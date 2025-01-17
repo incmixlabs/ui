@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "types": ["@types/wicg-file-system-access", "vite/client"],
+    "rootDir": ".",
+    "baseUrl": "./src",
+    "paths": {
+      "@i18n": ["./src/i18n"],
+      "@i18n/*": ["./src/i18n/*"],
+      "@pages": ["./src/index.ts"],
+      "@pages/*": ["./src/*"],
+      "@layouts": ["./common/components/layouts"],
+      "@layouts/*": ["./common/components/layouts/*"],
+      "@auth": ["./auth"],
+      "@auth/*": ["./auth/*"],
+      "@common": ["./common"],
+      "@common/*": ["./common/*"],
+      "@orgs": ["./orgs"],
+      "@orgs/*": ["./orgs/*"],
+      "@users": ["./users"],
+      "@users/*": ["./users/*"]
+    }
+  },
+  "extends": "@incmix-fe/config/react.json",
+  "include": ["."],
+  "exclude": ["node_modules"]
+}

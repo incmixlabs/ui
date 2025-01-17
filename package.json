@@ -1,0 +1,31 @@
+{
+  "name": "incmix-fe",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:fe": "turbo build:fe",
+    "build:storybook": "turbo build:storybook",
+    "clean": "turbo clean",
+    "dev:fe": "turbo dev --parallel --ui tui --filter=\"./apps/fihi-app\"",
+    "dev:storybook": "turbo dev --parallel --ui tui --filter=\"./apps/storybook\"",
+    "lint": "biome check .",
+    "lint:fix": "biome check --fix --unsafe",
+    "lint:packages": "pnpx sherif@latest",
+    "postinstall": "lefthook install",
+    "typecheck": "turbo typecheck"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "packageManager": "pnpm@9.15.4",
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@commitlint/cli": "19.6.1",
+    "@commitlint/config-conventional": "19.6.0",
+    "@turbo/gen": "2.3.3",
+    "lefthook": "1.10.4",
+    "turbo": "2.3.3"
+  },
+  "trustedDependencies": ["@biomejs/biome", "core-js-pure"]
+}

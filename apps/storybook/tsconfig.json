@@ -1,0 +1,13 @@
+{
+  "extends": "@incmix-fe/config/react.json",
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "declaration": false,
+    "declarationMap": false,
+    "plugins": [],
+    "module": "ESNext",
+    "moduleResolution": "bundler"
+  },
+  "include": ["src", "**/*.ts", "**/*.tsx", "vite.config.mts"],
+  "exclude": ["node_modules"]
+}

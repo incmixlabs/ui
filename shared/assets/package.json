@@ -1,0 +1,12 @@
+{
+  "name": "@incmix-fe/assets",
+  "version": "0.1.2",
+  "private": true,
+  "license": "MIT",
+  "files": [
+    "**/*"
+  ],
+  "dependencies": {
+    "@jsprtmnn/utils": "0.1.0"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "React Library",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
+    "lib": ["ESNext", "es6", "dom"],
+    "target": "ESNext",
+    "types": ["node", "vite/client"],
+    "jsx": "react-jsx"
+  }
+}

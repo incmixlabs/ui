@@ -1,0 +1,27 @@
+{
+  "extends": "@incmix-fe/config/react.json",
+  "exclude": ["node_modules", "dist", "./*.ts"],
+  "include": ["src/"],
+  "compilerOptions": {
+    "types": ["@types/wicg-file-system-access", "vite/client"],
+    "rootDir": "src",
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+      "@components/*": ["./components/*"],
+      "@components": ["./components"],
+      "@hooks": ["./hooks"],
+      "@hooks/*": ["./hooks/*"],
+      "@icons": ["./icons"],
+      "@icons/*": ["./icons/*"],
+      "@primitives": ["./primitives"],
+      "@primitives/*": ["./primitives/*"],
+      "@layouts": ["./layouts"],
+      "@layouts/*": ["./layouts/*"],
+      "@utils": ["./utils"],
+      "@utils/*": ["./utils/*"],
+      "@widgets/*": ["./widgets/*"],
+      "@widgets": ["./widgets"]
+    }
+  }
+}

@@ -1,0 +1,9 @@
+
+#   Refer for explanation to following link:
+#   https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md
+
+commit-msg:
+  parallel: true
+  commands:
+    commitlint:
+      run: pnpm commitlint --edit {1}
