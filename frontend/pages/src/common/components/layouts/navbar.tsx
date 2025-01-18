@@ -3,7 +3,7 @@ import { motion } from "framer-motion"
 import type React from "react"
 
 import { useLogout } from "@auth"
-import { useSidebarStore, useThemeStore } from "@incmix-fe/store"
+import { useSidebarStore, useThemeStore } from "@incmix/store"
 import {
   Box,
   Button,
@@ -12,7 +12,7 @@ import {
   IconButton,
   Link,
   TextField,
-} from "@incmix-fe/ui"
+} from "@incmix/ui"
 
 import {
   BellIcon,

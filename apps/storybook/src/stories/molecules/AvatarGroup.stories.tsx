@@ -1,5 +1,5 @@
-import { AvatarGroup } from "@incmix-fe/ui"
-import { directions, layouts, sizes, stackOrders } from "@incmix-fe/ui"
+import { AvatarGroup } from "@incmix/ui"
+import { directions, layouts, sizes, stackOrders } from "@incmix/ui"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof AvatarGroup> = {

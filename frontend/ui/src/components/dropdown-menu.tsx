@@ -38,11 +38,11 @@ export type DropdownMenuItemProps = {
   color?: Color
   children?: DropdownMenuItemProps[]
 }
-type DropdownButtonProps = ButtonProps & {
+export type DropdownButtonProps = ButtonProps & {
   label?: string
   icon?: ReactNode
 }
-type DropdownMenuProps = {
+export type DropdownMenuProps = {
   button?: DropdownButtonProps
   trigger?: ReactNode
   content?: {
@@ -51,7 +51,6 @@ type DropdownMenuProps = {
     color?: (typeof dropdownContentPropDefs)["color"]
     highContrast?: (typeof dropdownContentPropDefs)["highContrast"]
   }
-  className?: string
   items: DropdownMenuItemProps[]
 }
 

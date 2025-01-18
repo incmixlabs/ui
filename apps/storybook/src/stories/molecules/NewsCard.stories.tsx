@@ -1,6 +1,6 @@
-import { useThemeStore } from "@incmix-fe/store"
-import { Carousel, CarouselContent } from "@incmix-fe/ui"
-import { NewsCard, type NewsStory } from "@incmix-fe/ui/widgets"
+import { useThemeStore } from "@incmix/store"
+import { Carousel, CarouselContent } from "@incmix/ui"
+import { NewsCard, type NewsStory } from "@incmix/ui/widgets"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof NewsCard> = {

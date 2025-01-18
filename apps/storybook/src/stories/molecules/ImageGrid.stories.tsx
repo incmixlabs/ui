@@ -1,5 +1,5 @@
-import { useThemeStore } from "@incmix-fe/store"
-import { ImageGrid } from "@incmix-fe/ui/widgets"
+import { useThemeStore } from "@incmix/store"
+import { ImageGrid } from "@incmix/ui/widgets"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof ImageGrid> = {

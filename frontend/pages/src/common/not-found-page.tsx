@@ -1,4 +1,4 @@
-import { CardContainer } from "@incmix-fe/ui"
+import { CardContainer } from "@incmix/ui"
 import { Button, Flex, Heading, Text } from "@radix-ui/themes"
 import { Link } from "@tanstack/react-router"
 import { useTranslation } from "react-i18next"

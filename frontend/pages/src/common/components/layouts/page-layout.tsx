@@ -1,4 +1,4 @@
-import { Toaster } from "@incmix-fe/ui"
+import { Toaster } from "@incmix/ui"
 import { Box, Flex, ScrollArea } from "@radix-ui/themes"
 import type { FC, ReactNode } from "react"
 

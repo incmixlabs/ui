@@ -9,7 +9,7 @@ import {
   CarouselPrevious,
 } from "@components/carousel"
 import { Tabs, TabsList, TabsTrigger } from "@components/tabs"
-import { useRateLimitStore } from "@incmix-fe/store"
+import { useRateLimitStore } from "@incmix/store"
 import { Spinner, Text } from "@radix-ui/themes"
 import { useQuery } from "@tanstack/react-query"
 import { LOCATION_API_URL } from "@utils/constants"
@@ -200,4 +200,3 @@ export default function NewsWidget({ country }: NewsProps) {
 }
 
 export { NewsWidget }
-export type { NewsStory } from "./news-card"

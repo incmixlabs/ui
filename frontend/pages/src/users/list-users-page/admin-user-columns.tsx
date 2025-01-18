@@ -4,10 +4,10 @@ import {
   type DataTableRowAction,
   GoogleIcon,
   toast,
-} from "@incmix-fe/ui"
-import { Badge, Checkbox, DropdownMenu, Spinner, Switch } from "@incmix-fe/ui"
-import { DotsHorizontalIcon } from "@radix-ui/react-icons"
+} from "@incmix/ui"
+import { Badge, Checkbox, DropdownMenu, Spinner, Switch } from "@incmix/ui"
 import type { UserAndProfile } from "@jsprtmnn/utils/types"
+import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { setEnabled, setVerified } from "./actions"
 

@@ -4,12 +4,12 @@ import { getReorderDestinationIndex } from "@atlaskit/pragmatic-drag-and-drop-hi
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder"
-import { Card, Flex, Spinner } from "@radix-ui/themes"
 import type {
   ColumnWithTasks,
   NestedColumns,
   Task,
 } from "@jsprtmnn/utils/types"
+import { Card, Flex, Spinner } from "@radix-ui/themes"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import invariant from "tiny-invariant"
 import { CardContent } from "../card/card"

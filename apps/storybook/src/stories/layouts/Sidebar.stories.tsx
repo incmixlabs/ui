@@ -1,4 +1,4 @@
-import { Box, Flex, Sidebar, SidebarItem, SidebarSubItem } from "@incmix-fe/ui"
+import { Box, Flex, Sidebar, SidebarItem, SidebarSubItem } from "@incmix/ui"
 
 import {
   DashboardIcon,

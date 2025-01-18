@@ -1,14 +1,14 @@
 import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 
-import { I18n } from "@incmix-fe/pages/i18n"
-import { useRateLimitStore } from "@incmix-fe/store"
+import { I18n } from "@incmix/pages/i18n"
+import { useRateLimitStore } from "@incmix/store"
 import {
   AUTH_API_URL,
   RATELIMIT_API_URL,
   USERS_API_URL,
-} from "@incmix-fe/ui/constants"
-import { isTauri } from "@incmix-fe/ui/tauri"
+} from "@incmix/ui/constants"
+import { isTauri } from "@incmix/ui/tauri"
 import type {
   AuthUserSession,
   OptionalPresignedUrl,

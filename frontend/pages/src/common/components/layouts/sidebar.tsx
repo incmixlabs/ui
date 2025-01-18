@@ -1,7 +1,9 @@
-import { I18n } from "@incmix-fe/pages/i18n"
-import { useOrganizationStore, useSidebarStore } from "@incmix-fe/store"
-import { Sidebar, SidebarItem, SidebarSubItem } from "@incmix-fe/ui"
-import { USERS_API_URL } from "@incmix-fe/ui/constants"
+import { I18n } from "@incmix/pages/i18n"
+import { useOrganizationStore, useSidebarStore } from "@incmix/store"
+import { Sidebar, SidebarItem, SidebarSubItem } from "@incmix/ui"
+import { USERS_API_URL } from "@incmix/ui/constants"
+import { createAbilityFromPermissions } from "@jsprtmnn/utils/casl"
+import type { Permission } from "@jsprtmnn/utils/types"
 import {
   BackpackIcon,
   ComponentInstanceIcon,
@@ -15,8 +17,6 @@ import {
   ReaderIcon,
 } from "@radix-ui/react-icons"
 import { Flex } from "@radix-ui/themes"
-import { createAbilityFromPermissions } from "@jsprtmnn/utils/casl"
-import type { Permission } from "@jsprtmnn/utils/types"
 import { useQuery } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 

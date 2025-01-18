@@ -1,5 +1,5 @@
-import { CardContainer, Toaster } from "@incmix-fe/ui"
-import { AUTH_API_URL } from "@incmix-fe/ui/constants"
+import { CardContainer, Toaster } from "@incmix/ui"
+import { AUTH_API_URL } from "@incmix/ui/constants"
 import {
   Button,
   Container,

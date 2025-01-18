@@ -1,5 +1,5 @@
-import { Box } from "@incmix-fe/ui"
-import { Battery, BatteryWidget } from "@incmix-fe/ui/widgets"
+import { Box } from "@incmix/ui"
+import { Battery, BatteryWidget } from "@incmix/ui/widgets"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof Battery> = {

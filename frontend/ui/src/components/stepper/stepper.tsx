@@ -1,14 +1,13 @@
-//@ts-nocheck
 "use client"
+import { Box, Flex } from "@radix-ui/themes"
 import * as React from "react"
 import { type PropsWithChildren, useMemo } from "react"
 
-import { Button } from "@components/button"
+import CheckIcon from "@components/icons/check"
+import Loader from "@components/icons/loader"
+import X from "@components/icons/x"
 import { useMediaQuery } from "@hooks/use-media-query"
-import CheckIcon from "../icons/check"
-import Loader from "../icons/loader"
-import X from "../icons/x"
-import { Collapsible, CollapsibleContent } from "@primitives/collapsible"
+import * as Collapsible from "@radix-ui/react-collapsible"
 import { cn } from "@utils/cn"
 import { cva } from "@utils/cva"
 import { StepperProvider, useStepper } from "./stepper-context"
@@ -166,8 +165,8 @@ type VerticalStepProps = StepSharedProps & {
 const verticalStepVariants = cva(
   [
     "relative flex flex-col transition-all duration-200",
-    "data-[completed=true]:[&:not(:last-child)]:after:bg-primary",
-    "data-[invalid=true]:[&:not(:last-child)]:after:bg-destructive",
+    "data-[completed=true]:[&:not(:last-child)]:after:bg-gray-12",
+    "data-[invalid=true]:[&:not(:last-child)]:after:bg-red-9",
   ],
   {
     variants: {
@@ -236,8 +235,8 @@ const VerticalStep = React.forwardRef<HTMLDivElement, VerticalStepProps>(
     const renderChildren = () => {
       if (!expandVerticalSteps) {
         return (
-          <Collapsible open={isCurrentStep}>
-            <CollapsibleContent
+          <Collapsible.Root open={isCurrentStep}>
+            <Collapsible.Content
               ref={(node) => {
                 if (
                   // If the step is the first step and the previous step
@@ -256,11 +255,11 @@ const VerticalStep = React.forwardRef<HTMLDivElement, VerticalStepProps>(
                   })
                 }
               }}
-              className="overflow-hidden data-[state=closed]:animate-collapsibleUp data-[state=open]:animate-collapsibleDown"
+              className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down"
             >
               {children}
-            </CollapsibleContent>
-          </Collapsible>
+            </Collapsible.Content>
+          </Collapsible.Root>
         )
       }
       return children
@@ -304,9 +303,11 @@ const VerticalStep = React.forwardRef<HTMLDivElement, VerticalStepProps>(
           data-active={active}
           className={cn(
             "stepper__vertical-step-container",
+            (clickable || !!onClickStep || !!onClickStepGeneral) &&
+              "cursor-pointer",
             "flex items-center",
             variant === "line" &&
-              "border-s-[3px] py-2 ps-3 data-[active=true]:border-primary",
+              "border-s-[3px] py-2 ps-3 data-[active=true]:border-gray-12",
             styles?.["vertical-step-container"]
           )}
         >
@@ -394,18 +395,19 @@ const HorizontalStep = React.forwardRef<HTMLDivElement, StepSharedProps>(
         aria-disabled={!hasVisited}
         className={cn(
           "stepper__horizontal-step",
+          (clickable || !!onClickStep) && "cursor-pointer",
           "relative flex items-center transition-all duration-200",
           "[&:not(:last-child)]:flex-1",
           "[&:not(:last-child)]:after:transition-all [&:not(:last-child)]:after:duration-200",
           "[&:not(:last-child)]:after:h-[2px] [&:not(:last-child)]:after:bg-border [&:not(:last-child)]:after:content-['']",
-          "data-[completed=true]:[&:not(:last-child)]:after:bg-primary",
-          "data-[invalid=true]:[&:not(:last-child)]:after:bg-destructive",
+          "data-[completed=true]:[&:not(:last-child)]:after:bg-gray-12",
+          "data-[invalid=true]:[&:not(:last-child)]:after:bg-red-9",
           variant === "circle-alt" &&
             "flex-1 flex-col justify-start [&:not(:last-child)]:after:relative [&:not(:last-child)]:after:start-[50%] [&:not(:last-child)]:after:end-[50%] [&:not(:last-child)]:after:top-[calc(var(--step-icon-size)/2)] [&:not(:last-child)]:after:order-[-1] [&:not(:last-child)]:after:w-[calc((100%-var(--step-icon-size))-(var(--step-gap)))]",
           variant === "circle" &&
             "[&:not(:last-child)]:after:ms-[var(--step-gap)] [&:not(:last-child)]:after:me-[var(--step-gap)] [&:not(:last-child)]:after:flex-1",
           variant === "line" &&
-            "flex-1 flex-col border-t-[3px] data-[active=true]:border-primary",
+            "flex-1 flex-col border-gray-4 border-t-[3px] data-[active=true]:border-gray-12",
           styles?.["horizontal-step"]
         )}
         onKeyUp={(event) => {
@@ -463,8 +465,8 @@ const iconVariants = cva("", {
   variants: {
     size: {
       sm: "size-4",
-      md: "size-4",
-      lg: "size-5",
+      md: "size-5",
+      lg: "size-6",
     },
   },
   defaultVariants: {
@@ -501,33 +503,52 @@ const StepIcon = React.forwardRef<HTMLDivElement, StepIconProps>(
     )
 
     return useMemo(() => {
+      const IconContainer = React.forwardRef<
+        HTMLDivElement,
+        React.HTMLAttributes<HTMLDivElement>
+      >((props, ref) => (
+        <Flex
+          ref={ref}
+          className={cn(iconVariants({ size }), props.className)}
+          align="center"
+          justify="center"
+          {...props}
+        />
+      ))
+
       if (isCompletedStep) {
         if (isError && isKeepError) {
           return (
-            <div key="icon">
+            <IconContainer key="icon">
               <X className={cn(iconVariants({ size }))} />
-            </div>
+            </IconContainer>
           )
         }
         return (
-          <div key="check-icon">
-            <Check className={cn(iconVariants({ size }))} />
-          </div>
+          <IconContainer
+            key="check-icon"
+            className={cn(iconVariants({ size }))}
+          >
+            <Check name="Check" />
+          </IconContainer>
         )
       }
       if (isCurrentStep) {
         if (isError && ErrorIcon) {
           return (
-            <div key="error-icon">
-              <ErrorIcon className={cn(iconVariants({ size }))} />
-            </div>
+            <IconContainer
+              key="error-icon"
+              className={cn(iconVariants({ size }))}
+            >
+              <ErrorIcon name="X" />
+            </IconContainer>
           )
         }
         if (isError) {
           return (
-            <div key="icon">
+            <IconContainer key="icon">
               <X className={cn(iconVariants({ size }))} />
-            </div>
+            </IconContainer>
           )
         }
         if (isLoading) {
@@ -538,9 +559,9 @@ const StepIcon = React.forwardRef<HTMLDivElement, StepIconProps>(
       }
       if (Icon) {
         return (
-          <div key="step-icon">
-            <Icon className={cn(iconVariants({ size }))} />
-          </div>
+          <IconContainer key="step-icon" className={cn(iconVariants({ size }))}>
+            <Icon name="Check" />
+          </IconContainer>
         )
       }
       return (
@@ -597,18 +618,19 @@ const StepButtonContainer = ({
   }
 
   return (
-    <Button
-      variant="ghost"
+    <Box
       tabIndex={currentStepClickable ? 0 : -1}
       className={cn(
+        "m-0 transition-all duration-200",
+        "border-gray-4 bg-gray-1 text-gray-12",
         "stepper__step-button-container",
         "pointer-events-none rounded-full p-0",
         "h-[var(--step-icon-size)] w-[var(--step-icon-size)]",
         "flex items-center justify-center rounded-full border-2",
         "data-[clickable=true]:pointer-events-auto",
-        "data-[active=true]:border-primary data-[active=true]:bg-primary data-[active=true]:text-primary-foreground",
-        "data-[current=true]:border-primary data-[current=true]:bg-secondary",
-        "data-[invalid=true]:border-destructive data-[invalid=true]:bg-destructive data-[invalid=true]:text-destructive-foreground",
+        "data-[active=true]:border-gray-12 data-[active=true]:bg-gray-12 data-[active=true]:text-gray-1",
+        "data-[current=true]:border-gray-12 data-[current=true]:bg-gray-1",
+        "data-[invalid=true]:border-red-9 data-[invalid=true]:bg-red-9 data-[invalid=true]:text-gray-1",
         styles?.["step-button-container"]
       )}
       aria-current={isCurrentStep ? "step" : undefined}
@@ -619,7 +641,7 @@ const StepButtonContainer = ({
       data-loading={isLoading && (isCurrentStep || isCompletedStep)}
     >
       {children}
-    </Button>
+    </Box>
   )
 }
 
@@ -630,20 +652,25 @@ const VARIABLE_SIZES = {
 }
 
 const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
-  (props, ref: React.Ref<HTMLDivElement>) => {
+  (
+    {
+      size = "md",
+      orientation = "horizontal",
+      responsive = true,
+      initialStep = 0,
+      ...props
+    },
+    ref: React.Ref<HTMLDivElement>
+  ) => {
     const {
       className,
       children,
-      orientation: orientationProp,
       state,
-      responsive,
       checkIcon,
       errorIcon,
       onClickStep,
       mobileBreakpoint,
       expandVerticalSteps = false,
-      initialStep = 0,
-      size,
       steps,
       variant,
       styles,
@@ -670,21 +697,20 @@ const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
 
     const stepCount = items.length
 
-    // TODO
     const isMobile = useMediaQuery(
       `(max-width: ${mobileBreakpoint || "768px"})`
     )
 
     const clickable = !!onClickStep
 
-    const orientation = isMobile && responsive ? "vertical" : orientationProp
-    const isVertical = orientation === "vertical"
+    const orientationValue = isMobile && responsive ? "vertical" : orientation
+    const isVertical = orientationValue === "vertical"
 
     return (
       <StepperProvider
         value={{
           initialStep,
-          orientation,
+          orientation: orientationValue,
           state,
           size,
           responsive,
@@ -707,8 +733,8 @@ const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
             "stepper__main-container",
             "flex w-full flex-wrap",
             stepCount === 1 ? "justify-end" : "justify-between",
-            orientation === "vertical" ? "flex-col" : "flex-row",
-            variant === "line" && orientation === "horizontal" && "gap-4",
+            orientationValue === "vertical" ? "flex-col" : "flex-row",
+            variant === "line" && orientationValue === "horizontal" && "gap-4",
             className,
             styles?.["main-container"]
           )}
@@ -733,12 +759,6 @@ const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
   }
 )
 Stepper.displayName = "Stepper"
-
-Stepper.defaultProps = {
-  size: "md",
-  orientation: "horizontal",
-  responsive: true,
-}
 
 const VerticalContent = ({ children }: PropsWithChildren) => {
   const { activeStep } = useStepper()
@@ -792,7 +812,6 @@ const HorizontalContent = ({ children }: PropsWithChildren) => {
   )
 }
 
-//
 export {
   HorizontalStep,
   Step,

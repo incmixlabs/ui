@@ -1,8 +1,8 @@
 import type { Preview } from "@storybook/react"
 import React from "react"
 import "./global.css"
-import { useThemeStore } from "@incmix-fe/store"
-import { Toaster } from "@incmix-fe/ui"
+import { useThemeStore } from "@incmix/store"
+import { Toaster } from "@incmix/ui"
 import { Flex, Theme } from "@radix-ui/themes"
 import QueryProvider from "./query-client"
 

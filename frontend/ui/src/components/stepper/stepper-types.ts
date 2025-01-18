@@ -1,8 +1,18 @@
+import type { TextField } from "@radix-ui/themes"
+import type { z } from "zod"
 import type { LucideIconCompType } from "../icons/lucide-icon"
 
 export interface FullStepProps extends StepProps, StepInternalConfig {}
 
 type IconType = LucideIconCompType | React.ComponentType<any> | undefined
+
+export type Field = {
+  name: string
+  label: string
+  type?: TextField.RootProps["type"] | "textarea"
+  initialValue?: string
+  validation?: z.ZodSchema<string>
+}
 
 export type StepItem = {
   id?: string
@@ -10,6 +20,7 @@ export type StepItem = {
   description?: string
   icon?: IconType
   optional?: boolean
+  fields?: Field[]
 }
 
 export type StepIconProps = {
@@ -22,6 +33,13 @@ export type StepIconProps = {
   index?: number
   checkIcon?: IconType
   errorIcon?: IconType
+}
+
+export type StepperProps = StepOptions & {
+  children?: React.ReactNode
+  className?: string
+  initialStep?: number
+  steps: StepItem[]
 }
 
 export type StepProps = React.HTMLAttributes<HTMLLIElement> & {
@@ -65,7 +83,7 @@ type StepInternalConfig = {
   isLastStep?: boolean
 }
 
-type StepOptions = {
+export type StepOptions = {
   orientation?: "vertical" | "horizontal"
   state?: "loading" | "error"
   responsive?: boolean
@@ -93,10 +111,4 @@ type StepOptions = {
     "--step-gap"?: string
   }
   scrollTracking?: boolean
-}
-export type StepperProps = StepOptions & {
-  children?: React.ReactNode
-  className?: string
-  initialStep: number
-  steps: StepItem[]
 }

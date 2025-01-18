@@ -1,7 +1,7 @@
 import type { PGliteWithLive } from "@electric-sql/pglite/live"
-import { I18n } from "@incmix-fe/pages/i18n"
-import { recordChangelog } from "@incmix-fe/store/src/sql/tasks"
-import { TASKS_API_URL } from "@incmix-fe/ui/constants"
+import { I18n } from "@incmix/pages/i18n"
+import { recordChangelog } from "@incmix/store/src/sql/tasks"
+import { TASKS_API_URL } from "@incmix/ui/constants"
 import type {
   Board,
   Column,

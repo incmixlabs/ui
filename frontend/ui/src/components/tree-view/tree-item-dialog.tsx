@@ -8,6 +8,8 @@ import {
   TextField,
   VisuallyHidden,
 } from "@radix-ui/themes"
+import { useForm } from "@tanstack/react-form"
+import type { FieldApi } from "@tanstack/react-form"
 import * as React from "react"
 import {
   Dialog,
@@ -34,6 +36,18 @@ type TreeItemDialogProps = {
   initialData?: Record<string, string>
 }
 
+function FieldInfo({ field }: { field: FieldApi<any, any, any, any> }) {
+  return (
+    <>
+      {field.state.meta.isTouched && field.state.meta.errors ? (
+        <Text color="red" size="1">
+          {field.state.meta.errors}
+        </Text>
+      ) : null}
+    </>
+  )
+}
+
 export function TreeItemDialog({
   open,
   onOpenChange,
@@ -45,32 +59,23 @@ export function TreeItemDialog({
   const { descriptions, fileFields, folderFields } = useTreeViewContext()
   const fields = type === "file" ? fileFields : folderFields
 
-  const [formData, setFormData] = React.useState<FormData>({})
+  const form = useForm({
+    defaultValues:
+      initialData ||
+      Object.fromEntries(fields.map((field) => [field.name, ""])),
+    onSubmit: ({ value }) => {
+      onSubmit(value, type, position)
+      onOpenChange(false)
+    },
+  })
 
   React.useEffect(() => {
     if (open && initialData) {
-      setFormData(initialData)
+      form.reset(initialData)
     } else if (!open) {
-      setFormData({})
+      form.reset()
     }
-  }, [open, initialData])
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmit(formData, type, position)
-    setFormData({})
-    onOpenChange(false)
-  }
-
-  const handleFieldChange = (fieldName: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [fieldName]: value }))
-  }
-
-  const isValid = fields.every(
-    (field) =>
-      !field.required ||
-      (formData[field.name] && formData[field.name].trim() !== "")
-  )
+  }, [open, initialData, form])
 
   const isEditing = !!initialData
 
@@ -99,31 +104,51 @@ export function TreeItemDialog({
                 : descriptions.newFolderTitle}
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            form.handleSubmit()
+          }}
+        >
           <Flex direction="column" gap="3">
             {fields.map((field) => (
-              <Flex key={field.name} direction="column" gap="1">
-                <Text as="label" size="2">
-                  {field.label}
-                </Text>
-                {field.type === "textarea" ? (
-                  <TextArea
-                    placeholder={field.placeholder}
-                    value={formData[field.name] || ""}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                      handleFieldChange(field.name, e.target.value)
-                    }
-                  />
-                ) : (
-                  <TextField.Root
-                    placeholder={field.placeholder}
-                    value={formData[field.name] || ""}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      handleFieldChange(field.name, e.target.value)
-                    }
-                  />
+              <form.Field
+                key={field.name}
+                name={field.name}
+                validators={{
+                  onChange: ({ value }) =>
+                    field.required && (!value || value.trim() === "")
+                      ? "This field is required"
+                      : undefined,
+                }}
+              >
+                {(fieldApi) => (
+                  <Flex direction="column" gap="1">
+                    <Text as="label" size="2" htmlFor={fieldApi.name}>
+                      {field.label}
+                    </Text>
+                    {field.type === "textarea" ? (
+                      <TextArea
+                        id={fieldApi.name}
+                        placeholder={field.placeholder}
+                        value={fieldApi.state.value}
+                        onBlur={fieldApi.handleBlur}
+                        onChange={(e) => fieldApi.handleChange(e.target.value)}
+                      />
+                    ) : (
+                      <TextField.Root
+                        id={fieldApi.name}
+                        placeholder={field.placeholder}
+                        value={fieldApi.state.value}
+                        onBlur={fieldApi.handleBlur}
+                        onChange={(e) => fieldApi.handleChange(e.target.value)}
+                      />
+                    )}
+                    <FieldInfo field={fieldApi} />
+                  </Flex>
                 )}
-              </Flex>
+              </form.Field>
             ))}
           </Flex>
           <DialogFooter className="mt-4">
@@ -134,9 +159,15 @@ export function TreeItemDialog({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={!isValid}>
-              {isEditing ? "Save" : `Add ${type}`}
-            </Button>
+            <form.Subscribe
+              selector={(state) => [state.canSubmit, state.isSubmitting]}
+            >
+              {([canSubmit, isSubmitting]) => (
+                <Button type="submit" disabled={!canSubmit}>
+                  {isSubmitting ? "..." : isEditing ? "Save" : `Add ${type}`}
+                </Button>
+              )}
+            </form.Subscribe>
           </DialogFooter>
         </form>
       </DialogContent>

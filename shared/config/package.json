@@ -1,13 +1,9 @@
 {
-  "name": "@incmix-fe/config",
+  "name": "@incmix/config",
   "version": "0.0.0",
   "main": "index.js",
   "license": "MIT",
-  "files": [
-    "base.json",
-    "nextjs.json",
-    "react.json"
-  ],
+  "files": ["base.json", "nextjs.json", "react.json"],
   "devDependencies": {
     "next": "15.1.4",
     "typescript": "5.7.3"

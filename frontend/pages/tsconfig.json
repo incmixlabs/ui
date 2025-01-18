@@ -20,7 +20,7 @@
       "@users/*": ["./users/*"]
     }
   },
-  "extends": "@incmix-fe/config/react.json",
+  "extends": "@incmix/config/react.json",
   "include": ["."],
   "exclude": ["node_modules"]
 }

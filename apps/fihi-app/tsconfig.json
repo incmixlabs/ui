@@ -1,5 +1,5 @@
 {
-  "extends": "@incmix-fe/config/nextjs.json",
+  "extends": "@incmix/config/nextjs.json",
   "compilerOptions": {
     "moduleResolution": "node",
     "baseUrl": ".",

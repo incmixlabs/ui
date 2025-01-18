@@ -1,6 +1,6 @@
-import { I18n } from "@incmix-fe/pages/i18n"
-import { AUTH_API_URL } from "@incmix-fe/ui/constants"
-import { cn } from "@incmix-fe/ui/utils"
+import { I18n } from "@incmix/pages/i18n"
+import { AUTH_API_URL } from "@incmix/ui/constants"
+import { cn } from "@incmix/ui/utils"
 import {
   Container,
   Flex,

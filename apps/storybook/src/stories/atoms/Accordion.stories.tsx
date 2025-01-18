@@ -1,4 +1,4 @@
-import { Accordion, type AccordionItems } from "@incmix-fe/ui"
+import { Accordion, type AccordionItems } from "@incmix/ui"
 import type { Meta, StoryObj } from "@storybook/react"
 const types = ["single", "multiple"]
 

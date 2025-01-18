@@ -9,9 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@incmix-fe/ui"
-import { Button } from "@radix-ui/themes"
+} from "@incmix/ui"
 import type { UserAndProfile } from "@jsprtmnn/utils/types"
+import { Button } from "@radix-ui/themes"
 import type { Row } from "@tanstack/react-table"
 import { Trash } from "lucide-react"
 

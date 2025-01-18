@@ -39,4 +39,4 @@ export {
   Switch,
 } from "@radix-ui/themes"
 export * from "./scroll-area"
-export { Stepper } from "./stepper"
+export * from "./stepper"

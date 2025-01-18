@@ -1,5 +1,6 @@
 import { LoadingPage } from "@common"
-import { Button, CardContainer, FormField } from "@incmix-fe/ui"
+import { Button, CardContainer, FormField } from "@incmix/ui"
+import type { Organization } from "@jsprtmnn/utils/types"
 import { ChevronRightIcon } from "@radix-ui/react-icons"
 import {
   Box,
@@ -11,7 +12,6 @@ import {
   Text,
   TextField,
 } from "@radix-ui/themes"
-import type { Organization } from "@jsprtmnn/utils/types"
 import { Link } from "@tanstack/react-router"
 import { Field, Form } from "houseform"
 import { useState } from "react"

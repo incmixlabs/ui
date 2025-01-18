@@ -1,4 +1,4 @@
-# @incmix-fe/store
+# @incmix/store
 # https://github.com/pmndrs/zustand/blob/main/src/middleware/persist.ts
 ##
 # Stores and remote services

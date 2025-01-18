@@ -2,8 +2,8 @@ import {
   DropdownMenu,
   type DropdownMenuItemProps,
   dropdownContentPropDefs,
-} from "@incmix-fe/ui"
-import { accentColorEnums } from "@incmix-fe/ui/utils"
+} from "@incmix/ui"
+import { accentColorEnums } from "@incmix/ui/utils"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const { variant, size } = dropdownContentPropDefs

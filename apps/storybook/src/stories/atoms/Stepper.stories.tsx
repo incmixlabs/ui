@@ -1,5 +1,5 @@
-import { Stepper } from "@incmix-fe/ui/stepper"
-import type { StepperProps } from "@incmix-fe/ui/stepper"
+import { Stepper } from "@incmix/ui/stepper"
+import type { StepperProps } from "@incmix/ui/stepper"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof Stepper> = {

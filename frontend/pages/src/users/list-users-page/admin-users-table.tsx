@@ -9,11 +9,11 @@ import {
   type DataTableRowAction,
   Flex,
   useDataTable,
-} from "@incmix-fe/ui"
+} from "@incmix/ui"
 import { useQuery } from "@tanstack/react-query"
 
-import { Spinner } from "@incmix-fe/ui"
-import { USERS_API_URL } from "@incmix-fe/ui/constants"
+import { Spinner } from "@incmix/ui"
+import { USERS_API_URL } from "@incmix/ui/constants"
 import type {
   UserAndProfile,
   UserProfilePaginated,

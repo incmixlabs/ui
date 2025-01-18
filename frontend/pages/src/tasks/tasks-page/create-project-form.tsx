@@ -1,6 +1,6 @@
 "use client"
 
-import { useOrganizationStore } from "@incmix-fe/store"
+import { useOrganizationStore } from "@incmix/store"
 import {
   Dialog,
   DialogClose,
@@ -13,9 +13,9 @@ import {
   FormField,
   ReactiveButton,
   toast,
-} from "@incmix-fe/ui"
-import { Button, Flex } from "@radix-ui/themes"
+} from "@incmix/ui"
 import type { Project } from "@jsprtmnn/utils/types"
+import { Button, Flex } from "@radix-ui/themes"
 import { useMutation } from "@tanstack/react-query"
 import { Form } from "houseform"
 import { z } from "zod"

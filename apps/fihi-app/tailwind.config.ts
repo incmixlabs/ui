@@ -1,4 +1,4 @@
-import { incmixTailwindPreset } from "@incmix-fe/ui/preset"
+import { incmixTailwindPreset } from "@incmix/ui/preset"
 import type { Config } from "tailwindcss"
 
 const config: Config = {

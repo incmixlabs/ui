@@ -1,5 +1,5 @@
 {
-  "name": "@incmix-fe/storybook",
+  "name": "@incmix/storybook",
   "private": true,
   "version": "workspace: *",
   "scripts": {
@@ -8,8 +8,8 @@
     "build:storybook": "storybook build"
   },
   "dependencies": {
-    "@incmix-fe/store": "workspace: *",
-    "@incmix-fe/ui": "workspace: *",
+    "@incmix/store": "workspace: *",
+    "@incmix/ui": "workspace: *",
     "@jsprtmnn/utils": "0.1.0",
     "@radix-ui/react-icons": "1.3.1",
     "@storybook/addons": "7.6.17",
@@ -19,7 +19,7 @@
     "react-hook-form": "7.51.2"
   },
   "devDependencies": {
-    "@incmix-fe/config": "workspace: *",
+    "@incmix/config": "workspace: *",
     "@storybook/addon-essentials": "8.4.6",
     "@storybook/addon-interactions": "8.4.6",
     "@storybook/addon-links": "8.4.6",

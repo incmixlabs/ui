@@ -10,9 +10,9 @@ import {
   FormField,
   ReactiveButton,
   toast,
-} from "@incmix-fe/ui"
-import { Button, Flex } from "@radix-ui/themes"
+} from "@incmix/ui"
 import type { UserAndProfile } from "@jsprtmnn/utils/types"
+import { Button, Flex } from "@radix-ui/themes"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import type { Row } from "@tanstack/react-table"
 import { Form } from "houseform"

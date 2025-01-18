@@ -1,4 +1,4 @@
-# @incmix-fe/assets
+# @incmix/assets
 
 ## 0.1.2
 

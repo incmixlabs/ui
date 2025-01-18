@@ -1,4 +1,4 @@
-import { INTL_API_URL } from "@incmix-fe/ui/constants"
+import { INTL_API_URL } from "@incmix/ui/constants"
 import i18n, { type Resource, type InitOptions } from "i18next"
 import ChainedBackend, {
   type ChainedBackendOptions,

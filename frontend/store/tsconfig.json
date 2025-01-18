@@ -1,5 +1,5 @@
 {
-  "extends": "@incmix-fe/config/react.json",
+  "extends": "@incmix/config/react.json",
   "exclude": ["node_modules"],
   "compilerOptions": {
     "types": ["vite/client"],

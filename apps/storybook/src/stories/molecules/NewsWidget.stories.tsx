@@ -1,5 +1,5 @@
-import { useThemeStore } from "@incmix-fe/store"
-import { NewsWidget } from "@incmix-fe/ui/widgets"
+import { useThemeStore } from "@incmix/store"
+import { NewsWidget } from "@incmix/ui/widgets"
 // @ts-nocheck
 import type { Meta, StoryObj } from "@storybook/react"
 

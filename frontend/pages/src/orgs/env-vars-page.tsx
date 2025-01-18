@@ -4,7 +4,7 @@ import {
   type TreeDataItem,
   TreeView,
   type TreeViewDescriptions,
-} from "@incmix-fe/ui"
+} from "@incmix/ui"
 import { Flex, Text } from "@radix-ui/themes"
 import { useTranslation } from "react-i18next"
 import { create } from "zustand"

@@ -32,8 +32,8 @@ import {
   TauriGoogleAuthCallbackRoute,
   TestRoute,
   WelcomeRoute,
-} from "@incmix-fe/pages"
-import { BFF_API_URL, VITE_SENTRY_DSN } from "@incmix-fe/ui/constants"
+} from "@incmix/pages"
+import { BFF_API_URL, VITE_SENTRY_DSN } from "@incmix/ui/constants"
 const routeTree = RootRoute.addChildren([
   LoginRoute,
   ForgotPasswordRoute,

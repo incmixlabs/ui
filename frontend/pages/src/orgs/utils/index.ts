@@ -1,5 +1,5 @@
-import { I18n } from "@incmix-fe/pages/i18n"
-import { ORG_API_URL } from "@incmix-fe/ui/constants"
+import { I18n } from "@incmix/pages/i18n"
+import { ORG_API_URL } from "@incmix/ui/constants"
 import { createAbilityFromPermissions } from "@jsprtmnn/utils/casl"
 import type {
   AppAbility,

@@ -9,8 +9,8 @@ import {
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { dropTargetForExternal } from "@atlaskit/pragmatic-drag-and-drop/external/adapter"
-import { Card } from "@radix-ui/themes"
 import type { Task } from "@jsprtmnn/utils/types"
+import { Card } from "@radix-ui/themes"
 import { cva } from "@utils/cva"
 import { useEffect, useRef, useState } from "react"
 import type React from "react"

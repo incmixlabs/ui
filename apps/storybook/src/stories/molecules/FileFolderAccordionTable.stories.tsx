@@ -1,6 +1,6 @@
-import { FileFolderAccordionTable } from "@incmix-fe/ui"
-import type { BuildingEnvironmentVariableRoot } from "@incmix-fe/ui"
-import { buildEnvironmentVariable } from "@incmix-fe/ui"
+import { FileFolderAccordionTable } from "@incmix/ui"
+import type { BuildingEnvironmentVariableRoot } from "@incmix/ui"
+import { buildEnvironmentVariable } from "@incmix/ui"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof FileFolderAccordionTable> = {

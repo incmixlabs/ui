@@ -5,16 +5,9 @@ import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
-import { CardContainer, FormField } from "@incmix-fe/ui"
-import {
-  Box,
-  Container,
-  Flex,
-  Heading,
-  ReactiveButton,
-  Text,
-} from "@incmix-fe/ui"
-import { AUTH_API_URL } from "@incmix-fe/ui/constants"
+import { CardContainer, FormField } from "@incmix/ui"
+import { Box, Container, Flex, Heading, ReactiveButton, Text } from "@incmix/ui"
+import { AUTH_API_URL } from "@incmix/ui/constants"
 import type { AuthUser } from "@jsprtmnn/utils/types"
 
 function SignupForm() {

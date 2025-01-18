@@ -7,7 +7,7 @@ import {
   SwapyExclude,
   SwapyLayout,
   SwapySlot,
-} from "@incmix-fe/ui"
+} from "@incmix/ui"
 import {
   BatteryWidget,
   CalendarWidget,
@@ -16,7 +16,7 @@ import {
   NewsWidget,
   WeatherWidget,
   getBattery,
-} from "@incmix-fe/ui/widgets"
+} from "@incmix/ui/widgets"
 import { Container, Flex, Heading, Text } from "@radix-ui/themes"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"

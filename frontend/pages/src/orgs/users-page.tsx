@@ -1,4 +1,9 @@
-import { Button, CardContainer } from "@incmix-fe/ui"
+import { Button, CardContainer } from "@incmix/ui"
+import type {
+  MemberDetails,
+  MemberRole,
+  Organization,
+} from "@jsprtmnn/utils/types"
 import { ArrowLeftIcon } from "@radix-ui/react-icons"
 import {
   Container,
@@ -10,11 +15,6 @@ import {
   TextField,
   Tooltip,
 } from "@radix-ui/themes"
-import type {
-  MemberDetails,
-  MemberRole,
-  Organization,
-} from "@jsprtmnn/utils/types"
 import { Link } from "@tanstack/react-router"
 import { forwardRef, useContext, useState } from "react"
 import { useTranslation } from "react-i18next"
