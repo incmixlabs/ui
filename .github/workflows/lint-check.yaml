@@ -17,4 +17,3 @@ jobs:
           version: 1.9.4
       - name: Run Biome
         run: biome ci .
-`
