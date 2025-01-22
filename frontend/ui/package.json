@@ -113,6 +113,7 @@
     "@tailwindcss/typography": "0.5.15",
     "@tanstack/react-form": "0.41.2",
     "@tanstack/react-table": "8.20.6",
+    "@tanstack/zod-form-adapter": "^0.41.3",
     "@tauri-apps/api": ">=2.0.0-beta.0",
     "@types/resize-observer-browser": "0.1.11",
     "aria-hidden": "1.2.4",

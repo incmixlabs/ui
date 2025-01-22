@@ -1,14 +1,16 @@
-"use client";
-import { clx } from "@utils/clx/clx-merge";
+"use client"
+import { clx } from "@utils/clx/clx-merge"
 
 export function DemoDashboard() {
-  const Dashboard = clx.div("flex flex-1");
-  const DashboardHeader = clx.div("flex gap-2");
-  const DashboardCell = clx.div("size-full rounded-lg bg-secondary animate-pulse");
-  const DashboardBody = clx.div("flex flex-1 gap-2");
+  const Dashboard = clx.div("flex flex-1")
+  const DashboardHeader = clx.div("flex gap-2")
+  const DashboardCell = clx.div(
+    "size-full rounded-lg bg-secondary animate-pulse"
+  )
+  const DashboardBody = clx.div("flex flex-1 gap-2")
   const DashboardContainer = clx.div(
-    "flex flex-col flex-1 size-full gap-2 p-2 bg-card border md:p-10 rounded-tl-2xl",
-  );
+    "flex flex-col flex-1 size-full gap-2 p-2 bg-card border md:p-10 rounded-tl-2xl"
+  )
 
   return (
     <Dashboard>
@@ -25,5 +27,5 @@ export function DemoDashboard() {
         </DashboardBody>
       </DashboardContainer>
     </Dashboard>
-  );
+  )
 }

@@ -10,7 +10,9 @@ import {
 } from "@radix-ui/themes"
 import { useForm } from "@tanstack/react-form"
 import type { FieldApi } from "@tanstack/react-form"
+import { zodValidator } from "@tanstack/zod-form-adapter"
 import * as React from "react"
+import { z } from "zod"
 import {
   Dialog,
   DialogContent,
@@ -19,6 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../dialog"
+import { FormField } from "../form/form-field"
 import { useTreeViewContext } from "./tree-view-context"
 
 type FormData = Record<string, string>
@@ -36,7 +39,7 @@ type TreeItemDialogProps = {
   initialData?: Record<string, string>
 }
 
-function FieldInfo({ field }: { field: FieldApi<any, any, any, any> }) {
+export function FieldInfo({ field }: { field: FieldApi<any, any, any, any> }) {
   return (
     <>
       {field.state.meta.isTouched && field.state.meta.errors ? (
@@ -116,37 +119,18 @@ export function TreeItemDialog({
               <form.Field
                 key={field.name}
                 name={field.name}
+                validatorAdapter={zodValidator()}
                 validators={{
-                  onChange: ({ value }) =>
-                    field.required && (!value || value.trim() === "")
-                      ? "This field is required"
-                      : undefined,
+                  onChange: z.string().min(10, "This field is required"),
                 }}
               >
                 {(fieldApi) => (
-                  <Flex direction="column" gap="1">
-                    <Text as="label" size="2" htmlFor={fieldApi.name}>
-                      {field.label}
-                    </Text>
-                    {field.type === "textarea" ? (
-                      <TextArea
-                        id={fieldApi.name}
-                        placeholder={field.placeholder}
-                        value={fieldApi.state.value}
-                        onBlur={fieldApi.handleBlur}
-                        onChange={(e) => fieldApi.handleChange(e.target.value)}
-                      />
-                    ) : (
-                      <TextField.Root
-                        id={fieldApi.name}
-                        placeholder={field.placeholder}
-                        value={fieldApi.state.value}
-                        onBlur={fieldApi.handleBlur}
-                        onChange={(e) => fieldApi.handleChange(e.target.value)}
-                      />
-                    )}
-                    <FieldInfo field={fieldApi} />
-                  </Flex>
+                  <FormField
+                    name={field.name}
+                    label={field.label}
+                    type={field.type === "textarea" ? "textarea" : "text"}
+                    field={fieldApi}
+                  />
                 )}
               </form.Field>
             ))}
