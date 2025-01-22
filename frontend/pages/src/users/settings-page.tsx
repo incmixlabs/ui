@@ -7,8 +7,9 @@ import {
   Switch,
   Text,
 } from "@radix-ui/themes"
+import { useForm } from "@tanstack/react-form"
 import { useQueryClient } from "@tanstack/react-query"
-import { Form as HouseForm } from "houseform"
+import { zodValidator } from "@tanstack/zod-form-adapter"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
@@ -18,11 +19,11 @@ import { useCurrentUser, useProfileUpdate } from "@auth"
 import { LoadingPage } from "@common"
 import { useLanguageStore, useThemeStore } from "@incmix/store"
 import { Button, CardContainer, FormField } from "@incmix/ui"
-import type { UserProfile } from "@jsprtmnn/utils/types"
+import type { UserProfile } from "@incmix/utils/types"
 import { PageLayout } from "../common/components/layouts/page-layout"
 import { CurrentUserProfileImage } from "../common/components/user-profile-image"
 
-const FormButton: React.FC<{
+const _FormButton: React.FC<{
   onClick: () => void
   disabled?: boolean
   className?: string
@@ -37,58 +38,55 @@ const useGeneralInfoForm = (userId: string) => {
   const queryClient = useQueryClient()
   const { handleUpdateUser, isUpdatingUser, updateUserError } =
     useProfileUpdate(userId)
-  const [fullName, setFullName] = useState("")
   const { t } = useTranslation(["profile"])
 
-  const handleSubmit = async () => {
-    try {
-      await handleUpdateUser(fullName.trim())
-      toast.success(t("success.updateUser"))
-      queryClient.invalidateQueries({ queryKey: ["user"] })
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : t("error.updateUser")
-      toast.error(message)
-    }
-  }
+  const form = useForm({
+    defaultValues: {
+      fullName: "",
+    },
+    onSubmit: async ({ value }) => {
+      try {
+        await handleUpdateUser(value.fullName.trim())
+        toast.success(t("success.updateUser"))
+        queryClient.invalidateQueries({ queryKey: ["user"] })
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : t("error.updateUser")
+        toast.error(message)
+      }
+    },
+  })
 
   return {
-    fullName,
-    setFullName,
-    handleSubmit,
+    form,
     isUpdatingUser,
     updateUserError,
   }
 }
 
 const usePasswordChangeForm = () => {
-  const [currentPassword, setCurrentPassword] = useState("")
-  const [newPassword, setNewPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
   const { t } = useTranslation(["profile"])
 
-  const handleSubmit = () => {
-    try {
-      // TODO: Implement password change logic here
-      console.log({ currentPassword, newPassword, confirmPassword })
-      // After successful password change:
-      toast.success(t("success.changePassword"))
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : t("error.changePassword")
-      toast.error(message)
-    }
-  }
+  const form = useForm({
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+    onSubmit: ({ value }) => {
+      try {
+        // TODO: Implement password change logic here
+        console.log(value)
+        toast.success(t("success.changePassword"))
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : t("error.changePassword")
+        toast.error(message)
+      }
+    },
+  })
 
-  return {
-    currentPassword,
-    setCurrentPassword,
-    newPassword,
-    setNewPassword,
-    confirmPassword,
-    setConfirmPassword,
-    handleSubmit,
-  }
+  return { form }
 }
 
 const ProfileSection: React.FC<{ user: UserProfile }> = ({ user }) => {
@@ -108,9 +106,7 @@ const ProfileSection: React.FC<{ user: UserProfile }> = ({ user }) => {
 }
 
 const GeneralInfoForm: React.FC<ReturnType<typeof useGeneralInfoForm>> = ({
-  fullName,
-  setFullName,
-  handleSubmit,
+  form,
   isUpdatingUser,
   updateUserError,
 }) => {
@@ -120,79 +116,109 @@ const GeneralInfoForm: React.FC<ReturnType<typeof useGeneralInfoForm>> = ({
       <Heading size="4" mb="4" color="gray">
         {t("generalInfo")}
       </Heading>
-      <HouseForm onSubmit={handleSubmit}>
-        {({ submit }) => (
-          <Flex direction="column" gap="4">
-            <FormField
-              name="fullName"
-              label={t("common:fullName")}
-              value={fullName}
-              onChange={setFullName}
-              validation={z.string().min(1, t("nameRequired"))}
-            />
-            <FormButton onClick={submit} disabled={isUpdatingUser}>
-              {isUpdatingUser ? t("saving") : t("saveChanges")}
-            </FormButton>
-            {updateUserError && (
-              <Text color="red">{updateUserError.message}</Text>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          form.handleSubmit()
+        }}
+      >
+        <Flex direction="column" gap="4">
+          <form.Field
+            name="fullName"
+            validatorAdapter={zodValidator()}
+            validators={{
+              onChange: z.string().min(1, t("nameRequired")),
+            }}
+          >
+            {(field) => (
+              <FormField
+                name="fullName"
+                label={t("common:fullName")}
+                field={field}
+              />
             )}
-          </Flex>
-        )}
-      </HouseForm>
+          </form.Field>
+          <Button type="submit" disabled={isUpdatingUser}>
+            {isUpdatingUser ? t("saving") : t("saveChanges")}
+          </Button>
+          {updateUserError && (
+            <Text color="red">{updateUserError.message}</Text>
+          )}
+        </Flex>
+      </form>
     </CardContainer>
   )
 }
 
 const PasswordChangeForm: React.FC<
   ReturnType<typeof usePasswordChangeForm>
-> = ({
-  currentPassword,
-  setCurrentPassword,
-  newPassword,
-  setNewPassword,
-  confirmPassword,
-  setConfirmPassword,
-  handleSubmit,
-}) => {
+> = ({ form }) => {
   const { t } = useTranslation(["settings", "common"])
   return (
     <CardContainer>
       <Heading size="4" mb="4" color="gray">
         {t("changePassword")}
       </Heading>
-      <HouseForm onSubmit={handleSubmit}>
-        {({ submit }) => (
-          <Flex direction="column" gap="4">
-            <FormField
-              name="currentPassword"
-              label={t("currentPassword")}
-              type="password"
-              value={currentPassword}
-              onChange={setCurrentPassword}
-              validation={z.string().min(1, t("currentPasswordRequired"))}
-            />
-            <FormField
-              name="newPassword"
-              label={t("newPassword")}
-              type="password"
-              value={newPassword}
-              onChange={setNewPassword}
-              validation={z.string().min(8, t("newPasswordLength"))}
-            />
-            <FormField
-              name="confirmPassword"
-              label={t("confirmNewPassword")}
-              type="password"
-              value={confirmPassword}
-              onChange={setConfirmPassword}
-              validation={z.string().min(1, t("confirmPasswordRequired"))}
-            />
-            <FormButton onClick={submit} className="mt-4">
-              {t("changePassword")}
-            </FormButton>
-          </Flex>
-        )}
-      </HouseForm>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          form.handleSubmit()
+        }}
+      >
+        <Flex direction="column" gap="4">
+          <form.Field
+            name="currentPassword"
+            validatorAdapter={zodValidator()}
+            validators={{
+              onChange: z.string().min(1, t("currentPasswordRequired")),
+            }}
+          >
+            {(field) => (
+              <FormField
+                name="currentPassword"
+                label={t("currentPassword")}
+                type="password"
+                field={field}
+              />
+            )}
+          </form.Field>
+          <form.Field
+            name="newPassword"
+            validatorAdapter={zodValidator()}
+            validators={{
+              onChange: z.string().min(8, t("newPasswordLength")),
+            }}
+          >
+            {(field) => (
+              <FormField
+                name="newPassword"
+                label={t("newPassword")}
+                type="password"
+                field={field}
+              />
+            )}
+          </form.Field>
+          <form.Field
+            name="confirmPassword"
+            validatorAdapter={zodValidator()}
+            validators={{
+              onChange: z.string().min(1, t("confirmPasswordRequired")),
+            }}
+          >
+            {(field) => (
+              <FormField
+                name="confirmPassword"
+                label={t("confirmNewPassword")}
+                type="password"
+                field={field}
+              />
+            )}
+          </form.Field>
+          <Button type="submit">{t("changePassword")}</Button>
+        </Flex>
+      </form>
     </CardContainer>
   )
 }
