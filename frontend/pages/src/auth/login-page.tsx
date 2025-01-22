@@ -1,10 +1,11 @@
 import { LoadingPage } from "@common"
 import { CardContainer, FormField, ReactiveButton } from "@incmix/ui"
 import { Box, Container, Flex, Heading, Text } from "@radix-ui/themes"
+import { useForm } from "@tanstack/react-form"
 import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { Link } from "@tanstack/react-router"
-import { Form } from "houseform"
+import { zodValidator } from "@tanstack/zod-form-adapter"
 import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import {
@@ -31,61 +32,84 @@ function LoginForm() {
     isSuccess: isLoginSuccess,
   } = useLogin()
 
-  const handleSubmit = (values: { email: string; password: string }) => {
-    handleLogin(values.email, values.password)
-  }
+  const form = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    onSubmit: ({ value }) => {
+      handleLogin(value.email, value.password)
+    },
+  })
 
   return (
     <CardContainer>
       <Heading size="4" mb="4" align="center">
         {t("title")}
       </Heading>
-      <Form onSubmit={handleSubmit}>
-        {({ submit }) => (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              submit()
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          form.handleSubmit()
+        }}
+      >
+        <Flex direction="column" gap="4">
+          <form.Field
+            name="email"
+            validatorAdapter={zodValidator()}
+            validators={{
+              onChange: z.string().email(t("emailValidation")),
             }}
           >
-            <Flex direction="column" gap="4">
+            {(field) => (
               <FormField
                 name="email"
                 label={t("common:email")}
                 type="email"
-                validation={z.string().email(t("emailValidation"))}
+                field={field}
               />
+            )}
+          </form.Field>
 
+          <form.Field
+            name="password"
+            validatorAdapter={zodValidator()}
+            validators={{
+              onChange: z.string().min(1, t("passwordValidation")),
+            }}
+          >
+            {(field) => (
               <FormField
                 name="password"
                 label={t("common:password")}
                 type="password"
-                validation={z.string().min(1, t("passwordValidation"))}
+                field={field}
               />
+            )}
+          </form.Field>
 
-              {loginError && (
-                <Text color="red" size="2">
-                  {loginError.message}
-                </Text>
-              )}
-              <Box className="text-left">
-                <Link to="/forgot-password">
-                  <Text color="blue">{t("login:forgotPassword")}</Text>
-                </Link>
-              </Box>
-              <ReactiveButton
-                type="submit"
-                color="blue"
-                loading={isLoginLoading}
-                success={isLoginSuccess}
-                className="w-full"
-              >
-                {t("submit")}
-              </ReactiveButton>
-            </Flex>
-          </form>
-        )}
-      </Form>
+          {loginError && (
+            <Text color="red" size="2">
+              {loginError.message}
+            </Text>
+          )}
+          <Box className="text-left">
+            <Link to="/forgot-password">
+              <Text color="blue">{t("login:forgotPassword")}</Text>
+            </Link>
+          </Box>
+          <ReactiveButton
+            type="submit"
+            color="blue"
+            loading={isLoginLoading}
+            success={isLoginSuccess}
+            className="w-full"
+          >
+            {t("submit")}
+          </ReactiveButton>
+        </Flex>
+      </form>
       <ReactiveButton
         onClick={handleGoogleLogin}
         color="red"

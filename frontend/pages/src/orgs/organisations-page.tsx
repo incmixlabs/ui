@@ -1,9 +1,8 @@
 import { LoadingPage } from "@common"
 import { Button, CardContainer, FormField } from "@incmix/ui"
-import type { Organization } from "@jsprtmnn/utils/types"
+import type { Organization } from "@incmix/utils/types"
 import { ChevronRightIcon } from "@radix-ui/react-icons"
 import {
-  Box,
   Container,
   Dialog,
   Flex,
@@ -12,8 +11,8 @@ import {
   Text,
   TextField,
 } from "@radix-ui/themes"
+import { useForm } from "@tanstack/react-form"
 import { Link } from "@tanstack/react-router"
-import { Field, Form } from "houseform"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { PageLayout } from "../common/components/layouts/page-layout"
@@ -76,10 +75,24 @@ const CreateOrganizationDialog: React.FC<{
   onCreateOrganization: () => void
 }> = ({ isOpen, onOpenChange, onCreateOrganization }) => {
   const { t } = useTranslation(["organizations"])
-
   const { handleValidateOrganization, isValidating } = useValidateHandle()
   const { handleCreateOrganization, isCreatingOrganization } =
     useCreateOrganization()
+
+  const form = useForm({
+    defaultValues: {
+      organizationName: "",
+      organizationHandle: "",
+    },
+    onSubmit: ({ value }) => {
+      handleCreateOrganization(
+        value.organizationName,
+        value.organizationHandle,
+        []
+      )
+      onCreateOrganization()
+    },
+  })
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
@@ -88,84 +101,60 @@ const CreateOrganizationDialog: React.FC<{
         <Dialog.Description className="sr-only">
           {t("organizations:createNewOrganization")}
         </Dialog.Description>
-        <Form
-          onSubmit={(values) => {
-            handleCreateOrganization(
-              values.organizationName,
-              values.organizationHandle,
-              []
-            )
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            form.handleSubmit()
           }}
         >
-          {({ submit, value: formValues }) => {
-            const orgName: string = formValues.organizationName || ""
-            const [defaultHandle] = orgName?.length ? orgName.split(" ") : [""]
-            formValues.organizationHandle = defaultHandle
-            return (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  submit().then(() => {
-                    onCreateOrganization()
-                  })
-                }}
-              >
-                <Flex direction="column" gap="2">
-                  <FormField
-                    name="organizationName"
-                    label={t("organizations:organizationName")}
-                  />
+          <Flex direction="column" gap="2">
+            <form.Field
+              name="organizationName"
+              validators={{
+                onChange: ({ value }) =>
+                  !value || value.trim() === ""
+                    ? "Organization name is required"
+                    : undefined,
+              }}
+            >
+              {(field) => (
+                <FormField
+                  name="organizationName"
+                  label={t("organizations:organizationName")}
+                  field={field}
+                />
+              )}
+            </form.Field>
 
-                  <Field
-                    name="organizationHandle"
-                    onChangeValidate={handleValidateOrganization}
-                    listenTo={["organizationName"]}
-                  >
-                    {({
-                      value,
-                      setValue,
-                      onBlur,
-                      errors,
-                      isTouched,
-                      setIsTouched,
-                    }) => {
-                      const handleChange = (newValue: string) => {
-                        setIsTouched(true)
-                        setValue(newValue)
-                      }
-
-                      return (
-                        <Flex direction="column">
-                          <TextField.Root
-                            defaultValue={defaultHandle.toLowerCase()}
-                            value={
-                              isTouched ? value : defaultHandle.toLowerCase()
-                            }
-                            onChange={(e) => handleChange(e.target.value)}
-                            onBlur={onBlur}
-                            placeholder={t("organizations:organizationHandle")}
-                          />
-                          <Box>
-                            {errors.map((error) => (
-                              <Text key={error} color="red" size="1">
-                                {error}
-                              </Text>
-                            ))}
-                          </Box>
-                        </Flex>
-                      )
-                    }}
-                  </Field>
-                  <Button disabled={isCreatingOrganization || isValidating}>
-                    {isCreatingOrganization
-                      ? t("common:creating")
-                      : t("common:create")}
-                  </Button>
-                </Flex>
-              </form>
-            )
-          }}
-        </Form>
+            <form.Field
+              name="organizationHandle"
+              validators={{
+                onChange: ({ value }) => {
+                  const isValid = handleValidateOrganization(value)
+                  if (!isValid) {
+                    return "Organization handle is already taken"
+                  }
+                  return
+                },
+              }}
+            >
+              {(field) => (
+                <TextField.Root
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  placeholder={t("organizations:organizationHandle")}
+                />
+              )}
+            </form.Field>
+            <Button disabled={isCreatingOrganization || isValidating}>
+              {isCreatingOrganization
+                ? t("common:creating")
+                : t("common:create")}
+            </Button>
+          </Flex>
+        </form>
       </Dialog.Content>
     </Dialog.Root>
   )

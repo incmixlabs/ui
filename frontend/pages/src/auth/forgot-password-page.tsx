@@ -3,9 +3,10 @@ import { I18n } from "@incmix/pages/i18n"
 import { CardContainer, FormField, ReactiveButton, toast } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import { Box, Container, Flex, Heading, Text } from "@radix-ui/themes"
+import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
-import { Form } from "houseform"
+import { zodValidator } from "@tanstack/zod-form-adapter"
 import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -36,54 +37,66 @@ function ForgotPasswordForm() {
     },
   })
 
-  const handleSubmit = (values: { email: string }) => {
-    mutate({ email: values.email })
-  }
+  const form = useForm({
+    defaultValues: {
+      email: "",
+    },
+    onSubmit: ({ value }) => {
+      mutate({ email: value.email })
+    },
+  })
 
   return (
     <CardContainer>
       <Heading size="4" mb="4" align="center">
         {t("forgotPassword:title")}
       </Heading>
-      <Form onSubmit={handleSubmit}>
-        {({ submit }) => (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              submit()
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          form.handleSubmit()
+        }}
+      >
+        <Flex direction="column" gap="4">
+          <form.Field
+            name="email"
+            validatorAdapter={zodValidator()}
+            validators={{
+              onChange: z.string().email(t("login:emailValidation")),
             }}
           >
-            <Flex direction="column" gap="4">
+            {(field) => (
               <FormField
                 name="email"
                 label={t("common:email")}
                 type="email"
-                validation={z.string().email(t("login:emailValidation"))}
+                field={field}
               />
-              {isError && (
-                <Text color="red" size="2">
-                  {error.message}
-                </Text>
-              )}
-              {isSuccess && (
-                <Text color="green" size="2">
-                  {data.message}
-                </Text>
-              )}
+            )}
+          </form.Field>
+          {isError && (
+            <Text color="red" size="2">
+              {error.message}
+            </Text>
+          )}
+          {isSuccess && (
+            <Text color="green" size="2">
+              {data.message}
+            </Text>
+          )}
 
-              <ReactiveButton
-                color="blue"
-                type="submit"
-                loading={isPending}
-                success={isSuccess}
-                className="w-full"
-              >
-                {t("forgotPassword:submit")}
-              </ReactiveButton>
-            </Flex>
-          </form>
-        )}
-      </Form>
+          <ReactiveButton
+            color="blue"
+            type="submit"
+            loading={isPending}
+            success={isSuccess}
+            className="w-full"
+          >
+            {t("forgotPassword:submit")}
+          </ReactiveButton>
+        </Flex>
+      </form>
       <Box mt="4" className="text-center">
         <Link to="/login">
           <Text color="blue">{t("forgotPassword:loginPrompt")}</Text>

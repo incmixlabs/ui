@@ -14,10 +14,11 @@ import {
   ReactiveButton,
   toast,
 } from "@incmix/ui"
-import type { Project } from "@jsprtmnn/utils/types"
+import type { Project } from "@incmix/utils/types/tasks"
 import { Button, Flex } from "@radix-ui/themes"
+import { useForm } from "@tanstack/react-form"
 import { useMutation } from "@tanstack/react-query"
-import { Form } from "houseform"
+import { zodValidator } from "@tanstack/zod-form-adapter"
 import { z } from "zod"
 import { createProject } from "./actions"
 
@@ -40,6 +41,18 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
       toast.error(error.message)
     },
   })
+
+  const form = useForm({
+    defaultValues: {
+      name: "",
+    },
+    onSubmit: ({ value }) => {
+      if (selectedOrganisation) {
+        mutate({ name: value.name, orgId: selectedOrganisation.id })
+      }
+    },
+  })
+
   return (
     <Dialog {...props}>
       <DialogTrigger>
@@ -52,40 +65,38 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
             Fill out the form to create a new project.
           </DialogDescription>
         </DialogHeader>
-        <Form
-          onSubmit={(values) => {
-            if (selectedOrganisation)
-              mutate({ name: values.name, orgId: selectedOrganisation.id })
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            form.handleSubmit()
           }}
         >
-          {({ submit }) => (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                submit()
+          <Flex direction="column" gap="4">
+            <form.Field
+              name="name"
+              validatorAdapter={zodValidator()}
+              validators={{
+                onChange: z.string().min(1, "Name is Required"),
               }}
             >
-              <Flex direction="column" gap="4">
-                <FormField
-                  name="name"
-                  label={"Project Name"}
-                  validation={z.string().min(1, "Name is Required")}
-                />
-                <DialogClose>
-                  <ReactiveButton
-                    type="submit"
-                    color="blue"
-                    loading={isPending}
-                    success={isSuccess}
-                    className="w-full"
-                  >
-                    Create
-                  </ReactiveButton>
-                </DialogClose>
-              </Flex>
-            </form>
-          )}
-        </Form>
+              {(field) => (
+                <FormField name="name" label="Project Name" field={field} />
+              )}
+            </form.Field>
+            <DialogClose>
+              <ReactiveButton
+                type="submit"
+                color="blue"
+                loading={isPending}
+                success={isSuccess}
+                className="w-full"
+              >
+                Create
+              </ReactiveButton>
+            </DialogClose>
+          </Flex>
+        </form>
         <DialogFooter className="gap-2 sm:space-x-0">
           <DialogClose>
             <Button variant="soft" color="gray">

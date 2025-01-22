@@ -1,6 +1,7 @@
+import { useForm } from "@tanstack/react-form"
 import { useMutation } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
-import { Form } from "houseform"
+import { zodValidator } from "@tanstack/zod-form-adapter"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -8,7 +9,7 @@ import { z } from "zod"
 import { CardContainer, FormField } from "@incmix/ui"
 import { Box, Container, Flex, Heading, ReactiveButton, Text } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
-import type { AuthUser } from "@jsprtmnn/utils/types"
+import type { AuthUser } from "@incmix/utils/types"
 
 function SignupForm() {
   const { t } = useTranslation(["signup", "common"])
@@ -53,70 +54,101 @@ function SignupForm() {
     },
   })
 
-  const handleSubmit = (values: {
-    fullName: string
-    email: string
-    password: string
-  }) => {
-    signupMutation.mutate(values)
-  }
+  const form = useForm({
+    defaultValues: {
+      fullName: "",
+      email: "",
+      password: "",
+    },
+    onSubmit: ({ value }) => {
+      signupMutation.mutate(value)
+    },
+  })
 
   return (
     <CardContainer>
       <Heading size="4" mb="4" align="center">
         {t("title")}
       </Heading>
-      <Form onSubmit={handleSubmit}>
-        {({ submit }) => (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              submit()
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          form.handleSubmit()
+        }}
+      >
+        <Flex direction="column" gap="4">
+          <form.Field
+            name="fullName"
+            validatorAdapter={zodValidator()}
+            validators={{
+              onChange: z.string().min(1, t("fullNameValidation")),
             }}
           >
-            <Flex direction="column" gap="4">
+            {(field) => (
               <FormField
                 name="fullName"
                 label={t("common:fullName")}
-                validation={z.string().min(1, t("fullNameValidation"))}
+                field={field}
               />
+            )}
+          </form.Field>
+
+          <form.Field
+            name="email"
+            validatorAdapter={zodValidator()}
+            validators={{
+              onChange: z.string().email(t("emailValidation")),
+            }}
+          >
+            {(field) => (
               <FormField
                 name="email"
                 label={t("common:email")}
                 type="email"
-                validation={z.string().email(t("emailValidation"))}
+                field={field}
               />
+            )}
+          </form.Field>
 
+          <form.Field
+            name="password"
+            validatorAdapter={zodValidator()}
+            validators={{
+              onChange: z.string().min(6, t("passwordValidation")),
+            }}
+          >
+            {(field) => (
               <FormField
                 name="password"
                 label={t("common:password")}
                 type="password"
-                validation={z.string().min(6, t("passwordValidation"))}
+                field={field}
               />
+            )}
+          </form.Field>
 
-              {signupMutation.isError && (
-                <Text color="red" size="2">
-                  {errorMessage}
-                </Text>
-              )}
+          {signupMutation.isError && (
+            <Text color="red" size="2">
+              {errorMessage}
+            </Text>
+          )}
 
-              {signupMutation.isSuccess && (
-                <Text color="green" size="2">
-                  {t("signupSuccess")}
-                </Text>
-              )}
+          {signupMutation.isSuccess && (
+            <Text color="green" size="2">
+              {t("signupSuccess")}
+            </Text>
+          )}
 
-              <ReactiveButton
-                type="submit"
-                loading={signupMutation.isPending}
-                success={signupMutation.isSuccess}
-              >
-                {t("submit")}
-              </ReactiveButton>
-            </Flex>
-          </form>
-        )}
-      </Form>
+          <ReactiveButton
+            type="submit"
+            loading={signupMutation.isPending}
+            success={signupMutation.isSuccess}
+          >
+            {t("submit")}
+          </ReactiveButton>
+        </Flex>
+      </form>
 
       <Box mt="4" className="text-center">
         <Link to="/login">

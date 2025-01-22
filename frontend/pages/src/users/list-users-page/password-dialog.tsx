@@ -11,14 +11,16 @@ import {
   ReactiveButton,
   toast,
 } from "@incmix/ui"
-import type { UserAndProfile } from "@jsprtmnn/utils/types"
+import type { UserAndProfile } from "@incmix/utils/data-table"
 import { Button, Flex } from "@radix-ui/themes"
+import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import type { Row } from "@tanstack/react-table"
-import { Form } from "houseform"
+import { zodValidator } from "@tanstack/zod-form-adapter"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 import { setPassword } from "./actions"
+
 interface PasswordDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
   items: Row<UserAndProfile>["original"][]
@@ -43,45 +45,58 @@ export function PasswordDialog({
       toast.error(error.message)
     },
   })
+
+  const form = useForm({
+    defaultValues: {
+      password: "",
+    },
+    onSubmit: ({ value }) => {
+      mutate({ id: items[0].id, value: value.password })
+    },
+  })
+
   return (
     <Dialog {...props}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Change User Password</DialogTitle>
         </DialogHeader>
-        <Form
-          onSubmit={(values) => {
-            mutate({ id: items[0].id, value: values.password })
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            form.handleSubmit()
           }}
         >
-          {({ submit }) => (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                submit()
+          <Flex direction="column" gap="4">
+            <form.Field
+              name="password"
+              validatorAdapter={zodValidator()}
+              validators={{
+                onChange: z.string().min(1, t("login:passwordValidation")),
               }}
             >
-              <Flex direction="column" gap="4">
+              {(field) => (
                 <FormField
                   name="password"
                   label={t("settings:newPassword")}
                   type="password"
-                  validation={z.string().min(1, t("login:passwordValidation"))}
+                  field={field}
                 />
+              )}
+            </form.Field>
 
-                <ReactiveButton
-                  type="submit"
-                  color="blue"
-                  loading={isPending}
-                  success={isSuccess}
-                  className="w-full"
-                >
-                  {t("settings:changePassword")}
-                </ReactiveButton>
-              </Flex>
-            </form>
-          )}
-        </Form>
+            <ReactiveButton
+              type="submit"
+              color="blue"
+              loading={isPending}
+              success={isSuccess}
+              className="w-full"
+            >
+              {t("settings:changePassword")}
+            </ReactiveButton>
+          </Flex>
+        </form>
         <DialogFooter className="gap-2 sm:space-x-0">
           <DialogClose>
             <Button variant="soft" color="gray">
