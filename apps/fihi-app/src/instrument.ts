@@ -9,6 +9,7 @@ import {
 } from "react-router-dom"
 
 import {
+  AdminDashboardRoute,
   DashboardRoute,
   EmailVerificationRoute,
   ForgotPasswordRoute,
@@ -54,6 +55,7 @@ const routeTree = RootRoute.addChildren([
   NotificationsRoute,
   NotFoundRoute,
   LoadingRoute,
+  AdminDashboardRoute,
   DashboardRoute,
   ListUsersRoute,
   TasksRoute,
