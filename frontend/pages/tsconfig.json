@@ -10,17 +10,9 @@
       "@pages/*": ["./src/*"],
       "@layouts": ["./common/components/layouts"],
       "@layouts/*": ["./common/components/layouts/*"],
-      "@auth": ["./auth"],
-      "@auth/*": ["./auth/*"],
-      "@common": ["./common"],
-      "@common/*": ["./common/*"],
-      "@orgs": ["./orgs"],
-      "@orgs/*": ["./orgs/*"],
-      "@users": ["./users"],
-      "@users/*": ["./users/*"]
     }
   },
-  "extends": "@incmix/config/react.json",
+  "extends": "../../shared/config/react.json",
   "include": ["."],
   "exclude": ["node_modules"]
 }

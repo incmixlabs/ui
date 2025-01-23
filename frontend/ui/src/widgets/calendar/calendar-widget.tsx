@@ -1,3 +1,4 @@
+"use client";
 import { createId as cuid } from "@paralleldrive/cuid2"
 import { DateTime } from "luxon"
 import { useCallback, useEffect, useState } from "react"

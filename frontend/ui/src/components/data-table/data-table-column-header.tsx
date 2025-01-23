@@ -5,7 +5,7 @@ import type { Column } from "@tanstack/react-table"
 import { ArrowDown, ArrowUp, ChevronsUpDown, EyeOff } from "lucide-react"
 
 import { Flex, Select } from "@radix-ui/themes"
-import { cn } from "@utils/cn"
+import { cn } from "@incmix/ui/utils/cn"
 
 interface DataTableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {

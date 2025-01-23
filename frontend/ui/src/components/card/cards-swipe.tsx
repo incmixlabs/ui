@@ -7,7 +7,7 @@ import {
 } from "framer-motion"
 import type React from "react"
 
-import { clx } from "@utils/clx/clx-merge"
+import { clx } from "@incmix/ui/utils"
 
 export const CardsSwipeContainer = clx.div("relative size-52")
 

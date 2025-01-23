@@ -1,4 +1,4 @@
-import { useForm } from "@tanstack/react-form"
+"use client";
 import { useMutation } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { zodValidator } from "@tanstack/zod-form-adapter"

@@ -1,7 +1,7 @@
 import { type Table as TanstackTable, flexRender } from "@tanstack/react-table"
 import type * as React from "react"
 
-import { cn } from "@utils/cn"
+import { cn } from "@incmix/ui/utils/cn"
 import {
   Table,
   TableBody,

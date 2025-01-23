@@ -1,6 +1,7 @@
-import { LoadingPage } from "@common"
-import { NavbarMain } from "@common/components/layouts/navbar"
-import { PageLayout } from "@common/components/layouts/page-layout"
+"use client";
+import { LoadingPage } from "@incmix/pages/common"
+import { NavbarMain } from "@incmix/pages/layouts"
+import { PageLayout } from "@incmix/pages/layouts"
 import {
   CardContainer,
   EditSwitch,

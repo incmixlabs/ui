@@ -39,7 +39,7 @@ type TreeItemDialogProps = {
   initialData?: Record<string, string>
 }
 
-export function FieldInfo({ field }: { field: FieldApi<any, any, any, any> }) {
+function FieldInfo({ field }: { field: FieldApi<any, any, any, any> }) {
   return (
     <>
       {field.state.meta.isTouched && field.state.meta.errors ? (

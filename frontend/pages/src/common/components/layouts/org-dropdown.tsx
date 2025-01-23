@@ -1,5 +1,6 @@
+"use client";
 import { useOrganizationStore } from "@incmix/store"
-import { useOrganizations } from "@orgs/utils"
+import { useOrganizations } from "@incmix/pages/orgs/utils"
 import { Select } from "@radix-ui/themes"
 import { useEffect } from "react"
 

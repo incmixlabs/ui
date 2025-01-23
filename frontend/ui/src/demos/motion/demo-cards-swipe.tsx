@@ -2,7 +2,7 @@
 import { motion } from "framer-motion"
 import { useState } from "react"
 
-import { CardSwipe, CardsSwipeContainer } from "@components/card/cards-swipe"
+import { CardSwipe, CardsSwipeContainer } from "../../components/card/cards-swipe"
 
 export default function DemoCardsSwipe() {
   const [cards, setCards] = useState(DEMO_CARDS)

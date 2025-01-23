@@ -2,11 +2,51 @@ import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 export { useShallow } from "zustand/react/shallow"
 import i18n from "i18next"
+import { produce } from "immer"
 
 export type Language = "en" | "pt"
 export type Variables = {
   [key: string]: string
 }
+type SidebarSettings = { disabled: boolean }
+type SidebarStore = {
+  isOpen: boolean
+  settings: SidebarSettings
+  toggleOpen: () => void
+  setIsOpen: (isOpen: boolean) => void
+  getOpenState: () => boolean
+  setSettings: (settings: Partial<SidebarSettings>) => void
+}
+
+export const useSidebar = create(
+  persist<SidebarStore>(
+    (set, get) => ({
+      isOpen: true,
+      settings: { disabled: false, isHoverOpen: false },
+      toggleOpen: () => {
+        set({ isOpen: !get().isOpen })
+      },
+      setIsOpen: (isOpen: boolean) => {
+        set({ isOpen })
+      },
+      getOpenState: () => {
+        const state = get()
+        return state.isOpen
+      },
+      setSettings: (settings: Partial<SidebarSettings>) => {
+        set(
+          produce((state: SidebarStore) => {
+            state.settings = { ...state.settings, ...settings }
+          })
+        )
+      },
+    }),
+    {
+      name: "sidebar",
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+)
 interface PreferencesState {
   // Theme state
   variables: Variables

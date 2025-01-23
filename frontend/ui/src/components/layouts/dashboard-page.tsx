@@ -5,8 +5,8 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@components/breadcrumb"
-import { Separator } from "@components/separator"
+} from "../breadcrumb"
+import { Separator } from "../separator"
 import { AppSidebar } from "./app-sidebar"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "./sidebar"
 

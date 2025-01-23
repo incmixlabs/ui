@@ -4,7 +4,7 @@ import type { Table } from "@tanstack/react-table"
 import { Download } from "lucide-react"
 
 import { Button, exportTableToCSV } from "@incmix/ui"
-import type { UserAndProfile } from "@jsprtmnn/utils/types"
+import type { UserAndProfile } from "@incmix/utils/data-table"
 import { DeleteDialog } from "./delete-dialog"
 
 interface ToolbarActionsProps {

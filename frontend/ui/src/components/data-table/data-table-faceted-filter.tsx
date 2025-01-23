@@ -5,7 +5,7 @@ import type { Option } from "./lib/types"
 import { Badge } from "@radix-ui/themes"
 import { Button } from "@radix-ui/themes"
 import { Separator } from "@radix-ui/themes"
-import { cn } from "@utils"
+import { cn } from "@incmix/ui/utils"
 import {
   Command,
   CommandEmpty,

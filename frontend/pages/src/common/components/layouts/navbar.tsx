@@ -2,7 +2,7 @@ import { Link as RouterLink, useNavigate } from "@tanstack/react-router"
 import { motion } from "framer-motion"
 import type React from "react"
 
-import { useLogout } from "@auth"
+import { useLogout } from "@incmix/pages/auth"
 import { useSidebarStore, useThemeStore } from "@incmix/store"
 import {
   Box,

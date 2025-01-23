@@ -1,6 +1,6 @@
 import { Spinner, Text } from "@radix-ui/themes"
 import { useQuery } from "@tanstack/react-query"
-import { LOCATION_API_URL } from "@utils/constants"
+import { LOCATION_API_URL } from "@incmix/ui/utils/constants"
 import { WeatherCard, type WeatherCardProps } from "./weather-card"
 import "./weather.css"
 

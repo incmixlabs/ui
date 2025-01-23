@@ -1,6 +1,6 @@
 "use client"
 
-import { useAuth } from "@auth"
+import { useAuth } from "@incmix/pages/auth"
 import { usePGlite } from "@electric-sql/pglite-react"
 import {
   Dialog,
@@ -14,7 +14,7 @@ import {
   ReactiveButton,
   toast,
 } from "@incmix/ui"
-import type { Task, TaskStatus } from "@jsprtmnn/utils/types"
+import type { Task, TaskStatus } from "@incmix/utils/types"
 import { Button, Flex, Select, TextField } from "@radix-ui/themes"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import type React from "react"

@@ -1,4 +1,4 @@
-import { RootRoute } from "@common"
+import { RootRoute } from "@incmix/pages/common"
 import { createRoute } from "@tanstack/react-router"
 import OrganisationEnvVarsPage from "../env-vars-page"
 

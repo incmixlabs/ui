@@ -2,8 +2,8 @@ import { I18n } from "@incmix/pages/i18n"
 import { useOrganizationStore, useSidebarStore } from "@incmix/store"
 import { Sidebar, SidebarItem, SidebarSubItem } from "@incmix/ui"
 import { USERS_API_URL } from "@incmix/ui/constants"
-import { createAbilityFromPermissions } from "@jsprtmnn/utils/casl"
-import type { Permission } from "@jsprtmnn/utils/types"
+import { createAbilityFromPermissions } from "@incmix/utils/casl"
+import type { Permission } from "@incmix/utils/types"
 import {
   BackpackIcon,
   ComponentInstanceIcon,

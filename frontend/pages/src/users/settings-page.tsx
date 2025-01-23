@@ -1,3 +1,4 @@
+"use client";
 import {
   Box,
   Flex,
@@ -15,8 +16,8 @@ import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { z } from "zod"
 
-import { useCurrentUser, useProfileUpdate } from "@auth"
-import { LoadingPage } from "@common"
+import { useCurrentUser, useProfileUpdate } from "@incmix/pages/auth"
+import { LoadingPage } from "@incmix/pages/common"
 import { useLanguageStore, useThemeStore } from "@incmix/store"
 import { Button, CardContainer, FormField } from "@incmix/ui"
 import type { UserProfile } from "@incmix/utils/types"

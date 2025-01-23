@@ -1,6 +1,6 @@
 "use client"
-import { useCurrentUser } from "@auth"
-import { LoadingPage } from "@common"
+import { useCurrentUser } from "@incmix/pages/auth"
+import { LoadingPage } from "@incmix/pages/common"
 import { CardContainer } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import { Button, Container, Flex, Heading } from "@radix-ui/themes"

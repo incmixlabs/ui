@@ -1,6 +1,6 @@
 "use client"
 
-import { RootRoute, TestPage } from "@common"
+import { RootRoute, TestPage } from "@incmix/pages/common"
 import { createRoute } from "@tanstack/react-router"
 
 export default createRoute({

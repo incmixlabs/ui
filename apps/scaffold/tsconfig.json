@@ -1,0 +1,24 @@
+{
+  "extends": "../../shared/config/nextjs.json",
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "types": [
+      "vite/client",
+      "./src/translations/i18n.d.ts"
+    ],
+    "strictNullChecks": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "vite.config.ts",
+    ".next/types/**/*.ts"
+  ]
+}

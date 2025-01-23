@@ -1,10 +1,10 @@
-import { USERS_API_URL } from "@incmix/ui/constants"
+import { AUTH_API_URL } from "@incmix/ui/constants"
 
 export const setVerified = async ({
   id,
   value,
 }: { id: string; value: boolean }): Promise<{ message: string }> => {
-  const response = await fetch(`${USERS_API_URL}/setVerified`, {
+  const response = await fetch(`${AUTH_API_URL}/users/setVerified`, {
     method: "PUT",
     credentials: "include",
     body: JSON.stringify({ value, id }),
@@ -23,7 +23,7 @@ export const setEnabled = async ({
   id,
   value,
 }: { id: string; value: boolean }): Promise<{ message: string }> => {
-  const response = await fetch(`${USERS_API_URL}/setEnabled`, {
+  const response = await fetch(`${AUTH_API_URL}/users/setEnabled`, {
     method: "PUT",
     credentials: "include",
     body: JSON.stringify({ value, id }),
@@ -43,7 +43,7 @@ export const setPassword = async ({
   id,
   value,
 }: { id: string; value: string }): Promise<{ message: string }> => {
-  const response = await fetch(`${USERS_API_URL}/setPassword`, {
+  const response = await fetch(`${AUTH_API_URL}/users/setPassword`, {
     method: "PUT",
     credentials: "include",
     body: JSON.stringify({ value, id }),

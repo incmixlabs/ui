@@ -1,6 +1,6 @@
 import { LightningBoltIcon } from "@radix-ui/react-icons"
 import { Box, Flex, Text } from "@radix-ui/themes"
-import { cn } from "@utils/cn"
+import { cn } from "@incmix/ui/utils/cn"
 
 function LowBatteryWarning() {
   return (

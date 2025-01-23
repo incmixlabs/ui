@@ -4,7 +4,7 @@ import type { Table } from "@tanstack/react-table"
 import { Check, ChevronsUpDown, Settings2 } from "lucide-react"
 import * as React from "react"
 
-import { cn } from "@utils/cn"
+import { cn } from "@incmix/ui/utils/cn"
 import { Button } from "../button"
 import {
   Command,

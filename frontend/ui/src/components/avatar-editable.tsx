@@ -1,3 +1,4 @@
+"use client";
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons"
 import { Box, Flex } from "@radix-ui/themes"
 import { useRef, useState } from "react"

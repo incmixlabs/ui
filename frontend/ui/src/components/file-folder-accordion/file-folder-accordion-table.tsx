@@ -1,3 +1,4 @@
+"use client";
 import { type FunctionComponent, useEffect, useRef, useState } from "react"
 
 import {

@@ -1,6 +1,6 @@
 import { DropdownMenu as RadixDropdownMenu } from "@radix-ui/themes"
 import { buttonPropDefs } from "@radix-ui/themes/props"
-import type { Color } from "@utils/colors"
+import type { Color } from "@incmix/ui/utils"
 import React, { type ReactNode, type MouseEvent } from "react"
 import type { ButtonProps } from "./button/button"
 import { Button } from "./button/button"
@@ -32,6 +32,7 @@ export type DropdownMenuItemProps = {
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void
   disabled?: boolean
   icon?: ReactNode
+  href?: string
   shortcut?: string
   separator?: boolean
   asChild?: boolean

@@ -3,13 +3,11 @@ import { Box, Flex } from "@radix-ui/themes"
 import * as React from "react"
 import { type PropsWithChildren, useMemo } from "react"
 
-import CheckIcon from "@components/icons/check"
-import Loader from "@components/icons/loader"
-import X from "@components/icons/x"
-import { useMediaQuery } from "@hooks/use-media-query"
+import { CheckIcon, LoaderCircleIcon as Loader, XIcon as X } from "@incmix/ui/icons"
+import { useMediaQuery } from "../../hooks/use-media-query"
 import * as Collapsible from "@radix-ui/react-collapsible"
-import { cn } from "@utils/cn"
-import { cva } from "@utils/cva"
+import { cn } from "@incmix/ui/utils/cn"
+import { cva } from "@incmix/ui/utils/cva"
 import { StepperProvider, useStepper } from "./stepper-context"
 import type {
   FullStepProps,

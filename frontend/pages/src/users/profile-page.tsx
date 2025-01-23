@@ -1,10 +1,11 @@
+"use client";
 import { useNavigate } from "@tanstack/react-router"
 import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 
-import { useAuth, useCurrentUser } from "@auth"
+import { useAuth, useCurrentUser } from "@incmix/pages/auth"
 import { CardContainer } from "@incmix/ui"
-import type { UserProfile } from "@jsprtmnn/utils/types"
+import type { UserProfile } from "@incmix/utils/types"
 import { Box, Flex, Heading, Text } from "@radix-ui/themes"
 import { PageLayout } from "../common/components/layouts/page-layout"
 import { CurrentUserProfileImage } from "../common/components/user-profile-image"

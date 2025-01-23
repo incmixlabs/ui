@@ -1,9 +1,9 @@
 "use client"
 
-import { RootRoute } from "@common"
+import { RootRoute } from "@incmix/pages/common"
 import { createRoute } from "@tanstack/react-router"
 
-import { searchParamsSchema } from "@jsprtmnn/utils/data-table"
+import { searchParamsSchema } from "@incmix/utils/data-table"
 import type { z } from "zod"
 import ListUsersPage from "../list-users-page"
 

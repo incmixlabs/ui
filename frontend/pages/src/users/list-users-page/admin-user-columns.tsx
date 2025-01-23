@@ -6,7 +6,7 @@ import {
   toast,
 } from "@incmix/ui"
 import { Badge, Checkbox, DropdownMenu, Spinner, Switch } from "@incmix/ui"
-import type { UserAndProfile } from "@jsprtmnn/utils/types"
+import type { UserAndProfile } from "@incmix/utils/data-table"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { setEnabled, setVerified } from "./actions"
@@ -106,6 +106,7 @@ export function getColumns({
 
         return (
           <Switch
+            size={"1"}
             checked={value}
             onCheckedChange={(value) => mutate({ id, value })}
             disabled={isPending}
@@ -135,6 +136,7 @@ export function getColumns({
         if (isPending) return <Spinner />
         return (
           <Switch
+            size={"1"}
             checked={value}
             onCheckedChange={(value) => mutate({ id, value })}
             disabled={isPending}
@@ -149,7 +151,7 @@ export function getColumns({
           <DropdownMenu
             button={{
               "aria-label": "Open menu",
-              variant: "ghost",
+              variant: "soft",
               className: "flex size-8 p-0 data-[state=open]:bg-muted",
               icon: <DotsHorizontalIcon className="size-4" color="black" />,
             }}

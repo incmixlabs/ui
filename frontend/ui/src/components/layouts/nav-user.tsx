@@ -9,7 +9,7 @@ import {
   Sparkles,
 } from "lucide-react"
 
-import { Avatar } from "@components/avatar"
+import { Avatar } from "../../components/avatar"
 import { DropdownMenu } from "@radix-ui/themes"
 import {
   SidebarMenu,

@@ -1,7 +1,7 @@
 "use client"
 
 import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons"
-import { cn } from "@utils/cn"
+import { cn } from "@incmix/ui/utils/cn"
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from "embla-carousel-react"

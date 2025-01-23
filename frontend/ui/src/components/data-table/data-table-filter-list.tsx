@@ -22,7 +22,7 @@ import type {
 
 import { Badge } from "@radix-ui/themes"
 import { Button } from "@radix-ui/themes"
-import { cn } from "@utils/cn"
+import { cn } from "@incmix/ui/utils/cn"
 import { useDebouncedCallback } from "./hooks"
 import { dataTableConfig } from "./lib/config"
 import { getDefaultFilterOperator, getFilterOperators } from "./lib/data-table"

@@ -3,7 +3,7 @@
 import { Check } from "lucide-react"
 import * as React from "react"
 
-import { cn } from "@utils/cn"
+import { cn } from "@incmix/ui/utils/cn"
 import {
   Command,
   CommandEmpty,

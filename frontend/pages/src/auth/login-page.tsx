@@ -1,4 +1,5 @@
-import { LoadingPage } from "@common"
+"use client";
+import { LoadingPage } from "@incmix/pages/common"
 import { CardContainer, FormField, ReactiveButton } from "@incmix/ui"
 import { Box, Container, Flex, Heading, Text } from "@radix-ui/themes"
 import { useForm } from "@tanstack/react-form"

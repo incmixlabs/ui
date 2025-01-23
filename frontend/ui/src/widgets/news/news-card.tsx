@@ -1,9 +1,9 @@
-import { Card, CardContent, CardTitle } from "@components/card/card"
-import { CarouselItem } from "@components/carousel"
+import { Card, CardContent, CardTitle } from "../../components/card/card"
+import { CarouselItem } from "../../components/carousel"
 import { Box, Flex, Text } from "@radix-ui/themes"
-import { cn } from "@utils/cn"
+import { cn } from "@incmix/ui/utils/cn"
 
-import { getRelativeTime } from "@utils/date"
+import { getRelativeTime } from "@incmix/ui/utils"
 
 export type NewsStory = {
   thumbnail?: string

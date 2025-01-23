@@ -1,9 +1,10 @@
+"use client";
 import { Button, CardContainer } from "@incmix/ui"
 import type {
   MemberDetails,
   MemberRole,
   Organization,
-} from "@jsprtmnn/utils/types"
+} from "@incmix/utils/types"
 import { ArrowLeftIcon } from "@radix-ui/react-icons"
 import {
   Container,
@@ -31,12 +32,12 @@ import {
   useAddMember,
   useDeleteOrganization,
   useOrganization,
-  useOrganizationMemberAbility,
   useOrganizationMembers,
   useRemoveMembers,
   useUpdateMemberRole,
   useUpdateOrganization,
 } from "./utils"
+import { useOrganizationMemberAbility } from "./utils"
 import { AbilityContext, Can } from "./utils/ability-context"
 
 const RemoveButton: React.FC<{ member: MemberDetails; orgHandle: string }> = ({

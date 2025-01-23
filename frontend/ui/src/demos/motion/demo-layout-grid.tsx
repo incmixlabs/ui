@@ -1,6 +1,6 @@
 "use client"
 
-import { GridLayoutCard, LayoutGrid } from "@components/layout-grid"
+import { GridLayoutCard, LayoutGrid } from "../../components/layout-grid"
 
 export default function LayoutGridDemo() {
   return (

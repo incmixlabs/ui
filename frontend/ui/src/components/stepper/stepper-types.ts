@@ -1,6 +1,6 @@
+import type { LucideIconCompType } from "@icons/lucide-icon"
 import type { TextField } from "@radix-ui/themes"
 import type { z } from "zod"
-import type { LucideIconCompType } from "../icons/lucide-icon"
 
 export interface FullStepProps extends StepProps, StepInternalConfig {}
 

@@ -1,4 +1,4 @@
-import { type VariantProps, cn, cva } from "@utils"
+import { type VariantProps, cn, cva } from "@incmix/ui/utils"
 import * as React from "react"
 
 import { Drawer as DrawerPrimitive } from "vaul"

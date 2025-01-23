@@ -1,7 +1,7 @@
 "use client"
-import { Button } from "@components/button"
+import { Button } from "../../components/button"
 import { useScrollIntoView } from "@mantine/hooks"
-import { clx } from "@utils/clx/clx-merge"
+import { clx } from "@incmix/ui/utils"
 
 export default function DemoUseScrollIntoView() {
   const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({

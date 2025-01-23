@@ -3,12 +3,12 @@ import {
   GridLayoutCard,
   LayoutGrid,
   type LayoutGridCard,
-} from "@components/layout-grid"
-import { toast } from "@components/toaster"
-import { useUploadFile } from "@hooks/use-upload-file"
+} from "../../components/layout-grid"
+import { toast } from "../../components/toaster"
+import { useUploadFile } from "../../hooks/use-upload-file"
 import { TrashIcon, UploadIcon } from "@radix-ui/react-icons"
 import { Box, Button, Card, Flex, Text } from "@radix-ui/themes"
-import { cn } from "@utils"
+import { cn } from "@incmix/ui/utils"
 import { useCallback, useEffect, useState } from "react"
 
 type FileItem = { card: LayoutGridCard; handle: FileSystemFileHandle }

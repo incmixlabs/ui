@@ -1,4 +1,4 @@
-import { RootRoute } from "@common"
+import { RootRoute } from "@incmix/pages/common"
 import { createRoute, redirect } from "@tanstack/react-router"
 import OrganisationUsersRoute from "./users"
 

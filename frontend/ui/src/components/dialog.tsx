@@ -4,7 +4,7 @@ import { Button, Dialog as DialogPrimitive } from "@radix-ui/themes"
 import { X } from "lucide-react"
 import * as React from "react"
 
-import { cn } from "@utils/cn"
+import { cn } from "@incmix/ui/utils/cn"
 
 const Dialog = DialogPrimitive.Root
 

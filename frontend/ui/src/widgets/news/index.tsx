@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useMemo, useRef, useState } from "react"
 
 import {
@@ -7,12 +8,12 @@ import {
   CarouselContent,
   CarouselNext,
   CarouselPrevious,
-} from "@components/carousel"
-import { Tabs, TabsList, TabsTrigger } from "@components/tabs"
+} from "../../components/carousel"
+import { Tabs, TabsList, TabsTrigger } from "../../components/tabs"
 import { useRateLimitStore } from "@incmix/store"
 import { Spinner, Text } from "@radix-ui/themes"
 import { useQuery } from "@tanstack/react-query"
-import { LOCATION_API_URL } from "@utils/constants"
+import { LOCATION_API_URL } from "@incmix/ui/utils/constants"
 import { DateTime } from "luxon"
 import { NewsCard, type NewsCardProps } from "./news-card"
 export { NewsCard, type NewsCardProps }

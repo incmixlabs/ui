@@ -1,4 +1,4 @@
-import { cn } from "@utils/cn"
+import { cn } from "@incmix/ui/utils/cn"
 import * as React from "react"
 
 const Table = React.forwardRef<

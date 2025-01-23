@@ -1,6 +1,6 @@
 "use client"
 
-import { RootRoute } from "@common"
+import { RootRoute } from "@incmix/pages/common"
 import { createRoute } from "@tanstack/react-router"
 import SettingsPage from "../settings-page"
 

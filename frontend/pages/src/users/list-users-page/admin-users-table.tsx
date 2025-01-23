@@ -17,9 +17,9 @@ import { USERS_API_URL } from "@incmix/ui/constants"
 import type {
   UserAndProfile,
   UserProfilePaginated,
-} from "@jsprtmnn/utils/types"
-import { ListUsersRoute } from "@users/routes"
-import type { UserListSearchParams } from "@users/routes/list-users"
+} from "@incmix/utils/data-table"
+import { ListUsersRoute } from "../routes"
+import type { UserListSearchParams } from "../routes/list-users"
 import { getColumns } from "./admin-user-columns"
 import { DeleteDialog } from "./delete-dialog"
 import { PasswordDialog } from "./password-dialog"

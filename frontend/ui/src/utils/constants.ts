@@ -1,5 +1,6 @@
-import { API } from "@jsprtmnn/utils/env"
+import { API } from "@incmix/utils/env"
 export const BFF_API_URL: string = import.meta.env["VITE_BFF_API_URL"] || ""
+export const isMock = import.meta.env.MOCK_MODE === "true"
 export const VITE_SENTRY_DSN: string = import.meta.env.VITE_SENTRY_DSN || ""
 export const INTL_API_URL = `${BFF_API_URL}${API.INTL}`
 export const AUTH_API_URL = `${BFF_API_URL}${API.AUTH}`

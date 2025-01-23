@@ -1,13 +1,7 @@
-export * from "./icon"
 export * from "./loader-circle"
-export * from "./lazy-icon"
 export * from "./google-icon"
-export {
-  AudioWaveform,
-  File,
-  FileImage,
-  FolderArchive,
-  UploadCloud,
-  Video,
-  X,
-} from "lucide-react"
+export * from "./loader"
+export * from "./svg-icon"
+export { default as CheckIcon } from "./check"
+export { default as LoaderCircleIcon } from "./loader-circle"
+export { default as XIcon } from "./x"

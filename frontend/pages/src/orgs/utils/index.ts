@@ -1,13 +1,12 @@
 import { I18n } from "@incmix/pages/i18n"
 import { ORG_API_URL } from "@incmix/ui/constants"
-import { createAbilityFromPermissions } from "@jsprtmnn/utils/casl"
+import { createAbilityFromPermissions } from "@incmix/utils/casl"
+import type { AppAbility, Permission } from "@incmix/utils/types"
 import type {
-  AppAbility,
   GetMembersResponse,
   Member,
   Organization,
-  Permission,
-} from "@jsprtmnn/utils/types"
+} from "@incmix/utils/types"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { useCallback } from "react"

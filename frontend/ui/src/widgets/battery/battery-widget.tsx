@@ -1,3 +1,4 @@
+"use client";
 import { Box } from "@radix-ui/themes"
 import { useEffect, useState } from "react"
 import { Battery, type BatteryInfo } from "./battery"

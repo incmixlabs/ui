@@ -5,8 +5,8 @@ import {
   DragCard,
   DragCards,
   DragCardsTitle,
-} from "@components/card/cards-drag"
-import { clx } from "@utils/clx/clx-merge"
+} from "../../components/card/cards-drag"
+import { clx } from "@incmix/ui/utils"
 
 export default function DemoCardsDrag() {
   const containerRef = useRef(null)

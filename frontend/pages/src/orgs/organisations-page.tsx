@@ -1,4 +1,5 @@
-import { LoadingPage } from "@common"
+"use client";
+import { LoadingPage } from "@incmix/pages/common"
 import { Button, CardContainer, FormField } from "@incmix/ui"
 import type { Organization } from "@incmix/utils/types"
 import { ChevronRightIcon } from "@radix-ui/react-icons"

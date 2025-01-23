@@ -1,3 +1,4 @@
+"use client";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -5,7 +6,7 @@ import {
   PlusIcon,
 } from "@radix-ui/react-icons"
 import { Box, Flex, Heading, Text, TextField } from "@radix-ui/themes"
-import { cn } from "@utils/cn"
+import { cn } from "@incmix/ui/utils/cn"
 import { AnimatePresence, motion } from "framer-motion"
 import { DateTime, Info } from "luxon"
 import { useCallback, useState } from "react"

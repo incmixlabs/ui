@@ -1,3 +1,4 @@
+"use client";
 import { Box, type BoxProps } from "@radix-ui/themes"
 import { useEffect, useRef } from "react"
 import { createSwapy } from "swapy"

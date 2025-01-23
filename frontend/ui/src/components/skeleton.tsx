@@ -1,4 +1,4 @@
-import { cn } from "@utils"
+import { cn } from "@incmix/ui/utils"
 
 function Skeleton({
   className,

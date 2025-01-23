@@ -1,8 +1,7 @@
 import * as React from "react"
-
-import { cn } from "@utils"
-
 export { Card } from "@radix-ui/themes"
+
+import { cn } from "@incmix/ui/utils/cn"
 
 const CardHeader = React.forwardRef<
   HTMLDivElement,

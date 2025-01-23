@@ -1,3 +1,4 @@
+"use client";
 import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import { getReorderDestinationIndex } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index"
@@ -8,7 +9,7 @@ import type {
   ColumnWithTasks,
   NestedColumns,
   Task,
-} from "@jsprtmnn/utils/types"
+} from "@incmix/utils/types/tasks"
 import { Card, Flex, Spinner } from "@radix-ui/themes"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import invariant from "tiny-invariant"

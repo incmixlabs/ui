@@ -4,7 +4,7 @@ import {
   DropdownMenu,
   type DropdownMenuItemProps,
   type DropdownMenuProps,
-} from "@components/dropdown-menu"
+} from "../dropdown-menu"
 import type { Side } from "../types"
 import { Button, type ButtonProps } from "./button"
 

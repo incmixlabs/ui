@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@incmix/ui"
-import type { UserAndProfile } from "@jsprtmnn/utils/types"
+import type { UserAndProfile } from "@incmix/utils/data-table"
 import { Button } from "@radix-ui/themes"
 import type { Row } from "@tanstack/react-table"
 import { Trash } from "lucide-react"

@@ -1,4 +1,5 @@
-import { LoadingPage } from "@common"
+"use client";
+import { LoadingPage } from "@incmix/pages/common"
 import { I18n } from "@incmix/pages/i18n"
 import { CardContainer, FormField, ReactiveButton, toast } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"

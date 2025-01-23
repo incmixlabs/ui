@@ -1,10 +1,11 @@
-import { LoadingPage } from "@common"
+"use client";
+import { LoadingPage } from "@incmix/pages/common"
 import { Button, CardContainer } from "@incmix/ui"
 import type {
   MemberDetails,
   MemberRole,
   Organization,
-} from "@jsprtmnn/utils/types"
+} from "@incmix/utils/types"
 import { ArrowLeftIcon } from "@radix-ui/react-icons"
 import {
   Container,
@@ -203,16 +204,15 @@ const AddUserForm: React.FC<{
 
 const OrganizationDetailsPage: React.FC = () => {
   const { t } = useTranslation(["organizationDetails", "common"])
-  const { orgHandle } = OrganisationDetailsRoute.useParams()
-  const { organization, isLoading: isOrgLoading } = useOrganization(orgHandle)
-  const { members, isLoading: isMembersLoading } =
-    useOrganizationMembers(orgHandle)
+  const { orgId } = OrganisationDetailsRoute.useParams()
+  const { organization, isLoading: isOrgLoading } = useOrganization(orgId)
+  const { members, isLoading: isMembersLoading } = useOrganizationMembers(orgId)
   const { handleUpdateOrganization } = useUpdateOrganization()
   const { handleAddMember } = useAddMember()
   const { handleUpdateMemberRole } = useUpdateMemberRole()
   const { handleDeleteOrganization } = useDeleteOrganization()
   const { ability, isLoading: isAbilityLoading } =
-    useOrganizationMemberAbility(orgHandle)
+    useOrganizationMemberAbility(orgId)
 
   const handleUpdateName = async (newName: string) => {
     if (organization) {
@@ -309,7 +309,7 @@ const OrganizationDetailsPage: React.FC = () => {
                     <UserRow
                       key={member.userId}
                       member={member}
-                      orgId={orgHandle}
+                      orgId={orgId}
                       onUpdateRole={handleRoleChange}
                     />
                   ))}

@@ -1,6 +1,6 @@
 import type { PGliteWithLive } from "@electric-sql/pglite/live"
 import { I18n } from "@incmix/pages/i18n"
-import { recordChangelog } from "@incmix/store/src/sql/tasks"
+import { recordChangelog } from "@incmix/store/tasks"
 import { TASKS_API_URL } from "@incmix/ui/constants"
 import type {
   Board,
@@ -9,7 +9,7 @@ import type {
   Project,
   Task,
   TaskStatus,
-} from "@jsprtmnn/utils/types"
+} from "@incmix/utils/types"
 import sql from "sql-template-tag"
 
 export async function getProjects(orgId: string) {
