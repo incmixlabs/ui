@@ -20,7 +20,7 @@
     "@electric-sql/pglite": "0.2.15",
     "@electric-sql/pglite-sync": "0.2.17",
     "@hono/zod-openapi": "0.18.3",
-    "@jsprtmnn/utils": "0.1.0",
+    "@incmix/utils": "0.1.0",
     "@koale/useworker": "4.1.0",
     "broadcast-channel": "7.0.0",
     "i18next": "24.2.1",

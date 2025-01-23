@@ -9,7 +9,7 @@ import type {
   Project,
   Task,
   TaskStatus,
-} from "@jsprtmnn/utils/types"
+} from "@incmix/utils/types"
 import sql from "sql-template-tag"
 
 export async function getProjects(orgId: string) {

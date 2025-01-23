@@ -6,7 +6,7 @@ import {
   toast,
 } from "@incmix/ui"
 import { Badge, Checkbox, DropdownMenu, Spinner, Switch } from "@incmix/ui"
-import type { UserAndProfile } from "@jsprtmnn/utils/types"
+import type { UserAndProfile } from "@incmix/utils/types"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { setEnabled, setVerified } from "./actions"

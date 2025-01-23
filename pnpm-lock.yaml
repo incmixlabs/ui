@@ -41,7 +41,7 @@ importers:
       '@incmix/ui':
         specifier: 'workspace: *'
         version: link:../../frontend/ui
-      '@jsprtmnn/utils':
+      '@incmix/utils':
         specifier: 0.1.0
         version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
       '@sentry/react':
@@ -114,7 +114,7 @@ importers:
       '@incmix/ui':
         specifier: 'workspace: *'
         version: link:../../frontend/ui
-      '@jsprtmnn/utils':
+      '@incmix/utils':
         specifier: 0.1.0
         version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
       '@radix-ui/react-icons':
@@ -208,7 +208,7 @@ importers:
       '@incmix/ui':
         specifier: 'workspace: *'
         version: link:../ui
-      '@jsprtmnn/utils':
+      '@incmix/utils':
         specifier: 0.1.0
         version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
       '@radix-ui/themes':
@@ -299,7 +299,7 @@ importers:
       '@hono/zod-openapi':
         specifier: 0.18.3
         version: 0.18.3(hono@4.6.16)(zod@3.23.8)
-      '@jsprtmnn/utils':
+      '@incmix/utils':
         specifier: 0.1.0
         version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
       '@koale/useworker':
@@ -402,7 +402,7 @@ importers:
       '@incmix/store':
         specifier: 'workspace: *'
         version: link:../store
-      '@jsprtmnn/utils':
+      '@incmix/utils':
         specifier: 0.1.0
         version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
       '@mantine/hooks':
@@ -583,13 +583,13 @@ importers:
 
   shared/assets:
     dependencies:
-      '@jsprtmnn/utils':
+      '@incmix/utils':
         specifier: 0.1.0
         version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
 
   shared/config:
     dependencies:
-      '@jsprtmnn/utils':
+      '@incmix/utils':
         specifier: 0.1.0
         version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
     devDependencies:
@@ -1893,6 +1893,13 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@incmix/utils@0.1.0':
+    resolution: {integrity: sha512-FkXg4aikKsp4AkdeeBgrk9jogDeZLn2Tc2QT1uh08CjlzygwPsNzm9YzQNvXDDYIiuLp6pKYxoHph9fOuM/ArA==}
+    engines: {node: '>=22.13.0'}
+    peerDependencies:
+      '@types/luxon': '>=3.0'
+      luxon: '>=3.0'
+
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
@@ -1926,13 +1933,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
-
-  '@jsprtmnn/utils@0.1.0':
-    resolution: {integrity: sha512-3SIx4o/oymNpLXs1/JpjjvVlS5Xk3FHKY48AmDWIyJ/derIYWIRQstFah3F/LaWNXgjy6F9VjOr+jRc7MUYGYg==}
-    engines: {node: '>=22.13.0'}
-    peerDependencies:
-      '@types/luxon': '>=3.0'
-      luxon: '>=3.0'
 
   '@julr/vite-plugin-validate-env@1.2.0':
     resolution: {integrity: sha512-taAYS+7zOREHjiLiMp6S1ZhYRxWs4QfC7Usvqvbi4ni78vOuHREbk446A5u0im06eTxUOfqishLbZ879N0hHMg==}
@@ -8639,6 +8639,16 @@ snapshots:
   '@img/sharp-win32-x64@0.33.5':
     optional: true
 
+  '@incmix/utils@0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)':
+    dependencies:
+      '@casl/ability': 6.7.3
+      '@hono/zod-openapi': 0.18.3(hono@4.6.16)(zod@3.23.8)
+      '@types/luxon': 3.4.2
+      luxon: 3.5.0
+    transitivePeerDependencies:
+      - hono
+      - zod
+
   '@isaacs/cliui@8.0.2':
     dependencies:
       string-width: 5.1.2
@@ -8677,16 +8687,6 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
-
-  '@jsprtmnn/utils@0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)':
-    dependencies:
-      '@casl/ability': 6.7.3
-      '@hono/zod-openapi': 0.18.3(hono@4.6.16)(zod@3.23.8)
-      '@types/luxon': 3.4.2
-      luxon: 3.5.0
-    transitivePeerDependencies:
-      - hono
-      - zod
 
   '@julr/vite-plugin-validate-env@1.2.0(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))(zod@3.23.8)':
     dependencies:

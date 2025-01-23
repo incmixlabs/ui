@@ -14,10 +14,7 @@ import { useQuery } from "@tanstack/react-query"
 
 import { Spinner } from "@incmix/ui"
 import { USERS_API_URL } from "@incmix/ui/constants"
-import type {
-  UserAndProfile,
-  UserProfilePaginated,
-} from "@jsprtmnn/utils/types"
+import type { UserAndProfile, UserProfilePaginated } from "@incmix/utils/types"
 import { ListUsersRoute } from "@users/routes"
 import type { UserListSearchParams } from "@users/routes/list-users"
 import { getColumns } from "./admin-user-columns"

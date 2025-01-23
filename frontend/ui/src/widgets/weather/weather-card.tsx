@@ -1,4 +1,4 @@
-import { getWeekDay } from "@jsprtmnn/utils/date"
+import { getWeekDay } from "@incmix/utils/date"
 import { PaperPlaneIcon } from "@radix-ui/react-icons"
 import { Box, Flex, Text } from "@radix-ui/themes"
 import type React from "react"

@@ -1,1 +1,1 @@
-import "@jsprtmnn/utils/i18n"
+import "@incmix/utils/i18n"

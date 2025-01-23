@@ -94,7 +94,7 @@
     "@floating-ui/react-dom": "2.1.2",
     "@hookform/resolvers": "3.3.4",
     "@incmix/store": "workspace: *",
-    "@jsprtmnn/utils": "0.1.0",
+    "@incmix/utils": "0.1.0",
     "@mantine/hooks": "7.14.1",
     "@paralleldrive/cuid2": "^2.2.2",
     "@radix-ui/colors": "3.0.0",

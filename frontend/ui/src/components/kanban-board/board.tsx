@@ -1,4 +1,4 @@
-import type { NestedColumns, Task } from "@jsprtmnn/utils/types"
+import type { NestedColumns, Task } from "@incmix/utils/types"
 import { cn } from "@utils/cn"
 import type React from "react"
 import { BoardColumn } from "./board-column"

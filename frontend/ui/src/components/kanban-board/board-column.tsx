@@ -1,6 +1,6 @@
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
-import type { Column, Task } from "@jsprtmnn/utils/types"
+import type { Column, Task } from "@incmix/utils/types"
 import { Badge, Card } from "@radix-ui/themes"
 import type React from "react"
 import { useCallback, useEffect, useMemo, useRef } from "react"
