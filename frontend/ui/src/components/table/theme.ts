@@ -1,10 +1,11 @@
-import { createTheme } from "@utils/create-theme";
-import type {TableTheme } from "./Table";
+import { createTheme } from "@utils/create-theme"
+import type { TableTheme } from "./Table"
 
-export const tableTheme:TableTheme = createTheme({
+export const tableTheme: TableTheme = createTheme({
   root: {
     base: "w-full text-left text-sm text-gray-500 dark:text-gray-400",
-    shadow: "absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-white drop-shadow-md dark:bg-black",
+    shadow:
+      "absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-white drop-shadow-md dark:bg-black",
     wrapper: "relative",
   },
   body: {
@@ -13,8 +14,8 @@ export const tableTheme:TableTheme = createTheme({
       base: "group-first/body:group-first/row:first:rounded-tl-lg group-first/body:group-first/row:last:rounded-tr-lg group-last/body:group-last/row:first:rounded-bl-lg group-last/body:group-last/row:last:rounded-br-lg",
       padding: {
         base: "px-6 py-4",
-        tight: "px-4 py-2"
-      }
+        tight: "px-4 py-2",
+      },
     },
   },
   head: {
@@ -23,13 +24,14 @@ export const tableTheme:TableTheme = createTheme({
       base: "bg-gray-50 group-first/head:first:rounded-tl-lg group-first/head:last:rounded-tr-lg dark:bg-gray-700",
       padding: {
         base: "px-6 py-3",
-        tight: "px-4 py-2"
-      }
+        tight: "px-4 py-2",
+      },
     },
   },
   row: {
     base: "group/row",
     hovered: "hover:bg-gray-50 dark:hover:bg-gray-600",
-    striped: "odd:bg-white even:bg-gray-50 odd:dark:bg-gray-800 even:dark:bg-gray-700",
+    striped:
+      "odd:bg-white even:bg-gray-50 odd:dark:bg-gray-800 even:dark:bg-gray-700",
   },
-});
+})

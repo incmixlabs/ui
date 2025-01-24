@@ -1,34 +1,38 @@
-import { render, screen } from "@testing-library/react";
-import type { FC } from "react";
-import { describe, expect, it } from "vitest";
-import type { TableProps } from "./Table";
-import { Table } from "./Table";
+import { render, screen } from "@testing-library/react"
+import type { FC } from "react"
+import { describe, expect, it } from "vitest"
+import type { TableProps } from "./Table"
+import { Table } from "./Table"
 
 describe("Components / Table", () => {
   it("should be able to render a table", () => {
-    render(<TestTable />);
+    render(<TestTable />)
 
-    expect(screen.getByTestId("table-element")).toBeTruthy();
-  });
+    expect(screen.getByTestId("table-element")).toBeTruthy()
+  })
 
   it("should be able to render a striped table", () => {
-    render(<TestTable striped />);
+    render(<TestTable striped />)
 
-    const rows = screen.getAllByTestId("table-row-element");
+    const rows = screen.getAllByTestId("table-row-element")
 
-    expect(rows.length).toEqual(5);
-    expect(rows[0].className).toContain("odd:bg-white even:bg-gray-50 odd:dark:bg-gray-800 even:dark:bg-gray-700");
-  });
+    expect(rows.length).toEqual(5)
+    expect(rows[0].className).toContain(
+      "odd:bg-white even:bg-gray-50 odd:dark:bg-gray-800 even:dark:bg-gray-700"
+    )
+  })
 
   it("should be able to render a hoverable table", () => {
-    render(<TestTable hoverable />);
+    render(<TestTable hoverable />)
 
-    const rows = screen.getAllByTestId("table-row-element");
+    const rows = screen.getAllByTestId("table-row-element")
 
-    expect(rows.length).toEqual(5);
-    expect(rows[0].className).toContain("hover:bg-gray-50 dark:hover:bg-gray-600");
-  });
-});
+    expect(rows.length).toEqual(5)
+    expect(rows[0].className).toContain(
+      "hover:bg-gray-50 dark:hover:bg-gray-600"
+    )
+  })
+})
 
 const TestTable: FC<TableProps> = (props) => (
   <Table {...props}>
@@ -50,7 +54,10 @@ const TestTable: FC<TableProps> = (props) => (
         <Table.Cell>Laptop</Table.Cell>
         <Table.Cell>$2999</Table.Cell>
         <Table.Cell>
-          <a href="/tables" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+          <a
+            href="/tables"
+            className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
+          >
             Edit
           </a>
         </Table.Cell>
@@ -63,18 +70,26 @@ const TestTable: FC<TableProps> = (props) => (
         <Table.Cell>Laptop PC</Table.Cell>
         <Table.Cell>$1999</Table.Cell>
         <Table.Cell>
-          <a href="/tables" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+          <a
+            href="/tables"
+            className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
+          >
             Edit
           </a>
         </Table.Cell>
       </Table.Row>
       <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-        <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">Magic Mouse 2</Table.Cell>
+        <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+          Magic Mouse 2
+        </Table.Cell>
         <Table.Cell>Black</Table.Cell>
         <Table.Cell>Accessories</Table.Cell>
         <Table.Cell>$99</Table.Cell>
         <Table.Cell>
-          <a href="/tables" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+          <a
+            href="/tables"
+            className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
+          >
             Edit
           </a>
         </Table.Cell>
@@ -87,22 +102,30 @@ const TestTable: FC<TableProps> = (props) => (
         <Table.Cell>Phone</Table.Cell>
         <Table.Cell>$799</Table.Cell>
         <Table.Cell>
-          <a href="/tables" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+          <a
+            href="/tables"
+            className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
+          >
             Edit
           </a>
         </Table.Cell>
       </Table.Row>
       <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-        <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">Apple Watch 5</Table.Cell>
+        <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+          Apple Watch 5
+        </Table.Cell>
         <Table.Cell>Red</Table.Cell>
         <Table.Cell>Wearables</Table.Cell>
         <Table.Cell>$999</Table.Cell>
         <Table.Cell>
-          <a href="/tables" className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+          <a
+            href="/tables"
+            className="font-medium text-cyan-600 hover:underline dark:text-cyan-500"
+          >
             Edit
           </a>
         </Table.Cell>
       </Table.Row>
     </Table.Body>
   </Table>
-);
+)

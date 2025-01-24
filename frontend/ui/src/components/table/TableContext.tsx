@@ -1,23 +1,25 @@
-"use client";
+"use client"
 
-import { createContext, useContext } from "react";
-import type {TableTheme } from "./Table";
+import { createContext, useContext } from "react"
+import type { TableTheme } from "./Table"
 
 export type TableContext = {
-  theme:TableTheme;
-  striped?: boolean;
-  hoverable?: boolean;
-  tight?: boolean;
-};
+  theme: TableTheme
+  striped?: boolean
+  hoverable?: boolean
+  tight?: boolean
+}
 
-export const TableContext = createContext<TableContext | undefined>(undefined);
+export const TableContext = createContext<TableContext | undefined>(undefined)
 
 export function useTableContext(): TableContext {
-  const context = useContext(TableContext);
+  const context = useContext(TableContext)
 
   if (!context) {
-    throw new Error("useTableContext should be used within the TableContext provider!");
+    throw new Error(
+      "useTableContext should be used within the TableContext provider!"
+    )
   }
 
-  return context;
+  return context
 }

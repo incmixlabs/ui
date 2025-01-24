@@ -1,27 +1,27 @@
-"use client";
+"use client"
 
-import { forwardRef, type ComponentPropsWithRef } from "react";
-import { twMerge } from "tailwind-merge";
-import { mergeDeep } from "@utils/objects";
-import type { DeepPartial } from "@types";
-import { useTableContext } from "./TableContext";
-import type {TableHeadCellTheme } from "./TableHeadCell";
-import { TableHeadContext } from "./TableHeadContext";
+import type { DeepPartial } from "@types"
+import { mergeDeep } from "@utils/objects"
+import { type ComponentPropsWithRef, forwardRef } from "react"
+import { twMerge } from "tailwind-merge"
+import { useTableContext } from "./TableContext"
+import type { TableHeadCellTheme } from "./TableHeadCell"
+import { TableHeadContext } from "./TableHeadContext"
 
 export interface TableHeadTheme {
-  base: string;
-  cell:TableHeadCellTheme;
+  base: string
+  cell: TableHeadCellTheme
 }
 
 export interface TableHeadProps extends ComponentPropsWithRef<"thead"> {
-  theme?: DeepPartial<TableHeadTheme>;
+  theme?: DeepPartial<TableHeadTheme>
 }
 
 export const TableHead = forwardRef<HTMLTableSectionElement, TableHeadProps>(
   ({ children, className, theme: customTheme = {}, ...props }, ref) => {
-    const { theme: rootTheme } = useTableContext();
+    const { theme: rootTheme } = useTableContext()
 
-    const theme = mergeDeep(rootTheme.head, customTheme);
+    const theme = mergeDeep(rootTheme.head, customTheme)
 
     return (
       <TableHeadContext.Provider value={{ theme }}>
@@ -29,8 +29,8 @@ export const TableHead = forwardRef<HTMLTableSectionElement, TableHeadProps>(
           <tr>{children}</tr>
         </thead>
       </TableHeadContext.Provider>
-    );
-  },
-);
+    )
+  }
+)
 
-TableHead.displayName = "Table.Head";
+TableHead.displayName = "Table.Head"
