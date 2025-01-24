@@ -7,6 +7,7 @@ export type TableContext = {
   theme:TableTheme;
   striped?: boolean;
   hoverable?: boolean;
+  tight?: boolean;
 };
 
 export const TableContext = createContext<TableContext | undefined>(undefined);

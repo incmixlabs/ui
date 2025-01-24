@@ -5,9 +5,14 @@ import { twMerge } from "tailwind-merge";
 import { mergeDeep } from "@utils/objects";
 import type { DeepPartial } from "@types";
 import { useTableHeadContext } from "./TableHeadContext";
+import { useTableContext } from "./TableContext";
 
 export interface TableHeadCellTheme {
   base: string;
+  padding: {
+    base: string;
+    tight: string;
+  }
 }
 
 export interface TableHeadCellProps extends ComponentPropsWithRef<"th"> {
@@ -15,13 +20,15 @@ export interface TableHeadCellProps extends ComponentPropsWithRef<"th"> {
 }
 
 export const TableHeadCell = forwardRef<HTMLTableCellElement, TableHeadCellProps>(
-  ({ children, className, theme: customTheme = {}, ...props }, ref) => {
+  ({ children, className,  theme: customTheme = {}, ...props }, ref) => {
     const { theme: headTheme } = useTableHeadContext();
-
+    const tableContext = useTableContext();
     const theme = mergeDeep(headTheme.cell, customTheme);
-
+    const padding = tableContext.tight ? theme.tight : theme.base;
+    console.log("Padding ", padding);
+    console.log("is tight", tableContext.tight);
     return (
-      <th className={twMerge(theme.base, className)} ref={ref} {...props}>
+      <th className={twMerge(theme.base,  padding, theme.tight, className)} ref={ref} {...props}>
         {children}
       </th>
     );

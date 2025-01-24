@@ -25,7 +25,7 @@ export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
 
     return (
       <TableBodyContext.Provider value={{ theme }}>
-        <tbody className={twMerge(theme.base, className)} ref={ref} {...props}>
+        <tbody className={twMerge(theme.base,  className)} ref={ref} {...props}>
           {children}
         </tbody>
       </TableBodyContext.Provider>
