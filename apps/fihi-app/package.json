@@ -17,7 +17,7 @@
     "@incmix/store": "workspace: *",
     "@incmix/ui": "workspace: *",
     "@incmix/utils": "catalog:",
-    "@sentry/react": "8.19.0",
+    "@sentry/react": "8.51.0",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "catalog:",
     "@tauri-apps/api": ">=2.0.0-beta.0",
@@ -28,7 +28,7 @@
   "devDependencies": {
     "@incmix/config": "workspace: *",
     "@julr/vite-plugin-validate-env": "1.2.0",
-    "@sentry/vite-plugin": "^3.0.0",
+    "@sentry/vite-plugin": "3.0.0",
     "@tauri-apps/cli": ">=2.0.0-beta.0",
     "@tauri-apps/plugin-shell": ">=2.0.0-beta.0",
     "@types/react": "catalog:",
