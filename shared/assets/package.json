@@ -5,6 +5,6 @@
   "license": "MIT",
   "files": ["**/*"],
   "dependencies": {
-    "@jsprtmnn/utils": "0.1.0"
+    "@incmix/utils": "catalog:"
   }
 }

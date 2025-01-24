@@ -1,4 +1,4 @@
-import { filterParser, sortParser } from "@jsprtmnn/utils/data-table"
+import { filterParser, sortParser } from "@incmix/utils/data-table"
 import type { Row } from "@tanstack/react-table"
 import { createParser } from "nuqs/server"
 import type { ExtendedSortingState, Filter } from "./types"
