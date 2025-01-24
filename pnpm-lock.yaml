@@ -4,6 +4,60 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@electric-sql/pglite-react':
+      specifier: 0.2.15
+      version: 0.2.15
+    '@incmix/utils':
+      specifier: 0.1.0
+      version: 0.1.0
+    '@radix-ui/themes':
+      specifier: 3.1.6
+      version: 3.1.6
+    '@tanstack/react-query':
+      specifier: 5.59.16
+      version: 5.59.16
+    '@tanstack/react-router':
+      specifier: 1.76.1
+      version: 1.76.1
+    '@types/react':
+      specifier: 18.3.1
+      version: 18.3.1
+    '@types/react-dom':
+      specifier: 18.3.1
+      version: 18.3.1
+    '@vitejs/plugin-react':
+      specifier: 4.3.4
+      version: 4.3.4
+    lucide-react:
+      specifier: 0.471.1
+      version: 0.471.1
+    postcss:
+      specifier: 8.5.1
+      version: 8.5.1
+    react:
+      specifier: 18.3.1
+      version: 18.3.1
+    react-dom:
+      specifier: 18.3.1
+      version: 18.3.1
+    tailwindcss:
+      specifier: 3.4.14
+      version: 3.4.14
+    typescript:
+      specifier: 5.7.3
+      version: 5.7.3
+    vite:
+      specifier: 6.0.7
+      version: 6.0.7
+    vite-tsconfig-paths:
+      specifier: 5.1.4
+      version: 5.1.4
+    zod:
+      specifier: 3.24.1
+      version: 3.24.1
+
 importers:
 
   .:
@@ -30,7 +84,7 @@ importers:
   apps/fihi-app:
     dependencies:
       '@electric-sql/pglite-react':
-        specifier: 0.2.15
+        specifier: 'catalog:'
         version: 0.2.15(@electric-sql/pglite@0.2.15)(react@18.3.1)
       '@incmix/pages':
         specifier: 'workspace: *'
@@ -41,26 +95,26 @@ importers:
       '@incmix/ui':
         specifier: 'workspace: *'
         version: link:../../frontend/ui
-      '@jsprtmnn/utils':
-        specifier: 0.1.0
-        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
+      '@incmix/utils':
+        specifier: 'catalog:'
+        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.24.1)
       '@sentry/react':
         specifier: 8.19.0
         version: 8.19.0(react@18.3.1)
       '@tanstack/react-query':
-        specifier: 5.59.16
+        specifier: 'catalog:'
         version: 5.59.16(react@18.3.1)
       '@tanstack/react-router':
-        specifier: 1.76.1
+        specifier: 'catalog:'
         version: 1.76.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tauri-apps/api':
         specifier: '>=2.0.0-beta.0'
         version: 2.2.0
       react:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-router-dom:
         specifier: 6.23.1
@@ -71,7 +125,7 @@ importers:
         version: link:../../shared/config
       '@julr/vite-plugin-validate-env':
         specifier: 1.2.0
-        version: 1.2.0(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))(zod@3.23.8)
+        version: 1.2.0(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))(zod@3.24.1)
       '@sentry/vite-plugin':
         specifier: ^3.0.0
         version: 3.0.0
@@ -82,28 +136,31 @@ importers:
         specifier: '>=2.0.0-beta.0'
         version: 2.2.0
       '@types/react':
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       '@types/react-dom':
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       '@vitejs/plugin-react':
-        specifier: 4.3.4
+        specifier: 'catalog:'
         version: 4.3.4(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))
       internal-ip:
         specifier: 8.0.0
         version: 8.0.0
       postcss:
-        specifier: 8.5.1
+        specifier: 'catalog:'
         version: 8.5.1
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 3.4.14(ts-node@10.9.2(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@22.10.1)(typescript@5.7.3))
       typescript:
-        specifier: 5.7.3
+        specifier: 'catalog:'
         version: 5.7.3
       vite:
-        specifier: 6.0.7
+        specifier: 'catalog:'
         version: 6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
       vite-tsconfig-paths:
-        specifier: 5.1.4
+        specifier: 'catalog:'
         version: 5.1.4(typescript@5.7.3)(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))
 
   apps/storybook:
@@ -114,9 +171,9 @@ importers:
       '@incmix/ui':
         specifier: 'workspace: *'
         version: link:../../frontend/ui
-      '@jsprtmnn/utils':
-        specifier: 0.1.0
-        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
+      '@incmix/utils':
+        specifier: 'catalog:'
+        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.24.1)
       '@radix-ui/react-icons':
         specifier: 1.3.1
         version: 1.3.1(react@18.3.1)
@@ -124,13 +181,13 @@ importers:
         specifier: 7.6.17
         version: 7.6.17(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-query':
-        specifier: 5.59.16
+        specifier: 'catalog:'
         version: 5.59.16(react@18.3.1)
       react:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-hook-form:
         specifier: 7.51.2
@@ -164,10 +221,10 @@ importers:
         specifier: 0.2.1
         version: 0.2.1
       '@types/react':
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       '@types/react-dom':
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       '@vitejs/plugin-react-swc':
         specifier: 3.7.2
@@ -176,7 +233,7 @@ importers:
         specifier: 10.4.19
         version: 10.4.19(postcss@8.5.1)
       postcss:
-        specifier: 8.5.1
+        specifier: 'catalog:'
         version: 8.5.1
       prop-types:
         specifier: 15.8.1
@@ -187,11 +244,14 @@ importers:
       storybook:
         specifier: 8.4.6
         version: 8.4.6(prettier@3.4.2)
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 3.4.14(ts-node@10.9.2(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@22.10.1)(typescript@5.7.3))
       typescript:
-        specifier: 5.7.3
+        specifier: 'catalog:'
         version: 5.7.3
       vite:
-        specifier: 6.0.7
+        specifier: 'catalog:'
         version: 6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
 
   frontend/pages:
@@ -200,7 +260,7 @@ importers:
         specifier: 4.0.0
         version: 4.0.0(@casl/ability@6.7.3)(react@18.3.1)
       '@electric-sql/pglite-react':
-        specifier: 0.2.15
+        specifier: 'catalog:'
         version: 0.2.15(@electric-sql/pglite@0.2.15)(react@18.3.1)
       '@incmix/store':
         specifier: 'workspace: *'
@@ -208,21 +268,21 @@ importers:
       '@incmix/ui':
         specifier: 'workspace: *'
         version: link:../ui
-      '@jsprtmnn/utils':
-        specifier: 0.1.0
-        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
+      '@incmix/utils':
+        specifier: 'catalog:'
+        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.24.1)
       '@radix-ui/themes':
-        specifier: 3.1.6
+        specifier: 'catalog:'
         version: 3.1.6(@types/react-dom@18.3.1)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-query':
-        specifier: 5.59.16
+        specifier: 'catalog:'
         version: 5.59.16(react@18.3.1)
       '@tanstack/react-router':
-        specifier: 1.76.1
+        specifier: 'catalog:'
         version: 1.76.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/zod-form-adapter':
         specifier: 0.41.2
-        version: 0.41.2(zod@3.23.8)
+        version: 0.41.2(zod@3.24.1)
       i18next:
         specifier: 24.2.1
         version: 24.2.1(typescript@5.7.3)
@@ -239,10 +299,10 @@ importers:
         specifier: 10.1.1
         version: 10.1.1
       react:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-i18next:
         specifier: 15.4.0
@@ -254,14 +314,14 @@ importers:
         specifier: 2.3.0
         version: 2.3.0
       tailwindcss:
-        specifier: 3.4.14
+        specifier: 'catalog:'
         version: 3.4.14(ts-node@10.9.2(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@22.10.1)(typescript@5.7.3))
       tailwindcss-animate:
         specifier: 1.0.7
         version: 1.0.7(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@22.10.1)(typescript@5.7.3)))
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 'catalog:'
+        version: 3.24.1
       zustand:
         specifier: 4.5.4
         version: 4.5.4(@types/react@18.3.1)(immer@10.1.1)(react@18.3.1)
@@ -276,10 +336,10 @@ importers:
         specifier: 1.36.3
         version: 1.36.3(@tanstack/react-router@1.76.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(csstype@3.1.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/react':
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       '@types/react-dom':
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       '@types/wicg-file-system-access':
         specifier: 2023.10.5
@@ -298,10 +358,10 @@ importers:
         version: 0.2.17(@electric-sql/pglite@0.2.15)
       '@hono/zod-openapi':
         specifier: 0.18.3
-        version: 0.18.3(hono@4.6.16)(zod@3.23.8)
-      '@jsprtmnn/utils':
-        specifier: 0.1.0
-        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
+        version: 0.18.3(hono@4.6.16)(zod@3.24.1)
+      '@incmix/utils':
+        specifier: 'catalog:'
+        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.24.1)
       '@koale/useworker':
         specifier: 4.1.0
         version: 4.1.0(react@18.3.1)
@@ -355,7 +415,7 @@ importers:
         specifier: 'workspace: *'
         version: link:../../shared/config
       typescript:
-        specifier: 5.7.3
+        specifier: 'catalog:'
         version: 5.7.3
 
   frontend/ui:
@@ -383,7 +443,7 @@ importers:
         version: 1.2.2(react@18.3.1)
       '@conform-to/zod':
         specifier: ^1.2.2
-        version: 1.2.2(zod@3.23.8)
+        version: 1.2.2(zod@3.24.1)
       '@dnd-kit/core':
         specifier: 6.3.1
         version: 6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -402,9 +462,9 @@ importers:
       '@incmix/store':
         specifier: 'workspace: *'
         version: link:../store
-      '@jsprtmnn/utils':
-        specifier: 0.1.0
-        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
+      '@incmix/utils':
+        specifier: 'catalog:'
+        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.24.1)
       '@mantine/hooks':
         specifier: 7.14.1
         version: 7.14.1(react@18.3.1)
@@ -436,7 +496,7 @@ importers:
         specifier: 1.1.6
         version: 1.1.6(@types/react-dom@18.3.1)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/themes':
-        specifier: 3.1.6
+        specifier: 'catalog:'
         version: 3.1.6(@types/react-dom@18.3.1)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@stepperize/react':
         specifier: ^4.0.1
@@ -461,13 +521,10 @@ importers:
         version: 8.20.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/zod-form-adapter':
         specifier: ^0.41.3
-        version: 0.41.3(zod@3.23.8)
+        version: 0.41.3(zod@3.24.1)
       '@tauri-apps/api':
         specifier: '>=2.0.0-beta.0'
         version: 2.2.0
-      '@types/resize-observer-browser':
-        specifier: 0.1.11
-        version: 0.1.11
       aria-hidden:
         specifier: 1.2.4
         version: 1.2.4
@@ -496,7 +553,7 @@ importers:
         specifier: 10.1.1
         version: 10.1.1
       lucide-react:
-        specifier: 0.471.1
+        specifier: 'catalog:'
         version: 0.471.1(react@18.3.1)
       luxon:
         specifier: 3.5.0
@@ -550,8 +607,8 @@ importers:
         specifier: 1.0.0-beta.0
         version: 1.0.0-beta.0(@radix-ui/colors@3.0.0)(@tailwindcss/typography@0.5.15(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@22.10.1)(typescript@5.7.3))))(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@22.10.1)(typescript@5.7.3)))(windy-radix-palette@2.0.0-beta.7(@radix-ui/colors@3.0.0)(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@22.10.1)(typescript@5.7.3))))
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 'catalog:'
+        version: 3.24.1
     devDependencies:
       '@incmix/config':
         specifier: 'workspace: *'
@@ -560,22 +617,25 @@ importers:
         specifier: 3.4.2
         version: 3.4.2
       '@types/react':
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       '@types/react-dom':
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
+      '@types/resize-observer-browser':
+        specifier: 0.1.11
+        version: 0.1.11
       '@types/wicg-file-system-access':
         specifier: 2023.10.5
         version: 2023.10.5
       react:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       tailwindcss:
-        specifier: 3.4.14
+        specifier: 'catalog:'
         version: 3.4.14(ts-node@10.9.2(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@22.10.1)(typescript@5.7.3))
       typescript:
         specifier: 5.7.3
@@ -583,15 +643,15 @@ importers:
 
   shared/assets:
     dependencies:
-      '@jsprtmnn/utils':
-        specifier: 0.1.0
-        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
+      '@incmix/utils':
+        specifier: 'catalog:'
+        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.24.1)
 
   shared/config:
     dependencies:
-      '@jsprtmnn/utils':
-        specifier: 0.1.0
-        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
+      '@incmix/utils':
+        specifier: 'catalog:'
+        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.24.1)
     devDependencies:
       next:
         specifier: 15.1.4
@@ -1893,6 +1953,13 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@incmix/utils@0.1.0':
+    resolution: {integrity: sha512-FkXg4aikKsp4AkdeeBgrk9jogDeZLn2Tc2QT1uh08CjlzygwPsNzm9YzQNvXDDYIiuLp6pKYxoHph9fOuM/ArA==}
+    engines: {node: '>=22.13.0'}
+    peerDependencies:
+      '@types/luxon': '>=3.0'
+      luxon: '>=3.0'
+
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
@@ -1926,13 +1993,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
-
-  '@jsprtmnn/utils@0.1.0':
-    resolution: {integrity: sha512-3SIx4o/oymNpLXs1/JpjjvVlS5Xk3FHKY48AmDWIyJ/derIYWIRQstFah3F/LaWNXgjy6F9VjOr+jRc7MUYGYg==}
-    engines: {node: '>=22.13.0'}
-    peerDependencies:
-      '@types/luxon': '>=3.0'
-      luxon: '>=3.0'
 
   '@julr/vite-plugin-validate-env@1.2.0':
     resolution: {integrity: sha512-taAYS+7zOREHjiLiMp6S1ZhYRxWs4QfC7Usvqvbi4ni78vOuHREbk446A5u0im06eTxUOfqishLbZ879N0hHMg==}
@@ -7243,8 +7303,8 @@ packages:
     resolution: {integrity: sha512-b4JR1PFR10y1mKjhHY9LaGo6tmrgjit7hxVIeAmyMw3jegXR4dhYqLaQF5zMXZxY7tLpMyJeLjr1C4rLmkVe8g==}
     engines: {node: '>=12.20'}
 
-  zod@3.23.8:
-    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
+  zod@3.24.1:
+    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
 
   zustand-middleware-computed-state@0.1.3:
     resolution: {integrity: sha512-Gkb3h/AxUKu6oG1RQXuGTXXu/lNmOSdWhqdw7TNFQ3rAZhNFllBPbciAZ/x5fR6Jz6xsu0ZE+ekbzSa1uTaI/Q==}
@@ -7285,10 +7345,10 @@ snapshots:
 
   '@antfu/utils@0.7.10': {}
 
-  '@asteasolutions/zod-to-openapi@7.3.0(zod@3.23.8)':
+  '@asteasolutions/zod-to-openapi@7.3.0(zod@3.24.1)':
     dependencies:
       openapi3-ts: 4.4.0
-      zod: 3.23.8
+      zod: 3.24.1
 
   '@atlaskit/ds-lib@3.3.0(@types/react@18.3.1)(react@18.3.1)':
     dependencies:
@@ -8251,10 +8311,10 @@ snapshots:
       '@conform-to/dom': 1.2.2
       react: 18.3.1
 
-  '@conform-to/zod@1.2.2(zod@3.23.8)':
+  '@conform-to/zod@1.2.2(zod@3.24.1)':
     dependencies:
       '@conform-to/dom': 1.2.2
-      zod: 3.23.8
+      zod: 3.24.1
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
@@ -8548,17 +8608,17 @@ snapshots:
 
   '@floating-ui/utils@0.2.9': {}
 
-  '@hono/zod-openapi@0.18.3(hono@4.6.16)(zod@3.23.8)':
+  '@hono/zod-openapi@0.18.3(hono@4.6.16)(zod@3.24.1)':
     dependencies:
-      '@asteasolutions/zod-to-openapi': 7.3.0(zod@3.23.8)
-      '@hono/zod-validator': 0.4.2(hono@4.6.16)(zod@3.23.8)
+      '@asteasolutions/zod-to-openapi': 7.3.0(zod@3.24.1)
+      '@hono/zod-validator': 0.4.2(hono@4.6.16)(zod@3.24.1)
       hono: 4.6.16
-      zod: 3.23.8
+      zod: 3.24.1
 
-  '@hono/zod-validator@0.4.2(hono@4.6.16)(zod@3.23.8)':
+  '@hono/zod-validator@0.4.2(hono@4.6.16)(zod@3.24.1)':
     dependencies:
       hono: 4.6.16
-      zod: 3.23.8
+      zod: 3.24.1
 
   '@hookform/resolvers@3.3.4(react-hook-form@7.51.2(react@18.3.1))':
     dependencies:
@@ -8639,6 +8699,16 @@ snapshots:
   '@img/sharp-win32-x64@0.33.5':
     optional: true
 
+  '@incmix/utils@0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.24.1)':
+    dependencies:
+      '@casl/ability': 6.7.3
+      '@hono/zod-openapi': 0.18.3(hono@4.6.16)(zod@3.24.1)
+      '@types/luxon': 3.4.2
+      luxon: 3.5.0
+    transitivePeerDependencies:
+      - hono
+      - zod
+
   '@isaacs/cliui@8.0.2':
     dependencies:
       string-width: 5.1.2
@@ -8678,24 +8748,14 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@jsprtmnn/utils@0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)':
-    dependencies:
-      '@casl/ability': 6.7.3
-      '@hono/zod-openapi': 0.18.3(hono@4.6.16)(zod@3.23.8)
-      '@types/luxon': 3.4.2
-      luxon: 3.5.0
-    transitivePeerDependencies:
-      - hono
-      - zod
-
-  '@julr/vite-plugin-validate-env@1.2.0(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))(zod@3.23.8)':
+  '@julr/vite-plugin-validate-env@1.2.0(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))(zod@3.24.1)':
     dependencies:
       '@poppinss/cliui': 6.4.2
       '@poppinss/validator-lite': 1.0.3
       unconfig: 0.6.0
       vite: 6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
     optionalDependencies:
-      zod: 3.23.8
+      zod: 3.24.1
     transitivePeerDependencies:
       - supports-color
 
@@ -10465,7 +10525,7 @@ snapshots:
   '@tanstack/router-generator@1.37.0':
     dependencies:
       prettier: 3.4.2
-      zod: 3.23.8
+      zod: 3.24.1
 
   '@tanstack/store@0.5.5': {}
 
@@ -10473,15 +10533,15 @@ snapshots:
 
   '@tanstack/table-core@8.20.5': {}
 
-  '@tanstack/zod-form-adapter@0.41.2(zod@3.23.8)':
+  '@tanstack/zod-form-adapter@0.41.2(zod@3.24.1)':
     dependencies:
       '@tanstack/form-core': 0.41.2
-      zod: 3.23.8
+      zod: 3.24.1
 
-  '@tanstack/zod-form-adapter@0.41.3(zod@3.23.8)':
+  '@tanstack/zod-form-adapter@0.41.3(zod@3.24.1)':
     dependencies:
       '@tanstack/form-core': 0.41.3
-      zod: 3.23.8
+      zod: 3.24.1
 
   '@tauri-apps/api@2.2.0': {}
 
@@ -14275,7 +14335,7 @@ snapshots:
 
   yocto-queue@1.1.1: {}
 
-  zod@3.23.8: {}
+  zod@3.24.1: {}
 
   zustand-middleware-computed-state@0.1.3: {}
 

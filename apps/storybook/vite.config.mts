@@ -1,6 +1,5 @@
 import react from "@vitejs/plugin-react"
 import { PluginOption, defineConfig } from "vite"
-import externalize from "vite-plugin-externalize-dependencies"
 import tsconfigPaths from "vite-tsconfig-paths"
 
 type WorkerFormat = "es" | "iife"

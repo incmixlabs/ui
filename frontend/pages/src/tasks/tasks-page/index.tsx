@@ -1,7 +1,7 @@
 import { usePGlite } from "@electric-sql/pglite-react"
 import { pushChangesToBackend, useOrganizationStore } from "@incmix/store"
 import { KanbanBoard } from "@incmix/ui"
-import type { Task } from "@jsprtmnn/utils/types"
+import type { Task } from "@incmix/utils/types"
 import { Flex, ScrollArea, Select } from "@radix-ui/themes"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { useEffect, useState } from "react"

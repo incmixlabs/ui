@@ -1,12 +1,12 @@
 import type { PGliteWithLive } from "@electric-sql/pglite/live"
-import { API } from "@jsprtmnn/utils/env"
+import { API } from "@incmix/utils/env"
 
 import type {
   DdlSchema,
   DdlVersion,
   Task,
   TaskStatus,
-} from "@jsprtmnn/utils/types"
+} from "@incmix/utils/types"
 
 import sql, { join } from "sql-template-tag"
 

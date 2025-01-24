@@ -1,8 +1,4 @@
-import {
-  columnTypes,
-  joinOperators,
-  operators,
-} from "@jsprtmnn/utils/data-table"
+import { columnTypes, joinOperators, operators } from "@incmix/utils/data-table"
 export type DataTableConfig = typeof dataTableConfig
 
 export const dataTableConfig = {

@@ -6,21 +6,21 @@
   "types": "./src/index.ts",
   "devDependencies": {
     "@incmix/config": "workspace: *",
-    "typescript": "5.7.3"
+    "typescript": "catalog:"
   },
   "scripts": {
     "typecheck": "tsc",
     "build": "rm -rf dist && tsc -p tsconfig.json --outDir dist"
   },
   "peerDependencies": {
-    "typescript": "5.4.3"
+    "typescript": "catalog:"
   },
   "dependencies": {
     "@electric-sql/client": "1.0.0-beta.2",
     "@electric-sql/pglite": "0.2.15",
     "@electric-sql/pglite-sync": "0.2.17",
     "@hono/zod-openapi": "0.18.3",
-    "@jsprtmnn/utils": "0.1.0",
+    "@incmix/utils": "catalog:",
     "@koale/useworker": "4.1.0",
     "broadcast-channel": "7.0.0",
     "i18next": "24.2.1",

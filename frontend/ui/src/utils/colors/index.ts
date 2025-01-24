@@ -1,4 +1,4 @@
-import { strEnum } from "@jsprtmnn/utils/strings"
+import { strEnum } from "@incmix/utils/strings"
 import { accentColorPropDef as radixAccentColorPropDef } from "@radix-ui/themes/src/props/color.prop.js"
 import { colorPropDef as radixColorPropDef } from "@radix-ui/themes/src/props/color.prop.js"
 import { accentColors as radixAccentColors } from "@radix-ui/themes/src/props/color.prop.js"

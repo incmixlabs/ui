@@ -13,7 +13,7 @@ import type {
   AuthUserSession,
   OptionalPresignedUrl,
   UserProfile,
-} from "@jsprtmnn/utils/types"
+} from "@incmix/utils/types"
 import {
   type QueryClient,
   useMutation,

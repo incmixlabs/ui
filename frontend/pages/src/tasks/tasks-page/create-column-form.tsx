@@ -12,7 +12,7 @@ import {
   ReactiveButton,
   toast,
 } from "@incmix/ui"
-import type { Column } from "@jsprtmnn/utils/types"
+import type { Column } from "@incmix/utils/types"
 import { Button, Flex, Select, TextField } from "@radix-ui/themes"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import type React from "react"
