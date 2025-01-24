@@ -1,36 +1,36 @@
-"use client";
+"use client"
 
-import { forwardRef, type ComponentPropsWithRef } from "react";
-import { twMerge } from "tailwind-merge";
-import { mergeDeep } from "@utils/objects";
-import type { DeepPartial } from "@types";
-import { TableBodyContext } from "./TableBodyContext";
-import type {TableCellTheme } from "./TableCell";
-import { useTableContext } from "./TableContext";
+import type { DeepPartial } from "@types"
+import { mergeDeep } from "@utils/objects"
+import { type ComponentPropsWithRef, forwardRef } from "react"
+import { twMerge } from "tailwind-merge"
+import { TableBodyContext } from "./TableBodyContext"
+import type { TableCellTheme } from "./TableCell"
+import { useTableContext } from "./TableContext"
 
 export interface TableBodyTheme {
-  base: string;
-  cell:TableCellTheme;
+  base: string
+  cell: TableCellTheme
 }
 
 export interface TableBodyProps extends ComponentPropsWithRef<"tbody"> {
-  theme?: DeepPartial<TableBodyTheme>;
+  theme?: DeepPartial<TableBodyTheme>
 }
 
 export const TableBody = forwardRef<HTMLTableSectionElement, TableBodyProps>(
   ({ children, className, theme: customTheme = {}, ...props }, ref) => {
-    const { theme: rootTheme } = useTableContext();
+    const { theme: rootTheme } = useTableContext()
 
-    const theme = mergeDeep(rootTheme.body, customTheme);
+    const theme = mergeDeep(rootTheme.body, customTheme)
 
     return (
       <TableBodyContext.Provider value={{ theme }}>
-        <tbody className={twMerge(theme.base,  className)} ref={ref} {...props}>
+        <tbody className={twMerge(theme.base, className)} ref={ref} {...props}>
           {children}
         </tbody>
       </TableBodyContext.Provider>
-    );
-  },
-);
+    )
+  }
+)
 
-TableBody.displayName = "Table.Body";
+TableBody.displayName = "Table.Body"

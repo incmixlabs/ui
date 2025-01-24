@@ -119,11 +119,9 @@ export const useLocalStore = create<PreferencesState>()(
     }
   )
 )
-"use client";
+;("use client")
 
-import { useEffect } from "react";
-
-
+import { useEffect } from "react"
 
 // Enhanced selector helpers
 export const useThemeStore = () =>
