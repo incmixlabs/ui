@@ -18,6 +18,8 @@
       "@primitives/*": ["./primitives/*"],
       "@layouts": ["./layouts"],
       "@layouts/*": ["./layouts/*"],
+      "@types": ["./components/types"],
+      "@types/*": ["./components/types/*"],
       "@utils": ["./utils"],
       "@utils/*": ["./utils/*"],
       "@widgets/*": ["./widgets/*"],
