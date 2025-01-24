@@ -28,16 +28,16 @@ export interface TableRootTheme {
 export interface TableProps extends ComponentPropsWithRef<"table"> {
   striped?: boolean;
   hoverable?: boolean;
+  tight? : boolean;
   theme?: DeepPartial<TableTheme>;
 }
 
 const TableComponent = forwardRef<HTMLTableElement, TableProps>(
-  ({ children, className, striped = true, hoverable = true, theme: customTheme = {}, ...props }, ref) => {
+  ({ children, className, striped = true, tight, hoverable = true,  theme: customTheme = {}, ...props }, ref) => {
     const theme = mergeDeep(tableTheme, customTheme);
-
     return (
       <div data-testid="table-element" className={twMerge(theme.root.wrapper)}>
-        <TableContext.Provider value={{ theme, striped, hoverable }}>
+        <TableContext.Provider value={{ theme, striped, hoverable, tight }}>
           <div className={twMerge(theme.root.shadow, className)}></div>
           <table className={twMerge(theme.root.base, className)} {...props} ref={ref}>
             {children}

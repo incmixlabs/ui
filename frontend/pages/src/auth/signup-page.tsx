@@ -9,7 +9,7 @@ import { z } from "zod"
 import { CardContainer, FormField } from "@incmix/ui"
 import { Box, Container, Flex, Heading, ReactiveButton, Text } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
-import type { AuthUser } from "@incmix/utils/types"
+import type { AuthUser } from "@jsprt/utils/types"
 
 function SignupForm() {
   const { t } = useTranslation(["signup", "common"])
