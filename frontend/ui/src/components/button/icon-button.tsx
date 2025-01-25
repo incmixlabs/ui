@@ -3,6 +3,8 @@ import {
   IconButton as RadixIconButton,
 } from "@radix-ui/themes"
 import React from "react"
+export type { IconButtonProps }
+export { iconButtonPropDefs } from "@radix-ui/themes/src/components/icon-button.props.js"
 
 export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
   ({ children, className, disabled, variant, ...props }, ref) => {
