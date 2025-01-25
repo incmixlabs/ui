@@ -131,3 +131,4 @@ const AdminUsersTable = () => {
 }
 
 export default AdminUsersTable
+export { AdminUsersTable }

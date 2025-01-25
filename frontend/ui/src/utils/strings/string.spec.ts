@@ -1,4 +1,4 @@
-import { expect } from "chai"
+import { describe, expect, it } from "vitest"
 import { capitalizedToCamel } from "./index" // adjust the path as needed
 
 describe("capitalizedToCamel", () => {
@@ -52,7 +52,7 @@ describe("capitalizedToCamel", () => {
 
   it("should correctly format input with non-letter characters", () => {
     const input = "Hello_World Example-Test"
-    const expectedOutput = "hello_worldexample-test"
+    const expectedOutput = "hello_worldExample-test"
     expect(capitalizedToCamel(input)).to.equal(expectedOutput)
   })
 

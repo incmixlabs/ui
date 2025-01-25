@@ -28,7 +28,7 @@ export function camelToCapitalized(str: string) {
 
 // console.log(capitalizedToCamel("This Is A Capitalized Sentence"); // Output: thisIsACapitalizedSentence
 export function capitalizedToCamel(str: string): string {
-  const words = str.split(" ")
+  const words = str.trim().split(" ")
   const camelCase = words
     .map((word, index) => {
       if (index === 0) {
