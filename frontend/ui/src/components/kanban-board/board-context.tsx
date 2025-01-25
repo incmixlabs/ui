@@ -2,7 +2,7 @@ import { createContext, useContext } from "react"
 
 import invariant from "tiny-invariant"
 
-import type { Column } from "@jsprtmnn/utils/types"
+import type { Column } from "@incmix/utils/types"
 
 export type BoardContextValue = {
   getColumns: () => Column[]

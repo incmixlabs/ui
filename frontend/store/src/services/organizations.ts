@@ -1,4 +1,4 @@
-import type { Organization } from "@jsprtmnn/utils/types"
+import type { Organization } from "@incmix/utils/types"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 

@@ -1,6 +1,6 @@
 import { Checkbox, type ColumnDef, DataTableColumnHeader } from "@incmix/ui"
 
-import type { MemberDetails } from "@jsprtmnn/utils/types"
+import type { MemberDetails } from "@incmix/utils/types"
 
 export function getColumns(): ColumnDef<MemberDetails>[] {
   return [

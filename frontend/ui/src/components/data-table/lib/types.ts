@@ -1,7 +1,7 @@
 import type { ColumnSort, Row } from "@tanstack/react-table"
 import type { z } from "zod"
 
-import type { filterSchema } from "@jsprtmnn/utils/data-table"
+import type { filterSchema } from "@incmix/utils/data-table"
 import type { DataTableConfig } from "./config"
 
 export type Prettify<T> = {

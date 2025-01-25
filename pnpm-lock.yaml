@@ -4,6 +4,60 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@electric-sql/pglite-react':
+      specifier: 0.2.15
+      version: 0.2.15
+    '@incmix/utils':
+      specifier: 0.1.0
+      version: 0.1.0
+    '@radix-ui/themes':
+      specifier: 3.1.6
+      version: 3.1.6
+    '@tanstack/react-query':
+      specifier: 5.59.16
+      version: 5.59.16
+    '@tanstack/react-router':
+      specifier: 1.76.1
+      version: 1.76.1
+    '@types/react':
+      specifier: 18.3.1
+      version: 18.3.1
+    '@types/react-dom':
+      specifier: 18.3.1
+      version: 18.3.1
+    '@vitejs/plugin-react':
+      specifier: 4.3.4
+      version: 4.3.4
+    lucide-react:
+      specifier: 0.471.1
+      version: 0.471.1
+    postcss:
+      specifier: 8.5.1
+      version: 8.5.1
+    react:
+      specifier: 18.3.1
+      version: 18.3.1
+    react-dom:
+      specifier: 18.3.1
+      version: 18.3.1
+    tailwindcss:
+      specifier: 3.4.14
+      version: 3.4.14
+    typescript:
+      specifier: 5.7.3
+      version: 5.7.3
+    vite:
+      specifier: 6.0.9
+      version: 6.0.9
+    vite-tsconfig-paths:
+      specifier: 5.1.4
+      version: 5.1.4
+    zod:
+      specifier: 3.24.1
+      version: 3.24.1
+
 importers:
 
   .:
@@ -30,7 +84,7 @@ importers:
   apps/fihi-app:
     dependencies:
       '@electric-sql/pglite-react':
-        specifier: 0.2.15
+        specifier: 'catalog:'
         version: 0.2.15(@electric-sql/pglite@0.2.15)(react@18.3.1)
       '@incmix/pages':
         specifier: 'workspace: *'
@@ -41,26 +95,26 @@ importers:
       '@incmix/ui':
         specifier: 'workspace: *'
         version: link:../../frontend/ui
-      '@jsprtmnn/utils':
-        specifier: 0.1.0
-        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
+      '@incmix/utils':
+        specifier: 'catalog:'
+        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.24.1)
       '@sentry/react':
-        specifier: 8.19.0
-        version: 8.19.0(react@18.3.1)
+        specifier: 8.51.0
+        version: 8.51.0(react@18.3.1)
       '@tanstack/react-query':
-        specifier: 5.59.16
+        specifier: 'catalog:'
         version: 5.59.16(react@18.3.1)
       '@tanstack/react-router':
-        specifier: 1.76.1
+        specifier: 'catalog:'
         version: 1.76.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tauri-apps/api':
         specifier: '>=2.0.0-beta.0'
         version: 2.2.0
       react:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-router-dom:
         specifier: 6.23.1
@@ -71,9 +125,9 @@ importers:
         version: link:../../shared/config
       '@julr/vite-plugin-validate-env':
         specifier: 1.2.0
-        version: 1.2.0(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))(zod@3.23.8)
+        version: 1.2.0(vite@6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))(zod@3.24.1)
       '@sentry/vite-plugin':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tauri-apps/cli':
         specifier: '>=2.0.0-beta.0'
@@ -82,29 +136,32 @@ importers:
         specifier: '>=2.0.0-beta.0'
         version: 2.2.0
       '@types/react':
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       '@types/react-dom':
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       '@vitejs/plugin-react':
-        specifier: 4.3.4
-        version: 4.3.4(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))
+        specifier: 'catalog:'
+        version: 4.3.4(vite@6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))
       internal-ip:
         specifier: 8.0.0
         version: 8.0.0
       postcss:
-        specifier: 8.5.1
+        specifier: 'catalog:'
         version: 8.5.1
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 3.4.14(ts-node@10.9.2(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@22.10.1)(typescript@5.7.3))
       typescript:
-        specifier: 5.7.3
+        specifier: 'catalog:'
         version: 5.7.3
       vite:
-        specifier: 6.0.7
-        version: 6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
+        specifier: 'catalog:'
+        version: 6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
       vite-tsconfig-paths:
-        specifier: 5.1.4
-        version: 5.1.4(typescript@5.7.3)(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))
+        specifier: 'catalog:'
+        version: 5.1.4(typescript@5.7.3)(vite@6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))
 
   apps/storybook:
     dependencies:
@@ -114,9 +171,9 @@ importers:
       '@incmix/ui':
         specifier: 'workspace: *'
         version: link:../../frontend/ui
-      '@jsprtmnn/utils':
-        specifier: 0.1.0
-        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
+      '@incmix/utils':
+        specifier: 'catalog:'
+        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.24.1)
       '@radix-ui/react-icons':
         specifier: 1.3.1
         version: 1.3.1(react@18.3.1)
@@ -124,13 +181,13 @@ importers:
         specifier: 7.6.17
         version: 7.6.17(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-query':
-        specifier: 5.59.16
+        specifier: 'catalog:'
         version: 5.59.16(react@18.3.1)
       react:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-hook-form:
         specifier: 7.51.2
@@ -159,24 +216,24 @@ importers:
         version: 8.4.6(@storybook/test@8.4.6(storybook@8.4.6(prettier@3.4.2)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.4.6(prettier@3.4.2))(typescript@5.7.3)
       '@storybook/react-vite':
         specifier: 8.4.6
-        version: 8.4.6(@storybook/test@8.4.6(storybook@8.4.6(prettier@3.4.2)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.30.1)(storybook@8.4.6(prettier@3.4.2))(typescript@5.7.3)(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))
+        version: 8.4.6(@storybook/test@8.4.6(storybook@8.4.6(prettier@3.4.2)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.30.1)(storybook@8.4.6(prettier@3.4.2))(typescript@5.7.3)(vite@6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))
       '@storybook/testing-library':
         specifier: 0.2.1
         version: 0.2.1
       '@types/react':
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       '@types/react-dom':
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       '@vitejs/plugin-react-swc':
         specifier: 3.7.2
-        version: 3.7.2(@swc/helpers@0.5.15)(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))
+        version: 3.7.2(@swc/helpers@0.5.15)(vite@6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))
       autoprefixer:
         specifier: 10.4.19
         version: 10.4.19(postcss@8.5.1)
       postcss:
-        specifier: 8.5.1
+        specifier: 'catalog:'
         version: 8.5.1
       prop-types:
         specifier: 15.8.1
@@ -187,12 +244,15 @@ importers:
       storybook:
         specifier: 8.4.6
         version: 8.4.6(prettier@3.4.2)
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 3.4.14(ts-node@10.9.2(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@22.10.1)(typescript@5.7.3))
       typescript:
-        specifier: 5.7.3
+        specifier: 'catalog:'
         version: 5.7.3
       vite:
-        specifier: 6.0.7
-        version: 6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
+        specifier: 'catalog:'
+        version: 6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
 
   frontend/pages:
     dependencies:
@@ -200,7 +260,7 @@ importers:
         specifier: 4.0.0
         version: 4.0.0(@casl/ability@6.7.3)(react@18.3.1)
       '@electric-sql/pglite-react':
-        specifier: 0.2.15
+        specifier: 'catalog:'
         version: 0.2.15(@electric-sql/pglite@0.2.15)(react@18.3.1)
       '@incmix/store':
         specifier: 'workspace: *'
@@ -208,21 +268,21 @@ importers:
       '@incmix/ui':
         specifier: 'workspace: *'
         version: link:../ui
-      '@jsprtmnn/utils':
-        specifier: 0.1.0
-        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
+      '@incmix/utils':
+        specifier: 'catalog:'
+        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.24.1)
       '@radix-ui/themes':
-        specifier: 3.1.6
+        specifier: 'catalog:'
         version: 3.1.6(@types/react-dom@18.3.1)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-query':
-        specifier: 5.59.16
+        specifier: 'catalog:'
         version: 5.59.16(react@18.3.1)
       '@tanstack/react-router':
-        specifier: 1.76.1
+        specifier: 'catalog:'
         version: 1.76.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/zod-form-adapter':
         specifier: 0.41.2
-        version: 0.41.2(zod@3.23.8)
+        version: 0.41.2(zod@3.24.1)
       i18next:
         specifier: 24.2.1
         version: 24.2.1(typescript@5.7.3)
@@ -239,10 +299,10 @@ importers:
         specifier: 10.1.1
         version: 10.1.1
       react:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-i18next:
         specifier: 15.4.0
@@ -254,14 +314,14 @@ importers:
         specifier: 2.3.0
         version: 2.3.0
       tailwindcss:
-        specifier: 3.4.14
+        specifier: 'catalog:'
         version: 3.4.14(ts-node@10.9.2(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@22.10.1)(typescript@5.7.3))
       tailwindcss-animate:
         specifier: 1.0.7
         version: 1.0.7(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@22.10.1)(typescript@5.7.3)))
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 'catalog:'
+        version: 3.24.1
       zustand:
         specifier: 4.5.4
         version: 4.5.4(@types/react@18.3.1)(immer@10.1.1)(react@18.3.1)
@@ -276,10 +336,10 @@ importers:
         specifier: 1.36.3
         version: 1.36.3(@tanstack/react-router@1.76.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(csstype@3.1.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/react':
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       '@types/react-dom':
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       '@types/wicg-file-system-access':
         specifier: 2023.10.5
@@ -298,10 +358,10 @@ importers:
         version: 0.2.17(@electric-sql/pglite@0.2.15)
       '@hono/zod-openapi':
         specifier: 0.18.3
-        version: 0.18.3(hono@4.6.16)(zod@3.23.8)
-      '@jsprtmnn/utils':
-        specifier: 0.1.0
-        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
+        version: 0.18.3(hono@4.6.16)(zod@3.24.1)
+      '@incmix/utils':
+        specifier: 'catalog:'
+        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.24.1)
       '@koale/useworker':
         specifier: 4.1.0
         version: 4.1.0(react@18.3.1)
@@ -355,7 +415,7 @@ importers:
         specifier: 'workspace: *'
         version: link:../../shared/config
       typescript:
-        specifier: 5.7.3
+        specifier: 'catalog:'
         version: 5.7.3
 
   frontend/ui:
@@ -383,7 +443,7 @@ importers:
         version: 1.2.2(react@18.3.1)
       '@conform-to/zod':
         specifier: ^1.2.2
-        version: 1.2.2(zod@3.23.8)
+        version: 1.2.2(zod@3.24.1)
       '@dnd-kit/core':
         specifier: 6.3.1
         version: 6.3.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -402,9 +462,9 @@ importers:
       '@incmix/store':
         specifier: 'workspace: *'
         version: link:../store
-      '@jsprtmnn/utils':
-        specifier: 0.1.0
-        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
+      '@incmix/utils':
+        specifier: 'catalog:'
+        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.24.1)
       '@mantine/hooks':
         specifier: 7.14.1
         version: 7.14.1(react@18.3.1)
@@ -436,7 +496,7 @@ importers:
         specifier: 1.1.6
         version: 1.1.6(@types/react-dom@18.3.1)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@radix-ui/themes':
-        specifier: 3.1.6
+        specifier: 'catalog:'
         version: 3.1.6(@types/react-dom@18.3.1)(@types/react@18.3.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@stepperize/react':
         specifier: ^4.0.1
@@ -461,13 +521,10 @@ importers:
         version: 8.20.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/zod-form-adapter':
         specifier: ^0.41.3
-        version: 0.41.3(zod@3.23.8)
+        version: 0.41.3(zod@3.24.1)
       '@tauri-apps/api':
         specifier: '>=2.0.0-beta.0'
         version: 2.2.0
-      '@types/resize-observer-browser':
-        specifier: 0.1.11
-        version: 0.1.11
       aria-hidden:
         specifier: 1.2.4
         version: 1.2.4
@@ -496,7 +553,7 @@ importers:
         specifier: 10.1.1
         version: 10.1.1
       lucide-react:
-        specifier: 0.471.1
+        specifier: 'catalog:'
         version: 0.471.1(react@18.3.1)
       luxon:
         specifier: 3.5.0
@@ -550,8 +607,8 @@ importers:
         specifier: 1.0.0-beta.0
         version: 1.0.0-beta.0(@radix-ui/colors@3.0.0)(@tailwindcss/typography@0.5.15(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@22.10.1)(typescript@5.7.3))))(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@22.10.1)(typescript@5.7.3)))(windy-radix-palette@2.0.0-beta.7(@radix-ui/colors@3.0.0)(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@22.10.1)(typescript@5.7.3))))
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 'catalog:'
+        version: 3.24.1
     devDependencies:
       '@incmix/config':
         specifier: 'workspace: *'
@@ -560,22 +617,25 @@ importers:
         specifier: 3.4.2
         version: 3.4.2
       '@types/react':
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       '@types/react-dom':
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
+      '@types/resize-observer-browser':
+        specifier: 0.1.11
+        version: 0.1.11
       '@types/wicg-file-system-access':
         specifier: 2023.10.5
         version: 2023.10.5
       react:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       tailwindcss:
-        specifier: 3.4.14
+        specifier: 'catalog:'
         version: 3.4.14(ts-node@10.9.2(@swc/core@1.10.7(@swc/helpers@0.5.15))(@types/node@22.10.1)(typescript@5.7.3))
       typescript:
         specifier: 5.7.3
@@ -583,15 +643,15 @@ importers:
 
   shared/assets:
     dependencies:
-      '@jsprtmnn/utils':
-        specifier: 0.1.0
-        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
+      '@incmix/utils':
+        specifier: 'catalog:'
+        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.24.1)
 
   shared/config:
     dependencies:
-      '@jsprtmnn/utils':
-        specifier: 0.1.0
-        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)
+      '@incmix/utils':
+        specifier: 'catalog:'
+        version: 0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.24.1)
     devDependencies:
       next:
         specifier: 15.1.4
@@ -1893,6 +1953,13 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@incmix/utils@0.1.0':
+    resolution: {integrity: sha512-FkXg4aikKsp4AkdeeBgrk9jogDeZLn2Tc2QT1uh08CjlzygwPsNzm9YzQNvXDDYIiuLp6pKYxoHph9fOuM/ArA==}
+    engines: {node: '>=22.13.0'}
+    peerDependencies:
+      '@types/luxon': '>=3.0'
+      luxon: '>=3.0'
+
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
@@ -1926,13 +1993,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
-
-  '@jsprtmnn/utils@0.1.0':
-    resolution: {integrity: sha512-3SIx4o/oymNpLXs1/JpjjvVlS5Xk3FHKY48AmDWIyJ/derIYWIRQstFah3F/LaWNXgjy6F9VjOr+jRc7MUYGYg==}
-    engines: {node: '>=22.13.0'}
-    peerDependencies:
-      '@types/luxon': '>=3.0'
-      luxon: '>=3.0'
 
   '@julr/vite-plugin-validate-env@1.2.0':
     resolution: {integrity: sha512-taAYS+7zOREHjiLiMp6S1ZhYRxWs4QfC7Usvqvbi4ni78vOuHREbk446A5u0im06eTxUOfqishLbZ879N0hHMg==}
@@ -3045,28 +3105,28 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@sentry-internal/browser-utils@8.19.0':
-    resolution: {integrity: sha512-kM/2KlikKuBR63nFi2q7MGS3V9K9hakjvUknhr/jHZqDVfEuBKmp1ZlHFAdJtglKHHJy07gPj/XqDH7BbYh5yg==}
+  '@sentry-internal/browser-utils@8.51.0':
+    resolution: {integrity: sha512-r94yfRK17zNJER0hgQE4qOSy5pWzsnFcGTJQSqhSEKUcC4KK37qSfoPrPejFxtIqXhqlkd/dTWKvrMwXWcn0MQ==}
     engines: {node: '>=14.18'}
 
-  '@sentry-internal/feedback@8.19.0':
-    resolution: {integrity: sha512-Jc77H8fEaGcBhERc2U/o7Q8CZHvlZLT9vAlzq0ZZR20v/1vwYcJW1ysKfTuvmw22hCR6ukhFNl6pqJocXFVhvA==}
+  '@sentry-internal/feedback@8.51.0':
+    resolution: {integrity: sha512-VgfxSZWLYUPKDnkt2zG+Oe5ccv8U3WPM6Mo4kfABIJT3Ai4VbZB7+vb2a4pm6lUCF9DeOPXHb5o9Tg17SHDAHw==}
     engines: {node: '>=14.18'}
 
-  '@sentry-internal/replay-canvas@8.19.0':
-    resolution: {integrity: sha512-l4pKJDHrXEctxrK7Xme/+fKToXpGwr/G2t77BzeE1WEw9LwSwADz/hi8HoMdZzuKWriM2BNbz20tpVS84sODxA==}
+  '@sentry-internal/replay-canvas@8.51.0':
+    resolution: {integrity: sha512-ERXIbwdULkdtIQnfkMLRVfpoGV2rClwySGRlTPepFKeLxlcXo9o09cPu+qbukiDnGK0cgEgRnrV961hMg21Bmw==}
     engines: {node: '>=14.18'}
 
-  '@sentry-internal/replay@8.19.0':
-    resolution: {integrity: sha512-EW9e1J6XbqXUXQST1AfSIzT9O8OwPyeFOkhkn9/gqOQv08TJvQEIBtWJEoJS+XFMEUuB8IqIzVWNVko/DnGt9A==}
+  '@sentry-internal/replay@8.51.0':
+    resolution: {integrity: sha512-lkm7id3a2n3yMZeF5socCVQUeEeShNOGr7Wtsmb5RORacEnld0z+NfbMTilo1mDwiWBzI5OYBjm62eglm1HFsQ==}
     engines: {node: '>=14.18'}
 
   '@sentry/babel-plugin-component-annotate@3.0.0':
     resolution: {integrity: sha512-AJEt9UtU9euB6tDLRQRpCl0EUvY5UlDQEaMSu948OHC+E2jEDoh9RzmfxtqKaDhjT/6WO6g4UoSBNOLxdZkptw==}
     engines: {node: '>= 14'}
 
-  '@sentry/browser@8.19.0':
-    resolution: {integrity: sha512-ZC1HxIFm4TIGONyy9MkPG6Dw8IAhzq43t5mq9PqrB1ehuWj8GX6Vk3E26kuc2sydAm4AXbj0562OmvZHsAJpUA==}
+  '@sentry/browser@8.51.0':
+    resolution: {integrity: sha512-1kbbyVfBBAx5Xyynp+lC5lLnAHo0qJ2r4mtmdT6koPjesvoOocEK0QQnouQBmdUbm3L0L/bPI1SgXjbeJyhzHQ==}
     engines: {node: '>=14.18'}
 
   '@sentry/bundler-plugin-core@3.0.0':
@@ -3119,23 +3179,15 @@ packages:
     engines: {node: '>= 10'}
     hasBin: true
 
-  '@sentry/core@8.19.0':
-    resolution: {integrity: sha512-MrgjsZCEjOJgQjIznnDSrLEy7qL+4LVpNieAvr49cV1rzBNSwGmWRnt/puVaPsLyCUgupVx/43BPUHB/HtKNUw==}
+  '@sentry/core@8.51.0':
+    resolution: {integrity: sha512-Go0KxCYLw+OBIlLSv5YsYX+x9NW43fNVcyB6rhkSp2Q5Zme3tAE6KtZFvyu4SO7G/903wisW5Q6qV6UuK/ee4A==}
     engines: {node: '>=14.18'}
 
-  '@sentry/react@8.19.0':
-    resolution: {integrity: sha512-MzuMy4AEdSuIrBEyp3W7c4+v215+2MiU9ba7Y0KBKcC/Nrf1cGfRFRbjl9OYm/JIuxkaop7kgYs6sPMrVJVlrQ==}
+  '@sentry/react@8.51.0':
+    resolution: {integrity: sha512-Gqa6THfBJu3kagUr9B9kUWvOwzu7L2c1Wdvo7Wcy1yq6rcB2F2Ihxo9okNvb7cAez//UBtEYFebRJAaFKZqN0g==}
     engines: {node: '>=14.18'}
     peerDependencies:
       react: ^16.14.0 || 17.x || 18.x || 19.x
-
-  '@sentry/types@8.19.0':
-    resolution: {integrity: sha512-52C8X5V7mK2KIxMJt8MV5TxXAFHqrQR1RKm1oPTwKVWm8hKr1ZYJXINymNrWvpAc3oVIKLC/sa9WFYgXQh+YlA==}
-    engines: {node: '>=14.18'}
-
-  '@sentry/utils@8.19.0':
-    resolution: {integrity: sha512-8dWJJKaUN6Hf92Oxw2TBmHchGua2W3ZmonrZTTwLvl06jcAigbiQD0MGuF5ytZP8PHx860orV+SbTGKFzfU3Pg==}
-    engines: {node: '>=14.18'}
 
   '@sentry/vite-plugin@3.0.0':
     resolution: {integrity: sha512-E2elyHjP3Wqnk2uXr9C17jHRQBKX8jEOpzOnEOiXYDI2FBfehs9ttj9yX1I7H8ofCiqO2EsTu5r2a0C26ZWi+w==}
@@ -7042,8 +7094,8 @@ packages:
       vite:
         optional: true
 
-  vite@6.0.7:
-    resolution: {integrity: sha512-RDt8r/7qx9940f8FcOIAH9PTViRrghKaK2K1jY3RaAURrEUbm9Du1mJ72G+jlhtG3WwodnfzY8ORQZbBavZEAQ==}
+  vite@6.0.9:
+    resolution: {integrity: sha512-MSgUxHcaXLtnBPktkbUSoQUANApKYuxZ6DrbVENlIorbhL2dZydTLaZ01tjUoE3szeFzlFk9ANOKk0xurh4MKA==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
     peerDependencies:
@@ -7243,8 +7295,8 @@ packages:
     resolution: {integrity: sha512-b4JR1PFR10y1mKjhHY9LaGo6tmrgjit7hxVIeAmyMw3jegXR4dhYqLaQF5zMXZxY7tLpMyJeLjr1C4rLmkVe8g==}
     engines: {node: '>=12.20'}
 
-  zod@3.23.8:
-    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
+  zod@3.24.1:
+    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
 
   zustand-middleware-computed-state@0.1.3:
     resolution: {integrity: sha512-Gkb3h/AxUKu6oG1RQXuGTXXu/lNmOSdWhqdw7TNFQ3rAZhNFllBPbciAZ/x5fR6Jz6xsu0ZE+ekbzSa1uTaI/Q==}
@@ -7285,10 +7337,10 @@ snapshots:
 
   '@antfu/utils@0.7.10': {}
 
-  '@asteasolutions/zod-to-openapi@7.3.0(zod@3.23.8)':
+  '@asteasolutions/zod-to-openapi@7.3.0(zod@3.24.1)':
     dependencies:
       openapi3-ts: 4.4.0
-      zod: 3.23.8
+      zod: 3.24.1
 
   '@atlaskit/ds-lib@3.3.0(@types/react@18.3.1)(react@18.3.1)':
     dependencies:
@@ -8251,10 +8303,10 @@ snapshots:
       '@conform-to/dom': 1.2.2
       react: 18.3.1
 
-  '@conform-to/zod@1.2.2(zod@3.23.8)':
+  '@conform-to/zod@1.2.2(zod@3.24.1)':
     dependencies:
       '@conform-to/dom': 1.2.2
-      zod: 3.23.8
+      zod: 3.24.1
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
@@ -8548,17 +8600,17 @@ snapshots:
 
   '@floating-ui/utils@0.2.9': {}
 
-  '@hono/zod-openapi@0.18.3(hono@4.6.16)(zod@3.23.8)':
+  '@hono/zod-openapi@0.18.3(hono@4.6.16)(zod@3.24.1)':
     dependencies:
-      '@asteasolutions/zod-to-openapi': 7.3.0(zod@3.23.8)
-      '@hono/zod-validator': 0.4.2(hono@4.6.16)(zod@3.23.8)
+      '@asteasolutions/zod-to-openapi': 7.3.0(zod@3.24.1)
+      '@hono/zod-validator': 0.4.2(hono@4.6.16)(zod@3.24.1)
       hono: 4.6.16
-      zod: 3.23.8
+      zod: 3.24.1
 
-  '@hono/zod-validator@0.4.2(hono@4.6.16)(zod@3.23.8)':
+  '@hono/zod-validator@0.4.2(hono@4.6.16)(zod@3.24.1)':
     dependencies:
       hono: 4.6.16
-      zod: 3.23.8
+      zod: 3.24.1
 
   '@hookform/resolvers@3.3.4(react-hook-form@7.51.2(react@18.3.1))':
     dependencies:
@@ -8639,6 +8691,16 @@ snapshots:
   '@img/sharp-win32-x64@0.33.5':
     optional: true
 
+  '@incmix/utils@0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.24.1)':
+    dependencies:
+      '@casl/ability': 6.7.3
+      '@hono/zod-openapi': 0.18.3(hono@4.6.16)(zod@3.24.1)
+      '@types/luxon': 3.4.2
+      luxon: 3.5.0
+    transitivePeerDependencies:
+      - hono
+      - zod
+
   '@isaacs/cliui@8.0.2':
     dependencies:
       string-width: 5.1.2
@@ -8648,11 +8710,11 @@ snapshots:
       wrap-ansi: 8.1.0
       wrap-ansi-cjs: wrap-ansi@7.0.0
 
-  '@joshwooding/vite-plugin-react-docgen-typescript@0.4.2(typescript@5.7.3)(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))':
+  '@joshwooding/vite-plugin-react-docgen-typescript@0.4.2(typescript@5.7.3)(vite@6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))':
     dependencies:
       magic-string: 0.27.0
       react-docgen-typescript: 2.2.2(typescript@5.7.3)
-      vite: 6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
+      vite: 6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
     optionalDependencies:
       typescript: 5.7.3
 
@@ -8678,24 +8740,14 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@jsprtmnn/utils@0.1.0(@types/luxon@3.4.2)(hono@4.6.16)(luxon@3.5.0)(zod@3.23.8)':
-    dependencies:
-      '@casl/ability': 6.7.3
-      '@hono/zod-openapi': 0.18.3(hono@4.6.16)(zod@3.23.8)
-      '@types/luxon': 3.4.2
-      luxon: 3.5.0
-    transitivePeerDependencies:
-      - hono
-      - zod
-
-  '@julr/vite-plugin-validate-env@1.2.0(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))(zod@3.23.8)':
+  '@julr/vite-plugin-validate-env@1.2.0(vite@6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))(zod@3.24.1)':
     dependencies:
       '@poppinss/cliui': 6.4.2
       '@poppinss/validator-lite': 1.0.3
       unconfig: 0.6.0
-      vite: 6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
+      vite: 6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
     optionalDependencies:
-      zod: 3.23.8
+      zod: 3.24.1
     transitivePeerDependencies:
       - supports-color
 
@@ -9813,43 +9865,33 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.30.1':
     optional: true
 
-  '@sentry-internal/browser-utils@8.19.0':
+  '@sentry-internal/browser-utils@8.51.0':
     dependencies:
-      '@sentry/core': 8.19.0
-      '@sentry/types': 8.19.0
-      '@sentry/utils': 8.19.0
+      '@sentry/core': 8.51.0
 
-  '@sentry-internal/feedback@8.19.0':
+  '@sentry-internal/feedback@8.51.0':
     dependencies:
-      '@sentry/core': 8.19.0
-      '@sentry/types': 8.19.0
-      '@sentry/utils': 8.19.0
+      '@sentry/core': 8.51.0
 
-  '@sentry-internal/replay-canvas@8.19.0':
+  '@sentry-internal/replay-canvas@8.51.0':
     dependencies:
-      '@sentry-internal/replay': 8.19.0
-      '@sentry/core': 8.19.0
-      '@sentry/types': 8.19.0
-      '@sentry/utils': 8.19.0
+      '@sentry-internal/replay': 8.51.0
+      '@sentry/core': 8.51.0
 
-  '@sentry-internal/replay@8.19.0':
+  '@sentry-internal/replay@8.51.0':
     dependencies:
-      '@sentry-internal/browser-utils': 8.19.0
-      '@sentry/core': 8.19.0
-      '@sentry/types': 8.19.0
-      '@sentry/utils': 8.19.0
+      '@sentry-internal/browser-utils': 8.51.0
+      '@sentry/core': 8.51.0
 
   '@sentry/babel-plugin-component-annotate@3.0.0': {}
 
-  '@sentry/browser@8.19.0':
+  '@sentry/browser@8.51.0':
     dependencies:
-      '@sentry-internal/browser-utils': 8.19.0
-      '@sentry-internal/feedback': 8.19.0
-      '@sentry-internal/replay': 8.19.0
-      '@sentry-internal/replay-canvas': 8.19.0
-      '@sentry/core': 8.19.0
-      '@sentry/types': 8.19.0
-      '@sentry/utils': 8.19.0
+      '@sentry-internal/browser-utils': 8.51.0
+      '@sentry-internal/feedback': 8.51.0
+      '@sentry-internal/replay': 8.51.0
+      '@sentry-internal/replay-canvas': 8.51.0
+      '@sentry/core': 8.51.0
 
   '@sentry/bundler-plugin-core@3.0.0':
     dependencies:
@@ -9905,25 +9947,14 @@ snapshots:
       - encoding
       - supports-color
 
-  '@sentry/core@8.19.0':
-    dependencies:
-      '@sentry/types': 8.19.0
-      '@sentry/utils': 8.19.0
+  '@sentry/core@8.51.0': {}
 
-  '@sentry/react@8.19.0(react@18.3.1)':
+  '@sentry/react@8.51.0(react@18.3.1)':
     dependencies:
-      '@sentry/browser': 8.19.0
-      '@sentry/core': 8.19.0
-      '@sentry/types': 8.19.0
-      '@sentry/utils': 8.19.0
+      '@sentry/browser': 8.51.0
+      '@sentry/core': 8.51.0
       hoist-non-react-statics: 3.3.2
       react: 18.3.1
-
-  '@sentry/types@8.19.0': {}
-
-  '@sentry/utils@8.19.0':
-    dependencies:
-      '@sentry/types': 8.19.0
 
   '@sentry/vite-plugin@3.0.0':
     dependencies:
@@ -10059,13 +10090,13 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@storybook/builder-vite@8.4.6(storybook@8.4.6(prettier@3.4.2))(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))':
+  '@storybook/builder-vite@8.4.6(storybook@8.4.6(prettier@3.4.2))(vite@6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))':
     dependencies:
       '@storybook/csf-plugin': 8.4.6(storybook@8.4.6(prettier@3.4.2))
       browser-assert: 1.2.1
       storybook: 8.4.6(prettier@3.4.2)
       ts-dedent: 2.2.0
-      vite: 6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
+      vite: 6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
 
   '@storybook/channels@7.6.17':
     dependencies:
@@ -10230,11 +10261,11 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       storybook: 8.4.6(prettier@3.4.2)
 
-  '@storybook/react-vite@8.4.6(@storybook/test@8.4.6(storybook@8.4.6(prettier@3.4.2)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.30.1)(storybook@8.4.6(prettier@3.4.2))(typescript@5.7.3)(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))':
+  '@storybook/react-vite@8.4.6(@storybook/test@8.4.6(storybook@8.4.6(prettier@3.4.2)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rollup@4.30.1)(storybook@8.4.6(prettier@3.4.2))(typescript@5.7.3)(vite@6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))':
     dependencies:
-      '@joshwooding/vite-plugin-react-docgen-typescript': 0.4.2(typescript@5.7.3)(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))
+      '@joshwooding/vite-plugin-react-docgen-typescript': 0.4.2(typescript@5.7.3)(vite@6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))
       '@rollup/pluginutils': 5.1.4(rollup@4.30.1)
-      '@storybook/builder-vite': 8.4.6(storybook@8.4.6(prettier@3.4.2))(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))
+      '@storybook/builder-vite': 8.4.6(storybook@8.4.6(prettier@3.4.2))(vite@6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))
       '@storybook/react': 8.4.6(@storybook/test@8.4.6(storybook@8.4.6(prettier@3.4.2)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.4.6(prettier@3.4.2))(typescript@5.7.3)
       find-up: 5.0.0
       magic-string: 0.30.17
@@ -10244,7 +10275,7 @@ snapshots:
       resolve: 1.22.10
       storybook: 8.4.6(prettier@3.4.2)
       tsconfig-paths: 4.2.0
-      vite: 6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
+      vite: 6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
     transitivePeerDependencies:
       - '@storybook/test'
       - rollup
@@ -10465,7 +10496,7 @@ snapshots:
   '@tanstack/router-generator@1.37.0':
     dependencies:
       prettier: 3.4.2
-      zod: 3.23.8
+      zod: 3.24.1
 
   '@tanstack/store@0.5.5': {}
 
@@ -10473,15 +10504,15 @@ snapshots:
 
   '@tanstack/table-core@8.20.5': {}
 
-  '@tanstack/zod-form-adapter@0.41.2(zod@3.23.8)':
+  '@tanstack/zod-form-adapter@0.41.2(zod@3.24.1)':
     dependencies:
       '@tanstack/form-core': 0.41.2
-      zod: 3.23.8
+      zod: 3.24.1
 
-  '@tanstack/zod-form-adapter@0.41.3(zod@3.23.8)':
+  '@tanstack/zod-form-adapter@0.41.3(zod@3.24.1)':
     dependencies:
       '@tanstack/form-core': 0.41.3
-      zod: 3.23.8
+      zod: 3.24.1
 
   '@tauri-apps/api@2.2.0': {}
 
@@ -10760,21 +10791,21 @@ snapshots:
     dependencies:
       '@ucast/core': 1.10.2
 
-  '@vitejs/plugin-react-swc@3.7.2(@swc/helpers@0.5.15)(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))':
+  '@vitejs/plugin-react-swc@3.7.2(@swc/helpers@0.5.15)(vite@6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))':
     dependencies:
       '@swc/core': 1.10.7(@swc/helpers@0.5.15)
-      vite: 6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
+      vite: 6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@vitejs/plugin-react@4.3.4(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))':
+  '@vitejs/plugin-react@4.3.4(vite@6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))':
     dependencies:
       '@babel/core': 7.26.0
       '@babel/plugin-transform-react-jsx-self': 7.25.9(@babel/core@7.26.0)
       '@babel/plugin-transform-react-jsx-source': 7.25.9(@babel/core@7.26.0)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
+      vite: 6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -14092,18 +14123,18 @@ snapshots:
       - '@types/react'
       - '@types/react-dom'
 
-  vite-tsconfig-paths@5.1.4(typescript@5.7.3)(vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)):
+  vite-tsconfig-paths@5.1.4(typescript@5.7.3)(vite@6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)):
     dependencies:
       debug: 4.4.0(supports-color@8.1.1)
       globrex: 0.1.2
       tsconfck: 3.1.4(typescript@5.7.3)
     optionalDependencies:
-      vite: 6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
+      vite: 6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
     transitivePeerDependencies:
       - supports-color
       - typescript
 
-  vite@6.0.7(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0):
+  vite@6.0.9(@types/node@22.10.1)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0):
     dependencies:
       esbuild: 0.24.2
       postcss: 8.5.1
@@ -14275,7 +14306,7 @@ snapshots:
 
   yocto-queue@1.1.1: {}
 
-  zod@3.23.8: {}
+  zod@3.24.1: {}
 
   zustand-middleware-computed-state@0.1.3: {}
 

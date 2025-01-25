@@ -3,7 +3,7 @@ import type {
   MemberDetails,
   MemberRole,
   Organization,
-} from "@jsprtmnn/utils/types"
+} from "@incmix/utils/types"
 import { ArrowLeftIcon } from "@radix-ui/react-icons"
 import {
   Container,

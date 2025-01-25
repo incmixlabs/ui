@@ -4,7 +4,7 @@ import type { Table } from "@tanstack/react-table"
 import { Download } from "lucide-react"
 
 import { Button, exportTableToCSV } from "@incmix/ui"
-import type { MemberDetails } from "@jsprtmnn/utils/types"
+import type { MemberDetails } from "@incmix/utils/types"
 import { DeleteDialog } from "./delete-dialog"
 
 interface ToolbarActionsProps {

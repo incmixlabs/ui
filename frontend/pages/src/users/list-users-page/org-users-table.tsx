@@ -14,7 +14,7 @@ import { I18n } from "@incmix/pages/i18n"
 import { useOrganizationStore } from "@incmix/store"
 import { Spinner } from "@incmix/ui"
 import { ORG_API_URL } from "@incmix/ui/constants"
-import type { MemberDetails } from "@jsprtmnn/utils/types"
+import type { MemberDetails } from "@incmix/utils/types"
 import { getColumns } from "./org-user-columns"
 
 const AdminUsersTable = () => {
