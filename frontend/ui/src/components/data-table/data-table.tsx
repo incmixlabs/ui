@@ -7,9 +7,9 @@ import {
   TableBody,
   TableCell,
   TableHead,
-  TableHeader,
+  TableHeadCell,
   TableRow,
-} from "../table"
+} from "../table/index"
 import { DataTablePagination } from "./data-table-pagination"
 import { getCommonPinningStyles } from "./lib/data-table"
 
@@ -44,12 +44,12 @@ export function DataTable<TData>({
       {children}
       <div className="overflow-hidden rounded-md border">
         <Table>
-          <TableHeader>
+          <TableHead>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead
+                    <TableHeadCell
                       key={header.id}
                       colSpan={header.colSpan}
                       style={{
@@ -62,12 +62,12 @@ export function DataTable<TData>({
                             header.column.columnDef.header,
                             header.getContext()
                           )}
-                    </TableHead>
+                    </TableHeadCell>
                   )
                 })}
               </TableRow>
             ))}
-          </TableHeader>
+          </TableHead>
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
