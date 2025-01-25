@@ -14,7 +14,7 @@ import {
   ReactiveButton,
   toast,
 } from "@incmix/ui"
-import type { Project } from "@jsprt/utils/types/tasks"
+import type { Project } from "@incmix/utils/types/tasks"
 import { Button, Flex } from "@radix-ui/themes"
 import { useForm } from "@tanstack/react-form"
 import { useMutation } from "@tanstack/react-query"

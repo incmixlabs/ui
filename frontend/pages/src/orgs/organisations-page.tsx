@@ -1,6 +1,6 @@
 import { LoadingPage } from "@common"
 import { Button, CardContainer, FormField } from "@incmix/ui"
-import type { Organization } from "@jsprt/utils/types"
+import type { Organization } from "@incmix/utils/types"
 import { ChevronRightIcon } from "@radix-ui/react-icons"
 import {
   Container,
