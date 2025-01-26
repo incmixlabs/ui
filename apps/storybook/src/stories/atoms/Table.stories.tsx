@@ -198,9 +198,6 @@ export const UserTable: Story = {
                   {user.status}
                 </div>
               </Table.Cell>
-              <Table.Cell>
-                <div className="flex items-center gap-x-3 whitespace-nowrap"></div>
-              </Table.Cell>
             </Table.Row>
           ))}
         </Table.Body>
