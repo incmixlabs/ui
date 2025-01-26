@@ -11,7 +11,7 @@ export interface TableHeadCellTheme {
   base: string
   padding: {
     base: string
-    tight: string
+    compact: string
   }
 }
 
@@ -26,12 +26,14 @@ export const TableHeadCell = forwardRef<
   const { theme: headTheme } = useTableHeadContext()
   const tableContext = useTableContext()
   const theme = mergeDeep(headTheme.cell, customTheme)
-  const padding = tableContext.tight ? theme.padding.tight : theme.padding.base
+  const padding = tableContext.compact
+    ? theme.padding.compact
+    : theme.padding.base
   console.log("Padding ", padding)
-  console.log("is tight", tableContext.tight)
+  console.log("is compact", tableContext.compact)
   return (
     <th
-      className={twMerge(theme.base, padding, theme.tight, className)}
+      className={twMerge(theme.base, padding, theme.compact, className)}
       ref={ref}
       {...props}
     >

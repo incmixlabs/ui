@@ -11,7 +11,7 @@ export interface TableCellTheme {
   base: string
   padding: {
     base: string
-    tight: string
+    compact: string
   }
 }
 
@@ -23,16 +23,16 @@ export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(
   ({ children, className, theme: customTheme = {}, ...props }, ref) => {
     const { theme: bodyTheme } = useTableBodyContext()
     const tableContext = useTableContext()
-    const padding = tableContext.tight
-      ? bodyTheme.cell.padding.tight
+    const padding = tableContext.compact
+      ? bodyTheme.cell.padding.compact
       : bodyTheme.cell.padding.base
     console.log("Padding ", padding)
-    console.log("is tight", tableContext.tight)
+    console.log("is compact", tableContext.compact)
     const theme = mergeDeep(bodyTheme.cell, customTheme)
 
     return (
       <td
-        className={twMerge(theme.base, padding, theme.tight, className)}
+        className={twMerge(theme.base, padding, theme.compact, className)}
         ref={ref}
         {...props}
       >
