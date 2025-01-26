@@ -14,7 +14,7 @@ export const tableTheme: TableTheme = createTheme({
       base: "group-first/body:group-first/row:first:rounded-tl-lg group-first/body:group-first/row:last:rounded-tr-lg group-last/body:group-last/row:first:rounded-bl-lg group-last/body:group-last/row:last:rounded-br-lg",
       padding: {
         base: "px-6 py-4",
-        tight: "px-4 py-2",
+        compact: "px-2 py-1",
       },
     },
   },
@@ -24,7 +24,7 @@ export const tableTheme: TableTheme = createTheme({
       base: "bg-gray-50 group-first/head:first:rounded-tl-lg group-first/head:last:rounded-tr-lg dark:bg-gray-700",
       padding: {
         base: "px-6 py-3",
-        tight: "px-4 py-2",
+        compact: "px-2 py-1",
       },
     },
   },
