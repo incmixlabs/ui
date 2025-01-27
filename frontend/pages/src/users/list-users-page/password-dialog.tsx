@@ -11,7 +11,7 @@ import {
   ReactiveButton,
   toast,
 } from "@incmix/ui"
-import type { UserAndProfile } from "@jsprt/utils/data-table"
+import type { UserAndProfile } from "@incmix/utils/data-table"
 import { Button, Flex } from "@radix-ui/themes"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"

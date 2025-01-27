@@ -298,6 +298,9 @@ importers:
       immer:
         specifier: 10.1.1
         version: 10.1.1
+      lucide-react:
+        specifier: 'catalog:'
+        version: 0.471.1(react@18.3.1)
       react:
         specifier: 'catalog:'
         version: 18.3.1
