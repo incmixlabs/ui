@@ -34,6 +34,7 @@
     "./layouts": "./src/components/layouts/index.ts",
     "./object": "./src/utils/object.ts",
     "./preset": "./src/preset.ts",
+    "./sheet": "./src/components/sheet.tsx",
     "./stepper": "./src/components/stepper/index.ts",
     "./split-button": "./src/components/button/split-button.tsx",
     "./tauri": "./src/tauri.ts",

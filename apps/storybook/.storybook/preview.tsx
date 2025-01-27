@@ -43,9 +43,11 @@ const preview: Preview = {
       },
     },
   },
+
   initialGlobals: {
     theme: "light",
   },
+
   parameters: {
     actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
@@ -56,6 +58,7 @@ const preview: Preview = {
     },
     layout: "fullscreen",
   },
+
   decorators: [
     (Story, context) => {
       const theme = context.globals.theme.toLowerCase() as "light" | "dark"
@@ -67,6 +70,8 @@ const preview: Preview = {
       )
     },
   ],
+
+  tags: ["autodocs"],
 }
 
 export default preview

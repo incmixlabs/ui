@@ -1,19 +1,19 @@
 import { DropdownMenu as RadixDropdownMenu } from "@radix-ui/themes"
-import { buttonPropDefs } from "@radix-ui/themes/props"
 import type { Color } from "@utils/colors"
+import { mergeDeep } from "@utils/objects"
 import React, { type ReactNode, type MouseEvent } from "react"
-import type { ButtonProps } from "./button/button"
-import { Button } from "./button/button"
+import { Button, type ButtonProps, buttonPropDefs } from "./button/button"
+
+export const dropdownButtonPropDefs = mergeDeep(buttonPropDefs, {})
 
 const size = {
-  ...buttonPropDefs.size,
+  ...dropdownButtonPropDefs.size,
   values: ["1", "2"] as const,
 }
-const variants = buttonPropDefs.variant
-// @ts-ignore
+const variants = dropdownButtonPropDefs.variant
 variants.values = ["solid", "soft"]
-const colors = buttonPropDefs.color
-const highContrast = buttonPropDefs.highContrast
+const colors = dropdownButtonPropDefs.color
+const highContrast = dropdownButtonPropDefs.highContrast
 
 export const dropdownContentPropDefs = {
   size: size,

@@ -1,5 +1,4 @@
-import { Button } from "@radix-ui/themes"
-import { buttonPropDefs } from "@radix-ui/themes/props"
+import { Button, buttonPropDefs } from "@incmix/ui/button"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const { variant, size, radius } = buttonPropDefs
@@ -73,36 +72,39 @@ export const Soft: Story = {
 export const Outline: Story = {
   args: {
     ...Default.args,
-    variant: variants["outline"],
+    variant: "outline",
   },
 }
 
 export const Ghost: Story = {
   args: {
     ...Default.args,
-    variant: variants["ghost"],
+    variant: "ghost",
   },
 }
 export const All: Story = {
   render: () => {
+    console.log("variants ", variant.values)
     return (
       <>
-        {variant.values.map((variant) => (
-          <div className="flex items-baseline space-x-2" key={variant}>
-            <div className="w-[100px] text-slate-500 text-sm">{variant}</div>
-            <div className="mb-4 flex items-center space-x-2">
-              {size.values.map((size) => (
-                <Button
-                  variant={variant}
-                  size={size}
-                  key={`${variant}-${size}`}
-                >
-                  {`${variant} (${size})`}
-                </Button>
-              ))}
+        {["classic", "solid", "soft", "surface", "outline", "ghost"].map(
+          (variant) => (
+            <div className="flex items-baseline space-x-2" key={variant}>
+              <div className="w-[100px] text-slate-500 text-sm">{variant}</div>
+              <div className="mb-4 flex items-center space-x-2">
+                {size.values.map((size) => (
+                  <Button
+                    variant={variant}
+                    size={size}
+                    key={`${variant}-${size}`}
+                  >
+                    {`${variant} (${size})`}
+                  </Button>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        )}
       </>
     )
   },
