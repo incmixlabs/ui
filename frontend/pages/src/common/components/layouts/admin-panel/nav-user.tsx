@@ -87,7 +87,7 @@ export function NavUser({
                   {t("settings")}
                 </Link>
               </DropdownMenu.Item>
-              <DropdownMenu.Item>
+              <DropdownMenu.Item asChild>
                 <Link to="/notifications">
                   <Bell />
                   {t("notifications")}
