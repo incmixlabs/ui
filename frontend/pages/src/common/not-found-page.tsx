@@ -1,11 +1,11 @@
 import { CardContainer } from "@incmix/ui"
+import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { Button, Flex, Heading, Text } from "@radix-ui/themes"
 import { Link } from "@tanstack/react-router"
 import { useTranslation } from "react-i18next"
-import { PageLayout } from "./components/layouts/page-layout"
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return <PageLayout>{children}</PageLayout>
+  return <DashboardLayout breadcrumbItems={[]}>{children}</DashboardLayout>
 }
 
 const NotFoundPage: React.FC = () => {

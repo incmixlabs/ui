@@ -12,6 +12,8 @@ import {
   Separator,
   Sheet,
   SheetContent,
+  SheetDescription,
+  SheetTitle,
   Skeleton,
   Tooltip,
   TooltipContent,
@@ -206,9 +208,11 @@ const Sidebar = React.forwardRef<
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
               } as React.CSSProperties
             }
-            // @ts-expect-error TODO: fix error later
+            // @ts-expect-error TODO: fix error
             side={side}
           >
+            <SheetTitle className="sr-only">Sidebar</SheetTitle>
+            <SheetDescription className="sr-only">Sidebar</SheetDescription>
             <div className="flex h-full w-full flex-col">{children}</div>
           </SheetContent>
         </Sheet>
@@ -272,7 +276,7 @@ const SidebarTrigger = React.forwardRef<
     <IconButton
       ref={ref}
       data-sidebar="trigger"
-      variant="ghost"
+      variant="soft"
       className={cn("h-7 w-7", className)}
       onClick={(event) => {
         onClick?.(event)

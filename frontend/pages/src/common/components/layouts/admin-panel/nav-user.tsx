@@ -1,16 +1,12 @@
 "use client"
 
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from "lucide-react"
+import { Bell, ChevronsUpDown, LogOut, Settings2, UserIcon } from "lucide-react"
 
+import { useLogout } from "@auth"
 import { Avatar } from "@incmix/ui"
 import { DropdownMenu } from "@radix-ui/themes"
+import { Link } from "@tanstack/react-router"
+import { useTranslation } from "react-i18next"
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -24,11 +20,12 @@ export function NavUser({
   user: {
     name: string
     email: string
-    avatar: string
+    avatar?: string | null
   }
 }) {
   const { isMobile } = useSidebar()
-
+  const { t } = useTranslation("navbar")
+  const { handleLogout, isPending: isLogoutLoading } = useLogout()
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -63,31 +60,40 @@ export function NavUser({
               </div>
             </DropdownMenu.Label>
             <DropdownMenu.Separator />
-            <DropdownMenu.Group>
+            {/* <DropdownMenu.Group>
               <DropdownMenu.Item>
                 <Sparkles />
                 Upgrade to Pro
               </DropdownMenu.Item>
             </DropdownMenu.Group>
-            <DropdownMenu.Separator />
+            <DropdownMenu.Separator /> */}
             <DropdownMenu.Group>
-              <DropdownMenu.Item>
-                <BadgeCheck />
-                Account
+              <DropdownMenu.Item asChild>
+                <Link to="/profile">
+                  <UserIcon />
+                  {t("profile")}
+                </Link>
+              </DropdownMenu.Item>
+              <DropdownMenu.Item asChild>
+                <Link to="/settings">
+                  <Settings2 />
+                  {t("settings")}
+                </Link>
               </DropdownMenu.Item>
               <DropdownMenu.Item>
-                <CreditCard />
-                Billing
-              </DropdownMenu.Item>
-              <DropdownMenu.Item>
-                <Bell />
-                Notifications
+                <Link to="/notifications">
+                  <Bell />
+                  {t("notifications")}
+                </Link>
               </DropdownMenu.Item>
             </DropdownMenu.Group>
             <DropdownMenu.Separator />
-            <DropdownMenu.Item>
+            <DropdownMenu.Item
+              onClick={handleLogout}
+              disabled={isLogoutLoading}
+            >
               <LogOut />
-              Log out
+              {t("logout")}
             </DropdownMenu.Item>
           </DropdownMenu.Content>
         </DropdownMenu.Root>

@@ -1,9 +1,12 @@
 "use client"
 
-import { ChevronsUpDown, Plus } from "lucide-react"
+import { ChevronsUpDown } from "lucide-react"
 import * as React from "react"
 
+import { useOrganizationStore } from "@incmix/store"
+import { useOrganizations } from "@orgs/utils"
 import { DropdownMenu } from "@radix-ui/themes"
+import { useTranslation } from "react-i18next"
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -11,17 +14,23 @@ import {
   useSidebar,
 } from "./sidebar"
 
-export function TeamSwitcher({
-  teams,
-}: {
-  teams: {
-    name: string
-    logo: React.ElementType
-    plan: string
-  }[]
-}) {
+export function OrgSwitcher() {
   const { isMobile } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState(teams[0])
+  const { t } = useTranslation(["common", "sidebar"])
+  const { organizations, isLoading } = useOrganizations()
+  const { selectedOrganisation, setSelectedOrganisation } =
+    useOrganizationStore()
+
+  React.useEffect(() => {
+    if (!selectedOrganisation) setSelectedOrganisation(organizations?.[0])
+    else {
+      const found = organizations?.find((o) => o.id === selectedOrganisation.id)
+      if (!found) setSelectedOrganisation(organizations?.[0])
+    }
+  }, [selectedOrganisation, organizations, setSelectedOrganisation])
+
+  if (isLoading) return <div>Loading...</div>
+  if (!selectedOrganisation) return null
 
   return (
     <SidebarMenu>
@@ -32,14 +41,10 @@ export function TeamSwitcher({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <activeTeam.logo className="size-4" />
-              </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
-                  {activeTeam.name}
+                  {selectedOrganisation.name}
                 </span>
-                <span className="truncate text-xs">{activeTeam.plan}</span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
@@ -51,28 +56,25 @@ export function TeamSwitcher({
             sideOffset={4}
           >
             <DropdownMenu.Label className="text-muted-foreground text-xs">
-              Teams
+              {t("organizations")}
             </DropdownMenu.Label>
-            {teams.map((team) => (
+            {organizations.map((org, index) => (
               <DropdownMenu.Item
-                key={team.name}
-                onClick={() => setActiveTeam(team)}
+                key={org.name}
+                onClick={() => setSelectedOrganisation(org)}
                 className="gap-2 p-2"
+                shortcut={`⌘${index + 1}`}
               >
-                <div className="flex size-6 items-center justify-center rounded-sm border">
-                  <team.logo className="size-4 shrink-0" />
-                </div>
-                {team.name}
-                {/* <DropdownMenu.Shortcut>⌘{index + 1}</DropdownMenu.Shortcut> */}
+                {org.name}
               </DropdownMenu.Item>
             ))}
-            <DropdownMenu.Separator />
-            <DropdownMenu.Item className="gap-2 p-2">
+            {/* <DropdownMenu.Separator /> */}
+            {/* <DropdownMenu.Item className="gap-2 p-2">
               <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                 <Plus className="size-4" />
               </div>
               <div className="font-medium text-muted-foreground">Add team</div>
-            </DropdownMenu.Item>
+            </DropdownMenu.Item> */}
           </DropdownMenu.Content>
         </DropdownMenu.Root>
       </SidebarMenuItem>

@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next"
 import { useAuth, useCurrentUser } from "@auth"
 import { CardContainer } from "@incmix/ui"
 import type { UserProfile } from "@incmix/utils/types"
+import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { Box, Flex, Heading, Text } from "@radix-ui/themes"
 import { PageLayout } from "../common/components/layouts/page-layout"
 import { CurrentUserProfileImage } from "../common/components/user-profile-image"
@@ -74,14 +75,14 @@ const ProfilePage: React.FC = () => {
   if (isUserError || !user) return null
 
   return (
-    <PageLayout>
+    <DashboardLayout breadcrumbItems={[{ label: "Profile", url: "/profile" }]}>
       <CardContainer className="overflow-hidden">
         <Flex direction={{ initial: "column", md: "row" }}>
           <ProfileHeader user={user} />
           <ProfileInformation user={user} />
         </Flex>
       </CardContainer>
-    </PageLayout>
+    </DashboardLayout>
   )
 }
 

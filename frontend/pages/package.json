@@ -36,6 +36,7 @@
     "i18next-chained-backend": "4.6.2",
     "i18next-http-backend": "3.0.1",
     "i18next-resources-to-backend": "1.2.1",
+    "lucide-react": "catalog:",
     "immer": "10.1.1",
     "react": "catalog:",
     "react-dom": "catalog:",

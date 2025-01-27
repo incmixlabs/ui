@@ -17,6 +17,7 @@ import {
   WeatherWidget,
   getBattery,
 } from "@incmix/ui/widgets"
+import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { Container, Flex, Heading, Text } from "@radix-ui/themes"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -63,7 +64,7 @@ const EditWidgetsControl: React.FC<{
   const { t } = useTranslation(["dashboard", "common"])
 
   return (
-    <Flex align="center" gap="2">
+    <Flex align="center" gap="2" className="ml-4">
       <Text size="2" color="gray">
         {t("dashboard:editMode")}
       </Text>
@@ -160,12 +161,9 @@ const DashboardPage: React.FC = () => {
   if (!authUser) return null
 
   return (
-    <PageLayout
-      navbar={
-        <NavbarMain
-          extraIcons={<EditWidgetsControl onEditChange={setIsEditing} />}
-        />
-      }
+    <DashboardLayout
+      breadcrumbItems={[]}
+      navExtras={<EditWidgetsControl onEditChange={setIsEditing} />}
     >
       <Container size="4">
         <Flex direction="column" gap="6">
@@ -196,7 +194,7 @@ const DashboardPage: React.FC = () => {
           </Flex>
         </Flex>
       </Container>
-    </PageLayout>
+    </DashboardLayout>
   )
 }
 
