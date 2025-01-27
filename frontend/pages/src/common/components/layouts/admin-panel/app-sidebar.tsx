@@ -15,7 +15,7 @@ import {
 
 import React from "react"
 
-import { useCurrentUser } from "@auth"
+import { useAuth, useCurrentUser } from "@auth"
 import { useOrganizationStore } from "@incmix/store"
 import { USERS_API_URL } from "@incmix/ui/constants"
 import { createAbilityFromPermissions } from "@incmix/utils/casl"
@@ -38,7 +38,7 @@ import {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation(["common", "sidebar"])
   const { pathname } = useLocation()
-  const { user } = useCurrentUser()
+  const { authUser: user } = useAuth()
 
   const { selectedOrganisation } = useOrganizationStore()
 
@@ -173,13 +173,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       {user && (
         <SidebarFooter>
-          <NavUser
-            user={{
-              avatar: user.profileImage ?? user.avatar,
-              email: user.email,
-              name: user.fullName,
-            }}
-          />
+          <NavUser userId={user.id} />
         </SidebarFooter>
       )}
       <SidebarRail />
