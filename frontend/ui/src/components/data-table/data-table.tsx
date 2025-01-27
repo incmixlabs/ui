@@ -78,9 +78,6 @@ export function DataTable<TData>({
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      style={{
-                        ...getCommonPinningStyles({ column: cell.column }),
-                      }}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

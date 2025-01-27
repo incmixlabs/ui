@@ -24,7 +24,7 @@ export const tableTheme: TableTheme = createTheme({
       base: "bg-gray-50 group-first/head:first:rounded-tl-lg group-first/head:last:rounded-tr-lg dark:bg-gray-700",
       padding: {
         base: "px-6 py-3",
-        compact: "px-2 py-1",
+        compact: "px-2 py-3",
       },
     },
   },
