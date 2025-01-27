@@ -4,6 +4,7 @@ import type {
   MemberRole,
   Organization,
 } from "@incmix/utils/types"
+import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { ArrowLeftIcon } from "@radix-ui/react-icons"
 import {
   Container,
@@ -275,7 +276,18 @@ const OrganizationDetailsPage: React.FC = () => {
 
   return (
     <AbilityContext.Provider value={ability}>
-      <PageLayout>
+      <DashboardLayout
+        breadcrumbItems={[
+          {
+            label: organization.name,
+            url: `/organization/${orgHandle}`,
+          },
+          {
+            label: "Members",
+            url: `/organization/${orgHandle}/users`,
+          },
+        ]}
+      >
         <OrganizationLayout activeTab="users">
           <Container size="3">
             <CardContainer>
@@ -327,7 +339,7 @@ const OrganizationDetailsPage: React.FC = () => {
             </CardContainer>
           </Container>
         </OrganizationLayout>
-      </PageLayout>
+      </DashboardLayout>
     </AbilityContext.Provider>
   )
 }

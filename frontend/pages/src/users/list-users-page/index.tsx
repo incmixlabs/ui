@@ -1,12 +1,12 @@
 "use client"
 import { useOrganizationStore } from "@incmix/store"
-import { PageLayout } from "../../common/components/layouts/page-layout"
 
 import { I18n } from "@incmix/pages/i18n"
 import { Flex, Spinner } from "@incmix/ui"
 import { USERS_API_URL } from "@incmix/ui/constants"
 import { createAbilityFromPermissions } from "@incmix/utils/casl"
 import type { AppAbility, Permission } from "@incmix/utils/types"
+import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { InfoCircledIcon } from "@radix-ui/react-icons"
 import { Callout } from "@radix-ui/themes"
 import { useQuery } from "@tanstack/react-query"
@@ -36,7 +36,9 @@ const ListUsersPage = () => {
   })
   if (isLoading)
     return (
-      <PageLayout>
+      <DashboardLayout
+        breadcrumbItems={[{ label: "Users", url: "/users/list" }]}
+      >
         <Flex
           className="h-[calc((100vh-var(--navbar-height))-3rem)]"
           align="center"
@@ -44,15 +46,15 @@ const ListUsersPage = () => {
         >
           <Spinner className="size-10" />
         </Flex>
-      </PageLayout>
+      </DashboardLayout>
     )
 
   const ability = createAbilityFromPermissions(permissions ?? [])
 
   return (
-    <PageLayout>
+    <DashboardLayout breadcrumbItems={[{ label: "Users", url: "/users/list" }]}>
       <UserTable ability={ability} />
-    </PageLayout>
+    </DashboardLayout>
   )
 }
 

@@ -41,6 +41,7 @@ export function AppSidebar() {
           headers: { "accept-language": I18n.language ?? "en" },
         }
       )
+
       return await res.json()
     },
   })

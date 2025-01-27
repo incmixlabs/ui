@@ -5,12 +5,15 @@ import {
   TreeView,
   type TreeViewDescriptions,
 } from "@incmix/ui"
+import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { Flex, Text } from "@radix-ui/themes"
 import { useTranslation } from "react-i18next"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import { PageLayout } from "../common/components/layouts/page-layout"
 import { OrganizationLayout } from "./layouts/organisation-layout"
+import { OrganisationEnvVarsRoute } from "./routes"
+import { useOrganization } from "./utils"
 
 type EnvVarsState = {
   treeData: TreeDataItem[] | TreeDataItem
@@ -74,8 +77,26 @@ const OrganizationEnvVarsPage: React.FC = () => {
     },
   ]
 
+  const { orgHandle } = OrganisationEnvVarsRoute.useParams()
+  const { organization } = useOrganization(orgHandle)
+
+  if (!organization) {
+    return <div>{t("organizationDetails:notFound")}</div>
+  }
+
   return (
-    <PageLayout>
+    <DashboardLayout
+      breadcrumbItems={[
+        {
+          label: organization.name,
+          url: "/organization/$orgHandle",
+        },
+        {
+          label: t("environmentVariables"),
+          url: "/organization/$orgHandle/env-vars",
+        },
+      ]}
+    >
       <OrganizationLayout activeTab="env-vars">
         <CardContainer>
           <Flex direction="column" gap="4">
@@ -95,7 +116,7 @@ const OrganizationEnvVarsPage: React.FC = () => {
           </Flex>
         </CardContainer>
       </OrganizationLayout>
-    </PageLayout>
+    </DashboardLayout>
   )
 }
 

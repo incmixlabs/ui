@@ -1,3 +1,4 @@
+import { OrganisationUsersRoute } from "@orgs/routes"
 import { Container, Flex, Tabs } from "@radix-ui/themes"
 import { useNavigate } from "@tanstack/react-router"
 import { useTranslation } from "react-i18next"
@@ -20,7 +21,7 @@ export const OrganizationLayout: React.FC<OrganizationLayoutProps> = ({
         <Tabs.Root
           value={activeTab}
           onValueChange={(value) =>
-            navigate({ to: `/organization/$orgId/${value}` })
+            navigate({ to: `/organization/$orgHandle/${value}` })
           }
         >
           <Tabs.List>

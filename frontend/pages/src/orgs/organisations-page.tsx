@@ -1,6 +1,7 @@
 import { LoadingPage } from "@common"
 import { Button, CardContainer, FormField } from "@incmix/ui"
-import type { Organization } from "@jsprt/utils/types"
+import type { Organization } from "@incmix/utils/types"
+import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { ChevronRightIcon } from "@radix-ui/react-icons"
 import {
   Container,
@@ -15,7 +16,6 @@ import { useForm } from "@tanstack/react-form"
 import { Link } from "@tanstack/react-router"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
-import { PageLayout } from "../common/components/layouts/page-layout"
 import {
   useCreateOrganization,
   useOrganizations,
@@ -208,7 +208,11 @@ const OrganizationsPage: React.FC = () => {
   }
 
   return (
-    <PageLayout>
+    <DashboardLayout
+      breadcrumbItems={[
+        { label: t("organizations:title"), url: "/organizations" },
+      ]}
+    >
       <Container>
         <CardContainer>
           <Flex direction="column" gap="4">
@@ -225,7 +229,7 @@ const OrganizationsPage: React.FC = () => {
         onOpenChange={setIsCreateDialogOpen}
         onCreateOrganization={() => setIsCreateDialogOpen(false)}
       />
-    </PageLayout>
+    </DashboardLayout>
   )
 }
 

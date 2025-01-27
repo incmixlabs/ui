@@ -20,6 +20,7 @@ import { useAuth } from "../auth"
 import { PageLayout } from "../common/components/layouts/page-layout"
 import { UserProfileImage } from "../common/components/user-profile-image"
 
+import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { Link } from "@tanstack/react-router"
 import React from "react"
 import { forwardRef, useState } from "react"
@@ -276,7 +277,14 @@ const OrganizationDetailsPage: React.FC = () => {
 
   return (
     <AbilityContext.Provider value={ability}>
-      <PageLayout>
+      <DashboardLayout
+        breadcrumbItems={[
+          {
+            label: organization.name,
+            url: `/organization/${orgHandle}`,
+          },
+        ]}
+      >
         <Container size="3">
           <CardContainer>
             <Flex direction="column" gap="4">
@@ -326,7 +334,7 @@ const OrganizationDetailsPage: React.FC = () => {
             </Flex>
           </CardContainer>
         </Container>
-      </PageLayout>
+      </DashboardLayout>
     </AbilityContext.Provider>
   )
 }
