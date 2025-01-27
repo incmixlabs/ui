@@ -84,25 +84,27 @@ export const Ghost: Story = {
 }
 export const All: Story = {
   render: () => {
-    console.log("variants ", variant.values);
+    console.log("variants ", variant.values)
     return (
       <>
-        {["classic", "solid", "soft", "surface", "outline", "ghost"].map((variant) => (
-          <div className="flex items-baseline space-x-2" key={variant}>
-            <div className="w-[100px] text-slate-500 text-sm">{variant}</div>
-            <div className="mb-4 flex items-center space-x-2">
-              {size.values.map((size) => (
-                <Button
-                  variant={variant}
-                  size={size}
-                  key={`${variant}-${size}`}
-                >
-                  {`${variant} (${size})`}
-                </Button>
-              ))}
+        {["classic", "solid", "soft", "surface", "outline", "ghost"].map(
+          (variant) => (
+            <div className="flex items-baseline space-x-2" key={variant}>
+              <div className="w-[100px] text-slate-500 text-sm">{variant}</div>
+              <div className="mb-4 flex items-center space-x-2">
+                {size.values.map((size) => (
+                  <Button
+                    variant={variant}
+                    size={size}
+                    key={`${variant}-${size}`}
+                  >
+                    {`${variant} (${size})`}
+                  </Button>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        )}
       </>
     )
   },

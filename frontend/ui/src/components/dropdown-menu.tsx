@@ -1,8 +1,8 @@
-import React, { type ReactNode, type MouseEvent } from "react"
-import type { Color } from "@utils/colors"
 import { DropdownMenu as RadixDropdownMenu } from "@radix-ui/themes"
-import { type ButtonProps, buttonPropDefs, Button } from "./button/button"
+import type { Color } from "@utils/colors"
 import { mergeDeep } from "@utils/objects"
+import React, { type ReactNode, type MouseEvent } from "react"
+import { Button, type ButtonProps, buttonPropDefs } from "./button/button"
 
 export const dropdownButtonPropDefs = mergeDeep(buttonPropDefs, {})
 
