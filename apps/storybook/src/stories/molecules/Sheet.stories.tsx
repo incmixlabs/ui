@@ -34,11 +34,11 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   render: () => {
     return (
-    <Sheet>
+    <Sheet defaultOpen={true}>
       <SheetTrigger asChild>
         <Button>Open</Button>
       </SheetTrigger>
-      <SheetContent>
+      <SheetContent notOverlay={true}>
         <SheetHeader>
           <SheetTitle>Edit profile</SheetTitle>
           <SheetDescription>Make changes to your profile here. Click save when you're done.</SheetDescription>
