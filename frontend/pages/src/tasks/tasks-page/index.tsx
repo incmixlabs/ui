@@ -1,9 +1,9 @@
 import { usePGlite } from "@electric-sql/pglite-react"
 import { pushChangesToBackend, useOrganizationStore } from "@incmix/store"
-import { KanbanBoard } from "@incmix/ui"
+import { CardContent, KanbanBoard } from "@incmix/ui"
 import type { Task } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { Flex, ScrollArea, Select } from "@radix-ui/themes"
+import { Card, Flex, ScrollArea, Select } from "@radix-ui/themes"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import { PageLayout } from "../../common/components/layouts/page-layout"
@@ -44,6 +44,19 @@ const TasksPage = () => {
     if (!selectedProject && projectsQuery.data?.length)
       setSelectedProject(projectsQuery.data[0].id)
   }, [projectsQuery.data, selectedProject])
+
+  if (!selectedOrganisation)
+    return (
+      <DashboardLayout breadcrumbItems={[{ label: "Tasks", url: "/tasks" }]}>
+        <Card>
+          <CardContent>
+            <p className="text-center">
+              Please add an organisation to manage projects
+            </p>
+          </CardContent>
+        </Card>
+      </DashboardLayout>
+    )
 
   return (
     <DashboardLayout breadcrumbItems={[{ label: "Tasks", url: "/tasks" }]}>
