@@ -31,7 +31,7 @@ const ProfileHeader: React.FC<{ user: UserProfile }> = ({ user }) => {
       <Flex direction="column" align="center">
         <CurrentUserProfileImage size="9" />
         <Heading as="h2" size="5" color="gray" className="mt-4">
-          {user.fullName}
+          {user.name}
         </Heading>
         <Text size="2" color="gray">
           {user.email}
@@ -49,7 +49,7 @@ const ProfileInformation: React.FC<{ user: UserProfile }> = ({ user }) => {
         {t("profileInformation")}
       </Heading>
       <Flex direction="column" gap="4">
-        <InfoField label={t("common:fullName")} value={user.fullName} />
+        <InfoField label={t("common:name")} value={user.name} />
         <InfoField label={t("common:email")} value={user.email} />
       </Flex>
     </Box>

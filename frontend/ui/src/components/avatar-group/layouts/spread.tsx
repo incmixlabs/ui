@@ -25,14 +25,15 @@ export const SpreadLayout: React.FC<AvatarGroupProps> = ({
     >
       {sortedUsers.map((user) => (
         <Avatar
-          key={user.fullName}
+          key={user.id}
+          id={user.id}
           size={size}
-          imageUrl={user.imageUrl}
-          fullName={user.fullName}
+          src={user.src}
+          name={user.name}
         />
       ))}
       {remainingCount > 0 && (
-        <Avatar size={size} fullName={`+${remainingCount}`} />
+        <Avatar size={size} name={`+${remainingCount}`} />
       )}
     </Flex>
   )

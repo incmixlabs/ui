@@ -37,19 +37,18 @@ export const StackLayout: React.FC<AvatarGroupProps> = ({
     >
       {sortedUsers.map((user, index) => (
         <Avatar
-          key={user.fullName}
+          key={user.id}
+          id={user.id}
           size={size}
-          imageUrl={user.imageUrl}
-          fullName={user.fullName}
-          variant="solid"
+          src={user.src}
+          name={user.name}
           style={getStackStyles(index)}
         />
       ))}
       {remainingCount > 0 && (
         <Avatar
           size={size}
-          fullName={`+${remainingCount}`}
-          variant="solid"
+          name={`+${remainingCount}`}
           style={getStackStyles(visibleCount)}
         />
       )}

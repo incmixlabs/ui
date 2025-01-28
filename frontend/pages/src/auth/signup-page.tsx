@@ -19,15 +19,15 @@ function SignupForm() {
   const signupMutation = useMutation<
     AuthUser,
     Error,
-    { fullName: string; email: string; password: string }
+    { name: string; email: string; password: string }
   >({
-    mutationFn: async ({ fullName, email, password }) => {
+    mutationFn: async ({ name, email, password }) => {
       const response = await fetch(`${AUTH_API_URL}/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ fullName, email, password }),
+        body: JSON.stringify({ name, email, password }),
         credentials: "include",
       })
       if (!response.ok) {
@@ -56,7 +56,7 @@ function SignupForm() {
 
   const form = useForm({
     defaultValues: {
-      fullName: "",
+      name: "",
       email: "",
       password: "",
     },
@@ -79,16 +79,16 @@ function SignupForm() {
       >
         <Flex direction="column" gap="4">
           <form.Field
-            name="fullName"
+            name="name"
             validatorAdapter={zodValidator()}
             validators={{
-              onChange: z.string().min(1, t("fullNameValidation")),
+              onChange: z.string().min(1, t("nameValidation")),
             }}
           >
             {(field) => (
               <FormField
-                name="fullName"
-                label={t("common:fullName")}
+                name="name"
+                label={t("common:name")}
                 field={field}
               />
             )}

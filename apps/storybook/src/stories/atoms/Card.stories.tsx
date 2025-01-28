@@ -37,8 +37,8 @@ export const All: Story = {
             far, in reverse chronological order.
           </p>
         </Card>
-        <Card imgSrc="/images/blog/image-1.jpg" />
-        <Card imgAlt="Blog Image" imgSrc="/images/blog/image-2.jpg" />
+        <Card imgSrc="/images/blogs/image-1.jpg" />
+        <Card imgAlt="Blog Image" imgSrc="/images/blogs/image-2.jpg" />
       </>
     )
   },

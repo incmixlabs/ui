@@ -36,7 +36,7 @@ export function getColumns(): ColumnDef<MemberDetails>[] {
       ),
     },
     {
-      accessorKey: "fullName",
+      accessorKey: "name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Full Name" />
       ),

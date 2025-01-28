@@ -1,7 +1,4 @@
-export type User = {
-  fullName: string
-  imageUrl?: string
-}
+import { type AvatarProps } from "../avatar"
 
 export const sizes = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as const
 export const layouts = ["spread", "stack"] as const
@@ -14,7 +11,7 @@ export type Direction = (typeof directions)[number]
 export type StackOrder = (typeof stackOrders)[number]
 
 export type AvatarGroupProps = {
-  users: User[]
+  users: AvatarProps[]
   maxVisible?: number
   size?: Sizes
   layout?: Layout

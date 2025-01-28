@@ -5,7 +5,7 @@ import type { AvatarGroupProps } from "./types"
 
 const AvatarGroup: React.FC<AvatarGroupProps> = (props) => {
   const { layout = "spread" } = props
-
+  debugger;
   if (layout === "stack") {
     return <StackLayout {...props} />
   }

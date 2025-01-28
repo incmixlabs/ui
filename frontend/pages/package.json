@@ -16,6 +16,7 @@
     "./orgs": "./src/orgs/index.ts",
     "./tasks": "./src/tasks/index.ts",
     "./users": "./src/users/index.ts"
+
   },
   "scripts": {
     "build": "pnpm clean && echo 'Skipping build' && exit 0",

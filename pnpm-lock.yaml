@@ -165,6 +165,9 @@ importers:
 
   apps/storybook:
     dependencies:
+      '@incmix/pages':
+        specifier: 'workspace: *'
+        version: link:../../frontend/pages
       '@incmix/store':
         specifier: 'workspace: *'
         version: link:../../frontend/store

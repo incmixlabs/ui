@@ -43,11 +43,11 @@ const useGeneralInfoForm = (userId: string) => {
 
   const form = useForm({
     defaultValues: {
-      fullName: "",
+      name: "",
     },
     onSubmit: async ({ value }) => {
       try {
-        await handleUpdateUser(value.fullName.trim())
+        await handleUpdateUser(value.name.trim())
         toast.success(t("success.updateUser"))
         queryClient.invalidateQueries({ queryKey: ["user"] })
       } catch (error) {
@@ -97,7 +97,7 @@ const ProfileSection: React.FC<{ user: UserProfile }> = ({ user }) => {
         <CurrentUserProfileImage size="8" editable />
         <Box ml="4">
           <Heading size="4" color="gray">
-            {user.fullName}
+            {user.name}
           </Heading>
           <Text color="gray">{user.email}</Text>
         </Box>
@@ -126,7 +126,7 @@ const GeneralInfoForm: React.FC<ReturnType<typeof useGeneralInfoForm>> = ({
       >
         <Flex direction="column" gap="4">
           <form.Field
-            name="fullName"
+            name="name"
             validatorAdapter={zodValidator()}
             validators={{
               onChange: z.string().min(1, t("nameRequired")),
@@ -134,8 +134,8 @@ const GeneralInfoForm: React.FC<ReturnType<typeof useGeneralInfoForm>> = ({
           >
             {(field) => (
               <FormField
-                name="fullName"
-                label={t("common:fullName")}
+                name="name"
+                label={t("common:name")}
                 field={field}
               />
             )}
