@@ -1,5 +1,8 @@
+import {
+  FlowCard as Card,
+  type FlowCardProps as CardProps,
+} from "@incmix/ui/flow-card"
 import type { Meta, StoryObj } from "@storybook/react"
-import { type FlowCardProps as CardProps, FlowCard as Card,  } from "@incmix/ui/flow-card"
 
 const meta = {
   title: "Atoms/Card",
@@ -13,7 +16,6 @@ const meta = {
       },
       control: "text",
     },
-
   },
 } satisfies Meta<typeof Card>
 
@@ -22,22 +24,21 @@ type Story = StoryObj<typeof meta>
 
 // @see https://storybook.js.org/docs/react/writing-stories/args
 
-
 export const All: Story = {
   render: () => {
     return (
       <>
-         <Card horizontal={true}>
-          <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+        <Card horizontal={true}>
+          <h5 className="font-bold text-2xl text-gray-900 tracking-tight dark:text-white">
             Noteworthy technology acquisitions 2021
           </h5>
           <p className="font-normal text-gray-700 dark:text-gray-400">
-            Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.
+            Here are the biggest enterprise technology acquisitions of 2021 so
+            far, in reverse chronological order.
           </p>
         </Card>
         <Card imgSrc="/images/blog/image-1.jpg" />
         <Card imgAlt="Blog Image" imgSrc="/images/blog/image-2.jpg" />
-
       </>
     )
   },

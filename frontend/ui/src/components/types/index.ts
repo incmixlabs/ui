@@ -5,9 +5,9 @@ export type DeepPartial<T> = T extends object
       [P in keyof T]?: DeepPartial<T[P]>
     }
   : T
-export interface Boolean {
-    off: string;
-    on: string;
+export interface BooleanComp {
+  off: string
+  on: string
 }
 
 export type RemoveIndexSignature<T> = {

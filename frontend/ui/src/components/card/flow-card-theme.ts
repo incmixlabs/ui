@@ -1,4 +1,4 @@
-import type { FlowCardTheme } from "./flow-card";
+import type { FlowCardTheme } from "./flow-card"
 
 export const cardTheme: FlowCardTheme = {
   root: {
@@ -17,4 +17,4 @@ export const cardTheme: FlowCardTheme = {
       on: "h-96 w-full rounded-t-lg object-cover md:h-auto md:w-48 md:rounded-none md:rounded-l-lg",
     },
   },
-};
+}
