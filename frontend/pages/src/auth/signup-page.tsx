@@ -86,11 +86,7 @@ function SignupForm() {
             }}
           >
             {(field) => (
-              <FormField
-                name="name"
-                label={t("common:name")}
-                field={field}
-              />
+              <FormField name="name" label={t("common:name")} field={field} />
             )}
           </form.Field>
 

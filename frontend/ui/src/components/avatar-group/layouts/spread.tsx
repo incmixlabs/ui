@@ -32,9 +32,7 @@ export const SpreadLayout: React.FC<AvatarGroupProps> = ({
           name={user.name}
         />
       ))}
-      {remainingCount > 0 && (
-        <Avatar size={size} name={`+${remainingCount}`} />
-      )}
+      {remainingCount > 0 && <Avatar size={size} name={`+${remainingCount}`} />}
     </Flex>
   )
 }

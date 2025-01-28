@@ -30,14 +30,19 @@ export const Avatar = forwardRef<HTMLImageElement, AvatarProps>(
     },
     ref
   ) => {
-    const getInitials = (name: string) => name.match(/(\b\S)?/g).join("").match(/(^\S|\S$)?/g).join("").toUpperCase()
+    const getInitials = (name: string) =>
+      name
+        .match(/(\b\S)?/g)
+        .join("")
+        .match(/(^\S|\S$)?/g)
+        .join("")
+        .toUpperCase()
 
     const fallback = name ? (
       getInitials(name)
     ) : (
       <PersonIcon height="24px" width="24px" />
     )
-    debugger;
     return (
       <RadixAvatar
         data-user-id={id}

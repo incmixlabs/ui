@@ -133,11 +133,7 @@ const GeneralInfoForm: React.FC<ReturnType<typeof useGeneralInfoForm>> = ({
             }}
           >
             {(field) => (
-              <FormField
-                name="name"
-                label={t("common:name")}
-                field={field}
-              />
+              <FormField name="name" label={t("common:name")} field={field} />
             )}
           </form.Field>
           <Button type="submit" disabled={isUpdatingUser}>

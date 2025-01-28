@@ -9,7 +9,6 @@ export default [
     avatar: "/images/users/neil-sims.png",
   },
   {
-
     id: "2",
     name: "Roberta Casas",
     email: "roberta.casas@flowbite.com",

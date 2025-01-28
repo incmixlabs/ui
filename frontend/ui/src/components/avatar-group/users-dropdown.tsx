@@ -23,11 +23,7 @@ export const UsersDropdown: React.FC<UsersDropdownProps> = ({
         <Flex direction="column" gap="2">
           {users.map((user) => (
             <Flex key={user.name} align="center" gap="2">
-              <Avatar
-                size={size}
-                src={user.src}
-                name={user.name}
-              />
+              <Avatar size={size} src={user.src} name={user.name} />
               <Text size={size}>{user.name}</Text>
             </Flex>
           ))}
