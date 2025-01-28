@@ -28,12 +28,12 @@ export default meta
 type Story = StoryObj<typeof AvatarGroup>
 
 const sampleUsers = [
-  { fullName: "John Doe", imageUrl: "https://example.com/john.jpg" },
-  { fullName: "Jane Smith", imageUrl: "https://example.com/jane.jpg" },
-  { fullName: "Bob Johnson", imageUrl: "https://example.com/bob.jpg" },
-  { fullName: "Alice Brown", imageUrl: "https://example.com/alice.jpg" },
-  { fullName: "Charlie Wilson", imageUrl: "https://example.com/charlie.jpg" },
-  { fullName: "Eva Davis", imageUrl: "https://example.com/eva.jpg" },
+  { name: "John Doe", src: "https://example.com/john.jpg" },
+  { name: "Jane Smith", src: "https://example.com/jane.jpg" },
+  { name: "Bob Johnson", src: "https://example.com/bob.jpg" },
+  { name: "Alice Brown", src: "https://example.com/alice.jpg" },
+  { name: "Charlie Wilson", src: "https://example.com/charlie.jpg" },
+  { name: "Eva Davis", src: "https://example.com/eva.jpg" },
 ]
 
 export const Spread: Story = {

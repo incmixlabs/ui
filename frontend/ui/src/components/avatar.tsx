@@ -5,10 +5,11 @@ import {
 } from "@radix-ui/themes"
 import { forwardRef } from "react"
 
-type AvatarProps = {
+export type AvatarProps = {
+  id: string
   size?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
-  imageUrl?: string | null
-  fullName?: string
+  src?: string | null
+  name?: string
   radius?: RadixProps["radius"]
   variant?: RadixProps["variant"]
   className?: string
@@ -18,9 +19,9 @@ type AvatarProps = {
 export const Avatar = forwardRef<HTMLImageElement, AvatarProps>(
   (
     {
+      id,
       size = "3",
-      imageUrl,
-      fullName,
+      name,
       radius = "full",
       variant = "solid",
       className,
@@ -29,28 +30,28 @@ export const Avatar = forwardRef<HTMLImageElement, AvatarProps>(
     },
     ref
   ) => {
-    const getInitials = (name: string) => {
-      const names = name.split(" ")
-      const firstInitial = names[0]?.[0] ?? ""
-      const lastInitial = names[names.length - 1]?.[0] ?? ""
-      return `${firstInitial}${lastInitial}`.toUpperCase()
-    }
+    const getInitials = (name: string) =>
+      name
+        .match(/(\b\S)?/g)
+        .join("")
+        .match(/(^\S|\S$)?/g)
+        .join("")
+        .toUpperCase()
 
-    const fallback = fullName ? (
-      getInitials(fullName)
+    const fallback = name ? (
+      getInitials(name)
     ) : (
-      <PersonIcon height="33%" width="33%" />
+      <PersonIcon height="24px" width="24px" />
     )
-
     return (
       <RadixAvatar
+        data-user-id={id}
         ref={ref}
         style={style}
         className={`overflow-hidden ${className}`}
         size={size}
-        src={imageUrl || undefined}
         fallback={fallback}
-        alt={fullName}
+        alt={name}
         radius={radius}
         variant={variant}
         {...props}

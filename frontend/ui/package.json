@@ -32,6 +32,7 @@
     "./icon-button": "./src/components/icon-button.tsx",
     "./icons": "./src/components/icons/index.ts",
     "./image": "./src/components/image.ts",
+    "./kanban-view": "./src/components/kanban-board/kanban-view.tsx",
     "./label": "./src/components/form/label.tsx",
     "./layouts": "./src/components/layouts/index.ts",
     "./object": "./src/utils/object.ts",

@@ -196,14 +196,14 @@ export const useProfileUpdate = (userId: string) => {
   const { t } = useTranslation(["profile"])
 
   const updateUserMutation = useMutation({
-    mutationFn: async ({ fullName }: { fullName: string }) => {
+    mutationFn: async ({ name }: { name: string }) => {
       const response = await fetch(`${USERS_API_URL}/${userId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Accept-Language": I18n.language ?? "en",
         },
-        body: JSON.stringify({ fullName }),
+        body: JSON.stringify({ name }),
         credentials: "include",
       })
       if (!response.ok) {
@@ -215,7 +215,7 @@ export const useProfileUpdate = (userId: string) => {
     onSuccess: (data: any) => {
       queryClient.setQueryData(["user"], (oldData: UserProfile) => ({
         ...oldData,
-        fullName: data?.fullName,
+        name: data?.name,
       }))
     },
     onError: (error) => {
@@ -225,8 +225,8 @@ export const useProfileUpdate = (userId: string) => {
     },
   })
 
-  const handleUpdateUser = (fullName: string) =>
-    updateUserMutation.mutateAsync({ fullName })
+  const handleUpdateUser = (name: string) =>
+    updateUserMutation.mutateAsync({ name })
 
   return {
     handleUpdateUser,

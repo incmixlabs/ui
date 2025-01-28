@@ -1,5 +1,6 @@
 export default [
   {
+    id: "1",
     name: "Neil Sims",
     email: "neil.sims@flowbite.com",
     position: "Front-end developer",
@@ -8,6 +9,7 @@ export default [
     avatar: "/images/users/neil-sims.png",
   },
   {
+    id: "2",
     name: "Roberta Casas",
     email: "roberta.casas@flowbite.com",
     position: "Designer",
@@ -16,6 +18,7 @@ export default [
     avatar: "/images/users/roberta-casas.png",
   },
   {
+    id: "3",
     name: "Michael Gough",
     email: "michael.gough@flowbite.com",
     position: "React developer",
@@ -24,6 +27,7 @@ export default [
     avatar: "/images/users/michael-gough.png",
   },
   {
+    id: "4",
     name: "Jese Leos",
     email: "jese.leos@flowbite.com",
     position: "Marketing",
@@ -32,6 +36,7 @@ export default [
     avatar: "/images/users/jese-leos.png",
   },
   {
+    id: "5",
     name: "Bonnie Green",
     email: "bonnie.green@flowbite.com",
     position: "UI/UX Engineer",
@@ -40,6 +45,7 @@ export default [
     avatar: "/images/users/bonnie-green.png",
   },
   {
+    id: "6",
     name: "Thomas Lean",
     email: "thomas.lean@flowbite.com",
     position: "Vue developer",
@@ -48,6 +54,7 @@ export default [
     avatar: "/images/users/thomas-lean.png",
   },
   {
+    id: "7",
     name: "Helene Engels",
     email: "helene.engels@flowbite.com",
     position: "Product owner",
@@ -56,6 +63,7 @@ export default [
     avatar: "/images/users/helene-engels.png",
   },
   {
+    id: "8",
     name: "Lana Byrd",
     email: "lana.byrd@flowbite.com",
     position: "Designer",
@@ -64,6 +72,7 @@ export default [
     avatar: "/images/users/lana-byrd.png",
   },
   {
+    id: "9",
     name: "Leslie Livingston",
     email: "leslie.livingston@flowbite.com",
     position: "Product owner",
@@ -72,6 +81,7 @@ export default [
     avatar: "/images/users/helene-engels.png",
   },
   {
+    id: "10",
     name: "Robert Brown",
     email: "robert.brown@flowbite.com",
     position: "Laravel developer",

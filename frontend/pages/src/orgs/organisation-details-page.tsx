@@ -126,7 +126,7 @@ const UserRow: React.FC<{
         <Flex align="center" gap="2">
           <UserProfileImage size="2" userId={member.userId} />
           <Text>
-            {member.fullName}
+            {member.name}
             {currentUser &&
               currentUser.id === member.userId &&
               ` (${t("common:you")})`}

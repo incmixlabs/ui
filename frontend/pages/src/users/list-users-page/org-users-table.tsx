@@ -22,13 +22,13 @@ const AdminUsersTable = () => {
 
   const filterFields: DataTableFilterField<MemberDetails>[] = [
     {
-      id: "fullName",
+      id: "name",
       label: "Full Name",
       placeholder: "Filter Full Name...",
     },
   ]
 
-  // const { page, pageSize, fullName, sort } =
+  // const { page, pageSize, name, sort } =
   //   ListUsersRoute.useSearch() as UserListSearchParams
   const { selectedOrganisation } = useOrganizationStore()
 
