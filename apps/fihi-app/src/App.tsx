@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect, useMemo } from "react"
 
 import { useQuery } from "@tanstack/react-query"
-import { createRouter, RouterProvider } from "@tanstack/react-router"
+import { RouterProvider, createRouter } from "@tanstack/react-router"
 import { Settings } from "luxon"
 
 import { PGliteProvider } from "@electric-sql/pglite-react"
