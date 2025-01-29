@@ -33,6 +33,9 @@ catalogs:
     lucide-react:
       specifier: 0.471.1
       version: 0.471.1
+    nanoid:
+      specifier: 5.0.9
+      version: 5.0.9
     postcss:
       specifier: 8.5.1
       version: 8.5.1
@@ -381,7 +384,7 @@ importers:
         specifier: 0.6.1
         version: 0.6.1(@electric-sql/pglite@0.2.15)(kysely@0.27.5)
       nanoid:
-        specifier: 5.0.9
+        specifier: 'catalog:'
         version: 5.0.9
       observable-hooks:
         specifier: 4.2.4
@@ -564,6 +567,9 @@ importers:
       luxon:
         specifier: 3.5.0
         version: 3.5.0
+      nanoid:
+        specifier: 'catalog:'
+        version: 5.0.9
       nuqs:
         specifier: 2.2.3
         version: 2.2.3(next@15.1.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-router-dom@6.23.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)

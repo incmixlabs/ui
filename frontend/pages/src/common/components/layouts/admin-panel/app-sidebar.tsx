@@ -91,7 +91,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/users/list",
         icon: UserIcon,
         isActive:
-          pathname.includes("/users") ||
+          pathname.startsWith("/users") ||
           pathname.includes("/profile") ||
           pathname.includes("/settings"),
         items: ability.can("read", "Member")

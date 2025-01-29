@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect, useMemo } from "react"
 
 import { useQuery } from "@tanstack/react-query"
-import { RouterProvider } from "@tanstack/react-router"
+import { RouterProvider, createRouter } from "@tanstack/react-router"
 import { Settings } from "luxon"
 
 import { PGliteProvider } from "@electric-sql/pglite-react"
@@ -15,7 +15,6 @@ import {
 } from "@incmix/store"
 import { DashboardPage } from "@incmix/ui/layouts"
 import { Theme } from "@radix-ui/themes"
-import { router } from "./instrument"
 import { translations } from "./translations"
 
 const luxonLocale: Record<Language, string> = {
@@ -24,6 +23,59 @@ const luxonLocale: Record<Language, string> = {
 }
 
 const db = pgWorkerMain()
+
+import {
+  DashboardRoute,
+  EmailVerificationRoute,
+  ForgotPasswordRoute,
+  GoogleAuthCallbackRoute,
+  IndexRoute,
+  ListUsersRoute,
+  LoadingRoute,
+  LoginRoute,
+  NotFoundRoute,
+  NotificationsRoute,
+  OrganisationDetailsRoute,
+  OrganisationEnvVarsRoute,
+  OrganisationUsersRoute,
+  OrganisationsRoute,
+  ProfileRoute,
+  ResetPasswordRoute,
+  RootRoute,
+  SettingsRoute,
+  SignupRoute,
+  TasksRoute,
+  TauriGoogleAuthCallbackRoute,
+  TestRoute,
+  WelcomeRoute,
+} from "@incmix/pages"
+
+const routeTree = RootRoute.addChildren([
+  LoginRoute,
+  ForgotPasswordRoute,
+  ResetPasswordRoute,
+  EmailVerificationRoute,
+  SignupRoute,
+  IndexRoute,
+  WelcomeRoute,
+  GoogleAuthCallbackRoute,
+  TauriGoogleAuthCallbackRoute,
+  ProfileRoute,
+  SettingsRoute,
+  TestRoute,
+  OrganisationsRoute,
+  OrganisationDetailsRoute,
+  OrganisationUsersRoute,
+  OrganisationEnvVarsRoute,
+  NotificationsRoute,
+  NotFoundRoute,
+  LoadingRoute,
+  DashboardRoute,
+  ListUsersRoute,
+  TasksRoute,
+])
+
+const router = createRouter({ routeTree })
 
 function App() {
   const { theme } = useThemeStore()

@@ -12,13 +12,13 @@ import {
   ReactiveButton,
   toast,
 } from "@incmix/ui"
-import type { Column } from "@incmix/utils/types"
+import type { Board, Column } from "@incmix/utils/types"
 import { Button, Flex, Select, TextField } from "@radix-ui/themes"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { nanoid } from "nanoid"
 import type React from "react"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { createColumn, getColumns } from "./actions"
-
 interface CreateColumnProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
   projectId: string
@@ -30,6 +30,7 @@ export function CreateColumnForm({
   projectId,
   ...props
 }: CreateColumnProps) {
+  const [isOpen, setIsOpen] = useState(false)
   const [parentId, setParentId] = useState<string>("")
 
   const columnsQuery = useQuery({
@@ -41,7 +42,9 @@ export function CreateColumnForm({
     queryFn: () => getColumns(projectId, parentId),
   })
 
-  const { mutate, isPending, isSuccess } = useMutation({
+  const queryClient = useQueryClient()
+
+  const { mutate, isPending, isSuccess, reset } = useMutation({
     mutationFn: (data: {
       label: string
       projectId: string
@@ -50,8 +53,12 @@ export function CreateColumnForm({
     }) => {
       return createColumn(data)
     },
-    onSuccess: (data) => {
-      if (onSuccess) onSuccess(data)
+    onSettled: () => {
+      columnsQuery.refetch()
+      columnOrderQuery.refetch()
+      queryClient
+        .invalidateQueries({ queryKey: ["board", projectId] })
+        .then(() => setIsOpen(false))
     },
     onError: (error) => {
       toast.error(error.message)
@@ -71,8 +78,21 @@ export function CreateColumnForm({
     mutate(data)
   }
 
+  const defaultOrder = useMemo(() => {
+    if (!columnOrderQuery.data) return 0
+    if (columnOrderQuery.data.length === 1) return 1
+    return columnOrderQuery.data.length
+  }, [columnOrderQuery.data])
+
   return (
-    <Dialog {...props}>
+    <Dialog
+      {...props}
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open)
+        reset()
+      }}
+    >
       <DialogTrigger>
         <Button>Add Column</Button>
       </DialogTrigger>
@@ -108,7 +128,10 @@ export function CreateColumnForm({
               </Select.Content>
             </Select.Root>
             {!!columnOrderQuery.data?.length && (
-              <Select.Root name="columnOrder" defaultValue="0">
+              <Select.Root
+                name="columnOrder"
+                defaultValue={String(defaultOrder)}
+              >
                 <Select.Trigger
                   className="w-full max-w-96"
                   placeholder={
@@ -131,17 +154,15 @@ export function CreateColumnForm({
                 </Select.Content>
               </Select.Root>
             )}
-            <DialogClose>
-              <ReactiveButton
-                type="submit"
-                color="blue"
-                loading={isPending}
-                success={isSuccess}
-                className="w-full"
-              >
-                Create
-              </ReactiveButton>
-            </DialogClose>
+            <ReactiveButton
+              type="submit"
+              color="blue"
+              loading={isPending}
+              success={isSuccess}
+              className="w-full"
+            >
+              Create
+            </ReactiveButton>
           </Flex>
         </form>
 
