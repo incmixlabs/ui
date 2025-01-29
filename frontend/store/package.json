@@ -26,7 +26,7 @@
     "i18next": "24.2.1",
     "immer": "10.1.1",
     "kysely-pglite": "0.6.1",
-    "nanoid": "5.0.9",
+    "nanoid": "catalog:",
     "observable-hooks": "4.2.4",
     "persist-and-sync": "1.2.1",
     "rxjs": "7.8.1",

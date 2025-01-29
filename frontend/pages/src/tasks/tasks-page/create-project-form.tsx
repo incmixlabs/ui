@@ -14,13 +14,14 @@ import {
   ReactiveButton,
   toast,
 } from "@incmix/ui"
-import type { Project } from "@jsprt/utils/types/tasks"
+import type { Project } from "@incmix/utils/types"
 import { Button, Flex } from "@radix-ui/themes"
 import { useForm } from "@tanstack/react-form"
 import { useMutation } from "@tanstack/react-query"
 import { zodValidator } from "@tanstack/zod-form-adapter"
 import { z } from "zod"
 import { createProject } from "./actions"
+import { useState } from "react"
 
 interface CreateProjectProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
@@ -28,14 +29,16 @@ interface CreateProjectProps
 }
 
 export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
+  const [isOpen, setIsOpen] = useState(false)
   const { selectedOrganisation } = useOrganizationStore()
 
-  const { mutate, isPending, isSuccess } = useMutation({
+  const { mutate, isPending, isSuccess, reset } = useMutation({
     mutationFn: ({ name, orgId }: { name: string; orgId: string }) => {
       return createProject({ name, orgId })
     },
     onSuccess: (data) => {
       if (onSuccess) onSuccess(data)
+      setIsOpen(false)
     },
     onError: (error) => {
       toast.error(error.message)
@@ -54,7 +57,14 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
   })
 
   return (
-    <Dialog {...props}>
+    <Dialog
+      {...props}
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open)
+        reset()
+      }}
+    >
       <DialogTrigger>
         <Button>Create Project</Button>
       </DialogTrigger>
@@ -84,17 +94,16 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
                 <FormField name="name" label="Project Name" field={field} />
               )}
             </form.Field>
-            <DialogClose>
-              <ReactiveButton
-                type="submit"
-                color="blue"
-                loading={isPending}
-                success={isSuccess}
-                className="w-full"
-              >
-                Create
-              </ReactiveButton>
-            </DialogClose>
+
+            <ReactiveButton
+              type="submit"
+              color="blue"
+              loading={isPending}
+              success={isSuccess}
+              className="w-full"
+            >
+              Create
+            </ReactiveButton>
           </Flex>
         </form>
         <DialogFooter className="gap-2 sm:space-x-0">

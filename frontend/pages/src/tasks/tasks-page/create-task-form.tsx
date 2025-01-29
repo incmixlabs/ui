@@ -19,6 +19,7 @@ import { Button, Flex, Select, TextField } from "@radix-ui/themes"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import type React from "react"
 import { createTask, getColumns } from "./actions"
+import { useState } from "react"
 
 interface CreateTaskProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
@@ -31,12 +32,14 @@ export function CreateTaskForm({
   projectId,
   ...props
 }: CreateTaskProps) {
+  const [isOpen, setIsOpen] = useState(false)
   const columnsQuery = useQuery({
     queryKey: ["columns", projectId],
     queryFn: () => getColumns(projectId),
+    refetchOnMount: true,
   })
   const db = usePGlite()
-  const { mutate, isPending, isSuccess } = useMutation({
+  const { mutate, isPending, isSuccess, reset } = useMutation({
     mutationFn: (data: {
       content: string
       projectId: string
@@ -49,6 +52,7 @@ export function CreateTaskForm({
     },
     onSuccess: (data) => {
       if (onSuccess) onSuccess(data)
+      setIsOpen(false)
     },
     onError: (error) => {
       toast.error(error.message)
@@ -70,7 +74,14 @@ export function CreateTaskForm({
   }
 
   return (
-    <Dialog {...props}>
+    <Dialog
+      {...props}
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open)
+        reset()
+      }}
+    >
       <DialogTrigger>
         <Button>Add Task</Button>
       </DialogTrigger>
@@ -101,17 +112,16 @@ export function CreateTaskForm({
                 ))}
               </Select.Content>
             </Select.Root>
-            <DialogClose>
-              <ReactiveButton
-                type="submit"
-                color="blue"
-                loading={isPending}
-                success={isSuccess}
-                className="w-full"
-              >
-                Create
-              </ReactiveButton>
-            </DialogClose>
+
+            <ReactiveButton
+              type="submit"
+              color="blue"
+              loading={isPending}
+              success={isSuccess}
+              className="w-full"
+            >
+              Create
+            </ReactiveButton>
           </Flex>
         </form>
 

@@ -1,10 +1,10 @@
 import { usePGlite } from "@electric-sql/pglite-react"
 import { pushChangesToBackend, useOrganizationStore } from "@incmix/store"
 import { CardContent, KanbanBoard } from "@incmix/ui"
-import type { Task } from "@incmix/utils/types"
+import type { Board, Task } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { Card, Flex, ScrollArea, Select } from "@radix-ui/themes"
-import { useMutation, useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import { PageLayout } from "../../common/components/layouts/page-layout"
 import { getKanbanBoard, getProjects, updatedTasks } from "./actions"
@@ -12,6 +12,7 @@ import { CreateColumnForm } from "./create-column-form"
 import { CreateProjectForm } from "./create-project-form"
 import { CreateTaskForm } from "./create-task-form"
 import { useAutoSync } from "./use-auto-sync"
+
 const TasksPage = () => {
   const { selectedOrganisation } = useOrganizationStore()
 
@@ -34,8 +35,45 @@ const TasksPage = () => {
     },
   })
 
+  const queryClient = useQueryClient()
+
   const tasksMutation = useMutation({
     mutationFn: (tasks: Task[]) => updatedTasks(db, tasks),
+    onMutate: async (tasks) => {
+      await queryClient.cancelQueries({ queryKey: ["board", selectedProject] })
+      // Snapshot the previous value
+      const prevoiusBoard = queryClient.getQueryData<Board>([
+        "board",
+        selectedProject,
+      ])
+
+      queryClient.setQueryData(["board", selectedProject], (old: Board) => {
+        console.log(old)
+        return {
+          ...old,
+          tasks: [
+            ...old.tasks.filter(
+              (t) => tasks.find((nt) => nt.id !== t.id) !== undefined
+            ),
+            ...tasks,
+          ],
+        }
+      })
+
+      return { prevoiusBoard }
+    },
+    // If the mutation fails,
+    // use the context returned from onMutate to roll back
+    onError: (_err, _updatedTasks, context) => {
+      queryClient.setQueryData(
+        ["board", selectedProject],
+        context?.prevoiusBoard
+      )
+    },
+    // Always refetch after error or success:
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["board", selectedProject] })
+    },
   })
 
   useAutoSync(pushChangesToBackend)
@@ -101,9 +139,7 @@ const TasksPage = () => {
       <ScrollArea scrollbars="horizontal" className="max-w-[1116px] pb-4">
         <KanbanBoard
           updateTasks={(tasks) => {
-            tasksMutation.mutateAsync(tasks).then(() => {
-              boardQuery.refetch()
-            })
+            tasksMutation.mutate(tasks)
           }}
           columns={boardQuery.data?.columns ?? []}
           tasks={boardQuery.data?.tasks ?? []}

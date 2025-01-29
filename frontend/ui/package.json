@@ -98,6 +98,7 @@
     "lucide-react": "catalog:",
     "luxon": "3.5.0",
     "nuqs": "2.2.3",
+    "nanoid": "catalog:",
     "react-clock": "5.1.0",
     "react-day-picker": "9.4.2",
     "react-dropzone": "14.3.5",
