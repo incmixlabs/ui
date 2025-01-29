@@ -18,8 +18,8 @@ import type { Task, TaskStatus } from "@incmix/utils/types"
 import { Button, Flex, Select, TextField } from "@radix-ui/themes"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import type React from "react"
-import { createTask, getColumns } from "./actions"
 import { useState } from "react"
+import { createTask, getColumns } from "./actions"
 
 interface CreateTaskProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
