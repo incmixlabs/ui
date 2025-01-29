@@ -1,7 +1,7 @@
 import "@incmix/ui/styles/global.css"
 import React from "react"
 import ReactDOM from "react-dom/client"
-import "./instrument"
+// import "./instrument"
 import { NuqsReactAdaptor } from "@incmix/ui/data-table"
 import App from "./App"
 import QueryProvider from "./query-client"

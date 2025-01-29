@@ -1,6 +1,6 @@
 import path from "node:path"
 import { Schema, ValidateEnv } from "@julr/vite-plugin-validate-env"
-import { sentryVitePlugin } from "@sentry/vite-plugin"
+// import { sentryVitePlugin } from "@sentry/vite-plugin"
 import react from "@vitejs/plugin-react"
 import { internalIpV4 } from "internal-ip"
 import { defineConfig } from "vite"
@@ -31,11 +31,11 @@ export default defineConfig(async () => ({
     ValidateEnv({
       VITE_BFF_API_URL: Schema.string(),
     }),
-    sentryVitePlugin({
-      org: "incmix",
-      project: process.env.SENTRY_PROJECT,
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-    }),
+    // sentryVitePlugin({
+    //   org: "incmix",
+    //   project: process.env.SENTRY_PROJECT,
+    //   authToken: process.env.SENTRY_AUTH_TOKEN,
+    // }),
   ],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
