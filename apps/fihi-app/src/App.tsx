@@ -50,7 +50,7 @@ function App() {
 
   return (
     <Theme
-      accentColor="blue"
+      accentColor="indigo"
       grayColor="slate"
       panelBackground="solid"
       scaling="100%"
