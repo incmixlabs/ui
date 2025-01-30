@@ -1,8 +1,8 @@
 import {
   FlowCard as Card,
   type FlowCardProps as CardProps,
-} from "@incmix/ui/flow-card"
-import type { Meta, StoryObj } from "@storybook/react"
+} from "@incmix/ui/flow-card";
+import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
   title: "Atoms/Card",
@@ -17,10 +17,10 @@ const meta = {
       control: "text",
     },
   },
-} satisfies Meta<typeof Card>
+} satisfies Meta<typeof Card>;
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 // @see https://storybook.js.org/docs/react/writing-stories/args
 
@@ -40,6 +40,6 @@ export const All: Story = {
         <Card imgSrc="/images/blogs/image-1.jpg" />
         <Card imgAlt="Blog Image" imgSrc="/images/blogs/image-2.jpg" />
       </>
-    )
+    );
   },
-}
+};

@@ -1,6 +1,6 @@
-import { Button } from "@incmix/ui/button"
-import { Input } from "@incmix/ui/form"
-import { Label } from "@incmix/ui/label"
+import { Button } from "@incmix/ui/button";
+import { Input } from "@incmix/ui/form";
+import { Label } from "@incmix/ui/label";
 import {
   Sheet,
   SheetClose,
@@ -10,8 +10,8 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@incmix/ui/sheet"
-import type { Meta, StoryObj } from "@storybook/react"
+} from "@incmix/ui/sheet";
+import type { Meta, StoryObj } from "@storybook/react";
 
 const meta = {
   title: "Atoms/Sheet",
@@ -26,10 +26,10 @@ const meta = {
       control: "text",
     },
   },
-} satisfies Meta<typeof Sheet>
+} satisfies Meta<typeof Sheet>;
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => {
@@ -66,6 +66,6 @@ export const Default: Story = {
           </SheetFooter>
         </SheetContent>
       </Sheet>
-    )
+    );
   },
-}
+};

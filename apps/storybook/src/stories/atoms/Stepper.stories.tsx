@@ -1,11 +1,19 @@
-import { Button, Card, Flex, FormButton, FormField, Text, cn } from "@incmix/ui"
-import { Step, type StepItem, Stepper, useStepper } from "@incmix/ui/stepper"
-import * as Collapsible from "@radix-ui/react-collapsible"
-import { PersonIcon, QuoteIcon, StarIcon } from "@radix-ui/react-icons"
-import type { Meta, StoryObj } from "@storybook/react"
-import { useForm } from "@tanstack/react-form"
-import { zodValidator } from "@tanstack/zod-form-adapter"
-import { z } from "zod"
+import {
+  Button,
+  Card,
+  Flex,
+  FormButton,
+  FormField,
+  Text,
+  cn,
+} from "@incmix/ui";
+import { Step, type StepItem, Stepper, useStepper } from "@incmix/ui/stepper";
+import * as Collapsible from "@radix-ui/react-collapsible";
+import { PersonIcon, QuoteIcon, StarIcon } from "@radix-ui/react-icons";
+import type { Meta, StoryObj } from "@storybook/react";
+import { useForm } from "@tanstack/react-form";
+import { zodValidator } from "@tanstack/zod-form-adapter";
+import { z } from "zod";
 
 const meta: Meta<typeof Stepper> = {
   title: "Atoms/NewStepper",
@@ -17,10 +25,10 @@ const meta: Meta<typeof Stepper> = {
       </Flex>
     ),
   ],
-}
+};
 
-export default meta
-type Story = StoryObj<typeof Stepper>
+export default meta;
+type Story = StoryObj<typeof Stepper>;
 
 const steps: StepItem[] = [
   {
@@ -35,16 +43,16 @@ const steps: StepItem[] = [
     label: "Step 3",
     description: "Third step description",
   },
-]
+];
 
 function StepperFooter({
   onlyLastStep = false,
   orientation = "horizontal",
   formSubmit,
 }: {
-  onlyLastStep?: boolean
-  orientation?: "horizontal" | "vertical"
-  formSubmit?: () => Promise<boolean>
+  onlyLastStep?: boolean;
+  orientation?: "horizontal" | "vertical";
+  formSubmit?: () => Promise<boolean>;
 }) {
   const {
     nextStep,
@@ -56,7 +64,7 @@ function StepperFooter({
     isDisabledStep,
     isError,
     isLoading,
-  } = useStepper()
+  } = useStepper();
 
   const FinalCard = () => (
     <Card className="my-2 h-40">
@@ -64,9 +72,9 @@ function StepperFooter({
         <Text className="text-xl">Woohoo! All steps completed! 🎉</Text>
       </Flex>
     </Card>
-  )
+  );
 
-  const Btn = formSubmit ? FormButton : Button
+  const Btn = formSubmit ? FormButton : Button;
 
   return (
     <>
@@ -76,7 +84,7 @@ function StepperFooter({
         <Collapsible.Root open={hasCompletedAllSteps}>
           <Collapsible.Content
             className={cn(
-              "overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down"
+              "overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down",
             )}
           >
             <FinalCard />
@@ -104,7 +112,7 @@ function StepperFooter({
                 variant="soft"
                 onClick={async () => {
                   if (!formSubmit || (await formSubmit())) {
-                    nextStep()
+                    nextStep();
                   }
                 }}
                 disabled={isError || isLoading}
@@ -116,7 +124,7 @@ function StepperFooter({
         </div>
       )}
     </>
-  )
+  );
 }
 
 function StepCard({ index }: { index: number }) {
@@ -126,7 +134,7 @@ function StepCard({ index }: { index: number }) {
         <Text className="text-gray-10 text-xl">Step {index + 1}</Text>
       </Flex>
     </Card>
-  )
+  );
 }
 
 export const Default: Story = {
@@ -146,9 +154,9 @@ export const Default: Story = {
           <StepperFooter />
         </Stepper>
       </Flex>
-    )
+    );
   },
-}
+};
 
 export const Horizontal: Story = {
   render: () => {
@@ -167,9 +175,9 @@ export const Horizontal: Story = {
           <StepperFooter />
         </Stepper>
       </Flex>
-    )
+    );
   },
-}
+};
 
 export const Vertical: Story = {
   render: () => {
@@ -188,9 +196,9 @@ export const Vertical: Story = {
           <StepperFooter orientation="vertical" />
         </Stepper>
       </Flex>
-    )
+    );
   },
-}
+};
 
 export const Circle: Story = {
   render: () => {
@@ -209,9 +217,9 @@ export const Circle: Story = {
           <StepperFooter />
         </Stepper>
       </Flex>
-    )
+    );
   },
-}
+};
 
 export const CircleAlt: Story = {
   render: () => {
@@ -230,9 +238,9 @@ export const CircleAlt: Story = {
           <StepperFooter />
         </Stepper>
       </Flex>
-    )
+    );
   },
-}
+};
 
 export const Line: Story = {
   render: () => {
@@ -251,9 +259,9 @@ export const Line: Story = {
           <StepperFooter />
         </Stepper>
       </Flex>
-    )
+    );
   },
-}
+};
 
 export const ErrorState: Story = {
   render: () => {
@@ -272,9 +280,9 @@ export const ErrorState: Story = {
           <StepperFooter />
         </Stepper>
       </Flex>
-    )
+    );
   },
-}
+};
 
 export const LoadingState: Story = {
   render: () => {
@@ -293,9 +301,9 @@ export const LoadingState: Story = {
           <StepperFooter />
         </Stepper>
       </Flex>
-    )
+    );
   },
-}
+};
 
 const customIconSteps: StepItem[] = [
   {
@@ -313,7 +321,7 @@ const customIconSteps: StepItem[] = [
     description: "Third step description",
     icon: QuoteIcon,
   },
-]
+];
 
 export const CustomIcons: Story = {
   render: () => {
@@ -333,9 +341,9 @@ export const CustomIcons: Story = {
           <StepperFooter />
         </Stepper>
       </Flex>
-    )
+    );
   },
-}
+};
 
 export const FooterInside: Story = {
   render: () => {
@@ -355,9 +363,9 @@ export const FooterInside: Story = {
           <StepperFooter onlyLastStep orientation="vertical" />
         </Stepper>
       </Flex>
-    )
+    );
   },
-}
+};
 
 export const ClickableSteps: Story = {
   render: () => {
@@ -366,7 +374,7 @@ export const ClickableSteps: Story = {
         <Stepper
           steps={steps}
           onClickStep={(step, setStep) => {
-            setStep(step)
+            setStep(step);
           }}
         >
           {steps.map((step, index) => (
@@ -381,9 +389,9 @@ export const ClickableSteps: Story = {
           <StepperFooter />
         </Stepper>
       </Flex>
-    )
+    );
   },
-}
+};
 
 const formSteps: StepItem[] = [
   {
@@ -434,7 +442,7 @@ const formSteps: StepItem[] = [
       },
     ],
   },
-]
+];
 
 export const WithForm: Story = {
   render: () => {
@@ -455,26 +463,26 @@ export const WithForm: Story = {
           <StepperFooter onlyLastStep />
         </Stepper>
       </Flex>
-    )
+    );
   },
-}
+};
 
 function StepForm({ fields }: { fields: (typeof formSteps)[0]["fields"] }) {
   const form = useForm({
     defaultValues: Object.fromEntries(
-      fields?.map((field) => [field.name, ""]) ?? []
+      fields?.map((field) => [field.name, ""]) ?? [],
     ),
     onSubmit: () => {
-      form.handleSubmit()
+      form.handleSubmit();
     },
-  })
+  });
 
   return (
     <form
       onSubmit={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        form.handleSubmit()
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
       }}
     >
       <Flex direction="column" gap="4">
@@ -507,5 +515,5 @@ function StepForm({ fields }: { fields: (typeof formSteps)[0]["fields"] }) {
         </form.Subscribe>
       </Flex>
     </form>
-  )
+  );
 }

@@ -1,9 +1,9 @@
-import { Box } from "@incmix/ui"
-import { Calendar, type CalendarEvent } from "@incmix/ui/widgets"
-import { createId as cuid } from "@paralleldrive/cuid2"
-import type { Meta, StoryObj } from "@storybook/react"
-import { DateTime } from "luxon"
-import { useState } from "react"
+import { Box } from "@incmix/ui";
+import { Calendar, type CalendarEvent } from "@incmix/ui/widgets";
+import { createId as cuid } from "@paralleldrive/cuid2";
+import type { Meta, StoryObj } from "@storybook/react";
+import { DateTime } from "luxon";
+import { useState } from "react";
 
 const meta: Meta<typeof Calendar> = {
   title: "Molecules/Calendar",
@@ -16,10 +16,10 @@ const meta: Meta<typeof Calendar> = {
       </Box>
     ),
   ],
-}
+};
 
-export default meta
-type Story = StoryObj<typeof Calendar>
+export default meta;
+type Story = StoryObj<typeof Calendar>;
 
 const sampleEvents = [
   {
@@ -50,19 +50,19 @@ const sampleEvents = [
     color: "yellow",
     date: DateTime.now().plus({ days: 5 }),
   },
-] as const
+] as const;
 
 export const Empty: Story = {
   args: {
     events: [],
   },
-}
+};
 
 export const WithEvents: Story = {
   args: {
     events: [...sampleEvents],
   },
-}
+};
 
 export const SingleDayMultipleEvents: Story = {
   args: {
@@ -147,7 +147,7 @@ export const SingleDayMultipleEvents: Story = {
       },
     ],
   },
-}
+};
 
 export const MultipleMonths: Story = {
   args: {
@@ -169,10 +169,10 @@ export const MultipleMonths: Story = {
       },
     ],
   },
-}
+};
 
 const InteractiveCalendarStory = () => {
-  const [events, setEvents] = useState<CalendarEvent[]>([...sampleEvents])
+  const [events, setEvents] = useState<CalendarEvent[]>([...sampleEvents]);
 
   const handleAddEvent = (date: DateTime) => {
     const newEvent: CalendarEvent = {
@@ -183,9 +183,9 @@ const InteractiveCalendarStory = () => {
         events.length % 4
       ] as CalendarEvent["color"],
       date: date,
-    }
-    setEvents([...events, newEvent])
-  }
+    };
+    setEvents([...events, newEvent]);
+  };
 
   const handleRemoveEvent = (eventToRemove: CalendarEvent) => {
     setEvents(
@@ -195,10 +195,10 @@ const InteractiveCalendarStory = () => {
             event.eventName === eventToRemove.eventName &&
             event.calendar === eventToRemove.calendar &&
             event.date.equals(eventToRemove.date)
-          )
-      )
-    )
-  }
+          ),
+      ),
+    );
+  };
 
   const handleEditEvent = (event: CalendarEvent, newName: string) => {
     setEvents(
@@ -207,10 +207,10 @@ const InteractiveCalendarStory = () => {
         e.calendar === event.calendar &&
         e.date.equals(event.date)
           ? { ...e, eventName: newName }
-          : e
-      )
-    )
-  }
+          : e,
+      ),
+    );
+  };
 
   return (
     <Calendar
@@ -219,15 +219,15 @@ const InteractiveCalendarStory = () => {
       onRemoveEvent={handleRemoveEvent}
       onEditEvent={handleEditEvent}
     />
-  )
-}
+  );
+};
 
 export const Interactive: Story = {
   render: () => <InteractiveCalendarStory />,
-}
+};
 
 const EmptyInteractiveCalendarStory = () => {
-  const [events, setEvents] = useState<CalendarEvent[]>([])
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
 
   const handleAddEvent = (date: DateTime) => {
     const newEvent: CalendarEvent = {
@@ -238,9 +238,9 @@ const EmptyInteractiveCalendarStory = () => {
         events.length % 4
       ] as CalendarEvent["color"],
       date: date,
-    }
-    setEvents([...events, newEvent])
-  }
+    };
+    setEvents([...events, newEvent]);
+  };
 
   const handleRemoveEvent = (eventToRemove: CalendarEvent) => {
     setEvents(
@@ -250,10 +250,10 @@ const EmptyInteractiveCalendarStory = () => {
             event.eventName === eventToRemove.eventName &&
             event.calendar === eventToRemove.calendar &&
             event.date.equals(eventToRemove.date)
-          )
-      )
-    )
-  }
+          ),
+      ),
+    );
+  };
 
   const handleEditEvent = (event: CalendarEvent, newName: string) => {
     setEvents(
@@ -262,10 +262,10 @@ const EmptyInteractiveCalendarStory = () => {
         e.calendar === event.calendar &&
         e.date.equals(event.date)
           ? { ...e, eventName: newName }
-          : e
-      )
-    )
-  }
+          : e,
+      ),
+    );
+  };
 
   return (
     <Calendar
@@ -274,9 +274,9 @@ const EmptyInteractiveCalendarStory = () => {
       onRemoveEvent={handleRemoveEvent}
       onEditEvent={handleEditEvent}
     />
-  )
-}
+  );
+};
 
 export const EmptyInteractive: Story = {
   render: () => <EmptyInteractiveCalendarStory />,
-}
+};

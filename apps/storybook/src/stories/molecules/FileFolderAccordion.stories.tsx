@@ -1,19 +1,19 @@
-import { FileFolderAccordion } from "@incmix/ui"
-import type { BuildingEnvironmentVariableRoot } from "@incmix/ui"
-import { buildEnvironmentVariable } from "@incmix/ui"
-import type { Meta, StoryObj } from "@storybook/react"
+import { FileFolderAccordion } from "@incmix/ui";
+import type { BuildingEnvironmentVariableRoot } from "@incmix/ui";
+import { buildEnvironmentVariable } from "@incmix/ui";
+import type { Meta, StoryObj } from "@storybook/react";
 
 const meta: Meta<typeof FileFolderAccordion> = {
   title: "Molecules/FileFolderAccordion",
   component: FileFolderAccordion,
-}
+};
 
-export default meta
-type Story = StoryObj<typeof FileFolderAccordion>
+export default meta;
+type Story = StoryObj<typeof FileFolderAccordion>;
 
 const defaultStyle = {
   width: "400px",
-}
+};
 
 const sampleData: BuildingEnvironmentVariableRoot = {
   children: [
@@ -41,20 +41,20 @@ const sampleData: BuildingEnvironmentVariableRoot = {
     },
     { type: "leaf", label: "File 3", value: "Content 3" },
   ],
-}
+};
 
 export const Default: Story = {
   args: {
     root: buildEnvironmentVariable(sampleData),
     style: defaultStyle,
   },
-}
+};
 
 export const EmptyRoot: Story = {
   args: {
     root: buildEnvironmentVariable({ children: [] }),
   },
-}
+};
 
 export const SingleLevel: Story = {
   args: {
@@ -67,11 +67,11 @@ export const SingleLevel: Story = {
     }),
     style: defaultStyle,
   },
-}
+};
 
 export const MultipleLevels: Story = {
   args: {
     root: buildEnvironmentVariable(sampleData),
     style: defaultStyle,
   },
-}
+};

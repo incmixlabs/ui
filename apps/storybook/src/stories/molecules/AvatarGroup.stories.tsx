@@ -1,6 +1,6 @@
-import { AvatarGroup } from "@incmix/ui"
-import { directions, layouts, sizes, stackOrders } from "@incmix/ui"
-import type { Meta, StoryObj } from "@storybook/react"
+import { AvatarGroup } from "@incmix/ui";
+import { directions, layouts, sizes, stackOrders } from "@incmix/ui";
+import type { Meta, StoryObj } from "@storybook/react";
 
 const meta: Meta<typeof AvatarGroup> = {
   title: "Molecules/AvatarGroup",
@@ -22,10 +22,10 @@ const meta: Meta<typeof AvatarGroup> = {
       control: { type: "radio", options: stackOrders },
     },
   },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof AvatarGroup>
+export default meta;
+type Story = StoryObj<typeof AvatarGroup>;
 
 const sampleUsers = [
   { name: "John Doe", src: "https://example.com/john.jpg" },
@@ -34,46 +34,46 @@ const sampleUsers = [
   { name: "Alice Brown", src: "https://example.com/alice.jpg" },
   { name: "Charlie Wilson", src: "https://example.com/charlie.jpg" },
   { name: "Eva Davis", src: "https://example.com/eva.jpg" },
-]
+];
 
 export const Spread: Story = {
   args: {
     users: sampleUsers,
     layout: "spread",
   },
-}
+};
 
 export const Stacked: Story = {
   args: {
     ...Spread.args,
     layout: "stack",
   },
-}
+};
 
 export const Small: Story = {
   args: {
     ...Spread.args,
     size: "2",
   },
-}
+};
 
 export const Large: Story = {
   args: {
     ...Spread.args,
     size: "6",
   },
-}
+};
 
 export const LowVisibility: Story = {
   args: {
     ...Spread.args,
     maxVisible: 3,
   },
-}
+};
 
 export const HighVisibility: Story = {
   args: {
     ...Spread.args,
     maxVisible: 6,
   },
-}
+};

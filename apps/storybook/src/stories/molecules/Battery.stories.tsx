@@ -1,6 +1,6 @@
-import { Box } from "@incmix/ui"
-import { Battery, BatteryWidget } from "@incmix/ui/widgets"
-import type { Meta, StoryObj } from "@storybook/react"
+import { Box } from "@incmix/ui";
+import { Battery, BatteryWidget } from "@incmix/ui/widgets";
+import type { Meta, StoryObj } from "@storybook/react";
 
 const meta: Meta<typeof Battery> = {
   title: "Molecules/Battery",
@@ -13,10 +13,10 @@ const meta: Meta<typeof Battery> = {
       </Box>
     ),
   ],
-}
+};
 
-export default meta
-type Story = StoryObj<typeof Battery>
+export default meta;
+type Story = StoryObj<typeof Battery>;
 
 export const LowBattery: Story = {
   args: {
@@ -27,7 +27,7 @@ export const LowBattery: Story = {
       dischargingTime: 600,
     },
   },
-}
+};
 
 export const MediumBattery: Story = {
   args: {
@@ -38,7 +38,7 @@ export const MediumBattery: Story = {
       dischargingTime: 600,
     },
   },
-}
+};
 
 export const HalfBattery: Story = {
   args: {
@@ -49,7 +49,7 @@ export const HalfBattery: Story = {
       dischargingTime: 600,
     },
   },
-}
+};
 
 export const FullBattery: Story = {
   args: {
@@ -60,7 +60,7 @@ export const FullBattery: Story = {
       dischargingTime: 3600,
     },
   },
-}
+};
 
 export const ChargingBattery: Story = {
   args: {
@@ -71,14 +71,14 @@ export const ChargingBattery: Story = {
       dischargingTime: 0,
     },
   },
-}
+};
 
 export const NoBattery: Story = {
   args: {
     batteryInfo: null,
   },
-}
+};
 
 export const LiveBattery: StoryObj<typeof BatteryWidget> = {
   render: () => <BatteryWidget />,
-}
+};

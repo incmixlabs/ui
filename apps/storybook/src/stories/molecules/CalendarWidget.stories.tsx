@@ -1,6 +1,6 @@
-import { Box } from "@incmix/ui"
-import { CalendarWidget } from "@incmix/ui/widgets"
-import type { Meta, StoryObj } from "@storybook/react"
+import { Box } from "@incmix/ui";
+import { CalendarWidget } from "@incmix/ui/widgets";
+import type { Meta, StoryObj } from "@storybook/react";
 
 const meta: Meta<typeof CalendarWidget> = {
   title: "Molecules/CalendarWidget",
@@ -13,10 +13,10 @@ const meta: Meta<typeof CalendarWidget> = {
       </Box>
     ),
   ],
-}
+};
 
-export default meta
-type Story = StoryObj<typeof CalendarWidget>
+export default meta;
+type Story = StoryObj<typeof CalendarWidget>;
 
 export const Default: Story = {
   args: {
@@ -30,4 +30,4 @@ export const Default: Story = {
       },
     },
   },
-}
+};
