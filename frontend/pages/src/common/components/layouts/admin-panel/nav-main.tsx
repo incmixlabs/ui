@@ -2,7 +2,11 @@
 
 import { ChevronRight, type LucideIcon } from "lucide-react"
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@incmix/ui"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@incmix/ui/collapsible"
 import { Link } from "@tanstack/react-router"
 import type React from "react"
 import {
