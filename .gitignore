@@ -5,8 +5,6 @@
 node_modules
 .pnp
 .pnp.js
-apps/fihi-app/public
-apps/storybook/public
 # Local env files
 .env
 .env.local
