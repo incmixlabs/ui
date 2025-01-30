@@ -2,18 +2,22 @@ import { FlowCard as Card, Image } from "@incmix/ui/flow-card"
 import type React from "react"
 
 export type AuthWrapperProps = {
-  image: string
+  image?: string
+  step?: number
   title?: string
   subTitle?: string
   children: React.ReactNode
 }
 
 export const AuthWrapper: React.FC<AuthWrapperProps> = ({
-  image = "step1",
+  image,
   title,
+  step = 1,
   subTitle,
   children,
-}: AuthWrapperProps) => (
+}: AuthWrapperProps) => {
+  image = !image ? `step${step}` : image
+  return(
   <div className="mx-auto flex flex-col items-center justify-center px-6 pt-8 md:h-screen">
     <a
       href="/"
@@ -52,4 +56,4 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({
       {children}
     </Card>
   </div>
-)
+)}
