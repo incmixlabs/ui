@@ -1,6 +1,6 @@
-import { useThemeStore } from "@incmix/store";
-import { type ClockSize, ClockWidget } from "@incmix/ui/widgets";
-import type { Meta, StoryObj } from "@storybook/react";
+import { useThemeStore } from "@incmix/store"
+import { type ClockSize, ClockWidget } from "@incmix/ui/widgets"
+import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof ClockWidget> = {
   title: "Molecules/Clock",
@@ -12,8 +12,8 @@ const meta: Meta<typeof ClockWidget> = {
           title: "Theme",
           icon: "circlehollow",
           onClick: () => {
-            const { toggleTheme } = useThemeStore();
-            toggleTheme();
+            const { toggleTheme } = useThemeStore()
+            toggleTheme()
           },
         },
       ],
@@ -24,44 +24,44 @@ const meta: Meta<typeof ClockWidget> = {
       control: { type: "select", options: ["1", "2", "3"] as ClockSize[] },
     },
   },
-};
+}
 
-export default meta;
-type Story = StoryObj<typeof ClockWidget>;
+export default meta
+type Story = StoryObj<typeof ClockWidget>
 
 const sampleClocks = [
   { city: "New York", timeZone: "America/New_York" },
   { city: "London", timeZone: "Europe/London" },
   { city: "Tokyo", timeZone: "Asia/Tokyo" },
-];
+]
 
 export const Single: Story = {
   args: {
     clocks: [sampleClocks[0]],
     size: "2",
   },
-};
+}
 
 export const Multiple: Story = {
   args: {
     clocks: sampleClocks,
     size: "2",
   },
-};
+}
 
 export const Small: Story = {
   args: {
     clocks: [sampleClocks[0]],
     size: "1",
   },
-};
+}
 
 export const Large: Story = {
   args: {
     clocks: [sampleClocks[0]],
     size: "3",
   },
-};
+}
 
 export const Flip: Story = {
   args: {
@@ -69,4 +69,4 @@ export const Flip: Story = {
     size: "2",
     flip: true,
   },
-};
+}

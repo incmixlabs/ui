@@ -1,8 +1,8 @@
-import { type TreeDataItem, TreeView } from "@incmix/ui";
-import { Box } from "@incmix/ui";
-import type { Meta, StoryObj } from "@storybook/react";
-import { FileIcon, FolderIcon, FolderOpenIcon } from "lucide-react";
-import { useState } from "react";
+import { type TreeDataItem, TreeView } from "@incmix/ui"
+import { Box } from "@incmix/ui"
+import type { Meta, StoryObj } from "@storybook/react"
+import { FileIcon, FolderIcon, FolderOpenIcon } from "lucide-react"
+import { useState } from "react"
 
 const meta: Meta<typeof TreeView> = {
   title: "Molecules/TreeView",
@@ -15,10 +15,10 @@ const meta: Meta<typeof TreeView> = {
       </Box>
     ),
   ],
-};
+}
 
-export default meta;
-type Story = StoryObj<typeof TreeView>;
+export default meta
+type Story = StoryObj<typeof TreeView>
 
 const sampleData: TreeDataItem[] = [
   {
@@ -78,12 +78,12 @@ const sampleData: TreeDataItem[] = [
       },
     ],
   },
-];
+]
 
 const TreeViewWithState = (args: React.ComponentProps<typeof TreeView>) => {
-  const [data, setData] = useState(args.data);
-  return <TreeView {...args} data={data} setData={setData} />;
-};
+  const [data, setData] = useState(args.data)
+  return <TreeView {...args} data={data} setData={setData} />
+}
 
 export const Default: Story = {
   render: (args) => <TreeViewWithState {...args} />,
@@ -98,7 +98,7 @@ export const Default: Story = {
       },
     },
   },
-};
+}
 
 export const WithInitialSelection: Story = {
   render: (args) => <TreeViewWithState {...args} />,
@@ -114,7 +114,7 @@ export const WithInitialSelection: Story = {
       },
     },
   },
-};
+}
 
 export const Empty: Story = {
   render: (args) => <TreeViewWithState {...args} />,
@@ -129,4 +129,4 @@ export const Empty: Story = {
       },
     },
   },
-};
+}

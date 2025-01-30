@@ -1,11 +1,11 @@
-import { Button, buttonPropDefs } from "@incmix/ui/button";
-import type { Meta, StoryObj } from "@storybook/react";
+import { Button, buttonPropDefs } from "@incmix/ui/button"
+import type { Meta, StoryObj } from "@storybook/react"
 
-const { variant, size, radius } = buttonPropDefs;
-const variants = Object.fromEntries(variant.values.map((v) => [v, v]));
-const sizes = Object.fromEntries(size.values.map((v) => [v, v]));
+const { variant, size, radius } = buttonPropDefs
+const variants = Object.fromEntries(variant.values.map((v) => [v, v]))
+const sizes = Object.fromEntries(size.values.map((v) => [v, v]))
 
-const radiuses = Object.fromEntries(radius.values.map((v) => [v, v]));
+const radiuses = Object.fromEntries(radius.values.map((v) => [v, v]))
 // @see https://storybook.js.org/docs/react/writing-stories/introduction
 const meta = {
   title: "Atoms/Button",
@@ -48,10 +48,10 @@ const meta = {
       options: Object.values(radiuses),
     },
   },
-} satisfies Meta<typeof Button>;
+} satisfies Meta<typeof Button>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 // @see https://storybook.js.org/docs/react/writing-stories/args
 export const Default: Story = {
@@ -60,31 +60,31 @@ export const Default: Story = {
     size: size.default,
     children: "My button",
   },
-};
+}
 
 export const Soft: Story = {
   args: {
     ...Default.args,
     variant: variants["soft"],
   },
-};
+}
 
 export const Outline: Story = {
   args: {
     ...Default.args,
     variant: "outline",
   },
-};
+}
 
 export const Ghost: Story = {
   args: {
     ...Default.args,
     variant: "ghost",
   },
-};
+}
 export const All: Story = {
   render: () => {
-    console.log("variants ", variant.values);
+    console.log("variants ", variant.values)
     return (
       <>
         {["classic", "solid", "soft", "surface", "outline", "ghost"].map(
@@ -103,9 +103,9 @@ export const All: Story = {
                 ))}
               </div>
             </div>
-          ),
+          )
         )}
       </>
-    );
+    )
   },
-};
+}

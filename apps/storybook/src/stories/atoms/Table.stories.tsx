@@ -1,19 +1,19 @@
-import usersList from "@/data/users";
-import { Avatar } from "@incmix/ui/avatar";
-import { Checkbox } from "@incmix/ui/checkbox";
-import { Label } from "@incmix/ui/label";
-import type { TableProps } from "@incmix/ui/table";
-import { Table } from "@incmix/ui/table";
-import type { Meta, StoryObj } from "@storybook/react";
-usersList.length = 5;
-import { twMerge } from "tailwind-merge";
+import usersList from "@/data/users"
+import { Avatar } from "@incmix/ui/avatar"
+import { Checkbox } from "@incmix/ui/checkbox"
+import { Label } from "@incmix/ui/label"
+import type { TableProps } from "@incmix/ui/table"
+import { Table } from "@incmix/ui/table"
+import type { Meta, StoryObj } from "@storybook/react"
+usersList.length = 5
+import { twMerge } from "tailwind-merge"
 export interface User {
-  email: string;
-  avatar: string;
-  country: string;
-  name: string;
-  position: string;
-  status: string;
+  email: string
+  avatar: string
+  country: string
+  name: string
+  position: string
+  status: string
 }
 
 const meta = {
@@ -29,10 +29,10 @@ const meta = {
       control: "text",
     },
   },
-} satisfies Meta<typeof Table>;
+} satisfies Meta<typeof Table>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   render: () => {
@@ -130,9 +130,9 @@ export const Default: Story = {
           </Table.Row>
         </Table.Body>
       </Table>
-    );
+    )
   },
-} as Story;
+} as Story
 
 export const UserTable: Story = {
   render: () => {
@@ -192,7 +192,7 @@ export const UserTable: Story = {
                   <div
                     className={twMerge(
                       "mr-2 h-2.5 w-2.5 rounded-full",
-                      user.status === "Active" ? "bg-green-400" : "bg-red-500",
+                      user.status === "Active" ? "bg-green-400" : "bg-red-500"
                     )}
                   />
                   {user.status}
@@ -202,6 +202,6 @@ export const UserTable: Story = {
           ))}
         </Table.Body>
       </Table>
-    );
+    )
   },
-} as Story;
+} as Story

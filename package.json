@@ -27,8 +27,5 @@
     "lefthook": "1.10.4",
     "turbo": "2.3.4"
   },
-  "trustedDependencies": [
-    "@biomejs/biome",
-    "core-js-pure"
-  ]
+  "trustedDependencies": ["@biomejs/biome", "core-js-pure"]
 }

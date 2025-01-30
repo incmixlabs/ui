@@ -1,7 +1,7 @@
-import { useThemeStore } from "@incmix/store";
-import { Carousel, CarouselContent } from "@incmix/ui";
-import { NewsCard, type NewsStory } from "@incmix/ui/widgets";
-import type { Meta, StoryObj } from "@storybook/react";
+import { useThemeStore } from "@incmix/store"
+import { Carousel, CarouselContent } from "@incmix/ui"
+import { NewsCard, type NewsStory } from "@incmix/ui/widgets"
+import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof NewsCard> = {
   title: "Molecules/NewsCard",
@@ -22,17 +22,17 @@ const meta: Meta<typeof NewsCard> = {
           title: "Theme",
           icon: "circlehollow",
           onClick: () => {
-            const { toggleTheme } = useThemeStore();
-            toggleTheme();
+            const { toggleTheme } = useThemeStore()
+            toggleTheme()
           },
         },
       ],
     },
   },
-};
+}
 
-export default meta;
-type Story = StoryObj<typeof NewsCard>;
+export default meta
+type Story = StoryObj<typeof NewsCard>
 
 const mockHighlight: NewsStory = {
   thumbnail: "https://picsum.photos/800/400",
@@ -44,7 +44,7 @@ const mockHighlight: NewsStory = {
     authors: ["Dr. Jane Smith", "Dr. John Doe"],
   },
   date: new Date().toISOString(),
-};
+}
 
 const mockRelatedStories: Array<NewsStory & { position: number }> = [
   {
@@ -66,14 +66,14 @@ const mockRelatedStories: Array<NewsStory & { position: number }> = [
     },
     date: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
   },
-];
+]
 
 export const SingleStory: Story = {
   args: {
     position: 0,
     highlight: mockHighlight,
   },
-};
+}
 
 export const WithRelatedStories: Story = {
   args: {
@@ -81,7 +81,7 @@ export const WithRelatedStories: Story = {
     highlight: mockHighlight,
     stories: mockRelatedStories,
   },
-};
+}
 
 export const NoThumbnail: Story = {
   args: {
@@ -92,4 +92,4 @@ export const NoThumbnail: Story = {
     },
     stories: mockRelatedStories,
   },
-};
+}

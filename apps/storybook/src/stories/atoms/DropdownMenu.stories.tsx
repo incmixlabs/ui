@@ -2,17 +2,17 @@ import {
   DropdownMenu,
   type DropdownMenuItemProps,
   dropdownContentPropDefs,
-} from "@incmix/ui";
-import { accentColorEnums } from "@incmix/ui/utils";
-import type { Meta, StoryObj } from "@storybook/react";
+} from "@incmix/ui"
+import { accentColorEnums } from "@incmix/ui/utils"
+import type { Meta, StoryObj } from "@storybook/react"
 
-const { variant, size } = dropdownContentPropDefs;
-console.log(variant);
-console.log(size);
-const variants = Object.fromEntries(variant.values.map((v) => [v, v]));
-const sizes = Object.fromEntries(size.values.map((v) => [v, v]));
-console.log(variants);
-console.log(sizes);
+const { variant, size } = dropdownContentPropDefs
+console.log(variant)
+console.log(size)
+const variants = Object.fromEntries(variant.values.map((v) => [v, v]))
+const sizes = Object.fromEntries(size.values.map((v) => [v, v]))
+console.log(variants)
+console.log(sizes)
 // @see https://storybook.js.org/docs/react/writing-stories/introduction
 const meta = {
   title: "Atoms/DropdownMenu",
@@ -27,10 +27,10 @@ const meta = {
       control: "text",
     },
   },
-} satisfies Meta<typeof DropdownMenu>;
+} satisfies Meta<typeof DropdownMenu>
 
-export default meta;
-type Story = StoryObj<typeof meta>;
+export default meta
+type Story = StoryObj<typeof meta>
 
 // @see https://storybook.js.org/docs/react/writing-stories/args
 
@@ -38,20 +38,20 @@ const items: DropdownMenuItemProps[] = [
   {
     label: "Item 1",
     onClick: () => {
-      console.log("clicked");
+      console.log("clicked")
     },
   },
   {
     label: "Item 2",
     onClick: () => {
-      console.log("clicked");
+      console.log("clicked")
     },
   },
   {
     label: "Item 3",
     shortcut: "⌘ E",
     onClick: () => {
-      console.log("clicked");
+      console.log("clicked")
     },
     separator: true,
     color: accentColorEnums.red,
@@ -60,10 +60,10 @@ const items: DropdownMenuItemProps[] = [
     label: "Item 4",
     shortcut: "⌘ F",
     onClick: () => {
-      console.log("clicked");
+      console.log("clicked")
     },
   },
-];
+]
 export const Default: Story = {
   render: () => {
     return (
@@ -91,6 +91,6 @@ export const Default: Story = {
           </div>
         ))}
       </>
-    );
+    )
   },
-};
+}

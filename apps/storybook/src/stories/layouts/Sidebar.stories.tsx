@@ -1,13 +1,13 @@
-import { Box, Flex, Sidebar, SidebarItem, SidebarSubItem } from "@incmix/ui";
+import { Box, Flex, Sidebar, SidebarItem, SidebarSubItem } from "@incmix/ui"
 
 import {
   DashboardIcon,
   EnvelopeClosedIcon,
   GearIcon,
   PersonIcon,
-} from "@radix-ui/react-icons";
-import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
+} from "@radix-ui/react-icons"
+import type { Meta, StoryObj } from "@storybook/react"
+import { useState } from "react"
 
 const meta: Meta<typeof Sidebar> = {
   title: "Layouts/Sidebar",
@@ -20,11 +20,11 @@ const meta: Meta<typeof Sidebar> = {
       </Box>
     ),
   ],
-};
+}
 
-export default meta;
+export default meta
 
-const noop = () => {};
+const noop = () => {}
 
 const DefaultContent = () => (
   <Flex direction="column" gap="1" p="2">
@@ -42,34 +42,34 @@ const DefaultContent = () => (
     </SidebarItem>
     <SidebarItem icon={<GearIcon />} label="Settings" onClick={noop} />
   </Flex>
-);
+)
 
 export const Extended = () => {
   return (
     <Sidebar minified={false} state="extended">
       <DefaultContent />
     </Sidebar>
-  );
-};
+  )
+}
 
 export const Minified = () => {
   return (
     <Sidebar minified={true} state="extended">
       <DefaultContent />
     </Sidebar>
-  );
-};
+  )
+}
 
 export const WithName = () => {
   return (
     <Sidebar minified={false} state="extended" name="Sidebar">
       <DefaultContent />
     </Sidebar>
-  );
-};
+  )
+}
 
 export const WithMinifyButton = () => {
-  const [isMinified, setIsMinified] = useState(false);
+  const [isMinified, setIsMinified] = useState(false)
 
   return (
     <Sidebar
@@ -80,5 +80,5 @@ export const WithMinifyButton = () => {
     >
       <DefaultContent />
     </Sidebar>
-  );
-};
+  )
+}

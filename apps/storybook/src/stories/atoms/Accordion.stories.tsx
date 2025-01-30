@@ -1,6 +1,6 @@
-import { Accordion, type AccordionItems } from "@incmix/ui";
-import type { Meta, StoryObj } from "@storybook/react";
-const types = ["single", "multiple"];
+import { Accordion, type AccordionItems } from "@incmix/ui"
+import type { Meta, StoryObj } from "@storybook/react"
+const types = ["single", "multiple"]
 
 const meta: Meta<typeof Accordion> = {
   title: "Atoms/Accordion",
@@ -10,10 +10,10 @@ const meta: Meta<typeof Accordion> = {
       control: { type: "select", options: types },
     },
   },
-};
+}
 
-export default meta;
-type Story = StoryObj<typeof Accordion>;
+export default meta
+type Story = StoryObj<typeof Accordion>
 
 const items: AccordionItems[] = [
   { label: "Item 1", content: "Content 1" },
@@ -21,17 +21,17 @@ const items: AccordionItems[] = [
   { label: "Item 3", content: "Content 3" },
   { label: "Item 4", content: "Content 4" },
   { label: "Item 5", content: "Content 5" },
-];
+]
 
 export const AccordionSingle: Story = {
   args: {
     items,
     type: "single",
   },
-};
+}
 export const AccordionMultiple: Story = {
   args: {
     items,
     type: "multiple",
   },
-};
+}
