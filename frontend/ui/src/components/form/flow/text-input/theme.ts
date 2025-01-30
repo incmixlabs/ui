@@ -47,6 +47,6 @@ export const textInputTheme = {
       },
     },
   },
-};
+}
 
-export type TextInputTheme = typeof textInputTheme;
+export type TextInputTheme = typeof textInputTheme

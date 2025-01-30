@@ -1,29 +1,36 @@
-import type { ComponentProps, FC, ReactNode } from "react";
-import { forwardRef } from "react";
-import { twMerge } from "tailwind-merge";
-import { mergeDeep } from "@utils/objects";
-import type { DeepPartial, DynamicStringEnumKeysOf,  BooleanComp, Colors, Sizes } from "@types";
-import { HelperText } from "../helper-text";
-import {  textInputTheme, type TextInputTheme  } from "./theme";
+import type {
+  BooleanComp,
+  Colors,
+  DeepPartial,
+  DynamicStringEnumKeysOf,
+  Sizes,
+} from "@types"
+import { mergeDeep } from "@utils/objects"
+import type { ComponentProps, FC, ReactNode } from "react"
+import { forwardRef } from "react"
+import { twMerge } from "tailwind-merge"
+import { HelperText } from "../helper-text"
+import { type TextInputTheme, textInputTheme } from "./theme"
 
 export interface TextInputColors
   extends Pick<Colors, "gray" | "info" | "failure" | "warning" | "success"> {
-  [key: string]: string;
+  [key: string]: string
 }
 
 export interface TextInputSizes extends Pick<Sizes, "sm" | "md" | "lg"> {
-  [key: string]: string;
+  [key: string]: string
 }
 
-export interface TextInputProps extends Omit<ComponentProps<"input">, "ref" | "color"> {
-  addon?: ReactNode;
-  color?: DynamicStringEnumKeysOf<TextInputColors>;
-  helperText?: ReactNode;
-  icon?: FC<ComponentProps<"svg">>;
-  rightIcon?: FC<ComponentProps<"svg">>;
-  shadow?: boolean;
-  sizing?: DynamicStringEnumKeysOf<TextInputSizes>;
-  theme?: DeepPartial<TextInputTheme>;
+export interface TextInputProps
+  extends Omit<ComponentProps<"input">, "ref" | "color"> {
+  addon?: ReactNode
+  color?: DynamicStringEnumKeysOf<TextInputColors>
+  helperText?: ReactNode
+  icon?: FC<ComponentProps<"svg">>
+  rightIcon?: FC<ComponentProps<"svg">>
+  shadow?: boolean
+  sizing?: DynamicStringEnumKeysOf<TextInputSizes>
+  theme?: DeepPartial<TextInputTheme>
 }
 
 export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
@@ -41,9 +48,9 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
       type = "text",
       ...props
     },
-    ref,
+    ref
   ) => {
-    const theme = mergeDeep(textInputTheme, customTheme);
+    const theme = mergeDeep(textInputTheme, customTheme)
 
     return (
       <>
@@ -56,7 +63,10 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
               </div>
             )}
             {RightIcon && (
-              <div data-testid="right-icon" className={theme.field.rightIcon.base}>
+              <div
+                data-testid="right-icon"
+                className={theme.field.rightIcon.base}
+              >
                 <RightIcon className={theme.field.rightIcon.svg} />
               </div>
             )}
@@ -68,7 +78,7 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
                 theme.field.input.withIcon[Icon ? "on" : "off"],
                 theme.field.input.withRightIcon[RightIcon ? "on" : "off"],
                 theme.field.input.withAddon[addon ? "on" : "off"],
-                theme.field.input.withShadow[shadow ? "on" : "off"],
+                theme.field.input.withShadow[shadow ? "on" : "off"]
               )}
               type={type}
               {...props}
@@ -78,8 +88,8 @@ export const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
         </div>
         {helperText && <HelperText color={color}>{helperText}</HelperText>}
       </>
-    );
-  },
-);
+    )
+  }
+)
 
-TextInput.displayName = "TextInput";
+TextInput.displayName = "TextInput"

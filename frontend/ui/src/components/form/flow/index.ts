@@ -1,2 +1,2 @@
-export * from "./helper-text";
-export * from "./text-input";
+export * from "./helper-text"
+export * from "./text-input"

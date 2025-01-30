@@ -1,9 +1,9 @@
-import type { Colors,  } from "@types";
+import type { Colors } from "@types"
 
-export interface HelperColors extends Pick<Colors, "gray" | "info" | "failure" | "warning" | "success"> {
-  [key: string]: string;
+export interface HelperColors
+  extends Pick<Colors, "gray" | "info" | "failure" | "warning" | "success"> {
+  [key: string]: string
 }
-
 
 export const helperTextTheme = {
   root: {
@@ -18,4 +18,4 @@ export const helperTextTheme = {
   },
 }
 
-export type HelperTextTheme = typeof helperTextTheme;
+export type HelperTextTheme = typeof helperTextTheme
