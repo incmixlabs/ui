@@ -1,14 +1,14 @@
 import { AuthWrapper } from "@incmix/ui/auth-wrapper"
 import { Button } from "@incmix/ui/button"
 import { Checkbox } from "@incmix/ui/checkbox"
-import { Label } from "@incmix/ui/label"
 import { TextInput } from "@incmix/ui/flow-form"
+import { Label } from "@incmix/ui/label"
 
 import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof AuthWrapper> = {
   title: "Molecules/AuthWrapper",
-  component: AuthWrapper
+  component: AuthWrapper,
 }
 
 export default meta
@@ -17,7 +17,7 @@ type Story = StoryObj<typeof AuthWrapper>
 export const Default: Story = {
   render: () => {
     return (
-      <AuthWrapper subTitle="Create an account" title="Welcome!" image='step1'>
+      <AuthWrapper subTitle="Create an account" title="Welcome!" image="step1">
         <form className="mt-8 space-y-6">
           <div className="flex flex-col gap-y-2">
             <Label htmlFor="email">Your email</Label>
@@ -59,15 +59,11 @@ export const Default: Story = {
             </Label>
           </div>
           <div className="mb-7">
-            <Button
-              size="2"
-              type="submit"
-              className="w-full p-2  sm:w-auto"
-            >
+            <Button size="2" type="submit" className="w-full p-2 sm:w-auto">
               Create account
             </Button>
           </div>
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+          <p className="font-medium text-gray-500 text-sm dark:text-gray-400">
             Already have an account?&nbsp;
             <a
               href="#"

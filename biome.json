@@ -9,6 +9,7 @@
   "files": {
     "ignore": [
       "node_modules",
+      "apps/storybook",
       "dist",
       ".next",
       ".astro",

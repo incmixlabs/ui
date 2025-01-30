@@ -8,8 +8,8 @@ import type { Meta, StoryObj } from "@storybook/react"
 
 const { variant, size } = dropdownContentPropDefs
 
-const variants = Object.fromEntries(variant.values.map((v) => [v, v]))
-const sizes = Object.fromEntries(size.values.map((v) => [v, v]))
+const _variants = Object.fromEntries(variant.values.map((v) => [v, v]))
+const _sizes = Object.fromEntries(size.values.map((v) => [v, v]))
 
 // @see https://storybook.js.org/docs/react/writing-stories/introduction
 const meta = {
