@@ -7,7 +7,7 @@
     "build:fe": "turbo build:fe",
     "build:storybook": "turbo build:storybook",
     "clean": "turbo clean",
-    "dev:fe": "turbo dev --parallel --ui tui --filter=\"./apps/fihi-app\"",
+    "dev:fe": "cp -r public apps/fihi-app && cp -r public apps/storybook && turbo dev --parallel --ui tui --filter=\"./apps/fihi-app\"",
     "dev:storybook": "turbo dev --parallel --ui tui --filter=\"./apps/storybook\"",
     "lint": "biome check .",
     "lint:fix": "biome check --fix --unsafe",
