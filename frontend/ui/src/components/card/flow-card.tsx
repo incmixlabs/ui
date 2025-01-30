@@ -55,7 +55,13 @@ interface CommonCardProps extends ComponentProps<"div"> {
 }
 
 export type FlowCardProps = (
-  | { imgAlt?: string; imgSrc?: string; renderImage?: any }
+  | {
+      imgAlt?: string
+      imgSrc?: string
+      renderImage?: any
+      width?: number
+      height?: number
+    }
   | {
       /** Allows to provide a custom render function for the image component. Useful in Next.JS and Gatsby. **Setting this will disable `imgSrc` and `imgAlt`**.
        */
