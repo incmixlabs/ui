@@ -64,7 +64,7 @@ const OrganizationEnvVarsPage: React.FC = () => {
       name: "notes",
       label: t("common:notes"),
       type: "textarea",
-      required: true,
+      required: false,
     },
   ]
 
@@ -73,7 +73,7 @@ const OrganizationEnvVarsPage: React.FC = () => {
       name: "notes",
       label: t("common:notes"),
       type: "textarea",
-      required: true,
+      required: false,
     },
   ]
 
