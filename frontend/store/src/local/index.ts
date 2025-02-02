@@ -12,9 +12,10 @@ interface PreferencesState {
   variables: Variables
   setVariables: (variables: Variables) => void
   theme: "light" | "dark"
+  system: boolean
   toggleTheme: () => void
   setTheme: (theme: "light" | "dark") => void
-
+  isSystem: (system: boolean) => void
   // Language state
   language: Language
   setLanguage: (lang: Language) => void
@@ -63,12 +64,14 @@ export const useLocalStore = create<PreferencesState>()(
       return {
         // Theme implementation
         theme: "light",
+        system: true,
         variables: {},
         setVariables: (variables: Variables) => set({ variables }),
         toggleTheme: () =>
           set((state) => ({
             theme: state.theme === "light" ? "dark" : "light",
           })),
+        isSystem: (system: boolean) => set({ system }),
         setTheme: (theme: "light" | "dark") => set({ theme }),
         // Language implementation
         language: i18n.language as Language,
@@ -127,6 +130,8 @@ export const useThemeStore = () =>
     theme: state.theme,
     toggleTheme: state.toggleTheme,
     setTheme: state.setTheme,
+    isSystem: state.isSystem,
+    system: state.system,
   }))
 
 export const useLanguageStore = () =>
