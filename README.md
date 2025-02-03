@@ -1,6 +1,9 @@
 # Incmix Monorepo
 
-## Scaffolded from turborepo-nextjs
+## To get started, 
+  copy/link public directory from root into apps/fihi-app and apps/storybook
+  in fihi-app, create .env file with VITE_BFF_API_URL, and register. 
+     
 
 ## The Tech stack is
 
