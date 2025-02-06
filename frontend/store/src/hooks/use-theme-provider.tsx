@@ -45,6 +45,7 @@ const  ExtendThemeContext = createContext<ExtendThemeContextValue>({
 });
 
 const ThemeProvider = ({ children,  ...props }: ThemeProviderProps) => {
+  debugger;
   const extendThemeContext  = useContext(ExtendThemeContext);
   const { appearance, onAppearanceChange} = useThemeContext()
   const [newProps, ] = useLocalStorage('theme',{...props, defaultContextValue, theme: defaultScheme()});
