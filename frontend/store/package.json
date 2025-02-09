@@ -13,7 +13,7 @@
     "./local": "./src/local/index.ts",
     "./hooks/theme-provider": "./src/hooks/use-theme-provider.tsx",
     "./sql/tasks": "./src/sql/tasks/index.ts",
-    "./sql/helper" : "./src/sql/helper.ts"
+    "./sql/helper": "./src/sql/helper.ts"
   },
   "scripts": {
     "typecheck": "tsc",

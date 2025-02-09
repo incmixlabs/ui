@@ -1,49 +1,49 @@
-"use client";
+"use client"
 
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react"
 
 function getItemFromLocalStorage(key: string) {
   // FIXME: !!!!!!!!!
   // if (typeof window === "undefined") return null;
 
-  const item = window?.localStorage.getItem(key);
-  if (item) return JSON.parse(item);
+  const item = window?.localStorage.getItem(key)
+  if (item) return JSON.parse(item)
 
-  return null;
+  return null
 }
 
 export function useLocalStorage<T>(
   key: string,
-  initialValue: T,
+  initialValue: T
 ): [T, React.Dispatch<React.SetStateAction<T>>] {
   const [storedValue, setStoredValue] = useState(
-    getItemFromLocalStorage(key) ?? initialValue,
-  );
+    getItemFromLocalStorage(key) ?? initialValue
+  )
 
   useEffect(() => {
     // Retrieve from localStorage
-    const item = getItemFromLocalStorage(key);
-    if (item) setStoredValue(item);
-  }, [key]);
+    const item = getItemFromLocalStorage(key)
+    if (item) setStoredValue(item)
+  }, [key])
 
   const setValue: React.Dispatch<React.SetStateAction<T>> = useCallback(
     (value) => {
       if (value instanceof Function) {
         setStoredValue((prev: T) => {
-          const newValue = value(prev);
+          const newValue = value(prev)
           // Save to localStorage
-          window.localStorage.setItem(key, JSON.stringify(newValue));
-          return newValue;
-        });
+          window.localStorage.setItem(key, JSON.stringify(newValue))
+          return newValue
+        })
       } else {
-        setStoredValue(value);
+        setStoredValue(value)
         // Save to localStorage
-        window.localStorage.setItem(key, JSON.stringify(value));
+        window.localStorage.setItem(key, JSON.stringify(value))
       }
-      return setStoredValue;
+      return setStoredValue
     },
-    [key, setStoredValue],
-  );
+    [key]
+  )
 
-  return [storedValue, setValue];
+  return [storedValue, setValue]
 }

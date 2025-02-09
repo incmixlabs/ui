@@ -10,6 +10,7 @@
     "ignore": [
       "node_modules",
       "apps/storybook",
+      "frontend/form-builder",
       "dist",
       ".next",
       ".astro",
