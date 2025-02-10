@@ -1,50 +1,9 @@
 import type { DeepPartial } from "@types"
 import { mergeDeep } from "@utils/objects"
 import { omit } from "@utils/objects/omit"
-import type { ComponentProps, FC } from "react"
+import type { ComponentProps, FC, JSX } from "react"
 import { twMerge } from "tailwind-merge"
-import { cardTheme } from "./flow-card-theme"
-
-export interface FlowCardTheme {
-  root: FlowCardRootTheme
-  img: FlowCardImageTheme
-}
-export const Image: FC<FlowCardProps> = ({
-  theme: customTheme = {},
-  ...props
-}) => {
-  const theme = mergeDeep(cardTheme, customTheme)
-  if (props.renderImage) {
-    return props.renderImage(theme, props.horizontal ?? false)
-  }
-  if (props.imgSrc) {
-    return (
-      <img
-        data-testid="flowbite-card-image"
-        alt={props.imgAlt ?? ""}
-        src={props.imgSrc}
-        className={twMerge(
-          theme.img.base,
-          theme.img.horizontal[props.horizontal ? "on" : "off"]
-        )}
-      />
-    )
-  }
-  return null
-}
-
-export interface FlowCardRootTheme {
-  base: string
-  children: string
-  horizontal?: boolean
-  href: string
-}
-
-export interface FlowCardImageTheme {
-  base: string
-  horizontal?: boolean
-}
-
+import { cardTheme, type FlowCardTheme } from "./flow-card-theme"
 interface CommonCardProps extends ComponentProps<"div"> {
   horizontal?: boolean
   href?: string
@@ -58,22 +17,42 @@ export type FlowCardProps = (
   | {
       imgAlt?: string
       imgSrc?: string
-      renderImage?: any
       width?: number
-      height?: number
-    }
-  | {
-      /** Allows to provide a custom render function for the image component. Useful in Next.JS and Gatsby. **Setting this will disable `imgSrc` and `imgAlt`**.
-       */
+      height?: number,
+      horizontal?: boolean
       renderImage?: (
         theme: DeepPartial<FlowCardTheme>,
         horizontal: boolean
       ) => JSX.Element
-      imgAlt?: string
-      imgSrc?: string
-    }
+      theme?: DeepPartial<FlowCardTheme>
+  }
 ) &
   CommonCardProps
+
+export const Image: FC<FlowCardProps> = ({
+  theme = {},
+  ...props
+}) => {
+  const mergedTheme = mergeDeep(theme, cardTheme)
+  if (props.renderImage) {
+    return props.renderImage(mergedTheme, props.horizontal ?? false)
+  }
+  if (props.imgSrc) {
+    const horizontalClass = theme?.img?.horizontal ? theme.img.horizontal[props.horizontal ? "on" : "off"] : ""
+    return (
+      <img
+        data-testid="flowbite-card-image"
+        alt={props.imgAlt ?? ""}
+        src={props.imgSrc}
+        className={twMerge(
+          theme?.img?.base,
+          horizontalClass,
+        )}
+      />
+    )
+  }
+  return null
+}
 
 export const FlowCard: FC<FlowCardProps> = (props) => {
   const {
@@ -81,27 +60,26 @@ export const FlowCard: FC<FlowCardProps> = (props) => {
     className,
     horizontal,
     href,
-    theme: customTheme = {},
+    theme = {},
   } = props
   const Component = typeof href === "undefined" ? "div" : "a"
   const theirProps = removeCustomProps(props)
-
-  const theme = mergeDeep(cardTheme, customTheme)
+  const customTheme = mergeDeep(theme, cardTheme)
 
   return (
     <Component
       data-testid="flowbite-card"
       href={href}
       className={twMerge(
-        theme.root.base,
-        theme.root.horizontal[horizontal ? "on" : "off"],
-        href && theme.root.href,
+        customTheme.root.base,
+        customTheme.root.horizontal[horizontal ? "on" : "off"],
+        href && customTheme.root.href,
         className
       )}
       {...theirProps}
     >
       <Image {...props} />
-      <div className={theme.root.children}>{children}</div>
+      <div className={customTheme.root.children}>{children}</div>
     </Component>
   )
 }
