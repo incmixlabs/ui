@@ -71,7 +71,7 @@ const ThemeProvider = ({
     return () => {
       preferDarkScheme.removeEventListener("change", () => updateTheme())
     }
-  }, [])
+  }, [isSystemTheme, onAppearanceChange, appearance])
 
   return (
     <ExtendThemeContext.Provider value={extendThemeContext}>
