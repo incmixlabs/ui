@@ -32,6 +32,7 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarHeaderLabel,
   SidebarRail,
 } from "./sidebar"
 
@@ -70,21 +71,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t("sidebar:dashboard"),
         url: "/dashboard",
         icon: LayoutDashboardIcon,
+        isSelected: pathname.includes("/dashboard"),
       },
       {
         title: t("sidebar:inbox"),
         url: "/inbox",
         icon: InboxIcon,
+        isSelected: pathname.includes("/inbox"),
       },
       {
         title: t("sidebar:ecommerce"),
         url: "/e-commerce",
         icon: BackpackIcon,
+        isSelected: pathname.includes("/e-commerce"),
       },
       {
         title: "Tasks",
         url: "/tasks",
         icon: FileTextIcon,
+        isSelected: pathname.includes("/tasks"),
+        notificationCount: 8,
       },
       {
         title: t("common:users"),
@@ -99,33 +105,39 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               {
                 title: t("sidebar:usersList"),
                 url: "/users/list",
+                isSelected: pathname.includes("/users/list"),
               },
-
               {
                 title: t("sidebar:profile"),
                 url: "/profile",
+                isSelected: pathname.includes("/profile"),
               },
               {
                 title: t("sidebar:feed"),
                 url: "/users/feed",
+                isSelected: pathname.includes("/users/feed"),
               },
               {
                 title: t("sidebar:settings"),
                 url: "/settings",
+                isSelected: pathname.includes("/settings"),
               },
             ]
           : [
               {
                 title: t("sidebar:profile"),
                 url: "/profile",
+                isSelected: pathname.includes("/profile"),
               },
               {
                 title: t("sidebar:feed"),
                 url: "/users/feed",
+                isSelected: pathname.includes("/users/feed"),
               },
               {
                 title: t("sidebar:settings"),
                 url: "/settings",
+                isSelected: pathname.includes("/settings"),
               },
             ],
       },
@@ -133,39 +145,55 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t("sidebar:pages"),
         url: "/pages",
         icon: FileTextIcon,
+        isSelected: pathname.includes("/pages"),
       },
       {
         title: t("sidebar:authentication"),
         url: "/auth",
         icon: LockIcon,
+        isSelected: pathname.includes("/auth"),
       },
       {
         title: t("sidebar:organizations"),
         url: "/organizations",
         icon: BoxIcon,
+        isSelected: pathname.includes("/organizations"),
       },
       {
         title: t("sidebar:docs"),
         url: "/docs",
         icon: TextIcon,
+        isSelected: pathname.includes("/docs"),
       },
       {
         title: t("sidebar:components"),
         url: "/components",
         icon: ComponentIcon,
+        isSelected: pathname.includes("/components"),
       },
       {
         title: t("sidebar:help"),
         url: "/help",
         icon: HelpCircle,
+        isSelected: pathname.includes("/help"),
       },
     ]
   }, [t, pathname, ability])
 
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar  isDefaultMobile={false} collapsible="icon" {...props}>
       <SidebarHeader>
         <OrgSwitcher />
+        <SidebarHeaderLabel asChild>
+          <div>
+            <img
+              className="inline-block h-8 w-8"
+              src="/tauri.svg"
+              alt="Incmix logo"
+            />
+            <span className="group-data-[collapsible=icon]:hidden">Incmix</span>
+          </div>
+        </SidebarHeaderLabel>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navItems} />

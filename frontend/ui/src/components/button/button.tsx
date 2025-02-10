@@ -5,7 +5,10 @@ import {
 import React from "react"
 export { buttonPropDefs } from "@radix-ui/themes/src/components/button.props.js"
 
-export type ButtonProps = RadixButtonProps
+export type ButtonProps = RadixButtonProps & {
+  icon?: React.ReactNode
+  srLabel?: string
+}
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ children, className, disabled, variant, ...props }, ref) => {
     const defaultClassName = `${disabled ? "cursor-not-allowed" : "cursor-pointer"} `
