@@ -1,5 +1,19 @@
-import type { FlowCardTheme } from "./flow-card"
+export interface FlowCardImageTheme {
+  base: string
+  horizontal?: {
+    off: string
+    on: string
+  }
+}
+export interface FlowCardRootTheme extends FlowCardImageTheme {
+  children: string
+  href: string
+}
 
+export interface FlowCardTheme {
+  root: FlowCardRootTheme
+  img: FlowCardImageTheme
+}
 export const cardTheme: FlowCardTheme = {
   root: {
     base: "flex rounded-lg border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800",
