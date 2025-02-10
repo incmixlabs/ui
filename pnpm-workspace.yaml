@@ -15,7 +15,7 @@ catalog:
   tailwindcss: 3.4.14
   zod: 3.24.1
   nanoid: "5.0.9"
-  "@radix-ui/themes": 3.1.6
+  "@radix-ui/themes": 3.2.0
   "@tanstack/react-query": 5.65.1
   "@tanstack/react-router": 1.98.3
   "@types/react": 19.0.0
