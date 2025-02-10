@@ -3,7 +3,7 @@ import { mergeDeep } from "@utils/objects"
 import { omit } from "@utils/objects/omit"
 import type { ComponentProps, FC, JSX } from "react"
 import { twMerge } from "tailwind-merge"
-import { cardTheme, type FlowCardTheme } from "./flow-card-theme"
+import { type FlowCardTheme, cardTheme } from "./flow-card-theme"
 interface CommonCardProps extends ComponentProps<"div"> {
   horizontal?: boolean
   href?: string
@@ -13,41 +13,35 @@ interface CommonCardProps extends ComponentProps<"div"> {
   theme?: DeepPartial<FlowCardTheme>
 }
 
-export type FlowCardProps = (
-  | {
-      imgAlt?: string
-      imgSrc?: string
-      width?: number
-      height?: number,
-      horizontal?: boolean
-      renderImage?: (
-        theme: DeepPartial<FlowCardTheme>,
-        horizontal: boolean
-      ) => JSX.Element
-      theme?: DeepPartial<FlowCardTheme>
-  }
-) &
+export type FlowCardProps = {
+  imgAlt?: string
+  imgSrc?: string
+  width?: number
+  height?: number
+  horizontal?: boolean
+  renderImage?: (
+    theme: DeepPartial<FlowCardTheme>,
+    horizontal: boolean
+  ) => JSX.Element
+  theme?: DeepPartial<FlowCardTheme>
+} &
   CommonCardProps
 
-export const Image: FC<FlowCardProps> = ({
-  theme = {},
-  ...props
-}) => {
+export const Image: FC<FlowCardProps> = ({ theme = {}, ...props }) => {
   const mergedTheme = mergeDeep(theme, cardTheme)
   if (props.renderImage) {
     return props.renderImage(mergedTheme, props.horizontal ?? false)
   }
   if (props.imgSrc) {
-    const horizontalClass = theme?.img?.horizontal ? theme.img.horizontal[props.horizontal ? "on" : "off"] : ""
+    const horizontalClass = theme?.img?.horizontal
+      ? theme.img.horizontal[props.horizontal ? "on" : "off"]
+      : ""
     return (
       <img
         data-testid="flowbite-card-image"
         alt={props.imgAlt ?? ""}
         src={props.imgSrc}
-        className={twMerge(
-          theme?.img?.base,
-          horizontalClass,
-        )}
+        className={twMerge(theme?.img?.base, horizontalClass)}
       />
     )
   }
@@ -55,13 +49,7 @@ export const Image: FC<FlowCardProps> = ({
 }
 
 export const FlowCard: FC<FlowCardProps> = (props) => {
-  const {
-    children,
-    className,
-    horizontal,
-    href,
-    theme = {},
-  } = props
+  const { children, className, horizontal, href, theme = {} } = props
   const Component = typeof href === "undefined" ? "div" : "a"
   const theirProps = removeCustomProps(props)
   const customTheme = mergeDeep(theme, cardTheme)
