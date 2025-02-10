@@ -24,8 +24,7 @@ export type FlowCardProps = {
     horizontal: boolean
   ) => JSX.Element
   theme?: DeepPartial<FlowCardTheme>
-} &
-  CommonCardProps
+} & CommonCardProps
 
 export const Image: FC<FlowCardProps> = ({ theme = {}, ...props }) => {
   const mergedTheme = mergeDeep(theme, cardTheme)
