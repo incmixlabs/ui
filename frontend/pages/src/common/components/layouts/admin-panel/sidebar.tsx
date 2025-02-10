@@ -184,7 +184,7 @@ const Sidebar = React.forwardRef<
     const SideBarTrigger = (
       <SidebarTrigger
         icon={<ChevronsLeft />}
-        className="-right-5 fixed top-10 z-50 h-10 w-10 left-[calc(var(--sidebar-width)_-_20px)] group-data-[collapsible=icon]:left-[calc(var(--sidebar-width-icon)_-_20px)] rounded-full border-1 border-[#DADADA] border-solid bg-white transition-all duration-200 ease-linear group-data-[collapsible=icon]:rotate-180"
+        className="-right-5 fixed top-10 left-[calc(var(--sidebar-width)_-_20px)] z-50 h-10 w-10 rounded-full border-1 border-[#DADADA] border-solid bg-white transition-all duration-200 ease-linear group-data-[collapsible=icon]:left-[calc(var(--sidebar-width-icon)_-_20px)] group-data-[collapsible=icon]:rotate-180"
       />
     )
 
@@ -633,7 +633,8 @@ const SidebarMenuButton = React.forwardRef<
         data-size={size}
         data-active={isActive}
         className={cn(
-          sidebarMenuButtonVariants({ variant, size }),'hover:bg-[#4A7DF6] dark:hover:bg-[#4A7DF6]',
+          sidebarMenuButtonVariants({ variant, size }),
+          "hover:bg-[#4A7DF6] dark:hover:bg-[#4A7DF6]",
           `${isSelected && open && "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[#4A7DF6] font-[600] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[4px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-white before:content-['']"}`,
           `${(isSelected || isSubMenuSelected) && !open && " bg-white text-[#3E63DD]"}`,
           className
@@ -803,7 +804,8 @@ const SidebarMenuSubButton = React.forwardRef<
         data-active={isActive}
         className={cn(
           "-translate-x-px flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground",
-          "data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground",'hover:bg-[#4A7DF6] dark:hover:bg-[#4A7DF6]',
+          "data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground",
+          "hover:bg-[#4A7DF6] dark:hover:bg-[#4A7DF6]",
           size === "sm" && "text-xs",
           size === "md" && "text-sm",
           isSelected &&
