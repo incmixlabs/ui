@@ -1,4 +1,8 @@
-import { FormControl, FormItem, FormMessage } from "@/components/form"
+import {
+  FormControl,
+  FormItem,
+  FormMessage,
+} from "@/components/shadcn-form/form"
 import { Input } from "@/components/form/input"
 import { Trash2 } from "lucide-react"
 import { type ChangeEvent, useState } from "react"
@@ -51,7 +55,11 @@ export default function AutoFormFile({
         {file && (
           <div className="flex h-[40px] w-full flex-row items-center justify-between space-x-2 rounded-sm border-0 bg-zinc-300/50 p-2 text-black focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-white dark:text-black dark:focus-visible:ring-0 dark:focus-visible:ring-offset-0">
             <p>{fileName}</p>
-            <button type="button" onClick={handleRemoveClick} aria-label="Remove image">
+            <button
+              type="button"
+              onClick={handleRemoveClick}
+              aria-label="Remove image"
+            >
               <Trash2 className="size-4" />
             </button>
           </div>

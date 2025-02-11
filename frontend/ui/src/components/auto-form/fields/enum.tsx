@@ -1,4 +1,8 @@
-import { FormControl, FormItem, FormMessage } from "@/components/form"
+import {
+  FormControl,
+  FormItem,
+  FormMessage,
+} from "@/components/shadcn-form/form"
 import {
   Select,
   SelectContent,

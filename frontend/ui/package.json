@@ -53,7 +53,8 @@
     "./utils": "./src/utils/index.ts",
     "./widgets": "./src/widgets/index.ts",
     "./popover-shadcn": "./src/components/popover-shadcn.tsx",
-    "./date-picker": "./src/components/date-picker.tsx"
+    "./date-picker": "./src/components/date-picker.tsx",
+    "./onboarding": "./src/components/onboarding/index.tsx"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "1.4.0",
@@ -104,6 +105,7 @@
     "embla-carousel-react": "8.5.1",
     "framer-motion": "12.0.6",
     "immer": "10.1.1",
+    "json-schema-to-zod": "^2.6.0",
     "lucide-react": "catalog:",
     "luxon": "3.5.0",
     "nanoid": "catalog:",

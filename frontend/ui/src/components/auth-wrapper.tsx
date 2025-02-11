@@ -18,7 +18,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({
 }: AuthWrapperProps) => {
   image = !image ? `step${step}` : image
   return (
-    <div className="mx-auto flex flex-col items-center justify-center px-6 pt-8 md:h-screen">
+    <div className="mx-auto flex flex-col items-center justify-center px-6">
       <a
         href="/"
         className="mb-8 flex items-center justify-center font-semibold text-2xl lg:mb-10 dark:text-white"

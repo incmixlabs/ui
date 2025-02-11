@@ -1,4 +1,4 @@
-import { Form } from "@components/form"
+import { Form } from "@components/shadcn-form/form"
 
 import { type DefaultValues, useForm } from "react-hook-form"
 import type { z } from "zod"

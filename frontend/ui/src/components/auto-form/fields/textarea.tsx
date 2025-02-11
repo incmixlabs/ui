@@ -1,4 +1,8 @@
-import { FormControl, FormItem, FormMessage } from "@/components/form"
+import {
+  FormControl,
+  FormItem,
+  FormMessage,
+} from "@/components/shadcn-form/form"
 import { Textarea } from "@/components/textarea"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"

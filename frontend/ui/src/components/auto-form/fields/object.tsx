@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/shad-occordion"
-import { FormField } from "@/components/form"
+import { SCNformField } from "@/components/shadcn-form/form"
 import { type useForm, useFormContext } from "react-hook-form"
 import * as z from "zod"
 import { DEFAULT_ZOD_HANDLERS, INPUT_COMPONENTS } from "../config"
@@ -169,7 +169,7 @@ export default function AutoFormObject<
           false
 
         return (
-          <FormField
+          <SCNformField
             control={form.control}
             name={key}
             key={key}

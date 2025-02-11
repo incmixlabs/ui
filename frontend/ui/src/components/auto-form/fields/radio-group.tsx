@@ -3,7 +3,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/form"
+} from "@/components/shadcn-form/form"
 import { RadioGroup, RadioGroupItem } from "@/components/radio-group"
 import type * as z from "zod"
 import AutoFormLabel from "../common/label"
