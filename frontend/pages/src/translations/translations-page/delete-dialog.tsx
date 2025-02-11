@@ -9,15 +9,19 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  ReactiveButton,
 } from "@incmix/ui"
-import type { UserAndProfile } from "@incmix/utils/types"
+import { INTL_API_URL } from "@incmix/ui/constants"
 import { Button } from "@radix-ui/themes"
+import { useMutation } from "@tanstack/react-query"
 import type { Row } from "@tanstack/react-table"
 import { Trash } from "lucide-react"
+import { useState } from "react"
+import type { TranslationMessage } from "./types"
 
 interface DeleteDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  items: Row<UserAndProfile>["original"][]
+  items: Row<TranslationMessage>["original"][]
   showTrigger?: boolean
   onSuccess?: () => void
 }
@@ -28,11 +32,31 @@ export function DeleteDialog({
   onSuccess,
   ...props
 }: DeleteDialogProps) {
+  const { mutate: onDelete, isPending } = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`${INTL_API_URL}/messages`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          items,
+        }),
+      })
+
+      const data = (await res.json()) as { message: string }
+      if (!res.ok) throw new Error(data.message)
+
+      return data
+    },
+    onSuccess,
+  })
+
   return (
     <Dialog {...props}>
       {showTrigger ? (
         <DialogTrigger>
-          <Button variant="outline">
+          <Button variant="outline" color="red">
             <Trash className="mr-2 size-4" />
             Delete ({items.length})
           </Button>
@@ -44,7 +68,7 @@ export function DeleteDialog({
           <DialogDescription>
             This action cannot be undone. This will permanently delete your{" "}
             <span className="font-medium">{items.length}</span>
-            {items.length === 1 ? " user" : " users"} from our servers.
+            {items.length === 1 ? " item" : " items"} from our servers.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="gap-2 sm:space-x-0">
@@ -53,7 +77,13 @@ export function DeleteDialog({
               Cancel
             </Button>
           </DialogClose>
-          <Button aria-label="Delete selected rows">Delete</Button>
+          <ReactiveButton
+            onClick={() => onDelete()}
+            loading={isPending}
+            aria-label="Delete selected rows"
+          >
+            Delete
+          </ReactiveButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

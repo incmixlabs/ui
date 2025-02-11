@@ -53,7 +53,7 @@ export function getColumns({
       ),
     },
     {
-      accessorKey: "name",
+      accessorKey: "fullName",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Full Name" />
       ),

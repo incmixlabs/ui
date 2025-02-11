@@ -1,59 +1,75 @@
-"use client"
-import React from "react"
-
 import {
   DataTable,
   type DataTableAdvancedFilterField,
   DataTableAdvancedToolbar,
-  type DataTableFilterField,
   type DataTableRowAction,
   Flex,
+  Spinner,
   useDataTable,
 } from "@incmix/ui"
+import { INTL_API_URL } from "@incmix/ui/constants"
 import { useQuery } from "@tanstack/react-query"
-
-import { Spinner } from "@incmix/ui"
-import { USERS_API_URL } from "@incmix/ui/constants"
-import type { UserAndProfile, UserProfilePaginated } from "@incmix/utils/types"
-import { ListUsersRoute } from "@users/routes"
-import type { UserListSearchParams } from "@users/routes/list-users"
-import { getColumns } from "./admin-user-columns"
+import React, { useState } from "react"
+import { TranslationsRoute } from "translations/routes"
+import type { TranslationSearchParams } from "../routes/translations"
 import { DeleteDialog } from "./delete-dialog"
-import { PasswordDialog } from "./password-dialog"
+import { EditTranslationDialog } from "./edit-translation"
 import { ToolbarActions } from "./toolbar-actions"
+import { getColumns } from "./translations-columns"
+import type { TranslationMessage } from "./types"
 
-const AdminUsersTable = () => {
+export const TranslationsTable = () => {
   const [rowAction, setRowAction] =
-    React.useState<DataTableRowAction<UserAndProfile> | null>(null)
-
+    useState<DataTableRowAction<TranslationMessage> | null>(null)
   const columns = React.useMemo(() => getColumns({ setRowAction }), [])
 
-  const filterFields: DataTableFilterField<UserAndProfile>[] = [
+  const advancedFilter: DataTableAdvancedFilterField<TranslationMessage>[] = [
     {
-      id: "fullName",
-      label: "Full Name",
-      placeholder: "Filter Full Name...",
-    },
-  ]
-
-  const advancedFilter: DataTableAdvancedFilterField<UserAndProfile>[] = [
-    {
-      id: "fullName",
-      label: "Full Name",
+      id: "locale",
+      label: "Locale",
       type: "text",
     },
     {
-      id: "email",
-      label: "Email",
+      id: "namespace",
+      label: "Namespace",
       type: "text",
+    },
+    {
+      id: "key",
+      label: "Key",
+      type: "text",
+    },
+    {
+      id: "value",
+      label: "Value",
+      type: "text",
+    },
+    {
+      id: "type",
+      label: "Type",
+      type: "multi-select",
+      options: [
+        { label: "Frag", value: "frag" },
+        { label: "Label", value: "label" },
+      ],
     },
   ]
 
   const { page, pageSize, filters, sort, joinOperator } =
-    ListUsersRoute.useSearch() as UserListSearchParams
+    TranslationsRoute.useSearch() as TranslationSearchParams
 
-  const { data, isLoading, isFetching } = useQuery<UserProfilePaginated>({
-    queryKey: ["user-list", filters, joinOperator, sort, page, pageSize],
+  const { data, isLoading, refetch } = useQuery<{
+    results: TranslationMessage[]
+    metadata: { pageCount: number }
+  }>({
+    queryKey: [
+      "translations-list",
+      filters,
+      joinOperator,
+      sort,
+      page,
+      pageSize,
+    ],
     placeholderData: (prev) => prev,
     queryFn: async () => {
       const searchParams = new URLSearchParams()
@@ -65,13 +81,14 @@ const AdminUsersTable = () => {
       if (sort?.length) {
         searchParams.append("sort", JSON.stringify(sort))
       }
-
       const res = await fetch(
-        `${USERS_API_URL}/list?${searchParams.toString()}`,
+        `${INTL_API_URL}/messages?${searchParams.toString()}`,
         {
+          method: "GET",
           credentials: "include",
         }
       )
+
       return await res.json()
     },
   })
@@ -79,15 +96,17 @@ const AdminUsersTable = () => {
   const { table } = useDataTable({
     data: data?.results ?? [],
     columns,
-    pageCount: data?.metadata?.pageCount ?? 1,
-    filterFields,
-    enableAdvancedFilter: false,
+    pageCount: data?.metadata.pageCount ?? 1,
+    filterFields: advancedFilter,
+
+    enableAdvancedFilter: true,
+    enableMultiSort: true,
     initialState: {
       sorting: [{ id: "id", desc: false }],
       columnPinning: { right: ["actions"] },
       columnVisibility: { id: false },
     },
-    getRowId: (originalRow) => originalRow.id,
+    getRowId: (originalRow) => String(originalRow.id),
     shallow: false,
     clearOnDefault: true,
   })
@@ -106,8 +125,8 @@ const AdminUsersTable = () => {
     <div>
       <DataTable table={table}>
         <DataTableAdvancedToolbar table={table} filterFields={advancedFilter}>
-          {isFetching && <Spinner className="mr-auto" />}
-          <ToolbarActions table={table} />
+          {isLoading && <Spinner className="mr-auto" />}
+          <ToolbarActions table={table} refetchData={refetch} />
         </DataTableAdvancedToolbar>
       </DataTable>
       <DeleteDialog
@@ -115,20 +134,22 @@ const AdminUsersTable = () => {
         onOpenChange={() => setRowAction(null)}
         items={rowAction?.row.original ? [rowAction?.row.original] : []}
         showTrigger={false}
-        onSuccess={() => rowAction?.row.toggleSelected(false)}
-      />
-      <PasswordDialog
-        open={rowAction?.type === "changePassword"}
-        onOpenChange={() => setRowAction(null)}
-        items={rowAction?.row.original ? [rowAction?.row.original] : []}
         onSuccess={() => {
           rowAction?.row.toggleSelected(false)
           setRowAction(null)
+          refetch()
+        }}
+      />
+      <EditTranslationDialog
+        open={rowAction?.type === "update"}
+        onOpenChange={() => setRowAction(null)}
+        item={rowAction?.row.original}
+        onSuccess={() => {
+          rowAction?.row.toggleSelected(false)
+          setRowAction(null)
+          refetch()
         }}
       />
     </div>
   )
 }
-
-export default AdminUsersTable
-export { AdminUsersTable }
