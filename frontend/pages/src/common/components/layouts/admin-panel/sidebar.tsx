@@ -183,8 +183,10 @@ const Sidebar = React.forwardRef<
     const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
     const SideBarTrigger = (
       <SidebarTrigger
-        icon={<ChevronsLeft />}
-        className="-right-5 fixed top-10 left-[calc(var(--sidebar-width)_-_20px)] z-50 h-10 w-10 rounded-full border-1 border-[#DADADA] border-solid bg-white transition-all duration-200 ease-linear group-data-[collapsible=icon]:left-[calc(var(--sidebar-width-icon)_-_20px)] group-data-[collapsible=icon]:rotate-180"
+        icon={
+          <ChevronsLeft className="stroke-[hsl(var(--sidebar-background))]" />
+        }
+        className="-right-5 fixed top-10 left-[calc(var(--sidebar-width)_-_20px)] z-50 h-10 w-10 rounded-full border border-[hsl(var(--sidebar-trigger-border))] border-solid bg-[hsl(var(--sidebar-trigger-background))] transition-all duration-200 ease-linear group-data-[collapsible=icon]:left-[calc(var(--sidebar-width-icon)_-_20px)] group-data-[collapsible=icon]:rotate-180"
       />
     )
 
@@ -222,10 +224,7 @@ const Sidebar = React.forwardRef<
             // @ts-expect-error TODO: fix error
             side={side}
           >
-            <SidebarTrigger
-              icon={<ChevronsLeft />}
-              className="absolute h-10 w-10 rounded-full bg-red bg-white p-2"
-            />
+            {SideBarTrigger}
             <SheetTitle className="sr-only">Sidebar</SheetTitle>
             <SheetDescription className="sr-only">Sidebar</SheetDescription>
             <div className="flex h-full w-full flex-col">{children}</div>
@@ -317,7 +316,7 @@ const SidebarTrigger = React.forwardRef<
       ref={ref}
       data-sidebar="trigger"
       variant="soft"
-      className={cn("h-7 w-7 border-2 border-[#EEEEEE]", className)}
+      className={cn("h-7 w-7", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
@@ -634,9 +633,9 @@ const SidebarMenuButton = React.forwardRef<
         data-active={isActive}
         className={cn(
           sidebarMenuButtonVariants({ variant, size }),
-          "hover:bg-[#4A7DF6] dark:hover:bg-[#4A7DF6]",
-          `${isSelected && open && "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[#4A7DF6] font-[600] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[4px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-white before:content-['']"}`,
-          `${(isSelected || isSubMenuSelected) && !open && " bg-white text-[#3E63DD]"}`,
+          "hover:bg-[hsl(var(--sidebar-accent))] dark:hover:bg-[hsl(var(--sidebar-accent))]",
+          `${isSelected && open && "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[hsl(var(--sidebar-accent))] font-[600] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[4px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-[hsl(var(--sidebar-foreground))] before:content-['']"}`,
+          `${(isSelected || isSubMenuSelected) && !open && " bg-[hsl(var(--sidebar-accent))]  text-[hsl(var(--sidebar-foreground))]"}`,
           className
         )}
         {...props}
@@ -805,12 +804,12 @@ const SidebarMenuSubButton = React.forwardRef<
         className={cn(
           "-translate-x-px flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground",
           "data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground",
-          "hover:bg-[#4A7DF6] dark:hover:bg-[#4A7DF6]",
+          "hover:bg-[hsl(var(--sidebar-item-primary))] dark:hover:bg-[hsl(var(--sidebar-item-primary))]",
           size === "sm" && "text-xs",
           size === "md" && "text-sm",
           isSelected &&
             open &&
-            "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[#4A7DF6] font-[600] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[3px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-white before:content-['']",
+            "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[hsl(var(--sidebar-item-primary))] font-[600] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[3px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-[hsl(var(--sidebar-primary-foreground))] before:content-['']",
           "group-data-[collapsible=icon]:hidden",
           className
         )}

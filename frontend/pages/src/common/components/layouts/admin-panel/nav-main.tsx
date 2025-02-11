@@ -88,7 +88,7 @@ export function NavMain({
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
                   {item.notificationCount && (
-                    <div className="ml-auto rounded-md bg-white px-1.5 font-normal text-[#3E63DD] text-[10px] transition-transform duration-200">
+                    <div className="ml-auto rounded-md bg-[hsl(var(--sidebar-foreground))] px-1.5 font-normal text-[10px] text-[hsl(var(--sidebar-background))] transition-transform duration-200">
                       {item.notificationCount}
                     </div>
                   )}
