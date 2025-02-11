@@ -2,7 +2,6 @@
 import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
 
-import { cn } from "@/utils"
 import { Button } from "@/components/button"
 import { Calendar } from "@/components/calendar"
 import {
@@ -10,6 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/popover-shadcn"
+import { cn } from "@/utils"
 import { forwardRef } from "react"
 
 export const DatePicker = forwardRef<

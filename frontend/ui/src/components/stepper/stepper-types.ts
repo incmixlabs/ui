@@ -21,7 +21,6 @@ export type StepItem = {
   icon?: IconType
   optional?: boolean
   fields?: Field[]
-
 }
 
 export type StepIconProps = {

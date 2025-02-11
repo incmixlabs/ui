@@ -1,6 +1,6 @@
 import type { z } from "zod"
-import type { ZodObjectOrWrapped } from "../auto-form/utils"
 import type { FieldConfig } from "../auto-form/types"
+import type { ZodObjectOrWrapped } from "../auto-form/utils"
 
 export interface StepSchema<SchemaType extends ZodObjectOrWrapped = any> {
   formSchema: any

@@ -4,8 +4,8 @@ import { type DefaultValues, useForm } from "react-hook-form"
 import type { z } from "zod"
 
 import { Button } from "@/components/button"
-import { cn } from "@utils/cn"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { cn } from "@utils/cn"
 
 import AutoFormObject from "./fields/object"
 import type { FieldConfig } from "./types"

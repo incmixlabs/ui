@@ -1,9 +1,9 @@
+import { Input } from "@/components/form/input"
 import {
   FormControl,
   FormItem,
   FormMessage,
 } from "@/components/shadcn-form/form"
-import { Input } from "@/components/form/input"
 import { Trash2 } from "lucide-react"
 import { type ChangeEvent, useState } from "react"
 import AutoFormLabel from "../common/label"

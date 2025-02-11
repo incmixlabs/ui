@@ -1,3 +1,4 @@
+import { Flex } from "@incmix/ui"
 import { AuthWrapper } from "@incmix/ui/auth-wrapper"
 import {
   Step,
@@ -5,13 +6,12 @@ import {
   Stepper,
   StepperProvider,
 } from "@incmix/ui/stepper"
-import { Flex } from "@incmix/ui"
-import { StepperFooter } from "./stepper-footer"
 import { formSchema } from "./form-schema"
+import { StepperFooter } from "./stepper-footer"
 
 import { jsonSchemaToZod } from "json-schema-to-zod"
-import { z } from "zod"
 import { useEffect, useState } from "react"
+import { z } from "zod"
 import AutoForm from "../auto-form"
 
 const convertToZod = (schema: any) => {

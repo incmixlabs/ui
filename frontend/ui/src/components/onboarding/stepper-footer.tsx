@@ -1,8 +1,8 @@
-import { Button } from "@incmix/ui/button"
 import { Card, Flex, Text } from "@incmix/ui"
-import * as Collapsible from "@radix-ui/react-collapsible"
-import { cn } from "@incmix/ui/utils"
+import { Button } from "@incmix/ui/button"
 import { useStepper } from "@incmix/ui/stepper"
+import { cn } from "@incmix/ui/utils"
+import * as Collapsible from "@radix-ui/react-collapsible"
 
 interface StepperFooterProps {
   onlyLastStep?: boolean
@@ -31,7 +31,7 @@ export function StepperFooter({
   } = useStepper() as { currentStep: number } & ReturnType<typeof useStepper>
 
   const handleNext = async () => {
-    if (!formSubmit || await formSubmit()) {
+    if (!formSubmit || (await formSubmit())) {
       nextStep()
       onStepChange?.(currentStep + 1)
     }
