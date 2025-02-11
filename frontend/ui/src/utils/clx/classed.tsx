@@ -78,7 +78,6 @@ const internalClassed = <
           ),
           dataAttributeProps,
         ] as const
-        // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
       }, [props])
 
       const merged = useMemo(

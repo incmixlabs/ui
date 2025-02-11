@@ -8,6 +8,13 @@
     "@incmix/config": "workspace: *",
     "typescript": "catalog:"
   },
+  "exports": {
+    ".": "./src/index.ts",
+    "./local": "./src/local/index.ts",
+    "./hooks/theme-provider": "./src/hooks/use-theme-provider.tsx",
+    "./sql/tasks": "./src/sql/tasks/index.ts",
+    "./sql/helper": "./src/sql/helper.ts"
+  },
   "scripts": {
     "typecheck": "tsc",
     "build": "rm -rf dist && tsc -p tsconfig.json --outDir dist"
@@ -22,6 +29,7 @@
     "@hono/zod-openapi": "0.18.3",
     "@incmix/utils": "catalog:",
     "@koale/useworker": "4.1.0",
+    "@radix-ui/themes": "catalog:",
     "broadcast-channel": "7.0.0",
     "i18next": "24.2.1",
     "immer": "10.1.1",
