@@ -47,6 +47,7 @@ import {
   TasksRoute,
   TauriGoogleAuthCallbackRoute,
   TestRoute,
+  TranslationsRoute,
   WelcomeRoute,
 } from "@incmix/pages"
 
@@ -73,6 +74,7 @@ const routeTree = RootRoute.addChildren([
   DashboardRoute,
   ListUsersRoute,
   TasksRoute,
+  TranslationsRoute,
 ])
 
 const router = createRouter({ routeTree })

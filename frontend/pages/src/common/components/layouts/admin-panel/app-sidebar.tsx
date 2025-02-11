@@ -7,6 +7,7 @@ import {
   FileTextIcon,
   HelpCircle,
   InboxIcon,
+  LanguagesIcon,
   LayoutDashboardIcon,
   LockIcon,
   TextIcon,
@@ -100,7 +101,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 title: t("sidebar:usersList"),
                 url: "/users/list",
               },
-
               {
                 title: t("sidebar:profile"),
                 url: "/profile",
@@ -153,6 +153,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: t("sidebar:components"),
         url: "/components",
         icon: ComponentIcon,
+      },
+      {
+        title: "Translations",
+        url: "/translations",
+        icon: LanguagesIcon,
       },
       {
         title: t("sidebar:help"),

@@ -22,7 +22,7 @@ const AdminUsersTable = () => {
 
   const filterFields: DataTableFilterField<MemberDetails>[] = [
     {
-      id: "name",
+      id: "fullName",
       label: "Full Name",
       placeholder: "Filter Full Name...",
     },
