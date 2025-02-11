@@ -1,4 +1,4 @@
-import { Button, Card, Flex, FormButton, FormField, Text, cn } from "@incmix/ui"
+import { Button, Card, Flex, FormField, Text, cn } from "@incmix/ui"
 import { Step, type StepItem, Stepper, useStepper } from "@incmix/ui/stepper"
 import * as Collapsible from "@radix-ui/react-collapsible"
 import { PersonIcon, QuoteIcon, StarIcon } from "@radix-ui/react-icons"
@@ -66,7 +66,7 @@ function StepperFooter({
     </Card>
   )
 
-  const Btn = formSubmit ? FormButton : Button
+  const Btn = formSubmit ? Button : Button
 
   return (
     <>
