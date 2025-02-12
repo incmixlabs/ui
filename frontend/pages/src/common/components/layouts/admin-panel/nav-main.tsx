@@ -11,7 +11,6 @@ import { Link } from "@tanstack/react-router"
 import type React from "react"
 import {
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -28,15 +27,17 @@ export function NavMain({
     url: string
     icon?: LucideIcon
     isActive?: boolean
+    isSelected?: boolean
+    notificationCount?: number
     items?: {
       title: string
       url: string
+      isSelected?: boolean
     }[]
   }[]
 }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Incmix</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) =>
           item.items?.length ? (
@@ -48,7 +49,11 @@ export function NavMain({
             >
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton tooltip={item.title}>
+                  <SidebarMenuButton
+                    isSelected={item.isSelected}
+                    isSubMenuSelected={item.isActive}
+                    tooltip={item.title}
+                  >
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -58,7 +63,10 @@ export function NavMain({
                   <SidebarMenuSub>
                     {item.items?.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
-                        <SidebarMenuSubButton asChild>
+                        <SidebarMenuSubButton
+                          isSelected={subItem.isSelected}
+                          asChild
+                        >
                           <Link to={subItem.url}>
                             <span>{subItem.title}</span>
                           </Link>
@@ -71,10 +79,19 @@ export function NavMain({
             </Collapsible>
           ) : (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title} asChild>
+              <SidebarMenuButton
+                isSelected={item.isSelected}
+                tooltip={item.title}
+                asChild
+              >
                 <Link to={item.url}>
                   {item.icon && <item.icon />}
                   <span>{item.title}</span>
+                  {item.notificationCount && (
+                    <div className="ml-auto rounded-md bg-[hsl(var(--sidebar-foreground))] px-1.5 font-normal text-[10px] text-[hsl(var(--sidebar-background))] transition-transform duration-200">
+                      {item.notificationCount}
+                    </div>
+                  )}
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
