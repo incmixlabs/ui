@@ -25,10 +25,10 @@ import { useQuery } from "@tanstack/react-query"
 import { useLocation, useRouter } from "@tanstack/react-router"
 import { I18n } from "i18n"
 import { useTranslation } from "react-i18next"
+import SecondarySidebar from "./SecondarySidebar"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
 import { OrgSwitcher } from "./org-switcher"
-import SecondarySidebar from "./secondarySidebar"
 import {
   Sidebar,
   SidebarContent,
