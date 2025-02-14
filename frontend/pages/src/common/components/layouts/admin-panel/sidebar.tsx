@@ -24,6 +24,7 @@ import { useIsMobile } from "@incmix/ui/hooks"
 import { cn } from "@incmix/ui/utils"
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
+const SECONDARY_SIDEBAR_COOKIE_NAME = "secondary-sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
 const SIDEBAR_WIDTH_MOBILE = "18rem"
@@ -31,13 +32,21 @@ const SIDEBAR_WIDTH_ICON = "4rem"
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
 type SidebarContext = {
+  // Primary sidebar
   state: "expanded" | "collapsed"
   open: boolean
   setOpen: (open: boolean) => void
+
+  // Secondary sidebar
+  secondaryOpen: boolean
+  setSecondaryOpen: (open: boolean) => void
+
+  // Common
+  isMobile: boolean
   openMobile: boolean
   setOpenMobile: (open: boolean) => void
-  isMobile: boolean
   toggleSidebar: () => void
+  toggleSecondarySidebar: () => void
 }
 
 const SidebarContext = React.createContext<SidebarContext | null>(null)
@@ -54,9 +63,15 @@ function useSidebar() {
 const SidebarProvider = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
+    // Primary sidebar
     defaultOpen?: boolean
     open?: boolean
     onOpenChange?: (open: boolean) => void
+
+    // Secondary sidebar
+    defaultSecondaryOpen?: boolean
+    secondaryOpen?: boolean
+    onSecondaryOpenChange?: (open: boolean) => void
   }
 >(
   (
@@ -71,8 +86,16 @@ const SidebarProvider = React.forwardRef<
     },
     ref
   ) => {
+    const {
+      defaultSecondaryOpen = true,
+      secondaryOpen: secondaryOpenProp,
+      onSecondaryOpenChange: setSecondaryOpenProp,
+    } = props
     const isMobile = useIsMobile()
     const [openMobile, setOpenMobile] = React.useState(false)
+    const [_secondaryOpen, _setSecondaryOpen] =
+      React.useState(defaultSecondaryOpen)
+    const secondaryOpen = secondaryOpenProp ?? _secondaryOpen
 
     // This is the internal state of the sidebar.
     // We use openProp and setOpenProp for control from outside the component.
@@ -92,12 +115,25 @@ const SidebarProvider = React.forwardRef<
       },
       [setOpenProp, open]
     )
-
     // Helper to toggle the sidebar.
     const toggleSidebar = React.useCallback(() => {
       setOpenMobile((open) => !open)
       setOpen((open) => !open)
     }, [setOpen])
+
+    const setSecondaryOpen = React.useCallback(
+      (value: boolean | ((prev: boolean) => boolean)) => {
+        const newValue =
+          typeof value === "function" ? value(secondaryOpen) : value
+        setSecondaryOpenProp?.(newValue) || _setSecondaryOpen(newValue)
+        document.cookie = `${SECONDARY_SIDEBAR_COOKIE_NAME}=${newValue}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+      },
+      [setSecondaryOpenProp, secondaryOpen]
+    )
+
+    const toggleSecondarySidebar = React.useCallback(() => {
+      setSecondaryOpen((prev) => !prev)
+    }, [setSecondaryOpen])
 
     // Adds a keyboard shortcut to toggle the sidebar.
     React.useEffect(() => {
@@ -128,8 +164,21 @@ const SidebarProvider = React.forwardRef<
         openMobile,
         setOpenMobile,
         toggleSidebar,
+        setSecondaryOpen,
+        secondaryOpen,
+        toggleSecondarySidebar,
       }),
-      [state, open, setOpen, isMobile, openMobile, toggleSidebar]
+      [
+        state,
+        open,
+        setOpen,
+        isMobile,
+        openMobile,
+        toggleSidebar,
+        setSecondaryOpen,
+        secondaryOpen,
+        toggleSecondarySidebar,
+      ]
     )
 
     return (
@@ -309,8 +358,8 @@ Sidebar.displayName = "Sidebar"
 const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
   React.ComponentProps<typeof Button>
->(({ className, onClick, icon, srLabel, ...props }, ref) => {
-  const { toggleSidebar } = useSidebar()
+>(({ className, onClick, icon, isSecondary, srLabel, ...props }, ref) => {
+  const { toggleSidebar, toggleSecondarySidebar } = useSidebar()
   return (
     <IconButton
       ref={ref}
@@ -319,6 +368,10 @@ const SidebarTrigger = React.forwardRef<
       className={cn("h-7 w-7", className)}
       onClick={(event) => {
         onClick?.(event)
+        if (isSecondary) {
+          toggleSecondarySidebar()
+          return
+        }
         toggleSidebar()
       }}
       {...props}
