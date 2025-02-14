@@ -112,17 +112,17 @@ export default function SecondarySidebar() {
   return (
     <div
       className={cn(
-        "relative h-screen transition-all duration-200 ease-linear",
+        "relative h-screen  transition-all duration-200 ease-linear",
         secondaryOpen || (isMobile && open) ? "min-w-[270px]" : "w-0"
       )}
     >
       <div
         className={cn(
-          " fixed top-0 z-10 flex max-h-screen min-w-[270px] flex-col border border-y-0 border-r-[hsl(var(--sidebar-border))] border-l-0 bg-[hsl(var(--sidebar-trigger-background))]",
+          " fixed top-0 z-10 flex h-screen min-w-[270px] flex-col border border-y-0 border-r-[hsl(var(--sidebar-border))] border-l-0 bg-[hsl(var(--sidebar-trigger-background))] transition-[left,opacity] duration-300 ease-in-out",
           open
             ? "left-[calc(var(--sidebar-width))] z-30"
             : "left-[calc(var(--sidebar-width-icon))]",
-          secondaryOpen || (isMobile && open) ? "min-w-[270px]" : "hidden w-0"
+          secondaryOpen || (isMobile && open) ? "min-w-[270px]" : "hidden  w-0"
         )}
       >
         <div className="">
