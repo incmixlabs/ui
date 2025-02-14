@@ -635,7 +635,7 @@ const SidebarMenuButton = React.forwardRef<
           sidebarMenuButtonVariants({ variant, size }),
           "hover:bg-[hsl(var(--sidebar-accent))] dark:hover:bg-[hsl(var(--sidebar-accent))]",
           `${isSelected && open && "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[hsl(var(--sidebar-accent))] font-[600] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[4px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-[hsl(var(--sidebar-foreground))] before:content-['']"}`,
-          `${(isSelected || isSubMenuSelected) && !open && " bg-[hsl(var(--sidebar-accent))]  text-[hsl(var(--sidebar-foreground))]"}`,
+          `${(isSelected || isSubMenuSelected) && !open && " bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-foreground))]"}`,
           className
         )}
         {...props}
