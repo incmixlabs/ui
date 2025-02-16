@@ -2,8 +2,8 @@ import type { z } from "zod"
 import type { FieldConfig } from "../auto-form/types"
 import type { ZodObjectOrWrapped } from "../auto-form/utils"
 
-export interface StepSchema<SchemaType extends ZodObjectOrWrapped = any> {
-  formSchema: any
+export interface StepSchema<SchemaType extends ZodObjectOrWrapped> {
+  formSchema: any // Replace with more specific type if possible
   label: string
   stepIcon: string
   fieldConfig?: FieldConfig<z.infer<SchemaType>>
@@ -19,6 +19,7 @@ export interface StepSchema<SchemaType extends ZodObjectOrWrapped = any> {
   }
 }
 
+// Define the overall schema structure
 export interface StepperSchema {
-  steps: StepSchema[]
+  steps: StepSchema<any>[]
 }

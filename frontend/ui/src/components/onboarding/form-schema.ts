@@ -1,6 +1,6 @@
 import type { StepSchema } from "./types"
 
-export const formSchema: { steps: StepSchema[] } = {
+export const formSchema: { steps: StepSchema<any>[] } = {
   steps: [
     {
       label: "Company Details",
@@ -19,6 +19,27 @@ export const formSchema: { steps: StepSchema[] } = {
           inputProps: {
             required: true,
             placeholder: "Enter your company name",
+          },
+        },
+      },
+    },
+    {
+      label: "Full name of user",
+      stepIcon: "User1",
+      formSchema: {
+        type: "object",
+        properties: {
+          username: {
+            type: "string",
+          },
+        },
+      },
+      fieldConfig: {
+        username: {
+          description: "Full Name",
+          inputProps: {
+            required: true,
+            placeholder: "Enter your company name 2",
           },
         },
       },
