@@ -2,84 +2,11 @@
 
 import { cn } from "@incmix/ui"
 import { Progress } from "@radix-ui/themes"
-import {
-  Book,
-  FileText,
-  Folder,
-  FolderClosed,
-  Layout,
-  type LucideIcon,
-  Trash2,
-  Workflow,
-} from "lucide-react"
+import { Folder, FolderClosed, type LucideIcon, Workflow } from "lucide-react"
 import * as React from "react"
+import { secondaryFooterData, secondarySidebarData } from "./data"
 import { useSidebar } from "./sidebar"
 import { Tree } from "./tree-view"
-
-const data = [
-  { id: "1", name: "Unread" },
-  { id: "2", name: "Threads" },
-  {
-    id: "3",
-    name: "Chat Rooms",
-    children: [
-      { id: "c1", name: "General" },
-      { id: "c2", name: "Random" },
-      { id: "c3", name: "Open Source Projects" },
-    ],
-  },
-  {
-    id: "4",
-    name: "Direct Messages 1",
-    children: [
-      {
-        id: "d1",
-        name: "Alice",
-        children: [
-          { id: "d11", name: "Alice2" },
-          { id: "d12", name: "Bob2" },
-          { id: "d13", name: "Charlie2" },
-        ],
-      },
-      { id: "d2", name: "Bob" },
-      { id: "d3", name: "Charlie" },
-    ],
-  },
-  {
-    id: "5",
-    name: "Direct Messages 2",
-    children: [
-      {
-        id: "e1",
-        name: "Alice",
-        children: [
-          { id: "e11", name: "Alice2" },
-          { id: "e12", name: "Bob2" },
-          { id: "e13", name: "Charlie2" },
-        ],
-      },
-      { id: "e2", name: "Bob" },
-      { id: "e3", name: "Charlie" },
-    ],
-  },
-  {
-    id: "6",
-    name: "Direct Messages 3",
-    children: [
-      {
-        id: "f1",
-        name: "Alice",
-        children: [
-          { id: "f11", name: "Alice2" },
-          { id: "f12", name: "Bob2" },
-          { id: "f13", name: "Charlie2" },
-        ],
-      },
-      { id: "f2", name: "Bob" },
-      { id: "f3", name: "Charlie" },
-    ],
-  },
-]
 
 interface footerTypes {
   icon?: LucideIcon
@@ -87,24 +14,7 @@ interface footerTypes {
   storageAvailable?: number
 }
 
-const footerData: footerTypes[] = [
-  {
-    icon: Trash2,
-    title: "Trash",
-  },
-  {
-    storageAvailable: 80,
-    title: "Storage",
-  },
-  {
-    icon: FileText,
-    title: "Notes",
-  },
-  {
-    icon: Book,
-    title: "Contacts",
-  },
-]
+const footerData: footerTypes[] = secondaryFooterData
 
 export default function SecondarySidebar() {
   const { isMobile, open, secondaryOpen } = useSidebar()
@@ -112,7 +22,7 @@ export default function SecondarySidebar() {
   return (
     <div
       className={cn(
-        "relative h-screen  transition-all duration-200 ease-linear",
+        "relative h-screen transition-all duration-200 ease-linear",
         secondaryOpen || (isMobile && open) ? "min-w-[270px]" : "w-0"
       )}
     >
@@ -122,7 +32,7 @@ export default function SecondarySidebar() {
           open
             ? "left-[calc(var(--sidebar-width))] z-30"
             : "left-[calc(var(--sidebar-width-icon))]",
-          secondaryOpen || (isMobile && open) ? "min-w-[270px]" : "hidden  w-0"
+          secondaryOpen || (isMobile && open) ? "min-w-[270px]" : "hidden w-0"
         )}
       >
         <div className="">
@@ -138,7 +48,7 @@ export default function SecondarySidebar() {
         </div>
         <div className="flex-1 overflow-scroll">
           <Tree
-            data={data}
+            data={secondarySidebarData}
             className="w-full flex-shrink-0"
             initialSelectedItemId="f12"
             onSelectChange={(item) => setContent(item?.name ?? "")}
