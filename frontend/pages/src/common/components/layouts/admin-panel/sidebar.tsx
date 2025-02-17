@@ -24,7 +24,6 @@ import { useIsMobile } from "@incmix/ui/hooks"
 import { cn } from "@incmix/ui/utils"
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
-const SECONDARY_SIDEBAR_COOKIE_NAME = "secondary-sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
 const SIDEBAR_WIDTH_MOBILE = "18rem"
@@ -126,7 +125,6 @@ const SidebarProvider = React.forwardRef<
         const newValue =
           typeof value === "function" ? value(secondaryOpen) : value
         setSecondaryOpenProp?.(newValue) || _setSecondaryOpen(newValue)
-        document.cookie = `${SECONDARY_SIDEBAR_COOKIE_NAME}=${newValue}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
       },
       [setSecondaryOpenProp, secondaryOpen]
     )
