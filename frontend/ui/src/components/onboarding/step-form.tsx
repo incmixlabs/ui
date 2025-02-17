@@ -1,10 +1,12 @@
+import { zodResolver } from "@hookform/resolvers/zod"
 import jsonSchemaToZod from "json-schema-to-zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 import { AuthWrapper } from "../auth-wrapper"
 import AutoForm from "../auto-form"
 import { useStepper } from "../stepper"
 import { formSchema } from "./form-schema"
 import { StepperFooter } from "./stepper-footer"
-import { z } from "zod"
 
 interface StepFormProps {
   step: any
@@ -22,7 +24,6 @@ export const StepForm = ({
   onFinalSubmit,
 }: StepFormProps) => {
   const { nextStep, activeStep, isLastStep } = useStepper()
-  const totalSteps = formSchema.steps.length
 
   const convertToZod = (schema: any) => {
     try {
@@ -37,7 +38,7 @@ export const StepForm = ({
   }
 
   const handleSubmit = (data: any) => {
-    // Update step data
+    // First save the data
     setStepData({
       ...stepData,
       [activeStep]: data,
@@ -49,9 +50,10 @@ export const StepForm = ({
         ...stepData,
         [activeStep]: data,
       })
-      // Move to the next step to trigger completion state
+      // Move to completed state
       nextStep()
     } else {
+      // Move to next step
       nextStep()
     }
   }
@@ -63,7 +65,7 @@ export const StepForm = ({
       image={`step${index + 1}`}
     >
       <AutoForm
-        key={activeStep} // Important for resetting form state
+        key={activeStep}
         onSubmit={handleSubmit}
         formSchema={convertToZod(step.formSchema)}
         values={stepData[activeStep] || {}}

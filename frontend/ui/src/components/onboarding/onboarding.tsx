@@ -1,14 +1,13 @@
+import { useMediaQuery } from "@hooks/use-media-query"
 import { Button, Card, Flex } from "@incmix/ui"
 import { Step, Stepper, StepperProvider, useStepper } from "@incmix/ui/stepper"
-import { useMediaQuery } from "@hooks/use-media-query"
-import { formSchema } from "./form-schema"
 import { useState } from "react"
+import { formSchema } from "./form-schema"
 
 import { StepForm } from "./step-form"
 
 export const Onboarding = () => {
   const [stepData, setStepData] = useState<Record<number, any>>({})
-
   const isDesktop = useMediaQuery("(min-width: 768px)")
 
   console.log(" Step Data: ", stepData)
