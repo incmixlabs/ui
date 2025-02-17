@@ -1,6 +1,6 @@
 "use client"
 
-import {  AccordionContent, AccordionTrigger, cn } from "@incmix/ui"
+import { AccordionContent, AccordionTrigger, cn } from "@incmix/ui"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import { ScrollArea } from "@radix-ui/themes"
 import { ChevronRight, type LucideIcon } from "lucide-react"
@@ -145,43 +145,44 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                         <AccordionPrimitive.Item value={item.id}>
                           <AccordionTrigger
                             className={cn(
-                              "mb-1 w-full  select-none gap-4 rounded-md py-5 pr-5 pl-7 hover:no-underline  hover:bg-[hsl(var(--sidebar-background)/0.1)]",
+                              "mb-1 w-full select-none gap-4 rounded-md py-5 pr-5 pl-7 hover:bg-[hsl(var(--sidebar-background)/0.1)] hover:no-underline",
                               open &&
                                 "bg-[hsl(var(--sidebar-background)/0.1)] text-[hsl(var(--sidebar-background))]"
                             )}
                             onClick={() => handleSelectChange(item)}
                           >
-                            <span className='flex items-center gap-4'>
-                            {item.icon ? (
-                              <item.icon
-                                className="h-6 w-6 shrink-0 text-accent-foreground/50"
-                                aria-hidden="true"
-                              />
-                            ) : (
-                              FolderIcon &&
-                              (open ? (
-                                <img
-                                  src="images/sidebar/open-folder.svg"
+                            <span className="flex items-center gap-4">
+                              {item.icon ? (
+                                <item.icon
                                   className="h-6 w-6 shrink-0 text-accent-foreground/50"
                                   aria-hidden="true"
-                                  alt="open folder"
                                 />
                               ) : (
-                                <img
-                                  src="images/sidebar/folder.svg"
-                                  className="h-6 w-6 shrink-0 text-accent-foreground/50"
-                                  aria-hidden="true"
-                                  alt="folder"
-                                />
-                              ))
-                            )}
-                            <span
-                              className={cn(
-                                "truncate text-[hsl(var(--sidebar-secondary-text))] text-sm",
-                                open && "text-[hsl(var(--sidebar-background))]"
+                                FolderIcon &&
+                                (open ? (
+                                  <img
+                                    src="images/sidebar/open-folder.svg"
+                                    className="h-6 w-6 shrink-0 text-accent-foreground/50"
+                                    aria-hidden="true"
+                                    alt="open folder"
+                                  />
+                                ) : (
+                                  <img
+                                    src="images/sidebar/folder.svg"
+                                    className="h-6 w-6 shrink-0 text-accent-foreground/50"
+                                    aria-hidden="true"
+                                    alt="folder"
+                                  />
+                                ))
                               )}
-                            >
-                              {item.name}
+                              <span
+                                className={cn(
+                                  "truncate text-[hsl(var(--sidebar-secondary-text))] text-sm",
+                                  open &&
+                                    "text-[hsl(var(--sidebar-background))]"
+                                )}
+                              >
+                                {item.name}
                               </span>
                             </span>
                           </AccordionTrigger>

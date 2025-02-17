@@ -224,9 +224,8 @@ export const incmixTailwindPreset: Config = {
         "collapsible-up": "collapsible-up 200ms ease-in-out",
       },
       textDecoration: {
-        'no-underline': 'none',
+        "no-underline": "none",
       },
-
     },
   },
   plugins: [
