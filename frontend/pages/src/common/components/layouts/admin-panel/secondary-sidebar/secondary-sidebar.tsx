@@ -4,9 +4,11 @@ import { cn } from "@incmix/ui"
 import { Progress } from "@radix-ui/themes"
 import { Folder, FolderClosed, type LucideIcon, Workflow } from "lucide-react"
 import * as React from "react"
-import { secondaryFooterData, secondarySidebarData } from "./data"
-import { useSidebar } from "./sidebar"
-import { Tree } from "./tree-view"
+import FolderClose from "/images/sidebar/folder.svg"
+import FolderOpen from "/images/sidebar/open-folder.svg"
+import { secondaryFooterData, secondarySidebarData } from "../data"
+import { useSidebar } from "../sidebar"
+import { Tree } from "../tree-view"
 
 interface footerTypes {
   icon?: LucideIcon
@@ -52,8 +54,9 @@ export default function SecondarySidebar() {
             className="w-full flex-shrink-0"
             initialSelectedItemId="f12"
             onSelectChange={(item) => setContent(item?.name ?? "")}
-            folderIcon={Folder}
-            itemIcon={Workflow}
+            folderIcon={FolderClose}
+            folderIconOpen={FolderOpen}
+            itemIcon={FolderClose}
           />
         </div>
         <div className="">
