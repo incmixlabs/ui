@@ -40,7 +40,6 @@
     "lucide-react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-error-boundary": "^5.0.0",
     "react-i18next": "15.4.0",
     "swapy": "0.4.2",
     "tailwind-merge": "2.3.0",

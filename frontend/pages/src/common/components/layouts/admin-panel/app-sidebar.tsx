@@ -24,13 +24,11 @@ import type { Permission } from "@incmix/utils/types"
 import { useQuery } from "@tanstack/react-query"
 import { useLocation, useRouter } from "@tanstack/react-router"
 import { I18n } from "i18n"
-import { ErrorBoundary } from "react-error-boundary"
 import { useTranslation } from "react-i18next"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
 import { OrgSwitcher } from "./org-switcher"
 import SecondarySidebar from "./secondary-sidebar/secondary-sidebar"
-import SidebarErrorFallback from "./secondary-sidebar/secondary-sidebar-fallback"
 import {
   Sidebar,
   SidebarContent,
@@ -218,9 +216,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         )}
         <SidebarRail />
       </Sidebar>
-      <ErrorBoundary fallback={<SidebarErrorFallback />}>
-        <SecondarySidebar />
-      </ErrorBoundary>
+      <SecondarySidebar />
     </>
   )
 }
