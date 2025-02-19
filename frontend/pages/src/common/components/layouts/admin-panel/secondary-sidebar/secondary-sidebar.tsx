@@ -4,9 +4,9 @@ import { cn } from "@incmix/ui"
 import { Progress } from "@radix-ui/themes"
 import { FolderClosed, type LucideIcon } from "lucide-react"
 import * as React from "react"
-import { secondaryFooterData, secondarySidebarData } from "../data"
 import { useSidebar } from "../sidebar"
 import { Tree } from "../tree-view"
+import { secondaryFooterData, secondarySidebarData } from "./data"
 import { FolderClose } from "./icons/folder-close"
 import { FolderOpen } from "./icons/folder-open"
 
@@ -20,7 +20,7 @@ const footerData: footerTypes[] = secondaryFooterData
 
 export default function SecondarySidebar() {
   const { isMobile, open, secondaryOpen } = useSidebar()
-  const [_content, setContent] = React.useState("Admin Page")
+  const [_selectedItem, setSelectedItem] = React.useState<string>("Admin Page")
   return (
     <div
       className={cn(
@@ -53,7 +53,7 @@ export default function SecondarySidebar() {
             data={secondarySidebarData}
             className="w-full flex-shrink-0"
             initialSelectedItemId="f12"
-            onSelectChange={(item) => setContent(item?.name ?? "")}
+            onSelectChange={(item) => setSelectedItem(item?.name ?? "")}
             folderIcon={FolderClose}
             folderIconOpen={FolderOpen}
             itemIcon={FolderClose}

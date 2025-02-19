@@ -1,6 +1,18 @@
-import { Book, FileText, Trash2 } from "lucide-react"
+import { Book, FileText, type LucideIcon, Trash2 } from "lucide-react"
 
-export const secondarySidebarData = [
+interface SidebarItem {
+  id: string
+  name: string
+  children?: SidebarItem[]
+}
+
+interface FooterItem {
+  icon?: LucideIcon
+  title: string
+  storageAvailable?: number
+}
+
+export const secondarySidebarData: SidebarItem[] = [
   { id: "1", name: "Unread" },
   { id: "2", name: "Threads" },
   {
@@ -65,7 +77,7 @@ export const secondarySidebarData = [
   },
 ]
 
-export const secondaryFooterData = [
+export const secondaryFooterData: FooterItem[] = [
   {
     icon: Trash2,
     title: "Trash",
