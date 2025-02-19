@@ -3,8 +3,9 @@
 import { AccordionContent, AccordionTrigger, cn } from "@incmix/ui"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import { ScrollArea } from "@radix-ui/themes"
-import { ChevronRight, type LucideIcon } from "lucide-react"
-import React from "react"
+import type { LucideIcon } from "lucide-react"
+import React, { type ComponentType } from "react"
+import type { IconProps } from "./secondary-sidebar/icons/types"
 
 interface TreeDataItem {
   id: string
@@ -18,9 +19,9 @@ type TreeProps = React.HTMLAttributes<HTMLDivElement> & {
   initialSelectedItemId?: string
   onSelectChange?: (item: TreeDataItem | undefined) => void
   expandAll?: boolean
-  folderIconOpen?: string
-  folderIcon?: string
-  itemIcon?: string
+  folderIconOpen?: ComponentType<IconProps>
+  folderIcon?: ComponentType<IconProps>
+  itemIcon?: ComponentType<IconProps>
 }
 
 const Tree = React.forwardRef<HTMLDivElement, TreeProps>(
@@ -93,7 +94,7 @@ const Tree = React.forwardRef<HTMLDivElement, TreeProps>(
               handleSelectChange={handleSelectChange}
               expandedItemIds={expandedItemIds}
               FolderIcon={folderIcon}
-              folderIconOpen={folderIconOpen}
+              FolderIconOpen={folderIconOpen}
               ItemIcon={itemIcon}
               {...props}
             />
@@ -108,9 +109,9 @@ type TreeItemProps = TreeProps & {
   selectedItemId?: string
   handleSelectChange: (item: TreeDataItem | undefined) => void
   expandedItemIds: string[]
-  FolderIcon?: string
-  ItemIcon?: string
-  folderIconOpen?: string
+  FolderIcon?: ComponentType<IconProps>
+  ItemIcon?: ComponentType<IconProps>
+  FolderIconOpen?: ComponentType<IconProps>
 }
 
 const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
@@ -123,7 +124,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
       expandedItemIds,
       FolderIcon,
       ItemIcon,
-      folderIconOpen,
+      FolderIconOpen,
       ...props
     },
     ref
@@ -163,21 +164,17 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                                   aria-hidden="true"
                                 />
                               ) : (
-                                folderIconOpen &&
+                                FolderIconOpen &&
                                 FolderIcon &&
                                 (open ? (
-                                  <img
-                                    src={folderIconOpen}
+                                  <FolderIconOpen
                                     className="h-6 w-6 shrink-0 text-accent-foreground/50"
                                     aria-hidden="true"
-                                    alt="open folder"
                                   />
                                 ) : (
-                                  <img
-                                    src={FolderIcon}
+                                  <FolderIcon
                                     className="h-6 w-6 shrink-0 text-accent-foreground/50"
                                     aria-hidden="true"
-                                    alt="folder"
                                   />
                                 ))
                               )}
@@ -200,7 +197,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                               expandedItemIds={expandedItemIds}
                               FolderIcon={FolderIcon}
                               ItemIcon={ItemIcon}
-                              folderIconOpen={folderIconOpen}
+                              FolderIconOpen={FolderIconOpen}
                             />
                           </AccordionContent>
                         </AccordionPrimitive.Item>
@@ -238,7 +235,7 @@ const Leaf = React.forwardRef<
   React.HTMLAttributes<HTMLDivElement> & {
     item: TreeDataItem
     isSelected?: boolean
-    Icon?: string
+    Icon?: ComponentType<IconProps>
   }
 >(({ className, item, isSelected, Icon, ...props }, ref) => {
   return (
@@ -259,11 +256,9 @@ const Leaf = React.forwardRef<
         />
       ) : (
         Icon && (
-          <img
-            src={Icon}
+          <Icon
             className="h-6 w-6 shrink-0 text-accent-foreground/50"
             aria-hidden="true"
-            alt="folder"
           />
         )
       )}
