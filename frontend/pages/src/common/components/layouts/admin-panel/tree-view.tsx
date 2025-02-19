@@ -18,8 +18,9 @@ type TreeProps = React.HTMLAttributes<HTMLDivElement> & {
   initialSelectedItemId?: string
   onSelectChange?: (item: TreeDataItem | undefined) => void
   expandAll?: boolean
-  folderIcon?: LucideIcon
-  itemIcon?: LucideIcon
+  folderIconOpen?: string
+  folderIcon?: string
+  itemIcon?: string
 }
 
 const Tree = React.forwardRef<HTMLDivElement, TreeProps>(
@@ -29,6 +30,7 @@ const Tree = React.forwardRef<HTMLDivElement, TreeProps>(
       initialSelectedItemId,
       onSelectChange,
       expandAll,
+      folderIconOpen,
       folderIcon,
       itemIcon,
       className,
@@ -91,6 +93,7 @@ const Tree = React.forwardRef<HTMLDivElement, TreeProps>(
               handleSelectChange={handleSelectChange}
               expandedItemIds={expandedItemIds}
               FolderIcon={folderIcon}
+              folderIconOpen={folderIconOpen}
               ItemIcon={itemIcon}
               {...props}
             />
@@ -105,8 +108,9 @@ type TreeItemProps = TreeProps & {
   selectedItemId?: string
   handleSelectChange: (item: TreeDataItem | undefined) => void
   expandedItemIds: string[]
-  FolderIcon?: LucideIcon
-  ItemIcon?: LucideIcon
+  FolderIcon?: string
+  ItemIcon?: string
+  folderIconOpen?: string
 }
 
 const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
@@ -119,6 +123,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
       expandedItemIds,
       FolderIcon,
       ItemIcon,
+      folderIconOpen,
       ...props
     },
     ref
@@ -158,17 +163,18 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                                   aria-hidden="true"
                                 />
                               ) : (
+                                folderIconOpen &&
                                 FolderIcon &&
                                 (open ? (
                                   <img
-                                    src="images/sidebar/open-folder.svg"
+                                    src={folderIconOpen}
                                     className="h-6 w-6 shrink-0 text-accent-foreground/50"
                                     aria-hidden="true"
                                     alt="open folder"
                                   />
                                 ) : (
                                   <img
-                                    src="images/sidebar/folder.svg"
+                                    src={FolderIcon}
                                     className="h-6 w-6 shrink-0 text-accent-foreground/50"
                                     aria-hidden="true"
                                     alt="folder"
@@ -194,6 +200,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                               expandedItemIds={expandedItemIds}
                               FolderIcon={FolderIcon}
                               ItemIcon={ItemIcon}
+                              folderIconOpen={folderIconOpen}
                             />
                           </AccordionContent>
                         </AccordionPrimitive.Item>
@@ -231,7 +238,7 @@ const Leaf = React.forwardRef<
   React.HTMLAttributes<HTMLDivElement> & {
     item: TreeDataItem
     isSelected?: boolean
-    Icon?: LucideIcon
+    Icon?: string
   }
 >(({ className, item, isSelected, Icon, ...props }, ref) => {
   return (
@@ -245,19 +252,20 @@ const Leaf = React.forwardRef<
       )}
       {...props}
     >
-      {item.icon && (
+      {item.icon ? (
         <item.icon
           className="h-6 w-6 shrink-0 text-accent-foreground/50"
           aria-hidden="true"
         />
-      )}
-      {!item.icon && Icon && (
-        <img
-          src="images/sidebar/folder.svg"
-          className="h-6 w-6 shrink-0 text-accent-foreground/50"
-          aria-hidden="true"
-          alt="folder"
-        />
+      ) : (
+        Icon && (
+          <img
+            src={Icon}
+            className="h-6 w-6 shrink-0 text-accent-foreground/50"
+            aria-hidden="true"
+            alt="folder"
+          />
+        )
       )}
 
       <span
