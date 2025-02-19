@@ -8,6 +8,7 @@ export { buttonPropDefs } from "@radix-ui/themes/src/components/button.props.js"
 export type ButtonProps = RadixButtonProps & {
   icon?: React.ReactNode
   srLabel?: string
+  isSecondary?: boolean
 }
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ children, className, disabled, variant, ...props }, ref) => {
