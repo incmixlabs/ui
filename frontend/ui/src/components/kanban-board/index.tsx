@@ -1,351 +1,188 @@
-import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
-import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
-import { getReorderDestinationIndex } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index"
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
-import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
-import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder"
-import type { ColumnWithTasks, NestedColumns, Task } from "@incmix/utils/types"
-import { Card, Flex, Spinner } from "@radix-ui/themes"
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import invariant from "tiny-invariant"
-import { CardContent } from "../card/card"
-import { Board } from "./board"
-import { BoardContext, type BoardContextValue } from "./board-context"
 
-export type ColumnMap = { [columnId: string]: ColumnWithTasks }
+import { Board } from "./board";
+import { KanbanImages } from "./images";
+import { TCard } from "./types";
 
-const flattenColumns = (cols: NestedColumns[]): ColumnWithTasks[] => {
-  return cols.flatMap((col) =>
-    col.children ? [col, ...flattenColumns(col.children)] : [col]
-  )
-}
+type TCustomColumn = {
+  id: number;
+  title: string;
+  tasks: TCard[];
+};
 
-const columnMap = (cols: ColumnWithTasks[]): ColumnMap => {
-  const columnMap: ColumnMap = {}
-  cols.forEach((col) => {
-    columnMap[col.id] = col
-  })
-  return columnMap
-}
+type TCustomBoard = TCustomColumn[];
 
-type Outcome =
-  | {
-      type: "card-reorder"
-      columnId: string
-      startIndex: number
-      finishIndex: number
-    }
-  | {
-      type: "card-move"
-      finishColumnId: string
-      itemIndexInStartColumn: number
-      itemIndexInFinishColumn: number
-    }
+// Your custom data
+const initialData: TCustomBoard = [
+  {
+    id: 1,
+    title: 'To Do',
+    tasks: [
+      {
+        id: 32,
+        name: 'Brand Logo Design',
+        date: 'Jun 17',
+        description: 'Make a redesign of the logo in corporate colors',
+        completed: false,
+        daysLeft: 5,
+        filesData: [
+          { name: 'logo.png', url: '', size: '1.2MB' },
+          { name: 'design.png', url: '', size: '1.2MB' },
+        ],
+        members: [
+          {
+            id: 1,
+            name: 'Bonnie Green',
+            src: KanbanImages.user1,
+          },
+          {
+            id: 2,
+            name: 'Roberta Casas',
+            src:  KanbanImages.user2,
+          },
+        ],
+      },
+      {
+        id: 23,
+        name: 'New Header Image',
+        completed: false,
+        daysLeft: 22,
+        date: 'Jun 17',
+        attachment:   KanbanImages.bg2,
+        filesData: [{ name: 'preview.png', url: '', size: '1.2MB' }],
+        members: [
+          {
+            id: 2,
+            name: 'Roberta Casas',
+            src:   KanbanImages.user2,
+          },
+        ],
+      },
+      {
+        id: 20,
+        name: 'Updating Modules',
+        completed: false,
+        daysLeft: 22,
+        date: 'Jun 17',
+        description: 'Step-by-step update of modules.',
 
-type Trigger = "pointer" | "keyboard"
+        subTasks: [{ name: 'sub-tasks-1', progress: 40, completed: false }],
+        filesData: [{ name: 'preview.png', url: '', size: '1.2MB' }],
+        members: [
+          {
+            id: 1,
+            name: 'Bonnie Green',
+            src:  KanbanImages.user2,
+          },
+          {
+            id: 2,
+            name: 'Roberta Casas',
+            src:   KanbanImages.user2,
+          },
+        ],
+      },
+      {
+        id: 24,
+        name: 'Wireframe for APP',
+        description: 'Make a wramework for an app for a pre-presentation.',
+        completed: false,
+        daysLeft: 22,
+        date: 'Jun 17',
+        members: [
+          {
+            id: 1,
+            name: 'Bonnie Green',
+            src:   KanbanImages.user2,
+          },
+          {
+            id: 2,
+            name: 'Roberta Casas',
+            src:   KanbanImages.user1,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 2,
+    title: 'In Progress',
+    tasks: [
+      {
+        id: 76,
+        name: 'Updating Modules',
+        description: 'Step-by-step update of modules.',
+        date: 'Jun 17',
+        filesData: [
+          { name: 'logo.png', url: '', size: '1.2MB' },
+          { name: 'design.png', url: '', size: '1.2MB' },
+        ],
+        completed: false,
+        daysLeft: 9,
+        subTasks: [{ name: 'sub-tasks-1', progress: 40, completed: false }],
+        members: [
+          {
+            id: 1,
+            name: 'Bonnie Green',
+            src: KanbanImages.user1,
+          },
+          {
+            id: 2,
+            name: 'Roberta Casas',
+            src: KanbanImages.user2,
 
-type Operation = {
-  trigger: Trigger
-  outcome: Outcome
-}
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: 3,
+    title: 'Done',
+    tasks: [
+      {
+        id: 34,
+        name: 'New Background',
+        completed: true,
+        daysLeft: 0,
+        date: 'Jun 17',
+        attachment: KanbanImages.bg1,
+        members: [
+          {
+            id: 1,
+            name: 'Bonnie Green',
+            src: KanbanImages.user1,
+          },
+        ],
+      },
+    ],
+  },
+];
 
-type BoardState = {
-  columnMap: ColumnMap
-  orderedColumnIds: string[]
-  lastOperation: Operation | null
-}
+function convertCustomDataToBoardFormat(customData: TCustomBoard) {
+  const columns = customData.map((column) => {
+    // Convert tasks to cards
+    const cards: TCard[] = column.tasks.map((task) => ({
+      ...task,
+      id: task.id,
+    }));
 
-type BoardProps = {
-  columns: NestedColumns[]
-  tasks: Task[]
-  updateTasks: (updatedTasks: Task[]) => void
-  isLoading?: boolean
-}
-
-export const KanbanBoard: React.FC<BoardProps> = ({
-  columns,
-  tasks,
-  updateTasks,
-  isLoading,
-}) => {
-  const data = useMemo<BoardState>(() => {
-    const flatColumns = flattenColumns(columns)
-    const base = columnMap(flatColumns)
     return {
-      columnMap: base,
-      orderedColumnIds: Object.keys(base),
-      lastOperation: null,
-    }
-  }, [columns])
+      id: `column:${column.id}`,
+      title: column.title,
+      cards,
+    };
+  });
 
-  const stableData = useRef(data)
-
-  useEffect(() => {
-    stableData.current = data
-  }, [data])
-
-  const getColumns = useCallback(() => {
-    const { columnMap, orderedColumnIds } = stableData.current
-    return orderedColumnIds.map((columnId) => columnMap[columnId])
-  }, [])
-
-  const reorderCard = useCallback(
-    ({
-      columnId,
-      startIndex,
-      finishIndex,
-    }: {
-      columnId: string
-      startIndex: number
-      finishIndex: number
-      trigger?: Trigger
-    }) => {
-      const sourceColumn = data.columnMap[columnId]
-      const updatedItems = reorder({
-        list: sourceColumn.tasks,
-        startIndex,
-        finishIndex,
-      })
-
-      updateTasks(updatedItems.map((item, i) => ({ ...item, taskOrder: i })))
-    },
-    [data, updateTasks]
-  )
-  const moveCard = useCallback(
-    ({
-      startColumnId,
-      finishColumnId,
-      itemIndexInStartColumn,
-      itemIndexInFinishColumn,
-    }: {
-      startColumnId: string
-      finishColumnId: string
-      itemIndexInStartColumn: number
-      itemIndexInFinishColumn?: number
-      trigger?: "pointer" | "keyboard"
-    }) => {
-      // invalid cross column movement
-      if (startColumnId === finishColumnId) {
-        return
-      }
-
-      const sourceColumn = data.columnMap[startColumnId]
-
-      const destinationColumn = data.columnMap[finishColumnId]
-
-      const item = sourceColumn.tasks[itemIndexInStartColumn]
-      invariant(item)
-      const destinationItems = Array.from(destinationColumn.tasks)
-      // Going into the first position if no index is provided
-      const newIndexInDestination = itemIndexInFinishColumn ?? 0
-
-      item.columnId = destinationColumn.id
-      destinationItems.splice(newIndexInDestination, 0, item)
-
-      const updatedMap = {
-        ...data.columnMap,
-        [startColumnId]: {
-          ...sourceColumn,
-          tasks: sourceColumn.tasks.filter((i) => i.id !== item.id),
-        },
-        [finishColumnId]: {
-          ...destinationColumn,
-          tasks: destinationItems,
-        },
-      }
-
-      updateTasks(
-        updatedMap[startColumnId].tasks.map((item, i) => ({
-          ...item,
-          taskOrder: i,
-        }))
-      )
-      updateTasks(
-        updatedMap[finishColumnId].tasks.map((item, i) => ({
-          ...item,
-          taskOrder: i,
-        }))
-      )
-    },
-    [updateTasks, data]
-  )
-
-  const [instanceId] = useState(() => Symbol("instance-id"))
-
-  useEffect(() => {
-    return combine(
-      monitorForElements({
-        canMonitor({ source }) {
-          return source.data.instanceId === instanceId
-        },
-        onDrop(args) {
-          const { location, source } = args
-
-          // didn't drop on anything
-          if (!location.current.dropTargets.length) {
-            return
-          }
-          // need to handle drop
-
-          // 1. remove element from original position
-          // 2. move to new position
-
-          // if (source.data.type === "column") {
-          //   const startIndex: number = data.orderedColumnIds.findIndex(
-          //     (columnId) => columnId === source.data.columnId
-          //   )
-
-          //   const target = location.current.dropTargets[0]
-          //   const indexOfTarget: number = data.orderedColumnIds.findIndex(
-          //     (id) => id === target.data.columnId
-          //   )
-          //   const closestEdgeOfTarget: Edge | null = extractClosestEdge(
-          //     target.data
-          //   )
-
-          //   const finishIndex = getReorderDestinationIndex({
-          //     startIndex,
-          //     indexOfTarget,
-          //     closestEdgeOfTarget,
-          //     axis: "horizontal",
-          //   })
-
-          //   // reorderColumn({ startIndex, finishIndex, trigger: "pointer" });
-          // }
-          // Dragging a card
-          if (source.data.itemId) {
-            const itemId = source.data.itemId
-            invariant(typeof itemId === "string")
-            // TODO: these lines not needed if item has columnId on it
-            const [, startColumnRecord] = location.initial.dropTargets
-            const sourceId = startColumnRecord.data.columnId
-            invariant(typeof sourceId === "string")
-            const sourceColumn = data.columnMap[sourceId]
-            const itemIndex = sourceColumn.tasks.findIndex(
-              (item) => item.id === itemId
-            )
-            invariant(itemIndex !== undefined)
-            if (location.current.dropTargets.length === 1) {
-              const [destinationColumnRecord] = location.current.dropTargets
-              const destinationId = destinationColumnRecord.data.columnId
-              invariant(typeof destinationId === "string")
-              const destinationColumn = data.columnMap[destinationId]
-              invariant(destinationColumn)
-
-              // reordering in same column
-              if (sourceColumn === destinationColumn) {
-                const destinationIndex = getReorderDestinationIndex({
-                  startIndex: itemIndex,
-                  indexOfTarget: sourceColumn.tasks.length - 1,
-                  closestEdgeOfTarget: null,
-                  axis: "vertical",
-                })
-                reorderCard({
-                  columnId: sourceColumn.id,
-                  startIndex: itemIndex,
-                  finishIndex: destinationIndex,
-                  trigger: "pointer",
-                })
-                return
-              }
-
-              // moving to a new column
-              moveCard({
-                itemIndexInStartColumn: itemIndex,
-                startColumnId: sourceColumn.id,
-                finishColumnId: destinationColumn.id,
-                trigger: "pointer",
-              })
-              return
-            }
-
-            // dropping in a column (relative to a card)
-            if (location.current.dropTargets.length === 2) {
-              const [destinationCardRecord, destinationColumnRecord] =
-                location.current.dropTargets
-              const destinationColumnId = destinationColumnRecord.data.columnId
-
-              invariant(typeof destinationColumnId === "string")
-              const destinationColumn = data.columnMap[destinationColumnId]
-
-              const indexOfTarget = destinationColumn.tasks.findIndex(
-                (item) => item.id === destinationCardRecord.data.itemId
-              )
-              const closestEdgeOfTarget: Edge | null = extractClosestEdge(
-                destinationCardRecord.data
-              )
-
-              // case 1: ordering in the same column
-              if (sourceColumn === destinationColumn) {
-                const destinationIndex = getReorderDestinationIndex({
-                  startIndex: itemIndex,
-                  indexOfTarget,
-                  closestEdgeOfTarget,
-                  axis: "vertical",
-                })
-                reorderCard({
-                  columnId: sourceColumn.id,
-                  startIndex: itemIndex,
-                  finishIndex: destinationIndex,
-                  trigger: "pointer",
-                })
-                return
-              }
-
-              // case 2: moving into a new column relative to a card
-
-              const destinationIndex =
-                closestEdgeOfTarget === "bottom"
-                  ? indexOfTarget + 1
-                  : indexOfTarget
-
-              moveCard({
-                itemIndexInStartColumn: itemIndex,
-                startColumnId: sourceColumn.id,
-                finishColumnId: destinationColumn.id,
-                itemIndexInFinishColumn: destinationIndex,
-                trigger: "pointer",
-              })
-            }
-          }
-        },
-      })
-    )
-  }, [data, instanceId, moveCard, reorderCard])
-
-  const contextValue: BoardContextValue = useMemo(() => {
-    return {
-      getColumns,
-      // reorderColumn,
-      reorderCard,
-      moveCard,
-
-      instanceId,
-    }
-  }, [getColumns, reorderCard, moveCard, instanceId])
-
-  if (isLoading)
-    return (
-      <Flex
-        className="h-[calc((100vh-var(--navbar-height))-3rem)]"
-        align="center"
-        justify="center"
-      >
-        <Spinner className="size-10" />
-      </Flex>
-    )
-  if (!columns.length)
-    return (
-      <Card>
-        <CardContent>
-          <p className="text-center">No columns or tasks found</p>
-        </CardContent>
-      </Card>
-    )
+  return {
+    columns,
+  };
+}
+export  const KanbanBoard = ()=> {
+  const boardData = convertCustomDataToBoardFormat(initialData);
+  // console.log('boardData:', boardData?.columns[0]?.cards);
 
   return (
-    <BoardContext.Provider value={contextValue}>
-      <Board columns={columns} tasks={tasks} />
-    </BoardContext.Provider>
-  )
+    <div className="h-full md:flex md:flex-row md:justify-center">
+      <Board initial={boardData} />
+    </div>
+  );
 }
