@@ -1,1 +1,1 @@
-export const blockBoardPanningAttr = 'data-block-board-panning' as const;
+export const blockBoardPanningAttr = "data-block-board-panning" as const
