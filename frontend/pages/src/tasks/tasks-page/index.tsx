@@ -1,87 +1,118 @@
-import { usePGlite } from "@electric-sql/pglite-react"
-import { pushChangesToBackend, useOrganizationStore } from "@incmix/store"
+import type { TaskCollections } from "@incmix/store"
+import { useOrganizationStore } from "@incmix/store"
 import { CardContent, KanbanBoard } from "@incmix/ui"
-import type { Board, Task } from "@incmix/utils/types"
+import type { Task } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { Card, Flex, ScrollArea, Select } from "@radix-ui/themes"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useEffect, useState } from "react"
-import { PageLayout } from "../../common/components/layouts/page-layout"
-import { getKanbanBoard, getProjects, updatedTasks } from "./actions"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { useEffect, useMemo, useState } from "react"
+import type { RxDatabase } from "rxdb"
+import { useRxDB } from "rxdb-hooks"
+import { generateBoard } from "./actions"
 import { CreateColumnForm } from "./create-column-form"
 import { CreateProjectForm } from "./create-project-form"
 import { CreateTaskForm } from "./create-task-form"
-import { useAutoSync } from "./use-auto-sync"
 
 const TasksPage = () => {
   const { selectedOrganisation } = useOrganizationStore()
 
   const [selectedProject, setSelectedProject] = useState<string>()
-  const projectsQuery = useQuery({
+
+  const db: RxDatabase<TaskCollections> = useRxDB()
+  const projectCollection = db.projects
+  const columnCollection = db.columns
+  const taskCollection = db.tasks
+
+  const {
+    data: projects,
+    isLoading: fetchingProjects,
+    refetch: refetchProjects,
+  } = useQuery({
     queryKey: ["projects", selectedOrganisation?.id],
-    enabled: !!selectedOrganisation?.id,
+    enabled: !!selectedOrganisation?.id && !!projectCollection,
     queryFn: () => {
-      if (selectedOrganisation) return getProjects(selectedOrganisation?.id)
-      return []
+      if (!selectedOrganisation) return []
+
+      return projectCollection
+        .find({
+          selector: { orgId: selectedOrganisation?.id },
+          sort: [{ createdAt: "asc" }],
+        })
+        .exec()
     },
   })
-  const db = usePGlite()
-  const boardQuery = useQuery({
-    queryKey: ["board", selectedProject],
+
+  const {
+    data: columns,
+    isLoading: fetchingColumns,
+    refetch: refetchColumns,
+  } = useQuery({
+    queryKey: ["columns", selectedProject],
     enabled: !!selectedProject,
     queryFn: () => {
-      if (selectedProject) return getKanbanBoard(db, selectedProject)
-      return { columns: [], tasks: [] }
+      return columnCollection
+        .find({
+          selector: { projectId: selectedProject },
+          sort: [{ columnOrder: "asc" }],
+        })
+        .exec()
+    },
+  })
+  const {
+    data: tasks,
+    isLoading: fetchingTasks,
+    refetch: refetchTasks,
+  } = useQuery({
+    queryKey: ["tasks", selectedProject],
+    enabled: !!selectedProject,
+    queryFn: () => {
+      return taskCollection
+        .find({
+          selector: { projectId: selectedProject },
+          sort: [{ taskOrder: "asc" }],
+        })
+        .exec()
     },
   })
 
-  const queryClient = useQueryClient()
+  const [boardLoading, setBoardLoading] = useState(true)
+
+  const board = useMemo(() => {
+    const board = generateBoard(columns ?? [], tasks ?? [])
+
+    setBoardLoading(false)
+    return board
+  }, [columns, tasks])
 
   const tasksMutation = useMutation({
-    mutationFn: (tasks: Task[]) => updatedTasks(db, tasks),
-    onMutate: async (tasks) => {
-      await queryClient.cancelQueries({ queryKey: ["board", selectedProject] })
-      // Snapshot the previous value
-      const prevoiusBoard = queryClient.getQueryData<Board>([
-        "board",
-        selectedProject,
-      ])
-
-      queryClient.setQueryData(["board", selectedProject], (old: Board) => {
-        console.log(old)
-        return {
-          ...old,
-          tasks: [
-            ...old.tasks.filter(
-              (t) => tasks.find((nt) => nt.id !== t.id) !== undefined
-            ),
-            ...tasks,
-          ],
-        }
-      })
-
-      return { prevoiusBoard }
-    },
-    // If the mutation fails,
-    // use the context returned from onMutate to roll back
-    onError: (_err, _updatedTasks, context) => {
-      queryClient.setQueryData(
-        ["board", selectedProject],
-        context?.prevoiusBoard
+    mutationFn: (tasks: Task[]) => {
+      return Promise.all(
+        tasks.map((t) =>
+          taskCollection
+            .find({
+              selector: {
+                id: t.id,
+              },
+            })
+            .patch({
+              columnId: t.columnId,
+              taskOrder: t.taskOrder,
+              updatedAt: new Date().toISOString(),
+            })
+        )
       )
     },
-    // Always refetch after error or success:
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["board", selectedProject] })
+
+    onSuccess: () => {
+      refetchTasks()
     },
   })
 
-  useAutoSync(pushChangesToBackend)
+  // useAutoSync(pushChangesToBackend)
 
   useEffect(() => {
-    if (!selectedProject && projectsQuery.data?.length)
-      setSelectedProject(projectsQuery.data[0].id)
-  }, [projectsQuery.data, selectedProject])
+    if (!selectedProject && projects?.length) setSelectedProject(projects[0].id)
+  }, [projects, selectedProject])
 
   if (!selectedOrganisation)
     return (
@@ -102,15 +133,13 @@ const TasksPage = () => {
         <Select.Root value={selectedProject} onValueChange={setSelectedProject}>
           <Select.Trigger
             className="w-full max-w-96"
-            placeholder={
-              projectsQuery.isLoading ? "Loading" : "Select Projects"
-            }
+            placeholder={fetchingProjects ? "Loading" : "Select Projects"}
           />
           <Select.Content>
-            {projectsQuery.isLoading && <div>Loading...</div>}
-            {projectsQuery.isError && <div>Error fetching projects</div>}
+            {fetchingProjects && <div>Loading...</div>}
+            {/* {projectsQuery.isError && <div>Error fetching projects</div>} */}
 
-            {projectsQuery.data?.map((p) => (
+            {projects?.map((p) => (
               <Select.Item key={p.id} value={p.id}>
                 {p.name}
               </Select.Item>
@@ -119,7 +148,7 @@ const TasksPage = () => {
         </Select.Root>
         <CreateProjectForm
           onSuccess={(p) => {
-            projectsQuery.refetch()
+            refetchProjects()
             setSelectedProject(p.id)
           }}
         />
@@ -127,11 +156,11 @@ const TasksPage = () => {
           <div className="ml-auto flex gap-4">
             <CreateColumnForm
               projectId={selectedProject}
-              onSuccess={() => boardQuery.refetch()}
+              onSuccess={() => refetchColumns()}
             />
             <CreateTaskForm
               projectId={selectedProject}
-              onSuccess={() => boardQuery.refetch()}
+              onSuccess={() => refetchTasks()}
             />
           </div>
         )}
@@ -139,11 +168,13 @@ const TasksPage = () => {
       <ScrollArea scrollbars="horizontal" className="max-w-[1116px] pb-4">
         <KanbanBoard
           updateTasks={(tasks) => {
-            tasksMutation.mutate(tasks)
+            if (tasks.length) tasksMutation.mutate(tasks)
           }}
-          columns={boardQuery.data?.columns ?? []}
-          tasks={boardQuery.data?.tasks ?? []}
-          isLoading={boardQuery.isLoading || projectsQuery.isLoading}
+          columns={board.columns}
+          tasks={board.tasks}
+          isLoading={
+            fetchingColumns || fetchingTasks || boardLoading || fetchingProjects
+          }
         />
       </ScrollArea>
     </DashboardLayout>
