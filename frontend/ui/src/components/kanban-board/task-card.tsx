@@ -1,69 +1,72 @@
-"use client"
+"use client";
 
 import {
   draggable,
   dropTargetForElements,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
-import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
-import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
-import { type MutableRefObject, useEffect, useRef, useState } from "react"
-import { createPortal } from "react-dom"
-import invariant from "tiny-invariant"
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source";
+import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
+import { type MutableRefObject, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import invariant from "tiny-invariant";
 
 import {
   type Edge,
   attachClosestEdge,
   extractClosestEdge,
-} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
-import { CalendarDays, MessageSquareText, Paperclip } from "lucide-react"
-import { IconButton } from "../button"
-import { isSafari } from "./is-safari"
-import { isShallowEqual } from "./is-shallow-equal"
+} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { CalendarDays, MessageSquareText, Paperclip } from "lucide-react";
+import { IconButton } from "../button";
+import { isSafari } from "./is-safari";
+import { isShallowEqual } from "./is-shallow-equal";
 import {
   type TCard,
   getCardData,
   getCardDropTargetData,
   isCardData,
   isDraggingACard,
-} from "./types"
+} from "./types";
+
+import TaskCardDrawer from "./task-card-drawer";
 
 type TCardState =
   | {
-      type: "idle"
+      type: "idle";
     }
   | {
-      type: "is-dragging"
+      type: "is-dragging";
     }
   | {
-      type: "is-dragging-and-left-self"
+      type: "is-dragging-and-left-self";
     }
   | {
-      type: "is-over"
-      dragging: DOMRect
-      closestEdge: Edge
+      type: "is-over";
+      dragging: DOMRect;
+      closestEdge: Edge;
     }
   | {
-      type: "preview"
-      container: HTMLElement
-      dragging: DOMRect
-    }
+      type: "preview";
+      container: HTMLElement;
+      dragging: DOMRect;
+    };
 
-const idle: TCardState = { type: "idle" }
+const idle: TCardState = { type: "idle" };
 
 const innerStyles: { [Key in TCardState["type"]]?: string } = {
   idle: "hover:outline outline-2 outline-neutral-50 cursor-grab",
   "is-dragging": "opacity-20",
-}
+};
 
 const outerStyles: { [Key in TCardState["type"]]?: string } = {
   // We no longer render the draggable item after we have left it
   // as it's space will be taken up by a shadow on adjacent items.
   // Using `display:none` rather than returning `null` so we can always
   // return refs from this component.
+  "is-dragging": "opacity-50",
   // Keeping the refs allows us to continue to receive events during the drag.
   "is-dragging-and-left-self": "hidden",
-}
+};
 
 export function CardShadow({ dragging }: { dragging: DOMRect }) {
   return (
@@ -71,23 +74,26 @@ export function CardShadow({ dragging }: { dragging: DOMRect }) {
       className="flex-shrink-0 rounded bg-slate-200"
       style={{ height: dragging.height }}
     />
-  )
+  );
 }
 
 export function CardDisplay({
   card,
   state,
+  setOpen,
   outerRef,
   innerRef,
 }: {
-  card: TCard
-  state: TCardState
-  outerRef?: React.MutableRefObject<HTMLDivElement | null>
-  innerRef?: MutableRefObject<HTMLDivElement | null>
+  card: TCard;
+  state: TCardState;
+  setOpen?: (open: boolean) => void;
+  outerRef?: React.MutableRefObject<HTMLDivElement | null>;
+  innerRef?: MutableRefObject<HTMLDivElement | null>;
 }) {
   return (
     <div
       ref={outerRef}
+      onClick={() => setOpen && setOpen(true)}
       className={`flex flex-shrink-0 flex-col gap-2 px-3 py-1 ${outerStyles[state.type]}`}
     >
       {/* Put a shadow before the item if closer to the top edge */}
@@ -95,16 +101,17 @@ export function CardDisplay({
         <CardShadow dragging={state.dragging} />
       ) : null}
       <article
-        className={`relative space-y-1.5 rounded-lg border border-[#F0F0F3] bg-gray-50 p-3 text-gray-900 ${innerStyles[state.type]}`}
+        className={`relative space-y-1.5 cursor-pointer rounded-lg border border-[#F0F0F3] bg-gray-50 p-3 text-gray-900 ${innerStyles[state.type]}`}
         ref={innerRef}
         style={
           state.type === "preview"
             ? {
                 width: state.dragging.width,
                 height: state.dragging.height,
+                backgroundColor: "white",
                 opacity: 1,
-                border: "2px solid #F0F0F3",
-                transform: !isSafari() ? "rotate(0deg)" : undefined,
+                border: "2px solid #696969",
+                transform: !isSafari() ? "rotate(4deg)" : undefined,
               }
             : undefined
         }
@@ -122,15 +129,15 @@ export function CardDisplay({
                 "bg-orange-400",
                 "bg-cyan-400",
                 "bg-red-400",
-              ]
+              ];
               const randomColor =
-                colors[Math.floor(Math.random() * colors.length)]
+                colors[Math.floor(Math.random() * colors.length)];
               return (
                 <span
                   key={file.name}
                   className={`flex h-1 w-6 items-center gap-1 rounded-full ${randomColor}`}
                 />
-              )
+              );
             })}
           </div>
         )}
@@ -193,18 +200,19 @@ export function CardDisplay({
         <CardShadow dragging={state.dragging} />
       ) : null}
     </div>
-  )
+  );
 }
 
 export function Card({ card, columnId }: { card: TCard; columnId: string }) {
-  const outerRef = useRef<HTMLDivElement | null>(null)
-  const innerRef = useRef<HTMLDivElement | null>(null)
-  const [state, setState] = useState<TCardState>(idle)
+  const outerRef = useRef<HTMLDivElement | null>(null);
+  const innerRef = useRef<HTMLDivElement | null>(null);
+  const [state, setState] = useState<TCardState>(idle);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const outer = outerRef.current
-    const inner = innerRef.current
-    invariant(outer && inner)
+    const outer = outerRef.current;
+    const inner = innerRef.current;
+    invariant(outer && inner);
 
     return combine(
       draggable({
@@ -216,8 +224,8 @@ export function Card({ card, columnId }: { card: TCard; columnId: string }) {
             rect: element.getBoundingClientRect(),
           }),
         onGenerateDragPreview({ nativeSetDragImage, location, source }) {
-          const data = source.data
-          invariant(isCardData(data))
+          const data = source.data;
+          invariant(isCardData(data));
           setCustomNativeDragPreview({
             nativeSetDragImage,
             getOffset: preserveOffsetOnSource({
@@ -230,15 +238,15 @@ export function Card({ card, columnId }: { card: TCard; columnId: string }) {
                 type: "preview",
                 container,
                 dragging: inner.getBoundingClientRect(),
-              })
+              });
             },
-          })
+          });
         },
         onDragStart() {
-          setState({ type: "is-dragging" })
+          setState({ type: "is-dragging" });
         },
         onDrop() {
-          setState(idle)
+          setState(idle);
         },
       }),
       dropTargetForElements({
@@ -246,67 +254,72 @@ export function Card({ card, columnId }: { card: TCard; columnId: string }) {
         getIsSticky: () => true,
         canDrop: isDraggingACard,
         getData: ({ element, input }) => {
-          const data = getCardDropTargetData({ card, columnId })
+          const data = getCardDropTargetData({ card, columnId });
           return attachClosestEdge(data, {
             element,
             input,
             allowedEdges: ["top", "bottom"],
-          })
+          });
         },
         onDragEnter({ source, self }) {
           if (!isCardData(source.data)) {
-            return
+            return;
           }
           if (source.data.card.id === card.id) {
-            return
+            return;
           }
-          const closestEdge = extractClosestEdge(self.data)
+          const closestEdge = extractClosestEdge(self.data);
           if (!closestEdge) {
-            return
+            return;
           }
 
-          setState({ type: "is-over", dragging: source.data.rect, closestEdge })
+          setState({
+            type: "is-over",
+            dragging: source.data.rect,
+            closestEdge,
+          });
         },
         onDrag({ source, self }) {
           if (!isCardData(source.data)) {
-            return
+            return;
           }
           if (source.data.card.id === card.id) {
-            return
+            return;
           }
-          const closestEdge = extractClosestEdge(self.data)
+          const closestEdge = extractClosestEdge(self.data);
           if (!closestEdge) {
-            return
+            return;
           }
           // optimization - Don't update react state if we don't need to.
           const proposed: TCardState = {
             type: "is-over",
             dragging: source.data.rect,
             closestEdge,
-          }
+          };
           setState((current) => {
             if (isShallowEqual(proposed, current)) {
-              return current
+              return current;
             }
-            return proposed
-          })
+            return proposed;
+          });
         },
         onDragLeave({ source }) {
           if (!isCardData(source.data)) {
-            return
+            return;
           }
           if (source.data.card.id === card.id) {
-            setState({ type: "is-dragging-and-left-self" })
-            return
+            setState({ type: "is-dragging-and-left-self" });
+            return;
           }
-          setState(idle)
+          setState(idle);
         },
         onDrop() {
-          setState(idle)
+          setState(idle);
         },
-      })
-    )
-  }, [card, columnId])
+      }),
+    );
+  }, [card, columnId]);
+
   return (
     <>
       <CardDisplay
@@ -314,14 +327,16 @@ export function Card({ card, columnId }: { card: TCard; columnId: string }) {
         innerRef={innerRef}
         state={state}
         card={card}
+        setOpen={setOpen}
         key={card.id}
       />
       {state.type === "preview"
         ? createPortal(
             <CardDisplay state={state} card={card} />,
-            state.container
+            state.container,
           )
         : null}
+      <TaskCardDrawer setOpen={setOpen} open={open} />
     </>
-  )
+  );
 }
