@@ -8,8 +8,8 @@ import type { KanbanBoardTask } from "./types"
 export type KanbanViewProps = {
   task: KanbanBoardTask
 }
-export const KanbanView: FC = ({ task }: KanbanViewProps) => {
-  console.log("members", task.members)
+export const KanbanView: FC<KanbanViewProps> = ({ task }) => {
+  // console.log("members", task.members)
   console.log("description", task.description)
   const daysLeft = `\u00A0 ${task.daysLeft} days left`
   return (
@@ -27,7 +27,7 @@ export const KanbanView: FC = ({ task }: KanbanViewProps) => {
           <div className="relative mb-3 aspect-video w-full">
             <Image
               imgAlt=""
-              fill
+              // fill
               imgSrc={task.attachment}
               className="rounded-lg"
             />
@@ -38,12 +38,12 @@ export const KanbanView: FC = ({ task }: KanbanViewProps) => {
         </div>
         <div className="flex justify-between">
           <div className="flex items-center justify-start">
-            <AvatarGroup
+            {/* <AvatarGroup
               size="2"
               layout="stack"
-              users={task.members}
+              // users={task.members}
               maxVisible={3}
-            />
+            /> */}
           </div>
           <div className="flex items-center justify-center rounded-lg bg-purple-100 px-3 font-medium text-purple-800 text-sm dark:bg-purple-200">
             <Clock width="12px" height="12px" /> {daysLeft}
