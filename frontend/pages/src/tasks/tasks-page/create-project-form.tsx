@@ -1,6 +1,7 @@
 "use client"
 
-import { useOrganizationStore } from "@incmix/store"
+import { useAuth } from "@auth"
+import { type ProjectDocType, useOrganizationStore } from "@incmix/store"
 import {
   Dialog,
   DialogClose,
@@ -19,7 +20,9 @@ import { Button, Flex } from "@radix-ui/themes"
 import { useForm } from "@tanstack/react-form"
 import { useMutation } from "@tanstack/react-query"
 import { zodValidator } from "@tanstack/zod-form-adapter"
+import { nanoid } from "nanoid"
 import { useState } from "react"
+import { useRxCollection } from "rxdb-hooks"
 import { z } from "zod"
 import { createProject } from "./actions"
 
@@ -32,12 +35,33 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
   const [isOpen, setIsOpen] = useState(false)
   const { selectedOrganisation } = useOrganizationStore()
 
+  const collection = useRxCollection<ProjectDocType>("projects")
+  const { authUser } = useAuth()
+
   const { mutate, isPending, isSuccess, reset } = useMutation({
     mutationFn: ({ name, orgId }: { name: string; orgId: string }) => {
-      return createProject({ name, orgId })
+      if (!authUser) return Promise.reject(new Error("Not authenticated"))
+      if (!selectedOrganisation)
+        return Promise.reject(new Error("No organisation selected"))
+      if (!collection)
+        return Promise.reject(new Error("Database not initialized"))
+      return collection.insert({
+        name,
+        orgId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        createdBy: authUser.id,
+        id: nanoid(7),
+        updatedBy: authUser.id,
+      })
     },
     onSuccess: (data) => {
-      if (onSuccess) onSuccess(data)
+      if (onSuccess)
+        onSuccess({
+          ...data,
+          createdAt: new Date(data.createdAt),
+          updatedAt: new Date(data.updatedAt),
+        })
       setIsOpen(false)
     },
     onError: (error) => {

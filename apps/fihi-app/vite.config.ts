@@ -4,8 +4,8 @@ import { Schema, ValidateEnv } from "@julr/vite-plugin-validate-env"
 import react from "@vitejs/plugin-react"
 import { internalIpV4 } from "internal-ip"
 import { defineConfig } from "vite"
+import topLevelAwait from "vite-plugin-top-level-await"
 import tsconfigPaths from "vite-tsconfig-paths"
-
 // @ts-expect-error process is a nodejs global
 const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM)
 
@@ -16,9 +16,13 @@ export default defineConfig(async () => ({
   optimizeDeps: {
     exclude: ["@electric-sql/pglite"],
   },
+  assetsInclude: ["**/*.wasm"],
   worker: { format: "es" as WorkerFormat },
   build: {
     sourcemap: true, // Source map generation must be turned on
+  },
+  preview: {
+    port: 1420,
   },
   resolve: {
     alias: {
@@ -31,6 +35,7 @@ export default defineConfig(async () => ({
     ValidateEnv({
       VITE_BFF_API_URL: Schema.string(),
     }),
+    topLevelAwait(),
     // sentryVitePlugin({
     //   org: "incmix",
     //   project: process.env.SENTRY_PROJECT,
