@@ -116,7 +116,6 @@ const SidebarProvider = React.forwardRef<
     )
     // Helper to toggle the sidebar.
     const toggleSidebar = React.useCallback(() => {
-      setOpenMobile((open) => !open)
       setOpen((open) => !open)
     }, [setOpen])
 
@@ -282,13 +281,13 @@ const Sidebar = React.forwardRef<
 
     return (
       <>
-        {isMobile && !openMobile && (
+        {isMobile && openMobile && (
           <div
-            className="fixed inset-0 z-30 bg-black bg-opacity-50 transition-opacity"
+            className="fixed inset-0 z-30 cursor-pointer bg-black bg-opacity-50 transition-opacity"
             onClick={() => setOpenMobile(false)}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                setOpenMobile(false)
+                // toggleSidebar()
               }
             }}
           />
@@ -298,9 +297,10 @@ const Sidebar = React.forwardRef<
           ref={ref}
           className={cn(
             "group peer relative text-sidebar-foreground",
-            isMobile && !openMobile
+            isMobile && openMobile
               ? "fixed inset-y-0 left-0 z-40 w-[--sidebar-width]"
-              : ""
+              : "hidden",
+            !isMobile && "flex"
           )}
           data-state={state}
           data-collapsible={state === "collapsed" ? collapsible : ""}
@@ -324,7 +324,7 @@ const Sidebar = React.forwardRef<
           <div
             className={cn(
               "fixed inset-y-0 z-10 flex h-svh w-[--sidebar-width] transition-[left,right,width] duration-200 ease-linear",
-              isMobile && !openMobile ? "z-40 bg-sidebar shadow-lg" : "",
+              isMobile && openMobile ? "z-40 bg-sidebar shadow-lg" : "",
               side === "left"
                 ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
                 : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
@@ -356,29 +356,60 @@ Sidebar.displayName = "Sidebar"
 const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
   React.ComponentProps<typeof Button>
->(({ className, onClick, icon, isSecondary, srLabel, ...props }, ref) => {
-  const { toggleSidebar, toggleSecondarySidebar } = useSidebar()
-  return (
-    <IconButton
-      ref={ref}
-      data-sidebar="trigger"
-      variant="soft"
-      className={cn("h-7 w-7", className)}
-      onClick={(event) => {
-        onClick?.(event)
-        if (isSecondary) {
-          toggleSecondarySidebar()
-          return
-        }
-        toggleSidebar()
-      }}
-      {...props}
-    >
-      {icon ? icon : <PanelLeft />}
-      <span className="sr-only">{srLabel ? srLabel : "Toggle Sidebar"}</span>
-    </IconButton>
-  )
-})
+>(
+  (
+    {
+      className,
+      onClick,
+      icon,
+      isSecondary,
+      mobileSidebarTrigger,
+      srLabel,
+      ...props
+    },
+    ref
+  ) => {
+    const {
+      toggleSidebar,
+      toggleSecondarySidebar,
+      isMobile,
+      openMobile,
+      setOpenMobile,
+    } = useSidebar()
+
+    return (
+      <IconButton
+        ref={ref}
+        data-sidebar="trigger"
+        variant="soft"
+        className={cn("h-7 w-7", className)}
+        onClick={(event) => {
+          onClick?.(event)
+          if (isMobile) {
+            if (mobileSidebarTrigger) {
+              setOpenMobile(!openMobile)
+            }
+            if (isSecondary) {
+              toggleSecondarySidebar()
+            } else {
+              toggleSidebar()
+            }
+          } else {
+            if (isSecondary) {
+              toggleSecondarySidebar()
+            } else {
+              toggleSidebar()
+            }
+          }
+        }}
+        {...props}
+      >
+        {icon ? icon : <PanelLeft />}
+        <span className="sr-only">{srLabel ? srLabel : "Toggle Sidebar"}</span>
+      </IconButton>
+    )
+  }
+)
 SidebarTrigger.displayName = "SidebarTrigger"
 
 const SidebarRail = React.forwardRef<

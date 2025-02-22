@@ -9,6 +9,7 @@ export type ButtonProps = RadixButtonProps & {
   icon?: React.ReactNode
   srLabel?: string
   isSecondary?: boolean
+  mobileSidebarTrigger?: boolean
 }
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ children, className, disabled, variant, ...props }, ref) => {

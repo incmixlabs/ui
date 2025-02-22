@@ -40,6 +40,7 @@ export function DashboardLayout({
           <div className="flex w-full items-center gap-2 px-4">
             <SidebarTrigger
               isSecondary
+              mobileSidebarTrigger
               className="-ml-1"
               aria-label={t("toggleSecondarySidebar")}
             />
