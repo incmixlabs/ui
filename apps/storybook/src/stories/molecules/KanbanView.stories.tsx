@@ -1,6 +1,9 @@
 import { KanbanView } from "@incmix/ui/kanban-view"
 import type { Meta, StoryObj } from "@storybook/react"
 import data from "../../data/kanban"
+import { KanbanBoard } from "@incmix/ui";
+
+
 
 const meta: Meta<typeof KanbanView> = {
   title: "Pages/KanbanView",
@@ -16,8 +19,8 @@ export const All: Story = {
   render: () => {
     return (
       <>
-        <KanbanView task={tasks[0]} />
-        <KanbanView task={tasks[1]} />
+   
+        <KanbanBoard/>
       </>
     )
   },

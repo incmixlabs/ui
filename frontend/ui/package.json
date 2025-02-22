@@ -108,6 +108,7 @@
     "json-schema-to-zod": "^2.6.0",
     "lucide-react": "catalog:",
     "luxon": "3.5.0",
+    "motion": "^12.4.7",
     "nanoid": "catalog:",
     "nuqs": "2.3.1",
     "react-clock": "5.1.0",
