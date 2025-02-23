@@ -24,12 +24,13 @@ import {
 import { IconButton, Section } from "@radix-ui/themes";
 import { Filter } from "lucide-react";
 import { FilterIcon } from "../icons/filter";
+import TaskCardDrawer from "./task-card-drawer";
+import { useKanbanFilter } from "@hooks/use-kanban-filter";
 
 export function Board({ initial }: { initial: TBoard }) {
   const [data, setData] = useState(initial);
   const scrollableRef = useRef<HTMLDivElement | null>(null);
-  const [kanbanFilter, setKanbanFilter] = useState<boolean>(false);
-
+  const { kanbanFilter, toggleKanbanFilter } = useKanbanFilter();
   useEffect(() => {
     const element = scrollableRef.current;
     invariant(element);
@@ -145,7 +146,7 @@ export function Board({ initial }: { initial: TBoard }) {
               ...destination,
               cards: destinationCards,
             };
-            setData({ ...data, columns });
+            setData((prevData) => ({ ...prevData, columns }));
             return;
           }
 
@@ -349,28 +350,27 @@ export function Board({ initial }: { initial: TBoard }) {
       <div className="flex  justify-end">
         <IconButton
           className="cursor-pointer h-10 w-12"
-          onClick={() => setKanbanFilter(!kanbanFilter)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              setKanbanFilter(!kanbanFilter);
-            }
-          }}
+          onClick={toggleKanbanFilter}
         >
           <FilterIcon className=" fill-white size-8" />
         </IconButton>
       </div>
       <div
-        className={`${kanbanFilter ? "2xl:w-[55rem] w-[45rem] space-y-5   " : "flex flex-row"} h-full gap-3 overflow-hidden p-3 [scrollbar-color:theme(colors.sky.200)_theme(colors.sky.400)] [scrollbar-width:thin]`}
+        className={`${kanbanFilter && "w-full  flex "} h-full  overflow-hidden [scrollbar-color:theme(colors.sky.200)_theme(colors.sky.400)] [scrollbar-width:thin]`}
         ref={scrollableRef}
       >
-        {data.columns.map((column) => (
-          <BoardColumn
-            key={column.id}
-            column={column}
-            kanbanFilter={kanbanFilter}
-          />
-        ))}
+        <div
+          className={`${kanbanFilter ? "w-full space-y-5 " : "flex flex-row 2xl:gap-7 gap-4  p-3"}`}
+        >
+          {data.columns.map((column) => (
+            <BoardColumn
+              key={column.id}
+              column={column}
+              kanbanFilter={kanbanFilter}
+            />
+          ))}
+        </div>
+        <TaskCardDrawer kanbanFilter={kanbanFilter} />
       </div>
     </>
   );

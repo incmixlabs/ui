@@ -31,6 +31,8 @@ import {
 import TaskCardDrawer from "./task-card-drawer";
 import { Card, Checkbox, Flex, Heading, Text } from "@radix-ui/themes";
 import { cn } from "@utils";
+import { useQueryState } from "nuqs";
+import { useKanbanDrawer } from "@hooks/use-kanban-drawer";
 
 type TCardState =
   | {
@@ -82,35 +84,21 @@ export function TaskCardShadow({ dragging }: { dragging: DOMRect }) {
 export function TaskCardDisplay({
   card,
   state,
-  open,
-  setOpen,
   outerRef,
   innerRef,
   kanbanFilter,
 }: {
   card: TCard;
   state: TCardState;
-  open?: boolean;
-  setOpen?: (open: boolean) => void;
   outerRef?: React.MutableRefObject<HTMLDivElement | null>;
   innerRef?: MutableRefObject<HTMLDivElement | null>;
   kanbanFilter?: boolean;
 }) {
+  const { taskId, handleDrawerOpen, handleDrawerClose } = useKanbanDrawer();
   return (
     <div
       ref={outerRef}
-      onClick={async () => {
-        setOpen?.(false);
-        await Promise.resolve(); // Ensures the state update is processed
-        setOpen?.(true);
-      }}
-      onKeyDown={async (e) => {
-        if (e.key === "Enter") {
-          setOpen?.(false);
-          await Promise.resolve();
-          setOpen?.(true);
-        }
-      }}
+      onClick={() => handleDrawerOpen(card.id.toString())}
       className={`flex flex-shrink-0 flex-col  gap-2 px-3 py-1  ${outerStyles[state.type]}`}
     >
       {/* Put a shadow before the item if closer to the top edge */}
@@ -432,8 +420,6 @@ export function TaskCard({
         innerRef={innerRef}
         state={state}
         card={card}
-        open={open}
-        setOpen={setOpen}
         key={card.id}
         kanbanFilter={kanbanFilter}
       />

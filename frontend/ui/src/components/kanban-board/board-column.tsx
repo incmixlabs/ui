@@ -304,11 +304,6 @@ export function BoardColumn({
           </div>
         </div>
       </div>
-      <TaskCardDrawer
-        setOpen={setOpen}
-        open={open}
-        kanbanFilter={kanbanFilter}
-      />
     </>
   );
 }

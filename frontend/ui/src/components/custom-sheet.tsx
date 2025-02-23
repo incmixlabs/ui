@@ -4,14 +4,14 @@ import React from "react";
 
 interface SheetProps {
   open: boolean;
-  setOpen: (open: boolean) => void;
+  handleClose: () => Promise<void>;
   kanbanFilter?: boolean;
   children?: React.ReactNode;
 }
 
 const Sheet: React.FC<SheetProps> = ({
   open,
-  setOpen,
+  handleClose,
   kanbanFilter,
   children,
 }) => {
@@ -21,7 +21,7 @@ const Sheet: React.FC<SheetProps> = ({
         <div
           className={cn(
             kanbanFilter
-              ? "absolute top-6 right-4 z-50  2xl:w-[40rem] w-[35rem]  h-full flex-shrink-0"
+              ? "relative z-50  2xl:w-[40rem] w-[30rem]  h-full flex-shrink-0"
               : "fixed top-0 left-0 h-screen w-screen z-50",
           )}
         >
@@ -31,7 +31,7 @@ const Sheet: React.FC<SheetProps> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setOpen(false)}
+              onClick={handleClose}
             />
           )}
 

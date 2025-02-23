@@ -410,6 +410,12 @@ const TimePicker = () => {
                     "h-8 px-3 grid place-content-center flex-shrink-0 w-full bg-gray-3 hover:bg-secondary hover:text-white rounded-md text-sm focus-visible:outline-0 outline-0 focus-visible:border-0 cursor-pointer ring-0",
                   )}
                   onClick={() => handleClick(i, part, PM_AM, trueIndex)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleClick(i, part, PM_AM, trueIndex);
+                    }
+                  }}
                   onFocus={() => isSuggested && setActiveIndex(trueIndex)}
                 >
                   {currentValue}

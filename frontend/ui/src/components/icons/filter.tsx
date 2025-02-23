@@ -2,12 +2,12 @@ export const FilterIcon = (
   props: React.SVGProps<SVGSVGElement> & { size?: number },
 ) => (
   <svg
+    {...props}
     width={props.size ?? 24}
     height={props.size ?? 24}
-    viewBox="0 0 20 20"
+    viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
-    preserveAspectRatio="xMinYMin"
-    {...props}
+    preserveAspectRatio="xMidYMid meet"
   >
     <title>Filter Icon</title>
     <path
