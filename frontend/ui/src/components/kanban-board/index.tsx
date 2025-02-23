@@ -1,14 +1,15 @@
-import { Board } from "./board"
-import { KanbanImages } from "./images"
-import type { TCard } from "./types"
+import { useState } from "react";
+import { Board } from "./board";
+import { KanbanImages } from "./images";
+import type { TCard } from "./types";
 
 type TCustomColumn = {
-  id: number
-  title: string
-  tasks: TCard[]
-}
+  id: number;
+  title: string;
+  tasks: TCard[];
+};
 
-type TCustomBoard = TCustomColumn[]
+type TCustomBoard = TCustomColumn[];
 
 const initialData: TCustomBoard = [
   {
@@ -152,7 +153,7 @@ const initialData: TCustomBoard = [
       },
     ],
   },
-]
+];
 
 function convertCustomDataToBoardFormat(customData: TCustomBoard) {
   const columns = customData.map((column) => {
@@ -160,26 +161,26 @@ function convertCustomDataToBoardFormat(customData: TCustomBoard) {
     const cards: TCard[] = column.tasks.map((task) => ({
       ...task,
       id: task.id,
-    }))
+    }));
 
     return {
       id: `column:${column.id}`,
       title: column.title,
       cards,
-    }
-  })
+    };
+  });
 
   return {
     columns,
-  }
+  };
 }
 export const KanbanBoard = () => {
-  const boardData = convertCustomDataToBoardFormat(initialData)
+  const boardData = convertCustomDataToBoardFormat(initialData);
   // console.log('boardData:', boardData?.columns[0]?.cards);
 
   return (
-    <div className="h-full md:flex md:flex-row md:justify-center">
+    <div className="h-full w-full ">
       <Board initial={boardData} />
     </div>
-  )
-}
+  );
+};

@@ -7,9 +7,9 @@ import { ActiveModifiers } from "react-day-picker";
 import { Calendar, CalendarProps } from "./calendar";
 import { Button } from "./button";
 import { cn } from "utils";
-import { Calendar as CalendarIcon, LucideTextCursorInput } from "lucide-react";
+import { LucideTextCursorInput } from "lucide-react";
 import { ScrollArea } from "@radix-ui/themes";
-import { CalenderIcon } from "./icons/calender";
+import { CalendarIcon } from "./icons/calender";
 
 /* -------------------------------------------------------------------------- */
 /*                               Inspired By:                                 */
@@ -168,10 +168,10 @@ export const SmartDatetimeInput = React.forwardRef<
           showTimePicker: shouldShowBoth ? true : showTimePicker,
         }}
       >
-        <div className="w-fit bg-gray-100">
+        <div className="w-fit bg-gray-3 rounded-md">
           <div
             className={cn(
-              "flex gap-0 w-full p-1 items-center  rounded-md border border-gray-200 transition-all",
+              "flex gap-0 w-full p-1 items-center bg-gray-5  rounded-md border border-gray-5 transition-all",
               className,
             )}
           >
@@ -407,7 +407,7 @@ const TimePicker = () => {
                   key={`time-${trueIndex}`}
                   aria-label="currentTime"
                   className={cn(
-                    "h-8 px-3 grid place-content-center flex-shrink-0 w-full bg-gray-100 hover:bg-secondary hover:text-white rounded-md text-sm focus-visible:outline-0 outline-0 focus-visible:border-0 cursor-pointer ring-0",
+                    "h-8 px-3 grid place-content-center flex-shrink-0 w-full bg-gray-3 hover:bg-secondary hover:text-white rounded-md text-sm focus-visible:outline-0 outline-0 focus-visible:border-0 cursor-pointer ring-0",
                   )}
                   onClick={() => handleClick(i, part, PM_AM, trueIndex)}
                   onFocus={() => isSuggested && setActiveIndex(trueIndex)}
@@ -590,13 +590,12 @@ const DateTimeLocalInput = ({
     <Popover>
       <PopoverTrigger>
         <Button
-          //   size={"icon"}
           className={cn(
-            "size-9 flex items-center justify-center font-normal",
+            "flex items-center justify-center dark:bg-gray-12 bg-gray-5 px-1 font-normal",
             !value && "text-muted-foreground",
           )}
         >
-          <CalenderIcon className="size-6" />
+          <CalendarIcon />
           <span className="sr-only">calendar</span>
         </Button>
       </PopoverTrigger>

@@ -146,7 +146,10 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
     return (
       <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
         <Popover.Trigger>
-          <IconButton className="bg-gray-100  w-8 h-8 rounded-full flex items-center justify-center">
+          <IconButton
+            color="gray"
+            className="  w-8 h-8 rounded-full flex items-center justify-center"
+          >
             <Plus aria-hidden="true" />
             <span className="sr-only">Close</span>
           </IconButton>

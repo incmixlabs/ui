@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   Autoplay,
@@ -7,68 +7,68 @@ import {
   CarouselContent,
   CarouselNext,
   CarouselPrevious,
-} from "@components/carousel"
-import { Tabs, TabsList, TabsTrigger } from "@components/tabs"
-import { useRateLimitStore } from "@incmix/store"
-import { Spinner, Text } from "@radix-ui/themes"
-import { useQuery } from "@tanstack/react-query"
-import { LOCATION_API_URL } from "@utils/constants"
-import { DateTime } from "luxon"
-import { NewsCard, type NewsCardProps } from "./news-card"
-export { NewsCard, type NewsCardProps }
+} from "@components/carousel";
+import { Tabs, TabsList, TabsTrigger } from "@components/tabs";
+import { useRateLimitStore } from "@incmix/store";
+import { Spinner, Text } from "@radix-ui/themes";
+import { useQuery } from "@tanstack/react-query";
+import { LOCATION_API_URL } from "@utils/constants";
+import { DateTime } from "luxon";
+import { NewsCard, type NewsCardProps } from "./news-card";
+export { NewsCard, type NewsCardProps };
 
-const NEWS_TOPIC_KEY = "news_widget_topic"
-const NEWS_STORIES_KEY = "news_widget_stories"
+const NEWS_TOPIC_KEY = "news_widget_topic";
+const NEWS_STORIES_KEY = "news_widget_stories";
 
 export type NewsProps = {
-  country?: string
-}
+  country?: string;
+};
 
 type TopicsResponse = {
-  topics: { topic_token: string; title: string }[]
-  country: string
-}
+  topics: { topic_token: string; title: string }[];
+  country: string;
+};
 
 type LocalStorageNews = Record<
   string,
   { data: NewsCardProps[]; updatedAt: number }
->
+>;
 function getLocalStorageNews() {
-  const storiesJson = localStorage.getItem(NEWS_STORIES_KEY)
+  const storiesJson = localStorage.getItem(NEWS_STORIES_KEY);
   if (storiesJson) {
-    return JSON.parse(storiesJson) as LocalStorageNews
+    return JSON.parse(storiesJson) as LocalStorageNews;
   }
-  return {}
+  return {};
 }
 
-const newsApiUrl = `${LOCATION_API_URL}/news`
+const newsApiUrl = `${LOCATION_API_URL}/news`;
 export default function NewsWidget({ country }: NewsProps) {
-  const [api, setApi] = useState<CarouselApi>()
-  const [_current, setCurrent] = useState(0)
-  const [_count, setCount] = useState(0)
-  const plugin = useRef(Autoplay({ delay: 2000, stopOnInteraction: true }))
+  const [api, setApi] = useState<CarouselApi>();
+  const [_current, setCurrent] = useState(0);
+  const [_count, setCount] = useState(0);
+  const plugin = useRef(Autoplay({ delay: 2000, stopOnInteraction: true }));
   useEffect(() => {
     if (!api) {
-      return
+      return;
     }
 
-    setCount(api.scrollSnapList().length)
-    setCurrent(api.selectedScrollSnap() + 1)
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap() + 1);
     api.on("select", () => {
-      setCurrent(api.selectedScrollSnap() + 1)
-    })
-  }, [api])
+      setCurrent(api.selectedScrollSnap() + 1);
+    });
+  }, [api]);
 
-  const [selectedTopic, setSelectedTopic] = useState<string | undefined>()
+  const [selectedTopic, setSelectedTopic] = useState<string | undefined>();
 
-  const { rateLimits } = useRateLimitStore()
+  const { rateLimits } = useRateLimitStore();
 
   const frequency = useMemo(() => {
     if (rateLimits.location)
-      return rateLimits.location?.time / rateLimits.location?.limit
+      return rateLimits.location?.time / rateLimits.location?.limit;
 
-    return 0
-  }, [rateLimits.location])
+    return 0;
+  }, [rateLimits.location]);
 
   const {
     data: topicData,
@@ -77,30 +77,30 @@ export default function NewsWidget({ country }: NewsProps) {
   } = useQuery<TopicsResponse>({
     queryKey: ["news-topics", country],
     queryFn: async () => {
-      const topicsJson = localStorage.getItem(NEWS_TOPIC_KEY)
+      const topicsJson = localStorage.getItem(NEWS_TOPIC_KEY);
 
       if (topicsJson) {
-        const topicsResponse = JSON.parse(topicsJson) as TopicsResponse
-        if (topicsResponse.topics.length) return topicsResponse
+        const topicsResponse = JSON.parse(topicsJson) as TopicsResponse;
+        if (topicsResponse.topics.length) return topicsResponse;
       }
 
-      const searchParams = new URLSearchParams()
-      if (country?.length) searchParams.append("country", country)
+      const searchParams = new URLSearchParams();
+      if (country?.length) searchParams.append("country", country);
       const res = await fetch(`${newsApiUrl}/topics?${searchParams}`).then(
-        async (res) => (await res.json()) as TopicsResponse
-      )
-      const jsonString = JSON.stringify(res)
-      localStorage.setItem(NEWS_TOPIC_KEY, jsonString)
+        async (res) => (await res.json()) as TopicsResponse,
+      );
+      const jsonString = JSON.stringify(res);
+      localStorage.setItem(NEWS_TOPIC_KEY, jsonString);
 
-      return res
+      return res;
     },
-  })
+  });
 
   useEffect(() => {
     if (topicData?.topics?.length) {
-      setSelectedTopic(topicData.topics[0].topic_token)
+      setSelectedTopic(topicData.topics[0].topic_token);
     }
-  }, [topicData])
+  }, [topicData]);
 
   const {
     data: newsData,
@@ -110,46 +110,46 @@ export default function NewsWidget({ country }: NewsProps) {
     queryKey: ["news", country, selectedTopic],
     enabled: !!selectedTopic,
     queryFn: async () => {
-      const localStorageNews = getLocalStorageNews()
+      const localStorageNews = getLocalStorageNews();
       const topicExists = selectedTopic
         ? localStorageNews[selectedTopic]
-        : undefined
+        : undefined;
 
       if (topicExists?.data.length) {
-        const now = DateTime.now().toSeconds()
-        const expired = now - topicExists.updatedAt > frequency
-        if (!expired) return topicExists.data
+        const now = DateTime.now().toSeconds();
+        const expired = now - topicExists.updatedAt > frequency;
+        if (!expired) return topicExists.data;
       }
 
-      const searchParams = new URLSearchParams()
-      if (selectedTopic) searchParams.append("topicToken", selectedTopic)
+      const searchParams = new URLSearchParams();
+      if (selectedTopic) searchParams.append("topicToken", selectedTopic);
 
-      if (country?.length) searchParams.append("country", country)
+      if (country?.length) searchParams.append("country", country);
       else if (topicData?.country?.length)
-        searchParams.append("country", topicData.country)
+        searchParams.append("country", topicData.country);
 
       const res = await fetch(`${newsApiUrl}?${searchParams}`).then(
-        async (res) => (await res.json()) as NewsCardProps[]
-      )
+        async (res) => (await res.json()) as NewsCardProps[],
+      );
       if (selectedTopic) {
         localStorageNews[selectedTopic] = {
           data: res,
           updatedAt: DateTime.now().toSeconds(),
-        }
-        const jsonString = JSON.stringify(localStorageNews)
-        localStorage.setItem(NEWS_STORIES_KEY, jsonString)
+        };
+        const jsonString = JSON.stringify(localStorageNews);
+        localStorage.setItem(NEWS_STORIES_KEY, jsonString);
       }
 
-      return res
+      return res;
     },
-  })
+  });
 
   const newsCards = useMemo(() => {
     if (newsData)
-      return newsData.map((news) => {
-        return <NewsCard {...news} key={news.position} />
-      })
-  }, [newsData])
+      return newsData?.map((news) => {
+        return <NewsCard {...news} key={news.position} />;
+      });
+  }, [newsData]);
 
   const tabs = useMemo(() => {
     if (topicData?.topics)
@@ -158,14 +158,14 @@ export default function NewsWidget({ country }: NewsProps) {
           <TabsTrigger key={`cat_${topic_token}`} value={topic_token}>
             {title}
           </TabsTrigger>
-        )
-      })
-  }, [topicData?.topics])
+        );
+      });
+  }, [topicData?.topics]);
 
-  if (isTopicPending) return <Spinner />
+  if (isTopicPending) return <Spinner />;
 
   if (topicError || newsError)
-    return <Text color="red">Failed to fetch News</Text>
+    return <Text color="red">Failed to fetch News</Text>;
 
   return (
     <div>
@@ -196,7 +196,7 @@ export default function NewsWidget({ country }: NewsProps) {
         </Carousel>
       )}
     </div>
-  )
+  );
 }
 
-export { NewsWidget }
+export { NewsWidget };

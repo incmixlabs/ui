@@ -9,7 +9,7 @@ export const ZipIcon = (
     preserveAspectRatio="xMinYMin"
     {...props}
   >
-    <title>Calender Icon</title>
+    <title>Zip Icon</title>
 
     <path
       fillRule="evenodd"

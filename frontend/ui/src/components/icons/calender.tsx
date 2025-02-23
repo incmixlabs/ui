@@ -1,4 +1,4 @@
-export const CalenderIcon = (
+export const CalendarIcon = (
   props: React.SVGProps<SVGSVGElement> & { size?: number },
 ) => (
   <svg
@@ -10,7 +10,6 @@ export const CalenderIcon = (
     {...props}
   >
     <title>Calender Icon</title>
-
     <path
       fillRule="evenodd"
       clipRule="evenodd"

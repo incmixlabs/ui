@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React, {
   createContext,
@@ -7,14 +7,14 @@ import React, {
   useEffect,
   useCallback,
   ReactNode,
-} from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { X } from 'lucide-react';
-import { Drawer as VaulDrawer } from 'vaul';
+} from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { X } from "lucide-react";
+import { Drawer as VaulDrawer } from "vaul";
 import { cn } from "@utils";
 
 // Direction variants similar to the other implementation
-type DrawerDirection = 'top' | 'bottom' | 'left' | 'right';
+type DrawerDirection = "top" | "bottom" | "left" | "right";
 
 interface DrawerContextProps {
   open: boolean;
@@ -27,7 +27,7 @@ const DrawerContext = createContext<DrawerContextProps | undefined>(undefined);
 export const useDrawer = () => {
   const context = useContext(DrawerContext);
   if (!context) {
-    throw new Error('useDrawer must be used within a ResponsiveDrawer');
+    throw new Error("useDrawer must be used within a ResponsiveDrawer");
   }
   return context;
 };
@@ -50,10 +50,10 @@ export function ResponsiveDrawer({
   open: controlledOpen,
   setOpen: controlledSetOpen,
   className,
-  direction = 'bottom',
+  direction = "bottom",
   forceDrawerMode = false,
   forceModalMode = false,
-  breakpoint = '(min-width: 768px)',
+  breakpoint = "(min-width: 768px)",
 }: ResponsiveDrawerProps) {
   const [internalOpen, setInternalOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
@@ -67,7 +67,7 @@ export function ResponsiveDrawer({
         setInternalOpen(value);
       }
     },
-    [controlledSetOpen]
+    [controlledSetOpen],
   );
 
   useEffect(() => {
@@ -77,10 +77,10 @@ export function ResponsiveDrawer({
     };
 
     setIsDesktop(mediaQuery.matches);
-    mediaQuery.addEventListener('change', handleMediaChange);
+    mediaQuery.addEventListener("change", handleMediaChange);
 
     return () => {
-      mediaQuery.removeEventListener('change', handleMediaChange);
+      mediaQuery.removeEventListener("change", handleMediaChange);
     };
   }, [breakpoint]);
 
@@ -97,37 +97,32 @@ export function ResponsiveDrawer({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className='fixed inset-0 z-[110] flex items-center justify-center bg-background/40 backdrop-blur-sm cursor-zoom-out'
+              className="fixed inset-0 z-[110] flex items-center justify-center bg-background/40 backdrop-blur-sm cursor-zoom-out"
               onClick={() => setOpen(false)}
             >
               <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                transition={{ type: 'spring', duration: 0.5 }}
+                transition={{ type: "spring", duration: 0.5 }}
                 onClick={(e) => e.stopPropagation()}
                 className={cn(
-                  'relative w-full max-w-md p-6 border bg-background rounded-lg cursor-default',
-                  className
+                  "relative w-full max-w-md p-6 border bg-background rounded-lg cursor-default",
+                  className,
                 )}
               >
-                <DrawerClose className='absolute top-2 right-2 bg-primary text-background p-2 border z-[1] rounded-md'>
+                <DrawerClose className="absolute top-2 right-2 bg-primary text-background p-2 border z-[1] rounded-md">
                   <X aria-hidden="true" />
                   <span className="sr-only">Close</span>
                 </DrawerClose>
-                <div className="h-full w-full">
-                  {children}
-                </div>
+                <div className="h-full w-full">{children}</div>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
       ) : (
         <Drawer open={open} onOpenChange={setOpen}>
-          <DrawerContent 
-            direction={direction}
-            className={className}
-          >
+          <DrawerContent direction={direction} className={className}>
             {children}
           </DrawerContent>
         </Drawer>
@@ -141,17 +136,24 @@ export const Drawer = ({
   shouldScaleBackground = true,
   ...props
 }: React.ComponentProps<typeof VaulDrawer.Root>) => (
-  <VaulDrawer.Root
-    shouldScaleBackground={shouldScaleBackground}
-    {...props}
-  />
+  <VaulDrawer.Root shouldScaleBackground={shouldScaleBackground} {...props} />
 );
 Drawer.displayName = "Drawer";
 
 export const DrawerTrigger = ({ children }: { children: ReactNode }) => {
   const { setOpen } = useDrawer();
   return (
-    <div onClick={() => setOpen(true)} role="button" tabIndex={0}>
+    <div
+      onClick={() => setOpen(true)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          setOpen(true);
+        }
+      }}
+      role="button"
+      tabIndex={0}
+    >
       {children}
     </div>
   );
@@ -159,7 +161,7 @@ export const DrawerTrigger = ({ children }: { children: ReactNode }) => {
 DrawerTrigger.displayName = "DrawerTrigger";
 
 export const DrawerClose = React.forwardRef<
-  HTMLButtonElement, 
+  HTMLButtonElement,
   React.ButtonHTMLAttributes<HTMLButtonElement>
 >(({ className, children, ...props }, ref) => {
   const { setOpen } = useDrawer();
@@ -179,31 +181,31 @@ DrawerClose.displayName = "DrawerClose";
 
 const getDirectionStyles = (direction: DrawerDirection): string => {
   switch (direction) {
-    case 'top':
-      return 'inset-x-0 top-0 rounded-b-2.5';
-    case 'bottom':
-      return 'inset-x-0 bottom-0 rounded-t-2.5';
-    case 'left':
-      return 'inset-y-0 left-0 rounded-r-2.5 h-full w-[95vw] max-w-md';
-    case 'right':
-      return 'inset-y-0 right-0 rounded-l-2.5 h-full w-[95vw] max-w-md';
+    case "top":
+      return "inset-x-0 top-0 rounded-b-2.5";
+    case "bottom":
+      return "inset-x-0 bottom-0 rounded-t-2.5";
+    case "left":
+      return "inset-y-0 left-0 rounded-r-2.5 h-full w-[95vw] max-w-md";
+    case "right":
+      return "inset-y-0 right-0 rounded-l-2.5 h-full w-[95vw] max-w-md";
     default:
-      return 'inset-x-0 bottom-0 rounded-t-2.5';
+      return "inset-x-0 bottom-0 rounded-t-2.5";
   }
 };
 
 const getSliderStyles = (direction: DrawerDirection): string => {
   switch (direction) {
-    case 'top':
-      return 'bottom-1 mx-auto h-1 w-16 rounded-full';
-    case 'bottom':
-      return 'top-1 mx-auto h-1 w-16 rounded-full';
-    case 'left':
-      return 'right-1 my-auto h-16 w-1 rounded-full';
-    case 'right':
-      return 'left-1 my-auto h-16 w-1 rounded-full';
+    case "top":
+      return "bottom-1 mx-auto h-1 w-16 rounded-full";
+    case "bottom":
+      return "top-1 mx-auto h-1 w-16 rounded-full";
+    case "left":
+      return "right-1 my-auto h-16 w-1 rounded-full";
+    case "right":
+      return "left-1 my-auto h-16 w-1 rounded-full";
     default:
-      return 'top-1 mx-auto h-1 w-16 rounded-full';
+      return "top-1 mx-auto h-1 w-16 rounded-full";
   }
 };
 
@@ -216,25 +218,22 @@ interface DrawerContentProps {
 export const DrawerContent = React.forwardRef<
   React.ElementRef<typeof VaulDrawer.Content>,
   DrawerContentProps
->(({ children, className, direction = 'bottom' }, ref) => {
+>(({ children, className, direction = "bottom" }, ref) => {
   const ctx = useContext(DrawerContext);
   const finalDirection = ctx?.direction || direction;
-  
+
   return (
     <VaulDrawer.Portal>
       <VaulDrawer.Overlay className="fixed inset-0 z-[110] bg-background/40 backdrop-blur-sm" />
       <VaulDrawer.Content
         ref={ref}
         className={cn(
-          'fixed z-[115] bg-background p-4 shadow-lg',
+          "fixed z-[115] bg-background p-4 shadow-lg",
           getDirectionStyles(finalDirection),
-          className
+          className,
         )}
       >
-        <div className={cn(
-          'bg-muted',
-          getSliderStyles(finalDirection)
-        )} />
+        <div className={cn("bg-muted", getSliderStyles(finalDirection))} />
         <div className="h-full w-full max-h-[96vh] overflow-auto">
           {children}
         </div>
@@ -271,7 +270,7 @@ export const DrawerTitle = React.forwardRef<
     ref={ref}
     className={cn(
       "text-left font-semibold text-lg leading-none tracking-tight",
-      className
+      className,
     )}
     {...props}
   />
