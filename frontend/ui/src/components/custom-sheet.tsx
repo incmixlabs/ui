@@ -21,9 +21,11 @@ const Sheet: React.FC<SheetProps> = ({
         <div
           className={cn(
             kanbanFilter
-              ? "relative z-50  2xl:w-[40rem] w-[30rem]  h-full flex-shrink-0"
+              ? "rrelative z-50  2xl:w-[40rem] w-[30rem]  h-full flex-shrink-0"
               : "fixed top-0 left-0 h-screen w-screen z-50",
           )}
+          role="dialog"
+          aria-modal="true"
         >
           {!kanbanFilter && (
             <motion.div
@@ -32,13 +34,14 @@ const Sheet: React.FC<SheetProps> = ({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={handleClose}
+              role="button"
+              aria-label="Close drawer"
             />
           )}
 
-          {/* Content */}
           <motion.div
             className={cn(
-              "content rounded-lg dark:bg-gray-4 bg-gray-3 cursor-default h-[98%] absolute top-[1%] bottom-[1%]   right-[1.5%]",
+              "rounded-lg dark:bg-gray-4 bg-gray-3 cursor-default h-[98%] absolute top-[1%] bottom-[1%]   right-[1.5%]",
               kanbanFilter ? " h-full  w-full" : "  w-[52rem]",
             )}
             initial={{ x: "100%" }}

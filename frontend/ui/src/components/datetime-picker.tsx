@@ -1,13 +1,11 @@
-"use client";
-
 import React from "react";
 import { parseDate } from "chrono-node";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
-import { ActiveModifiers } from "react-day-picker";
-import { Calendar, CalendarProps } from "./calendar";
+import type { ActiveModifiers } from "react-day-picker";
+import { Calendar } from "./calendar";
+import type { CalendarProps } from "./calendar";
 import { Button } from "./button";
 import { cn } from "utils";
-import { LucideTextCursorInput } from "lucide-react";
 import { ScrollArea } from "@radix-ui/themes";
 import { CalendarIcon } from "./icons/calender";
 
@@ -93,16 +91,7 @@ const formatDateTime = (
 const inputBase =
   "bg-transparent focus:outline-none focus:ring-0 focus-within:outline-none focus-within:ring-0 sm:text-sm disabled:cursor-not-allowed disabled:opacity-50";
 
-// @source: https://www.perplexity.ai/search/in-javascript-how-RfI7fMtITxKr5c.V9Lv5KA#1
-// use this pattern to validate the transformed date string for the natural language input
-const naturalInputValidationPattern =
-  "^[A-Z][a-z]{2}sd{1,2},sd{4},sd{1,2}:d{2}s[AP]M$";
-
 const DEFAULT_SIZE = 96;
-
-/**
- * Smart time input Docs: {@link: https://shadcn-extension.vercel.app/docs/smart-time-input}
- */
 
 interface SmartDatetimeInputProps {
   value?: Date;
@@ -168,7 +157,7 @@ export const SmartDatetimeInput = React.forwardRef<
           showTimePicker: shouldShowBoth ? true : showTimePicker,
         }}
       >
-        <div className="w-fit bg-gray-3 rounded-md">
+        <div className="w-fit  rounded-md bg-gray-3">
           <div
             className={cn(
               "flex gap-0 w-full p-1 items-center bg-gray-5  rounded-md border border-gray-5 transition-all",
@@ -201,12 +190,12 @@ const TimePicker = () => {
     (time: string, hour: number, partStamp: number) => {
       onTimeChange(time);
 
-      let newVal = value ? new Date(value) : new Date();
+      const newVal = value ? new Date(value) : new Date();
 
       // If no value exists, use current date but only set the time
       newVal.setHours(
         hour,
-        partStamp === 0 ? parseInt("00") : timestamp * partStamp,
+        partStamp === 0 ? Number.parseInt("00") : timestamp * partStamp,
       );
 
       onValueChange(newVal);
@@ -254,7 +243,9 @@ const TimePicker = () => {
         // this should work now haha that hour is what does the trick
 
         const PM_AM = timeValue.split(" ")[1];
-        const PM_AM_hour = parseInt(timeValue.split(" ")[0].split(":")[0]);
+        const PM_AM_hour = Number.parseInt(
+          timeValue.split(" ")[0].split(":")[0],
+        );
         const hour =
           PM_AM === "AM"
             ? PM_AM_hour === 12
@@ -265,7 +256,7 @@ const TimePicker = () => {
               : PM_AM_hour + 12;
 
         const part = Math.floor(
-          parseInt(timeValue.split(" ")[0].split(":")[1]) / 15,
+          Number.parseInt(timeValue.split(" ")[0].split(":")[1]) / 15,
         );
 
         formateSelectedTime(timeValue, hour, part);
@@ -313,23 +304,21 @@ const TimePicker = () => {
   const currentTime = React.useMemo(() => {
     const timeVal = Time.split(" ")[0];
     return {
-      hours: parseInt(timeVal.split(":")[0]),
-      minutes: parseInt(timeVal.split(":")[1]),
+      hours: Number.parseInt(timeVal.split(":")[0]),
+      minutes: Number.parseInt(timeVal.split(":")[1]),
     };
   }, [Time]);
 
   React.useEffect(() => {
     const getCurrentElementTime = () => {
       const timeVal = Time.split(" ")[0];
-      const hours = parseInt(timeVal.split(":")[0]);
-      const minutes = parseInt(timeVal.split(":")[1]);
+      const hours = Number.parseInt(timeVal.split(":")[0]);
+      const minutes = Number.parseInt(timeVal.split(":")[1]);
       const PM_AM = Time.split(" ")[1];
 
       const formatIndex =
         PM_AM === "AM" ? hours : hours === 12 ? hours : hours + 12;
       const formattedHours = formatIndex;
-
-      console.log(formatIndex);
 
       for (let j = 0; j <= 3; j++) {
         const diff = Math.abs(j * timestamp - minutes);
@@ -546,7 +535,7 @@ const NaturalLanguageInput = React.forwardRef<
       onKeyDown={handleKeydown}
       onBlur={handleParse}
       className={cn(
-        "px-2 mr-0.5 bg-background flex-1 border-none h-8 rounded",
+        "px-2 mr-0.5  h-8 flex-1 rounded  border-none bg-background   ",
         inputBase,
       )}
       {...props}

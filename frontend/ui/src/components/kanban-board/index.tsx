@@ -176,7 +176,6 @@ function convertCustomDataToBoardFormat(customData: TCustomBoard) {
 }
 export const KanbanBoard = () => {
   const boardData = convertCustomDataToBoardFormat(initialData);
-  // console.log('boardData:', boardData?.columns[0]?.cards);
 
   return (
     <div className="h-full w-full ">

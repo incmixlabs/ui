@@ -347,20 +347,20 @@ export function Board({ initial }: { initial: TBoard }) {
 
   return (
     <>
-      <div className="flex  justify-end">
+      <div className="flex justify-end mb-2">
         <IconButton
-          className="cursor-pointer h-10 w-12"
+          className="h-10 w-12 cursor-pointer "
           onClick={toggleKanbanFilter}
         >
-          <FilterIcon className=" fill-white size-8" />
+          <FilterIcon className="size-8 fill-whit" />
         </IconButton>
       </div>
       <div
-        className={`${kanbanFilter && "w-full  flex "} h-full  overflow-hidden [scrollbar-color:theme(colors.sky.200)_theme(colors.sky.400)] [scrollbar-width:thin]`}
+        className={`${kanbanFilter && "w-full flex gap-3 "} h-full overflow-hidden [scrollbar-color:theme(colors.sky.200)_theme(colors.sky.400)] [scrollbar-width:thin]`}
         ref={scrollableRef}
       >
         <div
-          className={`${kanbanFilter ? "w-full space-y-5 " : "flex flex-row 2xl:gap-7 gap-4  p-3"}`}
+          className={`${kanbanFilter ? "w-full space-y-5 " : "flex flex-row gap-4 p-3 2xl:gap-7"}`}
         >
           {data.columns.map((column) => (
             <BoardColumn

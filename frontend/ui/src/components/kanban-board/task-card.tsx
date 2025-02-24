@@ -94,12 +94,20 @@ export function TaskCardDisplay({
   innerRef?: MutableRefObject<HTMLDivElement | null>;
   kanbanFilter?: boolean;
 }) {
-  const { taskId, handleDrawerOpen, handleDrawerClose } = useKanbanDrawer();
+  const { handleDrawerOpen } = useKanbanDrawer();
   return (
     <div
       ref={outerRef}
       onClick={() => handleDrawerOpen(card.id.toString())}
-      className={`flex flex-shrink-0 flex-col  gap-2 px-3 py-1  ${outerStyles[state.type]}`}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === "Space") {
+          e.preventDefault();
+          handleDrawerOpen(card.id.toString());
+        }
+      }}
+      role="button"
+      tabIndex={0}
+      className={`flex flex-shrink-0 flex-col gap-2 px-3 py-1 ${outerStyles[state.type]}`}
     >
       {/* Put a shadow before the item if closer to the top edge */}
       {state.type === "is-over" && state.closestEdge === "top" ? (
@@ -107,7 +115,7 @@ export function TaskCardDisplay({
       ) : null}
       <Card
         className={cn(
-          `relative space-y-1.5 cursor-pointer rounded-lg   p-3 ${innerStyles[state.type]}`,
+          `relative cursor-pointer space-y-1.5 rounded-lg p-3 ${innerStyles[state.type]}`,
           kanbanFilter ? `flex items-center justify-between ` : "",
         )}
         ref={innerRef}
@@ -131,7 +139,7 @@ export function TaskCardDisplay({
                 size={"3"}
                 className="w-5 h-5 text-secondary border-black border group-hover:bg-white bg-gray-12 rounded-md "
               />
-              <Heading as="h6" size={"3"} className="font-medium py-2">
+              <Heading as="h6" size={"3"} className="py-2 font-medium">
                 {card.name}
               </Heading>
             </Flex>
@@ -206,7 +214,7 @@ export function TaskCardDisplay({
                 })}
               </Flex>
             )}
-            <Heading as="h6" className="font-medium py-2">
+            <Heading as="h6" className="py-2 font-medium">
               {card.name}
             </Heading>
             {card.description && (
@@ -223,7 +231,7 @@ export function TaskCardDisplay({
                   <Flex
                     align={"center"}
                     justify={"between"}
-                    className="w-full gap-1  uppercase  text-gray-11"
+                    className="w-full gap-1 text-gray-11 uppercase"
                   >
                     <span>{subtask.name}</span>
                     <span>{subtask?.progress}%</span>
@@ -253,12 +261,12 @@ export function TaskCardDisplay({
             >
               <Flex align={"center"} gap="2">
                 {card.filesData && (
-                  <IconButton className="flex items-center gap-1 bg-transparent dark:text-gray-200 text-gray-700">
+                  <IconButton className="flex items-center gap-1 bg-transparent text-gray-700 dark:text-gray-200">
                     <Paperclip size={20} />
                     <span>{card.filesData.length}</span>
                   </IconButton>
                 )}
-                <IconButton className="flex items-center gap-1 bg-transparent dark:text-gray-200 text-gray-700">
+                <IconButton className="flex items-center gap-1 bg-transparent text-gray-700 dark:text-gray-200">
                   <MessageSquareText size={20} />
                   <span>5</span>
                 </IconButton>
@@ -289,14 +297,10 @@ export function TaskCard({
   card,
   columnId,
   kanbanFilter,
-  setOpen,
-  open,
 }: {
   card: TCard;
   columnId: string;
   kanbanFilter: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  open: boolean;
 }) {
   const outerRef = useRef<HTMLDivElement | null>(null);
   const innerRef = useRef<HTMLDivElement | null>(null);

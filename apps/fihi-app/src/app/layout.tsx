@@ -1,4 +1,3 @@
-"use client";
 import { Container, Theme } from "@radix-ui/themes";
 import { Link } from "@tanstack/react-router";
 import React from "react";

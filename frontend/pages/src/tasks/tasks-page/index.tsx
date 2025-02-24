@@ -138,15 +138,15 @@ const TasksPage = () => {
       </Flex>
       <ScrollArea
         scrollbars="horizontal"
-        className=" w-full pb-4 2xl:px-10 px-2"
+        className=" w-full pb-4 2xl:px-10 px-2 "
       >
         <KanbanBoard
-          updateTasks={(tasks) => {
-            tasksMutation.mutate(tasks);
-          }}
-          columns={boardQuery.data?.columns ?? []}
-          tasks={boardQuery.data?.tasks ?? []}
-          isLoading={boardQuery.isLoading || projectsQuery.isLoading}
+        // updateTasks={(tasks) => {
+        //   tasksMutation.mutate(tasks);
+        // }}
+        // columns={boardQuery.data?.columns ?? []}
+        // tasks={boardQuery.data?.tasks ?? []}
+        // isLoading={boardQuery.isLoading || projectsQuery.isLoading}
         />
       </ScrollArea>
     </DashboardLayout>

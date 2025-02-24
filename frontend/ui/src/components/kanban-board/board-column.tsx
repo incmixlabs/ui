@@ -61,20 +61,14 @@ const idle = { type: "idle" } satisfies TColumnState;
 const CardList = memo(function CardList({
   column,
   kanbanFilter,
-  setOpen,
-  open,
 }: {
   column: TColumn;
   kanbanFilter: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  open: boolean;
 }) {
   return column.cards.map((card) => (
     <TaskCard
       key={card.id}
       card={card}
-      setOpen={setOpen}
-      open={open}
       columnId={column.id}
       kanbanFilter={kanbanFilter}
     />
@@ -247,7 +241,7 @@ export function BoardColumn({
         ref={outerFullHeightRef}
       >
         <div
-          className={`flex max-h-full flex-col rounded-lg dark:bg-gray-2 bg-gray-3 dark:text-white text-black ${stateStyles[state.type]}`}
+          className={`flex max-h-full flex-col rounded-lg  bg-gray-3 text-black dark:bg-gray-2 dark:text-white ${stateStyles[state.type]}`}
           ref={innerRef}
           {...{ [blockBoardPanningAttr]: true }}
         >
@@ -268,12 +262,7 @@ export function BoardColumn({
               className="flex flex-col overflow-y-auto [overflow-anchor:none] [scrollbar-color:theme(colors.slate.400)_theme(colors.slate.200)] [scrollbar-width:thin]"
               ref={scrollableRef}
             >
-              <CardList
-                column={column}
-                kanbanFilter={kanbanFilter}
-                setOpen={setOpen}
-                open={open}
-              />
+              <CardList column={column} kanbanFilter={kanbanFilter} />
               {state.type === "is-card-over" && !state.isOverChildCard ? (
                 <div className="flex-shrink-0 px-3 py-1">
                   <TaskCardShadow dragging={state.dragging} />
@@ -281,13 +270,13 @@ export function BoardColumn({
               ) : null}
             </div>
             {kanbanFilter ? (
-              <Box className="px-3.5 mt-2 ">
+              <Box className="mt-2 px-3.5">
                 <Flex
                   justify={"start"}
                   gap="2"
-                  className=" rounded-xl  p-3 w-full border-2 border-dashed border-gray-8 hover:bg-gray-8 cursor-pointer"
+                  className=" rounded-xl cursor-pointer p-3 w-full border-2   border-dashed border-gray-8  hover:bg-gray-8"
                 >
-                  <IconButton className="rounded gap-3  p-2 w-fit bg-transparent font-medium text-xl text-blue-500  hover:text-white">
+                  <IconButton className=" w-fit gap-3 rounded p-2 bg-transparent font-medium text-xl text-blue-500  hover:text-white">
                     <Plus size={24} /> Add Task
                   </IconButton>
                 </Flex>
