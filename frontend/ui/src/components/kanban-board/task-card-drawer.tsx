@@ -98,12 +98,10 @@ export default function TaskCardDrawer({
 
   const handleDateChange = (date: Date) => {
     setSelectedDate(date);
-    console.log("Selected date:", date);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Comment submitted:", comment);
     setComment("");
   };
 

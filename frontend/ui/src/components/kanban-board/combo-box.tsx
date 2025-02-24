@@ -115,6 +115,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
         <Popover.Trigger>
           <IconButton
             color="gray"
+            aria-label="Open options menu"
             className="flex w-8 h-8 items-center justify-center rounded-full "
           >
             <Plus aria-hidden="true" />

@@ -18,7 +18,7 @@ const Sheet: React.FC<SheetProps> = ({
   return (
     <AnimatePresence>
       {open && (
-        <div
+        <dialog
           className={cn(
             kanbanFilter
               ? "relative z-50 2xl:w-[40rem] w-[30rem] h-full flex-shrink-0"
@@ -55,7 +55,7 @@ const Sheet: React.FC<SheetProps> = ({
           >
             {children}
           </motion.div>
-        </div>
+        </dialog>
       )}
     </AnimatePresence>
   );
