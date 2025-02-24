@@ -25,7 +25,9 @@ const TasksPage = () => {
       return [];
     },
   });
+
   const db = usePGlite();
+
   const boardQuery = useQuery({
     queryKey: ["board", selectedProject],
     enabled: !!selectedProject,

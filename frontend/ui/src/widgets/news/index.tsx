@@ -145,10 +145,11 @@ export default function NewsWidget({ country }: NewsProps) {
   });
 
   const newsCards = useMemo(() => {
-    if (newsData)
+    if (newsData && Array.isArray(newsData))
       return newsData?.map((news) => {
         return <NewsCard {...news} key={news.position} />;
       });
+    return [];
   }, [newsData]);
 
   const tabs = useMemo(() => {
