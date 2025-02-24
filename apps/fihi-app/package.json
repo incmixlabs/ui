@@ -4,7 +4,7 @@
   "version": "workspace: *",
   "type": "module",
   "scripts": {
-    "dev": "vite --mode production",
+    "dev": "vite",
     "build": "vite build",
     "build:fe": "vite build --mode production",
     "preview": "vite preview",

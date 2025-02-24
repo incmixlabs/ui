@@ -13,9 +13,13 @@ import { getRxStorageIndexedDB } from "rxdb-premium/plugins/storage-indexeddb"
 import { RxDBMigrationSchemaPlugin } from "rxdb/plugins/migration-schema"
 import { RxDBUpdatePlugin } from "rxdb/plugins/update"
 import { wrappedValidateAjvStorage } from "rxdb/plugins/validate-ajv"
+
 addRxPlugin(RxDBUpdatePlugin)
 addRxPlugin(RxDBMigrationSchemaPlugin)
-addRxPlugin(RxDBDevModePlugin)
+
+if (import.meta.env.MODE === "development") {
+  addRxPlugin(RxDBDevModePlugin)
+}
 // import * as SQLite from "wa-sqlite"
 // import SQLiteESMFactory from "wa-sqlite/dist/wa-sqlite.mjs"
 
