@@ -12,7 +12,7 @@
     "lint": "biome check .",
     "lint:fix": "biome check --fix --unsafe",
     "lint:packages": "pnpx sherif@latest",
-    "postinstall": "node postinstall.js",
+    "postinstall": "node postinstall.cjs && cd ./node_modules/rxdb-premium && pnpm postinstall",
     "typecheck": "turbo typecheck"
   },
   "pnpm": {
