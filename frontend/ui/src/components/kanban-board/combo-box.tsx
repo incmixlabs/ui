@@ -55,7 +55,7 @@ interface MultiSelectProps
 
   popoverClass?: string;
 
-  addNewLebel?: boolean;
+  addNewLabel?: boolean;
   title?: string;
 }
 
@@ -67,7 +67,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
     placeholder = "Select options",
     title,
     popoverClass,
-    addNewLebel = false,
+    addNewLabel = false,
   }) => {
     const [selectedValues, setSelectedValues] =
       React.useState<string[]>(defaultValue);
@@ -118,7 +118,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
             className="flex w-8 h-8 items-center justify-center rounded-full "
           >
             <Plus aria-hidden="true" />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">Add new item</span>
           </IconButton>
         </Popover.Trigger>
         <Popover.Content
@@ -199,7 +199,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
               </CommandGroup>
               {/* <CommandSeparator /> */}
               <CommandGroup>
-                {addNewLebel ? (
+                {addNewLabel ? (
                   <>
                     <Button className="h-10 w-full rounded-md bg-blue-500 px-4   text-white ">
                       Add new label

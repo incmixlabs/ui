@@ -21,7 +21,7 @@ const Sheet: React.FC<SheetProps> = ({
         <div
           className={cn(
             kanbanFilter
-              ? "rrelative z-50  2xl:w-[40rem] w-[30rem]  h-full flex-shrink-0"
+              ? "relative z-50 2xl:w-[40rem] w-[30rem] h-full flex-shrink-0"
               : "fixed top-0 left-0 h-screen w-screen z-50",
           )}
           role="dialog"
@@ -30,12 +30,12 @@ const Sheet: React.FC<SheetProps> = ({
           {!kanbanFilter && (
             <motion.div
               className="overlay absolute h-full w-full bg-black/40 cursor-pointer"
+              role="button"
+              aria-label="Close drawer"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={handleClose}
-              role="button"
-              aria-label="Close drawer"
             />
           )}
 

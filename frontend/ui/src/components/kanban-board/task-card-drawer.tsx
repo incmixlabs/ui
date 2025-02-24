@@ -315,7 +315,7 @@ export default function TaskCardDrawer({
                               defaultValue={selectedLabels}
                               placeholder="Search Label"
                               title="Labels"
-                              addNewLebel={true}
+                              addNewLabel={true}
                             />
                           </Flex>
 
@@ -691,7 +691,7 @@ export default function TaskCardDrawer({
                               defaultValue={selectedLabels}
                               placeholder="Search Label"
                               title="Labels"
-                              addNewLebel={true}
+                              addNewLabel={true}
                             />
                           </Flex>
                           <Flex gap="2" wrap={"wrap"}>
@@ -750,8 +750,19 @@ export default function TaskCardDrawer({
     </>
   );
 }
-
-const Item = ({ children, item }: { children: React.ReactNode; item: any }) => {
+interface ChecklistItem {
+  id: number;
+  title: string;
+  date: string;
+  checked: boolean;
+}
+const Item = ({
+  children,
+  item,
+}: {
+  children: React.ReactNode;
+  item: ChecklistItem;
+}) => {
   const y = useMotionValue(0);
   //   const boxShadow = useRaisedShadow(y);
   const dragControls = useDragControls();

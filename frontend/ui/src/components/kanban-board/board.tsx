@@ -163,8 +163,6 @@ export function Board({ initial }: { initial: TBoard }) {
 
             // dropping on home
             if (home === destination) {
-              console.log("moving card to home column");
-
               // move to last position
               const reordered = reorder({
                 list: home.cards,
@@ -352,7 +350,7 @@ export function Board({ initial }: { initial: TBoard }) {
           className="h-10 w-12 cursor-pointer "
           onClick={toggleKanbanFilter}
         >
-          <FilterIcon className="size-8 fill-whit" />
+          <FilterIcon className="size-8 fill-white" />
         </IconButton>
       </div>
       <div
