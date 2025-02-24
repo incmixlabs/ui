@@ -12,8 +12,11 @@
     "lint": "biome check .",
     "lint:fix": "biome check --fix --unsafe",
     "lint:packages": "pnpx sherif@latest",
-    "postinstall": "lefthook install",
+    "postinstall": "node postinstall.js",
     "typecheck": "turbo typecheck"
+  },
+  "pnpm": {
+    "neverBuiltDependencies": ["rxdb-premium"]
   },
   "engines": {
     "node": ">=22.13.0"
