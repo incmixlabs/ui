@@ -145,14 +145,14 @@ export default function NewsWidget({ country }: NewsProps) {
   })
 
   const newsCards = useMemo(() => {
-    if (newsData)
+    if (newsData && Array.isArray(newsData))
       return newsData.map((news) => {
         return <NewsCard {...news} key={news.position} />
       })
   }, [newsData])
 
   const tabs = useMemo(() => {
-    if (topicData?.topics)
+    if (topicData?.topics && Array.isArray(topicData.topics))
       return topicData.topics.map(({ topic_token, title }) => {
         return (
           <TabsTrigger key={`cat_${topic_token}`} value={topic_token}>

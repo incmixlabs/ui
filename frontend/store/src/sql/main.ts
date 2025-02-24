@@ -1,91 +1,56 @@
-import { type PGliteWithLive, live } from "@electric-sql/pglite/live"
-import { PGliteWorker } from "@electric-sql/pglite/worker"
-import { syncSchemaWithBackend } from "./tasks"
-// https://electric-sql.com/product/pglite
-// https://github.com/dnlsandiego/kysely-pglite
+// main.ts
 
-const _data = {
-  project: {
-    id: "test-project",
-    org_id: "test-org",
-    name: "Project 1",
+import { addRxPlugin, createRxDatabase } from "rxdb"
+import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode"
+import {
+  type TaskCollections,
+  columnSchemaLiteral,
+  projectSchemaLiteral,
+  taskSchemaLiteral,
+} from "./types"
 
-    columns: [
-      {
-        id: "todo-column",
-        label: "Todo",
-        order: 1,
-        parent_column_id: null,
-        tasks: [
-          {
-            id: "task-1",
-            content: "Task 1",
-            status: "TODO",
-          },
-          {
-            id: "task-2",
-            content: "Task 2",
-            status: "TODO",
-          },
-        ],
-      },
-      {
-        id: "inprogress-column",
-        label: "In Progress",
-        order: 2,
-        parent_column_id: null,
-        tasks: [
-          {
-            id: "task-3",
-            content: "Task 3",
-            status: "IN_PROGRESS",
-          },
-        ],
-      },
-      {
-        id: "done-column",
-        label: "Done",
-        order: 3,
-        parent_column_id: null,
-        tasks: [],
-      },
-    ],
-  },
+import { getRxStorageIndexedDB } from "rxdb-premium/plugins/storage-indexeddb"
+import { RxDBMigrationSchemaPlugin } from "rxdb/plugins/migration-schema"
+import { RxDBUpdatePlugin } from "rxdb/plugins/update"
+import { wrappedValidateAjvStorage } from "rxdb/plugins/validate-ajv"
+
+addRxPlugin(RxDBUpdatePlugin)
+addRxPlugin(RxDBMigrationSchemaPlugin)
+
+if (import.meta.env.MODE === "development") {
+  addRxPlugin(RxDBDevModePlugin)
 }
+// import * as SQLite from "wa-sqlite"
+// import SQLiteESMFactory from "wa-sqlite/dist/wa-sqlite.mjs"
 
-export const pgWorkerMain = (dataDir = "idb://incmix-db"): PGliteWithLive => {
-  const worker = new PGliteWorker(
-    new Worker(new URL("./worker.ts", import.meta.url), {
-      type: "module",
-    }),
-    {
-      dataDir,
-      extensions: {
-        live,
-      },
-    }
-  ) as unknown as PGliteWithLive //Type issue
+// const sqliteModule = await SQLiteESMFactory()
+// const sqlite3 = SQLite.Factory(sqliteModule)
 
-  worker.onLeaderChange(() => console.log("leader changed"))
+const storage = wrappedValidateAjvStorage({ storage: getRxStorageIndexedDB() })
 
-  worker.exec(`
-    CREATE TABLE IF NOT EXISTS schema_meta (
-      id SERIAL PRIMARY KEY,
-      version INTEGER,
-      updated_at TIMESTAMP DEFAULT NOW()
-    );`)
+export const database = await createRxDatabase<TaskCollections>({
+  storage,
+  name: "incmix-db",
 
-  worker.exec(`
-    CREATE TABLE IF NOT EXISTS tasks_change_log (
-      id SERIAL PRIMARY KEY,
-      table_name TEXT NOT NULL,
-      record_id TEXT NOT NULL,
-      sync_status TEXT check(sync_status in ('pending','synced')) NOT NULL,
-      operation TEXT check(operation in ('update', 'delete')) NOT NULL,
-      updated_at TEXT NOT NULL
-    );`)
+  // getRxStorageSharedWorker({
+  //   //   /**
+  //   //    * Contains any value that can be used as parameter
+  //   //    * to the SharedWorker constructor of thread.js
+  //   //    * Most likely you want to put the path to the shared-worker.js file in here.
+  //   //    *
+  //   //    * @link https://developer.mozilla.org/en-US/docs/Web/API/SharedWorker?retiredLocale=de
+  //   //    */
 
-  syncSchemaWithBackend(worker)
+  //   workerInput: () =>
+  //     new SharedWorker(new URL("./worker.ts", import.meta.url), {
+  //       type: "module",
+  //       // credentials: "include",
+  //     }),
+  // }),
+})
 
-  return worker
-}
+database.addCollections({
+  tasks: { schema: taskSchemaLiteral, autoMigrate: true },
+  columns: { schema: columnSchemaLiteral, autoMigrate: true },
+  projects: { schema: projectSchemaLiteral, autoMigrate: true },
+})
