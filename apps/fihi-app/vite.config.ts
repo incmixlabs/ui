@@ -3,9 +3,10 @@ import { Schema, ValidateEnv } from "@julr/vite-plugin-validate-env"
 // import { sentryVitePlugin } from "@sentry/vite-plugin"
 import react from "@vitejs/plugin-react"
 import { internalIpV4 } from "internal-ip"
-import { defineConfig } from "vite"
+import { defineConfig, type PluginOption } from "vite"
 import topLevelAwait from "vite-plugin-top-level-await"
 import tsconfigPaths from "vite-tsconfig-paths"
+import { visualizer } from "rollup-plugin-visualizer"
 // @ts-expect-error process is a nodejs global
 const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM)
 
@@ -20,6 +21,7 @@ export default defineConfig(async () => ({
   worker: { format: "es" as WorkerFormat },
   build: {
     sourcemap: true, // Source map generation must be turned on
+    chunkSizeWarningLimit: 4800
   },
   preview: {
     port: 1420,
@@ -32,6 +34,7 @@ export default defineConfig(async () => ({
   plugins: [
     react(),
     tsconfigPaths(),
+    visualizer() as PluginOption,
     ValidateEnv({
       VITE_BFF_API_URL: Schema.string(),
     }),

@@ -37,6 +37,7 @@
     "@vitejs/plugin-react": "catalog:",
     "internal-ip": "8.0.0",
     "postcss": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
