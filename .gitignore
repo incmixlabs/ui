@@ -2,6 +2,8 @@
 
 /apps/fihi-app/public
 /apps/storybook/public
+/apps/fihi-app/stats.html
+/apps/fihi-app/bundle*.json
 .idea
 # Dependencies
 node_modules

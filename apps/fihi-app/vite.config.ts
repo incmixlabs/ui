@@ -7,6 +7,8 @@ import { defineConfig, type PluginOption } from "vite"
 import topLevelAwait from "vite-plugin-top-level-await"
 import tsconfigPaths from "vite-tsconfig-paths"
 import { visualizer } from "rollup-plugin-visualizer"
+import bundlesize from "vite-plugin-bundlesize"
+
 // @ts-expect-error process is a nodejs global
 const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM)
 
@@ -20,7 +22,7 @@ export default defineConfig(async () => ({
   assetsInclude: ["**/*.wasm"],
   worker: { format: "es" as WorkerFormat },
   build: {
-    sourcemap: true, // Source map generation must be turned on
+    sourcemap: "hidden", // Source map generation must be turned on
     chunkSizeWarningLimit: 4800
   },
   preview: {
@@ -32,9 +34,10 @@ export default defineConfig(async () => ({
     },
   },
   plugins: [
+    bundlesize(),
     react(),
     tsconfigPaths(),
-    visualizer() as PluginOption,
+    visualizer({ open: true }) as PluginOption,
     ValidateEnv({
       VITE_BFF_API_URL: Schema.string(),
     }),
