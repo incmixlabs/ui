@@ -37,46 +37,46 @@ const TasksPage = () => {
     },
   })
 
-  const queryClient = useQueryClient()
+  // const queryClient = useQueryClient()
 
-  const tasksMutation = useMutation({
-    mutationFn: (tasks: Task[]) => updatedTasks(db, tasks),
-    onMutate: async (tasks) => {
-      await queryClient.cancelQueries({ queryKey: ["board", selectedProject] })
-      // Snapshot the previous value
-      const prevoiusBoard = queryClient.getQueryData<Board>([
-        "board",
-        selectedProject,
-      ])
+  // const tasksMutation = useMutation({
+  //   mutationFn: (tasks: Task[]) => updatedTasks(db, tasks),
+  //   onMutate: async (tasks) => {
+  //     await queryClient.cancelQueries({ queryKey: ["board", selectedProject] })
+  //     // Snapshot the previous value
+  //     const prevoiusBoard = queryClient.getQueryData<Board>([
+  //       "board",
+  //       selectedProject,
+  //     ])
 
-      queryClient.setQueryData(["board", selectedProject], (old: Board) => {
-        console.log(old)
-        return {
-          ...old,
-          tasks: [
-            ...old.tasks.filter(
-              (t) => tasks.find((nt) => nt.id !== t.id) !== undefined
-            ),
-            ...tasks,
-          ],
-        }
-      })
+  //     queryClient.setQueryData(["board", selectedProject], (old: Board) => {
+  //       console.log(old)
+  //       return {
+  //         ...old,
+  //         tasks: [
+  //           ...old.tasks.filter(
+  //             (t) => tasks.find((nt) => nt.id !== t.id) !== undefined
+  //           ),
+  //           ...tasks,
+  //         ],
+  //       }
+  //     })
 
-      return { prevoiusBoard }
-    },
-    // If the mutation fails,
-    // use the context returned from onMutate to roll back
-    onError: (_err, _updatedTasks, context) => {
-      queryClient.setQueryData(
-        ["board", selectedProject],
-        context?.prevoiusBoard
-      )
-    },
-    // Always refetch after error or success:
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["board", selectedProject] })
-    },
-  })
+  //     return { prevoiusBoard }
+  //   },
+  //   // If the mutation fails,
+  //   // use the context returned from onMutate to roll back
+  //   onError: (_err, _updatedTasks, context) => {
+  //     queryClient.setQueryData(
+  //       ["board", selectedProject],
+  //       context?.prevoiusBoard
+  //     )
+  //   },
+  //   // Always refetch after error or success:
+  //   onSettled: () => {
+  //     queryClient.invalidateQueries({ queryKey: ["board", selectedProject] })
+  //   },
+  // })
 
   useAutoSync(pushChangesToBackend)
 
@@ -140,7 +140,7 @@ const TasksPage = () => {
       </Flex>
       <ScrollArea
         scrollbars="horizontal"
-        className=" w-full pb-4 2xl:px-10 px-2 "
+        className="w-full px-2 pb-4 2xl:px-10"
       >
         <KanbanBoard
         // updateTasks={(tasks) => {
