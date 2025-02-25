@@ -3,11 +3,11 @@ import { Schema, ValidateEnv } from "@julr/vite-plugin-validate-env"
 // import { sentryVitePlugin } from "@sentry/vite-plugin"
 import react from "@vitejs/plugin-react"
 import { internalIpV4 } from "internal-ip"
-import { defineConfig, type PluginOption } from "vite"
+import { visualizer } from "rollup-plugin-visualizer"
+import { type PluginOption, defineConfig } from "vite"
+import bundlesize from "vite-plugin-bundlesize"
 import topLevelAwait from "vite-plugin-top-level-await"
 import tsconfigPaths from "vite-tsconfig-paths"
-import { visualizer } from "rollup-plugin-visualizer"
-import bundlesize from "vite-plugin-bundlesize"
 
 // @ts-expect-error process is a nodejs global
 const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM)
@@ -23,7 +23,7 @@ export default defineConfig(async () => ({
   worker: { format: "es" as WorkerFormat },
   build: {
     sourcemap: "hidden", // Source map generation must be turned on
-    chunkSizeWarningLimit: 4800
+    chunkSizeWarningLimit: 4800,
   },
   preview: {
     port: 1420,
