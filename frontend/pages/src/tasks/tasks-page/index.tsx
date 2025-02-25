@@ -75,16 +75,16 @@ const TasksPage = () => {
     },
   })
 
-  const [boardLoading, setBoardLoading] = useState(true)
+  const [_boardLoading, setBoardLoading] = useState(true)
 
-  const board = useMemo(() => {
+  const _board = useMemo(() => {
     const board = generateBoard(columns ?? [], tasks ?? [])
 
     setBoardLoading(false)
     return board
   }, [columns, tasks])
 
-  const tasksMutation = useMutation({
+  const _tasksMutation = useMutation({
     mutationFn: (tasks: Task[]) => {
       return Promise.all(
         tasks.map((t) =>
@@ -165,16 +165,19 @@ const TasksPage = () => {
           </div>
         )}
       </Flex>
-      <ScrollArea scrollbars="horizontal" className="max-w-[1116px] pb-4">
+      <ScrollArea
+        scrollbars="horizontal"
+        className=" w-full px-2 pb-4 2xl:px-10 "
+      >
         <KanbanBoard
-          updateTasks={(tasks) => {
-            if (tasks.length) tasksMutation.mutate(tasks)
-          }}
-          columns={board.columns}
-          tasks={board.tasks}
-          isLoading={
-            fetchingColumns || fetchingTasks || boardLoading || fetchingProjects
-          }
+        // updateTasks={(tasks) => {
+        //   if (tasks.length) tasksMutation.mutate(tasks)
+        // }}
+        // columns={board.columns}
+        // tasks={board.tasks}
+        // isLoading={
+        //   fetchingColumns || fetchingTasks || boardLoading || fetchingProjects
+        // }
         />
       </ScrollArea>
     </DashboardLayout>

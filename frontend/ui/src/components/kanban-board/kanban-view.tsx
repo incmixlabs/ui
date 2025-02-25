@@ -9,8 +9,6 @@ export type KanbanViewProps = {
   task: KanbanBoardTask
 }
 export const KanbanView: FC<KanbanViewProps> = ({ task }) => {
-  // console.log("members", task.members)
-  console.log("description", task.description)
   const daysLeft = `\u00A0 ${task.daysLeft} days left`
   return (
     <div

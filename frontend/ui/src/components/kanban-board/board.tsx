@@ -8,11 +8,16 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types"
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder"
+import { useKanbanFilter } from "@hooks/use-kanban-filter"
+import { IconButton, Section } from "@radix-ui/themes"
 import { bindAll } from "bind-event-listener"
+import { Filter } from "lucide-react"
 import { useContext, useEffect, useRef, useState } from "react"
 import invariant from "tiny-invariant"
-import { Column } from "./board-column"
+import { FilterIcon } from "../icons/filter"
+import { BoardColumn } from "./board-column"
 import { blockBoardPanningAttr } from "./data-attributes"
+import TaskCardDrawer from "./task-card-drawer"
 import type { TBoard, TColumn } from "./types"
 import {
   isCardData,
@@ -25,8 +30,7 @@ import {
 export function Board({ initial }: { initial: TBoard }) {
   const [data, setData] = useState(initial)
   const scrollableRef = useRef<HTMLDivElement | null>(null)
-  const [_isChecking, _setIsChecking] = useState()
-
+  const { kanbanFilter, toggleKanbanFilter } = useKanbanFilter()
   useEffect(() => {
     const element = scrollableRef.current
     invariant(element)
@@ -97,7 +101,16 @@ export function Board({ initial }: { initial: TBoard }) {
               }
               const columns = Array.from(data.columns)
               columns[homeColumnIndex] = updated
-              setData({ ...data, columns })
+
+              setData((prevData) => {
+                const updatedColumns = [...prevData.columns]
+                updatedColumns[homeColumnIndex] = updated
+
+                return {
+                  ...prevData,
+                  columns: updatedColumns,
+                }
+              })
               return
             }
 
@@ -133,7 +146,7 @@ export function Board({ initial }: { initial: TBoard }) {
               ...destination,
               cards: destinationCards,
             }
-            setData({ ...data, columns })
+            setData((prevData) => ({ ...prevData, columns }))
             return
           }
 
@@ -150,8 +163,6 @@ export function Board({ initial }: { initial: TBoard }) {
 
             // dropping on home
             if (home === destination) {
-              console.log("moving card to home column")
-
               // move to last position
               const reordered = reorder({
                 list: home.cards,
@@ -262,7 +273,7 @@ export function Board({ initial }: { initial: TBoard }) {
         },
       })
     )
-  }, [data])
+  }, [data, setData])
 
   // Panning the board
   useEffect(() => {
@@ -302,8 +313,7 @@ export function Board({ initial }: { initial: TBoard }) {
             listener: () => cleanupEvents(),
           })),
         ],
-        // need to make sure we are not after the "pointerdown" on the scrollable
-        // Also this is helpful to make sure we always hear about events from this point
+
         { capture: true }
       )
 
@@ -332,20 +342,34 @@ export function Board({ initial }: { initial: TBoard }) {
       cleanupActive?.()
     }
   }, [])
-  // console.log('isChecking', data);
 
   return (
-    <div className={"flex h-full flex-col"}>
+    <>
+      <div className="mb-2 flex justify-end">
+        <IconButton
+          className="h-10 w-12 cursor-pointer "
+          onClick={toggleKanbanFilter}
+        >
+          <FilterIcon className="size-8 fill-white" />
+        </IconButton>
+      </div>
       <div
-        className={
-          "flex h-full flex-row gap-3 overflow-hidden p-3 [scrollbar-color:theme(colors.sky.200)_theme(colors.sky.400)] [scrollbar-width:thin]"
-        }
+        className={`${kanbanFilter && "flex w-full gap-3 "} h-full overflow-hidden [scrollbar-color:theme(colors.sky.200)_theme(colors.sky.400)] [scrollbar-width:thin]`}
         ref={scrollableRef}
       >
-        {data.columns.map((column) => (
-          <Column key={column.id} column={column} />
-        ))}
+        <div
+          className={`${kanbanFilter ? "w-full space-y-5 " : "flex flex-row gap-4 p-3 2xl:gap-7"}`}
+        >
+          {data.columns.map((column) => (
+            <BoardColumn
+              key={column.id}
+              column={column}
+              kanbanFilter={kanbanFilter}
+            />
+          ))}
+        </div>
+        <TaskCardDrawer kanbanFilter={kanbanFilter} />
       </div>
-    </div>
+    </>
   )
 }

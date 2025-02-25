@@ -1,5 +1,4 @@
 import "@incmix/ui/styles/global.css"
-// import "./instrument"
 import { NuqsReactAdaptor } from "@incmix/ui/data-table"
 import React from "react"
 import ReactDOM from "react-dom/client"

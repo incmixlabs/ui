@@ -6,9 +6,9 @@ import {
 import { forwardRef } from "react"
 
 export type AvatarProps = {
-  id: string
+  id?: string
   size?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
-  src?: string | null
+  src?: string
   name?: string
   radius?: RadixProps["radius"]
   variant?: RadixProps["variant"]
@@ -25,18 +25,23 @@ export const Avatar = forwardRef<HTMLImageElement, AvatarProps>(
       radius = "full",
       variant = "solid",
       className,
+      src,
       style,
       ...props
     },
     ref
   ) => {
-    const getInitials = (name: string) =>
-      name
-        .match(/(\b\S)?/g)
-        .join("")
-        .match(/(^\S|\S$)?/g)
-        .join("")
-        .toUpperCase()
+    const getInitials = (name: string) => {
+      if (!name) return ""
+      return (
+        name
+          .match(/(\b\S)?/g)
+          ?.join("")
+          .match(/(^\S|\S$)?/g)
+          ?.join("")
+          .toUpperCase() || ""
+      )
+    }
 
     const fallback = name ? (
       getInitials(name)
@@ -47,6 +52,7 @@ export const Avatar = forwardRef<HTMLImageElement, AvatarProps>(
       <RadixAvatar
         data-user-id={id}
         ref={ref}
+        src={src}
         style={style}
         className={`overflow-hidden ${className}`}
         size={size}
