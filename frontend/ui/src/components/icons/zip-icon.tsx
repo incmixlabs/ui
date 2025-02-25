@@ -1,5 +1,5 @@
 export const ZipIcon = (
-  props: React.SVGProps<SVGSVGElement> & { size?: number },
+  props: React.SVGProps<SVGSVGElement> & { size?: number }
 ) => (
   <svg
     width={props.size ?? 24}
@@ -37,4 +37,4 @@ export const ZipIcon = (
       fill="#8A9099"
     />
   </svg>
-);
+)

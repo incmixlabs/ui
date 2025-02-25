@@ -1,66 +1,66 @@
-"use client";
+"use client"
 
 import {
   draggable,
   dropTargetForElements,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source";
-import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
-import { type MutableRefObject, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import invariant from "tiny-invariant";
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
+import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
+import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
+import { type MutableRefObject, useEffect, useRef, useState } from "react"
+import { createPortal } from "react-dom"
+import invariant from "tiny-invariant"
 
 import {
   type Edge,
   attachClosestEdge,
   extractClosestEdge,
-} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { CalendarDays, MessageSquareText, Paperclip } from "lucide-react";
-import { IconButton } from "../button";
-import { isSafari } from "./is-safari";
-import { isShallowEqual } from "./is-shallow-equal";
+} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
+import { CalendarDays, MessageSquareText, Paperclip } from "lucide-react"
+import { IconButton } from "../button"
+import { isSafari } from "./is-safari"
+import { isShallowEqual } from "./is-shallow-equal"
 import {
   type TCard,
   getCardData,
   getCardDropTargetData,
   isCardData,
   isDraggingACard,
-} from "./types";
+} from "./types"
 
-import TaskCardDrawer from "./task-card-drawer";
-import { Card, Checkbox, Flex, Heading, Text } from "@radix-ui/themes";
-import { cn } from "@utils";
-import { useQueryState } from "nuqs";
-import { useKanbanDrawer } from "@hooks/use-kanban-drawer";
+import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
+import { Card, Checkbox, Flex, Heading, Text } from "@radix-ui/themes"
+import { cn } from "@utils"
+import { useQueryState } from "nuqs"
+import TaskCardDrawer from "./task-card-drawer"
 
 type TCardState =
   | {
-      type: "idle";
+      type: "idle"
     }
   | {
-      type: "is-dragging";
+      type: "is-dragging"
     }
   | {
-      type: "is-dragging-and-left-self";
+      type: "is-dragging-and-left-self"
     }
   | {
-      type: "is-over";
-      dragging: DOMRect;
-      closestEdge: Edge;
+      type: "is-over"
+      dragging: DOMRect
+      closestEdge: Edge
     }
   | {
-      type: "preview";
-      container: HTMLElement;
-      dragging: DOMRect;
-    };
+      type: "preview"
+      container: HTMLElement
+      dragging: DOMRect
+    }
 
-const idle: TCardState = { type: "idle" };
+const idle: TCardState = { type: "idle" }
 
 const innerStyles: { [Key in TCardState["type"]]?: string } = {
   idle: "hover:outline outline-2 outline-gray-2 ",
   "is-dragging": "opacity-20 cursor-grabbing",
-};
+}
 
 const outerStyles: { [Key in TCardState["type"]]?: string } = {
   // We no longer render the draggable item after we have left it
@@ -70,7 +70,7 @@ const outerStyles: { [Key in TCardState["type"]]?: string } = {
   "is-dragging": "opacity-50",
   // Keeping the refs allows us to continue to receive events during the drag.
   "is-dragging-and-left-self": "hidden",
-};
+}
 
 export function TaskCardShadow({ dragging }: { dragging: DOMRect }) {
   return (
@@ -78,7 +78,7 @@ export function TaskCardShadow({ dragging }: { dragging: DOMRect }) {
       className="flex-shrink-0 rounded bg-gray-5"
       style={{ height: dragging.height }}
     />
-  );
+  )
 }
 
 export function TaskCardDisplay({
@@ -88,25 +88,23 @@ export function TaskCardDisplay({
   innerRef,
   kanbanFilter,
 }: {
-  card: TCard;
-  state: TCardState;
-  outerRef?: React.MutableRefObject<HTMLDivElement | null>;
-  innerRef?: MutableRefObject<HTMLDivElement | null>;
-  kanbanFilter?: boolean;
+  card: TCard
+  state: TCardState
+  outerRef?: React.MutableRefObject<HTMLDivElement | null>
+  innerRef?: MutableRefObject<HTMLDivElement | null>
+  kanbanFilter?: boolean
 }) {
-  const { handleDrawerOpen } = useKanbanDrawer();
+  const { handleDrawerOpen } = useKanbanDrawer()
   return (
     <div
       ref={outerRef}
       onClick={() => handleDrawerOpen(card.id.toString())}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === "Space") {
-          e.preventDefault();
-          handleDrawerOpen(card.id.toString());
+          e.preventDefault()
+          handleDrawerOpen(card.id.toString())
         }
       }}
-      role="button"
-      tabIndex={0}
       className={`flex flex-shrink-0 flex-col gap-2 px-3 py-1 ${outerStyles[state.type]}`}
     >
       {/* Put a shadow before the item if closer to the top edge */}
@@ -116,7 +114,7 @@ export function TaskCardDisplay({
       <Card
         className={cn(
           `relative cursor-pointer space-y-1.5 rounded-lg p-3 ${innerStyles[state.type]}`,
-          kanbanFilter ? `flex items-center justify-between ` : "",
+          kanbanFilter ? "flex items-center justify-between " : ""
         )}
         ref={innerRef}
         style={
@@ -137,7 +135,7 @@ export function TaskCardDisplay({
             <Flex align={"center"} justify={"center"} gap="2">
               <Checkbox
                 size={"3"}
-                className="w-5 h-5 text-secondary border-black border group-hover:bg-white bg-gray-12 rounded-md "
+                className="h-5 w-5 rounded-md border border-black bg-gray-12 text-secondary group-hover:bg-white "
               />
               <Heading as="h6" size={"3"} className="py-2 font-medium">
                 {card.name}
@@ -160,15 +158,15 @@ export function TaskCardDisplay({
                       "bg-orange-400",
                       "bg-cyan-400",
                       "bg-red-400",
-                    ];
+                    ]
                     const randomColor =
-                      colors[Math.floor(Math.random() * colors.length)];
+                      colors[Math.floor(Math.random() * colors.length)]
                     return (
                       <span
                         key={file.name}
                         className={`flex h-4 w-4 items-center gap-1 rounded-md ${randomColor}`}
                       />
-                    );
+                    )
                   })}
                 </Flex>
               )}
@@ -202,15 +200,15 @@ export function TaskCardDisplay({
                     "bg-orange-400",
                     "bg-cyan-400",
                     "bg-red-400",
-                  ];
+                  ]
                   const randomColor =
-                    colors[Math.floor(Math.random() * colors.length)];
+                    colors[Math.floor(Math.random() * colors.length)]
                   return (
                     <span
                       key={file.name}
                       className={`flex h-1 w-6 items-center gap-1 rounded-full ${randomColor}`}
                     />
-                  );
+                  )
                 })}
               </Flex>
             )}
@@ -290,7 +288,7 @@ export function TaskCardDisplay({
         <TaskCardShadow dragging={state.dragging} />
       ) : null}
     </div>
-  );
+  )
 }
 
 export function TaskCard({
@@ -298,18 +296,18 @@ export function TaskCard({
   columnId,
   kanbanFilter,
 }: {
-  card: TCard;
-  columnId: string;
-  kanbanFilter: boolean;
+  card: TCard
+  columnId: string
+  kanbanFilter: boolean
 }) {
-  const outerRef = useRef<HTMLDivElement | null>(null);
-  const innerRef = useRef<HTMLDivElement | null>(null);
-  const [state, setState] = useState<TCardState>(idle);
+  const outerRef = useRef<HTMLDivElement | null>(null)
+  const innerRef = useRef<HTMLDivElement | null>(null)
+  const [state, setState] = useState<TCardState>(idle)
 
   useEffect(() => {
-    const outer = outerRef.current;
-    const inner = innerRef.current;
-    invariant(outer && inner);
+    const outer = outerRef.current
+    const inner = innerRef.current
+    invariant(outer && inner)
 
     return combine(
       draggable({
@@ -321,8 +319,8 @@ export function TaskCard({
             rect: element.getBoundingClientRect(),
           }),
         onGenerateDragPreview({ nativeSetDragImage, location, source }) {
-          const data = source.data;
-          invariant(isCardData(data));
+          const data = source.data
+          invariant(isCardData(data))
           setCustomNativeDragPreview({
             nativeSetDragImage,
             getOffset: preserveOffsetOnSource({
@@ -335,15 +333,15 @@ export function TaskCard({
                 type: "preview",
                 container,
                 dragging: inner.getBoundingClientRect(),
-              });
+              })
             },
-          });
+          })
         },
         onDragStart() {
-          setState({ type: "is-dragging" });
+          setState({ type: "is-dragging" })
         },
         onDrop() {
-          setState(idle);
+          setState(idle)
         },
       }),
       dropTargetForElements({
@@ -351,71 +349,71 @@ export function TaskCard({
         getIsSticky: () => true,
         canDrop: isDraggingACard,
         getData: ({ element, input }) => {
-          const data = getCardDropTargetData({ card, columnId });
+          const data = getCardDropTargetData({ card, columnId })
           return attachClosestEdge(data, {
             element,
             input,
             allowedEdges: ["top", "bottom"],
-          });
+          })
         },
         onDragEnter({ source, self }) {
           if (!isCardData(source.data)) {
-            return;
+            return
           }
           if (source.data.card.id === card.id) {
-            return;
+            return
           }
-          const closestEdge = extractClosestEdge(self.data);
+          const closestEdge = extractClosestEdge(self.data)
           if (!closestEdge) {
-            return;
+            return
           }
 
           setState({
             type: "is-over",
             dragging: source.data.rect,
             closestEdge,
-          });
+          })
         },
         onDrag({ source, self }) {
           if (!isCardData(source.data)) {
-            return;
+            return
           }
           if (source.data.card.id === card.id) {
-            return;
+            return
           }
-          const closestEdge = extractClosestEdge(self.data);
+          const closestEdge = extractClosestEdge(self.data)
           if (!closestEdge) {
-            return;
+            return
           }
           // optimization - Don't update react state if we don't need to.
           const proposed: TCardState = {
             type: "is-over",
             dragging: source.data.rect,
             closestEdge,
-          };
+          }
           setState((current) => {
             if (isShallowEqual(proposed, current)) {
-              return current;
+              return current
             }
-            return proposed;
-          });
+            return proposed
+          })
         },
         onDragLeave({ source }) {
           if (!isCardData(source.data)) {
-            return;
+            return
           }
           if (source.data.card.id === card.id) {
-            setState({ type: "is-dragging-and-left-self" });
-            return;
+            setState({ type: "is-dragging-and-left-self" })
+            return
           }
-          setState(idle);
+          setState(idle)
         },
         onDrop() {
-          setState(idle);
+          setState(idle)
         },
-      }),
-    );
-  }, [card, columnId]);
+      })
+    )
+  }, [card, columnId])
 
   return (
     <>
@@ -430,9 +428,9 @@ export function TaskCard({
       {state.type === "preview"
         ? createPortal(
             <TaskCardDisplay state={state} card={card} />,
-            state.container,
+            state.container
           )
         : null}
     </>
-  );
+  )
 }

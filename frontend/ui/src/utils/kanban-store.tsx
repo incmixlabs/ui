@@ -1,8 +1,8 @@
-import { create } from "zustand";
+import { create } from "zustand"
 
 interface KanbanState {
-  kanbanFilter: boolean;
-  toggleKanbanFilter: () => void;
+  kanbanFilter: boolean
+  toggleKanbanFilter: () => void
 }
 
 const useKanbanStore = create<KanbanState>((set) => ({
@@ -12,6 +12,6 @@ const useKanbanStore = create<KanbanState>((set) => ({
     set((state) => ({
       kanbanFilter: !state.kanbanFilter,
     })),
-}));
+}))
 
-export default useKanbanStore;
+export default useKanbanStore

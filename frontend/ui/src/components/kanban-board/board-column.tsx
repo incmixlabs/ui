@@ -1,25 +1,27 @@
-"use client";
+"use client"
 
 import {
   draggable,
   dropTargetForElements,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { Copy, Ellipsis, Plus } from "lucide-react";
-import { memo, useContext, useEffect, useRef, useState } from "react";
-import invariant from "tiny-invariant";
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
+import { Copy, Ellipsis, Plus } from "lucide-react"
+import { memo, useContext, useEffect, useRef, useState } from "react"
+import invariant from "tiny-invariant"
 
-import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
-import { unsafeOverflowAutoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/unsafe-overflow/element";
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import type { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
-import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source";
-import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
+import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
+import { unsafeOverflowAutoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/unsafe-overflow/element"
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
+import type { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types"
+import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
+import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
 
-import { IconButton } from "../button";
-import { blockBoardPanningAttr } from "./data-attributes";
-import { isSafari } from "./is-safari";
-import { isShallowEqual } from "./is-shallow-equal";
-import { TaskCard, TaskCardShadow } from "./task-card";
+import { Box, Flex } from "@radix-ui/themes"
+import { IconButton } from "../button"
+import { blockBoardPanningAttr } from "./data-attributes"
+import { isSafari } from "./is-safari"
+import { isShallowEqual } from "./is-shallow-equal"
+import { TaskCard, TaskCardShadow } from "./task-card"
+import TaskCardDrawer from "./task-card-drawer"
 import {
   type TCardData,
   type TColumn,
@@ -29,41 +31,39 @@ import {
   isColumnData,
   isDraggingACard,
   isDraggingAColumn,
-} from "./types";
-import { Box, Flex } from "@radix-ui/themes";
-import TaskCardDrawer from "./task-card-drawer";
+} from "./types"
 
 type TColumnState =
   | {
-      type: "is-card-over";
-      isOverChildCard: boolean;
-      dragging: DOMRect;
+      type: "is-card-over"
+      isOverChildCard: boolean
+      dragging: DOMRect
     }
   | {
-      type: "is-column-over";
+      type: "is-column-over"
     }
   | {
-      type: "idle";
+      type: "idle"
     }
   | {
-      type: "is-dragging";
-    };
+      type: "is-dragging"
+    }
 
 const stateStyles: { [Key in TColumnState["type"]]: string } = {
   idle: "",
   "is-card-over": "outline outline-2 outline-gray-6",
   "is-dragging": "opacity-40 outline outline-2 outline-gray-6",
   "is-column-over": "bg-slate-900",
-};
+}
 
-const idle = { type: "idle" } satisfies TColumnState;
+const idle = { type: "idle" } satisfies TColumnState
 
 const CardList = memo(function CardList({
   column,
   kanbanFilter,
 }: {
-  column: TColumn;
-  kanbanFilter: boolean;
+  column: TColumn
+  kanbanFilter: boolean
 }) {
   return column.cards.map((card) => (
     <TaskCard
@@ -72,59 +72,59 @@ const CardList = memo(function CardList({
       columnId={column.id}
       kanbanFilter={kanbanFilter}
     />
-  ));
-});
+  ))
+})
 
 export function BoardColumn({
   column,
   kanbanFilter,
 }: {
-  column: TColumn;
-  kanbanFilter: boolean;
+  column: TColumn
+  kanbanFilter: boolean
 }) {
-  const scrollableRef = useRef<HTMLDivElement | null>(null);
-  const outerFullHeightRef = useRef<HTMLDivElement | null>(null);
-  const headerRef = useRef<HTMLDivElement | null>(null);
-  const innerRef = useRef<HTMLDivElement | null>(null);
-  const [state, setState] = useState<TColumnState>(idle);
-  const [open, setOpen] = useState(false);
+  const scrollableRef = useRef<HTMLDivElement | null>(null)
+  const outerFullHeightRef = useRef<HTMLDivElement | null>(null)
+  const headerRef = useRef<HTMLDivElement | null>(null)
+  const innerRef = useRef<HTMLDivElement | null>(null)
+  const [state, setState] = useState<TColumnState>(idle)
+  const [_open, _setOpen] = useState(false)
 
   useEffect(() => {
-    const outer = outerFullHeightRef.current;
-    const scrollable = scrollableRef.current;
-    const header = headerRef.current;
-    const inner = innerRef.current;
-    invariant(outer);
-    invariant(scrollable);
-    invariant(header);
-    invariant(inner);
+    const outer = outerFullHeightRef.current
+    const scrollable = scrollableRef.current
+    const header = headerRef.current
+    const inner = innerRef.current
+    invariant(outer)
+    invariant(scrollable)
+    invariant(header)
+    invariant(inner)
 
-    const data = getColumnData({ column });
+    const data = getColumnData({ column })
 
     function setIsCardOver({
       data,
       location,
     }: {
-      data: TCardData;
-      location: DragLocationHistory;
+      data: TCardData
+      location: DragLocationHistory
     }) {
-      const innerMost = location.current.dropTargets[0];
+      const innerMost = location.current.dropTargets[0]
       const isOverChildCard = Boolean(
-        innerMost && isCardDropTargetData(innerMost.data),
-      );
+        innerMost && isCardDropTargetData(innerMost.data)
+      )
 
       const proposed: TColumnState = {
         type: "is-card-over",
         dragging: data.rect,
         isOverChildCard,
-      };
+      }
       // optimization - don't update state if we don't need to.
       setState((current) => {
         if (isShallowEqual(proposed, current)) {
-          return current;
+          return current
         }
-        return proposed;
-      });
+        return proposed
+      })
     }
 
     return combine(
@@ -132,8 +132,8 @@ export function BoardColumn({
         element: header,
         getInitialData: () => data,
         onGenerateDragPreview({ source, location, nativeSetDragImage }) {
-          const data = source.data;
-          invariant(isColumnData(data));
+          const data = source.data
+          invariant(isColumnData(data))
           setCustomNativeDragPreview({
             nativeSetDragImage,
             getOffset: preserveOffsetOnSource({
@@ -143,56 +143,56 @@ export function BoardColumn({
             render({ container }) {
               // Simple drag preview generation: just cloning the current element.
               // Not using react for this.
-              const rect = inner.getBoundingClientRect();
-              const preview = inner.cloneNode(true);
-              invariant(preview instanceof HTMLElement);
-              preview.style.width = `${rect.width}px`;
-              preview.style.height = `${rect.height}px`;
+              const rect = inner.getBoundingClientRect()
+              const preview = inner.cloneNode(true)
+              invariant(preview instanceof HTMLElement)
+              preview.style.width = `${rect.width}px`
+              preview.style.height = `${rect.height}px`
 
               // rotation of native drag previews does not work in safari
               if (!isSafari()) {
-                preview.style.transform = "rotate(4deg)";
+                preview.style.transform = "rotate(4deg)"
               }
 
-              container.appendChild(preview);
+              container.appendChild(preview)
             },
-          });
+          })
         },
         onDragStart() {
-          setState({ type: "is-dragging" });
+          setState({ type: "is-dragging" })
         },
         onDrop() {
-          setState(idle);
+          setState(idle)
         },
       }),
       dropTargetForElements({
         element: outer,
         getData: () => data,
         canDrop({ source }) {
-          return isDraggingACard({ source }) || isDraggingAColumn({ source });
+          return isDraggingACard({ source }) || isDraggingAColumn({ source })
         },
         getIsSticky: () => true,
         onDragStart({ source, location }) {
           if (isCardData(source.data)) {
-            setIsCardOver({ data: source.data, location });
+            setIsCardOver({ data: source.data, location })
           }
         },
         onDragEnter({ source, location }) {
           if (isCardData(source.data)) {
-            setIsCardOver({ data: source.data, location });
-            return;
+            setIsCardOver({ data: source.data, location })
+            return
           }
           if (
             isColumnData(source.data) &&
             source.data.column.id !== column.id
           ) {
-            setState({ type: "is-column-over" });
+            setState({ type: "is-column-over" })
           }
         },
         onDropTargetChange({ source, location }) {
           if (isCardData(source.data)) {
-            setIsCardOver({ data: source.data, location });
-            return;
+            setIsCardOver({ data: source.data, location })
+            return
           }
         },
         onDragLeave({ source }) {
@@ -200,24 +200,24 @@ export function BoardColumn({
             isColumnData(source.data) &&
             source.data.column.id === column.id
           ) {
-            return;
+            return
           }
-          setState(idle);
+          setState(idle)
         },
         onDrop() {
-          setState(idle);
+          setState(idle)
         },
       }),
       autoScrollForElements({
         canScroll({ source }) {
-          return isDraggingACard({ source });
+          return isDraggingACard({ source })
         },
         element: scrollable,
       }),
       unsafeOverflowAutoScrollForElements({
         element: scrollable,
         canScroll({ source }) {
-          return isDraggingACard({ source });
+          return isDraggingACard({ source })
         },
         getOverflow() {
           return {
@@ -227,21 +227,21 @@ export function BoardColumn({
             forBottomEdge: {
               bottom: 1000,
             },
-          };
+          }
         },
-      }),
-    );
-  }, [column]);
+      })
+    )
+  }, [column])
   // console.log('checking', column);
 
   return (
     <>
       <div
-        className={`flex w-full flex-1 flex-shrink-0 select-none flex-col`}
+        className={"flex w-full flex-1 flex-shrink-0 select-none flex-col"}
         ref={outerFullHeightRef}
       >
         <div
-          className={`flex max-h-full flex-col rounded-lg  bg-gray-3 text-black dark:bg-gray-2 dark:text-white ${stateStyles[state.type]}`}
+          className={`flex max-h-full flex-col rounded-lg bg-gray-3 text-black dark:bg-gray-2 dark:text-white ${stateStyles[state.type]}`}
           ref={innerRef}
           {...{ [blockBoardPanningAttr]: true }}
         >
@@ -274,9 +274,9 @@ export function BoardColumn({
                 <Flex
                   justify={"start"}
                   gap="2"
-                  className=" rounded-xl cursor-pointer p-3 w-full border-2   border-dashed border-gray-8  hover:bg-gray-8"
+                  className=" w-full cursor-pointer rounded-xl border-2 border-gray-8 border-dashed p-3 hover:bg-gray-8"
                 >
-                  <IconButton className=" w-fit gap-3 rounded p-2 bg-transparent font-medium text-xl text-blue-500  hover:text-white">
+                  <IconButton className=" w-fit gap-3 rounded bg-transparent p-2 font-medium text-blue-500 text-xl hover:text-white">
                     <Plus size={24} /> Add Task
                   </IconButton>
                 </Flex>
@@ -294,5 +294,5 @@ export function BoardColumn({
         </div>
       </div>
     </>
-  );
+  )
 }

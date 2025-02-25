@@ -1,5 +1,6 @@
 import type { PGliteWithLive } from "@electric-sql/pglite/live"
 import { I18n } from "@incmix/pages/i18n"
+import type { ColumnDocType, TaskDocType } from "@incmix/store"
 import { recordChangelog } from "@incmix/store/sql/tasks"
 import { TASKS_API_URL } from "@incmix/ui/constants"
 import type {
@@ -10,6 +11,7 @@ import type {
   Task,
   TaskStatus,
 } from "@incmix/utils/types"
+import type { RxDocument } from "rxdb"
 import sql from "sql-template-tag"
 
 export async function getProjects(orgId: string) {
@@ -40,6 +42,45 @@ export async function getColumns(projectId: string, parentId?: string) {
   const data = (await res.json()) as Column[]
 
   return data
+}
+
+export function generateBoard(
+  columns: RxDocument<ColumnDocType>[],
+  tasks: RxDocument<TaskDocType>[]
+) {
+  const columnMap: Record<string, NestedColumns> = {}
+  const parsedTasks = tasks.map((t) => ({
+    ...t.toJSON(),
+    createdAt: new Date(t.toJSON().createdAt),
+    updatedAt: new Date(t.toJSON().updatedAt),
+  }))
+  columns
+    .sort((a, b) => a.columnOrder - b.columnOrder)
+    .forEach((column) => {
+      columnMap[column.id] = {
+        ...column.toJSON(),
+        createdAt: new Date(column.toJSON().createdAt),
+        updatedAt: new Date(column.toJSON().updatedAt),
+        children: [],
+        tasks: parsedTasks.filter((task) => task.columnId === column.id),
+      }
+    })
+
+  const nestedColumns: NestedColumns[] = []
+
+  columns.forEach((column) => {
+    if (column.parentId) {
+      const child = columnMap[column.id]
+      // If the category has a parent, add it to the parent's children
+      if (child) columnMap[column.parentId]?.children?.push(child)
+    } else {
+      // If the category has no parent, it's a root category
+      const child = columnMap[column.id]
+      if (child) nestedColumns.push(child)
+    }
+  })
+
+  return { columns: nestedColumns, tasks: parsedTasks }
 }
 
 export async function getKanbanBoard(db: PGliteWithLive, projectId: string) {
@@ -78,31 +119,8 @@ export async function getKanbanBoard(db: PGliteWithLive, projectId: string) {
   }
 
   const columns = await getColumns(projectId)
-  const columnMap: Record<string, NestedColumns> = {}
-
-  columns.forEach((column) => {
-    columnMap[column.id] = {
-      ...column,
-      children: [],
-      tasks: tasks.filter((task) => task.columnId === column.id),
-    }
-  })
-
-  const nestedColumns: NestedColumns[] = []
-
-  columns.forEach((column) => {
-    if (column.parentId) {
-      const child = columnMap[column.id]
-      // If the category has a parent, add it to the parent's children
-      if (child) columnMap[column.parentId]?.children?.push(child)
-    } else {
-      // If the category has no parent, it's a root category
-      const child = columnMap[column.id]
-      if (child) nestedColumns.push(child)
-    }
-  })
-
-  return { columns: nestedColumns, tasks }
+  // @ts-expect-error
+  return generateBoard(columns, tasks)
 }
 
 const flattenColumns = (cols: NestedColumns[]): Column[] => {
