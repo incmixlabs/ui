@@ -24,3 +24,5 @@ public
 *.sln
 *.sw?
 storybook-static
+
+public

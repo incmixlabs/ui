@@ -1,12 +1,12 @@
-import { cn } from "@utils";
-import { motion, AnimatePresence } from "motion/react";
-import React from "react";
+import { cn } from "@utils"
+import { AnimatePresence, motion } from "motion/react"
+import type React from "react"
 
 interface SheetProps {
-  open: boolean;
-  handleClose: () => Promise<void>;
-  kanbanFilter?: boolean;
-  children?: React.ReactNode;
+  open: boolean
+  handleClose: () => Promise<void>
+  kanbanFilter?: boolean
+  children?: React.ReactNode
 }
 
 const Sheet: React.FC<SheetProps> = ({
@@ -21,15 +21,14 @@ const Sheet: React.FC<SheetProps> = ({
         <dialog
           className={cn(
             kanbanFilter
-              ? "relative z-50 2xl:w-[40rem] w-[30rem] h-full flex-shrink-0"
-              : "fixed top-0 left-0 h-screen w-screen z-50",
+              ? "relative z-50 h-full w-[30rem] flex-shrink-0 2xl:w-[40rem]"
+              : "fixed top-0 left-0 z-50 h-screen w-screen"
           )}
-          role="dialog"
           aria-modal="true"
         >
           {!kanbanFilter && (
             <motion.div
-              className="overlay absolute h-full w-full bg-black/40 cursor-pointer"
+              className="overlay absolute h-full w-full cursor-pointer bg-black/40"
               role="button"
               aria-label="Close drawer"
               initial={{ opacity: 0 }}
@@ -41,8 +40,8 @@ const Sheet: React.FC<SheetProps> = ({
 
           <motion.div
             className={cn(
-              "rounded-lg dark:bg-gray-4 bg-gray-3 cursor-default h-[98%] absolute top-[1%] bottom-[1%]   right-[1.5%]",
-              kanbanFilter ? " h-full  w-full" : "  w-[52rem]",
+              "absolute top-[1%] right-[1.5%] bottom-[1%] h-[98%] cursor-default rounded-lg bg-gray-3 dark:bg-gray-4",
+              kanbanFilter ? " h-full w-full" : " w-[52rem]"
             )}
             initial={{ x: "100%" }}
             animate={{ x: "0%" }}
@@ -58,7 +57,7 @@ const Sheet: React.FC<SheetProps> = ({
         </dialog>
       )}
     </AnimatePresence>
-  );
-};
+  )
+}
 
-export default Sheet;
+export default Sheet

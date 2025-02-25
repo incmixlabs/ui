@@ -4,17 +4,17 @@ import { useQuery } from "@tanstack/react-query"
 import { RouterProvider, createRouter } from "@tanstack/react-router"
 import { Settings } from "luxon"
 
-import { PGliteProvider } from "@electric-sql/pglite-react"
 import { LoadingPage } from "@incmix/pages/common"
 import { I18n, usei18n } from "@incmix/pages/i18n"
 import {
   type Language,
-  pgWorkerMain,
+  database as db,
   useLanguageStore,
   useThemeStore,
 } from "@incmix/store"
 import { DashboardPage } from "@incmix/ui/layouts"
 import { Theme } from "@radix-ui/themes"
+import { Provider as RxdbProvider } from "rxdb-hooks"
 import { translations } from "./translations"
 
 const luxonLocale: Record<Language, string> = {
@@ -22,7 +22,7 @@ const luxonLocale: Record<Language, string> = {
   pt: "pt-BR",
 }
 
-const db = pgWorkerMain()
+// const db = await createDatabase()
 
 import {
   DashboardRoute,
@@ -111,11 +111,11 @@ function App() {
       radius="large"
       appearance={theme}
     >
-      <PGliteProvider db={db}>
+      <RxdbProvider db={db}>
         <Suspense fallback={<LoadingPage />}>
           {isMock ? <DashboardPage /> : <RouterProvider router={router} />}
         </Suspense>
-      </PGliteProvider>
+      </RxdbProvider>
     </Theme>
   )
 }

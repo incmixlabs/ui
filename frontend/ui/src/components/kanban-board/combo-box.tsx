@@ -1,10 +1,12 @@
-"use client";
-import * as React from "react";
-import { CheckIcon, XCircle, ChevronDown, XIcon, Plus } from "lucide-react";
+"use client"
+import { CheckIcon, ChevronDown, Plus, XCircle, XIcon } from "lucide-react"
+import * as React from "react"
 
-import { cn } from "utils";
+import { cn } from "utils"
 
-import { Button, IconButton } from "../button";
+import { Popover } from "@radix-ui/themes"
+import { Avatar } from "../avatar"
+import { Button, IconButton } from "../button"
 import {
   Command,
   CommandEmpty,
@@ -13,9 +15,7 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "../command";
-import { Popover } from "@radix-ui/themes";
-import { Avatar } from "../avatar";
+} from "../command"
 
 /**
  * Props for MultiSelect component
@@ -28,35 +28,35 @@ interface MultiSelectProps
    */
   options: {
     /** The text to display for the option. */
-    label: string;
+    label: string
     /** The unique value associated with the option. */
-    value: string;
+    value: string
     /** Optional icon component to display alongside the option. */
-    icon?: React.ComponentType<{ className?: string }>;
-    avatarSrc?: string;
-    labelStyle?: string;
-    disable?: boolean;
-  }[];
+    icon?: React.ComponentType<{ className?: string }>
+    avatarSrc?: string
+    labelStyle?: string
+    disable?: boolean
+  }[]
 
   /**
    * Callback function triggered when the selected values change.
    * Receives an array of the new selected values.
    */
-  onValueChange: (value: string[]) => void;
+  onValueChange: (value: string[]) => void
 
   /** The default selected values when the component mounts. */
-  defaultValue?: string[];
+  defaultValue?: string[]
 
   /**
    * Placeholder text to be displayed when no values are selected.
    * Optional, defaults to "Select options".
    */
-  placeholder?: string;
+  placeholder?: string
 
-  popoverClass?: string;
+  popoverClass?: string
 
-  addNewLabel?: boolean;
-  title?: string;
+  addNewLabel?: boolean
+  title?: string
 }
 
 export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
@@ -70,34 +70,34 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
     addNewLabel = false,
   }) => {
     const [selectedValues, setSelectedValues] =
-      React.useState<string[]>(defaultValue);
-    const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
+      React.useState<string[]>(defaultValue)
+    const [isPopoverOpen, setIsPopoverOpen] = React.useState(false)
 
     const handleInputKeyDown = (
-      event: React.KeyboardEvent<HTMLInputElement>,
+      event: React.KeyboardEvent<HTMLInputElement>
     ) => {
       if (event.key === "Enter") {
-        setIsPopoverOpen(true);
+        setIsPopoverOpen(true)
       } else if (event.key === "Backspace" && !event.currentTarget.value) {
-        const newSelectedValues = [...selectedValues];
-        newSelectedValues.pop();
-        setSelectedValues(newSelectedValues);
-        onValueChange(newSelectedValues);
+        const newSelectedValues = [...selectedValues]
+        newSelectedValues.pop()
+        setSelectedValues(newSelectedValues)
+        onValueChange(newSelectedValues)
       }
-    };
+    }
 
     const toggleOption = (option: string) => {
       const newSelectedValues = selectedValues.includes(option)
         ? selectedValues.filter((value) => value !== option)
-        : [...selectedValues, option];
-      setSelectedValues(newSelectedValues);
-      onValueChange(newSelectedValues);
-    };
+        : [...selectedValues, option]
+      setSelectedValues(newSelectedValues)
+      onValueChange(newSelectedValues)
+    }
 
     const handleClear = () => {
-      setSelectedValues([]);
-      onValueChange([]);
-    };
+      setSelectedValues([])
+      onValueChange([])
+    }
 
     // const filteredOptions = options.filter((option) => !option.disable);
     // const toggleAll = () => {
@@ -116,7 +116,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
           <IconButton
             color="gray"
             aria-label="Open options menu"
-            className="flex w-8 h-8 items-center justify-center rounded-full "
+            className="flex h-8 w-8 items-center justify-center rounded-full "
           >
             <Plus aria-hidden="true" />
             <span className="sr-only">Add new item</span>
@@ -155,8 +155,8 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                   <span>(Select All)</span>
                 </CommandItem> */}
                 {options.map((option) => {
-                  const isSelected = selectedValues.includes(option.value);
-                  const isDisabled = option.disable;
+                  const isSelected = selectedValues.includes(option.value)
+                  const isDisabled = option.disable
 
                   return (
                     <CommandItem
@@ -164,7 +164,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                       onSelect={() => !isDisabled && toggleOption(option.value)}
                       className={cn(
                         "cursor-pointer justify-between rounded-md",
-                        isDisabled && "cursor-not-allowed opacity-50 ", // Disable styling
+                        isDisabled && "cursor-not-allowed opacity-50 " // Disable styling
                       )}
                     >
                       <div className="flex items-center gap-2">
@@ -172,7 +172,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                           <option.icon
                             className={cn(
                               "mr-2 h-4 w-4",
-                              isDisabled ? "text-muted-foreground" : "",
+                              isDisabled ? "text-muted-foreground" : ""
                             )}
                           />
                         )}
@@ -189,20 +189,20 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                           "ml-2 flex h-5 w-5 items-center justify-center rounded-sm border border-secondary",
                           isSelected
                             ? "bg-secondary text-primary-foreground"
-                            : "opacity-50 [&_svg]:invisible",
+                            : "opacity-50 [&_svg]:invisible"
                         )}
                       >
                         {!isDisabled && <CheckIcon className="h-4 w-4" />}
                       </div>
                     </CommandItem>
-                  );
+                  )
                 })}
               </CommandGroup>
               {/* <CommandSeparator /> */}
               <CommandGroup>
                 {addNewLabel ? (
                   <>
-                    <Button className="h-10 w-full rounded-md bg-blue-500 px-4   text-white ">
+                    <Button className="h-10 w-full rounded-md bg-blue-500 px-4 text-white ">
                       Add new label
                     </Button>
                   </>
@@ -212,14 +212,14 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                       {selectedValues.length > 0 && (
                         <CommandItem
                           onSelect={handleClear}
-                          className="flex-1 justify-center cursor-pointer h-10 "
+                          className="h-10 flex-1 cursor-pointer justify-center "
                         >
                           Clear
                         </CommandItem>
                       )}
                       <CommandItem
                         onSelect={() => setIsPopoverOpen(false)}
-                        className="h-10 max-w-full flex-1 cursor-pointer justify-center   "
+                        className="h-10 max-w-full flex-1 cursor-pointer justify-center "
                       >
                         Close
                       </CommandItem>
@@ -231,8 +231,8 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
           </Command>
         </Popover.Content>
       </Popover.Root>
-    );
-  },
-);
+    )
+  }
+)
 
-ComboBox.displayName = "Combobox";
+ComboBox.displayName = "Combobox"

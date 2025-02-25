@@ -1,6 +1,6 @@
-import { Container, Theme } from "@radix-ui/themes";
-import { Link } from "@tanstack/react-router";
-import React from "react";
+import { Container, Theme } from "@radix-ui/themes"
+import { Link } from "@tanstack/react-router"
+import React from "react"
 function App() {
   return (
     <Theme accentColor="blue">
@@ -24,6 +24,6 @@ function App() {
         </div>
       </Container>
     </Theme>
-  );
+  )
 }
-export default App;
+export default App

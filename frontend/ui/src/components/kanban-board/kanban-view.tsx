@@ -1,15 +1,15 @@
-import { Clock } from "lucide-react";
-import { type FC, Fragment } from "react";
+import { Clock } from "lucide-react"
+import { type FC, Fragment } from "react"
 
-import { AvatarGroup } from "@components/avatar-group";
-import { Image } from "@components/card/flow-card";
-import type { KanbanBoardTask } from "./types";
+import { AvatarGroup } from "@components/avatar-group"
+import { Image } from "@components/card/flow-card"
+import type { KanbanBoardTask } from "./types"
 
 export type KanbanViewProps = {
-  task: KanbanBoardTask;
-};
+  task: KanbanBoardTask
+}
 export const KanbanView: FC<KanbanViewProps> = ({ task }) => {
-  const daysLeft = `\u00A0 ${task.daysLeft} days left`;
+  const daysLeft = `\u00A0 ${task.daysLeft} days left`
   return (
     <div
       key={task.id}
@@ -49,5 +49,5 @@ export const KanbanView: FC<KanbanViewProps> = ({ task }) => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

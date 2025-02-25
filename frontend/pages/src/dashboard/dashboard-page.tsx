@@ -1,13 +1,13 @@
-import { LoadingPage } from "@common";
-import { NavbarMain } from "@common/components/layouts/navbar";
-import { PageLayout } from "@common/components/layouts/page-layout";
+import { LoadingPage } from "@common"
+import { NavbarMain } from "@common/components/layouts/navbar"
+import { PageLayout } from "@common/components/layouts/page-layout"
 import {
   CardContainer,
   EditSwitch,
   SwapyExclude,
   SwapyLayout,
   SwapySlot,
-} from "@incmix/ui";
+} from "@incmix/ui"
 import {
   BatteryWidget,
   CalendarWidget,
@@ -16,29 +16,29 @@ import {
   NewsWidget,
   WeatherWidget,
   getBattery,
-} from "@incmix/ui/widgets";
-import { DashboardLayout } from "@layouts/admin-panel/layout";
-import { Container, Flex, Heading, Text } from "@radix-ui/themes";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { createSwapy } from "swapy";
-import { useAuth } from "../auth";
+} from "@incmix/ui/widgets"
+import { DashboardLayout } from "@layouts/admin-panel/layout"
+import { Container, Flex, Heading, Text } from "@radix-ui/themes"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { createSwapy } from "swapy"
+import { useAuth } from "../auth"
 
 type Widget = {
-  id: string;
-  type: "weather" | "clock" | "news" | "battery" | "image-grid" | "calendar";
-};
+  id: string
+  type: "weather" | "clock" | "news" | "battery" | "image-grid" | "calendar"
+}
 
 const MOCK_WEATHER_DATA = {
   lat: "40.730610",
   lon: "-73.935242",
-};
+}
 
 const MOCK_CLOCK_DATA = [
   { city: "New York", timeZone: "America/New_York" },
   { city: "London", timeZone: "Europe/London" },
   { city: "Tokyo", timeZone: "Asia/Tokyo" },
-];
+]
 
 const INITIAL_WIDGETS: Widget[] = [
   { id: "weather", type: "weather" },
@@ -47,7 +47,7 @@ const INITIAL_WIDGETS: Widget[] = [
   { id: "battery", type: "battery" },
   { id: "image-grid", type: "image-grid" },
   { id: "calendar", type: "calendar" },
-];
+]
 
 const INITIAL_SLOT_ITEMS = [
   { slotId: "slot1", itemId: "weather" },
@@ -56,12 +56,12 @@ const INITIAL_SLOT_ITEMS = [
   { slotId: "slot4", itemId: "news" },
   { slotId: "slot5", itemId: "image-grid" },
   { slotId: "slot6", itemId: "calendar" },
-];
+]
 
 const EditWidgetsControl: React.FC<{
-  onEditChange: (checked: boolean) => void;
+  onEditChange: (checked: boolean) => void
 }> = ({ onEditChange }) => {
-  const { t } = useTranslation(["dashboard", "common"]);
+  const { t } = useTranslation(["dashboard", "common"])
 
   return (
     <Flex align="center" gap="2" className="ml-4">
@@ -70,95 +70,95 @@ const EditWidgetsControl: React.FC<{
       </Text>
       <EditSwitch onCheckedChange={onEditChange} />
     </Flex>
-  );
-};
+  )
+}
 
 const renderWidget = (widget: Widget) => {
   switch (widget.type) {
     case "weather":
-      return <WeatherWidget location={MOCK_WEATHER_DATA} />;
+      return <WeatherWidget location={MOCK_WEATHER_DATA} />
     case "clock":
-      return <ClockWidget flip clocks={MOCK_CLOCK_DATA} size="1" />;
+      return <ClockWidget flip clocks={MOCK_CLOCK_DATA} size="1" />
     case "news":
-      return <NewsWidget country="us" />;
+      return <NewsWidget country="us" />
     case "battery":
-      return <BatteryWidget />;
+      return <BatteryWidget />
     case "image-grid":
-      return <ImageGrid />;
+      return <ImageGrid />
     case "calendar":
-      return <CalendarWidget storageKey={"calendar_events_dashboard"} />;
+      return <CalendarWidget storageKey={"calendar_events_dashboard"} />
     default:
-      return null;
+      return null
   }
-};
+}
 
 const DashboardPage: React.FC = () => {
-  const { t } = useTranslation(["dashboard", "common"]);
-  const { authUser, isLoading } = useAuth();
-  const swapyRef = useRef<ReturnType<typeof createSwapy> | null>(null);
+  const { t } = useTranslation(["dashboard", "common"])
+  const { authUser, isLoading } = useAuth()
+  const swapyRef = useRef<ReturnType<typeof createSwapy> | null>(null)
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [widgets, setWidgets] = useState<Widget[]>([]);
+  const [isEditing, setIsEditing] = useState(false)
+  const [widgets, setWidgets] = useState<Widget[]>([])
   const [slotItemsMap, setSlotItemsMap] = useState<typeof INITIAL_SLOT_ITEMS>(
-    [],
-  );
+    []
+  )
 
   const slottedWidgets = useMemo(() => {
     return slotItemsMap.map(({ slotId, itemId }) => ({
       slotId,
       itemId,
       widget: widgets.find((w) => w.id === itemId),
-    }));
-  }, [widgets, slotItemsMap]);
+    }))
+  }, [widgets, slotItemsMap])
 
   useEffect(() => {
     const initializeWidgets = async () => {
-      const battery = await getBattery();
+      const battery = await getBattery()
 
       const availableWidgets = INITIAL_WIDGETS.filter(
-        (widget) => widget.type !== "battery" || battery !== null,
-      );
+        (widget) => widget.type !== "battery" || battery !== null
+      )
 
       const availableSlotItems = INITIAL_SLOT_ITEMS.filter((item) =>
-        availableWidgets.some((widget) => widget.id === item.itemId),
-      );
+        availableWidgets.some((widget) => widget.id === item.itemId)
+      )
 
-      setWidgets(availableWidgets);
-      setSlotItemsMap(availableSlotItems);
-    };
+      setWidgets(availableWidgets)
+      setSlotItemsMap(availableSlotItems)
+    }
 
-    initializeWidgets();
-  }, []);
+    initializeWidgets()
+  }, [])
 
   useEffect(() => {
-    const container = document.querySelector("#dashboard-container");
-    if (!container) return;
+    const container = document.querySelector("#dashboard-container")
+    if (!container) return
 
     swapyRef.current = createSwapy(container, {
       manualSwap: true,
       swapMode: "drop",
-    });
+    })
 
     swapyRef.current.onSwap(({ data }) => {
       setSlotItemsMap(
         data.array.filter(
           (item): item is { slotId: string; itemId: string } =>
-            item.itemId !== null,
-        ),
-      );
-    });
+            item.itemId !== null
+        )
+      )
+    })
 
     return () => {
-      swapyRef.current?.destroy();
-    };
-  }, []);
+      swapyRef.current?.destroy()
+    }
+  }, [])
 
   useEffect(() => {
-    swapyRef.current?.setData({ array: slotItemsMap });
-  }, [slotItemsMap]);
+    swapyRef.current?.setData({ array: slotItemsMap })
+  }, [slotItemsMap])
 
-  if (isLoading) return <LoadingPage />;
-  if (!authUser) return null;
+  if (isLoading) return <LoadingPage />
+  if (!authUser) return null
 
   return (
     <DashboardLayout
@@ -195,7 +195,7 @@ const DashboardPage: React.FC = () => {
         </Flex>
       </Container>
     </DashboardLayout>
-  );
-};
+  )
+}
 
-export default DashboardPage;
+export default DashboardPage

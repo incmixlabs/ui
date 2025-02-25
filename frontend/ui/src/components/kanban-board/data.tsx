@@ -1,4 +1,4 @@
-import { KanbanImages } from "./images";
+import { KanbanImages } from "./images"
 
 export const attachments = [
   {
@@ -24,7 +24,7 @@ export const attachments = [
     size: "1.4 MB",
     thumbnailUrl: KanbanImages?.attachment5,
   },
-];
+]
 
 export const assignData = [
   {
@@ -42,7 +42,7 @@ export const assignData = [
     label: "Jane Wilson",
     avatarSrc: KanbanImages.user1,
   },
-];
+]
 export const lablesData = [
   {
     value: "design",
@@ -59,7 +59,7 @@ export const lablesData = [
     label: "Backend",
     labelStyle: "bg-orange-500 px-4 text-white py-1 rounded-md inline-block",
   },
-];
+]
 
 export const commentsData = [
   {
@@ -95,4 +95,4 @@ export const commentsData = [
     text: "Hi Jacob. Will you be able to finish the last item of the task by tomorrow?",
     timestamp: "5 min ago",
   },
-];
+]

@@ -31,13 +31,21 @@ const SIDEBAR_WIDTH_ICON = "4rem"
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
 type SidebarContext = {
+  // Primary sidebar
   state: "expanded" | "collapsed"
   open: boolean
   setOpen: (open: boolean) => void
+
+  // Secondary sidebar
+  secondaryOpen: boolean
+  setSecondaryOpen: (open: boolean) => void
+
+  // Common
+  isMobile: boolean
   openMobile: boolean
   setOpenMobile: (open: boolean) => void
-  isMobile: boolean
   toggleSidebar: () => void
+  toggleSecondarySidebar: () => void
 }
 
 const SidebarContext = React.createContext<SidebarContext | null>(null)
@@ -54,9 +62,15 @@ function useSidebar() {
 const SidebarProvider = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
+    // Primary sidebar
     defaultOpen?: boolean
     open?: boolean
     onOpenChange?: (open: boolean) => void
+
+    // Secondary sidebar
+    defaultSecondaryOpen?: boolean
+    secondaryOpen?: boolean
+    onSecondaryOpenChange?: (open: boolean) => void
   }
 >(
   (
@@ -71,8 +85,16 @@ const SidebarProvider = React.forwardRef<
     },
     ref
   ) => {
+    const {
+      defaultSecondaryOpen = true,
+      secondaryOpen: secondaryOpenProp,
+      onSecondaryOpenChange: setSecondaryOpenProp,
+    } = props
     const isMobile = useIsMobile()
     const [openMobile, setOpenMobile] = React.useState(false)
+    const [_secondaryOpen, _setSecondaryOpen] =
+      React.useState(defaultSecondaryOpen)
+    const secondaryOpen = secondaryOpenProp ?? _secondaryOpen
 
     // This is the internal state of the sidebar.
     // We use openProp and setOpenProp for control from outside the component.
@@ -92,12 +114,23 @@ const SidebarProvider = React.forwardRef<
       },
       [setOpenProp, open]
     )
-
     // Helper to toggle the sidebar.
     const toggleSidebar = React.useCallback(() => {
-      setOpenMobile((open) => !open)
       setOpen((open) => !open)
     }, [setOpen])
+
+    const setSecondaryOpen = React.useCallback(
+      (value: boolean | ((prev: boolean) => boolean)) => {
+        const newValue =
+          typeof value === "function" ? value(secondaryOpen) : value
+        setSecondaryOpenProp?.(newValue) || _setSecondaryOpen(newValue)
+      },
+      [setSecondaryOpenProp, secondaryOpen]
+    )
+
+    const toggleSecondarySidebar = React.useCallback(() => {
+      setSecondaryOpen((prev) => !prev)
+    }, [setSecondaryOpen])
 
     // Adds a keyboard shortcut to toggle the sidebar.
     React.useEffect(() => {
@@ -128,8 +161,21 @@ const SidebarProvider = React.forwardRef<
         openMobile,
         setOpenMobile,
         toggleSidebar,
+        setSecondaryOpen,
+        secondaryOpen,
+        toggleSecondarySidebar,
       }),
-      [state, open, setOpen, isMobile, openMobile, toggleSidebar]
+      [
+        state,
+        open,
+        setOpen,
+        isMobile,
+        openMobile,
+        toggleSidebar,
+        setSecondaryOpen,
+        secondaryOpen,
+        toggleSecondarySidebar,
+      ]
     )
 
     return (
@@ -235,13 +281,13 @@ const Sidebar = React.forwardRef<
 
     return (
       <>
-        {isMobile && !openMobile && (
+        {isMobile && openMobile && (
           <div
-            className="fixed inset-0 z-30 bg-black bg-opacity-50 transition-opacity"
+            className="fixed inset-0 z-30 cursor-pointer bg-black bg-opacity-50 transition-opacity"
             onClick={() => setOpenMobile(false)}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                setOpenMobile(false)
+                // toggleSidebar()
               }
             }}
           />
@@ -251,9 +297,10 @@ const Sidebar = React.forwardRef<
           ref={ref}
           className={cn(
             "group peer relative text-sidebar-foreground",
-            isMobile && !openMobile
+            isMobile && openMobile
               ? "fixed inset-y-0 left-0 z-40 w-[--sidebar-width]"
-              : ""
+              : "hidden",
+            !isMobile && "flex"
           )}
           data-state={state}
           data-collapsible={state === "collapsed" ? collapsible : ""}
@@ -277,7 +324,7 @@ const Sidebar = React.forwardRef<
           <div
             className={cn(
               "fixed inset-y-0 z-10 flex h-svh w-[--sidebar-width] transition-[left,right,width] duration-200 ease-linear",
-              isMobile && !openMobile ? "z-40 bg-sidebar shadow-lg" : "",
+              isMobile && openMobile ? "z-40 bg-sidebar shadow-lg" : "",
               side === "left"
                 ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
                 : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
@@ -309,25 +356,60 @@ Sidebar.displayName = "Sidebar"
 const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
   React.ComponentProps<typeof Button>
->(({ className, onClick, icon, srLabel, ...props }, ref) => {
-  const { toggleSidebar } = useSidebar()
-  return (
-    <IconButton
-      ref={ref}
-      data-sidebar="trigger"
-      variant="soft"
-      className={cn("h-7 w-7", className)}
-      onClick={(event) => {
-        onClick?.(event)
-        toggleSidebar()
-      }}
-      {...props}
-    >
-      {icon ? icon : <PanelLeft />}
-      <span className="sr-only">{srLabel ? srLabel : "Toggle Sidebar"}</span>
-    </IconButton>
-  )
-})
+>(
+  (
+    {
+      className,
+      onClick,
+      icon,
+      isSecondary,
+      mobileSidebarTrigger,
+      srLabel,
+      ...props
+    },
+    ref
+  ) => {
+    const {
+      toggleSidebar,
+      toggleSecondarySidebar,
+      isMobile,
+      openMobile,
+      setOpenMobile,
+    } = useSidebar()
+
+    return (
+      <IconButton
+        ref={ref}
+        data-sidebar="trigger"
+        variant="soft"
+        className={cn("h-7 w-7", className)}
+        onClick={(event) => {
+          onClick?.(event)
+          if (isMobile) {
+            if (mobileSidebarTrigger) {
+              setOpenMobile(!openMobile)
+            }
+            if (isSecondary) {
+              toggleSecondarySidebar()
+            } else {
+              toggleSidebar()
+            }
+          } else {
+            if (isSecondary) {
+              toggleSecondarySidebar()
+            } else {
+              toggleSidebar()
+            }
+          }
+        }}
+        {...props}
+      >
+        {icon ? icon : <PanelLeft />}
+        <span className="sr-only">{srLabel ? srLabel : "Toggle Sidebar"}</span>
+      </IconButton>
+    )
+  }
+)
 SidebarTrigger.displayName = "SidebarTrigger"
 
 const SidebarRail = React.forwardRef<
