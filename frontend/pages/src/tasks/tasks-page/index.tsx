@@ -1,89 +1,89 @@
-import { usePGlite } from "@electric-sql/pglite-react";
-import { pushChangesToBackend, useOrganizationStore } from "@incmix/store";
-import { CardContent, KanbanBoard } from "@incmix/ui";
-import type { Board, Task } from "@incmix/utils/types";
-import { DashboardLayout } from "@layouts/admin-panel/layout";
-import { Card, Flex, ScrollArea, Select } from "@radix-ui/themes";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
-import { PageLayout } from "../../common/components/layouts/page-layout";
-import { getKanbanBoard, getProjects, updatedTasks } from "./actions";
-import { CreateColumnForm } from "./create-column-form";
-import { CreateProjectForm } from "./create-project-form";
-import { CreateTaskForm } from "./create-task-form";
-import { useAutoSync } from "./use-auto-sync";
+import { usePGlite } from "@electric-sql/pglite-react"
+import { pushChangesToBackend, useOrganizationStore } from "@incmix/store"
+import { CardContent, KanbanBoard } from "@incmix/ui"
+import type { Board, Task } from "@incmix/utils/types"
+import { DashboardLayout } from "@layouts/admin-panel/layout"
+import { Card, Flex, ScrollArea, Select } from "@radix-ui/themes"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useEffect, useState } from "react"
+import { PageLayout } from "../../common/components/layouts/page-layout"
+import { getKanbanBoard, getProjects, updatedTasks } from "./actions"
+import { CreateColumnForm } from "./create-column-form"
+import { CreateProjectForm } from "./create-project-form"
+import { CreateTaskForm } from "./create-task-form"
+import { useAutoSync } from "./use-auto-sync"
 
 const TasksPage = () => {
-  const { selectedOrganisation } = useOrganizationStore();
+  const { selectedOrganisation } = useOrganizationStore()
 
-  const [selectedProject, setSelectedProject] = useState<string>();
+  const [selectedProject, setSelectedProject] = useState<string>()
   const projectsQuery = useQuery({
     queryKey: ["projects", selectedOrganisation?.id],
     enabled: !!selectedOrganisation?.id,
     queryFn: () => {
-      if (selectedOrganisation) return getProjects(selectedOrganisation?.id);
-      return [];
+      if (selectedOrganisation) return getProjects(selectedOrganisation?.id)
+      return []
     },
-  });
+  })
 
-  const db = usePGlite();
+  const db = usePGlite()
 
   const boardQuery = useQuery({
     queryKey: ["board", selectedProject],
     enabled: !!selectedProject,
     queryFn: () => {
-      if (selectedProject) return getKanbanBoard(db, selectedProject);
-      return { columns: [], tasks: [] };
+      if (selectedProject) return getKanbanBoard(db, selectedProject)
+      return { columns: [], tasks: [] }
     },
-  });
+  })
 
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   const tasksMutation = useMutation({
     mutationFn: (tasks: Task[]) => updatedTasks(db, tasks),
     onMutate: async (tasks) => {
-      await queryClient.cancelQueries({ queryKey: ["board", selectedProject] });
+      await queryClient.cancelQueries({ queryKey: ["board", selectedProject] })
       // Snapshot the previous value
       const prevoiusBoard = queryClient.getQueryData<Board>([
         "board",
         selectedProject,
-      ]);
+      ])
 
       queryClient.setQueryData(["board", selectedProject], (old: Board) => {
-        console.log(old);
+        console.log(old)
         return {
           ...old,
           tasks: [
             ...old.tasks.filter(
-              (t) => tasks.find((nt) => nt.id !== t.id) !== undefined,
+              (t) => tasks.find((nt) => nt.id !== t.id) !== undefined
             ),
             ...tasks,
           ],
-        };
-      });
+        }
+      })
 
-      return { prevoiusBoard };
+      return { prevoiusBoard }
     },
     // If the mutation fails,
     // use the context returned from onMutate to roll back
     onError: (_err, _updatedTasks, context) => {
       queryClient.setQueryData(
         ["board", selectedProject],
-        context?.prevoiusBoard,
-      );
+        context?.prevoiusBoard
+      )
     },
     // Always refetch after error or success:
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["board", selectedProject] });
+      queryClient.invalidateQueries({ queryKey: ["board", selectedProject] })
     },
-  });
+  })
 
-  useAutoSync(pushChangesToBackend);
+  useAutoSync(pushChangesToBackend)
 
   useEffect(() => {
     if (!selectedProject && projectsQuery.data?.length)
-      setSelectedProject(projectsQuery.data[0].id);
-  }, [projectsQuery.data, selectedProject]);
+      setSelectedProject(projectsQuery.data[0].id)
+  }, [projectsQuery.data, selectedProject])
 
   if (!selectedOrganisation)
     return (
@@ -96,7 +96,7 @@ const TasksPage = () => {
           </CardContent>
         </Card>
       </DashboardLayout>
-    );
+    )
 
   return (
     <DashboardLayout breadcrumbItems={[{ label: "Tasks", url: "/tasks" }]}>
@@ -121,8 +121,8 @@ const TasksPage = () => {
         </Select.Root>
         <CreateProjectForm
           onSuccess={(p) => {
-            projectsQuery.refetch();
-            setSelectedProject(p.id);
+            projectsQuery.refetch()
+            setSelectedProject(p.id)
           }}
         />
         {selectedProject && (
@@ -152,7 +152,7 @@ const TasksPage = () => {
         />
       </ScrollArea>
     </DashboardLayout>
-  );
-};
+  )
+}
 
-export default TasksPage;
+export default TasksPage
