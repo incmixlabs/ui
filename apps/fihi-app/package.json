@@ -12,7 +12,6 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@electric-sql/pglite-react": "catalog:",
     "@incmix/pages": "workspace: *",
     "@incmix/store": "workspace: *",
     "@incmix/ui": "workspace: *",

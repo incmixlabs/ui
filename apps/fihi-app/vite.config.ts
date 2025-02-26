@@ -16,15 +16,16 @@ type WorkerFormat = "es" | "iife"
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  optimizeDeps: {
-    exclude: ["@electric-sql/pglite"],
-  },
-  assetsInclude: ["**/*.wasm"],
   worker: { format: "es" as WorkerFormat },
   build: {
-    sourcemap: "hidden", // Source map generation must be turned on
+    // using hidden sourcemap to avoid the vscode type error
+    sourcemap: "hidden" as unknown as boolean, // Source map generation must be turned on
     chunkSizeWarningLimit: 4800,
+    rollupOptions: {
+      treeshake: true,
+    },
   },
+
   preview: {
     port: 1420,
   },
@@ -34,7 +35,7 @@ export default defineConfig(async () => ({
     },
   },
   plugins: [
-    bundlesize(),
+    bundlesize({ limits: [{ name: "**/*", limit: "3 mB" }] }),
     react(),
     tsconfigPaths(),
     visualizer({ open: true }) as PluginOption,

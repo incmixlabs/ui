@@ -1,7 +1,6 @@
 "use client"
 
 import { useAuth } from "@auth"
-import { usePGlite } from "@electric-sql/pglite-react"
 import type { TaskCollections } from "@incmix/store"
 import {
   Dialog,
@@ -23,7 +22,6 @@ import type React from "react"
 import { useState } from "react"
 import type { RxDatabase } from "rxdb"
 import { useRxDB } from "rxdb-hooks"
-import { createTask, getColumns } from "./actions"
 
 interface CreateTaskProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
