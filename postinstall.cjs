@@ -7,6 +7,8 @@ if (!rxdbPremium && fs.existsSync(".env")) {
   const match = envContent.match(/RXDB_PREMIUM=(.+)/)
   if (match) {
     rxdbPremium = match[1]
+    console.log("RXDB_PREMIUM value found in .env file, skipping update")
+    process.exit(0)
   }
 }
 
@@ -16,7 +18,23 @@ if (!rxdbPremium) {
   )
   process.exit(1)
 } else {
-  // Write the value to .env file
-  fs.writeFileSync(".env", `RXDB_PREMIUM=${rxdbPremium}\n`)
-  console.log(".env file created successfully")
+  // Read existing .env content
+  let envContent = ""
+  if (fs.existsSync(".env")) {
+    envContent = fs.readFileSync(".env", "utf8")
+  }
+
+  // Replace or append RXDB_PREMIUM
+  if (envContent.match(/RXDB_PREMIUM=.*/)) {
+    envContent = envContent.replace(
+      /RXDB_PREMIUM=.*/,
+      `RXDB_PREMIUM=${rxdbPremium}`
+    )
+  } else {
+    envContent += `${envContent && !envContent.endsWith("\n") ? "\n" : ""}RXDB_PREMIUM=${rxdbPremium}\n`
+  }
+
+  // Write back to .env file
+  fs.writeFileSync(".env", envContent)
+  console.log("RXDB_PREMIUM value updated in .env file")
 }
