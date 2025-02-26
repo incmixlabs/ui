@@ -24,7 +24,6 @@ import { nanoid } from "nanoid"
 import { useState } from "react"
 import { useRxCollection } from "rxdb-hooks"
 import { z } from "zod"
-import { createProject } from "./actions"
 
 interface CreateProjectProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
