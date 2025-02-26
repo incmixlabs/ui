@@ -54,7 +54,6 @@ export default function AutoFormMultiCheckbox({
   isRequired,
   field,
   fieldConfigItem,
-  fieldProps,
 }: AutoFormInputComponentProps) {
   const options = (fieldConfigItem.inputProps?.options || []) as MCQOption[]
   const layout = (fieldConfigItem.inputProps?.layout || "grid") as MCQLayoutType

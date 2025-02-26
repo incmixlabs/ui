@@ -1,8 +1,8 @@
-import { useStepper } from "../stepper"
+import jsonSchemaToZod from "json-schema-to-zod"
+import { z } from "zod"
 import { AuthWrapper } from "../auth-wrapper"
 import AutoForm from "../auto-form"
-import { z } from "zod"
-import jsonSchemaToZod from "json-schema-to-zod"
+import { useStepper } from "../stepper"
 import { StepperFooter } from "./stepper-footer"
 
 interface StepFormProps {
