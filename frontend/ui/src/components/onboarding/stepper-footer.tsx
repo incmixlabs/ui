@@ -21,7 +21,7 @@ export function StepperFooter() {
           >
             Prev
           </Button>
-          <Button type="submit" size="1">
+          <Button type="submit" size="1" >
             {isLastStep ? "Finish" : "Next"}
           </Button>
         </>
