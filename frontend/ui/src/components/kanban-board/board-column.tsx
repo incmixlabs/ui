@@ -15,11 +15,13 @@ import type { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist
 import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
 
+import { Box, Flex } from "@radix-ui/themes"
 import { IconButton } from "../button"
 import { blockBoardPanningAttr } from "./data-attributes"
 import { isSafari } from "./is-safari"
 import { isShallowEqual } from "./is-shallow-equal"
-import { Card, CardShadow } from "./task-card"
+import { TaskCard, TaskCardShadow } from "./task-card"
+import TaskCardDrawer from "./task-card-drawer"
 import {
   type TCardData,
   type TColumn,
@@ -48,31 +50,44 @@ type TColumnState =
     }
 
 const stateStyles: { [Key in TColumnState["type"]]: string } = {
-  idle: "cursor-grab",
-  "is-card-over": "outline outline-2 outline-neutral-50",
-  "is-dragging": "opacity-40",
+  idle: "",
+  "is-card-over": "outline outline-2 outline-gray-6",
+  "is-dragging": "opacity-40 outline outline-2 outline-gray-6",
   "is-column-over": "bg-slate-900",
 }
 
 const idle = { type: "idle" } satisfies TColumnState
 
-/**
- * A memoized component for rendering out the card.
- *
- * Created so that state changes to the column don't require all cards to be rendered
- */
-const CardList = memo(function CardList({ column }: { column: TColumn }) {
+const CardList = memo(function CardList({
+  column,
+  kanbanFilter,
+}: {
+  column: TColumn
+  kanbanFilter: boolean
+}) {
   return column.cards.map((card) => (
-    <Card key={card.id} card={card} columnId={column.id} />
+    <TaskCard
+      key={card.id}
+      card={card}
+      columnId={column.id}
+      kanbanFilter={kanbanFilter}
+    />
   ))
 })
 
-export function Column({ column }: { column: TColumn }) {
+export function BoardColumn({
+  column,
+  kanbanFilter,
+}: {
+  column: TColumn
+  kanbanFilter: boolean
+}) {
   const scrollableRef = useRef<HTMLDivElement | null>(null)
   const outerFullHeightRef = useRef<HTMLDivElement | null>(null)
   const headerRef = useRef<HTMLDivElement | null>(null)
   const innerRef = useRef<HTMLDivElement | null>(null)
   const [state, setState] = useState<TColumnState>(idle)
+  const [_open, _setOpen] = useState(false)
 
   useEffect(() => {
     const outer = outerFullHeightRef.current
@@ -89,7 +104,10 @@ export function Column({ column }: { column: TColumn }) {
     function setIsCardOver({
       data,
       location,
-    }: { data: TCardData; location: DragLocationHistory }) {
+    }: {
+      data: TCardData
+      location: DragLocationHistory
+    }) {
       const innerMost = location.current.dropTargets[0]
       const isOverChildCard = Boolean(
         innerMost && isCardDropTargetData(innerMost.data)
@@ -217,46 +235,64 @@ export function Column({ column }: { column: TColumn }) {
   // console.log('checking', column);
 
   return (
-    <div
-      className="flex w-full flex-1 flex-shrink-0 select-none flex-col"
-      ref={outerFullHeightRef}
-    >
+    <>
       <div
-        className={`flex max-h-full flex-col rounded-lg bg-white text-black ${stateStyles[state.type]}`}
-        ref={innerRef}
-        {...{ [blockBoardPanningAttr]: true }}
+        className={"flex w-full flex-1 flex-shrink-0 select-none flex-col"}
+        ref={outerFullHeightRef}
       >
-        {/* Extra wrapping element to make it easy to toggle visibility of content when a column is dragging over */}
         <div
-          className={`flex max-h-full flex-col pb-2 ${state.type === "is-column-over" ? "invisible" : ""}`}
+          className={`flex max-h-full flex-col rounded-lg bg-gray-3 text-black dark:bg-gray-2 dark:text-white ${stateStyles[state.type]}`}
+          ref={innerRef}
+          {...{ [blockBoardPanningAttr]: true }}
         >
+          {/* Extra wrapping element to make it easy to toggle visibility of content when a column is dragging over */}
           <div
-            className="flex flex-row items-center justify-between p-3 pb-2"
-            ref={headerRef}
+            className={`flex max-h-full flex-col pb-2 ${state.type === "is-column-over" ? "invisible" : ""}`}
           >
-            <div className="pl-2 font-bold leading-4">{column.title}</div>
-            <IconButton className="rounded p-2 hover:bg-slate-200 active:bg-slate-300">
-              <Ellipsis size={16} />
-            </IconButton>
-          </div>
-          <div
-            className="flex flex-col overflow-y-auto [overflow-anchor:none] [scrollbar-color:theme(colors.slate.400)_theme(colors.slate.200)] [scrollbar-width:thin]"
-            ref={scrollableRef}
-          >
-            <CardList column={column} />
-            {state.type === "is-card-over" && !state.isOverChildCard ? (
-              <div className="flex-shrink-0 px-3 py-1">
-                <CardShadow dragging={state.dragging} />
-              </div>
-            ) : null}
-          </div>
-          <div className="flex justify-center gap-2 p-3">
-            <IconButton className="rounded bg-blue-600/10 p-2 font-bold text-2xl text-blue-500 hover:bg-blue-600 hover:text-white">
-              <Plus size={20} />
-            </IconButton>
+            <div
+              className="flex flex-row items-center justify-between p-3 pb-2"
+              ref={headerRef}
+            >
+              <div className="pl-2 font-bold leading-4">{column.title}</div>
+              <IconButton className="rounded p-2 hover:bg-slate-200 active:bg-slate-300">
+                <Ellipsis size={16} />
+              </IconButton>
+            </div>
+            <div
+              className="flex flex-col overflow-y-auto [overflow-anchor:none] [scrollbar-color:theme(colors.slate.400)_theme(colors.slate.200)] [scrollbar-width:thin]"
+              ref={scrollableRef}
+            >
+              <CardList column={column} kanbanFilter={kanbanFilter} />
+              {state.type === "is-card-over" && !state.isOverChildCard ? (
+                <div className="flex-shrink-0 px-3 py-1">
+                  <TaskCardShadow dragging={state.dragging} />
+                </div>
+              ) : null}
+            </div>
+            {kanbanFilter ? (
+              <Box className="mt-2 px-3.5">
+                <Flex
+                  justify={"start"}
+                  gap="2"
+                  className=" w-full cursor-pointer rounded-xl border-2 border-gray-8 border-dashed p-3 hover:bg-gray-8"
+                >
+                  <IconButton className=" w-fit gap-3 rounded bg-transparent p-2 font-medium text-blue-500 text-xl hover:text-white">
+                    <Plus size={24} /> Add Task
+                  </IconButton>
+                </Flex>
+              </Box>
+            ) : (
+              <>
+                <Flex justify={"center"} gap="2" className=" p-3">
+                  <IconButton className="rounded bg-blue-600/10 p-2 font-bold text-2xl text-blue-500 hover:bg-blue-600 hover:text-white">
+                    <Plus size={24} />
+                  </IconButton>
+                </Flex>
+              </>
+            )}
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

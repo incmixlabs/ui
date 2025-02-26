@@ -12,9 +12,6 @@ catalogs:
     '@incmix/utils':
       specifier: 0.1.0
       version: 0.1.0
-    '@radix-ui/themes':
-      specifier: 3.2.0
-      version: 3.2.0
     '@tanstack/react-query':
       specifier: 5.65.1
       version: 5.65.1
@@ -30,12 +27,6 @@ catalogs:
     '@vitejs/plugin-react':
       specifier: 4.3.4
       version: 4.3.4
-    lucide-react:
-      specifier: 0.474.0
-      version: 0.474.0
-    nanoid:
-      specifier: 5.0.9
-      version: 5.0.9
     postcss:
       specifier: 8.5.1
       version: 8.5.1
@@ -63,9 +54,6 @@ catalogs:
     vite-tsconfig-paths:
       specifier: 5.1.4
       version: 5.1.4
-    zod:
-      specifier: 3.24.1
-      version: 3.24.1
 
 importers:
 
@@ -591,6 +579,9 @@ importers:
       aria-hidden:
         specifier: 1.2.4
         version: 1.2.4
+      chrono-node:
+        specifier: ^2.7.8
+        version: 2.7.8
       class-variance-authority:
         specifier: 0.7.1
         version: 0.7.1
@@ -637,8 +628,8 @@ importers:
         specifier: 5.1.0
         version: 5.1.0(@types/react@19.0.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react-day-picker:
-        specifier: 9.4.2
-        version: 9.4.2(react@19.0.0)
+        specifier: ^8.9.1
+        version: 8.10.1(date-fns@2.30.0)(react@19.0.0)
       react-dropzone:
         specifier: 14.3.5
         version: 14.3.5(react@19.0.0)
@@ -1561,9 +1552,6 @@ packages:
   '@csstools/css-tokenizer@3.0.3':
     resolution: {integrity: sha512-UJnjoFsmxfKUdNYdWgOB0mWUypuLvAfQPH1+pyvRJs6euowbFkFC6P13w1l8mJyi3vxYMxc9kld5jZEGRQs6bw==}
     engines: {node: '>=18'}
-
-  '@date-fns/tz@1.2.0':
-    resolution: {integrity: sha512-LBrd7MiJZ9McsOgxqWX7AaxrDjcFVjWH/tIKJd7pnR7McaslGYOP1QmmiBXdJH/H/yLCT+rcQ7FaPBUxRGUtrg==}
 
   '@dnd-kit/accessibility@3.1.1':
     resolution: {integrity: sha512-2P+YgaXF+gRsIihwwY1gCsQSYnu9Zyj2py8kY5fFvUM1qm2WA2u639R6YNVfU4GWr+ZM5mqEsfHZZLoRONbemw==}
@@ -5050,6 +5038,10 @@ packages:
     resolution: {integrity: sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==}
     engines: {node: '>=10'}
 
+  chrono-node@2.7.8:
+    resolution: {integrity: sha512-pzxemrTKu6jFVyAfkNxUckp9nlrmRFtr5lGrEJcVKyeKV9WSeGT78Oysazlzd/H0BdMv7EzACtJrw0pi2KODBQ==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+
   cidr-regex@4.0.3:
     resolution: {integrity: sha512-HOwDIy/rhKeMf6uOzxtv7FAbrz8zPjmVKfSpM+U7/bNBXC5rtOyr758jxcptiSx6ZZn5LOhPJT5WWxPAGDV8dw==}
     engines: {node: '>=14'}
@@ -5344,8 +5336,8 @@ packages:
     resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
     engines: {node: '>=0.11'}
 
-  date-fns@4.1.0:
-    resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
+  dayjs@1.11.13:
+    resolution: {integrity: sha512-oaMBel6gjolK862uaPQOVTA7q3TZhuSvuMQAAglQDOWYO9A91IrAOUJEyKVlqJlHE0vq5p5UXxzdPfMH/x6xNg==}
 
   debug@4.4.0:
     resolution: {integrity: sha512-6WTZ/IxCY/T6BALoZHaE4ctp9xm+Z5kY/pzYaCHRFeyVhojxlrm+46y68HA6hr0TcwEssoxNiDEUJQjfPZ/RYA==}
@@ -7646,11 +7638,11 @@ packages:
       '@types/react':
         optional: true
 
-  react-day-picker@9.4.2:
-    resolution: {integrity: sha512-qKunVfJ+QWJqdHylZ9TsXSSJzzK9vDLsZ+c80/r+ZwOWqGW8mADwPy1iOBrNcZiAokQ4xrSsPLnWzTRHS4mSsQ==}
-    engines: {node: '>=18'}
+  react-day-picker@8.10.1:
+    resolution: {integrity: sha512-TMx7fNbhLk15eqcMt+7Z7S2KF7mfTId/XJDjKE8f+IUcFn0l08/kI4FiYTL/0yuOLmEcbR4Fwe3GJf/NiiMnPA==}
     peerDependencies:
-      react: '>=16.8.0'
+      date-fns: ^2.28.0 || ^3.0.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
 
   react-docgen-typescript@2.2.2:
     resolution: {integrity: sha512-tvg2ZtOpOi6QDwsb3GZhOjDkkX0h8Z2gipvTg6OVMUyoYoURhEiRNePT8NZItTVCDh39JJHnLdfCOkzoLbFnTg==}
@@ -9197,7 +9189,7 @@ snapshots:
       '@babel/traverse': 7.26.7
       '@babel/types': 7.26.7
       convert-source-map: 2.0.0
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.0
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -9891,7 +9883,7 @@ snapshots:
       '@babel/parser': 7.26.7
       '@babel/template': 7.25.9
       '@babel/types': 7.26.7
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.0
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -10093,8 +10085,6 @@ snapshots:
       '@csstools/css-tokenizer': 3.0.3
 
   '@csstools/css-tokenizer@3.0.3': {}
-
-  '@date-fns/tz@1.2.0': {}
 
   '@dnd-kit/accessibility@3.1.1(react@19.0.0)':
     dependencies:
@@ -13554,7 +13544,7 @@ snapshots:
 
   agent-base@6.0.2:
     dependencies:
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.0
     transitivePeerDependencies:
       - supports-color
 
@@ -13937,6 +13927,10 @@ snapshots:
 
   chownr@2.0.0: {}
 
+  chrono-node@2.7.8:
+    dependencies:
+      dayjs: 1.11.13
+
   cidr-regex@4.0.3:
     dependencies:
       ip-regex: 5.0.0
@@ -14237,7 +14231,11 @@ snapshots:
     dependencies:
       '@babel/runtime': 7.26.7
 
-  date-fns@4.1.0: {}
+  dayjs@1.11.13: {}
+
+  debug@4.4.0:
+    dependencies:
+      ms: 2.1.3
 
   debug@4.4.0(supports-color@8.1.1):
     dependencies:
@@ -15221,7 +15219,7 @@ snapshots:
   https-proxy-agent@5.0.1:
     dependencies:
       agent-base: 6.0.2
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.0
     transitivePeerDependencies:
       - supports-color
 
@@ -15284,7 +15282,7 @@ snapshots:
   importx@0.5.1:
     dependencies:
       bundle-require: 5.1.0(esbuild@0.24.2)
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.0
       esbuild: 0.24.2
       jiti: 2.4.2
       pathe: 1.1.2
@@ -16957,10 +16955,9 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.0
 
-  react-day-picker@9.4.2(react@19.0.0):
+  react-day-picker@8.10.1(date-fns@2.30.0)(react@19.0.0):
     dependencies:
-      '@date-fns/tz': 1.2.0
-      date-fns: 4.1.0
+      date-fns: 2.30.0
       react: 19.0.0
 
   react-docgen-typescript@2.2.2(typescript@5.7.3):
@@ -18191,7 +18188,7 @@ snapshots:
 
   vite-tsconfig-paths@5.1.4(typescript@5.7.3)(vite@6.0.9(@types/node@22.13.4)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)):
     dependencies:
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.0
       globrex: 0.1.2
       tsconfck: 3.1.4(typescript@5.7.3)
     optionalDependencies:

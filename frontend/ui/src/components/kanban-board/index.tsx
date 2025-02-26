@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { Board } from "./board"
 import { KanbanImages } from "./images"
 import type { TCard } from "./types"
@@ -175,10 +176,9 @@ function convertCustomDataToBoardFormat(customData: TCustomBoard) {
 }
 export const KanbanBoard = () => {
   const boardData = convertCustomDataToBoardFormat(initialData)
-  // console.log('boardData:', boardData?.columns[0]?.cards);
 
   return (
-    <div className="h-full md:flex md:flex-row md:justify-center">
+    <div className="h-full w-full ">
       <Board initial={boardData} />
     </div>
   )
