@@ -99,6 +99,17 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
       onValueChange([])
     }
 
+    // const filteredOptions = options.filter((option) => !option.disable);
+    // const toggleAll = () => {
+    //   if (selectedValues.length === filteredOptions.length) {
+    //     handleClear();
+    //   } else {
+    //     const allValues = filteredOptions.map((option) => option.value);
+    //     setSelectedValues(allValues);
+    //     onValueChange(allValues);
+    //   }
+    // };
+
     return (
       <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
         <Popover.Trigger>
