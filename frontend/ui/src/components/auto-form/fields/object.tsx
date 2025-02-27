@@ -82,6 +82,10 @@ export default function AutoFormObject<
         let isHidden = false
         const dependency = dependencies[name]
         let isDisabled = false
+
+        // Get field config item early so we can use it throughout this function
+        const fieldConfigItem: FieldConfigItem = fieldConfig?.[name] ?? {}
+
         if (dependency) {
           const watchedValue = watch(dependency.field)
           if (dependency.condition.value === watchedValue) {
@@ -148,7 +152,62 @@ export default function AutoFormObject<
             </AccordionItem>
           )
         }
-        if (zodBaseType === "ZodArray") {
+
+        // Check if this is an array field AND there's a fieldType of multiCheckbox defined
+        // in the fieldConfig. If so, don't use AutoFormArray, use the multiCheckbox component instead.
+        if (
+          zodBaseType === "ZodArray" &&
+          fieldConfigItem.fieldType === "multiCheckbox"
+        ) {
+          // Handle it as a regular field instead of using AutoFormArray
+          const zodInputProps = zodToHtmlInputProps(item)
+          const isRequired =
+            zodInputProps.required ||
+            fieldConfigItem.inputProps?.required ||
+            false
+
+          return (
+            <SCNformField
+              control={form.control}
+              name={key}
+              key={key}
+              render={({ field }) => {
+                const InputComponent = INPUT_COMPONENTS.multiCheckbox
+
+                const ParentElement =
+                  fieldConfigItem.renderParent ?? DefaultParent
+
+                const defaultValue = fieldConfigItem.inputProps?.defaultValue
+                const value = field.value ?? defaultValue ?? []
+
+                const fieldProps = {
+                  ...zodToHtmlInputProps(item),
+                  ...field,
+                  ...fieldConfigItem.inputProps,
+                  disabled: isDisabled,
+                  ref: undefined,
+                  value: value,
+                }
+
+                return (
+                  <ParentElement key={`${key}.parent`}>
+                    <InputComponent
+                      zodInputProps={zodInputProps}
+                      field={field}
+                      fieldConfigItem={fieldConfigItem}
+                      label={itemName}
+                      isRequired={isRequired}
+                      zodItem={item}
+                      fieldProps={fieldProps}
+                      className={fieldProps.className}
+                    />
+                  </ParentElement>
+                )
+              }}
+            />
+          )
+          // biome-ignore lint/style/noUselessElse: <explanation>
+        } else if (zodBaseType === "ZodArray") {
           return (
             <AutoFormArray
               key={key}
@@ -161,7 +220,6 @@ export default function AutoFormObject<
           )
         }
 
-        const fieldConfigItem: FieldConfigItem = fieldConfig?.[name] ?? {}
         const zodInputProps = zodToHtmlInputProps(item)
         const isRequired =
           zodInputProps.required ||

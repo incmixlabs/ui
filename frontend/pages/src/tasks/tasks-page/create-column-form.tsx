@@ -14,7 +14,7 @@ import {
   ReactiveButton,
   toast,
 } from "@incmix/ui"
-import type { Board, Column } from "@incmix/utils/types"
+import type { Column } from "@incmix/utils/types"
 import { Button, Flex, Select, TextField } from "@radix-ui/themes"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { nanoid } from "nanoid"
@@ -22,7 +22,6 @@ import type React from "react"
 import { useMemo, useState } from "react"
 import type { RxDatabase } from "rxdb"
 import { useRxDB } from "rxdb-hooks"
-import { createColumn, getColumns } from "./actions"
 interface CreateColumnProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
   projectId: string

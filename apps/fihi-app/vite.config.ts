@@ -3,9 +3,12 @@ import { Schema, ValidateEnv } from "@julr/vite-plugin-validate-env"
 // import { sentryVitePlugin } from "@sentry/vite-plugin"
 import react from "@vitejs/plugin-react"
 import { internalIpV4 } from "internal-ip"
-import { defineConfig } from "vite"
+import { visualizer } from "rollup-plugin-visualizer"
+import { type PluginOption, defineConfig } from "vite"
+import bundlesize from "vite-plugin-bundlesize"
 import topLevelAwait from "vite-plugin-top-level-await"
 import tsconfigPaths from "vite-tsconfig-paths"
+
 // @ts-expect-error process is a nodejs global
 const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM)
 
@@ -13,14 +16,16 @@ type WorkerFormat = "es" | "iife"
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  optimizeDeps: {
-    exclude: ["@electric-sql/pglite"],
-  },
-  assetsInclude: ["**/*.wasm"],
   worker: { format: "es" as WorkerFormat },
   build: {
-    sourcemap: true, // Source map generation must be turned on
+    // using hidden sourcemap to avoid the vscode type error
+    sourcemap: "hidden" as unknown as boolean, // Source map generation must be turned on
+    chunkSizeWarningLimit: 4800,
+    rollupOptions: {
+      treeshake: true,
+    },
   },
+
   preview: {
     port: 1420,
   },
@@ -30,8 +35,10 @@ export default defineConfig(async () => ({
     },
   },
   plugins: [
+    bundlesize({ limits: [{ name: "**/*", limit: "3 mB" }] }),
     react(),
     tsconfigPaths(),
+    visualizer({ open: true }) as PluginOption,
     ValidateEnv({
       VITE_BFF_API_URL: Schema.string(),
     }),
