@@ -137,7 +137,10 @@ export function PropertySheet() {
               Use JSONP
             </Text>
             <Box className="w-full p-2 px-3">
-              <Checkbox />
+              <Flex align="center" gap="1">
+                <Checkbox id="jsonp-checkbox" />
+                <label htmlFor="jsonp-checkbox" className="text-sm hidden">Enable JSONP</label>
+              </Flex>
             </Box>
           </Flex>
         </Box>

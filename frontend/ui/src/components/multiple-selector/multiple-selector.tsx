@@ -1,12 +1,12 @@
 
-import { Command as CommandPrimitive, useCommandState } from 'cmdk';
-import { X } from 'lucide-react';
-import * as React from 'react';
-import { forwardRef, useEffect } from 'react';
+import { Command as CommandPrimitive, useCommandState } from 'cmdk'
+import { X } from 'lucide-react'
+import * as React from 'react'
+import { forwardRef, useEffect } from 'react'
 
-import { Command, CommandGroup, CommandItem, CommandList } from '../command';
-import { cn } from '@utils';
-import { Badge } from '../badge';
+import { Command, CommandGroup, CommandItem, CommandList } from '../command'
+import { cn } from '@utils'
+import { Badge } from '../badge'
 
 export interface Option {
   value: string;
@@ -429,24 +429,8 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
           return 'bg-orange-9 text-orange-1 hover:bg-orange-10';
         case 'crimson':
           return 'bg-crimson-9 text-crimson-1 hover:bg-crimson-10';
-        case 'gray':
         default:
-          return 'bg-gray-4 text-gray-12 hover:bg-gray-6 hover:text-gray-';
-      }
-    };
-    const getSearchColorStyles = () => {
-      switch (defaultColor) {
-        case 'indigo':
-          return 'bg-indigo-3 text-indigo-12 placeholder:text-indigo-10 focus:outline-indigo-12 focus:outline-indigo-6';
-        case 'cyan':
-          return 'bg-cyan-3 text-cyan-12 placeholder:text-cyan-10 focus:outline-cyan-6';
-        case 'orange':
-          return 'bg-orange-3 text-orange-12 placeholder:text-orange-10 focus:outline-orange-6';
-        case 'crimson':
-          return 'bg-crimson-3 text-crimson-12 placeholder:text-crimson-10 focus:outline-crimson-6';
-        case 'gray':
-        default:
-          return 'bg-gray-3 text-gray-12 placeholder:text-gray-10 focus:outline-gray-6';
+          return 'bg-gray-4 text-gray-12 hover:bg-gray-6 ';
       }
     };
 
@@ -460,27 +444,11 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
           return 'bg-orange-11 text-orange-1';
         case 'crimson':
           return 'bg-crimson-11 text-crimson-1';
-        case 'gray':
         default:
           return 'bg-gray-11 text-gray-1';
       }
     };
-    // Selected item background styles
-    const getSelectedItemStyles = () => {
-      switch (defaultColor) {
-        case 'indigo':
-          return 'bg-indigo-9 hover:bg-indigo-4 text-white';
-        case 'cyan':
-          return 'bg-cyan-9 text-white';
-        case 'orange':
-          return 'bg-orange-9 text-white';
-        case 'crimson':
-          return 'bg-crimson-9 text-white';
-        case 'gray':
-        default:
-          return 'bg-gray-3 hover:bg-gray-6 text-gray-11';
-      }
-    };
+
 
     return (
       <Command
@@ -498,7 +466,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
       >
         <div
           className={cn(
-            'min-h-10 rounded-md border border-gray-6  text-base md:text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2',
+            'min-h-10 rounded-md border border-gray-6 text-base ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 md:text-sm',
             {
               'px-3 py-2': selected.length !== 0,
               'cursor-text': !disabled && selected.length !== 0,
@@ -526,6 +494,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                 >
                   {option.label}
                   <button
+                    type="button"
                     className={cn(
                       'ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2',
 
@@ -542,7 +511,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                     }}
                     onClick={() => handleUnselect(option)}
                   >
-                    <X className="h-3 w-3  group-hover:text-foreground" />
+                    <X className="h-3 w-3 group-hover:text-foreground" />
                   </button>
                 </Badge>
               );
@@ -569,8 +538,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
               }}
               placeholder={hidePlaceholderWhenSelected && selected.length !== 0 ? '' : placeholder}
               className={cn(
-                ' bg-transparent outline-none   border-gray-5 rounded-md block w-full  placeholder:text-muted-foreground',
-                getSearchColorStyles(),
+                'block w-full border-gray-5 rounded-md bg-transparent outline-none placeholder:text-muted-foreground',
                 {
                   'w-full': hidePlaceholderWhenSelected,
                   'px-3 py-2': selected.length === 0,
@@ -586,7 +554,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                 onChange?.(selected.filter((s) => s.fixed));
               }}
               className={cn(
-                'absolute right-0 h-6 w-6  bg-gray-12 text-gray-2 grid place-content-center rounded-md',
+                'absolute right-0 grid h-6 w-6 place-content-center rounded-md bg-gray-12 text-gray-2',
                 getClearButtonStyles(),
                 (hideClearAllButton ||
                   disabled ||
@@ -602,7 +570,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
         <div className="relative">
           {open && (
             <CommandList
-              className="absolute top-1 z-10 w-full rounded-md border border-gray-6 bg-popover text-popover-foreground shadow-md outline-none animate-in"
+              className="absolute top-1 z-10 w-full animate-in rounded-md border border-gray-6 bg-popover text-popover-foreground shadow-md outline-none"
               onMouseLeave={() => {
                 setOnScrollbar(false);
               }}
@@ -645,8 +613,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                                 onChange?.(newOptions);
                               }}
                               className={cn(
-                                'cursor-pointer p-2 m-1',
-                                getSelectedItemStyles(),
+                                'm-1 cursor-pointer p-2',
                                 option.disable && 'cursor-default ',
                               )}
                             >

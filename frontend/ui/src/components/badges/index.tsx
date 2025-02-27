@@ -1,20 +1,19 @@
-'use client';
 import React from 'react';
 import { Badge } from '../badge';
+import { BadgeProps } from '@radix-ui/themes'
 
 
-type ThemeColor = 'black' | 'gray' | 'indigo' | 'cyan' | 'orange' | 'crimson';
+type ThemeColor = BadgeProps["color"] | "black"
 
-interface MultipleSelectorControlledProps {
+interface BadgeComponentProps {
   themeColor: ThemeColor;
 }
 
-export const BadgeComponent: React.FC<MultipleSelectorControlledProps> = ({ themeColor = "gray", }) => {
+export const BadgeComponent: React.FC<BadgeComponentProps> = ({ themeColor = "gray", }) => {
 
   return (
-    <div className=" gap-5 px-10 w-[30rem] grid place-content-center space-y-4">
-      {/* <p className="text-primary">Your selection: {value.map((val) => val.label).join(', ')}</p> */}
-      <Badge color={themeColor} className=' text-xl text-center block w-fit px-3 py-1 capitalize'>Primary</Badge>
+    <div className="grid w-[30rem] place-content-center gap-5 space-y-4 px-10">
+      <Badge color={themeColor} className="block w-fit px-3 py-1 text-center text-xl capitalize">Primary</Badge>
     </div>
   );
 };

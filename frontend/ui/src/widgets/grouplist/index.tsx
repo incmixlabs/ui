@@ -3,7 +3,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Box, Card, Flex, Heading, ScrollArea, Text } from "@radix-ui/themes"
 import { IconButton } from "@components"
 
-// Define our data types
 type Movie = {
   id: number
   title: string
@@ -14,8 +13,15 @@ type Year = {
   year: number
   movies: Movie[]
 }
-// Sample data
-const years: Year[] = [
+
+
+interface GroupListProps {
+  years?: Year[];
+  defaultView?: 'years' | 'movies';
+  defaultSelectedYear?: Year | null;
+}
+
+const defaultYears: Year[] = [
   {
     year: 2011,
     movies: [
@@ -176,21 +182,24 @@ const years: Year[] = [
       },
     ],
   },
-]
+];
 
-export const GroupList = () => {
-  const [selectedYear, setSelectedYear] = useState<Year | null>(null)
-  const [listView, setListView] = useState("years")
+export const GroupList = ({
+  years = defaultYears,
+  defaultView = 'years',
+  defaultSelectedYear = null
+}: GroupListProps) => {
+  const [selectedYear, setSelectedYear] = useState<Year | null>(defaultSelectedYear);
+  const [listView, setListView] = useState(defaultView);
 
   const handleYearClick = (year: Year) => {
-    setSelectedYear(year)
-    setListView("movies")
-  }
+    setSelectedYear(year);
+    setListView("movies");
+  };
 
   const handleBackToYears = () => {
-    // setSelectedYear(null)
-    setListView("years")
-  }
+    setListView("years");
+  };
 
   return (
     <>
@@ -204,16 +213,17 @@ export const GroupList = () => {
           <ScrollArea className="h-full">
             <Box className="h-full overflow-y-auto">
               {years.map((year) => (
-                <Flex
+                <button
                   key={year.year}
-                  align={"center"}
-                  justify={"between"}
+                  type="button"
                   onClick={() => handleYearClick(year)}
-                  className=" cursor-pointer border-gray-5 border-t p-4 hover:bg-gray-3"
+                  className="w-full cursor-pointer border-gray-5 border-t p-4 hover:bg-gray-3"
                 >
-                  <span>Year {year.year}</span>
-                  <ChevronRight size={20} />
-                </Flex>
+                  <Flex align={"center"} justify={"between"}>
+                    <span>Year {year.year}</span>
+                    <ChevronRight size={20} />
+                  </Flex>
+                </button>
               ))}
             </Box>
           </ScrollArea>
@@ -234,17 +244,16 @@ export const GroupList = () => {
 
           <Box className="h-full overflow-y-auto">
             {selectedYear?.movies.map((movie) => (
-              <Flex
+              <button
                 key={movie.id}
-                align={"center"}
-                justify={"between"}
-                className="group relative cursor-pointer border-gray-5 border-t p-4 hover:bg-gray-3"
+                type="button"
+                className="group relative flex items-center justify-center  w-full cursor-pointer border-gray-5 border-t p-4 text-left hover:bg-gray-3"
               >
                 <Box className="absolute left-0 h-full w-1 bg-blue-700 opacity-0 group-hover:opacity-100" />
                 <Text as="span">
                   {movie.id}. {movie.title}
                 </Text>
-              </Flex>
+              </button>
             ))}
           </Box>
         </Box>
