@@ -1,8 +1,8 @@
 "use client"
 
-import { AccordionContent, AccordionTrigger, cn } from "@incmix/ui"
+import { cn } from "@incmix/ui"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import { ScrollArea } from "@radix-ui/themes"
+import { ChevronDownIcon, ScrollArea } from "@radix-ui/themes"
 import type { LucideIcon } from "lucide-react"
 import React, { type ComponentType } from "react"
 import type { IconProps } from "./secondary-sidebar/icons/types"
@@ -149,9 +149,9 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                         }
                       >
                         <AccordionPrimitive.Item value={item.id}>
-                          <AccordionTrigger
+                          <AccordionPrimitive.Trigger
                             className={cn(
-                              "mb-1 w-full select-none gap-4 rounded-md py-5 pr-5 pl-7 hover:bg-[hsl(var(--sidebar-background)/0.1)] hover:no-underline",
+                              "mb-1 flex w-full flex-1 select-none items-center justify-between gap-4 rounded-md py-5 pr-5 pl-7 font-medium text-sm transition-all hover:bg-[hsl(var(--sidebar-background)/0.1)] hover:no-underline [&[data-state=open]>svg]:rotate-180",
                               open &&
                                 "bg-[hsl(var(--sidebar-background)/0.1)] text-[hsl(var(--sidebar-background))]"
                             )}
@@ -188,8 +188,9 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                                 {item.name}
                               </span>
                             </span>
-                          </AccordionTrigger>
-                          <AccordionContent className="pl-6">
+                            <ChevronDownIcon className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" />
+                          </AccordionPrimitive.Trigger>
+                          <AccordionPrimitive.Content className="pl-6">
                             <TreeItem
                               data={item.children ? item.children : item}
                               selectedItemId={selectedItemId}
@@ -199,7 +200,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                               ItemIcon={ItemIcon}
                               FolderIconOpen={FolderIconOpen}
                             />
-                          </AccordionContent>
+                          </AccordionPrimitive.Content>
                         </AccordionPrimitive.Item>
                       </AccordionPrimitive.Root>
                     )
