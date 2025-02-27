@@ -12,7 +12,7 @@ import {
   Popover,
   Text,
 } from "@radix-ui/themes"
-import { Input } from "@/components"
+import { Input } from "@components"
 import { SketchPicker } from "react-color"
 import CompactColorPicker from "./color-picker"
 import {
@@ -23,8 +23,8 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/select"
-import { KanbanImages } from "@/components/kanban-board/images"
+} from "@components/select"
+import { KanbanImages } from "@components/kanban-board/images"
 
 export const themeData = [
   {
@@ -42,8 +42,8 @@ export function PropertySheet() {
   const [color, setColor] = useState("#BD6FCB")
   // State to toggle the color picker visibility
 
-  const [width, setWidth] = useState("200")
-  const [height, setHeight] = useState("480")
+  const [width, setWidth] = useState(200)
+  const [height, setHeight] = useState(480)
   const [dataUrl, setDataUrl] = useState("https://incmixlabs.com/data")
 
   const [propertyType, setPropertyType] = useState("json")
@@ -69,9 +69,11 @@ export function PropertySheet() {
             <Box className="w-full ">
               <Input
                 placeholder="200"
+                type="number"
+                min="0"
                 className="rounded-none border-none"
                 value={width}
-                onChange={(e) => setWidth(e.target.value)}
+                onChange={(e) => setWidth(Number(e.target.value))}
               />
             </Box>
           </Flex>
@@ -82,9 +84,11 @@ export function PropertySheet() {
             <Box className="w-full ">
               <Input
                 placeholder="480"
+                type="number"
+                min="0"
                 className="rounded-none border-none"
                 value={height}
-                onChange={(e) => setHeight(e.target.value)}
+                onChange={(e) => setHeight(Number(e.target.value))}
               />
             </Box>
           </Flex>
@@ -173,7 +177,7 @@ export function PropertySheet() {
                 </SelectTrigger>
                 <SelectContent className="border-gray-5">
                   <SelectItem value="dark">dark</SelectItem>
-                  <SelectItem value="right">right</SelectItem>
+                  <SelectItem value="light">light</SelectItem>
                 </SelectContent>
               </Select>
             </Box>

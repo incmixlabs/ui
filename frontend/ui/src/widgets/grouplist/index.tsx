@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Box, Card, Flex, Heading, ScrollArea, Text } from "@radix-ui/themes"
-import { IconButton } from "@/components"
+import { IconButton } from "@components"
 
 // Define our data types
 type Movie = {

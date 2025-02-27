@@ -172,6 +172,7 @@ const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
         {darkColors.map((color, index) => (
           <button
             key={`dark-${index}`}
+            type="button"
             className="h-6 w-6 cursor-pointer rounded-sm transition-transform hover:scale-110"
             style={{ backgroundColor: color }}
             onClick={() => onColorSelect({ hex: color })}
@@ -186,6 +187,7 @@ const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
             {group.map((color, colorIndex) => (
               <button
                 key={`color-${groupIndex}-${colorIndex}`}
+                type="button"
                 className="h-6 w-6 cursor-pointer rounded-sm transition-transform hover:scale-110"
                 style={{ backgroundColor: color }}
                 onClick={() => onColorSelect({ hex: color })}
