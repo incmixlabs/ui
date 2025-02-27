@@ -24,7 +24,6 @@
   },
   "dependencies": {
     "@casl/react": "5.0.0",
-    "@electric-sql/pglite-react": "catalog:",
     "@incmix/store": "workspace: *",
     "@incmix/ui": "workspace: *",
     "@incmix/utils": "catalog:",

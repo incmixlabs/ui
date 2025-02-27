@@ -44,7 +44,7 @@ const TasksPage = () => {
 
   const {
     data: columns,
-    isLoading: fetchingColumns,
+    // isLoading: fetchingColumns,
     refetch: refetchColumns,
   } = useQuery({
     queryKey: ["columns", selectedProject],
@@ -60,7 +60,7 @@ const TasksPage = () => {
   })
   const {
     data: tasks,
-    isLoading: fetchingTasks,
+    // isLoading: fetchingTasks,
     refetch: refetchTasks,
   } = useQuery({
     queryKey: ["tasks", selectedProject],
