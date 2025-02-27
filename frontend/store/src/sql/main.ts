@@ -1,5 +1,3 @@
-// main.ts
-
 import { addRxPlugin, createRxDatabase } from "rxdb"
 import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode"
 import {
@@ -10,6 +8,7 @@ import {
 } from "./types"
 
 import { getRxStorageIndexedDB } from "rxdb-premium/plugins/storage-indexeddb"
+
 import { RxDBMigrationSchemaPlugin } from "rxdb/plugins/migration-schema"
 import { RxDBUpdatePlugin } from "rxdb/plugins/update"
 import { wrappedValidateAjvStorage } from "rxdb/plugins/validate-ajv"
