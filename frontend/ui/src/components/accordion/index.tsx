@@ -17,15 +17,16 @@ export type AccordionProps = {
   items: AccordionItems[]
   icon?: ReactElement
   className?: string
+  triggerClassName?: string
 }
 
-export const Accordion = ({ type = "single", items }: AccordionProps) => {
+export const Accordion = ({ type = "single", items, triggerClassName }: AccordionProps) => {
   return (
     <RadixAccordion type={type}>
       {items.map((item, index) => (
         // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
         <RadixAccordionItem value={item.value ?? index.toString()} key={index}>
-          <RadixAccordionTrigger>{item.label}</RadixAccordionTrigger>
+          <RadixAccordionTrigger >{item.label}</RadixAccordionTrigger>
           <RadixAccordionContent>{item.content}</RadixAccordionContent>
         </RadixAccordionItem>
       ))}
