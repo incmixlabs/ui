@@ -19,6 +19,19 @@ import React from "react"
 import { useAuth, useCurrentUser } from "@auth"
 import { useOrganizationStore } from "@incmix/store"
 import { USERS_API_URL } from "@incmix/ui/constants"
+import {
+  SecondarySidebar,
+  SidebarErrorFallback,
+} from "@incmix/ui/secondary-sidebars"
+import { FileFolder } from "@incmix/ui/secondary-sidebars/file-folder"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarHeaderLabel,
+  SidebarRail,
+} from "@incmix/ui/sidebar"
 import { createAbilityFromPermissions } from "@incmix/utils/casl"
 import type { Permission } from "@incmix/utils/types"
 import { useQuery } from "@tanstack/react-query"
@@ -29,16 +42,6 @@ import { useTranslation } from "react-i18next"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
 import { OrgSwitcher } from "./org-switcher"
-import SecondarySidebar from "./secondary-sidebar/secondary-sidebar"
-import SidebarErrorFallback from "./secondary-sidebar/secondary-sidebar-fallback"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarHeaderLabel,
-  SidebarRail,
-} from "./sidebar"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation(["common", "sidebar"])
@@ -198,7 +201,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <div>
               <img
                 className="inline-block h-8 w-8"
-                src="/tauri.svg"
+                src="/incmix.svg"
                 alt="Incmix logo"
               />
               <span className="group-data-[collapsible=icon]:hidden">
@@ -219,7 +222,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarRail />
       </Sidebar>
       <ErrorBoundary fallback={<SidebarErrorFallback />}>
-        <SecondarySidebar />
+        <SecondarySidebar>
+          <FileFolder />
+        </SecondarySidebar>
       </ErrorBoundary>
     </>
   )

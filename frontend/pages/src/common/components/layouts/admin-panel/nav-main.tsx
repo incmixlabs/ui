@@ -7,8 +7,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@incmix/ui/collapsible"
-import { Link } from "@tanstack/react-router"
-import type React from "react"
 import {
   SidebarGroup,
   SidebarMenu,
@@ -17,7 +15,9 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "./sidebar"
+} from "@incmix/ui/sidebar"
+import { Link } from "@tanstack/react-router"
+import type React from "react"
 
 export function NavMain({
   items,

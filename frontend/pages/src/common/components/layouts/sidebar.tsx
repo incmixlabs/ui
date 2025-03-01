@@ -1,7 +1,7 @@
 import { I18n } from "@incmix/pages/i18n"
 import { useOrganizationStore, useSidebarStore } from "@incmix/store"
-import { Sidebar, SidebarItem, SidebarSubItem } from "@incmix/ui"
 import { USERS_API_URL } from "@incmix/ui/constants"
+import { Sidebar, SidebarItem, SidebarSubItem } from "@incmix/ui/sidebar"
 import { createAbilityFromPermissions } from "@incmix/utils/casl"
 import type { Permission } from "@incmix/utils/types"
 import {

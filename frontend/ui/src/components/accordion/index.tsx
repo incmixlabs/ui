@@ -20,11 +20,7 @@ export type AccordionProps = {
   triggerClassName?: string
 }
 
-export const Accordion = ({
-  type = "single",
-  items,
-  triggerClassName,
-}: AccordionProps) => {
+export const Accordion = ({ type = "single", items }: AccordionProps) => {
   return (
     <RadixAccordion type={type}>
       {items.map((item, index) => (
