@@ -61,7 +61,7 @@ interface MultiSelectProps
   isLabelFormOpen?: boolean
   setIsLabelFormOpen?: (isLabelFormOpen: boolean) => void
   labelColor?: string
-  setLabelColor?: (isLabelFormOpen: string) => void
+  setLabelColor?: (labelColor: string) => void
   handleAddNewLabel?: (e: React.FormEvent) => void
 }
 
@@ -112,21 +112,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
       onValueChange([])
     }
 
-<<<<<<< HEAD
 
-
-=======
-    // const filteredOptions = options.filter((option) => !option.disable);
-    // const toggleAll = () => {
-    //   if (selectedValues.length === filteredOptions.length) {
-    //     handleClear();
-    //   } else {
-    //     const allValues = filteredOptions.map((option) => option.value);
-    //     setSelectedValues(allValues);
-    //     onValueChange(allValues);
-    //   }
-    // };
->>>>>>> main
 
     return (
       <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>

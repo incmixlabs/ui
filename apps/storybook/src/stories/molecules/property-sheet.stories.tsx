@@ -1,4 +1,3 @@
-import { useThemeStore } from "@incmix/store"
 import { PropertySheet } from "@incmix/ui/widgets"
 import type { Meta, StoryObj } from "@storybook/react"
 
