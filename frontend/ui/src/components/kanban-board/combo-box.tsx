@@ -1,4 +1,3 @@
-"use client"
 import { CheckIcon, ChevronDown, Plus, XCircle, XIcon } from "lucide-react"
 import * as React from "react"
 

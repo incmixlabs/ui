@@ -1,5 +1,5 @@
-import React from "react";
-import { Badge } from "../badge";
+import React from "react"
+import { Badge } from "../badge"
 import { BadgeProps } from "@radix-ui/themes"
 
 

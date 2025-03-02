@@ -42,6 +42,8 @@ export {
 export * from "./scroll-area"
 export * from "./stepper"
 export * from "./sheet"
+export * from "./badges"
+export * from "./multiple-selector"
 export * from "./skeleton"
 export * from "./tooltip"
 export { Separator } from "@radix-ui/themes"

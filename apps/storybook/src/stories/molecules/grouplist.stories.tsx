@@ -27,6 +27,5 @@ type Story = StoryObj<typeof GroupList>
 
 export const Default: Story = {
   args: {
-    location: { lat: "40.730610", lon: "-73.935242" },
   },
 }
