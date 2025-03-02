@@ -148,7 +148,7 @@ export function PropertySheet() {
             <Box className="w-full p-2 px-3">
               <Flex align="center" gap="1">
                 <Checkbox id="jsonp-checkbox" />
-                <label htmlFor="jsonp-checkbox" className="text-sm sr-only">Enable JSONP</label>
+                <label htmlFor="jsonp-checkbox" className="sr-only text-sm">Enable JSONP</label>
               </Flex>
             </Box>
           </Flex>
@@ -217,7 +217,7 @@ export function PropertySheet() {
               <Popover.Trigger>
                 <Button
                   variant="soft"
-                  className="color-swatch h-4 w-4 border-gray-4 border cursor-pointer rounded-sm"
+                  className="color-swatch h-4·w-4 cursor-pointer rounded-sm border border-gray-4"
                   style={{ backgroundColor: color }}
                 />
               </Popover.Trigger>

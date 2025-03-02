@@ -169,9 +169,9 @@ const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
   return (
     <div className="bg-white p-2">
       <div className="mb-1 flex justify-between">
-        {darkColors.map((color, index) => (
+        {darkColors.map((color) => (
           <button
-            key={`dark-${index}`}
+            key={`dark-${color}`}
             type="button"
             className="h-6 w-6 cursor-pointer rounded-sm transition-transform hover:scale-110"
             style={{ backgroundColor: `${color}` }}
@@ -184,9 +184,9 @@ const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
       <div className="flex justify-between">
         {colorGroups.map((group, groupIndex) => (
           <div key={`group-${groupIndex}`} className="flex flex-col gap-1">
-            {group.map((color, colorIndex) => (
+            {group.map((color) => (
               <button
-                key={`color-${groupIndex}-${colorIndex}`}
+                key={`color-${groupIndex}-${color}`}
                 type="button"
                 className="h-6 w-6 cursor-pointer rounded-sm transition-transform hover:scale-110"
                 style={{ backgroundColor: `${color}` }}

@@ -32,21 +32,18 @@ export const assignData = [
     label: "Regina Cooper",
     avatarSrc: KanbanImages.user1,
     color: "orange",
-
   },
   {
     value: "jacob-hawkins",
     label: "Jacob Hawkins",
     avatarSrc: KanbanImages.user2,
     color: "blue",
-
   },
   {
     value: "jane-wilson",
     label: "Jane Wilson",
     avatarSrc: KanbanImages.user1,
     color: "green",
-
   },
 ]
 export const labelsData = [

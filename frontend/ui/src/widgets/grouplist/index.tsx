@@ -17,7 +17,7 @@ type Year = {
 
 interface GroupListProps {
   years?: Year[]
-  defaultView?: 'years' | 'movies'
+  defaultView?: "years" | "movies"
   defaultSelectedYear?: Year | null
 }
 

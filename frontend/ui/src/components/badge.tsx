@@ -20,7 +20,7 @@ export const Badge = ({
     const { variant } = props;
     return (
         <RadixBadge
-            className={cn('', className, isBlackColor && 'dark:bg-gray-7 bg-gray-5 text-black dark:text-white', isBlackColor && variant === "solid" && "dark:bg-black bg-white dark:text-white text-black")}
+            className={cn('', className, isBlackColor && 'bg-gray-5 text-black dark:bg-gray-7 dark:text-white', isBlackColor && variant === "solid" && "bg-white text-black dark:bg-black dark:text-white")}
             color={isBlackColor ? undefined : color as BadgeProps["color"]}
             {...props}
         >

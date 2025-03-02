@@ -5,6 +5,8 @@ import { cn } from "utils"
 
 import { Box, Flex, Grid, Popover } from "@radix-ui/themes"
 import { Avatar } from "../avatar"
+import { Badge } from "../badge"
+import type { ExtendedColorType } from "../badge"
 import { Button, IconButton } from "../button"
 import {
   Command,
@@ -16,7 +18,6 @@ import {
   CommandSeparator,
 } from "../command"
 import { Input } from "../form"
-import { Badge, ExtendedColorType } from "../badge"
 
 /**
  * Props for MultiSelect component
@@ -168,7 +169,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                         {option.avatarSrc && (
                           <Avatar src={option.avatarSrc} className="h-8 w-8" />
                         )}
-                        <Badge color={option.color as ExtendedColorType} variant="solid" className="py-1.5 px-3">
+                        <Badge color={option.color as ExtendedColorType} variant="solid" className="px-3 py-1.5">
                           {option.label}
                         </Badge>
                       </div>
@@ -197,7 +198,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                           name="labelName"
                           type="text"
                           placeholder="Enter label name"
-                          className="w-full px-3 py-2 border bg-gray-1 border-gray-5 rounded-md mb-3"
+                          className="mb-3 w-full rounded-md border border-gray-5 bg-gray-1 px-3 py-2"
                           required
                         />
 
@@ -207,28 +208,28 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                             <Popover.Trigger>
                               <Button
                                 variant="solid"
-                                className="color-swatch h-7 w-8 border border-gray-12 cursor-pointer rounded-sm"
+                                className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
                                 color={labelColor as any}
                               />
                             </Popover.Trigger>
                             <Popover.Content
                               alignOffset={-75}
                               width="190px"
-                              className="overflow-hidden p-3 z-[888] bg-white"
+                              className="z-[888] overflow-hidden bg-white p-3"
                             >
                               <Grid className="w-fit" columns="6" gap="2">
-                                <Button variant="solid" color="blue" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("blue")} />
-                                <Button variant="solid" color="green" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("green")} />
-                                <Button variant="solid" color="red" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("red")} />
-                                <Button variant="solid" color="amber" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("amber")} />
-                                <Button variant="solid" color="purple" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("purple")} />
-                                <Button variant="solid" color="teal" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("teal")} />
-                                <Button variant="solid" color="pink" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("pink")} />
-                                <Button variant="solid" color="indigo" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("indigo")} />
-                                <Button variant="solid" color="lime" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("lime")} />
-                                <Button variant="solid" color="orange" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("orange")} />
-                                <Button variant="solid" color="violet" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("violet")} />
-                                <Button variant="solid" color="cyan" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("cyan")} />
+                                <Button variant="solid" color="blue" className="h-6 w-6 rounded-full" onClick={() => setLabelColor?.("blue")} />
+                                <Button variant="solid" color="green" className="h-6 w-6 rounded-full" onClick={() => setLabelColor?.("green")} />
+                                <Button variant="solid" color="red" className="h-6 w-6 rounded-full" onClick={() => setLabelColor?.("red")} />
+                                <Button variant="solid" color="amber" className="h-6 w-6 rounded-full" onClick={() => setLabelColor?.("amber")} />
+                                <Button variant="solid" color="purple" className="h-6 w-6 rounded-full" onClick={() => setLabelColor?.("purple")} />
+                                <Button variant="solid" color="teal" className="h-6 w-6 rounded-full" onClick={() => setLabelColor?.("teal")} />
+                                <Button variant="solid" color="pink" className="h-6 w-6 rounded-full" onClick={() => setLabelColor?.("pink")} />
+                                <Button variant="solid" color="indigo" className="h-6 w-6 rounded-full" onClick={() => setLabelColor?.("indigo")} />
+                                <Button variant="solid" color="lime" className="h-6 w-6 rounded-full" onClick={() => setLabelColor?.("lime")} />
+                                <Button variant="solid" color="orange" className="h-6 w-6 rounded-full" onClick={() => setLabelColor?.("orange")} />
+                                <Button variant="solid" color="violet" className="h-6 w-6 rounded-full" onClick={() => setLabelColor?.("violet")} />
+                                <Button variant="solid" color="cyan" className="h-6 w-6 rounded-full" onClick={() => setLabelColor?.("cyan")} />
                               </Grid>
                             </Popover.Content>
                           </Popover.Root>
@@ -237,7 +238,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                               type="submit"
                               color="blue"
                               variant="solid"
-                              className="h-8 px-3 rounded-md"
+                              className="h-8 rounded-md px-3"
                             >
                               Save
                             </Button>
@@ -246,7 +247,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                               type="button"
                               color="red"
                               variant="solid"
-                              onClick={() => setIsLabelFormOpen && setIsLabelFormOpen(false)}
+                              onClick={() => setIsLabelFormOpen?.(false)}
                             >
                               ✕
                             </Button>
@@ -254,7 +255,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                         </Flex>
                       </form>
                     ) : <Button
-                      onClick={() => setIsLabelFormOpen && setIsLabelFormOpen(true)}
+                      onClick={() => setIsLabelFormOpen?.(true)}
                       className="h-10 w-full rounded-md bg-blue-500 px-4 text-white ">
                       Add new label
                     </Button>}
