@@ -1,89 +1,89 @@
 
-import { Command as CommandPrimitive, useCommandState } from 'cmdk'
-import { X } from 'lucide-react'
-import * as React from 'react'
-import { forwardRef, useEffect } from 'react'
+import { Command as CommandPrimitive, useCommandState } from "cmdk"
+import { X } from "lucide-react"
+import * as React from "react"
+import { forwardRef, useEffect } from "react"
 
-import { Command, CommandGroup, CommandItem, CommandList } from '../command'
-import { cn } from '@utils'
-import { Badge } from '../badge'
+import { Command, CommandGroup, CommandItem, CommandList } from "../command"
+import { cn } from "@utils"
+import { Badge } from "../badge"
 
 export interface Option {
-  value: string;
-  label: string;
-  disable?: boolean;
+  value: string
+  label: string
+  disable?: boolean
   /** fixed option that can't be removed. */
-  fixed?: boolean;
+  fixed?: boolean
   /** Group the options by providing key. */
-  [key: string]: string | boolean | undefined;
+  [key: string]: string | boolean | undefined
 }
 interface GroupOption {
   [key: string]: Option[];
 }
 
 interface MultipleSelectorProps {
-  value?: Option[];
-  defaultOptions?: Option[];
+  value?: Option[]
+  defaultOptions?: Option[]
   /** manually controlled options */
-  options?: Option[];
-  placeholder?: string;
+  options?: Option[]
+  placeholder?: string
   /** Loading component. */
-  loadingIndicator?: React.ReactNode;
+  loadingIndicator?: React.ReactNode
   /** Empty component. */
-  emptyIndicator?: React.ReactNode;
+  emptyIndicator?: React.ReactNode
   /** Debounce time for async search. Only work with `onSearch`. */
-  delay?: number;
+  delay?: number
   /**
    * Only work with `onSearch` prop. Trigger search when `onFocus`.
    * For example, when user click on the input, it will trigger the search to get initial options.
    **/
-  triggerSearchOnFocus?: boolean;
+  triggerSearchOnFocus?: boolean
   /** async search */
-  onSearch?: (value: string) => Promise<Option[]>;
+  onSearch?: (value: string) => Promise<Option[]>
   /**
    * sync search. This search will not showing loadingIndicator.
    * The rest props are the same as async search.
    * i.e.: creatable, groupBy, delay.
    **/
-  onSearchSync?: (value: string) => Option[];
-  onChange?: (options: Option[]) => void;
+  onSearchSync?: (value: string) => Option[]
+  onChange?: (options: Option[]) => void
   /** Limit the maximum number of selected options. */
-  maxSelected?: number;
+  maxSelected?: number
   /** When the number of selected options exceeds the limit, the onMaxSelected will be called. */
-  onMaxSelected?: (maxLimit: number) => void;
+  onMaxSelected?: (maxLimit: number) => void
   /** Hide the placeholder when there are options selected. */
-  hidePlaceholderWhenSelected?: boolean;
-  disabled?: boolean;
+  hidePlaceholderWhenSelected?: boolean
+  disabled?: boolean
   /** Group the options base on provided key. */
-  groupBy?: string;
-  className?: string;
-  badgeClassName?: string;
+  groupBy?: string
+  className?: string
+  badgeClassName?: string
   /**
    * First item selected is a default behavior by cmdk. That is why the default is true.
    * This is a workaround solution by add a dummy item.
    *
    * @reference: https://github.com/pacocoursey/cmdk/issues/171
    */
-  selectFirstItem?: boolean;
+  selectFirstItem?: boolean
   /** Allow user to create option when there is no option matched. */
-  creatable?: boolean;
+  creatable?: boolean
   /** Props of `Command` */
-  commandProps?: React.ComponentPropsWithoutRef<typeof Command>;
+  commandProps?: React.ComponentPropsWithoutRef<typeof Command>
   /** Props of `CommandInput` */
   inputProps?: Omit<
     React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>,
     'value' | 'placeholder' | 'disabled'
-  >;
+  >
   /** hide the clear all button. */
-  hideClearAllButton?: boolean;
+  hideClearAllButton?: boolean
   defaultColor?: 'gray' | 'indigo' | 'cyan' | 'orange' | 'crimson'
 }
 
 export interface MultipleSelectorRef {
-  selectedValue: Option[];
-  input: HTMLInputElement;
-  focus: () => void;
-  reset: () => void;
+  selectedValue: Option[]
+  input: HTMLInputElement
+  focus: () => void
+  reset: () => void
 }
 
 export function useDebounce<T>(value: T, delay?: number): T {
@@ -297,7 +297,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
         setOptions(transToGroupOption(res || [], groupBy));
       };
 
-      const exec = async () => {
+      const exec = () => {
         if (!onSearchSync || !open) return;
 
         if (triggerSearchOnFocus) {
@@ -538,7 +538,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
               }}
               placeholder={hidePlaceholderWhenSelected && selected.length !== 0 ? '' : placeholder}
               className={cn(
-                'block w-full border-gray-5 rounded-md bg-transparent outline-none placeholder:text-muted-foreground',
+                'block w-full rounded-md border-gray-5 bg-transparent outline-none placeholder:text-muted-foreground',
                 {
                   'w-full': hidePlaceholderWhenSelected,
                   'px-3 py-2': selected.length === 0,
@@ -591,37 +591,35 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
                   {!selectFirstItem && <CommandItem value="-" className="hidden" />}
                   {Object.entries(selectables).map(([key, dropdowns]) => (
                     <CommandGroup key={key} heading={key} className="h-full overflow-auto">
-                      <>
-                        {dropdowns.map((option) => {
-                          return (
-                            <CommandItem
-                              key={option.value}
-                              value={option.label}
-                              disabled={option.disable}
-                              onMouseDown={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                              }}
-                              onSelect={() => {
-                                if (selected.length >= maxSelected) {
-                                  onMaxSelected?.(selected.length);
-                                  return;
-                                }
-                                setInputValue('');
-                                const newOptions = [...selected, option];
-                                setSelected(newOptions);
-                                onChange?.(newOptions);
-                              }}
-                              className={cn(
-                                'm-1 cursor-pointer p-2',
-                                option.disable && 'cursor-default ',
-                              )}
-                            >
-                              {option.label}
-                            </CommandItem>
-                          );
-                        })}
-                      </>
+                      {dropdowns.map((option) => {
+                        return (
+                          <CommandItem
+                            key={option.value}
+                            value={option.label}
+                            disabled={option.disable}
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                            }}
+                            onSelect={() => {
+                              if (selected.length >= maxSelected) {
+                                onMaxSelected?.(selected.length);
+                                return;
+                              }
+                              setInputValue('');
+                              const newOptions = [...selected, option];
+                              setSelected(newOptions);
+                              onChange?.(newOptions);
+                            }}
+                            className={cn(
+                              'm-1 cursor-pointer p-2',
+                              option.disable && 'cursor-default ',
+                            )}
+                          >
+                            {option.label}
+                          </CommandItem>
+                        );
+                      })}
                     </CommandGroup>
                   ))}
 

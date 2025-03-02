@@ -4,7 +4,7 @@ import * as React from "react"
 
 import { cn } from "utils"
 
-import { Popover } from "@radix-ui/themes"
+import { Box, Flex, Grid, Popover } from "@radix-ui/themes"
 import { Avatar } from "../avatar"
 import { Button, IconButton } from "../button"
 import {
@@ -16,6 +16,8 @@ import {
   CommandList,
   CommandSeparator,
 } from "../command"
+import { Input } from "../form"
+import { Badge, ExtendedColorType } from "../badge"
 
 /**
  * Props for MultiSelect component
@@ -34,8 +36,10 @@ interface MultiSelectProps
     /** Optional icon component to display alongside the option. */
     icon?: React.ComponentType<{ className?: string }>
     avatarSrc?: string
-    labelStyle?: string
+    color?: string
     disable?: boolean
+
+
   }[]
 
   /**
@@ -46,17 +50,20 @@ interface MultiSelectProps
 
   /** The default selected values when the component mounts. */
   defaultValue?: string[]
-
   /**
    * Placeholder text to be displayed when no values are selected.
    * Optional, defaults to "Select options".
    */
   placeholder?: string
-
   popoverClass?: string
-
   addNewLabel?: boolean
   title?: string
+  formRef?: React.RefObject<HTMLFormElement>
+  isLabelFormOpen?: boolean
+  setIsLabelFormOpen?: (isLabelFormOpen: boolean) => void
+  labelColor?: string
+  setLabelColor?: (isLabelFormOpen: string) => void
+  handleAddNewLabel?: (e: React.FormEvent) => void
 }
 
 export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
@@ -68,10 +75,17 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
     title,
     popoverClass,
     addNewLabel = false,
+    formRef,
+    labelColor,
+    setLabelColor,
+    isLabelFormOpen,
+    setIsLabelFormOpen,
+    handleAddNewLabel,
   }) => {
     const [selectedValues, setSelectedValues] =
       React.useState<string[]>(defaultValue)
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false)
+
 
     const handleInputKeyDown = (
       event: React.KeyboardEvent<HTMLInputElement>
@@ -99,6 +113,9 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
       onValueChange([])
     }
 
+
+
+
     return (
       <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
         <Popover.Trigger>
@@ -118,7 +135,9 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
           width="280px"
         >
           {title && <h1 className="font-medium">{title}</h1>}
-          <Command>
+          <Command
+            className="bg-transparent"
+          >
             <CommandInput
               placeholder={placeholder}
               onKeyDown={handleInputKeyDown}
@@ -126,23 +145,6 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup>
-                {/* <CommandItem
-                  key="all"
-                  onSelect={toggleAll}
-                  className="cursor-pointer"
-                >
-                  <div
-                    className={cn(
-                      "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                      selectedValues.length === filteredOptions.length
-                        ? "bg-primary text-primary-foreground"
-                        : "opacity-50 [&_svg]:invisible",
-                    )}
-                  >
-                    <CheckIcon className="h-4 w-4" />
-                  </div>
-                  <span>(Select All)</span>
-                </CommandItem> */}
                 {options.map((option) => {
                   const isSelected = selectedValues.includes(option.value)
                   const isDisabled = option.disable
@@ -168,9 +170,9 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                         {option.avatarSrc && (
                           <Avatar src={option.avatarSrc} className="h-8 w-8" />
                         )}
-                        <span className={cn("", option.labelStyle)}>
+                        <Badge color={option.color as ExtendedColorType} variant="solid" className="py-1.5 px-3">
                           {option.label}
-                        </span>
+                        </Badge>
                       </div>
 
                       <div
@@ -191,9 +193,74 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
               <CommandGroup>
                 {addNewLabel ? (
                   <>
-                    <Button className="h-10 w-full rounded-md bg-blue-500 px-4 text-white ">
+                    {isLabelFormOpen ? (
+                      <form ref={formRef} onSubmit={handleAddNewLabel} className="p-2">
+                        <Input
+                          name="labelName"
+                          type="text"
+                          placeholder="Enter label name"
+                          className="w-full px-3 py-2 border bg-gray-1 border-gray-5 rounded-md mb-3"
+                          required
+                        />
+
+                        <Flex justify={"between"}>
+
+                          <Popover.Root>
+                            <Popover.Trigger>
+                              <Button
+                                variant="solid"
+                                className="color-swatch h-7 w-8 border border-gray-12 cursor-pointer rounded-sm"
+                                color={labelColor as any}
+                              />
+                            </Popover.Trigger>
+                            <Popover.Content
+                              alignOffset={-75}
+                              width="190px"
+                              className="overflow-hidden p-3 z-[888] bg-white"
+                            >
+                              <Grid className="w-fit" columns="6" gap="2">
+                                <Button variant="solid" color="blue" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("blue")} />
+                                <Button variant="solid" color="green" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("green")} />
+                                <Button variant="solid" color="red" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("red")} />
+                                <Button variant="solid" color="amber" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("amber")} />
+                                <Button variant="solid" color="purple" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("purple")} />
+                                <Button variant="solid" color="teal" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("teal")} />
+                                <Button variant="solid" color="pink" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("pink")} />
+                                <Button variant="solid" color="indigo" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("indigo")} />
+                                <Button variant="solid" color="lime" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("lime")} />
+                                <Button variant="solid" color="orange" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("orange")} />
+                                <Button variant="solid" color="violet" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("violet")} />
+                                <Button variant="solid" color="cyan" className="h-6 w-6 rounded-full" onClick={() => setLabelColor && setLabelColor("cyan")} />
+                              </Grid>
+                            </Popover.Content>
+                          </Popover.Root>
+                          <Flex gap="2">
+                            <Button
+                              type="submit"
+                              color="blue"
+                              variant="solid"
+                              className="h-8 px-3 rounded-md"
+                            >
+                              Save
+                            </Button>
+
+                            <Button
+                              type="button"
+                              color="red"
+                              variant="solid"
+                              onClick={() => setIsLabelFormOpen && setIsLabelFormOpen(false)}
+                            >
+                              ✕
+                            </Button>
+                          </Flex>
+                        </Flex>
+                      </form>
+                    ) : <Button
+                      onClick={() => setIsLabelFormOpen && setIsLabelFormOpen(true)}
+                      className="h-10 w-full rounded-md bg-blue-500 px-4 text-white ">
                       Add new label
-                    </Button>
+                    </Button>}
+
                   </>
                 ) : (
                   <>

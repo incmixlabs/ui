@@ -1,7 +1,7 @@
-import React, { useState } from "react"
+import { IconButton } from "@components"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Box, Card, Flex, Heading, ScrollArea, Text } from "@radix-ui/themes"
-import { IconButton } from "@components"
+import React, { useState } from "react"
 
 type Movie = {
   id: number
@@ -16,9 +16,9 @@ type Year = {
 
 
 interface GroupListProps {
-  years?: Year[];
-  defaultView?: 'years' | 'movies';
-  defaultSelectedYear?: Year | null;
+  years?: Year[]
+  defaultView?: 'years' | 'movies'
+  defaultSelectedYear?: Year | null
 }
 
 const defaultYears: Year[] = [
@@ -186,19 +186,19 @@ const defaultYears: Year[] = [
 
 export const GroupList = ({
   years = defaultYears,
-  defaultView = 'years',
+  defaultView = "years",
   defaultSelectedYear = null
 }: GroupListProps) => {
-  const [selectedYear, setSelectedYear] = useState<Year | null>(defaultSelectedYear);
-  const [listView, setListView] = useState(defaultView);
+  const [selectedYear, setSelectedYear] = useState<Year | null>(defaultSelectedYear)
+  const [listView, setListView] = useState(defaultView)
 
   const handleYearClick = (year: Year) => {
-    setSelectedYear(year);
-    setListView("movies");
+    setSelectedYear(year)
+    setListView("movies")
   };
 
   const handleBackToYears = () => {
-    setListView("years");
+    setListView("years")
   };
 
   return (
@@ -247,7 +247,7 @@ export const GroupList = ({
               <button
                 key={movie.id}
                 type="button"
-                className="group relative flex items-center justify-center  w-full cursor-pointer border-gray-5 border-t p-4 text-left hover:bg-gray-3"
+                className="group relative flex w-full cursor-pointer items-center justify-start border-gray-5 border-t p-4 text-left hover:bg-gray-3"
               >
                 <Box className="absolute left-0 h-full w-1 bg-blue-700 opacity-0 group-hover:opacity-100" />
                 <Text as="span">

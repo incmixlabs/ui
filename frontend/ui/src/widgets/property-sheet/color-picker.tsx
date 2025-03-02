@@ -5,164 +5,164 @@ interface CompactColorPickerProps {
 const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
   // Dark colors - displayed horizontally
   const darkColors = [
-    "#000000",
-    "#303030",
-    "#474747",
-    "#5E5E5E",
-    "#757575",
-    "#8C8C8C",
-    "#A3A3A3",
-    "#BABABA",
-    "#D1D1D1",
-    "#E8E8E8",
-    "#FFFFFF",
+    "var(--gray-1)",
+    "var(--gray-2)",
+    "var(--gray-4)",
+    "var(--gray-5)",
+    "var(--gray-6)",
+    "var(--gray-7)",
+    "var(--gray-8)",
+    "var(--gray-9)",
+    "var(--gray-10)",
+    "var(--gray-11)",
+    "var(--gray-12)",
   ]
 
   // Other color groups - displayed vertically
   const redsColors = [
-    "#ff3b30",
-    "#f4574c",
-    "#f56c62",
-    "#f78179",
-    "#f8968f",
-    "#f9aba5",
-    "#fbc0bc",
-    "#fcd5d2",
-    "#fdeae8",
+    "var(--red-9)",
+    "var(--red-8)",
+    "var(--red-7)",
+    "var(--red-6)",
+    "var(--red-5)",
+    "var(--red-4)",
+    "var(--red-3)",
+    "var(--red-2)",
+    "var(--red-1)",
   ]
 
   const orangesColors = [
-    "#ff9700",
-    "#ffa21c",
-    "#ffae38",
-    "#ffb955",
-    "#ffc571",
-    "#ffd08d",
-    "#ffdcaa",
-    "#ffe7c6",
-    "#fff3e2",
+    "var(--orange-9)",
+    "var(--orange-8)",
+    "var(--orange-7)",
+    "var(--orange-6)",
+    "var(--orange-5)",
+    "var(--orange-4)",
+    "var(--orange-3)",
+    "var(--orange-2)",
+    "var(--orange-1)",
   ]
 
-  const yeallowsColors = [
-    "#ffea3b",
-    "#ffec50",
-    "#ffee66",
-    "#fff17c",
-    "#fff392",
-    "#fff5a7",
-    "#fff8bd",
-    "#fffad3",
-    "#fffce9",
+  const yellowsColors = [
+    "var(--yellow-9)",
+    "var(--yellow-8)",
+    "var(--yellow-7)",
+    "var(--yellow-6)",
+    "var(--yellow-5)",
+    "var(--yellow-4)",
+    "var(--yellow-3)",
+    "var(--yellow-2)",
+    "var(--yellow-1)",
   ]
 
   const leafColors = [
-    "#4cb050",
-    "#5fb863",
-    "#73c176",
-    "#87ca8a",
-    "#9bd39d",
-    "#afdbb1",
-    "#c3e4c4",
-    "#d7edd8",
-    "#ebf6eb",
+    "var(--grass-9)",
+    "var(--grass-8)",
+    "var(--grass-7)",
+    "var(--grass-6)",
+    "var(--grass-5)",
+    "var(--grass-4)",
+    "var(--grass-3)",
+    "var(--grass-2)",
+    "var(--grass-1)",
   ]
 
   const greensColors = [
-    "#009788",
-    "#1ca295",
-    "#38aea2",
-    "#55b9af",
-    "#71c5bc",
-    "#8dd0ca",
-    "#aadcd7",
-    "#c6e7e4",
-    "#e2f3f1",
+    "var(--green-9)",
+    "var(--green-8)",
+    "var(--green-7)",
+    "var(--green-6)",
+    "var(--green-5)",
+    "var(--green-4)",
+    "var(--green-3)",
+    "var(--green-2)",
+    "var(--green-1)",
   ]
 
   const tealsColors = [
-    "#00bcd4",
-    "#1cc3d8",
-    "#38cadd",
-    "#55d2e2",
-    "#71d9e7",
-    "#8de1eb",
-    "#aae8f0",
-    "#c6f0f5",
-    "#e2f7fa",
+    "var(--teal-9)",
+    "var(--teal-8)",
+    "var(--teal-7)",
+    "var(--teal-6)",
+    "var(--teal-5)",
+    "var(--teal-4)",
+    "var(--teal-3)",
+    "var(--teal-2)",
+    "var(--teal-1)",
   ]
 
   const bluesColors = [
-    "#2196f3",
-    "#39a1f4",
-    "#52adf5",
-    "#6bb9f7",
-    "#83c4f8",
-    "#9cd0f9",
-    "#b5dcfb",
-    "#cde7fc",
-    "#e6f3fd",
+    "var(--blue-9)",
+    "var(--blue-8)",
+    "var(--blue-7)",
+    "var(--blue-6)",
+    "var(--blue-5)",
+    "var(--blue-4)",
+    "var(--blue-3)",
+    "var(--blue-2)",
+    "var(--blue-1)",
   ]
 
-  const purple2Colors = [
-    "#3f51b5",
-    "#5464bd",
-    "#6977c5",
-    "#7f8bcd",
-    "#949ed5",
-    "#a9b1de",
-    "#bfc5e6",
-    "#d4d8ee",
-    "#e9ebf6",
+  const indigoColors = [
+    "var(--indigo-9)",
+    "var(--indigo-8)",
+    "var(--indigo-7)",
+    "var(--indigo-6)",
+    "var(--indigo-5)",
+    "var(--indigo-4)",
+    "var(--indigo-3)",
+    "var(--indigo-2)",
+    "var(--indigo-1)",
   ]
 
-  const purpleColors = [
-    "#673bb7",
-    "#7750bf",
-    "#8866c7",
-    "#997ccf",
-    "#aa92d7",
-    "#bba7df",
-    "#ccbde7",
-    "#ddd3ef",
-    "#eee9f7",
+  const violetColors = [
+    "var(--violet-9)",
+    "var(--violet-8)",
+    "var(--violet-7)",
+    "var(--violet-6)",
+    "var(--violet-5)",
+    "var(--violet-4)",
+    "var(--violet-3)",
+    "var(--violet-2)",
+    "var(--violet-1)",
   ]
 
-  const purplesColors = [
-    "#9c28b1",
-    "#a73fb9",
-    "#b257c2",
-    "#bd6fcb",
-    "#c887d3",
-    "#d39fdc",
-    "#deb7e5",
-    "#e9cfed",
-    "#f4e7f6",
+  const plumsColors = [
+    "var(--plum-9)",
+    "var(--plum-8)",
+    "var(--plum-7)",
+    "var(--plum-6)",
+    "var(--plum-5)",
+    "var(--plum-4)",
+    "var(--plum-3)",
+    "var(--plum-2)",
+    "var(--plum-1)",
   ]
 
   const pinksColors = [
-    "#ea1e63",
-    "#ec3774",
-    "#ee5085",
-    "#f16997",
-    "#f382a8",
-    "#f59bb9",
-    "#f8b4cb",
-    "#facddc",
-    "#fce6ed",
+    "var(--pink-9)",
+    "var(--pink-8)",
+    "var(--pink-7)",
+    "var(--pink-6)",
+    "var(--pink-5)",
+    "var(--pink-4)",
+    "var(--pink-3)",
+    "var(--pink-2)",
+    "var(--pink-1)",
   ]
 
   // All vertical color groups
   const colorGroups = [
     redsColors,
     orangesColors,
-    yeallowsColors,
+    yellowsColors,
     leafColors,
     greensColors,
     tealsColors,
     bluesColors,
-    purple2Colors,
-    purpleColors,
-    purplesColors,
+    indigoColors,
+    violetColors,
+    plumsColors,
     pinksColors,
   ]
 
@@ -174,7 +174,7 @@ const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
             key={`dark-${index}`}
             type="button"
             className="h-6 w-6 cursor-pointer rounded-sm transition-transform hover:scale-110"
-            style={{ backgroundColor: color }}
+            style={{ backgroundColor: `${color}` }}
             onClick={() => onColorSelect({ hex: color })}
             title={color}
           />
@@ -189,7 +189,7 @@ const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
                 key={`color-${groupIndex}-${colorIndex}`}
                 type="button"
                 className="h-6 w-6 cursor-pointer rounded-sm transition-transform hover:scale-110"
-                style={{ backgroundColor: color }}
+                style={{ backgroundColor: `${color}` }}
                 onClick={() => onColorSelect({ hex: color })}
                 title={color}
               />

@@ -1,21 +1,23 @@
-import React from 'react'
-import MultipleSelector, { Option } from './multiple-selector'
+import React from "react"
+import MultipleSelector from "./multiple-selector"
+import type { Option } from "./multiple-selector"
+
 
 const OPTIONS: Option[] = [
-  { label: 'Next.js', value: 'nextjs' },
-  { label: 'React', value: 'react' },
-  { label: 'Remix', value: 'remix' },
-  { label: 'Vite', value: 'vite' },
-  { label: 'Nuxt', value: 'nuxt' },
-  { label: 'Vue', value: 'vue' },
-  { label: 'Svelte', value: 'svelte' },
-  { label: 'Angular', value: 'angular', disable: true },
-  { label: 'Ember', value: 'ember', disable: true },
-  { label: 'Gatsby', value: 'gatsby' },
-  { label: 'Astro', value: 'astro' },
-]
+  { label: "Next.js", value: "nextjs" },
+  { label: "React", value: "react" },
+  { label: "Remix", value: "remix" },
+  { label: "Vite", value: "vite" },
+  { label: "Nuxt", value: "nuxt" },
+  { label: "Vue", value: "vue" },
+  { label: "Svelte", value: "svelte" },
+  { label: "Angular", value: "angular", disable: true },
+  { label: "Ember", value: "ember", disable: true },
+  { label: "Gatsby", value: "gatsby" },
+  { label: "Astro", value: "astro" },
+];
 
-type ThemeColor = 'gray' | 'indigo' | 'cyan' | 'orange' | 'crimson'
+type ThemeColor = "gray" | "indigo" | "cyan" | "orange" | "crimson";
 
 interface MultipleSelectorControlledProps {
   themeColor: ThemeColor

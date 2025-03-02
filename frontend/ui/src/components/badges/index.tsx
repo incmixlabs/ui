@@ -1,6 +1,6 @@
-import React from 'react';
-import { Badge } from '../badge';
-import { BadgeProps } from '@radix-ui/themes'
+import React from "react";
+import { Badge } from "../badge";
+import { BadgeProps } from "@radix-ui/themes"
 
 
 type ThemeColor = BadgeProps["color"] | "black"

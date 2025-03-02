@@ -30,19 +30,19 @@ const sheetVariants = cva(
 // Create context to manage sheet state
 const SheetContext = React.createContext<{
   open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }>({
   open: false,
-  setOpen: () => { },
+  setOpen: () => { }
 });
 
 interface SheetProps extends Omit<React.ComponentPropsWithoutRef<typeof Dialog.Root>, "open" | "onOpenChange"> {
-  defaultOpen?: boolean;
+  defaultOpen?: boolean
 }
 
 // Sheet component (using Dialog.Root from Themes)
 const Sheet = ({ defaultOpen = false, children, ...props }: SheetProps) => {
-  const [open, setOpen] = React.useState(defaultOpen);
+  const [open, setOpen] = React.useState(defaultOpen)
 
   return (
     <SheetContext.Provider value={{ open, setOpen }}>
@@ -60,7 +60,7 @@ interface SheetTriggerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "
 
 // Sheet Trigger with asChild support
 const SheetTrigger = ({ asChild, children, ...props }: SheetTriggerProps) => {
-  const { setOpen } = React.useContext(SheetContext);
+  const { setOpen } = React.useContext(SheetContext)
 
   if (asChild && React.isValidElement(children)) {
     const childProps = {
@@ -76,7 +76,7 @@ const SheetTrigger = ({ asChild, children, ...props }: SheetTriggerProps) => {
       },
     };
 
-    return React.cloneElement(children, childProps);
+    return React.cloneElement(children, childProps)
   }
 
   return (
@@ -93,7 +93,7 @@ interface SheetCloseProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "ch
 
 // Sheet Close with asChild support
 const SheetClose = ({ asChild, children, ...props }: SheetCloseProps) => {
-  const { setOpen } = React.useContext(SheetContext);
+  const { setOpen } = React.useContext(SheetContext)
 
   if (asChild && React.isValidElement(children)) {
     const childProps = {
@@ -121,8 +121,8 @@ const SheetClose = ({ asChild, children, ...props }: SheetCloseProps) => {
 interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof Dialog.Content>,
   VariantProps<typeof sheetVariants> {
-  notOverlay?: boolean;
-  hideCloseIcon?: boolean;
+  notOverlay?: boolean
+  hideCloseIcon?: boolean
 }
 
 // Sheet Content
@@ -141,7 +141,7 @@ const SheetContent = React.forwardRef<
     },
     ref
   ) => {
-    const { setOpen } = React.useContext(SheetContext);
+    const { setOpen } = React.useContext(SheetContext)
 
     return (
       <Dialog.Content

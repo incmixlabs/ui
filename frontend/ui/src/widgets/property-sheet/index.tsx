@@ -13,7 +13,6 @@ import {
   Text,
 } from "@radix-ui/themes"
 import { Input } from "@components"
-import { SketchPicker } from "react-color"
 import CompactColorPicker from "./color-picker"
 import {
   Select,
@@ -38,9 +37,20 @@ export const themeData = [
     avatarSrc: KanbanImages.user2,
   },
 ]
+
+const resolveColorVariable = (colorVar: string) => {
+  if (colorVar.startsWith("var(")) {
+    const variableName = colorVar.match(/var\((--[^)]+)\)/)?.[1];
+    if (variableName) {
+      return getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+    }
+  }
+  return colorVar;
+};
+
+
 export function PropertySheet() {
-  const [color, setColor] = useState("#BD6FCB")
-  // State to toggle the color picker visibility
+  const [color, setColor] = useState("#f76b15")
 
   const [width, setWidth] = useState(200)
   const [height, setHeight] = useState(480)
@@ -48,13 +58,13 @@ export function PropertySheet() {
 
   const [propertyType, setPropertyType] = useState("json")
   const [position, setPosition] = useState("right")
-  // const [theme, setTheme] = useState("left")
   const [theme, setTheme] = useState<string>("dark")
 
   const handleColorChange = (newColor: {
-    hex: React.SetStateAction<string>
+    hex: string
   }) => {
-    setColor(newColor.hex)
+    const resolvedColor = resolveColorVariable(newColor.hex);
+    setColor(resolvedColor);
   }
 
   return (
@@ -139,7 +149,7 @@ export function PropertySheet() {
             <Box className="w-full p-2 px-3">
               <Flex align="center" gap="1">
                 <Checkbox id="jsonp-checkbox" />
-                <label htmlFor="jsonp-checkbox" className="text-sm hidden">Enable JSONP</label>
+                <label htmlFor="jsonp-checkbox" className="text-sm sr-only">Enable JSONP</label>
               </Flex>
             </Box>
           </Flex>
@@ -208,7 +218,7 @@ export function PropertySheet() {
               <Popover.Trigger>
                 <Button
                   variant="soft"
-                  className="color-swatch h-4 w-4 cursor-pointer rounded-sm"
+                  className="color-swatch h-4 w-4 border-gray-4 border cursor-pointer rounded-sm"
                   style={{ backgroundColor: color }}
                 />
               </Popover.Trigger>
