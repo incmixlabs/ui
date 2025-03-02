@@ -6,7 +6,7 @@ import type { BadgeProps } from "@radix-ui/themes"
 type ThemeColor = BadgeProps["color"] | "black"
 
 interface BadgeComponentProps {
-  themeColor: ThemeColor;
+  themeColor: ThemeColor
 }
 
 export const BadgeComponent: React.FC<BadgeComponentProps> = ({ themeColor = "gray", }) => {

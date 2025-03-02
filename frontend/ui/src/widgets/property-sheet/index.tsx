@@ -1,4 +1,14 @@
-import { useState } from "react"
+import { Input } from "@components"
+import { KanbanImages } from "@components/kanban-board/images"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@components/select"
 import {
   Box,
   Button,
@@ -11,18 +21,9 @@ import {
   Popover,
   Text,
 } from "@radix-ui/themes"
-import { Input } from "@components"
+import { useState } from "react"
 import CompactColorPicker from "./color-picker"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select"
-import { KanbanImages } from "@components/kanban-board/images"
+
 
 export const themeData = [
   {
@@ -39,13 +40,13 @@ export const themeData = [
 
 const resolveColorVariable = (colorVar: string) => {
   if (colorVar.startsWith("var(")) {
-    const variableName = colorVar.match(/var\((--[^)]+)\)/)?.[1];
+    const variableName = colorVar.match(/var\((--[^)]+)\)/)?.[1]
     if (variableName) {
-      return getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+      return getComputedStyle(document.documentElement).getPropertyValue(variableName).trim()
     }
   }
-  return colorVar;
-};
+  return colorVar
+}
 
 
 export function PropertySheet() {
@@ -62,8 +63,8 @@ export function PropertySheet() {
   const handleColorChange = (newColor: {
     hex: string
   }) => {
-    const resolvedColor = resolveColorVariable(newColor.hex);
-    setColor(resolvedColor);
+    const resolvedColor = resolveColorVariable(newColor.hex)
+    setColor(resolvedColor)
   }
 
   return (

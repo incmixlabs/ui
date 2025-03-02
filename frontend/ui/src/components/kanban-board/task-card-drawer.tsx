@@ -329,7 +329,7 @@ export default function TaskCardDrawer({
                         {/* lables */}
                         <h2 className="font-medium text-gray-500">LABELS</h2>
                         <Flex className="gap-2">
-                          {allLabelsData && allLabelsData?.map((label) => (
+                          {allLabelsData?.map((label) => (
                             <Badge
                               color={label.color as ExtendedColorType}
                               variant="solid"
@@ -733,7 +733,7 @@ export default function TaskCardDrawer({
                           />
                         </Flex>
                         <Flex gap="2" wrap={"wrap"}>
-                          {allLabelsData && allLabelsData?.map((label) => (
+                          {allLabelsData?.map((label) => (
                             <Badge
                               color={label.color as ExtendedColorType}
                               variant="solid"

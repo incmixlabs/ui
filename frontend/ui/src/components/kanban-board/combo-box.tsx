@@ -36,10 +36,8 @@ interface MultiSelectProps
     /** Optional icon component to display alongside the option. */
     icon?: React.ComponentType<{ className?: string }>
     avatarSrc?: string
-    color?: string
+    color?: ExtendedColorType | string
     disable?: boolean
-
-
   }[]
 
   /**
@@ -86,7 +84,6 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
       React.useState<string[]>(defaultValue)
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false)
 
-
     const handleInputKeyDown = (
       event: React.KeyboardEvent<HTMLInputElement>
     ) => {
@@ -113,8 +110,6 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
       onValueChange([])
     }
 
-
-
     return (
       <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
         <Popover.Trigger>
@@ -134,8 +129,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
           width="280px"
         >
           {title && <h1 className="font-medium">{title}</h1>}
-          <Command
-            className="bg-transparent"
+          <Command className="bg-transparent"
           >
             <CommandInput
               placeholder={placeholder}
@@ -169,7 +163,9 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                         {option.avatarSrc && (
                           <Avatar src={option.avatarSrc} className="h-8 w-8" />
                         )}
-                        <Badge color={option.color as ExtendedColorType} variant="solid" className="px-3 py-1.5">
+                        <Badge
+                          // @ts-ignore 
+                          color={option.color} variant="solid" className="px-3 py-1.5">
                           {option.label}
                         </Badge>
                       </div>

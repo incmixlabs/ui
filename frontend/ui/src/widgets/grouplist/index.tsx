@@ -1,6 +1,6 @@
 import { IconButton } from "@components"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Box, Card, Flex, Heading, ScrollArea, Text } from "@radix-ui/themes"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import React, { useState } from "react"
 
 type Movie = {
@@ -195,11 +195,11 @@ export const GroupList = ({
   const handleYearClick = (year: Year) => {
     setSelectedYear(year)
     setListView("movies")
-  };
+  }
 
   const handleBackToYears = () => {
     setListView("years")
-  };
+  }
 
   return (
     <>
