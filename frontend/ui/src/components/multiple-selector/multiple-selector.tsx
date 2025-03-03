@@ -72,11 +72,11 @@ interface MultipleSelectorProps {
   /** Props of `CommandInput` */
   inputProps?: Omit<
     React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>,
-    'value' | 'placeholder' | 'disabled'
+    "value" | "placeholder" | "disabled"
   >
   /** hide the clear all button. */
   hideClearAllButton?: boolean
-  defaultColor?: 'gray' | 'indigo' | 'cyan' | 'orange' | 'crimson'
+  defaultColor?: "gray" | "indigo" | "cyan" | "orange" | "crimson"
 }
 
 export interface MultipleSelectorRef {
@@ -90,12 +90,12 @@ export function useDebounce<T>(value: T, delay?: number): T {
   const [debouncedValue, setDebouncedValue] = React.useState<T>(value);
 
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedValue(value), delay || 500);
+    const timer = setTimeout(() => setDebouncedValue(value), delay || 500)
 
     return () => {
-      clearTimeout(timer);
+      clearTimeout(timer)
     };
-  }, [value, delay]);
+  }, [value, delay])
 
   return debouncedValue;
 }
@@ -107,36 +107,36 @@ function transToGroupOption(options: Option[], groupBy?: string) {
   if (!groupBy) {
     return {
       '': options,
-    };
+    }
   }
 
-  const groupOption: GroupOption = {};
+  const groupOption: GroupOption = {}
   options.forEach((option) => {
-    const key = (option[groupBy] as string) || '';
+    const key = (option[groupBy] as string) || ''
     if (!groupOption[key]) {
-      groupOption[key] = [];
+      groupOption[key] = []
     }
-    groupOption[key].push(option);
+    groupOption[key].push(option)
   });
-  return groupOption;
+  return groupOption
 }
 
 function removePickedOption(groupOption: GroupOption, picked: Option[]) {
   const cloneOption = JSON.parse(JSON.stringify(groupOption)) as GroupOption;
 
   for (const [key, value] of Object.entries(cloneOption)) {
-    cloneOption[key] = value.filter((val) => !picked.find((p) => p.value === val.value));
+    cloneOption[key] = value.filter((val) => !picked.find((p) => p.value === val.value))
   }
-  return cloneOption;
+  return cloneOption
 }
 
 function isOptionsExist(groupOption: GroupOption, targetOption: Option[]) {
   for (const [, value] of Object.entries(groupOption)) {
     if (value.some((option) => targetOption.find((p) => p.value === option.value))) {
-      return true;
+      return true
     }
   }
-  return false;
+  return false
 }
 
 const CommandEmpty = forwardRef<
@@ -155,10 +155,10 @@ const CommandEmpty = forwardRef<
       role="presentation"
       {...props}
     />
-  );
-});
+  )
+})
 
-CommandEmpty.displayName = 'CommandEmpty';
+CommandEmpty.displayName = 'CommandEmpty'
 
 const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorProps>(
   (

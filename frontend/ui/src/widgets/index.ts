@@ -6,4 +6,3 @@ export * from "./news"
 export * from "./weather"
 export * from "./property-sheet"
 export * from "./grouplist"
-

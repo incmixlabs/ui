@@ -14,7 +14,6 @@ type Year = {
   movies: Movie[]
 }
 
-
 interface GroupListProps {
   years?: Year[]
   defaultView?: "years" | "movies"

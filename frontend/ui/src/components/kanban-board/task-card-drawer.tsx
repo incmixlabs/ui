@@ -47,12 +47,13 @@ import { Avatar } from "../avatar"
 import { IconButton } from "../button"
 import { SmartDatetimeInput } from "../datetime-picker"
 import { EyeIcon } from "../icons/eye"
+import { Badge } from "../badge"
 import { TaskIcon } from "../icons/task"
 import X from "../icons/x"
 import { ComboBox } from "./combo-box"
 import { assignData, attachments, commentsData, labelsData } from "./data"
 import { KanbanImages } from "./images"
-import { Badge, ExtendedColorType } from "../badge"
+import type { ExtendedColorType } from "../badge"
 
 export default function TaskCardDrawer({
   kanbanFilter,
@@ -98,9 +99,9 @@ export default function TaskCardDrawer({
   ])
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [allLabelsData, setAllLabelsData] = useState(labelsData)
-  const [isLabelFormOpen, setIsLabelFormOpen] = useState(false);
-  const [labelColor, setLabelColor] = useState("blue");
-  const formRef = useRef<HTMLFormElement>(null as unknown as HTMLFormElement);
+  const [isLabelFormOpen, setIsLabelFormOpen] = useState(false)
+  const [labelColor, setLabelColor] = useState("blue")
+  const formRef = useRef<HTMLFormElement>(null as unknown as HTMLFormElement)
 
   const handleDateChange = (date: Date) => {
     setSelectedDate(date)
@@ -113,20 +114,20 @@ export default function TaskCardDrawer({
 
 
   const handleAddNewLabel = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    if (!formRef.current) return;
+    if (!formRef.current) return
 
-    const formData = new FormData(formRef.current);
-    const labelName = formData.get('labelName') as string;
+    const formData = new FormData(formRef.current)
+    const labelName = formData.get('labelName') as string
 
-    if (!labelName.trim()) return;
+    if (!labelName.trim()) return
 
     const newLabel = {
       value: labelName.toLowerCase().replace(/\s+/g, '-'),
       label: labelName,
       color: labelColor || "blue",
-    };
+    }
 
     // Add the new label to options
     // This depends on how you're managing state in the parent component
@@ -134,9 +135,9 @@ export default function TaskCardDrawer({
 
     setAllLabelsData([...allLabelsData, newLabel])
     // Reset form and close it
-    formRef.current.reset();
-    setIsLabelFormOpen(false);
-  };
+    formRef.current.reset()
+    setIsLabelFormOpen(false)
+  }
   return (
     <>
       <AnimatePresence>
@@ -304,7 +305,6 @@ export default function TaskCardDrawer({
                                 defaultValue={selectedMemebers}
                                 placeholder="Find Person..."
                                 title="Assign To"
-
                               />
                             </Flex>
                           </Box>
@@ -627,7 +627,6 @@ export default function TaskCardDrawer({
                               ))}
                             </Box>
                           </Tabs.Content>
-
                           <Tabs.Content value="activity">
                             <p>Access and update your documents.</p>
                           </Tabs.Content>

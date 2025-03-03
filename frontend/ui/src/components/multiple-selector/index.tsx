@@ -17,7 +17,7 @@ const OPTIONS: Option[] = [
   { label: "Astro", value: "astro" },
 ];
 
-type ThemeColor = "gray" | "indigo" | "cyan" | "orange" | "crimson";
+type ThemeColor = "gray" | "indigo" | "cyan" | "orange" | "crimson"
 
 interface MultipleSelectorControlledProps {
   themeColor: ThemeColor
