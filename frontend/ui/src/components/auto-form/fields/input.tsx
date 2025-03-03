@@ -34,7 +34,9 @@ export default function AutoFormInput({
           type={type}
           {...fieldPropsWithoutShowLabel}
           className={`h-14 w-full rounded-lg px-4 ${type === "password" ? "pr-10" : ""}`}
-          placeholder={`Enter your ${label.toLowerCase()}`}
+          placeholder={
+            fieldProps.placeholder || `Enter your ${label.toLowerCase()}`
+          }
         />
       </FormControl>
       <FormMessage className="mt-1 text-red-500 text-sm" />
