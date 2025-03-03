@@ -44,16 +44,15 @@ import {
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import { Avatar } from "../avatar"
+import { Badge } from "../badge"
+import type { ExtendedColorType } from "../badge"
 import { IconButton } from "../button"
 import { SmartDatetimeInput } from "../datetime-picker"
-import { EyeIcon } from "../icons/eye"
-import { Badge } from "../badge"
 import { TaskIcon } from "../icons/task"
 import X from "../icons/x"
 import { ComboBox } from "./combo-box"
 import { assignData, attachments, commentsData, labelsData } from "./data"
 import { KanbanImages } from "./images"
-import type { ExtendedColorType } from "../badge"
 
 export default function TaskCardDrawer({
   kanbanFilter,

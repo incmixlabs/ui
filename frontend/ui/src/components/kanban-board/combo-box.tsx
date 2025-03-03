@@ -218,62 +218,74 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                                   variant="solid"
                                   color="blue"
                                   className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("blue")} />
+                                  onClick={() => setLabelColor?.("blue")}
+                                />
                                 <Button
                                   variant="solid"
                                   color="green"
                                   className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("green")} />
+                                  onClick={() => setLabelColor?.("green")}
+                                />
                                 <Button
                                   variant="solid"
                                   color="red"
                                   className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("red")} />
+                                  onClick={() => setLabelColor?.("red")}
+                                />
                                 <Button
                                   variant="solid"
                                   color="amber"
                                   className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("amber")} />
+                                  onClick={() => setLabelColor?.("amber")}
+                                />
                                 <Button
                                   variant="solid"
                                   color="purple"
                                   className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("purple")} />
+                                  onClick={() => setLabelColor?.("purple")}
+                                />
                                 <Button
                                   variant="solid"
                                   color="teal"
                                   className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("teal")} />
+                                  onClick={() => setLabelColor?.("teal")}
+                                />
                                 <Button
                                   variant="solid"
                                   color="pink"
                                   className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("pink")} />
+                                  onClick={() => setLabelColor?.("pink")}
+                                />
                                 <Button
                                   variant="solid"
                                   color="indigo"
                                   className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("indigo")} />
+                                  onClick={() => setLabelColor?.("indigo")}
+                                />
                                 <Button
                                   variant="solid"
                                   color="lime"
                                   className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("lime")} />
+                                  onClick={() => setLabelColor?.("lime")}
+                                />
                                 <Button
                                   variant="solid"
                                   color="orange"
                                   className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("orange")} />
+                                  onClick={() => setLabelColor?.("orange")}
+                                />
                                 <Button
                                   variant="solid"
                                   color="violet"
                                   className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("violet")} />
+                                  onClick={() => setLabelColor?.("violet")}
+                                />
                                 <Button
                                   variant="solid"
                                   color="cyan"
                                   className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("cyan")} />
+                                  onClick={() => setLabelColor?.("cyan")}
+                                />
                               </Grid>
                             </Popover.Content>
                           </Popover.Root>
