@@ -8,6 +8,7 @@ import {
   SwapyLayout,
   SwapySlot,
 } from "@incmix/ui"
+import { TaskCardInfo } from "@incmix/ui/task-card"
 import {
   BatteryWidget,
   CalendarWidget,
@@ -168,7 +169,7 @@ const DashboardPage: React.FC = () => {
       <Container size="4">
         <Flex direction="column" gap="6">
           <Heading size="6">{t("dashboard:title")}</Heading>
-
+          <TaskCardInfo />
           <Flex direction="column" gap="6">
             {slottedWidgets.length && (
               <SwapyLayout
