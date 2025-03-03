@@ -337,7 +337,6 @@ export default function TaskCardDrawer({
                             >
                               {label.label}
                             </Badge>
-
                           ))}
 
                           <ComboBox

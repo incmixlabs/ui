@@ -182,11 +182,11 @@ const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
       </div>
 
       <div className="flex justify-between">
-        {colorGroups.map((group, groupIndex) => (
-          <div key={`group-${groupIndex}`} className="flex flex-col gap-1">
+        {colorGroups.map((group) => (
+          <div key={`group-${group}`} className="flex flex-col gap-1">
             {group.map((color) => (
               <button
-                key={`color-${groupIndex}-${color}`}
+                key={`color-${group}-${color}`}
                 type="button"
                 className="h-6 w-6 cursor-pointer rounded-sm transition-transform hover:scale-110"
                 style={{ backgroundColor: `${color}` }}

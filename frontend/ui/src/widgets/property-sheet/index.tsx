@@ -220,6 +220,7 @@ export function PropertySheet() {
                   variant="soft"
                   className="color-swatch h-4·w-4 cursor-pointer rounded-sm border border-gray-4"
                   style={{ backgroundColor: color }}
+                  aria-label="Open color picker"
                 />
               </Popover.Trigger>
               <Popover.Content

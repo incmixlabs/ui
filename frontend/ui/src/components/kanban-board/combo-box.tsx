@@ -1,12 +1,9 @@
 import { CheckIcon, ChevronDown, Plus, XCircle, XIcon } from "lucide-react"
 import * as React from "react"
-
 import { cn } from "utils"
-
-import { Box, Flex, Grid, Popover } from "@radix-ui/themes"
+import { BadgeProps, Box, Flex, Grid, Popover } from "@radix-ui/themes"
 import { Avatar } from "../avatar"
 import { Badge } from "../badge"
-import type { ExtendedColorType } from "../badge"
 import { Button, IconButton } from "../button"
 import {
   Command,
@@ -18,6 +15,9 @@ import {
   CommandSeparator,
 } from "../command"
 import { Input } from "../form"
+
+
+export type ExtendedColorType = BadgeProps["color"] | "blue"
 
 /**
  * Props for MultiSelect component
@@ -205,7 +205,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                               <Button
                                 variant="solid"
                                 className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
-                                color={labelColor as any}
+                                color={(labelColor as ExtendedColorType) || "blue"}
                               />
                             </Popover.Trigger>
                             <Popover.Content
