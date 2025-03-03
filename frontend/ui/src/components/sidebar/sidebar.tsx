@@ -264,7 +264,6 @@ const Sidebar = React.forwardRef<
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
               } as React.CSSProperties
             }
-            // @ts-expect-error TODO: fix error
             side={side}
           >
             {SideBarTrigger}
