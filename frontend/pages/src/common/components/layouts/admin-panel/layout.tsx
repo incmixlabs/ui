@@ -9,12 +9,16 @@ import {
   Button,
   Separator,
 } from "@incmix/ui"
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@incmix/ui/sidebar"
 import { Link, useLocation } from "@tanstack/react-router"
 import { MoonIcon, SunIcon } from "lucide-react"
 import React from "react"
 import { useTranslation } from "react-i18next"
 import { AppSidebar } from "./app-sidebar"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "./sidebar"
 
 type Props = {
   children: React.ReactNode

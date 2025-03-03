@@ -1,11 +1,11 @@
 "use client"
 
-import { AccordionContent, AccordionTrigger, cn } from "@incmix/ui"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import { ScrollArea } from "@radix-ui/themes"
+import { ChevronDownIcon, ScrollArea } from "@radix-ui/themes"
+import { cn } from "@utils/cn"
 import type { LucideIcon } from "lucide-react"
 import React, { type ComponentType } from "react"
-import type { IconProps } from "./secondary-sidebar/icons/types"
+import type { IconProps } from "./icons/types"
 
 interface TreeDataItem {
   id: string
@@ -114,6 +114,8 @@ type TreeItemProps = TreeProps & {
   FolderIconOpen?: ComponentType<IconProps>
 }
 
+const iconClass = "h-4 w-4 shrink-0 text-accent-foreground/50"
+const padding = "py-1 pr-3 pl-1"
 const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
   (
     {
@@ -140,6 +142,12 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                     const [open, setOpen] = React.useState(
                       expandedItemIds.includes(item.id)
                     )
+                    const IconComp = item.icon
+                      ? item.icon
+                      : open && FolderIconOpen
+                        ? FolderIconOpen
+                        : FolderIcon
+
                     return (
                       <AccordionPrimitive.Root
                         type="multiple"
@@ -149,35 +157,22 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                         }
                       >
                         <AccordionPrimitive.Item value={item.id}>
-                          <AccordionTrigger
+                          <AccordionPrimitive.Trigger
                             className={cn(
-                              "mb-1 w-full select-none gap-4 rounded-md py-5 pr-5 pl-7 hover:bg-[hsl(var(--sidebar-background)/0.1)] hover:no-underline",
+                              `mb-1 flex w-full flex-1 select-none items-center justify-between gap-4 rounded-md ${padding} font-medium text-sm transition-all hover:bg-[hsl(var(--sidebar-background)/0.1)] hover:no-underline [&[data-state=open]>svg]:rotate-180`,
                               open &&
                                 "bg-[hsl(var(--sidebar-background)/0.1)] text-[hsl(var(--sidebar-background))]"
                             )}
                             onClick={() => handleSelectChange(item)}
                           >
                             <span className="flex items-center gap-4">
-                              {item.icon ? (
-                                <item.icon
-                                  className="h-6 w-6 shrink-0 text-accent-foreground/50"
+                              {IconComp && (
+                                <IconComp
+                                  className={iconClass}
                                   aria-hidden="true"
                                 />
-                              ) : (
-                                FolderIconOpen &&
-                                FolderIcon &&
-                                (open ? (
-                                  <FolderIconOpen
-                                    className="h-6 w-6 shrink-0 text-accent-foreground/50"
-                                    aria-hidden="true"
-                                  />
-                                ) : (
-                                  <FolderIcon
-                                    className="h-6 w-6 shrink-0 text-accent-foreground/50"
-                                    aria-hidden="true"
-                                  />
-                                ))
                               )}
+
                               <span
                                 className={cn(
                                   "truncate text-[hsl(var(--sidebar-secondary-text))] text-sm",
@@ -188,8 +183,11 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                                 {item.name}
                               </span>
                             </span>
-                          </AccordionTrigger>
-                          <AccordionContent className="pl-6">
+                            <ChevronDownIcon
+                              className={`${iconClass} transition-transform duration-200`}
+                            />
+                          </AccordionPrimitive.Trigger>
+                          <AccordionPrimitive.Content className="pl-4">
                             <TreeItem
                               data={item.children ? item.children : item}
                               selectedItemId={selectedItemId}
@@ -199,7 +197,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                               ItemIcon={ItemIcon}
                               FolderIconOpen={FolderIconOpen}
                             />
-                          </AccordionContent>
+                          </AccordionPrimitive.Content>
                         </AccordionPrimitive.Item>
                       </AccordionPrimitive.Root>
                     )
@@ -238,30 +236,19 @@ const Leaf = React.forwardRef<
     Icon?: ComponentType<IconProps>
   }
 >(({ className, item, isSelected, Icon, ...props }, ref) => {
+  const IconComp = item.icon ? item.icon : Icon
   return (
     <div
       ref={ref}
       className={cn(
-        "mb-1 flex cursor-pointer select-none items-center gap-4 rounded-md py-5 pr-5 pl-7 hover:bg-[hsl(var(--sidebar-background)/0.1)]",
+        `mb-1 flex cursor-pointer select-none items-center gap-4 rounded-md ${padding} hover:bg-[hsl(var(--sidebar-background)/0.1)]`,
         className,
         isSelected &&
           "bg-[hsl(var(--sidebar-background)/0.1)] text-[hsl(var(--sidebar-background))] "
       )}
       {...props}
     >
-      {item.icon ? (
-        <item.icon
-          className="h-6 w-6 shrink-0 text-accent-foreground/50"
-          aria-hidden="true"
-        />
-      ) : (
-        Icon && (
-          <Icon
-            className="h-6 w-6 shrink-0 text-accent-foreground/50"
-            aria-hidden="true"
-          />
-        )
-      )}
+      {IconComp && <IconComp className={`${iconClass}`} aria-hidden="true" />}
 
       <span
         className={cn(

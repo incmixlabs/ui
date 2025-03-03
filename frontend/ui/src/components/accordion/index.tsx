@@ -17,6 +17,7 @@ export type AccordionProps = {
   items: AccordionItems[]
   icon?: ReactElement
   className?: string
+  triggerClassName?: string
 }
 
 export const Accordion = ({ type = "single", items }: AccordionProps) => {
