@@ -11,7 +11,7 @@ import type { AutoFormInputComponentProps } from "../types"
 export default function AutoFormInput({
   label,
   isRequired,
-  fieldConfigItem,
+
   fieldProps,
 }: AutoFormInputComponentProps) {
   const { showLabel: _showLabel, ...fieldPropsWithoutShowLabel } = fieldProps
@@ -19,15 +19,25 @@ export default function AutoFormInput({
   const type = fieldProps.type || "text"
 
   return (
-    <div className="flex flex-row items-center space-x-2">
-      <FormItem className="flex w-full flex-row items-center justify-start space-x-2">
-        {showLabel && <AutoFormLabel label={label} isRequired={isRequired} />}
-        <FormControl>
-          <Input type={type} {...fieldPropsWithoutShowLabel} />
-        </FormControl>
-        <AutoFormTooltip fieldConfigItem={fieldConfigItem} />
-        <FormMessage />
-      </FormItem>
-    </div>
+    <FormItem className="mb-6 flex w-full flex-col space-y-2">
+      {showLabel && (
+        <div className="mb-2">
+          <AutoFormLabel
+            label={label}
+            isRequired={isRequired}
+            className="w-auto font-medium text-base"
+          />
+        </div>
+      )}
+      <FormControl>
+        <Input
+          type={type}
+          {...fieldPropsWithoutShowLabel}
+          className={`h-14 w-full rounded-lg px-4 ${type === "password" ? "pr-10" : ""}`}
+          placeholder={`Enter your ${label.toLowerCase()}`}
+        />
+      </FormControl>
+      <FormMessage className="mt-1 text-red-500 text-sm" />
+    </FormItem>
   )
 }
