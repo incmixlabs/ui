@@ -40,6 +40,7 @@ import {
   OrganisationUsersRoute,
   OrganisationsRoute,
   ProfileRoute,
+  ProjectsRoute,
   ResetPasswordRoute,
   RootRoute,
   SettingsRoute,
@@ -74,6 +75,7 @@ const routeTree = RootRoute.addChildren([
   DashboardRoute,
   ListUsersRoute,
   TasksRoute,
+  ProjectsRoute,
   TranslationsRoute,
 ])
 
