@@ -1,7 +1,7 @@
+import { type BadgeProps, Box, Flex, Grid, Popover } from "@radix-ui/themes"
 import { CheckIcon, ChevronDown, Plus, XCircle, XIcon } from "lucide-react"
 import * as React from "react"
 import { cn } from "utils"
-import { BadgeProps, Box, Flex, Grid, Popover } from "@radix-ui/themes"
 import { Avatar } from "../avatar"
 import { Badge } from "../badge"
 import { Button, IconButton } from "../button"
@@ -15,7 +15,6 @@ import {
   CommandSeparator,
 } from "../command"
 import { Input } from "../form"
-
 
 export type ExtendedColorType = BadgeProps["color"] | "blue"
 
@@ -129,8 +128,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
           width="280px"
         >
           {title && <h1 className="font-medium">{title}</h1>}
-          <Command className="bg-transparent"
-          >
+          <Command className="bg-transparent">
             <CommandInput
               placeholder={placeholder}
               onKeyDown={handleInputKeyDown}
@@ -164,8 +162,11 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                           <Avatar src={option.avatarSrc} className="h-8 w-8" />
                         )}
                         <Badge
-                          // @ts-ignore 
-                          color={option.color} variant="solid" className="px-3 py-1.5">
+                          // @ts-ignore
+                          color={option.color}
+                          variant="solid"
+                          className="px-3 py-1.5"
+                        >
                           {option.label}
                         </Badge>
                       </div>
@@ -189,7 +190,11 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                 {addNewLabel ? (
                   <>
                     {isLabelFormOpen ? (
-                      <form ref={formRef} onSubmit={handleAddNewLabel} className="p-2">
+                      <form
+                        ref={formRef}
+                        onSubmit={handleAddNewLabel}
+                        className="p-2"
+                      >
                         <Input
                           name="labelName"
                           type="text"
@@ -199,13 +204,14 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                         />
 
                         <Flex justify={"between"}>
-
                           <Popover.Root>
                             <Popover.Trigger>
                               <Button
                                 variant="solid"
                                 className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
-                                color={(labelColor as ExtendedColorType) || "blue"}
+                                color={
+                                  (labelColor as ExtendedColorType) || "blue"
+                                }
                               />
                             </Popover.Trigger>
                             <Popover.Content
@@ -310,12 +316,14 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                           </Flex>
                         </Flex>
                       </form>
-                    ) : <Button
-                      onClick={() => setIsLabelFormOpen?.(true)}
-                      className="h-10 w-full rounded-md bg-blue-500 px-4 text-white">
-                      Add new label
-                    </Button>}
-
+                    ) : (
+                      <Button
+                        onClick={() => setIsLabelFormOpen?.(true)}
+                        className="h-10 w-full rounded-md bg-blue-500 px-4 text-white"
+                      >
+                        Add new label
+                      </Button>
+                    )}
                   </>
                 ) : (
                   <>

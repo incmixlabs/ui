@@ -111,19 +111,18 @@ export default function TaskCardDrawer({
     setComment("")
   }
 
-
   const handleAddNewLabel = (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!formRef.current) return
 
     const formData = new FormData(formRef.current)
-    const labelName = formData.get('labelName') as string
+    const labelName = formData.get("labelName") as string
 
     if (!labelName.trim()) return
 
     const newLabel = {
-      value: labelName.toLowerCase().replace(/\s+/g, '-'),
+      value: labelName.toLowerCase().replace(/\s+/g, "-"),
       label: labelName,
       color: labelColor || "blue",
     }
@@ -599,7 +598,7 @@ export default function TaskCardDrawer({
                                             key={`${image}-${
                                               // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
                                               index
-                                              }`}
+                                            }`}
                                             className="group relative"
                                           >
                                             <img
@@ -609,7 +608,7 @@ export default function TaskCardDrawer({
                                             />
                                             {index === 3 &&
                                               (comment.images?.length ?? 0) >
-                                              3 && (
+                                                3 && (
                                                 <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/40">
                                                   <span className="font-medium text-white">
                                                     +3
@@ -739,9 +738,7 @@ export default function TaskCardDrawer({
                             >
                               {label.label}
                             </Badge>
-
                           ))}
-
                         </Flex>
                       </Box>
                       <Box className="space-y-3 border-gray-6 border-t-2 p-4 py-3 ">

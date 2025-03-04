@@ -2,14 +2,14 @@
 import { format } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
 
-import { Button } from "@/components/button"
-import { Calendar } from "@/components/calendar"
+import { Button } from "@components/button"
+import { Calendar } from "@components/calendar"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/popover-shadcn"
-import { cn } from "@/utils"
+} from "@components/popover-shadcn"
+import { cn } from "@utils"
 import { forwardRef } from "react"
 
 export const DatePicker = forwardRef<

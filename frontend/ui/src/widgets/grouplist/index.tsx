@@ -181,14 +181,16 @@ const defaultYears: Year[] = [
       },
     ],
   },
-];
+]
 
 export const GroupList = ({
   years = defaultYears,
   defaultView = "years",
-  defaultSelectedYear = null
+  defaultSelectedYear = null,
 }: GroupListProps) => {
-  const [selectedYear, setSelectedYear] = useState<Year | null>(defaultSelectedYear)
+  const [selectedYear, setSelectedYear] = useState<Year | null>(
+    defaultSelectedYear
+  )
   const [listView, setListView] = useState(defaultView)
 
   const handleYearClick = (year: Year) => {
