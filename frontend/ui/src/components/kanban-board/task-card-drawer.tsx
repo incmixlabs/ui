@@ -595,20 +595,17 @@ export default function TaskCardDrawer({
                                       <Flex className="mt-3" gap={"2"}>
                                         {comment.images.map((image, index) => (
                                           <div
-                                            key={`${image}-${
-                                              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                                              index
-                                              }`}
+                                            key={`${image}`}
                                             className="group relative"
                                           >
                                             <img
                                               src={image}
-                                              alt={`Attachment ${index + 1}`}
+                                              alt={`Attachment ${image}`}
                                               className="h-16 w-16 rounded-lg object-cover"
                                             />
                                             {index === 3 &&
                                               (comment.images?.length ?? 0) >
-                                              3 && (
+                                                3 && (
                                                 <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/40">
                                                   <span className="font-medium text-white">
                                                     +3

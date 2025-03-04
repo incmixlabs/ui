@@ -249,7 +249,7 @@ export const GroupList = ({
                 align={"center"}
                 justify={"start"}
                 key={movie.id}
-                className="group relative  w-full cursor-pointer  border-gray-5 border-t p-4 text-left hover:bg-gray-3"
+                className="group relative w-full cursor-pointer border-gray-5 border-t p-4 text-left hover:bg-gray-3"
               >
                 <Box className="absolute left-0 h-full w-1 bg-blue-700 opacity-0 group-hover:opacity-100" />
                 <Text as="span">

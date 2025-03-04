@@ -487,6 +487,12 @@ const MultipleSelector = React.forwardRef<
             if (disabled) return
             inputRef?.current?.focus()
           }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              if (disabled) return
+              inputRef?.current?.focus()
+            }
+          }}
         >
           <div className="relative flex flex-wrap gap-1">
             {selected.map((option) => {
@@ -573,7 +579,7 @@ const MultipleSelector = React.forwardRef<
                   disabled ||
                   selected.length < 1 ||
                   selected.filter((s) => s.fixed).length === selected.length) &&
-                "hidden"
+                  "hidden"
               )}
             >
               <X size={20} />
