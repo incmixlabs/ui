@@ -488,8 +488,7 @@ const MultipleSelector = React.forwardRef<
             inputRef?.current?.focus()
           }}
           onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              if (disabled) return
+            if (e.key === "Enter" && !disabled) {
               inputRef?.current?.focus()
             }
           }}
