@@ -11,7 +11,7 @@ interface TaskStat {
   backgroundColor: string
 }
 
-export const TaskCardInfo = () => {
+export const StatsCard = () => {
   const taskStats: TaskStat[] = [
     {
       count: 780,
@@ -67,4 +67,4 @@ export const TaskCardInfo = () => {
   )
 }
 
-export default TaskCardInfo
+export default StatsCard

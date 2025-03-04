@@ -1,2 +1,2 @@
 export * from "./single-task-view"
-export * from "./task-card-info"
+export * from "./stats-card"

@@ -62,7 +62,7 @@
     "./popover-shadcn": "./src/components/popover-shadcn.tsx",
     "./date-picker": "./src/components/date-picker.tsx",
     "./onboarding": "./src/components/onboarding/index.tsx",
-    "./task-card": "./src/components/task-card/index.ts",
+    "./stats-card": "./src/components/stats-card/index.ts",
     "./radial-bar-chart-card": "./src/components/radial-bar-chart-card/radial-bar-chart-card.tsx"
   },
   "dependencies": {
