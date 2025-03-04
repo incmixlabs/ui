@@ -42,15 +42,16 @@ import {
   useMotionValue,
 } from "motion/react"
 import type React from "react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Avatar } from "../avatar"
+import { Badge } from "../badge"
+import type { ExtendedColorType } from "../badge"
 import { IconButton } from "../button"
 import { SmartDatetimeInput } from "../datetime-picker"
-import { EyeIcon } from "../icons/eye"
 import { TaskIcon } from "../icons/task"
 import X from "../icons/x"
 import { ComboBox } from "./combo-box"
-import { assignData, attachments, commentsData, lablesData } from "./data"
+import { assignData, attachments, commentsData, labelsData } from "./data"
 import { KanbanImages } from "./images"
 
 export default function TaskCardDrawer({
@@ -96,6 +97,10 @@ export default function TaskCardDrawer({
     "backend",
   ])
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
+  const [allLabelsData, setAllLabelsData] = useState(labelsData)
+  const [isLabelFormOpen, setIsLabelFormOpen] = useState(false)
+  const [labelColor, setLabelColor] = useState("blue")
+  const formRef = useRef<HTMLFormElement>(null as unknown as HTMLFormElement)
 
   const handleDateChange = (date: Date) => {
     setSelectedDate(date)
@@ -106,6 +111,31 @@ export default function TaskCardDrawer({
     setComment("")
   }
 
+  const handleAddNewLabel = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!formRef.current) return
+
+    const formData = new FormData(formRef.current)
+    const labelName = formData.get("labelName") as string
+
+    if (!labelName.trim()) return
+
+    const newLabel = {
+      value: labelName.toLowerCase().replace(/\s+/g, "-"),
+      label: labelName,
+      color: labelColor || "blue",
+    }
+
+    // Add the new label to options
+    // This depends on how you're managing state in the parent component
+    // For example: onLabelsChange([...options, newLabel]);
+
+    setAllLabelsData([...allLabelsData, newLabel])
+    // Reset form and close it
+    formRef.current.reset()
+    setIsLabelFormOpen(false)
+  }
   return (
     <>
       <AnimatePresence>
@@ -297,22 +327,28 @@ export default function TaskCardDrawer({
                         {/* lables */}
                         <h2 className="font-medium text-gray-500">LABELS</h2>
                         <Flex className="gap-2">
-                          <Button className="rounded-md bg-green-500 px-4 py-1 text-white">
-                            Design
-                          </Button>
-                          <Button className="rounded-md bg-blue-500 px-4 py-1 text-white">
-                            Frontend
-                          </Button>
-                          <Button className="rounded-md bg-orange-500 px-4 py-1 text-white">
-                            Backend
-                          </Button>
+                          {allLabelsData?.map((label) => (
+                            <Badge
+                              color={label.color as ExtendedColorType}
+                              variant="solid"
+                              key={label.value}
+                              className="rounded-md p-1.5 px-2.5"
+                            >
+                              {label.label}
+                            </Badge>
+                          ))}
+
                           <ComboBox
-                            options={lablesData}
+                            options={allLabelsData}
                             onValueChange={setSelectedLabes}
                             defaultValue={selectedLabels}
                             placeholder="Search Label"
                             title="Labels"
                             addNewLabel={true}
+                            isLabelFormOpen={isLabelFormOpen}
+                            formRef={formRef}
+                            setIsLabelFormOpen={setIsLabelFormOpen}
+                            handleAddNewLabel={handleAddNewLabel}
                           />
                         </Flex>
 
@@ -559,15 +595,12 @@ export default function TaskCardDrawer({
                                       <Flex className="mt-3" gap={"2"}>
                                         {comment.images.map((image, index) => (
                                           <div
-                                            key={`${image}-${
-                                              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                                              index
-                                            }`}
+                                            key={`${image}`}
                                             className="group relative"
                                           >
                                             <img
                                               src={image}
-                                              alt={`Attachment ${index + 1}`}
+                                              alt={`Attachment ${image}`}
                                               className="h-16 w-16 rounded-lg object-cover"
                                             />
                                             {index === 3 &&
@@ -588,7 +621,6 @@ export default function TaskCardDrawer({
                               ))}
                             </Box>
                           </Tabs.Content>
-
                           <Tabs.Content value="activity">
                             <p>Access and update your documents.</p>
                           </Tabs.Content>
@@ -679,32 +711,31 @@ export default function TaskCardDrawer({
                             LABELS
                           </Heading>
                           <ComboBox
-                            options={lablesData}
+                            options={allLabelsData}
                             onValueChange={setSelectedLabes}
                             defaultValue={selectedLabels}
                             placeholder="Search Label"
                             title="Labels"
                             addNewLabel={true}
+                            isLabelFormOpen={isLabelFormOpen}
+                            formRef={formRef}
+                            setIsLabelFormOpen={setIsLabelFormOpen}
+                            handleAddNewLabel={handleAddNewLabel}
+                            labelColor={labelColor}
+                            setLabelColor={setLabelColor}
                           />
                         </Flex>
                         <Flex gap="2" wrap={"wrap"}>
-                          <Button
-                            color="orange"
-                            variant="solid"
-                            className="rounded-md px-4 py-1"
-                          >
-                            Design
-                          </Button>
-                          <Button className=" rounded-md px-4 py-1">
-                            Frontend
-                          </Button>
-                          <Button
-                            color="cyan"
-                            variant="solid"
-                            className=" rounded-md px-4 py-1"
-                          >
-                            Backend
-                          </Button>
+                          {allLabelsData?.map((label) => (
+                            <Badge
+                              color={label.color as ExtendedColorType}
+                              variant="solid"
+                              key={label.value}
+                              className="rounded-md p-1.5 px-2.5"
+                            >
+                              {label.label}
+                            </Badge>
+                          ))}
                         </Flex>
                       </Box>
                       <Box className="space-y-3 border-gray-6 border-t-2 p-4 py-3 ">

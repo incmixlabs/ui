@@ -63,7 +63,8 @@
       },
       "suspicious": {
         "useAwait": "warn",
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noArrayIndexKey": "error"
       }
     },
     "include": [

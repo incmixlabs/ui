@@ -31,33 +31,36 @@ export const assignData = [
     value: "regina-cooper",
     label: "Regina Cooper",
     avatarSrc: KanbanImages.user1,
+    color: "orange",
   },
   {
     value: "jacob-hawkins",
     label: "Jacob Hawkins",
     avatarSrc: KanbanImages.user2,
+    color: "blue",
   },
   {
     value: "jane-wilson",
     label: "Jane Wilson",
     avatarSrc: KanbanImages.user1,
+    color: "green",
   },
 ]
-export const lablesData = [
+export const labelsData = [
   {
     value: "design",
     label: "Design",
-    labelStyle: "bg-green-500 px-4 text-white py-1 rounded-md inline-block",
+    color: "purple",
   },
   {
     value: "frontend",
     label: "Frontend",
-    labelStyle: "bg-blue-500 px-4 text-white py-1 rounded-md inline-block",
+    color: "blue",
   },
   {
     value: "backend",
     label: "Backend",
-    labelStyle: "bg-orange-500 px-4 text-white py-1 rounded-md inline-block",
+    color: "indigo",
   },
 ]
 
