@@ -111,19 +111,18 @@ export default function TaskCardDrawer({
     setComment("")
   }
 
-
   const handleAddNewLabel = (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!formRef.current) return
 
     const formData = new FormData(formRef.current)
-    const labelName = formData.get('labelName') as string
+    const labelName = formData.get("labelName") as string
 
     if (!labelName.trim()) return
 
     const newLabel = {
-      value: labelName.toLowerCase().replace(/\s+/g, '-'),
+      value: labelName.toLowerCase().replace(/\s+/g, "-"),
       label: labelName,
       color: labelColor || "blue",
     }
@@ -739,9 +738,7 @@ export default function TaskCardDrawer({
                             >
                               {label.label}
                             </Badge>
-
                           ))}
-
                         </Flex>
                       </Box>
                       <Box className="space-y-3 border-gray-6 border-t-2 p-4 py-3 ">

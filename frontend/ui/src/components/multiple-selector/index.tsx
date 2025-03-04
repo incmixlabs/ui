@@ -2,7 +2,6 @@ import React from "react"
 import MultipleSelector from "./multiple-selector"
 import type { Option } from "./multiple-selector"
 
-
 const OPTIONS: Option[] = [
   { label: "Next.js", value: "nextjs" },
   { label: "React", value: "react" },
@@ -15,7 +14,7 @@ const OPTIONS: Option[] = [
   { label: "Ember", value: "ember", disable: true },
   { label: "Gatsby", value: "gatsby" },
   { label: "Astro", value: "astro" },
-];
+]
 
 type ThemeColor = "gray" | "indigo" | "cyan" | "orange" | "crimson"
 
@@ -23,7 +22,9 @@ interface MultipleSelectorControlledProps {
   themeColor: ThemeColor
 }
 
-export const MultipleSelectorControlled: React.FC<MultipleSelectorControlledProps> = ({ themeColor = "gray" }) => {
+export const MultipleSelectorControlled: React.FC<
+  MultipleSelectorControlledProps
+> = ({ themeColor = "gray" }) => {
   const [value, setValue] = React.useState<Option[]>([])
 
   return (
@@ -43,5 +44,5 @@ export const MultipleSelectorControlled: React.FC<MultipleSelectorControlledProp
         }
       />
     </div>
-  );
-};
+  )
+}

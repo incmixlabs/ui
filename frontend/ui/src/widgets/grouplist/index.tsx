@@ -181,14 +181,16 @@ const defaultYears: Year[] = [
       },
     ],
   },
-];
+]
 
 export const GroupList = ({
   years = defaultYears,
   defaultView = "years",
-  defaultSelectedYear = null
+  defaultSelectedYear = null,
 }: GroupListProps) => {
-  const [selectedYear, setSelectedYear] = useState<Year | null>(defaultSelectedYear)
+  const [selectedYear, setSelectedYear] = useState<Year | null>(
+    defaultSelectedYear
+  )
   const [listView, setListView] = useState(defaultView)
 
   const handleYearClick = (year: Year) => {
@@ -243,16 +245,17 @@ export const GroupList = ({
 
           <Box className="h-full overflow-y-auto">
             {selectedYear?.movies.map((movie) => (
-              <button
+              <Flex
+                align={"center"}
+                justify={"start"}
                 key={movie.id}
-                type="button"
-                className="group relative flex w-full cursor-pointer items-center justify-start border-gray-5 border-t p-4 text-left hover:bg-gray-3"
+                className="group relative  w-full cursor-pointer  border-gray-5 border-t p-4 text-left hover:bg-gray-3"
               >
                 <Box className="absolute left-0 h-full w-1 bg-blue-700 opacity-0 group-hover:opacity-100" />
                 <Text as="span">
                   {movie.id}. {movie.title}
                 </Text>
-              </button>
+              </Flex>
             ))}
           </Box>
         </Box>

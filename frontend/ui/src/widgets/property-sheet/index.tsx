@@ -24,7 +24,6 @@ import {
 import { useState } from "react"
 import CompactColorPicker from "./color-picker"
 
-
 export const themeData = [
   {
     value: "dark",
@@ -42,12 +41,13 @@ const resolveColorVariable = (colorVar: string) => {
   if (colorVar.startsWith("var(")) {
     const variableName = colorVar.match(/var\((--[^)]+)\)/)?.[1]
     if (variableName) {
-      return getComputedStyle(document.documentElement).getPropertyValue(variableName).trim()
+      return getComputedStyle(document.documentElement)
+        .getPropertyValue(variableName)
+        .trim()
     }
   }
   return colorVar
 }
-
 
 export function PropertySheet() {
   const [color, setColor] = useState("#f76b15")
@@ -149,7 +149,9 @@ export function PropertySheet() {
             <Box className="w-full p-2 px-3">
               <Flex align="center" gap="1">
                 <Checkbox id="jsonp-checkbox" />
-                <label htmlFor="jsonp-checkbox" className="sr-only text-sm">Enable JSONP</label>
+                <label htmlFor="jsonp-checkbox" className="sr-only text-sm">
+                  Enable JSONP
+                </label>
               </Flex>
             </Box>
           </Flex>

@@ -29,14 +29,18 @@ const sheetVariants = cva(
 
 // Create context to manage sheet state
 const SheetContext = React.createContext<{
-  open: boolean;
+  open: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }>({
   open: false,
-  setOpen: () => { }
-});
+  setOpen: () => {},
+})
 
-interface SheetProps extends Omit<React.ComponentPropsWithoutRef<typeof Dialog.Root>, "open" | "onOpenChange"> {
+interface SheetProps
+  extends Omit<
+    React.ComponentPropsWithoutRef<typeof Dialog.Root>,
+    "open" | "onOpenChange"
+  > {
   defaultOpen?: boolean
 }
 
@@ -50,12 +54,13 @@ const Sheet = ({ defaultOpen = false, children, ...props }: SheetProps) => {
         {children}
       </Dialog.Root>
     </SheetContext.Provider>
-  );
-};
+  )
+}
 
-interface SheetTriggerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
-  asChild?: boolean;
-  children: React.ReactNode;
+interface SheetTriggerProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
+  asChild?: boolean
+  children: React.ReactNode
 }
 
 // Sheet Trigger with asChild support
@@ -66,29 +71,26 @@ const SheetTrigger = ({ asChild, children, ...props }: SheetTriggerProps) => {
     const childProps = {
       ...props,
       onClick: (e: React.MouseEvent) => {
-        e.preventDefault();
-        setOpen(true);
+        e.preventDefault()
+        setOpen(true)
 
         // Call original onClick if it exists
         if (children.props.onClick) {
-          children.props.onClick(e);
+          children.props.onClick(e)
         }
       },
-    };
+    }
 
     return React.cloneElement(children, childProps)
   }
 
-  return (
-    <Dialog.Trigger {...props}>
-      {children}
-    </Dialog.Trigger>
-  );
-};
+  return <Dialog.Trigger {...props}>{children}</Dialog.Trigger>
+}
 
-interface SheetCloseProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
-  asChild?: boolean;
-  children: React.ReactNode;
+interface SheetCloseProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
+  asChild?: boolean
+  children: React.ReactNode
 }
 
 // Sheet Close with asChild support
@@ -99,28 +101,24 @@ const SheetClose = ({ asChild, children, ...props }: SheetCloseProps) => {
     const childProps = {
       ...props,
       onClick: (e: React.MouseEvent) => {
-        setOpen(false);
+        setOpen(false)
 
         // Call original onClick if it exists
         if (children.props.onClick) {
-          children.props.onClick(e);
+          children.props.onClick(e)
         }
       },
-    };
+    }
 
-    return React.cloneElement(children, childProps);
+    return React.cloneElement(children, childProps)
   }
 
-  return (
-    <Dialog.Close {...props}>
-      {children}
-    </Dialog.Close>
-  );
-};
+  return <Dialog.Close {...props}>{children}</Dialog.Close>
+}
 
 interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof Dialog.Content>,
-  VariantProps<typeof sheetVariants> {
+    VariantProps<typeof sheetVariants> {
   notOverlay?: boolean
   hideCloseIcon?: boolean
 }
@@ -162,10 +160,10 @@ const SheetContent = React.forwardRef<
           </button>
         )}
       </Dialog.Content>
-    );
+    )
   }
-);
-SheetContent.displayName = "SheetContent";
+)
+SheetContent.displayName = "SheetContent"
 
 // Sheet Header
 const SheetHeader = ({
@@ -179,8 +177,8 @@ const SheetHeader = ({
     )}
     {...props}
   />
-);
-SheetHeader.displayName = "SheetHeader";
+)
+SheetHeader.displayName = "SheetHeader"
 
 // Sheet Footer
 const SheetFooter = ({
@@ -194,8 +192,8 @@ const SheetFooter = ({
     )}
     {...props}
   />
-);
-SheetFooter.displayName = "SheetFooter";
+)
+SheetFooter.displayName = "SheetFooter"
 
 // Sheet Title
 const SheetTitle = React.forwardRef<
@@ -207,8 +205,8 @@ const SheetTitle = React.forwardRef<
     className={cn("font-semibold text-foreground text-lg", className)}
     {...props}
   />
-));
-SheetTitle.displayName = "SheetTitle";
+))
+SheetTitle.displayName = "SheetTitle"
 
 // Sheet Description
 const SheetDescription = React.forwardRef<
@@ -220,8 +218,8 @@ const SheetDescription = React.forwardRef<
     className={cn("text-muted-foreground text-sm", className)}
     {...props}
   />
-));
-SheetDescription.displayName = "SheetDescription";
+))
+SheetDescription.displayName = "SheetDescription"
 
 export {
   Sheet,
@@ -232,4 +230,4 @@ export {
   SheetFooter,
   SheetTitle,
   SheetDescription,
-};
+}
