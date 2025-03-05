@@ -24,6 +24,7 @@ export * from "./swapy"
 export * from "./toaster"
 export * from "./tree-view"
 export * from "./kanban-board"
+export * from "./projects"
 export {
   Badge,
   Box,

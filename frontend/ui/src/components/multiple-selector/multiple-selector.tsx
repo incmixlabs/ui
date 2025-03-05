@@ -10,7 +10,12 @@ import { Command, CommandGroup, CommandItem, CommandList } from "../command"
 export interface Option {
   value: string
   label: string
+  id?: string
+  name?: string
   disable?: boolean
+  avatar?: string
+  color?: string
+  position?: string
   /** fixed option that can't be removed. */
   fixed?: boolean
   /** Group the options by providing key. */
@@ -153,7 +158,7 @@ const CommandEmpty = forwardRef<
   return (
     <div
       ref={forwardedRef}
-      className={cn("py-6 text-center text-sm", className)}
+      className={cn("p-2 text-center text-sm", className)}
       cmdk-empty=""
       role="presentation"
       {...props}
@@ -348,7 +353,13 @@ const MultipleSelector = React.forwardRef<
     const CreatableItem = () => {
       if (!creatable) return undefined
       if (
-        isOptionsExist(options, [{ value: inputValue, label: inputValue }]) ||
+        isOptionsExist(options, [
+          {
+            value: inputValue,
+            label: inputValue,
+            avatar: "",
+          },
+        ]) ||
         selected.find((s) => s.value === inputValue)
       ) {
         return undefined
@@ -507,6 +518,13 @@ const MultipleSelector = React.forwardRef<
                   data-fixed={option.fixed}
                   data-disabled={disabled || undefined}
                 >
+                  {option.avatar && (
+                    <img
+                      src={option.avatar}
+                      alt={option.label}
+                      className="h-7 w-7 rounded-full p-1"
+                    />
+                  )}
                   {option.label}
                   <button
                     type="button"
@@ -639,6 +657,13 @@ const MultipleSelector = React.forwardRef<
                               option.disable && "cursor-default "
                             )}
                           >
+                            {option.avatar && (
+                              <img
+                                src={option.avatar}
+                                alt={option.label}
+                                className="h-7 w-7 rounded-full p-1"
+                              />
+                            )}
                             {option.label}
                           </CommandItem>
                         )

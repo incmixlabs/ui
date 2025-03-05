@@ -34,7 +34,7 @@ interface MultiSelectProps
     value: string
     /** Optional icon component to display alongside the option. */
     icon?: React.ComponentType<{ className?: string }>
-    avatarSrc?: string
+    avatar?: string
     color?: ExtendedColorType | string
     disable?: boolean
   }[]
@@ -158,8 +158,8 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                             )}
                           />
                         )}
-                        {option.avatarSrc && (
-                          <Avatar src={option.avatarSrc} className="h-8 w-8" />
+                        {option.avatar && (
+                          <Avatar src={option.avatar} className="h-8 w-8" />
                         )}
                         <Badge
                           color={option.color as ExtendedColorType}

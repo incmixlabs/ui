@@ -31,8 +31,6 @@ import {
 import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
 import { Card, Checkbox, Flex, Heading, Text } from "@radix-ui/themes"
 import { cn } from "@utils"
-import { useQueryState } from "nuqs"
-import TaskCardDrawer from "./task-card-drawer"
 
 type TCardState =
   | {

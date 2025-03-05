@@ -8,6 +8,7 @@ import {
   HelpCircle,
   InboxIcon,
   LanguagesIcon,
+  Layers,
   LayoutDashboardIcon,
   LockIcon,
   TextIcon,
@@ -98,6 +99,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: FileTextIcon,
         isSelected: pathname.includes("/tasks"),
         notificationCount: 8,
+      },
+      {
+        title: "Projects",
+        url: "/projects",
+        icon: Layers,
+        isSelected: pathname.includes("/projects"),
       },
       {
         title: t("common:users"),
