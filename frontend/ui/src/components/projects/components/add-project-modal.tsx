@@ -45,11 +45,18 @@ export function AddProjectModal({
     maxSize: 1024 * 1024 * 4,
     multiple: true,
   }
+
   useEffect(() => {
+    if (!files || files.length === 0) return
+
+    const urls = files.map((file) => URL.createObjectURL(file))
+    setObjectUrls(urls)
+
+    // Cleanup URLs when files change or component unmounts
     return () => {
-      objectUrls.forEach((url) => URL.revokeObjectURL(url))
+      urls.forEach((url) => URL.revokeObjectURL(url))
     }
-  }, [objectUrls])
+  }, [files])
 
   const handleStartDate = (date: Date) => {
     setStartDate(date)
@@ -91,6 +98,8 @@ export function AddProjectModal({
     setStartDate(undefined)
     setEndDate(undefined)
     setBudget("")
+    setFiles(null)
+    setObjectUrls([])
   }
 
   return (
@@ -112,25 +121,20 @@ export function AddProjectModal({
               </FileInput>
               {files && files.length > 0 && (
                 <FileUploaderContent className="absolute top-0 left-0 h-full w-full ">
-                  {files.map((file, i) => {
-                    const url = URL.createObjectURL(file)
-                    setObjectUrls((prev) => [...prev, url])
-
-                    return (
-                      <FileUploaderItem
-                        key={`${file.name}-${file.size}-${i}`}
-                        index={i}
-                        className="h-full w-full overflow-hidden rounded-md border-none bg-gray-4 hover:bg-gray-3"
-                        aria-roledescription={`file ${i + 1} containing ${file.name}`}
-                      >
-                        <img
-                          src={url}
-                          alt={file.name}
-                          className="h-full w-full rounded-md object-cover"
-                        />
-                      </FileUploaderItem>
-                    )
-                  })}
+                  {files.map((file, i) => (
+                    <FileUploaderItem
+                      key={`${file.name}-${file.size}-${i}`}
+                      index={i}
+                      className="h-full w-full overflow-hidden rounded-md border-none bg-gray-4 hover:bg-gray-3"
+                      aria-roledescription={`file ${i + 1} containing ${file.name}`}
+                    >
+                      <img
+                        src={objectUrls[i]} // Use the pre-generated URLs
+                        alt={file.name}
+                        className="h-full w-full rounded-md object-cover"
+                      />
+                    </FileUploaderItem>
+                  ))}
                 </FileUploaderContent>
               )}
             </FileUploader>
