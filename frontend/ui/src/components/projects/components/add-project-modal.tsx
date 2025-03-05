@@ -60,16 +60,22 @@ export function AddProjectModal({
 
   const handleStartDate = (date: Date) => {
     setStartDate(date)
-    console.log("Selected date:", date)
   }
   const handleEndDate = (date: Date) => {
     setEndDate(date)
-    console.log("Selected date:", date)
   }
 
   const handleSubmit = () => {
-    if (!title || !company || !description) return
+    const requiredFields = []
+    if (!title) requiredFields.push("Project Name")
+    if (!company) requiredFields.push("Client Name")
+    if (!description) requiredFields.push("Description")
 
+    if (requiredFields.length > 0) {
+      // Consider adding a toast or other notification here
+      console.error(`Please fill in required fields: ${requiredFields.join(", ")}`)
+      return
+    }
     const newProject: Omit<Project, "id"> = {
       title,
       company,
@@ -83,6 +89,7 @@ export function AddProjectModal({
       startDate: startDate ? startDate.getTime() : undefined,
       endDate: endDate ? new Date(endDate).getTime() : undefined,
       budget: budget ? Number.parseFloat(budget) : undefined,
+      files: objectUrls[0]
     }
 
     onAddProject(newProject)

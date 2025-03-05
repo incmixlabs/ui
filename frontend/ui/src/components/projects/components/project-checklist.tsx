@@ -19,19 +19,25 @@ import type { DragControls } from "motion/react"
 import type React from "react"
 import { useState } from "react"
 import { ProjectsImages } from "../images"
+type TChecklistItem = {
+  id: number;
+  title: string;
+  date: string;
+  checked: boolean;
+};
 
 function ProjectChecklist() {
-  const [checkListData, setChecklistData] = useState([
+  const [checkListData, setChecklistData] = useState<TChecklistItem[]>([
     {
       id: 1,
       title: "Inbox Template",
-      date: "32.8.2024",
+      date: "28.8.2024",
       checked: false,
     },
     {
       id: 2,
       title: "Chat Template",
-      date: "32.8.2024",
+      date: "29.8.2024",
       checked: false,
     },
     {
@@ -43,10 +49,14 @@ function ProjectChecklist() {
     {
       id: 4,
       title: "Projects Template",
-      date: "32.8.2024",
+      date: "31.8.2024",
       checked: false,
     },
   ])
+
+  const checkedCount = checkListData.filter((item) => item.checked).length;
+  const totalCount = checkListData.length;
+  const completionPercentage = totalCount > 0 ? Math.round((checkedCount / totalCount) * 100) : 0;
   return (
     <>
       <Box>
@@ -58,20 +68,12 @@ function ProjectChecklist() {
             <span>CheckList</span>
             <span>
               (
-              {Math.round(
-                (checkListData.filter((item) => item.checked).length /
-                  checkListData.length) *
-                  100
-              )}
+              {completionPercentage}
               %)
             </span>
           </Heading>
           <Progress
-            value={
-              (checkListData.filter((item) => item.checked).length /
-                checkListData.length) *
-              100
-            }
+            value={completionPercentage}
           />
         </Box>
         <Reorder.Group
@@ -81,7 +83,10 @@ function ProjectChecklist() {
           className="w-full space-y-1 "
         >
           {checkListData.map((item) => (
-            <Item key={item.id} item={item}>
+            <Item key={item.id} item={item}
+              setChecklistData={setChecklistData}
+              checkListData={checkListData}
+            >
               <Flex className="gap-2">
                 <Checkbox
                   size={"3"}
@@ -128,9 +133,14 @@ interface ChecklistItem {
 const Item = ({
   children,
   item,
+  setChecklistData,
+  checkListData
 }: {
   children: React.ReactNode
   item: ChecklistItem
+  setChecklistData: React.Dispatch<React.SetStateAction<TChecklistItem[]>>
+  checkListData: TChecklistItem[]
+
 }) => {
   const y = useMotionValue(0)
   //   const boxShadow = useRaisedShadow(y);
@@ -147,7 +157,11 @@ const Item = ({
       {children}
       <Flex className="gap-3" align={"center"}>
         <ReorderIcon dragControls={dragControls} />
-        <IconButton className="bg-transparent opacity-0 group-hover:opacity-100">
+        <IconButton
+          onClick={() => {
+            setChecklistData(checkListData.filter(i => i.id !== item.id));
+          }}
+          className="bg-transparent opacity-0 group-hover:opacity-100">
           <Trash2 className="h-5 w-5 text-gray-12" />
         </IconButton>
       </Flex>

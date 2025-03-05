@@ -23,4 +23,5 @@ export interface Project {
   startDate?: number
   endDate?: number
   budget?: number
+  files?: string
 }
