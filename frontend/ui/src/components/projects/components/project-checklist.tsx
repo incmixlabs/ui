@@ -20,11 +20,11 @@ import type React from "react"
 import { useState } from "react"
 import { ProjectsImages } from "../images"
 type TChecklistItem = {
-  id: number;
-  title: string;
-  date: string;
-  checked: boolean;
-};
+  id: number
+  title: string
+  date: string
+  checked: boolean
+}
 
 function ProjectChecklist() {
   const [checkListData, setChecklistData] = useState<TChecklistItem[]>([
@@ -54,9 +54,10 @@ function ProjectChecklist() {
     },
   ])
 
-  const checkedCount = checkListData.filter((item) => item.checked).length;
-  const totalCount = checkListData.length;
-  const completionPercentage = totalCount > 0 ? Math.round((checkedCount / totalCount) * 100) : 0;
+  const checkedCount = checkListData.filter((item) => item.checked).length
+  const totalCount = checkListData.length
+  const completionPercentage =
+    totalCount > 0 ? Math.round((checkedCount / totalCount) * 100) : 0
   return (
     <>
       <Box>
@@ -67,14 +68,11 @@ function ProjectChecklist() {
           >
             <span>CheckList</span>
             <span>
-              (
-              {completionPercentage}
+              ({completionPercentage}
               %)
             </span>
           </Heading>
-          <Progress
-            value={completionPercentage}
-          />
+          <Progress value={completionPercentage} />
         </Box>
         <Reorder.Group
           axis="y"
@@ -83,7 +81,9 @@ function ProjectChecklist() {
           className="w-full space-y-1 "
         >
           {checkListData.map((item) => (
-            <Item key={item.id} item={item}
+            <Item
+              key={item.id}
+              item={item}
               setChecklistData={setChecklistData}
               checkListData={checkListData}
             >
@@ -134,13 +134,12 @@ const Item = ({
   children,
   item,
   setChecklistData,
-  checkListData
+  checkListData,
 }: {
   children: React.ReactNode
   item: ChecklistItem
   setChecklistData: React.Dispatch<React.SetStateAction<TChecklistItem[]>>
   checkListData: TChecklistItem[]
-
 }) => {
   const y = useMotionValue(0)
   //   const boxShadow = useRaisedShadow(y);
@@ -159,9 +158,10 @@ const Item = ({
         <ReorderIcon dragControls={dragControls} />
         <IconButton
           onClick={() => {
-            setChecklistData(checkListData.filter(i => i.id !== item.id));
+            setChecklistData(checkListData.filter((i) => i.id !== item.id))
           }}
-          className="bg-transparent opacity-0 group-hover:opacity-100">
+          className="bg-transparent opacity-0 group-hover:opacity-100"
+        >
           <Trash2 className="h-5 w-5 text-gray-12" />
         </IconButton>
       </Flex>

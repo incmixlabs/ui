@@ -73,7 +73,9 @@ export function AddProjectModal({
 
     if (requiredFields.length > 0) {
       // Consider adding a toast or other notification here
-      console.error(`Please fill in required fields: ${requiredFields.join(", ")}`)
+      console.error(
+        `Please fill in required fields: ${requiredFields.join(", ")}`
+      )
       return
     }
     const newProject: Omit<Project, "id"> = {
@@ -89,7 +91,7 @@ export function AddProjectModal({
       startDate: startDate ? startDate.getTime() : undefined,
       endDate: endDate ? new Date(endDate).getTime() : undefined,
       budget: budget ? Number.parseFloat(budget) : undefined,
-      files: objectUrls[0]
+      files: objectUrls[0],
     }
 
     onAddProject(newProject)
