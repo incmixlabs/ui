@@ -1,4 +1,4 @@
-export default function SidebarErrorFallback() {
+export function SidebarErrorFallback() {
   return (
     <>
       <div className="flex h-screen items-center justify-center p-4 text-red-500 ">

@@ -8,7 +8,6 @@ import {
   Trash2,
 } from "lucide-react"
 
-import { DropdownMenu } from "@radix-ui/themes"
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -17,7 +16,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "./sidebar"
+} from "@incmix/ui/sidebar"
+import { DropdownMenu } from "@radix-ui/themes"
 
 export function NavProjects({
   projects,
