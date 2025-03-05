@@ -1,36 +1,52 @@
+import type { Option } from "../multiple-selector/multiple-selector"
 import { ProjectsImages } from "./images"
-import type { Member, Project } from "./types"
+import type { Project } from "./types"
 
-export const members: Member[] = [
+export const members: Option[] = [
   {
     id: "1",
+    value: "shane-black",
     name: "Shane Black",
+    label: "Shane Black",
     avatar: ProjectsImages?.user,
-    color: "bg-blue-500",
+    position: "UI/UX Designer",
+    color: "blue",
   },
   {
     id: "2",
+    value: "john-doe",
     name: "John Doe",
+    label: "John Doe",
     avatar: ProjectsImages?.user1,
-    color: "bg-red-500",
+    position: "Project Manager",
+    color: "amber",
   },
   {
     id: "3",
+    value: "jane-smith",
     name: "Jane Smith",
+    label: "Jane Smith",
     avatar: ProjectsImages?.user2,
-    color: "bg-green-500",
+    position: "Business Analyst",
+    color: "indigo",
   },
   {
     id: "4",
+    value: "emily-johnson",
     name: "Emily Johnson",
+    label: "Emily Johnson",
     avatar: ProjectsImages?.user3,
-    color: "bg-purple-500",
+    color: "cyan",
+    position: "Web Developer",
   },
   {
     id: "5",
+    value: "micheal-brown",
+    label: "micheal-brown",
     name: "Michael Brown",
     avatar: ProjectsImages?.user4,
-    color: "bg-yellow-500",
+    position: "Product Designer",
+    color: "orange",
   },
 ]
 

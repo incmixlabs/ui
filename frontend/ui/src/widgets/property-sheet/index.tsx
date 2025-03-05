@@ -40,7 +40,7 @@ export const themeData = [
 const resolveColorVariable = (colorVar: string) => {
   if (colorVar.startsWith("var(")) {
     const variableName = colorVar.match(/var\((--[^)]+)\)/)?.[1]
-    if (variableName) {
+    if (variableName && typeof document !== "undefined") {
       return getComputedStyle(document.documentElement)
         .getPropertyValue(variableName)
         .trim()
@@ -220,7 +220,7 @@ export function PropertySheet() {
               <Popover.Trigger>
                 <Button
                   variant="soft"
-                  className="color-swatch h-4·w-4 cursor-pointer rounded-sm border border-gray-4"
+                  className="color-swatch h-4 w-4 cursor-pointer rounded-sm border border-gray-4"
                   style={{ backgroundColor: color }}
                   aria-label="Open color picker"
                 />

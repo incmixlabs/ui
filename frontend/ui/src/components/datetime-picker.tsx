@@ -97,6 +97,7 @@ interface SmartDatetimeInputProps {
   value?: Date
   onValueChange: (date: Date) => void
   showCalendar?: boolean
+  removeInput?: boolean
   showTimePicker?: boolean
 }
 
@@ -117,13 +118,14 @@ const useSmartDateInput = () => {
   }
   return context
 }
+
 export const SmartDatetimeInput = React.forwardRef<
   HTMLInputElement,
   Omit<
     React.InputHTMLAttributes<HTMLInputElement>,
     "type" | "ref" | "value" | "defaultValue" | "onBlur"
   > &
-    SmartDatetimeInputProps
+  SmartDatetimeInputProps
 >(
   (
     {
@@ -132,6 +134,7 @@ export const SmartDatetimeInput = React.forwardRef<
       onValueChange,
       placeholder,
       disabled,
+      removeInput,
       showCalendar = true,
       showTimePicker = true,
     },
@@ -153,11 +156,12 @@ export const SmartDatetimeInput = React.forwardRef<
           onValueChange,
           Time,
           onTimeChange,
+          removeInput,
           showCalendar: shouldShowBoth ? true : showCalendar,
           showTimePicker: shouldShowBoth ? true : showTimePicker,
         }}
       >
-        <div className="w-fit rounded-md bg-gray-3">
+        <div className="w-full rounded-md bg-gray-3">
           <div
             className={cn(
               "flex w-full items-center gap-0 rounded-md border border-gray-5 bg-gray-5 p-1 transition-all",
@@ -165,11 +169,13 @@ export const SmartDatetimeInput = React.forwardRef<
             )}
           >
             <DateTimeLocalInput />
-            <NaturalLanguageInput
-              placeholder={placeholder}
-              disabled={disabled}
-              ref={ref}
-            />
+            {!removeInput && (
+              <NaturalLanguageInput
+                placeholder={placeholder}
+                disabled={disabled}
+                ref={ref}
+              />
+            )}
           </div>
         </div>
       </SmartDatetimeInputContext.Provider>
@@ -385,9 +391,8 @@ const TimePicker = () => {
 
               const isSuggested = !value && isSelected
 
-              const currentValue = `${formatIndex}:${
-                part === 0 ? "00" : timestamp * part
-              } ${PM_AM}`
+              const currentValue = `${formatIndex}:${part === 0 ? "00" : timestamp * part
+                } ${PM_AM}`
 
               return (
                 <li

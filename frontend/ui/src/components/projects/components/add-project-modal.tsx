@@ -1,8 +1,18 @@
+import { SmartDatetimeInput } from "@components/datetime-picker"
+import {
+  FileInput,
+  FileUploader,
+  FileUploaderContent,
+  FileUploaderItem,
+} from "@components/file-upload"
 import { Input } from "@components/form"
 import { Label } from "@components/label"
+import MultipleSelector, {
+  type Option,
+} from "@components/multiple-selector/multiple-selector"
 import { Textarea } from "@components/textarea"
-import { Button, Dialog } from "@radix-ui/themes"
-import { Calendar, Plus, X } from "lucide-react"
+import { Button, Dialog, Grid } from "@radix-ui/themes"
+import { Calendar, Paperclip, Plus, X } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
 import { members } from "../data"
@@ -23,19 +33,25 @@ export function AddProjectModal({
   const [title, setTitle] = useState("")
   const [company, setCompany] = useState("")
   const [description, setDescription] = useState("")
-  const [selectedMembers, setSelectedMembers] = useState<Member[]>([])
-  const [startDate, setStartDate] = useState("")
-  const [endDate, setEndDate] = useState("")
+  const [selectedMembers, setSelectedMembers] = useState<Option[]>([])
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined)
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined)
   const [budget, setBudget] = useState("")
+  const [files, setFiles] = useState<File[] | null>(null)
 
-  const handleAddMember = (member: Member) => {
-    if (!selectedMembers.some((m) => m.id === member.id)) {
-      setSelectedMembers([...selectedMembers, member])
-    }
+  const dropZoneConfig = {
+    maxFiles: 5,
+    maxSize: 1024 * 1024 * 4,
+    multiple: true,
   }
 
-  const handleRemoveMember = (memberId: string) => {
-    setSelectedMembers(selectedMembers.filter((m) => m.id !== memberId))
+  const handleStartDate = (date: Date) => {
+    setStartDate(date)
+    console.log("Selected date:", date)
+  }
+  const handleEndDate = (date: Date) => {
+    setEndDate(date)
+    console.log("Selected date:", date)
   }
 
   const handleSubmit = () => {
@@ -51,8 +67,8 @@ export function AddProjectModal({
       timeType: "week",
       members: selectedMembers,
       status: "started",
-      startDate,
-      endDate,
+      startDate: startDate ? startDate.getTime() : undefined,
+      endDate: endDate ? new Date(endDate).getTime() : undefined,
       budget: budget ? Number.parseFloat(budget) : undefined,
     }
 
@@ -66,20 +82,49 @@ export function AddProjectModal({
     setCompany("")
     setDescription("")
     setSelectedMembers([])
-    setStartDate("")
-    setEndDate("")
+    setStartDate(undefined)
+    setEndDate(undefined)
     setBudget("")
   }
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
-      <Dialog.Content maxWidth="450px">
-        <Dialog.Title>Add Project</Dialog.Title>
-        <div className="grid gap-4 py-4">
+      <Dialog.Content maxWidth="500px">
+        <Dialog.Title className="font-medium">Add Project</Dialog.Title>
+        <Grid className="py-4" gap={"4"}>
           <div className="mb-4 flex justify-center">
-            <div className="flex h-24 w-24 items-center justify-center rounded-md border-2 border-gray-300 border-dashed">
-              <Plus className="h-8 w-8 text-gray-400" />
-            </div>
+            <FileUploader
+              value={files}
+              onValueChange={setFiles}
+              dropzoneOptions={dropZoneConfig}
+              className="relative mx-auto h-28 w-36 rounded-lg border-none p-2"
+            >
+              <FileInput className="l mx-auto grid h-full w-full place-content-center outline-dashed outline-2 outline-gray-4 ">
+                <div className="flex w-full flex-col items-center justify-center pt-3 pb-4 ">
+                  <Plus size={32} className="text-gray-8" />
+                </div>
+              </FileInput>
+              {files && files.length > 0 && (
+                <FileUploaderContent className="absolute top-0 left-0 h-full w-full ">
+                  {files?.map((file, i) => (
+                    <FileUploaderItem
+                      key={i}
+                      index={i}
+                      className="h-full w-full overflow-hidden rounded-md border-none bg-gray-4 hover:bg-gray-3"
+                      aria-roledescription={`file ${i + 1} containing ${
+                        file.name
+                      }`}
+                    >
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt={file.name}
+                        className="h-full w-full rounded-md object-cover "
+                      />
+                    </FileUploaderItem>
+                  ))}
+                </FileUploaderContent>
+              )}
+            </FileUploader>
           </div>
 
           <div className="grid gap-2">
@@ -117,77 +162,47 @@ export function AddProjectModal({
             <div className="grid gap-2">
               <Label>Start Date</Label>
               <div className="relative">
-                <Input
-                  type="date"
+                <SmartDatetimeInput
                   value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="pl-10"
+                  showCalendar={true}
+                  onValueChange={handleStartDate}
+                  placeholder="Mar 5, 2025, 2:45 AM"
+                  className="w-fit bg-gray-2 dark:bg-gray-1 "
                 />
-                <Calendar className="absolute top-2.5 left-3 h-5 w-5 text-gray-400" />
+                {/* <Calendar className="absolute top-2.5 left-3 h-5 w-5 text-gray-400" /> */}
               </div>
             </div>
             <div className="grid gap-2">
               <Label>End Date</Label>
               <div className="relative">
-                <Input
-                  type="date"
+                <SmartDatetimeInput
                   value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="pl-10"
+                  showCalendar={true}
+                  onValueChange={handleEndDate}
+                  placeholder="Mar 6, 2025, 2:45 AM"
+                  className="w-fit bg-gray-2 dark:bg-gray-1"
                 />
-                <Calendar className="absolute top-2.5 left-3 h-5 w-5 text-gray-400" />
               </div>
             </div>
           </div>
 
           <div className="grid gap-2">
             <Label>Members</Label>
-            <div className="mb-2 flex flex-wrap gap-2">
-              {selectedMembers.map((member) => (
-                <div
-                  key={member.id}
-                  className="flex items-center gap-1 rounded-full bg-blue-50 px-2 py-1 text-blue-700 text-sm"
-                >
-                  <div className="h-5 w-5 overflow-hidden rounded-full">
-                    <img
-                      src={member.avatar}
-                      alt={member.name}
-                      width={20}
-                      height={20}
-                    />
-                  </div>
-                  <span>{member.name}</span>
-                  <button
-                    onClick={() => handleRemoveMember(member.id)}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
-            </div>
+
             <div className="flex flex-wrap gap-2">
-              {members
-                .filter(
-                  (member) => !selectedMembers.some((m) => m.id === member.id)
-                )
-                .map((member) => (
-                  <button
-                    key={member.id}
-                    onClick={() => handleAddMember(member)}
-                    className="flex items-center gap-1 rounded-full border border-gray-200 px-2 py-1 text-sm hover:bg-gray-50"
-                  >
-                    <div className="h-5 w-5 overflow-hidden rounded-full">
-                      <img
-                        src={member.avatar}
-                        alt={member.name}
-                        width={20}
-                        height={20}
-                      />
-                    </div>
-                    <span>{member.name}</span>
-                  </button>
-                ))}
+              <MultipleSelector
+                value={selectedMembers}
+                onChange={setSelectedMembers}
+                defaultColor={"gray"}
+                defaultOptions={members}
+                placeholder="Select members"
+                className="border-1 dark:bg-gray-1"
+                emptyIndicator={
+                  <p className="text-center text-gray-6 text-lg dark:text-gray-400">
+                    No results found.
+                  </p>
+                }
+              />
             </div>
           </div>
 
@@ -205,7 +220,7 @@ export function AddProjectModal({
               />
             </div>
           </div>
-        </div>
+        </Grid>
         <div className="flex justify-end">
           <Button
             onClick={handleSubmit}

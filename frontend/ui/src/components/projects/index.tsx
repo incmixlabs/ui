@@ -6,7 +6,8 @@ import { LayoutGrid, List, Plus, SlidersHorizontal, X } from "lucide-react"
 import { MotionSheet } from "../custom-sheet"
 import { AddProjectModal } from "./components/add-project-modal"
 import { ProjectCard } from "./components/project-card"
-import { ProjectDrawer } from "./components/project-drawer"
+
+import ProjectDrawer from "./components/project-drawer"
 import { ProjectFilter } from "./components/project-filter"
 import { projects as initialProjects } from "./data"
 import type { Project } from "./types"
@@ -21,7 +22,6 @@ export function ProjectPageComponents() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
-  const { onOpen } = useProjectDrawer()
 
   const handleTabChange = (
     tab: "all" | "started" | "on-hold" | "completed"
@@ -46,10 +46,6 @@ export function ProjectPageComponents() {
     if (activeTab === "all" || activeTab === newProject.status) {
       setFilteredProjects([...filteredProjects, projectWithId])
     }
-  }
-
-  const handleEditProject = (project: Project) => {
-    onOpen(project)
   }
 
   const handleAddMember = (project: Project) => {
@@ -90,7 +86,9 @@ export function ProjectPageComponents() {
     // Filter by members
     if (filters.members.length > 0) {
       filtered = filtered.filter((project) =>
-        project.members.some((member) => filters.members.includes(member.id))
+        project.members.some(
+          (member) => member.id && filters.members.includes(member.id)
+        )
       )
     }
 
@@ -214,7 +212,6 @@ export function ProjectPageComponents() {
                   <ProjectCard
                     key={project.id}
                     project={project}
-                    onEdit={handleEditProject}
                     onAddMember={handleAddMember}
                     onAddDueDate={handleAddDueDate}
                     onDelete={handleDeleteProject}
@@ -247,7 +244,6 @@ export function ProjectPageComponents() {
                   <ProjectCard
                     key={project.id}
                     project={project}
-                    onEdit={handleEditProject}
                     onAddMember={handleAddMember}
                     onAddDueDate={handleAddDueDate}
                     onDelete={handleDeleteProject}
@@ -280,7 +276,6 @@ export function ProjectPageComponents() {
                   <ProjectCard
                     key={project.id}
                     project={project}
-                    onEdit={handleEditProject}
                     onAddMember={handleAddMember}
                     onAddDueDate={handleAddDueDate}
                     onDelete={handleDeleteProject}
@@ -313,7 +308,6 @@ export function ProjectPageComponents() {
                   <ProjectCard
                     key={project.id}
                     project={project}
-                    onEdit={handleEditProject}
                     onAddMember={handleAddMember}
                     onAddDueDate={handleAddDueDate}
                     onDelete={handleDeleteProject}
@@ -350,8 +344,7 @@ export function ProjectPageComponents() {
       <ProjectDrawer />
 
       <MotionSheet
-        title="My Sheet"
-        description="Sheet description"
+        title="Filter"
         side="right"
         open={isFilterOpen}
         onOpenChange={setIsFilterOpen}
@@ -364,12 +357,3 @@ export function ProjectPageComponents() {
     </Box>
   )
 }
-
-// export const ProjectPageComponents = () => {
-
-//     return (
-//         <div className="h-full w-full ">
-//             p
-//         </div>
-//     )
-// }

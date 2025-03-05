@@ -1,8 +1,12 @@
+import type { Option } from "../multiple-selector/multiple-selector"
+
 export interface Member {
   id: string
   name: string
   avatar: string
   color?: string
+  label?: string
+  value?: string
 }
 
 export interface Project {
@@ -14,9 +18,9 @@ export interface Project {
   progress: number
   timeLeft: string
   timeType: "week" | "days"
-  members: Member[]
+  members: Option[]
   status: "all" | "started" | "on-hold" | "completed"
-  startDate?: string
-  endDate?: string
+  startDate?: number
+  endDate?: number
   budget?: number
 }

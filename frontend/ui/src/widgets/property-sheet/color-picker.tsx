@@ -1,6 +1,42 @@
 interface CompactColorPickerProps {
   onColorSelect: (color: { hex: string }) => void
 }
+const generateColorArray = (color: string, reverse = false) => {
+  const range = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  if (reverse) range.reverse()
+  return range.map((num) => `var(--${color}-${num})`)
+}
+
+function cssVarToHex(varName: string) {
+  // Create a temporary element to apply the CSS variable
+  const tempElem = document.createElement("div")
+  tempElem.style.color = `var(${varName})`
+  document.body.appendChild(tempElem)
+
+  // Get the computed color value (in RGB/RGBA format)
+  const computedColor = getComputedStyle(tempElem).color
+  document.body.removeChild(tempElem)
+
+  // Extract RGB/A components from the computed color
+  const components = computedColor.match(/[\d\.]+/g) || []
+  if (components.length < 3) return null // Invalid color
+
+  // Convert RGB values to hex
+  const [r, g, b] = components
+    .slice(0, 3)
+    .map((n) => Number.parseInt(n).toString(16).padStart(2, "0"))
+  let hex = `#${r}${g}${b}`
+
+  // Add alpha channel if present
+  if (components.length === 4) {
+    const a = Math.round(Number.parseFloat(components[3]) * 255)
+      .toString(16)
+      .padStart(2, "0")
+    hex += a
+  }
+
+  return hex.toUpperCase()
+}
 
 const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
   // Dark colors - displayed horizontally
@@ -17,139 +53,17 @@ const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
     "var(--gray-11)",
     "var(--gray-12)",
   ]
-
-  // Other color groups - displayed vertically
-  const redsColors = [
-    "var(--red-9)",
-    "var(--red-8)",
-    "var(--red-7)",
-    "var(--red-6)",
-    "var(--red-5)",
-    "var(--red-4)",
-    "var(--red-3)",
-    "var(--red-2)",
-    "var(--red-1)",
-  ]
-
-  const orangesColors = [
-    "var(--orange-9)",
-    "var(--orange-8)",
-    "var(--orange-7)",
-    "var(--orange-6)",
-    "var(--orange-5)",
-    "var(--orange-4)",
-    "var(--orange-3)",
-    "var(--orange-2)",
-    "var(--orange-1)",
-  ]
-
-  const yellowsColors = [
-    "var(--yellow-9)",
-    "var(--yellow-8)",
-    "var(--yellow-7)",
-    "var(--yellow-6)",
-    "var(--yellow-5)",
-    "var(--yellow-4)",
-    "var(--yellow-3)",
-    "var(--yellow-2)",
-    "var(--yellow-1)",
-  ]
-
-  const leafColors = [
-    "var(--grass-9)",
-    "var(--grass-8)",
-    "var(--grass-7)",
-    "var(--grass-6)",
-    "var(--grass-5)",
-    "var(--grass-4)",
-    "var(--grass-3)",
-    "var(--grass-2)",
-    "var(--grass-1)",
-  ]
-
-  const greensColors = [
-    "var(--green-9)",
-    "var(--green-8)",
-    "var(--green-7)",
-    "var(--green-6)",
-    "var(--green-5)",
-    "var(--green-4)",
-    "var(--green-3)",
-    "var(--green-2)",
-    "var(--green-1)",
-  ]
-
-  const tealsColors = [
-    "var(--teal-9)",
-    "var(--teal-8)",
-    "var(--teal-7)",
-    "var(--teal-6)",
-    "var(--teal-5)",
-    "var(--teal-4)",
-    "var(--teal-3)",
-    "var(--teal-2)",
-    "var(--teal-1)",
-  ]
-
-  const bluesColors = [
-    "var(--blue-9)",
-    "var(--blue-8)",
-    "var(--blue-7)",
-    "var(--blue-6)",
-    "var(--blue-5)",
-    "var(--blue-4)",
-    "var(--blue-3)",
-    "var(--blue-2)",
-    "var(--blue-1)",
-  ]
-
-  const indigoColors = [
-    "var(--indigo-9)",
-    "var(--indigo-8)",
-    "var(--indigo-7)",
-    "var(--indigo-6)",
-    "var(--indigo-5)",
-    "var(--indigo-4)",
-    "var(--indigo-3)",
-    "var(--indigo-2)",
-    "var(--indigo-1)",
-  ]
-
-  const violetColors = [
-    "var(--violet-9)",
-    "var(--violet-8)",
-    "var(--violet-7)",
-    "var(--violet-6)",
-    "var(--violet-5)",
-    "var(--violet-4)",
-    "var(--violet-3)",
-    "var(--violet-2)",
-    "var(--violet-1)",
-  ]
-
-  const plumsColors = [
-    "var(--plum-9)",
-    "var(--plum-8)",
-    "var(--plum-7)",
-    "var(--plum-6)",
-    "var(--plum-5)",
-    "var(--plum-4)",
-    "var(--plum-3)",
-    "var(--plum-2)",
-    "var(--plum-1)",
-  ]
-
-  const pinksColors = [
-    "var(--pink-9)",
-    "var(--pink-8)",
-    "var(--pink-7)",
-    "var(--pink-6)",
-    "var(--pink-5)",
-    "var(--pink-4)",
-    "var(--pink-3)",
-    "var(--pink-2)",
-    "var(--pink-1)",
-  ]
+  const redsColors = generateColorArray("red", true)
+  const orangesColors = generateColorArray("orange", true)
+  const yellowsColors = generateColorArray("yellow", true)
+  const leafColors = generateColorArray("grass", true)
+  const greensColors = generateColorArray("green", true)
+  const tealsColors = generateColorArray("teal", true)
+  const bluesColors = generateColorArray("blue", true)
+  const indigoColors = generateColorArray("indigo", true)
+  const violetColors = generateColorArray("violet", true)
+  const plumsColors = generateColorArray("plum", true)
+  const pinksColors = generateColorArray("pink", true)
 
   // All vertical color groups
   const colorGroups = [
@@ -183,14 +97,24 @@ const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
 
       <div className="flex justify-between">
         {colorGroups.map((group) => (
-          <div key={`group-${group}`} className="flex flex-col gap-1">
+          <div
+            key={`group-${colorGroups.indexOf(group)}`}
+            className="flex flex-col gap-1"
+          >
             {group.map((color) => (
               <button
-                key={`color-${group}-${color}`}
+                key={`color-${color}`}
                 type="button"
                 className="h-6 w-6 cursor-pointer rounded-sm transition-transform hover:scale-110"
                 style={{ backgroundColor: `${color}` }}
-                onClick={() => onColorSelect({ hex: color })}
+                onClick={() => {
+                  // Extract variable name from the CSS variable notation
+                  const varNameMatch = color.match(/^var\((--.+)\)$/)
+                  const varName = varNameMatch ? varNameMatch[1] : color
+                  // Convert the CSS variable to a hex color value using the helper function
+                  const hexColor = cssVarToHex(varName) || color
+                  onColorSelect({ hex: hexColor })
+                }}
                 title={color}
               />
             ))}

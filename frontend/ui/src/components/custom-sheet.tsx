@@ -1,4 +1,7 @@
+import { Box, Button, Flex, IconButton } from "@radix-ui/themes"
+import { cn } from "@utils"
 import { AnimatePresence, motion } from "framer-motion"
+import { X } from "lucide-react"
 import type React from "react"
 import { useEffect, useState } from "react"
 
@@ -9,15 +12,13 @@ interface SheetProps {
   side?: "top" | "right" | "bottom" | "left"
   open?: boolean
   onOpenChange?: (open: boolean) => void
-  width?: string | number
-  height?: string | number
   closeOnOutsideClick?: boolean
   closeOnEsc?: boolean
   showCloseButton?: boolean
   overlayColor?: string
   closeButtonText?: string
-  headerBackground?: string
   contentBackground?: string
+  className?: string
   zIndex?: number
 }
 
@@ -28,15 +29,11 @@ export const MotionSheet: React.FC<SheetProps> = ({
   side = "right",
   open = false,
   onOpenChange,
-  width = "400px",
-  height = "100vh",
   closeOnOutsideClick = true,
   closeOnEsc = true,
   showCloseButton = true,
   overlayColor = "rgba(0, 0, 0, 0.5)",
-  closeButtonText = "Close",
-  headerBackground = "white",
-  contentBackground = "white",
+  className,
   zIndex = 60,
 }) => {
   const [isOpen, setIsOpen] = useState(open)
@@ -103,7 +100,6 @@ export const MotionSheet: React.FC<SheetProps> = ({
   const getSheetStyle = (): React.CSSProperties => {
     const baseStyle: React.CSSProperties = {
       position: "fixed",
-      backgroundColor: contentBackground,
       boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
       display: "flex",
       flexDirection: "column",
@@ -111,28 +107,23 @@ export const MotionSheet: React.FC<SheetProps> = ({
       overflow: "hidden",
       maxWidth: "100vw",
       maxHeight: "100vh",
+      height: "98vh",
     }
 
     switch (side) {
       case "right":
         return {
           ...baseStyle,
-          top: 0,
-          right: 0,
-          width,
-          height,
-          borderTopLeftRadius: "8px",
-          borderBottomLeftRadius: "8px",
+          top: 8,
+          right: 12,
+          borderRadius: "8px",
         }
       case "left":
         return {
           ...baseStyle,
           top: 0,
           left: 0,
-          width,
-          height,
-          borderTopRightRadius: "8px",
-          borderBottomRightRadius: "8px",
+          borderRadius: "8px",
         }
       case "top":
         return {
@@ -140,10 +131,8 @@ export const MotionSheet: React.FC<SheetProps> = ({
           top: 0,
           left: 0,
           right: 0,
-          height,
           width: "100%",
-          borderBottomLeftRadius: "8px",
-          borderBottomRightRadius: "8px",
+          borderRadius: "8px",
         }
       case "bottom":
         return {
@@ -151,10 +140,8 @@ export const MotionSheet: React.FC<SheetProps> = ({
           bottom: 0,
           left: 0,
           right: 0,
-          height,
           width: "100%",
-          borderTopLeftRadius: "8px",
-          borderTopRightRadius: "8px",
+          borderRadius: "8px",
         }
     }
   }
@@ -186,21 +173,13 @@ export const MotionSheet: React.FC<SheetProps> = ({
             initial="hidden"
             animate="visible"
             exit="hidden"
+            className={cn("w-96 bg-gray-3 p-5 py-4", className)}
             variants={getSheetVariants()}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
             style={getSheetStyle()}
           >
             {(title || description || showCloseButton) && (
-              <div
-                style={{
-                  padding: "16px",
-                  borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  backgroundColor: headerBackground,
-                }}
-              >
+              <Flex align={"center"} justify={"between"}>
                 <div>
                   {title && (
                     <h3
@@ -222,32 +201,14 @@ export const MotionSheet: React.FC<SheetProps> = ({
                   )}
                 </div>
                 {showCloseButton && (
-                  <button
-                    onClick={handleClose}
-                    style={{
-                      background: "transparent",
-                      border: "1px solid rgba(0, 0, 0, 0.1)",
-                      borderRadius: "4px",
-                      padding: "6px 12px",
-                      cursor: "pointer",
-                      fontSize: "14px",
-                    }}
-                  >
-                    {closeButtonText}
-                  </button>
+                  <IconButton onClick={handleClose} color="gray" type="button">
+                    <X />
+                  </IconButton>
                 )}
-              </div>
+              </Flex>
             )}
 
-            <div
-              style={{
-                padding: "16px",
-                overflowY: "auto",
-                flexGrow: 1,
-              }}
-            >
-              {children}
-            </div>
+            <Box className="flex-1 ">{children}</Box>
           </motion.div>
         </>
       )}

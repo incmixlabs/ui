@@ -24,7 +24,6 @@ import Image from "next/image"
 
 interface ProjectCardProps {
   project: Project
-  onEdit: (project: Project) => void
   onAddMember: (project: Project) => void
   onAddDueDate: (project: Project) => void
   onDelete: (projectId: string) => void
@@ -32,13 +31,11 @@ interface ProjectCardProps {
 
 export function ProjectCard({
   project,
-  onEdit,
   onAddMember,
   onAddDueDate,
   onDelete,
 }: ProjectCardProps) {
-  const { onOpen } = useProjectDrawer()
-
+  const { handleDrawerOpen } = useProjectDrawer()
   return (
     <Card className=" flex flex-col gap-4 rounded-lg p-5">
       <Flex align={"center"} justify={"between"}>
@@ -69,7 +66,7 @@ export function ProjectCard({
           </DropdownMenu.Trigger>
           <DropdownMenu.Content align="end" className="w-[180px] p-0">
             <DropdownMenu.Item
-              onClick={() => onEdit(project)}
+              onClick={() => handleDrawerOpen(project?.id.toString())}
               className="flex items-center gap-2"
             >
               <Pencil size={16} />
