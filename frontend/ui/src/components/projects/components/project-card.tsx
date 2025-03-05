@@ -66,7 +66,9 @@ export function ProjectCard({
           </DropdownMenu.Trigger>
           <DropdownMenu.Content align="end" className="w-[180px] p-0">
             <DropdownMenu.Item
-              onClick={() => handleDrawerOpen(project?.id.toString())}
+              onClick={() =>
+                project?.id && handleDrawerOpen(project.id.toString())
+              }
               className="flex items-center gap-2"
             >
               <Pencil size={16} />

@@ -14,7 +14,7 @@ import { Textarea } from "@components/textarea"
 import { Button, Dialog, Grid } from "@radix-ui/themes"
 import { Calendar, Paperclip, Plus, X } from "lucide-react"
 import Image from "next/image"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { members } from "../data"
 import { ProjectsImages } from "../images"
 import type { Member, Project } from "../types"
@@ -38,12 +38,18 @@ export function AddProjectModal({
   const [endDate, setEndDate] = useState<Date | undefined>(undefined)
   const [budget, setBudget] = useState("")
   const [files, setFiles] = useState<File[] | null>(null)
+  const [objectUrls, setObjectUrls] = useState<string[]>([])
 
   const dropZoneConfig = {
     maxFiles: 5,
     maxSize: 1024 * 1024 * 4,
     multiple: true,
   }
+  useEffect(() => {
+    return () => {
+      objectUrls.forEach((url) => URL.revokeObjectURL(url))
+    }
+  }, [objectUrls])
 
   const handleStartDate = (date: Date) => {
     setStartDate(date)
@@ -106,22 +112,25 @@ export function AddProjectModal({
               </FileInput>
               {files && files.length > 0 && (
                 <FileUploaderContent className="absolute top-0 left-0 h-full w-full ">
-                  {files?.map((file, i) => (
-                    <FileUploaderItem
-                      key={i}
-                      index={i}
-                      className="h-full w-full overflow-hidden rounded-md border-none bg-gray-4 hover:bg-gray-3"
-                      aria-roledescription={`file ${i + 1} containing ${
-                        file.name
-                      }`}
-                    >
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt={file.name}
-                        className="h-full w-full rounded-md object-cover "
-                      />
-                    </FileUploaderItem>
-                  ))}
+                  {files.map((file, i) => {
+                    const url = URL.createObjectURL(file)
+                    setObjectUrls((prev) => [...prev, url])
+
+                    return (
+                      <FileUploaderItem
+                        key={`${file.name}-${file.size}-${i}`}
+                        index={i}
+                        className="h-full w-full overflow-hidden rounded-md border-none bg-gray-4 hover:bg-gray-3"
+                        aria-roledescription={`file ${i + 1} containing ${file.name}`}
+                      >
+                        <img
+                          src={url}
+                          alt={file.name}
+                          className="h-full w-full rounded-md object-cover"
+                        />
+                      </FileUploaderItem>
+                    )
+                  })}
                 </FileUploaderContent>
               )}
             </FileUploader>

@@ -125,7 +125,7 @@ export const SmartDatetimeInput = React.forwardRef<
     React.InputHTMLAttributes<HTMLInputElement>,
     "type" | "ref" | "value" | "defaultValue" | "onBlur"
   > &
-  SmartDatetimeInputProps
+    SmartDatetimeInputProps
 >(
   (
     {
@@ -391,8 +391,9 @@ const TimePicker = () => {
 
               const isSuggested = !value && isSelected
 
-              const currentValue = `${formatIndex}:${part === 0 ? "00" : timestamp * part
-                } ${PM_AM}`
+              const currentValue = `${formatIndex}:${
+                part === 0 ? "00" : timestamp * part
+              } ${PM_AM}`
 
               return (
                 <li

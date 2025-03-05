@@ -49,13 +49,11 @@ export function ProjectPageComponents() {
   }
 
   const handleAddMember = (project: Project) => {
-    // This would open a member selection modal in a real app
-    console.log("Add member to project", project.id)
+    console.log("TODO: Implement member selection for project", project.id)
   }
 
   const handleAddDueDate = (project: Project) => {
-    // This would open a date picker in a real app
-    console.log("Add due date to project", project.id)
+    console.log("TODO: Implement due date picker for project", project.id)
   }
 
   const handleDeleteProject = (projectId: string) => {

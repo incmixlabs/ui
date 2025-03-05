@@ -45,7 +45,7 @@ export function ProjectFilter({
     setSearch("")
     setSelectedMembers([])
     setDueDate(undefined)
-    setStatus("")
+    setStatus("started")
     onResetFilters()
   }
 

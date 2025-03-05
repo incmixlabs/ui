@@ -66,6 +66,30 @@ import { useEffect, useRef, useState } from "react"
 import { members, projects } from "../data"
 import { ProjectsImages } from "../images"
 
+const projectDetails = [
+  {
+    label: "Budget",
+    value: "2.500.00",
+    icon: <DollarSign />,
+    bgColor: "bg-green-3",
+    textColor: "text-green-8",
+  },
+  {
+    label: "Start Date",
+    value: "17 Jun, 2020",
+    icon: <CalendarDays />,
+    bgColor: "bg-blue-3",
+    textColor: "text-blue-8",
+  },
+  {
+    label: "End Date",
+    value: "04 Jul, 2020",
+    icon: <CalendarDays />,
+    bgColor: "bg-orange-3",
+    textColor: "text-orange-8",
+  },
+]
+
 export default function ProjectDrawer({
   listFilter,
 }: {
@@ -174,46 +198,24 @@ export default function ProjectDrawer({
                     <Heading size={"4"} className="font-medium text-gray-11">
                       DETAILS
                     </Heading>
-                    <Flex justify={"between"} className="pt-1">
-                      <Flex gap={"3"} className="">
-                        <Box className="grid h-10 w-10 place-content-center rounded-lg bg-green-3 text-green-8">
-                          <DollarSign />
-                        </Box>
-                        <Box>
-                          <Text as="span" className="text-gray-11 text-sm">
-                            Budget
-                          </Text>
-                          <Text as="p" className="text-sm">
-                            2.500.00
-                          </Text>
-                        </Box>
-                      </Flex>
-                      <Flex gap={"3"} className="">
-                        <Box className="grid h-10 w-10 place-content-center rounded-lg bg-blue-3 text-blue-8">
-                          <CalendarDays />
-                        </Box>
-                        <Box>
-                          <Text as="span" className="text-gray-11 text-sm">
-                            Start Date
-                          </Text>
-                          <Text as="p" className="text-sm">
-                            17 jun,2020
-                          </Text>
-                        </Box>
-                      </Flex>
-                      <Flex gap={"3"} className="">
-                        <Box className="grid h-10 w-10 place-content-center rounded-lg bg-orange-3 text-orange-8">
-                          <CalendarDays />
-                        </Box>
-                        <Box>
-                          <Text as="span" className="text-gray-11 text-sm">
-                            End Date
-                          </Text>
-                          <Text as="p" className="text-sm">
-                            04 jul,2020
-                          </Text>
-                        </Box>
-                      </Flex>
+                    <Flex justify="between" className="pt-1">
+                      {projectDetails.map((detail) => (
+                        <Flex key={detail.label} gap="3">
+                          <Box
+                            className={`grid h-10 w-10 place-content-center rounded-lg ${detail.bgColor} ${detail.textColor}`}
+                          >
+                            {detail.icon}
+                          </Box>
+                          <Box>
+                            <Text as="span" className="text-gray-11 text-sm">
+                              {detail.label}
+                            </Text>
+                            <Text as="p" className="text-sm">
+                              {detail.value}
+                            </Text>
+                          </Box>
+                        </Flex>
+                      ))}
                     </Flex>
                   </Box>
 

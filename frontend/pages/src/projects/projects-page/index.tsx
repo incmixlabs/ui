@@ -3,7 +3,9 @@ import { DashboardLayout } from "@layouts/admin-panel/layout"
 
 const ProjectsPage = () => {
   return (
-    <DashboardLayout breadcrumbItems={[{ label: "Tasks", url: "/tasks" }]}>
+    <DashboardLayout
+      breadcrumbItems={[{ label: "Projects", url: "/projects" }]}
+    >
       <ProjectPageComponents />
     </DashboardLayout>
   )
