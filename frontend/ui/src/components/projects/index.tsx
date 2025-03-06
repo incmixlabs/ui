@@ -148,7 +148,7 @@ export function ProjectPageComponents() {
               >
                 {activeTab === "all" && (
                   <motion.span
-                    layoutId={`tab-indicator`}
+                    layoutId={"tab-indicator"}
                     className="-bottom-0.5 absolute left-0 inline-block h-0.5 w-full bg-blue-600"
                   />
                 )}
@@ -163,7 +163,7 @@ export function ProjectPageComponents() {
               >
                 {activeTab === "started" && (
                   <motion.span
-                    layoutId={`tab-indicator`}
+                    layoutId={"tab-indicator"}
                     className="-bottom-0.5 absolute left-0 inline-block h-0.5 w-full bg-blue-600"
                   />
                 )}
@@ -178,7 +178,7 @@ export function ProjectPageComponents() {
               >
                 {activeTab === "on-hold" && (
                   <motion.span
-                    layoutId={`tab-indicator`}
+                    layoutId={"tab-indicator"}
                     className="-bottom-0.5 absolute left-0 inline-block h-0.5 w-full bg-blue-600"
                   />
                 )}
@@ -193,7 +193,7 @@ export function ProjectPageComponents() {
               >
                 {activeTab === "completed" && (
                   <motion.span
-                    layoutId={`tab-indicator`}
+                    layoutId={"tab-indicator"}
                     className="-bottom-0.5 absolute left-0 inline-block h-0.5 w-full bg-blue-600"
                   />
                 )}
@@ -204,7 +204,7 @@ export function ProjectPageComponents() {
               </Button>
             </Box>
           )}
-          <div className="absolute top-0 right-0 z-10 flex  rounded-md ">
+          <div className="absolute top-0 right-0 z-10 flex rounded-md ">
             <IconButton
               variant={viewMode === "list" ? "soft" : "solid"}
               className="h-10 w-10 cursor-pointer rounded-r-none border-0"
