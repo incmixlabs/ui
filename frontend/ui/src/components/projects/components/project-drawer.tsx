@@ -66,7 +66,7 @@ export default function ProjectDrawer({
           <motion.div
             className={cn(
               "cursor-default rounded-lg bg-gray-3 dark:bg-gray-4",
-              listFilter ? " h-full w-full" : " h-full w-hull"
+              listFilter ? " h-full w-full" : " h-full w-full"
             )}
           >
             <ScrollArea
@@ -102,6 +102,7 @@ export default function ProjectDrawer({
 
                   <Box className="space-y-3 px-3 pb-3">
                     <Select.Root
+                      aria-label="Project status"
                       defaultValue="started"
                       value={status}
                       onValueChange={setStatus}

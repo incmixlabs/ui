@@ -22,7 +22,7 @@ import { projects as initialProjects } from "./data"
 import type { Project } from "./types"
 
 export function ProjectPageComponents() {
-  const [_projectId, setProjectId] = useQueryState("projectId", {
+  const [projectId, setProjectId] = useQueryState("projectId", {
     defaultValue: "",
   })
   const [projects, setProjects] = useState<Project[]>(initialProjects)
@@ -131,7 +131,9 @@ export function ProjectPageComponents() {
     setFilteredProjects(projects)
     setActiveTab("all")
     setViewMode("list")
-    setProjectId(filteredProjects[0]?.id)
+    if (!projectId) {
+      setProjectId(filteredProjects[0]?.id)
+    }
   }
 
   return (
@@ -146,7 +148,7 @@ export function ProjectPageComponents() {
               >
                 {activeTab === "all" && (
                   <motion.span
-                    layoutId="hello"
+                    layoutId={`tab-indicator`}
                     className="-bottom-0.5 absolute left-0 inline-block h-0.5 w-full bg-blue-600"
                   />
                 )}
@@ -161,7 +163,7 @@ export function ProjectPageComponents() {
               >
                 {activeTab === "started" && (
                   <motion.span
-                    layoutId="hello"
+                    layoutId={`tab-indicator`}
                     className="-bottom-0.5 absolute left-0 inline-block h-0.5 w-full bg-blue-600"
                   />
                 )}
@@ -176,7 +178,7 @@ export function ProjectPageComponents() {
               >
                 {activeTab === "on-hold" && (
                   <motion.span
-                    layoutId="hello"
+                    layoutId={`tab-indicator`}
                     className="-bottom-0.5 absolute left-0 inline-block h-0.5 w-full bg-blue-600"
                   />
                 )}
@@ -191,7 +193,7 @@ export function ProjectPageComponents() {
               >
                 {activeTab === "completed" && (
                   <motion.span
-                    layoutId="hello"
+                    layoutId={`tab-indicator`}
                     className="-bottom-0.5 absolute left-0 inline-block h-0.5 w-full bg-blue-600"
                   />
                 )}
