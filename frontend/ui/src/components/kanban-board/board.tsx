@@ -354,7 +354,7 @@ export function Board({ initial }: { initial: TBoard }) {
         </IconButton>
       </div>
       <div
-        className={`${kanbanFilter && "flex w-full gap-3 "} h-full overflow-hidden [scrollbar-color:theme(colors.sky.200)_theme(colors.sky.400)] [scrollbar-width:thin]`}
+        className={`${kanbanFilter && "flex w-full gap-5"} h-full overflow-hidden [scrollbar-color:theme(colors.sky.200)_theme(colors.sky.400)] [scrollbar-width:thin]`}
         ref={scrollableRef}
       >
         <div

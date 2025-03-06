@@ -144,6 +144,7 @@ export default function TaskCardDrawer({
         onOpenChange={handleDrawerClose}
         showCloseButton={false}
         side="right"
+        isFilter={kanbanFilter}
         className="w-[53rem] p-0 py-0"
       >
         <div

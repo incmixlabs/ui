@@ -19,7 +19,9 @@ interface SheetProps {
   closeButtonText?: string
   contentBackground?: string
   className?: string
+  isFilterClassName?: string
   zIndex?: number
+  isFilter?: boolean
 }
 
 export const MotionSheet: React.FC<SheetProps> = ({
@@ -28,6 +30,8 @@ export const MotionSheet: React.FC<SheetProps> = ({
   description,
   side = "right",
   open = false,
+  isFilterClassName = "w-[30rem] 2xl:w-[40rem]",
+  isFilter = false,
   onOpenChange,
   closeOnOutsideClick = true,
   closeOnEsc = true,
@@ -96,87 +100,58 @@ export const MotionSheet: React.FC<SheetProps> = ({
     return variants
   }
 
-  // Determine sheet position and dimensions
-  const getSheetStyle = (): React.CSSProperties => {
-    const baseStyle: React.CSSProperties = {
-      position: "fixed",
-      boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
-      display: "flex",
-      flexDirection: "column",
-      zIndex,
-      overflow: "hidden",
-      maxWidth: "100vw",
-      maxHeight: "100vh",
-      height: "98vh",
-    }
-
-    switch (side) {
-      case "right":
-        return {
-          ...baseStyle,
-          top: 8,
-          right: 12,
-          borderRadius: "8px",
-        }
-      case "left":
-        return {
-          ...baseStyle,
-          top: 0,
-          left: 0,
-          borderRadius: "8px",
-        }
-      case "top":
-        return {
-          ...baseStyle,
-          top: 0,
-          left: 0,
-          right: 0,
-          width: "100%",
-          borderRadius: "8px",
-        }
-      case "bottom":
-        return {
-          ...baseStyle,
-          bottom: 0,
-          left: 0,
-          right: 0,
-          width: "100%",
-          borderRadius: "8px",
-        }
-    }
+  const positionClasses = {
+    right: "top-2 right-3 rounded-lg",
+    left: "top-0 left-0 rounded-lg",
+    top: "top-0 left-0 right-0 w-full rounded-lg",
+    bottom: "bottom-0 left-0 right-0 w-full rounded-lg",
   }
 
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          <motion.div
-            key="sheet-backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: overlayColor,
-              zIndex: zIndex - 1,
-            }}
-            onClick={closeOnOutsideClick ? handleClose : undefined}
-          />
-
+          {!isFilter && (
+            <motion.div
+              key="sheet-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: overlayColor,
+                zIndex: zIndex - 1,
+              }}
+              onClick={closeOnOutsideClick ? handleClose : undefined}
+            />
+          )}
           <motion.div
             key="sheet-content"
             initial="hidden"
             animate="visible"
             exit="hidden"
-            className={cn("w-96 bg-gray-3 p-5 py-4", className)}
             variants={getSheetVariants()}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            style={getSheetStyle()}
+            className={cn(
+              // Base styles for all sheets
+              isFilter
+                ? `relative z-50 h-[80vh] flex-shrink-0 rounded-xl ${isFilterClassName}`
+                : "fixed h-[98vh] w-96 max-w-full bg-gray-3 p-5 py-4",
+              positionClasses[side],
+              className
+            )}
+            style={{
+              zIndex,
+              boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+            }}
           >
             {(title || description || showCloseButton) && (
               <Flex align={"center"} justify={"between"}>

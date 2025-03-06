@@ -32,8 +32,10 @@ import ProjectDetails from "./project-detials"
 
 export default function ProjectDrawer({
   listFilter,
+  listFilterClassName = "w-full h-[84vh]",
 }: {
   listFilter?: boolean
+  listFilterClassName?: string
 }) {
   const { projectId, handleDrawerClose } = useProjectDrawer()
 
@@ -49,31 +51,29 @@ export default function ProjectDrawer({
         open={Boolean(projectId)}
         onOpenChange={handleDrawerClose}
         showCloseButton={false}
+        isFilterClassName={listFilterClassName}
+        isFilter={listFilter}
         side="right"
-        className="w-[53rem] p-0 py-0"
+        className={`${listFilter ? "w-full flex-1" : "w-[53rem]"} p-0 py-0`}
       >
         <div
           className={cn(
             listFilter
-              ? "relative z-50 h-[90vh] w-[30rem] flex-shrink-0 rounded-xl 2xl:w-[40rem]"
+              ? "relative z-50 h-full w-full flex-shrink-0 rounded-xl"
               : "h-full w-full"
           )}
         >
           <motion.div
             className={cn(
-              "cursor-default rounded-lg bg-gray-3 dark:bg-gray-4 ",
-              listFilter ? " h-full w-full" : " h-full w-hull"
+              "cursor-default rounded-lg bg-gray-3 dark:bg-gray-4",
+              listFilter ? " h-full w-full" : " h-full w-full"
             )}
-            initial={{ x: "100%" }}
-            animate={{ x: "0%" }}
-            exit={{ x: "100%" }}
-            transition={{
-              type: "spring",
-              damping: 25,
-              stiffness: 200,
-            }}
           >
-            <ScrollArea className="h-[98vh] rounded-lg">
+            <ScrollArea
+              className={
+                listFilter ? "h-[84vh] rounded-lg" : "h-[98vh] rounded-lg"
+              }
+            >
               <Flex align={"center"} className="h-full">
                 <Box className="bg-gray-1 p-4 dark:bg-gray-3">
                   <ProjectDetails />
@@ -82,8 +82,13 @@ export default function ProjectDrawer({
 
                   <ProjectComments />
                 </Box>
-                {!listFilter && (
-                  <Box className="relative h-full w-72 flex-shrink-0 pt-20">
+                <Box
+                  className={cn(
+                    "relative h-full w-72 flex-shrink-0",
+                    listFilter ? "pt-5" : "pt-20"
+                  )}
+                >
+                  {!listFilter && (
                     <IconButton
                       color="gray"
                       variant="soft"
@@ -93,101 +98,100 @@ export default function ProjectDrawer({
                       <X aria-hidden="true" />
                       <span className="sr-only">Close</span>
                     </IconButton>
-                    <Box className="space-y-3 px-3 pb-3">
-                      <Select.Root
-                        defaultValue="started"
-                        value={status}
-                        onValueChange={setStatus}
-                      >
-                        <Select.Trigger className="h-11 w-full" />
-                        <Select.Content className="mx-auto w-[95%]">
-                          <Select.Item value="started">Started</Select.Item>
-                          <Select.Item value="on-hold">On Hold</Select.Item>
-                          <Select.Item value="completed">Completed</Select.Item>
-                        </Select.Content>
-                      </Select.Root>
-                    </Box>
-                    <Box className="space-y-3 border-gray-6 border-t p-4 py-3">
-                      <Flex justify={"between"} align={"center"}>
-                        <Heading
-                          size={"4"}
-                          className=" font-medium text-gray-10"
-                        >
-                          Members
-                        </Heading>
-                        <ComboBox
-                          options={members}
-                          onValueChange={setSelectedMembers}
-                          defaultValue={selectedMemebers}
-                          placeholder="Find Person..."
-                          title="Assign To"
-                        />
-                      </Flex>
-                      <Box className="gap-1 space-y-4">
-                        {members?.map((member) => (
-                          <Flex gap={"3"} className="" key={member?.id}>
-                            <Avatar src={member.avatar} className="h-10 w-10" />
-                            <Box>
-                              <Heading size={"3"} className="font-medium">
-                                {member?.name}
-                              </Heading>
-                              <Text as="p" className="text-gray-11 text-sm">
-                                {member?.position}
-                              </Text>
-                            </Box>
-                          </Flex>
-                        ))}
-                      </Box>
-                    </Box>
-                    <Box className="space-y-3 border-gray-6 border-t p-4 py-3">
+                  )}
+
+                  <Box className="space-y-3 px-3 pb-3">
+                    <Select.Root
+                      aria-label="Project status"
+                      defaultValue="started"
+                      value={status}
+                      onValueChange={setStatus}
+                    >
+                      <Select.Trigger className="h-11 w-full" />
+                      <Select.Content className="mx-auto w-[95%]">
+                        <Select.Item value="started">Started</Select.Item>
+                        <Select.Item value="on-hold">On Hold</Select.Item>
+                        <Select.Item value="completed">Completed</Select.Item>
+                      </Select.Content>
+                    </Select.Root>
+                  </Box>
+                  <Box className="space-y-3 border-gray-6 border-t p-4 py-3">
+                    <Flex justify={"between"} align={"center"}>
                       <Heading size={"4"} className=" font-medium text-gray-10">
-                        FILES
+                        Members
                       </Heading>
-
-                      <Box className="space-y-5">
-                        {attachments.map((attachment) => (
-                          <Flex
-                            align={"center"}
-                            key={attachment.id}
-                            className=" rounded-lg bg-gray-3 transition-colors dark:bg-gray-4"
-                          >
-                            {attachment.type === "image" ? (
-                              <Box className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg">
-                                <img
-                                  src={attachment.thumbnailUrl}
-                                  alt={attachment.name}
-                                  className="h-full w-full object-cover"
-                                />
-                              </Box>
-                            ) : (
-                              <Box className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-gray-8">
-                                <FileArchive className="h-5 w-5 text-gray-8" />
-                              </Box>
-                            )}
-
-                            <div className="ml-4 flex-grow">
-                              <h3 className="font-medium text-gray-12 text-sm">
-                                {attachment.name}
-                              </h3>
-                              <p className="pt-1 text-gray-11 text-sm">
-                                {attachment.size}
-                              </p>
-                            </div>
-
-                            <div className="flex space-x-2">
-                              <Button
-                                variant="soft"
-                                className="h-9 cursor-pointer rounded-full bg-transparent p-2 transition-colors hover:bg-gray-4 dark:hover:bg-gray-7"
-                              >
-                                <Download className="h-5 w-5 text-gray-12" />
-                              </Button>
-                            </div>
-                          </Flex>
-                        ))}
-                      </Box>
+                      <ComboBox
+                        options={members}
+                        onValueChange={setSelectedMembers}
+                        defaultValue={selectedMemebers}
+                        placeholder="Find Person..."
+                        title="Assign To"
+                      />
+                    </Flex>
+                    <Box className="gap-1 space-y-4">
+                      {members?.map((member) => (
+                        <Flex gap={"3"} className="" key={member?.id}>
+                          <Avatar src={member.avatar} className="h-10 w-10" />
+                          <Box>
+                            <Heading size={"3"} className="font-medium">
+                              {member?.name}
+                            </Heading>
+                            <Text as="p" className="text-gray-11 text-sm">
+                              {member?.position}
+                            </Text>
+                          </Box>
+                        </Flex>
+                      ))}
                     </Box>
                   </Box>
-                )}
+                  <Box className="space-y-3 border-gray-6 border-t p-4 py-3">
+                    <Heading size={"4"} className=" font-medium text-gray-10">
+                      FILES
+                    </Heading>
+
+                    <Box className="space-y-5">
+                      {attachments.map((attachment) => (
+                        <Flex
+                          align={"center"}
+                          key={attachment.id}
+                          className=" rounded-lg bg-gray-3 transition-colors dark:bg-gray-4"
+                        >
+                          {attachment.type === "image" ? (
+                            <Box className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg">
+                              <img
+                                src={attachment.thumbnailUrl}
+                                alt={attachment.name}
+                                className="h-full w-full object-cover"
+                              />
+                            </Box>
+                          ) : (
+                            <Box className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-gray-8">
+                              <FileArchive className="h-5 w-5 text-gray-8" />
+                            </Box>
+                          )}
+
+                          <div className="ml-4 flex-grow">
+                            <h3 className="font-medium text-gray-12 text-sm">
+                              {attachment.name}
+                            </h3>
+                            <p className="pt-1 text-gray-11 text-sm">
+                              {attachment.size}
+                            </p>
+                          </div>
+
+                          <div className="flex space-x-2">
+                            <Button
+                              variant="soft"
+                              className="h-9 cursor-pointer rounded-full bg-transparent p-2 transition-colors hover:bg-gray-4 dark:hover:bg-gray-7"
+                            >
+                              <Download className="h-5 w-5 text-gray-12" />
+                            </Button>
+                          </div>
+                        </Flex>
+                      ))}
+                    </Box>
+                  </Box>
+                </Box>
               </Flex>
             </ScrollArea>
           </motion.div>
