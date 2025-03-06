@@ -1,18 +1,30 @@
 import { useState } from "react"
 
 import { useProjectDrawer } from "@hooks/use-project-drawer"
-import { Box, Button, Flex, IconButton, Tabs } from "@radix-ui/themes"
+import {
+  Box,
+  Button,
+  Flex,
+  IconButton,
+  ScrollArea,
+  Tabs,
+} from "@radix-ui/themes"
+import { cn } from "@utils"
 import { LayoutGrid, List, Plus, SlidersHorizontal, X } from "lucide-react"
+import { motion } from "motion/react"
+import { useQueryState } from "nuqs"
 import { MotionSheet } from "../custom-sheet"
 import { AddProjectModal } from "./components/add-project-modal"
 import { ProjectCard } from "./components/project-card"
-
 import ProjectDrawer from "./components/project-drawer"
 import { ProjectFilter } from "./components/project-filter"
 import { projects as initialProjects } from "./data"
 import type { Project } from "./types"
 
 export function ProjectPageComponents() {
+  const [_projectId, setProjectId] = useQueryState("projectId", {
+    defaultValue: "",
+  })
   const [projects, setProjects] = useState<Project[]>(initialProjects)
   const [filteredProjects, setFilteredProjects] =
     useState<Project[]>(initialProjects)
@@ -115,6 +127,13 @@ export function ProjectPageComponents() {
     setIsFilterOpen(false)
   }
 
+  const handleOpenListView = () => {
+    setFilteredProjects(projects)
+    setActiveTab("all")
+    setViewMode("list")
+    setProjectId(filteredProjects[0]?.id)
+  }
+
   return (
     <Box className="min-h-screen bg-gray-1">
       <Box className="mx-auto max-w-7xl px-4 py-8">
@@ -141,8 +160,73 @@ export function ProjectPageComponents() {
           </div>
         </Flex>
 
-        <div className="relative mb-6">
-          <div className="ou absolute top-0 right-0 flex rounded-md border border-gray-4 bg-gray-2">
+        <div className={"relative mb-6"}>
+          {viewMode === "grid" && (
+            <Box className="flex w-full items-center justify-start rounded-none border-gray-5 border-b bg-transparent ">
+              <Button
+                className="relative h-11 cursor-pointer bg-transparent text-gray-11"
+                onClick={() => handleTabChange("all")}
+              >
+                {activeTab === "all" && (
+                  <motion.span
+                    layoutId="hello"
+                    className="-bottom-0.5 absolute left-0 inline-block h-0.5 w-full bg-blue-600"
+                  />
+                )}
+                All{" "}
+                <span className="bg-gray-3 px-2 text-gray-10">
+                  {projects.length}
+                </span>
+              </Button>
+              <Button
+                className="relative h-11 cursor-pointer bg-transparent text-gray-11"
+                onClick={() => handleTabChange("started")}
+              >
+                {activeTab === "started" && (
+                  <motion.span
+                    layoutId="hello"
+                    className="-bottom-0.5 absolute left-0 inline-block h-0.5 w-full bg-blue-600"
+                  />
+                )}
+                Started{" "}
+                <span className="bg-gray-3 px-2 text-gray-10">
+                  {projects.filter((p) => p.status === "started").length}
+                </span>
+              </Button>
+              <Button
+                className="relative h-11 cursor-pointer bg-transparent text-gray-11"
+                onClick={() => handleTabChange("on-hold")}
+              >
+                {activeTab === "on-hold" && (
+                  <motion.span
+                    layoutId="hello"
+                    className="-bottom-0.5 absolute left-0 inline-block h-0.5 w-full bg-blue-600"
+                  />
+                )}
+                On Hold{" "}
+                <span className="bg-gray-3 px-2 text-gray-10">
+                  {projects.filter((p) => p.status === "on-hold").length}
+                </span>
+              </Button>
+              <Button
+                className="relative h-11 cursor-pointer bg-transparent text-gray-11"
+                onClick={() => handleTabChange("completed")}
+              >
+                {activeTab === "completed" && (
+                  <motion.span
+                    layoutId="hello"
+                    className="-bottom-0.5 absolute left-0 inline-block h-0.5 w-full bg-blue-600"
+                  />
+                )}
+                Completed{" "}
+                <span className="bg-gray-3 px-2 text-gray-10">
+                  {projects.filter((p) => p.status === "completed").length}
+                </span>
+              </Button>
+            </Box>
+          )}
+
+          <div className="absolute top-0 right-0 z-10 flex rounded-md border border-gray-4 bg-gray-2">
             <IconButton
               variant={viewMode === "list" ? "soft" : "solid"}
               className="cursor-pointer rounded-r-none border-0"
@@ -153,183 +237,53 @@ export function ProjectPageComponents() {
             <IconButton
               variant={viewMode === "grid" ? "soft" : "solid"}
               className="cursor-pointer rounded-l-none border-0"
-              onClick={() => setViewMode("list")}
+              onClick={handleOpenListView}
             >
               <List size={20} />
             </IconButton>
           </div>
-          <Tabs.Root
-            defaultValue="all"
-            value={activeTab}
-            onValueChange={(value) => handleTabChange(value as any)}
+          <Box
+            className={cn(
+              "relative mb-6",
+              viewMode === "list" ? "flex gap-5 pt-10" : "pt-4"
+            )}
           >
-            <Tabs.List className="w-full justify-start rounded-none border-gray-2 border-b bg-transparent p-0">
-              <Tabs.Trigger
-                value="all"
-                className="cursor-pointer rounded-none px-4 py-2 data-[state=active]:border-blue-600 data-[state=active]:border-b-2 data-[state=active]:text-blue-600 data-[state=active]:shadow-none"
-              >
-                All{" "}
-                <span className="ml-1.5 bg-gray-3 px-2 text-gray-10">
-                  {projects.length}
-                </span>
-              </Tabs.Trigger>
-              <Tabs.Trigger
-                value="started"
-                className="cursor-pointer rounded-none px-4 py-2 data-[state=active]:border-blue-600 data-[state=active]:border-b-2 data-[state=active]:text-blue-600 data-[state=active]:shadow-none"
-              >
-                Started{" "}
-                <span className="ml-1.5 bg-gray-3 px-2 text-gray-10">
-                  {projects.filter((p) => p.status === "started").length}
-                </span>
-              </Tabs.Trigger>
-              <Tabs.Trigger
-                value="on-hold"
-                className="cursor-pointer rounded-none px-4 py-2 data-[state=active]:border-blue-600 data-[state=active]:border-b-2 data-[state=active]:text-blue-600 data-[state=active]:shadow-none"
-              >
-                On Hold{" "}
-                <span className="ml-1.5 bg-gray-3 px-2 text-gray-10">
-                  {projects.filter((p) => p.status === "on-hold").length}
-                </span>
-              </Tabs.Trigger>
-              <Tabs.Trigger
-                value="completed"
-                className="cursor-pointer rounded-none px-4 py-2 data-[state=active]:border-blue-600 data-[state=active]:border-b-2 data-[state=active]:text-blue-600 data-[state=active]:shadow-none"
-              >
-                Completed{" "}
-                <span className="ml-1.5 bg-gray-3 px-2 text-gray-10">
-                  {projects.filter((p) => p.status === "completed").length}
-                </span>
-              </Tabs.Trigger>
-            </Tabs.List>
-
-            <Tabs.Content value="all" className="mt-6 p-0">
+            <ScrollArea
+              className={`${viewMode === "grid" ? "h-full" : "h-[75vh] w-80 "}`}
+            >
               <div
-                className={`grid ${viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"} gap-6`}
+                className={`${viewMode === "grid" ? "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" : "h-full w-full gap-4 space-y-2 overflow-x-auto"}`}
               >
                 {filteredProjects.map((project) => (
                   <ProjectCard
                     key={project.id}
                     project={project}
+                    isListFilter={viewMode === "list"}
                     onAddMember={handleAddMember}
                     onAddDueDate={handleAddDueDate}
                     onDelete={handleDeleteProject}
                   />
                 ))}
               </div>
-              {filteredProjects.length === 0 && (
-                <div className="py-12 text-center">
-                  <h3 className="mb-2 font-medium text-gray-900 text-lg">
-                    No projects found
-                  </h3>
-                  <p className="mb-6 text-gray-500">
-                    No projects match your current filters.
-                  </p>
-                  <Button
-                    onClick={() => setIsAddModalOpen(true)}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    <Plus className="mr-2 h-4 w-4" /> Add New Project
-                  </Button>
-                </div>
-              )}
-            </Tabs.Content>
-
-            <Tabs.Content value="started" className="mt-6 p-0">
-              <div
-                className={`grid ${viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"} gap-6`}
-              >
-                {filteredProjects.map((project) => (
-                  <ProjectCard
-                    key={project.id}
-                    project={project}
-                    onAddMember={handleAddMember}
-                    onAddDueDate={handleAddDueDate}
-                    onDelete={handleDeleteProject}
-                  />
-                ))}
+            </ScrollArea>
+            {filteredProjects.length === 0 && (
+              <div className="py-12 text-center">
+                <h3 className="mb-2 font-medium text-gray-900 text-lg">
+                  No projects found
+                </h3>
+                <p className="mb-6 text-gray-500">
+                  You don't have any completed projects yet.
+                </p>
+                <Button
+                  onClick={() => setIsAddModalOpen(true)}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <Plus className="mr-2 h-4 w-4" /> Add New Project
+                </Button>
               </div>
-              {filteredProjects.length === 0 && (
-                <div className="py-12 text-center">
-                  <h3 className="mb-2 font-medium text-gray-900 text-lg">
-                    No projects found
-                  </h3>
-                  <p className="mb-6 text-gray-500">
-                    You don't have any started projects yet.
-                  </p>
-                  <Button
-                    onClick={() => setIsAddModalOpen(true)}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    <Plus className="mr-2 h-4 w-4" /> Add New Project
-                  </Button>
-                </div>
-              )}
-            </Tabs.Content>
-
-            <Tabs.Content value="on-hold" className="mt-6 p-0">
-              <div
-                className={`grid ${viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"} gap-6`}
-              >
-                {filteredProjects.map((project) => (
-                  <ProjectCard
-                    key={project.id}
-                    project={project}
-                    onAddMember={handleAddMember}
-                    onAddDueDate={handleAddDueDate}
-                    onDelete={handleDeleteProject}
-                  />
-                ))}
-              </div>
-              {filteredProjects.length === 0 && (
-                <div className="py-12 text-center">
-                  <h3 className="mb-2 font-medium text-gray-900 text-lg">
-                    No projects found
-                  </h3>
-                  <p className="mb-6 text-gray-500">
-                    You don't have any on-hold projects yet.
-                  </p>
-                  <Button
-                    onClick={() => setIsAddModalOpen(true)}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    <Plus className="mr-2 h-4 w-4" /> Add New Project
-                  </Button>
-                </div>
-              )}
-            </Tabs.Content>
-
-            <Tabs.Content value="completed" className="mt-6 p-0">
-              <div
-                className={`grid ${viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"} gap-6`}
-              >
-                {filteredProjects.map((project) => (
-                  <ProjectCard
-                    key={project.id}
-                    project={project}
-                    onAddMember={handleAddMember}
-                    onAddDueDate={handleAddDueDate}
-                    onDelete={handleDeleteProject}
-                  />
-                ))}
-              </div>
-              {filteredProjects.length === 0 && (
-                <div className="py-12 text-center">
-                  <h3 className="mb-2 font-medium text-gray-900 text-lg">
-                    No projects found
-                  </h3>
-                  <p className="mb-6 text-gray-500">
-                    You don't have any completed projects yet.
-                  </p>
-                  <Button
-                    onClick={() => setIsAddModalOpen(true)}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    <Plus className="mr-2 h-4 w-4" /> Add New Project
-                  </Button>
-                </div>
-              )}
-            </Tabs.Content>
-          </Tabs.Root>
+            )}
+            <ProjectDrawer listFilter={viewMode === "list"} />
+          </Box>
         </div>
       </Box>
 
@@ -338,8 +292,6 @@ export function ProjectPageComponents() {
         onClose={() => setIsAddModalOpen(false)}
         onAddProject={handleAddProject}
       />
-
-      <ProjectDrawer />
 
       <MotionSheet
         title="Filter"
