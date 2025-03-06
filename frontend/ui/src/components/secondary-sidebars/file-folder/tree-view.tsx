@@ -86,7 +86,7 @@ const Tree = React.forwardRef<HTMLDivElement, TreeProps>(
 
     return (
       <div className={cn("overflow-hidden", className)}>
-        <ScrollArea>
+        <ScrollArea className="h-[60vh]">
           <div className="relative p-2">
             <TreeItem
               data={data}
@@ -159,9 +159,8 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                         <AccordionPrimitive.Item value={item.id}>
                           <AccordionPrimitive.Trigger
                             className={cn(
-                              `mb-1 flex w-full flex-1 select-none items-center justify-between gap-4 rounded-md ${padding} font-medium text-sm transition-all hover:bg-[hsl(var(--sidebar-background)/0.1)] hover:no-underline [&[data-state=open]>svg]:rotate-180`,
-                              open &&
-                                "bg-[hsl(var(--sidebar-background)/0.1)] text-[hsl(var(--sidebar-background))]"
+                              `mb-1 flex w-full flex-1 select-none items-center justify-between gap-4 rounded-md ${padding} font-medium text-sm transition-all hover:bg-gray-6 hover:no-underline [&[data-state=open]>svg]:rotate-180`,
+                              open && "bg-gray-6 text-gray-11"
                             )}
                             onClick={() => handleSelectChange(item)}
                           >
@@ -175,9 +174,8 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
 
                               <span
                                 className={cn(
-                                  "truncate text-[hsl(var(--sidebar-secondary-text))] text-sm",
-                                  open &&
-                                    "text-[hsl(var(--sidebar-background))]"
+                                  "truncate text-gray-12 text-sm",
+                                  open && "text-gray-12"
                                 )}
                               >
                                 {item.name}
@@ -241,10 +239,9 @@ const Leaf = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        `mb-1 flex cursor-pointer select-none items-center gap-4 rounded-md ${padding} hover:bg-[hsl(var(--sidebar-background)/0.1)]`,
+        `mb-1 flex cursor-pointer select-none items-center gap-4 rounded-md ${padding} hover:bg-gray-6`,
         className,
-        isSelected &&
-          "bg-[hsl(var(--sidebar-background)/0.1)] text-[hsl(var(--sidebar-background))] "
+        isSelected && "bg-gray-6 text-gray-12"
       )}
       {...props}
     >
@@ -252,8 +249,8 @@ const Leaf = React.forwardRef<
 
       <span
         className={cn(
-          "flex-grow truncate text-[hsl(var(--sidebar-secondary-text))] text-sm",
-          isSelected && "text-[hsl(var(--sidebar-background))]"
+          "flex-grow truncate text-gray-10 text-sm",
+          isSelected && "text-gray-12"
         )}
       >
         {item.name}

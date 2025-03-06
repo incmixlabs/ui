@@ -19,16 +19,15 @@ export function FileFolder(): JSX.Element {
   const [_selectedItem, setSelectedItem] = useState<string>("Admin Page")
   return (
     <>
-      <div className="flex gap-2 border-b-[1px] border-b-[hsl(var(--sidebar-border))] px-8 py-2 text-[hsl(var(--sidebar-background))] ">
+      <div className="flex gap-2 border-b-[1px] border-b-gray-6 bg-gray-1 px-8 py-2 text-gray-12 ">
         <FolderClosed />
         <span className=" font-medium text-[16px]">File Manager</span>
       </div>
+
       <div className="flex gap-2 px-8 py-1 pb-0">
-        <span className="text-[16px] text-[hsl(var(--sidebar-secondary-muted))] uppercase">
-          Folders
-        </span>
+        <span className="text-[16px] text-gray-12 uppercase">Folders</span>
       </div>
-      <div className="flex overflow-scroll">
+      <div className="flex ">
         <Tree
           data={secondarySidebarData}
           className="w-full flex-shrink-0"
@@ -39,16 +38,17 @@ export function FileFolder(): JSX.Element {
           itemIcon={FolderClose}
         />
       </div>
-      <div className="">
+
+      <div className="mt-auto bg-gray-1">
         {footerData.map((item) => {
           if (item.storageAvailable) {
             return (
               <div
                 key={item.title}
-                className=" cursor-pointer px-8 py-2 hover:bg-[hsl(var(--sidebar-background)/0.1)]"
+                className=" cursor-pointer px-8 py-2 hover:bg-gray-6"
               >
                 <div className="flex items-center justify-between gap-2 ">
-                  <span className=" font-medium text-[16px] text-[hsl(var(--sidebar-secondary-text))]">
+                  <span className=" font-medium text-[16px] text-gray-12">
                     {item.title}
                   </span>
                   <span className=" family-[Poppins] font-medium text-[16px] text-[hsl(var(--sidebar-secondary-muted))] ">
@@ -66,7 +66,7 @@ export function FileFolder(): JSX.Element {
           return (
             <div
               key={item.title}
-              className="flex cursor-pointer items-center gap-2 px-8 py-2 text-[hsl(var(--sidebar-secondary-text))] hover:bg-[hsl(var(--sidebar-background)/0.1)] "
+              className="flex cursor-pointer items-center gap-2 px-8 py-2 text-gray-12 hover:bg-gray-6"
             >
               {item.icon && (
                 <item.icon
