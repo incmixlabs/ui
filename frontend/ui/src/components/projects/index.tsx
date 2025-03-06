@@ -137,29 +137,6 @@ export function ProjectPageComponents() {
   return (
     <Box className="min-h-screen bg-gray-1">
       <Box className="mx-auto max-w-7xl px-4 py-8">
-        <Flex justify={"between"} align={"center"} className="mb-8">
-          <h1 className="font-bold text-2xl">Projects</h1>
-          <div className="flex items-center gap-2">
-            <IconButton
-              color="gray"
-              variant="soft"
-              onClick={() => setIsFilterOpen(true)}
-              className="h-10 w-10 cursor-pointer"
-            >
-              <SlidersHorizontal size={20} />
-            </IconButton>
-
-            <Button
-              onClick={() => setIsAddModalOpen(true)}
-              variant="solid"
-              className="h-10 cursor-pointer"
-            >
-              <Plus size={16} />
-              Add Project
-            </Button>
-          </div>
-        </Flex>
-
         <div className={"relative mb-6"}>
           {viewMode === "grid" && (
             <Box className="flex w-full items-center justify-start rounded-none border-gray-5 border-b bg-transparent ">
@@ -225,22 +202,40 @@ export function ProjectPageComponents() {
               </Button>
             </Box>
           )}
-
-          <div className="absolute top-0 right-0 z-10 flex rounded-md border border-gray-4 bg-gray-2">
+          <div className="absolute top-0 right-0 z-10 flex  rounded-md ">
             <IconButton
               variant={viewMode === "list" ? "soft" : "solid"}
-              className="cursor-pointer rounded-r-none border-0"
+              className="h-10 w-10 cursor-pointer rounded-r-none border-0"
               onClick={() => setViewMode("grid")}
             >
               <LayoutGrid size={16} />
             </IconButton>
             <IconButton
               variant={viewMode === "grid" ? "soft" : "solid"}
-              className="cursor-pointer rounded-l-none border-0"
+              className="h-10 w-10 cursor-pointer rounded-l-none border-0"
               onClick={handleOpenListView}
             >
               <List size={20} />
             </IconButton>
+            <div className="flex items-center gap-2 pl-2">
+              <IconButton
+                color="gray"
+                variant="soft"
+                onClick={() => setIsFilterOpen(true)}
+                className="h-10 w-10 cursor-pointer"
+              >
+                <SlidersHorizontal size={20} />
+              </IconButton>
+
+              <Button
+                onClick={() => setIsAddModalOpen(true)}
+                variant="solid"
+                className="h-10 cursor-pointer"
+              >
+                <Plus size={16} />
+                Add Project
+              </Button>
+            </div>
           </div>
           <Box
             className={cn(
@@ -249,7 +244,7 @@ export function ProjectPageComponents() {
             )}
           >
             <ScrollArea
-              className={`${viewMode === "grid" ? "h-full" : "h-[75vh] w-80 "}`}
+              className={`${viewMode === "grid" ? "h-full" : "h-[85vh] w-80 "}`}
             >
               <div
                 className={`${viewMode === "grid" ? "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" : "h-full w-full gap-4 space-y-2 overflow-x-auto"}`}

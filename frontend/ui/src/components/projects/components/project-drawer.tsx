@@ -32,7 +32,7 @@ import ProjectDetails from "./project-detials"
 
 export default function ProjectDrawer({
   listFilter,
-  listFilterClassName = "w-full",
+  listFilterClassName = "w-full h-[84vh]",
 }: {
   listFilter?: boolean
   listFilterClassName?: string
@@ -59,7 +59,7 @@ export default function ProjectDrawer({
         <div
           className={cn(
             listFilter
-              ? "relative z-50 h-[75vh] w-full flex-shrink-0 rounded-xl"
+              ? "relative z-50 h-full w-full flex-shrink-0 rounded-xl"
               : "h-full w-full"
           )}
         >
@@ -71,7 +71,7 @@ export default function ProjectDrawer({
           >
             <ScrollArea
               className={
-                listFilter ? "h-[75vh] rounded-lg" : "h-[98vh] rounded-lg"
+                listFilter ? "h-[84vh] rounded-lg" : "h-[98vh] rounded-lg"
               }
             >
               <Flex align={"center"} className="h-full">
