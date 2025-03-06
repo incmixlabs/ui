@@ -1,140 +1,102 @@
-import type { ApexOptions } from "apexcharts"
-import dynamic from "next/dynamic"
-import type { FC } from "react"
+import type React from "react"
+import { useState } from "react"
+import Chart from "react-apexcharts"
 
-// Import ApexCharts dynamically to avoid SSR issues
-const ReactApexChart = dynamic(() => import("react-apexcharts"), {
-  ssr: false,
-})
+const RadialBarChart: React.FC = () => {
+  const [_series, _setSeries] = useState<number[]>([44, 55, 13, 33])
 
-interface RadialBarChartProps {
-  value: number
-  total?: number
-  label?: string
-  title?: string
-  colors?: string[]
-  size?: "sm" | "md" | "lg"
-  className?: string
-}
-
-const sizeConfig = {
-  sm: {
-    height: 200,
-    fontSize: {
-      title: "14px",
-      value: "24px",
-    },
-  },
-  md: {
-    height: 250,
-    fontSize: {
-      title: "16px",
-      value: "30px",
-    },
-  },
-  lg: {
-    height: 300,
-    fontSize: {
-      title: "18px",
-      value: "36px",
-    },
-  },
-}
-
-export const RadialBarChart: FC<RadialBarChartProps> = ({
-  value,
-  total = 100,
-  label = "%",
-  title = "Progress",
-  colors = ["#00E396", "#ABE5A1"],
-  size = "md",
-  className = "",
-}) => {
-  const percentage = Math.round((value / total) * 100)
-  const config = sizeConfig[size]
-
-  const chartOptions: ApexOptions = {
+  const _options: ApexCharts.ApexOptions = {
     chart: {
-      height: config.height,
-      type: "radialBar",
-      toolbar: {
-        show: false,
-      },
-    },
-    plotOptions: {
-      radialBar: {
-        startAngle: -135,
-        endAngle: 135,
-        hollow: {
-          margin: 0,
-          size: "70%",
-          background: "transparent",
+      width: 100,
+      type: "donut",
+      animations: {
+        enabled: true,
+        speed: 800,
+        animateGradually: {
+          enabled: true,
+          delay: 150,
         },
-        track: {
-          background: "#e7e7e7",
-          strokeWidth: "97%",
-          margin: 5,
-          dropShadow: {
-            enabled: false,
-          },
-        },
-        dataLabels: {
-          name: {
-            show: true,
-            color: "#888",
-            fontSize: config.fontSize.title,
-            offsetY: -10,
-          },
-          value: {
-            show: true,
-            fontSize: config.fontSize.value,
-            color: "#111",
-            offsetY: 0,
-            formatter: (val: number) => `${val}${label}`,
-          },
+        dynamicAnimation: {
+          enabled: true,
+          speed: 350,
         },
       },
     },
-    fill: {
-      type: "gradient",
-      gradient: {
-        shade: "dark",
-        type: "horizontal",
-        shadeIntensity: 0.5,
-        gradientToColors: [colors[1]],
-        inverseColors: true,
-        opacityFrom: 1,
-        opacityTo: 1,
-        stops: [0, 100],
-        colorStops: [
-          {
-            offset: 0,
-            color: colors[0],
-          },
-          {
-            offset: 100,
-            color: colors[1],
-          },
-        ],
-      },
+
+    dataLabels: {
+      enabled: false,
+    },
+    legend: {
+      show: false,
     },
     stroke: {
-      lineCap: "round",
+      width: 10,
+      colors: ["#fff"], // ✅ White stroke around segments
     },
-    labels: [title],
+    fill: {
+      colors: ["#f4a77d", "#4361ee", "#ffd166"],
+      opacity: 1,
+      type: "solid",
+    },
+    plotOptions: {
+      pie: {
+        donut: {
+          size: "70%",
+          labels: {
+            show: true,
+            name: {
+              show: true,
+              fontSize: "14px",
+              fontFamily: "Poppins",
+              color: "#4361ee",
+            },
+            value: {
+              show: true,
+              fontSize: "24px",
+              fontFamily: "Poppins",
+              color: "#4361ee",
+              formatter: (val) => `${val}%`,
+            },
+          },
+        },
+      },
+    },
+    labels: ["Apple", "Mango", "Banana", "Orange"], // ✅ Custom labels instead of "series1"
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          chart: {
+            width: 20,
+          },
+        },
+      },
+    ],
   }
 
-  const series = [percentage]
-
   return (
-    <div className={className}>
-      {/* @ts-ignore */}
-      <ReactApexChart
-        options={chartOptions}
-        series={series}
-        type="radialBar"
-        height={config.height}
-      />
+    <div className="flex flex-col items-center">
+      <div className="absolute inset-0 rounded-full" />
+
+      <div className="custom-chart-container">
+        <Chart options={_options} series={_series} type="donut" />
+      </div>
+
+      <style>
+        {`
+    .custom-chart-container .apexcharts-datalabels text {
+      font-size: 16px !important;
+      font-weight: bold;
+      fill: #fff !important;
+    }
+
+    .custom-chart-container .apexcharts-tooltip {
+      background: #000 !important;
+      color: white !important;
+      border-radius: 8px !important;
+    }
+  `}
+      </style>
     </div>
   )
 }

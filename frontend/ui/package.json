@@ -63,7 +63,8 @@
     "./date-picker": "./src/components/date-picker.tsx",
     "./onboarding": "./src/components/onboarding/index.tsx",
     "./stats-card": "./src/components/stats-card/index.ts",
-    "./radial-bar-chart-card": "./src/components/radial-bar-chart-card/radial-bar-chart-card.tsx"
+    "./radial-bar-chart-card": "./src/components/radial-bar-chart-card/index.ts",
+    "./statistics-bar-chart-card": "./src/components/statistics-bar-chart-card/index.ts"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "1.4.0",
