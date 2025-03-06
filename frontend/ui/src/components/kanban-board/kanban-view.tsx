@@ -13,7 +13,7 @@ export const KanbanView: FC<KanbanViewProps> = ({ task }) => {
   return (
     <div
       key={task.id}
-      className="mb-4 w-[28rem] cursor-grab rounded-lg bg-white p-5 shadow dark:bg-gray-800"
+      className="mb-4 w-[28rem] cursor-grab rounded-lg bg-white p-5 shadow-sm dark:bg-gray-800"
     >
       <div className="flex items-center justify-between pb-4">
         <div className="font-semibold text-base text-gray-900 dark:text-white">

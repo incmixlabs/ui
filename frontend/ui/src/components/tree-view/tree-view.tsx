@@ -32,7 +32,7 @@ const selectedTreeVariants = cva(
 )
 
 const triggerStyles = cva(
-  "flex w-full flex-1 items-center px-2 py-2 transition-all first:[&[data-state=open]>svg]:rotate-90"
+  "flex w-full flex-1 items-center px-2 py-2 transition-all [&[data-state=open]>svg]:first:rotate-90"
 )
 
 const DEFAULT_DESCRIPTIONS: TreeViewDescriptions = {

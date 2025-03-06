@@ -369,7 +369,7 @@ const SelectedDayEvents = ({
             >
               <Flex align="center" gap="2" className="group">
                 <Box
-                  className={cn("relative h-3 w-3 flex-shrink-0 rounded-full", {
+                  className={cn("relative h-3 w-3 shrink-0 rounded-full", {
                     "bg-blue-9": event.color === "blue",
                     "bg-orange-9": event.color === "orange",
                     "bg-green-9": event.color === "green",
@@ -390,7 +390,7 @@ const SelectedDayEvents = ({
                     onChange={(e) => setEditText(e.target.value)}
                     onBlur={handleSaveEdit}
                     onKeyDown={handleKeyDown}
-                    className="flex-1 rounded border border-gray-7 bg-gray-2 text-sm focus:border-blue-8 focus:outline-none"
+                    className="flex-1 rounded-sm border border-gray-7 bg-gray-2 text-sm focus:border-blue-8 focus:outline-hidden"
                     autoFocus
                   />
                 ) : (

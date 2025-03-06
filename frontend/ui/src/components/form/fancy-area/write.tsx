@@ -126,12 +126,12 @@ export function Write({ textValue, setTextValue }: Props) {
     const textarea = textareaRef.current
     const dropdown = dropdownRef.current
     textarea?.addEventListener("keydown", handleKeyDown)
-    textarea?.addEventListener("blur", handleBlur)
+    textarea?.addEventListener("blur-sm", handleBlur)
     document?.addEventListener("selectionchange", handleSectionChange)
     dropdown?.addEventListener("mousedown", handleMouseDown)
     return () => {
       textarea?.removeEventListener("keydown", handleKeyDown)
-      textarea?.removeEventListener("blur", handleBlur)
+      textarea?.removeEventListener("blur-sm", handleBlur)
       document?.removeEventListener("selectionchange", handleSectionChange)
       dropdown?.removeEventListener("mousedown", handleMouseDown)
     }
@@ -154,7 +154,7 @@ export function Write({ textValue, setTextValue }: Props) {
       <Command
         ref={dropdownRef}
         className={cn(
-          "absolute hidden h-auto max-h-32 max-w-min overflow-y-scroll border border-popover shadow"
+          "absolute hidden h-auto max-h-32 max-w-min overflow-y-scroll border border-popover shadow-sm"
         )}
       >
         <div className="hidden">

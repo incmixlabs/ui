@@ -122,7 +122,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
           </IconButton>
         </Popover.Trigger>
         <Popover.Content
-          className={cn("z-[88] space-y-2", popoverClass)}
+          className={cn("z-88 space-y-2", popoverClass)}
           align="start"
           onEscapeKeyDown={() => setIsPopoverOpen(false)}
           width="280px"
@@ -171,7 +171,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                       </div>
                       <div
                         className={cn(
-                          "ml-2 flex h-5 w-5 items-center justify-center rounded-sm border border-secondary",
+                          "ml-2 flex h-5 w-5 items-center justify-center rounded-xs border border-secondary",
                           isSelected
                             ? "bg-secondary text-primary-foreground"
                             : "opacity-50 [&_svg]:invisible"
@@ -206,7 +206,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                             <Popover.Trigger>
                               <Button
                                 variant="solid"
-                                className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
+                                className="color-swatch h-7 w-8 cursor-pointer rounded-xs border border-gray-12"
                                 color={
                                   (labelColor as ExtendedColorType) || "blue"
                                 }
@@ -215,7 +215,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                             <Popover.Content
                               alignOffset={-75}
                               width="190px"
-                              className="z-[888] overflow-hidden bg-white p-3"
+                              className="z-888 overflow-hidden bg-white p-3"
                             >
                               <Grid className="w-fit" columns="6" gap="2">
                                 <Button

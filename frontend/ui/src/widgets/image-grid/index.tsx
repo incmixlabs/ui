@@ -106,12 +106,12 @@ export function ImageGrid() {
       </Flex>
       <Box
         className={cn(
-          "mt-6 h-[600px] rounded p-4",
+          "mt-6 h-[600px] rounded-sm p-4",
           isDropActive
             ? "outline outline-primary"
             : isDragging
               ? "outline-dashed outline-muted"
-              : "outline-none"
+              : "outline-hidden"
         )}
         {...dropzoneProps}
       >

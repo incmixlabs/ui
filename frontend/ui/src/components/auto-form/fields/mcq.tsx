@@ -46,7 +46,7 @@ const getOptionWidthClass = (layout: MCQLayoutType): string => {
     case "grid":
       return "w-full"
     case "row":
-      return "flex-grow-0"
+      return "grow-0"
     case "column":
       return "w-full"
     default:

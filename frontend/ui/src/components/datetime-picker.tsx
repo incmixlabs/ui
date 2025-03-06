@@ -89,7 +89,7 @@ const formatDateTime = (
 }
 
 const inputBase =
-  "bg-transparent focus:outline-none focus:ring-0 focus-within:outline-none focus-within:ring-0 sm:text-sm disabled:cursor-not-allowed disabled:opacity-50"
+  "bg-transparent focus:outline-hidden focus:ring-0 focus-within:outline-hidden focus-within:ring-0 sm:text-sm disabled:cursor-not-allowed disabled:opacity-50"
 
 const DEFAULT_SIZE = 96
 
@@ -402,7 +402,7 @@ const TimePicker = () => {
                   key={`time-${trueIndex}`}
                   aria-label="currentTime"
                   className={cn(
-                    "grid h-8 w-full flex-shrink-0 cursor-pointer place-content-center rounded-md bg-gray-3 px-3 text-sm outline-0 ring-0 hover:bg-secondary hover:text-white focus-visible:border-0 focus-visible:outline-0"
+                    "grid h-8 w-full shrink-0 cursor-pointer place-content-center rounded-md bg-gray-3 px-3 text-sm outline-0 ring-0 hover:bg-secondary hover:text-white focus-visible:border-0 focus-visible:outline-0"
                   )}
                   onClick={() => handleClick(i, part, PM_AM, trueIndex)}
                   onKeyDown={(e) => {
@@ -535,7 +535,7 @@ const NaturalLanguageInput = React.forwardRef<
       onKeyDown={handleKeydown}
       onBlur={handleParse}
       className={cn(
-        "mr-0.5 h-8 flex-1 rounded border-none bg-background px-2 ",
+        "mr-0.5 h-8 flex-1 rounded-sm border-none bg-background px-2 ",
         inputBase
       )}
       {...props}

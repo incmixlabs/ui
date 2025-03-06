@@ -59,7 +59,7 @@ export default function ProjectDrawer({
         <div
           className={cn(
             listFilter
-              ? "relative z-50 h-full w-full flex-shrink-0 rounded-xl"
+              ? "relative z-50 h-full w-full shrink-0 rounded-xl"
               : "h-full w-full"
           )}
         >
@@ -84,7 +84,7 @@ export default function ProjectDrawer({
                 </Box>
                 <Box
                   className={cn(
-                    "relative h-full w-72 flex-shrink-0",
+                    "relative h-full w-72 shrink-0",
                     listFilter ? "pt-5" : "pt-20"
                   )}
                 >
@@ -157,7 +157,7 @@ export default function ProjectDrawer({
                           className=" rounded-lg bg-gray-3 transition-colors dark:bg-gray-4"
                         >
                           {attachment.type === "image" ? (
-                            <Box className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg">
+                            <Box className="h-12 w-12 shrink-0 overflow-hidden rounded-lg">
                               <img
                                 src={attachment.thumbnailUrl}
                                 alt={attachment.name}
@@ -165,12 +165,12 @@ export default function ProjectDrawer({
                               />
                             </Box>
                           ) : (
-                            <Box className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-gray-8">
+                            <Box className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-gray-8">
                               <FileArchive className="h-5 w-5 text-gray-8" />
                             </Box>
                           )}
 
-                          <div className="ml-4 flex-grow">
+                          <div className="ml-4 grow">
                             <h3 className="font-medium text-gray-12 text-sm">
                               {attachment.name}
                             </h3>

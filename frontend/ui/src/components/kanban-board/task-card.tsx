@@ -73,7 +73,7 @@ const outerStyles: { [Key in TCardState["type"]]?: string } = {
 export function TaskCardShadow({ dragging }: { dragging: DOMRect }) {
   return (
     <div
-      className="flex-shrink-0 rounded bg-gray-5"
+      className="shrink-0 rounded-sm bg-gray-5"
       style={{ height: dragging.height }}
     />
   )
@@ -103,7 +103,7 @@ export function TaskCardDisplay({
           handleDrawerOpen(card.id.toString())
         }
       }}
-      className={`flex flex-shrink-0 flex-col gap-2 px-3 py-1 ${outerStyles[state.type]}`}
+      className={`flex shrink-0 flex-col gap-2 px-3 py-1 ${outerStyles[state.type]}`}
     >
       {/* Put a shadow before the item if closer to the top edge */}
       {state.type === "is-over" && state.closestEdge === "top" ? (

@@ -34,7 +34,7 @@ export function NewsCard({ position, highlight, stories }: NewsCardProps) {
             >
               {highlight.thumbnail?.length && (
                 <img
-                  className="thumbnail max-h-36 rounded object-cover"
+                  className="thumbnail max-h-36 rounded-sm object-cover"
                   src={highlight.thumbnail}
                   alt={highlight.title}
                 />

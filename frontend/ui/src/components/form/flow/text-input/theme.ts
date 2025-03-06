@@ -42,7 +42,7 @@ export const textInputTheme = {
         off: "rounded-lg",
       },
       withShadow: {
-        on: "shadow-sm dark:shadow-sm-light",
+        on: "shadow-xs dark:shadow-sm-light",
         off: "",
       },
     },

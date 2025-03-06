@@ -61,7 +61,7 @@ export function Battery({ className, batteryInfo }: BatteryProps) {
 
   return (
     <Box className={cn("w-24", className)}>
-      <Flex className="relative my-1 rounded border-2 border-gray-12 shadow">
+      <Flex className="relative my-1 rounded-sm border-2 border-gray-12 shadow-sm">
         <Box className="absolute z-10 mt-2 ml-24 flex h-6 rounded-r border-gray-12 border-r-8" />
         <Flex
           align="center"

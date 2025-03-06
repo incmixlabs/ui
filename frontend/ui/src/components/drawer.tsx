@@ -4,7 +4,7 @@ import * as React from "react"
 import { Drawer as DrawerPrimitive } from "vaul"
 
 const DrawerVariants = cva(
-  "fixed z-[115] flex flex-col overflow-x-hidden rounded-t-2.5 border bg-background p-4",
+  "fixed z-115 flex flex-col overflow-x-hidden rounded-t-2.5 border bg-background p-4",
   {
     variants: {
       direction: {
@@ -58,7 +58,7 @@ const DrawerOverlay = React.forwardRef<
   <DrawerPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-[110] bg-background/40 backdrop-blur-sm",
+      "fixed inset-0 z-110 bg-background/40 backdrop-blur-xs",
       className
     )}
     {...props}

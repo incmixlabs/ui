@@ -252,7 +252,7 @@ const Leaf = React.forwardRef<
 
       <span
         className={cn(
-          "flex-grow truncate text-[hsl(var(--sidebar-secondary-text))] text-sm",
+          "grow truncate text-[hsl(var(--sidebar-secondary-text))] text-sm",
           isSelected && "text-[hsl(var(--sidebar-background))]"
         )}
       >

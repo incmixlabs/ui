@@ -35,7 +35,7 @@ function ProjectComments() {
             <Tabs.Content value="comments" className="py-4">
               <form
                 onSubmit={handleSubmit}
-                className="rounded-lg border border-gray-5 bg-gray-2 shadow-sm dark:bg-gray-4"
+                className="rounded-lg border border-gray-5 bg-gray-2 shadow-xs dark:bg-gray-4"
               >
                 <Box className="p-2">
                   <textarea
@@ -93,7 +93,7 @@ function ProjectComments() {
                     <img
                       src={comment.user.avatar}
                       alt={comment.user.name}
-                      className="h-10 w-10 flex-shrink-0 rounded-full object-cover"
+                      className="h-10 w-10 shrink-0 rounded-full object-cover"
                     />
                     <div className="flex-1">
                       <Flex align={"center"} className="mb-1 gap-2">

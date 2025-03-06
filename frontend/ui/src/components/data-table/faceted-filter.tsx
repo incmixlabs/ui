@@ -70,7 +70,7 @@ const FacetedFilterItem = React.forwardRef<
     >
       <span
         className={cn(
-          "mr-2 flex size-4 items-center justify-center rounded-sm border border-primary",
+          "mr-2 flex size-4 items-center justify-center rounded-xs border border-primary",
           selected
             ? "bg-primary text-primary-foreground"
             : "opacity-50 [&_svg]:invisible"

@@ -38,7 +38,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({
         horizontal
         imgSrc={`/images/onboarding/${image}.png`}
         imgAlt=""
-        className="w-full md:max-w-screen-lg"
+        className="w-full md:max-w-(--breakpoint-lg)"
         theme={{
           root: {
             children: "my-auto w-full gap-0 space-y-8 p-6 sm:p-8 lg:p-16",

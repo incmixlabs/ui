@@ -34,7 +34,7 @@ export function DataTableViewOptions<TData>({
           aria-label="Toggle columns"
           variant="outline"
           size="1"
-          className="ml-auto hidden h-8 gap-2 focus:outline-none focus:ring-1 focus:ring-ring focus-visible:ring-0 lg:flex"
+          className="ml-auto hidden h-8 gap-2 focus:outline-hidden focus:ring-1 focus:ring-ring focus-visible:ring-0 lg:flex"
         >
           <Settings2 className="size-4" />
           View

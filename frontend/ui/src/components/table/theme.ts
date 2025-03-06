@@ -11,7 +11,7 @@ export const tableTheme: TableTheme = createTheme({
   body: {
     base: "group/body",
     cell: {
-      base: "group-first/body:group-first/row:first:rounded-tl-lg group-first/body:group-first/row:last:rounded-tr-lg group-last/body:group-last/row:first:rounded-bl-lg group-last/body:group-last/row:last:rounded-br-lg",
+      base: "first:group-first/row:group-first/body:rounded-tl-lg last:group-first/row:group-first/body:rounded-tr-lg first:group-last/row:group-last/body:rounded-bl-lg last:group-last/row:group-last/body:rounded-br-lg",
       padding: {
         base: "px-6 py-4",
         compact: "px-2 py-1",
@@ -21,7 +21,7 @@ export const tableTheme: TableTheme = createTheme({
   head: {
     base: "group/head text-xs uppercase text-gray-700 dark:text-gray-400",
     cell: {
-      base: "bg-gray-50 group-first/head:first:rounded-tl-lg group-first/head:last:rounded-tr-lg dark:bg-gray-700",
+      base: "bg-gray-50 first:group-first/head:rounded-tl-lg last:group-first/head:rounded-tr-lg dark:bg-gray-700",
       padding: {
         base: "px-6 py-3",
         compact: "px-2 py-3",
@@ -32,6 +32,6 @@ export const tableTheme: TableTheme = createTheme({
     base: "group/row",
     hovered: "hover:bg-gray-50 dark:hover:bg-gray-600",
     striped:
-      "odd:bg-white even:bg-gray-50 odd:dark:bg-gray-800 even:dark:bg-gray-700",
+      "odd:bg-white even:bg-gray-50 dark:odd:bg-gray-800 dark:even:bg-gray-700",
   },
 })

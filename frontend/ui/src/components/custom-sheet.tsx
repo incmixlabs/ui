@@ -140,7 +140,7 @@ export const MotionSheet: React.FC<SheetProps> = ({
             className={cn(
               // Base styles for all sheets
               isFilter
-                ? `relative z-50 h-[80vh] flex-shrink-0 rounded-xl ${isFilterClassName}`
+                ? `relative z-50 h-[80vh] shrink-0 rounded-xl ${isFilterClassName}`
                 : "fixed h-[98vh] w-96 max-w-full bg-gray-3 p-5 py-4",
               positionClasses[side],
               className

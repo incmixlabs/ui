@@ -232,7 +232,7 @@ export const FileUploader = forwardRef<
           ref={ref}
           onKeyDownCapture={handleKeyDown}
           className={cn(
-            "grid w-full overflow-hidden focus:outline-none ",
+            "grid w-full overflow-hidden focus:outline-hidden ",
             className,
             {
               "gap-2": value && value.length > 0,
@@ -298,7 +298,7 @@ export const FileUploaderItem = forwardRef<
       <button
         type="button"
         className={cn(
-          "absolute rounded bg-red-10 p-1 text-background",
+          "absolute rounded-sm bg-red-10 p-1 text-background",
           direction === "rtl" ? "top-1 left-1" : "right-1.5 bottom-1.5"
         )}
         onClick={() => removeFileFromSet(index)}
@@ -345,7 +345,7 @@ export const FileInput = forwardRef<HTMLDivElement, FileInputProps>(
         >
           {children}
           {dropzoneState.isDragActive && (
-            <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-primary-foreground/60 backdrop-blur-sm">
+            <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-primary-foreground/60 backdrop-blur-xs">
               <p className="font-medium text-primary">{dropmsg}</p>
             </div>
           )}

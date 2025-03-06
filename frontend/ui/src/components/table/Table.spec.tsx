@@ -18,7 +18,7 @@ describe("Components / Table", () => {
 
     expect(rows.length).toEqual(5)
     expect(rows[0].className).toContain(
-      "odd:bg-white even:bg-gray-50 odd:dark:bg-gray-800 even:dark:bg-gray-700"
+      "odd:bg-white even:bg-gray-50 dark:odd:bg-gray-800 dark:even:bg-gray-700"
     )
   })
 

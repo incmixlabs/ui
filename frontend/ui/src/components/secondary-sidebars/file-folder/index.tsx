@@ -31,7 +31,7 @@ export function FileFolder(): JSX.Element {
       <div className="flex overflow-scroll">
         <Tree
           data={secondarySidebarData}
-          className="w-full flex-shrink-0"
+          className="w-full shrink-0"
           initialSelectedItemId="f12"
           onSelectChange={(item) => setSelectedItem(item?.name ?? "")}
           folderIcon={FolderClose}

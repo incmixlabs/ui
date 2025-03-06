@@ -41,7 +41,7 @@ const getOptionWidthClass = (layout: MCQLayoutType): string => {
     case "grid":
       return "w-full"
     case "row":
-      return "flex-grow-0 mr-6"
+      return "grow-0 mr-6"
     case "column":
       return "w-full"
     default:
@@ -133,7 +133,7 @@ export default function AutoFormMultiCheckbox({
                       <input
                         type="checkbox"
                         id={`checkbox-${option.value}`}
-                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="h-4 w-4 rounded-sm border-gray-300 text-blue-600 focus:ring-blue-500"
                         value={option.value}
                         onChange={(e) => {
                           handleCheckboxChange(option.value, e.target.checked)

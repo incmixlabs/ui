@@ -161,7 +161,7 @@ export function DataTableFilterList<TData>({
           role="status"
           aria-live="polite"
           aria-label={`${filterField.label} filter is ${filter.operator === "isEmpty" ? "empty" : "not empty"}`}
-          className="h-8 w-full rounded border border-dashed"
+          className="h-8 w-full rounded-sm border border-dashed"
         />
       )
     }
@@ -176,7 +176,7 @@ export function DataTableFilterList<TData>({
             aria-label={`${filterField.label} filter value`}
             aria-describedby={`${inputId}-description`}
             placeholder={filterField.placeholder ?? "Enter a value..."}
-            className="h-8 w-full rounded"
+            className="h-8 w-full rounded-sm"
             defaultValue={
               typeof filter.value === "string" ? filter.value : undefined
             }
@@ -199,10 +199,10 @@ export function DataTableFilterList<TData>({
                 size="1"
                 aria-label={`${filterField.label} filter value`}
                 aria-controls={`${inputId}-listbox`}
-                className="h-8 w-full justify-start gap-2 rounded px-1.5 text-left text-muted-foreground hover:text-muted-foreground"
+                className="h-8 w-full justify-start gap-2 rounded-sm px-1.5 text-left text-muted-foreground hover:text-muted-foreground"
               >
                 {filter.value && typeof filter.value === "string" ? (
-                  <Badge className="rounded-sm px-1 font-normal">
+                  <Badge className="rounded-xs px-1 font-normal">
                     {filterField?.options?.find(
                       (option) => option.value === filter.value
                     )?.label || filter.value}
@@ -271,7 +271,7 @@ export function DataTableFilterList<TData>({
                 size="1"
                 aria-label={`${filterField.label} filter values`}
                 aria-controls={`${inputId}-listbox`}
-                className="h-8 w-full justify-start gap-2 rounded px-1.5 text-left text-muted-foreground hover:text-muted-foreground"
+                className="h-8 w-full justify-start gap-2 rounded-sm px-1.5 text-left text-muted-foreground hover:text-muted-foreground"
               >
                 {selectedValues.size === 0 && (
                   <>
@@ -281,12 +281,12 @@ export function DataTableFilterList<TData>({
                 )}
                 {selectedValues?.size > 0 && (
                   <div className="flex items-center">
-                    <Badge className="rounded-sm px-1 font-normal lg:hidden">
+                    <Badge className="rounded-xs px-1 font-normal lg:hidden">
                       {selectedValues.size}
                     </Badge>
                     <div className="hidden min-w-0 gap-1 lg:flex">
                       {selectedValues.size > 2 ? (
-                        <Badge className="rounded-sm px-1 font-normal">
+                        <Badge className="rounded-xs px-1 font-normal">
                           {selectedValues.size} selected
                         </Badge>
                       ) : (
@@ -295,7 +295,7 @@ export function DataTableFilterList<TData>({
                           .map((option) => (
                             <Badge
                               key={option.value}
-                              className="truncate rounded-sm px-1 font-normal"
+                              className="truncate rounded-xs px-1 font-normal"
                             >
                               {option.label}
                             </Badge>
@@ -379,7 +379,7 @@ export function DataTableFilterList<TData>({
                 aria-label={`${filterField.label} date filter`}
                 aria-controls={`${inputId}-calendar`}
                 className={cn(
-                  "h-8 w-full justify-start gap-2 rounded text-left font-normal",
+                  "h-8 w-full justify-start gap-2 rounded-sm text-left font-normal",
                   !filter.value && "text-muted-foreground"
                 )}
               >
@@ -464,7 +464,7 @@ export function DataTableFilterList<TData>({
               id={inputId}
               aria-label={`${filterField.label} boolean filter`}
               aria-controls={`${inputId}-listbox`}
-              className="h-8 w-full rounded bg-transparent"
+              className="h-8 w-full rounded-sm bg-transparent"
             />
 
             <Select.Content id={`${inputId}-listbox`}>
@@ -503,7 +503,7 @@ export function DataTableFilterList<TData>({
         align="start"
         collisionPadding={16}
         className={cn(
-          "flex w-[calc(100vw-theme(spacing.12))] min-w-64 max-w-none origin-[var(--radix-popover-content-transform-origin)] flex-col p-4 sm:w-[36rem]",
+          "flex w-[calc(100vw-(--spacing(12)))] min-w-64 max-w-none origin-[var(--radix-popover-content-transform-origin)] flex-col p-4 sm:w-[36rem]",
           filters.length > 0 ? "gap-3.5" : "gap-2"
         )}
       >
@@ -541,7 +541,7 @@ export function DataTableFilterList<TData>({
                       <Select.Trigger
                         aria-label="Select join operator"
                         aria-controls={joinOperatorListboxId}
-                        className="h-8 rounded lowercase"
+                        className="h-8 rounded-sm lowercase"
                       />
 
                       <Select.Content
@@ -570,7 +570,7 @@ export function DataTableFilterList<TData>({
                       size="1"
                       aria-label="Select filter field"
                       aria-controls={fieldListboxId}
-                      className="h-8 w-32 justify-between gap-2 rounded focus:outline-none focus:ring-1 focus:ring-ring focus-visible:ring-0"
+                      className="h-8 w-32 justify-between gap-2 rounded-sm focus:outline-hidden focus:ring-1 focus:ring-ring focus-visible:ring-0"
                     >
                       <span className="truncate">
                         {filterFields.find((field) => field.id === filter.id)
@@ -656,7 +656,7 @@ export function DataTableFilterList<TData>({
                   <Select.Trigger
                     aria-label="Select filter operator"
                     aria-controls={operatorListboxId}
-                    className="h-8 w-32 truncate rounded"
+                    className="h-8 w-32 truncate rounded-sm"
                   />
 
                   <Select.Content
@@ -678,7 +678,7 @@ export function DataTableFilterList<TData>({
                   variant="outline"
                   size="1"
                   aria-label={`Remove filter ${index + 1}`}
-                  className="size-8 shrink-0 rounded"
+                  className="size-8 shrink-0 rounded-sm"
                   onClick={() => removeFilter(filter.rowId)}
                 >
                   <Trash2 className="size-3.5" aria-hidden="true" />
@@ -688,14 +688,14 @@ export function DataTableFilterList<TData>({
           })}
         </div>
         <div className="flex w-full items-center gap-2">
-          <Button size="1" className="h-[1.85rem] rounded" onClick={addFilter}>
+          <Button size="1" className="h-[1.85rem] rounded-sm" onClick={addFilter}>
             Add filter
           </Button>
           {filters.length > 0 ? (
             <Button
               size="1"
               variant="outline"
-              className="rounded"
+              className="rounded-sm"
               onClick={() => {
                 void setFilters(null)
                 void setJoinOperator("and")

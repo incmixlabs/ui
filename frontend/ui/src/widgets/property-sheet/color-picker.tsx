@@ -87,7 +87,7 @@ const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
           <button
             key={`dark-${color}`}
             type="button"
-            className="h-6 w-6 cursor-pointer rounded-sm transition-transform hover:scale-110"
+            className="h-6 w-6 cursor-pointer rounded-xs transition-transform hover:scale-110"
             style={{ backgroundColor: `${color}` }}
             onClick={() => onColorSelect({ hex: color })}
             title={color}
@@ -105,7 +105,7 @@ const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
               <button
                 key={`color-${color}`}
                 type="button"
-                className="h-6 w-6 cursor-pointer rounded-sm transition-transform hover:scale-110"
+                className="h-6 w-6 cursor-pointer rounded-xs transition-transform hover:scale-110"
                 style={{ backgroundColor: `${color}` }}
                 onClick={() => {
                   // Extract variable name from the CSS variable notation

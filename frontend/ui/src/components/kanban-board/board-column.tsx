@@ -237,7 +237,7 @@ export function BoardColumn({
   return (
     <>
       <div
-        className={"flex w-full flex-1 flex-shrink-0 select-none flex-col"}
+        className={"flex w-full flex-1 shrink-0 select-none flex-col"}
         ref={outerFullHeightRef}
       >
         <div
@@ -254,17 +254,17 @@ export function BoardColumn({
               ref={headerRef}
             >
               <div className="pl-2 font-bold leading-4">{column.title}</div>
-              <IconButton className="rounded p-2 hover:bg-slate-200 active:bg-slate-300">
+              <IconButton className="rounded-sm p-2 hover:bg-slate-200 active:bg-slate-300">
                 <Ellipsis size={16} />
               </IconButton>
             </div>
             <div
-              className="flex flex-col overflow-y-auto [overflow-anchor:none] [scrollbar-color:theme(colors.slate.400)_theme(colors.slate.200)] [scrollbar-width:thin]"
+              className="flex flex-col overflow-y-auto [overflow-anchor:none] [scrollbar-color:var(--color-slate-400)_var(--color-slate-200)] [scrollbar-width:thin]"
               ref={scrollableRef}
             >
               <CardList column={column} kanbanFilter={kanbanFilter} />
               {state.type === "is-card-over" && !state.isOverChildCard ? (
-                <div className="flex-shrink-0 px-3 py-1">
+                <div className="shrink-0 px-3 py-1">
                   <TaskCardShadow dragging={state.dragging} />
                 </div>
               ) : null}
@@ -276,7 +276,7 @@ export function BoardColumn({
                   gap="2"
                   className=" w-full cursor-pointer rounded-xl border-2 border-gray-8 border-dashed p-3 hover:bg-gray-8"
                 >
-                  <IconButton className=" w-fit gap-3 rounded bg-transparent p-2 font-medium text-blue-500 text-xl hover:text-white">
+                  <IconButton className=" w-fit gap-3 rounded-sm bg-transparent p-2 font-medium text-blue-500 text-xl hover:text-white">
                     <Plus size={24} /> Add Task
                   </IconButton>
                 </Flex>
@@ -284,7 +284,7 @@ export function BoardColumn({
             ) : (
               <>
                 <Flex justify={"center"} gap="2" className=" p-3">
-                  <IconButton className="rounded bg-blue-600/10 p-2 font-bold text-2xl text-blue-500 hover:bg-blue-600 hover:text-white">
+                  <IconButton className="rounded-sm bg-blue-600/10 p-2 font-bold text-2xl text-blue-500 hover:bg-blue-600 hover:text-white">
                     <Plus size={24} />
                   </IconButton>
                 </Flex>

@@ -510,8 +510,8 @@ const MultipleSelector = React.forwardRef<
                 <Badge
                   key={option.value}
                   className={cn(
-                    "group data-[disabled]:bg-muted-foreground data-[disabled]:text-muted data-[disabled]:hover:bg-muted-foreground",
-                    "data-[fixed]:bg-muted-foreground data-[fixed]:text-muted data-[fixed]:hover:bg-muted-foreground",
+                    "group data-disabled:bg-muted-foreground data-disabled:text-muted data-disabled:hover:bg-muted-foreground",
+                    "data-fixed:bg-muted-foreground data-fixed:text-muted data-fixed:hover:bg-muted-foreground",
                     badgeClassName,
                     getBadgeColorStyles()
                   )}
@@ -529,7 +529,7 @@ const MultipleSelector = React.forwardRef<
                   <button
                     type="button"
                     className={cn(
-                      "ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                      "ml-1 rounded-full outline-hidden ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2",
 
                       (disabled || option.fixed) && "hidden"
                     )}
@@ -574,7 +574,7 @@ const MultipleSelector = React.forwardRef<
                   : placeholder
               }
               className={cn(
-                "block w-full rounded-md border-gray-5 bg-transparent outline-none placeholder:text-muted-foreground",
+                "block w-full rounded-md border-gray-5 bg-transparent outline-hidden placeholder:text-muted-foreground",
                 {
                   "w-full": hidePlaceholderWhenSelected,
                   "px-3 py-2": selected.length === 0,
@@ -606,7 +606,7 @@ const MultipleSelector = React.forwardRef<
         <div className="relative">
           {open && (
             <CommandList
-              className="absolute top-1 z-10 w-full animate-in rounded-md border border-gray-6 bg-popover text-popover-foreground shadow-md outline-none"
+              className="absolute top-1 z-10 w-full animate-in rounded-md border border-gray-6 bg-popover text-popover-foreground shadow-md outline-hidden"
               onMouseLeave={() => {
                 setOnScrollbar(false)
               }}

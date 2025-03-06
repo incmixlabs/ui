@@ -165,20 +165,20 @@ type VerticalStepProps = StepSharedProps & {
 const verticalStepVariants = cva(
   [
     "relative flex flex-col transition-all duration-200",
-    "data-[completed=true]:[&:not(:last-child)]:after:bg-gray-12",
-    "data-[invalid=true]:[&:not(:last-child)]:after:bg-red-9",
+    "data-[completed=true]:not-last:after:bg-gray-12",
+    "data-[invalid=true]:not-last:after:bg-red-9",
   ],
   {
     variants: {
       variant: {
         circle: cn(
-          "[&:not(:last-child)]:gap-[var(--step-gap)] [&:not(:last-child)]:pb-[var(--step-gap)]",
-          "[&:not(:last-child)]:after:w-[2px] [&:not(:last-child)]:after:bg-border [&:not(:last-child)]:after:content-['']",
-          "[&:not(:last-child)]:after:inset-x-[calc(var(--step-icon-size)/2)]",
-          "[&:not(:last-child)]:after:absolute",
-          "[&:not(:last-child)]:after:top-[calc(var(--step-icon-size)+var(--step-gap))]",
-          "[&:not(:last-child)]:after:bottom-[var(--step-gap)]",
-          "[&:not(:last-child)]:after:transition-all [&:not(:last-child)]:after:duration-200"
+          "not-last:gap-(--step-gap) not-last:pb-(--step-gap)",
+          "not-last:after:w-[2px] not-last:after:bg-border not-last:after:content-['']",
+          "not-last:after:inset-x-[calc(var(--step-icon-size)/2)]",
+          "not-last:after:absolute",
+          "not-last:after:top-[calc(var(--step-icon-size)+var(--step-gap))]",
+          "not-last:after:bottom-(--step-gap)",
+          "not-last:after:transition-all not-last:after:duration-200"
         ),
         line: "mb-4 flex-1 border-t-0",
       },
@@ -337,7 +337,7 @@ const VerticalStep = React.forwardRef<HTMLDivElement, VerticalStepProps>(
           className={cn(
             "stepper__vertical-step-content",
             !isLastStep && "min-h-4",
-            variant !== "line" && "ps-[--step-icon-size]",
+            variant !== "line" && "ps-(--step-icon-size)",
             variant === "line" && orientation === "vertical" && "min-h-0",
             styles?.["vertical-step-content"]
           )}
@@ -397,15 +397,15 @@ const HorizontalStep = React.forwardRef<HTMLDivElement, StepSharedProps>(
           "stepper__horizontal-step",
           (clickable || !!onClickStep) && "cursor-pointer",
           "relative flex items-center transition-all duration-200",
-          "[&:not(:last-child)]:flex-1",
-          "[&:not(:last-child)]:after:transition-all [&:not(:last-child)]:after:duration-200",
-          "[&:not(:last-child)]:after:h-[2px] [&:not(:last-child)]:after:bg-border [&:not(:last-child)]:after:content-['']",
-          "data-[completed=true]:[&:not(:last-child)]:after:bg-gray-12",
-          "data-[invalid=true]:[&:not(:last-child)]:after:bg-red-9",
+          "not-last:flex-1",
+          "not-last:after:transition-all not-last:after:duration-200",
+          "not-last:after:h-[2px] not-last:after:bg-border not-last:after:content-['']",
+          "data-[completed=true]:not-last:after:bg-gray-12",
+          "data-[invalid=true]:not-last:after:bg-red-9",
           variant === "circle-alt" &&
-            "flex-1 flex-col justify-start [&:not(:last-child)]:after:relative [&:not(:last-child)]:after:start-[50%] [&:not(:last-child)]:after:end-[50%] [&:not(:last-child)]:after:top-[calc(var(--step-icon-size)/2)] [&:not(:last-child)]:after:order-[-1] [&:not(:last-child)]:after:w-[calc((100%-var(--step-icon-size))-(var(--step-gap)))]",
+            "flex-1 flex-col justify-start not-last:after:relative not-last:after:start-[50%] not-last:after:end-[50%] not-last:after:top-[calc(var(--step-icon-size)/2)] not-last:after:order-[-1] not-last:after:w-[calc((100%-var(--step-icon-size))-(var(--step-gap)))]",
           variant === "circle" &&
-            "[&:not(:last-child)]:after:ms-[var(--step-gap)] [&:not(:last-child)]:after:me-[var(--step-gap)] [&:not(:last-child)]:after:flex-1",
+            "not-last:after:ms-(--step-gap) not-last:after:me-(--step-gap) not-last:after:flex-1",
           variant === "line" &&
             "flex-1 flex-col border-gray-4 border-t-[3px] data-[active=true]:border-gray-12",
           styles?.["horizontal-step"]

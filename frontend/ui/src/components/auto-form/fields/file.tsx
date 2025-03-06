@@ -53,7 +53,7 @@ export default function AutoFormFile({
           </FormControl>
         )}
         {file && (
-          <div className="flex h-[40px] w-full flex-row items-center justify-between space-x-2 rounded-sm border-0 bg-zinc-300/50 p-2 text-black focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-white dark:text-black dark:focus-visible:ring-0 dark:focus-visible:ring-offset-0">
+          <div className="flex h-[40px] w-full flex-row items-center justify-between space-x-2 rounded-xs border-0 bg-zinc-300/50 p-2 text-black focus-visible:ring-0 focus-visible:ring-offset-0 dark:bg-white dark:text-black dark:focus-visible:ring-0 dark:focus-visible:ring-offset-0">
             <p>{fileName}</p>
             <button
               type="button"

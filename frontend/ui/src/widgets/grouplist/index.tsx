@@ -204,7 +204,7 @@ export const GroupList = ({
 
   return (
     <>
-      <Card className="relative mx-auto h-96 w-96 max-w-md overflow-hidden rounded bg-white shadow">
+      <Card className="relative mx-auto h-96 w-96 max-w-md overflow-hidden rounded-sm bg-white shadow-sm">
         <Box
           className={`absolute top-0 left-0 h-full w-full transition-transform duration-500 ease-in-out ${listView === "years" ? "translate-x-0" : "-translate-x-full"}`}
         >
