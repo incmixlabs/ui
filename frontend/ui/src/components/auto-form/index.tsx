@@ -68,6 +68,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues ?? undefined,
     values: valuesProp,
+    mode: "onSubmit", // changed from default "onChange" to "onSubmit"
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -81,6 +82,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
     <div className="w-full">
       <Form {...form}>
         <form
+          noValidate // Add noValidate to disable browser validation
           onSubmit={(e) => {
             form.handleSubmit(onSubmit)(e)
           }}
