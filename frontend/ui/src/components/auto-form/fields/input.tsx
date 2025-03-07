@@ -4,19 +4,19 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/shadcn-form/form"
+import { Eye, EyeOff } from "lucide-react"
+import { useEffect, useState } from "react"
+import React from "react"
 import { useFormContext } from "react-hook-form"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"
 import type { AutoFormInputComponentProps } from "../types"
-import { useEffect, useState } from "react"
-import { Eye, EyeOff } from "lucide-react"
-import React from "react"
 
 export default function AutoFormInput({
   label,
   isRequired,
   field,
-  fieldConfigItem,
+  // fieldConfigItem,
   fieldProps,
 }: AutoFormInputComponentProps) {
   // Extract props we don't want to pass directly to Input
@@ -26,13 +26,13 @@ export default function AutoFormInput({
     type: fieldType,
     ...restFieldProps
   } = fieldProps
-  
+
   const showLabel = _showLabel === undefined ? true : _showLabel
   const type = fieldType || "text"
-  
+
   // Create a separate state for the input type itself
   const [inputType, setInputType] = useState(type)
-  
+
   // Set initial input type on mount
   useEffect(() => {
     setInputType(type)
@@ -45,7 +45,9 @@ export default function AutoFormInput({
 
   // Toggle password visibility with a direct type change
   const togglePasswordVisibility = () => {
-    setInputType((prevType:string) => prevType === "password" ? "text" : "password")
+    setInputType((prevType: string) =>
+      prevType === "password" ? "text" : "password"
+    )
   }
 
   // Get the appropriate icon component
@@ -70,7 +72,7 @@ export default function AutoFormInput({
       )}
       <div className="relative">
         {icon && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2">
+          <div className="-translate-y-1/2 absolute top-1/2 left-3">
             {getInputIcon()}
           </div>
         )}
@@ -78,9 +80,7 @@ export default function AutoFormInput({
           <Input
             {...restFieldProps}
             type={inputType}
-            className={`h-14 w-full rounded-lg ${
-              icon ? "pl-10" : "px-4"
-            } ${
+            className={`h-14 w-full rounded-lg ${icon ? "pl-10" : "px-4"} ${
               type === "password" ? "pr-10" : ""
             } ${hasError ? "border-red-500" : ""}`}
             placeholder={
@@ -94,9 +94,11 @@ export default function AutoFormInput({
           <button
             type="button"
             onClick={togglePasswordVisibility}
-            className="absolute right-3 top-1/2 -translate-y-1/2"
+            className="-translate-y-1/2 absolute top-1/2 right-3"
             tabIndex={-1}
-            aria-label={inputType === "password" ? "Show password" : "Hide password"}
+            aria-label={
+              inputType === "password" ? "Show password" : "Hide password"
+            }
           >
             {inputType === "password" ? (
               <Eye className="h-5 w-5 text-gray-400" />
@@ -108,8 +110,8 @@ export default function AutoFormInput({
       </div>
 
       {/* Fixed height error message container to prevent layout shift */}
-      <div className="min-h-[24px] pt-1 px-1">
-        <FormMessage className="text-red-500 text-sm block max-w-full whitespace-normal break-words" />
+      <div className="min-h-[24px] px-1 pt-1">
+        <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
       </div>
     </FormItem>
   )

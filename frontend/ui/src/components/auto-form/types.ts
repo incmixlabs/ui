@@ -1,8 +1,8 @@
+import type { LucideIcon } from "lucide-react"
 // auto-form/types.ts
 import type { ControllerRenderProps, FieldValues } from "react-hook-form"
 import type * as z from "zod"
 import type { INPUT_COMPONENTS } from "./config"
-import type { LucideIcon } from "lucide-react"
 
 // Add these new type definitions
 export type MCQOption = {

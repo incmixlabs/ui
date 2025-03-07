@@ -1,7 +1,7 @@
+import type { LucideIcon } from "lucide-react"
 import type { z } from "zod"
 import type { FieldConfig } from "../auto-form/types"
 import type { ZodObjectOrWrapped } from "../auto-form/utils"
-import type { LucideIcon } from "lucide-react"
 
 export interface StepSchema<SchemaType extends ZodObjectOrWrapped> {
   formSchema: any // Replace with more specific type if possible

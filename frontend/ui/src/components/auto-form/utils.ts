@@ -134,7 +134,7 @@ export function zodToHtmlInputProps(
   const inputProps: React.InputHTMLAttributes<HTMLInputElement> = {}
 
   // We can still determine if the field is required for UI/styling purposes
-  const isRequired = !["ZodOptional", "ZodNullable"].includes(
+  const _isRequired = !["ZodOptional", "ZodNullable"].includes(
     schema._def.typeName
   )
 
