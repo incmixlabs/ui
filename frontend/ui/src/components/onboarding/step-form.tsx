@@ -34,7 +34,7 @@ export const StepForm = ({
       // Return the Zod schema
       return zodSchemaFunction(z)
     } catch (error) {
-      console.error("Error converting to Zod:", error)
+      console.error("Error converting to Zod:", error, { schemaId: schema.id || 'unknown' })
       return null
     }
   }
