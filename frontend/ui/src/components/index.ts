@@ -25,6 +25,7 @@ export * from "./toaster"
 export * from "./tree-view"
 export * from "./kanban-board"
 export * from "./projects"
+export * from "./projects/roadmap-view"
 export {
   Badge,
   Box,
