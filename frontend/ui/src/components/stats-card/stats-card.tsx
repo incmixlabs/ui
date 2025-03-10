@@ -40,7 +40,7 @@ export const StatsCard = () => {
   ]
 
   return (
-    <div className="flex flex-1 flex-wrap gap-4">
+    <div className="flex flex-col gap-4">
       <div className="flex gap-4">
         {taskStats.slice(0, 2).map((stat, _index) => (
           <SingleTaskView
