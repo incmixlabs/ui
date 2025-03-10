@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../card/card"
-import { ThreeDots } from "./icons/clipboard"
+import { ThreeDots } from "./icons/three-dots-icon"
 import RadialBarChart from "./radial-bar-chart"
 
 export const RadialBarChartCard: React.FC = () => {
