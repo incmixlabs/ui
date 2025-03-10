@@ -1,5 +1,12 @@
 import ReactApexChart from "react-apexcharts"
-// import { ApexOptions } from "apexcharts"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../card/card"
 
 const StatisticsBarChartCard: React.FC = () => {
   const chartData = {
@@ -61,16 +68,39 @@ const StatisticsBarChartCard: React.FC = () => {
     },
   }
 
+  const _onHoldColor = "#4361ee"
+  const completedColor = "#ffd166"
+
   return (
-    <div className="flex-2 flex-grow flex-col rounded-lg bg-white p-4 shadow">
-      <h3 className="mb-4 font-semibold text-lg">Monthly Sales Statistics</h3>
-      <ReactApexChart
-        options={chartData.options}
-        series={chartData.series}
-        type="bar"
-        height={350}
-      />
-    </div>
+    <Card className="flex-2 flex-grow p-0">
+      <CardHeader>
+        <CardTitle className="font-poppins text-[20px]">Statistics</CardTitle>
+      </CardHeader>
+      <CardContent className="pb-0">
+        <ReactApexChart
+          options={chartData.options}
+          series={chartData.series}
+          type="bar"
+          height={260}
+        />
+      </CardContent>
+      <CardFooter className="flex flex-row justify-end gap-4 ">
+        <div className="flex flex-row items-center gap-2">
+          <div
+            className=" h-[8px] w-[8px] rounded-full"
+            style={{ backgroundColor: _onHoldColor }}
+          />
+          <CardDescription>New Tasks</CardDescription>
+        </div>
+        <div className="flex flex-row items-center gap-2">
+          <div
+            className=" h-[8px] w-[8px] rounded-full"
+            style={{ backgroundColor: completedColor }}
+          />
+          <CardDescription>In Progress</CardDescription>
+        </div>
+      </CardFooter>
+    </Card>
   )
 }
 
