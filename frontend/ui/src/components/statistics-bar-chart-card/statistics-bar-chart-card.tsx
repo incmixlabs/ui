@@ -1,4 +1,4 @@
-import ReactApexChart from "react-apexcharts"
+import { Suspense, lazy } from "react"
 import {
   Card,
   CardContent,
@@ -7,6 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "../card/card"
+
+const ReactApexChart = lazy(() => import("react-apexcharts"))
 
 const StatisticsBarChartCard: React.FC = () => {
   const chartData = {
@@ -77,12 +79,16 @@ const StatisticsBarChartCard: React.FC = () => {
         <CardTitle className="font-poppins text-[20px]">Statistics</CardTitle>
       </CardHeader>
       <CardContent className="pb-0">
-        <ReactApexChart
-          options={chartData.options}
-          series={chartData.series}
-          type="bar"
-          height={260}
-        />
+        <Suspense
+          fallback={<div className="h-[260px] animate-pulse bg-gray-100" />}
+        >
+          <ReactApexChart
+            options={chartData.options}
+            series={chartData.series}
+            type="bar"
+            height={260}
+          />
+        </Suspense>
       </CardContent>
       <CardFooter className="flex flex-row justify-end gap-4 ">
         <div className="flex flex-row items-center gap-2">
