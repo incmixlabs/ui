@@ -14,7 +14,7 @@ const StatisticsBarChartCard: React.FC = () => {
   const chartData = {
     series: [
       {
-        name: "Sales",
+        name: "Tasks",
         data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
       },
     ],
@@ -56,7 +56,7 @@ const StatisticsBarChartCard: React.FC = () => {
       },
       yaxis: {
         title: {
-          text: "Sales ($)",
+          text: "Tasks ($)",
         },
       },
       fill: {
@@ -64,7 +64,7 @@ const StatisticsBarChartCard: React.FC = () => {
       },
       tooltip: {
         y: {
-          formatter: (val: number) => `$ ${val} thousands`,
+          formatter: (val: number) => `$ ${val} tasks`,
         },
       },
     },

@@ -2,8 +2,18 @@ import type React from "react"
 import { useState } from "react"
 import Chart from "react-apexcharts"
 
-const RadialBarChart: React.FC = () => {
-  const [_series, _setSeries] = useState<number[]>([44, 55, 13, 33])
+interface RadialBarChartProps {
+  series?: number[]
+  labels?: string[]
+  colors?: string[]
+}
+
+const RadialBarChart: React.FC<RadialBarChartProps> = ({
+  series = [44, 55, 13, 33],
+  labels = ["Apple", "Mango", "Banana", "Orange"],
+  colors = ["#f4a77d", "#4361ee", "#ffd166", "#6c757d"],
+}) => {
+  const [_series, _setSeries] = useState<number[]>(series)
 
   const _options: ApexCharts.ApexOptions = {
     chart: {
@@ -34,7 +44,7 @@ const RadialBarChart: React.FC = () => {
       colors: ["#fff"], // ✅ White stroke around segments
     },
     fill: {
-      colors: ["#f4a77d", "#4361ee", "#ffd166"],
+      colors: colors,
       opacity: 1,
       type: "solid",
     },
@@ -61,7 +71,7 @@ const RadialBarChart: React.FC = () => {
         },
       },
     },
-    labels: ["Apple", "Mango", "Banana", "Orange"], // ✅ Custom labels instead of "series1"
+    labels: labels,
     responsive: [
       {
         breakpoint: 480,

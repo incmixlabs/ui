@@ -4,8 +4,8 @@ export function ClipBoardCheck({ size = "15", ...props }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="18"
-      height="20"
+      width={size}
+      height={size}
       viewBox="0 0 18 20"
       fill="none"
       role="img"

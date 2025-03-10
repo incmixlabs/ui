@@ -1,11 +1,11 @@
 import type { IconProps } from "./types"
 
-export function ClipBoard({ size = "15", ...props }: IconProps) {
+export function ClipBoard({ size = "16", ...props }: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="20"
+      width={size}
+      height={size}
       viewBox="0 0 16 20"
       fill="none"
       role="img"
