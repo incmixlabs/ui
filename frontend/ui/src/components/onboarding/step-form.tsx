@@ -22,19 +22,26 @@ export const StepForm = ({
 }: StepFormProps) => {
   const { nextStep, activeStep, isLastStep } = useStepper()
 
+  // Simplified conversion - using json-schema-to-zod directly
   const convertToZod = (schema: any) => {
     try {
-      const zodSchemaFunction = new Function(
-        "z",
-        `return ${jsonSchemaToZod(schema)}`
-      )
+      // Generate Zod code from JSON Schema
+      const zodString = jsonSchemaToZod(schema)
+
+      // Create a function that returns the Zod schema
+      const zodSchemaFunction = new Function("z", `return ${zodString}`)
+
+      // Return the Zod schema
       return zodSchemaFunction(z)
-    } catch {
+    } catch (error) {
+      console.error("Error converting to Zod:", error, {
+        schemaId: schema.id || "unknown",
+      })
       return null
     }
   }
 
-  // Add this function to continuously save form data as it changes
+  // Handle form values change
   const handleValuesChange = (values: any) => {
     setStepData((prev) => ({
       ...prev,
@@ -42,6 +49,7 @@ export const StepForm = ({
     }))
   }
 
+  // Handle form submission
   const handleSubmit = (data: any) => {
     // Update the step data with the current form data
     const updatedStepData = {
@@ -63,6 +71,9 @@ export const StepForm = ({
     }
   }
 
+  // Convert the JSON schema to Zod schema
+  const zodSchema = convertToZod(step.formSchema)
+
   return (
     <AuthWrapper
       title="Welcome!"
@@ -73,7 +84,7 @@ export const StepForm = ({
         key={`form-${activeStep}`}
         onSubmit={handleSubmit}
         onValuesChange={handleValuesChange}
-        formSchema={convertToZod(step.formSchema)}
+        formSchema={zodSchema}
         values={stepData[activeStep] || {}}
         fieldConfig={step?.fieldConfig ?? {}}
         dependencies={step?.dependencies ?? {}}

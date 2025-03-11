@@ -1,15 +1,19 @@
+import { Building2 } from "lucide-react"
 import type { StepSchema } from "./types"
 export const formSchema: { steps: StepSchema<any>[] } = {
   steps: [
     {
       label: "Company Details",
-      stepIcon: "Building",
+      stepIcon: "Building", // Now works with the updated type
       formSchema: {
         type: "object",
         properties: {
           companyName: {
             type: "string",
-            minLength: 1,
+            minLength: 3,
+            maxLength: 100,
+            title: "Company Name",
+            description: "The legal name of your company",
           },
         },
         required: ["companyName"],
@@ -18,8 +22,8 @@ export const formSchema: { steps: StepSchema<any>[] } = {
         companyName: {
           description: "Company Name",
           inputProps: {
-            required: true,
-            placeholder: "name@company.com",
+            placeholder: "Enter your company name",
+            icon: Building2, // Now works with the updated type
           },
         },
       },
