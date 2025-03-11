@@ -40,7 +40,7 @@ export const RadialBarChartCard: React.FC = () => {
             </CardTitle>
             <CardDescription>Ongoing</CardDescription>
           </div>
-          <div className="h-[75px] w-[1px] bg-[#E8E9EB]" />
+          <div className="h-[75px] w-[1px] bg-gray-200 dark:bg-gray-700" />
           <div className="flex flex-col items-center">
             <div
               className="mb-2 h-[6px] w-[6px] rounded-sm"
@@ -51,7 +51,7 @@ export const RadialBarChartCard: React.FC = () => {
             </CardTitle>
             <CardDescription>Hold</CardDescription>
           </div>
-          <div className="h-[75px] w-[1px] bg-[#E8E9EB]" />
+          <div className="h-[75px] w-[1px] bg-gray-200 dark:bg-gray-700" />
           <div className="flex flex-col items-center">
             <div
               className="mb-2 h-[6px] w-[6px] rounded-sm"

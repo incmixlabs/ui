@@ -8,7 +8,7 @@ interface TaskStat {
   count: number
   label: string
   icon: React.ReactNode
-  backgroundColor: string
+  backgroundColorClass: string
 }
 
 export const StatsCard = () => {
@@ -16,26 +16,43 @@ export const StatsCard = () => {
     {
       count: 780,
       label: "Total Tasks",
-      icon: <ClipBoard size="20" style={{ fill: "#376CFB" }} />,
-      backgroundColor: "#EEF1FF",
+      icon: (
+        <ClipBoard size="20" className="fill-[#376CFB] dark:fill-[#81A1FB]" />
+      ),
+      backgroundColorClass: "bg-[#e9edff20] dark:bg-[#2D3748]",
     },
     {
       count: 136,
       label: "New Tasks",
-      icon: <ClipBoardAdd size="20" style={{ fill: "#376CFB" }} />,
-      backgroundColor: "#FFF1ED",
+      icon: (
+        <ClipBoardAdd
+          size="20"
+          className="fill-[#376CFB] dark:fill-[#81A1FB]"
+        />
+      ),
+      backgroundColorClass: "bg-[#FFF1ED] dark:bg-[#3D3741]",
     },
     {
       count: 324,
       label: "In Progress",
-      icon: <ClipBoardStatus size="20" style={{ fill: "#376CFB" }} />,
-      backgroundColor: "#FFF6ED",
+      icon: (
+        <ClipBoardStatus
+          size="20"
+          className="fill-[#376CFB] dark:fill-[#81A1FB]"
+        />
+      ),
+      backgroundColorClass: "bg-[#FFF6ED] dark:bg-[#3D3641]",
     },
     {
       count: 215,
       label: "Done Tasks",
-      icon: <ClipBoardCheck size="20" style={{ fill: "#376CFB" }} />,
-      backgroundColor: "#EDFCF3",
+      icon: (
+        <ClipBoardCheck
+          size="20"
+          className="fill-[#376CFB] dark:fill-[#81A1FB]"
+        />
+      ),
+      backgroundColorClass: "bg-[#EDFCF3] dark:bg-[#2D3D36]",
     },
   ]
 
@@ -47,7 +64,7 @@ export const StatsCard = () => {
             key={stat.label}
             count={stat.count}
             label={stat.label}
-            backgroundColor={stat.backgroundColor}
+            backgroundColorClass={stat.backgroundColorClass}
             icon={stat.icon}
           />
         ))}
@@ -58,7 +75,7 @@ export const StatsCard = () => {
             key={stat.label}
             count={stat.count}
             label={stat.label}
-            backgroundColor={stat.backgroundColor}
+            backgroundColorClass={stat.backgroundColorClass}
             icon={stat.icon}
           />
         ))}

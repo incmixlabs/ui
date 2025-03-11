@@ -1,3 +1,4 @@
+import { useThemeContext } from "@radix-ui/themes"
 import { Suspense, lazy } from "react"
 import {
   Card,
@@ -11,6 +12,10 @@ import {
 const ReactApexChart = lazy(() => import("react-apexcharts"))
 
 const StatisticsBarChartCard: React.FC = () => {
+  const { appearance } = useThemeContext()
+  const isDarkMode = appearance === "dark"
+  const textColor = isDarkMode ? "#f8f8f8" : "#333"
+
   const chartData = {
     series: [
       {
@@ -25,6 +30,7 @@ const StatisticsBarChartCard: React.FC = () => {
         toolbar: {
           show: false,
         },
+        foreColor: textColor, // Default text color for the chart
       },
       plotOptions: {
         bar: {
@@ -53,16 +59,30 @@ const StatisticsBarChartCard: React.FC = () => {
           "Aug",
           "Sep",
         ],
+        labels: {
+          style: {
+            colors: textColor,
+          },
+        },
       },
       yaxis: {
         title: {
           text: "Tasks ($)",
+          style: {
+            color: textColor,
+          },
+        },
+        labels: {
+          style: {
+            colors: textColor,
+          },
         },
       },
       fill: {
         opacity: 1,
       },
       tooltip: {
+        theme: isDarkMode ? "dark" : "light",
         y: {
           formatter: (val: number) => `$ ${val} tasks`,
         },
