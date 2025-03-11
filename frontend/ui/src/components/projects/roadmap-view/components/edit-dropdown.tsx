@@ -1,4 +1,4 @@
-import { Button, ButtonProps, DropdownMenu, Grid } from "@radix-ui/themes"
+import { Button, type ButtonProps, DropdownMenu, Grid } from "@radix-ui/themes"
 import { cn } from "@utils"
 import { type AccentColor, accentColors } from "@utils/colors"
 import {
@@ -28,7 +28,11 @@ function EditDropdown({
   tasks,
   task,
   setTasks,
-}: { tasks: Task[]; task: Task; setTasks: React.Dispatch<React.SetStateAction<Task[]>> }) {
+}: {
+  tasks: Task[]
+  task: Task
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>
+}) {
   const [open, setOpen] = useState(false)
   const [editMode, setEditMode] = useState(false)
   const [inputValue, setInputValue] = useState(task.name)
@@ -59,17 +63,13 @@ function EditDropdown({
   const handleDelete = (e: Event) => {
     e.preventDefault()
 
-    setTasks((prevTasks: Task[]) =>
-      prevTasks.filter((t) => t.id !== task.id)
-    )
+    setTasks((prevTasks: Task[]) => prevTasks.filter((t) => t.id !== task.id))
     setOpen(false)
   }
 
   const handleSave = () => {
     setTasks((prevTasks: Task[]) =>
-      prevTasks.map((t) =>
-        t.id === task.id ? { ...t, name: inputValue } : t
-      )
+      prevTasks.map((t) => (t.id === task.id ? { ...t, name: inputValue } : t))
     )
     setEditMode(false)
     setOpen(false)
@@ -83,9 +83,7 @@ function EditDropdown({
     e.stopPropagation()
 
     setTasks((prevTasks: Task[]) =>
-      prevTasks.map((t) =>
-        t.id === task.id ? { ...t, color } : t
-      )
+      prevTasks.map((t) => (t.id === task.id ? { ...t, color } : t))
     )
   }
   // const colors = accentColors
@@ -158,11 +156,13 @@ function EditDropdown({
                           <Button
                             key={c}
                             variant="solid"
-                            color={c as ButtonProps['color']}
+                            color={c as ButtonProps["color"]}
                             className={cn(
                               "h-6 w-6 cursor-pointer rounded-full "
                             )}
-                            onClick={(e) => handleColorSelect(c as ExtendedColorType, e)}
+                            onClick={(e) =>
+                              handleColorSelect(c as ExtendedColorType, e)
+                            }
                           >
                             {" "}
                             {task.color === c && (
