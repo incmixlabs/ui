@@ -1,5 +1,6 @@
 import { Button, ButtonProps, DropdownMenu, Grid } from "@radix-ui/themes"
 import { cn } from "@utils"
+import { type AccentColor, accentColors } from "@utils/colors"
 import {
   Check,
   CheckCheck,
@@ -27,18 +28,12 @@ function EditDropdown({
   tasks,
   task,
   setTasks,
-}: { tasks: Task[]; task: Task; setTasks: any }) {
-  // State to control dropdown open/close
+}: { tasks: Task[]; task: Task; setTasks: React.Dispatch<React.SetStateAction<Task[]>> }) {
   const [open, setOpen] = useState(false)
-  // State to control edit mode
   const [editMode, setEditMode] = useState(false)
-  // State for the input value
   const [inputValue, setInputValue] = useState(task.name)
-  // State to store the temporary input value during editing
-  // State for label color
   const [_labelColor, _setLabelColor] = useState("blue")
 
-  // Handle edit button click
   const handleEditClick = (e: { preventDefault: () => void }) => {
     e.preventDefault()
     setInputValue(inputValue)
@@ -64,15 +59,15 @@ function EditDropdown({
   const handleDelete = (e: Event) => {
     e.preventDefault()
 
-    setTasks((prevTasks: { id: string }[]) =>
-      prevTasks.filter((t: { id: string }) => t.id !== task.id)
+    setTasks((prevTasks: Task[]) =>
+      prevTasks.filter((t) => t.id !== task.id)
     )
     setOpen(false)
   }
 
   const handleSave = () => {
-    setTasks((prevTasks: { id: string }[]) =>
-      prevTasks.map((t: { id: string }) =>
+    setTasks((prevTasks: Task[]) =>
+      prevTasks.map((t) =>
         t.id === task.id ? { ...t, name: inputValue } : t
       )
     )
@@ -84,15 +79,16 @@ function EditDropdown({
   const handleCancel = () => {
     setEditMode(false)
   }
-  const handleColorSelect = (color: string, e: React.MouseEvent) => {
+  const handleColorSelect = (color: ExtendedColorType, e: React.MouseEvent) => {
     e.stopPropagation()
 
-    setTasks((prevTasks: { id: string }[]) =>
-      prevTasks.map((t: { id: string }) =>
+    setTasks((prevTasks: Task[]) =>
+      prevTasks.map((t) =>
         t.id === task.id ? { ...t, color } : t
       )
     )
   }
+  // const colors = accentColors
   const colors = [
     "blue",
     "green",
@@ -162,11 +158,11 @@ function EditDropdown({
                           <Button
                             key={c}
                             variant="solid"
-                            color={c as ExtendedColorType}
+                            color={c as ButtonProps['color']}
                             className={cn(
                               "h-6 w-6 cursor-pointer rounded-full "
                             )}
-                            onClick={(e) => handleColorSelect(c, e)}
+                            onClick={(e) => handleColorSelect(c as ExtendedColorType, e)}
                           >
                             {" "}
                             {task.color === c && (
