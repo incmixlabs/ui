@@ -1,12 +1,7 @@
 import { Avatar } from "@components/avatar"
-import { Badge, ExtendedColorType } from "@components/badge"
 import { MotionSheet } from "@components/custom-sheet"
-import { SmartDatetimeInput } from "@components/datetime-picker"
-import { TaskIcon } from "@components/icons/task"
 import { ComboBox } from "@components/kanban-board/combo-box"
 import { attachments } from "@components/kanban-board/data"
-import { KanbanImages } from "@components/kanban-board/images"
-import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
 import { useProjectDrawer } from "@hooks/use-project-drawer"
 import {
   Box,
@@ -20,12 +15,11 @@ import {
   Text,
 } from "@radix-ui/themes"
 import { cn } from "@utils"
-import { Download, FileArchive, Image, Paperclip, Smile, X } from "lucide-react"
+import { Download, FileArchive, X } from "lucide-react"
 import { motion } from "motion/react"
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import { members, projects } from "../data"
-import { ProjectsImages } from "../images"
 import ProjectChecklist from "./project-checklist"
 import ProjectComments from "./project-comments"
 import ProjectDetails from "./project-detials"
@@ -158,7 +152,6 @@ export default function ProjectDrawer({
                         >
                           {attachment.type === "image" ? (
                             <Box className="h-12 w-12 shrink-0 overflow-hidden rounded-lg">
-
                               <img
                                 src={attachment.thumbnailUrl}
                                 alt={attachment.name}
@@ -167,7 +160,6 @@ export default function ProjectDrawer({
                             </Box>
                           ) : (
                             <Box className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-gray-8">
-
                               <FileArchive className="h-5 w-5 text-gray-8" />
                             </Box>
                           )}

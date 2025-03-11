@@ -159,12 +159,16 @@ export function ProjectDetail({
                       className="cursor-pointer rounded-md border p-4 transition-colors hover:bg-gray-50"
                       onClick={() => onSelectSubProject(subProject)}
                       onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
+                        if (e.key === "Enter" || e.key === " ") {
                           onSelectSubProject(subProject)
                         }
                       }}
                     >
-                      <Flex justify={"between"} align={"center"} className="mb-2">
+                      <Flex
+                        justify={"between"}
+                        align={"center"}
+                        className="mb-2"
+                      >
                         <h3 className="font-medium">{subProject.name}</h3>
                         <span className="text-gray-500 text-sm">
                           {formatDate(subProject.startDate)} -{" "}

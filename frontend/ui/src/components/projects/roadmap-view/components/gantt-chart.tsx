@@ -245,7 +245,7 @@ export function GanttChart({ projectTasks, className }: GanttChartProps) {
                   />
                   <Button
                     onClick={() => toggleProjectExpand(task.id)}
-                    className="flex h-full w-full items-center gap-2 bg-transparent text-gray-12 justify-start p-2 pl-4 "
+                    className="flex h-full w-full items-center justify-start gap-2 bg-transparent p-2 pl-4 text-gray-12"
                   >
                     {task.subtasks && task.subtasks.length > 0 ? (
                       <>
@@ -270,7 +270,7 @@ export function GanttChart({ projectTasks, className }: GanttChartProps) {
                       className={cn(
                         "flex h-16 items-center bg-gray-3 p-2 pl-8",
                         index === (task.subtasks?.length ?? 0) - 1 &&
-                        "border-gray-5 border-b"
+                          "border-gray-5 border-b"
                       )}
                     >
                       <span className="truncate">{subtask.name}</span>
