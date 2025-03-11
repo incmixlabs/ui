@@ -144,12 +144,13 @@ export default function TaskCardDrawer({
         onOpenChange={handleDrawerClose}
         showCloseButton={false}
         side="right"
+        isFilter={kanbanFilter}
         className="w-[53rem] p-0 py-0"
       >
         <div
           className={cn(
             kanbanFilter
-              ? "relative z-50 h-[90vh] w-[30rem] flex-shrink-0 rounded-xl 2xl:w-[40rem]"
+              ? "relative z-50 h-[90vh] w-[30rem] shrink-0 rounded-xl 2xl:w-[40rem]"
               : "h-full w-full"
           )}
           aria-modal="true"
@@ -190,7 +191,7 @@ export default function TaskCardDrawer({
                           </Button>
                         </DropdownMenu.Trigger>
                         <DropdownMenu.Content
-                          className=" z-[88] "
+                          className=" z-88 "
                           color="gray"
                           variant="soft"
                         >
@@ -231,7 +232,7 @@ export default function TaskCardDrawer({
                           variant="soft"
                           highContrast
                           alignOffset={-40}
-                          className=" z-[88] w-36 "
+                          className=" z-88 w-36 "
                         >
                           <DropdownMenu.Item className="justify-start px-1">
                             <TaskIcon /> Task
@@ -425,7 +426,7 @@ export default function TaskCardDrawer({
                           className=" rounded-lg bg-gray-3 p-3 transition-colors dark:bg-gray-4"
                         >
                           {attachment.type === "image" ? (
-                            <Box className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg">
+                            <Box className="h-16 w-16 shrink-0 overflow-hidden rounded-lg">
                               <img
                                 src={attachment.thumbnailUrl}
                                 alt={attachment.name}
@@ -433,12 +434,12 @@ export default function TaskCardDrawer({
                               />
                             </Box>
                           ) : (
-                            <Box className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg border border-gray-8">
+                            <Box className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-gray-8">
                               <FileArchive className="h-8 w-8 text-gray-8" />
                             </Box>
                           )}
 
-                          <div className="ml-4 flex-grow">
+                          <div className="ml-4 grow">
                             <h3 className="font-medium text-gray-12 text-sm">
                               {attachment.name}
                             </h3>
@@ -497,7 +498,7 @@ export default function TaskCardDrawer({
                         <Tabs.Content value="comments" className="py-4">
                           <form
                             onSubmit={handleSubmit}
-                            className="rounded-lg border border-gray-5 bg-gray-2 shadow-sm dark:bg-gray-4"
+                            className="rounded-lg border border-gray-5 bg-gray-2 shadow-xs dark:bg-gray-4"
                           >
                             <Box className="p-2">
                               <textarea
@@ -555,7 +556,7 @@ export default function TaskCardDrawer({
                                 <img
                                   src={comment.user.avatar}
                                   alt={comment.user.name}
-                                  className="h-10 w-10 flex-shrink-0 rounded-full object-cover"
+                                  className="h-10 w-10 shrink-0 rounded-full object-cover"
                                 />
                                 <div className="flex-1">
                                   <Flex align={"center"} className="mb-1 gap-2">
@@ -620,7 +621,7 @@ export default function TaskCardDrawer({
                   </Box>
                 </Box>
                 {!kanbanFilter && (
-                  <Box className="relative h-full w-72 flex-shrink-0 pt-24">
+                  <Box className="relative h-full w-72 shrink-0 pt-24">
                     <IconButton
                       color="gray"
                       variant="soft"

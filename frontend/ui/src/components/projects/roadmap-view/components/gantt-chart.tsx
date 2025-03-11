@@ -1,20 +1,40 @@
 "use client"
 
 import { Button } from "@components/button"
+
 import {
+  Box,
+  type ButtonProps,
+  DropdownMenu,
+  Flex,
+  Grid,
+  IconButton,
+  ScrollArea,
   Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select"
-import { Box, IconButton, ScrollArea } from "@radix-ui/themes"
+} from "@radix-ui/themes"
 import { cn } from "@utils"
-import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react"
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Clipboard,
+  Copy,
+  Delete,
+  Edit,
+  EllipsisVertical,
+  Pencil,
+  Plus,
+  SlidersHorizontal,
+  Trash2,
+  UserRoundPlus,
+} from "lucide-react"
 import { DateTime } from "luxon"
 import { useEffect, useRef, useState } from "react"
 import { CalendarHeader } from "./calendar-header"
+import EditDropdown from "./edit-dropdown"
 import { TaskBar } from "./task-bar"
+
+export type ExtendedColorType = ButtonProps["color"]
 
 export type ViewType = "week" | "month" | "quarter" | "year"
 
@@ -24,16 +44,17 @@ export interface Task {
   startDate: DateTime
   endDate: DateTime
   progress: number
-  color?: string
+  color?: ExtendedColorType
   subtasks?: Task[]
 }
 
 interface GanttChartProps {
-  tasks: Task[]
+  projectTasks: Task[]
   className?: string
 }
 
-export function GanttChart({ tasks, className }: GanttChartProps) {
+export function GanttChart({ projectTasks, className }: GanttChartProps) {
+  const [tasks, setTasks] = useState(projectTasks)
   const [view, setView] = useState<ViewType>("month")
   const [currentDate, setCurrentDate] = useState(DateTime.now())
   const [dates, setDates] = useState<DateTime[]>([])
@@ -137,7 +158,7 @@ export function GanttChart({ tasks, className }: GanttChartProps) {
       case "quarter":
         return "w-16"
       case "year":
-        return "w-30"
+        return "w-28"
       default:
         return "w-20"
     }
@@ -145,45 +166,62 @@ export function GanttChart({ tasks, className }: GanttChartProps) {
 
   return (
     <div className={cn("grid w-full grid-rows-[auto_1fr]", className)}>
-      <div className="mb-4 grid grid-cols-[1fr_auto] items-center gap-4">
-        <div className="flex items-center gap-2">
+      <Flex justify={"between"} gap={"4"} className="mb-4">
+        <Flex align={"center"} gap={"2"}>
           <Button
-            variant="outline"
+            variant="soft"
             onClick={handlePrevious}
             aria-label="Previous period"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <Button
-            variant="outline"
-            onClick={handleNext}
-            aria-label="Next period"
-          >
+          <Button variant="soft" onClick={handleNext} aria-label="Next period">
             <ChevronRight className="h-4 w-4" />
           </Button>
-          <h2 className="ml-2 font-semibold text-xl">
-            {view === "week" &&
-              `Week of ${currentDate.startOf("week").toFormat("LLL d, yyyy")}`}
-            {view === "month" && currentDate.toFormat("LLLL yyyy")}
-            {view === "quarter" &&
-              `Q${Math.ceil(currentDate.month / 3)} ${currentDate.year}`}
-            {view === "year" && currentDate.year.toString()}
-          </h2>
-        </div>
-        <div>
-          <Select value={view} onValueChange={handleViewChange}>
-            <SelectTrigger className="w-[120px]">
-              <SelectValue placeholder="View" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="week">Week</SelectItem>
-              <SelectItem value="month">Month</SelectItem>
-              <SelectItem value="quarter">Quarter</SelectItem>
-              <SelectItem value="year">Year</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+        </Flex>
+        <h2 className="ml-2 font-semibold text-xl">
+          {view === "week" &&
+            `Week of ${currentDate.startOf("week").toFormat("LLL d, yyyy")}`}
+          {view === "month" && currentDate.toFormat("LLLL yyyy")}
+          {view === "quarter" &&
+            `Q${Math.ceil(currentDate.month / 3)} ${currentDate.year}`}
+          {view === "year" && currentDate.year.toString()}
+        </h2>
+        <Flex align={"center"}>
+          <Select.Root
+            value={view}
+            onValueChange={handleViewChange}
+            defaultValue="Month"
+          >
+            <Select.Trigger className="w-[120px]" placeholder="View" />
+            <Select.Content>
+              <Select.Item value="week">Week</Select.Item>
+              <Select.Item value="month">Month</Select.Item>
+              <Select.Item value="quarter">Quarter</Select.Item>
+              <Select.Item value="year">Year</Select.Item>
+            </Select.Content>
+          </Select.Root>
+          <div className="flex items-center gap-2 pl-2">
+            <IconButton
+              color="gray"
+              variant="soft"
+              // onClick={() => setIsFilterOpen(true)}
+              className="h-9 w-9 cursor-pointer"
+            >
+              <SlidersHorizontal size={20} />
+            </IconButton>
+
+            <Button
+              // onClick={() => setIsAddModalOpen(true)}
+              variant="solid"
+              className="h-9 cursor-pointer"
+            >
+              <Plus size={16} />
+              Add Project
+            </Button>
+          </div>
+        </Flex>
+      </Flex>
 
       <div className=" overflow-hidden rounded-md border-gray-5 border-x border-t">
         <div className="grid grid-cols-[auto_1fr]">
@@ -194,15 +232,11 @@ export function GanttChart({ tasks, className }: GanttChartProps) {
             </div>
 
             {tasks.map((task) => (
-              <div
-                key={`task-name-${task.id}`}
-                className="border-gray-5 border-b"
-              >
+              <div key={`task-name-${task.id}`}>
                 <Box
                   className={cn(
-                    "relative h-16 w-full cursor-pointer rounded-none bg-transparent text-gray-11",
-                    expandedProjects[task.id] &&
-                      "border-gray-5 border-b bg-gray-3 text-gray-12"
+                    "relative h-16 w-full cursor-pointer rounded-none border-gray-5 border-b bg-transparent text-gray-11",
+                    expandedProjects[task.id] && "bg-gray-3 text-gray-12"
                   )}
                 >
                   <span
@@ -226,15 +260,17 @@ export function GanttChart({ tasks, className }: GanttChartProps) {
                     )}
                     <span className="truncate font-medium">{task.name}</span>
                   </button>
+                  <EditDropdown tasks={tasks} task={task} setTasks={setTasks} />
                 </Box>
 
                 {expandedProjects[task.id] &&
-                  task.subtasks?.map((subtask) => (
+                  task.subtasks?.map((subtask, index) => (
                     <div
                       key={`subtask-name-${subtask.id}`}
                       className={cn(
-                        "flex h-16 items-center p-2 pl-8",
-                        expandedProjects[task.id] && "bg-gray-3 "
+                        "flex h-16 items-center bg-gray-3 p-2 pl-8",
+                        index === (task.subtasks?.length ?? 0) - 1 &&
+                          "border-gray-5 border-b"
                       )}
                     >
                       <span className="truncate">{subtask.name}</span>
@@ -256,7 +292,7 @@ export function GanttChart({ tasks, className }: GanttChartProps) {
               <div className="relative">
                 {tasks.map((task) => (
                   <div key={`task-bar-${task.id}`}>
-                    <div className="relative h-16 border-gray-5 border-b">
+                    <div className="relative flex h-16 flex-col justify-center border-gray-5 border-b">
                       <TaskBar
                         task={task}
                         dates={dates}
@@ -269,7 +305,7 @@ export function GanttChart({ tasks, className }: GanttChartProps) {
                       task.subtasks?.map((subtask) => (
                         <div
                           key={`subtask-bar-${subtask.id}`}
-                          className="relative h-16 border-gray-5 border-b"
+                          className="relative flex h-16 flex-col justify-center border-gray-5 border-b"
                         >
                           <TaskBar
                             task={subtask}
