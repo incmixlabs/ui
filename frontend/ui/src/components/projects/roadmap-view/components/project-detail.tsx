@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/shadcn-card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/tabs"
-import { Button, IconButton } from "@radix-ui/themes"
+import { Box, Button, Flex, IconButton } from "@radix-ui/themes"
 import type { Project } from "@types"
 import { ArrowLeft, Calendar, Clock } from "lucide-react"
 import { useState } from "react"
@@ -42,17 +42,17 @@ export function ProjectDetail({
 
   const hasSubProjects = project.subProjects && project.subProjects.length > 0
   const subProjectsProgress = hasSubProjects
-    ? calculateAverageProgress(project.subProjects!)
+    ? calculateAverageProgress(project.subProjects ?? [])
     : 0
 
   return (
-    <div>
-      <div className="mb-6 flex items-center gap-4">
+    <>
+      <Flex align={"center"} gap={"2"} className="mb-6">
         <IconButton variant="outline" onClick={onBack}>
           <ArrowLeft className="h-4 w-4" />
         </IconButton>
         <h1 className="font-bold text-2xl">{project.name}</h1>
-      </div>
+      </Flex>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
         <TabsList>
@@ -152,29 +152,34 @@ export function ProjectDetail({
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-6">
+                <Box className="space-y-6">
                   {project.subProjects?.map((subProject) => (
-                    <div
+                    <Box
                       key={subProject.id}
                       className="cursor-pointer rounded-md border p-4 transition-colors hover:bg-gray-50"
                       onClick={() => onSelectSubProject(subProject)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          onSelectSubProject(subProject)
+                        }
+                      }}
                     >
-                      <div className="mb-2 flex items-center justify-between">
+                      <Flex justify={"between"} align={"center"} className="mb-2">
                         <h3 className="font-medium">{subProject.name}</h3>
                         <span className="text-gray-500 text-sm">
                           {formatDate(subProject.startDate)} -{" "}
                           {formatDate(subProject.endDate)}
                         </span>
-                      </div>
+                      </Flex>
                       <ProjectProgressBar project={subProject} />
-                    </div>
+                    </Box>
                   ))}
-                </div>
+                </Box>
               </CardContent>
             </Card>
           </TabsContent>
         )}
       </Tabs>
-    </div>
+    </>
   )
 }

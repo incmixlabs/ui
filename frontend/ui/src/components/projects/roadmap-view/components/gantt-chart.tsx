@@ -243,9 +243,9 @@ export function GanttChart({ projectTasks, className }: GanttChartProps) {
                     className="absolute top-0 left-0 h-full w-1.5"
                     style={{ background: task.color }}
                   />
-                  <button
+                  <Button
                     onClick={() => toggleProjectExpand(task.id)}
-                    className="flex h-full w-full items-center gap-2 p-2 pl-4 "
+                    className="flex h-full w-full items-center gap-2 bg-transparent text-gray-12 justify-start p-2 pl-4 "
                   >
                     {task.subtasks && task.subtasks.length > 0 ? (
                       <>
@@ -259,7 +259,7 @@ export function GanttChart({ projectTasks, className }: GanttChartProps) {
                       <div className="mr-2 w-6" />
                     )}
                     <span className="truncate font-medium">{task.name}</span>
-                  </button>
+                  </Button>
                   <EditDropdown tasks={tasks} task={task} setTasks={setTasks} />
                 </Box>
 
@@ -270,7 +270,7 @@ export function GanttChart({ projectTasks, className }: GanttChartProps) {
                       className={cn(
                         "flex h-16 items-center bg-gray-3 p-2 pl-8",
                         index === (task.subtasks?.length ?? 0) - 1 &&
-                          "border-gray-5 border-b"
+                        "border-gray-5 border-b"
                       )}
                     >
                       <span className="truncate">{subtask.name}</span>
