@@ -63,7 +63,7 @@ const tasks: Task[] = [
     subtasks: [
       {
         id: "3.1",
-        name: "Font Research",
+        name: "Typography Finalization",
         startDate: DateTime.now().minus({ days: 1 }),
         endDate: DateTime.now().plus({ days: 2 }),
         progress: 100,

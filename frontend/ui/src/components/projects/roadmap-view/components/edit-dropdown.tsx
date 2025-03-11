@@ -53,7 +53,7 @@ function EditDropdown({
 
     const newTask = {
       ...taskToDuplicate,
-      id: `${taskToDuplicate.id}-copy`,
+      id: `${taskToDuplicate.id}-copy-${Date.now()}`,
       name: `${taskToDuplicate.name}-copy`,
     }
 
