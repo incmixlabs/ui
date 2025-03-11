@@ -212,7 +212,9 @@ export function GanttChart({ projectTasks, className }: GanttChartProps) {
             </IconButton>
 
             <Button
-              onClick={() => console.log("Add project functionality coming soon")}
+              onClick={() =>
+                console.log("Add project functionality coming soon")
+              }
               variant="solid"
               className="h-9 cursor-pointer"
             >
@@ -270,7 +272,7 @@ export function GanttChart({ projectTasks, className }: GanttChartProps) {
                       className={cn(
                         "flex h-16 items-center bg-gray-3 p-2 pl-8",
                         index === (task.subtasks?.length ?? 0) - 1 &&
-                        "border-gray-5 border-b"
+                          "border-gray-5 border-b"
                       )}
                     >
                       <span className="truncate">{subtask.name}</span>
