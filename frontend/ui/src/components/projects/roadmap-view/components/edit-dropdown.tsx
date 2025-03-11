@@ -1,3 +1,4 @@
+import ColorPicker, { type ColorSelectType } from "@components/color-picker"
 import { Button, type ButtonProps, DropdownMenu, Grid } from "@radix-ui/themes"
 import { cn } from "@utils"
 import { type AccentColor, accentColors } from "@utils/colors"
@@ -79,28 +80,25 @@ function EditDropdown({
   const handleCancel = () => {
     setEditMode(false)
   }
-  const handleColorSelect = (color: ExtendedColorType, e: React.MouseEvent) => {
-    e.stopPropagation()
 
-    setTasks((prevTasks: Task[]) =>
-      prevTasks.map((t) => (t.id === task.id ? { ...t, color } : t))
+  const handleColorSelect = (newColor: ColorSelectType) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((t) => {
+        if (t.id === task.id) {
+          const updatedTask = { ...t, color: newColor.name as Task["color"] }
+          // If task has subtasks, update their colors too
+          if (updatedTask.subtasks) {
+            updatedTask.subtasks = updatedTask.subtasks.map((subtask) => ({
+              ...subtask,
+              color: newColor.name as Task["color"],
+            }))
+          }
+          return updatedTask
+        }
+        return t
+      })
     )
   }
-  // const colors = accentColors
-  const colors = [
-    "blue",
-    "green",
-    "red",
-    "amber",
-    "purple",
-    "teal",
-    "pink",
-    "indigo",
-    "lime",
-    "orange",
-    "violet",
-    "cyan",
-  ]
 
   return (
     <>
@@ -151,26 +149,10 @@ function EditDropdown({
                         Delete
                       </DropdownMenu.Item>
                       <DropdownMenu.Separator />
-                      <Grid className="w-fit p-3" columns="6" gap="2">
-                        {colors.map((c) => (
-                          <Button
-                            key={c}
-                            variant="solid"
-                            color={c as ButtonProps["color"]}
-                            className={cn(
-                              "h-6 w-6 cursor-pointer rounded-full "
-                            )}
-                            onClick={(e) =>
-                              handleColorSelect(c as ExtendedColorType, e)
-                            }
-                          >
-                            {" "}
-                            {task.color === c && (
-                              <Check className="h-4 w-4 flex-shrink-0 text-white" />
-                            )}
-                          </Button>
-                        ))}
-                      </Grid>
+                      <ColorPicker
+                        colorType="base"
+                        onColorSelect={handleColorSelect}
+                      />
                     </div>
                   ) : (
                     <div>

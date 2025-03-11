@@ -5,6 +5,7 @@ import { cn } from "utils"
 import { Avatar } from "../avatar"
 import { Badge } from "../badge"
 import { Button, IconButton } from "../button"
+import ColorPicker, { type ColorSelectType } from "../color-picker"
 import {
   Command,
   CommandEmpty,
@@ -59,7 +60,7 @@ interface MultiSelectProps
   isLabelFormOpen?: boolean
   setIsLabelFormOpen?: (isLabelFormOpen: boolean) => void
   labelColor?: string
-  setLabelColor?: (labelColor: string) => void
+  setLabelColor?: (labelColor: ExtendedColorType) => void
   handleAddNewLabel?: (e: React.FormEvent) => void
 }
 
@@ -107,6 +108,12 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
     const handleClear = () => {
       setSelectedValues([])
       onValueChange([])
+    }
+
+    const handleColorSelect = (newColor: ColorSelectType) => {
+      if (setLabelColor) {
+        setLabelColor(newColor.name as ExtendedColorType)
+      }
     }
 
     return (
@@ -217,80 +224,10 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                               width="190px"
                               className="z-[888] overflow-hidden bg-white p-3"
                             >
-                              <Grid className="w-fit" columns="6" gap="2">
-                                <Button
-                                  variant="solid"
-                                  color="blue"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("blue")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="green"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("green")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="red"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("red")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="amber"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("amber")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="purple"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("purple")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="teal"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("teal")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="pink"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("pink")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="indigo"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("indigo")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="lime"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("lime")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="orange"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("orange")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="violet"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("violet")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="cyan"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("cyan")}
-                                />
-                              </Grid>
+                              <ColorPicker
+                                colorType="base"
+                                onColorSelect={handleColorSelect}
+                              />
                             </Popover.Content>
                           </Popover.Root>
                           <Flex gap="2">
