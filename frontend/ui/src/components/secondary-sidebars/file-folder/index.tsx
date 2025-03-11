@@ -18,8 +18,8 @@ const footerData: footerTypes[] = secondaryFooterData
 export function FileFolder(): JSX.Element {
   const [_selectedItem, setSelectedItem] = useState<string>("Admin Page")
   return (
-    <>
-      <div className="flex gap-2 border-b-[1px] border-b-[hsl(var(--sidebar-border))] px-8 py-2 text-[hsl(var(--sidebar-background))] ">
+    <div className="flex h-screen flex-col bg-[hsl(var(--sidebar-secondary-background))]">
+      <div className="flex gap-2 border-b-[1px] border-b-[hsl(var(--sidebar-border))] px-8 py-2 text-[hsl(var(--sidebar-secondary-header))] ">
         <FolderClosed />
         <span className=" font-medium text-[16px]">File Manager</span>
       </div>
@@ -28,7 +28,7 @@ export function FileFolder(): JSX.Element {
           Folders
         </span>
       </div>
-      <div className="flex overflow-scroll">
+      <div className="flex flex-1 overflow-scroll">
         <Tree
           data={secondarySidebarData}
           className="w-full flex-shrink-0"
@@ -79,6 +79,6 @@ export function FileFolder(): JSX.Element {
           )
         })}
       </div>
-    </>
+    </div>
   )
 }

@@ -161,7 +161,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                             className={cn(
                               `mb-1 flex w-full flex-1 select-none items-center justify-between gap-4 rounded-md ${padding} font-medium text-sm transition-all hover:bg-[hsl(var(--sidebar-background)/0.1)] hover:no-underline [&[data-state=open]>svg]:rotate-180`,
                               open &&
-                                "bg-[hsl(var(--sidebar-background)/0.1)] text-[hsl(var(--sidebar-background))]"
+                                "bg-[hsl(var(--sidebar-background)/0.1)] text-[hsl(var(--sidebar-secondary-header))]"
                             )}
                             onClick={() => handleSelectChange(item)}
                           >
@@ -177,7 +177,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                                 className={cn(
                                   "truncate text-[hsl(var(--sidebar-secondary-text))] text-sm",
                                   open &&
-                                    "text-[hsl(var(--sidebar-background))]"
+                                    "text-[hsl(var(--sidebar-secondary-header))]"
                                 )}
                               >
                                 {item.name}
@@ -244,7 +244,7 @@ const Leaf = React.forwardRef<
         `mb-1 flex cursor-pointer select-none items-center gap-4 rounded-md ${padding} hover:bg-[hsl(var(--sidebar-background)/0.1)]`,
         className,
         isSelected &&
-          "bg-[hsl(var(--sidebar-background)/0.1)] text-[hsl(var(--sidebar-background))] "
+          "bg-[hsl(var(--sidebar-background)/0.1)] text-[hsl(var(--sidebar-secondary-header))] "
       )}
       {...props}
     >
@@ -253,7 +253,7 @@ const Leaf = React.forwardRef<
       <span
         className={cn(
           "flex-grow truncate text-[hsl(var(--sidebar-secondary-text))] text-sm",
-          isSelected && "text-[hsl(var(--sidebar-background))]"
+          isSelected && "text-[hsl(var(--sidebar-secondary-header))]"
         )}
       >
         {item.name}
