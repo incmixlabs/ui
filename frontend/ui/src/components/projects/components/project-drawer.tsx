@@ -158,6 +158,7 @@ export default function ProjectDrawer({
                         >
                           {attachment.type === "image" ? (
                             <Box className="h-12 w-12 shrink-0 overflow-hidden rounded-lg">
+
                               <img
                                 src={attachment.thumbnailUrl}
                                 alt={attachment.name}
@@ -166,10 +167,10 @@ export default function ProjectDrawer({
                             </Box>
                           ) : (
                             <Box className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-gray-8">
+
                               <FileArchive className="h-5 w-5 text-gray-8" />
                             </Box>
                           )}
-
                           <div className="ml-4 grow">
                             <h3 className="font-medium text-gray-12 text-sm">
                               {attachment.name}

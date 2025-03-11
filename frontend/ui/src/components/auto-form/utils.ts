@@ -120,6 +120,8 @@ export function getObjectFormSchema(
 /**
  * Convert a Zod schema to HTML input props to give direct feedback to the user.
  * Once submitted, the schema will be validated completely.
+ *
+ * MODIFIED: No longer adds HTML validation attributes to allow Zod validation to take precedence
  */
 export function zodToHtmlInputProps(
   schema:
@@ -128,42 +130,16 @@ export function zodToHtmlInputProps(
     | z.ZodOptional<z.ZodNumber | z.ZodString>
     | any
 ): React.InputHTMLAttributes<HTMLInputElement> {
-  if (["ZodOptional", "ZodNullable"].includes(schema._def.typeName)) {
-    const typedSchema = schema as z.ZodOptional<z.ZodNumber | z.ZodString>
-    return {
-      ...zodToHtmlInputProps(typedSchema._def.innerType),
-      required: false,
-    }
-  }
-  const typedSchema = schema as z.ZodNumber | z.ZodString
+  // Initialize props without HTML validation attributes to let Zod handle validation
+  const inputProps: React.InputHTMLAttributes<HTMLInputElement> = {}
 
-  if (!("checks" in typedSchema._def))
-    return {
-      required: true,
-    }
+  // We can still determine if the field is required for UI/styling purposes
+  const _isRequired = !["ZodOptional", "ZodNullable"].includes(
+    schema._def.typeName
+  )
 
-  const { checks } = typedSchema._def
-  const inputProps: React.InputHTMLAttributes<HTMLInputElement> = {
-    required: true,
-  }
-  const type = getBaseType(schema)
-
-  for (const check of checks) {
-    if (check.kind === "min") {
-      if (type === "ZodString") {
-        inputProps.minLength = check.value
-      } else {
-        inputProps.min = check.value
-      }
-    }
-    if (check.kind === "max") {
-      if (type === "ZodString") {
-        inputProps.maxLength = check.value
-      } else {
-        inputProps.max = check.value
-      }
-    }
-  }
+  // But we're not returning HTML validation attributes like 'required', 'minLength', etc.
+  // This allows Zod validation to take precedence
 
   return inputProps
 }
