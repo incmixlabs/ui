@@ -50,7 +50,7 @@ export default function ProjectDrawer({
         side="right"
         className={`${listFilter ? "w-full flex-1" : "w-[53rem]"} p-0 py-0`}
       >
-        <div
+        <Box
           className={cn(
             listFilter
               ? "relative z-50 h-full w-full shrink-0 rounded-xl"
@@ -90,7 +90,7 @@ export default function ProjectDrawer({
                       className="absolute top-5 right-3 ml-8 flex h-8 w-8 cursor-pointer items-center justify-center rounded-md"
                     >
                       <X aria-hidden="true" />
-                      <span className="sr-only">Close</span>
+                      <Text className="sr-only">Close</Text>
                     </IconButton>
                   )}
 
@@ -163,23 +163,23 @@ export default function ProjectDrawer({
                               <FileArchive className="h-5 w-5 text-gray-8" />
                             </Box>
                           )}
-                          <div className="ml-4 grow">
-                            <h3 className="font-medium text-gray-12 text-sm">
+                          <Box className="ml-4 grow">
+                            <Heading className="font-medium text-gray-12 text-sm">
                               {attachment.name}
-                            </h3>
-                            <p className="pt-1 text-gray-11 text-sm">
+                            </Heading>
+                            <Text className="pt-1 text-gray-11 text-sm">
                               {attachment.size}
-                            </p>
-                          </div>
+                            </Text>
+                          </Box>
 
-                          <div className="flex space-x-2">
+                          <Flex className="flex space-x-2">
                             <Button
                               variant="soft"
                               className="h-9 cursor-pointer rounded-full bg-transparent p-2 transition-colors hover:bg-gray-4 dark:hover:bg-gray-7"
                             >
                               <Download className="h-5 w-5 text-gray-12" />
                             </Button>
-                          </div>
+                          </Flex>
                         </Flex>
                       ))}
                     </Box>
@@ -188,7 +188,7 @@ export default function ProjectDrawer({
               </Flex>
             </ScrollArea>
           </motion.div>
-        </div>
+        </Box>
       </MotionSheet>
     </>
   )

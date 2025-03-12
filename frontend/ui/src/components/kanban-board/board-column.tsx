@@ -15,7 +15,7 @@ import type { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist
 import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
 
-import { Box, Flex } from "@radix-ui/themes"
+import { Box, Flex, Heading } from "@radix-ui/themes"
 import { IconButton } from "../button"
 import { blockBoardPanningAttr } from "./data-attributes"
 import { isSafari } from "./is-safari"
@@ -236,39 +236,47 @@ export function BoardColumn({
 
   return (
     <>
-      <div
-        className={"flex w-full flex-1 flex-shrink-0 select-none flex-col"}
+      <Flex
+        direction="column"
+        className={"w-full flex-1 flex-shrink-0 select-none"}
         ref={outerFullHeightRef}
       >
-        <div
-          className={`flex max-h-full flex-col rounded-lg bg-gray-3 text-black dark:bg-gray-2 dark:text-white ${stateStyles[state.type]}`}
+        <Flex
+          direction="column"
+          className={`max-h-full rounded-lg bg-gray-3 text-black dark:bg-gray-2 dark:text-white ${stateStyles[state.type]}`}
           ref={innerRef}
           {...{ [blockBoardPanningAttr]: true }}
         >
           {/* Extra wrapping element to make it easy to toggle visibility of content when a column is dragging over */}
-          <div
-            className={`flex max-h-full flex-col pb-2 ${state.type === "is-column-over" ? "invisible" : ""}`}
+          <Flex
+            direction="column"
+            className={`max-h-full pb-2 ${state.type === "is-column-over" ? "invisible" : ""}`}
           >
-            <div
-              className="flex flex-row items-center justify-between p-3 pb-2"
+            <Flex
+              direction="row"
+              justify="between"
+              align="center"
+              className="p-3 pb-2"
               ref={headerRef}
             >
-              <div className="pl-2 font-bold leading-4">{column.title}</div>
+              <Heading size={"5"} className="pl-2 font-bold leading-4">
+                {column.title}
+              </Heading>
               <IconButton className="rounded p-2 hover:bg-slate-200 active:bg-slate-300">
                 <Ellipsis size={16} />
               </IconButton>
-            </div>
-            <div
+            </Flex>
+            <Flex
               className="flex flex-col overflow-y-auto [overflow-anchor:none] [scrollbar-color:theme(colors.slate.400)_theme(colors.slate.200)] [scrollbar-width:thin]"
               ref={scrollableRef}
             >
               <CardList column={column} kanbanFilter={kanbanFilter} />
               {state.type === "is-card-over" && !state.isOverChildCard ? (
-                <div className="flex-shrink-0 px-3 py-1">
+                <Box className="flex-shrink-0 px-3 py-1">
                   <TaskCardShadow dragging={state.dragging} />
-                </div>
+                </Box>
               ) : null}
-            </div>
+            </Flex>
             {kanbanFilter ? (
               <Box className="mt-2 px-3.5">
                 <Flex
@@ -290,9 +298,9 @@ export function BoardColumn({
                 </Flex>
               </>
             )}
-          </div>
-        </div>
-      </div>
+          </Flex>
+        </Flex>
+      </Flex>
     </>
   )
 }

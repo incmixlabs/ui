@@ -4,7 +4,13 @@ export interface KanbanBoard {
   title: string
   tasks: KanbanBoardTask[]
 }
+export type TCustomColumn = {
+  id: number
+  title: string
+  tasks: TCard[]
+}
 
+export type TCustomBoard = TCustomColumn[]
 export interface KanbanBoardTask {
   id: number
   name: string

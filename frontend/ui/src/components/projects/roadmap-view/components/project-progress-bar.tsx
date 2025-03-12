@@ -1,3 +1,4 @@
+import { Box, Text } from "@radix-ui/themes"
 import type { Project } from "@types"
 import { getColorClass, getLightColorClass } from "./project-utils"
 
@@ -14,22 +15,25 @@ export function ProjectProgressBar({
 }: ProjectProgressBarProps) {
   const { progress, color } = project
   const baseColor = getColorClass(color)
-  const _lightColor = getLightColorClass(color)
 
   return (
-    <div className={`${compact ? "" : "py-2"}`}>
-      <div className="mb-1 flex items-center justify-between">
+    <Box className={`${compact ? "" : "py-2"}`}>
+      <Box className="mb-1 flex items-center justify-between">
         {showDetails && (
-          <div className="font-medium text-sm">{project.name}</div>
+          <Text as={"span"} className="font-medium ">
+            {project.name}
+          </Text>
         )}
-        <div className="font-medium text-sm">{progress}%</div>
-      </div>
-      <div className="h-4 w-full overflow-hidden rounded-full bg-gray-200">
-        <div
+        <Text as={"span"} className="font-medium">
+          {progress}%
+        </Text>
+      </Box>
+      <Box className="h-4 w-full overflow-hidden rounded-full bg-gray-200">
+        <Box
           className={`h-full rounded-full ${baseColor}`}
           style={{ width: `${progress}%` }}
         />
-      </div>
-    </div>
+      </Box>
+    </Box>
   )
 }

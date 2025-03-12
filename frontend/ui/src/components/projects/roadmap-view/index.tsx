@@ -1,3 +1,4 @@
+import { Box, Heading } from "@radix-ui/themes"
 import { DateTime } from "luxon"
 import { GanttChart, type Task } from "./components/gantt-chart"
 const tasks: Task[] = [
@@ -167,9 +168,9 @@ const tasks: Task[] = [
 
 export function RoadmapView() {
   return (
-    <div className="h-full w-full overflow-hidden">
-      <h1 className="mb-6 font-bold text-2xl">Project Timeline</h1>
+    <Box className="h-full w-full overflow-hidden">
+      <Heading className="mb-6 font-bold text-2xl">Project Timeline</Heading>
       <GanttChart projectTasks={tasks} />
-    </div>
+    </Box>
   )
 }

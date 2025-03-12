@@ -4,7 +4,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@components/tooltip"
-import { Badge, Box, Flex, HoverCard } from "@radix-ui/themes"
+import { Badge, Box, Flex, HoverCard, Text } from "@radix-ui/themes"
 import { CalendarDays, Clipboard, User } from "lucide-react"
 import type { DateTime } from "luxon"
 import { ProjectsImages } from "../../images"
@@ -151,22 +151,24 @@ export function TaskBar({ task, dates, view, columnWidth }: TaskBarProps) {
             <Box className="w-6">
               <Badge variant="solid" color={task.color} className=" h-4 w-4" />
             </Box>
-            <p className="text-gray-12">{task.name}</p>
+            <Text as="p" className="text-gray-12">
+              {task.name}
+            </Text>
           </Flex>
           <Flex align={"center"} gap={"3"}>
             <Box className="w-6">
               <CalendarDays className="h-5 w-5" />
             </Box>
-            <p>
+            <Text as="p">
               {task.startDate.toFormat("MMM d, yyyy")} -{" "}
               {task.endDate.toFormat("MMM d, yyyy")}
-            </p>
+            </Text>
           </Flex>
           <Flex align={"center"} gap={"3"}>
             <Box className="w-6">
               <Clipboard className="h-5 w-5" />
             </Box>
-            <p>task 3/3</p>
+            <Text as="p">task 3/3</Text>
           </Flex>
           <Flex align={"center"} gap={"3"}>
             <Box className="w-6">
@@ -190,50 +192,8 @@ export function TaskBar({ task, dates, view, columnWidth }: TaskBarProps) {
               />
             </Flex>
           </Flex>
-          {/* <Box className="text-sm">
-            <p >{task.name}</p>
-            <p className="text-muted-foreground">Progress: {task.progress}%</p>
-            <p className="text-muted-foreground">
-              {task.startDate.toFormat("MMM d, yyyy")} -{" "}
-              {task.endDate.toFormat("MMM d, yyyy")}
-            </p>
-          </Box> */}
         </HoverCard.Content>
       </HoverCard.Root>
-
-      {/* <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild >
-            <div
-              className="group absolute flex h-8 cursor-pointer items-center rounded-md transition-all hover:brightness-95"
-              style={{
-                left: `${left}px`,
-                width: `${width}px`,
-                background: `linear-gradient(to right, ${base} ${task.progress}%, ${light} ${task.progress}%)`,
-              }}
-            >
-              <div className="flex w-full items-center justify-between px-3">
-                <span className="truncate font-medium text-sm text-white group-hover:text-white/90">
-                  {task.name}
-                </span>
-                <span className="rounded px-2 py-0.5 font-medium text-sm text-white/90">
-                  {task.progress}%
-                </span>
-              </div>
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>
-            <div className="text-sm">
-              <p >{task.name}</p>
-              <p className="text-muted-foreground">Progress: {task.progress}%</p>
-              <p className="text-muted-foreground">
-                {task.startDate.toFormat("MMM d, yyyy")} -{" "}
-                {task.endDate.toFormat("MMM d, yyyy")}
-              </p>
-            </div>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider> */}
     </>
   )
 }

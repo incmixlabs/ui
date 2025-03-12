@@ -11,7 +11,7 @@ import MultipleSelector, {
   type Option,
 } from "@components/multiple-selector/multiple-selector"
 import { Textarea } from "@components/textarea"
-import { Button, Dialog, Grid } from "@radix-ui/themes"
+import { Box, Button, Dialog, Flex, Grid, Text } from "@radix-ui/themes"
 import { Calendar, Paperclip, Plus, X } from "lucide-react"
 import Image from "next/image"
 import { useEffect, useState } from "react"
@@ -116,7 +116,7 @@ export function AddProjectModal({
       <Dialog.Content maxWidth="500px">
         <Dialog.Title className="font-medium">Add Project</Dialog.Title>
         <Grid className="py-4" gap={"4"}>
-          <div className="mb-4 flex justify-center">
+          <Flex justify={"center"} className="mb-4">
             <FileUploader
               value={files}
               onValueChange={setFiles}
@@ -124,9 +124,14 @@ export function AddProjectModal({
               className="relative mx-auto h-28 w-36 rounded-lg border-none p-2"
             >
               <FileInput className="l mx-auto grid h-full w-full place-content-center outline-dashed outline-2 outline-gray-4 ">
-                <div className="flex w-full flex-col items-center justify-center pt-3 pb-4 ">
+                <Flex
+                  justify={"center"}
+                  align={"center"}
+                  direction="column"
+                  className="w-full pt-3 pb-4 "
+                >
                   <Plus size={32} className="text-gray-8" />
-                </div>
+                </Flex>
               </FileInput>
               {files && files.length > 0 && (
                 <FileUploaderContent className="absolute top-0 left-0 h-full w-full ">
@@ -147,9 +152,9 @@ export function AddProjectModal({
                 </FileUploaderContent>
               )}
             </FileUploader>
-          </div>
+          </Flex>
 
-          <div className="grid gap-2">
+          <Grid gap={"2"}>
             <Label htmlFor="project-name">Project Name</Label>
             <Input
               id="project-name"
@@ -157,9 +162,9 @@ export function AddProjectModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
-          </div>
+          </Grid>
 
-          <div className="grid gap-2">
+          <Grid gap={"2"}>
             <Label htmlFor="client-name">Client Name</Label>
             <Input
               id="client-name"
@@ -167,9 +172,9 @@ export function AddProjectModal({
               value={company}
               onChange={(e) => setCompany(e.target.value)}
             />
-          </div>
+          </Grid>
 
-          <div className="grid gap-2">
+          <Grid gap={"2"}>
             <Label htmlFor="description">Description</Label>
             <Textarea
               id="description"
@@ -178,10 +183,10 @@ export function AddProjectModal({
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
             />
-          </div>
+          </Grid>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
+          <Grid gap={"4"} columns={"2"}>
+            <Grid gap={"2"}>
               <Label>Start Date</Label>
               <div className="relative">
                 <SmartDatetimeInput
@@ -193,8 +198,8 @@ export function AddProjectModal({
                 />
                 {/* <Calendar className="absolute top-2.5 left-3 h-5 w-5 text-gray-400" /> */}
               </div>
-            </div>
-            <div className="grid gap-2">
+            </Grid>
+            <Grid gap={"2"}>
               <Label>End Date</Label>
               <div className="relative">
                 <SmartDatetimeInput
@@ -205,13 +210,13 @@ export function AddProjectModal({
                   className="w-fit bg-gray-2 dark:bg-gray-1"
                 />
               </div>
-            </div>
-          </div>
+            </Grid>
+          </Grid>
 
-          <div className="grid gap-2">
+          <Grid gap={"2"}>
             <Label>Members</Label>
 
-            <div className="flex flex-wrap gap-2">
+            <Flex gap={"2"} wrap={"wrap"}>
               <MultipleSelector
                 value={selectedMembers}
                 onChange={setSelectedMembers}
@@ -225,13 +230,13 @@ export function AddProjectModal({
                   </p>
                 }
               />
-            </div>
-          </div>
+            </Flex>
+          </Grid>
 
-          <div className="grid gap-2">
+          <Grid gap={"2"}>
             <Label htmlFor="budget">Budget</Label>
-            <div className="relative">
-              <span className="absolute top-2.5 left-3 text-gray-500">$</span>
+            <Box className="relative">
+              <Text className="absolute top-2.5 left-3 text-gray-500">$</Text>
               <Input
                 id="budget"
                 type="number"
@@ -240,17 +245,17 @@ export function AddProjectModal({
                 onChange={(e) => setBudget(e.target.value)}
                 className="pl-8"
               />
-            </div>
-          </div>
+            </Box>
+          </Grid>
         </Grid>
-        <div className="flex justify-end">
+        <Flex justify={"end"}>
           <Button
             onClick={handleSubmit}
             className="bg-blue-600 hover:bg-blue-700"
           >
             Create
           </Button>
-        </div>
+        </Flex>
       </Dialog.Content>
     </Dialog.Root>
   )

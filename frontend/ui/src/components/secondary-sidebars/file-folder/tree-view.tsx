@@ -1,7 +1,7 @@
 "use client"
 
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import { ChevronDownIcon, ScrollArea } from "@radix-ui/themes"
+import { Box, ChevronDownIcon, Flex, ScrollArea, Text } from "@radix-ui/themes"
 import { cn } from "@utils/cn"
 import type { LucideIcon } from "lucide-react"
 import React, { type ComponentType } from "react"
@@ -85,9 +85,9 @@ const Tree = React.forwardRef<HTMLDivElement, TreeProps>(
     }, [data, initialSelectedItemId])
 
     return (
-      <div className={cn("overflow-hidden", className)}>
+      <Box className={cn("overflow-hidden", className)}>
         <ScrollArea className="h-[60vh]">
-          <div className="relative p-2">
+          <Box className="relative p-2 px-6">
             <TreeItem
               data={data}
               selectedItemId={selectedItemId}
@@ -98,9 +98,9 @@ const Tree = React.forwardRef<HTMLDivElement, TreeProps>(
               ItemIcon={itemIcon}
               {...props}
             />
-          </div>
+          </Box>
         </ScrollArea>
-      </div>
+      </Box>
     )
   }
 )
@@ -115,7 +115,7 @@ type TreeItemProps = TreeProps & {
 }
 
 const iconClass = "h-4 w-4 shrink-0 text-accent-foreground/50"
-const padding = "py-1 pr-3 pl-1"
+const padding = "p-2"
 const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
   (
     {
@@ -132,7 +132,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
     ref
   ) => {
     return (
-      <div ref={ref} role="tree" className={className} {...props}>
+      <Box ref={ref} role="tree" className={className} {...props}>
         <ul>
           {Array.isArray(data) ? (
             data.map((item) => (
@@ -164,7 +164,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                             )}
                             onClick={() => handleSelectChange(item)}
                           >
-                            <span className="flex items-center gap-4">
+                            <Flex align={"center"} gap={"2"}>
                               {IconComp && (
                                 <IconComp
                                   className={iconClass}
@@ -172,17 +172,19 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                                 />
                               )}
 
-                              <span
+                              <Text
                                 className={cn(
                                   "truncate text-gray-12 text-sm",
                                   open && "text-gray-12"
                                 )}
                               >
                                 {item.name}
-                              </span>
-                            </span>
+                              </Text>
+                            </Flex>
                             <ChevronDownIcon
-                              className={`${iconClass} transition-transform duration-200`}
+                              className={
+                                " h-3 w-3 transition-transform duration-200"
+                              }
                             />
                           </AccordionPrimitive.Trigger>
                           <AccordionPrimitive.Content className="pl-4">
@@ -221,7 +223,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
             </li>
           )}
         </ul>
-      </div>
+      </Box>
     )
   }
 )
@@ -236,10 +238,12 @@ const Leaf = React.forwardRef<
 >(({ className, item, isSelected, Icon, ...props }, ref) => {
   const IconComp = item.icon ? item.icon : Icon
   return (
-    <div
+    <Flex
       ref={ref}
+      align={"center"}
+      gap={"2"}
       className={cn(
-        `mb-1 flex cursor-pointer select-none items-center gap-4 rounded-md ${padding} hover:bg-gray-6`,
+        `mb-1 cursor-pointer select-none rounded-md ${padding} hover:bg-gray-6`,
         className,
         isSelected && "bg-gray-6 text-gray-12"
       )}
@@ -247,15 +251,15 @@ const Leaf = React.forwardRef<
     >
       {IconComp && <IconComp className={`${iconClass}`} aria-hidden="true" />}
 
-      <span
+      <Text
         className={cn(
           "flex-grow truncate text-gray-10 text-sm",
           isSelected && "text-gray-12"
         )}
       >
         {item.name}
-      </span>
-    </div>
+      </Text>
+    </Flex>
   )
 })
 

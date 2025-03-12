@@ -8,9 +8,11 @@ import {
   DropdownMenu,
   Flex,
   Grid,
+  Heading,
   IconButton,
   ScrollArea,
   Select,
+  Text,
 } from "@radix-ui/themes"
 import { cn } from "@utils"
 import {
@@ -165,7 +167,7 @@ export function GanttChart({ projectTasks, className }: GanttChartProps) {
   }
 
   return (
-    <div className={cn("grid w-full grid-rows-[auto_1fr]", className)}>
+    <Grid className={cn("w-full", className)}>
       <Flex justify={"between"} gap={"4"} className="mb-4">
         <Flex align={"center"} gap={"2"}>
           <Button
@@ -179,14 +181,14 @@ export function GanttChart({ projectTasks, className }: GanttChartProps) {
             <ChevronRight className="h-4 w-4" />
           </Button>
         </Flex>
-        <h2 className="ml-2 font-semibold text-xl">
+        <Heading size={"4"} className="ml-2 font-semibold ">
           {view === "week" &&
             `Week of ${currentDate.startOf("week").toFormat("LLL d, yyyy")}`}
           {view === "month" && currentDate.toFormat("LLLL yyyy")}
           {view === "quarter" &&
             `Q${Math.ceil(currentDate.month / 3)} ${currentDate.year}`}
           {view === "year" && currentDate.year.toString()}
-        </h2>
+        </Heading>
         <Flex align={"center"}>
           <Select.Root
             value={view}
@@ -201,7 +203,7 @@ export function GanttChart({ projectTasks, className }: GanttChartProps) {
               <Select.Item value="year">Year</Select.Item>
             </Select.Content>
           </Select.Root>
-          <div className="flex items-center gap-2 pl-2">
+          <Flex align={"center"} className="gap-2 pl-2">
             <IconButton
               color="gray"
               variant="soft"
@@ -221,27 +223,32 @@ export function GanttChart({ projectTasks, className }: GanttChartProps) {
               <Plus size={16} />
               Add Project
             </Button>
-          </div>
+          </Flex>
         </Flex>
       </Flex>
 
-      <div className=" overflow-hidden rounded-md border-gray-5 border-x border-t">
-        <div className="grid grid-cols-[auto_1fr]">
+      <Box className=" overflow-hidden rounded-md border-gray-5 border-x border-t">
+        <Grid columns="auto 1fr">
           {/* Task names column - fixed */}
           <Box className="w-80 border-gray-5 border-r">
-            <div className="flex h-16 items-center border-gray-5 border-b p-2 px-4">
-              <span className="font-medium">Project Name</span>
-            </div>
+            <Flex
+              align={"center"}
+              className="h-16 border-gray-5 border-b p-2 px-4"
+            >
+              <Text as={"span"} className="font-medium">
+                Project Name
+              </Text>
+            </Flex>
 
             {tasks.map((task) => (
-              <div key={`task-name-${task.id}`}>
+              <Box key={`task-name-${task.id}`}>
                 <Box
                   className={cn(
                     "relative h-16 w-full cursor-pointer rounded-none border-gray-5 border-b bg-transparent text-gray-11",
                     expandedProjects[task.id] && "bg-gray-3 text-gray-12"
                   )}
                 >
-                  <span
+                  <Text
                     className="absolute top-0 left-0 h-full w-1.5"
                     style={{ background: task.color }}
                   />
@@ -258,16 +265,18 @@ export function GanttChart({ projectTasks, className }: GanttChartProps) {
                         )}
                       </>
                     ) : (
-                      <div className="mr-2 w-6" />
+                      <Box className="mr-2 w-6" />
                     )}
-                    <span className="truncate font-medium">{task.name}</span>
+                    <Text as={"span"} className="truncate font-medium">
+                      {task.name}
+                    </Text>
                   </Button>
                   <EditDropdown tasks={tasks} task={task} setTasks={setTasks} />
                 </Box>
 
                 {expandedProjects[task.id] &&
                   task.subtasks?.map((subtask, index) => (
-                    <div
+                    <Box
                       key={`subtask-name-${subtask.id}`}
                       className={cn(
                         "flex h-16 items-center bg-gray-3 p-2 pl-8",
@@ -275,10 +284,12 @@ export function GanttChart({ projectTasks, className }: GanttChartProps) {
                           "border-gray-5 border-b"
                       )}
                     >
-                      <span className="truncate">{subtask.name}</span>
-                    </div>
+                      <Text as={"span"} className="truncate">
+                        {subtask.name}
+                      </Text>
+                    </Box>
                   ))}
-              </div>
+              </Box>
             ))}
           </Box>
 
@@ -291,21 +302,21 @@ export function GanttChart({ projectTasks, className }: GanttChartProps) {
                 columnWidth={getColumnWidth()}
               />
 
-              <div className="relative">
+              <Box className="relative">
                 {tasks.map((task) => (
-                  <div key={`task-bar-${task.id}`}>
-                    <div className="relative flex h-16 flex-col justify-center border-gray-5 border-b">
+                  <Box key={`task-bar-${task.id}`}>
+                    <Box className="relative flex h-16 flex-col justify-center border-gray-5 border-b">
                       <TaskBar
                         task={task}
                         dates={dates}
                         view={view}
                         columnWidth={getColumnWidth()}
                       />
-                    </div>
+                    </Box>
 
                     {expandedProjects[task.id] &&
                       task.subtasks?.map((subtask) => (
-                        <div
+                        <Box
                           key={`subtask-bar-${subtask.id}`}
                           className="relative flex h-16 flex-col justify-center border-gray-5 border-b"
                         >
@@ -315,15 +326,15 @@ export function GanttChart({ projectTasks, className }: GanttChartProps) {
                             view={view}
                             columnWidth={getColumnWidth()}
                           />
-                        </div>
+                        </Box>
                       ))}
-                  </div>
+                  </Box>
                 ))}
-              </div>
+              </Box>
             </Box>
           </ScrollArea>
-        </div>
-      </div>
-    </div>
+        </Grid>
+      </Box>
+    </Grid>
   )
 }

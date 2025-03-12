@@ -159,14 +159,14 @@ export default function TaskCardDrawer({
                       Complete
                     </Button>
                     <DropdownMenu.Root>
-                      <DropdownMenu.Trigger className="">
+                      <DropdownMenu.Trigger>
                         <Button
                           color="gray"
                           variant="soft"
                           className="h-10 cursor-pointer gap-2 rounded-md border p-2 px-2"
                         >
                           <Eye size={16} />
-                          <span>2</span>
+                          <Text>2</Text>
                           <DropdownMenu.TriggerIcon />
                         </Button>
                       </DropdownMenu.Trigger>
@@ -238,7 +238,7 @@ export default function TaskCardDrawer({
                         className="ml-2 flex h-8 w-8 items-center justify-center rounded-md"
                       >
                         <X aria-hidden="true" />
-                        <span className="sr-only">Close</span>
+                        <Text className="sr-only">Close</Text>
                       </IconButton>
                     )}
                   </Flex>
@@ -353,8 +353,8 @@ export default function TaskCardDrawer({
                       size={"3"}
                       className="flex w-full items-center gap-1 font-medium text-gray-11 uppercase"
                     >
-                      <span>CheckList</span>
-                      <span>(50%)</span>
+                      <Text>CheckList</Text>
+                      <Text>(50%)</Text>
                     </Heading>
                     <Box
                       className="relative flex h-2 w-full items-center gap-1 rounded-full bg-gray-200 before:absolute before:top-0 before:left-0 before:h-2 before:w-[var(--progress)] before:rounded-full before:bg-secondary"
@@ -387,7 +387,7 @@ export default function TaskCardDrawer({
                   </Reorder.Group>
                   <IconButton className="mt-4 w-fit gap-2 bg-transparent p-1 font-semibold text-secondary ">
                     <Plus />
-                    <span>Add Checklist Item</span>
+                    <Text>Add Checklist Item</Text>
                   </IconButton>
                 </Box>
                 <Box className="py-5">
@@ -419,20 +419,23 @@ export default function TaskCardDrawer({
                           </Box>
                         )}
 
-                        <div className="ml-4 grow">
-                          <h3 className="font-medium text-gray-12 text-sm">
+                        <Box className="ml-4 grow">
+                          <Heading
+                            as="h3"
+                            className="font-medium text-gray-12 text-sm"
+                          >
                             {attachment.name}
-                          </h3>
-                          <div className="mt-1 text-gray-11 text-xs">
-                            <span>Uploaded on {attachment.uploadDate}</span>
-                            <span className="mx-2">•</span>
-                          </div>
-                          <p className="pt-1 text-gray-11 text-sm">
+                          </Heading>
+                          <Box className="mt-1 text-gray-11 text-xs">
+                            <Text>Uploaded on {attachment.uploadDate}</Text>
+                            <Text className="mx-2">•</Text>
+                          </Box>
+                          <Text as="p" className="pt-1 text-gray-11 text-sm">
                             {attachment.size}
-                          </p>
-                        </div>
+                          </Text>
+                        </Box>
 
-                        <div className="flex space-x-2">
+                        <Flex className="space-x-2">
                           <Button
                             variant="soft"
                             className="h-9 cursor-pointer rounded-full bg-transparent p-2 transition-colors hover:bg-gray-4 dark:hover:bg-gray-7"
@@ -445,14 +448,14 @@ export default function TaskCardDrawer({
                           >
                             <Trash2 className="h-5 w-5 text-gray-12" />
                           </Button>
-                        </div>
+                        </Flex>
                       </Flex>
                     ))}
                   </Box>
 
                   <IconButton className="mt-4 w-fit gap-2 bg-transparent p-1 font-semibold text-secondary ">
                     <Plus />
-                    <span>Add Attachment</span>
+                    <Text>Add Attachment</Text>
                   </IconButton>
                 </Box>
 
@@ -532,13 +535,13 @@ export default function TaskCardDrawer({
                         </form>
                         <Box className="space-y-4 py-4">
                           {commentsData.map((comment) => (
-                            <div key={comment.id} className="flex gap-4">
+                            <Flex key={comment.id} gap={"2"}>
                               <img
                                 src={comment.user.avatar}
                                 alt={comment.user.name}
                                 className="h-10 w-10 shrink-0 rounded-full object-cover"
                               />
-                              <div className="flex-1">
+                              <Box className="flex-1">
                                 <Flex align={"center"} className="mb-1 gap-2">
                                   <Heading
                                     size={"3"}
@@ -587,13 +590,13 @@ export default function TaskCardDrawer({
                                     ))}
                                   </Flex>
                                 )}
-                              </div>
-                            </div>
+                              </Box>
+                            </Flex>
                           ))}
                         </Box>
                       </Tabs.Content>
                       <Tabs.Content value="activity">
-                        <p>Access and update your documents.</p>
+                        <Text as="p">Access and update your documents.</Text>
                       </Tabs.Content>
                     </Box>
                   </Tabs.Root>
@@ -617,7 +620,7 @@ export default function TaskCardDrawer({
                     </Heading>
                     <Flex className="gap-2" align={"center"}>
                       <Avatar src={KanbanImages.user1} className="h-8 w-8" />
-                      <p>Regina Cooper</p>
+                      <Text as="p">Regina Cooper</Text>
                     </Flex>
                   </Box>
                   <Box className="space-y-3 border-gray-6 border-t-2 p-4 py-3">

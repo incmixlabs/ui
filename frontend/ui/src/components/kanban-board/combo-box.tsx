@@ -1,4 +1,11 @@
-import { type BadgeProps, Box, Flex, Grid, Popover } from "@radix-ui/themes"
+import {
+  type BadgeProps,
+  Box,
+  Flex,
+  Grid,
+  Popover,
+  Text,
+} from "@radix-ui/themes"
 import { CheckIcon, ChevronDown, Plus, XCircle, XIcon } from "lucide-react"
 import * as React from "react"
 import { cn } from "utils"
@@ -125,7 +132,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
             className="flex h-8 w-8 items-center justify-center rounded-full "
           >
             <Plus aria-hidden="true" />
-            <span className="sr-only">Add new item</span>
+            <Text className="sr-only">Add new item</Text>
           </IconButton>
         </Popover.Trigger>
         <Popover.Content
@@ -156,7 +163,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                         isDisabled && "cursor-not-allowed opacity-50 " // Disable styling
                       )}
                     >
-                      <div className="flex items-center gap-2">
+                      <Flex align={"center"} gap={"2"}>
                         {option.icon && (
                           <option.icon
                             className={cn(
@@ -175,17 +182,19 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                         >
                           {option.label}
                         </Badge>
-                      </div>
-                      <div
+                      </Flex>
+                      <Flex
+                        justify={"center"}
+                        align={"center"}
                         className={cn(
-                          "ml-2 flex h-5 w-5 items-center justify-center rounded-sm border border-secondary",
+                          "ml-2 h-5 w-5 rounded-sm border border-secondary",
                           isSelected
                             ? "bg-secondary text-primary-foreground"
                             : "opacity-50 [&_svg]:invisible"
                         )}
                       >
                         {!isDisabled && <CheckIcon className="h-4 w-4" />}
-                      </div>
+                      </Flex>
                     </CommandItem>
                   )
                 })}
@@ -262,7 +271,11 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                   </>
                 ) : (
                   <>
-                    <div className="flex items-center justify-between font-medium">
+                    <Flex
+                      justify={"between"}
+                      align={"center"}
+                      className="font-medium"
+                    >
                       {selectedValues.length > 0 && (
                         <CommandItem
                           onSelect={handleClear}
@@ -277,7 +290,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                       >
                         Close
                       </CommandItem>
-                    </div>
+                    </Flex>
                   </>
                 )}
               </CommandGroup>

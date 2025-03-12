@@ -1,10 +1,12 @@
 import ColorPicker, { type ColorSelectType } from "@components/color-picker"
-import { Button, type ButtonProps, DropdownMenu, Grid } from "@radix-ui/themes"
-import { cn } from "@utils"
-import { type AccentColor, accentColors } from "@utils/colors"
 import {
-  Check,
-  CheckCheck,
+  Box,
+  Button,
+  type ButtonProps,
+  DropdownMenu,
+  Grid,
+} from "@radix-ui/themes"
+import {
   Clipboard,
   Copy,
   EllipsisVertical,
@@ -130,7 +132,7 @@ function EditDropdown({
                   transition={{ duration: 0.2 }}
                 >
                   {!editMode ? (
-                    <div>
+                    <Box>
                       <DropdownMenu.Item onSelect={handleEditClick}>
                         <Pencil size={16} /> Edit
                       </DropdownMenu.Item>
@@ -153,10 +155,10 @@ function EditDropdown({
                         colorType="base"
                         onColorSelect={handleColorSelect}
                       />
-                    </div>
+                    </Box>
                   ) : (
-                    <div>
-                      <div className="mb-3">
+                    <Box>
+                      <Box className="mb-3">
                         <input
                           type="text"
                           value={inputValue}
@@ -164,8 +166,8 @@ function EditDropdown({
                           className="w-full rounded-md border border-gray-6 bg-gray-4 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                           onClick={(e) => e.stopPropagation()}
                         />
-                      </div>
-                      <div className="flex justify-end gap-2">
+                      </Box>
+                      <Box className="flex justify-end gap-2">
                         <Button
                           variant="soft"
                           color="red"
@@ -186,8 +188,8 @@ function EditDropdown({
                         >
                           <Save size={14} /> Save
                         </Button>
-                      </div>
-                    </div>
+                      </Box>
+                    </Box>
                   )}
                 </motion.div>
               </AnimatePresence>
