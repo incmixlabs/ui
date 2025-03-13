@@ -1,3 +1,4 @@
+import { Ellipsis } from "lucide-react"
 import {
   Card,
   CardContent,
@@ -5,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "../card/card"
-import { ThreeDots } from "./icons/three-dots-icon"
 import RadialBarChart from "./radial-bar-chart"
 
 export const RadialBarChartCard: React.FC = () => {
@@ -23,9 +23,9 @@ export const RadialBarChartCard: React.FC = () => {
     <Card className="max-w-[350px] p-0">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="font-poppins text-[20px]">Projects</CardTitle>
-        <div className="m-0 flex cursor-pointer flex-row items-center">
-          <ThreeDots />
-        </div>
+        <CardDescription className="m-0 flex cursor-pointer flex-row items-center p-0">
+          <Ellipsis />
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
         <RadialBarChart />
