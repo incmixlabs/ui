@@ -23,10 +23,9 @@ export function CalendarHeader({
   const isToday = (date: DateTime) => {
     return date.hasSame(today, "day")
   }
-  console.log(view, columnWidth)
 
   return (
-    <Box className="sticky top-0 z-20 h-16 border-gray-5 border-b ">
+    <Box className="sticky top-0 z-20 h-16 border-gray-5 border-b">
       <Grid height="full" columns="min-content" flow="column">
         {view === "year"
           ? dates.map((date) => (
