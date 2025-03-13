@@ -23,6 +23,14 @@ export default defineConfig(async () => ({
     chunkSizeWarningLimit: 4800,
     rollupOptions: {
       treeshake: true,
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom", "react-router-dom"],
+          charts: ["react-apexcharts", "apexcharts"],
+          ui: ["@radix-ui/themes", "@radix-ui/react-icons"],
+          motion: ["framer-motion", "motion"],
+        },
+      },
     },
   },
 

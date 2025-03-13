@@ -8,6 +8,9 @@ import {
   SwapyLayout,
   SwapySlot,
 } from "@incmix/ui"
+import { RadialBarChartCard } from "@incmix/ui/radial-bar-chart-card"
+import { StatisticsBarChartCard } from "@incmix/ui/statistics-bar-chart-card"
+import { StatsCard } from "@incmix/ui/stats-card"
 import {
   BatteryWidget,
   CalendarWidget,
@@ -168,7 +171,11 @@ const DashboardPage: React.FC = () => {
       <Container size="4">
         <Flex direction="column" gap="6">
           <Heading size="6">{t("dashboard:title")}</Heading>
-
+          <Flex gap="6">
+            <StatsCard />
+            <StatisticsBarChartCard />
+          </Flex>
+          <RadialBarChartCard />
           <Flex direction="column" gap="6">
             {slottedWidgets.length && (
               <SwapyLayout

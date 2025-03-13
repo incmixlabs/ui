@@ -61,7 +61,10 @@
     "./widgets": "./src/widgets/index.ts",
     "./popover-shadcn": "./src/components/popover-shadcn.tsx",
     "./date-picker": "./src/components/date-picker.tsx",
-    "./onboarding": "./src/components/onboarding/index.tsx"
+    "./onboarding": "./src/components/onboarding/index.tsx",
+    "./stats-card": "./src/components/stats-card/index.ts",
+    "./radial-bar-chart-card": "./src/components/radial-bar-chart-card/index.ts",
+    "./statistics-bar-chart-card": "./src/components/statistics-bar-chart-card/index.ts"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "1.4.0",
@@ -103,6 +106,7 @@
     "@tanstack/react-table": "8.20.6",
     "@tanstack/zod-form-adapter": "^0.41.3",
     "@tauri-apps/api": ">=2.0.0-beta.0",
+    "apexcharts": "^4.5.0",
     "aria-hidden": "1.2.4",
     "chrono-node": "^2.7.8",
     "class-variance-authority": "0.7.1",
@@ -119,6 +123,7 @@
     "motion": "^12.4.7",
     "nanoid": "catalog:",
     "nuqs": "2.3.1",
+    "react-apexcharts": "^1.7.0",
     "react-clock": "5.1.0",
     "react-day-picker": "^8.9.1",
     "react-dropzone": "14.3.5",
