@@ -22,7 +22,7 @@ export function SecondarySidebar({
     >
       <div
         className={cn(
-          " fixed top-0 z-10 flex h-screen w-[270px] flex-col border border-y-0 border-r-gray-6 border-l-0 bg-gray-4 transition-[left,opacity] duration-300 ease-in-out",
+          "fixed top-0 z-10 flex h-screen w-[270px] flex-col border border-y-0 border-r-gray-6 border-l-0 bg-gray-4 transition-[left,opacity] duration-300 ease-in-out",
           open
             ? "left-[calc(var(--sidebar-width))] z-30"
             : "left-[calc(var(--sidebar-width-icon))]",
@@ -31,7 +31,7 @@ export function SecondarySidebar({
             : `${secondaryOpen ? "flex min-w-[270px]" : "hidden w-0"}`
         )}
       >
-        {children}
+        <div className="flex h-full flex-col overflow-hidden">{children}</div>
       </div>
     </div>
   )

@@ -3,7 +3,7 @@
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import { Box, ChevronDownIcon, Flex, ScrollArea, Text } from "@radix-ui/themes"
 import { cn } from "@utils/cn"
-import type { LucideIcon } from "lucide-react"
+import { ChevronRight, type LucideIcon } from "lucide-react"
 import React, { type ComponentType } from "react"
 import type { IconProps } from "./icons/types"
 
@@ -85,22 +85,20 @@ const Tree = React.forwardRef<HTMLDivElement, TreeProps>(
     }, [data, initialSelectedItemId])
 
     return (
-      <Box className={cn("overflow-hidden", className)}>
-        <ScrollArea className="h-[60vh]">
-          <Box className="relative p-2 px-6">
-            <TreeItem
-              data={data}
-              selectedItemId={selectedItemId}
-              handleSelectChange={handleSelectChange}
-              expandedItemIds={expandedItemIds}
-              FolderIcon={folderIcon}
-              FolderIconOpen={folderIconOpen}
-              ItemIcon={itemIcon}
-              {...props}
-            />
-          </Box>
-        </ScrollArea>
-      </Box>
+      <>
+        <Box className={cn("relative p-2 px-6", className)}>
+          <TreeItem
+            data={data}
+            selectedItemId={selectedItemId}
+            handleSelectChange={handleSelectChange}
+            expandedItemIds={expandedItemIds}
+            FolderIcon={folderIcon}
+            FolderIconOpen={folderIconOpen}
+            ItemIcon={itemIcon}
+            {...props}
+          />
+        </Box>
+      </>
     )
   }
 )
@@ -156,14 +154,27 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                           setOpen(value.includes(item.id))
                         }
                       >
-                        <AccordionPrimitive.Item value={item.id}>
+                        <AccordionPrimitive.Item
+                          value={item.id}
+                          className={cn(
+                            "",
+                            open &&
+                              "relative before:absolute before:top-1 before:left-4 before:h-full before:w-0.5 before:bg-sidebar-secondary-active before:content-['']"
+                          )}
+                        >
                           <AccordionPrimitive.Trigger
                             className={cn(
-                              `mb-1 flex w-full flex-1 select-none items-center justify-between gap-4 rounded-md ${padding} font-medium text-sm transition-all hover:bg-gray-6 hover:no-underline [&[data-state=open]>svg]:rotate-180`,
-                              open && "bg-gray-6 text-gray-11"
+                              `mt-1 flex w-full flex-1 select-none items-center gap-1 rounded-md ${padding} font-medium text-sm transition-all hover:bg-sidebar-secondary-active hover:no-underline [&[data-state=open]>svg]:rotate-90`,
+                              open &&
+                                "bg-sidebar-secondary-active text-sidebar-header"
                             )}
                             onClick={() => handleSelectChange(item)}
                           >
+                            <ChevronRight
+                              className={
+                                " h-5 w-5 transition-transform duration-200"
+                              }
+                            />
                             <Flex align={"center"} gap={"2"}>
                               {IconComp && (
                                 <IconComp
@@ -174,20 +185,15 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
 
                               <Text
                                 className={cn(
-                                  "truncate text-gray-12 text-sm",
-                                  open && "text-gray-12"
+                                  "truncate text-sidebar-secondary-text text-sm",
+                                  open && "text-sidebar-background"
                                 )}
                               >
                                 {item.name}
                               </Text>
                             </Flex>
-                            <ChevronDownIcon
-                              className={
-                                " h-3 w-3 transition-transform duration-200"
-                              }
-                            />
                           </AccordionPrimitive.Trigger>
-                          <AccordionPrimitive.Content className="pl-4">
+                          <AccordionPrimitive.Content className="pl-6">
                             <TreeItem
                               data={item.children ? item.children : item}
                               selectedItemId={selectedItemId}
@@ -243,9 +249,9 @@ const Leaf = React.forwardRef<
       align={"center"}
       gap={"2"}
       className={cn(
-        `mb-1 cursor-pointer select-none rounded-md ${padding} hover:bg-gray-6`,
+        `mb-1 cursor-pointer select-none rounded-md ${padding} hover:bg-sidebar-secondary-active/50`,
         className,
-        isSelected && "bg-gray-6 text-gray-12"
+        isSelected && "bg-sidebar-secondary-active text-sidebar-background"
       )}
       {...props}
     >
@@ -253,8 +259,8 @@ const Leaf = React.forwardRef<
 
       <Text
         className={cn(
-          "flex-grow truncate text-gray-10 text-sm",
-          isSelected && "text-gray-12"
+          "flex-grow truncate text-sidebar-secondary-text text-sm",
+          isSelected && "text-sidebar-background"
         )}
       >
         {item.name}
