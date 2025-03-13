@@ -16,39 +16,15 @@ import { Filter, FilterIcon, ListFilter } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 import type { RxDatabase } from "rxdb"
 import { useRxDB } from "rxdb-hooks"
-import { initialData } from "../../../../ui/src/components/kanban-board/data"
-import type {
-  TCard,
-  TCustomBoard,
-} from "../../../../ui/src/components/kanban-board/types"
+
 import { generateBoard } from "./actions"
 import { CreateColumnForm } from "./create-column-form"
 import { CreateProjectForm } from "./create-project-form"
 import { CreateTaskForm } from "./create-task-form"
-function convertCustomDataToBoardFormat(customData: TCustomBoard) {
-  const columns = customData.map((column) => {
-    // Convert tasks to cards
-    const cards: TCard[] = column.tasks.map((task) => ({
-      ...task,
-      id: task.id,
-    }))
 
-    return {
-      id: `column:${column.id}`,
-      title: column.title,
-      cards,
-    }
-  })
-
-  return {
-    columns,
-  }
-}
 const TasksPage = () => {
   const { selectedOrganisation } = useOrganizationStore()
   const { toggleKanbanFilter } = useKanbanFilter()
-
-  const boardData = convertCustomDataToBoardFormat(initialData)
 
   const [selectedProject, setSelectedProject] = useState<string>()
 
@@ -218,7 +194,7 @@ const TasksPage = () => {
         </Flex>
 
         <Box className="h-full w-full ">
-          <Board initial={boardData} />
+          <Board />
         </Box>
         {/* <KanbanBoard
         // updateTasks={(tasks) => {

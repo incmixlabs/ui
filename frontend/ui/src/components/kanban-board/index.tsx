@@ -15,9 +15,10 @@ import { Filter } from "lucide-react"
 import { useContext, useEffect, useRef, useState } from "react"
 import invariant from "tiny-invariant"
 import { BoardColumn } from "./board-column"
+import { initialData } from "./data"
 import { blockBoardPanningAttr } from "./data-attributes"
 import TaskCardDrawer from "./task-card-drawer"
-import type { TBoard, TColumn } from "./types"
+import type { TBoard, TCard, TColumn, TCustomBoard } from "./types"
 import {
   isCardData,
   isCardDropTargetData,
@@ -26,10 +27,33 @@ import {
   isDraggingAColumn,
 } from "./types"
 
-export function Board({ initial }: { initial: TBoard }) {
-  const [data, setData] = useState(initial)
+function convertCustomDataToBoardFormat(customData: TCustomBoard) {
+  const columns = customData.map((column) => {
+    // Convert tasks to cards
+    const cards: TCard[] = column.tasks.map((task) => ({
+      ...task,
+      id: task.id,
+    }))
+
+    return {
+      id: `column:${column.id}`,
+      title: column.title,
+      cards,
+    }
+  })
+
+  return {
+    columns,
+  }
+}
+
+export function Board() {
+  const boardData = convertCustomDataToBoardFormat(initialData)
+
+  const [data, setData] = useState(boardData)
   const scrollableRef = useRef<HTMLDivElement | null>(null)
   const { kanbanFilter } = useKanbanFilter()
+
   useEffect(() => {
     const element = scrollableRef.current
     invariant(element)
