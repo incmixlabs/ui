@@ -28,7 +28,11 @@ export const RadialBarChartCard: React.FC = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
-        <RadialBarChart />
+        <RadialBarChart
+          colors={[ongoingColor, onHoldColor, completedColor]}
+          labels={["Ongoing", "Hold", "Done"]}
+          series={[420, 210, 200]}
+        />
         <div className="flex items-center justify-center gap-4 text-center">
           <div className="flex flex-col items-center">
             <div

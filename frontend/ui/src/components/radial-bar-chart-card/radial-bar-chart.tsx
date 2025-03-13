@@ -10,9 +10,9 @@ interface RadialBarChartProps {
 }
 
 const RadialBarChart: React.FC<RadialBarChartProps> = ({
-  series = [44, 55, 13, 33],
-  labels = ["Apple", "Mango", "Banana", "Orange"],
-  colors = ["#f4a77d", "#4361ee", "#ffd166", "#6c757d"],
+  series = [44, 55, 90],
+  labels = ["Ongoing", "Hold", "Done"],
+  colors = ["var(--orange-9)", "var(--indigo-9)", "var(--amber-9)"],
 }) => {
   const [_series] = useState<number[]>(series)
   const { appearance } = useThemeContext()
@@ -46,7 +46,7 @@ const RadialBarChart: React.FC<RadialBarChartProps> = ({
       },
       stroke: {
         width: 0,
-        colors: [isDarkMode ? "#1e293b" : "#fff"],
+        colors: ["hsl(var(--foreground))"],
       },
       fill: {
         colors: colors,
@@ -63,14 +63,14 @@ const RadialBarChart: React.FC<RadialBarChartProps> = ({
                 show: true,
                 fontSize: "14px",
                 fontFamily: "Poppins",
-                color: isDarkMode ? "#e2e8f0" : "#4361ee",
+                color: "hsl(var(--foreground))",
               },
               value: {
                 show: true,
                 fontSize: "24px",
                 fontFamily: "Poppins",
-                color: isDarkMode ? "#e2e8f0" : "#4361ee",
-                formatter: (val) => `${val}%`,
+                color: "hsl(var(--foreground))",
+                formatter: (val) => `${val}`,
               },
             },
           },
@@ -101,22 +101,6 @@ const RadialBarChart: React.FC<RadialBarChartProps> = ({
       <div className="custom-chart-container">
         <Chart options={_options} series={_series} type="donut" />
       </div>
-
-      <style>
-        {`
-        .custom-chart-container .apexcharts-datalabels text {
-          font-size: 16px !important;
-          font-weight: bold;
-          fill: ${isDarkMode ? "#e2e8f0" : "#4361ee"} !important;
-        }
-
-        .custom-chart-container .apexcharts-tooltip {
-          background: ${isDarkMode ? "rgba(30, 41, 59, 0.9)" : "rgba(0, 0, 0, 0.8)"} !important;
-          color: ${isDarkMode ? "#e2e8f0" : "white"} !important;
-          border-radius: 8px !important;
-        }
-        `}
-      </style>
     </div>
   )
 }
