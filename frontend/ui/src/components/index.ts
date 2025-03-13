@@ -24,6 +24,8 @@ export * from "./swapy"
 export * from "./toaster"
 export * from "./tree-view"
 export * from "./kanban-board"
+export * from "./projects"
+export * from "./projects/roadmap-view"
 export {
   Badge,
   Box,
@@ -42,6 +44,8 @@ export {
 export * from "./scroll-area"
 export * from "./stepper"
 export * from "./sheet"
+export * from "./badges"
+export * from "./multiple-selector"
 export * from "./skeleton"
 export * from "./tooltip"
 export { Separator } from "@radix-ui/themes"

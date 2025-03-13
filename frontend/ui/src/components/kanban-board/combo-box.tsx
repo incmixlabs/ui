@@ -1,12 +1,18 @@
-"use client"
+import {
+  type BadgeProps,
+  Box,
+  Flex,
+  Grid,
+  Popover,
+  Text,
+} from "@radix-ui/themes"
 import { CheckIcon, ChevronDown, Plus, XCircle, XIcon } from "lucide-react"
 import * as React from "react"
-
 import { cn } from "utils"
-
-import { Popover } from "@radix-ui/themes"
 import { Avatar } from "../avatar"
+import { Badge } from "../badge"
 import { Button, IconButton } from "../button"
+import ColorPicker, { type ColorSelectType } from "../color-picker"
 import {
   Command,
   CommandEmpty,
@@ -16,6 +22,9 @@ import {
   CommandList,
   CommandSeparator,
 } from "../command"
+import { Input } from "../form"
+
+export type ExtendedColorType = BadgeProps["color"] | "blue"
 
 /**
  * Props for MultiSelect component
@@ -33,8 +42,8 @@ interface MultiSelectProps
     value: string
     /** Optional icon component to display alongside the option. */
     icon?: React.ComponentType<{ className?: string }>
-    avatarSrc?: string
-    labelStyle?: string
+    avatar?: string
+    color?: ExtendedColorType | string
     disable?: boolean
   }[]
 
@@ -46,17 +55,20 @@ interface MultiSelectProps
 
   /** The default selected values when the component mounts. */
   defaultValue?: string[]
-
   /**
    * Placeholder text to be displayed when no values are selected.
    * Optional, defaults to "Select options".
    */
   placeholder?: string
-
   popoverClass?: string
-
   addNewLabel?: boolean
   title?: string
+  formRef?: React.RefObject<HTMLFormElement>
+  isLabelFormOpen?: boolean
+  setIsLabelFormOpen?: (isLabelFormOpen: boolean) => void
+  labelColor?: string
+  setLabelColor?: (labelColor: ExtendedColorType) => void
+  handleAddNewLabel?: (e: React.FormEvent) => void
 }
 
 export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
@@ -68,6 +80,12 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
     title,
     popoverClass,
     addNewLabel = false,
+    formRef,
+    labelColor,
+    setLabelColor,
+    isLabelFormOpen,
+    setIsLabelFormOpen,
+    handleAddNewLabel,
   }) => {
     const [selectedValues, setSelectedValues] =
       React.useState<string[]>(defaultValue)
@@ -99,16 +117,11 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
       onValueChange([])
     }
 
-    // const filteredOptions = options.filter((option) => !option.disable);
-    // const toggleAll = () => {
-    //   if (selectedValues.length === filteredOptions.length) {
-    //     handleClear();
-    //   } else {
-    //     const allValues = filteredOptions.map((option) => option.value);
-    //     setSelectedValues(allValues);
-    //     onValueChange(allValues);
-    //   }
-    // };
+    const handleColorSelect = (newColor: ColorSelectType) => {
+      if (setLabelColor) {
+        setLabelColor(newColor.name as ExtendedColorType)
+      }
+    }
 
     return (
       <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
@@ -119,7 +132,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
             className="flex h-8 w-8 items-center justify-center rounded-full "
           >
             <Plus aria-hidden="true" />
-            <span className="sr-only">Add new item</span>
+            <Text className="sr-only">Add new item</Text>
           </IconButton>
         </Popover.Trigger>
         <Popover.Content
@@ -129,7 +142,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
           width="280px"
         >
           {title && <h1 className="font-medium">{title}</h1>}
-          <Command>
+          <Command className="bg-transparent">
             <CommandInput
               placeholder={placeholder}
               onKeyDown={handleInputKeyDown}
@@ -137,23 +150,6 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup>
-                {/* <CommandItem
-                  key="all"
-                  onSelect={toggleAll}
-                  className="cursor-pointer"
-                >
-                  <div
-                    className={cn(
-                      "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                      selectedValues.length === filteredOptions.length
-                        ? "bg-primary text-primary-foreground"
-                        : "opacity-50 [&_svg]:invisible",
-                    )}
-                  >
-                    <CheckIcon className="h-4 w-4" />
-                  </div>
-                  <span>(Select All)</span>
-                </CommandItem> */}
                 {options.map((option) => {
                   const isSelected = selectedValues.includes(option.value)
                   const isDisabled = option.disable
@@ -167,7 +163,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                         isDisabled && "cursor-not-allowed opacity-50 " // Disable styling
                       )}
                     >
-                      <div className="flex items-center gap-2">
+                      <Flex align={"center"} gap={"2"}>
                         {option.icon && (
                           <option.icon
                             className={cn(
@@ -176,24 +172,29 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                             )}
                           />
                         )}
-                        {option.avatarSrc && (
-                          <Avatar src={option.avatarSrc} className="h-8 w-8" />
+                        {option.avatar && (
+                          <Avatar src={option.avatar} className="h-8 w-8" />
                         )}
-                        <span className={cn("", option.labelStyle)}>
+                        <Badge
+                          color={option.color as ExtendedColorType}
+                          variant="solid"
+                          className="px-3 py-1.5"
+                        >
                           {option.label}
-                        </span>
-                      </div>
-
-                      <div
+                        </Badge>
+                      </Flex>
+                      <Flex
+                        justify={"center"}
+                        align={"center"}
                         className={cn(
-                          "ml-2 flex h-5 w-5 items-center justify-center rounded-sm border border-secondary",
+                          "ml-2 h-5 w-5 rounded-sm border border-secondary",
                           isSelected
                             ? "bg-secondary text-primary-foreground"
                             : "opacity-50 [&_svg]:invisible"
                         )}
                       >
                         {!isDisabled && <CheckIcon className="h-4 w-4" />}
-                      </div>
+                      </Flex>
                     </CommandItem>
                   )
                 })}
@@ -202,13 +203,79 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
               <CommandGroup>
                 {addNewLabel ? (
                   <>
-                    <Button className="h-10 w-full rounded-md bg-blue-500 px-4 text-white ">
-                      Add new label
-                    </Button>
+                    {isLabelFormOpen ? (
+                      <form
+                        ref={formRef}
+                        onSubmit={handleAddNewLabel}
+                        className="p-2"
+                      >
+                        <Input
+                          name="labelName"
+                          type="text"
+                          placeholder="Enter label name"
+                          className="mb-3 w-full rounded-md border border-gray-5 bg-gray-1 px-3 py-2"
+                          required
+                        />
+
+                        <Flex justify={"between"}>
+                          <Popover.Root>
+                            <Popover.Trigger>
+                              <Button
+                                variant="solid"
+                                className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
+                                color={
+                                  (labelColor as ExtendedColorType) || "blue"
+                                }
+                              />
+                            </Popover.Trigger>
+                            <Popover.Content
+                              alignOffset={-75}
+                              width="190px"
+                              className="z-[888] overflow-hidden bg-white p-3"
+                            >
+                              <ColorPicker
+                                colorType="base"
+                                onColorSelect={handleColorSelect}
+                              />
+                            </Popover.Content>
+                          </Popover.Root>
+                          <Flex gap="2">
+                            <Button
+                              type="submit"
+                              color="blue"
+                              variant="solid"
+                              className="h-8 rounded-md px-3"
+                            >
+                              Save
+                            </Button>
+
+                            <Button
+                              type="button"
+                              color="red"
+                              variant="solid"
+                              onClick={() => setIsLabelFormOpen?.(false)}
+                            >
+                              ✕
+                            </Button>
+                          </Flex>
+                        </Flex>
+                      </form>
+                    ) : (
+                      <Button
+                        onClick={() => setIsLabelFormOpen?.(true)}
+                        className="h-10 w-full rounded-md bg-blue-500 px-4 text-white"
+                      >
+                        Add new label
+                      </Button>
+                    )}
                   </>
                 ) : (
                   <>
-                    <div className="flex items-center justify-between font-medium">
+                    <Flex
+                      justify={"between"}
+                      align={"center"}
+                      className="font-medium"
+                    >
                       {selectedValues.length > 0 && (
                         <CommandItem
                           onSelect={handleClear}
@@ -223,7 +290,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                       >
                         Close
                       </CommandItem>
-                    </div>
+                    </Flex>
                   </>
                 )}
               </CommandGroup>

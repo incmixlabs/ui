@@ -29,10 +29,8 @@ import {
 } from "./types"
 
 import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
-import { Card, Checkbox, Flex, Heading, Text } from "@radix-ui/themes"
+import { Box, Card, Checkbox, Flex, Heading, Text } from "@radix-ui/themes"
 import { cn } from "@utils"
-import { useQueryState } from "nuqs"
-import TaskCardDrawer from "./task-card-drawer"
 
 type TCardState =
   | {
@@ -96,7 +94,7 @@ export function TaskCardDisplay({
 }) {
   const { handleDrawerOpen } = useKanbanDrawer()
   return (
-    <div
+    <Box
       ref={outerRef}
       onClick={() => handleDrawerOpen(card.id.toString())}
       onKeyDown={(e) => {
@@ -204,7 +202,7 @@ export function TaskCardDisplay({
                   const randomColor =
                     colors[Math.floor(Math.random() * colors.length)]
                   return (
-                    <span
+                    <Text
                       key={file.name}
                       className={`flex h-1 w-6 items-center gap-1 rounded-full ${randomColor}`}
                     />
@@ -222,27 +220,25 @@ export function TaskCardDisplay({
             )}
             {card.subTasks?.map((subtask, i) => (
               <>
-                <div
-                  key={`${subtask?.name}-${i}`}
-                  className="gap-2 space-y-2 py-2"
-                >
+                <Box key={`${subtask?.name}-${i}`} className="space-y-2 py-2">
                   <Flex
                     align={"center"}
                     justify={"between"}
                     className="w-full gap-1 text-gray-11 uppercase"
                   >
-                    <span>{subtask.name}</span>
-                    <span>{subtask?.progress}%</span>
+                    <Text>{subtask.name}</Text>
+                    <Text>{subtask?.progress}%</Text>
                   </Flex>
-                  <div
-                    className="relative flex h-2 w-full items-center gap-1 rounded-full bg-gray-200 before:absolute before:top-0 before:left-0 before:h-2 before:w-[var(--progress)] before:rounded-full before:bg-green-400"
+                  <Flex
+                    align={"center"}
+                    className="i relative h-2 w-full gap-1 rounded-full bg-gray-200 before:absolute before:top-0 before:left-0 before:h-2 before:w-[var(--progress)] before:rounded-full before:bg-green-400"
                     style={
                       {
                         "--progress": `${subtask?.progress}%`,
                       } as React.CSSProperties
                     }
                   />
-                </div>
+                </Box>
               </>
             ))}
             {card.attachment && (
@@ -257,16 +253,16 @@ export function TaskCardDisplay({
               justify={"between"}
               className="gap-2 pt-6 pb-2"
             >
-              <Flex align={"center"} gap="2">
+              <Flex align={"center"} gap="4">
                 {card.filesData && (
                   <IconButton className="flex items-center gap-1 bg-transparent text-gray-700 dark:text-gray-200">
                     <Paperclip size={20} />
-                    <span>{card.filesData.length}</span>
+                    <Text>{card.filesData.length}</Text>
                   </IconButton>
                 )}
                 <IconButton className="flex items-center gap-1 bg-transparent text-gray-700 dark:text-gray-200">
                   <MessageSquareText size={20} />
-                  <span>5</span>
+                  <Text>5</Text>
                 </IconButton>
               </Flex>
               <Flex align={"center"} className="gap-2">
@@ -287,7 +283,7 @@ export function TaskCardDisplay({
       {state.type === "is-over" && state.closestEdge === "bottom" ? (
         <TaskCardShadow dragging={state.dragging} />
       ) : null}
-    </div>
+    </Box>
   )
 }
 

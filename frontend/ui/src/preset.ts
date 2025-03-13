@@ -175,6 +175,13 @@ export const incmixTailwindPreset: Config = {
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
+
+          // secondary sidebar colors
+          "secondary-background": "hsl(var(--sidebar-secondary-background))",
+          "secondary-header": "hsl(var(--sidebar-secondary-header))",
+          "secondary-muted": "hsl(var(--sidebar-secondary-muted))",
+          "secondary-text": "hsl(var(--sidebar-secondary-text))",
+          "secondary-active": "hsl(var(--sidebar-secondary-active))",
         },
 
         border: colors.alias("gray.4"),

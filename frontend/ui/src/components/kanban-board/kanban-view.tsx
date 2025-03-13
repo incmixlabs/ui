@@ -3,6 +3,7 @@ import { type FC, Fragment } from "react"
 
 import { AvatarGroup } from "@components/avatar-group"
 import { Image } from "@components/card/flow-card"
+import { Box, Flex, Text } from "@radix-ui/themes"
 import type { KanbanBoardTask } from "./types"
 
 export type KanbanViewProps = {
@@ -11,43 +12,50 @@ export type KanbanViewProps = {
 export const KanbanView: FC<KanbanViewProps> = ({ task }) => {
   const daysLeft = `\u00A0 ${task.daysLeft} days left`
   return (
-    <div
+    <Box
       key={task.id}
       className="mb-4 w-[28rem] cursor-grab rounded-lg bg-white p-5 shadow dark:bg-gray-800"
     >
-      <div className="flex items-center justify-between pb-4">
+      <Flex align={"center"} justify={"between"} className="pb-4">
         <div className="font-semibold text-base text-gray-900 dark:text-white">
           {task.name}
         </div>
-      </div>
-      <div className="flex flex-col">
+      </Flex>
+      <Flex direction={"column"}>
         {!!task.attachment && (
-          <div className="relative mb-3 aspect-video w-full">
+          <Box className="relative mb-3 aspect-video w-full">
             <Image
               imgAlt=""
               // fill
               imgSrc={task.attachment}
               className="rounded-lg"
             />
-          </div>
+          </Box>
         )}
-        <div className="pb-4 font-normal text-gray-700 text-sm dark:text-gray-400">
+        <Text
+          as="p"
+          className="pb-4 font-normal text-gray-700 text-sm dark:text-gray-400"
+        >
           {task.description}
-        </div>
-        <div className="flex justify-between">
-          <div className="flex items-center justify-start">
+        </Text>
+        <Flex justify={"between"}>
+          <Flex align={"center"} justify={"start"}>
             {/* <AvatarGroup
               size="2"
               layout="stack"
               // users={task.members}
               maxVisible={3}
             /> */}
-          </div>
-          <div className="flex items-center justify-center rounded-lg bg-purple-100 px-3 font-medium text-purple-800 text-sm dark:bg-purple-200">
+          </Flex>
+          <Flex
+            justify={"center"}
+            align={"center"}
+            className="rounded-lg bg-purple-100 px-3 font-medium text-purple-800 text-sm dark:bg-purple-200"
+          >
             <Clock width="12px" height="12px" /> {daysLeft}
-          </div>
-        </div>
-      </div>
-    </div>
+          </Flex>
+        </Flex>
+      </Flex>
+    </Box>
   )
 }
