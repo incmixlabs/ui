@@ -96,11 +96,13 @@ const RadialBarChart: React.FC<RadialBarChartProps> = ({
 
   return (
     <div className="flex flex-col items-center">
-      <div className="absolute inset-0 rounded-full" />
-
-      <div className="custom-chart-container">
-        <Chart options={_options} series={_series} type="donut" />
-      </div>
+      <figure
+        aria-label={`Donut chart showing ${labels.join(", ")} statistics`}
+      >
+        <div className="custom-chart-container">
+          <Chart options={_options} series={_series} type="donut" />
+        </div>
+      </figure>
     </div>
   )
 }
