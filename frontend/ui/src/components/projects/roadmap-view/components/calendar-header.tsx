@@ -26,7 +26,7 @@ export function CalendarHeader({
   console.log(view, columnWidth)
 
   return (
-    <Box className="sticky top-0 z-20 h-16 border-gray-5 border-b bg-white">
+    <Box className="sticky top-0 z-20 h-16 border-gray-5 border-b ">
       <Grid height="full" columns="min-content" flow="column">
         {view === "year"
           ? dates.map((date) => (
