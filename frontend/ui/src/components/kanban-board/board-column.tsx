@@ -259,7 +259,7 @@ export function BoardColumn({
               className="p-3 pb-2"
               ref={headerRef}
             >
-              <Heading size={"5"} className="pl-2 font-bold leading-4">
+              <Heading size={"5"} as="h3" className="pl-2 font-bold leading-4">
                 {column.title}
               </Heading>
               <IconButton className="rounded p-2 hover:bg-slate-200 active:bg-slate-300">

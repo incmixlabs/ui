@@ -22,7 +22,7 @@ export function FileFolder(): JSX.Element {
       <Flex
         gap={"2"}
         align={"center"}
-        className="shrink-0 border-b-[1px] border-b-gray-6 bg-sidebar-secondary-background px-8 py-2 text-sidebar-secondary-header"
+        className="shrink-0 border-b-[1px] border-b-gray-6 bg-sidebar-secondary-background px-8 py-2 "
       >
         <FolderClosed
           className="fill-sidebar-secondary-muted stroke-sidebar-secondary-muted"

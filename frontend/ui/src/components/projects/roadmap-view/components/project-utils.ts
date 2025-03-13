@@ -8,7 +8,7 @@ export function formatDate(date: DateTime): string {
 export function calculateDaysRemaining(endDate: DateTime): number {
   const today = DateTime.now()
   const diff = endDate.diff(today, "days").days
-  return Math.ceil(diff)
+  return Math.max(0, Math.ceil(diff))
 }
 
 export function calculateDaysElapsed(startDate: DateTime): number {
@@ -22,7 +22,7 @@ export function calculateTotalDuration(
   endDate: DateTime
 ): number {
   const diff = endDate.diff(startDate, "days").days
-  return Math.ceil(diff)
+  return Math.max(0, Math.ceil(diff))
 }
 
 export function calculateProgressPercentage(
@@ -30,6 +30,17 @@ export function calculateProgressPercentage(
   endDate: DateTime
 ): number {
   const totalDuration = calculateTotalDuration(startDate, endDate)
+
+  // Handle invalid date ranges
+  if (totalDuration <= 0) {
+    return 0 // Return 0% progress for invalid date ranges
+  }
+
+  // If start date is in the future, progress is 0%
+  if (startDate > DateTime.now()) {
+    return 0
+  }
+
   const daysElapsed = calculateDaysElapsed(startDate)
 
   // Cap at 100%

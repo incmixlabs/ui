@@ -29,9 +29,9 @@ export function CalendarHeader({
     <Box className="sticky top-0 z-20 h-16 border-gray-5 border-b bg-white">
       <Grid height="full" columns="min-content" flow="column">
         {view === "year"
-          ? dates.map((date, index) => (
+          ? dates.map((date) => (
               <Box
-                key={index}
+              key={`year-${date.toISODate()}`}
                 className={cn(
                   "flex h-full flex-col items-center justify-center border-gray-5 border-r py-1",
                   columnWidth,
@@ -45,9 +45,9 @@ export function CalendarHeader({
                 </Text>
               </Box>
             ))
-          : dates.map((date, index) => (
+          : dates.map((date) => (
               <Box
-                key={index}
+              key={`year-${date.toISODate()}`}
                 className={cn(
                   "flex h-full flex-col items-center justify-center border-gray-5 border-r py-1",
                   columnWidth
