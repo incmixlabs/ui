@@ -14,7 +14,7 @@ const ReactApexChart = lazy(() => import("react-apexcharts"))
 const StatisticsBarChartCard: React.FC = () => {
   const { appearance } = useThemeContext()
   const isDarkMode = appearance === "dark"
-  const textColor = isDarkMode ? "#f8f8f8" : "#333"
+  const textColor = "hsl(var(--foreground))"
 
   const chartData = {
     series: [
@@ -90,8 +90,8 @@ const StatisticsBarChartCard: React.FC = () => {
     },
   }
 
-  const _onHoldColor = "#4361ee"
-  const completedColor = "#ffd166"
+  const _onHoldColor = "var(--indigo-9)"
+  const completedColor = "var(--amber-9)"
 
   return (
     <Card className="flex-2 flex-grow p-0">

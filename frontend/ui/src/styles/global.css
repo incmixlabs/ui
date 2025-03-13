@@ -67,6 +67,12 @@
     --sidebar-trigger-background: 0 0% 100%;
     --sidebar-secondary-muted: 216 7% 57%;
     --sidebar-secondary-text: 218 8% 27%;
+
+    /* Stats card background colors */
+    --stats-card-bg-1: 225 100% 95%; /* #e9edff */
+    --stats-card-bg-2: 11 100% 97%; /* #FFF1ED */
+    --stats-card-bg-3: 20 100% 97%; /* #FFF6ED */
+    --stats-card-bg-4: 146 73% 96%; /* #EDFCF3 */
   }
 
   .dark {
@@ -111,6 +117,11 @@
     --sidebar-trigger-background: 0 0% 100%;
     --sidebar-secondary-muted: 216 7% 57%;
     --sidebar-secondary-text: 218 8% 27%;
+    /* Stats card background colors */
+    --stats-card-bg-1: 220 24% 23%; /* #2D3748 */
+    --stats-card-bg-2: 330 13% 24%; /* #3D3741 */
+    --stats-card-bg-3: 330 13% 23%; /* #3D3641 */
+    --stats-card-bg-4: 150 14% 21%; /* #2D3D36 */
   }
 }
 

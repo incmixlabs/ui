@@ -15,9 +15,9 @@ export const RadialBarChartCard: React.FC = () => {
   const completedProjects = 200
 
   // Colors for the chart segments
-  const ongoingColor = "#f4a77d"
-  const onHoldColor = "#4361ee"
-  const completedColor = "#ffd166"
+  const ongoingColor = "var(--orange-9)"
+  const onHoldColor = "var(--indigo-9)"
+  const completedColor = "var(--amber-9)"
 
   return (
     <Card className="max-w-[350px] p-0">

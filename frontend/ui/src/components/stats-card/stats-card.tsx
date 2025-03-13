@@ -16,43 +16,26 @@ export const StatsCard = () => {
     {
       count: 780,
       label: "Total Tasks",
-      icon: (
-        <ClipBoard size="20" className="fill-[#376CFB] dark:fill-[#81A1FB]" />
-      ),
-      backgroundColorClass: "bg-[#e9edff20] dark:bg-[#2D3748]",
+      icon: <ClipBoard size="20" />,
+      backgroundColorClass: "bg-[hsl(var(--stats-card-bg-1))]",
     },
     {
       count: 136,
       label: "New Tasks",
-      icon: (
-        <ClipBoardAdd
-          size="20"
-          className="fill-[#376CFB] dark:fill-[#81A1FB]"
-        />
-      ),
-      backgroundColorClass: "bg-[#FFF1ED] dark:bg-[#3D3741]",
+      icon: <ClipBoardAdd size="20" />,
+      backgroundColorClass: "bg-[hsl(var(--stats-card-bg-2))]",
     },
     {
       count: 324,
       label: "In Progress",
-      icon: (
-        <ClipBoardStatus
-          size="20"
-          className="fill-[#376CFB] dark:fill-[#81A1FB]"
-        />
-      ),
-      backgroundColorClass: "bg-[#FFF6ED] dark:bg-[#3D3641]",
+      icon: <ClipBoardStatus size="20" />,
+      backgroundColorClass: "bg-[hsl(var(--stats-card-bg-3))]",
     },
     {
       count: 215,
       label: "Done Tasks",
-      icon: (
-        <ClipBoardCheck
-          size="20"
-          className="fill-[#376CFB] dark:fill-[#81A1FB]"
-        />
-      ),
-      backgroundColorClass: "bg-[#EDFCF3] dark:bg-[#2D3D36]",
+      icon: <ClipBoardCheck size="20" />,
+      backgroundColorClass: "bg-[hsl(var(--stats-card-bg-4))]",
     },
   ]
 
