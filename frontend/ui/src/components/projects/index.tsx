@@ -5,9 +5,11 @@ import {
   Box,
   Button,
   Flex,
+  Heading,
   IconButton,
   ScrollArea,
   Tabs,
+  Text,
 } from "@radix-ui/themes"
 import { cn } from "@utils"
 import { LayoutGrid, List, Plus, SlidersHorizontal, X } from "lucide-react"
@@ -139,7 +141,7 @@ export function ProjectPageComponents() {
   return (
     <Box className="min-h-screen bg-gray-1">
       <Box className="mx-auto max-w-7xl px-4 py-8">
-        <div className={"relative mb-6"}>
+        <Box className={"relative mb-6"}>
           {viewMode === "grid" && (
             <Box className="flex w-full items-center justify-start rounded-none border-gray-5 border-b bg-transparent ">
               <Button
@@ -153,9 +155,9 @@ export function ProjectPageComponents() {
                   />
                 )}
                 All{" "}
-                <span className="bg-gray-3 px-2 text-gray-10">
+                <Text as={"span"} className="bg-gray-3 px-2 text-gray-10">
                   {projects.length}
-                </span>
+                </Text>
               </Button>
               <Button
                 className="relative h-11 cursor-pointer bg-transparent text-gray-11"
@@ -168,9 +170,9 @@ export function ProjectPageComponents() {
                   />
                 )}
                 Started{" "}
-                <span className="bg-gray-3 px-2 text-gray-10">
+                <Text as="span" className="bg-gray-3 px-2 text-gray-10">
                   {projects.filter((p) => p.status === "started").length}
-                </span>
+                </Text>
               </Button>
               <Button
                 className="relative h-11 cursor-pointer bg-transparent text-gray-11"
@@ -183,9 +185,9 @@ export function ProjectPageComponents() {
                   />
                 )}
                 On Hold{" "}
-                <span className="bg-gray-3 px-2 text-gray-10">
+                <Text as={"span"} className="bg-gray-3 px-2 text-gray-10">
                   {projects.filter((p) => p.status === "on-hold").length}
-                </span>
+                </Text>
               </Button>
               <Button
                 className="relative h-11 cursor-pointer bg-transparent text-gray-11"
@@ -198,13 +200,13 @@ export function ProjectPageComponents() {
                   />
                 )}
                 Completed{" "}
-                <span className="bg-gray-3 px-2 text-gray-10">
+                <Text as={"span"} className="bg-gray-3 px-2 text-gray-10">
                   {projects.filter((p) => p.status === "completed").length}
-                </span>
+                </Text>
               </Button>
             </Box>
           )}
-          <div className="absolute top-0 right-0 z-10 flex rounded-md ">
+          <Box className="absolute top-0 right-0 z-10 flex rounded-md ">
             <IconButton
               variant={viewMode === "list" ? "soft" : "solid"}
               className="h-10 w-10 cursor-pointer rounded-r-none border-0"
@@ -219,7 +221,7 @@ export function ProjectPageComponents() {
             >
               <List size={20} />
             </IconButton>
-            <div className="flex items-center gap-2 pl-2">
+            <Flex align={"center"} gap={"2"} className=" pl-2">
               <IconButton
                 color="gray"
                 variant="soft"
@@ -237,8 +239,8 @@ export function ProjectPageComponents() {
                 <Plus size={16} />
                 Add Project
               </Button>
-            </div>
-          </div>
+            </Flex>
+          </Box>
           <Box
             className={cn(
               "relative mb-6",
@@ -248,7 +250,7 @@ export function ProjectPageComponents() {
             <ScrollArea
               className={`${viewMode === "grid" ? "h-full" : "h-[85vh] w-80 "}`}
             >
-              <div
+              <Box
                 className={`${viewMode === "grid" ? "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" : "h-full w-full gap-4 space-y-2 overflow-x-auto"}`}
               >
                 {filteredProjects.map((project) => (
@@ -261,27 +263,30 @@ export function ProjectPageComponents() {
                     onDelete={handleDeleteProject}
                   />
                 ))}
-              </div>
+              </Box>
             </ScrollArea>
             {filteredProjects.length === 0 && (
-              <div className="py-12 text-center">
-                <h3 className="mb-2 font-medium text-gray-900 text-lg">
+              <Box className="py-12 text-center">
+                <Heading
+                  as="h1"
+                  className="mb-2 font-medium text-gray-900 text-lg"
+                >
                   No projects found
-                </h3>
-                <p className="mb-6 text-gray-500">
+                </Heading>
+                <Text as="p" className="mb-6 text-gray-500">
                   You don't have any completed projects yet.
-                </p>
+                </Text>
                 <Button
                   onClick={() => setIsAddModalOpen(true)}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
                   <Plus className="mr-2 h-4 w-4" /> Add New Project
                 </Button>
-              </div>
+              </Box>
             )}
             <ProjectDrawer listFilter={viewMode === "list"} />
           </Box>
-        </div>
+        </Box>
       </Box>
 
       <AddProjectModal
@@ -289,7 +294,6 @@ export function ProjectPageComponents() {
         onClose={() => setIsAddModalOpen(false)}
         onAddProject={handleAddProject}
       />
-
       <MotionSheet
         title="Filter"
         side="right"

@@ -59,7 +59,7 @@ function ProjectComments() {
                   >
                     Comment
                   </Button>
-                  <div className="flex items-center gap-2">
+                  <Flex gap={"2"} align={"center"}>
                     <Button
                       type="button"
                       variant="soft"
@@ -84,18 +84,18 @@ function ProjectComments() {
                     >
                       <Image className="h-5 w-5 text-gray-12" />
                     </Button>
-                  </div>
+                  </Flex>
                 </Flex>
               </form>
               <Box className="space-y-4 py-4">
                 {commentsData.map((comment) => (
-                  <div key={comment.id} className="flex gap-4">
+                  <Flex key={comment.id} gap={"2"}>
                     <img
                       src={comment.user.avatar}
                       alt={comment.user.name}
                       className="h-10 w-10 flex-shrink-0 rounded-full object-cover"
                     />
-                    <div className="flex-1">
+                    <Box className="flex-1">
                       <Flex align={"center"} className="mb-1 gap-2">
                         <Heading
                           size={"3"}
@@ -114,7 +114,7 @@ function ProjectComments() {
                       {comment.images && (
                         <Flex className="mt-3" gap={"2"}>
                           {comment.images.map((image, index) => (
-                            <div
+                            <Box
                               key={`${comment.id}-image-${image}`}
                               className="group relative"
                             >
@@ -125,23 +125,27 @@ function ProjectComments() {
                               />
                               {index === 3 &&
                                 (comment.images?.length ?? 0) > 3 && (
-                                  <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/40">
-                                    <span className="font-medium text-white">
+                                  <Flex
+                                    align={"center"}
+                                    justify={"center"}
+                                    className="absolute inset-0 rounded-lg bg-black/40"
+                                  >
+                                    <Text className="font-medium text-white">
                                       +3
-                                    </span>
-                                  </div>
+                                    </Text>
+                                  </Flex>
                                 )}
-                            </div>
+                            </Box>
                           ))}
                         </Flex>
                       )}
-                    </div>
-                  </div>
+                    </Box>
+                  </Flex>
                 ))}
               </Box>
             </Tabs.Content>
             <Tabs.Content value="activity">
-              <p>Access and update your documents.</p>
+              <Text>Access and update your documents.</Text>
             </Tabs.Content>
           </Box>
         </Tabs.Root>

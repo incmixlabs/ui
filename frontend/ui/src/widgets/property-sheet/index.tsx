@@ -1,4 +1,5 @@
 import { Input } from "@components"
+import ColorPicker from "@components/color-picker"
 import { KanbanImages } from "@components/kanban-board/images"
 import {
   Select,
@@ -14,15 +15,12 @@ import {
   Button,
   Card,
   Checkbox,
-  DropdownMenu,
   Flex,
-  Grid,
   Heading,
   Popover,
   Text,
 } from "@radix-ui/themes"
 import { useState } from "react"
-import CompactColorPicker from "./color-picker"
 
 export const themeData = [
   {
@@ -231,7 +229,7 @@ export function PropertySheet() {
                 className="overflow-hidden p-0"
               >
                 <Box className="w-full">
-                  <CompactColorPicker onColorSelect={handleColorChange} />
+                  <ColorPicker onColorSelect={handleColorChange} />
                 </Box>
               </Popover.Content>
             </Popover.Root>

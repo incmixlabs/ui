@@ -20,7 +20,6 @@ import {
   Progress,
   Text,
 } from "@radix-ui/themes"
-import Image from "next/image"
 
 interface ProjectCardProps {
   project: Project

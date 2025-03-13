@@ -52,7 +52,7 @@ export function ProjectFilter({
   return (
     <Flex className="flex-col py-4" gap={"4"}>
       <Box>
-        <div className="space-y-4">
+        <Box className="space-y-4">
           <Box className="relative ">
             <Search className="absolute top-3 left-2.5" size={20} />
             <Input
@@ -119,7 +119,7 @@ export function ProjectFilter({
               </Select.Content>
             </Select.Root>
           </div>
-        </div>
+        </Box>
       </Box>
 
       <Flex align={"center"} gap={"4"} className="mt-auto">
