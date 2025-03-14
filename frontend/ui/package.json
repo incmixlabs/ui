@@ -59,7 +59,6 @@
     "./utils": "./src/utils/index.ts",
     "./utils/cn": "./src/utils/cn.ts",
     "./widgets": "./src/widgets/index.ts",
-    "./popover-shadcn": "./src/components/popover-shadcn.tsx",
     "./date-picker": "./src/components/date-picker.tsx",
     "./onboarding": "./src/components/onboarding/index.tsx"
   },

@@ -3,7 +3,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/shad-occordion"
+} from "@/components/shadcn-accordion"
 import { SCNformField } from "@/components/shadcn-form/form"
 import { type useForm, useFormContext } from "react-hook-form"
 import * as z from "zod"

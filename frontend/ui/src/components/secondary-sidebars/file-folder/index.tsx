@@ -22,15 +22,18 @@ export function FileFolder(): JSX.Element {
       <Flex
         gap={"2"}
         align={"center"}
-        className="shrink-0 border-b-[1px] border-b-gray-6 bg-sidebar-secondary-background px-8 py-2 "
+        className="shrink-0 border-b-[1px] border-b-gray-6 px-8 py-2 "
       >
         <FolderClosed
-          className="fill-sidebar-secondary-muted stroke-sidebar-secondary-muted"
+          className="stroke-sidebar-secondary-active"
           size={20}
         />
-        <Text className="font-medium text-[16px]">File Manager</Text>
+        <Text className="font-medium text-[16px] text-sidebar-secondary-active">File Manager</Text>
       </Flex>
       <ScrollArea className="flex-1">
+        <Text className="inline-block px-8 pt-2 font-medium text-[16px] text-gray-9">
+          FOLDERS
+        </Text>
         <Tree
           data={secondarySidebarData}
           initialSelectedItemId="f12"
@@ -40,13 +43,13 @@ export function FileFolder(): JSX.Element {
           itemIcon={FolderClose}
         />
       </ScrollArea>
-      <Box className="mt-auto shrink-0 bg-gray-1">
+      <Box className="mt-auto shrink-0 border-gray-6 border-t bg-gray-1">
         {footerData.map((item) => {
           if (item.storageAvailable) {
             return (
               <Box
                 key={item.title}
-                className=" cursor-pointer px-8 py-2 hover:bg-sidebar-secondary-active/50"
+                className=" cursor-pointer px-8 py-2 hover:bg-sidebar-secondary-active/10"
               >
                 <Flex justify={"between"} align={"center"} className="gap-2 ">
                   <Text className=" font-medium text-[16px] text-gray-12">
@@ -65,9 +68,9 @@ export function FileFolder(): JSX.Element {
             )
           }
           return (
-            <div
+            <Box
               key={item.title}
-              className="flex cursor-pointer items-center gap-2 px-8 py-2 text-gray-12 hover:bg-gray-6"
+              className="flex cursor-pointer items-center gap-2 px-8 py-2 text-gray-12 hover:bg-sidebar-secondary-active/10"
             >
               {item.icon && (
                 <item.icon
@@ -75,8 +78,8 @@ export function FileFolder(): JSX.Element {
                   aria-hidden="true"
                 />
               )}
-              <span className=" font-medium text-[16px]">{item.title}</span>
-            </div>
+              <Text className=" font-medium text-[16px]">{item.title}</Text>
+            </Box>
           )
         })}
       </Box>

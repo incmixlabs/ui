@@ -4,11 +4,7 @@ import { Calendar as CalendarIcon } from "lucide-react"
 
 import { Button } from "@components/button"
 import { Calendar } from "@components/calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@components/popover-shadcn"
+import { Popover, PopoverContent, PopoverTrigger } from "@components/popover"
 import { cn } from "@utils"
 import { forwardRef } from "react"
 
@@ -21,7 +17,7 @@ export const DatePicker = forwardRef<
 >(function DatePickerCmp({ date, setDate }, ref) {
   return (
     <Popover>
-      <PopoverTrigger asChild>
+      <PopoverTrigger>
         <Button
           variant={"outline"}
           className={cn(
