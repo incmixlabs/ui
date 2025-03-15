@@ -20,6 +20,7 @@ import ProjectDrawer from "./components/project-drawer"
 import { ProjectFilter } from "./components/project-filter"
 import { projects as initialProjects } from "./data"
 import type { Project } from "./types"
+import { AddProjectAutoForm } from "./components/add-project-auto-form"
 
 export function ProjectPageComponents() {
   const [projectId, setProjectId] = useQueryState("projectId", {
@@ -47,6 +48,7 @@ export function ProjectPageComponents() {
   }
 
   const handleAddProject = (newProject: Omit<Project, "id">) => {
+    console.log("newProject from handleAddProject:", newProject)
     const projectWithId = {
       ...newProject,
       id: (projects.length + 1).toString(),
@@ -284,11 +286,16 @@ export function ProjectPageComponents() {
         </div>
       </Box>
 
-      <AddProjectModal
+      <AddProjectAutoForm
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onAddProject={handleAddProject}
       />
+      {/* <AddProjectModal
+      isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAddProject={handleAddProject}
+      /> */}
 
       <MotionSheet
         title="Filter"

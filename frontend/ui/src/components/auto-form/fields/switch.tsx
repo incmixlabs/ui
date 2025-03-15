@@ -1,5 +1,5 @@
-import { FormControl, FormItem } from "@/components/shadcn-form/form"
-import { Switch } from "@/components/switch"
+import { FormControl, FormItem } from "@components/shadcn-form/form"
+import { Switch } from "@components/switch"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"
 import type { AutoFormInputComponentProps } from "../types"

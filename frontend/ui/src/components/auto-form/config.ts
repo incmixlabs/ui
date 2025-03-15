@@ -9,6 +9,7 @@ import AutoFormNumber from "./fields/number"
 import AutoFormRadioGroup from "./fields/radio-group"
 import AutoFormSwitch from "./fields/switch"
 import AutoFormTextarea from "./fields/textarea"
+import MultipleSelectorField from "./fields/multiple-selector"
 
 export const INPUT_COMPONENTS = {
   checkbox: AutoFormCheckbox,
@@ -22,7 +23,8 @@ export const INPUT_COMPONENTS = {
   fallback: AutoFormInput,
   mcq: AutoFormMCQ,
   multiCheckbox: AutoFormMultiCheckbox,
-}
+  multipleSelector: MultipleSelectorField,
+} as const
 
 /**
  * Define handlers for specific Zod types.

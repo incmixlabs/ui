@@ -13,7 +13,13 @@ export type MCQOption = {
 export type MCQLayoutType = "grid" | "row" | "column"
 export type MCQSizeType = "sm" | "md" | "lg"
 
-// Modify the FieldConfigItem type to include icon props
+
+export type MultipleSelectorOption = {
+  label: string
+  value: string
+}
+
+
 export type FieldConfigItem = {
   description?: React.ReactNode
   inputProps?: React.InputHTMLAttributes<HTMLInputElement> & {
@@ -28,6 +34,10 @@ export type FieldConfigItem = {
     // Add icon properties
     icon?: LucideIcon // Add support for direct Lucide icon components
     iconName?: string // Add support for icon name strings
+    // Add MultipleSelector specific properties
+    defaultOptions?: MultipleSelectorOption[]
+    defaultColor?: string
+    multipleSelectorOptions?: MultipleSelectorOption[]
   }
   fieldType?:
     | keyof typeof INPUT_COMPONENTS

@@ -1,9 +1,9 @@
-import { Input } from "@/components/form/input"
+import { Input } from "@components/form/input"
 import {
   FormControl,
   FormItem,
   FormMessage,
-} from "@/components/shadcn-form/form"
+} from "@components/shadcn-form/form"
 import { Eye, EyeOff } from "lucide-react"
 import { useEffect, useState } from "react"
 import React from "react"

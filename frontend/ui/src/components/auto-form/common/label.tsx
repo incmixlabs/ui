@@ -1,4 +1,4 @@
-import { FormLabel } from "@/components/shadcn-form/form"
+import { FormLabel } from "@components/shadcn-form/form"
 import { cn } from "@utils/cn"
 
 function AutoFormLabel({
