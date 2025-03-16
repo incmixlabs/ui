@@ -1,2 +1,2 @@
-export { default as ProjectsPage } from "./projects-page"
+export { default as ProjectsPage } from "./page"
 export { default as ProjectsRoute } from "./routes"

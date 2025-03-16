@@ -2,8 +2,8 @@ import { Toaster } from "@incmix/ui"
 import { Box, Flex, ScrollArea } from "@radix-ui/themes"
 import type { FC, ReactNode } from "react"
 
+import { AppSidebar as Sidebar } from "./admin-panel/app-sidebar"
 import { NavbarMain } from "./navbar"
-import { AppSidebar as Sidebar } from "./sidebar"
 
 interface PageLayoutProps {
   children: ReactNode

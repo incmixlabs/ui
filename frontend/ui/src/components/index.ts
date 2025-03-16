@@ -23,6 +23,7 @@ export * from "./swapy"
 export * from "./toaster"
 export * from "./tree-view"
 export * from "./kanban-board"
+export * from "./file-manager"
 export * from "./projects"
 export * from "./projects/roadmap-view"
 export {
@@ -40,7 +41,6 @@ export {
   Spinner,
   Switch,
 } from "@radix-ui/themes"
-export * from "./scroll-area"
 export * from "./stepper"
 export * from "./sheet"
 export * from "./badges"

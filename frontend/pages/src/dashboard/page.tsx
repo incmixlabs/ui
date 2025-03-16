@@ -151,13 +151,14 @@ const DashboardPage: React.FC = () => {
 
   if (isLoading) return <LoadingPage />
   if (!authUser) return null
+  console.log(slottedWidgets)
 
   return (
     <DashboardLayout
       breadcrumbItems={[]}
       navExtras={<EditWidgetsControl onEditChange={setIsEditing} />}
     >
-      <Container size="2">
+      <Container>
         <Flex direction="column" gap="6">
           <Heading size="6">{t("dashboard:title")}</Heading>
 

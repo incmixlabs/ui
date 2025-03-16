@@ -5,6 +5,7 @@ import {
   BoxIcon,
   ComponentIcon,
   FileTextIcon,
+  FolderClosed,
   HelpCircle,
   InboxIcon,
   LanguagesIcon,
@@ -35,6 +36,7 @@ import {
 } from "@incmix/ui/sidebar"
 import { createAbilityFromPermissions } from "@incmix/utils/casl"
 import type { Permission } from "@incmix/utils/types"
+import { ScrollArea } from "@radix-ui/themes"
 import { useQuery } from "@tanstack/react-query"
 import { useLocation, useRouter } from "@tanstack/react-router"
 import { I18n } from "i18n"
@@ -105,6 +107,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/projects",
         icon: Layers,
         isSelected: pathname.includes("/projects"),
+      },
+      {
+        title: "File Manager",
+        url: "/file-manager",
+        icon: FolderClosed,
+        isSelected: pathname.includes("/file-manager"),
       },
       {
         title: t("common:users"),
@@ -217,8 +225,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </div>
           </SidebarHeaderLabel>
         </SidebarHeader>
-        <SidebarContent>
-          <NavMain items={navItems} />
+        <SidebarContent className="overflow-hidden">
+          <ScrollArea className="h-full">
+            <NavMain items={navItems} />
+          </ScrollArea>
           {/* <NavProjects projects={data.projects} /> */}
         </SidebarContent>
         {user && (
@@ -228,11 +238,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         )}
         <SidebarRail />
       </Sidebar>
-      <ErrorBoundary fallback={<SidebarErrorFallback />}>
-        <SecondarySidebar>
-          <FileFolder />
-        </SecondarySidebar>
-      </ErrorBoundary>
+      {pathname.includes("/file-manager") && (
+        <ErrorBoundary fallback={<SidebarErrorFallback />}>
+          <SecondarySidebar>
+            <FileFolder />
+          </SecondarySidebar>
+        </ErrorBoundary>
+      )}
     </>
   )
 }

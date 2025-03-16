@@ -24,11 +24,10 @@ export function FileFolder(): JSX.Element {
         align={"center"}
         className="shrink-0 border-b-[1px] border-b-gray-6 px-8 py-2 "
       >
-        <FolderClosed
-          className="stroke-sidebar-secondary-active"
-          size={20}
-        />
-        <Text className="font-medium text-[16px] text-sidebar-secondary-active">File Manager</Text>
+        <FolderClosed className="stroke-sidebar-secondary-active" size={20} />
+        <Text className="font-medium text-[16px] text-sidebar-secondary-active">
+          File Manager
+        </Text>
       </Flex>
       <ScrollArea className="flex-1">
         <Text className="inline-block px-8 pt-2 font-medium text-[16px] text-gray-9">

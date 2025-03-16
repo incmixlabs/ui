@@ -1,6 +1,6 @@
 import { RootRoute } from "@common"
 import { createRoute } from "@tanstack/react-router"
-import DashboardPage from "../dashboard-page"
+import DashboardPage from "../page"
 
 export default createRoute({
   getParentRoute: () => RootRoute,

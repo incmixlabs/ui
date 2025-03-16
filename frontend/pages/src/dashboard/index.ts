@@ -1,3 +1,3 @@
 export * from "./routes"
 
-export { default as DashboardPage } from "./dashboard-page"
+export { default as DashboardPage } from "./page"
