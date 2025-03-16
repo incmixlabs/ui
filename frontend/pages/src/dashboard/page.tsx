@@ -151,7 +151,6 @@ const DashboardPage: React.FC = () => {
 
   if (isLoading) return <LoadingPage />
   if (!authUser) return null
-  console.log(slottedWidgets)
 
   return (
     <DashboardLayout
