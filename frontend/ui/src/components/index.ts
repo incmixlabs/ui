@@ -14,7 +14,6 @@ export * from "./data-table"
 export * from "./dialog"
 export * from "./drag-handle"
 export * from "./dropdown-menu"
-export * from "./edit-switch"
 export * from "./file-folder-accordion"
 export * from "./form"
 export { useDropzone } from "react-dropzone"
@@ -24,7 +23,9 @@ export * from "./swapy"
 export * from "./toaster"
 export * from "./tree-view"
 export * from "./kanban-board"
+export * from "./file-manager"
 export * from "./projects"
+export * from "./projects/roadmap-view"
 export {
   Badge,
   Box,
@@ -40,7 +41,6 @@ export {
   Spinner,
   Switch,
 } from "@radix-ui/themes"
-export * from "./scroll-area"
 export * from "./stepper"
 export * from "./sheet"
 export * from "./badges"

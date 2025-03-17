@@ -1,3 +1,5 @@
+import type { DateTime } from "luxon"
+
 export type Side = "left" | "right"
 export type Direction = "ltr" | "rtl"
 export type DeepPartial<T> = T extends object
@@ -56,4 +58,14 @@ export interface Sizes {
   "5xl": string
   "6xl": string
   "7xl": string
+}
+
+export interface Project {
+  id: string
+  name: string
+  startDate: DateTime
+  endDate: DateTime
+  progress: number
+  color: string
+  subProjects?: Project[]
 }

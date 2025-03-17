@@ -1,4 +1,4 @@
-import { Box, Button, Flex, IconButton } from "@radix-ui/themes"
+import { Box, Button, Flex, Heading, IconButton, Text } from "@radix-ui/themes"
 import { cn } from "@utils"
 import { AnimatePresence, motion } from "framer-motion"
 import { X } from "lucide-react"
@@ -140,7 +140,7 @@ export const MotionSheet: React.FC<SheetProps> = ({
             className={cn(
               // Base styles for all sheets
               isFilter
-                ? `relative z-50 h-[80vh] flex-shrink-0 rounded-xl ${isFilterClassName}`
+                ? `relative z-50 h-[80vh] shrink-0 rounded-xl ${isFilterClassName}`
                 : "fixed h-[98vh] w-96 max-w-full bg-gray-3 p-5 py-4",
               positionClasses[side],
               className
@@ -155,16 +155,16 @@ export const MotionSheet: React.FC<SheetProps> = ({
           >
             {(title || description || showCloseButton) && (
               <Flex align={"center"} justify={"between"}>
-                <div>
+                <Box>
                   {title && (
-                    <h3
+                    <Heading
                       style={{ margin: 0, fontSize: "18px", fontWeight: 600 }}
                     >
                       {title}
-                    </h3>
+                    </Heading>
                   )}
                   {description && (
-                    <p
+                    <Text
                       style={{
                         margin: "4px 0 0 0",
                         fontSize: "14px",
@@ -172,9 +172,9 @@ export const MotionSheet: React.FC<SheetProps> = ({
                       }}
                     >
                       {description}
-                    </p>
+                    </Text>
                   )}
-                </div>
+                </Box>
                 {showCloseButton && (
                   <IconButton onClick={handleClose} color="gray" type="button">
                     <X />

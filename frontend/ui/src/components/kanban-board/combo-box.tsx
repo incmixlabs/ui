@@ -1,10 +1,18 @@
-import { type BadgeProps, Box, Flex, Grid, Popover } from "@radix-ui/themes"
+import {
+  type BadgeProps,
+  Box,
+  Flex,
+  Grid,
+  Popover,
+  Text,
+} from "@radix-ui/themes"
 import { CheckIcon, ChevronDown, Plus, XCircle, XIcon } from "lucide-react"
 import * as React from "react"
 import { cn } from "utils"
 import { Avatar } from "../avatar"
 import { Badge } from "../badge"
 import { Button, IconButton } from "../button"
+import ColorPicker, { type ColorSelectType } from "../color-picker"
 import {
   Command,
   CommandEmpty,
@@ -59,7 +67,7 @@ interface MultiSelectProps
   isLabelFormOpen?: boolean
   setIsLabelFormOpen?: (isLabelFormOpen: boolean) => void
   labelColor?: string
-  setLabelColor?: (labelColor: string) => void
+  setLabelColor?: (labelColor: ExtendedColorType) => void
   handleAddNewLabel?: (e: React.FormEvent) => void
 }
 
@@ -109,6 +117,12 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
       onValueChange([])
     }
 
+    const handleColorSelect = (newColor: ColorSelectType) => {
+      if (setLabelColor) {
+        setLabelColor(newColor.name as ExtendedColorType)
+      }
+    }
+
     return (
       <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
         <Popover.Trigger>
@@ -118,7 +132,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
             className="flex h-8 w-8 items-center justify-center rounded-full "
           >
             <Plus aria-hidden="true" />
-            <span className="sr-only">Add new item</span>
+            <Text className="sr-only">Add new item</Text>
           </IconButton>
         </Popover.Trigger>
         <Popover.Content
@@ -149,7 +163,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                         isDisabled && "cursor-not-allowed opacity-50 " // Disable styling
                       )}
                     >
-                      <div className="flex items-center gap-2">
+                      <Flex align={"center"} gap={"2"}>
                         {option.icon && (
                           <option.icon
                             className={cn(
@@ -168,17 +182,19 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                         >
                           {option.label}
                         </Badge>
-                      </div>
-                      <div
+                      </Flex>
+                      <Flex
+                        justify={"center"}
+                        align={"center"}
                         className={cn(
-                          "ml-2 flex h-5 w-5 items-center justify-center rounded-sm border border-secondary",
+                          "ml-2 h-5 w-5 rounded-sm border border-secondary",
                           isSelected
                             ? "bg-secondary text-primary-foreground"
                             : "opacity-50 [&_svg]:invisible"
                         )}
                       >
                         {!isDisabled && <CheckIcon className="h-4 w-4" />}
-                      </div>
+                      </Flex>
                     </CommandItem>
                   )
                 })}
@@ -217,80 +233,10 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                               width="190px"
                               className="z-[888] overflow-hidden bg-white p-3"
                             >
-                              <Grid className="w-fit" columns="6" gap="2">
-                                <Button
-                                  variant="solid"
-                                  color="blue"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("blue")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="green"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("green")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="red"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("red")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="amber"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("amber")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="purple"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("purple")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="teal"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("teal")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="pink"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("pink")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="indigo"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("indigo")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="lime"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("lime")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="orange"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("orange")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="violet"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("violet")}
-                                />
-                                <Button
-                                  variant="solid"
-                                  color="cyan"
-                                  className="h-6 w-6 rounded-full"
-                                  onClick={() => setLabelColor?.("cyan")}
-                                />
-                              </Grid>
+                              <ColorPicker
+                                colorType="base"
+                                onColorSelect={handleColorSelect}
+                              />
                             </Popover.Content>
                           </Popover.Root>
                           <Flex gap="2">
@@ -325,7 +271,11 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                   </>
                 ) : (
                   <>
-                    <div className="flex items-center justify-between font-medium">
+                    <Flex
+                      justify={"between"}
+                      align={"center"}
+                      className="font-medium"
+                    >
                       {selectedValues.length > 0 && (
                         <CommandItem
                           onSelect={handleClear}
@@ -340,7 +290,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                       >
                         Close
                       </CommandItem>
-                    </div>
+                    </Flex>
                   </>
                 )}
               </CommandGroup>

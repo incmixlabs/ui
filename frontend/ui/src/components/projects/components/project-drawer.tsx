@@ -1,12 +1,7 @@
 import { Avatar } from "@components/avatar"
-import { Badge, ExtendedColorType } from "@components/badge"
 import { MotionSheet } from "@components/custom-sheet"
-import { SmartDatetimeInput } from "@components/datetime-picker"
-import { TaskIcon } from "@components/icons/task"
 import { ComboBox } from "@components/kanban-board/combo-box"
 import { attachments } from "@components/kanban-board/data"
-import { KanbanImages } from "@components/kanban-board/images"
-import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
 import { useProjectDrawer } from "@hooks/use-project-drawer"
 import {
   Box,
@@ -20,12 +15,11 @@ import {
   Text,
 } from "@radix-ui/themes"
 import { cn } from "@utils"
-import { Download, FileArchive, Image, Paperclip, Smile, X } from "lucide-react"
+import { Download, FileArchive, X } from "lucide-react"
 import { motion } from "motion/react"
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import { members, projects } from "../data"
-import { ProjectsImages } from "../images"
 import ProjectChecklist from "./project-checklist"
 import ProjectComments from "./project-comments"
 import ProjectDetails from "./project-detials"
@@ -56,10 +50,10 @@ export default function ProjectDrawer({
         side="right"
         className={`${listFilter ? "w-full flex-1" : "w-[53rem]"} p-0 py-0`}
       >
-        <div
+        <Box
           className={cn(
             listFilter
-              ? "relative z-50 h-full w-full flex-shrink-0 rounded-xl"
+              ? "relative z-50 h-full w-full shrink-0 rounded-xl"
               : "h-full w-full"
           )}
         >
@@ -84,7 +78,7 @@ export default function ProjectDrawer({
                 </Box>
                 <Box
                   className={cn(
-                    "relative h-full w-72 flex-shrink-0",
+                    "relative h-full w-72 shrink-0",
                     listFilter ? "pt-5" : "pt-20"
                   )}
                 >
@@ -96,7 +90,7 @@ export default function ProjectDrawer({
                       className="absolute top-5 right-3 ml-8 flex h-8 w-8 cursor-pointer items-center justify-center rounded-md"
                     >
                       <X aria-hidden="true" />
-                      <span className="sr-only">Close</span>
+                      <Text className="sr-only">Close</Text>
                     </IconButton>
                   )}
 
@@ -157,7 +151,7 @@ export default function ProjectDrawer({
                           className=" rounded-lg bg-gray-3 transition-colors dark:bg-gray-4"
                         >
                           {attachment.type === "image" ? (
-                            <Box className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg">
+                            <Box className="h-12 w-12 shrink-0 overflow-hidden rounded-lg">
                               <img
                                 src={attachment.thumbnailUrl}
                                 alt={attachment.name}
@@ -165,28 +159,27 @@ export default function ProjectDrawer({
                               />
                             </Box>
                           ) : (
-                            <Box className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-gray-8">
+                            <Box className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-gray-8">
                               <FileArchive className="h-5 w-5 text-gray-8" />
                             </Box>
                           )}
-
-                          <div className="ml-4 flex-grow">
-                            <h3 className="font-medium text-gray-12 text-sm">
+                          <Box className="ml-4 grow">
+                            <Heading className="font-medium text-gray-12 text-sm">
                               {attachment.name}
-                            </h3>
-                            <p className="pt-1 text-gray-11 text-sm">
+                            </Heading>
+                            <Text className="pt-1 text-gray-11 text-sm">
                               {attachment.size}
-                            </p>
-                          </div>
+                            </Text>
+                          </Box>
 
-                          <div className="flex space-x-2">
+                          <Flex className="flex space-x-2">
                             <Button
                               variant="soft"
                               className="h-9 cursor-pointer rounded-full bg-transparent p-2 transition-colors hover:bg-gray-4 dark:hover:bg-gray-7"
                             >
                               <Download className="h-5 w-5 text-gray-12" />
                             </Button>
-                          </div>
+                          </Flex>
                         </Flex>
                       ))}
                     </Box>
@@ -195,7 +188,7 @@ export default function ProjectDrawer({
               </Flex>
             </ScrollArea>
           </motion.div>
-        </div>
+        </Box>
       </MotionSheet>
     </>
   )

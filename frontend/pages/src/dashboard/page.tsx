@@ -1,13 +1,5 @@
 import { LoadingPage } from "@common"
-import { NavbarMain } from "@common/components/layouts/navbar"
-import { PageLayout } from "@common/components/layouts/page-layout"
-import {
-  CardContainer,
-  EditSwitch,
-  SwapyExclude,
-  SwapyLayout,
-  SwapySlot,
-} from "@incmix/ui"
+import { CardContainer, SwapyExclude, SwapyLayout, SwapySlot } from "@incmix/ui"
 import {
   BatteryWidget,
   CalendarWidget,
@@ -18,7 +10,7 @@ import {
   getBattery,
 } from "@incmix/ui/widgets"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { Container, Flex, Heading, Text } from "@radix-ui/themes"
+import { Container, Flex, Heading, Switch, Text } from "@radix-ui/themes"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { createSwapy } from "swapy"
@@ -68,7 +60,7 @@ const EditWidgetsControl: React.FC<{
       <Text size="2" color="gray">
         {t("dashboard:editMode")}
       </Text>
-      <EditSwitch onCheckedChange={onEditChange} />
+      <Switch onCheckedChange={onEditChange} />
     </Flex>
   )
 }
@@ -165,7 +157,7 @@ const DashboardPage: React.FC = () => {
       breadcrumbItems={[]}
       navExtras={<EditWidgetsControl onEditChange={setIsEditing} />}
     >
-      <Container size="4">
+      <Container>
         <Flex direction="column" gap="6">
           <Heading size="6">{t("dashboard:title")}</Heading>
 

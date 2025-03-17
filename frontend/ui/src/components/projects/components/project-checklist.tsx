@@ -66,11 +66,11 @@ function ProjectChecklist() {
             size={"3"}
             className="flex w-full items-center gap-1 font-medium text-gray-11 uppercase"
           >
-            <span>CheckList</span>
-            <span>
+            <Text>CheckList</Text>
+            <Text>
               ({completionPercentage}
               %)
-            </span>
+            </Text>
           </Heading>
           <Progress value={completionPercentage} />
         </Box>
@@ -100,7 +100,7 @@ function ProjectChecklist() {
                   }}
                   className="h-5 w-5 rounded-md border border-black bg-gray-12 text-secondary group-hover:bg-white "
                 />
-                <h1 className="text-gray-12 text-sm ">{item.title}</h1>
+                <Heading size={"2"}>{item.title}</Heading>
               </Flex>
             </Item>
           ))}
@@ -118,7 +118,7 @@ function ProjectChecklist() {
           className="mt-4 w-fit gap-2 bg-transparent p-1 font-semibold text-secondary "
         >
           <Plus />
-          <span>Add Checklist Item</span>
+          <Text>Add Checklist Item</Text>
         </IconButton>
       </Box>
     </>

@@ -1,5 +1,5 @@
 "use client"
-import { Progress } from "@radix-ui/themes"
+import { Box, Flex, Progress, ScrollArea, Text } from "@radix-ui/themes"
 import { FolderClosed, type LucideIcon } from "lucide-react"
 import { type JSX, useState } from "react"
 import { secondaryFooterData, secondarySidebarData } from "./data"
@@ -19,66 +19,69 @@ export function FileFolder(): JSX.Element {
   const [_selectedItem, setSelectedItem] = useState<string>("Admin Page")
   return (
     <>
-      <div className="flex gap-2 border-b-[1px] border-b-[hsl(var(--sidebar-border))] px-8 py-2 text-[hsl(var(--sidebar-background))] ">
-        <FolderClosed />
-        <span className=" font-medium text-[16px]">File Manager</span>
-      </div>
-      <div className="flex gap-2 px-8 py-1 pb-0">
-        <span className="text-[16px] text-[hsl(var(--sidebar-secondary-muted))] uppercase">
-          Folders
-        </span>
-      </div>
-      <div className="flex overflow-scroll">
+      <Flex
+        gap={"2"}
+        align={"center"}
+        className="shrink-0 border-b-[1px] border-b-gray-6 px-8 py-2 "
+      >
+        <FolderClosed className="stroke-sidebar-secondary-active" size={20} />
+        <Text className="font-medium text-[16px] text-sidebar-secondary-active">
+          File Manager
+        </Text>
+      </Flex>
+      <ScrollArea className="flex-1">
+        <Text className="inline-block px-8 pt-2 font-medium text-[16px] text-gray-9">
+          FOLDERS
+        </Text>
         <Tree
           data={secondarySidebarData}
-          className="w-full flex-shrink-0"
           initialSelectedItemId="f12"
           onSelectChange={(item) => setSelectedItem(item?.name ?? "")}
           folderIcon={FolderClose}
           folderIconOpen={FolderOpen}
           itemIcon={FolderClose}
         />
-      </div>
-      <div className="">
+      </ScrollArea>
+      <Box className="mt-auto shrink-0 border-gray-6 border-t bg-gray-1">
         {footerData.map((item) => {
           if (item.storageAvailable) {
             return (
-              <div
+              <Box
                 key={item.title}
-                className=" cursor-pointer px-8 py-2 hover:bg-[hsl(var(--sidebar-background)/0.1)]"
+                className=" cursor-pointer px-8 py-2 hover:bg-sidebar-secondary-active/10"
               >
-                <div className="flex items-center justify-between gap-2 ">
-                  <span className=" font-medium text-[16px] text-[hsl(var(--sidebar-secondary-text))]">
+                <Flex justify={"between"} align={"center"} className="gap-2 ">
+                  <Text className=" font-medium text-[16px] text-gray-12">
                     {item.title}
-                  </span>
-                  <span className=" family-[Poppins] font-medium text-[16px] text-[hsl(var(--sidebar-secondary-muted))] ">
+                  </Text>
+                  <Text className=" family-[Poppins] font-medium text-[16px] text-sidebar-secondary-muted ">
                     {item.storageAvailable}%
-                  </span>
-                </div>
+                  </Text>
+                </Flex>
                 <Progress
                   value={item.storageAvailable}
                   color="grass"
                   className="mt-4"
                 />
-              </div>
+              </Box>
             )
           }
           return (
-            <div
+            <Box
               key={item.title}
-              className="flex cursor-pointer items-center gap-2 px-8 py-2 text-[hsl(var(--sidebar-secondary-text))] hover:bg-[hsl(var(--sidebar-background)/0.1)] "
+              className="flex cursor-pointer items-center gap-2 px-8 py-2 text-gray-12 hover:bg-sidebar-secondary-active/10"
             >
               {item.icon && (
                 <item.icon
-                  className="h-4 w-4 shrink-0 text-[hsl(var(--sidebar-secondary-muted))]"
+                  className="h-4 w-4 shrink-0 text-sidebar-secondary-muted"
                   aria-hidden="true"
                 />
               )}
-              <span className=" font-medium text-[16px]">{item.title}</span>
-            </div>
+              <Text className=" font-medium text-[16px]">{item.title}</Text>
+            </Box>
           )
         })}
-      </div>
+      </Box>
     </>
   )
 }

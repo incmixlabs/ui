@@ -9,7 +9,6 @@ import AutoFormMultiCheckbox from "./fields/multi-checkbox"
 import MultipleSelectorField from "./fields/multiple-selector"
 import AutoFormNumber from "./fields/number"
 import AutoFormRadioGroup from "./fields/radio-group"
-import AutoFormSwitch from "./fields/switch"
 import AutoFormTextarea from "./fields/textarea"
 
 // Note: We don't include FieldGroup in INPUT_COMPONENTS as it's handled separately
@@ -18,7 +17,6 @@ export const INPUT_COMPONENTS = {
   date: AutoFormDate,
   select: AutoFormEnum,
   radio: AutoFormRadioGroup,
-  switch: AutoFormSwitch,
   textarea: AutoFormTextarea,
   number: AutoFormNumber,
   file: AutoFormFile,

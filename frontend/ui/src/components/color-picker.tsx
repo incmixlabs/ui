@@ -1,6 +1,31 @@
-interface CompactColorPickerProps {
-  onColorSelect: (color: { hex: string }) => void
+import { cn } from "@utils"
+import { Check } from "lucide-react"
+export interface ColorSelectType {
+  hex: string
+  name?: string
 }
+
+interface CompactColorPickerProps {
+  onColorSelect: (color: { hex: string; name?: string }) => void
+  colorType?: "base" | "all"
+  activeColor?: string
+}
+
+const baseColors = [
+  "blue",
+  "green",
+  "red",
+  "amber",
+  "purple",
+  "teal",
+  "pink",
+  "indigo",
+  "lime",
+  "orange",
+  "violet",
+  "cyan",
+]
+
 const generateColorArray = (color: string, reverse = false) => {
   const range = [1, 2, 3, 4, 5, 6, 7, 8, 9]
   if (reverse) range.reverse()
@@ -8,18 +33,15 @@ const generateColorArray = (color: string, reverse = false) => {
 }
 
 function cssVarToHex(varName: string) {
-  // Create a temporary element to apply the CSS variable
   const tempElem = document.createElement("div")
   tempElem.style.color = `var(${varName})`
   document.body.appendChild(tempElem)
 
-  // Get the computed color value (in RGB/RGBA format)
   const computedColor = getComputedStyle(tempElem).color
   document.body.removeChild(tempElem)
 
-  // Extract RGB/A components from the computed color
   const components = computedColor.match(/[\d\.]+/g) || []
-  if (components.length < 3) return null // Invalid color
+  if (components.length < 3) return null
 
   // Convert RGB values to hex
   const [r, g, b] = components
@@ -38,7 +60,11 @@ function cssVarToHex(varName: string) {
   return hex.toUpperCase()
 }
 
-const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
+const ColorPicker = ({
+  onColorSelect,
+  colorType = "all",
+  activeColor,
+}: CompactColorPickerProps) => {
   // Dark colors - displayed horizontally
   const darkColors = [
     "var(--gray-1)",
@@ -53,6 +79,7 @@ const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
     "var(--gray-11)",
     "var(--gray-12)",
   ]
+
   const redsColors = generateColorArray("red", true)
   const orangesColors = generateColorArray("orange", true)
   const yellowsColors = generateColorArray("yellow", true)
@@ -65,7 +92,6 @@ const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
   const plumsColors = generateColorArray("plum", true)
   const pinksColors = generateColorArray("pink", true)
 
-  // All vertical color groups
   const colorGroups = [
     redsColors,
     orangesColors,
@@ -80,6 +106,35 @@ const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
     pinksColors,
   ]
 
+  if (colorType === "base") {
+    return (
+      <div className="bg-white p-2">
+        <div className="grid grid-cols-6 gap-2">
+          {baseColors.map((color) => (
+            <button
+              key={color}
+              type="button"
+              className={cn(
+                "h-6 w-6 cursor-pointer rounded-full transition-transform hover:scale-110",
+                "flex items-center justify-center",
+                activeColor === color && "ring-2 ring-offset-2"
+              )}
+              style={{ backgroundColor: `var(--${color}-9)` }}
+              onClick={() =>
+                onColorSelect({ hex: `var(--${color}-9)`, name: color })
+              }
+              title={color}
+            >
+              {activeColor === color && (
+                <Check className="h-4 w-4 flex-shrink-0 text-white" />
+              )}
+            </button>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="bg-white p-2">
       <div className="mb-1 flex justify-between">
@@ -87,7 +142,10 @@ const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
           <button
             key={`dark-${color}`}
             type="button"
-            className="h-6 w-6 cursor-pointer rounded-sm transition-transform hover:scale-110"
+            className={cn(
+              "h-6 w-6 cursor-pointer rounded-sm transition-transform hover:scale-110",
+              activeColor === color && "ring-2 ring-offset-2"
+            )}
             style={{ backgroundColor: `${color}` }}
             onClick={() => onColorSelect({ hex: color })}
             title={color}
@@ -101,23 +159,29 @@ const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
             key={`group-${colorGroups.indexOf(group)}`}
             className="flex flex-col gap-1"
           >
-            {group.map((color) => (
-              <button
-                key={`color-${color}`}
-                type="button"
-                className="h-6 w-6 cursor-pointer rounded-sm transition-transform hover:scale-110"
-                style={{ backgroundColor: `${color}` }}
-                onClick={() => {
-                  // Extract variable name from the CSS variable notation
-                  const varNameMatch = color.match(/^var\((--.+)\)$/)
-                  const varName = varNameMatch ? varNameMatch[1] : color
-                  // Convert the CSS variable to a hex color value using the helper function
-                  const hexColor = cssVarToHex(varName) || color
-                  onColorSelect({ hex: hexColor })
-                }}
-                title={color}
-              />
-            ))}
+            {group.map((color) => {
+              const varNameMatch = color.match(/^var\((--.+)\)$/)
+              const varName = varNameMatch ? varNameMatch[1] : color
+              return (
+                <button
+                  key={`color-${color}`}
+                  type="button"
+                  className={cn(
+                    "h-6 w-6 cursor-pointer rounded-sm transition-transform hover:scale-110",
+                    activeColor === color && "ring-2 ring-offset-2"
+                  )}
+                  style={{ backgroundColor: `${color}` }}
+                  onClick={() => {
+                    const hexColor = cssVarToHex(varName) || color
+                    onColorSelect({
+                      hex: hexColor,
+                      name: varName.replace(/^--/, ""),
+                    })
+                  }}
+                  title={color}
+                />
+              )
+            })}
           </div>
         ))}
       </div>
@@ -125,4 +189,4 @@ const CompactColorPicker = ({ onColorSelect }: CompactColorPickerProps) => {
   )
 }
 
-export default CompactColorPicker
+export default ColorPicker

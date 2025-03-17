@@ -1,13 +1,35 @@
-//@ts-nocheck
+"use client"
 
-import { Dialog } from "@radix-ui/themes"
-import { type VariantProps, cva } from "@utils/cva"
+import * as SheetPrimitive from "@radix-ui/react-dialog"
+import { type VariantProps, cva } from "class-variance-authority"
 import { X } from "lucide-react"
 import * as React from "react"
 
 import { cn } from "@utils"
 
-// Sheet variants for positioning and animations
+const Sheet = SheetPrimitive.Root
+
+const SheetTrigger = SheetPrimitive.Trigger
+
+const SheetClose = SheetPrimitive.Close
+
+const SheetPortal = SheetPrimitive.Portal
+
+const SheetOverlay = React.forwardRef<
+  React.ElementRef<typeof SheetPrimitive.Overlay>,
+  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>
+>(({ className, ...props }, ref) => (
+  <SheetPrimitive.Overlay
+    className={cn(
+      "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80 data-[state=closed]:animate-out data-[state=open]:animate-in",
+      className
+    )}
+    {...props}
+    ref={ref}
+  />
+))
+SheetOverlay.displayName = SheetPrimitive.Overlay.displayName
+
 const sheetVariants = cva(
   "fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:duration-300 data-[state=open]:duration-500",
   {
@@ -16,9 +38,9 @@ const sheetVariants = cva(
         top: "data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top inset-x-0 top-0 border-b",
         bottom:
           "data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 border-t",
-        left: "data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-lg",
+        left: "data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm",
         right:
-          "data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-lg",
+          "data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm",
       },
     },
     defaultVariants: {
@@ -27,145 +49,31 @@ const sheetVariants = cva(
   }
 )
 
-// Create context to manage sheet state
-const SheetContext = React.createContext<{
-  open: boolean
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
-}>({
-  open: false,
-  setOpen: () => {},
-})
-
-interface SheetProps
-  extends Omit<
-    React.ComponentPropsWithoutRef<typeof Dialog.Root>,
-    "open" | "onOpenChange"
-  > {
-  defaultOpen?: boolean
-}
-
-// Sheet component (using Dialog.Root from Themes)
-const Sheet = ({ defaultOpen = false, children, ...props }: SheetProps) => {
-  const [open, setOpen] = React.useState(defaultOpen)
-
-  return (
-    <SheetContext.Provider value={{ open, setOpen }}>
-      <Dialog.Root open={open} onOpenChange={setOpen} {...props}>
-        {children}
-      </Dialog.Root>
-    </SheetContext.Provider>
-  )
-}
-
-interface SheetTriggerProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
-  asChild?: boolean
-  children: React.ReactNode
-}
-
-// Sheet Trigger with asChild support
-const SheetTrigger = ({ asChild, children, ...props }: SheetTriggerProps) => {
-  const { setOpen } = React.useContext(SheetContext)
-
-  if (asChild && React.isValidElement(children)) {
-    const childProps = {
-      ...props,
-      onClick: (e: React.MouseEvent) => {
-        e.preventDefault()
-        setOpen(true)
-
-        // Call original onClick if it exists
-        if (children.props.onClick) {
-          children.props.onClick(e)
-        }
-      },
-    }
-
-    return React.cloneElement(children, childProps)
-  }
-
-  return <Dialog.Trigger {...props}>{children}</Dialog.Trigger>
-}
-
-interface SheetCloseProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
-  asChild?: boolean
-  children: React.ReactNode
-}
-
-// Sheet Close with asChild support
-const SheetClose = ({ asChild, children, ...props }: SheetCloseProps) => {
-  const { setOpen } = React.useContext(SheetContext)
-
-  if (asChild && React.isValidElement(children)) {
-    const childProps = {
-      ...props,
-      onClick: (e: React.MouseEvent) => {
-        setOpen(false)
-
-        // Call original onClick if it exists
-        if (children.props.onClick) {
-          children.props.onClick(e)
-        }
-      },
-    }
-
-    return React.cloneElement(children, childProps)
-  }
-
-  return <Dialog.Close {...props}>{children}</Dialog.Close>
-}
-
 interface SheetContentProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog.Content>,
-    VariantProps<typeof sheetVariants> {
-  notOverlay?: boolean
-  hideCloseIcon?: boolean
-}
+  extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,
+    VariantProps<typeof sheetVariants> {}
 
-// Sheet Content
 const SheetContent = React.forwardRef<
-  React.ElementRef<typeof Dialog.Content>,
+  React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
->(
-  (
-    {
-      side = "right",
-      notOverlay,
-      className,
-      hideCloseIcon,
-      children,
-      ...props
-    },
-    ref
-  ) => {
-    const { setOpen } = React.useContext(SheetContext)
+>(({ side = "right", className, children, ...props }, ref) => (
+  <SheetPortal>
+    <SheetOverlay />
+    <SheetPrimitive.Content
+      ref={ref}
+      className={cn(sheetVariants({ side }), className)}
+      {...props}
+    >
+      <SheetPrimitive.Close className="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+        <X className="h-4 w-4" />
+        <span className="sr-only">Close</span>
+      </SheetPrimitive.Close>
+      {children}
+    </SheetPrimitive.Content>
+  </SheetPortal>
+))
+SheetContent.displayName = SheetPrimitive.Content.displayName
 
-    return (
-      <Dialog.Content
-        ref={ref}
-        className={cn(sheetVariants({ side }), className)}
-        overlayClassName={notOverlay ? "hidden" : undefined}
-        {...props}
-      >
-        {children}
-        {!hideCloseIcon && (
-          <button
-            type="button"
-            className="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary"
-            onClick={() => setOpen(false)}
-          >
-            <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
-          </button>
-        )}
-      </Dialog.Content>
-    )
-  }
-)
-SheetContent.displayName = "SheetContent"
-
-// Sheet Header
 const SheetHeader = ({
   className,
   ...props
@@ -180,7 +88,6 @@ const SheetHeader = ({
 )
 SheetHeader.displayName = "SheetHeader"
 
-// Sheet Footer
 const SheetFooter = ({
   className,
   ...props
@@ -195,34 +102,34 @@ const SheetFooter = ({
 )
 SheetFooter.displayName = "SheetFooter"
 
-// Sheet Title
 const SheetTitle = React.forwardRef<
-  React.ElementRef<typeof Dialog.Title>,
-  React.ComponentPropsWithoutRef<typeof Dialog.Title>
+  React.ElementRef<typeof SheetPrimitive.Title>,
+  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>
 >(({ className, ...props }, ref) => (
-  <Dialog.Title
+  <SheetPrimitive.Title
     ref={ref}
     className={cn("font-semibold text-foreground text-lg", className)}
     {...props}
   />
 ))
-SheetTitle.displayName = "SheetTitle"
+SheetTitle.displayName = SheetPrimitive.Title.displayName
 
-// Sheet Description
 const SheetDescription = React.forwardRef<
-  React.ElementRef<typeof Dialog.Description>,
-  React.ComponentPropsWithoutRef<typeof Dialog.Description>
+  React.ElementRef<typeof SheetPrimitive.Description>,
+  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description>
 >(({ className, ...props }, ref) => (
-  <Dialog.Description
+  <SheetPrimitive.Description
     ref={ref}
     className={cn("text-muted-foreground text-sm", className)}
     {...props}
   />
 ))
-SheetDescription.displayName = "SheetDescription"
+SheetDescription.displayName = SheetPrimitive.Description.displayName
 
 export {
   Sheet,
+  SheetPortal,
+  SheetOverlay,
   SheetTrigger,
   SheetClose,
   SheetContent,
