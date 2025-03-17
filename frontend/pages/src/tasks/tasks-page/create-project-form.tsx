@@ -91,7 +91,7 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
       <DialogTrigger>
         <Button>Create Project</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="border border-gray-4">
         <DialogHeader>
           <DialogTitle>Create New Project</DialogTitle>
           <DialogDescription>

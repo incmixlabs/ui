@@ -97,7 +97,7 @@ const ProfileSection: React.FC<{ user: UserProfile }> = ({ user }) => {
         <CurrentUserProfileImage size="8" editable />
         <Box ml="4">
           <Heading size="4" color="gray">
-            {user.name}
+            {user?.name}
           </Heading>
           <Text color="gray">{user.email}</Text>
         </Box>

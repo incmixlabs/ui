@@ -70,7 +70,7 @@
     --sidebar-secondary-header: 226 70% 55%;
     --sidebar-secondary-muted: 216 7% 57%;
     --sidebar-secondary-text: 218 8% 27%;
-    --sidebar-secondary-active: 240 7% 86%;
+    --sidebar-secondary-active: 226 66% 55%;
   }
 
   .dark {
@@ -122,7 +122,7 @@
     --sidebar-secondary-header: 0 0% 100%;
     --sidebar-secondary-muted: 216 7% 57%;
     --sidebar-secondary-text: 228 7% 73%;
-    --sidebar-secondary-active: 216 9% 23%;
+    --sidebar-secondary-active: 0 0% 93%;
   }
 }
 

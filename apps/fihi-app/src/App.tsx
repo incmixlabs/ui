@@ -27,6 +27,7 @@ const luxonLocale: Record<Language, string> = {
 import {
   DashboardRoute,
   EmailVerificationRoute,
+  FileManagerRoute,
   ForgotPasswordRoute,
   GoogleAuthCallbackRoute,
   IndexRoute,
@@ -72,6 +73,7 @@ const routeTree = RootRoute.addChildren([
   NotificationsRoute,
   NotFoundRoute,
   LoadingRoute,
+  FileManagerRoute,
   DashboardRoute,
   ListUsersRoute,
   TasksRoute,
