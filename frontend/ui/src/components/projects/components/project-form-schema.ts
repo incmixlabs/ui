@@ -1,23 +1,30 @@
 // frontend/ui/src/components/projects/components/project-form-schema.ts
 import { members } from "../data"
 
-import type { z } from "zod";
-import type { FieldConfig } from "@components/auto-form/types";
-import type { ZodObjectOrWrapped } from "@components/auto-form/utils";
+import type { FieldConfig } from "@components/auto-form/types"
+import type { ZodObjectOrWrapped } from "@components/auto-form/utils"
+import type { z } from "zod"
 
-export interface ProjectFormSchema<SchemaType extends ZodObjectOrWrapped = any> {
+export interface ProjectFormSchema<
+  SchemaType extends ZodObjectOrWrapped = any,
+> {
   formSchema: {
-    type: string;
-    properties: Record<string, any>;
-    required: string[];
-  };
-  fieldConfig: FieldConfig<z.infer<SchemaType>>;
+    type: string
+    properties: Record<string, any>
+    required: string[]
+  }
+  fieldConfig: FieldConfig<z.infer<SchemaType>>
 }
 
 export const projectFormSchema: ProjectFormSchema = {
   formSchema: {
     type: "object",
     properties: {
+      files: {
+        type: "string",
+        format: "data-url",
+        title: "Project Image",
+      },
       title: {
         type: "string",
         minLength: 1,
@@ -62,6 +69,15 @@ export const projectFormSchema: ProjectFormSchema = {
     required: ["title", "company", "description"],
   },
   fieldConfig: {
+    files: {
+      description: "Project Image",
+      fieldType: "file",
+      inputProps: {
+        accept: "image/*",
+        className: "w-full",
+        showLabel: false,
+      },
+    },
     title: {
       description: "Project Name",
       inputProps: {
@@ -79,7 +95,6 @@ export const projectFormSchema: ProjectFormSchema = {
       fieldType: "textarea",
       inputProps: {
         placeholder: "Create a mobile application on iOS and Android devices.",
-
       },
     },
     startDate: {
@@ -87,7 +102,6 @@ export const projectFormSchema: ProjectFormSchema = {
       fieldType: "date",
       inputProps: {
         placeholder: "Mar 5, 2025, 2:45 AM",
-
         className: "w-full",
       },
     },
@@ -96,7 +110,6 @@ export const projectFormSchema: ProjectFormSchema = {
       fieldType: "date",
       inputProps: {
         placeholder: "Mar 6, 2025, 2:45 AM",
-
         className: "w-full",
       },
     },
@@ -108,7 +121,6 @@ export const projectFormSchema: ProjectFormSchema = {
         placeholder: "Select members",
         defaultColor: "gray",
         className: "border-1 dark:bg-gray-1",
-
       },
     },
     budget: {
@@ -120,5 +132,15 @@ export const projectFormSchema: ProjectFormSchema = {
         className: "pl-8",
       },
     },
+
+    // field groups configuration
+    fieldGroups: [
+      {
+        fields: ["startDate", "endDate"],
+        layout: "row",
+        gap: 4,
+        className: "mb-4",
+      },
+    ] as any,
   },
-};
+}

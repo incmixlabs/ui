@@ -1,12 +1,12 @@
+import AutoForm from "@components/auto-form"
+import { Button, Dialog } from "@radix-ui/themes"
+import jsonSchemaToZod from "json-schema-to-zod"
 // frontend/ui/src/components/projects/components/add-project-auto-form.tsx
 import { useState } from "react"
 import { z } from "zod"
-import { Button, Dialog } from "@radix-ui/themes"
-import jsonSchemaToZod from "json-schema-to-zod"
-import AutoForm from "@components/auto-form"
-import { projectFormSchema } from "./project-form-schema"
-import type { Project } from "../types"
 import { ProjectsImages } from "../images"
+import type { Project } from "../types"
+import { projectFormSchema } from "./project-form-schema"
 
 interface AddProjectAutoFormProps {
   isOpen: boolean
@@ -58,10 +58,15 @@ export function AddProjectAutoForm({
       timeType: "week", // Default timeType
       members: data.members || [],
       status: "started", // Default status
-      startDate: data.startDate ? new Date(data.startDate).getTime() : undefined,
+      startDate: data.startDate
+        ? new Date(data.startDate).getTime()
+        : undefined,
       endDate: data.endDate ? new Date(data.endDate).getTime() : undefined,
       budget: data.budget ? Number.parseFloat(data.budget) : undefined,
-      files: data.files && data.files.length > 0 ? URL.createObjectURL(data.files[0]) : undefined,
+      files:
+        data.files && data.files.length > 0
+          ? URL.createObjectURL(data.files[0])
+          : undefined,
     }
     console.log("newProject", newProject)
     onAddProject(newProject)
@@ -87,10 +92,7 @@ export function AddProjectAutoForm({
               fieldConfig={projectFormSchema.fieldConfig}
             >
               <div className="mt-4 flex justify-end">
-                <Button
-                  type="submit"
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
+                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
                   Create
                 </Button>
               </div>

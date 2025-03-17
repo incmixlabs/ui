@@ -14,13 +14,13 @@ import { LayoutGrid, List, Plus, SlidersHorizontal, X } from "lucide-react"
 import { motion } from "motion/react"
 import { useQueryState } from "nuqs"
 import { MotionSheet } from "../custom-sheet"
+import { AddProjectAutoForm } from "./components/add-project-auto-form"
 import { AddProjectModal } from "./components/add-project-modal"
 import { ProjectCard } from "./components/project-card"
 import ProjectDrawer from "./components/project-drawer"
 import { ProjectFilter } from "./components/project-filter"
 import { projects as initialProjects } from "./data"
 import type { Project } from "./types"
-import { AddProjectAutoForm } from "./components/add-project-auto-form"
 
 export function ProjectPageComponents() {
   const [projectId, setProjectId] = useQueryState("projectId", {

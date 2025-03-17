@@ -1,5 +1,5 @@
 import type { DefaultValues } from "react-hook-form"
-import  { z } from "zod"
+import { z } from "zod"
 
 // TODO: This should support recursive ZodEffects but TypeScript doesn't allow circular type definitions.
 export type ZodObjectOrWrapped =
@@ -146,23 +146,22 @@ export function zodToHtmlInputProps(
 
 // Add this to your utils.ts file - it helps determine if an array schema should use multipleSelector
 export function isMultipleSelectorType(zodItem: z.ZodTypeAny): boolean {
-  if (!(zodItem instanceof z.ZodArray)) return false;
+  if (!(zodItem instanceof z.ZodArray)) return false
 
-  const innerType = zodItem._def.type;
+  const innerType = zodItem._def.type
 
   // Check if it's an array of objects that look like options
   try {
     if (innerType instanceof z.ZodObject) {
-      const shape = innerType.shape;
+      const shape = innerType.shape
       return (
-        shape.label instanceof z.ZodString &&
-        shape.value instanceof z.ZodString
-      );
+        shape.label instanceof z.ZodString && shape.value instanceof z.ZodString
+      )
     }
-  } catch (e) {
+  } catch (_e) {
     // If any error in type checking, it's not a MultipleSelector type
-    return false;
+    return false
   }
 
-  return false;
+  return false
 }
