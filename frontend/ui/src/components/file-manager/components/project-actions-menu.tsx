@@ -1,15 +1,21 @@
-
-import { Copy, Download, Link, MoreHorizontal, Pencil, Share, Trash2, FolderUp } from "lucide-react"
+import {
+  Copy,
+  Download,
+  FolderUp,
+  Link,
+  MoreHorizontal,
+  Pencil,
+  Share,
+  Trash2,
+} from "lucide-react"
 
 import { Button, DropdownMenu } from "@radix-ui/themes"
 
 interface FileActionsMenuProps {
-  fileId: string
+  fileId: string | undefined
 }
 
 export function FileActionsMenu({ fileId }: FileActionsMenuProps) {
-
-
   const handleShare = () => {
     // toast({
     //   title: "Sharing options",
@@ -64,13 +70,13 @@ export function FileActionsMenu({ fileId }: FileActionsMenuProps) {
 
   return (
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger >
+      <DropdownMenu.Trigger className="cursor-pointer">
         <Button variant="ghost">
           <MoreHorizontal className="h-4 w-4" />
           <span className="sr-only">More options</span>
         </Button>
       </DropdownMenu.Trigger>
-      <DropdownMenu.Content align="end">
+      <DropdownMenu.Content align="end" className="w-48">
         <DropdownMenu.Item onClick={handleShare}>
           <Share className="mr-2 h-4 w-4" />
           <span>Share</span>
@@ -98,7 +104,7 @@ export function FileActionsMenu({ fileId }: FileActionsMenuProps) {
           <span>Move</span>
         </DropdownMenu.Item>
         <DropdownMenu.Separator />
-        <DropdownMenu.Item onClick={handleDelete} className="text-destructive focus:text-destructive">
+        <DropdownMenu.Item onClick={handleDelete} color="red">
           <Trash2 className="mr-2 h-4 w-4" />
           <span>Delete</span>
         </DropdownMenu.Item>
@@ -106,4 +112,3 @@ export function FileActionsMenu({ fileId }: FileActionsMenuProps) {
     </DropdownMenu.Root>
   )
 }
-
