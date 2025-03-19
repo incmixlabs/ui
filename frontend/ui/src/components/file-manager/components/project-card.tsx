@@ -2,21 +2,21 @@ import { Box, Card, Flex } from "@radix-ui/themes"
 import { cn } from "@utils"
 import type { ElementType } from "react"
 import type { FileItem } from "../data"
-import { FileActionsMenu } from "./project-actions-menu"
+import { ProjectActionsMenu } from "./project-actions-menu"
 
-interface FileCardProps {
+interface ProjectCardProps {
   file: FileItem
   onClick: () => void
-  viewMode: "grid" | "list"
+  viewMode: "grid" | "list" | "column"
   isSelected?: boolean
 }
 
-export default function FileCard({
+export default function ProjectCard({
   file,
   onClick,
   viewMode,
   isSelected = false,
-}: FileCardProps) {
+}: ProjectCardProps) {
   const IconComponent: ElementType | undefined = isSelected
     ? file.openIcon
     : file.closeIcon
@@ -49,12 +49,19 @@ export default function FileCard({
         </Box>
 
         <Box className={`${viewMode === "grid" ? "text-center" : "flex-1"}`}>
-          <h3 className="truncate font-medium">{file.name}</h3>
+          <h3
+            className={cn(
+              "truncate font-medium",
+              viewMode === "grid" ? "text-center" : ""
+            )}
+          >
+            {file.name}
+          </h3>
           {viewMode === "list" && (
             <Flex
               align={"center"}
               gap={"4"}
-              className="text-muted-foreground text-sm"
+              className="text-muted-foreground text-sm "
             >
               <span>{file.modified}</span>
               <span>
@@ -65,6 +72,7 @@ export default function FileCard({
           {viewMode === "grid" && (
             <Flex
               align={"center"}
+              justify={"center"}
               gap={"4"}
               className="mt-1 text-muted-foreground text-sm"
             >
@@ -77,7 +85,10 @@ export default function FileCard({
         className="absolute top-3 right-5 opacity-0 transition-opacity group-hover:opacity-100"
         onClick={(e) => e.stopPropagation()}
       >
-        <FileActionsMenu fileId={file.id} />
+        <ProjectActionsMenu
+          projectId={file.id}
+          className="h-6 w-6 cursor-pointer bg-sidebar-secondary-active/20 dark:bg-sidebar-secondary-active/20 dark:text-white "
+        />
       </Box>
     </Box>
   )

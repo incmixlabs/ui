@@ -10,12 +10,17 @@ import {
 } from "lucide-react"
 
 import { Button, DropdownMenu } from "@radix-ui/themes"
+import { cn } from "@utils"
 
-interface FileActionsMenuProps {
-  fileId: string | undefined
+interface ProjectActionsMenuProps {
+  projectId: string | undefined
+  className?: string
 }
 
-export function FileActionsMenu({ fileId }: FileActionsMenuProps) {
+export function ProjectActionsMenu({
+  projectId,
+  className,
+}: ProjectActionsMenuProps) {
   const handleShare = () => {
     // toast({
     //   title: "Sharing options",
@@ -25,7 +30,7 @@ export function FileActionsMenu({ fileId }: FileActionsMenuProps) {
 
   const handleSharingLink = () => {
     // Simulate copying link to clipboard
-    navigator.clipboard.writeText(`https://example.com/files/${fileId}`)
+    navigator.clipboard.writeText(`https://example.com/files/${projectId}`)
     // toast({
     //   title: "Link copied",
     //   description: "Sharing link copied to clipboard",
@@ -70,7 +75,7 @@ export function FileActionsMenu({ fileId }: FileActionsMenuProps) {
 
   return (
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger className="cursor-pointer">
+      <DropdownMenu.Trigger className={cn("cursor-pointer", className)}>
         <Button variant="ghost">
           <MoreHorizontal className="h-4 w-4" />
           <span className="sr-only">More options</span>

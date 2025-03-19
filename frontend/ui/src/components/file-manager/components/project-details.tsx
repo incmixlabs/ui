@@ -3,14 +3,14 @@ import { Flex, Tabs } from "@radix-ui/themes"
 import { Button, IconButton, Switch } from "@radix-ui/themes"
 import { X } from "lucide-react"
 import { projectFolders } from "../data"
-import { FileActionsMenu } from "./project-actions-menu"
+import { ProjectActionsMenu } from "./project-actions-menu"
 
-interface FileDetailsProps {
+interface ProjectDetailsProps {
   projectId: string
   onClose: () => void
 }
 
-export function FileDetails({ projectId, onClose }: FileDetailsProps) {
+export function ProjectDetails({ projectId, onClose }: ProjectDetailsProps) {
   const fileData = projectFolders.find((file) => file.id === projectId)
 
   return (
@@ -24,8 +24,15 @@ export function FileDetails({ projectId, onClose }: FileDetailsProps) {
           <h2 className="truncate font-semibold text-lg">{fileData?.name}</h2>
         </Flex>
         <Flex align={"center"} gap={"2"}>
-          <FileActionsMenu fileId={fileData?.id} />
-          <IconButton variant="ghost" onClick={onClose}>
+          <ProjectActionsMenu
+            projectId={fileData?.id}
+            className="h-6 w-6 cursor-pointer"
+          />
+          <IconButton
+            variant="ghost"
+            className="h-6 w-6 cursor-pointer"
+            onClick={onClose}
+          >
             <X className="h-4 w-4" />
           </IconButton>
         </Flex>

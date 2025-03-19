@@ -1,19 +1,40 @@
-export const FilterIcon = (
-  props: React.SVGProps<SVGSVGElement> & { size?: number }
-) => (
+import type * as React from "react"
+
+export const FilterIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
   <svg
-    {...props}
-    width={props.size ?? 24}
-    height={props.size ?? 24}
-    viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
-    preserveAspectRatio="xMidYMid meet"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    {...props} // ✅ spreads props like className, style, onClick, etc.
   >
-    <title>Filter Icon</title>
+    <title id="filterIconTitle">Filter icon</title>
     <path
-      fillRule="evenodd"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.5"
+      d="M9.113 4.938h4.2"
+    />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.5"
+      d="M2.667 4.964A1.57 1.57 0 0 0 4.24 6.528c.87 0 1.576-.7 1.576-1.564A1.57 1.57 0 0 0 4.241 3.4c-.87 0-1.574.7-1.574 1.564"
       clipRule="evenodd"
-      d="M2.75 12.5153C2.33579 12.5153 2 12.8569 2 13.2783C2 13.6997 2.33579 14.0414 2.75 14.0414H8.38888C8.8031 14.0414 9.13888 13.6997 9.13888 13.2783C9.13888 12.8569 8.8031 12.5153 8.38888 12.5153H2.75ZM17.2492 14.0414H12.3607V15.737C12.3607 16.1584 12.0249 16.5 11.6107 16.5C11.1965 16.5 10.8607 16.1584 10.8607 15.737V13.3024C10.8605 13.2944 10.8604 13.2864 10.8604 13.2783C10.8604 13.2703 10.8605 13.2622 10.8607 13.2542V10.8196C10.8607 10.3981 11.1965 10.0565 11.6107 10.0565C12.0249 10.0565 12.3607 10.3981 12.3607 10.8196V12.5153H17.2492C17.6634 12.5153 17.9992 12.8569 17.9992 13.2783C17.9992 13.6997 17.6634 14.0414 17.2492 14.0414ZM9.25 6.72167C9.25 6.30026 9.58579 5.95863 10 5.95863H17.25C17.6642 5.95863 18 6.30026 18 6.72167C18 7.14309 17.6642 7.48472 17.25 7.48472H10C9.58579 7.48472 9.25 7.14309 9.25 6.72167ZM2.75 5.95863C2.33579 5.95863 2 6.30026 2 6.72167C2 7.14309 2.33579 7.48472 2.75 7.48472H6.02734V9.18045C6.02734 9.60186 6.36313 9.94349 6.77734 9.94349C7.19156 9.94349 7.52734 9.60186 7.52734 9.18045V6.74778C7.52763 6.73911 7.52777 6.73041 7.52777 6.72167C7.52777 6.71294 7.52763 6.70424 7.52734 6.69557V4.26305C7.52734 3.84163 7.19156 3.5 6.77734 3.5C6.36313 3.5 6.02734 3.84163 6.02734 4.26305V5.95863H2.75Z"
+    />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.5"
+      d="M7.24 11.4H3.039"
+    />
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="1.5"
+      d="M10.182 11.436A1.57 1.57 0 0 0 11.758 13c.87 0 1.575-.7 1.575-1.564a1.57 1.57 0 0 0-1.575-1.564c-.87 0-1.576.7-1.576 1.564"
+      clipRule="evenodd"
     />
   </svg>
 )

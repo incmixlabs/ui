@@ -101,6 +101,7 @@ export const incmixTailwindPreset: Config = {
         card: {
           DEFAULT: colors.alias("gray.1"),
           foreground: colors.alias("gray.12"),
+          "file-background": "hsl(var(--file-card-background))",
         },
 
         popover: {
