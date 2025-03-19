@@ -26,7 +26,7 @@ import ProjectDetails from "./project-detials"
 
 export default function ProjectDrawer({
   listFilter,
-  listFilterClassName = "w-full h-[84vh] relative z-50 h-[80vh] shrink-0 rounded-xl",
+  listFilterClassName = "w-full relative z-50 h-[84vh] shrink-0 rounded-xl",
 }: {
   listFilter?: boolean
   listFilterClassName?: string
