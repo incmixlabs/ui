@@ -140,6 +140,7 @@ export default function TaskCardDrawer({
         onOpenChange={handleDrawerClose}
         showCloseButton={false}
         side="right"
+        isFilterClassName="relative z-50 h-[80vh] shrink-0 rounded-xl"
         isFilter={kanbanFilter}
         className="w-[53rem] p-0 "
       >

@@ -1,3 +1,4 @@
+import { useMediaQuery } from "@hooks/use-media-query"
 import { Box, Card, Flex } from "@radix-ui/themes"
 import { cn } from "@utils"
 import type { ElementType } from "react"
@@ -17,13 +18,15 @@ export default function ProjectCard({
   viewMode,
   isSelected = false,
 }: ProjectCardProps) {
+  const isTabet = useMediaQuery("(min-width: 768px)")
+
   const IconComponent: ElementType | undefined = isSelected
     ? file.openIcon
     : file.closeIcon
   return (
     <Box
       className={cn(
-        "group aspect relative cursor-pointer overflow-hidden rounded-md border border-gray-1 hover:border-sidebar-secondary-active/30 hover:bg-sidebar-secondary-active/5",
+        "group aspect relative cursor-pointer overflow-hidden rounded-md border border-gray-5 hover:border-sidebar-secondary-active/30 hover:bg-sidebar-secondary-active/5 md:border-gray-1",
         viewMode === "grid"
           ? "flex flex-col items-center py-10 "
           : "flex items-center p-3 ",
@@ -81,15 +84,17 @@ export default function ProjectCard({
           )}
         </Box>
       </Box>
-      <Box
-        className="absolute top-3 right-5 opacity-0 transition-opacity group-hover:opacity-100"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <ProjectActionsMenu
-          projectId={file.id}
-          className="h-6 w-6 cursor-pointer bg-sidebar-secondary-active/20 dark:bg-sidebar-secondary-active/20 dark:text-white "
-        />
-      </Box>
+      {isTabet && (
+        <Box
+          className="absolute top-3 right-5 opacity-0 transition-opacity group-hover:opacity-100"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <ProjectActionsMenu
+            projectId={file.id}
+            className="h-6 w-6 cursor-pointer bg-sidebar-secondary-active/20 dark:bg-sidebar-secondary-active/20 dark:text-white "
+          />
+        </Box>
+      )}
     </Box>
   )
 }

@@ -7,6 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@components/table"
+import { useMediaQuery } from "@hooks/use-media-query"
 import { ScrollArea } from "@radix-ui/themes"
 import { cn } from "@utils"
 import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react"
@@ -28,6 +29,8 @@ export function ProjectListView({
   onFileClick,
   selectedProjectId,
 }: ProjectListViewProps) {
+  const isMobile = useMediaQuery("(min-width: 640px)")
+
   const [sortField, setSortField] = useState<SortField>("name")
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc")
   const [selectedFiles, setSelectedFiles] = useState<string[]>([])
@@ -93,7 +96,7 @@ export function ProjectListView({
       <Table className="w-full overflow-hidden">
         <TableHeader className="bg-gray-3">
           <TableRow className="border-gray-5 ">
-            <TableHead className="w-12">
+            <TableHead className="w-8 md:w-12">
               <Checkbox
                 checked={
                   selectedFiles.length === files.length && files.length > 0
@@ -115,23 +118,31 @@ export function ProjectListView({
                 Files {getSortIcon("name")}
               </div>
             </TableHead>
-            <TableHead
-              className="cursor-pointer text-right"
-              onClick={() => handleSort("modified")}
-            >
-              <div className="flex items-center justify-end gap-2">
-                Date {getSortIcon("modified")}
-              </div>
+            {isMobile && (
+              <>
+                <TableHead
+                  className="cursor-pointer text-right"
+                  onClick={() => handleSort("modified")}
+                >
+                  <div className="flex items-center justify-end gap-2">
+                    Date {getSortIcon("modified")}
+                  </div>
+                </TableHead>
+
+                <TableHead
+                  className="cursor-pointer text-right"
+                  onClick={() => handleSort("size")}
+                >
+                  <div className="flex items-center justify-end gap-2">
+                    Size {getSortIcon("size")}
+                  </div>
+                </TableHead>
+              </>
+            )}
+
+            <TableHead className="w-10 text-right md:w-20 lg:w-32">
+              Action
             </TableHead>
-            <TableHead
-              className="cursor-pointer text-right"
-              onClick={() => handleSort("size")}
-            >
-              <div className="flex items-center justify-end gap-2">
-                Size {getSortIcon("size")}
-              </div>
-            </TableHead>
-            <TableHead className="w-32 text-right">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className="px-2">
@@ -152,7 +163,7 @@ export function ProjectListView({
                 onClick={() => onFileClick(file)}
               >
                 <TableCell
-                  className="w-12 px-2"
+                  className="w-8 px-2 md:w-12"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <Checkbox
@@ -180,19 +191,24 @@ export function ProjectListView({
                     <span className="font-medium">{file.name}</span>
                   </div>
                 </TableCell>
-                <TableCell className="text-right text-muted-foreground">
-                  {file.modified}
-                </TableCell>
-                <TableCell className="text-right text-muted-foreground">
-                  {file.size.value} {file.size.unit}
-                </TableCell>
+                {isMobile && (
+                  <>
+                    <TableCell className="text-right text-muted-foreground">
+                      {file.modified}
+                    </TableCell>
+                    <TableCell className="text-right text-muted-foreground">
+                      {file.size.value} {file.size.unit}
+                    </TableCell>
+                  </>
+                )}
+
                 <TableCell
-                  className="w-32 text-right"
+                  className="w-10 text-right md:w-20 lg:w-32"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <ProjectActionsMenu
                     projectId={file?.id}
-                    className="mr-2 h-6 w-6 cursor-pointer"
+                    className="mr-1 h-5 w-5 cursor-pointer sm:mr-2 sm:h-6 sm:w-6"
                   />
                 </TableCell>
               </TableRow>

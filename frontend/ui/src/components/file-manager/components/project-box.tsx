@@ -1,6 +1,8 @@
 import { Input } from "@components/form"
 import { FilterIcon } from "@components/icons/filter"
 
+import { MotionSheet } from "@components/custom-sheet"
+import { useMediaQuery } from "@hooks/use-media-query"
 import { Box, Button, DropdownMenu, Flex, IconButton } from "@radix-ui/themes"
 import { cn } from "@utils"
 import {
@@ -23,6 +25,8 @@ interface FileGridProps {
   title: string
 }
 const ProjectBox = ({ title }: FileGridProps) => {
+  const isDesktop = useMediaQuery("(min-width: 1536px)")
+  const isMobile = useMediaQuery("(min-width: 640px)")
   const [selectedProjectId, setSelectedProjectId] = useQueryState("projectId", {
     defaultValue: "",
   })
@@ -105,17 +109,19 @@ const ProjectBox = ({ title }: FileGridProps) => {
           <span>File Manager</span> /{" "}
           <span className="text-blue-10">{title}</span>
         </Flex>
-        <Box className="p-8 ">
+        <Box className="p-4 sm:p-8 ">
           <Flex align={"center"} justify={"between"} className="mb-4 gap-4 ">
-            <Box className="relative flex h-11 w-full items-center rounded-md bg-gray-3">
-              <Search className="ml-3 h-5 w-5 text-gray-10" />
-              <Input
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="absolute top-0 left-0 h-full w-full rounded-md bg-transparent pl-10"
-              />
-            </Box>
+            {isMobile && (
+              <Box className="relative flex h-11 w-full items-center rounded-md bg-gray-3">
+                <Search className="ml-3 h-5 w-5 text-gray-10" />
+                <Input
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="absolute top-0 left-0 h-full w-full rounded-md bg-transparent pl-10"
+                />
+              </Box>
+            )}
             <Button variant="solid" className="h-11">
               <Plus /> Add Folder
             </Button>
@@ -124,7 +130,7 @@ const ProjectBox = ({ title }: FileGridProps) => {
             </Button>
           </Flex>
           <Flex align={"center"} justify={"between"} className="mb-4">
-            <h2 className="font-semibold text-2xl">{title}</h2>
+            <h2 className="font-semibold text-xl sm:text-2xl">{title}</h2>
             <Flex align={"center"} gap={"2"}>
               <Flex
                 align={"center"}
@@ -132,13 +138,13 @@ const ProjectBox = ({ title }: FileGridProps) => {
                 gap={"2"}
                 className="w-full"
               >
-                <Box className="relative flex h-9 w-64 items-center">
+                <Box className="relative flex h-9 w-10 cursor-pointer items-center rounded-lg border border-gray-5 md:w-64 md:cursor-default md:border-none">
                   <Search className="ml-2 h-5 w-5 text-gray-10" />
                   <Input
                     placeholder="Search files..."
                     value={projectSearchQuery}
                     onChange={(e) => setProjectSearchQuery(e.target.value)}
-                    className="absolute top-0 left-0 h-full w-full bg-transparent pl-8"
+                    className="absolute top-0 left-0 hidden h-full w-full bg-transparent md:block md:pl-8"
                   />
                 </Box>
                 <Box className="h-9 w-9 rounded-md border border-gray-5">
@@ -179,17 +185,19 @@ const ProjectBox = ({ title }: FileGridProps) => {
                 >
                   <LayoutGrid className={cn("h-5 w-5")} />
                 </IconButton>
-                <IconButton
-                  className={cn(
-                    " h-7 cursor-pointer border-none",
-                    viewMode === "side"
-                      ? "bg-sidebar-secondary-active dark:bg-sidebar-secondary-active/20 "
-                      : "bg-transparent text-gray-10"
-                  )}
-                  onClick={() => setViewMode("side")}
-                >
-                  <Columns2 className={cn("h-5 w-5")} />
-                </IconButton>
+                {isMobile && (
+                  <IconButton
+                    className={cn(
+                      " h-7 cursor-pointer border-none",
+                      viewMode === "side"
+                        ? "bg-sidebar-secondary-active dark:bg-sidebar-secondary-active/20 "
+                        : "bg-transparent text-gray-10"
+                    )}
+                    onClick={() => setViewMode("side")}
+                  >
+                    <Columns2 className={cn("h-5 w-5")} />
+                  </IconButton>
+                )}
               </Flex>
             </Flex>
           </Flex>
@@ -209,9 +217,9 @@ const ProjectBox = ({ title }: FileGridProps) => {
                 {viewMode === "grid" ? (
                   <Box
                     className={`grid pb-10 ${
-                      !selectedProjectId
+                      !selectedProjectId && isDesktop
                         ? "grid-cols-3 gap-5 2xl:grid-cols-4"
-                        : "grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3"
+                        : "grid-cols-2 gap-5 sm:grid-cols-2 md:grid-cols-3"
                     } gap-4 border-gray-5 border-t pt-5`}
                   >
                     {currentItems.map((item) => (
@@ -244,6 +252,16 @@ const ProjectBox = ({ title }: FileGridProps) => {
               gap="2"
               className="border-gray-5 border-t py-8"
             >
+              {!isMobile && (
+                <Box className="w-full font-medium">
+                  <span>
+                    Page{" "}
+                    <span className="font-semibold italic">{currentPage}</span>{" "}
+                    of {totalPages}
+                  </span>
+                </Box>
+              )}
+
               <Button
                 onClick={() => currentPage > 1 && paginate(currentPage - 1)}
                 variant={currentPage === 1 ? "outline" : "solid"}
@@ -255,26 +273,28 @@ const ProjectBox = ({ title }: FileGridProps) => {
                 <ChevronLeft className="h-4 w-4" />
                 Previous
               </Button>
-              <Flex gap="2" align={"center"}>
-                {getPageNumbers().map((page, index) =>
-                  page === "ellipsis1" || page === "ellipsis2" ? (
-                    <span key={`ellipsis-${page}-${index}`} className="px-2">
-                      ...
-                    </span>
-                  ) : (
-                    <Button
-                      key={page}
-                      variant={currentPage === page ? "solid" : "outline"}
-                      onClick={() => paginate(page as number)}
-                      className={
-                        "flex h-8 w-8 cursor-pointer items-center justify-center rounded-md font-medium text-sm transition-colors"
-                      }
-                    >
-                      {page}
-                    </Button>
-                  )
-                )}
-              </Flex>
+              {isMobile && (
+                <Flex gap="2" align={"center"}>
+                  {getPageNumbers().map((page, index) =>
+                    page === "ellipsis1" || page === "ellipsis2" ? (
+                      <span key={`ellipsis-${page}-${index}`} className="px-2">
+                        ...
+                      </span>
+                    ) : (
+                      <Button
+                        key={page}
+                        variant={currentPage === page ? "solid" : "outline"}
+                        onClick={() => paginate(page as number)}
+                        className={
+                          "flex h-8 w-8 cursor-pointer items-center justify-center rounded-md font-medium text-sm transition-colors"
+                        }
+                      >
+                        {page}
+                      </Button>
+                    )
+                  )}
+                </Flex>
+              )}
 
               <Button
                 onClick={() =>
@@ -293,10 +313,19 @@ const ProjectBox = ({ title }: FileGridProps) => {
           )}
         </Box>
       </Box>
-      {selectedProjectId && (
+      <MotionSheet
+        open={Boolean(selectedProjectId)}
+        onOpenChange={handleCloseDetails}
+        showCloseButton={false}
+        side="right"
+        isFilterClassName={"w-80 h-full"}
+        isFilter={Boolean(isDesktop)}
+        className="w-80 p-0 "
+        shadow="0 0 10px rgba(0, 0, 0, 0)"
+      >
         <Box
           className={cn(
-            "slide-in-from-right w-80 animate-in rounded-md border border-gray-4"
+            "slide-in-from-right h-full w-full animate-in rounded-md border border-gray-4"
           )}
         >
           <ProjectDetails
@@ -304,7 +333,7 @@ const ProjectBox = ({ title }: FileGridProps) => {
             onClose={handleCloseDetails}
           />
         </Box>
-      )}
+      </MotionSheet>
     </Flex>
   )
 }
