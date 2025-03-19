@@ -12,10 +12,11 @@ import { cn } from "@utils"
 import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react"
 import { useState } from "react"
 import { ProjectActionsMenu } from "./project-actions-menu"
+import { FileItem } from "../data"
 
 interface ProjectListViewProps {
-  files: any[]
-  onFileClick: (file: any) => void
+  files: FileItem[]
+  onFileClick: (file: FileItem) => void
   selectedProjectId: string | null
 }
 
@@ -67,15 +68,6 @@ export function ProjectListView({
     return sortDirection === "asc" ? comparison : -comparison
   })
 
-  const _toggleSelectFile = (fileId: string, e: React.MouseEvent) => {
-    e.stopPropagation()
-    setSelectedFiles((prev) =>
-      prev.includes(fileId)
-        ? prev.filter((id) => id !== fileId)
-        : [...prev, fileId]
-    )
-  }
-
   const toggleSelectAll = () => {
     if (selectedFiles.length === files.length) {
       setSelectedFiles([])
@@ -106,6 +98,7 @@ export function ProjectListView({
                 checked={
                   selectedFiles.length === files.length && files.length > 0
                 }
+                // @ts-ignore
                 indeterminate={
                   selectedFiles.length > 0 &&
                   selectedFiles.length < files.length
@@ -144,7 +137,9 @@ export function ProjectListView({
         <TableBody className="px-2">
           {sortedFiles.map((file) => {
             const IconComponent =
-              selectedProjectId === file.id ? file.openIcon : file.closeIcon
+              selectedProjectId === file.id
+                ? (file.openIcon || null)
+                : (file.closeIcon || null)
 
             return (
               <TableRow

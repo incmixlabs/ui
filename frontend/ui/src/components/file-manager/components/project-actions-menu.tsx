@@ -29,12 +29,20 @@ export function ProjectActionsMenu({
   }
 
   const handleSharingLink = () => {
-    // Simulate copying link to clipboard
-    navigator.clipboard.writeText(`https://example.com/files/${projectId}`)
-    // toast({
-    //   title: "Link copied",
-    //   description: "Sharing link copied to clipboard",
-    // })
+    try {
+      // Simulate copying link to clipboard
+      navigator.clipboard.writeText(`https://example.com/files/${projectId}`)
+      // toast({
+      //   title: "Link copied",
+      //   description: "Sharing link copied to clipboard",
+      // })
+    } catch (error) {
+      // toast({
+      //   title: "Error",
+      //   description: "Failed to copy link to clipboard",
+      //   variant: "destructive",
+      // })
+    }
   }
 
   const handleDownload = () => {

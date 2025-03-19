@@ -12,6 +12,14 @@ interface ProjectDetailsProps {
 
 export function ProjectDetails({ projectId, onClose }: ProjectDetailsProps) {
   const fileData = projectFolders.find((file) => file.id === projectId)
+  if (!fileData) {
+    return (
+      <Flex className="h-full items-center justify-center" direction="column">
+        <p className="text-muted-foreground">Project not found</p>
+        <Button onClick={onClose} className="mt-4">Close</Button>
+      </Flex>
+    )
+  }
 
   return (
     <Flex className="h-full" direction="column">
@@ -91,7 +99,7 @@ export function ProjectDetails({ projectId, onClose }: ProjectDetailsProps) {
                 <div className="flex justify-between gap-2 text-sm">
                   <div className="text-muted-foreground">Size</div>
                   <div className="font-medium">
-                    {fileData?.size?.value} {fileData?.size?.unit}
+                  {fileData?.size ? `${fileData.size.value} ${fileData.size.unit}` : 'N/A'}
                   </div>
                 </div>
                 <div className="flex justify-between gap-2 text-sm">

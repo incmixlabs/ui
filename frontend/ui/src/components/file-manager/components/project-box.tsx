@@ -1,34 +1,20 @@
 import { Input } from "@components/form"
 import { FilterIcon } from "@components/icons/filter"
-import { GridIcon } from "@components/icons/grid"
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@components/pagination"
+
 import { Box, Button, DropdownMenu, Flex, IconButton } from "@radix-ui/themes"
 import { cn } from "@utils"
 import {
-  BookmarkIcon,
   ChevronLeft,
-  ChevronRight,
   Columns2,
-  Filter,
-  Grid3X3,
   LayoutGrid,
   List,
   Plus,
   Search,
-  SlidersHorizontal,
   Upload,
 } from "lucide-react"
 import { useQueryState } from "nuqs"
 import { type SetStateAction, useState } from "react"
-import { type FileItem, ITEMS_PER_PAGE, projectFolders } from "../data"
+import { type FileItem, projectFolders } from "../data"
 import ProjectCard from "./project-card"
 import { ProjectDetails } from "./project-details"
 import { ProjectListView } from "./project-list"
@@ -40,8 +26,9 @@ const ProjectBox = ({ title }: FileGridProps) => {
   const [selectedProjectId, setSelectedProjectId] = useQueryState("projectId", {
     defaultValue: "",
   })
-  const [viewMode, setViewMode] = useState<"grid" | "list" | "column">("grid")
+  const [viewMode, setViewMode] = useState<"grid" | "list" | "side">("grid")
   const [searchQuery, setSearchQuery] = useState("")
+  const [projectSearchQuery, setProjectSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
 
   const itemsPerPage = 6
@@ -93,7 +80,7 @@ const ProjectBox = ({ title }: FileGridProps) => {
     return pageNumbers
   }
 
-  const handleFileClick = (file) => {
+  const handleFileClick = (file: FileItem) => {
     setSelectedProjectId(file.id === selectedProjectId ? null : file.id)
   }
   const handleCloseDetails = () => {
@@ -107,7 +94,7 @@ const ProjectBox = ({ title }: FileGridProps) => {
           className="border-gray-5 border-b px-8 py-4 font-medium text-gray-10"
           gap={"1"}
         >
-          <IconButton className="rouned-full mr-2 h-6 w-6">
+          <IconButton className="rouned-full mr-2 h-6 w-6" onClick={() => {/* Add navigation logic here */}}>
             <ChevronLeft />
           </IconButton>
           <span>File Manager</span> /{" "}
@@ -144,8 +131,8 @@ const ProjectBox = ({ title }: FileGridProps) => {
                   <Search className="ml-2 h-5 w-5 text-gray-10" />
                   <Input
                     placeholder="Search files..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    value={projectSearchQuery}
+                    onChange={(e) => setProjectSearchQuery(e.target.value)}
                     className="absolute top-0 left-0 h-full w-full bg-transparent pl-8"
                   />
                 </Box>
@@ -190,11 +177,11 @@ const ProjectBox = ({ title }: FileGridProps) => {
                 <IconButton
                   className={cn(
                     " h-7 cursor-pointer border-none",
-                    viewMode === "column"
+                    viewMode === "side"
                       ? "bg-sidebar-secondary-active dark:bg-sidebar-secondary-active/20 "
                       : "bg-transparent text-gray-10"
                   )}
-                  // onClick={() => setViewMode("grid")}
+                  onClick={() => setViewMode("side")}
                 >
                   <Columns2 className={cn("h-5 w-5")} />
                 </IconButton>
@@ -266,14 +253,14 @@ const ProjectBox = ({ title }: FileGridProps) => {
               <Flex gap="2" align={"center"}>
                 {getPageNumbers().map((page, index) =>
                   page === "ellipsis1" || page === "ellipsis2" ? (
-                    <span key={`ellipsis-${index}`} className="px-2">
+                    <span key={`ellipsis-${page}-${index}`} className="px-2">
                       ...
                     </span>
                   ) : (
                     <Button
                       key={page}
                       variant={currentPage === page ? "solid" : "outline"}
-                      onClick={() => paginate(page)}
+                      onClick={() => paginate(page as number)}
                       className={
                         "flex h-8 w-8 cursor-pointer items-center justify-center rounded-md font-medium text-sm transition-colors"
                       }

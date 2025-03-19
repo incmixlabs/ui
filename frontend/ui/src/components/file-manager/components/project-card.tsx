@@ -7,7 +7,7 @@ import { ProjectActionsMenu } from "./project-actions-menu"
 interface ProjectCardProps {
   file: FileItem
   onClick: () => void
-  viewMode: "grid" | "list" | "column"
+  viewMode: "grid" | "list" | "side"
   isSelected?: boolean
 }
 
