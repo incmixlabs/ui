@@ -51,10 +51,25 @@ export function ProjectListView({
     if (sortField === "name") {
       comparison = a.name.localeCompare(b.name)
     } else if (sortField === "modified") {
-      comparison =
-        new Date(a.modified).getTime() - new Date(b.modified).getTime()
+      try {
+        const dateA = new Date(a.modified).getTime()
+        const dateB = new Date(b.modified).getTime()
+        if (isNaN(dateA) || isNaN(dateB)) {
+          comparison = 0
+        } else {
+          comparison = dateA - dateB
+        }
+      } catch (error) {
+        console.error("Error parsing dates:", error)
+        comparison = 0
+      }
     } else if (sortField === "size") {
-      comparison = getBytes(a) - getBytes(b)
+      try {
+        comparison = getBytes(a) - getBytes(b)
+      } catch (error) {
+        console.error("Error comparing file sizes:", error)
+        comparison = 0
+      }
     }
 
     return sortDirection === "asc" ? comparison : -comparison
@@ -89,11 +104,6 @@ export function ProjectListView({
               <Checkbox
                 checked={
                   selectedFiles.length === files.length && files.length > 0
-                }
-                // @ts-ignore
-                indeterminate={
-                  selectedFiles.length > 0 &&
-                  selectedFiles.length < files.length
                 }
                 onCheckedChange={toggleSelectAll}
                 aria-label="Select all files"
