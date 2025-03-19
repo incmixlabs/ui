@@ -1,4 +1,3 @@
-import { getBytes } from "@utils/getBytes"
 import { Checkbox } from "@components/checkbox"
 import {
   Table,
@@ -11,6 +10,7 @@ import {
 import { useMediaQuery } from "@hooks/use-media-query"
 import { ScrollArea } from "@radix-ui/themes"
 import { cn } from "@utils"
+import { getBytes } from "@utils/getBytes"
 import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react"
 import { useState } from "react"
 import type { FileItem } from "../data"
@@ -54,7 +54,7 @@ export function ProjectListView({
       try {
         const dateA = new Date(a.modified).getTime()
         const dateB = new Date(b.modified).getTime()
-        if (isNaN(dateA) || isNaN(dateB)) {
+        if (Number.isNaN(dateA) || Number.isNaN(dateB)) {
           comparison = 0
         } else {
           comparison = dateA - dateB
