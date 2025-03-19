@@ -1,4 +1,4 @@
-import { getBytes } from "@/utils/getBytes"
+import { getBytes } from "@utils/getBytes"
 import { Checkbox } from "@components/checkbox"
 import {
   Table,
