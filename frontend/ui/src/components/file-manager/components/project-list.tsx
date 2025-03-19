@@ -1,3 +1,4 @@
+import { getBytes } from "@/utils/getBytes"
 import { Checkbox } from "@components/checkbox"
 import {
   Table,
@@ -53,18 +54,6 @@ export function ProjectListView({
       comparison =
         new Date(a.modified).getTime() - new Date(b.modified).getTime()
     } else if (sortField === "size") {
-      // Convert all sizes to bytes for comparison
-      const getBytes = (file: any) => {
-        const { value, unit } = file.size
-        const multipliers: Record<string, number> = {
-          B: 1,
-          KB: 1024,
-          MB: 1024 * 1024,
-          GB: 1024 * 1024 * 1024,
-          TB: 1024 * 1024 * 1024 * 1024,
-        }
-        return value * (multipliers[unit] || 1)
-      }
       comparison = getBytes(a) - getBytes(b)
     }
 

@@ -2,9 +2,9 @@ import { Label } from "@components/label"
 import { Flex, Tabs } from "@radix-ui/themes"
 import { Button, IconButton, Switch } from "@radix-ui/themes"
 import { X } from "lucide-react"
+import { useState } from "react"
 import { projectFolders } from "../data"
 import { ProjectActionsMenu } from "./project-actions-menu"
-import { useState } from "react"
 
 interface ProjectDetailsProps {
   projectId: string
@@ -15,7 +15,7 @@ export function ProjectDetails({ projectId, onClose }: ProjectDetailsProps) {
   const [settings, setSettings] = useState({
     fileSharing: true,
     backup: false,
-    sync: false
+    sync: false,
   })
   const fileData = projectFolders.find((file) => file.id === projectId)
   if (!fileData) {
@@ -138,9 +138,12 @@ export function ProjectDetails({ projectId, onClose }: ProjectDetailsProps) {
                   <Label htmlFor="file-sharing" className="text-sm">
                     File Sharing
                   </Label>
-                  <Switch id="file-sharing" 
-                  checked={settings.fileSharing}
-                  onCheckedChange={(checked) => setSettings(prev => ({ ...prev, fileSharing: checked }))}
+                  <Switch
+                    id="file-sharing"
+                    checked={settings.fileSharing}
+                    onCheckedChange={(checked) =>
+                      setSettings((prev) => ({ ...prev, fileSharing: checked }))
+                    }
                   />
                 </div>
 
@@ -148,16 +151,26 @@ export function ProjectDetails({ projectId, onClose }: ProjectDetailsProps) {
                   <Label htmlFor="backup" className="text-sm">
                     Backup
                   </Label>
-                  <Switch id="backup"  checked={settings.backup}
-                  onCheckedChange={(checked) => setSettings(prev => ({ ...prev, backup: checked }))}/>
+                  <Switch
+                    id="backup"
+                    checked={settings.backup}
+                    onCheckedChange={(checked) =>
+                      setSettings((prev) => ({ ...prev, backup: checked }))
+                    }
+                  />
                 </div>
 
                 <div className="flex items-center justify-between">
                   <Label htmlFor="sync" className="text-sm">
                     Sync
                   </Label>
-                  <Switch id="sync"  checked={settings.sync}
-                  onCheckedChange={(checked) => setSettings(prev => ({ ...prev, sync: checked }))}/>
+                  <Switch
+                    id="sync"
+                    checked={settings.sync}
+                    onCheckedChange={(checked) =>
+                      setSettings((prev) => ({ ...prev, sync: checked }))
+                    }
+                  />
                 </div>
               </div>
             </div>
