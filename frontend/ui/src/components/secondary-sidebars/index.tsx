@@ -14,10 +14,10 @@ export function SecondarySidebar({
   return (
     <Box
       className={cn(
-        "relative h-screen w-[270px] transition-all duration-200 ease-linear",
+        "relative h-screen w-[240px] transition-all duration-200 ease-linear xl:w-[270px]",
         isMobile
-          ? `min-w-[270px] ${open && "hidden"} ${!openMobile && "hidden"}`
-          : `${secondaryOpen ? "flex min-w-[270px]" : "hidden w-0"}`
+          ? `fixed left-16 z-30 min-w-[270px] bg-gray-2 ${open && "hidden"} ${!openMobile && "hidden"}`
+          : `${secondaryOpen ? "flex w-[250px] xl:min-w-[270px]" : "hidden w-0"}`
       )}
     >
       <Box
@@ -28,7 +28,7 @@ export function SecondarySidebar({
             : "left-[calc(var(--sidebar-width-icon))]",
           isMobile
             ? `min-w-[270px] ${open && "hidden"} ${!openMobile && "hidden"}`
-            : `${secondaryOpen ? "flex min-w-[270px]" : "hidden w-0"}`
+            : `${secondaryOpen ? "flex w-[250px] xl:min-w-[270px]" : "hidden w-0"}`
         )}
       >
         <Flex direction={"column"} className="h-full overflow-hidden">
