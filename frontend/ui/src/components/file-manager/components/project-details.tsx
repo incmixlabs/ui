@@ -16,7 +16,9 @@ export function ProjectDetails({ projectId, onClose }: ProjectDetailsProps) {
     return (
       <Flex className="h-full items-center justify-center" direction="column">
         <p className="text-muted-foreground">Project not found</p>
-        <Button onClick={onClose} className="mt-4">Close</Button>
+        <Button onClick={onClose} className="mt-4">
+          Close
+        </Button>
       </Flex>
     )
   }
@@ -99,7 +101,9 @@ export function ProjectDetails({ projectId, onClose }: ProjectDetailsProps) {
                 <div className="flex justify-between gap-2 text-sm">
                   <div className="text-muted-foreground">Size</div>
                   <div className="font-medium">
-                  {fileData?.size ? `${fileData.size.value} ${fileData.size.unit}` : 'N/A'}
+                    {fileData?.size
+                      ? `${fileData.size.value} ${fileData.size.unit}`
+                      : "N/A"}
                   </div>
                 </div>
                 <div className="flex justify-between gap-2 text-sm">

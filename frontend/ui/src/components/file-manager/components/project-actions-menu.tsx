@@ -36,7 +36,7 @@ export function ProjectActionsMenu({
       //   title: "Link copied",
       //   description: "Sharing link copied to clipboard",
       // })
-    } catch (error) {
+    } catch (_error) {
       // toast({
       //   title: "Error",
       //   description: "Failed to copy link to clipboard",

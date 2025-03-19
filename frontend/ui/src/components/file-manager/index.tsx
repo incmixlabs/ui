@@ -1,8 +1,8 @@
 import { useState } from "react"
 import ProjectBox from "./components/project-box"
 export function FileManager() {
-  const [_currentFolderId, setCurrentFolderId] = useState<string | null>(null)
-  const [breadcrumbs, setBreadcrumbs] = useState<
+  const [_currentFolderId, _setCurrentFolderId] = useState<string | null>(null)
+  const [breadcrumbs, _setBreadcrumbs] = useState<
     { id: string; name: string }[]
   >([{ id: "", name: "File manager" }])
 

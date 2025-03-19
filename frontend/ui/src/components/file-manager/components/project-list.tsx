@@ -11,8 +11,8 @@ import { ScrollArea } from "@radix-ui/themes"
 import { cn } from "@utils"
 import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react"
 import { useState } from "react"
+import type { FileItem } from "../data"
 import { ProjectActionsMenu } from "./project-actions-menu"
-import { FileItem } from "../data"
 
 interface ProjectListViewProps {
   files: FileItem[]
@@ -138,8 +138,8 @@ export function ProjectListView({
           {sortedFiles.map((file) => {
             const IconComponent =
               selectedProjectId === file.id
-                ? (file.openIcon || null)
-                : (file.closeIcon || null)
+                ? file.openIcon || null
+                : file.closeIcon || null
 
             return (
               <TableRow

@@ -94,7 +94,12 @@ const ProjectBox = ({ title }: FileGridProps) => {
           className="border-gray-5 border-b px-8 py-4 font-medium text-gray-10"
           gap={"1"}
         >
-          <IconButton className="rouned-full mr-2 h-6 w-6" onClick={() => {/* Add navigation logic here */}}>
+          <IconButton
+            className="rouned-full mr-2 h-6 w-6"
+            onClick={() => {
+              /* Add navigation logic here */
+            }}
+          >
             <ChevronLeft />
           </IconButton>
           <span>File Manager</span> /{" "}
