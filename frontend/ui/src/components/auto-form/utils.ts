@@ -144,7 +144,14 @@ export function zodToHtmlInputProps(
   return inputProps
 }
 
-// Add this to your utils.ts file - it helps determine if an array schema should use multipleSelector
+/**
++ * Determines if a Zod schema represents an array that should use a multiple selector component.
++ *
++ * The schema must be a ZodArray containing ZodObjects with 'label' and 'value' string properties.
++ *
++ * @param zodItem - The Zod schema to check
++ * @returns boolean - True if the schema should use a multiple selector
++ */
 export function isMultipleSelectorType(zodItem: z.ZodTypeAny): boolean {
   if (!(zodItem instanceof z.ZodArray)) return false
 
