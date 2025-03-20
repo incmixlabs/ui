@@ -1,5 +1,5 @@
-import type React from "react"
 import type ApexCharts from "apexcharts"
+import type React from "react"
 
 import { lazy, useMemo, useState } from "react"
 const Chart = lazy(() => import("react-apexcharts"))
@@ -97,12 +97,10 @@ export const RadialBarChart: React.FC<RadialBarChartProps> = ({
   )
 
   return (
-    <figure
-      aria-label={`Donut chart showing ${labels.join(", ")} statistics`}
-    >
+    <figure aria-label={`Donut chart showing ${labels.join(", ")} statistics`}>
       <div className="custom-chart-container">
         <Chart options={_options} series={_series} type="donut" />
       </div>
-      </figure>
+    </figure>
   )
 }

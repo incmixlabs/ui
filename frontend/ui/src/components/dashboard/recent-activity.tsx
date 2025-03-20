@@ -3,7 +3,6 @@ import { Ellipsis } from "lucide-react"
 import { activityGroups } from "./data"
 
 export default function RecentActivity() {
-
   return (
     <>
       <div className="mb-4 flex items-center justify-between">

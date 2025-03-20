@@ -1,7 +1,6 @@
 import { useThemeContext } from "@radix-ui/themes"
 import { Suspense, lazy } from "react"
 
-
 const ReactApexChart = lazy(() => import("react-apexcharts"))
 
 interface StatisticsBarChartViewProps {

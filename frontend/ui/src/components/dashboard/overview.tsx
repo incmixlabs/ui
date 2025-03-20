@@ -187,7 +187,7 @@ export function Overview() {
 
                         <Box className="min-w-0 flex-1">
                           <Text as="p" className="font-medium text-sm">
-                          {revision.recipient || "Regina Cooper"}
+                            {revision.recipient || "Regina Cooper"}
                           </Text>
                           <Text className="truncate text-gray-8 text-sm">
                             Sending project{" "}

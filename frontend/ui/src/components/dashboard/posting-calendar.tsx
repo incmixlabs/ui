@@ -179,12 +179,9 @@ export default function PostingCalendar() {
     { day: "SU", time: "5PM", hasLightning: false, description: "Monday prep" },
   ]
 
-
   const getTasksAtTime = (day: string, time: string) => {
     return tasks.filter((task) => task.day === day && task.time === time)
   }
-
-
 
   const _getDayName = (shortDay: string) => {
     const dayMap: Record<string, string> = {
@@ -199,17 +196,16 @@ export default function PostingCalendar() {
     return dayMap[shortDay] || shortDay
   }
 
-
   const immediateTasksSorted = useMemo(() => {
     return tasks
-      .filter(task => task.hasLightning)
+      .filter((task) => task.hasLightning)
       .sort((a, b) => {
-        // Sort logic by day and time
-        return 0; // Implement proper sorting logic
+        const dayOrder = daysOfWeek.indexOf(a.day) - daysOfWeek.indexOf(b.day)
+        if (dayOrder !== 0) return dayOrder
+        return hoursOfDay.indexOf(a.time) - hoursOfDay.indexOf(b.time)
       })
-      .slice(0, 2); // Get the first 2 immediate tasks
-  }, [tasks]);
-
+      .slice(0, 2)
+  }, [tasks])
 
   return (
     <>
@@ -221,10 +217,15 @@ export default function PostingCalendar() {
       </Flex>
 
       <Text as="p">
-        Immediate tasks: {immediateTasksSorted.length > 0 ? (
+        Immediate tasks:{" "}
+        {immediateTasksSorted.length > 0 ? (
           immediateTasksSorted.map((task, index) => (
-            <React.Fragment key={`${task.day}-${task.time}-${task.description}`}>
-              <Text className="underline">{_getDayName(task.day)} at {task.time}</Text>
+            <React.Fragment
+              key={`${task.day}-${task.time}-${task.description}`}
+            >
+              <Text className="underline">
+                {_getDayName(task.day)} at {task.time}
+              </Text>
               {index < immediateTasksSorted.length - 1 && " / "}
             </React.Fragment>
           ))
@@ -275,7 +276,10 @@ export default function PostingCalendar() {
                     content={
                       hasTask
                         ? tasksAtTime.map((task) => (
-                            <div key={`${task.day}-${task.time}-${task.description}`} className="py-1">
+                            <div
+                              key={`${task.day}-${task.time}-${task.description}`}
+                              className="py-1"
+                            >
                               {task.description}
                               {task.hasLightning && " (Urgent)"}
                             </div>
