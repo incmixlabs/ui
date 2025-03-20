@@ -67,7 +67,6 @@ export const DropdownMenuItem = ({
           <RadixDropdownMenu.SubTrigger>{label}</RadixDropdownMenu.SubTrigger>
           <RadixDropdownMenu.SubContent>
             {children.map((item, index) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
               <DropdownMenuItem {...item} key={index} />
             ))}
           </RadixDropdownMenu.SubContent>
@@ -116,7 +115,6 @@ export const DropdownMenu = ({
         highContrast={highContrast}
       >
         {items.map((item, index) => (
-          // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
           <DropdownMenuItem {...item} key={index} />
         ))}
       </RadixDropdownMenu.Content>
