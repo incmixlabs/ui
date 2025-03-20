@@ -25,7 +25,11 @@ export * from "./tree-view"
 export * from "./kanban-board"
 export * from "./file-manager"
 export * from "./projects"
+export * from "./dashboard/overview"
 export * from "./projects/roadmap-view"
+export * from "./stats-card"
+export * from "./chart/statistic-bar-chart"
+export * from "./chart/radial-bar-chart"
 export {
   Badge,
   Box,

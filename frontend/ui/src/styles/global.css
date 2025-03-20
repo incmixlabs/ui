@@ -73,6 +73,8 @@
     --sidebar-secondary-active: 226 66% 55%;
 
     --file-card-background: 227 10% 21%;
+
+    --dashboard-orange: 22 100% 68%;
   }
 
   .dark {
@@ -127,6 +129,8 @@
     --sidebar-secondary-active: 0 0% 93%;
 
     --file-card-background: 0 0% 93%;
+
+    --dashboard-orange: 23 100% 68%;
   }
 }
 

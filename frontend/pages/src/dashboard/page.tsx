@@ -1,5 +1,12 @@
 import { LoadingPage } from "@common"
-import { CardContainer, SwapyExclude, SwapyLayout, SwapySlot } from "@incmix/ui"
+
+import {
+  CardContainer,
+  Overview,
+  SwapyExclude,
+  SwapyLayout,
+  SwapySlot,
+} from "@incmix/ui"
 import {
   BatteryWidget,
   CalendarWidget,
@@ -10,7 +17,7 @@ import {
   getBattery,
 } from "@incmix/ui/widgets"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { Container, Flex, Heading, Switch, Text } from "@radix-ui/themes"
+import { Flex, Heading, Switch, Text } from "@radix-ui/themes"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { createSwapy } from "swapy"
@@ -157,35 +164,35 @@ const DashboardPage: React.FC = () => {
       breadcrumbItems={[]}
       navExtras={<EditWidgetsControl onEditChange={setIsEditing} />}
     >
-      <Container>
-        <Flex direction="column" gap="6">
-          <Heading size="6">{t("dashboard:title")}</Heading>
+      <Flex direction="column" gap="6">
+        <Heading size="6">{t("dashboard:title")}</Heading>
+        <Overview />
 
-          <Flex direction="column" gap="6">
-            {slottedWidgets.length && (
-              <SwapyLayout
-                id="dashboard-container"
-                enable={isEditing}
-                config={{ swapMode: "drop" }}
-              >
-                <Flex direction="row" gap="4" wrap="wrap">
-                  {slottedWidgets.map(({ slotId, widget }) => (
-                    <SwapySlot key={slotId} id={slotId} showHandle={isEditing}>
-                      {widget && (
-                        <CardContainer>
-                          <SwapyExclude id={widget.id}>
-                            {renderWidget(widget)}
-                          </SwapyExclude>
-                        </CardContainer>
-                      )}
-                    </SwapySlot>
-                  ))}
-                </Flex>
-              </SwapyLayout>
-            )}
-          </Flex>
+        {/* <RadialBarChartCard /> */}
+        <Flex direction="column" gap="6">
+          {slottedWidgets.length && (
+            <SwapyLayout
+              id="dashboard-container"
+              enable={isEditing}
+              config={{ swapMode: "drop" }}
+            >
+              <Flex direction="row" gap="4" wrap="wrap">
+                {slottedWidgets.map(({ slotId, widget }) => (
+                  <SwapySlot key={slotId} id={slotId} showHandle={isEditing}>
+                    {widget && (
+                      <CardContainer>
+                        <SwapyExclude id={widget.id}>
+                          {renderWidget(widget)}
+                        </SwapyExclude>
+                      </CardContainer>
+                    )}
+                  </SwapySlot>
+                ))}
+              </Flex>
+            </SwapyLayout>
+          )}
         </Flex>
-      </Container>
+      </Flex>
     </DashboardLayout>
   )
 }
