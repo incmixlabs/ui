@@ -1,13 +1,6 @@
 import { useThemeContext } from "@radix-ui/themes"
 import { Suspense, lazy } from "react"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../card/card"
+
 
 const ReactApexChart = lazy(() => import("react-apexcharts"))
 

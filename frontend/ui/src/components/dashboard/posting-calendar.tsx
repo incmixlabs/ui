@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useMemo } from "react"
 
 import {
   Box,
@@ -13,7 +13,6 @@ import { cn } from "@utils"
 import { Ellipsis, CloudLightningIcon as Lightning, Zap } from "lucide-react"
 import { useState } from "react"
 
-// Define types for our data structure
 interface Task {
   day: string
   time: string
@@ -22,7 +21,6 @@ interface Task {
 }
 
 export default function PostingCalendar() {
-  // Data arrays
   const daysOfWeek = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"]
   const hoursOfDay = [
     "12AM",
@@ -51,7 +49,6 @@ export default function PostingCalendar() {
     "11PM",
   ]
 
-  // All tasks data
   const tasks: Task[] = [
     {
       day: "TU",
@@ -182,35 +179,12 @@ export default function PostingCalendar() {
     { day: "SU", time: "5PM", hasLightning: false, description: "Monday prep" },
   ]
 
-  // Highlighted tasks state
-  const [_highlightedTasks, setHighlightedTasks] = useState<{
-    day: string
-    time: string
-    count: number
-  } | null>({
-    day: "FR",
-    time: "11AM",
-    count: 2,
-  })
 
-  // Helper functions
   const getTasksAtTime = (day: string, time: string) => {
     return tasks.filter((task) => task.day === day && task.time === time)
   }
 
-  const handleCellClick = (day: string, time: string) => {
-    const tasksAtTime = getTasksAtTime(day, time)
 
-    if (tasksAtTime.length > 0) {
-      setHighlightedTasks({
-        day,
-        time,
-        count: tasksAtTime.length,
-      })
-    } else {
-      setHighlightedTasks(null)
-    }
-  }
 
   const _getDayName = (shortDay: string) => {
     const dayMap: Record<string, string> = {
@@ -225,6 +199,18 @@ export default function PostingCalendar() {
     return dayMap[shortDay] || shortDay
   }
 
+
+  const immediateTasksSorted = useMemo(() => {
+    return tasks
+      .filter(task => task.hasLightning)
+      .sort((a, b) => {
+        // Sort logic by day and time
+        return 0; // Implement proper sorting logic
+      })
+      .slice(0, 2); // Get the first 2 immediate tasks
+  }, [tasks]);
+
+
   return (
     <>
       <Flex justify={"between"} align={"center"} className="mb-4">
@@ -235,8 +221,16 @@ export default function PostingCalendar() {
       </Flex>
 
       <Text as="p">
-        Immediate tasks: <Text className="underline">Wednesday at 10 AM</Text> /{" "}
-        <Text className="underline">Wednesday at 4 PM</Text>
+        Immediate tasks: {immediateTasksSorted.length > 0 ? (
+          immediateTasksSorted.map((task, index) => (
+            <React.Fragment key={`${task.day}-${task.time}-${task.description}`}>
+              <Text className="underline">{_getDayName(task.day)} at {task.time}</Text>
+              {index < immediateTasksSorted.length - 1 && " / "}
+            </React.Fragment>
+          ))
+        ) : (
+          <Text>None</Text>
+        )}
       </Text>
 
       <Box className="relative overflow-x-auto">
@@ -281,7 +275,7 @@ export default function PostingCalendar() {
                     content={
                       hasTask
                         ? tasksAtTime.map((task) => (
-                            <div key={task?.day} className="py-1">
+                            <div key={`${task.day}-${task.time}-${task.description}`} className="py-1">
                               {task.description}
                               {task.hasLightning && " (Urgent)"}
                             </div>
@@ -299,7 +293,6 @@ export default function PostingCalendar() {
                         hasLightning &&
                           "bg-dashboard-orange/80 hover:bg-dashboard-orange"
                       )}
-                      onClick={() => handleCellClick(day, time)}
                     >
                       {hasLightning && (
                         <Zap size={16} className="fill-white stroke-white" />

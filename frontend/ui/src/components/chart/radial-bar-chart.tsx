@@ -1,7 +1,9 @@
-import { useThemeContext } from "@radix-ui/themes"
 import type React from "react"
-import { useMemo, useState } from "react"
-import Chart from "react-apexcharts"
+import type ApexCharts from "apexcharts"
+
+import { lazy, useMemo, useState } from "react"
+const Chart = lazy(() => import("react-apexcharts"))
+import { useThemeContext } from "@radix-ui/themes"
 
 interface RadialBarChartProps {
   series?: number[]
@@ -95,14 +97,12 @@ export const RadialBarChart: React.FC<RadialBarChartProps> = ({
   )
 
   return (
-    <div className="flex flex-col items-center">
-      <figure
-        aria-label={`Donut chart showing ${labels.join(", ")} statistics`}
-      >
-        <div className="custom-chart-container">
-          <Chart options={_options} series={_series} type="donut" />
-        </div>
+    <figure
+      aria-label={`Donut chart showing ${labels.join(", ")} statistics`}
+    >
+      <div className="custom-chart-container">
+        <Chart options={_options} series={_series} type="donut" />
+      </div>
       </figure>
-    </div>
   )
 }

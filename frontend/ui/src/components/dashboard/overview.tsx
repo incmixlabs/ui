@@ -27,6 +27,7 @@ import { useState } from "react"
 import { Calendar } from "../calendar"
 import { SmartDatetimeInput } from "../datetime-picker"
 import { KanbanImages } from "../kanban-board/images"
+import { revisionData, taskStats } from "./data"
 import PostingCalendar from "./posting-calendar"
 import RecentActivity from "./recent-activity"
 interface ProjectRevision {
@@ -38,38 +39,6 @@ interface ProjectRevision {
   type: string
 }
 
-interface TaskStat {
-  count: number
-  label: string
-  icon: React.ReactNode
-  backgroundColorClass: string
-}
-const taskStats: TaskStat[] = [
-  {
-    count: 780,
-    label: "Total Tasks",
-    icon: <ClipBoard size="20" />,
-    backgroundColorClass: "bg-indigo-3",
-  },
-  {
-    count: 136,
-    label: "New Tasks",
-    icon: <ClipBoardAdd size="20" />,
-    backgroundColorClass: "bg-orange-3",
-  },
-  {
-    count: 324,
-    label: "In Progress",
-    icon: <ClipBoardStatus size="20" />,
-    backgroundColorClass: "bg-amber-3",
-  },
-  {
-    count: 215,
-    label: "Done Tasks",
-    icon: <ClipBoardCheck size="20" />,
-    backgroundColorClass: "bg-green-3",
-  },
-]
 const stats = [
   { label: "Ongoing", value: 420, color: "var(--orange-9)" },
   { label: "Hold", value: 210, color: "var(--indigo-9)" },
@@ -80,43 +49,6 @@ const ongoingColor = "var(--orange-9)"
 const onHoldColor = "var(--indigo-9)"
 const completedColor = "var(--amber-9)"
 type TabType = "month" | "week" | "day"
-
-const revisionData = [
-  {
-    id: "1",
-    type: "month",
-    projectNumber: "783",
-    recipient: "Leslie Miles",
-    checked: false,
-    color: "var(--blue-9)", // blue
-  },
-  {
-    id: "2",
-    type: "month",
-    projectNumber: "675",
-    recipient: "Kristin Edwards",
-    checked: true,
-    color: "var(--purple-9)", // purple
-  },
-  {
-    id: "3",
-    type: "month",
-
-    projectNumber: "788",
-    recipient: "Regina Warren",
-    checked: false,
-    color: "var(--green-9)", // green
-  },
-  {
-    id: "4",
-    type: "month",
-
-    projectNumber: "543",
-    recipient: "Stella Penas",
-    checked: false,
-    color: "var(--yellow-9)", // yellow
-  },
-]
 
 export function Overview() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
@@ -255,7 +187,7 @@ export function Overview() {
 
                         <Box className="min-w-0 flex-1">
                           <Text as="p" className="font-medium text-sm">
-                            Regina Cooper
+                          {revision.recipient || "Regina Cooper"}
                           </Text>
                           <Text className="truncate text-gray-8 text-sm">
                             Sending project{" "}
