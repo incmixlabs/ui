@@ -1,4 +1,5 @@
 import type { DateTime } from "luxon"
+import type { SVGProps } from "react"
 
 export type Side = "left" | "right"
 export type Direction = "ltr" | "rtl"
@@ -68,4 +69,8 @@ export interface Project {
   progress: number
   color: string
   subProjects?: Project[]
+}
+
+export type IconProps = SVGProps<SVGSVGElement> & {
+  size?: string | number
 }

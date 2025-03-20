@@ -1,6 +1,5 @@
 import { useState } from "react"
 
-import { useProjectDrawer } from "@hooks/use-project-drawer"
 import {
   Box,
   Button,
