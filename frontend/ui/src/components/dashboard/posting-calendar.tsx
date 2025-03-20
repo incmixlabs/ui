@@ -21,11 +21,6 @@ interface Task {
   description?: string
 }
 
-interface ImmediateTask {
-  day: string
-  time: string
-}
-
 export default function PostingCalendar() {
   // Data arrays
   const daysOfWeek = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"]
@@ -285,8 +280,8 @@ export default function PostingCalendar() {
                     key={`${day}-${time}`}
                     content={
                       hasTask
-                        ? tasksAtTime.map((task, i) => (
-                            <div key={i} className="py-1">
+                        ? tasksAtTime.map((task) => (
+                            <div key={task?.day} className="py-1">
                               {task.description}
                               {task.hasLightning && " (Urgent)"}
                             </div>

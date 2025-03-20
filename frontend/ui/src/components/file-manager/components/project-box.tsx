@@ -275,9 +275,9 @@ const ProjectBox = ({ title }: FileGridProps) => {
               </Button>
               {isMobile && (
                 <Flex gap="2" align={"center"}>
-                  {getPageNumbers().map((page, index) =>
+                  {getPageNumbers().map((page) =>
                     page === "ellipsis1" || page === "ellipsis2" ? (
-                      <span key={`ellipsis-${page}-${index}`} className="px-2">
+                      <span key={`ellipsis-${page}`} className="px-2">
                         ...
                       </span>
                     ) : (
