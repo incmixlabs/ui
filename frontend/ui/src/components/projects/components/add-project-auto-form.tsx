@@ -14,6 +14,18 @@ interface AddProjectAutoFormProps {
   onAddProject: (project: Omit<Project, "id">) => void
 }
 
+/**
+ * Renders a dialog with an auto-generated form for creating a new project.
+ *
+ * This component converts a JSON schema to a Zod schema to dynamically construct an AutoForm.
+ * It manages local form state and transforms input data into a new project object with default values,
+ * then invokes callbacks to add the project and close the dialog.
+ *
+ * @param isOpen - Controls the visibility of the dialog.
+ * @param onClose - Callback invoked to close the dialog.
+ * @param onAddProject - Callback invoked with the new project object (excluding its ID) upon form submission.
+ * @returns A JSX element representing the dialog with the form.
+ */
 export function AddProjectAutoForm({
   isOpen,
   onClose,

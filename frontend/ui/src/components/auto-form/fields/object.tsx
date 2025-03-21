@@ -19,11 +19,36 @@ import {
 import AutoFormArray from "./array"
 import FieldGroup from "./field-group"
 
+/**
+ * Renders child elements within a React fragment.
+ *
+ * This component serves as a default wrapper for form fields, passing through its children without applying any additional layout or styling.
+ */
 function DefaultParent({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
-// Helper function to render a single field
+/**
+ * Renders a form field based on its Zod schema and configuration.
+ *
+ * Depending on the underlying Zod type, this helper returns a JSX element that appropriately renders
+ * the field:
+ * - For Zod objects, it wraps the field in an accordion item and delegates rendering to the AutoFormObject.
+ * - For Zod arrays with a "multiCheckbox" or "multipleSelector" field type, it renders a custom input
+ *   component through SCNformField.
+ * - For other Zod arrays, it delegates rendering to the AutoFormArray component.
+ * - For regular fields, it selects an input component based on the Zod type and renders the field using
+ *   SCNformField.
+ *
+ * Field properties such as default values, required status, and disabled state are computed and passed
+ * to the rendered component.
+ *
+ * @param fieldConfig - Optional configuration for customizing the field's rendering.
+ * @param itemName - The label to display for the field.
+ * @param isDisabled - Indicates whether the field should be rendered in a disabled state.
+ *
+ * @returns A React element representing the rendered form field.
+ */
 function renderField({
   name,
   item,
@@ -198,6 +223,20 @@ function renderField({
   )
 }
 
+/**
+ * Renders a dynamic form based on the provided Zod schema.
+ *
+ * This component builds a form by iterating over the schema's fields, grouping them when specified by the field configuration,
+ * and applying dependency rules to conditionally disable or hide fields. It leverages React Hook Form to monitor field values
+ * via the watch function and automatically coerces number inputs when applicable. If the schema or its underlying shape is invalid,
+ * the component returns null.
+ *
+ * @param schema - A Zod schema or ZodEffects wrapper that defines the form's structure and validation.
+ * @param fieldConfig - (Optional) Customization settings for rendering fields, including grouping configurations.
+ * @param path - (Optional) Array representing the nested key path for generating unique field identifiers (default: empty array).
+ * @param dependencies - (Optional) Mapping of dependency rules that control field behavior, such as disabling or hiding fields based on other field values.
+ * @returns An Accordion component containing the dynamically rendered form fields, or null if the schema is not valid.
+ */
 export default function AutoFormObject<
   SchemaType extends z.ZodObject<any, any>,
 >({
