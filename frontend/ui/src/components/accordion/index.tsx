@@ -24,7 +24,6 @@ export const Accordion = ({ type = "single", items }: AccordionProps) => {
   return (
     <RadixAccordion type={type}>
       {items.map((item, index) => (
-        // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
         <RadixAccordionItem value={item.value ?? index.toString()} key={index}>
           <RadixAccordionTrigger>{item.label}</RadixAccordionTrigger>
           <RadixAccordionContent>{item.content}</RadixAccordionContent>

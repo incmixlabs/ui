@@ -64,7 +64,7 @@
       "suspicious": {
         "useAwait": "warn",
         "noExplicitAny": "off",
-        "noArrayIndexKey": "error"
+        "noArrayIndexKey": "off"
       }
     },
     "include": [

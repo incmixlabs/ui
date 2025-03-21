@@ -52,11 +52,7 @@ const NotificationsPage: React.FC = () => {
   return (
     <div className="space-y-2">
       {items.map((m, i) => (
-        <Text
-          className="block"
-          // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-          key={`notif_${i}`}
-        >
+        <Text className="block" key={`notif_${i}`}>
           {m.message}
         </Text>
       ))}

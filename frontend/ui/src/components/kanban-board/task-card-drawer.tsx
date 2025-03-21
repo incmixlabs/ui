@@ -568,10 +568,7 @@ export default function TaskCardDrawer({
                                   <Flex className="mt-3" gap={"2"}>
                                     {comment.images.map((image, index) => (
                                       <div
-                                        key={`${image}-${
-                                          // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                                          index
-                                        }`}
+                                        key={`${image}-${index}`}
                                         className="group relative"
                                       >
                                         <img
