@@ -6,8 +6,8 @@ const ProjectsPage = () => {
     <DashboardLayout
       breadcrumbItems={[{ label: "Projects", url: "/projects" }]}
     >
-      {/* <ProjectPageComponents /> */}
-      <RoadmapView />
+      <ProjectPageComponents />
+      {/* <RoadmapView /> */}
     </DashboardLayout>
   )
 }

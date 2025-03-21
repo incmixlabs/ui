@@ -2,6 +2,10 @@ export * from "./icon"
 export * from "./loader-circle"
 export * from "./lazy-icon"
 export * from "./google-icon"
+export * from "./clipboard"
+export * from "./clipboard-add"
+export * from "./clipboard-check"
+export * from "./clipboard-status"
 export {
   AudioWaveform,
   File,

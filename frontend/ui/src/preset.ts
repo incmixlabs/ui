@@ -101,6 +101,7 @@ export const incmixTailwindPreset: Config = {
         card: {
           DEFAULT: colors.alias("gray.1"),
           foreground: colors.alias("gray.12"),
+          "file-background": "hsl(var(--file-card-background))",
         },
 
         popover: {
@@ -183,7 +184,9 @@ export const incmixTailwindPreset: Config = {
           "secondary-text": "hsl(var(--sidebar-secondary-text))",
           "secondary-active": "hsl(var(--sidebar-secondary-active))",
         },
-
+        dashboard: {
+          orange: "hsl(var(--dashboard-orange))",
+        },
         border: colors.alias("gray.4"),
         ring: colors.alias("gray.4"),
 

@@ -20,6 +20,7 @@ interface SheetProps {
   contentBackground?: string
   className?: string
   isFilterClassName?: string
+  shadow?: string
   zIndex?: number
   isFilter?: boolean
 }
@@ -32,6 +33,7 @@ export const MotionSheet: React.FC<SheetProps> = ({
   open = false,
   isFilterClassName = "w-[30rem] 2xl:w-[40rem]",
   isFilter = false,
+  shadow = "0 0 10px rgba(0, 0, 0, 0.2)",
   onOpenChange,
   closeOnOutsideClick = true,
   closeOnEsc = true,
@@ -140,14 +142,14 @@ export const MotionSheet: React.FC<SheetProps> = ({
             className={cn(
               // Base styles for all sheets
               isFilter
-                ? `relative z-50 h-[80vh] shrink-0 rounded-xl ${isFilterClassName}`
+                ? isFilterClassName
                 : "fixed h-[98vh] w-96 max-w-full bg-gray-3 p-5 py-4",
               positionClasses[side],
               className
             )}
             style={{
               zIndex,
-              boxShadow: "0 0 10px rgba(0, 0, 0, 0.2)",
+              boxShadow: shadow,
               display: "flex",
               flexDirection: "column",
               overflow: "hidden",
