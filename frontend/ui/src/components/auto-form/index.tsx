@@ -3,7 +3,7 @@ import { Form } from "@components/shadcn-form/form"
 import { type DefaultValues, useForm } from "react-hook-form"
 import type { z } from "zod"
 
-import { Button } from "@/components/button"
+import { Button } from "@components/button"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { cn } from "@utils/cn"
 

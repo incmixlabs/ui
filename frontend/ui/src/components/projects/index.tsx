@@ -15,6 +15,7 @@ import { LayoutGrid, List, Plus, SlidersHorizontal, X } from "lucide-react"
 import { motion } from "motion/react"
 import { useQueryState } from "nuqs"
 import { MotionSheet } from "../custom-sheet"
+import { AddProjectAutoForm } from "./components/add-project-auto-form"
 import { AddProjectModal } from "./components/add-project-modal"
 import { ProjectCard } from "./components/project-card"
 import ProjectDrawer from "./components/project-drawer"
@@ -48,6 +49,7 @@ export function ProjectPageComponents() {
   }
 
   const handleAddProject = (newProject: Omit<Project, "id">) => {
+    console.log("newProject from handleAddProject:", newProject)
     const projectWithId = {
       ...newProject,
       id: (projects.length + 1).toString(),
@@ -288,11 +290,17 @@ export function ProjectPageComponents() {
         </Box>
       </Box>
 
-      <AddProjectModal
+      <AddProjectAutoForm
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onAddProject={handleAddProject}
       />
+      {/* <AddProjectModal
+      isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAddProject={handleAddProject}
+      /> */}
+
       <MotionSheet
         title="Filter"
         side="right"

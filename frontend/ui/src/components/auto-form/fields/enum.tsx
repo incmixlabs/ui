@@ -4,12 +4,12 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/select"
+} from "@components/select"
 import {
   FormControl,
   FormItem,
   FormMessage,
-} from "@/components/shadcn-form/form"
+} from "@components/shadcn-form/form"
 import type * as z from "zod"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"

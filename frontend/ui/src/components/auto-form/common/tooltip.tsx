@@ -3,7 +3,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/tooltip"
+} from "@components/tooltip"
 import { HelpCircle } from "lucide-react"
 
 function AutoFormTooltip({ fieldConfigItem }: { fieldConfigItem: any }) {

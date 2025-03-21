@@ -1,14 +1,17 @@
 import AutoFormCheckbox from "./fields/checkbox"
 import AutoFormDate from "./fields/date"
 import AutoFormEnum from "./fields/enum"
+import FieldGroup from "./fields/field-group"
 import AutoFormFile from "./fields/file"
 import AutoFormInput from "./fields/input"
 import AutoFormMCQ from "./fields/mcq"
 import AutoFormMultiCheckbox from "./fields/multi-checkbox"
+import MultipleSelectorField from "./fields/multiple-selector"
 import AutoFormNumber from "./fields/number"
 import AutoFormRadioGroup from "./fields/radio-group"
 import AutoFormTextarea from "./fields/textarea"
 
+// Note: We don't include FieldGroup in INPUT_COMPONENTS as it's handled separately
 export const INPUT_COMPONENTS = {
   checkbox: AutoFormCheckbox,
   date: AutoFormDate,
@@ -20,7 +23,8 @@ export const INPUT_COMPONENTS = {
   fallback: AutoFormInput,
   mcq: AutoFormMCQ,
   multiCheckbox: AutoFormMultiCheckbox,
-}
+  multipleSelector: MultipleSelectorField,
+} as const
 
 /**
  * Define handlers for specific Zod types.
@@ -37,3 +41,6 @@ export const DEFAULT_ZOD_HANDLERS: {
   ZodMCQ: "mcq",
   ZodMultiCheckbox: "multiCheckbox",
 }
+
+// Export FieldGroup separately
+export { FieldGroup }

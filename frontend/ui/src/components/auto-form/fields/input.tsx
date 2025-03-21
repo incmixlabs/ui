@@ -1,9 +1,9 @@
-import { Input } from "@/components/form/input"
+import { Input } from "@components/form/input"
 import {
   FormControl,
   FormItem,
   FormMessage,
-} from "@/components/shadcn-form/form"
+} from "@components/shadcn-form/form"
 import { Eye, EyeOff } from "lucide-react"
 import { useEffect, useState } from "react"
 import React from "react"
@@ -60,9 +60,9 @@ export default function AutoFormInput({
   }
 
   return (
-    <FormItem className="mb-6 flex w-full flex-col">
+    <FormItem className=" flex w-full flex-col">
       {showLabel && (
-        <div className="mb-2">
+        <div className="mb-1">
           <AutoFormLabel
             label={label}
             isRequired={isRequired}
@@ -80,11 +80,11 @@ export default function AutoFormInput({
           <Input
             {...restFieldProps}
             type={inputType}
-            className={`h-14 w-full rounded-lg ${icon ? "pl-10" : "px-4"} ${
-              type === "password" ? "pr-10" : ""
-            } ${hasError ? "border-red-500" : ""}`}
+            className={`h-10 w-full rounded-md border-0 bg-zinc-950 text-white ${icon ? "pl-10" : "px-4"}
+              ${type === "password" ? "pr-10" : ""}
+              ${hasError ? "border border-red-500" : ""}focus-visible:ring-0 focus-visible:ring-offset-0`}
             placeholder={
-              restFieldProps.placeholder || `Enter your ${label.toLowerCase()}`
+              restFieldProps.placeholder || `Enter ${label.toLowerCase()}`
             }
           />
         </FormControl>
@@ -110,7 +110,7 @@ export default function AutoFormInput({
       </div>
 
       {/* Fixed height error message container to prevent layout shift */}
-      <div className="min-h-[24px] px-1 pt-1">
+      <div>
         <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
       </div>
     </FormItem>
