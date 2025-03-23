@@ -18,6 +18,7 @@ catalog:
   zod: 3.24.1
   nanoid: "5.0.9"
   "@radix-ui/themes": 3.2.0
+  "@tailwindcss/vite": 4.0.15
   "@tanstack/react-query": 5.65.1
   "@tanstack/react-router": 1.98.3
   "@types/react": 19.0.0

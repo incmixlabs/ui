@@ -12,6 +12,9 @@ catalogs:
     '@radix-ui/themes':
       specifier: 3.2.0
       version: 3.2.0
+    '@tailwindcss/vite':
+      specifier: 4.0.15
+      version: 4.0.15
     '@tanstack/react-query':
       specifier: 5.65.1
       version: 5.65.1
@@ -136,7 +139,7 @@ importers:
         specifier: 3.0.0
         version: 3.0.0
       '@tailwindcss/vite':
-        specifier: ^4.0.15
+        specifier: 'catalog:'
         version: 4.0.15(vite@6.0.9(@types/node@22.13.4)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.2)(yaml@2.7.0))
       '@tauri-apps/cli':
         specifier: '>=2.0.0-beta.0'

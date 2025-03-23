@@ -8,6 +8,7 @@ import { type PluginOption, defineConfig } from "vite"
 import bundlesize from "vite-plugin-bundlesize"
 import topLevelAwait from "vite-plugin-top-level-await"
 import tsconfigPaths from "vite-tsconfig-paths"
+
 import tailwindcss from "@tailwindcss/vite";
 
 // @ts-expect-error process is a nodejs global
