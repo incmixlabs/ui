@@ -3,7 +3,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/shadcn-form/form"
+} from "@components/shadcn-form/form"
 import { cn } from "@utils/cn"
 import type {
   AutoFormInputComponentProps,
