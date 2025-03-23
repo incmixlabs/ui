@@ -4,23 +4,26 @@ import {
   Button,
   CardContainer,
   Checkbox,
+  type ExtendedColorType,
   Flex,
   Grid,
   Heading,
   IconButton,
+  Progress,
   RadialBarChart,
   ScrollArea,
-  StatisticsBarChartView,
   StatsCard,
   Text,
+  cn,
 } from "@incmix/ui"
 
-import { Ellipsis, EllipsisVertical, Settings } from "lucide-react"
+import { Clipboard, Ellipsis, EllipsisVertical, Settings } from "lucide-react"
 import { motion } from "motion/react"
 import type React from "react"
 import { useState } from "react"
 import { Calendar } from "../calendar"
-import { SmartDatetimeInput } from "../datetime-picker"
+import RadialTaskStatusChart from "../chart/radial-task-status-chart"
+import WeeklyActivityChart from "../chart/statisic-weekly-active-chart"
 import { KanbanImages } from "../kanban-board/images"
 import { revisionData, taskStats } from "./data"
 import PostingCalendar from "./posting-calendar"
@@ -40,19 +43,47 @@ const stats = [
   { label: "Done", value: 200, color: "var(--amber-9)" },
 ]
 // Colors for the chart segments
-const ongoingColor = "var(--orange-9)"
-const onHoldColor = "var(--indigo-9)"
-const completedColor = "var(--amber-9)"
+const _ongoingColor = "var(--orange-9)"
+const _onHoldColor = "var(--indigo-9)"
+const _completedColor = "var(--amber-9)"
 type TabType = "month" | "week" | "day"
+interface ProgressItem {
+  category: string
+  value: number
+  maxValue: number
+  color: ExtendedColorType
+}
 
 export function Project2() {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
+  const [progressItems, _setProgressItems] = useState<ProgressItem[]>([
+    {
+      category: "Product Design",
+      value: 87,
+      maxValue: 120,
+      color: "indigo",
+    },
+    {
+      category: "Graphic Design",
+      value: 108,
+      maxValue: 120,
+      color: "orange",
+    },
+    {
+      category: "iOS Apps",
+      value: 100,
+      maxValue: 120,
+      color: "yellow",
+    },
+    {
+      category: "Android Apps",
+      value: 24,
+      maxValue: 120,
+      color: "green",
+    },
+  ])
 
   const [activeTab, setActiveTab] = useState<TabType>("month")
   const [revisions, setRevisions] = useState<ProjectRevision[]>(revisionData)
-  const handleDateChange = (date: Date) => {
-    setSelectedDate(date)
-  }
 
   const handleFilterRevision = (tab: TabType) => {
     setActiveTab(tab)
@@ -63,9 +94,9 @@ export function Project2() {
     <div>
       <Flex gap="6">
         <Box className="w-full">
-          <Box className="grid grid-cols-12 gap-8 ">
-            <Grid columns={"2"} gap="4" className="col-span-5 2xl:col-span-4">
-              {taskStats.map((stat, _index) => (
+          <Box className="grid grid-cols-12 gap-4 2xl:gap-8 ">
+            <Grid columns={"2"} gap="4" className="col-span-2 2xl:col-span-4">
+              {taskStats.slice(0, 1).map((stat, _index) => (
                 <StatsCard
                   key={stat.label}
                   count={stat.count}
@@ -75,38 +106,14 @@ export function Project2() {
                 />
               ))}
             </Grid>
-            <CardContainer className="col-span-7 2xl:col-span-8">
-              <Flex justify={"between"}>
-                <Heading size="5" className="pb-4">
-                  Statistics
-                </Heading>
-                <Box className="w-40">
-                  <SmartDatetimeInput
-                    className="bg-gray-2"
-                    showTimePicker={false}
-                    value={selectedDate}
-                    onValueChange={handleDateChange}
-                    placeholder="Enter a date"
-                  />
-                </Box>
-              </Flex>
-              <StatisticsBarChartView />
-            </CardContainer>
             <CardContainer className="col-span-5 2xl:col-span-4">
-              <Flex justify={"between"} align={"center"}>
-                <Heading className="font-poppins text-[20px]">Projects</Heading>
-                <IconButton
-                  variant="ghost"
-                  className="m-0 flex cursor-pointer flex-row items-center p-0"
-                >
-                  <Ellipsis />
+              <Flex align={"center"} gap={"2"} justify={"between"}>
+                <Heading size="5">Projects</Heading>
+                <IconButton>
+                  <Ellipsis size={16} />
                 </IconButton>
               </Flex>
-              <RadialBarChart
-                colors={[ongoingColor, onHoldColor, completedColor]}
-                labels={["Ongoing", "Hold", "Done"]}
-                series={[420, 210, 200]}
-              />
+              <RadialTaskStatusChart />
               <Grid columns={"3"} gap="4" className="mt-2">
                 {stats.map((stat) => (
                   <div
@@ -125,6 +132,35 @@ export function Project2() {
                 ))}
               </Grid>
             </CardContainer>
+            <CardContainer className="col-span-5 2xl:col-span-4">
+              <Flex align={"center"} gap={"2"} justify={"between"}>
+                <Heading size="5">Statistics</Heading>
+                <IconButton>
+                  <Ellipsis size={16} />
+                </IconButton>
+              </Flex>
+              <WeeklyActivityChart />
+              <Flex
+                align={"center"}
+                gap={"2"}
+                justify={"between"}
+                className="border-gray-5 border-t pt-2"
+              >
+                <Flex align={"center"} gap={"2"}>
+                  <IconButton>
+                    <Clipboard size={16} />
+                  </IconButton>
+                  <Box>
+                    <Text as="p">Completed Project</Text>
+                    <Text className="text-gray-10">Current Week</Text>
+                  </Box>
+                </Flex>
+                <Heading size="5" className="font-medium">
+                  874
+                </Heading>
+              </Flex>
+            </CardContainer>
+
             <CardContainer className="col-span-7 2xl:col-span-8">
               <Flex justify={"between"} align={"center"} className="pb-4">
                 <Heading size="5">Active Tasks</Heading>
@@ -184,7 +220,7 @@ export function Project2() {
                           <Text as="p" className="font-medium text-sm">
                             {revision.recipient || "Regina Cooper"}
                           </Text>
-                          <Text className="truncate text-gray-8 text-sm">
+                          <Text className="truncate text-gray-10 text-sm">
                             Sending project{" "}
                             <span className="text-blue-600">
                               #{revision.projectNumber}
@@ -203,6 +239,38 @@ export function Project2() {
                     ))}
                   </>
                 )}
+              </Box>
+            </CardContainer>
+            <CardContainer className="col-span-5 2xl:col-span-4">
+              <Flex justify={"between"} align={"center"}>
+                <Heading className="font-poppins text-[20px]">
+                  Total Projects
+                </Heading>
+                <IconButton
+                  variant="ghost"
+                  className="m-0 flex cursor-pointer flex-row items-center p-0"
+                >
+                  <Ellipsis />
+                </IconButton>
+              </Flex>
+              <Box className="space-y-4 pt-10">
+                {progressItems.map((item, index) => (
+                  <Box key={index} className="space-y-2">
+                    <Flex justify={"between"}>
+                      <Text className="font-medium text-gray-700 text-sm">
+                        {item.category}
+                      </Text>
+                      <Text className="font-medium text-gray-900 text-sm">
+                        {item.value}
+                      </Text>
+                    </Flex>
+                    <Progress
+                      value={(item.value / item.maxValue) * 100}
+                      className="h-2 bg-gray-100"
+                      color={item.color as ExtendedColorType}
+                    />
+                  </Box>
+                ))}
               </Box>
             </CardContainer>
             <CardContainer className="col-span-12">
