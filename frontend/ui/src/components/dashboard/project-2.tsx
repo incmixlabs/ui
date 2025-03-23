@@ -45,7 +45,7 @@ const onHoldColor = "var(--indigo-9)"
 const completedColor = "var(--amber-9)"
 type TabType = "month" | "week" | "day"
 
-export function Overview() {
+export function Project2() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
 
   const [activeTab, setActiveTab] = useState<TabType>("month")

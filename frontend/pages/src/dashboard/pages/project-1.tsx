@@ -1,43 +1,16 @@
 import { LoadingPage } from "@common"
-
-import {
-  CardContainer,
-  Overview,
-  SwapyExclude,
-  SwapyLayout,
-  SwapySlot,
-} from "@incmix/ui"
-import { Flex, Heading, Switch, Text } from "@incmix/ui"
-import {
-  BatteryWidget,
-  CalendarWidget,
-  ClockWidget,
-  ImageGrid,
-  NewsWidget,
-  WeatherWidget,
-  getBattery,
-} from "@incmix/ui/widgets"
+import { Flex, Heading, Project1, Switch, Text } from "@incmix/ui"
+import { getBattery } from "@incmix/ui/widgets"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { createSwapy } from "swapy"
-import { useAuth } from "../auth"
+import { useAuth } from "../../auth"
 
 type Widget = {
   id: string
   type: "weather" | "clock" | "news" | "battery" | "image-grid" | "calendar"
 }
-
-const MOCK_WEATHER_DATA = {
-  lat: "40.730610",
-  lon: "-73.935242",
-}
-
-const MOCK_CLOCK_DATA = [
-  { city: "New York", timeZone: "America/New_York" },
-  { city: "London", timeZone: "Europe/London" },
-  { city: "Tokyo", timeZone: "Asia/Tokyo" },
-]
 
 const INITIAL_WIDGETS: Widget[] = [
   { id: "weather", type: "weather" },
@@ -72,43 +45,16 @@ const EditWidgetsControl: React.FC<{
   )
 }
 
-const renderWidget = (widget: Widget) => {
-  switch (widget.type) {
-    case "weather":
-      return <WeatherWidget location={MOCK_WEATHER_DATA} />
-    case "clock":
-      return <ClockWidget flip clocks={MOCK_CLOCK_DATA} size="1" />
-    case "news":
-      return <NewsWidget country="us" />
-    case "battery":
-      return <BatteryWidget />
-    case "image-grid":
-      return <ImageGrid />
-    case "calendar":
-      return <CalendarWidget storageKey={"calendar_events_dashboard"} />
-    default:
-      return null
-  }
-}
-
-const DashboardPage: React.FC = () => {
+const DashboardProject1: React.FC = () => {
   const { t } = useTranslation(["dashboard", "common"])
   const { authUser, isLoading } = useAuth()
   const swapyRef = useRef<ReturnType<typeof createSwapy> | null>(null)
 
-  const [isEditing, setIsEditing] = useState(false)
-  const [widgets, setWidgets] = useState<Widget[]>([])
+  const [_isEditing, setIsEditing] = useState(false)
+  const [_widgets, setWidgets] = useState<Widget[]>([])
   const [slotItemsMap, setSlotItemsMap] = useState<typeof INITIAL_SLOT_ITEMS>(
     []
   )
-
-  const slottedWidgets = useMemo(() => {
-    return slotItemsMap.map(({ slotId, itemId }) => ({
-      slotId,
-      itemId,
-      widget: widgets.find((w) => w.id === itemId),
-    }))
-  }, [widgets, slotItemsMap])
 
   useEffect(() => {
     const initializeWidgets = async () => {
@@ -166,35 +112,10 @@ const DashboardPage: React.FC = () => {
     >
       <Flex direction="column" gap="6">
         <Heading size="6">{t("dashboard:title")}</Heading>
-        <Overview />
-
-        {/* <RadialBarChartCard /> */}
-        <Flex direction="column" gap="6">
-          {slottedWidgets.length && (
-            <SwapyLayout
-              id="dashboard-container"
-              enable={isEditing}
-              config={{ swapMode: "drop" }}
-            >
-              <Flex direction="row" gap="4" wrap="wrap">
-                {slottedWidgets.map(({ slotId, widget }) => (
-                  <SwapySlot key={slotId} id={slotId} showHandle={isEditing}>
-                    {widget && (
-                      <CardContainer>
-                        <SwapyExclude id={widget.id}>
-                          {renderWidget(widget)}
-                        </SwapyExclude>
-                      </CardContainer>
-                    )}
-                  </SwapySlot>
-                ))}
-              </Flex>
-            </SwapyLayout>
-          )}
-        </Flex>
+        <Project1 />
       </Flex>
     </DashboardLayout>
   )
 }
 
-export default DashboardPage
+export default DashboardProject1

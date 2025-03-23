@@ -82,6 +82,46 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/dashboard",
         icon: LayoutDashboardIcon,
         isSelected: pathname.includes("/dashboard"),
+        isActive:
+          pathname.startsWith("/dashboard") ||
+          pathname.includes("/home") ||
+          pathname.includes("/project-1") ||
+          pathname.includes("/project-2"),
+        items: ability.can("read", "Member")
+          ? [
+              {
+                title: t("sidebar:home"),
+                url: "/dashboard/home",
+                isSelected: pathname.includes("/dashboard/home"),
+              },
+              {
+                title: t("sidebar:project-1"),
+                url: "/dashboard/project-1",
+                isSelected: pathname.includes("/dashboard/project-1"),
+              },
+              {
+                title: t("sidebar:project-2"),
+                url: "/dashboard/project-2",
+                isSelected: pathname.includes("/dashboard/project-2"),
+              },
+            ]
+          : [
+              {
+                title: t("sidebar:home"),
+                url: "/dashboard/home",
+                isSelected: pathname.includes("/dashboard/home"),
+              },
+              {
+                title: t("sidebar:project-1"),
+                url: "/dashboard/project-1",
+                isSelected: pathname.includes("/dashboard/project-1"),
+              },
+              {
+                title: t("sidebar:project-2"),
+                url: "/dashboard/project-2",
+                isSelected: pathname.includes("/dashboard/project-2"),
+              },
+            ],
       },
       {
         title: t("sidebar:inbox"),
