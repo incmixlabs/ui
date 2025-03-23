@@ -6,14 +6,12 @@
 */
 
 @layer tw_base, radix_ui, tw_components_utils;
-@import "@radix-ui/themes/styles.css" layer(radix_ui);
+@import '@radix-ui/themes/styles.css' layer(radix_ui);
 
 @layer tw_base {
-  @tailwind base;
+  @import 'tailwindcss';
 }
 @layer tw_components_utils {
-  @tailwind components;
-  @tailwind utilities;
 }
 @layer tw_base {
   .aspect-video {
