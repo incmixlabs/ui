@@ -9,6 +9,16 @@ import { type ChangeEvent, useState } from "react"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 
+/**
+ * Renders a file upload component with preview and removal capabilities.
+ *
+ * This component enables file selection within a form. When a file is chosen, it creates an object URL for preview and reads the file as a base64-encoded string to pass the file data back via a change handler. If the file is an image, it displays a preview; otherwise, it shows the file name. The component also provides the ability to remove the selected file, which clears the internal state and revokes the preview URL.
+ *
+ * @param label - The text label displayed above the file input.
+ * @param isRequired - Indicates whether the file input is required.
+ * @param fieldProps - Additional configuration for the file input. The optional `showLabel` property controls label visibility.
+ * @param field - Field-specific configuration and callback for updating form state with the file data.
+ */
 export default function AutoFormFile({
   label,
   isRequired,

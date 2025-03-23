@@ -118,10 +118,15 @@ export function getObjectFormSchema(
 }
 
 /**
- * Convert a Zod schema to HTML input props to give direct feedback to the user.
- * Once submitted, the schema will be validated completely.
+ * Converts a Zod schema into HTML input properties for React components.
  *
- * MODIFIED: No longer adds HTML validation attributes to allow Zod validation to take precedence
+ * This function processes a Zod schema representing a number or string field (or their optional variants)
+ * and returns an object of input attributes. It determines whether the field is required for UI styling,
+ * but it deliberately omits native HTML validation attributes (e.g., "required", "minLength"),
+ * allowing Zod to perform the full validation upon form submission.
+ *
+ * @param schema - A Zod schema defining the field's type.
+ * @returns An object containing HTML input properties.
  */
 export function zodToHtmlInputProps(
   schema:
@@ -145,13 +150,15 @@ export function zodToHtmlInputProps(
 }
 
 /**
-+ * Determines if a Zod schema represents an array that should use a multiple selector component.
-+ *
-+ * The schema must be a ZodArray containing ZodObjects with 'label' and 'value' string properties.
-+ *
-+ * @param zodItem - The Zod schema to check
-+ * @returns boolean - True if the schema should use a multiple selector
-+ */
+ * Checks if a Zod schema represents an array of objects suitable for a multiple selector component.
+ *
+ * The function confirms that the provided schema is a ZodArray whose items are ZodObjects that include both
+ * "label" and "value" properties of string type. The function returns false if the schema does not match these
+ * conditions or if any error occurs during the validation process.
+ *
+ * @param zodItem - The Zod schema to evaluate.
+ * @returns True if the schema represents an array of selectable option objects, false otherwise.
+ */
 export function isMultipleSelectorType(zodItem: z.ZodTypeAny): boolean {
   if (!(zodItem instanceof z.ZodArray)) return false
 
