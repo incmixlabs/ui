@@ -1,6 +1,6 @@
 import { CardContainer } from "@incmix/ui"
 import { useRunOnce } from "@incmix/ui"
-import { Flex, Heading, Text } from "@radix-ui/themes"
+import { Flex, Heading, Text } from "@incmix/ui"
 import { useTranslation } from "react-i18next"
 import TauriGoogleAuthCallbackRoute from "./routes/tauri-google-auth-callback"
 

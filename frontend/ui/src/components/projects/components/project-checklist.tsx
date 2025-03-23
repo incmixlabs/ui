@@ -6,14 +6,8 @@ import {
   IconButton,
   Progress,
   Text,
-} from "@radix-ui/themes"
-import {
-  CalendarDays,
-  DollarSign,
-  GripVertical,
-  Plus,
-  Trash2,
-} from "lucide-react"
+} from "@incmix/ui"
+import { GripVertical, Plus, Trash2 } from "lucide-react"
 import { Reorder, motion, useDragControls, useMotionValue } from "motion/react"
 import type { DragControls } from "motion/react"
 import type React from "react"

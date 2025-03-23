@@ -33,6 +33,7 @@ export * from "./chart/radial-bar-chart"
 export {
   Badge,
   Box,
+  Popover,
   Checkbox,
   Heading,
   Flex,
@@ -43,7 +44,22 @@ export {
   Link,
   Select,
   Spinner,
+  ScrollArea,
+  Avatar,
   Switch,
+  Tooltip,
+  Tabs,
+  DropdownMenu,
+  HoverCard,
+  Theme,
+  ThickCheckIcon,
+  Table,
+  Callout,
+  Separator,
+  VisuallyHidden,
+  TextArea,
+  ContextMenu,
+  Progress,
 } from "@radix-ui/themes"
 export * from "./stepper"
 export * from "./sheet"
@@ -51,4 +67,3 @@ export * from "./badges"
 export * from "./multiple-selector"
 export * from "./skeleton"
 export * from "./tooltip"
-export { Separator } from "@radix-ui/themes"

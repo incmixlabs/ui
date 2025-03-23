@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, Flex, Text } from "@radix-ui/themes"
+import { Button, Flex, Text, TextArea } from "@incmix/ui"
 import { FilePlus, FolderPlus } from "lucide-react"
 import React from "react"
 import { TreeItemDialog } from "./tree-item-dialog"

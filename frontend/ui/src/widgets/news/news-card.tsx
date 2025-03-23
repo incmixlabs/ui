@@ -1,6 +1,6 @@
 import { Card, CardContent, CardTitle } from "@components/card/card"
 import { CarouselItem } from "@components/carousel"
-import { Box, Flex, Text } from "@radix-ui/themes"
+import { Box, Flex, Text } from "@incmix/ui"
 import { cn } from "@utils/cn"
 
 import { getRelativeTime } from "@utils/date"

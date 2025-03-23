@@ -1,5 +1,5 @@
+import { Container } from "@incmix/ui"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { Container } from "@radix-ui/themes"
 import { TranslationsTable } from "./translations-table"
 
 const TranslationsPage = () => {

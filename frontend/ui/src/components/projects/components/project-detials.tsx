@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Text } from "@radix-ui/themes"
+import { Box, Flex, Heading, Text } from "@incmix/ui"
 import { CalendarDays, DollarSign } from "lucide-react"
 import React from "react"
 import { ProjectsImages } from "../images"

@@ -1,5 +1,5 @@
 import { Toaster } from "@incmix/ui"
-import { Box, Flex, ScrollArea } from "@radix-ui/themes"
+import { Box, Flex, ScrollArea } from "@incmix/ui"
 import type { FC, ReactNode } from "react"
 
 import { AppSidebar as Sidebar } from "./admin-panel/app-sidebar"

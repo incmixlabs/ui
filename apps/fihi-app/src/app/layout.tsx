@@ -1,4 +1,4 @@
-import { Container, Theme } from "@radix-ui/themes"
+import { Container, Theme } from "@incmix/ui"
 import { Link } from "@tanstack/react-router"
 import React from "react"
 function App() {

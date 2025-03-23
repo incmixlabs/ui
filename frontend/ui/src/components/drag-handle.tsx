@@ -1,5 +1,5 @@
+import { Box } from "@incmix/ui"
 import { HamburgerMenuIcon } from "@radix-ui/react-icons"
-import { Box } from "@radix-ui/themes"
 
 export const DragHandle = () => {
   return (

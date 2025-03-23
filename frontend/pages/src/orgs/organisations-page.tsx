@@ -1,8 +1,12 @@
 import { LoadingPage } from "@common"
-import { Button, CardContainer, FormField } from "@incmix/ui"
-import type { Organization } from "@incmix/utils/types"
-import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { ChevronRightIcon } from "@radix-ui/react-icons"
+import {
+  Button,
+  CardContainer,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  FormField,
+} from "@incmix/ui"
 import {
   Container,
   Dialog,
@@ -11,7 +15,10 @@ import {
   Table,
   Text,
   TextField,
-} from "@radix-ui/themes"
+} from "@incmix/ui"
+import type { Organization } from "@incmix/utils/types"
+import { DashboardLayout } from "@layouts/admin-panel/layout"
+import { ChevronRightIcon } from "@radix-ui/react-icons"
 import { useForm } from "@tanstack/react-form"
 import { Link } from "@tanstack/react-router"
 import { useState } from "react"
@@ -95,12 +102,12 @@ const CreateOrganizationDialog: React.FC<{
   })
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
-      <Dialog.Content>
-        <Dialog.Title>{t("organizations:createNewOrganization")}</Dialog.Title>
-        <Dialog.Description className="sr-only">
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogTitle>{t("organizations:createNewOrganization")}</DialogTitle>
+        <DialogDescription className="sr-only">
           {t("organizations:createNewOrganization")}
-        </Dialog.Description>
+        </DialogDescription>
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -155,8 +162,8 @@ const CreateOrganizationDialog: React.FC<{
             </Button>
           </Flex>
         </form>
-      </Dialog.Content>
-    </Dialog.Root>
+      </DialogContent>
+    </Dialog>
   )
 }
 

@@ -3,7 +3,7 @@ import { FilterIcon } from "@components/icons/filter"
 
 import { MotionSheet } from "@components/custom-sheet"
 import { useMediaQuery } from "@hooks/use-media-query"
-import { Box, Button, DropdownMenu, Flex, IconButton } from "@radix-ui/themes"
+import { Box, Button, Flex, IconButton } from "@incmix/ui"
 import { cn } from "@utils"
 import {
   ChevronLeft,

@@ -1,25 +1,20 @@
 import {
-  CardContainer,
-  ClipBoard,
-  ClipBoardAdd,
-  ClipBoardCheck,
-  ClipBoardStatus,
-  RadialBarChart,
-  StatisticsBarChartView,
-  StatsCard,
-} from "@incmix/ui"
-import {
   Avatar,
   Box,
   Button,
+  CardContainer,
   Checkbox,
   Flex,
   Grid,
   Heading,
   IconButton,
+  RadialBarChart,
   ScrollArea,
+  StatisticsBarChartView,
+  StatsCard,
   Text,
-} from "@radix-ui/themes"
+} from "@incmix/ui"
+
 import { Ellipsis, EllipsisVertical, Settings } from "lucide-react"
 import { motion } from "motion/react"
 import type React from "react"

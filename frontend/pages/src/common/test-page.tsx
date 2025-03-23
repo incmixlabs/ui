@@ -1,4 +1,4 @@
-import { Text } from "@radix-ui/themes"
+import { Text } from "@incmix/ui"
 import type React from "react"
 
 const TestPage: React.FC = () => {

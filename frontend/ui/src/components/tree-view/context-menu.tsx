@@ -1,10 +1,6 @@
 "use client"
 
-import {
-  Button,
-  ContextMenu as ContextMenuPrimitive,
-  Flex,
-} from "@radix-ui/themes"
+import { Button, ContextMenu as ContextMenuPrimitive, Flex } from "@incmix/ui"
 import { FilePlus, FolderPlus, Pencil, Trash } from "lucide-react"
 import type * as React from "react"
 import { useTreeViewContext } from "./tree-view-context"

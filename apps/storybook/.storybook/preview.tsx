@@ -3,7 +3,7 @@ import React from "react"
 import "./global.css"
 import { useThemeStore } from "@incmix/store"
 import { Toaster } from "@incmix/ui"
-import { Flex, Theme } from "@radix-ui/themes"
+import { Flex, Theme } from "@incmix/ui"
 import QueryProvider from "./query-client"
 
 const ThemeWrapper = ({

@@ -4,10 +4,9 @@ import { useTranslation } from "react-i18next"
 
 import { useAuth, useCurrentUser } from "@auth"
 import { CardContainer } from "@incmix/ui"
+import { Box, Flex, Heading, Text } from "@incmix/ui"
 import type { UserProfile } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { Box, Flex, Heading, Text } from "@radix-ui/themes"
-import { PageLayout } from "../common/components/layouts/page-layout"
 import { CurrentUserProfileImage } from "../common/components/user-profile-image"
 import LoadingPage from "../common/loading-page"
 
@@ -31,10 +30,10 @@ const ProfileHeader: React.FC<{ user: UserProfile }> = ({ user }) => {
       <Flex direction="column" align="center">
         <CurrentUserProfileImage size="9" />
         <Heading as="h2" size="5" color="gray" className="mt-4">
-          {user.name}
+          {user?.fullName}
         </Heading>
         <Text size="2" color="gray">
-          {user.email}
+          {user?.email}
         </Text>
       </Flex>
     </Box>
@@ -49,8 +48,8 @@ const ProfileInformation: React.FC<{ user: UserProfile }> = ({ user }) => {
         {t("profileInformation")}
       </Heading>
       <Flex direction="column" gap="4">
-        <InfoField label={t("common:name")} value={user.name} />
-        <InfoField label={t("common:email")} value={user.email} />
+        <InfoField label={t("common:name")} value={user?.fullName} />
+        <InfoField label={t("common:email")} value={user?.email} />
       </Flex>
     </Box>
   )

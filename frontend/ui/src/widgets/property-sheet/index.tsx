@@ -4,9 +4,7 @@ import { KanbanImages } from "@components/kanban-board/images"
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@components/select"
@@ -19,7 +17,7 @@ import {
   Heading,
   Popover,
   Text,
-} from "@radix-ui/themes"
+} from "@incmix/ui"
 import { useState } from "react"
 
 export const themeData = [

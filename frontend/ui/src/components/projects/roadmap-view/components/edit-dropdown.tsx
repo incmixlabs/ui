@@ -1,11 +1,5 @@
 import ColorPicker, { type ColorSelectType } from "@components/color-picker"
-import {
-  Box,
-  Button,
-  type ButtonProps,
-  DropdownMenu,
-  Grid,
-} from "@radix-ui/themes"
+import { Box, Button, DropdownMenu } from "@incmix/ui"
 import {
   Clipboard,
   Copy,

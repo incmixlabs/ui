@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Text } from "@radix-ui/themes"
+import { Box, Flex, Heading, Text } from "@incmix/ui"
 import type { Project } from "@types"
 import { DateTime } from "luxon"
 import { formatDate, getColorClass, getLightColorClass } from "./project-utils"

@@ -1,7 +1,7 @@
 "use client"
 
+import { Box, Flex, Text } from "@incmix/ui"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import { Box, ChevronDownIcon, Flex, ScrollArea, Text } from "@radix-ui/themes"
 import { cn } from "@utils/cn"
 import { ChevronRight, type LucideIcon } from "lucide-react"
 import React, { type ComponentType } from "react"

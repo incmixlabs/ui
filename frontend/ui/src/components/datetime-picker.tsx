@@ -1,4 +1,4 @@
-import { ScrollArea } from "@radix-ui/themes"
+import { ScrollArea } from "@incmix/ui"
 import { parseDate } from "chrono-node"
 import React from "react"
 import type { ActiveModifiers } from "react-day-picker"

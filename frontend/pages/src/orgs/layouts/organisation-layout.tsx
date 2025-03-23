@@ -1,5 +1,4 @@
-import { OrganisationUsersRoute } from "@orgs/routes"
-import { Container, Flex, Tabs } from "@radix-ui/themes"
+import { Container, Flex, Tabs } from "@incmix/ui"
 import { useNavigate } from "@tanstack/react-router"
 import { useTranslation } from "react-i18next"
 

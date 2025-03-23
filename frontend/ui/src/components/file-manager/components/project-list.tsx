@@ -8,10 +8,10 @@ import {
   TableRow,
 } from "@components/table"
 import { useMediaQuery } from "@hooks/use-media-query"
-import { ScrollArea } from "@radix-ui/themes"
+import { ScrollArea } from "@incmix/ui"
 import { cn } from "@utils"
 import { getBytes } from "@utils/getBytes"
-import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react"
+import { ChevronDown, ChevronUp } from "lucide-react"
 import { useState } from "react"
 import type { FileItem } from "../data"
 import { ProjectActionsMenu } from "./project-actions-menu"

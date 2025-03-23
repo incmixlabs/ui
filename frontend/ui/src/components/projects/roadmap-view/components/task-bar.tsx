@@ -1,10 +1,4 @@
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@components/tooltip"
-import { Badge, Box, Flex, HoverCard, Text } from "@radix-ui/themes"
+import { Badge, Box, Flex, HoverCard, Text } from "@incmix/ui"
 import { CalendarDays, Clipboard, User } from "lucide-react"
 import type { DateTime } from "luxon"
 import { ProjectsImages } from "../../images"

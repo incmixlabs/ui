@@ -8,7 +8,7 @@ import { SmartDatetimeInput } from "@components/datetime-picker"
 import MultipleSelector, {
   type Option,
 } from "@components/multiple-selector/multiple-selector"
-import { Box, Button, Flex, Grid, Select } from "@radix-ui/themes"
+import { Box, Button, Flex, Select } from "@incmix/ui"
 import Image from "next/image"
 
 interface ProjectFilterProps {

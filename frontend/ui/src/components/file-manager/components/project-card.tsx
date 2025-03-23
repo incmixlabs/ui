@@ -1,5 +1,5 @@
 import { useMediaQuery } from "@hooks/use-media-query"
-import { Box, Card, Flex } from "@radix-ui/themes"
+import { Box, Flex } from "@incmix/ui"
 import { cn } from "@utils"
 import type { ElementType } from "react"
 import type { FileItem } from "../data"
