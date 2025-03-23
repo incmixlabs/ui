@@ -1,12 +1,6 @@
 import { LoadingPage } from "@common"
 
-import {
-  CardContainer,
-  Overview,
-  SwapyExclude,
-  SwapyLayout,
-  SwapySlot,
-} from "@incmix/ui"
+import { CardContainer, SwapyExclude, SwapyLayout, SwapySlot } from "@incmix/ui"
 import { Flex, Heading, Switch, Text } from "@incmix/ui"
 import {
   BatteryWidget,
@@ -21,7 +15,7 @@ import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { createSwapy } from "swapy"
-import { useAuth } from "../auth"
+import { useAuth } from "../../auth"
 
 type Widget = {
   id: string
@@ -91,7 +85,7 @@ const renderWidget = (widget: Widget) => {
   }
 }
 
-const DashboardPage: React.FC = () => {
+const DashboardHomePage: React.FC = () => {
   const { t } = useTranslation(["dashboard", "common"])
   const { authUser, isLoading } = useAuth()
   const swapyRef = useRef<ReturnType<typeof createSwapy> | null>(null)
@@ -166,9 +160,7 @@ const DashboardPage: React.FC = () => {
     >
       <Flex direction="column" gap="6">
         <Heading size="6">{t("dashboard:title")}</Heading>
-        <Overview />
 
-        {/* <RadialBarChartCard /> */}
         <Flex direction="column" gap="6">
           {slottedWidgets.length && (
             <SwapyLayout
@@ -197,4 +189,4 @@ const DashboardPage: React.FC = () => {
   )
 }
 
-export default DashboardPage
+export default DashboardHomePage

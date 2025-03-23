@@ -25,7 +25,9 @@ const luxonLocale: Record<Language, string> = {
 // const db = await createDatabase()
 
 import {
-  DashboardRoute,
+  DashboardHomeRoute,
+  DashboardProject1Route,
+  DashboardProject2Route,
   EmailVerificationRoute,
   FileManagerRoute,
   ForgotPasswordRoute,
@@ -74,7 +76,9 @@ const routeTree = RootRoute.addChildren([
   NotFoundRoute,
   LoadingRoute,
   FileManagerRoute,
-  DashboardRoute,
+  DashboardHomeRoute,
+  DashboardProject1Route,
+  DashboardProject2Route,
   ListUsersRoute,
   TasksRoute,
   ProjectsRoute,
