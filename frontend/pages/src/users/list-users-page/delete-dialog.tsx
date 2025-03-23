@@ -1,6 +1,7 @@
 "use client"
 
 import {
+  Button,
   Dialog,
   DialogClose,
   DialogContent,
@@ -11,7 +12,6 @@ import {
   DialogTrigger,
 } from "@incmix/ui"
 import type { UserAndProfile } from "@incmix/utils/types"
-import { Button } from "@radix-ui/themes"
 import type { Row } from "@tanstack/react-table"
 import { Trash } from "lucide-react"
 

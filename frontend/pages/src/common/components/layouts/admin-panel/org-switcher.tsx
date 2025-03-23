@@ -2,6 +2,7 @@ import { ChevronsUpDown } from "lucide-react"
 import * as React from "react"
 
 import { useOrganizationStore } from "@incmix/store"
+import { DropdownMenu } from "@incmix/ui"
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -9,7 +10,6 @@ import {
   useSidebar,
 } from "@incmix/ui/sidebar"
 import { useOrganizations } from "@orgs/utils"
-import { DropdownMenu } from "@radix-ui/themes"
 import { useTranslation } from "react-i18next"
 
 export function OrgSwitcher() {

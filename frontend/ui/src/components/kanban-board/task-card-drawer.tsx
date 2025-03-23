@@ -7,36 +7,28 @@ import {
   Flex,
   Grid,
   Heading,
-  Popover,
   ScrollArea,
   Tabs,
   Text,
-} from "@radix-ui/themes"
+} from "@incmix/ui"
 import { cn } from "@utils"
 import {
   Check,
-  Delete,
   Download,
   Ellipsis,
   Eye,
-  File,
   FileArchive,
   GripVertical,
   Image,
-  Layout,
   Link,
   Paperclip,
   Plus,
-  Search,
   Smile,
   Trash2,
 } from "lucide-react"
 import {
-  AnimatePresence,
   type DragControls,
-  MotionValue,
   Reorder,
-  animate,
   motion,
   useDragControls,
   useMotionValue,

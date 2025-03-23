@@ -1,4 +1,4 @@
-import { Box, Grid, Text } from "@radix-ui/themes"
+import { Box, Grid, Text } from "@incmix/ui"
 import { cn } from "@utils"
 import { DateTime } from "luxon"
 import type { ViewType } from "./gantt-chart"

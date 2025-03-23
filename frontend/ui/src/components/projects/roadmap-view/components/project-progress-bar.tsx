@@ -1,6 +1,6 @@
-import { Box, Text } from "@radix-ui/themes"
+import { Box, Text } from "@incmix/ui"
 import type { Project } from "@types"
-import { getColorClass, getLightColorClass } from "./project-utils"
+import { getColorClass } from "./project-utils"
 
 interface ProjectProgressBarProps {
   project: Project

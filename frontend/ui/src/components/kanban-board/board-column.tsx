@@ -15,13 +15,12 @@ import type { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist
 import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
 
-import { Box, Flex, Heading } from "@radix-ui/themes"
+import { Box, Flex, Heading } from "@incmix/ui"
 import { IconButton } from "../button"
 import { blockBoardPanningAttr } from "./data-attributes"
 import { isSafari } from "./is-safari"
 import { isShallowEqual } from "./is-shallow-equal"
 import { TaskCard, TaskCardShadow } from "./task-card"
-import TaskCardDrawer from "./task-card-drawer"
 import {
   type TCardData,
   type TColumn,

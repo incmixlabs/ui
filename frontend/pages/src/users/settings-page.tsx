@@ -1,16 +1,7 @@
-import {
-  Box,
-  Flex,
-  Grid,
-  Heading,
-  Select,
-  Switch,
-  Text,
-} from "@radix-ui/themes"
+import { Box, Flex, Grid, Heading, Select, Switch, Text } from "@incmix/ui"
 import { useForm } from "@tanstack/react-form"
 import { useQueryClient } from "@tanstack/react-query"
 import { zodValidator } from "@tanstack/zod-form-adapter"
-import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -21,7 +12,6 @@ import { useLanguageStore, useThemeStore } from "@incmix/store"
 import { Button, CardContainer, FormField } from "@incmix/ui"
 import type { UserProfile } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { PageLayout } from "../common/components/layouts/page-layout"
 import { CurrentUserProfileImage } from "../common/components/user-profile-image"
 
 const _FormButton: React.FC<{
@@ -97,7 +87,7 @@ const ProfileSection: React.FC<{ user: UserProfile }> = ({ user }) => {
         <CurrentUserProfileImage size="8" editable />
         <Box ml="4">
           <Heading size="4" color="gray">
-            {user?.name}
+            {user?.fullName}
           </Heading>
           <Text color="gray">{user.email}</Text>
         </Box>

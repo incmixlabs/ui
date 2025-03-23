@@ -1,16 +1,9 @@
 import type { TaskCollections } from "@incmix/store"
 import { useOrganizationStore } from "@incmix/store"
 import { Board, CardContent, useKanbanFilter } from "@incmix/ui"
+import { Box, Card, Flex, IconButton, ScrollArea, Select } from "@incmix/ui"
 import type { Task } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import {
-  Box,
-  Card,
-  Flex,
-  IconButton,
-  ScrollArea,
-  Select,
-} from "@radix-ui/themes"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { Filter, FilterIcon, ListFilter } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"

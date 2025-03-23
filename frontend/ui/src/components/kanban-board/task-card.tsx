@@ -29,7 +29,7 @@ import {
 } from "./types"
 
 import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
-import { Box, Card, Checkbox, Flex, Heading, Text } from "@radix-ui/themes"
+import { Box, Card, Checkbox, Flex, Heading, Text } from "@incmix/ui"
 import { cn } from "@utils"
 
 type TCardState =

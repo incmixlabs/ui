@@ -11,7 +11,16 @@ import MultipleSelector, {
   type Option,
 } from "@components/multiple-selector/multiple-selector"
 import { Textarea } from "@components/textarea"
-import { Box, Button, Dialog, Flex, Grid, Text } from "@radix-ui/themes"
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  Flex,
+  Grid,
+  Text,
+} from "@incmix/ui"
 import { Calendar, Paperclip, Plus, X } from "lucide-react"
 import Image from "next/image"
 import { useEffect, useState } from "react"
@@ -112,9 +121,9 @@ export function AddProjectModal({
   }
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={onClose}>
-      <Dialog.Content maxWidth="500px">
-        <Dialog.Title className="font-medium">Add Project</Dialog.Title>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent maxWidth="500px">
+        <DialogTitle className="font-medium">Add Project</DialogTitle>
         <Grid className="py-4" gap={"4"}>
           <Flex justify={"center"} className="mb-4">
             <FileUploader
@@ -256,7 +265,7 @@ export function AddProjectModal({
             Create
           </Button>
         </Flex>
-      </Dialog.Content>
-    </Dialog.Root>
+      </DialogContent>
+    </Dialog>
   )
 }

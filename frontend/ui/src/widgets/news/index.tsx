@@ -10,7 +10,7 @@ import {
 } from "@components/carousel"
 import { Tabs, TabsList, TabsTrigger } from "@components/tabs"
 import { useRateLimitStore } from "@incmix/store"
-import { Spinner, Text } from "@radix-ui/themes"
+import { Spinner, Text } from "@incmix/ui"
 import { useQuery } from "@tanstack/react-query"
 import { LOCATION_API_URL } from "@utils/constants"
 import { DateTime } from "luxon"

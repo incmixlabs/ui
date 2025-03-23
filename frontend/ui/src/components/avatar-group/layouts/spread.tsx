@@ -1,4 +1,4 @@
-import { Flex } from "@radix-ui/themes"
+import { Flex } from "@incmix/ui"
 import type React from "react"
 import { Avatar } from "../../avatar"
 import { gaps } from "../constants"

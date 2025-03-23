@@ -1,4 +1,4 @@
-import { Flex, Spinner } from "@radix-ui/themes"
+import { Flex, Spinner } from "@incmix/ui"
 
 const LoadingPage: React.FC = () => {
   return (

@@ -1,11 +1,4 @@
 import { Button, CardContainer } from "@incmix/ui"
-import type {
-  MemberDetails,
-  MemberRole,
-  Organization,
-} from "@incmix/utils/types"
-import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { ArrowLeftIcon } from "@radix-ui/react-icons"
 import {
   Container,
   Flex,
@@ -15,7 +8,14 @@ import {
   Text,
   TextField,
   Tooltip,
-} from "@radix-ui/themes"
+} from "@incmix/ui"
+import type {
+  MemberDetails,
+  MemberRole,
+  Organization,
+} from "@incmix/utils/types"
+import { DashboardLayout } from "@layouts/admin-panel/layout"
+import { ArrowLeftIcon } from "@radix-ui/react-icons"
 import { Link } from "@tanstack/react-router"
 import { forwardRef, useContext, useState } from "react"
 import { useTranslation } from "react-i18next"

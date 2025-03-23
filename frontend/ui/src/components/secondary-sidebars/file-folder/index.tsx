@@ -1,5 +1,5 @@
 "use client"
-import { Box, Flex, Progress, ScrollArea, Text } from "@radix-ui/themes"
+import { Box, Flex, Progress, ScrollArea, Text } from "@incmix/ui"
 import { FolderClosed, type LucideIcon } from "lucide-react"
 import { type JSX, useState } from "react"
 import { secondaryFooterData, secondarySidebarData } from "./data"

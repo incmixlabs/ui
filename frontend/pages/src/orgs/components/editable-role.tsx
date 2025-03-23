@@ -1,6 +1,6 @@
+import { Button, Flex, Select, Spinner, Text, Tooltip } from "@incmix/ui"
 import type { MemberRole } from "@incmix/utils/types"
 import { CheckIcon, Cross1Icon, Pencil1Icon } from "@radix-ui/react-icons"
-import { Button, Flex, Select, Spinner, Text, Tooltip } from "@radix-ui/themes"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"

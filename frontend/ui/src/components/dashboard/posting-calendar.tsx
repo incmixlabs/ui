@@ -1,17 +1,8 @@
 import React, { useMemo } from "react"
 
-import {
-  Box,
-  Flex,
-  Grid,
-  Heading,
-  IconButton,
-  Text,
-  Tooltip,
-} from "@radix-ui/themes"
+import { Box, Flex, Grid, Heading, IconButton, Text, Tooltip } from "@incmix/ui"
 import { cn } from "@utils"
-import { Ellipsis, CloudLightningIcon as Lightning, Zap } from "lucide-react"
-import { useState } from "react"
+import { Ellipsis, Zap } from "lucide-react"
 
 interface Task {
   day: string

@@ -1,6 +1,6 @@
 "use client"
 
-import { Popover as PopoverPrimitive } from "@radix-ui/themes"
+import { Popover as PopoverPrimitive } from "@incmix/ui"
 import * as React from "react"
 
 import { cn } from "@utils"

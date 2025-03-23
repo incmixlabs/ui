@@ -11,8 +11,8 @@ import {
   DialogTrigger,
   ReactiveButton,
 } from "@incmix/ui"
+import { Button } from "@incmix/ui"
 import { INTL_API_URL } from "@incmix/ui/constants"
-import { Button } from "@radix-ui/themes"
 import { useMutation } from "@tanstack/react-query"
 import type { Row } from "@tanstack/react-table"
 import { Trash } from "lucide-react"

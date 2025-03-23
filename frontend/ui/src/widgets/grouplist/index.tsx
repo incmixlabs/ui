@@ -1,5 +1,5 @@
 import { IconButton } from "@components"
-import { Box, Card, Flex, Heading, ScrollArea, Text } from "@radix-ui/themes"
+import { Box, Card, Flex, Heading, ScrollArea, Text } from "@incmix/ui"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import React, { useState } from "react"
 

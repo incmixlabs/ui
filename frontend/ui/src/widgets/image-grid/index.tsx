@@ -6,8 +6,8 @@ import {
 } from "@components/layout-grid"
 import { toast } from "@components/toaster"
 import { useUploadFile } from "@hooks/use-upload-file"
+import { Box, Button, Card, Flex, Text } from "@incmix/ui"
 import { TrashIcon, UploadIcon } from "@radix-ui/react-icons"
-import { Box, Button, Card, Flex, Text } from "@radix-ui/themes"
 import { cn } from "@utils"
 import { useCallback, useEffect, useState } from "react"
 

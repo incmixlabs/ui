@@ -3,14 +3,13 @@
 import { Bell, ChevronsUpDown, LogOut, Settings2, UserIcon } from "lucide-react"
 
 import { useLogout, useProfilePictureUrl, useUser } from "@auth"
-import { Avatar } from "@incmix/ui"
+import { Avatar, DropdownMenu } from "@incmix/ui"
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from "@incmix/ui/sidebar"
-import { DropdownMenu } from "@radix-ui/themes"
 import { Link } from "@tanstack/react-router"
 import { useTranslation } from "react-i18next"
 
@@ -40,7 +39,11 @@ export function NavUser({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar src={avatarUrl} className="h-8 w-8 rounded-lg" />
+              <Avatar
+                src={avatarUrl}
+                className="h-8 w-8 rounded-lg"
+                fallback={""}
+              />
 
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">{user.fullName}</span>
@@ -57,7 +60,11 @@ export function NavUser({
           >
             <DropdownMenu.Label className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar src={avatarUrl} className="h-8 w-8 rounded-lg" />
+                <Avatar
+                  src={avatarUrl}
+                  className="h-8 w-8 rounded-lg"
+                  fallback={""}
+                />
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
                     {user.fullName}

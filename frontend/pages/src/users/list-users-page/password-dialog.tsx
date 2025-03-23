@@ -1,18 +1,19 @@
 "use client"
 
 import {
+  Button,
   Dialog,
   DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  Flex,
   FormField,
   ReactiveButton,
   toast,
 } from "@incmix/ui"
 import type { UserAndProfile } from "@incmix/utils/types"
-import { Button, Flex } from "@radix-ui/themes"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import type { Row } from "@tanstack/react-table"

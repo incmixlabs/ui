@@ -3,6 +3,7 @@
 import { useAuth } from "@auth"
 import type { TaskCollections } from "@incmix/store"
 import {
+  Button,
   Dialog,
   DialogClose,
   DialogContent,
@@ -11,11 +12,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Flex,
   ReactiveButton,
+  Select,
+  TextField,
   toast,
 } from "@incmix/ui"
 import type { Column } from "@incmix/utils/types"
-import { Button, Flex, Select, TextField } from "@radix-ui/themes"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { nanoid } from "nanoid"
 import type React from "react"

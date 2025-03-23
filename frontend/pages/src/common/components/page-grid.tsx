@@ -1,4 +1,4 @@
-import { Grid } from "@radix-ui/themes"
+import { Grid } from "@incmix/ui"
 import type React from "react"
 import type { ReactNode } from "react"
 

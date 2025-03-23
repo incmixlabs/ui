@@ -5,8 +5,8 @@ import {
   TreeView,
   type TreeViewDescriptions,
 } from "@incmix/ui"
+import { Flex, Text } from "@incmix/ui"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { Flex, Text } from "@radix-ui/themes"
 import { useTranslation } from "react-i18next"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"

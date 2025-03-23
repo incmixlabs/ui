@@ -1,6 +1,6 @@
+import { Text } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import type { WsMessage } from "@incmix/utils/types"
-import { Text } from "@radix-ui/themes"
 import { useNavigate } from "@tanstack/react-router"
 import { useEffect, useMemo, useState } from "react"
 import { useCurrentUser } from "../auth"

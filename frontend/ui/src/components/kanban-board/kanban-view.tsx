@@ -1,9 +1,8 @@
 import { Clock } from "lucide-react"
-import { type FC, Fragment } from "react"
+import type { FC } from "react"
 
-import { AvatarGroup } from "@components/avatar-group"
 import { Image } from "@components/card/flow-card"
-import { Box, Flex, Text } from "@radix-ui/themes"
+import { Box, Flex, Text } from "@incmix/ui"
 import type { KanbanBoardTask } from "./types"
 
 export type KanbanViewProps = {

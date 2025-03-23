@@ -1,12 +1,6 @@
-import {
-  type BadgeProps,
-  Box,
-  Flex,
-  Grid,
-  Popover,
-  Text,
-} from "@radix-ui/themes"
-import { CheckIcon, ChevronDown, Plus, XCircle, XIcon } from "lucide-react"
+import { Flex, Popover, Text } from "@incmix/ui"
+import type { BadgeProps } from "@radix-ui/themes"
+import { CheckIcon, Plus } from "lucide-react"
 import * as React from "react"
 import { cn } from "utils"
 import { Avatar } from "../avatar"

@@ -1,6 +1,6 @@
+import { Box, Flex, Text } from "@incmix/ui"
 import { getWeekDay } from "@incmix/utils/date"
 import { PaperPlaneIcon } from "@radix-ui/react-icons"
-import { Box, Flex, Text } from "@radix-ui/themes"
 import type React from "react"
 import {
   Clouds,

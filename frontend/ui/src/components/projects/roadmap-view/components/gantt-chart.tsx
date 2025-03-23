@@ -4,8 +4,6 @@ import { Button } from "@components/button"
 
 import {
   Box,
-  type ButtonProps,
-  DropdownMenu,
   Flex,
   Grid,
   Heading,
@@ -13,7 +11,9 @@ import {
   ScrollArea,
   Select,
   Text,
-} from "@radix-ui/themes"
+} from "@incmix/ui"
+import type { ButtonProps } from "@radix-ui/themes"
+
 import { cn } from "@utils"
 import {
   ChevronDown,

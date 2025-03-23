@@ -1,6 +1,6 @@
 import { LoadingPage } from "@common"
 import { CardContainer, FormField, ReactiveButton } from "@incmix/ui"
-import { Box, Container, Flex, Heading, Text } from "@radix-ui/themes"
+import { Box, Container, Flex, Heading, Text } from "@incmix/ui"
 import { useForm } from "@tanstack/react-form"
 import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"

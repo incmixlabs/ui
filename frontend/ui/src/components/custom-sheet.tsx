@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading, IconButton, Text } from "@radix-ui/themes"
+import { Box, Flex, Heading, IconButton, Text } from "@incmix/ui"
 import { cn } from "@utils"
 import { AnimatePresence, motion } from "framer-motion"
 import { X } from "lucide-react"

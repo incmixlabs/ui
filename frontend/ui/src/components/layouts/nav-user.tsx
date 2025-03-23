@@ -10,7 +10,7 @@ import {
 } from "lucide-react"
 
 import { Avatar } from "@components/avatar"
-import { DropdownMenu } from "@radix-ui/themes"
+import { DropdownMenu } from "@incmix/ui"
 import {
   SidebarMenu,
   SidebarMenuButton,

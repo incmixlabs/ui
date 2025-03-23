@@ -7,9 +7,8 @@ import {
   Heading,
   IconButton,
   ScrollArea,
-  Tabs,
   Text,
-} from "@radix-ui/themes"
+} from "@incmix/ui"
 import { cn } from "@utils"
 import { LayoutGrid, List, Plus, SlidersHorizontal, X } from "lucide-react"
 import { motion } from "motion/react"

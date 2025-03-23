@@ -11,9 +11,8 @@ import {
   IconButton,
   ScrollArea,
   Select,
-  Tabs,
   Text,
-} from "@radix-ui/themes"
+} from "@incmix/ui"
 import { cn } from "@utils"
 import { Download, FileArchive, X } from "lucide-react"
 import { motion } from "motion/react"

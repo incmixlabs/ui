@@ -1,4 +1,4 @@
-import { Spinner, Text } from "@radix-ui/themes"
+import { Spinner, Text } from "@incmix/ui"
 import { useQuery } from "@tanstack/react-query"
 import { LOCATION_API_URL } from "@utils/constants"
 import { WeatherCard, type WeatherCardProps } from "./weather-card"

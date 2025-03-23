@@ -1,11 +1,5 @@
 import { LoadingPage } from "@common"
 import { Button, CardContainer } from "@incmix/ui"
-import type {
-  MemberDetails,
-  MemberRole,
-  Organization,
-} from "@incmix/utils/types"
-import { ArrowLeftIcon } from "@radix-ui/react-icons"
 import {
   Container,
   Flex,
@@ -15,9 +9,14 @@ import {
   Text,
   TextField,
   Tooltip,
-} from "@radix-ui/themes"
+} from "@incmix/ui"
+import type {
+  MemberDetails,
+  MemberRole,
+  Organization,
+} from "@incmix/utils/types"
+import { ArrowLeftIcon } from "@radix-ui/react-icons"
 import { useAuth } from "../auth"
-import { PageLayout } from "../common/components/layouts/page-layout"
 import { UserProfileImage } from "../common/components/user-profile-image"
 
 import { DashboardLayout } from "@layouts/admin-panel/layout"

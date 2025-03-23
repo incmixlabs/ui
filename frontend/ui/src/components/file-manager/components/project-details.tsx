@@ -1,6 +1,5 @@
 import { Label } from "@components/label"
-import { Flex, Tabs } from "@radix-ui/themes"
-import { Button, IconButton, Switch } from "@radix-ui/themes"
+import { Button, Flex, IconButton, Switch, Tabs } from "@incmix/ui"
 import { X } from "lucide-react"
 import { useState } from "react"
 import { projectFolders } from "../data"

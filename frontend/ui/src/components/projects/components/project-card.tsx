@@ -11,7 +11,6 @@ import type { Project } from "../types"
 import { useProjectDrawer } from "@hooks/use-project-drawer"
 import {
   Box,
-  Button,
   Card,
   DropdownMenu,
   Flex,
@@ -19,7 +18,7 @@ import {
   IconButton,
   Progress,
   Text,
-} from "@radix-ui/themes"
+} from "@incmix/ui"
 
 interface ProjectCardProps {
   project: Project

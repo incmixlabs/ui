@@ -7,6 +7,7 @@ import {
   SwapyLayout,
   SwapySlot,
 } from "@incmix/ui"
+import { Flex, Heading, Switch, Text } from "@incmix/ui"
 import {
   BatteryWidget,
   CalendarWidget,
@@ -17,7 +18,6 @@ import {
   getBattery,
 } from "@incmix/ui/widgets"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { Flex, Heading, Switch, Text } from "@radix-ui/themes"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { createSwapy } from "swapy"

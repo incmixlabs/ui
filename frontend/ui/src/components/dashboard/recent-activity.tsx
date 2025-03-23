@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, IconButton, Text } from "@radix-ui/themes"
+import { Box, Flex, Heading, IconButton, Text } from "@incmix/ui"
 import { Ellipsis } from "lucide-react"
 import { activityGroups } from "./data"
 

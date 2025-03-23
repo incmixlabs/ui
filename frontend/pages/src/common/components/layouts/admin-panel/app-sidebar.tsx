@@ -20,6 +20,7 @@ import React from "react"
 
 import { useAuth, useCurrentUser } from "@auth"
 import { useOrganizationStore } from "@incmix/store"
+import { ScrollArea } from "@incmix/ui"
 import { USERS_API_URL } from "@incmix/ui/constants"
 import {
   SecondarySidebar,
@@ -36,7 +37,6 @@ import {
 } from "@incmix/ui/sidebar"
 import { createAbilityFromPermissions } from "@incmix/utils/casl"
 import type { Permission } from "@incmix/utils/types"
-import { ScrollArea } from "@radix-ui/themes"
 import { useQuery } from "@tanstack/react-query"
 import { useLocation, useRouter } from "@tanstack/react-router"
 import { I18n } from "i18n"

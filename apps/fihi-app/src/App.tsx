@@ -12,8 +12,8 @@ import {
   useLanguageStore,
   useThemeStore,
 } from "@incmix/store"
+import { Theme } from "@incmix/ui"
 import { DashboardPage } from "@incmix/ui/layouts"
-import { Theme } from "@radix-ui/themes"
 import { Provider as RxdbProvider } from "rxdb-hooks"
 import { translations } from "./translations"
 

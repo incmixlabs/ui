@@ -1,4 +1,5 @@
 import {
+  Button,
   Dialog,
   DialogClose,
   DialogContent,
@@ -10,9 +11,10 @@ import {
   Flex,
   FormField,
   ReactiveButton,
+  Select,
+  Text,
 } from "@incmix/ui"
 import { INTL_API_URL } from "@incmix/ui/constants"
-import { Button, Select, Text } from "@radix-ui/themes"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import type { Row } from "@tanstack/react-table"
