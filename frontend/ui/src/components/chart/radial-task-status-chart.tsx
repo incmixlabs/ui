@@ -1,5 +1,5 @@
 import { Box } from "@incmix/ui"
-import { cn } from "@utils"
+import { cn, taskColorValues } from "@utils"
 import { lazy, useEffect, useState } from "react"
 
 // Dynamically import ApexCharts to avoid SSR issues
@@ -63,15 +63,15 @@ interface RadialTaskStatusChartProps {
 
 export default function RadialTaskStatusChart({
   tasks = [
-    { name: "Ongoing", value: 420, color: "#FF9D66" },
-    { name: "Hold", value: 210, color: "#3366FF" },
-    { name: "Done", value: 200, color: "#FFCC33" },
+    { name: "Ongoing", value: 420, color: taskColorValues.ongoing },
+    { name: "Hold", value: 210, color: taskColorValues.hold },
+    { name: "Done", value: 200, color: taskColorValues.done },
   ],
   startAngle = -135,
   endAngle = 135,
   hollowSize = "40%",
   className,
-  trackBackground = "#F2F4F7",
+  trackBackground = taskColorValues.track,
 }: RadialTaskStatusChartProps) {
   const [mounted, setMounted] = useState(false)
 

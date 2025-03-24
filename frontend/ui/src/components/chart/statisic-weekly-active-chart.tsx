@@ -60,8 +60,8 @@ interface WeeklyActivityChartProps {
 export default function WeeklyActivityChart({
   values = [30, 65, 45, 80, 55, 40, 65],
   days = ["M", "T", "W", "T", "F", "S", "S"],
-  primaryColor = "#244cff",
-  highlightColor = "#ff843d",
+  primaryColor = "#3366FF",
+  highlightColor = "#FF9D66",
   highlightDay = 3,
   barWidth = "40%",
   borderRadius = 10,

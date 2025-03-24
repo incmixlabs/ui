@@ -16,6 +16,7 @@ import {
   StatsCard,
   Text,
   cn,
+  taskColorValues,
 } from "@incmix/ui"
 
 import { Clipboard, Ellipsis, EllipsisVertical, Settings } from "lucide-react"
@@ -38,16 +39,12 @@ interface ProjectRevision {
   color: string
   type: string
 }
-
 const stats = [
-  { label: "Ongoing", value: 420, color: "var(--orange-9)" },
-  { label: "Hold", value: 210, color: "var(--indigo-9)" },
-  { label: "Done", value: 200, color: "var(--amber-9)" },
+  { label: "Ongoing", value: 420, color: taskColorValues.ongoing },
+  { label: "Hold", value: 210, color: taskColorValues.hold },
+  { label: "Done", value: 200, color: taskColorValues.done },
 ]
-// Colors for the chart segments
-const _ongoingColor = "var(--orange-9)"
-const _onHoldColor = "var(--indigo-9)"
-const _completedColor = "var(--amber-9)"
+
 type TabType = "month" | "week" | "day"
 interface ProgressItem {
   category: string
@@ -103,7 +100,7 @@ export function Project2() {
                   title="On Hold"
                   className="h-24"
                   data={[25, 30, 35, 25, 45, 75, 55, 25, 30, 25]}
-                  color={_onHoldColor}
+                  color={taskColorValues.hold}
                 />
                 <Text className="inline-block text-gray-10">Total Task</Text>
                 <Heading size={"8"}>820</Heading>
@@ -113,7 +110,7 @@ export function Project2() {
                   title="Ongoing"
                   className="h-24"
                   data={[25, 30, 35, 25, 45, 75, 55, 25, 30, 25]}
-                  color={_ongoingColor}
+                  color={taskColorValues.ongoing}
                 />
                 <Text className="inline-block text-gray-10">Total Task</Text>
                 <Heading size={"8"}>540</Heading>
@@ -140,7 +137,7 @@ export function Project2() {
                     <Text as="p" className="text-2xl">
                       {stat.value}
                     </Text>
-                    <Text className="text-gray-10 text-sm">{stat.label}</Text>
+                    <Text className="text-gray-10">{stat.label}</Text>
                   </div>
                 ))}
               </Grid>
