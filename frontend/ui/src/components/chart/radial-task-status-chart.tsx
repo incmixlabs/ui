@@ -61,6 +61,22 @@ interface RadialTaskStatusChartProps {
   showLabels?: boolean
 }
 
+/**
+ * Renders a radial bar chart that visualizes task statuses.
+ *
+ * This component calculates the percentage contribution of each task based on its value and uses react-apexcharts to display a radial bar chart. The chart is rendered only after the component mounts to ensure proper client-side behavior. Default tasks ("Ongoing", "Hold", and "Done") and preset values for chart angles, hollow center size, and track background color are provided if not specified.
+ *
+ * @param tasks - Optional array of tasks (each with a name, value, and color). Defaults to predefined tasks.
+ * @param startAngle - Optional starting angle of the chart in degrees. Defaults to -135.
+ * @param endAngle - Optional ending angle of the chart in degrees. Defaults to 135.
+ * @param hollowSize - Optional size of the hollow center (as a percentage string). Defaults to "40%".
+ * @param className - Optional additional CSS classes for the chart container.
+ * @param trackBackground - Optional background color for the chart track. Defaults to a preset dashboard color.
+ *
+ * @returns A JSX element rendering the radial bar chart.
+ *
+ * @remarks The chart is rendered after the component has mounted to prevent potential server-client rendering issues.
+ */
 export default function RadialTaskStatusChart({
   tasks = [
     { name: "Ongoing", value: 420, color: dashboardColorValues.color3 },

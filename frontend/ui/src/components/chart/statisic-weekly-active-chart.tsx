@@ -57,6 +57,22 @@ interface WeeklyActivityChartProps {
   className?: string
 }
 
+/**
+ * Renders a bar chart displaying weekly activity data.
+ *
+ * The component leverages ReactApexChart to generate a customizable bar chart, where a specific day can be highlighted by applying a distinct color. The chart is rendered only after the component has mounted, ensuring compatibility with server-side rendering environments.
+ *
+ * @param values - Activity values for each day of the week. Defaults to [30, 65, 45, 80, 55, 40, 65].
+ * @param days - Labels for each day displayed on the chart's x-axis. Defaults to ["M", "T", "W", "T", "F", "S", "S"].
+ * @param primaryColor - The default color for the bars. Defaults to "#3366FF".
+ * @param highlightColor - The color applied to the bar corresponding to the highlighted day. Defaults to "#FF9D66".
+ * @param highlightDay - The zero-based index indicating which day to highlight. Defaults to 3.
+ * @param barWidth - The width of each bar as a percentage (e.g., "40%"). Defaults to "40%".
+ * @param borderRadius - The border radius applied to the bars. Defaults to 10.
+ * @param className - Additional CSS classes for styling the chart container.
+ *
+ * @returns A React element containing the rendered weekly activity bar chart.
+ */
 export default function WeeklyActivityChart({
   values = [30, 65, 45, 80, 55, 40, 65],
   days = ["M", "T", "W", "T", "F", "S", "S"],

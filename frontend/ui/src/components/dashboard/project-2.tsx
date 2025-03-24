@@ -53,6 +53,15 @@ interface ProgressItem {
   color: ExtendedColorType
 }
 
+/**
+ * Renders the project management dashboard with interactive metrics and task filtering.
+ *
+ * This component displays a comprehensive dashboard featuring key project statistics, visual charts, a progress overview,
+ * and interactive sections for filtering active tasks by time intervals (month, week, day). It also includes a sidebar presenting
+ * user information, a calendar, and recent activity.
+ *
+ * @returns the JSX element for the project management dashboard.
+ */
 export function Project2() {
   const [progressItems, _setProgressItems] = useState<ProgressItem[]>([
     {
