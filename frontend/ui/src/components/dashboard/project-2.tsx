@@ -4,6 +4,7 @@ import {
   Button,
   CardContainer,
   Checkbox,
+  Container,
   type ExtendedColorType,
   Flex,
   Grid,
@@ -23,6 +24,7 @@ import type React from "react"
 import { useState } from "react"
 import { Calendar } from "../calendar"
 import RadialTaskStatusChart from "../chart/radial-task-status-chart"
+import SparkChart from "../chart/spark-chart"
 import WeeklyActivityChart from "../chart/statisic-weekly-active-chart"
 import { KanbanImages } from "../kanban-board/images"
 import { revisionData, taskStats } from "./data"
@@ -95,25 +97,36 @@ export function Project2() {
       <Flex gap="6">
         <Box className="w-full">
           <Box className="grid grid-cols-12 gap-4 2xl:gap-8 ">
-            <Grid columns={"2"} gap="4" className="col-span-2 2xl:col-span-4">
-              {taskStats.slice(0, 1).map((stat, _index) => (
-                <StatsCard
-                  key={stat.label}
-                  count={stat.count}
-                  label={stat.label}
-                  iconClassName={stat.backgroundColorClass}
-                  icon={stat.icon}
+            <Box className="col-span-2 flex flex-col gap-4">
+              <CardContainer className="h-fit space-y-2 text-center">
+                <SparkChart
+                  title="Ongoing"
+                  className="h-24"
+                  data={[25, 30, 35, 25, 45, 75, 55, 25, 30, 25]}
+                  color={_onHoldColor}
                 />
-              ))}
-            </Grid>
-            <CardContainer className="col-span-5 2xl:col-span-4">
+                <Text className="inline-block text-gray-10">Total Task</Text>
+                <Heading size={"8"}>820</Heading>
+              </CardContainer>
+              <CardContainer className="h-fit space-y-2 text-center">
+                <SparkChart
+                  title="Ongoing"
+                  className="h-24"
+                  data={[25, 30, 35, 25, 45, 75, 55, 25, 30, 25]}
+                  color={_ongoingColor}
+                />
+                <Text className="inline-block text-gray-10">Total Task</Text>
+                <Heading size={"8"}>540</Heading>
+              </CardContainer>
+            </Box>
+            <CardContainer className="col-span-5 2xl:col-span-5">
               <Flex align={"center"} gap={"2"} justify={"between"}>
                 <Heading size="5">Projects</Heading>
                 <IconButton>
                   <Ellipsis size={16} />
                 </IconButton>
               </Flex>
-              <RadialTaskStatusChart />
+              <RadialTaskStatusChart className="h-72" />
               <Grid columns={"3"} gap="4" className="mt-2">
                 {stats.map((stat) => (
                   <div
@@ -132,14 +145,14 @@ export function Project2() {
                 ))}
               </Grid>
             </CardContainer>
-            <CardContainer className="col-span-5 2xl:col-span-4">
+            <CardContainer className="col-span-5 2xl:col-span-5">
               <Flex align={"center"} gap={"2"} justify={"between"}>
                 <Heading size="5">Statistics</Heading>
                 <IconButton>
                   <Ellipsis size={16} />
                 </IconButton>
               </Flex>
-              <WeeklyActivityChart />
+              <WeeklyActivityChart className="h-72" />
               <Flex
                 align={"center"}
                 gap={"2"}

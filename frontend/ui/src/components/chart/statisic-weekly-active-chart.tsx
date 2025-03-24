@@ -1,6 +1,7 @@
 "use client"
 
 import { Box } from "@incmix/ui"
+import { cn } from "@utils"
 import { lazy, useEffect, useState } from "react"
 
 const ReactApexChart = lazy(() => import("react-apexcharts"))
@@ -53,6 +54,7 @@ interface WeeklyActivityChartProps {
    * @default 10
    */
   borderRadius?: number
+  className?: string
 }
 
 export default function WeeklyActivityChart({
@@ -61,9 +63,9 @@ export default function WeeklyActivityChart({
   primaryColor = "#244cff",
   highlightColor = "#ff843d",
   highlightDay = 3,
-  height = 250,
   barWidth = "40%",
   borderRadius = 10,
+  className,
 }: WeeklyActivityChartProps) {
   const [mounted, setMounted] = useState(false)
 
@@ -148,13 +150,13 @@ export default function WeeklyActivityChart({
   ]
 
   return (
-    <Box className="w-full">
+    <Box className={cn("w-full", className)}>
       {mounted && (
         <ReactApexChart
           options={options}
           series={series}
           type="bar"
-          height={height}
+          height={"100%"}
         />
       )}
     </Box>
