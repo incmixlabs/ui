@@ -1,7 +1,8 @@
 import { CardContainer } from "@incmix/ui"
 import { Button, Flex, Heading, Text } from "@incmix/ui"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { Link } from "@tanstack/react-router"
+import { Link, useLocation, useNavigate } from "@tanstack/react-router"
+import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -10,6 +11,15 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 const NotFoundPage: React.FC = () => {
   const { t } = useTranslation(["pageNotFound", "common"])
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    // If the current location is "/dashboard", redirect to "/dashboard/home"
+    if (location.pathname === "/dashboard") {
+      navigate({ to: "/dashboard/home", replace: true })
+    }
+  }, [location.pathname, navigate])
 
   return (
     <Layout>

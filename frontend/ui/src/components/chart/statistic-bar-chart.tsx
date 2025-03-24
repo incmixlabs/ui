@@ -1,4 +1,5 @@
 import { useThemeContext } from "@radix-ui/themes"
+import { dashboardColorValues } from "@utils"
 import { Suspense, lazy } from "react"
 
 const ReactApexChart = lazy(() => import("react-apexcharts"))
@@ -89,7 +90,7 @@ export const StatisticsBarChartView: React.FC<StatisticsBarChartViewProps> = ({
           left: 12,
         },
       },
-      colors: ["#4f46e5", "#f97316"],
+      colors: [dashboardColorValues.color5, dashboardColorValues.color3],
       states: {
         hover: {
           filter: {
