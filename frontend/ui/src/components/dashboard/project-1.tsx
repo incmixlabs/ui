@@ -13,6 +13,7 @@ import {
   StatisticsBarChartView,
   StatsCard,
   Text,
+  dashboardColorValues,
 } from "@incmix/ui"
 
 import { Ellipsis, EllipsisVertical, Settings } from "lucide-react"
@@ -35,14 +36,14 @@ interface ProjectRevision {
 }
 
 const stats = [
-  { label: "Ongoing", value: 420, color: "var(--orange-9)" },
-  { label: "Hold", value: 210, color: "var(--indigo-9)" },
-  { label: "Done", value: 200, color: "var(--amber-9)" },
+  { label: "Ongoing", value: 420, color: dashboardColorValues.color1 },
+  { label: "Hold", value: 210, color: dashboardColorValues.color2 },
+  { label: "Done", value: 200, color: dashboardColorValues.color3 },
 ]
 // Colors for the chart segments
-const ongoingColor = "var(--orange-9)"
-const onHoldColor = "var(--indigo-9)"
-const completedColor = "var(--amber-9)"
+const ongoingColor = dashboardColorValues.color1
+const onHoldColor = dashboardColorValues.color2
+const completedColor = dashboardColorValues.color3
 type TabType = "month" | "week" | "day"
 
 export function Project1() {

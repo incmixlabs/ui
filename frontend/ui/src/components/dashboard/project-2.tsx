@@ -16,7 +16,7 @@ import {
   StatsCard,
   Text,
   cn,
-  taskColorValues,
+  dashboardColorValues,
 } from "@incmix/ui"
 
 import { Clipboard, Ellipsis, EllipsisVertical, Settings } from "lucide-react"
@@ -40,9 +40,9 @@ interface ProjectRevision {
   type: string
 }
 const stats = [
-  { label: "Ongoing", value: 420, color: taskColorValues.ongoing },
-  { label: "Hold", value: 210, color: taskColorValues.hold },
-  { label: "Done", value: 200, color: taskColorValues.done },
+  { label: "Ongoing", value: 420, color: dashboardColorValues.color1 },
+  { label: "Hold", value: 210, color: dashboardColorValues.color2 },
+  { label: "Done", value: 200, color: dashboardColorValues.color3 },
 ]
 
 type TabType = "month" | "week" | "day"
@@ -100,7 +100,7 @@ export function Project2() {
                   title="On Hold"
                   className="h-24"
                   data={[25, 30, 35, 25, 45, 75, 55, 25, 30, 25]}
-                  color={taskColorValues.hold}
+                  color={dashboardColorValues.color2}
                 />
                 <Text className="inline-block text-gray-10">Total Task</Text>
                 <Heading size={"8"}>820</Heading>
@@ -110,7 +110,7 @@ export function Project2() {
                   title="Ongoing"
                   className="h-24"
                   data={[25, 30, 35, 25, 45, 75, 55, 25, 30, 25]}
-                  color={taskColorValues.ongoing}
+                  color={dashboardColorValues.color1}
                 />
                 <Text className="inline-block text-gray-10">Total Task</Text>
                 <Heading size={"8"}>540</Heading>
