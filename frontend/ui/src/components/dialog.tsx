@@ -5,6 +5,7 @@ import { X } from "lucide-react"
 import * as React from "react"
 
 import { cn } from "@utils/cn"
+import { iconSize } from "./icons/icon"
 
 const Dialog = DialogPrimitive.Root
 
