@@ -10,6 +10,7 @@ export type ButtonProps = RadixButtonProps & {
   srLabel?: string
   isSecondary?: boolean
   mobileSidebarTrigger?: boolean
+  variant?: RadixButtonProps["variant"] | "naked"
 }
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ children, className, disabled, variant, ...props }, ref) => {
@@ -18,7 +19,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <RadixButton
         {...props}
         variant={variant}
-        className={`${defaultClassName}${className}`}
+        className={`h-10 ${defaultClassName}${className}`}
         ref={ref}
         disabled={disabled}
       >
