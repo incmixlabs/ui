@@ -16,10 +16,10 @@ import {
   extractClosestEdge,
 } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
+import { isSafari } from "@utils/browser"
+import { isShallowEqual } from "@utils/objects"
 import { CalendarDays, MessageSquareText, Paperclip } from "lucide-react"
 import { IconButton } from "../button"
-import { isSafari } from "./is-safari"
-import { isShallowEqual } from "./is-shallow-equal"
 import {
   type TCard,
   getCardData,

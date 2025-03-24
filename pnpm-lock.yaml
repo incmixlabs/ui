@@ -119,6 +119,15 @@ importers:
       '@tauri-apps/api':
         specifier: '>=2.0.0-beta.0'
         version: 2.4.0
+      '@tiptap/pm':
+        specifier: ^2.11.5
+        version: 2.11.5
+      '@tiptap/react':
+        specifier: ^2.11.5
+        version: 2.11.5(@tiptap/core@2.11.5(@tiptap/pm@2.11.5))(@tiptap/pm@2.11.5)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@tiptap/starter-kit':
+        specifier: ^2.11.5
+        version: 2.11.5
       react:
         specifier: 'catalog:'
         version: 19.0.0
@@ -20062,7 +20071,7 @@ snapshots:
   vite@6.0.9(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.3)(yaml@2.7.0):
     dependencies:
       esbuild: 0.24.2
-      postcss: 8.5.3
+      postcss: 8.5.1
       rollup: 4.37.0
     optionalDependencies:
       '@types/node': 22.13.14

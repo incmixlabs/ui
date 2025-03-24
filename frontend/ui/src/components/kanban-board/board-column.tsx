@@ -16,10 +16,10 @@ import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/elemen
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
 
 import { Box, Flex, Heading } from "@incmix/ui"
+import { isSafari } from "@utils/browser"
+import { isShallowEqual } from "@utils/objects"
 import { IconButton } from "../button"
 import { blockBoardPanningAttr } from "./data-attributes"
-import { isSafari } from "./is-safari"
-import { isShallowEqual } from "./is-shallow-equal"
 import { TaskCard, TaskCardShadow } from "./task-card"
 import {
   type TCardData,
