@@ -100,7 +100,7 @@ export function Project2() {
             <Box className="col-span-2 flex flex-col gap-4">
               <CardContainer className="h-fit space-y-2 text-center">
                 <SparkChart
-                  title="Ongoing"
+                  title="On Hold"
                   className="h-24"
                   data={[25, 30, 35, 25, 45, 75, 55, 25, 30, 25]}
                   color={_onHoldColor}
