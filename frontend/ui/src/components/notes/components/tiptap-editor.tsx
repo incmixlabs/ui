@@ -1,6 +1,7 @@
 import { Box, Button, Flex } from "@incmix/ui"
 import { EditorProvider, useCurrentEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
+import { encodeHTML } from "@utils/string"
 import {
   Bold,
   Code,
@@ -97,14 +98,15 @@ const TitleMenuBar = () => {
   )
 }
 
-export function TiptapEditor({ modalData, onChange }: TiptapEditorProps) {
+export function TiptapEditor({ modalData }: TiptapEditorProps) {
   const content = `
     <h2>
- ${modalData?.title || ""}
+  ${modalData?.title ? encodeHTML(modalData.title) : ""}
 </h2>
 <p>
-  ${modalData?.content || ""}
-</p>`
+  ${modalData?.content ? encodeHTML(modalData.content) : ""}
+  +</p>`
+
   const extensions = [
     StarterKit.configure({
       bulletList: {
@@ -124,9 +126,12 @@ export function TiptapEditor({ modalData, onChange }: TiptapEditorProps) {
         slotBefore={<TitleMenuBar />}
         extensions={extensions}
         content={content}
-        // onUpdate={({ editor }) => {
-        //   onChange(editor.getHTML())
-        // }}
+        onUpdate={() => {
+          // onChange?.({
+          //   title: editor.getHTML().trim(),
+          //   content: editor.getHTML().trim(),
+          // })
+        }}
         editorProps={{
           attributes: {
             class:

@@ -11,3 +11,12 @@ export function camelize(str: string) {
 export function capitalize(str: string) {
   return String(str).charAt(0).toUpperCase() + String(str).slice(1)
 }
+
+export function encodeHTML(str: string) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;")
+}
