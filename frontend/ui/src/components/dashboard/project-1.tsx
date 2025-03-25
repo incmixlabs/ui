@@ -46,6 +46,17 @@ const onHoldColor = dashboardColorValues.color2
 const completedColor = dashboardColorValues.color3
 type TabType = "month" | "week" | "day"
 
+/**
+ * Renders the project management dashboard component.
+ *
+ * This component displays a comprehensive dashboard view that includes task statistics, bar and radial charts,
+ * and a dynamically filtered list of project revisions. It also features interactive elements such as a smart date
+ * input for filtering data and revision filtering buttons (month, week, day). A sidebar complements the layout by
+ * showing user information, a calendar, and recent activity.
+ *
+ * @remark Color values for charts and task statistics are sourced from the centralized `dashboardColorValues`
+ *         module to ensure consistent UI theming.
+ */
 export function Project1() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
 

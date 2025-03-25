@@ -12,6 +12,18 @@ interface TaskCardProps {
   className?: string
 }
 
+/**
+ * Renders a sparkline bar chart within a styled container.
+ *
+ * This component configures a bar chart using the provided title, data, and color, and renders it
+ * via ReactApexChart on the client side. The chart is displayed as a sparkline with a fixed height,
+ * disabled tooltip, and custom bar styling. An optional CSS class name can be applied to the chart container.
+ *
+ * @param title - The title for the chart series.
+ * @param data - An array of numbers representing the data points.
+ * @param color - The color used for the chart bars.
+ * @param className - Optional additional CSS classes for the chart container.
+ */
 export default function SparkChart({
   title,
   data,
