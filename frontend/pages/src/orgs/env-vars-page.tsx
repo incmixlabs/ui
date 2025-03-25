@@ -10,10 +10,10 @@ import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useTranslation } from "react-i18next"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
+import OrganizationTable from "../../../ui/src/components/organization-table"
 import { OrganizationLayout } from "./layouts/organisation-layout"
 import { OrganisationEnvVarsRoute } from "./routes"
 import { useOrganization } from "./utils"
-import OrganizationTable from "../../../ui/src/components/organization-table"
 
 type EnvVarsState = {
   treeData: TreeDataItem[] | TreeDataItem
@@ -37,7 +37,7 @@ const OrganizationEnvVarsPage: React.FC = () => {
   const { treeData, setTreeData } = useEnvVarsStore()
   console.log(treeData)
 
-  const DESCRIPTIONS: TreeViewDescriptions = {
+  const _DESCRIPTIONS: TreeViewDescriptions = {
     edit: t("common:edit"),
     delete: t("common:delete"),
     name: t("common:name"),
@@ -54,7 +54,7 @@ const OrganizationEnvVarsPage: React.FC = () => {
     editFolderTitle: t("environmentVariables:editFolderTitle"),
   }
 
-  const FILE_FIELDS: FormFieldConfig[] = [
+  const _FILE_FIELDS: FormFieldConfig[] = [
     {
       name: "value",
       label: t("common:value"),
@@ -69,7 +69,7 @@ const OrganizationEnvVarsPage: React.FC = () => {
     },
   ]
 
-  const FOLDER_FIELDS: FormFieldConfig[] = [
+  const _FOLDER_FIELDS: FormFieldConfig[] = [
     {
       name: "notes",
       label: t("common:notes"),
@@ -104,7 +104,7 @@ const OrganizationEnvVarsPage: React.FC = () => {
             <Text size="5" weight="bold">
               {t("environmentVariables")}
             </Text>
-            <OrganizationTable  />
+            <OrganizationTable />
             {/* <TreeView
               data={treeData}
               setData={setTreeData}

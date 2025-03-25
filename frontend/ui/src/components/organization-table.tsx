@@ -1,9 +1,16 @@
 "use client"
 
-import { useState } from "react"
-import { ChevronDown, ChevronRight } from "lucide-react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./table"
 import { Checkbox } from "@radix-ui/themes"
+import { ChevronDown, ChevronRight } from "lucide-react"
+import { useState } from "react"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./table"
 
 // Define the data structure types
 interface DataItem {
@@ -49,7 +56,8 @@ export default function ExpandableTable() {
             {
               data: {
                 name: "lemonsqueezy",
-                value: "sk.jhoshadfohsoaghfiosujodfulosdahfihsgdfhiosdhfiuasgdhifuasden",
+                value:
+                  "sk.jhoshadfohsoaghfiosujodfulosdahfihsgdfhiosdhfiuasgdhifuasden",
                 notes: "",
               },
               id: "a6f68b76-c661-4678-a0ae-9675db07269e",
@@ -109,21 +117,33 @@ export default function ExpandableTable() {
   }
 
   const renderRows = (items: Item[], level = 0) => {
-    return items.flatMap((item, index) => {
+    return items.flatMap((item, _index) => {
       const rows = [
         <TableRow key={item.id}>
           <TableCell className="w-12 border border-gray-200">
             <Checkbox />
           </TableCell>
           <TableCell className="border border-gray-200">
-            <div className="flex items-center" style={{ paddingLeft: `${level * 24}px` }}>
+            <div
+              className="flex items-center"
+              style={{ paddingLeft: `${level * 24}px` }}
+            >
               {item.type === "folder" && (
-                <button onClick={() => toggleExpand(item.id)} className="mr-2 focus:outline-none">
-                  {item.expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                <button
+                  onClick={() => toggleExpand(item.id)}
+                  className="mr-2 focus:outline-none"
+                >
+                  {item.expanded ? (
+                    <ChevronDown className="h-4 w-4" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4" />
+                  )}
                 </button>
               )}
               {item.type === "file" && <div className="w-6" />}
-              <span className={item.type === "folder" ? "font-medium" : ""}>{item.name}</span>
+              <span className={item.type === "folder" ? "font-medium" : ""}>
+                {item.name}
+              </span>
             </div>
           </TableCell>
           <TableCell className="max-w-xs border border-gray-200">
@@ -135,13 +155,22 @@ export default function ExpandableTable() {
               ""
             )}
           </TableCell>
-          <TableCell className="border border-gray-200">{item.createdOn || null}</TableCell>
-          <TableCell className="border border-gray-200">{item.createdBy || null}</TableCell>
+          <TableCell className="border border-gray-200">
+            {item.createdOn || null}
+          </TableCell>
+          <TableCell className="border border-gray-200">
+            {item.createdBy || null}
+          </TableCell>
         </TableRow>,
       ]
 
       // If the item is a folder and is expanded, render its children
-      if (item.type === "folder" && item.expanded && item.children && item.children.length > 0) {
+      if (
+        item.type === "folder" &&
+        item.expanded &&
+        item.children &&
+        item.children.length > 0
+      ) {
         rows.push(...renderRows(item.children, level + 1))
       }
 
@@ -157,7 +186,9 @@ export default function ExpandableTable() {
             <TableHead className="w-12 border border-gray-200">
               <Checkbox />
             </TableHead>
-            <TableHead className="border border-gray-200">Description</TableHead>
+            <TableHead className="border border-gray-200">
+              Description
+            </TableHead>
             <TableHead className="w-64 border border-gray-200">Value</TableHead>
             <TableHead className="border border-gray-200">Created on</TableHead>
             <TableHead className="border border-gray-200">Created by</TableHead>
@@ -168,4 +199,3 @@ export default function ExpandableTable() {
     </div>
   )
 }
-
