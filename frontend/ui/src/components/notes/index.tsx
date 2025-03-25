@@ -29,7 +29,7 @@ import {
   Trash,
   X,
 } from "lucide-react"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { Label } from "../label"
 import { TiptapEditor } from "./components/tiptap-editor"
 import { type INote, notesData } from "./data"
@@ -39,6 +39,8 @@ export function NoteComponent() {
   const [isOpen, setIsOpen] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [modalData, setModalData] = useState<INote | null>(null)
+  const titleInputRef = useRef<HTMLInputElement>(null)
+  const descriptionInputRef = useRef<HTMLTextAreaElement>(null)
 
   const onClick = (id: string) => {
     const findData = notes.find((note) => note.id === id)
@@ -74,13 +76,15 @@ export function NoteComponent() {
                       type="text"
                       placeholder="The title of a note"
                       className="w-[80%] "
+                      ref={titleInputRef}
                     />
                   </Box>
                   <Box className="space-y-2">
                     <Label>Description</Label>
                     <TextArea
                       placeholder="The description of a note"
-                      className="min-w-20"
+                      className="min-h-36"
+                      ref={descriptionInputRef}
                     />
                   </Box>
                 </DialogDescription>
@@ -97,7 +101,7 @@ export function NoteComponent() {
           </Flex>
         </Flex>
         <Grid
-          className="overflow-hidden py-8 "
+          className="overflow-hidden py-8"
           columns={{ initial: "1", md: "2", lg: "3", xl: "4" }}
           gap={"5"}
         >
@@ -129,6 +133,7 @@ export function NoteComponent() {
                     className="absolute bottom-0 left-0 w-full stroke-gray-7"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
                   >
                     <path d="M0 1H350" stroke-dasharray="5" />
                   </svg>
