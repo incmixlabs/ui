@@ -408,7 +408,6 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                   </>
                 )}
               </TableCell>
-          
             </TableRow>
           </>
         ))}
@@ -641,70 +640,70 @@ const TreeNode = ({
 
   return (
     <>
-        <Box className="relative">
-          <div
-            ref={elementRef}
-            className={cn(
-              treeVariants(),
-              selectedItemId === item.id && selectedTreeVariants(),
-              isDragging && "opacity-50"
-            )}
-            onClick={() => {
-              handleSelectChange(item)
-              item.onClick?.()
+      <Box className="relative">
+        <div
+          ref={elementRef}
+          className={cn(
+            treeVariants(),
+            selectedItemId === item.id && selectedTreeVariants(),
+            isDragging && "opacity-50"
+          )}
+          onClick={() => {
+            handleSelectChange(item)
+            item.onClick?.()
+          }}
+        >
+          <TreeContextMenu
+            onAddFile={(position) => {
+              setDialogType("file")
+              setDialogPosition(position)
+              setIsEditing(false)
+              setDialogOpen(true)
             }}
+            onAddFolder={(position) => {
+              setDialogType("folder")
+              setDialogPosition(position)
+              setIsEditing(false)
+              setDialogOpen(true)
+            }}
+            onDelete={handleDelete}
+            onEdit={handleEdit}
+            canDelete={!!setData}
+            isFolder={item.type === "folder"}
           >
-            <TreeContextMenu
-              onAddFile={(position) => {
-                setDialogType("file")
-                setDialogPosition(position)
-                setIsEditing(false)
-                setDialogOpen(true)
-              }}
-              onAddFolder={(position) => {
-                setDialogType("folder")
-                setDialogPosition(position)
-                setIsEditing(false)
-                setDialogOpen(true)
-              }}
-              onDelete={handleDelete}
-              onEdit={handleEdit}
-              canDelete={!!setData}
-              isFolder={item.type === "folder"}
+            <Flex
+              align="center"
+              gap="2"
+              onClick={() =>
+                onValueChange(value.includes(item.id) ? [] : [item.id])
+              }
             >
-              <Flex
-                align="center"
-                gap="2"
-                onClick={() =>
-                  onValueChange(value.includes(item.id) ? [] : [item.id])
-                }
-              >
-                {value.includes(item.id) ? <ChevronDown /> : <ChevronRight />}
-                <TreeIcon
-                  item={item}
-                  isOpen={value.includes(item.id)}
-                  isSelected={selectedItemId === item.id}
-                  default={defaultNodeIcon}
-                />
-                <Text className="truncate text-sm">{item.name}</Text>
-              </Flex>
-            </TreeContextMenu>
-
-            {value.includes(item.id) && item.type === "folder" && (
-              <TreeItem
-                data={item.children}
-                rootData={rootData}
-                selectedItemId={selectedItemId}
-                handleSelectChange={handleSelectChange}
-                expandedItemIds={expandedItemIds}
-                defaultLeafIcon={defaultLeafIcon}
-                defaultNodeIcon={defaultNodeIcon}
-                setData={setData}
+              {value.includes(item.id) ? <ChevronDown /> : <ChevronRight />}
+              <TreeIcon
+                item={item}
+                isOpen={value.includes(item.id)}
+                isSelected={selectedItemId === item.id}
+                default={defaultNodeIcon}
               />
-            )}
-            {instruction && <DropIndicator instruction={instruction} />}
-          </div>
-        </Box>
+              <Text className="truncate text-sm">{item.name}</Text>
+            </Flex>
+          </TreeContextMenu>
+
+          {value.includes(item.id) && item.type === "folder" && (
+            <TreeItem
+              data={item.children}
+              rootData={rootData}
+              selectedItemId={selectedItemId}
+              handleSelectChange={handleSelectChange}
+              expandedItemIds={expandedItemIds}
+              defaultLeafIcon={defaultLeafIcon}
+              defaultNodeIcon={defaultNodeIcon}
+              setData={setData}
+            />
+          )}
+          {instruction && <DropIndicator instruction={instruction} />}
+        </div>
+      </Box>
       {/* <TableCell>
         <TreeActions isSelected={selectedItemId === item.id}>{item.actions}</TreeActions>
       </TableCell> */}
