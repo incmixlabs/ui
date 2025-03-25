@@ -1,8 +1,4 @@
-"use client"
-
-import { Button } from "@incmix/ui"
-import ListItem from "@tiptap/extension-list-item"
-import TextStyle from "@tiptap/extension-text-style"
+import { Box, Button, Flex } from "@incmix/ui"
 import { EditorProvider, useCurrentEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import {
@@ -32,90 +28,72 @@ const TitleMenuBar = () => {
   }
 
   return (
-    <div className="mb-2 flex flex-wrap gap-1">
+    <Flex wrap={"wrap"} gap={"1"} className="mb-2">
       <Button
-        variant="soft"
+        variant={editor.isActive("bold") ? "solid" : "soft"}
         onClick={() => editor.chain().focus().toggleBold().run()}
         disabled={!editor.can().chain().focus().toggleBold().run()}
-        className={editor.isActive("bold") ? "bg-muted text-primary" : ""}
       >
         <Bold className="h-4 w-4" />
       </Button>
       <Button
-        variant="soft"
+        variant={editor.isActive("italic") ? "solid" : "soft"}
         onClick={() => editor.chain().focus().toggleItalic().run()}
         disabled={!editor.can().chain().focus().toggleItalic().run()}
-        className={editor.isActive("italic") ? "bg-muted text-primary" : ""}
       >
         <Italic className="h-4 w-4" />
       </Button>
       <Button
-        variant="soft"
+        variant={editor.isActive("heading", { level: 1 }) ? "solid" : "soft"}
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-        className={
-          editor.isActive("heading", { level: 1 })
-            ? "bg-muted text-primary"
-            : ""
-        }
       >
         <Heading1 className="h-4 w-4" />
       </Button>
       <Button
-        variant="soft"
+        variant={editor.isActive("heading", { level: 2 }) ? "solid" : "soft"}
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        className={
-          editor.isActive("heading", { level: 2 })
-            ? "bg-muted text-primary"
-            : ""
-        }
       >
         <Heading2 className="h-4 w-4" />
       </Button>
       <Button
-        variant="soft"
+        variant={editor.isActive("bulletList") ? "solid" : "soft"}
         onClick={() => editor.chain().focus().toggleBulletList().run()}
-        className={editor.isActive("bulletList") ? "bg-muted text-primary" : ""}
       >
         <List className="h-4 w-4" />
       </Button>
       <Button
-        variant="soft"
+        variant={editor.isActive("orderedList") ? "solid" : "soft"}
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
-        className={
-          editor.isActive("orderedList") ? "bg-muted text-primary" : ""
-        }
       >
         <ListOrdered className="h-4 w-4" />
       </Button>
       <Button
-        variant="soft"
+        variant={editor.isActive("codeBlock") ? "solid" : "soft"}
         onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-        className={editor.isActive("codeBlock") ? "bg-muted text-primary" : ""}
       >
         <Code className="h-4 w-4" />
       </Button>
       <Button
-        variant="soft"
+        variant={editor.isActive("blockquote") ? "solid" : "soft"}
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
-        className={editor.isActive("blockquote") ? "bg-muted text-primary" : ""}
       >
         <Quote className="h-4 w-4" />
       </Button>
       <Button
-        variant="soft"
+        variant={editor.isActive("undo") ? "solid" : "soft"}
         onClick={() => editor.chain().focus().undo().run()}
         disabled={!editor.can().chain().focus().undo().run()}
       >
         <Undo className="h-4 w-4" />
       </Button>
       <Button
-        variant="soft"
+        variant={editor.isActive("redo") ? "solid" : "soft"}
         onClick={() => editor.chain().focus().redo().run()}
         disabled={!editor.can().chain().focus().redo().run()}
       >
         <Redo className="h-4 w-4" />
       </Button>
-    </div>
+    </Flex>
   )
 }
 
@@ -141,7 +119,7 @@ export function TiptapEditor({ modalData, onChange }: TiptapEditorProps) {
   ]
 
   return (
-    <div className="mb-4">
+    <Box className="mb-4">
       <EditorProvider
         slotBefore={<TitleMenuBar />}
         extensions={extensions}
@@ -151,12 +129,13 @@ export function TiptapEditor({ modalData, onChange }: TiptapEditorProps) {
         // }}
         editorProps={{
           attributes: {
-            class: "pb-2 focus:outline-none w-full prose max-w-none",
+            class:
+              "pb-2 focus:outline-none w-full prose max-w-none text-gray-12",
           },
         }}
       >
         <div />
       </EditorProvider>
-    </div>
+    </Box>
   )
 }
