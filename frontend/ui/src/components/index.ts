@@ -34,6 +34,7 @@ export * from "./notes"
 export * from "./stats-card"
 export * from "./chart/statistic-bar-chart"
 export * from "./chart/radial-bar-chart"
+export * from "./organization-table"
 export {
   Badge,
   Box,

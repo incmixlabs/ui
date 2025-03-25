@@ -10,10 +10,10 @@ import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useTranslation } from "react-i18next"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { PageLayout } from "../common/components/layouts/page-layout"
 import { OrganizationLayout } from "./layouts/organisation-layout"
 import { OrganisationEnvVarsRoute } from "./routes"
 import { useOrganization } from "./utils"
+import OrganizationTable from "../../../ui/src/components/organization-table"
 
 type EnvVarsState = {
   treeData: TreeDataItem[] | TreeDataItem
@@ -35,6 +35,7 @@ export const useEnvVarsStore = create<EnvVarsState>()(
 const OrganizationEnvVarsPage: React.FC = () => {
   const { t } = useTranslation(["organizationDetails", "environmentVariables"])
   const { treeData, setTreeData } = useEnvVarsStore()
+  console.log(treeData)
 
   const DESCRIPTIONS: TreeViewDescriptions = {
     edit: t("common:edit"),
@@ -103,7 +104,8 @@ const OrganizationEnvVarsPage: React.FC = () => {
             <Text size="5" weight="bold">
               {t("environmentVariables")}
             </Text>
-            <TreeView
+            <OrganizationTable  />
+            {/* <TreeView
               data={treeData}
               setData={setTreeData}
               emptyMessage="No environment variables. Create a new variable or folder to get started."
@@ -112,7 +114,7 @@ const OrganizationEnvVarsPage: React.FC = () => {
               fileFields={FILE_FIELDS}
               folderFields={FOLDER_FIELDS}
               descriptions={DESCRIPTIONS}
-            />
+            /> */}
           </Flex>
         </CardContainer>
       </OrganizationLayout>
