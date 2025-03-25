@@ -160,9 +160,91 @@ export const projectSchemaLiteral = {
   ],
 } as const
 
+// Update this in your types.ts file where you defined formProjectSchemaLiteral
+
+export const formProjectSchemaLiteral = {
+  title: "form projects schema",
+  version: 0,
+  primaryKey: "id",
+  type: "object",
+  properties: {
+    id: {
+      maxLength: 10,
+      type: "string",
+    },
+    title: {
+      type: "string",
+    },
+    company: {
+      type: "string",
+    },
+    logo: {
+      type: "string",
+    },
+    description: {
+      type: "string",
+    },
+    progress: {
+      type: "integer",
+    },
+    timeLeft: {
+      type: "string",
+    },
+    timeType: {
+      type: "string",
+      enum: ["day", "days", "week", "month", "year"], // Added "days" to match form data
+    },
+    members: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          label: { type: "string" },
+          value: { type: "string" },
+        },
+      },
+    },
+    status: {
+      type: "string",
+      enum: ["all", "started", "on-hold", "completed"],
+    },
+    startDate: {
+      type: "integer", // Using integer for timestamp
+    },
+    endDate: {
+      type: "integer", // Using integer for timestamp
+    },
+    budget: {
+      type: "integer",
+    },
+    files: {
+      type: "string",
+      // Removed the "optional" keyword - it's not part of the JSON Schema standard used by RxDB
+    },
+    // Additional fields for tracking
+    createdAt: {
+      type: "integer", // Using integer for timestamp
+    },
+    updatedAt: {
+      type: "integer", // Using integer for timestamp
+    },
+  },
+  required: [
+    "id",
+    "title",
+    "company",
+    "description",
+    "status",
+    "startDate",
+    "endDate",
+
+  ],
+} as const;
+
 const tasksTyped = toTypedRxJsonSchema(taskSchemaLiteral)
 const columnsTyped = toTypedRxJsonSchema(columnSchemaLiteral)
 const projectTyped = toTypedRxJsonSchema(projectSchemaLiteral)
+const formProjectTyped = toTypedRxJsonSchema(formProjectSchemaLiteral);
 
 export type TaskDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof tasksTyped
@@ -175,8 +257,15 @@ export type ProjectDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof projectTyped
 >
 
+export type FormProjectDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
+  typeof formProjectTyped
+>
+
+
+
 export type TaskCollections = {
   tasks: RxCollection<TaskDocType>
   columns: RxCollection<ColumnDocType>
   projects: RxCollection<ProjectDocType>
+  formProjects: RxCollection<FormProjectDocType>
 }
