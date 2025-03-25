@@ -10,9 +10,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
   Flex,
+  Grid,
   Heading,
+  IconButton,
+  Input,
   Pushpin,
+  TextArea,
 } from "@incmix/ui"
 import { cn } from "@utils"
 import {
@@ -25,13 +30,14 @@ import {
   X,
 } from "lucide-react"
 import { useState } from "react"
+import { Label } from "../label"
 import { TiptapEditor } from "./components/tiptap-editor"
 import { type INote, notesData } from "./data"
 
 export function NoteComponent() {
   const [notes, _setNotes] = useState<INote[]>(notesData)
   const [isOpen, setIsOpen] = useState(false)
-  const [isEditing, _setIsEditing] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
   const [modalData, setModalData] = useState<INote | null>(null)
 
   const onClick = (id: string) => {
@@ -48,15 +54,53 @@ export function NoteComponent() {
         <Flex align={"center"} justify={"between"}>
           <Heading size={"7"}>Notes</Heading>
           <Flex gap={"2"}>
-            <Button onClick={() => setIsOpen(true)} variant="soft" color="gray">
+            <Button variant="soft" color="gray">
               <SlidersHorizontal className="h-5 w-5" />
             </Button>
-            <Button onClick={() => setIsOpen(true)}>
-              <Plus className="h-5 w-5" /> Add Note
-            </Button>
+            <Dialog>
+              <DialogTrigger>
+                <Button variant="solid">
+                  <Plus className="h-5 w-5" /> Add Note
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="border border-gray-4">
+                <DialogHeader className="relative">
+                  <DialogTitle>Add Note</DialogTitle>
+                </DialogHeader>
+                <DialogDescription className="space-y-4">
+                  <Box className="space-y-2">
+                    <Label>Title</Label>
+                    <Input
+                      type="text"
+                      placeholder="The title of a note"
+                      className="w-[80%] "
+                    />
+                  </Box>
+                  <Box className="space-y-2">
+                    <Label>Description</Label>
+                    <TextArea
+                      placeholder="The description of a note"
+                      className="min-w-20"
+                    />
+                  </Box>
+                </DialogDescription>
+                <DialogFooter>
+                  <DialogClose>
+                    <Button variant="soft" color="gray">
+                      Cancel
+                    </Button>
+                  </DialogClose>
+                  <Button variant="solid">Add Note</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </Flex>
         </Flex>
-        <div className="grid grid-cols-1 gap-6 overflow-hidden py-8 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 2xl:gap-10">
+        <Grid
+          className="overflow-hidden py-8 "
+          columns={{ initial: "1", md: "2", lg: "3", xl: "4" }}
+          gap={"5"}
+        >
           {notes.map((note) => (
             <Card key={note.id}>
               <CardContent className="p-0">
@@ -65,15 +109,19 @@ export function NoteComponent() {
                   justify={"between"}
                   className="relative px-4 py-4"
                 >
-                  <div className="flex items-center text-sm">
+                  <Flex align={"center"} className="text-sm">
                     <CalendarClock className="mr-1.5 h-4 w-4" />
                     {note.date}
-                  </div>
-                  <div onClick={() => onClick(note.id)}>
+                  </Flex>
+                  <IconButton
+                    variant="ghost"
+                    color="gray"
+                    onClick={() => onClick(note.id)}
+                  >
                     <Pushpin
                       className={"h-6 w-6 cursor-pointer stroke-gray-12"}
                     />
-                  </div>
+                  </IconButton>
                   <svg
                     width="350"
                     height="2"
@@ -92,7 +140,7 @@ export function NoteComponent() {
               </CardContent>
             </Card>
           ))}
-        </div>
+        </Grid>
       </Box>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -111,7 +159,7 @@ export function NoteComponent() {
                   <Button
                     variant="soft"
                     color="red"
-                    onClick={() => _setIsEditing(false)}
+                    onClick={() => setIsEditing(false)}
                   >
                     Close
                   </Button>
@@ -123,7 +171,7 @@ export function NoteComponent() {
                     variant="ghost"
                     color="gray"
                     className="h-6"
-                    onClick={() => _setIsEditing(true)}
+                    onClick={() => setIsEditing(true)}
                   >
                     <Edit2 className="h-4 w-4" />
                   </Button>
@@ -131,7 +179,7 @@ export function NoteComponent() {
                     variant="ghost"
                     color="red"
                     className="h-6"
-                    onClick={() => _setIsEditing(true)}
+                    onClick={() => setIsEditing(true)}
                   >
                     <Trash className="h-4 w-4" />
                   </Button>
@@ -139,7 +187,7 @@ export function NoteComponent() {
                     variant="ghost"
                     color="blue"
                     className="h-6"
-                    onClick={() => _setIsEditing(true)}
+                    onClick={() => setIsEditing(true)}
                   >
                     <Ellipsis className="h-4 w-4" />
                   </Button>
@@ -154,10 +202,10 @@ export function NoteComponent() {
               </div>
             ) : (
               <Box className="">
-                <h3 className="mb-2 font-medium text-black text-lg">
+                <h3 className="mb-2 font-medium text-gray-12 text-lg">
                   {modalData?.title}
                 </h3>
-                <p className="text-gray-10 text-sm">{modalData?.content}</p>
+                <p className="text-gray-11 text-sm">{modalData?.content}</p>
               </Box>
             )}
           </DialogDescription>
