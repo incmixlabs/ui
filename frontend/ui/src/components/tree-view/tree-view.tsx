@@ -14,8 +14,19 @@ import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import { cn } from "@utils/cn"
 import { cva } from "class-variance-authority"
 import { produce } from "immer"
-import { ChevronRight, File, Folder, FolderOpen } from "lucide-react"
+import {
+  ChevronDown,
+  ChevronRight,
+  File,
+  Folder,
+  FolderOpen,
+} from "lucide-react"
 import React, { useRef, useState, useEffect, useCallback } from "react"
+import { Table, TableHeader } from "../table"
+import { TableRow } from "../table"
+import { TableHead } from "../table"
+import { TableBody } from "../table"
+import { TableCell } from "../table"
 import { TreeContextMenu } from "./context-menu"
 import { EmptyTreeView } from "./empty-tree-view"
 import { TreeItemDialog } from "./tree-item-dialog"
@@ -294,25 +305,37 @@ const TreeView = React.forwardRef<HTMLDivElement, TreeProps>(
           className={cn("relative select-none", className)}
           {...props}
         >
-          {Array.isArray(data) && data.length === 0 ? (
-            <EmptyTreeView
-              onCreateItem={(item) => setInternalData([item])}
-              emptyMessage={emptyMessage}
-              newFileButtonText={newFileButtonText}
-              newFolderButtonText={newFolderButtonText}
-            />
-          ) : (
-            <TreeItem
-              data={data}
-              rootData={data}
-              selectedItemId={selectedItemId}
-              handleSelectChange={handleSelectChange}
-              expandedItemIds={expandedItemIds}
-              defaultLeafIcon={defaultLeafIcon}
-              defaultNodeIcon={defaultNodeIcon}
-              setData={setInternalData}
-            />
-          )}
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[20%]">Name</TableHead>
+                <TableHead className="w-[50%]">Value</TableHead>
+                <TableHead className="w-[12.5%]">Created By</TableHead>
+                <TableHead className="w-[12.5%]">Created On</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Array.isArray(data) && data.length === 0 ? (
+                <EmptyTreeView
+                  onCreateItem={(item) => setInternalData([item])}
+                  emptyMessage={emptyMessage}
+                  newFileButtonText={newFileButtonText}
+                  newFolderButtonText={newFolderButtonText}
+                />
+              ) : (
+                <TreeItem
+                  data={data}
+                  rootData={data}
+                  selectedItemId={selectedItemId}
+                  handleSelectChange={handleSelectChange}
+                  expandedItemIds={expandedItemIds}
+                  defaultLeafIcon={defaultLeafIcon}
+                  defaultNodeIcon={defaultNodeIcon}
+                  setData={setInternalData}
+                />
+              )}
+            </TableBody>
+          </Table>
         </Box>
       </TreeViewProvider>
     )
@@ -344,44 +367,52 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
       setData,
       ...props
     },
-    ref
+    _ref
   ) => {
     const dataArray = Array.isArray(data) ? data : [data]
+    console.log("dataarray", dataArray)
 
     return (
-      <Box ref={ref} role="tree" className={className} {...props}>
-        <Box>
-          {dataArray.map((item, index) => (
-            <Box key={item.id}>
-              {item.type === "folder" ? (
-                <TreeNode
-                  rootData={rootData}
-                  item={item}
-                  selectedItemId={selectedItemId}
-                  expandedItemIds={expandedItemIds}
-                  handleSelectChange={handleSelectChange}
-                  defaultNodeIcon={defaultNodeIcon}
-                  defaultLeafIcon={defaultLeafIcon}
-                  index={index}
-                  siblings={dataArray}
-                  setData={setData}
-                />
-              ) : (
-                <TreeLeaf
-                  rootData={rootData}
-                  item={item}
-                  handleSelectChange={handleSelectChange}
-                  selectedItemId={selectedItemId}
-                  defaultLeafIcon={defaultLeafIcon}
-                  index={index}
-                  siblings={dataArray}
-                  setData={setData}
-                />
-              )}
-            </Box>
-          ))}
-        </Box>
-      </Box>
+      <>
+        {dataArray.map((item, index) => (
+          <>
+            <TableRow key={item.id}>
+              <TableCell>
+                {item.type === "folder" ? (
+                  <TreeNode
+                    rootData={rootData}
+                    item={item}
+                    selectedItemId={selectedItemId}
+                    expandedItemIds={expandedItemIds}
+                    handleSelectChange={handleSelectChange}
+                    defaultNodeIcon={defaultNodeIcon}
+                    defaultLeafIcon={defaultLeafIcon}
+                    index={index}
+                    siblings={dataArray}
+                    setData={setData}
+                  />
+                ) : (
+                  <>
+                    <TreeLeaf
+                      rootData={rootData}
+                      item={item}
+                      iconTrue={true}
+                      itemValue={item.data}
+                      handleSelectChange={handleSelectChange}
+                      selectedItemId={selectedItemId}
+                      defaultLeafIcon={defaultLeafIcon}
+                      index={index}
+                      siblings={dataArray}
+                      setData={setData}
+                    />
+                  </>
+                )}
+              </TableCell>
+          
+            </TableRow>
+          </>
+        ))}
+      </>
     )
   }
 )
@@ -606,76 +637,88 @@ const TreeNode = ({
     },
     [item.id, rootData, setData]
   )
+  console.log("TreeNode", item)
 
   return (
-    <Box className="relative">
-      <AccordionPrimitive.Root
-        type="multiple"
-        value={value}
-        onValueChange={onValueChange}
-      >
-        <AccordionPrimitive.Item value={item.id}>
-          <Box className="relative">
-            <AccordionTrigger
-              ref={elementRef}
-              className={cn(
-                treeVariants(),
-                selectedItemId === item.id && selectedTreeVariants(),
-                isDragging && "opacity-50"
-              )}
-              onClick={() => {
-                handleSelectChange(item)
-                item.onClick?.()
+    <>
+        <Box className="relative">
+          <div
+            ref={elementRef}
+            className={cn(
+              treeVariants(),
+              selectedItemId === item.id && selectedTreeVariants(),
+              isDragging && "opacity-50"
+            )}
+            onClick={() => {
+              handleSelectChange(item)
+              item.onClick?.()
+            }}
+          >
+            <TreeContextMenu
+              onAddFile={(position) => {
+                setDialogType("file")
+                setDialogPosition(position)
+                setIsEditing(false)
+                setDialogOpen(true)
               }}
+              onAddFolder={(position) => {
+                setDialogType("folder")
+                setDialogPosition(position)
+                setIsEditing(false)
+                setDialogOpen(true)
+              }}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+              canDelete={!!setData}
+              isFolder={item.type === "folder"}
             >
-              <TreeContextMenu
-                onAddFile={(position) => {
-                  setDialogType("file")
-                  setDialogPosition(position)
-                  setIsEditing(false)
-                  setDialogOpen(true)
-                }}
-                onAddFolder={(position) => {
-                  setDialogType("folder")
-                  setDialogPosition(position)
-                  setIsEditing(false)
-                  setDialogOpen(true)
-                }}
-                onDelete={handleDelete}
-                onEdit={handleEdit}
-                canDelete={!!setData}
-                isFolder={item.type === "folder"}
+              <Flex
+                align="center"
+                gap="2"
+                onClick={() =>
+                  onValueChange(value.includes(item.id) ? [] : [item.id])
+                }
               >
-                <Flex align="center" gap="2">
-                  <TreeIcon
-                    item={item}
-                    isOpen={value.includes(item.id)}
-                    isSelected={selectedItemId === item.id}
-                    default={defaultNodeIcon}
-                  />
-                  <Text className="truncate text-sm">{item.name}</Text>
-                </Flex>
-              </TreeContextMenu>
-              <TreeActions isSelected={selectedItemId === item.id}>
-                {item.actions}
-              </TreeActions>
-            </AccordionTrigger>
+                {value.includes(item.id) ? <ChevronDown /> : <ChevronRight />}
+                <TreeIcon
+                  item={item}
+                  isOpen={value.includes(item.id)}
+                  isSelected={selectedItemId === item.id}
+                  default={defaultNodeIcon}
+                />
+                <Text className="truncate text-sm">{item.name}</Text>
+              </Flex>
+            </TreeContextMenu>
+
+            {value.includes(item.id) && item.type === "folder" && (
+              <TreeItem
+                data={item.children}
+                rootData={rootData}
+                selectedItemId={selectedItemId}
+                handleSelectChange={handleSelectChange}
+                expandedItemIds={expandedItemIds}
+                defaultLeafIcon={defaultLeafIcon}
+                defaultNodeIcon={defaultNodeIcon}
+                setData={setData}
+              />
+            )}
             {instruction && <DropIndicator instruction={instruction} />}
-          </Box>
-          <AccordionContent className="ml-4 border-l pl-1">
-            <TreeItem
-              data={item.type === "folder" ? item.children : item}
-              rootData={rootData}
-              selectedItemId={selectedItemId}
-              handleSelectChange={handleSelectChange}
-              expandedItemIds={expandedItemIds}
-              defaultLeafIcon={defaultLeafIcon}
-              defaultNodeIcon={defaultNodeIcon}
-              setData={setData}
-            />
-          </AccordionContent>
-        </AccordionPrimitive.Item>
-      </AccordionPrimitive.Root>
+          </div>
+        </Box>
+      {/* <TableCell>
+        <TreeActions isSelected={selectedItemId === item.id}>{item.actions}</TreeActions>
+      </TableCell> */}
+      {/* <TableCell>
+        {item.type === "folder" && (
+          <button
+            onClick={() => onValueChange(value.includes(item.id) ? [] : [item.id])}
+            className="p-1 rounded hover:bg-muted"
+          >
+            {value.includes(item.id) ? "Collapse" : "Expand"}
+          </button>
+        )}
+      </TableCell> */}
+
       <TreeItemDialog
         open={dialogOpen}
         onOpenChange={(open) => {
@@ -687,7 +730,7 @@ const TreeNode = ({
         position={dialogPosition}
         initialData={isEditing ? item.data : undefined}
       />
-    </Box>
+    </>
   )
 }
 
@@ -704,6 +747,8 @@ const TreeLeaf = React.forwardRef<
         | undefined
     ) => void
     selectedItemId?: string
+    itemValue?: string
+    iconTrue?: boolean
     defaultLeafIcon?: any
     index?: number
     siblings?: TreeDataItem<Record<string, string>, Record<string, string>>[]
@@ -718,10 +763,12 @@ const TreeLeaf = React.forwardRef<
     {
       rootData,
       item,
+      itemValue,
       handleSelectChange,
       selectedItemId,
       defaultLeafIcon,
       index,
+      iconTrue = false,
       siblings,
       setData,
       ...props
@@ -733,7 +780,7 @@ const TreeLeaf = React.forwardRef<
     const [instruction, setInstruction] = useState<Instruction | null>(null)
     const [dialogOpen, setDialogOpen] = useState(false)
     const [dialogType, setDialogType] = useState<"file" | "folder">("file")
-    const [dialogPosition, setDialogPosition] = useState<
+    const [dialogPosition, _setDialogPosition] = useState<
       "above" | "below" | "inside"
     >("below")
     const [isEditing, setIsEditing] = useState(false)
@@ -775,7 +822,7 @@ const TreeLeaf = React.forwardRef<
       setData(newData)
     }
 
-    const handleDelete = () => {
+    const _handleDelete = () => {
       if (!setData) return
       const newData = removeItemById(rootData, item.id)
       setData(newData)
@@ -850,7 +897,7 @@ const TreeLeaf = React.forwardRef<
       setIsEditing(false)
     }
 
-    const handleEdit = () => {
+    const _handleEdit = () => {
       setDialogType(item.type)
       setIsEditing(true)
       setDialogOpen(true)
@@ -902,10 +949,10 @@ const TreeLeaf = React.forwardRef<
         })
       )
     }, [item.id, mode, handleDrop])
-
+    console.log("TreeLeaf", item)
     return (
-      <Box className="relative">
-        <TreeContextMenu
+      <>
+        {/* <TreeContextMenu
           onAddFile={(position) => {
             setDialogType("file")
             setDialogPosition(position)
@@ -921,32 +968,37 @@ const TreeLeaf = React.forwardRef<
           onDelete={handleDelete}
           onEdit={handleEdit}
           canDelete={!!setData}
+        > */}
+
+        <Flex
+          ref={elementRef}
+          className={cn(
+            "ml-5 cursor-move items-center py-2 text-left",
+            treeVariants(),
+            props.className,
+            selectedItemId === item.id && selectedTreeVariants(),
+            isDragging && "opacity-50"
+          )}
+          onClick={() => {
+            handleSelectChange(item)
+            item.onClick?.()
+          }}
+          {...props}
         >
-          <Flex
-            ref={elementRef}
-            className={cn(
-              "ml-5 cursor-move items-center py-2 text-left",
-              treeVariants(),
-              props.className,
-              selectedItemId === item.id && selectedTreeVariants(),
-              isDragging && "opacity-50"
-            )}
-            onClick={() => {
-              handleSelectChange(item)
-              item.onClick?.()
-            }}
-            {...props}
-          >
-            <Flex align="center" gap="2">
-              <TreeIcon
-                item={item}
-                isSelected={selectedItemId === item.id}
-                default={defaultLeafIcon}
-              />
-              <Text className="truncate text-sm">{item.name}</Text>
-            </Flex>
+          <Flex align="center" gap="2">
+            <Box className="flex items-center gap-1 ">
+              {iconTrue && (
+                <TreeIcon
+                  item={item}
+                  isSelected={selectedItemId === item.id}
+                  default={defaultLeafIcon}
+                />
+              )}
+              <Text className="truncate text-sm">{item?.name}</Text>
+            </Box>
           </Flex>
-        </TreeContextMenu>
+        </Flex>
+        {/* </TreeContextMenu> */}
         <TreeActions isSelected={selectedItemId === item.id}>
           {item.actions}
         </TreeActions>
@@ -962,7 +1014,7 @@ const TreeLeaf = React.forwardRef<
           position={dialogPosition}
           initialData={isEditing ? item.data : undefined}
         />
-      </Box>
+      </>
     )
   }
 )
