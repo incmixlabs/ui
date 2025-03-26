@@ -187,7 +187,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                             : "opacity-50 [&_svg]:invisible"
                         )}
                       >
-                        {!isDisabled && <CheckIcon className={"$iconSize"} />}
+                        {!isDisabled && <CheckIcon className={iconSize} />}
                       </Flex>
                     </CommandItem>
                   )
