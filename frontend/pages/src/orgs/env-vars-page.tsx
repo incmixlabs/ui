@@ -34,10 +34,10 @@ export const useEnvVarsStore = create<EnvVarsState>()(
 
 const OrganizationEnvVarsPage: React.FC = () => {
   const { t } = useTranslation(["organizationDetails", "environmentVariables"])
-  const { treeData, setTreeData } = useEnvVarsStore()
+  const { treeData } = useEnvVarsStore()
   console.log(treeData)
 
-  const DESCRIPTIONS: TreeViewDescriptions = {
+  const _DESCRIPTIONS: TreeViewDescriptions = {
     edit: t("common:edit"),
     delete: t("common:delete"),
     name: t("common:name"),
@@ -54,7 +54,7 @@ const OrganizationEnvVarsPage: React.FC = () => {
     editFolderTitle: t("environmentVariables:editFolderTitle"),
   }
 
-  const FILE_FIELDS: FormFieldConfig[] = [
+  const _FILE_FIELDS: FormFieldConfig[] = [
     {
       name: "value",
       label: t("common:value"),
@@ -69,7 +69,7 @@ const OrganizationEnvVarsPage: React.FC = () => {
     },
   ]
 
-  const FOLDER_FIELDS: FormFieldConfig[] = [
+  const _FOLDER_FIELDS: FormFieldConfig[] = [
     {
       name: "notes",
       label: t("common:notes"),
