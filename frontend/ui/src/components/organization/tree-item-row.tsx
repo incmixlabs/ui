@@ -143,6 +143,7 @@ export const TreeItemRow = forwardRef<TreeItemRowRef, TreeItemRowProps>(
           >
             {item.type === "folder" && (
               <button
+                type="button" //
                 onClick={() => onToggleExpand(item.id)}
                 className="mr-2 focus:outline-none"
               >
@@ -177,7 +178,10 @@ export const TreeItemRow = forwardRef<TreeItemRowRef, TreeItemRowProps>(
         <TableCell className="w-10 border border-gray-200">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
-              <button className="rounded-md p-1 hover:bg-gray-100 focus:outline-none">
+              <button
+                type="button"
+                className="rounded-md p-1 hover:bg-gray-100 focus:outline-none"
+              >
                 <MoreVertical className="h-4 w-4" />
               </button>
             </DropdownMenu.Trigger>

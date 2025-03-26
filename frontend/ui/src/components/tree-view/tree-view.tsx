@@ -356,7 +356,6 @@ type TreeItemProps = TreeProps & {
 const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
   (
     {
-      className,
       data,
       rootData,
       selectedItemId,
@@ -365,7 +364,6 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
       defaultNodeIcon,
       defaultLeafIcon,
       setData,
-      ...props
     },
     _ref
   ) => {
@@ -641,7 +639,6 @@ const TreeNode = ({
     <>
       <Box className="relative">
         <div
-          ref={elementRef}
           className={cn(
             treeVariants(),
             selectedItemId === item.id && selectedTreeVariants(),
@@ -650,6 +647,12 @@ const TreeNode = ({
           onClick={() => {
             handleSelectChange(item)
             item.onClick?.()
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              handleSelectChange(item)
+              item.onClick?.()
+            }
           }}
         >
           <TreeContextMenu
