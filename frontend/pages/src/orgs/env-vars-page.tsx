@@ -6,11 +6,11 @@ import {
   type TreeViewDescriptions,
 } from "@incmix/ui"
 import { Flex, Text } from "@incmix/ui"
+import { OrganizationTable } from "@incmix/ui"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useTranslation } from "react-i18next"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import OrganizationTable from "../../../ui/src/components/organization-table"
 import { OrganizationLayout } from "./layouts/organisation-layout"
 import { OrganisationEnvVarsRoute } from "./routes"
 import { useOrganization } from "./utils"
@@ -37,7 +37,7 @@ const OrganizationEnvVarsPage: React.FC = () => {
   const { treeData, setTreeData } = useEnvVarsStore()
   console.log(treeData)
 
-  const _DESCRIPTIONS: TreeViewDescriptions = {
+  const DESCRIPTIONS: TreeViewDescriptions = {
     edit: t("common:edit"),
     delete: t("common:delete"),
     name: t("common:name"),
@@ -54,7 +54,7 @@ const OrganizationEnvVarsPage: React.FC = () => {
     editFolderTitle: t("environmentVariables:editFolderTitle"),
   }
 
-  const _FILE_FIELDS: FormFieldConfig[] = [
+  const FILE_FIELDS: FormFieldConfig[] = [
     {
       name: "value",
       label: t("common:value"),
@@ -69,7 +69,7 @@ const OrganizationEnvVarsPage: React.FC = () => {
     },
   ]
 
-  const _FOLDER_FIELDS: FormFieldConfig[] = [
+  const FOLDER_FIELDS: FormFieldConfig[] = [
     {
       name: "notes",
       label: t("common:notes"),
@@ -104,7 +104,10 @@ const OrganizationEnvVarsPage: React.FC = () => {
             <Text size="5" weight="bold">
               {t("environmentVariables")}
             </Text>
-            <OrganizationTable />
+            <OrganizationTable
+            // treeData={treeData}
+            // setTreeData={setTreeData}
+            />
             {/* <TreeView
               data={treeData}
               setData={setTreeData}

@@ -397,7 +397,6 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                       rootData={rootData}
                       item={item}
                       iconTrue={true}
-                      itemValue={item.data}
                       handleSelectChange={handleSelectChange}
                       selectedItemId={selectedItemId}
                       defaultLeafIcon={defaultLeafIcon}
@@ -746,7 +745,6 @@ const TreeLeaf = React.forwardRef<
         | undefined
     ) => void
     selectedItemId?: string
-    itemValue?: string
     iconTrue?: boolean
     defaultLeafIcon?: any
     index?: number
@@ -762,7 +760,6 @@ const TreeLeaf = React.forwardRef<
     {
       rootData,
       item,
-      itemValue,
       handleSelectChange,
       selectedItemId,
       defaultLeafIcon,
@@ -779,7 +776,7 @@ const TreeLeaf = React.forwardRef<
     const [instruction, setInstruction] = useState<Instruction | null>(null)
     const [dialogOpen, setDialogOpen] = useState(false)
     const [dialogType, setDialogType] = useState<"file" | "folder">("file")
-    const [dialogPosition, _setDialogPosition] = useState<
+    const [dialogPosition, setDialogPosition] = useState<
       "above" | "below" | "inside"
     >("below")
     const [isEditing, setIsEditing] = useState(false)
@@ -821,7 +818,7 @@ const TreeLeaf = React.forwardRef<
       setData(newData)
     }
 
-    const _handleDelete = () => {
+    const handleDelete = () => {
       if (!setData) return
       const newData = removeItemById(rootData, item.id)
       setData(newData)
@@ -896,7 +893,7 @@ const TreeLeaf = React.forwardRef<
       setIsEditing(false)
     }
 
-    const _handleEdit = () => {
+    const handleEdit = () => {
       setDialogType(item.type)
       setIsEditing(true)
       setDialogOpen(true)
@@ -951,7 +948,7 @@ const TreeLeaf = React.forwardRef<
     console.log("TreeLeaf", item)
     return (
       <>
-        {/* <TreeContextMenu
+        <TreeContextMenu
           onAddFile={(position) => {
             setDialogType("file")
             setDialogPosition(position)
@@ -967,37 +964,36 @@ const TreeLeaf = React.forwardRef<
           onDelete={handleDelete}
           onEdit={handleEdit}
           canDelete={!!setData}
-        > */}
-
-        <Flex
-          ref={elementRef}
-          className={cn(
-            "ml-5 cursor-move items-center py-2 text-left",
-            treeVariants(),
-            props.className,
-            selectedItemId === item.id && selectedTreeVariants(),
-            isDragging && "opacity-50"
-          )}
-          onClick={() => {
-            handleSelectChange(item)
-            item.onClick?.()
-          }}
-          {...props}
         >
-          <Flex align="center" gap="2">
-            <Box className="flex items-center gap-1 ">
-              {iconTrue && (
-                <TreeIcon
-                  item={item}
-                  isSelected={selectedItemId === item.id}
-                  default={defaultLeafIcon}
-                />
-              )}
-              <Text className="truncate text-sm">{item?.name}</Text>
-            </Box>
+          <Flex
+            ref={elementRef}
+            className={cn(
+              "ml-5 cursor-move items-center py-2 text-left",
+              treeVariants(),
+              props.className,
+              selectedItemId === item.id && selectedTreeVariants(),
+              isDragging && "opacity-50"
+            )}
+            onClick={() => {
+              handleSelectChange(item)
+              item.onClick?.()
+            }}
+            {...props}
+          >
+            <Flex align="center" gap="2">
+              <Box className="flex items-center gap-1 ">
+                {iconTrue && (
+                  <TreeIcon
+                    item={item}
+                    isSelected={selectedItemId === item.id}
+                    default={defaultLeafIcon}
+                  />
+                )}
+                <Text className="truncate text-sm">{item?.name}</Text>
+              </Box>
+            </Flex>
           </Flex>
-        </Flex>
-        {/* </TreeContextMenu> */}
+        </TreeContextMenu>
         <TreeActions isSelected={selectedItemId === item.id}>
           {item.actions}
         </TreeActions>
