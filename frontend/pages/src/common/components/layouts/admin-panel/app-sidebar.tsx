@@ -155,6 +155,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         isSelected: pathname.includes("/file-manager"),
       },
       {
+        title: "Notes",
+        url: "/notes",
+        icon: FolderClosed,
+        isSelected: pathname.includes("/notes"),
+      },
+      {
         title: t("common:users"),
         url: "/users/list",
         icon: UserIcon,

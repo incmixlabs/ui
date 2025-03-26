@@ -28,9 +28,11 @@ export * from "./projects"
 export * from "./dashboard/project-1"
 export * from "./dashboard/project-2"
 export * from "./projects/roadmap-view"
+export * from "./notes"
 export * from "./stats-card"
 export * from "./chart/statistic-bar-chart"
 export * from "./chart/radial-bar-chart"
+export * from "./organization/organization-table"
 export {
   Badge,
   Box,
@@ -61,6 +63,7 @@ export {
   TextArea,
   ContextMenu,
   Progress,
+  Dialog,
 } from "@radix-ui/themes"
 export * from "./stepper"
 export * from "./sheet"
