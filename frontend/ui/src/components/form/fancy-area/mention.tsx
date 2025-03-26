@@ -1,5 +1,6 @@
 import { Avatar } from "@/components/avatar"
 import { HoverCard } from "@/components/card/hover-card"
+import { iconSize } from "@/components/icons/icon"
 import { CalendarDays } from "lucide-react"
 import type React from "react"
 import { people } from "./data"
@@ -46,7 +47,7 @@ export function Mention({ children, handle }: Props) {
             <h4 className="font-semibold text-sm">{user.username}</h4>
             <p className="text-sm">{user.description}</p>
             <div className="flex items-center pt-2">
-              <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{" "}
+              <CalendarDays className={`mr-2 ${iconSize} opacity-70`} />{" "}
               <span className="text-muted-foreground text-xs">
                 Joined {user.joined}
               </span>

@@ -1,5 +1,5 @@
 "use client"
-import { Box, Flex, Progress, ScrollArea, Text } from "@incmix/ui"
+import { Box, Flex, Progress, ScrollArea, Text, iconSize } from "@incmix/ui"
 import { FolderClosed, type LucideIcon } from "lucide-react"
 import { type JSX, useState } from "react"
 import { secondaryFooterData, secondarySidebarData } from "./data"
@@ -73,7 +73,7 @@ export function FileFolder(): JSX.Element {
             >
               {item.icon && (
                 <item.icon
-                  className="h-4 w-4 shrink-0 text-sidebar-secondary-muted"
+                  className={`${iconSize} shrink-0 text-sidebar-secondary-muted`}
                   aria-hidden="true"
                 />
               )}

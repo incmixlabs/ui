@@ -1,3 +1,4 @@
+import { iconSize } from "@components/icons/icon"
 import {
   FormControl,
   FormItem,
@@ -10,7 +11,6 @@ import type {
   AutoFormInputComponentProps,
   MCQLayoutType,
   MCQOption,
-  MCQSizeType,
 } from "../types"
 
 const getLayoutClass = (layout: MCQLayoutType, gridCols = 2): string => {
@@ -133,7 +133,7 @@ export default function AutoFormMultiCheckbox({
                       <input
                         type="checkbox"
                         id={`checkbox-${option.value}`}
-                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className={`${iconSize} rounded border-gray-300 text-blue-600 focus:ring-blue-500`}
                         value={option.value}
                         onChange={(e) => {
                           handleCheckboxChange(option.value, e.target.checked)

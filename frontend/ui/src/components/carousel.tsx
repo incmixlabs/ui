@@ -16,6 +16,7 @@ import {
 import { Button } from "./button/shad-button"
 
 import Autoplay from "embla-carousel-autoplay"
+import { iconSize } from "./icons/icon"
 export { Autoplay }
 
 type CarouselApi = UseEmblaCarouselType[1]
@@ -226,7 +227,7 @@ const CarouselPrevious = forwardRef<
       onClick={scrollPrev}
       {...props}
     >
-      <ArrowLeftIcon className="h-4 w-4" />
+      <ArrowLeftIcon className={iconSize} />
       <span className="sr-only">Previous slide</span>
     </Button>
   )
@@ -255,7 +256,7 @@ const CarouselNext = forwardRef<
       onClick={scrollNext}
       {...props}
     >
-      <ArrowRightIcon className="h-4 w-4" />
+      <ArrowRightIcon className={iconSize} />
       <span className="sr-only">Next slide</span>
     </Button>
   )

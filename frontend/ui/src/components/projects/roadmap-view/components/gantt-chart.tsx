@@ -11,6 +11,7 @@ import {
   ScrollArea,
   Select,
   Text,
+  iconSize,
 } from "@incmix/ui"
 import type { ButtonProps } from "@radix-ui/themes"
 
@@ -175,10 +176,10 @@ export function GanttChart({ projectTasks, className }: GanttChartProps) {
             onClick={handlePrevious}
             aria-label="Previous period"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className={`${iconSize}`} />
           </Button>
           <Button variant="soft" onClick={handleNext} aria-label="Next period">
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className={`${iconSize}`} />
           </Button>
         </Flex>
         <Heading size={"4"} className="ml-2 font-semibold ">

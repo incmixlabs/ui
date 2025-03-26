@@ -9,7 +9,7 @@ import {
   Trash2,
 } from "lucide-react"
 
-import { Button, DropdownMenu } from "@incmix/ui"
+import { Button, DropdownMenu, iconSize } from "@incmix/ui"
 import { cn } from "@utils"
 
 interface ProjectActionsMenuProps {
@@ -80,47 +80,58 @@ export function ProjectActionsMenu({
     //   variant: "destructive",
     // })
   }
-
+  const moreOptions = [
+    {
+      title: "Share",
+      onClick: handleShare,
+      icon: Share,
+    },
+    {
+      title: "Sharing Link",
+      onClick: handleSharingLink,
+      icon: Link,
+    },
+    {
+      title: "Download",
+      onClick: handleDownload,
+      icon: Download,
+    },
+    {
+      title: "Rename",
+      onClick: handleRename,
+      icon: Pencil,
+    },
+    {
+      title: "Copy",
+      onClick: handleCopy,
+      icon: Copy,
+    },
+    {
+      title: "Move",
+      onClick: handleMove,
+      icon: FolderUp,
+    },
+    {
+      title: "Delete",
+      onClick: handleDelete,
+      icon: Trash2,
+    },
+  ].map((option, index) => (
+    <DropdownMenu.Item key={index} onClick={option.onClick}>
+      <option.icon className={`mr-2 ${iconSize}`} />
+      <span>{option.title}</span>
+    </DropdownMenu.Item>
+  ))
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger className={cn("cursor-pointer", className)}>
         <Button variant="ghost">
-          <MoreHorizontal className="h-4 w-4" />
+          <MoreHorizontal className={`${iconSize}`} />
           <span className="sr-only">More options</span>
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content align="end" className="w-48">
-        <DropdownMenu.Item onClick={handleShare}>
-          <Share className="mr-2 h-4 w-4" />
-          <span>Share</span>
-        </DropdownMenu.Item>
-        <DropdownMenu.Item onClick={handleSharingLink}>
-          <Link className="mr-2 h-4 w-4" />
-          <span>Sharing Link</span>
-        </DropdownMenu.Item>
-        <DropdownMenu.Separator />
-        <DropdownMenu.Item onClick={handleDownload}>
-          <Download className="mr-2 h-4 w-4" />
-          <span>Download</span>
-        </DropdownMenu.Item>
-        <DropdownMenu.Item onClick={handleRename}>
-          <Pencil className="mr-2 h-4 w-4" />
-          <span>Rename</span>
-        </DropdownMenu.Item>
-        <DropdownMenu.Separator />
-        <DropdownMenu.Item onClick={handleCopy}>
-          <Copy className="mr-2 h-4 w-4" />
-          <span>Copy</span>
-        </DropdownMenu.Item>
-        <DropdownMenu.Item onClick={handleMove}>
-          <FolderUp className="mr-2 h-4 w-4" />
-          <span>Move</span>
-        </DropdownMenu.Item>
-        <DropdownMenu.Separator />
-        <DropdownMenu.Item onClick={handleDelete} color="red">
-          <Trash2 className="mr-2 h-4 w-4" />
-          <span>Delete</span>
-        </DropdownMenu.Item>
+        {moreOptions}
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   )

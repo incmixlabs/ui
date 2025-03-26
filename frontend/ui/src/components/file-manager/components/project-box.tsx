@@ -3,7 +3,7 @@ import { FilterIcon } from "@components/icons/filter"
 
 import { MotionSheet } from "@components/custom-sheet"
 import { useMediaQuery } from "@hooks/use-media-query"
-import { Box, Button, Flex, IconButton } from "@incmix/ui"
+import { Box, Button, Flex, IconButton, iconSize } from "@incmix/ui"
 import { cn } from "@utils"
 import {
   ChevronLeft,
@@ -99,7 +99,7 @@ const ProjectBox = ({ title }: FileGridProps) => {
           gap={"1"}
         >
           <IconButton
-            className="rouned-full mr-2 h-6 w-6"
+            className={`mr-2 rounded-full ${iconSize}`}
             onClick={() => {
               /* Add navigation logic here */
             }}
@@ -270,7 +270,7 @@ const ProjectBox = ({ title }: FileGridProps) => {
                 }
                 disabled={currentPage === 1}
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className={`${iconSize}`} />
                 Previous
               </Button>
               {isMobile && (
@@ -307,7 +307,7 @@ const ProjectBox = ({ title }: FileGridProps) => {
                 disabled={currentPage === totalPages}
               >
                 Next
-                <ChevronLeft className="h-4 w-4 rotate-180" />
+                <ChevronLeft className={`${iconSize} rotate-180`} />
               </Button>
             </Flex>
           )}

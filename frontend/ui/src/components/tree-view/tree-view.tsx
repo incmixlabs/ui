@@ -9,7 +9,7 @@ import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indi
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
-import { Box, Flex, Text } from "@incmix/ui"
+import { Box, Flex, Text, iconSize } from "@incmix/ui"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import { cn } from "@utils/cn"
 import { cva } from "class-variance-authority"
@@ -978,7 +978,9 @@ const AccordionTrigger = React.forwardRef<
       className={cn(triggerStyles(), className)}
       {...props}
     >
-      <ChevronRight className="mr-1 h-4 w-4 shrink-0 text-accent-foreground/50 transition-transform duration-200" />
+      <ChevronRight
+        className={`mr-1 ${iconSize} shrink-0 text-accent-foreground/50 transition-transform duration-200`}
+      />
       {children}
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
@@ -1020,7 +1022,7 @@ const TreeIcon = ({
         : (item.selectedIcon ?? Folder)
       : (item.selectedIcon ?? defaultIcon ?? File))
 
-  return <Icon className="h-4 w-4 shrink-0" />
+  return <Icon className={`${iconSize} shrink-0`} />
 }
 
 const TreeActions = ({

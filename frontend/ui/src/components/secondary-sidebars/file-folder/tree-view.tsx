@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Flex, Text } from "@incmix/ui"
+import { Box, Flex, Text, iconSize } from "@incmix/ui"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import { cn } from "@utils/cn"
 import { ChevronRight, type LucideIcon } from "lucide-react"
@@ -112,7 +112,7 @@ type TreeItemProps = TreeProps & {
   FolderIconOpen?: ComponentType<IconProps>
 }
 
-const iconClass = "h-4 w-4 shrink-0 text-accent-foreground/50"
+const iconClass = `${iconSize} shrink-0 text-accent-foreground/50`
 const padding = "p-2"
 const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
   (

@@ -1,4 +1,4 @@
-import { Flex, Popover, Text } from "@incmix/ui"
+import { Flex, Popover, Text, iconSize } from "@incmix/ui"
 import type { BadgeProps } from "@radix-ui/themes"
 import { CheckIcon, Plus } from "lucide-react"
 import * as React from "react"
@@ -161,7 +161,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                         {option.icon && (
                           <option.icon
                             className={cn(
-                              "mr-2 h-4 w-4",
+                              `mr-2 ${iconSize}`,
                               isDisabled ? "text-muted-foreground" : ""
                             )}
                           />
@@ -187,7 +187,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                             : "opacity-50 [&_svg]:invisible"
                         )}
                       >
-                        {!isDisabled && <CheckIcon className="h-4 w-4" />}
+                        {!isDisabled && <CheckIcon className={iconSize} />}
                       </Flex>
                     </CommandItem>
                   )

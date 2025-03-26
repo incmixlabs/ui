@@ -1,13 +1,3 @@
-import {
-  Clock,
-  Ellipsis,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-  UserPlus,
-} from "lucide-react"
-import type { Project } from "../types"
-
 import { useProjectDrawer } from "@hooks/use-project-drawer"
 import {
   Box,
@@ -19,6 +9,16 @@ import {
   Progress,
   Text,
 } from "@incmix/ui"
+import {
+  Clock,
+  Ellipsis,
+  MoreHorizontal,
+  Pencil,
+  Trash2,
+  UserPlus,
+} from "lucide-react"
+import { iconSize } from "../../icons/icon"
+import type { Project } from "../types"
 
 interface ProjectCardProps {
   project: Project
@@ -133,7 +133,8 @@ export function ProjectCard({
           gap={"1"}
           className="rounded-md bg-gray-3 p-2 font-medium text-gray-11"
         >
-          <Clock className="h-4 w-4" />
+          <Clock className={`${iconSize}`} />
+
           <Text as="span" className="text-sm ">
             {project.timeLeft} {project.timeType} left
           </Text>

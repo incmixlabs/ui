@@ -143,7 +143,7 @@ export function TaskBar({ task, dates, view, columnWidth }: TaskBarProps) {
         <HoverCard.Content className="z-50 w-fit space-y-3 p-3 font-medium text-gray-11">
           <Flex align={"center"} gap={"3"}>
             <Box className="w-6">
-              <Badge variant="solid" color={task.color} className=" h-4 w-4" />
+              <Badge variant="solid" color={task.color} className="h-5 w-5" />
             </Box>
             <Text as="p" className="text-gray-12">
               {task.name}
