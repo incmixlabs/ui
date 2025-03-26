@@ -143,7 +143,7 @@ const NavbarIcons: React.FC<{ extraIcons?: React.ReactNode }> = ({
       <ThemeToggle />
       <RouterLink to="/notifications">
         <BellIcon
-          className={"$iconSize} cursor-pointer text-gray-12"}
+          className={`${iconSize} cursor-pointer text-gray-12`}
           aria-label={t("notifications")}
         />
       </RouterLink>
