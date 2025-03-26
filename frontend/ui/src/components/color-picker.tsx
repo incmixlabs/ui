@@ -1,5 +1,6 @@
 import { cn } from "@utils"
 import { Check } from "lucide-react"
+import { iconSize } from "./icons/icon"
 export interface ColorSelectType {
   hex: string
   name?: string
@@ -126,7 +127,7 @@ const ColorPicker = ({
               title={color}
             >
               {activeColor === color && (
-                <Check className="h-4 w-4 flex-shrink-0 text-white" />
+                <Check className={`${iconSize} flex-shrink-0 text-white`} />
               )}
             </button>
           ))}

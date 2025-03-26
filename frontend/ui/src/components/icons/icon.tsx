@@ -8,3 +8,4 @@ const Icon = ({ name, color, size }: IconType) => {
 }
 
 export default Icon
+export const iconSize = "w-4 h-4"
