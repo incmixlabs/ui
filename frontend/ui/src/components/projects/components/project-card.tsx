@@ -133,7 +133,15 @@ export function ProjectCard({
           gap={"1"}
           className="rounded-md bg-gray-3 p-2 font-medium text-gray-11"
         >
+// At the top of the file, alongside other import statements
+import { iconSize } from "../../icons/icon"
+
+// ... other existing imports and code
+
+// In the component code, line 136 remains unchanged:
           <Clock className={`${iconSize}`} />
+
+// ... rest of the file remains unchanged
           <Text as="span" className="text-sm ">
             {project.timeLeft} {project.timeType} left
           </Text>
