@@ -29,7 +29,7 @@ import {
 } from "./types"
 
 import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
-import { Box, Card, Checkbox, Flex, Heading, Text } from "@incmix/ui"
+import { Box, Card, Checkbox, Flex, Heading, Text, iconSize } from "@incmix/ui"
 import { cn } from "@utils"
 
 type TCardState =
@@ -162,7 +162,7 @@ export function TaskCardDisplay({
                     return (
                       <span
                         key={file.name}
-                        className={`flex h-4 w-4 items-center gap-1 rounded-md ${randomColor}`}
+                        className={`flex ${iconSize} items-center gap-1 rounded-md ${randomColor}`}
                       />
                     )
                   })}

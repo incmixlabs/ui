@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@components/table"
 import { useMediaQuery } from "@hooks/use-media-query"
-import { ScrollArea } from "@incmix/ui"
+import { ScrollArea, iconSize } from "@incmix/ui"
 import { cn } from "@utils"
 import { getBytes } from "@utils/getBytes"
 import { ChevronDown, ChevronUp } from "lucide-react"
@@ -86,9 +86,9 @@ export function ProjectListView({
   const getSortIcon = (field: SortField) => {
     if (sortField !== field) return null
     return sortDirection === "asc" ? (
-      <ChevronUp className="h-4 w-4" />
+      <ChevronUp className={`${iconSize}`} />
     ) : (
-      <ChevronDown className="h-4 w-4" />
+      <ChevronDown className={`${iconSize}`} />
     )
   }
 

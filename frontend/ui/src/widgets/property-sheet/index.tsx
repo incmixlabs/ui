@@ -17,6 +17,7 @@ import {
   Heading,
   Popover,
   Text,
+  iconSize,
 } from "@incmix/ui"
 import { useState } from "react"
 
@@ -216,7 +217,7 @@ export function PropertySheet() {
               <Popover.Trigger>
                 <Button
                   variant="soft"
-                  className="color-swatch h-4 w-4 cursor-pointer rounded-sm border border-gray-4"
+                  className={`color-swatch ${iconSize} cursor-pointer rounded-sm border border-gray-4`}
                   style={{ backgroundColor: color }}
                   aria-label="Open color picker"
                 />

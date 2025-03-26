@@ -12,6 +12,7 @@ import {
   IconButton,
   Link,
   TextField,
+  iconSize,
 } from "@incmix/ui"
 
 import {
@@ -67,12 +68,13 @@ const SearchBar: React.FC = () => {
 const ThemeToggle: React.FC = () => {
   const { theme, toggleTheme } = useThemeStore()
   const { t } = useTranslation("navbar")
+  const style = `${iconSize} text-gray-12`
   return (
     <Button variant="ghost" onClick={toggleTheme} aria-label={t("toggleTheme")}>
       {theme === "dark" ? (
-        <SunIcon className="h-6 w-6 text-gray-12" />
+        <SunIcon className={style} />
       ) : (
-        <MoonIcon className="h-6 w-6 text-gray-12" />
+        <MoonIcon className={style} />
       )}
     </Button>
   )
@@ -141,7 +143,7 @@ const NavbarIcons: React.FC<{ extraIcons?: React.ReactNode }> = ({
       <ThemeToggle />
       <RouterLink to="/notifications">
         <BellIcon
-          className="h-6 w-6 cursor-pointer text-gray-12"
+          className={"$iconSize} cursor-pointer text-gray-12"}
           aria-label={t("notifications")}
         />
       </RouterLink>

@@ -133,7 +133,7 @@ export function ProjectCard({
           gap={"1"}
           className="rounded-md bg-gray-3 p-2 font-medium text-gray-11"
         >
-          <Clock className="h-4 w-4" />
+          <Clock className={`${iconSize}`} />
           <Text as="span" className="text-sm ">
             {project.timeLeft} {project.timeType} left
           </Text>

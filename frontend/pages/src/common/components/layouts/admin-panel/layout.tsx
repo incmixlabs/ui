@@ -8,6 +8,7 @@ import {
   BreadcrumbSeparator,
   Button,
   Separator,
+  iconSize,
 } from "@incmix/ui"
 import {
   SidebarInset,
@@ -36,7 +37,7 @@ export function DashboardLayout({
   const { theme, toggleTheme } = useThemeStore()
   const { t } = useTranslation("navbar")
   const { pathname } = useLocation()
-
+  const style = `${iconSize} text-gray-12`
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -82,9 +83,9 @@ export function DashboardLayout({
               aria-label={t("toggleTheme")}
             >
               {theme === "dark" ? (
-                <SunIcon className="h-6 w-6 text-gray-12" />
+                <SunIcon className={style} />
               ) : (
-                <MoonIcon className="h-6 w-6 text-gray-12" />
+                <MoonIcon className={style} />
               )}
             </Button>
             {navExtras}
