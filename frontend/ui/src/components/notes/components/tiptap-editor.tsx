@@ -126,7 +126,6 @@ export function TiptapEditor({ modalData }: TiptapEditorProps) {
         slotBefore={<TitleMenuBar />}
         extensions={extensions}
         content={content}
-   
         editorProps={{
           attributes: {
             class:
