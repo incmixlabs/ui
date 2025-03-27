@@ -45,6 +45,7 @@ import {
   ProfileRoute,
   ProjectsRoute,
   ResetPasswordRoute,
+  RolesRoute,
   RootRoute,
   SettingsRoute,
   SignupRoute,
@@ -83,6 +84,7 @@ const routeTree = RootRoute.addChildren([
   TasksRoute,
   ProjectsRoute,
   TranslationsRoute,
+  RolesRoute,
 ])
 
 const router = createRouter({ routeTree })

@@ -30,6 +30,7 @@
     "@radix-ui/themes": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "catalog:",
+    "@tanstack/react-table": "8.20.6",
     "@tanstack/zod-form-adapter": "^0.41.3",
     "i18next": "24.2.1",
     "i18next-chained-backend": "4.6.2",
