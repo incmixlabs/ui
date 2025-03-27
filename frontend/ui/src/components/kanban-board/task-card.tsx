@@ -29,7 +29,7 @@ import {
 } from "./types"
 
 import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
-import { Box, Card, Checkbox, Flex, Heading, Text, iconSize } from "@incmix/ui"
+import { Avatar, Box, Card, Checkbox, Flex, Heading, Text, iconSize } from "@incmix/ui"
 import { cn } from "@utils"
 
 type TCardState =
@@ -103,7 +103,7 @@ export function TaskCardDisplay({
           handleDrawerOpen(card.id.toString())
         }
       }}
-      className={`flex flex-shrink-0 flex-col gap-2 px-3 py-1 ${outerStyles[state.type]}`}
+      className={`flex flex-shrink-0 flex-col gap-2 px-3  ${outerStyles[state.type]}`}
     >
       {/* Put a shadow before the item if closer to the top edge */}
       {state.type === "is-over" && state.closestEdge === "top" ? (
@@ -111,7 +111,7 @@ export function TaskCardDisplay({
       ) : null}
       <Card
         className={cn(
-          `relative cursor-pointer space-y-1.5 rounded-lg p-3 ${innerStyles[state.type]}`,
+          `relative cursor-pointer space-y-1.5 rounded-sm p-1 ${innerStyles[state.type]}`,
           kanbanFilter ? "flex items-center justify-between " : ""
         )}
         ref={innerRef}
@@ -132,8 +132,8 @@ export function TaskCardDisplay({
           <>
             <Flex align={"center"} justify={"center"} gap="2">
               <Checkbox
-                size={"3"}
-                className="h-5 w-5 rounded-md border border-black bg-gray-12 text-secondary group-hover:bg-white "
+                size={"2"}
+                className="h-4 w-4 rounded-md  bg-gray-12 text-secondary group-hover:bg-white "
               />
               <Heading as="h6" size={"3"} className="py-2 font-medium">
                 {card.name}
@@ -170,11 +170,11 @@ export function TaskCardDisplay({
               )}
               <Flex align={"center"} gap="2">
                 {card.members.map((member) => (
-                  <img
+                  <Avatar
                     key={member.id}
                     src={member.src}
-                    alt={member.name}
-                    className="h-8 w-8 rounded-full"
+                    fallback={member.name}
+                    size="2"
                   />
                 ))}
               </Flex>
@@ -267,11 +267,11 @@ export function TaskCardDisplay({
               </Flex>
               <Flex align={"center"} className="gap-2">
                 {card.members.map((member) => (
-                  <img
+                  <Avatar
                     key={member.id}
                     src={member.src}
-                    alt={member.name}
-                    className="h-8 w-8 rounded-full"
+                    fallback={member.name}
+                    size="2"
                   />
                 ))}
               </Flex>

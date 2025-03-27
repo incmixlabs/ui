@@ -266,15 +266,15 @@ export default function TaskCardDrawer({
                         <Flex className="gap-1">
                           <Avatar
                             src={KanbanImages.user1}
-                            className="h-8 w-8"
+                             size="2"
                           />
                           <Avatar
                             src={KanbanImages.user2}
-                            className="h-8 w-8"
+                             size="2"
                           />
                           <Avatar
                             src={KanbanImages.user1}
-                            className="h-8 w-8"
+                            size="2"
                           />
                           <ComboBox
                             options={assignData}

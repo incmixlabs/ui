@@ -3,6 +3,7 @@ import { CalendarDays, Clipboard, User } from "lucide-react"
 import type { DateTime } from "luxon"
 import { ProjectsImages } from "../../images"
 import type { Task, ViewType } from "./gantt-chart"
+import { Avatar } from "@components/avatar"
 
 interface TaskBarProps {
   task: Task
@@ -169,20 +170,20 @@ export function TaskBar({ task, dates, view, columnWidth }: TaskBarProps) {
               <User className=" h-5 w-5" />
             </Box>
             <Flex align={"center"} gap={"2"}>
-              <img
+              <Avatar
                 src={ProjectsImages.user}
-                className="h-8 w-8 rounded-full"
-                alt="task-assigned-image"
+                size="2"
+
               />
-              <img
+              <Avatar
                 src={ProjectsImages.user}
-                className="h-8 w-8 rounded-full"
-                alt="task-assigned-image"
+                size="2"
+
               />
-              <img
+              <Avatar
                 src={ProjectsImages.user}
-                className="h-8 w-8 rounded-full"
-                alt="task-assigned-image"
+
+                size="2"
               />
             </Flex>
           </Flex>

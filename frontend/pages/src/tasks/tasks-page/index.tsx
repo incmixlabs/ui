@@ -178,7 +178,7 @@ const TasksPage = () => {
           </Flex>
           <Flex justify={"end"} className="mb-2">
             <IconButton
-              className="h-10 w-12 cursor-pointer "
+              className="h-4 w-4 cursor-pointer "
               onClick={toggleKanbanFilter}
             >
               <ListFilter className="size-8 fill-white" />
