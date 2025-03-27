@@ -18,6 +18,12 @@ catalogs:
     '@tanstack/react-router':
       specifier: 1.98.3
       version: 1.98.3
+    '@tiptap/react':
+      specifier: 2.11.5
+      version: 2.11.5
+    '@tiptap/starter-kit':
+      specifier: 2.11.5
+      version: 2.11.5
     '@types/react':
       specifier: 19.0.0
       version: 19.0.0
@@ -113,15 +119,6 @@ importers:
       '@tauri-apps/api':
         specifier: '>=2.0.0-beta.0'
         version: 2.2.0
-      '@tiptap/pm':
-        specifier: ^2.11.5
-        version: 2.11.5
-      '@tiptap/react':
-        specifier: ^2.11.5
-        version: 2.11.5(@tiptap/core@2.11.5(@tiptap/pm@2.11.5))(@tiptap/pm@2.11.5)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      '@tiptap/starter-kit':
-        specifier: ^2.11.5
-        version: 2.11.5
       react:
         specifier: 'catalog:'
         version: 19.0.0
@@ -180,6 +177,9 @@ importers:
       vite-plugin-bundlesize:
         specifier: 'catalog:'
         version: 0.1.0(vite@6.0.9(@types/node@22.13.4)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))
+      vite-plugin-chunk-split:
+        specifier: ^0.5.0
+        version: 0.5.0(vite@6.0.9(@types/node@22.13.4)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))
       vite-plugin-top-level-await:
         specifier: ^1.5.0
         version: 1.5.0(@swc/helpers@0.5.15)(rollup@4.32.0)(vite@6.0.9(@types/node@22.13.4)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0))
@@ -561,9 +561,12 @@ importers:
       '@tanstack/zod-form-adapter':
         specifier: ^0.41.3
         version: 0.41.3(zod@3.24.1)
-      '@tauri-apps/api':
-        specifier: '>=2.0.0-beta.0'
-        version: 2.2.0
+      '@tiptap/react':
+        specifier: 'catalog:'
+        version: 2.11.5(@tiptap/core@2.11.5(@tiptap/pm@2.11.5))(@tiptap/pm@2.11.5)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@tiptap/starter-kit':
+        specifier: 'catalog:'
+        version: 2.11.5
       apexcharts:
         specifier: ^4.5.0
         version: 4.5.0
@@ -8790,6 +8793,11 @@ packages:
     hasBin: true
     peerDependencies:
       vite: '>= 5.0.0'
+
+  vite-plugin-chunk-split@0.5.0:
+    resolution: {integrity: sha512-pasNKLhH+ICjoCF6HoKKvgmZ1LEPSCIKAa8Lz0ZpMyQC9bLmCLT7UxgKMULewsc9SUw89OX0udsGiIQCtr8wLA==}
+    peerDependencies:
+      vite: ^4 || ^5
 
   vite-plugin-top-level-await@1.5.0:
     resolution: {integrity: sha512-r/DtuvHrSqUVk23XpG2cl8gjt1aATMG5cjExXL1BUTcSNab6CzkcPua9BPEc9fuTP5UpwClCxUe3+dNGL0yrgQ==}
@@ -18372,6 +18380,13 @@ snapshots:
       strip-ansi: 7.1.0
       vite: 6.0.9(@types/node@22.13.4)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
       vlq: 2.0.4
+
+  vite-plugin-chunk-split@0.5.0(vite@6.0.9(@types/node@22.13.4)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)):
+    dependencies:
+      es-module-lexer: 1.6.0
+      import-meta-resolve: 4.1.0
+      magic-string: 0.30.17
+      vite: 6.0.9(@types/node@22.13.4)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)
 
   vite-plugin-top-level-await@1.5.0(@swc/helpers@0.5.15)(rollup@4.32.0)(vite@6.0.9(@types/node@22.13.4)(jiti@2.4.2)(tsx@4.19.2)(yaml@2.7.0)):
     dependencies:

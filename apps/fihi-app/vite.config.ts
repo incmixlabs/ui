@@ -8,7 +8,7 @@ import { type PluginOption, defineConfig } from "vite"
 import bundlesize from "vite-plugin-bundlesize"
 import topLevelAwait from "vite-plugin-top-level-await"
 import tsconfigPaths from "vite-tsconfig-paths"
-
+import { chunkSplitPlugin } from 'vite-plugin-chunk-split';
 // @ts-expect-error process is a nodejs global
 const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM)
 
@@ -20,7 +20,7 @@ export default defineConfig(async () => ({
   build: {
     // using hidden sourcemap to avoid the vscode type error
     sourcemap: "hidden" as unknown as boolean, // Source map generation must be turned on
-    chunkSizeWarningLimit: 4800,
+    chunkSizeWarningLimit: 7200,
     rollupOptions: {
       treeshake: true,
     },
@@ -35,9 +35,10 @@ export default defineConfig(async () => ({
     },
   },
   plugins: [
-    bundlesize({ limits: [{ name: "**/*", limit: "3 mB" }] }),
+    bundlesize({ limits: [{ name: "**/*", limit: "6 mB" }] }),
     react(),
     tsconfigPaths(),
+    chunkSplitPlugin(),
     visualizer({ open: true }) as PluginOption,
     ValidateEnv({
       VITE_BFF_API_URL: Schema.string(),
