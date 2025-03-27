@@ -8,6 +8,7 @@ import {
   columnSchemaLiteral,
   projectSchemaLiteral,
   taskSchemaLiteral,
+  formProjectSchemaLiteral,
 } from "./types"
 
 import { API } from "@incmix/utils/env"
@@ -34,6 +35,7 @@ await database.addCollections({
   tasks: { schema: taskSchemaLiteral, autoMigrate: true },
   columns: { schema: columnSchemaLiteral, autoMigrate: true },
   projects: { schema: projectSchemaLiteral, autoMigrate: true },
+  formProjects: { schema: formProjectSchemaLiteral, autoMigrate: true },
 })
 
 const BFF_API_URL: string = import.meta.env["VITE_BFF_API_URL"] || ""
