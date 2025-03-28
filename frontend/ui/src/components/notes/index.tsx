@@ -29,10 +29,15 @@ import {
   Trash,
   X,
 } from "lucide-react"
-import { useRef, useState } from "react"
+import { Suspense, lazy, useRef, useState } from "react"
 import { Label } from "../label"
-import { TiptapEditor } from "./components/tiptap-editor"
 import { type INote, notesData } from "./data"
+
+const TiptapEditor = lazy(() =>
+  import("./components/tiptap-editor").then((mod) => ({
+    default: mod.TiptapEditor,
+  }))
+)
 
 export function NoteComponent() {
   const [notes, _setNotes] = useState<INote[]>(notesData)
@@ -203,7 +208,9 @@ export function NoteComponent() {
           <DialogDescription>
             {isEditing ? (
               <div className="space-y-4 pt-4">
-                <TiptapEditor modalData={modalData} />
+                <Suspense fallback={<div>Loading editor...</div>}>
+                  <TiptapEditor modalData={modalData} />
+                </Suspense>
               </div>
             ) : (
               <Box className="">

@@ -9,14 +9,18 @@ import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/dist/types/int
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder"
 import { useKanbanFilter } from "@hooks/use-kanban-filter"
-import { Box } from "@incmix/ui"
 import { bindAll } from "bind-event-listener"
+import { Suspense, lazy } from "react"
 import { useEffect, useRef, useState } from "react"
 import invariant from "tiny-invariant"
 import { BoardColumn } from "./board-column"
 import { initialData } from "./data"
 import { blockBoardPanningAttr } from "./data-attributes"
-import TaskCardDrawer from "./task-card-drawer"
+
+import { Box } from "@incmix/ui"
+
+// Dynamically import heavy component
+const TaskCardDrawer = lazy(() => import("./task-card-drawer"))
 import type { TCard, TColumn, TCustomBoard } from "./types"
 import {
   isCardData,
@@ -382,7 +386,9 @@ export function Board() {
             />
           ))}
         </Box>
-        <TaskCardDrawer kanbanFilter={kanbanFilter} />
+        <Suspense fallback={<Box className="p-4">Loading drawer...</Box>}>
+          <TaskCardDrawer kanbanFilter={kanbanFilter} />
+        </Suspense>
       </Box>
     </>
   )

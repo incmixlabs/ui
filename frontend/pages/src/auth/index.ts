@@ -1,4 +1,5 @@
 export * from "./routes"
+export * from "./layouts"
 
 export { default as GoogleAuthCallbackPage } from "./google-auth-callback-page"
 export { default as LoginPage } from "./login-page"
