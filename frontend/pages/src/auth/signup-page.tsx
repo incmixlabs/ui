@@ -6,10 +6,12 @@ import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
-import { CardContainer, FormField } from "@incmix/ui"
-import { Box, Container, Flex, Heading, ReactiveButton, Text } from "@incmix/ui"
+import { FormField } from "@incmix/ui"
+import { Box, Flex, Heading, ReactiveButton, Text } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import type { AuthUser } from "@incmix/utils/types"
+
+import { AuthLayout } from "./layouts"
 
 function SignupForm() {
   const { t } = useTranslation(["signup", "common"])
@@ -66,7 +68,7 @@ function SignupForm() {
   })
 
   return (
-    <CardContainer>
+    <>
       <Heading size="4" mb="4" align="center">
         {t("title")}
       </Heading>
@@ -151,17 +153,15 @@ function SignupForm() {
           <Text color="blue">{t("loginPrompt")}</Text>
         </Link>
       </Box>
-    </CardContainer>
+    </>
   )
 }
 
 function SignupPage() {
   return (
-    <Container>
-      <Flex height="100vh" align="center" justify="center">
-        <SignupForm />
-      </Flex>
-    </Container>
+    <AuthLayout>
+      <SignupForm />
+    </AuthLayout>
   )
 }
 

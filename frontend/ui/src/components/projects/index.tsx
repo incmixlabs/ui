@@ -15,11 +15,13 @@ import { LayoutGrid, List, Plus, SlidersHorizontal, X } from "lucide-react"
 import { motion } from "motion/react"
 import { useQueryState } from "nuqs"
 import { MotionSheet } from "../custom-sheet"
-import { AddProjectAutoForm } from "./components/add-project-auto-form"
-import { AddProjectModal } from "./components/add-project-modal"
-import { ProjectCard } from "./components/project-card"
-import ProjectDrawer from "./components/project-drawer"
-import { ProjectFilter } from "./components/project-filter"
+import { lazy, Suspense } from 'react'
+
+// Dynamically import heavy components
+const AddProjectAutoForm = lazy(() => import("./components/add-project-auto-form").then(module => ({ default: module.AddProjectAutoForm })))
+const ProjectCard = lazy(() => import("./components/project-card").then(module => ({ default: module.ProjectCard })))
+const ProjectDrawer = lazy(() => import("./components/project-drawer").then(module => ({ default: module.default })))
+const ProjectFilter = lazy(() => import("./components/project-filter").then(module => ({ default: module.ProjectFilter })))
 import { projects as initialProjects } from "./data"
 import type { Project } from "./types"
 
@@ -265,14 +267,16 @@ export function ProjectPageComponents() {
                 className={`${viewMode === "grid" ? "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" : "h-full w-full gap-4 space-y-2 overflow-x-auto"}`}
               >
                 {filteredProjects.map((project) => (
-                  <ProjectCard
-                    key={project.id}
-                    project={project}
-                    isListFilter={viewMode === "list"}
-                    onAddMember={handleAddMember}
-                    onAddDueDate={handleAddDueDate}
-                    onDelete={handleDeleteProject}
-                  />
+                  <Suspense key={project.id} fallback={<Box className="p-4 border rounded-md">Loading project...</Box>}>
+                    <ProjectCard
+                      key={project.id}
+                      project={project}
+                      isListFilter={viewMode === "list"}
+                      onAddMember={handleAddMember}
+                      onAddDueDate={handleAddDueDate}
+                      onDelete={handleDeleteProject}
+                    />
+                  </Suspense>
                 ))}
               </Box>
             </ScrollArea>
@@ -295,16 +299,20 @@ export function ProjectPageComponents() {
                 </Button>
               </Box>
             )}
-            <ProjectDrawer listFilter={viewMode === "list"} />
+            <Suspense fallback={<Box className="p-4">Loading drawer...</Box>}>
+              <ProjectDrawer listFilter={viewMode === "list"} />
+            </Suspense>
           </Box>
         </Box>
       </Box>
 
-      <AddProjectAutoForm
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onAddProject={handleAddProject}
-      />
+      <Suspense fallback={<Box className="p-4">Loading form...</Box>}>
+        <AddProjectAutoForm
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          onAddProject={handleAddProject}
+        />
+      </Suspense>
       {/* <AddProjectModal
       isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
@@ -317,10 +325,12 @@ export function ProjectPageComponents() {
         open={isFilterOpen}
         onOpenChange={setIsFilterOpen}
       >
-        <ProjectFilter
-          onApplyFilters={handleApplyFilters}
-          onResetFilters={handleResetFilters}
-        />
+        <Suspense fallback={<Box className="p-4">Loading filters...</Box>}>
+          <ProjectFilter
+            onApplyFilters={handleApplyFilters}
+            onResetFilters={handleResetFilters}
+          />
+        </Suspense>
       </MotionSheet>
     </Box>
   )

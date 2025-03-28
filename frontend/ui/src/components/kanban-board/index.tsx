@@ -16,7 +16,11 @@ import invariant from "tiny-invariant"
 import { BoardColumn } from "./board-column"
 import { initialData } from "./data"
 import { blockBoardPanningAttr } from "./data-attributes"
-import TaskCardDrawer from "./task-card-drawer"
+import { lazy, Suspense } from 'react'
+import { Box } from '@incmix/ui'
+
+// Dynamically import heavy component
+const TaskCardDrawer = lazy(() => import("./task-card-drawer"))
 import type { TCard, TColumn, TCustomBoard } from "./types"
 import {
   isCardData,
@@ -382,7 +386,9 @@ export function Board() {
             />
           ))}
         </Box>
-        <TaskCardDrawer kanbanFilter={kanbanFilter} />
+        <Suspense fallback={<Box className="p-4">Loading drawer...</Box>}>
+          <TaskCardDrawer kanbanFilter={kanbanFilter} />
+        </Suspense>
       </Box>
     </>
   )
