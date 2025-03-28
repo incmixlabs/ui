@@ -1,0 +1,2333 @@
+Mar 27 2025, 15:26:40
+
+Claude 3.7 Sonnet thinking
+
+Chrome Extension: Loom Clone with React, Shadcn, and TypeScript
+
+I'll create a comprehensive Chrome extension that mimics Loom's screen and camera recording functionality. Below is a well-structured implementation with detailed comments.
+
+Project Structure
+
+loom-clone/
+├── public/
+│   ├── manifest.json
+│   └── icons/
+├── src/
+│   ├── popup/
+│   ├── background/
+│   ├── content/
+│   └── components/
+├── package.json
+└── vite.config.ts
+
+1. Manifest File (public/manifest.json)
+
+json{
+  "manifest_version": 3,
+  "name": "Loom Clone",
+  "version": "1.0.0",
+  "description": "A Loom-like screen and camera recording extension",
+  "permissions": [
+    "desktopCapture",
+    "tabCapture",
+    "activeTab",
+    "storage",
+    "downloads",
+    "audioCapture"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
+
+2. Recording Service (src/lib/recordingService.ts)
+
+typescript// src/lib/recordingService.ts
+
+/**
+ * This service handles all recording functionalities for the extension
+ * It manages screen capture, camera capture, and audio recording
+ */
+export interface RecordingOptions {
+  audio: boolean;       // Whether to record audio
+  camera: boolean;      // Whether to include camera
+  screen: boolean;      // Whether to record screen
+  quality: 'high' | 'medium' | 'low'; // Recording quality
+  showCameraPreview: boolean; // Whether to show camera preview
+}
+
+// Quality presets for different recording modes
+const QUALITY_PRESETS = {
+  high: { width: 1920, height: 1080, frameRate: 30 },
+  medium: { width: 1280, height: 720, frameRate: 30 },
+  low: { width: 854, height: 480, frameRate: 24 },
+};
+
+class RecordingService {
+  private mediaRecorder: MediaRecorder | null = null;
+  private recordedChunks: Blob[] = [];
+  private screenStream: MediaStream | null = null;
+  private cameraStream: MediaStream | null = null;
+  private audioStream: MediaStream | null = null;
+  private combinedStream: MediaStream | null = null;
+  private recordingStartTime: number = 0;
+  private isRecording: boolean = false;
+
+  /**
+   * Start a new recording session with the provided options
+   */
+  async startRecording(options: RecordingOptions): Promise<boolean> {
+    try {
+      // Reset state
+      this.recordedChunks = [];
+
+      // Get screen capture if enabled
+      if (options.screen) {
+        this.screenStream = await this.captureScreen(options.quality);
+      }
+
+      // Get camera if enabled
+      if (options.camera) {
+        this.cameraStream = await this.captureCamera(options.quality);
+      }
+
+      // Get audio if enabled
+      if (options.audio) {
+        this.audioStream = await this.captureAudio();
+      }
+
+      // Combine all streams
+      this.combinedStream = this.createCombinedStream();
+
+      if (!this.combinedStream || this.combinedStream.getTracks().length === 0) {
+        throw new Error("No media to record");
+      }
+
+      // Create and configure MediaRecorder
+      this.mediaRecorder = new MediaRecorder(this.combinedStream, {
+        mimeType: 'video/webm;codecs=vp9',
+      });
+
+      // Handle data chunks as they become available
+      this.mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          this.recordedChunks.push(event.data);
+        }
+      };
+
+      // Start recording
+      this.mediaRecorder.start(1000); // Collect data every second
+      this.isRecording = true;
+      this.recordingStartTime = Date.now();
+
+      // Notify content script that recording has started
+      this.notifyRecordingStatus(true);
+
+      return true;
+    } catch (error) {
+      console.error("Error starting recording:", error);
+      this.cleanupStreams();
+      return false;
+    }
+  }
+
+  /**
+   * Stop the current recording and save the video
+   */
+  async stopRecording(): Promise<string | null> {
+    return new Promise((resolve, reject) => {
+      if (!this.mediaRecorder || this.mediaRecorder.state === 'inactive') {
+        this.cleanupStreams();
+        resolve(null);
+        return;
+      }
+
+      // Handle recording completion
+      this.mediaRecorder.onstop = () => {
+        // Create final video blob from all recorded chunks
+        const blob = new Blob(this.recordedChunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+
+        // Save the recording
+        chrome.downloads.download({
+          url: url,
+          filename: `loom-recording-${new Date().toISOString().replace(/[:.]/g, '-')}.webm`,
+          saveAs: true
+        });
+
+        this.isRecording = false;
+        this.cleanupStreams();
+        this.notifyRecordingStatus(false);
+
+        resolve(url);
+      };
+
+      this.mediaRecorder.stop();
+    });
+  }
+
+  /**
+   * Get current recording status and duration
+   */
+  getRecordingStatus(): { isRecording: boolean, duration: number } {
+    return {
+      isRecording: this.isRecording,
+      duration: this.isRecording ? Math.floor((Date.now() - this.recordingStartTime) / 1000) : 0
+    };
+  }
+
+  /**
+   * Capture screen using Chrome's desktopCapture API
+   */
+  private captureScreen(quality: 'high' | 'medium' | 'low'): Promise<MediaStream> {
+    return new Promise((resolve, reject) => {
+      // Using Chrome's desktop capture API
+      chrome.desktopCapture.chooseDesktopMedia(
+        ['screen', 'window', 'tab'],
+        (streamId) => {
+          if (!streamId) {
+            reject(new Error("Screen capture permission denied"));
+            return;
+          }
+
+          const constraints = {
+            audio: false,
+            video: {
+              mandatory: {
+                chromeMediaSource: 'desktop',
+                chromeMediaSourceId: streamId,
+                maxWidth: QUALITY_PRESETS[quality].width,
+                maxHeight: QUALITY_PRESETS[quality].height,
+                frameRate: QUALITY_PRESETS[quality].frameRate
+              }
+            }
+          };
+
+          navigator.mediaDevices.getUserMedia(constraints as MediaStreamConstraints)
+            .then(resolve)
+            .catch(reject);
+        }
+      );
+    });
+  }
+
+  /**
+   * Capture camera video
+   */
+  private async captureCamera(quality: 'high' | 'medium' | 'low'): Promise<MediaStream> {
+    try {
+      return await navigator.mediaDevices.getUserMedia({
+        video: {
+          width: { ideal: QUALITY_PRESETS[quality].width },
+          height: { ideal: QUALITY_PRESETS[quality].height },
+          frameRate: { ideal: QUALITY_PRESETS[quality].frameRate }
+        },
+        audio: false
+      });
+    } catch (error) {
+      console.error("Camera capture error:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Capture audio from microphone
+   */
+  private async captureAudio(): Promise<MediaStream> {
+    try {
+      return await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true
+        },
+        video: false
+      });
+    } catch (error) {
+      console.error("Audio capture error:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Create a combined stream from all active media streams
+   */
+  private createCombinedStream(): MediaStream {
+    const combinedStream = new MediaStream();
+
+    // Add all tracks from all streams
+    [this.screenStream, this.cameraStream, this.audioStream]
+      .filter(stream => stream !== null)
+      .forEach(stream => {
+        stream!.getTracks().forEach(track => {
+          combinedStream.addTrack(track);
+        });
+      });
+
+    return combinedStream;
+  }
+
+  /**
+   * Clean up all media streams
+   */
+  private cleanupStreams(): void {
+    // Stop all tracks in all streams
+    [this.screenStream, this.cameraStream, this.audioStream, this.combinedStream]
+      .filter(stream => stream !== null)
+      .forEach(stream => {
+        stream!.getTracks().forEach(track => track.stop());
+      });
+
+    this.screenStream = null;
+    this.cameraStream = null;
+    this.audioStream = null;
+    this.combinedStream = null;
+    this.mediaRecorder = null;
+  }
+
+  /**
+   * Notify content script about recording status changes
+   */
+  private notifyRecordingStatus(isRecording: boolean): void {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const activeTab = tabs[0];
+      if (activeTab && activeTab.id) {
+        chrome.tabs.sendMessage(activeTab.id, {
+          action: isRecording ? 'RECORDING_STARTED' : 'RECORDING_STOPPED'
+        });
+      }
+    });
+  }
+}
+
+// Export a singleton instance
+export default new RecordingService();
+
+3. Popup Component (src/popup/Popup.tsx)
+
+tsx// src/popup/Popup.tsx
+
+import React, { useState, useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Video, Mic, Camera, StopCircle, Settings } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { Toaster } from "@/components/ui/toaster";
+import { RecordingOptions } from '@/lib/recordingService';
+import '../styles/globals.css';
+
+/**
+ * Main popup component for the extension
+ * Handles the UI for starting/stopping recordings and configuring options
+ */
+const Popup: React.FC = () => {
+  // State for recording options and status
+  const [options, setOptions] = useState<RecordingOptions>({
+    audio: true,
+    camera: true,
+    screen: true,
+    quality: 'high',
+    showCameraPreview: true
+  });
+
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const { toast } = useToast();
+
+  // Load saved options when popup opens
+  useEffect(() => {
+    chrome.storage.sync.get(['recordingOptions'], (result) => {
+      if (result.recordingOptions) {
+        setOptions(result.recordingOptions);
+      }
+    });
+
+    // Check if recording is in progress
+    chrome.runtime.sendMessage({ action: 'GET_RECORDING_STATUS' }, (response) => {
+      if (response) {
+        setIsRecording(response.isRecording);
+        setRecordingTime(response.duration);
+      }
+    });
+  }, []);
+
+  // Save options when they change
+  useEffect(() => {
+    chrome.storage.sync.set({ recordingOptions: options });
+  }, [options]);
+
+  // Setup recording time counter
+  useEffect(() => {
+    let interval: number | undefined;
+
+    if (isRecording) {
+      interval = window.setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isRecording]);
+
+  /**
+   * Start a new recording with current options
+   */
+  const startRecording = () => {
+    chrome.runtime.sendMessage(
+      { action: 'START_RECORDING', options },
+      (response) => {
+        if (response && response.success) {
+          setIsRecording(true);
+          setRecordingTime(0);
+          toast({
+            title: "Recording started",
+            description: "Your screen recording has begun",
+          });
+        } else {
+          toast({
+            title: "Recording failed",
+            description: response?.error || "An unknown error occurred",
+            variant: "destructive",
+          });
+        }
+      }
+    );
+  };
+
+  /**
+   * Stop the current recording
+   */
+  const stopRecording = () => {
+    chrome.runtime.sendMessage(
+      { action: 'STOP_RECORDING' },
+      (response) => {
+        if (response && response.success) {
+          setIsRecording(false);
+          toast({
+            title: "Recording saved",
+            description: "Your recording has been saved successfully",
+          });
+        } else {
+          toast({
+            title: "Error stopping recording",
+            description: response?.error || "An unknown error occurred",
+            variant: "destructive",
+          });
+        }
+      }
+    );
+  };
+
+  // Format seconds to mm:ss display
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className="w-[360px]">
+      <Card className="border-0">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Video className="w-5 h-5" />
+            Loom Clone
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          <Tabs defaultValue="record" className="w-full">
+            <TabsList className="grid grid-cols-2 mb-4">
+              <TabsTrigger value="record">Record</TabsTrigger>
+              <TabsTrigger value="settings">Settings</TabsTrigger>
+            </TabsList>
+
+            {/* Recording Tab */}
+            <TabsContent value="record" className="space-y-4">
+              <div className="flex justify-between">
+                <div className="flex flex-col items-center">
+                  <Button
+                    size="sm"
+                    variant={options.screen ? "default" : "outline"}
+                    onClick={() => !isRecording && setOptions(prev => ({ ...prev, screen: !prev.screen }))}
+                    disabled={isRecording}
+                    className="h-14 w-14 rounded-full p-0"
+                  >
+                    <Video className="h-6 w-6" />
+                  </Button>
+                  <Label className="mt-2">Screen</Label>
+                </div>
+
+                <div className="flex flex-col items-center">
+                  <Button
+                    size="sm"
+                    variant={options.camera ? "default" : "outline"}
+                    onClick={() => !isRecording && setOptions(prev => ({ ...prev, camera: !prev.camera }))}
+                    disabled={isRecording}
+                    className="h-14 w-14 rounded-full p-0"
+                  >
+                    <Camera className="h-6 w-6" />
+                  </Button>
+                  <Label className="mt-2">Camera</Label>
+                </div>
+
+                <div className="flex flex-col items-center">
+                  <Button
+                    size="sm"
+                    variant={options.audio ? "default" : "outline"}
+                    onClick={() => !isRecording && setOptions(prev => ({ ...prev, audio: !prev.audio }))}
+                    disabled={isRecording}
+                    className="h-14 w-14 rounded-full p-0"
+                  >
+                    <Mic className="h-6 w-6" />
+                  </Button>
+                  <Label className="mt-2">Audio</Label>
+                </div>
+              </div>
+
+              {/* Recording timer */}
+              {isRecording && (
+                <div className="flex items-center justify-center py-2 text-xl font-semibold text-red-500">
+                  <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse mr-2"></div>
+                  {formatTime(recordingTime)}
+                </div>
+              )}
+
+              {/* Main action button */}
+              <Button
+                className="w-full"
+                size="lg"
+                variant={isRecording ? "destructive" : "default"}
+                onClick={isRecording ? stopRecording : startRecording}
+              >
+                {isRecording ? (
+                  <>
+                    <StopCircle className="mr-2 h-5 w-5" />
+                    Stop Recording
+                  </>
+                ) : (
+                  <>
+                    <Video className="mr-2 h-5 w-5" />
+                    Start Recording
+                  </>
+                )}
+              </Button>
+            </TabsContent>
+
+            {/* Settings Tab */}
+            <TabsContent value="settings" className="space-y-4">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="quality">Recording Quality</Label>
+                  <Select
+                    value={options.quality}
+                    onValueChange={(value: 'high' | 'medium' | 'low') =>
+                      setOptions(prev => ({ ...prev, quality: value }))
+                    }
+                    disabled={isRecording}
+                  >
+                    <SelectTrigger id="quality">
+                      <SelectValue placeholder="Select quality" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="high">High (1080p)</SelectItem>
+                      <SelectItem value="medium">Medium (720p)</SelectItem>
+                      <SelectItem value="low">Low (480p)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="camera-preview">Show Camera Preview</Label>
+                  <Switch
+                    id="camera-preview"
+                    checked={options.showCameraPreview}
+                    onCheckedChange={(checked) =>
+                      setOptions(prev => ({ ...prev, showCameraPreview: checked }))
+                    }
+                    disabled={isRecording}
+                  />
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+      <Toaster />
+    </div>
+  );
+};
+
+// Mount the React component
+const container = document.getElementById('root');
+if (container) {
+  const root = createRoot(container);
+  root.render(<Popup />);
+}
+
+export default Popup;
+
+4. Background Script (src/background/background.ts)
+
+typescript// src/background/background.ts
+
+import recordingService from '../lib/recordingService';
+
+/**
+ * Background script for the Chrome extension
+ * Handles communication between popup and content scripts
+ */
+
+// Handle extension installation
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === 'install') {
+    console.log('Loom Clone Extension installed');
+
+    // Initialize default settings
+    chrome.storage.sync.set({
+      recordingOptions: {
+        audio: true,
+        camera: true,
+        screen: true,
+        quality: 'high',
+        showCameraPreview: true
+      }
+    });
+  }
+});
+
+// Message handler
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log('Background received message:', message.action);
+
+  switch (message.action) {
+    case 'START_RECORDING':
+      // Start a new recording with the provided options
+      recordingService.startRecording(message.options)
+        .then(success => {
+          sendResponse({ success });
+        })
+        .catch(error => {
+          console.error('Error starting recording:', error);
+          sendResponse({ success: false, error: error.message });
+        });
+      return true; // Indicates async response
+
+    case 'STOP_RECORDING':
+      // Stop the current recording
+      recordingService.stopRecording()
+        .then(url => {
+          sendResponse({ success: true, url });
+        })
+        .catch(error => {
+          console.error('Error stopping recording:', error);
+          sendResponse({ success: false, error: error.message });
+        });
+      return true; // Indicates async response
+
+    case 'GET_RECORDING_STATUS':
+      // Get current recording status
+      const status = recordingService.getRecordingStatus();
+      sendResponse(status);
+      return false; // Synchronous response
+  }
+});
+
+// Keep service worker alive
+console.log('Loom Clone background service worker initialized');
+
+5. Content Script (src/content/content.tsx)
+
+tsx// src/content/content.tsx
+
+import React, { useState, useEffect, useRef } from 'react';
+import { createRoot } from 'react-dom/client';
+import { Mic, Camera, Video, Timer } from 'lucide-react';
+import '../styles/globals.css';
+
+/**
+ * Component for displaying recording controls and status
+ * This is injected into the active page when recording
+ */
+const RecordingControls: React.FC = () => {
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [showControls, setShowControls] = useState(true);
+  const controlsRef = useRef<HTMLDivElement>(null);
+
+  // Setup message listener
+  useEffect(() => {
+    const messageHandler = (message: any) => {
+      if (message.action === 'RECORDING_STARTED') {
+        setIsRecording(true);
+        setRecordingTime(0);
+        setShowControls(true);
+      } else if (message.action === 'RECORDING_STOPPED') {
+        setIsRecording(false);
+      }
+    };
+
+    // Register message listener
+    chrome.runtime.onMessage.addListener(messageHandler);
+
+    // Check if already recording
+    chrome.runtime.sendMessage({ action: 'GET_RECORDING_STATUS' }, (response) => {
+      if (response && response.isRecording) {
+        setIsRecording(true);
+        setRecordingTime(response.duration);
+      }
+    });
+
+    // Cleanup on unmount
+    return () => {
+      chrome.runtime.onMessage.removeListener(messageHandler);
+    };
+  }, []);
+
+  // Setup recording timer
+  useEffect(() => {
+    let interval: number | undefined;
+
+    if (isRecording) {
+      interval = window.setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isRecording]);
+
+  // Format seconds to mm:ss
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Make controls draggable
+  useEffect(() => {
+    if (!controlsRef.current) return;
+
+    let isDragging = false;
+    let offsetX: number, offsetY: number;
+
+    const handleMouseDown = (e: MouseEvent) => {
+      isDragging = true;
+      offsetX = e.clientX - controlsRef.current!.getBoundingClientRect().left;
+      offsetY = e.clientY - controlsRef.current!.getBoundingClientRect().top;
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging) return;
+
+      const left = e.clientX - offsetX;
+      const top = e.clientY - offsetY;
+
+      controlsRef.current!.style.left = `${left}px`;
+      controlsRef.current!.style.top = `${top}px`;
+    };
+
+    const handleMouseUp = () => {
+      isDragging = false;
+    };
+
+    controlsRef.current.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      controlsRef.current?.removeEventListener('mousedown', handleMouseDown);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [controlsRef.current]);
+
+  if (!isRecording) return null;
+
+  return (
+    <div
+      ref={controlsRef}
+      className={`fixed bottom-4 left-4 z-[9999] ${showControls ? 'opacity-100' : 'opacity-20'} hover:opacity-100 transition-opacity`}
+      onMouseEnter={() => setShowControls(true)}
+      onMouseLeave={() => setShowControls(false)}
+    >
+      <div className="flex items-center bg-black bg-opacity-80 text-white py-2 px-4 rounded-full shadow-lg cursor-move">
+        <div className="flex items-center mr-3">
+          <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse mr-2"></div>
+          <span className="font-medium">REC</span>
+        </div>
+
+        <div className="h-4 w-[1px] bg-gray-500 mx-2"></div>
+
+        <div className="flex items-center">
+          <Timer className="w-4 h-4 mr-1" />
+          <span>{formatTime(recordingTime)}</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Create container and inject component
+const container = document.createElement('div');
+container.id = 'loom-clone-container';
+document.body.appendChild(container);
+
+const root = createRoot(container);
+root.render(<RecordingControls />);
+
+6. Setup Instructions
+
+Package.json Configuration:
+
+json{
+  "name": "loom-clone-extension",
+  "version": "1.0.0",
+  "description": "A Chrome extension that mimics Loom functionality",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.0.4",
+    "@radix-ui/react-label": "^2.0.2",
+    "@radix-ui/react-select": "^1.2.2",
+    "@radix-ui/react-slot": "^1.0.2",
+    "@radix-ui/react-switch": "^1.0.3",
+    "@radix-ui/react-tabs": "^1.0.4",
+    "@radix-ui/react-toast": "^1.1.4",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
+    "lucide-react": "^0.258.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwind-merge": "^1.14.0"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.243",
+    "@types/node": "^20.4.5",
+    "@types/react": "^18.2.18",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.0.4",
+    "autoprefixer": "^10.4.14",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3",
+    "typescript": "^5.1.6",
+    "vite": "^4.4.8"
+  }
+}
+
+Vite Configuration (vite.config.ts):
+
+typescriptimport { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { resolve } from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  build: {
+    outDir: 'dist',
+    rollupOptions: {
+      input: {
+        popup: resolve(__dirname, 'src/popup/index.html'),
+        background: resolve(__dirname, 'src/background/background.ts'),
+        content: resolve(__dirname, 'src/content/content.tsx')
+      },
+      output: {
+        entryFileNames: '[name].js',
+        chunkFileNames: 'assets/[name].[hash].js',
+        assetFileNames: 'assets/[name].[hash].[ext]'
+      }
+    }
+  },
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src')
+    }
+  }
+});
+
+Installation Instructions
+
+Clone or create the project with the files above
+Run npm install to install dependencies
+Install the shadcn components you need:
+
+bashnpx shadcn-ui@latest init
+npx shadcn-ui@latest add button card tabs switch label select toast
+
+Build the extension:
+
+bashnpm run build
+
+Load the extension in Chrome:
+
+Open Chrome and go to chrome://extensions/
+Enable "Developer mode" in the top right
+Click "Load unpacked" and select the dist folder from your project
+
+Features Implemented
+
+Screen recording with quality options
+Camera recording
+Audio recording
+Recording controls overlay
+Draggable recording status indicator
+Timer showing recording duration
+Settings management
+Toast notifications for user feedback
+
+This implementation provides a comprehensive Loom-like experience directly in your browser as a Chrome extension. The code is structured to be maintainable and follows modern React patterns with TypeScript for type safety.
+
+Mar 27 2025, 15:43:04
+
+O3-Mini medium
+
+Below is an example of a Chrome extension codebase that implements a basic Loom‐clone using React, Shadcn UI components, and TypeScript. In this demo the extension displays a popup that lets you start/stop recording (screen, audio, camera) and then automatically downloads a WebM video.
+
+You can structure your project like this:
+
+──────────────
+chrome-loom-clone/
+├── public/
+│   ├── manifest.json
+│   └── icons/
+│       ├── icon16.png
+│       ├── icon48.png
+│       └── icon128.png
+├── src/
+│   ├── background/
+│   │   └── background.ts
+│   ├── popup/
+│   │   ├── index.html
+│   │   └── Popup.tsx
+│   └── components/
+│       └── RecordedVideo.tsx
+├── package.json
+├── tsconfig.json
+└── vite.config.ts
+──────────────
+
+Below are the code snippets for each part:
+
+──────────────────────────────────────────────
+
+public/manifest.json
+
+This Manifest V3 file defines the extension’s permissions, popup, background worker, and icons.
+
+{
+"manifest_version": 3,
+"name": "Chrome Loom Clone",
+"version": "1.0.0",
+"description": "A Loom-like video recording Chrome extension built with React, Shadcn and TypeScript",
+"permissions": [
+"desktopCapture",
+"tabs",
+"storage",
+"downloads"
+],
+"action": {
+"default_popup": "popup/index.html",
+"default_icon": {
+"16": "icons/icon16.png",
+"48": "icons/icon48.png",
+"128": "icons/icon128.png"
+}
+},
+"background": {
+"service_worker": "background/background.js"
+},
+"icons": {
+"16": "icons/icon16.png",
+"48": "icons/icon48.png",
+"128": "icons/icon128.png"
+}
+}
+
+──────────────────────────────────────────────
+2. src/popup/index.html
+
+This is the HTML shell for your React popup.
+
+
+
+
+    Chrome Loom Clone
+
+
+
+
+
+
+
+──────────────────────────────────────────────
+3. src/popup/index.tsx
+
+This file bootstraps your React popup application using Vite. It renders our main Popup component.
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import Popup from './Popup';
+import '@/styles/globals.css';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+<React.StrictMode>
+
+</React.StrictMode>
+);
+
+──────────────────────────────────────────────
+4. src/popup/Popup.tsx
+
+This is our main popup component with Shadcn UI and icons from lucide-react. It displays controls for starting and stopping recording. It communicates with the background worker via runtime messages.
+
+import React, { useState, useEffect, useRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Video, StopCircle, Mic, Camera } from 'lucide-react';
+// For toast notifications – you can implement or use a library like react-hot-toast.
+import { toast } from '@/components/ui/use-toast';
+
+/*
+RecordingOptions holds which media sources are enabled.
+*/
+interface RecordingOptions {
+audio: boolean;
+video: boolean;
+screen: boolean;
+}
+
+const Popup: React.FC = () => {
+const [isRecording, setIsRecording] = useState(false);
+const [recordingOptions, setRecordingOptions] = useState({
+audio: true,
+video: true,
+screen: true,
+});
+// Recording timer state (seconds)
+const [recordingTime, setRecordingTime] = useState(0);
+const timerRef = useRef<number | null>(null);
+
+// Start the recording: send a message to our background service worker.
+const startRecording = async () => {
+chrome.runtime.sendMessage(
+{
+type: 'START_RECORDING',
+options: recordingOptions
+},
+(response) => {
+if (response?.success) {
+setIsRecording(true);
+toast({ title: 'Recording started' });
+timerRef.current = window.setInterval(() => {
+setRecordingTime((prev) => prev + 1);
+}, 1000);
+} else {
+toast({ title: 'Failed to start recording', variant: 'destructive' });
+}
+}
+);
+};
+
+// Stop recording and reset the timer
+const stopRecording = () => {
+chrome.runtime.sendMessage({ type: 'STOP_RECORDING' }, (response) => {
+if (response?.success) {
+setIsRecording(false);
+setRecordingTime(0);
+window.clearInterval(timerRef.current!);
+toast({ title: 'Recording stopped, video downloading...' });
+} else {
+toast({ title: 'Failed to stop recording', variant: 'destructive' });
+}
+});
+};
+
+// Format time (mm:ss)
+const formatTime = (seconds: number): string => {
+const mins = Math.floor(seconds / 60);
+const secs = seconds % 60;
+return ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')};
+};
+
+// Toggle media options (audio, video, screen).
+const toggleOption = (option: keyof RecordingOptions) => {
+setRecordingOptions((prev) => ({
+...prev,
+[option]: !prev[option],
+}));
+};
+
+return (
+
+<Button
+variant={recordingOptions.audio ? 'default' : 'outline'}
+onClick={() => toggleOption('audio')}
+disabled={isRecording}
+>
+ Audio
+
+<Button
+variant={recordingOptions.video ? 'default' : 'outline'}
+onClick={() => toggleOption('video')}
+disabled={isRecording}
+>
+ Camera
+
+<Button
+variant={recordingOptions.screen ? 'default' : 'outline'}
+onClick={() => toggleOption('screen')}
+disabled={isRecording}
+>
+ Screen
+
+{isRecording && (
+        <div className="text-center text-lg font-bold">
+          {formatTime(recordingTime)}
+        </div>
+      )}
+
+      <Button
+        className="w-full"
+        variant={isRecording ? 'destructive' : 'default'}
+        onClick={isRecording ? stopRecording : startRecording}
+      >
+        {isRecording ? (
+          <>
+            <StopCircle className="w-4 h-4 mr-2" /> Stop Recording
+          </>
+        ) : (
+          <>
+            <Video className="w-4 h-4 mr-2" /> Start Recording
+          </>
+        )}
+      </Button>
+    </div>
+  </CardContent>
+</Card>
+
+);
+};
+
+export default Popup;
+
+──────────────────────────────────────────────
+5. src/background/background.ts
+
+The background service worker listens to messages from the popup. When a START_RECORDING message arrives, it requests the desktop capture stream via Chrome’s desktopCapture API, then starts a MediaRecorder. When STOP_RECORDING is received, it stops the recorder and downloads the video.
+
+//
+// NOTE: This background script must be compiled to JavaScript (background.js)
+// because Manifest V3 requires a JS service worker.
+//
+
+let mediaRecorder: MediaRecorder | null = null;
+let recordedChunks: Blob[] = [];
+
+// Listen for messages from the popup.
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+if (message.type === 'START_RECORDING') {
+startRecording(message.options, sendResponse);
+return true; // Keep the messaging channel open for async response.
+} else if (message.type === 'STOP_RECORDING') {
+stopRecording();
+sendResponse({ success: true });
+}
+});
+
+async function startRecording(options: { audio: boolean; video: boolean; screen: boolean }, sendResponse: (response: any) => void) {
+try {
+// Request the desktop capture stream
+chrome.desktopCapture.chooseDesktopMedia(['screen', 'window'], (streamId) => {
+if (!streamId) {
+sendResponse({ success: false, error: 'Permission denied or no stream selected.' });
+return;
+}
+// Create constraints for getUserMedia combining desktop and optionally camera/audio.
+const constraints: MediaStreamConstraints = {
+video: options.screen ? {
+mandatory: {
+chromeMediaSource: 'desktop',
+chromeMediaSourceId: streamId,
+maxWidth: window.screen.width,
+maxHeight: window.screen.height,
+maxFrameRate: 30,
+}
+} : false,
+audio: options.audio // You could also add specific constraints here.
+};
+
+navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+    // Optionally, add camera stream if enabled
+    if (options.video) {
+      navigator.mediaDevices.getUserMedia({ video: true }).then((camStream) => {
+        camStream.getVideoTracks().forEach((track) => stream.addTrack(track));
+        startMediaRecorder(stream, sendResponse);
+      }).catch((err) => {
+        console.error('Error getting camera stream:', err);
+        startMediaRecorder(stream, sendResponse);
+      });
+    } else {
+      startMediaRecorder(stream, sendResponse);
+    }
+  }).catch((err) => {
+    console.error('Error getting user media:', err);
+    sendResponse({ success: false, error: err.message });
+  });
+});
+
+} catch (error) {
+console.error('Error in startRecording:', error);
+sendResponse({ success: false, error: error.message });
+}
+}
+
+function startMediaRecorder(stream: MediaStream, sendResponse: (response: any) => void) {
+recordedChunks = [];
+mediaRecorder = new MediaRecorder(stream, {
+mimeType: 'video/webm'
+});
+mediaRecorder.ondataavailable = (event: BlobEvent) => {
+if (event.data.size > 0) {
+recordedChunks.push(event.data);
+}
+};
+mediaRecorder.onstop = () => {
+const blob = new Blob(recordedChunks, { type: 'video/webm' });
+const url = URL.createObjectURL(blob);
+chrome.downloads.download({
+url: url,
+filename: loom-clone-${new Date().toISOString()}.webm,
+saveAs: true,
+});
+};
+mediaRecorder.start();
+sendResponse({ success: true });
+}
+
+function stopRecording() {
+if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+mediaRecorder.stop();
+mediaRecorder.stream.getTracks().forEach(track => track.stop());
+}
+}
+
+──────────────────────────────────────────────
+6. package.json
+
+A sample package.json to manage dependencies and scripts. Adjust versions as needed.
+
+{
+"name": "chrome-loom-clone",
+"version": "1.0.0",
+"scripts": {
+"dev": "vite",
+"build": "tsc && vite build",
+"watch": "vite build --watch"
+},
+"dependencies": {
+"react": "^18.2.0",
+"react-dom": "^18.2.0",
+"lucide-react": "^0.284.0",
+"@shadcn/ui": "latest"
+},
+"devDependencies": {
+"@types/chrome": "^0.0.246",
+"@types/react": "^18.2.21",
+"@types/react-dom": "^18.2.7",
+"@vitejs/plugin-react": "^4.0.4",
+"typescript": "^5.2.2",
+"vite": "^4.4.9",
+"tailwindcss": "^3.3.3",
+"postcss": "^8.4.29",
+"autoprefixer": "^10.4.15"
+}
+}
+
+──────────────────────────────────────────────
+7. vite.config.ts
+
+This Vite configuration helps build multiple entry points (our popup and background). The background script will be compiled to JavaScript.
+
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+plugins: [react()],
+build: {
+rollupOptions: {
+input: {
+popup: path.resolve(__dirname, 'src/popup/index.html'),
+background: path.resolve(__dirname, 'src/background/background.ts')
+},
+output: {
+entryFileNames: '[name].js',
+chunkFileNames: '[name].js',
+assetFileNames: '[name].[ext]'
+}
+},
+outDir: 'dist'
+},
+resolve: {
+alias: {
+'@': path.resolve(__dirname, './src')
+}
+}
+});
+
+──────────────────────────────────────────────
+Setup Instructions
+
+Ensure Node.js is installed.
+From the project root, install dependencies:
+npm install
+For development, run:
+npm run dev
+(This serves your popup for rapid iteration.)
+Build the extension:
+npm run build
+Load the extension in Chrome:
+• Open chrome://extensions/
+• Enable "Developer mode"
+• Click "Load unpacked" and select the dist folder
+
+──────────────────────────────────────────────
+Summary
+
+This codebase demonstrates:
+• A manifest file for a Manifest V3 extension.
+• A popup built with React and Shadcn UI components that communicates with a background service worker.
+• A background service worker that handles desktop capture and downloads the video.
+• A basic timer and toggles for audio, screen, and camera recordings.
+
+Remember that this is a starting point—a real production-quality extension may require additional error handling, permission management, cleanup operations, and UI polish.
+
+Happy coding!
+
+Mar 27 2025, 15:26:40
+
+    To pick up a draggable item, press the space bar.
+    While dragging, use the arrow keys to move the item.
+    Press space again to drop the item in its new position, or press escape to cancel.
+
+
+write chrome extension to generate loom clone using react, shadcn and typescript
+
+Claude 3.5 Sonnet
+
+I'll help you create a Chrome extension for screen recording with a detailed setup and implementation. This will include the manifest file, popup interface, and background scripts.
+
+First, let's set up the project structure:
+
+plaintextchrome-screen-recorder/
+├── public/
+│   ├── manifest.json
+│   └── icons/
+├── src/
+│   ├── popup/
+│   ├── background/
+│   └── content/
+├── package.json
+└── tsconfig.json
+
+First, the manifest file:
+
+json// public/manifest.json
+
+{
+  "manifest_version": 3,
+  "name": "Screen Recorder Pro",
+  "version": "1.0.0",
+  "description": "A Loom-like screen recording Chrome extension",
+  "permissions": [
+    "desktopCapture",
+    "tabs",
+    "storage",
+    "downloads",
+    "identity"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
+
+The main popup component:
+
+tsx// src/popup/Popup.tsx
+
+import React, { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Video, Mic, Camera, StopCircle, Settings } from "lucide-react";
+
+interface RecordingOptions {
+  audio: boolean;
+  video: boolean;
+  screen: boolean;
+  quality: 'high' | 'medium' | 'low';
+}
+
+const Popup: React.FC = () => {
+  // State management
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [recordingOptions, setRecordingOptions] = useState<RecordingOptions>({
+    audio: true,
+    video: true,
+    screen: true,
+    quality: 'high'
+  });
+  const [recordingTime, setRecordingTime] = useState<number>(0);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+
+  // Quality settings for different recording modes
+  const qualitySettings = {
+    high: { width: 1920, height: 1080, frameRate: 60 },
+    medium: { width: 1280, height: 720, frameRate: 30 },
+    low: { width: 854, height: 480, frameRate: 24 }
+  };
+
+  useEffect(() => {
+    // Load saved settings from chrome.storage
+    chrome.storage.sync.get(['recordingOptions'], (result) => {
+      if (result.recordingOptions) {
+        setRecordingOptions(result.recordingOptions);
+      }
+    });
+
+    // Cleanup function
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
+
+  // Handle recording timer
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (isRecording) {
+      interval = setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isRecording]);
+
+  const startRecording = async () => {
+    try {
+      // Request screen capture from Chrome API
+      chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+        const tab = tabs[0];
+
+        // Send message to background script to initiate recording
+        chrome.runtime.sendMessage({
+          type: 'START_RECORDING',
+          options: {
+            ...recordingOptions,
+            quality: qualitySettings[recordingOptions.quality],
+            tabId: tab.id
+          }
+        }, async (response) => {
+          if (response.streamId) {
+            const stream = await navigator.mediaDevices.getUserMedia({
+              audio: recordingOptions.audio,
+              video: recordingOptions.video ? {
+                ...qualitySettings[recordingOptions.quality]
+              } : false
+            });
+
+            setStream(stream);
+            setIsRecording(true);
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Error starting recording:', error);
+    }
+  };
+
+  const stopRecording = () => {
+    chrome.runtime.sendMessage({ type: 'STOP_RECORDING' }, () => {
+      setIsRecording(false);
+      setRecordingTime(0);
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    });
+  };
+
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <Card className="w-[400px]">
+      <CardContent className="p-4">
+        <Tabs defaultValue="record">
+          <TabsList className="w-full mb-4">
+            <TabsTrigger value="record">Record</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="record">
+            <div className="space-y-4">
+              <div className="flex gap-2 justify-center">
+                <Button
+                  variant={recordingOptions.audio ? "default" : "outline"}
+                  onClick={() => setRecordingOptions(prev => ({
+                    ...prev,
+                    audio: !prev.audio
+                  }))}
+                  disabled={isRecording}
+                >
+                  <Mic className="w-4 h-4 mr-2" />
+                  Audio
+                </Button>
+                <Button
+                  variant={recordingOptions.video ? "default" : "outline"}
+                  onClick={() => setRecordingOptions(prev => ({
+                    ...prev,
+                    video: !prev.video
+                  }))}
+                  disabled={isRecording}
+                >
+                  <Camera className="w-4 h-4 mr-2" />
+                  Camera
+                </Button>
+              </div>
+
+              {isRecording && (
+                <div className="text-center text-xl font-bold">
+                  {formatTime(recordingTime)}
+                </div>
+              )}
+
+              <Button
+                className="w-full"
+                variant={isRecording ? "destructive" : "default"}
+                onClick={isRecording ? stopRecording : startRecording}
+              >
+                {isRecording ? (
+                  <>
+                    <StopCircle className="w-4 h-4 mr-2" />
+                    Stop Recording
+                  </>
+                ) : (
+                  <>
+                    <Video className="w-4 h-4 mr-2" />
+                    Start Recording
+                  </>
+                )}
+              </Button>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Recording Quality</label>
+                <Select
+                  value={recordingOptions.quality}
+                  onValueChange={(value: 'high' | 'medium' | 'low') =>
+                    setRecordingOptions(prev => ({
+                      ...prev,
+                      quality: value
+                    }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select quality" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="high">High (1080p)</SelectItem>
+                    <SelectItem value="medium">Medium (720p)</SelectItem>
+                    <SelectItem value="low">Low (480p)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default Popup;
+
+Background script for handling recording:
+
+typescript// src/background/background.ts
+
+let mediaRecorder: MediaRecorder | null = null;
+let recordedChunks: Blob[] = [];
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  switch (message.type) {
+    case 'START_RECORDING':
+      startRecording(message.options, sendResponse);
+      return true; // Keep channel open for async response
+
+    case 'STOP_RECORDING':
+      stopRecording();
+      sendResponse({ success: true });
+      return false;
+  }
+});
+
+async function startRecording(options: any, sendResponse: (response: any) => void) {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: options.audio,
+      video: {
+        mandatory: {
+          chromeMediaSource: 'desktop',
+          chromeMediaSourceId: options.streamId,
+          ...options.quality
+        }
+      }
+    });
+
+    mediaRecorder = new MediaRecorder(stream, {
+      mimeType: 'video/webm;codecs=vp9'
+    });
+
+    mediaRecorder.ondataavailable = handleDataAvailable;
+    mediaRecorder.onstop = handleStop;
+
+    mediaRecorder.start();
+    sendResponse({ success: true });
+  } catch (error) {
+    console.error('Error starting recording:', error);
+    sendResponse({ success: false, error: error.message });
+  }
+}
+
+function handleDataAvailable(event: BlobEvent) {
+  if (event.data.size > 0) {
+    recordedChunks.push(event.data);
+  }
+}
+
+function handleStop() {
+  const blob = new Blob(recordedChunks, { type: 'video/webm' });
+  const url = URL.createObjectURL(blob);
+
+  chrome.downloads.download({
+    url: url,
+    filename: `screen-recording-${new Date().toISOString()}.webm`,
+    saveAs: true
+  });
+
+  recordedChunks = [];
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+    mediaRecorder.stream.getTracks().forEach(track => track.stop());
+  }
+}
+
+Setup instructions in package.json:
+
+json{
+  "name": "chrome-screen-recorder",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "watch": "vite build --watch"
+  },
+  "dependencies": {
+    "@radix-ui/react-tabs": "^1.0.0",
+    "@radix-ui/react-select": "^1.0.0",
+    "@shadcn/ui": "^0.1.0",
+    "lucide-react": "^0.284.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.246",
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react": "^4.0.4",
+    "autoprefixer": "^10.4.15",
+    "postcss": "^8.4.29",
+    "tailwindcss": "^3.3.3",
+    "typescript": "^5.2.2",
+    "vite": "^4.4.9"
+  }
+}
+
+Vite configuration for building the extension:
+
+typescript// vite.config.ts
+
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  build: {
+    rollupOptions: {
+      input: {
+        popup: 'src/popup/index.html',
+        background: 'src/background/background.ts'
+      },
+      output: {
+        entryFileNames: '[name].js',
+        chunkFileNames: '[name].js',
+        assetFileNames: '[name].[ext]'
+      }
+    },
+    outDir: 'dist'
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src')
+    }
+  }
+});
+
+To use this extension:
+
+Install dependencies:
+
+bashnpm install
+
+Build the extension:
+
+bashnpm run build
+
+Load the extension in Chrome:
+
+Open Chrome and go to chrome://extensions/
+Enable "Developer mode"
+Click "Load unpacked"
+Select the dist folder from your project
+
+This implementation provides:
+
+Screen recording functionality
+Camera and audio recording
+Quality settings
+Recording timer
+Chrome extension popup interface
+Background processing
+Automatic download of recordings
+
+The extension will appear in your Chrome toolbar, and clicking it will open the popup interface where you can start and stop recordings.
+
+Remember to:
+
+Handle error cases properly
+Add proper type checking
+Implement proper cleanup of resources
+Add more robust error handling
+Consider adding a preview window
+Add proper loading states
+Implement proper storage management
+Add user feedback for actions
+
+This is a basic implementation that you can build upon based on your specific needs.
+
+Mar 27 2025, 15:22:39
+
+O3-Mini medium
+
+Below is an example of a Chrome extension that brings Loom-like video recording functionality using React, Shadcn UI components, and TypeScript. In this example, the extension’s popup (displayed when you click the extension’s icon) lets you toggle recording options and start/stop the recording. We’ll use the Web Media APIs to capture screen, webcam, and audio. You can later extend or tweak as needed.
+
+──────────────────────────────
+
+Setup Your Project Structure
+
+A possible project structure could be:
+
+my-loom-extension/
+├── public/
+│   ├── manifest.json       ← Chrome extension manifest
+│   ├── popup.html          ← HTML container for the popup React app
+├── src/
+│   ├── components/
+│   │   └── ScreenRecorder.tsx  ← Main recording component
+│   ├── Popup.tsx           ← Entry point for the React popup app
+│   ├── index.css           ← Global CSS (including Tailwind/other styles)
+├── package.json
+├── tsconfig.json
+└── ... (other config files as needed)
+
+──────────────────────────────
+2. manifest.json (Place under the public folder)
+
+Use Manifest V3. Make sure to include the required permissions and set the default popup.
+
+File: public/manifest.json
+
+{
+"manifest_version": 3,
+"name": "Loom-like Recorder",
+"version": "1.0",
+"description": "A Chrome extension for Loom-like video recording using React, Shadcn UI, and TypeScript.",
+"action": {
+"default_popup": "popup.html",
+"default_title": "Video Recorder"
+},
+"permissions": [
+"tabCapture",
+"activeTab",
+"storage"
+]
+}
+
+──────────────────────────────
+3. Popup HTML File (Place under the public folder)
+
+The HTML file loads the bundled React app (for example, bundled as popup.bundle.js).
+
+File: public/popup.html
+
+
+
+    Loom-like Recorder
+
+
+
+
+
+
+
+
+
+
+──────────────────────────────
+4. Recording Component (React + Shadcn + TypeScript)
+
+Below is the main recording component. It uses Shadcn UI components (e.g., Card and Button) and icons from lucide-react. The component handles toggling between recording options and starts/stops the recording using the MediaRecorder API.
+
+File: src/components/ScreenRecorder.tsx
+
+import React, { useState, useRef } from 'react';
+import { Button } from '@/components/ui/button'; // Adjust the imports as per your project config
+import { Card, CardContent } from '@/components/ui/card';
+import { Video, Mic, Camera, StopCircle } from 'lucide-react';
+import { toast } from '@/components/ui/use-toast';
+
+interface RecordingOptions {
+audio: boolean;
+video: boolean;
+screen: boolean;
+}
+
+const ScreenRecorder: React.FC = () => {
+// State for recording status and options
+const [isRecording, setIsRecording] = useState(false);
+const [recordingOptions, setRecordingOptions] = useState({
+audio: true,
+video: true,
+screen: true,
+});
+
+// Refs to hold the MediaRecorder, combined MediaStream, and collected chunks
+const mediaRecorder = useRef<MediaRecorder | null>(null);
+const streamRef = useRef<MediaStream | null>(null);
+const chunksRef = useRef<Blob[]>([]);
+
+// Combine selected streams and start recording
+const startRecording = async () => {
+try {
+const streams: MediaStream[] = [];
+
+// Get screen capture if enabled
+  if (recordingOptions.screen) {
+    const screenStream = await navigator.mediaDevices.getDisplayMedia({
+      video: true,
+    });
+    streams.push(screenStream);
+  }
+
+  // Get camera and/or audio if enabled
+  if (recordingOptions.video || recordingOptions.audio) {
+    const userStream = await navigator.mediaDevices.getUserMedia({
+      video: recordingOptions.video,
+      audio: recordingOptions.audio,
+    });
+    streams.push(userStream);
+  }
+
+  // Combine the tracks from different sources into one MediaStream
+  const combinedStream = new MediaStream();
+  streams.forEach((stream) => {
+    stream.getTracks().forEach((track) => {
+      combinedStream.addTrack(track);
+    });
+  });
+  streamRef.current = combinedStream;
+
+  // Initialize MediaRecorder with the combined stream
+  const recorder = new MediaRecorder(combinedStream, {
+    mimeType: 'video/webm',
+  });
+
+  recorder.ondataavailable = (event) => {
+    if (event.data?.size > 0) {
+      chunksRef.current.push(event.data);
+    }
+  };
+
+  recorder.onstop = () => {
+    // When recording stops, combine chunks and create a downloadable video
+    const blob = new Blob(chunksRef.current, { type: 'video/webm' });
+    const url = URL.createObjectURL(blob);
+    downloadRecording(url);
+    chunksRef.current = [];
+  };
+
+  mediaRecorder.current = recorder;
+  recorder.start();
+  setIsRecording(true);
+  toast({
+    title: 'Recording started',
+    description: 'Your video recording has begun.',
+  });
+} catch (error) {
+  console.error('Error starting recording:', error);
+  toast({
+    title: 'Error',
+    description: 'Failed to start recording.',
+    variant: 'destructive',
+  });
+}
+
+};
+
+// Stop recording by stopping the MediaRecorder and all stream tracks
+const stopRecording = () => {
+if (mediaRecorder.current && streamRef.current) {
+mediaRecorder.current.stop();
+streamRef.current.getTracks().forEach((track) => track.stop());
+setIsRecording(false);
+toast({
+title: 'Recording stopped',
+description: 'Your recording has been saved and downloaded.',
+});
+}
+};
+
+// Download the recording using a temporary anchor element
+const downloadRecording = (url: string) => {
+const a = document.createElement('a');
+a.href = url;
+a.download = recording-${new Date().toISOString()}.webm;
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+};
+
+// Toggle recording options on/off
+const toggleOption = (option: keyof RecordingOptions) => {
+// Allow changes only when not recording
+if (!isRecording) {
+setRecordingOptions((prev) => ({
+...prev,
+[option]: !prev[option],
+}));
+}
+};
+
+return (
+
+{/* Toggle buttons for each recording option */}
+
+<Button
+variant={recordingOptions.audio ? 'default' : 'outline'}
+onClick={() => toggleOption('audio')}
+disabled={isRecording}
+>
+
+Audio
+
+<Button
+variant={recordingOptions.video ? 'default' : 'outline'}
+onClick={() => toggleOption('video')}
+disabled={isRecording}
+>
+
+Camera
+
+<Button
+variant={recordingOptions.screen ? 'default' : 'outline'}
+onClick={() => toggleOption('screen')}
+disabled={isRecording}
+>
+
+Screen
+
+{/* Button to start/stop recording */}
+      <Button
+        className="w-full"
+        variant={isRecording ? 'destructive' : 'default'}
+        onClick={isRecording ? stopRecording : startRecording}
+      >
+        {isRecording ? (
+          <>
+            <StopCircle className="w-4 h-4 mr-2" />
+            Stop Recording
+          </>
+        ) : (
+          <>
+            <Video className="w-4 h-4 mr-2" />
+            Start Recording
+          </>
+        )}
+      </Button>
+    </div>
+  </CardContent>
+</Card>
+
+);
+};
+
+export default ScreenRecorder;
+
+──────────────────────────────
+5. Popup Entry Point (React App)
+
+This is the main entry point for the popup. It imports the ScreenRecorder component and any global UI elements (like toasts).
+
+File: src/Popup.tsx
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import ScreenRecorder from './components/ScreenRecorder';
+// Optionally import your Toaster component for toast notifications
+import { Toaster } from '@/components/ui/toaster';
+import './index.css'; // Import your TailwindCSS or global styles
+
+const Popup: React.FC = () => {
+return (
+
+);
+};
+
+// Render the popup app into the div#root element defined in popup.html
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+root.render();
+
+──────────────────────────────
+6. Build and Load Your Extension
+
+a. Bundle the App
+Use your preferred bundler (e.g., webpack, Vite, or Rollup) to build your React application. Ensure that the output JavaScript (e.g., popup.bundle.js) is placed into the public folder alongside popup.html.
+
+b. Load Your Extension into Chrome
+• Open Chrome and navigate to chrome://extensions/
+• Enable “Developer mode”
+• Click “Load unpacked” and select your project’s root folder (the folder that contains your public folder and manifest.json)
+
+c. Click the extension icon. The popup should load your React app with the recording UI.
+
+──────────────────────────────
+7. Notes and Next Steps
+
+• This example uses the MediaRecorder API, which might have browser compatibility considerations.
+• In a production extension you may want to add additional error handling and permissions checks.
+• Customize the UI and functionality using the robust components provided by Shadcn UI and your styling framework (e.g., TailwindCSS).
+• Consider adding features such as a preview window, recording timer, or options for video quality.
+
+This well-commented code should provide a solid starting point for an intermediate developer building a Loom-like Chrome extension with React, Shadcn, and TypeScript. Happy coding!
+
+Mar 27 2025, 15:22:39
+
+    To pick up a draggable item, press the space bar.
+    While dragging, use the arrow keys to move the item.
+    Press space again to drop the item in its new position, or press escape to cancel.
+
+
+Original Prompt: write code to generate a chrome extension for loom like video recording using react, shadcn and typescript
+
+Act as a software developer and provide a well-commented code snippet to create a Chrome extension for Loom-like video recording using React, Shadcn, and TypeScript. Ensure the code is suitable for a developer with intermediate experience in these technologies, and include any necessary setup instructions.
+
+Claude 3.5 Sonnet
+
+I'll help you create a basic Loom-like screen recording application using React, Shadcn UI, and TypeScript. This example will include the main recording functionality and a simple interface.
+
+tsx// src/components/ScreenRecorder.tsx
+
+import React, { useState, useRef } from 'react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Video, Mic, Camera, StopCircle } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
+
+interface RecordingOptions {
+  audio: boolean;
+  video: boolean;
+  screen: boolean;
+}
+
+const ScreenRecorder: React.FC = () => {
+  // State management for recording status and options
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [recordingOptions, setRecordingOptions] = useState<RecordingOptions>({
+    audio: true,
+    video: true,
+    screen: true,
+  });
+
+  // Refs for managing media recorder and streams
+  const mediaRecorder = useRef<MediaRecorder | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+
+  // Handle starting the recording
+  const startRecording = async () => {
+    try {
+      const streams: MediaStream[] = [];
+
+      // Get screen capture if enabled
+      if (recordingOptions.screen) {
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+        });
+        streams.push(screenStream);
+      }
+
+      // Get camera and audio if enabled
+      if (recordingOptions.video || recordingOptions.audio) {
+        const userStream = await navigator.mediaDevices.getUserMedia({
+          video: recordingOptions.video,
+          audio: recordingOptions.audio,
+        });
+        streams.push(userStream);
+      }
+
+      // Combine all streams
+      const combinedStream = new MediaStream();
+      streams.forEach(stream => {
+        stream.getTracks().forEach(track => {
+          combinedStream.addTrack(track);
+        });
+      });
+
+      streamRef.current = combinedStream;
+
+      // Create and configure MediaRecorder
+      const recorder = new MediaRecorder(combinedStream, {
+        mimeType: 'video/webm',
+      });
+
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunksRef.current.push(event.data);
+        }
+      };
+
+      recorder.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        downloadRecording(url);
+        chunksRef.current = [];
+      };
+
+      mediaRecorder.current = recorder;
+      recorder.start();
+      setIsRecording(true);
+      toast({
+        title: "Recording started",
+        description: "Your screen recording has begun.",
+      });
+    } catch (error) {
+      console.error('Error starting recording:', error);
+      toast({
+        title: "Error",
+        description: "Failed to start recording.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Handle stopping the recording
+  const stopRecording = () => {
+    if (mediaRecorder.current && streamRef.current) {
+      mediaRecorder.current.stop();
+      streamRef.current.getTracks().forEach(track => track.stop());
+      setIsRecording(false);
+      toast({
+        title: "Recording stopped",
+        description: "Your recording has been saved.",
+      });
+    }
+  };
+
+  // Handle downloading the recording
+  const downloadRecording = (url: string) => {
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `recording-${new Date().toISOString()}.webm`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  // Toggle recording options
+  const toggleOption = (option: keyof RecordingOptions) => {
+    setRecordingOptions(prev => ({
+      ...prev,
+      [option]: !prev[option],
+    }));
+  };
+
+  return (
+    <Card className="w-[400px] mx-auto mt-10">
+      <CardContent className="p-6">
+        <div className="space-y-4">
+          <div className="flex gap-2 justify-center">
+            <Button
+              variant={recordingOptions.audio ? "default" : "outline"}
+              onClick={() => toggleOption('audio')}
+              disabled={isRecording}
+            >
+              <Mic className="w-4 h-4 mr-2" />
+              Audio
+            </Button>
+            <Button
+              variant={recordingOptions.video ? "default" : "outline"}
+              onClick={() => toggleOption('video')}
+              disabled={isRecording}
+            >
+              <Camera className="w-4 h-4 mr-2" />
+              Camera
+            </Button>
+            <Button
+              variant={recordingOptions.screen ? "default" : "outline"}
+              onClick={() => toggleOption('screen')}
+              disabled={isRecording}
+            >
+              <Video className="w-4 h-4 mr-2" />
+              Screen
+            </Button>
+          </div>
+
+          <Button
+            className="w-full"
+            variant={isRecording ? "destructive" : "default"}
+            onClick={isRecording ? stopRecording : startRecording}
+          >
+            {isRecording ? (
+              <>
+                <StopCircle className="w-4 h-4 mr-2" />
+                Stop Recording
+              </>
+            ) : (
+              <>
+                <Video className="w-4 h-4 mr-2" />
+                Start Recording
+              </>
+            )}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default ScreenRecorder;
+
+To use this component, you'll need to have the following dependencies installed:
+
+bashnpm install @radix-ui/react-toast lucide-react @shadcn/ui
+
+And make sure to set up your tailwind.config.js and necessary Shadcn UI components.
+
+This code provides:
+
+Screen recording functionality
+Webcam recording
+Audio recording
+Options to toggle different recording sources
+Download functionality for the recorded video
+Toast notifications for user feedback
+A clean UI using Shadcn components
+
+To use this component in your application:
+
+tsx// src/App.tsx
+import ScreenRecorder from './components/ScreenRecorder';
+import { Toaster } from "@/components/ui/toaster";
+
+function App() {
+  return (
+    <div>
+      <ScreenRecorder />
+      <Toaster />
+    </div>
+  );
+}
+
+export default App;
+
+This implementation provides a basic Loom-like experience. You might want to add additional features like:
+
+Preview window for the recording
+Recording timer
+Different video quality options
+Cloud upload functionality
+Video trimming capabilities
+
+Remember to handle proper error cases and browser compatibility issues in a production environment.
