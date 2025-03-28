@@ -1,0 +1,33 @@
+{
+  "extends": "../../shared/config/react.json",
+  "exclude": ["node_modules", "dist", "./*.ts"],
+  "include": ["src/"],
+  "compilerOptions": {
+    "types": ["@types/wicg-file-system-access", "vite/client"],
+    "rootDir": "src",
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+      "@/components/*": ["./components/*"],
+      "@/components": ["./components"],
+      "@hooks": ["./hooks"],
+      "@hooks/*": ["./hooks/*"],
+      "@icons": ["./icons"],
+      "@icons/*": ["./icons/*"],
+      "@primitives": ["./primitives"],
+      "@primitives/*": ["./primitives/*"],
+      "@/base": ["./components/base"],
+      "@/base/*": ["./components/base/*"],
+      "@/shadcn": ["./components/base/shadcn"],
+      "@/shadcn/*": ["./components/base/shadcn/*"],
+      "@layouts": ["./layouts"],
+      "@layouts/*": ["./layouts/*"],
+      "@types": ["./types"],
+      "@types/*": ["./types/*"],
+      "@utils": ["./utils"],
+      "@utils/*": ["./utils/*"],
+      "@widgets/*": ["./widgets/*"],
+      "@widgets": ["./widgets"]
+    }
+  }
+}
