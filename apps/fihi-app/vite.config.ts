@@ -20,7 +20,7 @@ export default defineConfig(async () => ({
   build: {
     // using hidden sourcemap to avoid the vscode type error
     sourcemap: "hidden" as unknown as boolean, // Source map generation must be turned on
-    chunkSizeWarningLimit: 7200,
+    chunkSizeWarningLimit: 4800,
     rollupOptions: {
       treeshake: true,
     },
@@ -35,7 +35,7 @@ export default defineConfig(async () => ({
     },
   },
   plugins: [
-    bundlesize({ limits: [{ name: "**/*", limit: "6 mB" }] }),
+    bundlesize({ limits: [{ name: "**/*", limit: "3 mB" }] }),
     react(),
     tsconfigPaths(),
     chunkSplitPlugin(),
