@@ -12,20 +12,18 @@ interface PageLayoutProps {
   showSidebar?: boolean
 }
 
-export const PageLayout: FC<PageLayoutProps> = ({ 
-  children, 
-  navbar, 
+export const PageLayout: FC<PageLayoutProps> = ({
+  children,
+  navbar,
   sidebar,
-  showSidebar = true 
+  showSidebar = true,
 }) => {
   return (
     <Flex direction="column" className="min-h-screen overflow-hidden">
       {navbar ?? <NavbarMain />}
       <Flex className="flex-1 overflow-hidden">
         {showSidebar && (
-          <Box className="h-[calc(100vh-64px)]">
-            {sidebar ?? <Sidebar />}
-          </Box>
+          <Box className="h-[calc(100vh-64px)]">{sidebar ?? <Sidebar />}</Box>
         )}
         <ScrollArea
           scrollbars="vertical"

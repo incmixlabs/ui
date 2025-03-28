@@ -14,19 +14,14 @@ interface PageGridProps extends GridProps {
   }
 }
 
-export const PageGrid: React.FC<PageGridProps> = ({ 
+export const PageGrid: React.FC<PageGridProps> = ({
   children,
   noContainer = false,
   columns = { initial: "1", md: "2" },
-  ...props 
+  ...props
 }) => {
   const content = (
-    <Grid 
-      columns={columns} 
-      gap="6" 
-      className="w-full flex-1"
-      {...props}
-    >
+    <Grid columns={columns} gap="6" className="w-full flex-1" {...props}>
       {children}
     </Grid>
   )
@@ -37,9 +32,7 @@ export const PageGrid: React.FC<PageGridProps> = ({
 
   return (
     <Container>
-      <Box className="mb-6">
-        {content}
-      </Box>
+      <Box className="mb-6">{content}</Box>
     </Container>
   )
 }

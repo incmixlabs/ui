@@ -14,14 +14,30 @@ import { cn } from "@utils"
 import { LayoutGrid, List, Plus, SlidersHorizontal, X } from "lucide-react"
 import { motion } from "motion/react"
 import { useQueryState } from "nuqs"
+import { Suspense, lazy } from "react"
 import { MotionSheet } from "../custom-sheet"
-import { lazy, Suspense } from 'react'
 
 // Dynamically import heavy components
-const AddProjectAutoForm = lazy(() => import("./components/add-project-auto-form").then(module => ({ default: module.AddProjectAutoForm })))
-const ProjectCard = lazy(() => import("./components/project-card").then(module => ({ default: module.ProjectCard })))
-const ProjectDrawer = lazy(() => import("./components/project-drawer").then(module => ({ default: module.default })))
-const ProjectFilter = lazy(() => import("./components/project-filter").then(module => ({ default: module.ProjectFilter })))
+const AddProjectAutoForm = lazy(() =>
+  import("./components/add-project-auto-form").then((module) => ({
+    default: module.AddProjectAutoForm,
+  }))
+)
+const ProjectCard = lazy(() =>
+  import("./components/project-card").then((module) => ({
+    default: module.ProjectCard,
+  }))
+)
+const ProjectDrawer = lazy(() =>
+  import("./components/project-drawer").then((module) => ({
+    default: module.default,
+  }))
+)
+const ProjectFilter = lazy(() =>
+  import("./components/project-filter").then((module) => ({
+    default: module.ProjectFilter,
+  }))
+)
 import { projects as initialProjects } from "./data"
 import type { Project } from "./types"
 
@@ -267,7 +283,14 @@ export function ProjectPageComponents() {
                 className={`${viewMode === "grid" ? "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" : "h-full w-full gap-4 space-y-2 overflow-x-auto"}`}
               >
                 {filteredProjects.map((project) => (
-                  <Suspense key={project.id} fallback={<Box className="p-4 border rounded-md">Loading project...</Box>}>
+                  <Suspense
+                    key={project.id}
+                    fallback={
+                      <Box className="rounded-md border p-4">
+                        Loading project...
+                      </Box>
+                    }
+                  >
                     <ProjectCard
                       key={project.id}
                       project={project}

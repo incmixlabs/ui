@@ -7,20 +7,14 @@ interface AuthLayoutProps {
   maxWidth?: string
 }
 
-export const AuthLayout: FC<AuthLayoutProps> = ({ 
+export const AuthLayout: FC<AuthLayoutProps> = ({
   children,
-  maxWidth = "400px"
+  maxWidth = "400px",
 }) => {
   return (
     <Container>
-      <Flex 
-        height="100vh" 
-        align="center" 
-        justify="center"
-      >
-        <CardContainer style={{ maxWidth }}>
-          {children}
-        </CardContainer>
+      <Flex height="100vh" align="center" justify="center">
+        <CardContainer style={{ maxWidth }}>{children}</CardContainer>
       </Flex>
     </Container>
   )

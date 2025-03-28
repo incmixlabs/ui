@@ -9,17 +9,17 @@ interface PageFlexProps extends FlexProps {
   noContainer?: boolean
 }
 
-export const PageFlex: React.FC<PageFlexProps> = ({ 
+export const PageFlex: React.FC<PageFlexProps> = ({
   children,
   fullHeight = false,
   centered = false,
   noContainer = false,
-  ...props 
+  ...props
 }) => {
   const content = (
-    <Flex 
-      direction="column" 
-      gap="6" 
+    <Flex
+      direction="column"
+      gap="6"
       className={`
         ${fullHeight ? "min-h-[calc(100vh-150px)]" : ""} 
         ${centered ? "items-center justify-center" : ""}
@@ -36,9 +36,7 @@ export const PageFlex: React.FC<PageFlexProps> = ({
 
   return (
     <Container>
-      <Box className="mb-6">
-        {content}
-      </Box>
+      <Box className="mb-6">{content}</Box>
     </Container>
   )
 }

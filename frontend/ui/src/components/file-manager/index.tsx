@@ -1,5 +1,5 @@
-import { useState, lazy, Suspense } from "react"
 import { Box } from "@incmix/ui"
+import { Suspense, lazy, useState } from "react"
 
 // Dynamically import component
 const ProjectBox = lazy(() => import("./components/project-box"))

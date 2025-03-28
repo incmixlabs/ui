@@ -1,4 +1,3 @@
-import { lazy, Suspense, useRef, useState } from "react"
 import {
   Box,
   Button,
@@ -30,12 +29,15 @@ import {
   Trash,
   X,
 } from "lucide-react"
+import { Suspense, lazy, useRef, useState } from "react"
 import { Label } from "../label"
 import { type INote, notesData } from "./data"
 
-const TiptapEditor = lazy(() => import("./components/tiptap-editor").then((mod) => ({
-  default: mod.TiptapEditor
-})))
+const TiptapEditor = lazy(() =>
+  import("./components/tiptap-editor").then((mod) => ({
+    default: mod.TiptapEditor,
+  }))
+)
 
 export function NoteComponent() {
   const [notes, _setNotes] = useState<INote[]>(notesData)
