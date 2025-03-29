@@ -1,5 +1,6 @@
 import { createRootRouteWithContext, createRouter, createRoute } from '@tanstack/react-router';
 import { ShadcnComponentShowcase } from '../pages/ShadcnComponentShowcase';
+import { RadixUIComponentShowcase } from '../pages/RadixUIComponentShowcase';
 
 // Create a root route
 export const rootRoute = createRootRouteWithContext<{}>()({
@@ -13,9 +14,14 @@ export const shadcnRoute = createRoute({
   component: ShadcnComponentShowcase,
 });
 
+export const radixuiRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: 'radixui',
+  component: RadixUIComponentShowcase,
+});
 
 // Create the route tree
-const routeTree = rootRoute.addChildren([shadcnRoute]);
+const routeTree = rootRoute.addChildren([shadcnRoute, radixuiRoute]);
 
 // Create the router
 export const router = createRouter({

@@ -7,50 +7,45 @@ interface MainLayoutProps {
   activeComponent?: string;
   onComponentChange?: (id: string) => void;
 }
+const shadcnComponents = [
+  { id: 'accordion', label: 'Accordion' },
+  { id: 'badge', label: 'Badge' },
+  { id: 'button', label: 'Button' },
+  { id: 'radix-button', label: 'Button' },
+  { id: 'radix-avatar', label: 'Avatar' },
+  { id: 'calendar', label: 'Calendar' },
+  { id: 'card', label: 'Card' },
+  { id: 'command', label: 'Command' },
+  { id: 'dialog', label: 'Dialog' },
+  { id: 'dropdown', label: 'Dropdown' },
+  { id: 'form', label: 'Form' },
+  { id: 'radio', label: 'Radio' },
+  { id: 'separator', label: 'Separator' },
+];
 
-export function MainLayout({ 
-  children, 
+const radixComponents = [
+  { id: 'radix-button', label: 'Button' },
+  { id: 'radix-avatar', label: 'Avatar' },
+];
+export function MainLayout({
+  children,
   activeComponent,
   onComponentChange
 }: MainLayoutProps) {
   const navigate = useNavigate();
-  
-  const shadcnComponents = [
-    { id: 'accordion', label: 'Accordion' },
-    { id: 'badge', label: 'Badge' },
-    { id: 'button', label: 'Button' },
-    { id: 'calendar', label: 'Calendar' },
-    { id: 'card', label: 'Card' },
-    { id: 'command', label: 'Command' },
-    { id: 'dialog', label: 'Dialog' },
-    { id: 'dropdown', label: 'Dropdown' },
-    { id: 'form', label: 'Form' },
-    { id: 'radio', label: 'Radio' },
-    { id: 'separator', label: 'Separator' },
-  ];
-  
-  const radixComponents = [
-    { id: 'button', label: 'Button' },
-    { id: 'card', label: 'Card' },
-    { id: 'popover', label: 'Popover' },
-    { id: 'checkbox-radio', label: 'Checkbox & Radio' },
-    { id: 'groups', label: 'Groups' },
-    { id: 'layout', label: 'Layout' },
-    { id: 'callout', label: 'Callout' },
-    { id: 'context-menu', label: 'Context Menu' },
-  ];
+  const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const [activeComponentItems, setActiveComponentItems] = React.useState(shadcnComponents);
 
   // Determine which component list to show based on active component
-  const componentItems = activeComponent === 'shadcn' || activeComponent === 'radixui' 
-    ? []
-    : activeComponent?.startsWith('radix-') 
-      ? radixComponents 
-      : shadcnComponents;
 
   const handleItemClick = (id: string) => {
     if (id === 'shadcn') {
+      debugger;
+      setActiveComponentItems(shadcnComponents);
       navigate({ to: '/shadcn' });
     } else if (id === 'radixui') {
+      debugger;
+      setActiveComponentItems(radixComponents);
       navigate({ to: '/radixui' });
     } else {
       onComponentChange?.(id);
@@ -59,8 +54,8 @@ export function MainLayout({
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar 
-        items={componentItems}
+      <Sidebar
+        items={activeComponentItems}
         activeItem={activeComponent}
         onItemClick={handleItemClick}
       />

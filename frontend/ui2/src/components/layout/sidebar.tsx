@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/shadcn/button';
+import { Button } from '@/components/radixui/button';
 import { Separator } from '@/components/shadcn/separator';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/shadcn/accordion';
 import { ChevronRight, ChevronDown, PanelLeftClose, PanelLeft } from 'lucide-react';
@@ -78,10 +78,10 @@ function SidebarGroup({
   return (
     <div className="space-y-1">
       <Button
-        variant={activeItem === item.id ? "secondary" : "ghost"}
+        variant={activeItem === item.id ? "solid" : "ghost"}
         className={cn(
           "w-full justify-start",
-          level === 1 ? "pl-8" : level === 2 ? "pl-12" : level === 3 ? "pl-16" : ""
+          level === 1 ? "pl-4" : level === 2 ? "pl-2" : level === 3 ? "pl-16" : ""
         )}
         onClick={() => onItemClick?.(item.id)}
       >
@@ -93,12 +93,14 @@ function SidebarGroup({
 
 export function Sidebar({
   className,
-  items,
+  items = [],
   activeItem,
   onItemClick,
   defaultCollapsed = false,
   ...props
 }: SidebarProps) {
+  debugger;
+  console.log(items)
   const [collapsed, setCollapsed] = useState(defaultCollapsed);
 
   return (
@@ -129,11 +131,11 @@ export function Sidebar({
 
       {!collapsed && (
         <>
-          <div className="px-3 py-2">
-            <div className="space-y-1 px-3">
+          <div className="py-2">
+            <div className="space-y-1">
               <div className="space-y-3">
                 <div
-                  className="text-sm font-medium ml-1 mb-1 cursor-pointer hover:text-primary"
+                  className="text-sm font-medium ml-4 mb-1 cursor-pointer hover:text-primary"
                   onClick={() => {
                     // Toggle all top-level groups to collapse
                     const event = new CustomEvent('collapse-all-groups');
@@ -142,16 +144,16 @@ export function Sidebar({
                 >
                   Component Libraries
                 </div>
-                <div className="pl-3 space-y-1">
+                <div className="space-y-1">
                   <Button
-                    variant={activeItem === 'shadcn' ? "secondary" : "ghost"}
+                    variant={activeItem === 'shadcn' ? "solid" : "ghost"}
                     className="w-full justify-start"
                     onClick={() => onItemClick?.('shadcn')}
                   >
                     <span>Shadcn</span>
                   </Button>
                   <Button
-                    variant={activeItem === 'radixui' ? "secondary" : "ghost"}
+                    variant={activeItem === 'radixui' ? "solid" : "ghost"}
                     className="w-full justify-start"
                     onClick={() => onItemClick?.('radixui')}
                   >

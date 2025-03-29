@@ -1,7 +1,8 @@
 import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/shadcn/accordion';
 import { Badge } from '@/components/shadcn/badge';
-import { Button } from '@/components/shadcn/button';
+import { Button as ShadcnButton } from '@/components/shadcn/button';
+import { Flex } from '@/components/radixui/flex';
 import { Calendar } from '@/components/shadcn/calendar';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/shadcn/card';
 import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from '@/components/shadcn/command';
@@ -16,6 +17,8 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { Avatar } from '@/components/radixui/avatar';
+import { Button } from '@/components/radixui/button/button';
 import { MainLayout } from '@/components/layout/MainLayout';
 
 export function ShadcnComponentShowcase() {
@@ -110,20 +113,54 @@ export function ShadcnComponentShowcase() {
         <TabsContent value="button" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Button</h2>
           <div className="flex flex-wrap gap-4">
-            <Button>Default</Button>
-            <Button variant="secondary">Secondary</Button>
-            <Button variant="destructive">Destructive</Button>
-            <Button variant="outline">Outline</Button>
-            <Button variant="ghost">Ghost</Button>
-            <Button variant="link">Link</Button>
+            <ShadcnButton>Default</ShadcnButton>
+            <ShadcnButton variant="secondary">Secondary</ShadcnButton>
+            <ShadcnButton variant="destructive">Destructive</ShadcnButton>
+            <ShadcnButton variant="outline">Outline</ShadcnButton>
+            <ShadcnButton variant="ghost">Ghost</ShadcnButton>
+            <ShadcnButton variant="link">Link</ShadcnButton>
           </div>
           <div className="flex flex-wrap gap-4 mt-4">
-            <Button size="sm">Small</Button>
-            <Button>Default Size</Button>
-            <Button size="lg">Large</Button>
+            <ShadcnButton size="sm">Small</ShadcnButton>
+            <ShadcnButton size="lg">Large</ShadcnButton>
           </div>
         </TabsContent>
-
+        {/* Button */}
+        <TabsContent value="radix-button" className="space-y-4">
+          <h2 className="text-2xl font-semibold mb-4">RadixUI Button</h2>
+          <div className="flex flex-wrap gap-4">
+            <Button>Default</Button>
+            <Button variant="classic">Classic</Button>
+            <Button variant="soft">Soft</Button>
+            <Button variant="ghost">Ghost</Button>
+          </div>
+          <div className="flex flex-wrap gap-4 mt-4">
+            <Button size="1">Size 1</Button>
+            <Button size="2">Size 2</Button>
+            <Button size="3">Size 3</Button>
+          </div>
+        </TabsContent>
+        {/* Avatar */}
+        <TabsContent value="radix-avatar" className="space-y-4">
+          <h2 className="text-2xl font-semibold mb-4">RadixUI Avatar</h2>
+          <Flex align="center" gap="4">
+            <Avatar
+              size="1"
+              src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
+              fallback="A"
+            />
+            <Avatar
+              size="2"
+              src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
+              fallback="A"/>
+            <Avatar variant="solid" fallback="A" />
+            <Avatar variant="soft" fallback="A" />
+            <Avatar variant="solid" color="indigo" fallback="A" />
+            <Avatar variant="solid" color="cyan" fallback="A" />
+            <Avatar variant="solid" color="orange" fallback="A" />
+            <Avatar variant="solid" color="crimson" fallback="A" />
+          </Flex>
+        </TabsContent>
         {/* Calendar */}
         <TabsContent value="calendar" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Calendar</h2>
@@ -188,7 +225,7 @@ export function ShadcnComponentShowcase() {
           <h2 className="text-2xl font-semibold mb-4">Dialog</h2>
           <Dialog>
             <DialogTrigger asChild>
-              <Button>Open Dialog</Button>
+              <ShadcnButton>Open Dialog</ShadcnButton>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
@@ -201,7 +238,7 @@ export function ShadcnComponentShowcase() {
                 <p>Dialog content goes here.</p>
               </div>
               <DialogFooter>
-                <Button>Save changes</Button>
+                <ShadcnButton>Save changes</ShadcnButton>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -212,7 +249,7 @@ export function ShadcnComponentShowcase() {
           <h2 className="text-2xl font-semibold mb-4">Dropdown Menu</h2>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button>Open Dropdown</Button>
+              <ShadcnButton>Open Dropdown</ShadcnButton>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
@@ -250,7 +287,7 @@ export function ShadcnComponentShowcase() {
                   </FormItem>
                 )}
               />
-              <Button type="submit">Submit</Button>
+              <ShadcnButton type="submit">Submit</ShadcnButton>
             </form>
           </Form>
         </TabsContent>
