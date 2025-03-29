@@ -1,13 +1,21 @@
-import { createRootRouteWithContext, createRouter } from '@tanstack/react-router';
-import { ComponentShowcase } from '../pages/ComponentShowcase';
+import { createRootRouteWithContext, createRouter, createRoute } from '@tanstack/react-router';
+import { ShadcnComponentShowcase } from '../pages/ShadcnComponentShowcase';
 
 // Create a root route
 export const rootRoute = createRootRouteWithContext<{}>()({
-  component: () => <ComponentShowcase />
+  component: () => <ShadcnComponentShowcase />
 });
 
+// Create routes
+export const shadcnRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: 'shadcn',
+  component: ShadcnComponentShowcase,
+});
+
+
 // Create the route tree
-const routeTree = rootRoute;
+const routeTree = rootRoute.addChildren([shadcnRoute]);
 
 // Create the router
 export const router = createRouter({

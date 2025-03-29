@@ -1,33 +1,33 @@
 import React from 'react';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../components/base/shadcn/accordion';
-import { Badge } from '../components/base/shadcn/badge';
-import { Button } from '../components/base/shadcn/button';
-import { Calendar } from '../components/base/shadcn/calendar';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/base/shadcn/card';
-import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from '../components/base/shadcn/command';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../components/base/shadcn/dialog';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../components/base/shadcn/dropdown-menu';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../components/base/shadcn/form';
-import { Label } from '../components/base/shadcn/label';
-import { RadioGroup, RadioGroupItem } from '../components/base/shadcn/radio-group';
-import { Separator } from '../components/base/shadcn/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/base/shadcn/tabs';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/shadcn/accordion';
+import { Badge } from '@/components/shadcn/badge';
+import { Button } from '@/components/shadcn/button';
+import { Calendar } from '@/components/shadcn/calendar';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/shadcn/card';
+import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from '@/components/shadcn/command';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdown-menu';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form';
+import { Label } from '@/components/shadcn/label';
+import { RadioGroup, RadioGroupItem } from '@/components/shadcn/radio-group';
+import { Separator } from '@/components/shadcn/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/shadcn/tabs';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { MainLayout } from '../components/layout/MainLayout';
+import { MainLayout } from '@/components/layout/MainLayout';
 
-export function ComponentShowcase() {
+export function ShadcnComponentShowcase() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [activeTab, setActiveTab] = React.useState('accordion');
-  
+
   // Form setup
   const formSchema = z.object({
     username: z.string().min(2).max(50),
     radio: z.enum(['option1', 'option2', 'option3']),
   });
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,13 +46,13 @@ export function ComponentShowcase() {
   };
 
   return (
-    <MainLayout 
+    <MainLayout
       activeComponent={activeTab}
       onComponentChange={handleComponentChange}
     >
       <div className="container p-8">
-        <h1 className="text-3xl font-bold mb-8">Shadcn Components Showcase</h1>
-        
+        <h1 className="text-3xl font-bold mb-8">Components Showcase</h1>
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mb-12">
           <div className="hidden">
             <TabsList className="mb-4">
@@ -69,7 +69,7 @@ export function ComponentShowcase() {
               <TabsTrigger value="separator">Separator</TabsTrigger>
             </TabsList>
           </div>
-        
+
         {/* Accordion */}
         <TabsContent value="accordion" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Accordion</h2>
@@ -94,7 +94,7 @@ export function ComponentShowcase() {
             </AccordionItem>
           </Accordion>
         </TabsContent>
-        
+
         {/* Badge */}
         <TabsContent value="badge" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Badge</h2>
@@ -105,7 +105,7 @@ export function ComponentShowcase() {
             <Badge variant="destructive">Destructive</Badge>
           </div>
         </TabsContent>
-        
+
         {/* Button */}
         <TabsContent value="button" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Button</h2>
@@ -123,7 +123,7 @@ export function ComponentShowcase() {
             <Button size="lg">Large</Button>
           </div>
         </TabsContent>
-        
+
         {/* Calendar */}
         <TabsContent value="calendar" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Calendar</h2>
@@ -134,7 +134,7 @@ export function ComponentShowcase() {
             className="rounded-md border"
           />
         </TabsContent>
-        
+
         {/* Card */}
         <TabsContent value="card" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Card</h2>
@@ -151,7 +151,7 @@ export function ComponentShowcase() {
             </CardFooter>
           </Card>
         </TabsContent>
-        
+
         {/* Command */}
         <TabsContent value="command" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Command</h2>
@@ -182,7 +182,7 @@ export function ComponentShowcase() {
             </CommandList>
           </Command>
         </TabsContent>
-        
+
         {/* Dialog */}
         <TabsContent value="dialog" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Dialog</h2>
@@ -206,7 +206,7 @@ export function ComponentShowcase() {
             </DialogContent>
           </Dialog>
         </TabsContent>
-        
+
         {/* Dropdown Menu */}
         <TabsContent value="dropdown" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Dropdown Menu</h2>
@@ -224,7 +224,7 @@ export function ComponentShowcase() {
             </DropdownMenuContent>
           </DropdownMenu>
         </TabsContent>
-        
+
         {/* Form */}
         <TabsContent value="form" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Form</h2>
@@ -254,7 +254,7 @@ export function ComponentShowcase() {
             </form>
           </Form>
         </TabsContent>
-        
+
         {/* Radio Group */}
         <TabsContent value="radio" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Radio Group</h2>
@@ -293,7 +293,7 @@ export function ComponentShowcase() {
             </form>
           </Form>
         </TabsContent>
-        
+
         {/* Separator */}
         <TabsContent value="separator" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Separator</h2>

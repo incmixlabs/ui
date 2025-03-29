@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/shadcn/button';
-import { Separator } from '@/shadcn/separator';
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/shadcn/accordion';
+import { Button } from '@/components/shadcn/button';
+import { Separator } from '@/components/shadcn/separator';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/shadcn/accordion';
 import { ChevronRight, ChevronDown, PanelLeftClose, PanelLeft } from 'lucide-react';
 
 interface SidebarItem {
@@ -117,7 +117,7 @@ export function Sidebar({
           </h2>
         )}
         <Button
-          variant="solid"
+          variant="ghost"
           size="icon"
           onClick={() => setCollapsed(!collapsed)}
           className={cn("ml-auto", collapsed && "mx-auto")}
@@ -131,20 +131,38 @@ export function Sidebar({
         <>
           <div className="px-3 py-2">
             <div className="space-y-1 px-3">
-              <div
-                className="text-sm font-medium ml-1 mb-1 cursor-pointer hover:text-primary"
-                onClick={() => {
-                  // Toggle all top-level groups to collapse
-                  const event = new CustomEvent('collapse-all-groups');
-                  document.dispatchEvent(event);
-                }}
-              >
-                Shadcn
+              <div className="space-y-3">
+                <div
+                  className="text-sm font-medium ml-1 mb-1 cursor-pointer hover:text-primary"
+                  onClick={() => {
+                    // Toggle all top-level groups to collapse
+                    const event = new CustomEvent('collapse-all-groups');
+                    document.dispatchEvent(event);
+                  }}
+                >
+                  Component Libraries
+                </div>
+                <div className="pl-3 space-y-1">
+                  <Button
+                    variant={activeItem === 'shadcn' ? "secondary" : "ghost"}
+                    className="w-full justify-start"
+                    onClick={() => onItemClick?.('shadcn')}
+                  >
+                    <span>Shadcn</span>
+                  </Button>
+                  <Button
+                    variant={activeItem === 'radixui' ? "secondary" : "ghost"}
+                    className="w-full justify-start"
+                    onClick={() => onItemClick?.('radixui')}
+                  >
+                    <span>RadixUI</span>
+                  </Button>
+                </div>
               </div>
               <Accordion
                 type="multiple"
                 defaultValue={items.filter(item => item.children?.length).map(item => item.id)}
-                className="space-y-1"
+                className="space-y-1 mt-4"
               >
                 {items.map((item) => (
                   <SidebarGroup

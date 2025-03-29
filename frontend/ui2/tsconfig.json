@@ -1,33 +1,20 @@
 {
-  "extends": "../../shared/config/react.json",
-  "exclude": ["node_modules", "dist", "./*.ts"],
-  "include": ["src/"],
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
   "compilerOptions": {
-    "types": ["@types/wicg-file-system-access", "vite/client"],
-    "rootDir": "src",
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
-      "@/components/*": ["./components/*"],
-      "@/components": ["./components"],
-      "@hooks": ["./hooks"],
-      "@hooks/*": ["./hooks/*"],
-      "@icons": ["./icons"],
-      "@icons/*": ["./icons/*"],
-      "@primitives": ["./primitives"],
-      "@primitives/*": ["./primitives/*"],
-      "@/base": ["./components/base"],
-      "@/base/*": ["./components/base/*"],
-      "@/shadcn": ["./components/base/shadcn"],
-      "@/shadcn/*": ["./components/base/shadcn/*"],
-      "@layouts": ["./layouts"],
-      "@layouts/*": ["./layouts/*"],
-      "@types": ["./types"],
-      "@types/*": ["./types/*"],
-      "@utils": ["./utils"],
-      "@utils/*": ["./utils/*"],
-      "@widgets/*": ["./widgets/*"],
-      "@widgets": ["./widgets"]
+      "@/*": ["./src/*"],
+      "@/components": ["./src/components"],
+      "@/components/*": ["./src/components/*"],
+      "@/shadcn": ["./src/components/shadcn"],
+      "@/shadcn/*": ["./src/components/shadcn/*"],
+      "@/lib": ["./src/lib"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/hooks/*": ["./src/hooks/*"],
     }
   }
 }
