@@ -19,7 +19,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <RadixButton
         {...props}
         variant={variant}
-        className={`h-10 ${defaultClassName}${className}`}
+        className={`${defaultClassName}${className}`}
         ref={ref}
         disabled={disabled}
       >

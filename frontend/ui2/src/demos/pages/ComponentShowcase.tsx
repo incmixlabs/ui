@@ -19,9 +19,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Avatar } from '@/components/radixui/avatar';
 import { Button } from '@/components/radixui/button/button';
-import { MainLayout } from '@/components/layout/MainLayout';
+import { MainLayout } from '../layout/MainLayout';
 
-export function ShadcnComponentShowcase() {
+export function ComponentShowcase() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [activeTab, setActiveTab] = React.useState('accordion');
 

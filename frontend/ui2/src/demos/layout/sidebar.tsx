@@ -76,12 +76,11 @@ function SidebarGroup({
   }
 
   return (
-    <div className="space-y-1">
+    <div className="pl-4 space-y-1">
       <Button
         variant={activeItem === item.id ? "solid" : "ghost"}
         className={cn(
-          "w-full justify-start",
-          level === 1 ? "pl-4" : level === 2 ? "pl-2" : level === 3 ? "pl-16" : ""
+          "w-full justify-start"
         )}
         onClick={() => onItemClick?.(item.id)}
       >

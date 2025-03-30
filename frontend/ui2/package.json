@@ -1,11 +1,11 @@
 {
-  "name": "my-app",
+  "name": "@incmix/ui2",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "rm -rf dist && tsc -p tsconfig.json --outDir dist",
     "lint": "eslint .",
     "preview": "vite preview"
   },

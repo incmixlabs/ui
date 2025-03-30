@@ -1,11 +1,10 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
+  "extends": "../shared/config/react.json",
+  "exclude": ["node_modules", "dist", "./*.ts"],
+  "include": ["src/"],
   "compilerOptions": {
-    "baseUrl": ".",
+    "types": ["@types/wicg-file-system-access", "vite/client"],
+    "baseUrl": "./src",
     "paths": {
       "@/*": ["./src/*"],
       "@/components": ["./src/components"],
