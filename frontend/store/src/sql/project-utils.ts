@@ -120,12 +120,23 @@ const ensureFileObject = async (fileData: any): Promise<File | null> => {
       // If we have base64 data
       if (
         "data" in fileData &&
-        typeof fileData.data === "string" &&
-        fileData.data.startsWith("data:")
+        typeof fileData.data === "string"
       ) {
-        const res = await fetch(fileData.data)
-        const blob = await res.blob()
-        return new File([blob], fileData.name, { type: fileData.type })
+        // Explicitly validate the data URL format
+        if (fileData.data.startsWith('data:') &&
+            /^data:[a-z]+\/[a-z0-9-+.]+;base64,/i.test(fileData.data)) {
+          try {
+            const res = await fetch(fileData.data)
+            const blob = await res.blob()
+            return new File([blob], fileData.name, { type: fileData.type })
+          } catch (error) {
+            console.error("Error processing data URL:", error)
+            return null
+          }
+        } else {
+          console.warn('Invalid or unsupported data URL format')
+          return null
+        }
       }
 
       // If we have ArrayBuffer or similar
