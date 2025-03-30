@@ -1,5 +1,6 @@
 import { useState } from "react"
 
+import { saveFormProject } from "@incmix/store"
 import {
   Box,
   Button,
@@ -21,7 +22,6 @@ import ProjectDrawer from "./components/project-drawer"
 import { ProjectFilter } from "./components/project-filter"
 import { projects as initialProjects } from "./data"
 import type { Project } from "./types"
-import { saveFormProject } from "@incmix/store"
 
 /**
  * Renders the project management page with filtering, view mode switching, and project creation functionality.
@@ -59,40 +59,38 @@ export function ProjectPageComponents() {
   }
 
   const handleAddProject = async (newProject: Omit<Project, "id">) => {
-    console.log("newProject from handleAddProject:", newProject);
-
     // Create the project with ID
+    const uniqueId = `${Date.now().toString(36)}${Math.floor(Math.random() * 1000)}`
+
+    // Create the project with a unique ID
     const projectWithId = {
       ...newProject,
-      id: (projects.length + 1).toString(),
-    };
-    console.log("Project With ID:", projectWithId);
+      id: uniqueId, // Use our simple unique ID instead of array length
+    }
 
     try {
-      // Save to RxDB - cast to any to bypass type checking temporarily
-      // This is a workaround until you can update all the types consistently
-      await saveFormProject(projectWithId as any);
-      console.log("Project successfully saved to RxDB");
+      // Save to RxDB
+      await saveFormProject(projectWithId)
 
       // Update local state
-      const updatedProjects = [...projects, projectWithId];
-      setProjects(updatedProjects);
+      const updatedProjects = [...projects, projectWithId]
+      setProjects(updatedProjects)
 
       if (activeTab === "all" || activeTab === newProject.status) {
-        setFilteredProjects([...filteredProjects, projectWithId]);
+        setFilteredProjects([...filteredProjects, projectWithId])
       }
     } catch (error) {
-      console.error("Failed to save project to RxDB:", error);
+      console.error("Failed to save project to RxDB:", error)
 
       // Still update the UI state even if DB save fails
-      const updatedProjects = [...projects, projectWithId];
-      setProjects(updatedProjects);
+      const updatedProjects = [...projects, projectWithId]
+      setProjects(updatedProjects)
 
       if (activeTab === "all" || activeTab === newProject.status) {
-        setFilteredProjects([...filteredProjects, projectWithId]);
+        setFilteredProjects([...filteredProjects, projectWithId])
       }
     }
-  };
+  }
 
   const handleAddMember = (project: Project) => {
     console.log("TODO: Implement member selection for project", project.id)

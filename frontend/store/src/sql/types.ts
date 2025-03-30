@@ -3,6 +3,7 @@ import {
   type RxCollection,
   toTypedRxJsonSchema,
 } from "rxdb"
+
 export const taskSchemaLiteral = {
   title: "tasks schema",
   version: 0,
@@ -169,7 +170,7 @@ export const formProjectSchemaLiteral = {
   type: "object",
   properties: {
     id: {
-      maxLength: 10,
+      maxLength: 30,
       type: "string",
     },
     title: {
@@ -192,7 +193,7 @@ export const formProjectSchemaLiteral = {
     },
     timeType: {
       type: "string",
-      enum: ["day", "days", "week", "month", "year"], // Added "days" to match form data
+      enum: ["day", "days", "week", "month", "year"],
     },
     members: {
       type: "array",
@@ -217,11 +218,15 @@ export const formProjectSchemaLiteral = {
     budget: {
       type: "integer",
     },
-    files: {
-      type: "string",
-      // Removed the "optional" keyword - it's not part of the JSON Schema standard used by RxDB
+    fileInfo: {
+      type: "object",
+      properties: {
+        name: { type: "string" },
+        type: { type: "string" },
+        size: { type: "integer" },
+        attachmentId: { type: "string" },
+      },
     },
-    // Additional fields for tracking
     createdAt: {
       type: "integer", // Using integer for timestamp
     },
@@ -237,14 +242,16 @@ export const formProjectSchemaLiteral = {
     "status",
     "startDate",
     "endDate",
-
   ],
-} as const;
+  attachments: {
+    encrypted: false,
+  },
+} as const
 
 const tasksTyped = toTypedRxJsonSchema(taskSchemaLiteral)
 const columnsTyped = toTypedRxJsonSchema(columnSchemaLiteral)
 const projectTyped = toTypedRxJsonSchema(projectSchemaLiteral)
-const formProjectTyped = toTypedRxJsonSchema(formProjectSchemaLiteral);
+const formProjectTyped = toTypedRxJsonSchema(formProjectSchemaLiteral)
 
 export type TaskDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof tasksTyped
@@ -260,8 +267,6 @@ export type ProjectDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
 export type FormProjectDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof formProjectTyped
 >
-
-
 
 export type TaskCollections = {
   tasks: RxCollection<TaskDocType>
