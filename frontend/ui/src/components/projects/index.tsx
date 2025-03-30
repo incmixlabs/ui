@@ -22,6 +22,7 @@ import ProjectDrawer from "./components/project-drawer"
 import { ProjectFilter } from "./components/project-filter"
 import { projects as initialProjects } from "./data"
 import type { Project } from "./types"
+import { nanoid } from "nanoid"
 
 /**
  * Renders the project management page with filtering, view mode switching, and project creation functionality.
@@ -60,7 +61,7 @@ export function ProjectPageComponents() {
 
   const handleAddProject = async (newProject: Omit<Project, "id">) => {
     // Create the project with ID
-    const uniqueId = `${Date.now().toString(36)}${Math.floor(Math.random() * 1000)}`
+    const uniqueId =  nanoid()
 
     // Create the project with a unique ID
     const projectWithId = {
