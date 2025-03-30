@@ -13,6 +13,7 @@ import {
 import { cn } from "@utils"
 import { LayoutGrid, List, Plus, SlidersHorizontal, X } from "lucide-react"
 import { motion } from "motion/react"
+import { nanoid } from "nanoid"
 import { useQueryState } from "nuqs"
 import { MotionSheet } from "../custom-sheet"
 import { AddProjectAutoForm } from "./components/add-project-auto-form"
@@ -22,7 +23,6 @@ import ProjectDrawer from "./components/project-drawer"
 import { ProjectFilter } from "./components/project-filter"
 import { projects as initialProjects } from "./data"
 import type { Project } from "./types"
-import { nanoid } from "nanoid"
 
 /**
  * Renders the project management page with filtering, view mode switching, and project creation functionality.
@@ -61,7 +61,7 @@ export function ProjectPageComponents() {
 
   const handleAddProject = async (newProject: Omit<Project, "id">) => {
     // Create the project with ID
-    const uniqueId =  nanoid()
+    const uniqueId = nanoid()
 
     // Create the project with a unique ID
     const projectWithId = {
