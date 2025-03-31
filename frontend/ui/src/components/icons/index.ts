@@ -6,6 +6,7 @@ export * from "./clipboard"
 export * from "./clipboard-add"
 export * from "./clipboard-check"
 export * from "./clipboard-status"
+export * from "./pushpin"
 export {
   AudioWaveform,
   File,

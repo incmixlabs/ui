@@ -11,6 +11,7 @@
       "node_modules",
       "apps/storybook",
       "frontend/form-builder",
+      "frontend/ui2/src/demos/**/*",
       "dist",
       ".next",
       ".astro",
@@ -75,6 +76,11 @@
       "**/*.mjs",
       "**/*.cjs"
     ]
+  },
+  "json": {
+    "parser": {
+      "allowComments": true
+    }
   },
   "javascript": {
     "formatter": {

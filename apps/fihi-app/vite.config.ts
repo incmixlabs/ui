@@ -6,9 +6,9 @@ import { internalIpV4 } from "internal-ip"
 import { visualizer } from "rollup-plugin-visualizer"
 import { type PluginOption, defineConfig } from "vite"
 import bundlesize from "vite-plugin-bundlesize"
+import { chunkSplitPlugin } from "vite-plugin-chunk-split"
 import topLevelAwait from "vite-plugin-top-level-await"
 import tsconfigPaths from "vite-tsconfig-paths"
-
 // @ts-expect-error process is a nodejs global
 const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM)
 
@@ -38,6 +38,7 @@ export default defineConfig(async () => ({
     bundlesize({ limits: [{ name: "**/*", limit: "3 mB" }] }),
     react(),
     tsconfigPaths(),
+    chunkSplitPlugin(),
     visualizer({ open: true }) as PluginOption,
     ValidateEnv({
       VITE_BFF_API_URL: Schema.string(),

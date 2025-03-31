@@ -8,16 +8,23 @@ import { NavbarMain } from "./navbar"
 interface PageLayoutProps {
   children: ReactNode
   navbar?: ReactNode
+  sidebar?: ReactNode
+  showSidebar?: boolean
 }
 
-export const PageLayout: FC<PageLayoutProps> = ({ children, navbar }) => {
+export const PageLayout: FC<PageLayoutProps> = ({
+  children,
+  navbar,
+  sidebar,
+  showSidebar = true,
+}) => {
   return (
     <Flex direction="column" className="min-h-screen overflow-hidden">
       {navbar ?? <NavbarMain />}
       <Flex className="flex-1 overflow-hidden">
-        <Box className="h-[calc(100vh-64px)]">
-          <Sidebar />
-        </Box>
+        {showSidebar && (
+          <Box className="h-[calc(100vh-64px)]">{sidebar ?? <Sidebar />}</Box>
+        )}
         <ScrollArea
           scrollbars="vertical"
           className="h-[calc(100vh-64px)] flex-1"

@@ -1,6 +1,6 @@
 import { LoadingPage } from "@common"
-import { CardContainer, FormField, ReactiveButton } from "@incmix/ui"
-import { Box, Container, Flex, Heading, Text } from "@incmix/ui"
+import { FormField, ReactiveButton } from "@incmix/ui"
+import { Box, Flex, Heading, Text } from "@incmix/ui"
 import { useForm } from "@tanstack/react-form"
 import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
@@ -16,6 +16,7 @@ import {
 } from "./hooks/auth"
 
 import { z } from "zod"
+import { AuthLayout } from "./layouts"
 
 function LoginForm() {
   const { t } = useTranslation(["login", "common"])
@@ -43,7 +44,7 @@ function LoginForm() {
   })
 
   return (
-    <CardContainer>
+    <>
       <Heading size="4" mb="4" align="center">
         {t("title")}
       </Heading>
@@ -125,7 +126,7 @@ function LoginForm() {
           <Text color="blue">{t("signupPrompt")}</Text>
         </Link>
       </Box>
-    </CardContainer>
+    </>
   )
 }
 
@@ -158,11 +159,9 @@ function LoginPage() {
 
   if (isError || !authUser) {
     return (
-      <Container>
-        <Flex height="100vh" align="center" justify="center">
-          <LoginForm />
-        </Flex>
-      </Container>
+      <AuthLayout>
+        <LoginForm />
+      </AuthLayout>
     )
   }
 
