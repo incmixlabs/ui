@@ -1,7 +1,13 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Card as RadixCard } from "@radix-ui/themes"
-export { cardPropDefs} from "@radix-ui/themes/components/card.props"
-import { CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from "../shadcn/card"
+export { cardPropDefs } from "@radix-ui/themes/components/card.props"
+import {
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../shadcn/card"
 
 interface CardContainerProps {
   children: React.ReactNode
@@ -12,7 +18,9 @@ const CardContainer: React.FC<CardContainerProps> = ({
   children,
   className = "",
 }) => {
-  return <RadixCard className={`bg-gray-2 p-6 ${className}`}>{children}</RadixCard>
+  return (
+    <RadixCard className={`bg-gray-2 p-6 ${className}`}>{children}</RadixCard>
+  )
 }
 export { CardContainer }
 export const Card = {

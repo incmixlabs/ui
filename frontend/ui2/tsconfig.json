@@ -14,7 +14,7 @@
       "@/shadcn/*": ["./src/components/shadcn/*"],
       "@/lib": ["./src/lib"],
       "@/lib/*": ["./src/lib/*"],
-      "@/hooks/*": ["./src/hooks/*"],
+      "@/hooks/*": ["./src/hooks/*"]
     }
   }
 }

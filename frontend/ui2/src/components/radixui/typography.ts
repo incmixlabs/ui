@@ -1,4 +1,14 @@
-export { Text, Heading, Blockquote, Code, Em, Kbd, Link, Quote, Strong } from "@radix-ui/themes"
+export {
+  Text,
+  Heading,
+  Blockquote,
+  Code,
+  Em,
+  Kbd,
+  Link,
+  Quote,
+  Strong,
+} from "@radix-ui/themes"
 export { textPropDefs } from "@radix-ui/themes/src/components/text.props.js"
 export { headingPropDefs } from "@radix-ui/themes/src/components/heading.props.js"
 export { blockquotePropDefs } from "@radix-ui/themes/src/components/blockquote.props.js"

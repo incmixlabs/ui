@@ -1,50 +1,55 @@
-import React, { useState } from 'react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/radixui/button';
-import { Separator } from '@/components/radixui/separator';
-import { Accordion } from '@/components/shadcn/accordion';
-import { ChevronRight, ChevronDown, PanelLeftClose, PanelLeft } from 'lucide-react';
+import { Button } from "@/components/radixui/button"
+import { Separator } from "@/components/radixui/separator"
+import { Accordion } from "@/components/shadcn/accordion"
+import { cn } from "@/lib/utils"
+import {
+  ChevronDown,
+  ChevronRight,
+  PanelLeft,
+  PanelLeftClose,
+} from "lucide-react"
+import React, { useState } from "react"
 
 interface SidebarItem {
-  id: string;
-  label: string;
-  children?: SidebarItem[];
+  id: string
+  label: string
+  children?: SidebarItem[]
 }
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
-  items: SidebarItem[];
-  activeItem?: string;
-  onItemClick?: (id: string) => void;
-  defaultCollapsed?: boolean;
+  items: SidebarItem[]
+  activeItem?: string
+  onItemClick?: (id: string) => void
+  defaultCollapsed?: boolean
 }
 
 function SidebarGroup({
   item,
   activeItem,
   onItemClick,
-  level = 0
+  level = 0,
 }: {
-  item: SidebarItem;
-  activeItem?: string;
-  onItemClick?: (id: string) => void;
-  level?: number;
+  item: SidebarItem
+  activeItem?: string
+  onItemClick?: (id: string) => void
+  level?: number
 }) {
-  const [isOpen, setIsOpen] = useState(true);
-  const hasChildren = item.children && item.children.length > 0;
+  const [_isOpen, setIsOpen] = useState(true)
+  const hasChildren = item.children && item.children.length > 0
 
   React.useEffect(() => {
     const handleCollapseAll = () => {
       if (hasChildren) {
-        setIsOpen(false);
+        setIsOpen(false)
       }
-    };
+    }
 
-    document.addEventListener('collapse-all-groups', handleCollapseAll);
+    document.addEventListener("collapse-all-groups", handleCollapseAll)
 
     return () => {
-      document.removeEventListener('collapse-all-groups', handleCollapseAll);
-    };
-  }, [hasChildren]);
+      document.removeEventListener("collapse-all-groups", handleCollapseAll)
+    }
+  }, [hasChildren])
 
   if (hasChildren) {
     return (
@@ -53,7 +58,13 @@ function SidebarGroup({
           className={cn(
             "py-2",
             activeItem === item.id ? "bg-accent" : "",
-            level === 1 ? "pl-8" : level === 2 ? "pl-12" : level === 3 ? "pl-16" : ""
+            level === 1
+              ? "pl-8"
+              : level === 2
+                ? "pl-12"
+                : level === 3
+                  ? "pl-16"
+                  : ""
           )}
         >
           {item.label}
@@ -72,22 +83,20 @@ function SidebarGroup({
           </div>
         </Accordion.Content>
       </Accordion.Item>
-    );
+    )
   }
 
   return (
-    <div className="pl-4 space-y-1">
+    <div className="space-y-1 pl-4">
       <Button
         variant={activeItem === item.id ? "solid" : "ghost"}
-        className={cn(
-          "w-full justify-start"
-        )}
+        className={cn("w-full justify-start")}
         onClick={() => onItemClick?.(item.id)}
       >
         <span>{item.label}</span>
       </Button>
     </div>
-  );
+  )
 }
 
 export function Sidebar({
@@ -99,20 +108,20 @@ export function Sidebar({
   ...props
 }: SidebarProps) {
   console.log(items)
-  const [collapsed, setCollapsed] = useState(defaultCollapsed);
+  const [collapsed, setCollapsed] = useState(defaultCollapsed)
 
   return (
     <div
       className={cn(
-        'flex flex-col h-full border-r bg-background transition-all duration-300 ease-in-out',
-        collapsed ? 'w-[60px]' : 'w-[240px]',
+        "flex h-full flex-col border-r bg-background transition-all duration-300 ease-in-out",
+        collapsed ? "w-[60px]" : "w-[240px]",
         className
       )}
       {...props}
     >
-      <div className="flex justify-between items-center px-3 py-4">
+      <div className="flex items-center justify-between px-3 py-4">
         {!collapsed && (
-          <h2 className="px-4 text-lg font-semibold tracking-tight">
+          <h2 className="px-4 font-semibold text-lg tracking-tight">
             Components
           </h2>
         )}
@@ -123,7 +132,11 @@ export function Sidebar({
           className={cn("ml-auto", collapsed && "mx-auto")}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {collapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+          {collapsed ? (
+            <PanelLeft className="h-4 w-4" />
+          ) : (
+            <PanelLeftClose className="h-4 w-4" />
+          )}
         </Button>
       </div>
 
@@ -133,27 +146,27 @@ export function Sidebar({
             <div className="space-y-1">
               <div className="space-y-3">
                 <div
-                  className="text-sm font-medium ml-4 mb-1 cursor-pointer hover:text-primary"
+                  className="mb-1 ml-4 cursor-pointer font-medium text-sm hover:text-primary"
                   onClick={() => {
                     // Toggle all top-level groups to collapse
-                    const event = new CustomEvent('collapse-all-groups');
-                    document.dispatchEvent(event);
+                    const event = new CustomEvent("collapse-all-groups")
+                    document.dispatchEvent(event)
                   }}
                 >
                   Component Libraries
                 </div>
                 <div className="space-y-1">
                   <Button
-                    variant={activeItem === 'shadcn' ? "solid" : "ghost"}
+                    variant={activeItem === "shadcn" ? "solid" : "ghost"}
                     className="w-full justify-start"
-                    onClick={() => onItemClick?.('shadcn')}
+                    onClick={() => onItemClick?.("shadcn")}
                   >
                     <span>Shadcn</span>
                   </Button>
                   <Button
-                    variant={activeItem === 'radixui' ? "solid" : "ghost"}
+                    variant={activeItem === "radixui" ? "solid" : "ghost"}
                     className="w-full justify-start"
-                    onClick={() => onItemClick?.('radixui')}
+                    onClick={() => onItemClick?.("radixui")}
                   >
                     <span>RadixUI</span>
                   </Button>
@@ -161,8 +174,10 @@ export function Sidebar({
               </div>
               <Accordion.Root
                 type="multiple"
-                defaultValue={items.filter(item => item.children?.length).map(item => item.id)}
-                className="space-y-1 mt-4"
+                defaultValue={items
+                  .filter((item) => item.children?.length)
+                  .map((item) => item.id)}
+                className="mt-4 space-y-1"
               >
                 {items.map((item) => (
                   <SidebarGroup
@@ -176,10 +191,9 @@ export function Sidebar({
             </div>
           </div>
           <Separator />
-          <div className="flex-1"></div>
+          <div className="flex-1" />
           <div className="p-4">
-
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               UI component showcase
             </p>
           </div>
@@ -187,7 +201,7 @@ export function Sidebar({
       )}
 
       {collapsed && (
-        <div className="flex flex-col items-center py-4 space-y-4">
+        <div className="flex flex-col items-center space-y-4 py-4">
           {items.map((item) => (
             <Button
               key={item.id}
@@ -195,7 +209,7 @@ export function Sidebar({
               size="icon"
               title={item.label}
               onClick={() => onItemClick?.(item.id)}
-              className="w-10 h-10"
+              className="h-10 w-10"
             >
               {item.label.charAt(0)}
             </Button>
@@ -203,5 +217,5 @@ export function Sidebar({
         </div>
       )}
     </div>
-  );
+  )
 }

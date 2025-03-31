@@ -1,6 +1,6 @@
 "use client"
 
-import { Tabs, Tabs.Content, TabsList, Tabs.Trigger } from "@components/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/tabs"
 import React from "react"
 import { Preview } from "./preview"
 import { Write } from "./write"
@@ -12,17 +12,17 @@ export function FancyArea() {
   const [textValue, setTextValue] = React.useState(defaultText)
 
   return (
-    <Tabs.root defaultValue="write" className="w-full">
-      <Tabs.list >
-        <Tabs.Trigger value="write">Write</Tabs.Trigger>
-        <Tabs.Trigger value="preview">Preview</Tabs.Trigger>
+    <Tabs defaultValue="write" className="w-full">
+      <TabsList>
+        <TabsTrigger value="write">Write</TabsTrigger>
+        <TabsTrigger value="preview">Preview</TabsTrigger>
       </TabsList>
-      <Tabs.Content value="write">
+      <TabsContent value="write">
         <Write {...{ textValue, setTextValue }} />
-      </Tabs.Content>
-      <Tabs.Content value="preview">
+      </TabsContent>
+      <TabsContent value="preview">
         <Preview {...{ textValue }} />
-      </Tabs.Content>
+      </TabsContent>
     </Tabs>
   )
 }

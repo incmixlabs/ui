@@ -1,7 +1,7 @@
-import { RouterProvider } from '@tanstack/react-router'
-import { Theme } from '@radix-ui/themes'
-import { router } from './router'
-import './../style/global.css'
+import { Theme } from "@radix-ui/themes"
+import { RouterProvider } from "@tanstack/react-router"
+import { router } from "./router"
+import "./../style/global.css"
 
 function App() {
   return (
@@ -13,7 +13,7 @@ function App() {
       radius="large"
       appearance={"light"}
     >
-       <RouterProvider router={router} />
+      <RouterProvider router={router} />
     </Theme>
   )
 }

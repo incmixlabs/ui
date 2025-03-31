@@ -8,7 +8,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@components/carousel"
-import { Tabs, TabsList, Tabs.Trigger } from "@components/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@components/tabs"
 import { useRateLimitStore } from "@incmix/store"
 import { Spinner, Text } from "@incmix/ui"
 import { useQuery } from "@tanstack/react-query"
@@ -156,9 +156,9 @@ export default function NewsWidget({ country }: NewsProps) {
     if (topicData?.topics && Array.isArray(topicData.topics))
       return topicData.topics.map(({ topic_token, title }) => {
         return (
-          <Tabs.Trigger key={`cat_${topic_token}`} value={topic_token}>
+          <TabsTrigger key={`cat_${topic_token}`} value={topic_token}>
             {title}
-          </Tabs.Trigger>
+          </TabsTrigger>
         )
       })
   }, [topicData?.topics])
@@ -175,7 +175,7 @@ export default function NewsWidget({ country }: NewsProps) {
         onValueChange={setSelectedTopic}
         className="mb-2 px-12"
       >
-        <Tabs.list  className="w-full">{tabs}</TabsList>
+        <TabsList className="w-full">{tabs}</TabsList>
       </Tabs>
       {isNewsPending ? (
         <Spinner className="mx-auto" />
