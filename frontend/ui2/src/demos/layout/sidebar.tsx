@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/radixui/button';
-import { Separator } from '@/components/shadcn/separator';
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/shadcn/accordion';
+import { Separator } from '@/components/radixui/separator';
+import { Accordion } from '@/components/shadcn/accordion';
 import { ChevronRight, ChevronDown, PanelLeftClose, PanelLeft } from 'lucide-react';
 
 interface SidebarItem {
@@ -48,8 +48,8 @@ function SidebarGroup({
 
   if (hasChildren) {
     return (
-      <AccordionItem value={item.id} className="border-none">
-        <AccordionTrigger
+      <Accordion.Item value={item.id} className="border-none">
+        <Accordion.Trigger
           className={cn(
             "py-2",
             activeItem === item.id ? "bg-accent" : "",
@@ -57,8 +57,8 @@ function SidebarGroup({
           )}
         >
           {item.label}
-        </AccordionTrigger>
-        <AccordionContent className="pt-0 pb-0">
+        </Accordion.Trigger>
+        <Accordion.Content className="pt-0 pb-0">
           <div className="ml-2">
             {item.children?.map((child) => (
               <SidebarGroup
@@ -70,8 +70,8 @@ function SidebarGroup({
               />
             ))}
           </div>
-        </AccordionContent>
-      </AccordionItem>
+        </Accordion.Content>
+      </Accordion.Item>
     );
   }
 
@@ -98,7 +98,6 @@ export function Sidebar({
   defaultCollapsed = false,
   ...props
 }: SidebarProps) {
-  debugger;
   console.log(items)
   const [collapsed, setCollapsed] = useState(defaultCollapsed);
 
@@ -160,7 +159,7 @@ export function Sidebar({
                   </Button>
                 </div>
               </div>
-              <Accordion
+              <Accordion.Root
                 type="multiple"
                 defaultValue={items.filter(item => item.children?.length).map(item => item.id)}
                 className="space-y-1 mt-4"
@@ -173,7 +172,7 @@ export function Sidebar({
                     onItemClick={onItemClick}
                   />
                 ))}
-              </Accordion>
+              </Accordion.Root>
             </div>
           </div>
           <Separator />

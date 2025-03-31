@@ -1,16 +1,17 @@
+/* eslint-disable react-refresh/only-export-components */
 import * as React from "react"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import { ChevronDownIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-function Accordion({
+function Root({
   ...props
 }: React.ComponentProps<typeof AccordionPrimitive.Root>) {
   return <AccordionPrimitive.Root data-slot="accordion" {...props} />
 }
 
-function AccordionItem({
+function Item({
   className,
   ...props
 }: React.ComponentProps<typeof AccordionPrimitive.Item>) {
@@ -23,7 +24,7 @@ function AccordionItem({
   )
 }
 
-function AccordionTrigger({
+function Trigger({
   className,
   children,
   ...props
@@ -45,7 +46,7 @@ function AccordionTrigger({
   )
 }
 
-function AccordionContent({
+function Content({
   className,
   children,
   ...props
@@ -61,4 +62,9 @@ function AccordionContent({
   )
 }
 
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }
+export const Accordion = {
+  Root,
+  Trigger,
+  Item,
+  Content,
+}

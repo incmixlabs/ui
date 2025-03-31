@@ -5,13 +5,9 @@ import { SearchIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "../shadcn/dialog"
+} from "@/components/radixui/dialog"
 
-function Command({
+function Root({
   className,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive>) {
@@ -37,21 +33,20 @@ function CommandDialog({
   description?: string
 }) {
   return (
-    <Dialog {...props}>
-      <DialogHeader className="sr-only">
-        <DialogTitle>{title}</DialogTitle>
-        <DialogDescription>{description}</DialogDescription>
-      </DialogHeader>
-      <DialogContent className="overflow-hidden p-0">
-        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground **:data-[slot=command-input-wrapper]:h-12 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
+    <Dialog.Root {...props}>
+        <Dialog.Title>{title}</Dialog.Title>
+        <Dialog.Description>{description}</Dialog.Description>
+
+      <Dialog.Content >
+        <Root className="[&_[cmdk-group-heading]]:text-muted-foreground **:data-[slot=command-input-wrapper]:h-12 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
           {children}
-        </Command>
-      </DialogContent>
-    </Dialog>
+        </Root>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }
 
-function CommandInput({
+function Input({
   className,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Input>) {
@@ -73,7 +68,7 @@ function CommandInput({
   )
 }
 
-function CommandList({
+function List({
   className,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.List>) {
@@ -89,7 +84,7 @@ function CommandList({
   )
 }
 
-function CommandEmpty({
+function Empty({
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Empty>) {
   return (
@@ -101,7 +96,7 @@ function CommandEmpty({
   )
 }
 
-function CommandGroup({
+function Group({
   className,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Group>) {
@@ -117,7 +112,7 @@ function CommandGroup({
   )
 }
 
-function CommandSeparator({
+function Separator({
   className,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Separator>) {
@@ -130,7 +125,7 @@ function CommandSeparator({
   )
 }
 
-function CommandItem({
+function Item({
   className,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Item>) {
@@ -146,7 +141,7 @@ function CommandItem({
   )
 }
 
-function CommandShortcut({
+function Shortcut({
   className,
   ...props
 }: React.ComponentProps<"span">) {
@@ -161,15 +156,14 @@ function CommandShortcut({
     />
   )
 }
-
-export {
-  Command,
-  CommandDialog,
-  CommandInput,
-  CommandList,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-  CommandShortcut,
-  CommandSeparator,
+export const Command = {
+  Root,
+  Input,
+  Dialog: CommandDialog,
+  List,
+  Empty,
+  Group,
+  Item,
+  Shortcut,
+  Separator,
 }

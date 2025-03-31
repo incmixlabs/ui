@@ -1,27 +1,27 @@
 import React from 'react';
-import { Accordion } from '@/components/shadcn/accordion';
-import { Badge } from '@/components/radixui/badge';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/shadcn/accordion';
+import { Badge } from '@/components/shadcn/badge';
 import { Button as ShadcnButton } from '@/components/shadcn/button';
 import { Flex } from '@/components/radixui/flex';
 import { Calendar } from '@/components/shadcn/calendar';
-import { Card, } from '@/components/radixui/card';
-import { Command } from '@/components/shadcn/command';
-import { Dialog} from '@/components/radixui/dialog';
-import { DropdownMenu, } from '@/components/radixui/dropdown-menu';
-import { Form } from '@/components/shadcn/form';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/shadcn/card';
+import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator, CommandShortcut } from '@/components/shadcn/command';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/shadcn/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/shadcn/dropdown-menu';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/shadcn/form';
 import { Label } from '@/components/shadcn/label';
-import { RadioGroup } from '@/components/radixui/radio-group';
-import { Separator } from '@/components/radixui/separator';
-import { Tabs } from '@/components/radixui/tabs';
+import { RadioGroup, RadioGroupItem } from '@/components/shadcn/radio-group';
+import { Separator } from '@/components/shadcn/separator';
+import { Tabs, Tabs.Content, TabsList, Tabs.Trigger } from '@/components/shadcn/tabs';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Avatar } from '@/components/radixui/avatar';
 import { Button } from '@/components/radixui/button/button';
-import { MainLayout } from '../layout/MainLayout';
+import { MainLayout } from '@/components/layout/MainLayout';
 
-export function ComponentShowcase() {
+export function ShadcnComponentShowcase() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
   const [activeTab, setActiveTab] = React.useState('accordion');
 
@@ -56,13 +56,12 @@ export function ComponentShowcase() {
       <div className="container p-8">
         <h1 className="text-3xl font-bold mb-8">Components Showcase</h1>
 
-        <Tabs.Root value={activeTab} onValueChange={setActiveTab} className="w-full mb-12">
+        <Tabs.root value={activeTab} onValueChange={setActiveTab} className="w-full mb-12">
           <div className="hidden">
-            <Tabs.List  className="mb-4">
+            <Tabs.list  className="mb-4">
               <Tabs.Trigger value="accordion">Accordion</Tabs.Trigger>
-              <Tabs.Trigger className="bold" value="badge">Badge</Tabs.Trigger>
+              <Tabs.Trigger value="badge">Badge</Tabs.Trigger>
               <Tabs.Trigger value="button">Button</Tabs.Trigger>
-              <Tabs.Trigger className="bold" value="button">Button</Tabs.Trigger>
               <Tabs.Trigger value="calendar">Calendar</Tabs.Trigger>
               <Tabs.Trigger value="card">Card</Tabs.Trigger>
               <Tabs.Trigger value="command">Command</Tabs.Trigger>
@@ -71,32 +70,32 @@ export function ComponentShowcase() {
               <Tabs.Trigger value="form">Form</Tabs.Trigger>
               <Tabs.Trigger value="radio">Radio</Tabs.Trigger>
               <Tabs.Trigger value="separator">Separator</Tabs.Trigger>
-            </Tabs.List>
+            </TabsList>
           </div>
 
         {/* Accordion */}
         <Tabs.Content value="accordion" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Accordion</h2>
-          <Accordion.Root type="single" collapsible className="w-full">
-            <Accordion.Item value="item-1">
-              <Accordion.Trigger>Is it accessible?</Accordion.Trigger>
-              <Accordion.Content>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="item-1">
+              <AccordionTrigger>Is it accessible?</AccordionTrigger>
+              <AccordionContent>
                 Yes. It adheres to the WAI-ARIA design pattern.
-              </Accordion.Content>
-            </Accordion.Item>
-            <Accordion.Item value="item-2">
-              <Accordion.Trigger>Is it styled?</Accordion.Trigger>
-              <Accordion.Content>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2">
+              <AccordionTrigger>Is it styled?</AccordionTrigger>
+              <AccordionContent>
                 Yes. It comes with default styles that matches the other components.
-              </Accordion.Content>
-            </Accordion.Item>
-            <Accordion.Item value="item-3">
-              <Accordion.Trigger>Is it animated?</Accordion.Trigger>
-              <Accordion.Content>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-3">
+              <AccordionTrigger>Is it animated?</AccordionTrigger>
+              <AccordionContent>
                 Yes. It's animated by default, but you can disable it if you prefer.
-              </Accordion.Content>
-            </Accordion.Item>
-          </Accordion.Root>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </Tabs.Content>
 
         {/* Badge */}
@@ -176,137 +175,160 @@ export function ComponentShowcase() {
         {/* Card */}
         <Tabs.Content value="card" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Card</h2>
-          <Card.Root className="w-[350px]">
-
-              <Card.Title>Card Title</Card.Title>
-              <Card.Description>Card Description</Card.Description>
-
-            <Card.Content>
+          <Card className="w-[350px]">
+            <CardHeader>
+              <CardTitle>Card Title</CardTitle>
+              <CardDescription>Card Description</CardDescription>
+            </CardHeader>
+            <CardContent>
               <p>Card Content</p>
-            </Card.Content>
-            <Card.Footer>
+            </CardContent>
+            <CardFooter>
               <p>Card Footer</p>
-            </Card.Footer>
-          </Card.Root>
+            </CardFooter>
+          </Card>
         </Tabs.Content>
 
         {/* Command */}
         <Tabs.Content value="command" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Command</h2>
-          <Command.Root className="rounded-lg border shadow-md">
-            <Command.Input placeholder="Type a command or search..." />
-            <Command.List>
-              <Command.Empty>No results found.</Command.Empty>
-              <Command.Group heading="Suggestions">
-                <Command.Item>Calendar</Command.Item>
-                <Command.Item>Search</Command.Item>
-                <Command.Item>Settings</Command.Item>
-              </Command.Group>
-              <Command.Separator />
-              <Command.Group heading="Actions">
-                <Command.Item>
+          <Command className="rounded-lg border shadow-md">
+            <CommandInput placeholder="Type a command or search..." />
+            <CommandList>
+              <CommandEmpty>No results found.</CommandEmpty>
+              <CommandGroup heading="Suggestions">
+                <CommandItem>Calendar</CommandItem>
+                <CommandItem>Search</CommandItem>
+                <CommandItem>Settings</CommandItem>
+              </CommandGroup>
+              <CommandSeparator />
+              <CommandGroup heading="Actions">
+                <CommandItem>
                   New File
-                  <Command.Shortcut>⌘N</Command.Shortcut>
-                </Command.Item>
-                <Command.Item>
+                  <CommandShortcut>⌘N</CommandShortcut>
+                </CommandItem>
+                <CommandItem>
                   Open
-                  <Command.Shortcut>⌘O</Command.Shortcut>
-                </Command.Item>
-                <Command.Item>
+                  <CommandShortcut>⌘O</CommandShortcut>
+                </CommandItem>
+                <CommandItem>
                   Save
-                  <Command.Shortcut>⌘S</Command.Shortcut>
-                </Command.Item>
-              </Command.Group>
-            </Command.List>
-          </Command.Root>
+                  <CommandShortcut>⌘S</CommandShortcut>
+                </CommandItem>
+              </CommandGroup>
+            </CommandList>
+          </Command>
         </Tabs.Content>
 
         {/* Dialog */}
         <Tabs.Content value="dialog" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Dialog</h2>
-          <Dialog.Root>
-            <Dialog.Trigger asChild>
-              <Button>Open Dialog</Button>
-            </Dialog.Trigger>
-            <Dialog.Content className="sm:max-w-[425px]">
-
-                <Dialog.Title>Dialog Title</Dialog.Title>
-                <Dialog.Description>
+          <Dialog>
+            <DialogTrigger asChild>
+              <ShadcnButton>Open Dialog</ShadcnButton>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Dialog Title</DialogTitle>
+                <DialogDescription>
                   This is a dialog description. You can provide more information about this dialog here.
-                </Dialog.Description>
+                </DialogDescription>
+              </DialogHeader>
               <div className="grid gap-4 py-4">
                 <p>Dialog content goes here.</p>
               </div>
-              <Flex gap="3" mt="4" justify="end">
-              <Dialog.Close>
-        				<Button variant="soft" color="gray">
-					        Cancel
-				        </Button>
-              </Dialog.Close>
-                <Dialog.Close>
-                  <Button>Save changes</Button>
-                </Dialog.Close>
-              </Flex>
-            </Dialog.Content>
-          </Dialog.Root>
+              <DialogFooter>
+                <ShadcnButton>Save changes</ShadcnButton>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </Tabs.Content>
 
         {/* Dropdown Menu */}
         <Tabs.Content value="dropdown" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Dropdown Menu</h2>
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger asChild>
-              <Button>Open Dropdown</Button>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content className="w-56">
-              <DropdownMenu.Label>My Account</DropdownMenu.Label>
-              <DropdownMenu.Separator />
-              <DropdownMenu.Item>Profile</DropdownMenu.Item>
-              <DropdownMenu.Item>Billing</DropdownMenu.Item>
-              <DropdownMenu.Item>Team</DropdownMenu.Item>
-              <DropdownMenu.Item>Subscription</DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <ShadcnButton>Open Dropdown</ShadcnButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Billing</DropdownMenuItem>
+              <DropdownMenuItem>Team</DropdownMenuItem>
+              <DropdownMenuItem>Subscription</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </Tabs.Content>
 
         {/* Form */}
         <Tabs.Content value="form" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Form</h2>
-          <Form.Root {...form}>
+          <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-2/3">
-              <Form.Field
+              <FormField
                 control={form.control}
                 name="username"
                 render={({ field }) => (
-                  <Form.Item>
-                    <Form.Label>Username</Form.Label>
-                    <Form.Control>
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
                       <input
                         placeholder="Enter username"
                         className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm"
                         {...field}
                       />
-                    </Form.Control>
-                    <Form.Description>
+                    </FormControl>
+                    <FormDescription>
                       This is your public display name.
-                    </Form.Description>
-                    <Form.Message />
-                  </Form.Item>
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
                 )}
               />
-              <Button type="submit">Submit</Button>
+              <ShadcnButton type="submit">Submit</ShadcnButton>
             </form>
-          </Form.Root>
+          </Form>
         </Tabs.Content>
 
         {/* Radio Group */}
         <Tabs.Content value="radio" className="space-y-4">
           <h2 className="text-2xl font-semibold mb-4">Radio Group</h2>
-          <RadioGroup.Root defaultValue="1" name="example">
-            <RadioGroup.Item value="1">Default</RadioGroup.Item>
-            <RadioGroup.Item value="2">Comfortable</RadioGroup.Item>
-            <RadioGroup.Item value="3">Compact</RadioGroup.Item>
-          </RadioGroup.Root>
+          <Form {...form}>
+            <form className="w-2/3">
+              <FormField
+                control={form.control}
+                name="radio"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Select an option</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-col space-y-1"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="option1" id="option1" />
+                          <Label htmlFor="option1">Option 1</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="option2" id="option2" />
+                          <Label htmlFor="option2">Option 2</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="option3" id="option3" />
+                          <Label htmlFor="option3">Option 3</Label>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
         </Tabs.Content>
 
         {/* Separator */}
@@ -329,7 +351,7 @@ export function ComponentShowcase() {
             </div>
           </div>
         </Tabs.Content>
-      </Tabs.Root>
+      </Tabs>
     </div>
     </MainLayout>
   );

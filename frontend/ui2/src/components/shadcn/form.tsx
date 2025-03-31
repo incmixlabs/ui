@@ -12,9 +12,10 @@ import {
 } from "react-hook-form"
 
 import { cn } from "@/lib/utils"
-import { Label } from "./label"
+import { Label } from "@/components/shadcn/label"
+import { Item } from "@radix-ui/themes/components/checkbox-group.primitive"
 
-const Form = FormProvider
+const Root = FormProvider
 
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
@@ -153,13 +154,17 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
   )
 }
 
+
 export {
-  useFormField,
-  Form,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-  FormField,
+  useFormField
+}
+
+export const Form = {
+  Root,
+  Item: FormItem,
+  Label: FormLabel,
+  Control: FormControl,
+  Description: FormDescription,
+  Message: FormMessage,
+  Field: FormField,
 }
