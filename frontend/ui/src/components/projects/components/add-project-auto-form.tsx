@@ -1,7 +1,6 @@
 import AutoForm from "@components/auto-form"
 import { Button, Dialog } from "@radix-ui/themes"
 import jsonSchemaToZod from "json-schema-to-zod"
-// frontend/ui/src/components/projects/components/add-project-auto-form.tsx
 import { useState } from "react"
 import { z } from "zod"
 import { ProjectsImages } from "../images"
@@ -16,15 +15,7 @@ interface AddProjectAutoFormProps {
 
 /**
  * Renders a dialog with an auto-generated form for creating a new project.
- *
- * This component converts a JSON schema to a Zod schema to dynamically construct an AutoForm.
- * It manages local form state and transforms input data into a new project object with default values,
- * then invokes callbacks to add the project and close the dialog.
- *
- * @param isOpen - Controls the visibility of the dialog.
- * @param onClose - Callback invoked to close the dialog.
- * @param onAddProject - Callback invoked with the new project object (excluding its ID) upon form submission.
- * @returns A JSX element representing the dialog with the form.
+ * Fixed to properly handle file uploads.
  */
 export function AddProjectAutoForm({
   isOpen,
@@ -59,6 +50,9 @@ export function AddProjectAutoForm({
 
   // Handle form submission
   const handleSubmit = (data: any) => {
+    // Pass the raw File object directly, not as a serialized object
+    const fileData = data.files // This should be a File object from AutoFormFile
+
     // Transform form data to match the Project type
     const newProject: Omit<Project, "id"> = {
       title: data.title,
@@ -66,21 +60,21 @@ export function AddProjectAutoForm({
       logo: ProjectsImages.user, // Default logo
       description: data.description,
       progress: 0, // Default progress
-      timeLeft: "1", // Default timeLeft
-      timeType: "week", // Default timeType
+      timeLeft: data.timeLeft || "1", // Default timeLeft
+      timeType: data.timeType || "week", // Default timeType
       members: data.members || [],
-      status: "started", // Default status
+      status: data.status || "started", // Default status
       startDate: data.startDate
         ? new Date(data.startDate).getTime()
-        : undefined,
-      endDate: data.endDate ? new Date(data.endDate).getTime() : undefined,
-      budget: data.budget ? Number.parseFloat(data.budget) : undefined,
-      files:
-        data.files && data.files.length > 0
-          ? URL.createObjectURL(data.files[0])
-          : undefined,
+        : Date.now(),
+      endDate: data.endDate
+        ? new Date(data.endDate).getTime()
+        : Date.now() + 7 * 24 * 60 * 60 * 1000,
+      budget: data.budget ? Number.parseFloat(data.budget) : 0,
+      // Just pass the file data as is - our improved saveFormProject will handle it
+      fileData: fileData,
     }
-    console.log("newProject", newProject)
+
     onAddProject(newProject)
     setFormData({}) // Reset form
     onClose()
