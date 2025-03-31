@@ -10,6 +10,7 @@ import {
   ScrollArea,
   Text,
 } from "@incmix/ui"
+import { toast } from "@incmix/ui"
 import { cn } from "@utils"
 import { LayoutGrid, List, Plus, SlidersHorizontal, X } from "lucide-react"
 import { motion } from "motion/react"
@@ -80,9 +81,14 @@ export function ProjectPageComponents() {
       if (activeTab === "all" || activeTab === newProject.status) {
         setFilteredProjects([...filteredProjects, projectWithId])
       }
+      toast.success("Project created successfully", {
+        description: `"${newProject.title}" has been added to your projects.`,
+      })
     } catch (error) {
       console.error("Failed to save project to RxDB:", error)
-
+      toast.error("Failed to save project", {
+        description: "Your project couldn't be saved Please try again.",
+      })
       // Still update the UI state even if DB save fails
       const updatedProjects = [...projects, projectWithId]
       setProjects(updatedProjects)
