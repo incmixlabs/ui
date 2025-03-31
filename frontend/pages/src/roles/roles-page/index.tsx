@@ -8,20 +8,32 @@ import {
   TableRow,
 } from "@incmix/ui/table"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { flexRender, useReactTable } from "@tanstack/react-table"
+import {
+  type ExpandedState,
+  flexRender,
+  getExpandedRowModel,
+  useReactTable,
+} from "@tanstack/react-table"
 import { getCoreRowModel } from "@tanstack/react-table"
 import { PlusCircleIcon, PlusIcon } from "lucide-react"
-import React from "react"
+import React, { useState } from "react"
 import { getColumns } from "./columns"
-import { permissionsWithRoles } from "./mock"
-import type { RoleWithPermissions } from "./types"
+import { groupedPermissions, permissionsWithRoles } from "./mock"
+import type { RoleWithPermissionsWithSubrows } from "./types"
 const RolesPage = () => {
+  const [expandedRows, setExpandedRows] = useState<ExpandedState>({})
   console.log(permissionsWithRoles)
   const columns = getColumns()
-  const table = useReactTable<RoleWithPermissions>({
-    data: permissionsWithRoles,
+  const table = useReactTable<RoleWithPermissionsWithSubrows>({
+    data: groupedPermissions,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    state: {
+      expanded: expandedRows,
+    },
+    onExpandedChange: setExpandedRows,
+    getSubRows: (row) => row.subRows,
   })
   return (
     <DashboardLayout breadcrumbItems={[{ label: "Roles", url: "/roles" }]}>

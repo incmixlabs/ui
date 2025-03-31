@@ -1,7 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table"
 
 import { Checkbox, Flex, Input, Text } from "@incmix/ui"
-import { EllipsisVertical } from "lucide-react"
+import { ChevronDown, ChevronRight, EllipsisVertical } from "lucide-react"
 import { useState } from "react"
 import { roles } from "./mock"
 import type { RoleWithPermissions } from "./types"
@@ -14,9 +14,25 @@ export const getColumns = (): ColumnDef<RoleWithPermissions>[] => {
     accessorKey: "name",
     cell: ({ row }) => {
       return (
-        <div className="font-medium capitalize">
-          {`${row.getValue("name")} (${row.original.subject})`}
-        </div>
+        <Flex style={{ paddingLeft: `${row.depth * 2}rem` }}>
+          {row.getCanExpand() && (
+            <button
+              {...{
+                onClick: row.getToggleExpandedHandler(),
+                style: { cursor: "pointer" },
+              }}
+            >
+              {row.getIsExpanded() ? (
+                <ChevronDown className="size-4" />
+              ) : (
+                <ChevronRight className="size-4" />
+              )}
+            </button>
+          )}
+          <div className="font-medium capitalize">
+            {`${row.getValue("name")} (${row.original.subject})`}
+          </div>
+        </Flex>
       )
     },
   }

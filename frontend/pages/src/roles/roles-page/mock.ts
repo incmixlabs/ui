@@ -1,4 +1,11 @@
-import type { Permission, Role, RolePermission } from "./types"
+import type {
+  Permission,
+  PermissionWithSubrows,
+  Role,
+  RolePermission,
+  RoleWithPermissions,
+  RoleWithPermissionsWithSubrows,
+} from "./types"
 
 export const roles: Role[] = [
   {
@@ -93,17 +100,60 @@ export const rolePermissions: RolePermission[] = [
   },
 ]
 
-export const permissionsWithRoles = permissions.map((permission) => {
-  return {
-    ...permission,
-    ...Object.fromEntries(
-      rolePermissions.map((rp) => {
-        const role = roles.find((r) => r.id === rp.roleId)
-        const hasPermission = rolePermissions.some(
-          (rp) => rp.permissionId === permission.id
-        )
-        return [role?.name, hasPermission]
-      })
-    ),
+export const permissionsWithRoles: RoleWithPermissions[] = permissions.map(
+  (permission) => {
+    return {
+      ...permission,
+      ...Object.fromEntries(
+        rolePermissions.map((rp) => {
+          const role = roles.find((r) => r.id === rp.roleId)
+          const hasPermission = rolePermissions.some(
+            (rp) => rp.permissionId === permission.id
+          )
+          return [role?.name, hasPermission]
+        })
+      ),
+    }
   }
-})
+)
+
+export const groupPermissionsBySubject =
+  (): RoleWithPermissionsWithSubrows[] => {
+    // Group permissions by subject
+    const groupedBySubject = permissionsWithRoles.reduce<
+      Record<string, RoleWithPermissions[]>
+    >((acc, permission) => {
+      const { subject } = permission
+      if (!acc[subject]) {
+        acc[subject] = []
+      }
+      acc[subject].push(permission)
+      return acc
+    }, {})
+
+    // Convert the grouped permissions into the required format
+    return Object.entries(groupedBySubject).map(([subject, permissions]) => {
+      // Create a parent row for each subject
+      // @ts-expect-error
+      const parentRow: RoleWithPermissionsWithSubrows = {
+        id: `subject-${subject}`,
+        name: `Manage ${subject}`,
+        subject: subject,
+        // Copy the permission values from the first permission in the group
+        ...Object.fromEntries(roles.map((role) => [role.name, false])),
+        // Add subRows with the actual permissions
+        subRows: permissions,
+      }
+
+      // Update parent row permissions based on children
+      roles.forEach((role) => {
+        // If all permissions in this subject have this role, set parent to true
+        parentRow[role.name] = permissions.every((p) => p[role.name])
+      })
+
+      return parentRow
+    })
+  }
+
+export const groupedPermissions = groupPermissionsBySubject()
+console.log(groupedPermissions)
