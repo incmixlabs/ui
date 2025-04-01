@@ -1,64 +1,99 @@
 import { Input } from "@components/form/input"
-import {
-  FormControl,
-  FormItem,
-  FormMessage,
-} from "@components/shadcn-form/form"
+import { FormControl, FormMessage } from "@components/shadcn-form/form"
 import { Plus, Trash2 } from "lucide-react"
-import { type ChangeEvent, useState } from "react"
+import { type ChangeEvent, useEffect, useRef, useState } from "react"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 
 /**
  * Renders a file upload component with preview and removal capabilities.
  *
- * This component enables file selection within a form. When a file is chosen, it creates an object URL for preview and reads the file as a base64-encoded string to pass the file data back via a change handler. If the file is an image, it displays a preview; otherwise, it shows the file name. The component also provides the ability to remove the selected file, which clears the internal state and revokes the preview URL.
- *
- * @param label - The text label displayed above the file input.
- * @param isRequired - Indicates whether the file input is required.
- * @param fieldProps - Additional configuration for the file input. The optional `showLabel` property controls label visibility.
- * @param field - Field-specific configuration and callback for updating form state with the file data.
+ * This component ensures that the raw File object is passed directly to the form field
+ * and not serialized, which is essential for RxDB attachment handling.
  */
 export default function AutoFormFile({
   label,
   isRequired,
   fieldProps,
-  field,
+  field, // This comes from react-hook-form via AutoForm
 }: AutoFormInputComponentProps) {
   const { showLabel: _showLabel, ...fieldPropsWithoutShowLabel } = fieldProps
   const showLabel = _showLabel === undefined ? true : _showLabel
-  const [file, setFile] = useState<string | null>(null)
+  const [localFile, setLocalFile] = useState<File | null>(null)
   const [fileName, setFileName] = useState<string | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Effect to handle removal/reset from outside the component
+  useEffect(() => {
+    if (field.value === null || field.value === undefined) {
+      cleanupResources()
+    } else if (field.value instanceof File && field.value !== localFile) {
+      updateWithFile(field.value)
+    }
+  }, [field.value])
+
+  // Cleanup function to prevent memory leaks
+  const cleanupResources = () => {
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl)
+    }
+    setLocalFile(null)
+    setFileName(null)
+    setPreviewUrl(null)
+
+    // Reset the file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
+  }
+
+  // Update component state with a file
+  const updateWithFile = (file: File) => {
+    // Clean up previous preview URL if it exists
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl)
+    }
+
+    // Create new preview URL
+    const objectUrl = URL.createObjectURL(file)
+
+    setLocalFile(file)
+    setFileName(file.name)
+    setPreviewUrl(objectUrl)
+  }
+
+  // Clean up when component unmounts
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl)
+      }
+    }
+  }, [])
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const selectedFile = e.target.files?.[0]
 
-    if (file) {
-      // Create object URL for preview
-      const objectUrl = URL.createObjectURL(file)
-      setPreviewUrl(objectUrl)
+    if (selectedFile) {
+      updateWithFile(selectedFile)
 
-      // Read as base64 for form value (keeping original functionality)
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setFile(reader.result as string)
-        setFileName(file.name)
-        field.onChange(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+      // IMPORTANT: Pass the actual File object directly to the form
+      // This is the key to ensuring we're working with a real File object
+      field.onChange(selectedFile)
+    } else {
+      handleRemoveClick()
     }
   }
 
   const handleRemoveClick = () => {
-    setFile(null)
-    setFileName(null)
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl)
-      setPreviewUrl(null)
-    }
-    field.onChange("")
+    cleanupResources()
+    field.onChange(null) // Clear the form value
   }
+
+  // Determine if the file is an image for preview purposes
+  const isImage = localFile?.type.startsWith("image/")
+  const canPreview = isImage && previewUrl
 
   return (
     <div className="flex flex-col items-center space-y-2">
@@ -73,14 +108,15 @@ export default function AutoFormFile({
       )}
 
       <div className="relative h-28 w-36 rounded-lg">
-        {!file ? (
+        {!localFile ? (
           <div className="relative h-full w-full">
             <FormControl>
               <Input
                 type="file"
+                ref={fileInputRef}
                 {...fieldPropsWithoutShowLabel}
                 onChange={handleFileChange}
-                value={""}
+                value={undefined} // Must be undefined for file inputs
                 className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
               />
             </FormControl>
@@ -94,15 +130,21 @@ export default function AutoFormFile({
           <div className="relative h-full w-full">
             {/* File preview */}
             <div className="absolute inset-0 h-full w-full overflow-hidden rounded-md bg-gray-4">
-              {previewUrl && fileName?.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+              {canPreview ? (
                 <img
                   src={previewUrl}
-                  alt={fileName}
+                  alt={fileName ?? "File preview"}
                   className="h-full w-full rounded-md object-cover"
+                  onError={() => {
+                    console.error("Failed to load image preview")
+                    setPreviewUrl(null)
+                  }}
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-gray-3 p-2">
-                  <p className="truncate text-center text-sm">{fileName}</p>
+                  <p className="truncate text-center text-sm">
+                    {fileName ?? "File selected"}
+                  </p>
                 </div>
               )}
 

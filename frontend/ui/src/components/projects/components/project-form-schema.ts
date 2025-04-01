@@ -21,8 +21,7 @@ export const projectFormSchema: ProjectFormSchema = {
     type: "object",
     properties: {
       files: {
-        type: "string",
-        format: "data-url",
+        type: "object",
         title: "Project Image",
       },
       title: {
