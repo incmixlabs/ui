@@ -373,7 +373,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
     return (
       <>
         {dataArray.map((item, index) => (
-          <>
+          <React.Fragment key={`fragment-${item.id}`}>
             <TableRow key={`row-${item.id}`}>
               <TableCell>
                 {item.type === "folder" ? (
@@ -406,7 +406,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                 )}
               </TableCell>
             </TableRow>
-          </>
+          </React.Fragment>
         ))}
       </>
     )
