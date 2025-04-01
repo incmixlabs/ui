@@ -109,7 +109,28 @@ export function ComponentShowcase() {
               </Accordion.Item>
             </Accordion.Root>
           </Tabs.Content>
-
+        {/* Avatar */}
+        <Tabs.Content value="radix-avatar" className="space-y-4">
+            <h2 className="mb-4 font-semibold text-2xl">RadixUI Avatar</h2>
+            <Flex align="center" gap="4">
+              <Avatar
+                size="1"
+                src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
+                fallback="A"
+              />
+              <Avatar
+                size="2"
+                src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
+                fallback="A"
+              />
+              <Avatar variant="solid" fallback="A" />
+              <Avatar variant="soft" fallback="A" />
+              <Avatar variant="solid" color="indigo" fallback="A" />
+              <Avatar variant="solid" color="cyan" fallback="A" />
+              <Avatar variant="solid" color="orange" fallback="A" />
+              <Avatar variant="solid" color="crimson" fallback="A" />
+            </Flex>
+          </Tabs.Content>
           {/* Badge */}
           <Tabs.Content value="badge" className="space-y-4">
             <h2 className="mb-4 font-semibold text-2xl">Badge</h2>
@@ -152,28 +173,7 @@ export function ComponentShowcase() {
               <Button size="3">Size 3</Button>
             </div>
           </Tabs.Content>
-          {/* Avatar */}
-          <Tabs.Content value="radix-avatar" className="space-y-4">
-            <h2 className="mb-4 font-semibold text-2xl">RadixUI Avatar</h2>
-            <Flex align="center" gap="4">
-              <Avatar
-                size="1"
-                src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
-                fallback="A"
-              />
-              <Avatar
-                size="2"
-                src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
-                fallback="A"
-              />
-              <Avatar variant="solid" fallback="A" />
-              <Avatar variant="soft" fallback="A" />
-              <Avatar variant="solid" color="indigo" fallback="A" />
-              <Avatar variant="solid" color="cyan" fallback="A" />
-              <Avatar variant="solid" color="orange" fallback="A" />
-              <Avatar variant="solid" color="crimson" fallback="A" />
-            </Flex>
-          </Tabs.Content>
+
           {/* Calendar */}
           <Tabs.Content value="calendar" className="space-y-4">
             <h2 className="mb-4 font-semibold text-2xl">Calendar</h2>
@@ -312,7 +312,34 @@ export function ComponentShowcase() {
               </form>
             </Form.Root>
           </Tabs.Content>
-
+          {/* Pagination */}
+          <Tabs.Content value="pagination" className="space-y-4">
+            <h2 className="mb-4 font-semibold text-2xl">Pagination</h2>
+            <Pagination.Root>
+              <Pagination.Content>
+                <Pagination.Item>
+                  <Pagination.Previous href="#" />
+                </Pagination.Item>
+                <Pagination.Item>
+                  <Pagination.Link href="#">1</Pagination.Link>
+                </Pagination.Item>
+                <Pagination.Item>
+                  <Pagination.Link href="#" isActive>
+                    2
+                  </Pagination.Link>
+                </Pagination.Item>
+                <Pagination.Item>
+                  <Pagination.Link href="#">3</Pagination.Link>
+                </Pagination.Item>
+                <Pagination.Item>
+                  <Pagination.Ellipsis />
+                </Pagination.Item>
+                <Pagination.Item>
+                  <Pagination.Next href="#" />
+                </Pagination.Item>
+              </Pagination.Content>
+            </Pagination.Root>
+          </Tabs.Content>
           {/* Radio Group */}
           <Tabs.Content value="radio" className="space-y-4">
             <h2 className="mb-4 font-semibold text-2xl">Radio Group</h2>
