@@ -9,17 +9,18 @@ interface MainLayoutProps {
 }
 const shadcnComponents = [
   { id: "accordion", label: "Accordion" },
+
+  { id: "radix-avatar", label: "Avatar" },
   { id: "badge", label: "Badge" },
   { id: "button", label: "Button" },
-  { id: "pagination", label: "Pagination" },
   { id: "radix-button", label: "Button" },
-  { id: "radix-avatar", label: "Avatar" },
   { id: "calendar", label: "Calendar" },
   { id: "card", label: "Card" },
   { id: "command", label: "Command" },
   { id: "dialog", label: "Dialog" },
   { id: "dropdown", label: "Dropdown" },
   { id: "form", label: "Form" },
+  { id: "pagination", label: "Pagination" },
   { id: "radio", label: "Radio" },
   { id: "separator", label: "Separator" },
 
