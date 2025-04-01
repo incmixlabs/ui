@@ -228,6 +228,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         isSelected: pathname.includes("/organizations"),
       },
       {
+        title: "Roles and Permissions",
+        url: "/roles",
+        icon: LockIcon,
+        isSelected: pathname.includes("/roles"),
+      },
+      {
         title: t("sidebar:docs"),
         url: "/docs",
         icon: TextIcon,

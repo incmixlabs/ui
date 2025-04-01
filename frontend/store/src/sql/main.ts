@@ -44,8 +44,8 @@ await database.addCollections({
   },
 })
 
-const BFF_API_URL: string = import.meta.env["VITE_BFF_API_URL"] || ""
-const _TASKS_API_URL = `${BFF_API_URL}${API.TASKS}`
+// const BFF_API_URL: string = import.meta.env["VITE_BFF_API_URL"] || ""
+// const _TASKS_API_URL = `${BFF_API_URL}${API.TASKS}`
 
 // if (database.tasks) {
 //   replicateRxCollection<TaskDocType, { updatedAt: number; id: string }>({
