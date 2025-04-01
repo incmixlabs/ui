@@ -39,3 +39,12 @@ export function capitalizedToCamel(str: string): string {
     .join("")
   return camelCase
 }
+
+export function encodeHTML(str: string) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;")
+}

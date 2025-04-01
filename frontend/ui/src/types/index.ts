@@ -74,3 +74,18 @@ export interface Project {
 export type IconProps = SVGProps<SVGSVGElement> & {
   size?: string | number
 }
+
+export interface DataItem {
+  name?: string
+  notes?: string
+  value?: string
+}
+
+export interface TreeDataItem {
+  children?: TreeDataItem[]
+  data?: DataItem
+  expanded?: boolean
+  id: string
+  name: string
+  type: "folder" | "file"
+}

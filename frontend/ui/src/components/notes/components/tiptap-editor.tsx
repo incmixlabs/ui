@@ -1,7 +1,7 @@
 import { Box, Button, Flex } from "@incmix/ui"
 import { EditorProvider, useCurrentEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
-import { encodeHTML } from "@utils/string"
+import { encodeHTML } from "@utils/strings"
 import {
   Bold,
   Code,

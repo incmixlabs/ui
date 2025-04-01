@@ -27,7 +27,7 @@ const DialogContent = React.forwardRef<
   >
     {children}
     <DialogPrimitive.Close className="absolute top-4 right-4 cursor-pointer rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-      <Button variant="ghost">
+      <Button variant="ghost" className="h-6 w-6">
         <X className={iconSize} />
         <span className="sr-only">Close</span>
       </Button>
