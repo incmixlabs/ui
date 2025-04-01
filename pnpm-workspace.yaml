@@ -17,9 +17,9 @@ catalog:
   vite-plugin-bundlesize: 0.1.0
   zod: 3.24.1
   nanoid: "5.0.9"
-  "@radix-ui/themes": 3.2.0
-  "@tanstack/react-query": 5.65.1
-  "@tanstack/react-router": 1.98.3
+  "@radix-ui/themes": 3.2.1
+  "@tanstack/react-query":  5.71.0
+  "@tanstack/react-router": 1.114.29
   "@tiptap/react": 2.11.5
   "@tiptap/starter-kit": 2.11.5
   "@types/react": 19.0.0
