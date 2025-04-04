@@ -13,7 +13,7 @@ import {
 
 import { Label } from "@/components/shadcn/label"
 import { cn } from "@/lib/utils"
-import { Item } from "@radix-ui/themes/components/checkbox-group.primitive"
+// import { Item } from "@radix-ui/themes/components/checkbox-group.primitive"
 
 const Root = FormProvider
 
