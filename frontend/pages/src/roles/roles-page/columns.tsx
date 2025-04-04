@@ -1,12 +1,16 @@
-import type { ColumnDef } from "@tanstack/react-table"
+import type { ColumnDef, Row } from "@tanstack/react-table"
 
 import { Checkbox, Flex, Input, Text } from "@incmix/ui"
 import { ChevronDown, ChevronRight, EllipsisVertical } from "lucide-react"
 import { useState } from "react"
-import { roles } from "./mock"
-import type { RoleWithPermissions } from "./types"
 
-export const getColumns = (): ColumnDef<RoleWithPermissions>[] => {
+import type { Role, RoleWithPermissions } from "./types"
+import type { Change } from "./actions"
+
+export const getColumns = (
+  roles: Role[],
+  setChanges: React.Dispatch<React.SetStateAction<Change[]>>
+): ColumnDef<RoleWithPermissions>[] => {
   const searchColumn: ColumnDef<RoleWithPermissions> = {
     header: () => {
       return <Input placeholder="Search Permissions" />
@@ -30,7 +34,7 @@ export const getColumns = (): ColumnDef<RoleWithPermissions>[] => {
             </button>
           )}
           <div className="font-medium capitalize">
-            {`${row.getValue("name")} (${row.original.subject})`}
+            {`${row.original.action} ${row.original.subject}`}
           </div>
         </Flex>
       )
@@ -55,16 +59,55 @@ export const getColumns = (): ColumnDef<RoleWithPermissions>[] => {
     },
     accessorKey: role.name,
     cell: ({ row }) => {
-      const hasPermission = row.original[role.name] ?? false
-      const [isChecked, setIsChecked] = useState(hasPermission)
-      return (
-        <Checkbox
-          checked={isChecked}
-          onCheckedChange={(v) => setIsChecked(Boolean(v))}
-        />
-      )
+      return <CheckboxCell row={row} role={role} setChanges={setChanges} />
     },
   }))
 
   return [searchColumn, ...columns]
+}
+
+const CheckboxCell = ({
+  row,
+  role,
+  setChanges,
+}: {
+  row: Row<RoleWithPermissions>
+  role: Role
+  setChanges: React.Dispatch<React.SetStateAction<Change[]>>
+}) => {
+  let hasPermission: boolean | "intermediate" = row.original[role.name] ?? false
+
+  if (row.subRows.length > 0) {
+    const isAllTrue = row.subRows.every((subRow) => subRow.original[role.name])
+    const isAllFalse = row.subRows.every(
+      (subRow) => !subRow.original[role.name]
+    )
+    if (isAllTrue) {
+      hasPermission = true
+    } else if (isAllFalse) {
+      hasPermission = false
+    } else {
+      hasPermission = "intermediate"
+    }
+  }
+
+  const [isChecked, setIsChecked] = useState(hasPermission)
+  const handleChange = (v: boolean) => {
+    setIsChecked(v)
+    setChanges((prev) => [
+      ...prev,
+      {
+        roleId: role.id,
+        action: row.original.action,
+        subject: row.original.subject,
+        enabled: v,
+      },
+    ])
+  }
+  return (
+    <Checkbox
+      checked={isChecked}
+      onCheckedChange={(v) => handleChange(Boolean(v))}
+    />
+  )
 }
