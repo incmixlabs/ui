@@ -12,8 +12,14 @@ export type ButtonProps = RadixButtonProps & {
   mobileSidebarTrigger?: boolean
   variant?: RadixButtonProps["variant"] | "naked"
 }
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ children, className, disabled, variant, ...props }, ref) => {
+export const Button = ({ 
+  children, 
+  className, 
+  disabled, 
+  variant, 
+  ref,
+  ...props 
+}: ButtonProps & { ref?: React.Ref<HTMLButtonElement> }) => {
     const defaultClassName = `${disabled ? "cursor-not-allowed" : "cursor-pointer"} `
     return (
       <RadixButton

@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Command as CommandPrimitive, useCommandState } from 'cmdk';
 import { X } from 'lucide-react';
-import { forwardRef, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Command } from '@/components/shadcn/command';
@@ -132,17 +132,13 @@ function isOptionsExist(groupOption: GroupOption, targetOption: Option[]) {
  *
  * @reference: https://github.com/hsuanyi-chou/shadcn-ui-expansions/issues/34#issuecomment-1949561607
  **/
-const CommandEmpty = forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<typeof CommandPrimitive.Empty>
->(({ className, ...props }, forwardedRef) => {
+const CommandEmpty = ({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Empty>) => {
   const render = useCommandState((state) => state.filtered.count === 0);
 
   if (!render) return null;
 
   return (
     <div
-      ref={forwardedRef}
       className={cn('py-6 text-center text-sm', className)}
       cmdk-empty=""
       role="presentation"
@@ -153,9 +149,7 @@ const CommandEmpty = forwardRef<
 
 CommandEmpty.displayName = 'CommandEmpty';
 
-const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorProps>(
-  (
-    {
+const MultipleSelector = ({
       value,
       onChange,
       placeholder,
@@ -179,9 +173,7 @@ const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorP
       commandProps,
       inputProps,
       hideClearAllButton = false,
-    }: MultipleSelectorProps,
-    ref: React.Ref<MultipleSelectorRef>,
-  ) => {
+    }: MultipleSelectorProps & { ref?: React.Ref<MultipleSelectorRef> }) => {
     const inputRef = React.useRef<HTMLInputElement>(null);
     const [open, setOpen] = React.useState(false);
     const [onScrollbar, setOnScrollbar] = React.useState(false);
