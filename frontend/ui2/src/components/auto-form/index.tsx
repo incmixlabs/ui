@@ -1,11 +1,12 @@
-import { Form } from "@/components/shadcn-form/form"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Form } from "@/components/shadcn/form"
 
 import { type DefaultValues, useForm } from "react-hook-form"
 import type { z } from "zod"
 
-import { Button } from "@/components/button"
+import { Button } from "@/components/radixui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { cn } from "@utils/cn"
+import { cn } from "@/lib/utils"
 
 import AutoFormObject from "./fields/object"
 import type { FieldConfig } from "./types"
@@ -80,7 +81,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
 
   return (
     <div className="w-full">
-      <Form {...form}>
+      <Form.Root {...form}>
         <form
           noValidate // Add noValidate to disable browser validation
           onSubmit={(e) => {
@@ -105,7 +106,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
 
           {children}
         </form>
-      </Form>
+      </Form.Root>
     </div>
   )
 }

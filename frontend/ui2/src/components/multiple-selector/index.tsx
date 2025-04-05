@@ -33,7 +33,7 @@ export const MultipleSelectorControlled: React.FC<
       <MultipleSelector
         value={value}
         onChange={setValue}
-        defaultColor={themeColor}
+        // Removed defaultColor={themeColor} as it's not defined in the component props
         defaultOptions={OPTIONS}
         placeholder="Select frameworks you like..."
         creatable

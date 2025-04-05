@@ -1,13 +1,10 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/accordion/shadcn-accordion"
-
-import { SCNformField } from "@/components/shadcn-form/form"
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { type useForm, useFormContext } from "react-hook-form"
 import type * as z from "zod"
+import {
+  Accordion,
+} from "@/components/shadcn/accordion"
+import { Form } from "@/components/shadcn/form"
 import { DEFAULT_ZOD_HANDLERS, INPUT_COMPONENTS } from "../config"
 import type { FieldConfig, FieldConfigItem, FieldGroupConfig } from "../types"
 import {
@@ -75,9 +72,9 @@ function renderField({
   // Handle ZodObject
   if (zodBaseType === "ZodObject") {
     return (
-      <AccordionItem value={name} key={key} className="border-none">
-        <AccordionTrigger>{itemName}</AccordionTrigger>
-        <AccordionContent className="p-2">
+      <Accordion.Item value={name} key={key} className="border-none">
+        <Accordion.Trigger>{itemName}</Accordion.Trigger>
+        <Accordion.Content className="p-2">
           <AutoFormObject
             schema={item as unknown as z.ZodObject<any, any>}
             form={form}
@@ -86,8 +83,8 @@ function renderField({
             }
             path={[...path, name]}
           />
-        </AccordionContent>
-      </AccordionItem>
+        </Accordion.Content>
+      </Accordion.Item>
     )
   }
 
@@ -106,7 +103,7 @@ function renderField({
       zodInputProps.required || fieldConfigItem.inputProps?.required || false
 
     return (
-      <SCNformField
+      <Form.Field
         control={form.control}
         name={key}
         key={key}
@@ -170,7 +167,7 @@ function renderField({
     zodInputProps.required || fieldConfigItem.inputProps?.required || false
 
   return (
-    <SCNformField
+    <Form.Field
       control={form.control}
       name={key}
       key={key}
@@ -431,8 +428,8 @@ export default function AutoFormObject<
     .filter(Boolean) // Remove null values
 
   return (
-    <Accordion type="multiple" className="space-y-5 border-none">
+    <Accordion.Root type="multiple" className="space-y-5 border-none">
       {renderedFields}
-    </Accordion>
+    </Accordion.Root>
   )
 }

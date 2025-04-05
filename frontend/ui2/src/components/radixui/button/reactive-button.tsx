@@ -11,16 +11,16 @@ export type ReactiveButtonProps = ButtonProps & {
   successIconClassName?: string
 }
 
-export const ReactiveButton = ({
-  children,
-  loading,
-  success,
-  disabled,
-  spinnerClassName,
-  successIconClassName,
-  ref,
-  ...props
-}: ReactiveButtonProps & { ref?: React.Ref<HTMLButtonElement> }) => {
+export const ReactiveButton = React.forwardRef<HTMLButtonElement, ReactiveButtonProps>(
+  function ReactiveButton({
+    children,
+    loading,
+    success,
+    disabled,
+    spinnerClassName,
+    successIconClassName,
+    ...props
+  }, ref) {
     return (
       <Button {...props} ref={ref} disabled={loading || disabled}>
         {loading ? (

@@ -59,7 +59,7 @@ export default function AutoFormEnum({
           </SelectContent>
         </Select>
       </Form.Control>
-      <AutoFormTooltip fieldConfigItem={fieldConfigItem} />
+      <AutoFormTooltip content={fieldConfigItem.description} />
       <Form.Message />
     </Form.Item>
   )

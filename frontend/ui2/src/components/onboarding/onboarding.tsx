@@ -1,6 +1,6 @@
-import { useMediaQuery } from "@hooks/use-media-query"
-import { Button, Card, Flex } from "@incmix/ui"
-import { Step, Stepper, StepperProvider, useStepper } from "@incmix/ui/stepper"
+import { useMediaQuery } from "@/hooks/use-media-query"
+import { Button, Card, Flex } from "@/components/radixui"
+import { Step, Stepper, StepperProvider, useStepper } from "@/components/stepper"
 import { useState } from "react"
 import { formSchema } from "./form-schema"
 

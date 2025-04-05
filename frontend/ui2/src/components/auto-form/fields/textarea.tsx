@@ -1,9 +1,7 @@
 import {
-  FormControl,
-  FormItem,
-  FormMessage,
-} from "@/components/shadcn-form/form"
-import { Textarea } from "@/components/textarea"
+  Form
+} from "@/components/shadcn/form"
+import { TextArea } from "@/components/radixui/text-area"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 
@@ -28,7 +26,7 @@ export default function AutoFormTextarea({
   const showLabel = _showLabel === undefined ? true : _showLabel
 
   return (
-    <FormItem className="flex w-full flex-col space-y-2">
+    <Form.Item className="flex w-full flex-col space-y-2">
       {showLabel && (
         <div className="mb-1">
           <AutoFormLabel
@@ -38,8 +36,8 @@ export default function AutoFormTextarea({
           />
         </div>
       )}
-      <FormControl>
-        <Textarea
+      <Form.Control>
+        <TextArea
           className=" w-full resize-none rounded-md border-0 bg-zinc-950 text-white focus-visible:ring-0 focus-visible:ring-offset-0"
           placeholder={
             fieldPropsWithoutShowLabel?.placeholder ||
@@ -47,10 +45,10 @@ export default function AutoFormTextarea({
           }
           {...fieldPropsWithoutShowLabel}
         />
-      </FormControl>
+      </Form.Control>
       <div>
-        <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
+        <Form.Message className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
       </div>
-    </FormItem>
+    </Form.Item>
   )
 }

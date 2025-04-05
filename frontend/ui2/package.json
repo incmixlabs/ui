@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "@eslint/js": "catalog:",
+    "@incmix/config": "workspace: *",
     "@tailwindcss/vite": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

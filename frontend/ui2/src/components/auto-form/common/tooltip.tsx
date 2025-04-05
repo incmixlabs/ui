@@ -1,28 +1,34 @@
+import React from "react"
 import {
   Tooltip,
-
 } from "@/components/radixui/tooltip"
 import { IconButton } from "@/components/radixui/button"
 import { HelpCircle } from "lucide-react"
 
-import { width, size, radius, variant, type Size, Radius, Variant} from "@/components/types"
-import React from "react"
+import { iconWidth, size as sizeConst, radius as radiusConst, buttonVariant } from "@/types"
+import type { Size, Radius, ButtonVariant } from "@/types"
+
 export type AutoFormTooltipProps = {
   content?: string | React.ReactNode
-  Icon?: React.ReactNode
+  Icon?: React.ComponentType<{ width?: number; height?: number }>
   size?: Size
   radius?: Radius
-  variant?: Variant
+  variant?: ButtonVariant
 }
 
-function AutoFormTooltip({ content, Icon=HelpCircle, size=size.sm, radius=radius.full, variant=variant.ghost}: { fieldConfigItem: any }) {
-  const description = fieldConfigItem?.description
+function AutoFormTooltip({ 
+  content, 
+  Icon = HelpCircle, 
+  size = sizeConst.sm as Size, 
+  radius = radiusConst.full as Radius, 
+  variant = buttonVariant.ghost as ButtonVariant
+}: AutoFormTooltipProps) {
   return (
     <>
-      {description && (
-        <Tooltip content={description}>
+      {content && (
+        <Tooltip content={content}>
           <IconButton radius={radius} size={size} variant={variant}>
-            <Icon width={width[size]} height={width[size]} />
+            <Icon width={iconWidth[size]} height={iconWidth[size]} />
           </IconButton>
         </Tooltip>)
       }

@@ -4,9 +4,9 @@ import { Command as CommandPrimitive, useCommandState } from 'cmdk';
 import { X } from 'lucide-react';
 import { useEffect } from 'react';
 
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/components/radixui/badge';
 import { Command } from '@/components/shadcn/command';
-import { useDebounce}
+import { useDebounce } from '@/hooks/use-debounce';
 import { cn } from '@/lib/utils';
 
 export interface Option {
@@ -69,7 +69,7 @@ interface MultipleSelectorProps {
   /** Allow user to create option when there is no option matched. */
   creatable?: boolean;
   /** Props of `Command` */
-  commandProps?: React.ComponentPropsWithoutRef<typeof Command>;
+  commandProps?: React.ComponentPropsWithoutRef<typeof Command.Root>;
   /** Props of `CommandInput` */
   inputProps?: Omit<
     React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>,
@@ -132,13 +132,17 @@ function isOptionsExist(groupOption: GroupOption, targetOption: Option[]) {
  *
  * @reference: https://github.com/hsuanyi-chou/shadcn-ui-expansions/issues/34#issuecomment-1949561607
  **/
-const CommandEmpty = ({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Empty>) => {
+const CommandEmpty = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<typeof CommandPrimitive.Empty>
+>(function CommandEmpty({ className, ...props }, ref) {
   const render = useCommandState((state) => state.filtered.count === 0);
 
   if (!render) return null;
 
   return (
     <div
+      ref={ref}
       className={cn('py-6 text-center text-sm', className)}
       cmdk-empty=""
       role="presentation"
@@ -149,7 +153,8 @@ const CommandEmpty = ({ className, ...props }: React.ComponentProps<typeof Comma
 
 CommandEmpty.displayName = 'CommandEmpty';
 
-const MultipleSelector = ({
+const MultipleSelector = React.forwardRef<MultipleSelectorRef, MultipleSelectorProps>(
+  function MultipleSelector({
       value,
       onChange,
       placeholder,
@@ -173,7 +178,7 @@ const MultipleSelector = ({
       commandProps,
       inputProps,
       hideClearAllButton = false,
-    }: MultipleSelectorProps & { ref?: React.Ref<MultipleSelectorRef> }) => {
+    }, ref) {
     const inputRef = React.useRef<HTMLInputElement>(null);
     const [open, setOpen] = React.useState(false);
     const [onScrollbar, setOnScrollbar] = React.useState(false);

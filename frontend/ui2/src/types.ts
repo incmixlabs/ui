@@ -9,7 +9,17 @@ export const side = {
 export type Direction = "ltr" | "rtl"
 export const direction = {
   ltr: "ltr",
-  rtl: "rtl",
+  rtl: "rtl"
+}
+
+export type IconProps = SVGProps<SVGSVGElement> & {
+  size?: string | number
+}
+export const iconWidth = {
+  "1": 15,
+  "2": 18,
+  "3": 22,
+  "4": 24
 }
 export type Size = "1" | "2" | "3" | "4"
 export const size = {
@@ -70,13 +80,13 @@ export type DynamicStringEnumKeysOf<T extends object> = DynamicStringEnum<
   keyof RemoveIndexSignature<T>
 >
 
-export type StateColor {
+export type StateColor = {
   info: string
   failure: string
   success: string
   warning: string
 }
-export interface Colors extends StateColors {
+export interface Colors extends StateColor {
   [key: string]: string
   blue: string
   cyan: string

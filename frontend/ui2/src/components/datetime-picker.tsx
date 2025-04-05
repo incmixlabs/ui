@@ -125,7 +125,10 @@ const useSmartDateInput = () => {
   return context
 }
 
-export const SmartDatetimeInput = ({
+export const SmartDatetimeInput = React.forwardRef<HTMLInputElement, Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "type" | "ref" | "value" | "defaultValue" | "onBlur"
+> & SmartDatetimeInputProps>(function SmartDatetimeInput({
   className,
   value,
   onValueChange,
@@ -134,55 +137,48 @@ export const SmartDatetimeInput = ({
   removeInput,
   showCalendar = true,
   showTimePicker = true,
-  ref
-}: Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  "type" | "ref" | "value" | "defaultValue" | "onBlur"
-> &
-  SmartDatetimeInputProps & { ref?: React.Ref<HTMLInputElement> }) => {
-    const [Time, setTime] = React.useState<string>("")
+}, ref) {
+  const [Time, setTime] = React.useState<string>("")
 
-    const onTimeChange = React.useCallback((time: string) => {
-      setTime(time)
-    }, [])
+  const onTimeChange = React.useCallback((time: string) => {
+    setTime(time)
+  }, [])
 
-    // If neither calendar nor timepicker is specified, show both
-    const shouldShowBoth = showCalendar === showTimePicker
+  // If neither calendar nor timepicker is specified, show both
+  const shouldShowBoth = showCalendar === showTimePicker
 
-    return (
-      <SmartDatetimeInputContext.Provider
-        value={{
-          value,
-          onValueChange,
-          Time,
-          onTimeChange,
-          removeInput,
-          showCalendar: shouldShowBoth ? true : showCalendar,
-          showTimePicker: shouldShowBoth ? true : showTimePicker,
-        }}
-      >
-        <div className="w-full rounded-md bg-gray-3">
-          <div
-            className={cn(
-              "flex w-full items-center gap-0 rounded-md border border-gray-5 bg-gray-5 p-1 transition-all",
-              className
-            )}
-          >
-            <DateTimeLocalInput />
-            {!removeInput && (
-              <NaturalLanguageInput
-                placeholder={placeholder}
-                disabled={disabled}
-                ref={ref}
-              />
-            )}
-          </div>
+  return (
+    <SmartDatetimeInputContext.Provider
+      value={{
+        value,
+        onValueChange,
+        Time,
+        onTimeChange,
+        removeInput,
+        showCalendar: shouldShowBoth ? true : showCalendar,
+        showTimePicker: shouldShowBoth ? true : showTimePicker,
+      }}
+    >
+      <div className="w-full rounded-md bg-gray-3">
+        <div
+          className={cn(
+            "flex w-full items-center gap-0 rounded-md border border-gray-5 bg-gray-5 p-1 transition-all",
+            className
+          )}
+        >
+          <DateTimeLocalInput />
+          {!removeInput && (
+            <NaturalLanguageInput
+              placeholder={placeholder}
+              disabled={disabled}
+              ref={ref}
+            />
+          )}
         </div>
-      </SmartDatetimeInputContext.Provider>
-    )
-  }
-)
-
+      </div>
+    </SmartDatetimeInputContext.Provider>
+  )
+})
 SmartDatetimeInput.displayName = "DatetimeInput"
 
 // Make it a standalone component
@@ -435,11 +431,10 @@ const getDefaultPlaceholder = (
   }
   return 'e.g. "tomorrow at 5pm" or "in 2 hours"'
 }
-const NaturalLanguageInput = ({ placeholder, ref, ...props }: {
+const NaturalLanguageInput = React.forwardRef<HTMLInputElement, {
   placeholder?: string
   disabled?: boolean
-  ref?: React.Ref<HTMLInputElement>
-}) => {
+}>(function NaturalLanguageInput({ placeholder, ...props }, ref) {
   const { value, onValueChange, onTimeChange, showCalendar, showTimePicker } =
     useSmartDateInput()
 
@@ -467,7 +462,7 @@ const NaturalLanguageInput = ({ placeholder, ref, ...props }: {
       ).padStart(2, "0")} ${hour >= 12 ? "PM" : "AM"}`
       onTimeChange(timeVal)
     }
-  }, [value, showCalendar, showTimePicker])
+  }, [value, showCalendar, showTimePicker, onTimeChange])
 
   const handleParse = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -511,7 +506,7 @@ const NaturalLanguageInput = ({ placeholder, ref, ...props }: {
         }
       }
     },
-    [value, showCalendar, showTimePicker]
+    [value, showCalendar, showTimePicker, onValueChange]
   )
 
   const handleKeydown = React.useCallback(

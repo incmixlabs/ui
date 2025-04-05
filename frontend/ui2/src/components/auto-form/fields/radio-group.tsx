@@ -1,10 +1,8 @@
-import { RadioGroup, RadioGroupItem } from "@/components/radio-group"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { RadioGroup} from "@/components/radixui"
 import {
-  FormControl,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/shadcn-form/form"
+  Form
+} from "@/components/shadcn/form"
 import type * as z from "zod"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"
@@ -31,31 +29,31 @@ export default function AutoFormRadioGroup({
 
   return (
     <div className="flex flex-row items-center space-x-2">
-      <FormItem className="flex w-full flex-row items-center justify-start">
+      <Form.Item className="flex w-full flex-row items-center justify-start">
         <AutoFormLabel label={label} isRequired={isRequired} />
-        <FormControl>
-          <RadioGroup
+        <Form.Control>
+          <RadioGroup.Root
             onValueChange={field.onChange}
             defaultValue={field.value}
             className="flex h-10 w-full flex-row items-center space-x-1 rounded-md border p-2 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
             {...fieldProps}
           >
             {values?.map((value: any) => (
-              <FormItem
+              <Form.Item
                 className="flex items-center space-x-3 space-y-0"
                 key={value}
               >
-                <FormControl>
-                  <RadioGroupItem value={value} />
-                </FormControl>
-                <FormLabel className="font-normal">{value}</FormLabel>
-              </FormItem>
+                <Form.Control>
+                  <RadioGroup.Item value={value} />
+                </Form.Control>
+                <Form.Label className="font-normal">{value}</Form.Label>
+              </Form.Item>
             ))}
-          </RadioGroup>
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-      <AutoFormTooltip fieldConfigItem={fieldConfigItem} />
+          </RadioGroup.Root>
+        </Form.Control>
+        <Form.Message />
+      </Form.Item>
+      <AutoFormTooltip content={fieldConfigItem.description} />
     </div>
   )
 }

@@ -1,5 +1,5 @@
-import { Input } from "@/components/form/input"
-import { FormControl, FormMessage } from "@/components/shadcn-form/form"
+import { Input } from "@/components/shadcn/input"
+import { Form } from "@/components/shadcn/form"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 
@@ -46,19 +46,19 @@ export default function AutoFormNumber({
           </span>
         )}
 
-        <FormControl>
+        <Form.Control>
           <Input
             type="number"
             {...fieldPropsWithoutShowLabel}
             className={`h-14 w-full rounded-lg ${isCurrency ? "pl-8" : "px-4"}`}
             placeholder={fieldPropsWithoutShowLabel.placeholder || "0.00"}
           />
-        </FormControl>
+        </Form.Control>
       </div>
 
       {/* Fixed height error message container to prevent layout shift */}
       <div className="min-h-[24px] px-1 pt-1">
-        <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
+        <Form.Message className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
       </div>
     </div>
   )
