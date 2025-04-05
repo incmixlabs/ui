@@ -1,5 +1,5 @@
-import { Input } from "@components/form/input"
-import { FormControl, FormMessage } from "@components/shadcn-form/form"
+import { Input } from "@/components/form/input"
+import { FormControl, FormMessage } from "@/components/shadcn-form/form"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 

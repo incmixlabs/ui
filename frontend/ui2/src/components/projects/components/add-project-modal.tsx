@@ -1,16 +1,16 @@
-import { SmartDatetimeInput } from "@components/datetime-picker"
+import { SmartDatetimeInput } from "@/components/datetime-picker"
 import {
   FileInput,
   FileUploader,
   FileUploaderContent,
   FileUploaderItem,
-} from "@components/file-upload"
-import { Input } from "@components/form"
-import { Label } from "@components/label"
+} from "@/components/file-upload"
+import { Input } from "@/components/form"
+import { Label } from "@/components/label"
 import MultipleSelector, {
   type Option,
-} from "@components/multiple-selector/multiple-selector"
-import { Textarea } from "@components/textarea"
+} from "@/components/multiple-selector/multiple-selector"
+import { Textarea } from "@/components/textarea"
 import {
   Box,
   Button,

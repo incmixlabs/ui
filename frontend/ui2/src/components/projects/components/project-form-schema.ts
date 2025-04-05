@@ -1,8 +1,8 @@
 // frontend/ui/src/components/projects/components/project-form-schema.ts
 import { members } from "../data"
 
-import type { FieldConfig } from "@components/auto-form/types"
-import type { ZodObjectOrWrapped } from "@components/auto-form/utils"
+import type { FieldConfig } from "@/components/auto-form/types"
+import type { ZodObjectOrWrapped } from "@/components/auto-form/utils"
 import type { z } from "zod"
 
 export interface ProjectFormSchema<

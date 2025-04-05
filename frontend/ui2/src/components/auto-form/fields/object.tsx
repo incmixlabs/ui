@@ -3,9 +3,9 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@components/accordion/shadcn-accordion"
+} from "@/components/accordion/shadcn-accordion"
 
-import { SCNformField } from "@components/shadcn-form/form"
+import { SCNformField } from "@/components/shadcn-form/form"
 import { type useForm, useFormContext } from "react-hook-form"
 import type * as z from "zod"
 import { DEFAULT_ZOD_HANDLERS, INPUT_COMPONENTS } from "../config"

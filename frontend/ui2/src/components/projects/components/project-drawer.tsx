@@ -1,7 +1,7 @@
-import { Avatar } from "@components/avatar"
-import { MotionSheet } from "@components/custom-sheet"
-import { ComboBox } from "@components/kanban-board/combo-box"
-import { attachments } from "@components/kanban-board/data"
+import { Avatar } from "@/components/avatar"
+import { MotionSheet } from "@/components/custom-sheet"
+import { ComboBox } from "@/components/kanban-board/combo-box"
+import { attachments } from "@/components/kanban-board/data"
 import { useProjectDrawer } from "@hooks/use-project-drawer"
 import {
   Box,

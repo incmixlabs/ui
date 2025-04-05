@@ -1,10 +1,10 @@
-import MultipleSelector from "@components/multiple-selector/multiple-selector"
+import MultipleSelector from "@/components/multiple-selector/multiple-selector"
 import {
   FormControl,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@components/shadcn-form/form"
+} from "@/components/shadcn-form/form"
 import type { AutoFormInputComponentProps } from "../types"
 
 // Define the allowed color types to match the component's requirements

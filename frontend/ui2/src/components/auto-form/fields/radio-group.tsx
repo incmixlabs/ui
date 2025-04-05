@@ -1,10 +1,10 @@
-import { RadioGroup, RadioGroupItem } from "@components/radio-group"
+import { RadioGroup, RadioGroupItem } from "@/components/radio-group"
 import {
   FormControl,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@components/shadcn-form/form"
+} from "@/components/shadcn-form/form"
 import type * as z from "zod"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"
