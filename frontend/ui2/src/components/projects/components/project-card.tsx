@@ -1,4 +1,3 @@
-import { useProjectDrawer } from "@/hooks/use-project-drawer"
 import {
   Box,
   Card,
@@ -9,6 +8,7 @@ import {
   Progress,
   Text,
 } from "@/components/base"
+import { useProjectDrawer } from "@/hooks/use-project-drawer"
 import {
   Clock,
   Ellipsis,

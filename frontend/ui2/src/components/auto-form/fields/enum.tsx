@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Form } from "@/components/shadcn"
 
-import type * as z from "zod"
-import AutoFormLabel from "../common/label"
-import AutoFormTooltip from "../common/tooltip"
-import type { AutoFormInputComponentProps } from "../types"
-import { getBaseSchema } from "../utils"
 import {
   Select,
   SelectContent,
@@ -13,6 +8,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/shadcn/select"
+import type * as z from "zod"
+import AutoFormLabel from "../common/label"
+import AutoFormTooltip from "../common/tooltip"
+import type { AutoFormInputComponentProps } from "../types"
+import { getBaseSchema } from "../utils"
 
 export default function AutoFormEnum({
   label,

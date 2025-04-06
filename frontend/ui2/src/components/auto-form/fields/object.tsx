@@ -1,10 +1,8 @@
+import { Accordion } from "@/components/shadcn/accordion"
+import { Form } from "@/components/shadcn/form"
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type useForm, useFormContext } from "react-hook-form"
 import type * as z from "zod"
-import {
-  Accordion,
-} from "@/components/shadcn/accordion"
-import { Form } from "@/components/shadcn/form"
 import { DEFAULT_ZOD_HANDLERS, INPUT_COMPONENTS } from "../config"
 import type { FieldConfig, FieldConfigItem, FieldGroupConfig } from "../types"
 import {

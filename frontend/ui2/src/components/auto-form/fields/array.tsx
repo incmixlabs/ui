@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Accordion } from "@/components/shadcn/accordion"
 
+import { Button, Separator } from "@/components/radixui"
 import { Plus, Trash } from "lucide-react"
 import { useFieldArray, type useForm } from "react-hook-form"
 import type * as z from "zod"
 import { beautifyObjectName } from "../utils"
 import AutoFormObject from "./object"
-import { Button, Separator } from "@/components/radixui"
 
 export default function AutoFormArray({
   name,

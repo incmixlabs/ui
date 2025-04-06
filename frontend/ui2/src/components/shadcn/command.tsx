@@ -2,13 +2,13 @@
 // https://github.com/shadcn-ui/ui/blob/main/apps/v4/registry/new-york-v4/ui/command.tsx
 "use client"
 
-import type * as React from "react"
 import { Command as CommandPrimitive } from "cmdk"
 import { SearchIcon } from "lucide-react"
+import type * as React from "react"
 
+import { Container } from "@/components/radixui/container"
+import { Dialog } from "@/components/radixui/dialog"
 import { cn } from "@/lib/utils"
- import { Dialog } from "@/components/radixui/dialog"
- import { Container} from "@/components/radixui/container"
 
 function CommandRoot({
   className,
@@ -171,4 +171,4 @@ export const Command = {
   Item: CommandItem,
   Shortcut: CommandShortcut,
   Separator: CommandSeparator,
-};
+}

@@ -1,12 +1,15 @@
-import React from "react"
-import {
-  Tooltip,
-} from "@/components/radixui/tooltip"
 import { IconButton } from "@/components/radixui/button"
+import { Tooltip } from "@/components/radixui/tooltip"
 import { HelpCircle } from "lucide-react"
+import type React from "react"
 
-import { iconWidth, size as sizeConst, radius as radiusConst, buttonVariant } from "@/types"
-import type { Size, Radius, ButtonVariant } from "@/types"
+import {
+  buttonVariant,
+  iconWidth,
+  radius as radiusConst,
+  size as sizeConst,
+} from "@/types"
+import type { ButtonVariant, Radius, Size } from "@/types"
 
 export type AutoFormTooltipProps = {
   content?: string | React.ReactNode
@@ -16,12 +19,12 @@ export type AutoFormTooltipProps = {
   variant?: ButtonVariant
 }
 
-function AutoFormTooltip({ 
-  content, 
-  Icon = HelpCircle, 
-  size = sizeConst.sm as Size, 
-  radius = radiusConst.full as Radius, 
-  variant = buttonVariant.ghost as ButtonVariant
+function AutoFormTooltip({
+  content,
+  Icon = HelpCircle,
+  size = sizeConst.sm as Size,
+  radius = radiusConst.full as Radius,
+  variant = buttonVariant.ghost as ButtonVariant,
 }: AutoFormTooltipProps) {
   return (
     <>
@@ -30,8 +33,8 @@ function AutoFormTooltip({
           <IconButton radius={radius} size={size} variant={variant}>
             <Icon width={iconWidth[size]} height={iconWidth[size]} />
           </IconButton>
-        </Tooltip>)
-      }
+        </Tooltip>
+      )}
     </>
   )
 }

@@ -5,12 +5,13 @@ import {
   FileUploaderContent,
   FileUploaderItem,
 } from "@/components/file-upload"
-import { Input } from "@/components/shadcn/input"
-import { Label } from "@/components/shadcn/label"
 import MultipleSelector, {
   type Option,
 } from "@/components/multiple-selector/multiple-selector"
+import { Image } from "@/components/radixui/card/flow-card"
 import { TextArea } from "@/components/radixui/text-area"
+import { Input } from "@/components/shadcn/input"
+import { Label } from "@/components/shadcn/label"
 import {
   Box,
   Button,
@@ -22,7 +23,6 @@ import {
   Text,
 } from "@incmix/ui"
 import { Calendar, Paperclip, Plus, X } from "lucide-react"
-import {Image} from "@/components/radixui/card/flow-card"
 import { useEffect, useState } from "react"
 import { members } from "../data"
 import { ProjectsImages } from "../images"

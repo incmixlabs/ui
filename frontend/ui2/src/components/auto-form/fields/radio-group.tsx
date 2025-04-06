@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { RadioGroup} from "@/components/radixui"
-import {
-  Form
-} from "@/components/shadcn/form"
+import { RadioGroup } from "@/components/radixui"
+import { Form } from "@/components/shadcn/form"
 import type * as z from "zod"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"

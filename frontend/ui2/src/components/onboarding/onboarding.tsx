@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // @ts-nocheck
 
-import { useMediaQuery } from "@/hooks/use-media-query"
 import { Card, Flex } from "@/components/radixui"
 import { Step, Stepper, StepperProvider } from "@/components/stepper"
+import { useMediaQuery } from "@/hooks/use-media-query"
 import { useState } from "react"
 import { formSchema } from "./form-schema"
 
@@ -38,7 +38,10 @@ export const Onboarding = () => {
               value={{
                 steps: formSchema.steps.map((step) => ({
                   label: step.label,
-                  description: typeof step.stepIcon === "string" ? step.stepIcon : undefined,
+                  description:
+                    typeof step.stepIcon === "string"
+                      ? step.stepIcon
+                      : undefined,
                 })),
                 initialStep: 0,
               }}

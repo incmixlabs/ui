@@ -1,61 +1,59 @@
+import { cn } from "./classNames"
+import { TW_VARS } from "./constants"
+import { mapPropsToVariantClass, parseClassNames } from "./parser"
 import {
-  ClassedProducer,
-  Variants,
-  ClassedCoreFunctionType,
   // ClassedType,
   // ClassedVariants,
   $$ClassedVariants,
-} from "./types";
-import { mapPropsToVariantClass, parseClassNames } from "./parser";
-import { cn } from "./classNames";
-import { TW_VARS } from "./constants";
+  type ClassedCoreFunctionType,
+  type ClassedProducer,
+  type Variants,
+} from "./types"
 
 export interface ClassedCoreConfig {
-  merger?: (...args: string[]) => any;
+  merger?: (...args: string[]) => any
 }
-export interface CreateClassedCoreType {
-  (config?: ClassedCoreConfig): {
-    classed: ClassedCoreFunctionType;
-  };
+export type CreateClassedCoreType = (config?: ClassedCoreConfig) => {
+  classed: ClassedCoreFunctionType
 }
 
 const internalClassed = <V extends Variants = {}>(
-  classes: Array<any>,
-  { merger = cn }: ClassedCoreConfig = {},
+  classes: any[],
+  { merger = cn }: ClassedCoreConfig = {}
 ) => {
   const { className, variants, defaultVariants, compoundVariants } =
-    parseClassNames(classes);
+    parseClassNames(classes)
 
   const producer = ((variantProps: any) => {
     const variantClassName = mapPropsToVariantClass(
       { variants, defaultVariants, compoundVariants },
-      variantProps,
-    );
+      variantProps
+    )
 
-    const extra = [variantProps?.className, variantProps?.class].filter(Boolean);
+    const extra = [variantProps?.className, variantProps?.class].filter(Boolean)
 
-    return merger(className, variantClassName, ...extra);
-  }) as ClassedProducer<V>;
+    return merger(className, variantClassName, ...extra)
+  }) as ClassedProducer<V>
 
   Reflect.set(producer, TW_VARS, {
     className,
     variants,
     defaultVariants,
     compoundVariants,
-  });
+  })
 
-  return producer;
-};
+  return producer
+}
 
 export const createClassed = ((config?: ClassedCoreConfig) => {
-  const classed = (...args: any[]) => internalClassed(args, config);
+  const classed = (...args: any[]) => internalClassed(args, config)
 
   return {
     classed,
-  };
-}) as unknown as CreateClassedCoreType;
+  }
+}) as unknown as CreateClassedCoreType
 
-export const classed = createClassed().classed as ClassedCoreFunctionType;
+export const classed = createClassed().classed as ClassedCoreFunctionType
 
 /**
  * @param component - The component to get the variant configuration for.
@@ -79,6 +77,8 @@ export const classed = createClassed().classed as ClassedCoreFunctionType;
  *    },
  * });
  */
-export function getVariantConfig<T extends { [$$ClassedVariants]: {} }>(component: T) {
-  return Reflect.get(component, TW_VARS) as T[$$ClassedVariants];
+export function getVariantConfig<T extends { [$$ClassedVariants]: {} }>(
+  component: T
+) {
+  return Reflect.get(component, TW_VARS) as T[$$ClassedVariants]
 }

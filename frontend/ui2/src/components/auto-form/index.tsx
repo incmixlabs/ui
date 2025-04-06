@@ -5,8 +5,8 @@ import { type DefaultValues, useForm } from "react-hook-form"
 import type { z } from "zod"
 
 import { Button } from "@/components/radixui/button"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { cn } from "@/lib/utils"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 import AutoFormObject from "./fields/object"
 import type { FieldConfig } from "./types"

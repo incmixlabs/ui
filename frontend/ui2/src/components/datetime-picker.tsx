@@ -4,16 +4,16 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/radixui"
 import { Popover } from "@/components/radixui"
-import { parseDate } from "chrono-node"
-import React from "react"
-import type { ActiveModifiers } from "react-day-picker"
 import { Button } from "@/components/radixui"
-import { CalendarIcon } from "lucide-react"
 import { Calendar } from "@/components/shadcn"
 import type { CalendarProps } from "@/components/shadcn"
+import { cn } from "@/lib/utils"
+import { parseDate } from "chrono-node"
+import { CalendarIcon } from "lucide-react"
+import React from "react"
+import type { ActiveModifiers } from "react-day-picker"
 
 /* -------------------------------------------------------------------------- */
 /*                               Inspired By:                                 */
@@ -125,19 +125,26 @@ const useSmartDateInput = () => {
   return context
 }
 
-export const SmartDatetimeInput = React.forwardRef<HTMLInputElement, Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  "type" | "ref" | "value" | "defaultValue" | "onBlur"
-> & SmartDatetimeInputProps>(function SmartDatetimeInput({
-  className,
-  value,
-  onValueChange,
-  placeholder,
-  disabled,
-  removeInput,
-  showCalendar = true,
-  showTimePicker = true,
-}, ref) {
+export const SmartDatetimeInput = React.forwardRef<
+  HTMLInputElement,
+  Omit<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    "type" | "ref" | "value" | "defaultValue" | "onBlur"
+  > &
+    SmartDatetimeInputProps
+>(function SmartDatetimeInput(
+  {
+    className,
+    value,
+    onValueChange,
+    placeholder,
+    disabled,
+    removeInput,
+    showCalendar = true,
+    showTimePicker = true,
+  },
+  ref
+) {
   const [Time, setTime] = React.useState<string>("")
 
   const onTimeChange = React.useCallback((time: string) => {
@@ -431,10 +438,13 @@ const getDefaultPlaceholder = (
   }
   return 'e.g. "tomorrow at 5pm" or "in 2 hours"'
 }
-const NaturalLanguageInput = React.forwardRef<HTMLInputElement, {
-  placeholder?: string
-  disabled?: boolean
-}>(function NaturalLanguageInput({ placeholder, ...props }, ref) {
+const NaturalLanguageInput = React.forwardRef<
+  HTMLInputElement,
+  {
+    placeholder?: string
+    disabled?: boolean
+  }
+>(function NaturalLanguageInput({ placeholder, ...props }, ref) {
   const { value, onValueChange, onTimeChange, showCalendar, showTimePicker } =
     useSmartDateInput()
 

@@ -20,10 +20,7 @@ function Root({ className, ...props }: React.ComponentProps<"nav">) {
   )
 }
 
-function Content({
-  className,
-  ...props
-}: React.ComponentProps<"ul">) {
+function Content({ className, ...props }: React.ComponentProps<"ul">) {
   return (
     <ul
       data-slot="pagination-content"
@@ -65,10 +62,7 @@ function Link({
   )
 }
 
-function Previous({
-  className,
-  ...props
-}: React.ComponentProps<typeof Link>) {
+function Previous({ className, ...props }: React.ComponentProps<typeof Link>) {
   return (
     <Link
       aria-label="Go to previous page"
@@ -81,10 +75,7 @@ function Previous({
   )
 }
 
-function Next({
-  className,
-  ...props
-}: React.ComponentProps<typeof Link>) {
+function Next({ className, ...props }: React.ComponentProps<typeof Link>) {
   return (
     <Link
       aria-label="Go to next page"
@@ -97,10 +88,7 @@ function Next({
   )
 }
 
-function Ellipsis({
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
+function Ellipsis({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       aria-hidden

@@ -1,14 +1,14 @@
-import MultipleSelector, { Option as SelectorOption } from "@/components/multiple-selector/multiple-selector"
-import {
-  Form,
-} from "@/components/shadcn/form"
+import MultipleSelector, {
+  type Option as SelectorOption,
+} from "@/components/multiple-selector/multiple-selector"
+import { Form } from "@/components/shadcn/form"
 import type { AutoFormInputComponentProps } from "../types"
 
 /**
  * Renders a multiple selection form field.
  *
  * This component displays a selector that allows the user to choose multiple options. It pulls available options and styling
- * information from the configuration props, defaulting to "gray" if necessary. The field label is conditionally rendered based 
+ * information from the configuration props, defaulting to "gray" if necessary. The field label is conditionally rendered based
  * on provided configuration, and a validation message placeholder is included.
  *
  * @param props - Properties for configuring the multiple selection field:

@@ -9,7 +9,7 @@ export const side = {
 export type Direction = "ltr" | "rtl"
 export const direction = {
   ltr: "ltr",
-  rtl: "rtl"
+  rtl: "rtl",
 }
 
 export type IconProps = SVGProps<SVGSVGElement> & {
@@ -19,24 +19,24 @@ export const iconWidth = {
   "1": 15,
   "2": 18,
   "3": 22,
-  "4": 24
+  "4": 24,
 }
 export type Size = "1" | "2" | "3" | "4"
 export const size = {
-  "sm": "1",
-  "md": "2",
-  "lg": "3",
-  "xl": "4",
-  "default": "2"
+  sm: "1",
+  md: "2",
+  lg: "3",
+  xl: "4",
+  default: "2",
 }
 export type ExtendSize = Size | "5" | "6" | "7" | "8" | "9"
 export const extendedSize = {
   ...size,
-  "xl": "5",
+  xl: "5",
   "1x": "6",
   "2x": "7",
   "3x": "8",
-  "4x": "9"
+  "4x": "9",
 }
 export type Radius = "none" | "small" | "medium" | "large" | "full"
 export const radius = {
@@ -50,14 +50,14 @@ export type Variant = "classic" | "surface" | "soft"
 export const variant = {
   classic: "classic",
   surface: "surface",
-  soft: "soft"
+  soft: "soft",
 }
 export type ButtonVariant = Variant | "outline" | "solid" | "ghost"
 export const buttonVariant = {
   ...variant,
   outline: "outline",
   solid: "solid",
-  ghost: "ghost"
+  ghost: "ghost",
 }
 
 export type DeepPartial<T> = T extends object
@@ -68,7 +68,7 @@ export type DeepPartial<T> = T extends object
 export type BooleanComp = "off" | "on"
 export const booleanComp = {
   off: "off",
-  on: "on"
+  on: "on",
 }
 export type RemoveIndexSignature<T> = {
   [K in keyof T as string extends K ? never : K]: T[K]
@@ -102,7 +102,6 @@ export interface Colors extends StateColor {
   teal: string
   yellow: string
 }
-
 
 export interface Project {
   id: string

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import jsonSchemaToZod from "json-schema-to-zod"
 import { z } from "zod"
-import { AuthWrapper } from "./auth-wrapper"
 import AutoForm from "../auto-form"
 import { useStepper } from "../stepper"
+import { AuthWrapper } from "./auth-wrapper"
 import { StepperFooter } from "./stepper-footer"
 
 interface StepFormProps {

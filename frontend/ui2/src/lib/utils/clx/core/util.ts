@@ -1,5 +1,5 @@
 /** Narrowed function. */
-export type Function = (...args: any[]) => unknown;
+export type Function = (...args: any[]) => unknown
 
 /** Returns a widened value from the given value. */
 export type Widen<T> = T extends number
@@ -10,6 +10,6 @@ export type Widen<T> = T extends number
       ? boolean | T | "true"
       : T extends `${number}`
         ? number | T
-        : T;
+        : T
 
-export type String = string & Record<never, never>;
+export type String = string & Record<never, never>

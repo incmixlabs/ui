@@ -14,13 +14,7 @@ export type ButtonProps = RadixButtonProps & {
   variant?: RadixButtonProps["variant"] | "naked"
 }
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  function Button({
-    children,
-    className,
-    disabled,
-    variant,
-    ...props
-  }, ref) {
+  function Button({ children, className, disabled, variant, ...props }, ref) {
     const defaultClassName = `${disabled ? "cursor-not-allowed" : "cursor-pointer"} `
     return (
       <RadixButton

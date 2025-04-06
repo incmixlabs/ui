@@ -7,13 +7,10 @@ export type { IconButtonProps }
 export { iconButtonPropDefs } from "@radix-ui/themes/src/components/icon-button.props.js"
 
 export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
-  function IconButton({ 
-    children, 
-    className, 
-    disabled, 
-    variant, 
-    ...props 
-  }, ref) {
+  function IconButton(
+    { children, className, disabled, variant, ...props },
+    ref
+  ) {
     const defaultClassName = `${disabled ? "cursor-not-allowed" : "cursor-pointer"} `
 
     return (

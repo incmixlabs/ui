@@ -1,7 +1,5 @@
-import {
-  Form
-} from "@/components/shadcn/form"
 import { TextArea } from "@/components/radixui/text-area"
+import { Form } from "@/components/shadcn/form"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 

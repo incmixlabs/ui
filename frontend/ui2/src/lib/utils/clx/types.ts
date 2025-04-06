@@ -1,39 +1,41 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-empty-object-type */
-import type * as Polymorphic from "./polymorphic";
+import type { JSX } from "react"
 import type {
-  InferVariantProps,
-  Variants,
   $$ClassedProps,
   $$ClassedVariants,
+  InferVariantProps,
   VariantConfig,
-} from "./core";
+  Variants,
+} from "./core"
 // biome-ignore lint/style/useImportType: <explanation>
-import * as Util from "./core/util";
-import { JSX } from "react";
+import * as Util from "./core/util"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+import type * as Polymorphic from "./polymorphic"
 
 // biome-ignore lint/style/useExportType: <explanation>
-export { InferVariantProps, Variants, VariantConfig };
+export { InferVariantProps, Variants, VariantConfig }
 
 interface InferableClassedType {
   [$$ClassedVariants]: {
-    variants?: {} | unknown;
-    defaultVariants?: {} | unknown;
-  };
+    variants?: {} | unknown
+    defaultVariants?: {} | unknown
+  }
 }
 
-export type AnyComponent = React.ComponentType<any>;
-type AnyClassedComponent = ClassedComponentType<any, {}, {}>;
-export type ComponentProps<Component> = Component extends (...args: any[]) => any
+export type AnyComponent = React.ComponentType<any>
+type AnyClassedComponent = ClassedComponentType<any, {}, {}>
+export type ComponentProps<Component> = Component extends (
+  ...args: any[]
+) => any
   ? Parameters<Component>[0]
-  : never;
+  : never
 
 /**
  * Returns the variant props of the given component.
  */
 export type VariantProps<T extends InferableClassedType> = InferVariantProps<
   T[$$ClassedVariants]["variants"]
->;
+>
 
 /**
  * Creates a strict version of the given component.
@@ -47,12 +49,15 @@ export type StrictComponentType<
 > = ClassedComponentType<
   T,
   Required<Pick<VProps, U extends unknown ? PickRequiredVariants<T> : U>>
->;
+>
 
-export type PickRequiredVariants<T extends AnyClassedComponent & InferableClassedType> =
-  T[$$ClassedVariants]["defaultVariants"] extends {}
-    ? keyof Required<Omit<VariantProps<T>, keyof T[$$ClassedVariants]["defaultVariants"]>>
-    : never;
+export type PickRequiredVariants<
+  T extends AnyClassedComponent & InferableClassedType,
+> = T[$$ClassedVariants]["defaultVariants"] extends {}
+  ? keyof Required<
+      Omit<VariantProps<T>, keyof T[$$ClassedVariants]["defaultVariants"]>
+    >
+  : never
 
 /**
  * Defines a Classed component.
@@ -62,8 +67,8 @@ export interface ClassedComponentType<
   Props extends {} = {},
   TComposedVariants extends {} = {},
 > extends Polymorphic.ForwardRefComponent<Type, Props> {
-  [$$ClassedProps]: Props;
-  [$$ClassedVariants]: TComposedVariants;
+  [$$ClassedProps]: Props
+  [$$ClassedVariants]: TComposedVariants
 }
 
 /**
@@ -74,15 +79,16 @@ export type DerivedComponentType<
   Type extends keyof JSX.IntrinsicElements | React.ComponentType<any>,
   Props extends {} = {},
   TComposedVariants extends {} = {},
-> = ClassedComponentType<Type, Omit<Props, "as">, TComposedVariants>;
+> = ClassedComponentType<Type, Omit<Props, "as">, TComposedVariants>
 
 /** Returns the cumulative props from the given array of compositions. */
-export type ClassedComponentProps<T extends any[]> = ($$ClassedProps extends keyof T[0]
-  ? T[0][$$ClassedProps]
-  : T[0] extends { variants: { [name: string]: unknown } }
-    ? InferVariantProps<T[0]["variants"]>
-    : {}) &
-  (T extends [lead: any, ...tail: infer V] ? ClassedComponentProps<V> : {});
+export type ClassedComponentProps<T extends any[]> =
+  ($$ClassedProps extends keyof T[0]
+    ? T[0][$$ClassedProps]
+    : T[0] extends { variants: { [name: string]: unknown } }
+      ? InferVariantProps<T[0]["variants"]>
+      : {}) &
+    (T extends [lead: any, ...tail: infer V] ? ClassedComponentProps<V> : {})
 
 /** Returns the cumulative variants from the given array of compositions. */
 export type ClassedComponentVariants<T extends any[]> =
@@ -91,7 +97,7 @@ export type ClassedComponentVariants<T extends any[]> =
     : T[0] extends { variants: { [name: string]: unknown } }
       ? Pick<T[0], "variants" | "defaultVariants" | "dataAttributes">
       : {}) &
-    (T extends [lead: any, ...tail: infer V] ? ClassedComponentVariants<V> : {});
+    (T extends [lead: any, ...tail: infer V] ? ClassedComponentVariants<V> : {})
 
 /**
  * Defines the classed function. Used to create classed components.
@@ -104,10 +110,10 @@ export interface ClassedFunctionType {
       | string
       | Util.Function
       | {
-          base?: string;
-          variants?: { [name: string]: unknown };
-          defaultVariants?: { [name: string]: unknown };
-          defaultProps?: React.ComponentProps<Type>;
+          base?: string
+          variants?: { [name: string]: unknown }
+          defaultVariants?: { [name: string]: unknown }
+          defaultProps?: React.ComponentProps<Type>
         }
     )[],
   >(
@@ -118,15 +124,15 @@ export interface ClassedFunctionType {
         : Composers[K] extends string | Util.Function
           ? Composers[K]
           : {
-              base?: string;
-              variants?: Variants;
+              base?: string
+              variants?: Variants
               defaultVariants?: "variants" extends keyof Composers[K]
                 ? {
                     [Name in keyof Composers[K]["variants"]]?: Util.Widen<
                       keyof Composers[K]["variants"][Name]
-                    >;
+                    >
                   }
-                : {};
+                : {}
 
               compoundVariants?: (("variants" extends keyof Composers[K]
                 ? {
@@ -134,26 +140,26 @@ export interface ClassedFunctionType {
                       | Util.Widen<keyof Composers[K]["variants"][Name]>
                       // biome-ignore lint/style/useConsistentArrayType: <explanation>
                       | Array<Util.Widen<keyof Composers[K]["variants"][Name]>>
-                      | Util.String;
+                      | Util.String
                   }
                 : never) & {
-                className?: Util.String;
-                class?: Util.String;
-              })[];
+                className?: Util.String
+                class?: Util.String
+              })[]
 
               dataAttributes?: "variants" extends keyof Composers[K]
                 ? Array<keyof Composers[K]["variants"]>
-                // biome-ignore lint/style/useConsistentArrayType: <explanation>
-                : Array<string>;
+                : // biome-ignore lint/style/useConsistentArrayType: <explanation>
+                  Array<string>
 
-              defaultProps?: React.ComponentProps<Type>;
-            };
+              defaultProps?: React.ComponentProps<Type>
+            }
     }
   ): ClassedComponentType<
     Type,
     ClassedComponentProps<Composers>,
     ClassedComponentVariants<Composers>
-  >;
+  >
 }
 
 /**
@@ -161,60 +167,60 @@ export interface ClassedFunctionType {
  */
 export type ClassedProxyFunctionType<
   Type extends keyof JSX.IntrinsicElements | AnyComponent,
-> =
-  <
-    Composers extends (
-      | string
-      | Util.Function
-      | {
-          base?: string;
-          variants?: { [name: string]: unknown };
-          defaultVariants?: { [name: string]: unknown };
-          defaultProps?: React.ComponentProps<Type>;
-        }
-    )[],
-  >(
-    ...composers: {
-      [K in keyof Composers]: string extends Composers[K]
+> = <
+  Composers extends (
+    | string
+    | Util.Function
+    | {
+        base?: string
+        variants?: { [name: string]: unknown }
+        defaultVariants?: { [name: string]: unknown }
+        defaultProps?: React.ComponentProps<Type>
+      }
+  )[],
+>(
+  ...composers: {
+    [K in keyof Composers]: string extends Composers[K]
+      ? Composers[K]
+      : Composers[K] extends string | Util.Function
         ? Composers[K]
-        : Composers[K] extends string | Util.Function
-          ? Composers[K]
-          : {
-              base?: string;
-              variants?: Variants;
-              defaultVariants?: "variants" extends keyof Composers[K]
-                ? {
-                    [Name in keyof Composers[K]["variants"]]?: Util.Widen<
-                      keyof Composers[K]["variants"][Name]
-                    >;
-                  }
-                : {};
+        : {
+            base?: string
+            variants?: Variants
+            defaultVariants?: "variants" extends keyof Composers[K]
+              ? {
+                  [Name in keyof Composers[K]["variants"]]?: Util.Widen<
+                    keyof Composers[K]["variants"][Name]
+                  >
+                }
+              : {}
 
-              compoundVariants?: (("variants" extends keyof Composers[K]
-                ? {
-                    [Name in keyof Composers[K]["variants"]]?:
-                      | Util.Widen<keyof Composers[K]["variants"][Name]>
-                      // biome-ignore lint/style/useConsistentArrayType: <explanation>
-                      | Array<Util.Widen<keyof Composers[K]["variants"][Name]>>
-                      | Util.String;
-                  }
-                : never) & {
-                className?: Util.String;
-                class?: Util.String;
-              })[];
+            compoundVariants?: (("variants" extends keyof Composers[K]
+              ? {
+                  [Name in keyof Composers[K]["variants"]]?:
+                    | Util.Widen<keyof Composers[K]["variants"][Name]>
+                    // biome-ignore lint/style/useConsistentArrayType: <explanation>
+                    | Array<Util.Widen<keyof Composers[K]["variants"][Name]>>
+                    | Util.String
+                }
+              : never) & {
+              className?: Util.String
+              class?: Util.String
+            })[]
 
-              dataAttributes?: "variants" extends keyof Composers[K]
-                ? Array<keyof Composers[K]["variants"]>
-                // biome-ignore lint/style/useConsistentArrayType: <explanation>
-                : Array<string>;
+            dataAttributes?: "variants" extends keyof Composers[K]
+              ? Array<keyof Composers[K]["variants"]>
+              : // biome-ignore lint/style/useConsistentArrayType: <explanation>
+                Array<string>
 
-              defaultProps?: React.ComponentProps<Type>;
-            };
-    }) => ClassedComponentType<
-    Type,
-    ClassedComponentProps<Composers>,
-    ClassedComponentVariants<Composers>
-  >
+            defaultProps?: React.ComponentProps<Type>
+          }
+  }
+) => ClassedComponentType<
+  Type,
+  ClassedComponentProps<Composers>,
+  ClassedComponentVariants<Composers>
+>
 
 /**
  * Defines the clx function. Used to create clx components.
@@ -232,5 +238,5 @@ export type ClassedProxyFunctionType<
  * })
  */
 export type ClassedFunctionProxy = ClassedFunctionType & {
-  [K in keyof JSX.IntrinsicElements]: ClassedProxyFunctionType<K>;
-};
+  [K in keyof JSX.IntrinsicElements]: ClassedProxyFunctionType<K>
+}

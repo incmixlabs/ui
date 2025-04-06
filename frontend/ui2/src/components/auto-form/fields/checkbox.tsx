@@ -1,8 +1,8 @@
+import { Checkbox } from "@/components/radixui/checkbox"
+import { Form } from "@/components/shadcn"
 import { cn } from "@/lib/utils"
 import AutoFormTooltip from "../common/tooltip"
 import type { AutoFormInputComponentProps } from "../types"
-import { Form } from "@/components/shadcn"
-import { Checkbox } from "@/components/radixui/checkbox"
 
 export default function AutoFormCheckbox({
   label,

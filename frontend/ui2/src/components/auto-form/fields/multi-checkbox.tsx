@@ -1,11 +1,11 @@
 import { Form } from "@/components/shadcn"
+import { cn } from "@/lib/utils"
 import { useEffect, useState } from "react"
 import type {
   AutoFormInputComponentProps,
   MCQLayoutType,
   MCQOption,
 } from "../types"
-import { cn } from "@/lib/utils"
 
 const getLayoutClass = (layout: MCQLayoutType, gridCols = 2): string => {
   const baseClasses = "gap-3"
