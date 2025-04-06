@@ -24,7 +24,7 @@ interface MultipleSelectorControlledProps {
 
 export const MultipleSelectorControlled: React.FC<
   MultipleSelectorControlledProps
-> = ({ themeColor = "gray" }) => {
+> = () => {
   const [value, setValue] = React.useState<Option[]>([])
 
   return (

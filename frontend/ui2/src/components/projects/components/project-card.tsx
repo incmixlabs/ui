@@ -1,4 +1,4 @@
-import { useProjectDrawer } from "@hooks/use-project-drawer"
+import { useProjectDrawer } from "@/hooks/use-project-drawer"
 import {
   Box,
   Card,
@@ -8,7 +8,7 @@ import {
   IconButton,
   Progress,
   Text,
-} from "@incmix/ui"
+} from "@/components/base"
 import {
   Clock,
   Ellipsis,

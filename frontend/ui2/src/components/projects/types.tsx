@@ -1,4 +1,4 @@
-import type { Option } from "../multiple-selector/multiple-selector"
+import type { Option } from "@/components/multiple-selector/multiple-selector"
 
 export interface Member {
   id: string

@@ -1,8 +1,9 @@
-import { Avatar } from "@/components/avatar"
+import { useEffect, useRef, useState } from "react"
+import { Avatar } from "@/components/base"
 import { MotionSheet } from "@/components/custom-sheet"
 import { ComboBox } from "@/components/kanban-board/combo-box"
 import { attachments } from "@/components/kanban-board/data"
-import { useProjectDrawer } from "@hooks/use-project-drawer"
+import { useProjectDrawer } from "@/hooks/use-project-drawer"
 import {
   Box,
   Button,
@@ -12,16 +13,15 @@ import {
   ScrollArea,
   Select,
   Text,
-} from "@incmix/ui"
-import { cn } from "@utils"
+} from "@/components/base"
+import { cn } from "@/lib/utils"
 import { Download, FileArchive, X } from "lucide-react"
 import { motion } from "motion/react"
 import type React from "react"
-import { useEffect, useRef, useState } from "react"
 import { members, projects } from "../data"
 import ProjectChecklist from "./project-checklist"
 import ProjectComments from "./project-comments"
-import ProjectDetails from "./project-detials"
+import ProjectDetails from "./project-details"
 
 export default function ProjectDrawer({
   listFilter,

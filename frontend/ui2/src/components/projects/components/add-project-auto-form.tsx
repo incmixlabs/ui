@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import AutoForm from "@/components/auto-form"
 import { Button, Dialog } from "@radix-ui/themes"
 import jsonSchemaToZod from "json-schema-to-zod"

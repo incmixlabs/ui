@@ -5,12 +5,12 @@ import {
   FileUploaderContent,
   FileUploaderItem,
 } from "@/components/file-upload"
-import { Input } from "@/components/form"
-import { Label } from "@/components/label"
+import { Input } from "@/components/shadcn/input"
+import { Label } from "@/components/shadcn/label"
 import MultipleSelector, {
   type Option,
 } from "@/components/multiple-selector/multiple-selector"
-import { Textarea } from "@/components/textarea"
+import { TextArea } from "@/components/radixui/text-area"
 import {
   Box,
   Button,
@@ -22,7 +22,7 @@ import {
   Text,
 } from "@incmix/ui"
 import { Calendar, Paperclip, Plus, X } from "lucide-react"
-import Image from "next/image"
+import {Image} from "@/components/radixui/card/flow-card"
 import { useEffect, useState } from "react"
 import { members } from "../data"
 import { ProjectsImages } from "../images"
@@ -185,7 +185,7 @@ export function AddProjectModal({
 
           <Grid gap={"2"}>
             <Label htmlFor="description">Description</Label>
-            <Textarea
+            <TextArea
               id="description"
               placeholder="Create a mobile application on iOS and Android devices."
               value={description}

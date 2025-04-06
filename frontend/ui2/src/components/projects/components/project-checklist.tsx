@@ -6,7 +6,7 @@ import {
   IconButton,
   Progress,
   Text,
-} from "@incmix/ui"
+} from "@/components/base"
 import { GripVertical, Plus, Trash2 } from "lucide-react"
 import { Reorder, motion, useDragControls, useMotionValue } from "motion/react"
 import type { DragControls } from "motion/react"
