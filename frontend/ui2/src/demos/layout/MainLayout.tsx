@@ -11,6 +11,7 @@ const shadcnComponents = [
   { id: "accordion", label: "Accordion" },
   { id: "badge", label: "Badge" },
   { id: "button", label: "Button" },
+  { id: "pagination", label: "Pagination" },
   { id: "radix-button", label: "Button" },
   { id: "radix-avatar", label: "Avatar" },
   { id: "calendar", label: "Calendar" },
@@ -21,6 +22,7 @@ const shadcnComponents = [
   { id: "form", label: "Form" },
   { id: "radio", label: "Radio" },
   { id: "separator", label: "Separator" },
+
 ]
 
 const radixComponents = [
