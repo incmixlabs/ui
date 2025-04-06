@@ -1,5 +1,3 @@
-"use client"
-
 import { useQueryState } from "nuqs"
 export const useKanbanDrawer = () => {
   const [taskId, setTaskId] = useQueryState("taskId", { defaultValue: "" })
