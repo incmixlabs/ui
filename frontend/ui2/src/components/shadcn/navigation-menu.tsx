@@ -25,7 +25,7 @@ function Root({
       {...props}
     >
       {children}
-      {viewport && <NavigationMenuViewport />}
+      {viewport && <Viewport />}
     </NavigationMenuPrimitive.Root>
   )
 }

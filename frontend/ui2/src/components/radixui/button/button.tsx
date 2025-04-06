@@ -3,6 +3,7 @@ import {
   type ButtonProps as RadixButtonProps,
 } from "@radix-ui/themes"
 import React from "react"
+// eslint-disable-next-line react-refresh/only-export-components
 export { buttonPropDefs } from "@radix-ui/themes/src/components/button.props.js"
 
 export type ButtonProps = RadixButtonProps & {
@@ -13,12 +14,12 @@ export type ButtonProps = RadixButtonProps & {
   variant?: RadixButtonProps["variant"] | "naked"
 }
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  function Button({ 
-    children, 
-    className, 
-    disabled, 
-    variant, 
-    ...props 
+  function Button({
+    children,
+    className,
+    disabled,
+    variant,
+    ...props
   }, ref) {
     const defaultClassName = `${disabled ? "cursor-not-allowed" : "cursor-pointer"} `
     return (

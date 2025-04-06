@@ -7,7 +7,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "../shadcn/card"
+} from "@/components/shadcn/card"
 
 interface CardContainerProps {
   children: React.ReactNode
