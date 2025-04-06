@@ -235,7 +235,7 @@ export function ComponentShowcase() {
           <Tabs.Content value="dialog" className="space-y-4">
             <h2 className="mb-4 font-semibold text-2xl">Dialog</h2>
             <Dialog.Root>
-              <Dialog.Trigger asChild>
+              <Dialog.Trigger>
                 <Button>Open Dialog</Button>
               </Dialog.Trigger>
               <Dialog.Content className="sm:max-w-[425px]">
@@ -265,7 +265,7 @@ export function ComponentShowcase() {
           <Tabs.Content value="dropdown" className="space-y-4">
             <h2 className="mb-4 font-semibold text-2xl">Dropdown Menu</h2>
             <DropdownMenu.Root>
-              <DropdownMenu.Trigger asChild>
+              <DropdownMenu.Trigger>
                 <Button>Open Dropdown</Button>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content className="w-56">

@@ -1,5 +1,5 @@
 import { Button } from "@/components/radixui/button"
-import { useStepper } from "./stepper"
+import { useStepper } from "@/components/stepper"
 
 // TODO import
 

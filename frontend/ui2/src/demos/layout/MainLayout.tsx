@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router"
-import React, { useEffect } from "react"
+import React from "react"
 import { Sidebar } from "./sidebar"
 
 interface MainLayoutProps {
@@ -36,7 +36,7 @@ export function MainLayout({
   onComponentChange,
 }: MainLayoutProps) {
   const navigate = useNavigate()
-  const [_isCollapsed, _setIsCollapsed] = React.useState(false)
+  const [_isCollapsed] = React.useState(false)
   const [activeComponentItems, setActiveComponentItems] =
     React.useState(shadcnComponents)
 
@@ -45,10 +45,8 @@ export function MainLayout({
   const handleItemClick = (id: string) => {
     if (id === "shadcn") {
       setActiveComponentItems(shadcnComponents)
-      navigate({ to: "/shadcn" })
     } else if (id === "radixui") {
       setActiveComponentItems(radixComponents)
-      navigate({ to: "/radixui" })
     } else {
       onComponentChange?.(id)
     }

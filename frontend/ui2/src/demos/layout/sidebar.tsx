@@ -3,8 +3,6 @@ import { Separator } from "@/components/radixui/separator"
 import { Accordion } from "@/components/shadcn/accordion"
 import { cn } from "@/lib/utils"
 import {
-  ChevronDown,
-  ChevronRight,
   PanelLeft,
   PanelLeftClose,
 } from "lucide-react"
@@ -34,22 +32,7 @@ function SidebarGroup({
   onItemClick?: (id: string) => void
   level?: number
 }) {
-  const [_isOpen, setIsOpen] = useState(true)
   const hasChildren = item.children && item.children.length > 0
-
-  React.useEffect(() => {
-    const handleCollapseAll = () => {
-      if (hasChildren) {
-        setIsOpen(false)
-      }
-    }
-
-    document.addEventListener("collapse-all-groups", handleCollapseAll)
-
-    return () => {
-      document.removeEventListener("collapse-all-groups", handleCollapseAll)
-    }
-  }, [hasChildren])
 
   if (hasChildren) {
     return (
@@ -127,7 +110,6 @@ export function Sidebar({
         )}
         <Button
           variant="ghost"
-          size="icon"
           onClick={() => setCollapsed(!collapsed)}
           className={cn("ml-auto", collapsed && "mx-auto")}
           title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -205,8 +187,7 @@ export function Sidebar({
           {items.map((item) => (
             <Button
               key={item.id}
-              variant={activeItem === item.id ? "secondary" : "ghost"}
-              size="icon"
+              variant={activeItem === item.id ? "solid" : "ghost"}
               title={item.label}
               onClick={() => onItemClick?.(item.id)}
               className="h-10 w-10"

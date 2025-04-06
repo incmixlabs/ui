@@ -1,6 +1,6 @@
 {
   "extends": "@incmix/config/react.json",
-  "exclude": ["node_modules", "dist", "./*.ts"],
+  "exclude": ["node_modules", "dist", "./*.ts", "./src/demos", "./src/lib"],
   "include": ["src/"],
   "compilerOptions": {
     "types": ["@types/wicg-file-system-access", "vite/client"],

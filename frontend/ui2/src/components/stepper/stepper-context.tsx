@@ -1,31 +1,31 @@
-"use client"
+/* eslint-disable react-refresh/only-export-components */
+"use client";
 
-import { createContext, useContext, useState } from "react"
-import type { StepperProps } from "./stepper-types"
-import { usePrevious } from "@/hooks/use-previous"
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 
+import type { StepperProps } from "./stepper-types";
 interface StepperContextValue extends StepperProps {
-  clickable?: boolean
-  isError?: boolean
-  isLoading?: boolean
-  isVertical?: boolean
-  stepCount?: number
-  expandVerticalSteps?: boolean
-  activeStep: number
-  initialStep: number
+  clickable?: boolean;
+  isError?: boolean;
+  isLoading?: boolean;
+  isVertical?: boolean;
+  stepCount?: number;
+  expandVerticalSteps?: boolean;
+  activeStep: number;
+  initialStep: number;
 }
 
 type StepperContextProviderProps = {
-  value: Omit<StepperContextValue, "activeStep">
-  children: React.ReactNode
-}
+  value: Omit<StepperContextValue, "activeStep">;
+  children: React.ReactNode;
+};
 
 const StepperContext = createContext<
   StepperContextValue & {
-    nextStep: () => void
-    prevStep: () => void
-    resetSteps: () => void
-    setStep: (step: number) => void
+    nextStep: () => void;
+    prevStep: () => void;
+    resetSteps: () => void;
+    setStep: (step: number) => void;
   }
 >({
   steps: [],
@@ -35,29 +35,29 @@ const StepperContext = createContext<
   prevStep: () => {},
   resetSteps: () => {},
   setStep: () => {},
-})
+});
 
 const StepperProvider = ({ value, children }: StepperContextProviderProps) => {
-  const isError = value.state === "error"
-  const isLoading = value.state === "loading"
+  const isError = value.state === "error";
+  const isLoading = value.state === "loading";
 
-  const [activeStep, setActiveStep] = useState(value.initialStep)
+  const [activeStep, setActiveStep] = useState(value.initialStep);
 
   const nextStep = () => {
-    setActiveStep((prev) => prev + 1)
-  }
+    setActiveStep((prev) => prev + 1);
+  };
 
   const prevStep = () => {
-    setActiveStep((prev) => prev - 1)
-  }
+    setActiveStep((prev) => prev - 1);
+  };
 
   const resetSteps = () => {
-    setActiveStep(value.initialStep)
-  }
+    setActiveStep(value.initialStep);
+  };
 
   const setStep = (step: number) => {
-    setActiveStep(step)
-  }
+    setActiveStep(step);
+  };
 
   return (
     <StepperContext.Provider
@@ -74,36 +74,43 @@ const StepperProvider = ({ value, children }: StepperContextProviderProps) => {
     >
       {children}
     </StepperContext.Provider>
-  )
-}
+  );
+};
 
 /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
 /*                     🪝 USE STEPPER 🪝                       */
 /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
 // TODO: Export this in @/registry/hooks
+function usePrevious<T>(value: T): T | undefined {
+  const ref = useRef<T | undefined>(undefined);
 
+  useEffect(() => {
+    ref.current = value;
+  }, [value]);
+
+  return ref.current;
+}
 
 //
-// eslint-disable-next-line react-refresh/only-export-components
 export function useStepper() {
-  const context = useContext(StepperContext)
+  const context = useContext(StepperContext);
 
   if (context === undefined) {
-    throw new Error("useStepper must be used within a StepperProvider")
+    throw new Error("useStepper must be used within a StepperProvider");
   }
 
-  const { ...rest } = context
+  const { ...rest } = context;
 
-  const isLastStep = context.activeStep === context.steps.length - 1
-  const hasCompletedAllSteps = context.activeStep === context.steps.length
+  const isLastStep = context.activeStep === context.steps.length - 1;
+  const hasCompletedAllSteps = context.activeStep === context.steps.length;
 
-  const previousActiveStep = usePrevious(context.activeStep)
+  const previousActiveStep = usePrevious(context.activeStep);
 
-  const currentStep = context.steps[context.activeStep]
-  const isOptionalStep = !!currentStep?.optional
+  const currentStep = context.steps[context.activeStep];
+  const isOptionalStep = !!currentStep?.optional;
 
-  const isDisabledStep = context.activeStep === 0
+  const isDisabledStep = context.activeStep === 0;
 
   return {
     ...rest,
@@ -113,7 +120,7 @@ export function useStepper() {
     isDisabledStep,
     currentStep,
     previousActiveStep,
-  }
+  };
 }
 
-export { StepperContext, StepperProvider }
+export { StepperProvider };
