@@ -1,7 +1,7 @@
 {
   "extends": "@incmix/config/nextjs.json",
   "compilerOptions": {
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "baseUrl": ".",
     "types": ["vite/client", "./src/translations/i18n.d.ts"],
     "strictNullChecks": true

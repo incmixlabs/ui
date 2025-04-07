@@ -1,7 +1,7 @@
 "use client"
 import { useCurrentUser } from "@auth"
 import { LoadingPage } from "@common"
-import { CardContainer } from "@incmix/ui"
+import { CardContainer } from "@incmix/ui2"
 import { Button, Container, Flex, Heading } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import { useMutation } from "@tanstack/react-query"

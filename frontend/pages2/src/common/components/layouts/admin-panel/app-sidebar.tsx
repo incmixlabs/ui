@@ -34,7 +34,7 @@ import {
   SidebarHeader,
   SidebarHeaderLabel,
   SidebarRail,
-} from "@incmix/ui/sidebar"
+} from "@incmix/ui2/sidebar"
 import { createAbilityFromPermissions } from "@incmix/utils/casl"
 import type { Permission } from "@incmix/utils/types"
 import { useQuery } from "@tanstack/react-query"

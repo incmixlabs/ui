@@ -8,7 +8,6 @@ import {
 import MultipleSelector, {
   type Option,
 } from "@/components/multiple-selector/multiple-selector"
-import { Image } from "@/components/radixui/card/flow-card"
 import { TextArea } from "@/components/radixui/text-area"
 import { Input } from "@/components/shadcn/input"
 import { Label } from "@/components/shadcn/label"
@@ -16,17 +15,15 @@ import {
   Box,
   Button,
   Dialog,
-  DialogContent,
-  DialogTitle,
   Flex,
   Grid,
   Text,
-} from "@incmix/ui"
-import { Calendar, Paperclip, Plus, X } from "lucide-react"
+} from "@/components/base"
+import { Plus } from "lucide-react"
 import { useEffect, useState } from "react"
 import { members } from "../data"
 import { ProjectsImages } from "../images"
-import type { Member, Project } from "../types"
+import type { Project } from "../types"
 
 interface AddProjectModalProps {
   isOpen: boolean

@@ -4,8 +4,8 @@ import {
   draggable,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
-import { Ellipsis, Plus } from "lucide-react"
-import { memo, useEffect, useRef, useState } from "react"
+import { Copy, Ellipsis, Plus } from "lucide-react"
+import { memo, useContext, useEffect, useRef, useState } from "react"
 import invariant from "tiny-invariant"
 
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
@@ -15,11 +15,11 @@ import type { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist
 import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
 
-import { Box, Flex, Heading } from "@/components/base"
-import { IconButton } from "@/components/radixui/button/icon-button"
+import { Box, Flex, Heading } from "@incmix/ui"
+import { isSafari } from "@utils/browser"
+import { isShallowEqual } from "@utils/objects"
+import { IconButton } from "../button"
 import { blockBoardPanningAttr } from "./data-attributes"
-import { isSafari } from "./is-safari"
-import { isShallowEqual } from "./is-shallow-equal"
 import { TaskCard, TaskCardShadow } from "./task-card"
 import {
   type TCardData,
