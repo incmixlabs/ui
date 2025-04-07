@@ -1,6 +1,6 @@
 import usersList from "@/data/users"
 import { Avatar } from "@incmix/ui/avatar"
-import { Checkbox } from "@incmix/ui/checkbox"
+import { Checkbox } from "@incmix/ui"
 import { Label } from "@incmix/ui/label"
 import type { TableProps } from "@incmix/ui/table"
 import { Table } from "@incmix/ui/table"

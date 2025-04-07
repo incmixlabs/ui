@@ -1,6 +1,6 @@
 import { AuthWrapper } from "@incmix/ui/auth-wrapper"
 import { Button } from "@incmix/ui/button"
-import { Checkbox } from "@incmix/ui/checkbox"
+import { Checkbox } from "@incmix/ui"
 import { TextInput } from "@incmix/ui/flow-form"
 import { Label } from "@incmix/ui/label"
 
