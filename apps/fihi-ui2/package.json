@@ -1,0 +1,50 @@
+{
+  "name": "@incmix/fihi-app",
+  "private": true,
+  "version": "workspace: *",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:fe": "vite build --mode production",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@incmix/pages": "workspace: *",
+    "@incmix/store": "workspace: *",
+    "@incmix/ui2": "workspace: *",
+    "@incmix/utils": "catalog:",
+    "@sentry/react": "8.51.0",
+    "@tanstack/react-query": "catalog:",
+    "@tanstack/react-router": "catalog:",
+    "@tauri-apps/api": "2.4.1",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-router-dom": "7.5.0",
+    "rxdb-hooks": "catalog:"
+  },
+  "devDependencies": {
+    "@incmix/config": "workspace: *",
+    "@julr/vite-plugin-validate-env": "1.2.0",
+    "@sentry/vite-plugin": "3.0.0",
+    "@tailwindcss/vite": "catalog:",
+    "@tanstack/router-vite-plugin": "^1.115.0",
+    "@tauri-apps/cli": "2.4.1",
+    "@tauri-apps/plugin-shell": "2.2.1",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "internal-ip": "8.0.0",
+    "postcss": "catalog:",
+    "rollup-plugin-visualizer": "catalog:",
+    "tailwindcss": "4.0.17",
+    "typescript": "catalog:",
+    "vite": "catalog:",
+    "vite-plugin-bundlesize": "catalog:",
+    "vite-plugin-chunk-split": "^0.5.0",
+    "vite-plugin-top-level-await": "^1.5.0",
+    "vite-tsconfig-paths": "catalog:"
+  }
+}

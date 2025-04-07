@@ -67,6 +67,7 @@
     "eslint-plugin-react-hooks": "catalog:",
     "eslint-plugin-react-refresh": "catalog:",
     "globals": "catalog:",
+    "postcss": "catalog:",
     "tailwindcss": "4.0.17",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:",

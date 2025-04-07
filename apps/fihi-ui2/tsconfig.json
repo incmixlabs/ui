@@ -1,0 +1,11 @@
+{
+  "extends": "@incmix/config/nextjs.json",
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "types": ["vite/client", "./src/translations/i18n.d.ts"],
+    "strictNullChecks": true
+  },
+  "exclude": ["node_modules"],
+  "include": ["vite.config.ts"]
+}
