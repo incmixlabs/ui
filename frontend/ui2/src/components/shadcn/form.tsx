@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import type * as LabelPrimitive from "@radix-ui/react-label"
 import { Slot } from "@radix-ui/react-slot"
 import * as React from "react"
@@ -13,7 +14,7 @@ import {
 
 import { Label } from "@/components/shadcn/label"
 import { cn } from "@/lib/utils"
-import { Item } from "@radix-ui/themes/components/checkbox-group.primitive"
+// import { Item } from "@radix-ui/themes/components/checkbox-group.primitive"
 
 const Root = FormProvider
 

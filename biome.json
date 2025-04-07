@@ -12,6 +12,7 @@
       "apps/storybook",
       "frontend/form-builder",
       "frontend/ui2/src/demos/**/*",
+      "frontend/ui2/src/lib/**/*",
       "dist",
       ".next",
       ".astro",

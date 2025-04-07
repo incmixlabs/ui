@@ -1,11 +1,16 @@
+/* eslint-disable react-refresh/only-export-components */
+// https://github.com/shadcn-ui/ui/blob/main/apps/v4/registry/new-york-v4/ui/command.tsx
+"use client"
+
 import { Command as CommandPrimitive } from "cmdk"
 import { SearchIcon } from "lucide-react"
 import type * as React from "react"
 
+import { Container } from "@/components/radixui/container"
 import { Dialog } from "@/components/radixui/dialog"
 import { cn } from "@/lib/utils"
 
-function Root({
+function CommandRoot({
   className,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive>) {
@@ -26,25 +31,26 @@ function CommandDialog({
   description = "Search for a command to run...",
   children,
   ...props
-}: React.ComponentProps<typeof Dialog> & {
+}: React.ComponentProps<typeof Dialog.Root> & {
   title?: string
   description?: string
 }) {
   return (
     <Dialog.Root {...props}>
-      <Dialog.Title>{title}</Dialog.Title>
-      <Dialog.Description>{description}</Dialog.Description>
-
-      <Dialog.Content>
-        <Root className="**:data-[slot=command-input-wrapper]:h-12 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
-          {children}
-        </Root>
+      <Dialog.Content className="sr-only">
+        <Dialog.Title>{title}</Dialog.Title>
+        <Dialog.Description>{description}</Dialog.Description>
+        <Container className="overflow-hidden p-0">
+          <CommandRoot className="**:data-[slot=command-input-wrapper]:h-12 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-muted-foreground [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-group]]:px-2 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-2 [&_[cmdk-item]]:py-3 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5">
+            {children}
+          </CommandRoot>
+        </Container>
       </Dialog.Content>
     </Dialog.Root>
   )
 }
 
-function Input({
+function CommandInput({
   className,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Input>) {
@@ -66,7 +72,7 @@ function Input({
   )
 }
 
-function List({
+function CommandList({
   className,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.List>) {
@@ -82,7 +88,7 @@ function List({
   )
 }
 
-function Empty({
+function CommandEmpty({
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Empty>) {
   return (
@@ -94,7 +100,7 @@ function Empty({
   )
 }
 
-function Group({
+function CommandGroup({
   className,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Group>) {
@@ -110,7 +116,7 @@ function Group({
   )
 }
 
-function Separator({
+function CommandSeparator({
   className,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Separator>) {
@@ -123,7 +129,7 @@ function Separator({
   )
 }
 
-function Item({
+function CommandItem({
   className,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Item>) {
@@ -139,7 +145,10 @@ function Item({
   )
 }
 
-function Shortcut({ className, ...props }: React.ComponentProps<"span">) {
+function CommandShortcut({
+  className,
+  ...props
+}: React.ComponentProps<"span">) {
   return (
     <span
       data-slot="command-shortcut"
@@ -151,14 +160,15 @@ function Shortcut({ className, ...props }: React.ComponentProps<"span">) {
     />
   )
 }
+
 export const Command = {
-  Root,
-  Input,
+  Root: CommandRoot,
   Dialog: CommandDialog,
-  List,
-  Empty,
-  Group,
-  Item,
-  Shortcut,
-  Separator,
+  Input: CommandInput,
+  List: CommandList,
+  Empty: CommandEmpty,
+  Group: CommandGroup,
+  Item: CommandItem,
+  Shortcut: CommandShortcut,
+  Separator: CommandSeparator,
 }

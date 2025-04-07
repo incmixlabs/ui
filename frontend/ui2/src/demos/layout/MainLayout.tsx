@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router"
-import React, { useEffect } from "react"
+import React from "react"
 import { Sidebar } from "./sidebar"
 
 interface MainLayoutProps {
@@ -9,18 +9,21 @@ interface MainLayoutProps {
 }
 const shadcnComponents = [
   { id: "accordion", label: "Accordion" },
+
+  { id: "radix-avatar", label: "Avatar" },
   { id: "badge", label: "Badge" },
   { id: "button", label: "Button" },
   { id: "radix-button", label: "Button" },
-  { id: "radix-avatar", label: "Avatar" },
   { id: "calendar", label: "Calendar" },
   { id: "card", label: "Card" },
   { id: "command", label: "Command" },
   { id: "dialog", label: "Dialog" },
   { id: "dropdown", label: "Dropdown" },
   { id: "form", label: "Form" },
+  { id: "pagination", label: "Pagination" },
   { id: "radio", label: "Radio" },
   { id: "separator", label: "Separator" },
+
 ]
 
 const radixComponents = [
@@ -33,7 +36,7 @@ export function MainLayout({
   onComponentChange,
 }: MainLayoutProps) {
   const navigate = useNavigate()
-  const [_isCollapsed, _setIsCollapsed] = React.useState(false)
+  const [_isCollapsed] = React.useState(false)
   const [activeComponentItems, setActiveComponentItems] =
     React.useState(shadcnComponents)
 
@@ -42,10 +45,8 @@ export function MainLayout({
   const handleItemClick = (id: string) => {
     if (id === "shadcn") {
       setActiveComponentItems(shadcnComponents)
-      navigate({ to: "/shadcn" })
     } else if (id === "radixui") {
       setActiveComponentItems(radixComponents)
-      navigate({ to: "/radixui" })
     } else {
       onComponentChange?.(id)
     }

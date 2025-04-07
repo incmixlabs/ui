@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/react"
+/*import * as Sentry from "@sentry/react"
 import { createRouter } from "@tanstack/react-router"
 import { useEffect } from "react"
 import {
@@ -7,9 +7,8 @@ import {
   useLocation,
   useNavigationType,
 } from "react-router-dom"
-
+*/
 import {
-  DashboardRoute,
   EmailVerificationRoute,
   ForgotPasswordRoute,
   GoogleAuthCallbackRoute,
@@ -60,7 +59,7 @@ const routeTree = RootRoute.addChildren([
 ])
 
 export const router = createRouter({ routeTree })
-Sentry.init({
+/*Sentry.init({
   dsn: VITE_SENTRY_DSN,
   integrations: [
     Sentry.browserTracingIntegration(),
@@ -87,4 +86,4 @@ Sentry.init({
   // plus for 100% of sessions with an error
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
-})
+})*/
