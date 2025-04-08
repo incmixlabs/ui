@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:fe": "vite build --mode production",
+    "build:prod": "vite build --mode production",
     "preview": "vite preview",
     "tauri": "tauri",
     "typecheck": "tsc"
