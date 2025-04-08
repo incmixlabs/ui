@@ -1,6 +1,6 @@
 import { Button, Flex, Select, Spinner, Text, Tooltip } from "@incmix/ui"
 import type { MemberRole } from "@incmix/utils/types"
-import { Check, X, Pencil } from "lucide-react"
+import { Check, Pencil, X } from "lucide-react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"

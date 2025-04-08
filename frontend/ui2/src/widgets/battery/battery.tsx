@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@/components/radixui"
-import { Bolt as LightningBoltIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Bolt as LightningBoltIcon } from "lucide-react"
 
 function LowBatteryWarning() {
   return (

@@ -1,7 +1,14 @@
-import React, { useState } from "react"
+import {
+  Box,
+  Card,
+  Flex,
+  Heading,
+  ScrollArea,
+  Text,
+} from "@/components/radixui"
 import { IconButton } from "@/components/radixui/button"
-import { Box, Card, Flex, Heading, ScrollArea, Text } from "@/components/radixui"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import React, { useState } from "react"
 
 type Movie = {
   id: number

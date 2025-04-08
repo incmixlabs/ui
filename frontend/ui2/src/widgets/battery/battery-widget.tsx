@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react"
 import { Box } from "@/components/radixui/box"
+import { useEffect, useState } from "react"
 import { Battery, type BatteryInfo } from "./battery"
 
 type BatteryManagerInfo = BatteryInfo & EventTarget

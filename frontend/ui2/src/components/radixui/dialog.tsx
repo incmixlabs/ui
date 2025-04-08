@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { Dialog as RadixDialog, Flex } from "@radix-ui/themes"
+import { Flex, Dialog as RadixDialog } from "@radix-ui/themes"
 
 function Footer({ children }: { children: React.ReactNode }) {
   return (
@@ -11,9 +11,7 @@ function Footer({ children }: { children: React.ReactNode }) {
 
 function Header({ children }: { children: React.ReactNode }) {
   return (
-    <Flex className="flex-col gap-2 text-center sm:text-left">
-      {children}
-    </Flex>
+    <Flex className="flex-col gap-2 text-center sm:text-left">{children}</Flex>
   )
 }
 
@@ -26,7 +24,7 @@ export const Dialog = {
   Description: RadixDialog.Description,
   Close: RadixDialog.Close,
   Footer,
-  Header
+  Header,
 }
 
 // Import from the public API instead of internal paths to avoid breaking changes

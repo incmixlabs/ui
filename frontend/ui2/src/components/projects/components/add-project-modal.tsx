@@ -9,8 +9,6 @@ import MultipleSelector, {
   type Option,
 } from "@/components/multiple-selector/multiple-selector"
 
-import { Input } from "@/components/shadcn/input"
-import { Label } from "@/components/shadcn/label"
 import {
   Box,
   Button,
@@ -18,8 +16,10 @@ import {
   Flex,
   Grid,
   Text,
-  TextArea
+  TextArea,
 } from "@/components/base"
+import { Input } from "@/components/shadcn/input"
+import { Label } from "@/components/shadcn/label"
 import { Plus } from "lucide-react"
 import { useEffect, useState } from "react"
 import { members } from "../data"

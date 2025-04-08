@@ -1,16 +1,11 @@
-import { useCallback, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { DateTime, Info } from "luxon"
+import { useCallback, useState } from "react"
 import { useTranslation } from "react-i18next"
 
 import { Box, Flex, Heading, Text, TextField } from "@/components/radixui"
-import {
-  ChevronLeft,
-  ChevronRight,
-  Minus,
-  Plus
-} from "lucide-react"
 import { cn } from "@/lib/utils"
+import { ChevronLeft, ChevronRight, Minus, Plus } from "lucide-react"
 export interface CalendarEvent {
   id: string
   eventName: string

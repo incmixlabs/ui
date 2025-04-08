@@ -1,13 +1,13 @@
-/* eslint-disable react-refresh/only-export-components */
-import { User as PersonIcon} from "lucide-react"
 import {
   Avatar as RadixAvatar,
   type AvatarProps as RadixProps,
 } from "@radix-ui/themes"
-export { avatarPropDefs  } from "@radix-ui/themes/src/components/avatar.props.js"
-import { forwardRef } from "react"
+/* eslint-disable react-refresh/only-export-components */
+import { User as PersonIcon } from "lucide-react"
+export { avatarPropDefs } from "@radix-ui/themes/src/components/avatar.props.js"
 import { getInitials } from "@/lib/strings"
 import type { ExtendSize } from "@/types"
+import { forwardRef } from "react"
 export type AvatarProps = {
   id?: string
   size?: ExtendSize
@@ -34,8 +34,6 @@ export const Avatar = forwardRef<HTMLImageElement, AvatarProps>(
     },
     ref
   ) => {
-
-
     const fallback = name ? (
       getInitials(name)
     ) : (

@@ -7,8 +7,8 @@ import {
 } from "@incmix/ui"
 import { Badge, Checkbox, DropdownMenu, Spinner, Switch } from "@incmix/ui"
 import type { UserAndProfile } from "@incmix/utils/types"
-import { MoreHorizontal } from "lucide-react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { MoreHorizontal } from "lucide-react"
 import { setEnabled, setVerified } from "./actions"
 
 type GetColumnsProps = {

@@ -1,6 +1,6 @@
-import { Check } from "lucide-react"
 import type { ButtonProps } from "@radix-ui/themes"
 import { Spinner } from "@radix-ui/themes"
+import { Check } from "lucide-react"
 import React from "react"
 import { Button } from "./button"
 

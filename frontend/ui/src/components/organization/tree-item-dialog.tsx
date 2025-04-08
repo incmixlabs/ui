@@ -1,4 +1,4 @@
-import { Button, Dialog, Input, Label, Textarea  } from "@/components/base"
+import { Button, Dialog, Input, Label, Textarea } from "@/components/base"
 import { Input } from "@/components/shadcn/input"
 import { Label } from "../label"
 import { Textarea } from "../textarea"

@@ -1,11 +1,11 @@
 "use client"
 
-import React, { type ComponentType } from "react"
-import { ChevronRight, type LucideIcon } from "lucide-react"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
+import { ChevronRight, type LucideIcon } from "lucide-react"
+import React, { type ComponentType } from "react"
 
-import { Box, Flex, Text } from "@/components/radixui"
 import { iconSize } from "@/components/icons/icon"
+import { Box, Flex, Text } from "@/components/radixui"
 import { cn } from "@/lib/utils"
 import type { IconProps } from "./icons/types"
 

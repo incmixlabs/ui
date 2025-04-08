@@ -4,9 +4,7 @@ import type * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-function Root({
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Root>) {
+function Root({ ...props }: React.ComponentProps<typeof SelectPrimitive.Root>) {
   return <SelectPrimitive.Root data-slot="select" {...props} />
 }
 
@@ -169,7 +167,7 @@ function ScrollDownButton({
   )
 }
 
-export const Select ={
+export const Select = {
   Root,
   Content,
   Group,

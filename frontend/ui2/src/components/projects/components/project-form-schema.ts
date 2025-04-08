@@ -154,6 +154,11 @@ export const projectFormSchema: ProjectFormSchema = {
         gap: 4,
         className: "mb-4",
       },
-    ] as { fields: string[]; layout: "horizontal" | "vertical"; gap: number; className: string }[],
+    ] as {
+      fields: string[]
+      layout: "horizontal" | "vertical"
+      gap: number
+      className: string
+    }[],
   },
 }

@@ -1,4 +1,10 @@
-import { Button, Dialog, Input, Label, TextArea as Textarea } from "@/components/base"
+import {
+  Button,
+  Dialog,
+  Input,
+  Label,
+  TextArea,
+} from "@/components/base"
 
 interface TreeItemDialogProps {
   open: boolean
@@ -55,7 +61,7 @@ export function TreeItemDialog({
             <div key={field.name} className="space-y-2">
               <Label htmlFor={field.name}>{field.label}</Label>
               {field.type === "textarea" ? (
-                <Textarea
+                <TextArea
                   id={field.name}
                   value={formData[field.name] || ""}
                   onChange={(e) =>

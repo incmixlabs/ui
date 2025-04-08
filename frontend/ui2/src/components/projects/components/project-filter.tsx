@@ -1,12 +1,12 @@
-import { useState } from "react"
 import { Search } from "lucide-react"
+import { useState } from "react"
 import { members } from "../data"
 
+import { Box, Button, Flex, Input, Select } from "@/components/base"
 import { SmartDatetimeInput } from "@/components/datetime-picker"
 import MultipleSelector, {
   type Option,
 } from "@/components/multiple-selector/multiple-selector"
-import { Box, Button, Flex, Input, Select } from "@/components/base"
 
 interface ProjectFilterProps {
   onApplyFilters: (filters: {

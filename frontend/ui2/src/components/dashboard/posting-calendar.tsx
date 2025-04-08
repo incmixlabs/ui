@@ -1,8 +1,16 @@
 import React, { useMemo } from "react"
 
-import { Ellipsis, Zap } from "lucide-react"
-import { Box, Flex, Grid, Heading, IconButton, Text, Tooltip } from "@/components/radixui"
+import {
+  Box,
+  Flex,
+  Grid,
+  Heading,
+  IconButton,
+  Text,
+  Tooltip,
+} from "@/components/radixui"
 import { cn } from "@/lib/utils"
+import { Ellipsis, Zap } from "lucide-react"
 
 interface Task {
   day: string

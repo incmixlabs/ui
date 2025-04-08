@@ -1,13 +1,10 @@
 "use client"
 import * as React from "react"
 
-import { Slot } from "@radix-ui/react-slot"
 import { type VariantProps, cva } from "@/lib/cva"
+import { Slot } from "@radix-ui/react-slot"
 import { ChevronsLeft, PanelLeft } from "lucide-react"
 
-import { useIsMobile } from "@/hooks/use-mobile"
-import { cn } from "@/lib/utils"
-import { Sheet, SheetContent, SheetDescription, SheetTitle } from "../sheet"
 // biome-ignore lint/style/useImportType: <explanation>
 import {
   Button,
@@ -15,14 +12,17 @@ import {
   Input,
   Separator,
   Skeleton,
-  Tooltip
+  Tooltip,
 } from "@/components/base"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { cn } from "@/lib/utils"
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from "../sheet"
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
-const SIDEBAR_WIDTH = "16rem"
+const _SIDEBAR_WIDTH = "16rem"
 const SIDEBAR_WIDTH_MOBILE = "18rem"
-const SIDEBAR_WIDTH_ICON = "4rem"
+const _SIDEBAR_WIDTH_ICON = "4rem"
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
 type SidebarContext = {
@@ -78,7 +78,7 @@ const SidebarProvider = React.forwardRef<
       children,
       ...props
     },
-    ref
+    _ref
   ) => {
     const {
       defaultSecondaryOpen = true,
@@ -174,8 +174,7 @@ const SidebarProvider = React.forwardRef<
     )
 
     return (
-      <SidebarContext.Provider value={contextValue}>
-      </SidebarContext.Provider>
+      <SidebarContext.Provider value={contextValue}></SidebarContext.Provider>
     )
   }
 )

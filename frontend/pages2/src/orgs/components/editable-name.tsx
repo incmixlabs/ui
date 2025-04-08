@@ -1,5 +1,5 @@
 import { Button, Flex, Heading, TextField, Tooltip } from "@incmix/ui"
-import { Check, X, Pencil } from "lucide-react"
+import { Check, Pencil, X } from "lucide-react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"

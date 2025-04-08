@@ -1,5 +1,12 @@
 "use client"
 
+import { Button } from "@/components/shadcn/button"
+import { cn } from "@/lib/utils"
+import Autoplay from "embla-carousel-autoplay"
+import useEmblaCarousel, {
+  type UseEmblaCarouselType,
+} from "embla-carousel-react"
+import { ArrowLeft, ArrowRight } from "lucide-react"
 import {
   createContext,
   useCallback,
@@ -8,13 +15,6 @@ import {
   useRef,
   useState,
 } from "react"
-import Autoplay from "embla-carousel-autoplay"
-import useEmblaCarousel, {
-  type UseEmblaCarouselType,
-} from "embla-carousel-react"
-import { ArrowLeft, ArrowRight } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/shadcn/button"
 import { iconSize } from "./icons/icon"
 export { Autoplay }
 
@@ -61,69 +61,69 @@ function Carousel({
   ...props
 }: React.HTMLAttributes<HTMLDivElement> & CarouselProps) {
   const ref = useRef<HTMLDivElement>(null)
-    const [carouselRef, api] = useEmblaCarousel(
-      {
-        ...opts,
-        axis: orientation === "horizontal" ? "x" : "y",
-      },
-      plugins
-    )
-    const [canScrollPrev, setCanScrollPrev] = useState(false)
-    const [canScrollNext, setCanScrollNext] = useState(false)
+  const [carouselRef, api] = useEmblaCarousel(
+    {
+      ...opts,
+      axis: orientation === "horizontal" ? "x" : "y",
+    },
+    plugins
+  )
+  const [canScrollPrev, setCanScrollPrev] = useState(false)
+  const [canScrollNext, setCanScrollNext] = useState(false)
 
-    const onSelect = useCallback((api: CarouselApi) => {
-      if (!api) {
-        return
+  const onSelect = useCallback((api: CarouselApi) => {
+    if (!api) {
+      return
+    }
+
+    setCanScrollPrev(api.canScrollPrev())
+    setCanScrollNext(api.canScrollNext())
+  }, [])
+
+  const scrollPrev = useCallback(() => {
+    api?.scrollPrev()
+  }, [api])
+
+  const scrollNext = useCallback(() => {
+    api?.scrollNext()
+  }, [api])
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault()
+        scrollPrev()
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault()
+        scrollNext()
       }
+    },
+    [scrollPrev, scrollNext]
+  )
 
-      setCanScrollPrev(api.canScrollPrev())
-      setCanScrollNext(api.canScrollNext())
-    }, [])
+  useEffect(() => {
+    if (!api || !setApi) {
+      return
+    }
 
-    const scrollPrev = useCallback(() => {
-      api?.scrollPrev()
-    }, [api])
+    setApi(api)
+  }, [api, setApi])
 
-    const scrollNext = useCallback(() => {
-      api?.scrollNext()
-    }, [api])
+  useEffect(() => {
+    if (!api) {
+      return
+    }
 
-    const handleKeyDown = useCallback(
-      (event: React.KeyboardEvent<HTMLDivElement>) => {
-        if (event.key === "ArrowLeft") {
-          event.preventDefault()
-          scrollPrev()
-        } else if (event.key === "ArrowRight") {
-          event.preventDefault()
-          scrollNext()
-        }
-      },
-      [scrollPrev, scrollNext]
-    )
+    onSelect(api)
+    api.on("reInit", onSelect)
+    api.on("select", onSelect)
 
-    useEffect(() => {
-      if (!api || !setApi) {
-        return
-      }
+    return () => {
+      api?.off("select", onSelect)
+    }
+  }, [api, onSelect])
 
-      setApi(api)
-    }, [api, setApi])
-
-    useEffect(() => {
-      if (!api) {
-        return
-      }
-
-      onSelect(api)
-      api.on("reInit", onSelect)
-      api.on("select", onSelect)
-
-      return () => {
-        api?.off("select", onSelect)
-      }
-    }, [api, onSelect])
-
-    return (
+  return (
     <div className="px-12">
       <CarouselContext.Provider
         value={{
@@ -153,9 +153,9 @@ function Carousel({
 }
 Carousel.displayName = "Carousel"
 
-function CarouselContent({ 
-  className, 
-  ...props 
+function CarouselContent({
+  className,
+  ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
   const ref = useRef<HTMLDivElement>(null)
   const { carouselRef, orientation } = useCarousel()

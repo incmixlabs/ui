@@ -18,12 +18,12 @@ import {
 import {
   Bell,
   LogOut,
-  Settings,
   Menu,
-  Search,
   Moon,
-  User,
+  Search,
+  Settings,
   Sun,
+  User,
 } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { CurrentUserProfileImage } from "../user-profile-image"

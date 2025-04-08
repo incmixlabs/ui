@@ -1,21 +1,21 @@
-import {  Button , Checkbox } from "@/components/base"
+import { Button, Checkbox } from "@/components/base"
 
-import { produce } from "immer"
-import { useEffect, useRef, useState } from "react"
-import type { TreeDataItem } from "@/types"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/table"
 import {
   findItemById,
   removeItemById,
   useEnvVarsStore,
 } from "@/lib/utils/env-vars-store"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableHead,
-  TableRow,
-} from "@/components/table"
+import type { TreeDataItem } from "@/types"
+import { produce } from "immer"
+import { useEffect, useRef, useState } from "react"
 import { TreeItemRow, type TreeItemRowRef } from "./tree-item-row"
 
 interface FlattenedItem extends TreeDataItem {

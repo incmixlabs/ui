@@ -10,13 +10,7 @@ import {
   Text,
 } from "@/components/base"
 import { useProjectDrawer } from "@/hooks/use-project-drawer"
-import {
-  Clock,
-  Ellipsis,
-  Pencil,
-  Trash2,
-  UserPlus,
-} from "lucide-react"
+import { Clock, Ellipsis, Pencil, Trash2, UserPlus } from "lucide-react"
 import { iconSize } from "../../icons/icon"
 import type { Project } from "../types"
 
@@ -145,11 +139,7 @@ export function ProjectCard({
               key={member.id}
               className="h-8 w-8 overflow-hidden rounded-full"
             >
-              <Avatar
-                src={member.avatar}
-                fallback={member.name}
-
-              />
+              <Avatar src={member.avatar} fallback={member.name} />
             </Box>
           ))}
         </Flex>
