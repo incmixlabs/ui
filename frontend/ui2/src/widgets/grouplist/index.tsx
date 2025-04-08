@@ -1,7 +1,7 @@
-import { IconButton } from "@components"
-import { Box, Card, Flex, Heading, ScrollArea, Text } from "@incmix/ui"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 import React, { useState } from "react"
+import { IconButton } from "@/components/radixui/button"
+import { Box, Card, Flex, Heading, ScrollArea, Text } from "@/components/radixui"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 type Movie = {
   id: number
@@ -204,7 +204,7 @@ export const GroupList = ({
 
   return (
     <>
-      <Card className="relative mx-auto h-96 w-96 max-w-md overflow-hidden rounded bg-white shadow">
+      <Card.Root className="relative mx-auto h-96 w-96 max-w-md overflow-hidden rounded bg-white shadow">
         <Box
           className={`absolute top-0 left-0 h-full w-full transition-transform duration-500 ease-in-out ${listView === "years" ? "translate-x-0" : "-translate-x-full"}`}
         >
@@ -259,7 +259,7 @@ export const GroupList = ({
             ))}
           </Box>
         </Box>
-      </Card>
+      </Card.Root>
     </>
   )
 }

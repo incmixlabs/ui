@@ -1,4 +1,4 @@
-import { CheckIcon } from "@radix-ui/react-icons"
+import { Check } from "lucide-react"
 import type { ButtonProps } from "@radix-ui/themes"
 import { Spinner } from "@radix-ui/themes"
 import React from "react"
@@ -31,7 +31,7 @@ export const ReactiveButton = React.forwardRef<
       {loading ? (
         <Spinner className={spinnerClassName} />
       ) : success ? (
-        <CheckIcon className={successIconClassName} />
+        <Check className={successIconClassName} />
       ) : (
         children
       )}

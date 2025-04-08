@@ -7,7 +7,7 @@ import {
   CarouselContent,
   CarouselNext,
   CarouselPrevious,
-} from "@components/carousel"
+} from "@/components/carousel"
 import { Tabs, TabsList, TabsTrigger } from "@components/tabs"
 import { useRateLimitStore } from "@incmix/store"
 import { Spinner, Text } from "@incmix/ui"

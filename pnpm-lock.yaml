@@ -1113,6 +1113,9 @@ importers:
       embla-carousel-autoplay:
         specifier: 8.5.1
         version: 8.5.1(embla-carousel@8.5.1)
+      embla-carousel-react:
+        specifier: 8.5.1
+        version: 8.5.1(react@19.0.0)
       input-otp:
         specifier: 1.4.2
         version: 1.4.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -17195,6 +17198,12 @@ snapshots:
   embla-carousel-autoplay@8.5.1(embla-carousel@8.5.1):
     dependencies:
       embla-carousel: 8.5.1
+
+  embla-carousel-react@8.5.1(react@19.0.0):
+    dependencies:
+      embla-carousel: 8.5.1
+      embla-carousel-reactive-utils: 8.5.1(embla-carousel@8.5.1)
+      react: 19.0.0
 
   embla-carousel-react@8.5.1(react@19.1.0):
     dependencies:

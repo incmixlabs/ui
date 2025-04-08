@@ -7,17 +7,16 @@ import { ChevronsLeft, PanelLeft } from "lucide-react"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
-import type { Button, IconButton } from "@/components/radixui/button"
-import { Input } from "@/components/shadcn/input"
-import { Separator } from "@/components/radixui/separator"
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "../sheet"
-import { Skeleton } from "@/components/radixui/skeleton"
+// biome-ignore lint/style/useImportType: <explanation>
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../tooltip"
+  Button,
+  IconButton,
+  Input,
+  Separator,
+  Skeleton,
+  Tooltip
+} from "@/components/base"
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -176,25 +175,6 @@ const SidebarProvider = React.forwardRef<
 
     return (
       <SidebarContext.Provider value={contextValue}>
-        <TooltipProvider delayDuration={0}>
-          <div
-            style={
-              {
-                "--sidebar-width": SIDEBAR_WIDTH,
-                "--sidebar-width-icon": SIDEBAR_WIDTH_ICON,
-                ...style,
-              } as React.CSSProperties
-            }
-            className={cn(
-              "group/sidebar-wrapper flex min-h-svh w-full has-[[data-variant=inset]]:bg-sidebar",
-              className
-            )}
-            ref={ref}
-            {...props}
-          >
-            {children}
-          </div>
-        </TooltipProvider>
       </SidebarContext.Provider>
     )
   }

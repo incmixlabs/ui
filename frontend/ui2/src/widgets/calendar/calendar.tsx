@@ -1,19 +1,21 @@
-import { Box, Flex, Heading, Text, TextField } from "@incmix/ui"
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  MinusIcon,
-  PlusIcon,
-} from "@radix-ui/react-icons"
-import { cn } from "@/lib/utils"
+import { useCallback, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { DateTime, Info } from "luxon"
-import { useCallback, useState } from "react"
 import { useTranslation } from "react-i18next"
+
+import { Box, Flex, Heading, Text, TextField } from "@/components/radixui"
+import {
+  ChevronLeft,
+  ChevronRight,
+  Minus,
+  Plus
+} from "lucide-react"
+import { cn } from "@/lib/utils"
 export interface CalendarEvent {
   id: string
   eventName: string
   calendar: string
+  // TBD: Add a type for color
   color: "blue" | "orange" | "green" | "yellow"
   date: DateTime
 }
@@ -46,14 +48,14 @@ const CalendarHeader = ({
     align="center"
     className="select-none rounded-t-md bg-gray-3 px-4 py-3"
   >
-    <ChevronLeftIcon
+    <ChevronLeft
       className="h-5 w-5 cursor-pointer text-gray-11 hover:text-gray-12"
       onClick={onPrevMonth}
     />
     <Heading size="3">
       {capitalizeFirstLetter(currentDate.toFormat("MMMM yyyy"))}
     </Heading>
-    <ChevronRightIcon
+    <ChevronRight
       className="h-5 w-5 cursor-pointer text-gray-11 hover:text-gray-12"
       onClick={onNextMonth}
     />
@@ -140,7 +142,7 @@ const CalendarDay = ({
             className="h-1.5 w-1.5 rounded-full"
             title={`${dayEvents.length - 5} more events`}
           >
-            <PlusIcon className="absolute h-2.5 w-2.5 text-bold" />
+            <Plus className="absolute h-2.5 w-2.5 text-bold" />
           </Flex>
         )}
         {Array.from({ length: placeholderDots }).map((_, index) => (
@@ -380,7 +382,7 @@ const SelectedDayEvents = ({
                 >
                   {onRemoveEvent && (
                     <Box className="absolute inset-0 hidden items-center justify-center font-bold text-white text-xs group-hover:flex">
-                      <MinusIcon className="h-3 w-3" />
+                      <Minus className="h-3 w-3" />
                     </Box>
                   )}
                 </Box>
@@ -412,7 +414,7 @@ const SelectedDayEvents = ({
               onClick={() => onAddEvent(selectedDay)}
             >
               <Box className="relative size-3">
-                <PlusIcon className="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 size-4" />
+                <Plus className="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 size-4" />
               </Box>
               <Text>{t("addEvent")}</Text>
             </Flex>

@@ -1,7 +1,4 @@
-import { Button, Dialog } from "@incmix/ui"
-import { Input } from "../form"
-import { Label } from "../label"
-import { Textarea } from "../textarea"
+import { Button, Dialog, Input, Label, TextArea as Textarea } from "@/components/base"
 
 interface TreeItemDialogProps {
   open: boolean

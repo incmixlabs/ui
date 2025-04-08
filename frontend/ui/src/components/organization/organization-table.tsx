@@ -1,4 +1,4 @@
-import { Checkbox, Dialog, Input } from "@incmix/ui"
+import { Checkbox } from "@incmix/ui"
 import { Button } from "@incmix/ui"
 import { produce } from "immer"
 import { useEffect, useRef, useState } from "react"
@@ -8,7 +8,6 @@ import {
   removeItemById,
   useEnvVarsStore,
 } from "../../utils/env-vars-store"
-import { Label } from "../form/label"
 import {
   Table,
   TableBody,
@@ -65,7 +64,7 @@ export function OrganizationTable() {
   // Function to toggle the expanded state of a folder
   const toggleExpand = (itemId: string) => {
     setTreeData(
-      produce(treeData, (draft) => {
+      produce(treeData, (draft: TreeDataItem | TreeDataItem[]) => {
         const item = findItemById(draft, itemId)
         if (item && item.type === "folder") {
           item.expanded = !item.expanded
@@ -109,7 +108,7 @@ export function OrganizationTable() {
       setTreeData([...treeData, newItem])
     } else {
       setTreeData(
-        produce(treeData, (draft) => {
+        produce(treeData, (draft: TreeDataItem | TreeDataItem[]) => {
           if (position === "inside") {
             const targetItem = findItemById(draft, item.id)
             if (targetItem && targetItem.type === "folder") {
@@ -162,7 +161,7 @@ export function OrganizationTable() {
   // Function to handle editing an item
   const handleEdit = (updatedItem: TreeDataItem) => {
     setTreeData(
-      produce(treeData, (draft) => {
+      produce(treeData, (draft: TreeDataItem | TreeDataItem[]) => {
         const targetItem = findItemById(draft, updatedItem.id)
         if (targetItem) {
           targetItem.name = updatedItem.name

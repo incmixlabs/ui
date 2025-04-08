@@ -8,7 +8,7 @@ import {
 import MultipleSelector, {
   type Option,
 } from "@/components/multiple-selector/multiple-selector"
-import { TextArea } from "@/components/radixui/text-area"
+
 import { Input } from "@/components/shadcn/input"
 import { Label } from "@/components/shadcn/label"
 import {
@@ -18,6 +18,7 @@ import {
   Flex,
   Grid,
   Text,
+  TextArea
 } from "@/components/base"
 import { Plus } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -118,9 +119,9 @@ export function AddProjectModal({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent maxWidth="500px">
-        <DialogTitle className="font-medium">Add Project</DialogTitle>
+    <Dialog.Root open={isOpen} onOpenChange={onClose}>
+      <Dialog.Content maxWidth="500px">
+        <Dialog.Title className="font-medium">Add Project</Dialog.Title>
         <Grid className="py-4" gap={"4"}>
           <Flex justify={"center"} className="mb-4">
             <FileUploader
@@ -262,7 +263,7 @@ export function AddProjectModal({
             Create
           </Button>
         </Flex>
-      </DialogContent>
-    </Dialog>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }

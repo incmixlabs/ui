@@ -1,3 +1,4 @@
+import { useState } from "react"
 import {
   Box,
   Checkbox,
@@ -10,9 +11,67 @@ import {
 import { GripVertical, Plus, Trash2 } from "lucide-react"
 import { Reorder, motion, useDragControls, useMotionValue } from "motion/react"
 import type { DragControls } from "motion/react"
-import type React from "react"
-import { useState } from "react"
-import { ProjectsImages } from "../images"
+interface ChecklistItem {
+  id: number
+  title: string
+  date: string
+  checked: boolean
+}
+const Item = ({
+  children,
+  item,
+  setChecklistData,
+  checkListData,
+}: {
+  children: React.ReactNode
+  item: ChecklistItem
+  setChecklistData: React.Dispatch<React.SetStateAction<TChecklistItem[]>>
+  checkListData: TChecklistItem[]
+}) => {
+  const y = useMotionValue(0)
+  //   const boxShadow = useRaisedShadow(y);
+  const dragControls = useDragControls()
+
+  return (
+    <Reorder.Item
+      value={item}
+      style={{ y }}
+      dragListener={false}
+      dragControls={dragControls}
+      className="group flex w-full items-center justify-between rounded-md bg-gray-3 p-3 dark:bg-gray-4"
+    >
+      {children}
+      <Flex className="gap-3" align={"center"}>
+        <ReorderIcon dragControls={dragControls} />
+        <IconButton
+          onClick={() => {
+            setChecklistData(checkListData.filter((i) => i.id !== item.id))
+          }}
+          className="bg-transparent opacity-0 group-hover:opacity-100"
+        >
+          <Trash2 className="h-5 w-5 text-gray-12" />
+        </IconButton>
+      </Flex>
+    </Reorder.Item>
+  )
+}
+
+interface Props {
+  dragControls: DragControls
+}
+export function ReorderIcon({ dragControls }: Props) {
+  return (
+    <motion.div
+      whileTap={{ scale: 0.85 }}
+      onPointerDown={(e) => {
+        e.preventDefault()
+        dragControls.start(e)
+      }}
+    >
+      <GripVertical className=" h-7 w-7 cursor-grab text-gray-12 opacity-0 active:cursor-grabbing group-hover:opacity-100" />
+    </motion.div>
+  )
+}
 type TChecklistItem = {
   id: number
   title: string
@@ -20,7 +79,7 @@ type TChecklistItem = {
   checked: boolean
 }
 
-function ProjectChecklist() {
+export function ProjectChecklist() {
   const [checkListData, setChecklistData] = useState<TChecklistItem[]>([
     {
       id: 1,
@@ -116,67 +175,6 @@ function ProjectChecklist() {
         </IconButton>
       </Box>
     </>
-  )
-}
-interface ChecklistItem {
-  id: number
-  title: string
-  date: string
-  checked: boolean
-}
-const Item = ({
-  children,
-  item,
-  setChecklistData,
-  checkListData,
-}: {
-  children: React.ReactNode
-  item: ChecklistItem
-  setChecklistData: React.Dispatch<React.SetStateAction<TChecklistItem[]>>
-  checkListData: TChecklistItem[]
-}) => {
-  const y = useMotionValue(0)
-  //   const boxShadow = useRaisedShadow(y);
-  const dragControls = useDragControls()
-
-  return (
-    <Reorder.Item
-      value={item}
-      style={{ y }}
-      dragListener={false}
-      dragControls={dragControls}
-      className="group flex w-full items-center justify-between rounded-md bg-gray-3 p-3 dark:bg-gray-4"
-    >
-      {children}
-      <Flex className="gap-3" align={"center"}>
-        <ReorderIcon dragControls={dragControls} />
-        <IconButton
-          onClick={() => {
-            setChecklistData(checkListData.filter((i) => i.id !== item.id))
-          }}
-          className="bg-transparent opacity-0 group-hover:opacity-100"
-        >
-          <Trash2 className="h-5 w-5 text-gray-12" />
-        </IconButton>
-      </Flex>
-    </Reorder.Item>
-  )
-}
-
-interface Props {
-  dragControls: DragControls
-}
-export function ReorderIcon({ dragControls }: Props) {
-  return (
-    <motion.div
-      whileTap={{ scale: 0.85 }}
-      onPointerDown={(e) => {
-        e.preventDefault()
-        dragControls.start(e)
-      }}
-    >
-      <GripVertical className=" h-7 w-7 cursor-grab text-gray-12 opacity-0 active:cursor-grabbing group-hover:opacity-100" />
-    </motion.div>
   )
 }
 

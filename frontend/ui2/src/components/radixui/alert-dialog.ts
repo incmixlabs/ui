@@ -1,5 +1,4 @@
-export { AlertDialog } from "@radix-ui/themes"
-export { alertDialogContentPropDefs } from "@radix-ui/themes/src/components/alert-dialog.props.js"
+export { AlertDialog, AlertDialogContentProps } from "@radix-ui/themes"
 
 export type AlertDialogProps = {
   color: string

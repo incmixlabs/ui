@@ -1,22 +1,19 @@
 "use client"
 
-import { Checkbox, DropdownMenu, Input } from "@incmix/ui"
-import { IconButton } from "@radix-ui/themes"
+import { forwardRef, useImperativeHandle, useState } from "react"
 import { ChevronDown, ChevronRight, MoreVertical } from "lucide-react"
-import { forwardRef, useImperativeHandle, useRef, useState } from "react"
-import type { TreeDataItem } from "../../types"
-import { Button } from "../button"
+
+import type { TreeDataItem } from "@/types"
 import {
+  Button,
+  Checkbox,
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../dialog"
-import { Label } from "../label"
-import { TableCell, TableRow } from "../table"
-import { Textarea } from "../textarea"
+  DropdownMenu,
+  Input,
+  Label,
+  TextArea
+} from "@/components/base"
+import { TableCell, TableRow } from "@/components/table"
 interface TreeItemRowProps {
   item: TreeDataItem
   level: number
@@ -247,27 +244,27 @@ export const TreeItemRow = forwardRef<TreeItemRowRef, TreeItemRowProps>(
         </TableCell>
 
         {/* Dialog */}
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
+        <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
+          <Dialog.Content>
+            <Dialog.Header>
+              <Dialog.Title>
                 {isEditing
                   ? `Edit ${dialogType === "file" ? "Variable" : "Folder"}`
                   : `New ${dialogType === "file" ? "Variable" : "Folder"}`}
-              </DialogTitle>
-              <DialogDescription>
+              </Dialog.Title>
+              <Dialog.Description>
                 {isEditing
                   ? `Edit the ${dialogType === "file" ? "variable" : "folder"} details below.`
                   : `Add a new ${dialogType === "file" ? "variable" : "folder"} ${dialogPosition} the selected item.`}
-              </DialogDescription>
-            </DialogHeader>
+              </Dialog.Description>
+            </Dialog.Header>
 
             <div className="space-y-4 py-4">
               {dialogFields.map((field) => (
                 <div key={field.name} className="space-y-2">
                   <Label htmlFor={field.name}>{field.label}</Label>
                   {field.type === "textarea" ? (
-                    <Textarea
+                    <TextArea
                       id={field.name}
                       value={formData[field.name] || ""}
                       onChange={(e) =>
@@ -296,7 +293,7 @@ export const TreeItemRow = forwardRef<TreeItemRowRef, TreeItemRowProps>(
               ))}
             </div>
 
-            <DialogFooter>
+            <Dialog.Footer>
               <Button
                 variant="outline"
                 onClick={() => {
@@ -317,9 +314,9 @@ export const TreeItemRow = forwardRef<TreeItemRowRef, TreeItemRowProps>(
                   ? "Save"
                   : `Add ${dialogType === "file" ? "Variable" : "Folder"}`}
               </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog.Root>
       </TableRow>
     )
   }

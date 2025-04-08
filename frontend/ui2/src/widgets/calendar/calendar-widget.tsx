@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { createId as cuid } from "@paralleldrive/cuid2"
+import { nanoid  } from "nanoid"
 import { DateTime } from "luxon"
 import { useCallback, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -37,7 +37,7 @@ export function CalendarWidget({ storageKey }: CalendarWidgetProps) {
     (date: DateTime) => {
       const randomColor = COLORS[Math.floor(Math.random() * COLORS.length)]
       const newEvent: CalendarEvent = {
-        id: cuid(),
+        id: nanoid(),
         eventName: t("newEvent"),
         calendar: "Default",
         color: randomColor,

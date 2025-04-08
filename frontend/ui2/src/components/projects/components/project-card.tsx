@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Card,
   DropdownMenu,
@@ -12,7 +13,6 @@ import { useProjectDrawer } from "@/hooks/use-project-drawer"
 import {
   Clock,
   Ellipsis,
-  MoreHorizontal,
   Pencil,
   Trash2,
   UserPlus,
@@ -37,7 +37,7 @@ export function ProjectCard({
 }: ProjectCardProps) {
   const { handleDrawerOpen } = useProjectDrawer()
   return (
-    <Card
+    <Card.Root
       onClick={() => {
         if (isListFilter) {
           handleDrawerOpen(project.id.toString())
@@ -145,17 +145,15 @@ export function ProjectCard({
               key={member.id}
               className="h-8 w-8 overflow-hidden rounded-full"
             >
-              <img
+              <Avatar
                 src={member.avatar}
-                alt={member.name}
-                width={32}
-                height={32}
-                className="object-cover"
+                fallback={member.name}
+
               />
             </Box>
           ))}
         </Flex>
       </Flex>
-    </Card>
+    </Card.Root>
   )
 }
