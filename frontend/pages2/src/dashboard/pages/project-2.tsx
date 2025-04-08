@@ -1,8 +1,8 @@
-import { LoadingPage } from "@common"
-import { Flex, Heading, Project2 } from "@incmix/ui"
-import { DashboardLayout } from "@layouts/admin-panel/layout"
+import { useAuth } from "@/auth"
+import { LoadingPage } from "@/common"
+import { DashboardLayout } from "@/layouts/admin-panel/layout"
+import { Flex, Heading, Project2 } from "@incmix/ui2"
 import { useTranslation } from "react-i18next"
-import { useAuth } from "../../auth"
 
 const DashboardProject2: React.FC = () => {
   const { t } = useTranslation(["dashboard", "common"])

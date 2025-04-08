@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, TextField, Tooltip } from "@incmix/ui"
+import { Button, Flex, Heading, TextField, Tooltip } from "@incmix/ui2"
 import { Check, Pencil, X } from "lucide-react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"

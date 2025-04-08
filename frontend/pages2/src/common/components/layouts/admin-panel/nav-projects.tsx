@@ -1,5 +1,6 @@
 "use client"
 
+import { DropdownMenu } from "@incmix/ui2"
 import {
   Folder,
   Forward,
@@ -8,7 +9,6 @@ import {
   Trash2,
 } from "lucide-react"
 
-import { DropdownMenu } from "@incmix/ui"
 import {
   SidebarGroup,
   SidebarGroupLabel,

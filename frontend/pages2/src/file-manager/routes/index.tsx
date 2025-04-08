@@ -2,7 +2,7 @@
 
 import { createRoute } from "@tanstack/react-router"
 
-import { RootRoute } from "@common"
+import { RootRoute } from "@/common"
 import { searchParamsSchema } from "@incmix/utils/data-table"
 import FileManagerPage from "../page"
 

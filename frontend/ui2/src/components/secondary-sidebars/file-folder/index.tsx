@@ -1,5 +1,7 @@
 "use client"
-import { Box, Flex, Progress, ScrollArea, Text, iconSize } from "@incmix/ui"
+
+import { Box, Flex, Progress, ScrollArea, Text } from "@/components/base"
+import { iconSize } from "@/icons/icon"
 import { FolderClosed, type LucideIcon } from "lucide-react"
 import { type JSX, useState } from "react"
 import { secondaryFooterData, secondarySidebarData } from "./data"

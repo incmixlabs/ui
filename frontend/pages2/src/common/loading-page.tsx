@@ -1,4 +1,4 @@
-import { Flex, Spinner } from "@incmix/ui"
+import { Flex, Spinner } from "@incmix/ui2"
 
 const LoadingPage: React.FC = () => {
   return (

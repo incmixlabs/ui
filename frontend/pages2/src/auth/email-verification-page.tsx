@@ -1,11 +1,12 @@
-import { I18n } from "@incmix/pages/i18n"
-import { Container, Flex, Spinner, Text, ThickCheckIcon } from "@incmix/ui"
-import { AUTH_API_URL } from "@incmix/ui/constants"
-import { cn } from "@incmix/ui/utils"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
+
+import { I18n } from "@incmix/pages2/i18n"
+import { cn } from "@incmix/ui/utils"
+import { Container, Flex, Spinner, Text, ThickCheckIcon } from "@incmix/ui2"
+import { AUTH_API_URL } from "@incmix/ui2/constants"
 import EmailVerificationRoute from "./routes/email-verification"
 
 function EmailVerificationPage() {

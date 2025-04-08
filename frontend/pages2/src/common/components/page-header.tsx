@@ -1,4 +1,4 @@
-import { Heading } from "@incmix/ui"
+import { Heading } from "@incmix/ui2"
 import type React from "react"
 import type { ReactNode } from "react"
 

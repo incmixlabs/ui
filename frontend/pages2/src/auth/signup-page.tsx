@@ -6,9 +6,9 @@ import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
-import { FormField } from "@incmix/ui"
-import { Box, Flex, Heading, ReactiveButton, Text } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
+import { FormField } from "@incmix/ui2"
+import { Box, Flex, Heading, ReactiveButton, Text } from "@incmix/ui2"
 import type { AuthUser } from "@incmix/utils/types"
 
 import { AuthLayout } from "./layouts"

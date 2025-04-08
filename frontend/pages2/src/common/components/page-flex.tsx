@@ -1,8 +1,8 @@
-import { Box, Container, Flex, type FlexProps } from "@incmix/ui"
-import type React from "react"
+import { Box, Container, Flex, type FlexProps } from "@incmix/ui2"
 import type { ReactNode } from "react"
 
-interface PageFlexProps extends FlexProps {
+// @ts-ignore
+export type PageFlexProps = FlexProps & {
   children: ReactNode
   fullHeight?: boolean
   centered?: boolean
@@ -21,7 +21,7 @@ export const PageFlex: React.FC<PageFlexProps> = ({
       direction="column"
       gap="6"
       className={`
-        ${fullHeight ? "min-h-[calc(100vh-150px)]" : ""} 
+        ${fullHeight ? "min-h-[calc(100vh-150px)]" : ""}
         ${centered ? "items-center justify-center" : ""}
       `}
       {...props}

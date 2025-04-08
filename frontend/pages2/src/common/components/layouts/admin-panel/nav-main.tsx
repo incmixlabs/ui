@@ -3,11 +3,6 @@
 import { ChevronRight, type LucideIcon } from "lucide-react"
 
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@incmix/ui/collapsible"
-import {
   SidebarGroup,
   SidebarMenu,
   SidebarMenuButton,
@@ -16,8 +11,12 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@incmix/ui/sidebar"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@incmix/ui2/collapsible"
 import { Link } from "@tanstack/react-router"
-import type React from "react"
 
 export function NavMain({
   items,

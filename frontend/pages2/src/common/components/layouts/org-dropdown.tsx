@@ -1,6 +1,6 @@
+import { useOrganizations } from "@/orgs/utils"
 import { useOrganizationStore } from "@incmix/store"
-import { Select } from "@incmix/ui"
-import { useOrganizations } from "@orgs/utils"
+import { Select } from "@incmix/ui2"
 import { useEffect } from "react"
 
 const OrgDropdown = () => {

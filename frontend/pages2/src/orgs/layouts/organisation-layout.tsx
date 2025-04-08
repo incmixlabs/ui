@@ -1,4 +1,4 @@
-import { Container, Flex, Tabs } from "@incmix/ui"
+import { Container, Flex, Tabs } from "@incmix/ui2"
 import { useNavigate } from "@tanstack/react-router"
 import { useTranslation } from "react-i18next"
 
