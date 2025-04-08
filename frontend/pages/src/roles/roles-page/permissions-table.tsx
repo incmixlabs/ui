@@ -19,9 +19,9 @@ import { useContext, useMemo, useState } from "react"
 import { permissionsContext } from "."
 import { createPermissionSubrows, updateRolesPermissions } from "./actions"
 import { getColumns } from "./columns"
+import { DeleteDialog } from "./delete-dialog"
 import RoleEditorModal from "./role-editor-modal"
 import type { ColumnAction, PermissionsWithRole } from "./types"
-import { DeleteDialog } from "./delete-dialog"
 
 const PermissonsTable = () => {
   const [columnAction, setColumnAction] = useState<ColumnAction | null>(null)
