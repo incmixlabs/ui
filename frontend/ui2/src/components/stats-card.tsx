@@ -1,5 +1,5 @@
 import { Card, CardDescription, CardHeader, CardTitle } from "@incmix/ui"
-import { cn } from "@utils"
+import { cn } from "@/lib/utils"
 interface StatsCardProps {
   count: number
   label: string

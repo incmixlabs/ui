@@ -25,7 +25,10 @@
     "./utils": "./src/lib/utils.ts",
     "./widgets": "./src/widgets/index.ts",
     "./date-picker": "./src/components/date-picker.tsx",
-    "./onboarding": "./src/components/onboarding/index.tsx"
+    "./onboarding": "./src/components/onboarding/index.tsx",
+    "./card/flow-card": "./src/components/radixui/card/flow-card/index.ts",
+    "./shadcn": "./src/components/shadcn/index.ts",
+    "./radixui": "./src/components/radixui/index.ts"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "1.4.0",
