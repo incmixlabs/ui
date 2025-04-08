@@ -1,5 +1,27 @@
 "use client"
 
+import { useAuth } from "@/auth"
+import { useOrganizationStore } from "@incmix/store"
+import { FileFolder } from "@incmix/ui/secondary-sidebars/file-folder"
+import { ScrollArea } from "@incmix/ui2"
+import { USERS_API_URL } from "@incmix/ui2/constants"
+import {
+  SecondarySidebar,
+  SidebarErrorFallback,
+} from "@incmix/ui2/secondary-sidebars"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarHeaderLabel,
+  SidebarRail,
+} from "@incmix/ui2/sidebar"
+import { createAbilityFromPermissions } from "@incmix/utils/casl"
+import type { Permission } from "@incmix/utils/types"
+import { useQuery } from "@tanstack/react-query"
+import { useLocation } from "@tanstack/react-router"
+import { I18n } from "i18n"
 import {
   BackpackIcon,
   BoxIcon,
@@ -15,31 +37,7 @@ import {
   TextIcon,
   UserIcon,
 } from "lucide-react"
-
 import React from "react"
-
-import { useAuth, useCurrentUser } from "@auth"
-import { useOrganizationStore } from "@incmix/store"
-import { ScrollArea } from "@incmix/ui"
-import { USERS_API_URL } from "@incmix/ui/constants"
-import {
-  SecondarySidebar,
-  SidebarErrorFallback,
-} from "@incmix/ui/secondary-sidebars"
-import { FileFolder } from "@incmix/ui/secondary-sidebars/file-folder"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarHeaderLabel,
-  SidebarRail,
-} from "@incmix/ui2/sidebar"
-import { createAbilityFromPermissions } from "@incmix/utils/casl"
-import type { Permission } from "@incmix/utils/types"
-import { useQuery } from "@tanstack/react-query"
-import { useLocation, useRouter } from "@tanstack/react-router"
-import { I18n } from "i18n"
 import { ErrorBoundary } from "react-error-boundary"
 import { useTranslation } from "react-i18next"
 import { NavMain } from "./nav-main"

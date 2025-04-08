@@ -9,6 +9,24 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
+
+  "exports": {
+    ".": "./src/components/index.ts",
+    "./style/global.css": "./src/style/global.css",
+    "./tauri": "./src/tauri.ts",
+    "./types": "./src/components/types/index.ts",
+    "./collapsible": "./src/primitives/collapsible.tsx",
+    "./constants": "./src/lib/utils/constants.ts",
+    "./data-table": "./src/components/data-table/index.ts",
+    "./hooks": "./src/hooks/index.ts",
+    "./sidebar": "./src/components/sidebar/index.ts",
+    "./secondary-sidebars": "./src/components/secondary-sidebars/index.tsx",
+    "./tree-view": "./src/components/tree-view/index.ts",
+    "./utils": "./src/lib/utils.ts",
+    "./widgets": "./src/widgets/index.ts",
+    "./date-picker": "./src/components/date-picker.tsx",
+    "./onboarding": "./src/components/onboarding/index.tsx"
+  },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "1.4.0",
     "@atlaskit/pragmatic-drag-and-drop-auto-scroll": "2.1.0",

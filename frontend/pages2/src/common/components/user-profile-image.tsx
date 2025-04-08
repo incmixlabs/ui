@@ -1,8 +1,8 @@
-import { toast } from "@incmix/ui"
+import { toast } from "@incmix/ui2"
+import { Avatar, AvatarEditable } from "@incmix/ui2"
+import type { ExtendSize } from "@incmix/ui2/types"
 import { useQueryClient } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
-
-import { Avatar, AvatarEditable } from "@incmix/ui"
 import {
   useCurrentUser,
   useProfilePicture,
@@ -11,7 +11,7 @@ import {
 } from "../../auth"
 
 export type UserProfileImageProps = {
-  size?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+  size?: ExtendSize
   editable?: boolean
   onImageChange?: () => void
   onImageDelete?: () => void

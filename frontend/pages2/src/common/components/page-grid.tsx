@@ -1,8 +1,8 @@
-import { Box, Container, Grid, type GridProps } from "@incmix/ui"
+import { Box, Container, Grid, type GridProps } from "@incmix/ui2"
 import type React from "react"
 import type { ReactNode } from "react"
 
-interface PageGridProps extends GridProps {
+export type PageGridProps = GridProps & {
   children: ReactNode
   noContainer?: boolean
   columns?: {

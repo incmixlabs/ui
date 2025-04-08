@@ -1,4 +1,4 @@
-import { LoadingPage } from "@common"
+import { LoadingPage } from "@/common"
 import { useNavigate } from "@tanstack/react-router"
 import { useGoogleAuthCallback } from "./hooks/auth"
 import GoogleAuthCallbackRoute from "./routes/google-auth-callback"

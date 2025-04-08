@@ -1,20 +1,5 @@
 import { Link as RouterLink, useNavigate } from "@tanstack/react-router"
 import { motion } from "framer-motion"
-import type React from "react"
-
-import { useLogout } from "@auth"
-import { useSidebarStore, useThemeStore } from "@incmix/store"
-import {
-  Box,
-  Button,
-  DropdownMenu,
-  Flex,
-  IconButton,
-  Link,
-  TextField,
-  iconSize,
-} from "@incmix/ui"
-
 import {
   Bell,
   LogOut,
@@ -26,6 +11,20 @@ import {
   User,
 } from "lucide-react"
 import { useTranslation } from "react-i18next"
+
+import { useLogout } from "@/auth"
+import { useSidebarStore, useThemeStore } from "@incmix/store"
+import {
+  Box,
+  Button,
+  DropdownMenu,
+  Flex,
+  IconButton,
+  Link,
+  TextField,
+  iconSize,
+} from "@incmix/ui2"
+
 import { CurrentUserProfileImage } from "../user-profile-image"
 import OrgDropdown from "./org-dropdown"
 
@@ -98,7 +97,7 @@ const ProfileDropdown: React.FC = () => {
   const { handleLogout, isPending: isLogoutLoading } = useLogout()
 
   return (
-    <DropdownMenu
+    <DropdownMenu.Root
       trigger={
         <motion.div whileHover={{ scale: 1.1 }} transition={{ duration: 0.2 }}>
           <IconButton

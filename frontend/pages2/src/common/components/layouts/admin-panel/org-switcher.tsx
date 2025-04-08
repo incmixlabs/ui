@@ -1,16 +1,16 @@
 import { ChevronsUpDown } from "lucide-react"
 import * as React from "react"
+import { useTranslation } from "react-i18next"
 
+import { useOrganizations } from "@/orgs/utils"
 import { useOrganizationStore } from "@incmix/store"
-import { DropdownMenu } from "@incmix/ui"
+import { DropdownMenu } from "@incmix/ui2"
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@incmix/ui/sidebar"
-import { useOrganizations } from "@orgs/utils"
-import { useTranslation } from "react-i18next"
+} from "@incmix/ui2/sidebar"
 
 export function OrgSwitcher() {
   const { isMobile } = useSidebar()

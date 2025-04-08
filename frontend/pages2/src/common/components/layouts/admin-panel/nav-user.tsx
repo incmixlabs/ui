@@ -1,17 +1,17 @@
 "use client"
 
+import { Link } from "@tanstack/react-router"
 import { Bell, ChevronsUpDown, LogOut, Settings2, UserIcon } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
-import { useLogout, useProfilePictureUrl, useUser } from "@auth"
-import { Avatar, DropdownMenu } from "@incmix/ui"
+import { useLogout, useProfilePictureUrl, useUser } from "@/auth"
+import { Avatar, DropdownMenu } from "@incmix/ui2"
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@incmix/ui/sidebar"
-import { Link } from "@tanstack/react-router"
-import { useTranslation } from "react-i18next"
+} from "@incmix/ui2/sidebar"
 
 export function NavUser({
   userId,

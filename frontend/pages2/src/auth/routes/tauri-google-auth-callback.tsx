@@ -1,5 +1,5 @@
 "use client"
-import { RootRoute } from "@common"
+import { RootRoute } from "@/common"
 import { createRoute } from "@tanstack/react-router"
 import TauriGoogleAuthCallbackPage from "../tauri-google-auth-callback-page"
 
