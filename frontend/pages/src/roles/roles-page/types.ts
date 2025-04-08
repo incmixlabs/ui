@@ -23,3 +23,8 @@ export type PermissionsResponse = {
 export type PermissionsWithRole = PermissionsResponse & {
   subRows: PermissionsWithRole[]
 }
+
+export type ColumnAction = {
+  role: Role
+  type: "update" | "delete"
+}

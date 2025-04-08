@@ -1,13 +1,16 @@
 import type { ColumnDef, Row } from "@tanstack/react-table"
 
-import { Checkbox, Flex, Input, Text } from "@incmix/ui"
+import { Checkbox, DropdownMenu, Flex, Input, Text } from "@incmix/ui"
 import { ChevronDown, ChevronRight, EllipsisVertical } from "lucide-react"
 import { useContext, useMemo, useState } from "react"
 
 import { permissionsContext } from "."
-import type { PermissionsWithRole, Role } from "./types"
+import type { ColumnAction, PermissionsWithRole, Role } from "./types"
 
-export const getColumns = (roles: Role[]): ColumnDef<PermissionsWithRole>[] => {
+export const getColumns = (
+  roles: Role[],
+  setColumnAction: React.Dispatch<React.SetStateAction<ColumnAction | null>>
+): ColumnDef<PermissionsWithRole>[] => {
   const searchColumn: ColumnDef<PermissionsWithRole> = {
     header: () => {
       return <Input placeholder="Search Permissions" />
@@ -46,7 +49,33 @@ export const getColumns = (roles: Role[]): ColumnDef<PermissionsWithRole>[] => {
             <Text size="1" className="uppercase">
               Role
             </Text>
-            <EllipsisVertical className="size-4" />
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <EllipsisVertical className="size-4" />
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                <DropdownMenu.Item
+                  onClick={() =>
+                    setColumnAction({
+                      role,
+                      type: "update",
+                    })
+                  }
+                >
+                  Edit
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  onClick={() =>
+                    setColumnAction({
+                      role,
+                      type: "delete",
+                    })
+                  }
+                >
+                  Delete
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
           </Flex>
           <Text size="2" className="capitalize">
             {role.name}

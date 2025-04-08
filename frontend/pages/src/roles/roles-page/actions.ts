@@ -7,9 +7,14 @@ import {
 } from "@incmix/utils/types"
 import type { PermissionsResponse, PermissionsWithRole, Role } from "./types"
 export async function getRolesPermissions() {
-  const res = await fetch(`${ORG_API_URL}/permissions/roles-permissions`, {
+  const res = await fetch(`${ORG_API_URL}/permissions`, {
     credentials: "include",
   })
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch roles and permissions")
+  }
+
   const data = (await res.json()) as {
     roles: Role[]
     permissions: PermissionsResponse[]
@@ -109,7 +114,7 @@ export type Change = {
 }
 
 export async function updateRolesPermissions(changes: Change[]) {
-  const res = await fetch(`${ORG_API_URL}/permissions/roles-permissions`, {
+  const res = await fetch(`${ORG_API_URL}/permissions`, {
     method: "PUT",
     body: JSON.stringify({ updates: changes }),
     headers: { "content-type": "application/json" },
@@ -121,5 +126,57 @@ export async function updateRolesPermissions(changes: Change[]) {
   }
 
   const data = await res.json()
+  return data
+}
+
+export async function createRole(role: string) {
+  const res = await fetch(`${ORG_API_URL}/permissions/roles`, {
+    method: "POST",
+    body: JSON.stringify({ name: role }),
+    headers: { "content-type": "application/json" },
+    credentials: "include",
+  })
+
+  if (!res.ok) {
+    throw new Error("Failed to create role")
+  }
+
+  const data = (await res.json()) as {
+    message: string
+  }
+  return data
+}
+
+export async function deleteRole(roleId: number) {
+  const res = await fetch(`${ORG_API_URL}/permissions/roles/${roleId}`, {
+    method: "DELETE",
+    credentials: "include",
+  })
+
+  if (!res.ok) {
+    throw new Error("Failed to delete role")
+  }
+
+  const data = (await res.json()) as {
+    message: string
+  }
+  return data
+}
+
+export async function updateRole(role: { id: number; name: string }) {
+  const res = await fetch(`${ORG_API_URL}/permissions/roles`, {
+    method: "PUT",
+    body: JSON.stringify(role),
+    headers: { "content-type": "application/json" },
+    credentials: "include",
+  })
+
+  if (!res.ok) {
+    throw new Error("Failed to update role")
+  }
+
+  const data = (await res.json()) as {
+    message: string
+  }
   return data
 }

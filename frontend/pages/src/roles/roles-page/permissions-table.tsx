@@ -15,28 +15,27 @@ import {
   getExpandedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { PlusCircleIcon } from "lucide-react"
-import { useContext, useEffect, useMemo, useState } from "react"
+import { useContext, useMemo, useState } from "react"
 import { permissionsContext } from "."
 import { createPermissionSubrows, updateRolesPermissions } from "./actions"
 import { getColumns } from "./columns"
-import type { PermissionsWithRole } from "./types"
+import RoleEditorModal from "./role-editor-modal"
+import type { ColumnAction, PermissionsWithRole } from "./types"
+import { DeleteDialog } from "./delete-dialog"
 
 const PermissonsTable = () => {
+  const [columnAction, setColumnAction] = useState<ColumnAction | null>(null)
+
   const [expandedRows, setExpandedRows] = useState<ExpandedState>({})
 
   const { changes, rawPermissions, roles } = useContext(permissionsContext)
-
-  useEffect(() => {
-    console.log(changes)
-  }, [changes])
 
   const permissions = useMemo(() => {
     const transformedPermissions = createPermissionSubrows(rawPermissions)
     return transformedPermissions
   }, [rawPermissions])
 
-  const columns = getColumns(roles)
+  const columns = getColumns(roles, setColumnAction)
   const table = useReactTable<PermissionsWithRole>({
     data: permissions,
     columns,
@@ -76,9 +75,15 @@ const PermissonsTable = () => {
             </Tabs.List>
           </Tabs.Root> */}
         <Flex justify="end" gap="2" align="center">
-          <Button variant="outline">
-            <PlusCircleIcon /> Add New Role
-          </Button>
+          <RoleEditorModal
+            title="Add New Role"
+            showTrigger
+            onSuccess={() => {
+              queryClient.invalidateQueries({
+                queryKey: ["roles-permissions"],
+              })
+            }}
+          />
           <Button
             variant="soft"
             onClick={handleSaveChanges}
@@ -113,6 +118,27 @@ const PermissonsTable = () => {
           ))}
         </TableBody>
       </Table>
+      <RoleEditorModal
+        title="Edit Role"
+        role={columnAction?.role}
+        open={columnAction?.type === "update"}
+        onOpenChange={() => setColumnAction(null)}
+        onSuccess={async () => {
+          setColumnAction(null)
+          await queryClient.invalidateQueries({
+            queryKey: ["roles-permissions"],
+          })
+        }}
+      />
+      <DeleteDialog
+        item={columnAction.role}
+        onSuccess={async () => {
+          setColumnAction(null)
+          await queryClient.invalidateQueries({
+            queryKey: ["roles-permissions"],
+          })
+        }}
+      />
     </Flex>
   )
 }

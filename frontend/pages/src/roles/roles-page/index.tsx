@@ -5,6 +5,9 @@ import { createContext, useEffect, useState } from "react"
 import { type Change, getRolesPermissions } from "./actions"
 import PermissonsTable from "./permissions-table"
 import type { PermissionsResponse, Role } from "./types"
+import { Spinner, Callout } from "@incmix/ui"
+import { Flex } from "@incmix/ui"
+import { AlertCircleIcon } from "lucide-react"
 
 export const permissionsContext = createContext<{
   changes: Change[]
@@ -23,11 +26,7 @@ export const permissionsContext = createContext<{
 const RolesPage = () => {
   const [changes, setChanges] = useState<Change[]>([])
 
-  useEffect(() => {
-    console.log({ changes })
-  }, [changes])
-
-  const { data } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["roles-permissions"],
     queryFn: getRolesPermissions,
   })
@@ -39,6 +38,33 @@ const RolesPage = () => {
   useEffect(() => {
     setRawPermissions(data?.permissions ?? [])
   }, [data])
+
+  if (isLoading) {
+    return (
+      <DashboardLayout breadcrumbItems={[{ label: "Roles", url: "/roles" }]}>
+        <Flex
+          className="h-[calc((100vh-var(--navbar-height))-3rem)]"
+          align="center"
+          justify="center"
+        >
+          <Spinner className="size-10" />
+        </Flex>
+      </DashboardLayout>
+    )
+  }
+
+  if (isError) {
+    return (
+      <DashboardLayout breadcrumbItems={[{ label: "Roles", url: "/roles" }]}>
+        <Callout.Root variant="surface" color="red">
+          <Callout.Icon>
+            <AlertCircleIcon className="size-4" />
+          </Callout.Icon>
+          <Callout.Text>{error.message}</Callout.Text>
+        </Callout.Root>
+      </DashboardLayout>
+    )
+  }
 
   return (
     <DashboardLayout breadcrumbItems={[{ label: "Roles", url: "/roles" }]}>
