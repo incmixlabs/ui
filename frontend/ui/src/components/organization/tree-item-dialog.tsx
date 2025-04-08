@@ -1,5 +1,5 @@
-import { Button, Dialog, Input, Label, Textarea } from "@/components/base"
-import { Input } from "@/components/shadcn/input"
+import { Button, Dialog } from "@incmix/ui"
+import { Input } from "../form"
 import { Label } from "../label"
 import { Textarea } from "../textarea"
 

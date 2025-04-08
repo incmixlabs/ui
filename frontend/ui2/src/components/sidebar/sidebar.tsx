@@ -173,9 +173,7 @@ const SidebarProvider = React.forwardRef<
       ]
     )
 
-    return (
-      <SidebarContext.Provider value={contextValue}></SidebarContext.Provider>
-    )
+    return <SidebarContext.Provider value={contextValue} />
   }
 )
 SidebarProvider.displayName = "SidebarProvider"

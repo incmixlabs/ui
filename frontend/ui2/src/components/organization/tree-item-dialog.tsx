@@ -1,10 +1,4 @@
-import {
-  Button,
-  Dialog,
-  Input,
-  Label,
-  TextArea,
-} from "@/components/base"
+import { Button, Dialog, Input, Label, TextArea } from "@/components/base"
 
 interface TreeItemDialogProps {
   open: boolean
