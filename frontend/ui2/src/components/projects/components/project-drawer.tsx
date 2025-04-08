@@ -1,3 +1,6 @@
+import { Download, FileArchive, X } from "lucide-react"
+import { useState } from "react"
+
 import { Avatar } from "@/components/base"
 import {
   Box,
@@ -14,11 +17,8 @@ import { ComboBox } from "@/components/kanban-board/combo-box"
 import { attachments } from "@/components/kanban-board/data"
 import { useProjectDrawer } from "@/hooks/use-project-drawer"
 import { cn } from "@/lib/utils"
-import { Download, FileArchive, X } from "lucide-react"
 import { motion } from "motion/react"
-import { useEffect, useRef, useState } from "react"
-import type React from "react"
-import { members, projects } from "../data"
+import { members } from "../data"
 import ProjectChecklist from "./project-checklist"
 import ProjectComments from "./project-comments"
 import ProjectDetails from "./project-details"

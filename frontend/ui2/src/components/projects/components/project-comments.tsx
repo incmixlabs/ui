@@ -3,6 +3,7 @@ import { commentsData } from "@/components/kanban-board/data"
 import { Image, Paperclip, Smile } from "lucide-react"
 import type React from "react"
 import { useState } from "react"
+
 function ProjectComments() {
   const [comment, setComment] = useState("")
 

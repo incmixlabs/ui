@@ -4,25 +4,23 @@ import type * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-function Select({
-  ...props
-}: React.ComponentProps<typeof SelectPrimitive.Root>) {
+function Root({ ...props }: React.ComponentProps<typeof SelectPrimitive.Root>) {
   return <SelectPrimitive.Root data-slot="select" {...props} />
 }
 
-function SelectGroup({
+function Group({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Group>) {
   return <SelectPrimitive.Group data-slot="select-group" {...props} />
 }
 
-function SelectValue({
+function Value({
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Value>) {
   return <SelectPrimitive.Value data-slot="select-value" {...props} />
 }
 
-function SelectTrigger({
+function Trigger({
   className,
   size = "default",
   children,
@@ -48,7 +46,7 @@ function SelectTrigger({
   )
 }
 
-function SelectContent({
+function Content({
   className,
   children,
   position = "popper",
@@ -83,7 +81,7 @@ function SelectContent({
   )
 }
 
-function SelectLabel({
+function Label({
   className,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Label>) {
@@ -96,7 +94,7 @@ function SelectLabel({
   )
 }
 
-function SelectItem({
+function Item({
   className,
   children,
   ...props
@@ -120,7 +118,7 @@ function SelectItem({
   )
 }
 
-function SelectSeparator({
+function Separator({
   className,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.Separator>) {
@@ -133,7 +131,7 @@ function SelectSeparator({
   )
 }
 
-function SelectScrollUpButton({
+function ScrollUpButton({
   className,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.ScrollUpButton>) {
@@ -151,7 +149,7 @@ function SelectScrollUpButton({
   )
 }
 
-function SelectScrollDownButton({
+function ScrollDownButton({
   className,
   ...props
 }: React.ComponentProps<typeof SelectPrimitive.ScrollDownButton>) {
@@ -169,15 +167,15 @@ function SelectScrollDownButton({
   )
 }
 
-export {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectScrollDownButton,
-  SelectScrollUpButton,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
+export const Select = {
+  Root,
+  Content,
+  Group,
+  Item,
+  Label,
+  ScrollDownButton,
+  ScrollUpButton,
+  Separator,
+  Trigger,
+  Value,
 }

@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Card,
   DropdownMenu,
@@ -9,14 +10,7 @@ import {
   Text,
 } from "@/components/base"
 import { useProjectDrawer } from "@/hooks/use-project-drawer"
-import {
-  Clock,
-  Ellipsis,
-  MoreHorizontal,
-  Pencil,
-  Trash2,
-  UserPlus,
-} from "lucide-react"
+import { Clock, Ellipsis, Pencil, Trash2, UserPlus } from "lucide-react"
 import { iconSize } from "../../icons/icon"
 import type { Project } from "../types"
 
@@ -37,7 +31,7 @@ export function ProjectCard({
 }: ProjectCardProps) {
   const { handleDrawerOpen } = useProjectDrawer()
   return (
-    <Card
+    <Card.Root
       onClick={() => {
         if (isListFilter) {
           handleDrawerOpen(project.id.toString())
@@ -145,17 +139,11 @@ export function ProjectCard({
               key={member.id}
               className="h-8 w-8 overflow-hidden rounded-full"
             >
-              <img
-                src={member.avatar}
-                alt={member.name}
-                width={32}
-                height={32}
-                className="object-cover"
-              />
+              <Avatar src={member.avatar} fallback={member.name} />
             </Box>
           ))}
         </Flex>
       </Flex>
-    </Card>
+    </Card.Root>
   )
 }

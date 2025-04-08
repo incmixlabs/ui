@@ -1,0 +1,62 @@
+{
+  "name": "@incmix/pages2",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Auth pages package for Incmix",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./i18n": "./src/i18n/index.ts",
+    "./auth": "./src/auth/index.ts",
+    "./common": "./src/common/index.ts",
+    "./dashboard": "./src/dashboard/index.ts",
+    "./layouts": "./src/layouts/index.ts",
+    "./orgs": "./src/orgs/index.ts",
+    "./tasks": "./src/tasks/index.ts",
+    "./users": "./src/users/index.ts"
+  },
+  "scripts": {
+    "build": "pnpm clean && echo 'Skipping build' && exit 0",
+    "clean": "rm -rf dist *.tsbuildinfo",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@casl/react": "catalog:",
+    "@incmix/store": "workspace: *",
+    "@incmix/ui2": "workspace: *",
+    "@incmix/utils": "catalog:",
+    "@tanstack/react-query": "catalog:",
+    "@tanstack/react-router": "catalog:",
+    "@tanstack/react-table": "catalog:",
+    "@tanstack/zod-form-adapter": "catalog:",
+    "i18next": "catalog:",
+    "i18next-chained-backend": "catalog:",
+    "i18next-http-backend": "catalog:",
+    "i18next-resources-to-backend": "catalog:",
+    "immer": "catalog:",
+    "lucide-react": "catalog:",
+    "nanoid": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-error-boundary": "catalog:",
+    "react-i18next": "catalog:",
+    "rxdb": "catalog:",
+    "rxdb-hooks": "catalog:",
+    "swapy": "0.4.2",
+    "tailwind-merge": "catalog:",
+    "tailwindcss": "catalog:",
+    "tailwindcss-animate": "catalog:",
+    "zod": "catalog:",
+    "zustand": "catalog:"
+  },
+  "devDependencies": {
+    "@incmix/config": "workspace: *",
+    "@tanstack/router-cli": "catalog:",
+    "@tanstack/router-devtools": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@types/wicg-file-system-access": "2023.10.5"
+  }
+}

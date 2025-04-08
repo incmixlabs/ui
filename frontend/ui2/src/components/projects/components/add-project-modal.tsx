@@ -8,25 +8,23 @@ import {
 import MultipleSelector, {
   type Option,
 } from "@/components/multiple-selector/multiple-selector"
-import { Image } from "@/components/radixui/card/flow-card"
-import { TextArea } from "@/components/radixui/text-area"
-import { Input } from "@/components/shadcn/input"
-import { Label } from "@/components/shadcn/label"
+
 import {
   Box,
   Button,
   Dialog,
-  DialogContent,
-  DialogTitle,
   Flex,
   Grid,
   Text,
-} from "@incmix/ui"
-import { Calendar, Paperclip, Plus, X } from "lucide-react"
+  TextArea,
+} from "@/components/base"
+import { Input } from "@/components/shadcn/input"
+import { Label } from "@/components/shadcn/label"
+import { Plus } from "lucide-react"
 import { useEffect, useState } from "react"
 import { members } from "../data"
 import { ProjectsImages } from "../images"
-import type { Member, Project } from "../types"
+import type { Project } from "../types"
 
 interface AddProjectModalProps {
   isOpen: boolean
@@ -121,9 +119,9 @@ export function AddProjectModal({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent maxWidth="500px">
-        <DialogTitle className="font-medium">Add Project</DialogTitle>
+    <Dialog.Root open={isOpen} onOpenChange={onClose}>
+      <Dialog.Content maxWidth="500px">
+        <Dialog.Title className="font-medium">Add Project</Dialog.Title>
         <Grid className="py-4" gap={"4"}>
           <Flex justify={"center"} className="mb-4">
             <FileUploader
@@ -265,7 +263,7 @@ export function AddProjectModal({
             Create
           </Button>
         </Flex>
-      </DialogContent>
-    </Dialog>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }
