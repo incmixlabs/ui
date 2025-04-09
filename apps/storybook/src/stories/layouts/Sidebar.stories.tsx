@@ -1,4 +1,4 @@
-import { Box, Flex, Sidebar, SidebarItem, SidebarSubItem } from "@incmix/ui"
+import { Badge, Box, Flex, Sidebar, SidebarMenu, SidebarMenuItem, SidebarMenuSubItem, SidebarProvider } from "@incmix/ui"
 
 import {
   DashboardIcon,
@@ -27,34 +27,39 @@ export default meta
 const noop = () => {}
 
 const DefaultContent = () => (
-  <Flex direction="column" gap="1" p="2">
-    <SidebarItem icon={<DashboardIcon />} label="Dashboard" onClick={noop} />
-    <SidebarItem
-      icon={<EnvelopeClosedIcon />}
-      label="Inbox"
-      onClick={noop}
-      badge={3}
-    />
-    <SidebarItem icon={<PersonIcon />} label="Users">
-      <SidebarSubItem label="Users List" onClick={noop} />
-      <SidebarSubItem label="Profile" onClick={noop} />
-      <SidebarSubItem label="Settings" onClick={noop} />
-    </SidebarItem>
-    <SidebarItem icon={<GearIcon />} label="Settings" onClick={noop} />
-  </Flex>
+  <SidebarMenu>
+    <SidebarMenuItem>
+      <DashboardIcon /> Dashboard
+    </SidebarMenuItem>
+    <SidebarMenuItem>
+      <EnvelopeClosedIcon /> Inbox
+      <Badge>3</Badge>
+    </SidebarMenuItem>
+    <SidebarMenuItem>
+      <PersonIcon /> Users
+      <SidebarMenuSubItem>Users List</SidebarMenuSubItem>
+      <SidebarMenuSubItem>Profile</SidebarMenuSubItem>
+      <SidebarMenuSubItem>Settings</SidebarMenuSubItem>
+    </SidebarMenuItem>
+    <SidebarMenuItem>
+      <GearIcon /> Settings
+    </SidebarMenuItem>
+  </SidebarMenu>
 )
 
 export const Extended = () => {
   return (
-    <Sidebar minified={false} state="extended">
-      <DefaultContent />
-    </Sidebar>
+    <SidebarProvider>
+      <Sidebar>
+        <DefaultContent />
+      </Sidebar>
+    </SidebarProvider>
   )
 }
 
 export const Minified = () => {
   return (
-    <Sidebar minified={true} state="extended">
+    <Sidebar>
       <DefaultContent />
     </Sidebar>
   )
@@ -62,9 +67,11 @@ export const Minified = () => {
 
 export const WithName = () => {
   return (
-    <Sidebar minified={false} state="extended" name="Sidebar">
+    <SidebarProvider>
+    <Sidebar>
       <DefaultContent />
     </Sidebar>
+    </SidebarProvider>
   )
 }
 
@@ -72,13 +79,10 @@ export const WithMinifyButton = () => {
   const [isMinified, setIsMinified] = useState(false)
 
   return (
-    <Sidebar
-      minified={isMinified}
-      state="extended"
-      name="Interactive Sidebar"
-      onMinifyChange={setIsMinified}
-    >
-      <DefaultContent />
-    </Sidebar>
+    <SidebarProvider>
+      <Sidebar>
+        <DefaultContent />
+      </Sidebar>
+    </SidebarProvider>
   )
 }

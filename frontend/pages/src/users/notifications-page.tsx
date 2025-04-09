@@ -1,6 +1,6 @@
+import { Text } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import type { WsMessage } from "@incmix/utils/types"
-import { Text } from "@radix-ui/themes"
 import { useNavigate } from "@tanstack/react-router"
 import { useEffect, useMemo, useState } from "react"
 import { useCurrentUser } from "../auth"
@@ -52,11 +52,7 @@ const NotificationsPage: React.FC = () => {
   return (
     <div className="space-y-2">
       {items.map((m, i) => (
-        <Text
-          className="block"
-          // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-          key={`notif_${i}`}
-        >
+        <Text className="block" key={`notif_${i}`}>
           {m.message}
         </Text>
       ))}

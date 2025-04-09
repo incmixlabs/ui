@@ -72,14 +72,14 @@ export const UserProfileImage: React.FC<UserProfileImageProps> = ({
   const avatarUrl = profilePictureUrl || user?.avatar || undefined
 
   if (!editable) {
-    return <Avatar size={size} imageUrl={avatarUrl} fullName={user?.fullName} />
+    return <Avatar size={size} src={avatarUrl} name={user?.name} />
   }
 
   return (
     <AvatarEditable
       size={size}
-      imageUrl={avatarUrl}
-      fullName={user?.fullName}
+      src={avatarUrl}
+      name={user?.name}
       onImageChange={handleImageUpload}
       onImageDelete={handleImageDelete}
       isDeletingImage={isDeletingProfilePicture}

@@ -1,0 +1,19 @@
+{
+  "extends": "@incmix/config/react.json",
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "declaration": false,
+    "declarationMap": false,
+    "plugins": [],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+      "@/data/*": ["./data/*"],
+      "@/data": ["./data"]
+    }
+  },
+  "include": ["src", "**/*.ts", "**/*.tsx", "vite.config.mts"],
+  "exclude": ["node_modules"]
+}

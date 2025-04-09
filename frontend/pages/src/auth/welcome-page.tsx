@@ -1,13 +1,6 @@
 import { CardContainer, Toaster } from "@incmix/ui"
+import { Button, Container, Flex, Heading, Spinner, Text } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
-import {
-  Button,
-  Container,
-  Flex,
-  Heading,
-  Spinner,
-  Text,
-} from "@radix-ui/themes"
 import { useMutation } from "@tanstack/react-query"
 import { toast } from "sonner"
 import WelcomeRoute from "./routes/welcome"

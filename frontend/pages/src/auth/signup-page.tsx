@@ -6,10 +6,12 @@ import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
-import { CardContainer, FormField } from "@incmix/ui"
-import { Box, Container, Flex, Heading, ReactiveButton, Text } from "@incmix/ui"
+import { FormField } from "@incmix/ui"
+import { Box, Flex, Heading, ReactiveButton, Text } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
-import type { AuthUser } from "@jsprt/utils/types"
+import type { AuthUser } from "@incmix/utils/types"
+
+import { AuthLayout } from "./layouts"
 
 function SignupForm() {
   const { t } = useTranslation(["signup", "common"])
@@ -19,15 +21,15 @@ function SignupForm() {
   const signupMutation = useMutation<
     AuthUser,
     Error,
-    { fullName: string; email: string; password: string }
+    { name: string; email: string; password: string }
   >({
-    mutationFn: async ({ fullName, email, password }) => {
+    mutationFn: async ({ name, email, password }) => {
       const response = await fetch(`${AUTH_API_URL}/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ fullName, email, password }),
+        body: JSON.stringify({ fullName: name, email, password }),
         credentials: "include",
       })
       if (!response.ok) {
@@ -56,7 +58,7 @@ function SignupForm() {
 
   const form = useForm({
     defaultValues: {
-      fullName: "",
+      name: "",
       email: "",
       password: "",
     },
@@ -66,7 +68,7 @@ function SignupForm() {
   })
 
   return (
-    <CardContainer>
+    <>
       <Heading size="4" mb="4" align="center">
         {t("title")}
       </Heading>
@@ -79,18 +81,14 @@ function SignupForm() {
       >
         <Flex direction="column" gap="4">
           <form.Field
-            name="fullName"
+            name="name"
             validatorAdapter={zodValidator()}
             validators={{
-              onChange: z.string().min(1, t("fullNameValidation")),
+              onChange: z.string().min(1, t("nameValidation")),
             }}
           >
             {(field) => (
-              <FormField
-                name="fullName"
-                label={t("common:fullName")}
-                field={field}
-              />
+              <FormField name="name" label={t("common:name")} field={field} />
             )}
           </form.Field>
 
@@ -155,17 +153,15 @@ function SignupForm() {
           <Text color="blue">{t("loginPrompt")}</Text>
         </Link>
       </Box>
-    </CardContainer>
+    </>
   )
 }
 
 function SignupPage() {
   return (
-    <Container>
-      <Flex height="100vh" align="center" justify="center">
-        <SignupForm />
-      </Flex>
-    </Container>
+    <AuthLayout>
+      <SignupForm />
+    </AuthLayout>
   )
 }
 

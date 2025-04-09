@@ -1,10 +1,4 @@
 import { Button, CardContainer } from "@incmix/ui"
-import type {
-  MemberDetails,
-  MemberRole,
-  Organization,
-} from "@incmix/utils/types"
-import { ArrowLeftIcon } from "@radix-ui/react-icons"
 import {
   Container,
   Flex,
@@ -14,7 +8,14 @@ import {
   Text,
   TextField,
   Tooltip,
-} from "@radix-ui/themes"
+} from "@incmix/ui"
+import type {
+  MemberDetails,
+  MemberRole,
+  Organization,
+} from "@incmix/utils/types"
+import { DashboardLayout } from "@layouts/admin-panel/layout"
+import { ArrowLeftIcon } from "@radix-ui/react-icons"
 import { Link } from "@tanstack/react-router"
 import { forwardRef, useContext, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -124,7 +125,7 @@ const UserRow: React.FC<{
         <Flex align="center" gap="2">
           <UserProfileImage size="2" userId={member.userId} />
           <Text>
-            {member.fullName}
+            {member.name}
             {currentUser &&
               currentUser.id === member.userId &&
               ` (${t("common:you")})`}
@@ -275,7 +276,18 @@ const OrganizationDetailsPage: React.FC = () => {
 
   return (
     <AbilityContext.Provider value={ability}>
-      <PageLayout>
+      <DashboardLayout
+        breadcrumbItems={[
+          {
+            label: organization.name,
+            url: `/organization/${orgHandle}`,
+          },
+          {
+            label: "Members",
+            url: `/organization/${orgHandle}/users`,
+          },
+        ]}
+      >
         <OrganizationLayout activeTab="users">
           <Container size="3">
             <CardContainer>
@@ -327,7 +339,7 @@ const OrganizationDetailsPage: React.FC = () => {
             </CardContainer>
           </Container>
         </OrganizationLayout>
-      </PageLayout>
+      </DashboardLayout>
     </AbilityContext.Provider>
   )
 }

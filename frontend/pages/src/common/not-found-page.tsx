@@ -1,15 +1,25 @@
 import { CardContainer } from "@incmix/ui"
-import { Button, Flex, Heading, Text } from "@radix-ui/themes"
-import { Link } from "@tanstack/react-router"
+import { Button, Flex, Heading, Text } from "@incmix/ui"
+import { DashboardLayout } from "@layouts/admin-panel/layout"
+import { Link, useLocation, useNavigate } from "@tanstack/react-router"
+import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
-import { PageLayout } from "./components/layouts/page-layout"
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return <PageLayout>{children}</PageLayout>
+  return <DashboardLayout breadcrumbItems={[]}>{children}</DashboardLayout>
 }
 
 const NotFoundPage: React.FC = () => {
   const { t } = useTranslation(["pageNotFound", "common"])
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    // If the current location is "/dashboard", redirect to "/dashboard/home"
+    if (location.pathname === "/dashboard") {
+      navigate({ to: "/dashboard/home", replace: true })
+    }
+  }, [location.pathname, navigate])
 
   return (
     <Layout>

@@ -5,12 +5,15 @@ import {
   TreeView,
   type TreeViewDescriptions,
 } from "@incmix/ui"
-import { Flex, Text } from "@radix-ui/themes"
+import { Flex, Text } from "@incmix/ui"
+import { OrganizationTable } from "@incmix/ui"
+import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useTranslation } from "react-i18next"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { PageLayout } from "../common/components/layouts/page-layout"
 import { OrganizationLayout } from "./layouts/organisation-layout"
+import { OrganisationEnvVarsRoute } from "./routes"
+import { useOrganization } from "./utils"
 
 type EnvVarsState = {
   treeData: TreeDataItem[] | TreeDataItem
@@ -31,9 +34,10 @@ export const useEnvVarsStore = create<EnvVarsState>()(
 
 const OrganizationEnvVarsPage: React.FC = () => {
   const { t } = useTranslation(["organizationDetails", "environmentVariables"])
-  const { treeData, setTreeData } = useEnvVarsStore()
+  const { treeData } = useEnvVarsStore()
+  console.log(treeData)
 
-  const DESCRIPTIONS: TreeViewDescriptions = {
+  const _DESCRIPTIONS: TreeViewDescriptions = {
     edit: t("common:edit"),
     delete: t("common:delete"),
     name: t("common:name"),
@@ -50,7 +54,7 @@ const OrganizationEnvVarsPage: React.FC = () => {
     editFolderTitle: t("environmentVariables:editFolderTitle"),
   }
 
-  const FILE_FIELDS: FormFieldConfig[] = [
+  const _FILE_FIELDS: FormFieldConfig[] = [
     {
       name: "value",
       label: t("common:value"),
@@ -61,28 +65,50 @@ const OrganizationEnvVarsPage: React.FC = () => {
       name: "notes",
       label: t("common:notes"),
       type: "textarea",
-      required: true,
+      required: false,
     },
   ]
 
-  const FOLDER_FIELDS: FormFieldConfig[] = [
+  const _FOLDER_FIELDS: FormFieldConfig[] = [
     {
       name: "notes",
       label: t("common:notes"),
       type: "textarea",
-      required: true,
+      required: false,
     },
   ]
 
+  const { orgHandle } = OrganisationEnvVarsRoute.useParams()
+  const { organization } = useOrganization(orgHandle)
+
+  if (!organization) {
+    return <div>{t("organizationDetails:notFound")}</div>
+  }
+
   return (
-    <PageLayout>
+    <DashboardLayout
+      breadcrumbItems={[
+        {
+          label: organization.name,
+          url: "/organization/$orgHandle",
+        },
+        {
+          label: t("environmentVariables"),
+          url: "/organization/$orgHandle/env-vars",
+        },
+      ]}
+    >
       <OrganizationLayout activeTab="env-vars">
         <CardContainer>
           <Flex direction="column" gap="4">
             <Text size="5" weight="bold">
               {t("environmentVariables")}
             </Text>
-            <TreeView
+            <OrganizationTable
+            // treeData={treeData}
+            // setTreeData={setTreeData}
+            />
+            {/* <TreeView
               data={treeData}
               setData={setTreeData}
               emptyMessage="No environment variables. Create a new variable or folder to get started."
@@ -91,11 +117,11 @@ const OrganizationEnvVarsPage: React.FC = () => {
               fileFields={FILE_FIELDS}
               folderFields={FOLDER_FIELDS}
               descriptions={DESCRIPTIONS}
-            />
+            /> */}
           </Flex>
         </CardContainer>
       </OrganizationLayout>
-    </PageLayout>
+    </DashboardLayout>
   )
 }
 

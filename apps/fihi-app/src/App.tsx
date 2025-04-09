@@ -1,21 +1,20 @@
 import React, { Suspense, useEffect, useMemo } from "react"
 
 import { useQuery } from "@tanstack/react-query"
-import { RouterProvider } from "@tanstack/react-router"
+import { RouterProvider, createRouter } from "@tanstack/react-router"
 import { Settings } from "luxon"
 
-import { PGliteProvider } from "@electric-sql/pglite-react"
 import { LoadingPage } from "@incmix/pages/common"
 import { I18n, usei18n } from "@incmix/pages/i18n"
 import {
   type Language,
-  pgWorkerMain,
+  database as db,
   useLanguageStore,
   useThemeStore,
 } from "@incmix/store"
+import { Theme, Toaster } from "@incmix/ui"
 import { DashboardPage } from "@incmix/ui/layouts"
-import { Theme } from "@radix-ui/themes"
-import { router } from "./instrument"
+import { Provider as RxdbProvider } from "rxdb-hooks"
 import { translations } from "./translations"
 
 const luxonLocale: Record<Language, string> = {
@@ -23,7 +22,74 @@ const luxonLocale: Record<Language, string> = {
   pt: "pt-BR",
 }
 
-const db = pgWorkerMain()
+// const db = await createDatabase()
+
+import {
+  DashboardHomeRoute,
+  DashboardProject1Route,
+  DashboardProject2Route,
+  EmailVerificationRoute,
+  FileManagerRoute,
+  ForgotPasswordRoute,
+  GoogleAuthCallbackRoute,
+  IndexRoute,
+  ListUsersRoute,
+  LoadingRoute,
+  LoginRoute,
+  NotFoundRoute,
+  NotesRoute,
+  NotificationsRoute,
+  OrganisationDetailsRoute,
+  OrganisationEnvVarsRoute,
+  OrganisationUsersRoute,
+  OrganisationsRoute,
+  ProfileRoute,
+  ProjectsRoute,
+  ResetPasswordRoute,
+  RolesRoute,
+  RootRoute,
+  SettingsRoute,
+  SignupRoute,
+  TasksRoute,
+  TauriGoogleAuthCallbackRoute,
+  TestRoute,
+  TranslationsRoute,
+  WelcomeRoute,
+} from "@incmix/pages"
+
+const routeTree = RootRoute.addChildren([
+  LoginRoute,
+  ForgotPasswordRoute,
+  ResetPasswordRoute,
+  EmailVerificationRoute,
+  SignupRoute,
+  IndexRoute,
+  WelcomeRoute,
+  GoogleAuthCallbackRoute,
+  TauriGoogleAuthCallbackRoute,
+  ProfileRoute,
+  SettingsRoute,
+  TestRoute,
+  OrganisationsRoute,
+  OrganisationDetailsRoute,
+  OrganisationUsersRoute,
+  OrganisationEnvVarsRoute,
+  NotificationsRoute,
+  NotFoundRoute,
+  LoadingRoute,
+  FileManagerRoute,
+  DashboardHomeRoute,
+  NotesRoute,
+  DashboardProject1Route,
+  DashboardProject2Route,
+  ListUsersRoute,
+  TasksRoute,
+  ProjectsRoute,
+  TranslationsRoute,
+  RolesRoute,
+])
+
+const router = createRouter({ routeTree })
 
 function App() {
   const { theme } = useThemeStore()
@@ -50,18 +116,19 @@ function App() {
 
   return (
     <Theme
-      accentColor="blue"
+      accentColor="indigo"
       grayColor="slate"
       panelBackground="solid"
       scaling="100%"
       radius="large"
       appearance={theme}
     >
-      <PGliteProvider db={db}>
+      <RxdbProvider db={db}>
         <Suspense fallback={<LoadingPage />}>
+          <Toaster />
           {isMock ? <DashboardPage /> : <RouterProvider router={router} />}
         </Suspense>
-      </PGliteProvider>
+      </RxdbProvider>
     </Theme>
   )
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { useAuth } from "@auth"
-import { usePGlite } from "@electric-sql/pglite-react"
+import type { TaskCollections } from "@incmix/store"
 import {
   Dialog,
   DialogClose,
@@ -14,11 +14,14 @@ import {
   ReactiveButton,
   toast,
 } from "@incmix/ui"
+import { Button, Flex, Select, TextField } from "@incmix/ui"
 import type { Task, TaskStatus } from "@incmix/utils/types"
-import { Button, Flex, Select, TextField } from "@radix-ui/themes"
 import { useMutation, useQuery } from "@tanstack/react-query"
+import { nanoid } from "nanoid"
 import type React from "react"
-import { createTask, getColumns } from "./actions"
+import { useState } from "react"
+import type { RxDatabase } from "rxdb"
+import { useRxDB } from "rxdb-hooks"
 
 interface CreateTaskProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
@@ -31,12 +34,24 @@ export function CreateTaskForm({
   projectId,
   ...props
 }: CreateTaskProps) {
+  const { authUser } = useAuth()
+  const [isOpen, setIsOpen] = useState(false)
+  const db: RxDatabase<TaskCollections> = useRxDB()
   const columnsQuery = useQuery({
     queryKey: ["columns", projectId],
-    queryFn: () => getColumns(projectId),
+    queryFn: () => {
+      return db.columns
+        .find({
+          selector: {
+            projectId,
+          },
+        })
+        .exec()
+    },
+    refetchOnMount: true,
   })
-  const db = usePGlite()
-  const { mutate, isPending, isSuccess } = useMutation({
+
+  const { mutate, isPending, isSuccess, reset } = useMutation({
     mutationFn: (data: {
       content: string
       projectId: string
@@ -45,16 +60,34 @@ export function CreateTaskForm({
       assignedTo: string
       status: TaskStatus
     }) => {
-      return createTask(data, db)
+      return db.tasks.insert({
+        id: nanoid(7),
+        content: data.content,
+        projectId: data.projectId,
+        columnId: data.columnId,
+        taskOrder: data.taskOrder,
+        assignedTo: data.assignedTo,
+        status: data.status,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        createdBy: authUser?.id ?? "",
+        updatedBy: authUser?.id ?? "",
+      })
     },
     onSuccess: (data) => {
-      if (onSuccess) onSuccess(data)
+      setIsOpen(false)
+      if (onSuccess)
+        onSuccess({
+          ...data,
+          createdAt: new Date(data.createdAt),
+          updatedAt: new Date(data.updatedAt),
+        })
     },
     onError: (error) => {
       toast.error(error.message)
     },
   })
-  const { authUser } = useAuth()
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formdata = new FormData(e.currentTarget)
@@ -70,7 +103,14 @@ export function CreateTaskForm({
   }
 
   return (
-    <Dialog {...props}>
+    <Dialog
+      {...props}
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open)
+        reset()
+      }}
+    >
       <DialogTrigger>
         <Button>Add Task</Button>
       </DialogTrigger>
@@ -101,17 +141,16 @@ export function CreateTaskForm({
                 ))}
               </Select.Content>
             </Select.Root>
-            <DialogClose>
-              <ReactiveButton
-                type="submit"
-                color="blue"
-                loading={isPending}
-                success={isSuccess}
-                className="w-full"
-              >
-                Create
-              </ReactiveButton>
-            </DialogClose>
+
+            <ReactiveButton
+              type="submit"
+              color="blue"
+              loading={isPending}
+              success={isSuccess}
+              className="w-full"
+            >
+              Create
+            </ReactiveButton>
           </Flex>
         </form>
 

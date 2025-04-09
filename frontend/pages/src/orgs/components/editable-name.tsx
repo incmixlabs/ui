@@ -1,5 +1,5 @@
+import { Button, Flex, Heading, TextField, Tooltip } from "@incmix/ui"
 import { CheckIcon, Cross1Icon, Pencil1Icon } from "@radix-ui/react-icons"
-import { Button, Flex, Heading, TextField, Tooltip } from "@radix-ui/themes"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"

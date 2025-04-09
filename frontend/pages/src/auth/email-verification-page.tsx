@@ -1,13 +1,7 @@
 import { I18n } from "@incmix/pages/i18n"
+import { Container, Flex, Spinner, Text, ThickCheckIcon } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import { cn } from "@incmix/ui/utils"
-import {
-  Container,
-  Flex,
-  Spinner,
-  Text,
-  ThickCheckIcon,
-} from "@radix-ui/themes"
 import { useQuery } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { useEffect } from "react"

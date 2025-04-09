@@ -1,16 +1,7 @@
-import {
-  Box,
-  Flex,
-  Grid,
-  Heading,
-  Select,
-  Switch,
-  Text,
-} from "@radix-ui/themes"
+import { Box, Flex, Grid, Heading, Select, Switch, Text } from "@incmix/ui"
 import { useForm } from "@tanstack/react-form"
 import { useQueryClient } from "@tanstack/react-query"
 import { zodValidator } from "@tanstack/zod-form-adapter"
-import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -19,8 +10,8 @@ import { useCurrentUser, useProfileUpdate } from "@auth"
 import { LoadingPage } from "@common"
 import { useLanguageStore, useThemeStore } from "@incmix/store"
 import { Button, CardContainer, FormField } from "@incmix/ui"
-import type { UserProfile } from "@jsprt/utils/types"
-import { PageLayout } from "../common/components/layouts/page-layout"
+import type { UserProfile } from "@incmix/utils/types"
+import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { CurrentUserProfileImage } from "../common/components/user-profile-image"
 
 const _FormButton: React.FC<{
@@ -42,11 +33,11 @@ const useGeneralInfoForm = (userId: string) => {
 
   const form = useForm({
     defaultValues: {
-      fullName: "",
+      name: "",
     },
     onSubmit: async ({ value }) => {
       try {
-        await handleUpdateUser(value.fullName.trim())
+        await handleUpdateUser(value.name.trim())
         toast.success(t("success.updateUser"))
         queryClient.invalidateQueries({ queryKey: ["user"] })
       } catch (error) {
@@ -96,7 +87,7 @@ const ProfileSection: React.FC<{ user: UserProfile }> = ({ user }) => {
         <CurrentUserProfileImage size="8" editable />
         <Box ml="4">
           <Heading size="4" color="gray">
-            {user.fullName}
+            {user?.name}
           </Heading>
           <Text color="gray">{user.email}</Text>
         </Box>
@@ -125,18 +116,14 @@ const GeneralInfoForm: React.FC<ReturnType<typeof useGeneralInfoForm>> = ({
       >
         <Flex direction="column" gap="4">
           <form.Field
-            name="fullName"
+            name="name"
             validatorAdapter={zodValidator()}
             validators={{
               onChange: z.string().min(1, t("nameRequired")),
             }}
           >
             {(field) => (
-              <FormField
-                name="fullName"
-                label={t("common:fullName")}
-                field={field}
-              />
+              <FormField name="name" label={t("common:name")} field={field} />
             )}
           </form.Field>
           <Button type="submit" disabled={isUpdatingUser}>
@@ -278,7 +265,9 @@ const SettingsPage: React.FC = () => {
   if (isError || !user) return null
 
   return (
-    <PageLayout>
+    <DashboardLayout
+      breadcrumbItems={[{ label: t("settings"), url: "/settings" }]}
+    >
       <Flex direction="column" className="min-h-full">
         <Heading size="6" mb="6">
           {t("settings")}
@@ -301,7 +290,7 @@ const SettingsPage: React.FC = () => {
           </Flex>
         </Grid>
       </Flex>
-    </PageLayout>
+    </DashboardLayout>
   )
 }
 

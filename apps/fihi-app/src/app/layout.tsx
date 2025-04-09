@@ -1,11 +1,9 @@
-"use client"
-import { Container, Theme } from "@radix-ui/themes"
+import { Container, Theme } from "@incmix/ui"
 import { Link } from "@tanstack/react-router"
 import React from "react"
-
 function App() {
   return (
-    <Theme>
+    <Theme accentColor="blue">
       <Container className="flex h-screen items-center justify-center">
         <div className="text-center text-gray-600">
           <h1 className="font-semibold text-2xl">Welcome to Fihi App</h1>

@@ -28,7 +28,7 @@ const AdminUsersTable = () => {
     },
   ]
 
-  // const { page, pageSize, fullName, sort } =
+  // const { page, pageSize, name, sort } =
   //   ListUsersRoute.useSearch() as UserListSearchParams
   const { selectedOrganisation } = useOrganizationStore()
 

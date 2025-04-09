@@ -1,6 +1,7 @@
 "use client"
 
 import {
+  Button,
   Dialog,
   DialogClose,
   DialogContent,
@@ -11,7 +12,6 @@ import {
   DialogTrigger,
 } from "@incmix/ui"
 import type { UserAndProfile } from "@incmix/utils/types"
-import { Button } from "@radix-ui/themes"
 import type { Row } from "@tanstack/react-table"
 import { Trash } from "lucide-react"
 
@@ -44,7 +44,7 @@ export function DeleteDialog({
           <DialogDescription>
             This action cannot be undone. This will permanently delete your{" "}
             <span className="font-medium">{items.length}</span>
-            {items.length === 1 ? " task" : " tasks"} from our servers.
+            {items.length === 1 ? " user" : " users"} from our servers.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="gap-2 sm:space-x-0">

@@ -12,11 +12,9 @@
     "@incmix/ui": "workspace: *",
     "@incmix/utils": "catalog:",
     "@radix-ui/react-icons": "1.3.1",
-    "@storybook/addons": "7.6.17",
     "@tanstack/react-query": "catalog:",
     "react": "catalog:",
-    "react-dom": "catalog:",
-    "react-hook-form": "7.51.2"
+    "react-dom": "catalog:"
   },
   "devDependencies": {
     "@incmix/config": "workspace: *",
@@ -27,17 +25,19 @@
     "@storybook/cli": "^8.5.2",
     "@storybook/react": "^8.5.2",
     "@storybook/react-vite": "^8.5.2",
-    "@storybook/testing-library": "^0.2.2",
+    "@storybook/test": "^8.5.2",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react-swc": "3.7.2",
     "autoprefixer": "10.4.19",
     "postcss": "catalog:",
-    "tailwindcss": "catalog:",
     "prop-types": "15.8.1",
+    "remark-gfm": "^4.0.0",
     "semver": "7.6.3",
     "storybook": "^8.5.2",
+    "tailwindcss": "catalog:",
     "typescript": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "vite-plugin-top-level-await": "^1.5.0"
   }
 }

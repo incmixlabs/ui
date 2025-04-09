@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: [
-    "@incmix/ui",
-    "@incmix/ui",
+    "@incmix/ui2",
+    "@incmix/ui2",
     "@incmix/utils/i18n",
     "@incmix/store",
     "@incmix/pages",

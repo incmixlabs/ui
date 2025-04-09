@@ -9,6 +9,11 @@
   "files": {
     "ignore": [
       "node_modules",
+      "apps/storybook",
+      "apps/storybook2",
+      "frontend/ui2/src/demos",
+      "frontend/ui2/src/lib",
+      "frontend/pages2",
       "dist",
       ".next",
       ".astro",
@@ -47,7 +52,8 @@
         "noForEach": "off"
       },
       "correctness": {
-        "noUnusedVariables": "warn"
+        "noUnusedVariables": "warn",
+        "useExhaustiveDependencies": "off"
       },
       "style": {
         "useBlockStatements": "off",
@@ -60,7 +66,8 @@
       },
       "suspicious": {
         "useAwait": "warn",
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noArrayIndexKey": "off"
       }
     },
     "include": [
@@ -71,6 +78,11 @@
       "**/*.mjs",
       "**/*.cjs"
     ]
+  },
+  "json": {
+    "parser": {
+      "allowComments": true
+    }
   },
   "javascript": {
     "formatter": {

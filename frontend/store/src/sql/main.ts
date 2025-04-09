@@ -1,91 +1,123 @@
-import { type PGliteWithLive, live } from "@electric-sql/pglite/live"
-import { PGliteWorker } from "@electric-sql/pglite/worker"
-import { syncSchemaWithBackend } from "./tasks"
-// https://electric-sql.com/product/pglite
-// https://github.com/dnlsandiego/kysely-pglite
+// main.ts
 
-const _data = {
-  project: {
-    id: "test-project",
-    org_id: "test-org",
-    name: "Project 1",
+import { addRxPlugin, createRxDatabase } from "rxdb"
+import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode"
+import {
+  type TaskCollections,
+  type TaskDocType,
+  columnSchemaLiteral,
+  formProjectSchemaLiteral,
+  projectSchemaLiteral,
+  taskSchemaLiteral,
+} from "./types"
 
-    columns: [
-      {
-        id: "todo-column",
-        label: "Todo",
-        order: 1,
-        parent_column_id: null,
-        tasks: [
-          {
-            id: "task-1",
-            content: "Task 1",
-            status: "TODO",
-          },
-          {
-            id: "task-2",
-            content: "Task 2",
-            status: "TODO",
-          },
-        ],
-      },
-      {
-        id: "inprogress-column",
-        label: "In Progress",
-        order: 2,
-        parent_column_id: null,
-        tasks: [
-          {
-            id: "task-3",
-            content: "Task 3",
-            status: "IN_PROGRESS",
-          },
-        ],
-      },
-      {
-        id: "done-column",
-        label: "Done",
-        order: 3,
-        parent_column_id: null,
-        tasks: [],
-      },
-    ],
+import { API } from "@incmix/utils/env"
+import { getRxStorageIndexedDB } from "rxdb-premium/plugins/storage-indexeddb"
+import { RxDBAttachmentsPlugin } from "rxdb/plugins/attachments"
+import { RxDBMigrationSchemaPlugin } from "rxdb/plugins/migration-schema"
+import { replicateRxCollection } from "rxdb/plugins/replication"
+import { RxDBUpdatePlugin } from "rxdb/plugins/update"
+import { wrappedValidateAjvStorage } from "rxdb/plugins/validate-ajv"
+
+addRxPlugin(RxDBUpdatePlugin)
+addRxPlugin(RxDBMigrationSchemaPlugin)
+addRxPlugin(RxDBAttachmentsPlugin)
+
+if (import.meta.env.MODE === "development") {
+  addRxPlugin(RxDBDevModePlugin)
+}
+
+const storage = wrappedValidateAjvStorage({ storage: getRxStorageIndexedDB() })
+
+export const database = await createRxDatabase<TaskCollections>({
+  storage,
+  name: "incmix-db",
+})
+
+await database.addCollections({
+  tasks: { schema: taskSchemaLiteral, autoMigrate: true },
+  columns: { schema: columnSchemaLiteral, autoMigrate: true },
+  projects: { schema: projectSchemaLiteral, autoMigrate: true },
+  formProjects: {
+    schema: formProjectSchemaLiteral,
+    autoMigrate: true,
   },
-}
+})
 
-export const pgWorkerMain = (dataDir = "idb://incmix-db"): PGliteWithLive => {
-  const worker = new PGliteWorker(
-    new Worker(new URL("./worker.ts", import.meta.url), {
-      type: "module",
-    }),
-    {
-      dataDir,
-      extensions: {
-        live,
-      },
-    }
-  ) as unknown as PGliteWithLive //Type issue
+// const BFF_API_URL: string = import.meta.env["VITE_BFF_API_URL"] || ""
+// const _TASKS_API_URL = `${BFF_API_URL}${API.TASKS}`
 
-  worker.onLeaderChange(() => console.log("leader changed"))
+// if (database.tasks) {
+//   replicateRxCollection<TaskDocType, { updatedAt: number; id: string }>({
+//     collection: database.tasks,
+//     replicationIdentifier: "tasks",
+//     live: false,
+//     push: {
+//       async handler(changeRows) {
+//         console.log("replicating tasks")
+//         try {
+//           const rawResponse = await fetch(`${TASKS_API_URL}/sync/push`, {
+//             method: "POST",
+//             credentials: "include",
+//             headers: {
+//               "Content-Type": "application/json",
+//             },
+//             body: JSON.stringify(changeRows),
+//           })
 
-  worker.exec(`
-    CREATE TABLE IF NOT EXISTS schema_meta (
-      id SERIAL PRIMARY KEY,
-      version INTEGER,
-      updated_at TIMESTAMP DEFAULT NOW()
-    );`)
+//           if (!rawResponse.ok) {
+//             console.error(
+//               `Push replication failed: ${rawResponse.status} ${rawResponse.statusText}`
+//             )
+//             throw new Error(`Push replication failed: ${rawResponse.status}`)
+//           }
 
-  worker.exec(`
-    CREATE TABLE IF NOT EXISTS tasks_change_log (
-      id SERIAL PRIMARY KEY,
-      table_name TEXT NOT NULL,
-      record_id TEXT NOT NULL,
-      sync_status TEXT check(sync_status in ('pending','synced')) NOT NULL,
-      operation TEXT check(operation in ('update', 'delete')) NOT NULL,
-      updated_at TEXT NOT NULL
-    );`)
+//           const conflictsArray = await rawResponse.json()
+//           return conflictsArray
+//         } catch (error) {
+//           console.error("Error during push replication:", error)
+//           throw error // Re-throw to let RxDB handle the error
+//         }
+//       },
+//     },
+//     pull: {
+//       async handler(checkpointOrNull, _batchSize) {
+//         console.log(checkpointOrNull)
+//         try {
+//           const checkPoint = checkpointOrNull ? checkpointOrNull.updatedAt : 0
 
-  syncSchemaWithBackend(worker)
+//           const response = await fetch(
+//             `${TASKS_API_URL}/sync/pull?lastPulledAt=${checkPoint}`,
+//             {
+//               method: "POST",
+//               credentials: "include",
+//             }
+//           )
 
-  return worker
-}
+//           if (!response.ok) {
+//             console.error(
+//               `Pull replication failed: ${response.status} ${response.statusText}`
+//             )
+//             throw new Error(`Pull replication failed: ${response.status}`)
+//           }
+
+//           const data = await response.json()
+//           if (!data || !data.documents) {
+//             console.error(
+//               "Invalid data format received during pull replication"
+//             )
+//             throw new Error("Invalid data format received")
+//           }
+
+//           return {
+//             documents: data.documents,
+//             checkpoint: data.checkpoint,
+//           }
+//         } catch (error) {
+//           console.error("Error during pull replication:", error)
+//           throw error // Re-throw to let RxDB handle the error
+//         }
+//       },
+//     },
+//   })
+// }
