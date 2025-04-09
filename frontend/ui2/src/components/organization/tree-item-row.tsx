@@ -1,7 +1,7 @@
 "use client"
 
 import { ChevronDown, ChevronRight, MoreVertical } from "lucide-react"
-import { forwardRef, useImperativeHandle, useState } from "react"
+import { useState } from "react"
 
 import {
   Button,
@@ -26,9 +26,10 @@ interface TreeItemRowProps {
     position: "above" | "below" | "inside",
     formData: Record<string, string>
   ) => void
+  rowRef?: (instance: TreeItemRowHandle | null) => void
 }
 
-export interface TreeItemRowRef {
+export interface TreeItemRowHandle {
   openEditDialog: () => void
   openCreateDialog: (
     type: "file" | "folder",
@@ -36,8 +37,15 @@ export interface TreeItemRowRef {
   ) => void
 }
 
-export const TreeItemRow = forwardRef<TreeItemRowRef, TreeItemRowProps>(
-  ({ item, level, onToggleExpand, onEdit, onDelete, onCreateItem }, ref) => {
+export const TreeItemRow = ({ 
+  item, 
+  level, 
+  onToggleExpand, 
+  onEdit, 
+  onDelete, 
+  onCreateItem,
+  rowRef
+}: TreeItemRowProps) => {
     // Local state for dialog management
     const [dialogOpen, setDialogOpen] = useState(false)
     const [dialogType, setDialogType] = useState<"file" | "folder">("file")
@@ -75,11 +83,13 @@ export const TreeItemRow = forwardRef<TreeItemRowRef, TreeItemRowProps>(
       setDialogOpen(true)
     }
 
-    // Expose methods via ref
-    useImperativeHandle(ref, () => ({
-      openEditDialog: handleOpenEditDialog,
-      openCreateDialog: handleOpenCreateDialog,
-    }))
+    // Expose methods via callback ref
+    if (rowRef) {
+      rowRef({
+        openEditDialog: handleOpenEditDialog,
+        openCreateDialog: handleOpenCreateDialog,
+      })
+    }
 
     // Handle form submission
     const handleSubmit = () => {
@@ -319,8 +329,4 @@ export const TreeItemRow = forwardRef<TreeItemRowRef, TreeItemRowProps>(
         </Dialog.Root>
       </TableRow>
     )
-  }
-)
-
-// Add display name for better debugging
-TreeItemRow.displayName = "TreeItemRow"
+}

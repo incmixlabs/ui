@@ -10,7 +10,7 @@ import {
 import type { TreeDataItem } from "@/types"
 import { produce } from "immer"
 import { useEffect, useRef, useState } from "react"
-import { TreeItemRow, type TreeItemRowRef } from "./tree-item-row"
+import { TreeItemRow, type TreeItemRowHandle } from "./tree-item-row"
 
 interface FlattenedItem extends TreeDataItem {
   level: number
@@ -19,10 +19,10 @@ interface FlattenedItem extends TreeDataItem {
 
 export function OrganizationTable() {
   const { treeData, setTreeData } = useEnvVarsStore()
-  const rowRefs = useRef<Record<string, TreeItemRowRef>>({})
+  const rowRefs = useRef<Record<string, TreeItemRowHandle>>({})
   const [flattenedItems, setFlattenedItems] = useState<FlattenedItem[]>([])
 
-  const topLevelRowRef = useRef<TreeItemRowRef>(null)
+  const topLevelRowRef = useRef<TreeItemRowHandle | null>(null)
 
   const flattenTree = (
     items: TreeDataItem[],
@@ -201,7 +201,7 @@ export function OrganizationTable() {
       {/* Hidden virtual row for top-level operations */}
       <div className="hidden">
         <TreeItemRow
-          ref={topLevelRowRef}
+          rowRef={(instance) => topLevelRowRef.current = instance}
           item={virtualRootItem}
           level={0}
           onToggleExpand={() => {}}
@@ -239,8 +239,8 @@ export function OrganizationTable() {
             flattenedItems.map((item) => (
               <TreeItemRow
                 key={item.id}
-                ref={(el) => {
-                  if (el) rowRefs.current[item.id] = el
+                rowRef={(instance) => {
+                  if (instance) rowRefs.current[item.id] = instance
                 }}
                 item={item}
                 level={item.level}

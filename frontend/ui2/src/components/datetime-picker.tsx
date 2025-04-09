@@ -125,26 +125,23 @@ const useSmartDateInput = () => {
   return context
 }
 
-export const SmartDatetimeInput = React.forwardRef<
-  HTMLInputElement,
-  Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    "type" | "ref" | "value" | "defaultValue" | "onBlur"
-  > &
-    SmartDatetimeInputProps
->(function SmartDatetimeInput(
-  {
-    className,
-    value,
-    onValueChange,
-    placeholder,
-    disabled,
-    removeInput,
-    showCalendar = true,
-    showTimePicker = true,
-  },
-  ref
-) {
+export const SmartDatetimeInput = function SmartDatetimeInput({
+  className,
+  value,
+  onValueChange,
+  placeholder,
+  disabled,
+  removeInput,
+  showCalendar = true,
+  showTimePicker = true,
+  ref,
+}: Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "type" | "value" | "defaultValue" | "onBlur"
+> &
+  SmartDatetimeInputProps & {
+    ref?: React.Ref<HTMLInputElement>;
+  }) {
   const [Time, setTime] = React.useState<string>("")
 
   const onTimeChange = React.useCallback((time: string) => {
@@ -438,13 +435,15 @@ const getDefaultPlaceholder = (
   }
   return 'e.g. "tomorrow at 5pm" or "in 2 hours"'
 }
-const NaturalLanguageInput = React.forwardRef<
-  HTMLInputElement,
-  {
-    placeholder?: string
-    disabled?: boolean
-  }
->(function NaturalLanguageInput({ placeholder, ...props }, ref) {
+const NaturalLanguageInput = function NaturalLanguageInput({
+  placeholder,
+  ref,
+  ...props
+}: {
+  placeholder?: string
+  disabled?: boolean
+  ref?: React.Ref<HTMLInputElement>
+}) {
   const { value, onValueChange, onTimeChange, showCalendar, showTimePicker } =
     useSmartDateInput()
 

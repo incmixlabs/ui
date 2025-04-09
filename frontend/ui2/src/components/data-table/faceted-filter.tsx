@@ -7,29 +7,30 @@ import { Command, Popover } from "@/components/base"
 import { cn } from "@/lib/utils"
 const FacetedFilter = Popover
 
-const FacetedFilterTrigger = React.forwardRef<
-  React.ComponentRef<typeof Popover.Trigger>,
-  React.ComponentPropsWithoutRef<typeof Popover.Trigger>
->(({ className, children, ...props }, ref) => (
-  <Popover.Trigger ref={ref} className={cn(className)} {...props}>
-    {children}
-  </Popover.Trigger>
-))
+type FacetedFilterTriggerProps = React.ComponentPropsWithoutRef<typeof Popover.Trigger>
+
+function FacetedFilterTrigger({ className, children, ...props }: FacetedFilterTriggerProps) {
+  return (
+    <Popover.Trigger className={cn(className)} {...props}>
+      {children}
+    </Popover.Trigger>
+  )
+}
 FacetedFilterTrigger.displayName = "FacetedFilterTrigger"
 
-const FacetedFilterContent = React.forwardRef<
-  React.ComponentRef<typeof Popover.Content>,
-  React.ComponentPropsWithoutRef<typeof Popover.Content>
->(({ className, children, ...props }, ref) => (
-  <Popover.Content
-    ref={ref}
-    className={cn("w-[12.5rem] p-0", className)}
-    align="start"
-    {...props}
-  >
-    <Command.Root>{children}</Command.Root>
-  </Popover.Content>
-))
+type FacetedFilterContentProps = React.ComponentPropsWithoutRef<typeof Popover.Content>
+
+function FacetedFilterContent({ className, children, ...props }: FacetedFilterContentProps) {
+  return (
+    <Popover.Content
+      className={cn("w-[12.5rem] p-0", className)}
+      align="start"
+      {...props}
+    >
+      <Command.Root>{children}</Command.Root>
+    </Popover.Content>
+  )
+}
 FacetedFilterContent.displayName = "FacetedFilterContent"
 
 const FacetedFilterInput = Command.Input
@@ -45,13 +46,9 @@ interface FacetedFilterItemProps
   selected: boolean
 }
 
-const FacetedFilterItem = React.forwardRef<
-  React.ComponentRef<typeof Command.Item>,
-  FacetedFilterItemProps
->(({ className, children, selected, ...props }, ref) => {
+function FacetedFilterItem({ className, children, selected, ...props }: FacetedFilterItemProps) {
   return (
     <Command.Item
-      ref={ref}
       aria-selected={selected}
       data-selected={selected}
       className={cn(className)}
@@ -70,7 +67,7 @@ const FacetedFilterItem = React.forwardRef<
       {children}
     </Command.Item>
   )
-})
+}
 FacetedFilterItem.displayName = "FacetedFilterItem"
 
 const FacetedFilterSeparator = Command.Separator

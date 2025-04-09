@@ -26,21 +26,17 @@ type TreeProps = React.HTMLAttributes<HTMLDivElement> & {
   itemIcon?: ComponentType<IconProps>
 }
 
-const Tree = React.forwardRef<HTMLDivElement, TreeProps>(
-  (
-    {
-      data,
-      initialSelectedItemId,
-      onSelectChange,
-      expandAll,
-      folderIconOpen,
-      folderIcon,
-      itemIcon,
-      className,
-      ...props
-    },
-    _ref
-  ) => {
+const Tree = ({
+  data,
+  initialSelectedItemId,
+  onSelectChange,
+  expandAll,
+  folderIconOpen,
+  folderIcon,
+  itemIcon,
+  className,
+  ...props
+}: TreeProps) => {
     const [selectedItemId, setSelectedItemId] = React.useState<
       string | undefined
     >(initialSelectedItemId)
@@ -103,7 +99,6 @@ const Tree = React.forwardRef<HTMLDivElement, TreeProps>(
       </>
     )
   }
-)
 
 type TreeItemProps = TreeProps & {
   selectedItemId?: string
@@ -116,23 +111,19 @@ type TreeItemProps = TreeProps & {
 
 const iconClass = `${iconSize} shrink-0 text-accent-foreground/50`
 const padding = "p-2"
-const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
-  (
-    {
-      className,
-      data,
-      selectedItemId,
-      handleSelectChange,
-      expandedItemIds,
-      FolderIcon,
-      ItemIcon,
-      FolderIconOpen,
-      ...props
-    },
-    ref
-  ) => {
+const TreeItem = ({
+  className,
+  data,
+  selectedItemId,
+  handleSelectChange,
+  expandedItemIds,
+  FolderIcon,
+  ItemIcon,
+  FolderIconOpen,
+  ...props
+}: TreeItemProps) => {
     return (
-      <Box ref={ref} role="tree" className={className} {...props}>
+      <Box role="tree" className={className} {...props}>
         <ul>
           {Array.isArray(data) ? (
             data.map((item) => (
@@ -231,20 +222,17 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
       </Box>
     )
   }
-)
 
-const Leaf = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & {
-    item: TreeDataItem
-    isSelected?: boolean
-    Icon?: ComponentType<IconProps>
-  }
->(({ className, item, isSelected, Icon, ...props }, ref) => {
+type LeafProps = React.HTMLAttributes<HTMLDivElement> & {
+  item: TreeDataItem
+  isSelected?: boolean
+  Icon?: ComponentType<IconProps>
+}
+
+const Leaf = ({ className, item, isSelected, Icon, ...props }: LeafProps) => {
   const IconComp = item.icon ? item.icon : Icon
   return (
     <Flex
-      ref={ref}
       align={"center"}
       gap={"2"}
       className={cn(
@@ -267,6 +255,6 @@ const Leaf = React.forwardRef<
       </Text>
     </Flex>
   )
-})
+}
 
 export { Tree, type TreeDataItem }

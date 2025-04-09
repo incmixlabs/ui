@@ -11,23 +11,17 @@ export type ReactiveButtonProps = ButtonProps & {
   successIconClassName?: string
 }
 
-export const ReactiveButton = React.forwardRef<
-  HTMLButtonElement,
-  ReactiveButtonProps
->(function ReactiveButton(
-  {
-    children,
-    loading,
-    success,
-    disabled,
-    spinnerClassName,
-    successIconClassName,
-    ...props
-  },
-  ref
-) {
+export const ReactiveButton = ({
+  children,
+  loading,
+  success,
+  disabled,
+  spinnerClassName,
+  successIconClassName,
+  ...props
+}: ReactiveButtonProps) => {
   return (
-    <Button {...props} ref={ref} disabled={loading || disabled}>
+    <Button {...props} disabled={loading || disabled}>
       {loading ? (
         <Spinner className={spinnerClassName} />
       ) : success ? (
@@ -37,6 +31,6 @@ export const ReactiveButton = React.forwardRef<
       )}
     </Button>
   )
-})
+}
 
 ReactiveButton.displayName = "ReactiveButton"
