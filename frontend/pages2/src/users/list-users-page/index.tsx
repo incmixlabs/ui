@@ -2,9 +2,9 @@
 import { useOrganizationStore } from "@incmix/store"
 
 import { I18n } from "@incmix/pages/i18n"
-import { Flex, Spinner } from "@incmix/ui"
-import { Callout } from "@incmix/ui"
 import { USERS_API_URL } from "@incmix/ui/constants"
+import { Flex, Spinner } from "@incmix/ui2"
+import { Callout } from "@incmix/ui2"
 import { createAbilityFromPermissions } from "@incmix/utils/casl"
 import type { AppAbility, Permission } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"

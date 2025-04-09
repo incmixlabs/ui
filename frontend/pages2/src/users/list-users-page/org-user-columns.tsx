@@ -1,4 +1,4 @@
-import { Checkbox, type ColumnDef, DataTableColumnHeader } from "@incmix/ui"
+import { Checkbox, type ColumnDef, DataTableColumnHeader } from "@incmix/ui2"
 
 import type { MemberDetails } from "@incmix/utils/types"
 

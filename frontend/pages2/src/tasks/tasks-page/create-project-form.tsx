@@ -10,12 +10,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  Dialog.Trigger,
   FormField,
   ReactiveButton,
   toast,
-} from "@incmix/ui"
-import { Button, Flex } from "@incmix/ui"
+} from "@incmix/ui2"
+import { Button, Flex } from "@incmix/ui2"
 import type { Project } from "@incmix/utils/types"
 import { useForm } from "@tanstack/react-form"
 import { useMutation } from "@tanstack/react-query"
@@ -88,9 +88,9 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
         reset()
       }}
     >
-      <DialogTrigger>
+      <Dialog.Trigger>
         <Button>Create Project</Button>
-      </DialogTrigger>
+      </Dialog.Trigger>
       <DialogContent className="border border-gray-4">
         <DialogHeader>
           <DialogTitle>Create New Project</DialogTitle>

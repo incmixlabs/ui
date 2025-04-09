@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import type { TreeDataItem } from "../types"
+import type { TreeDataItem } from "@/types"
 
 // Zustand store
 type EnvVarsState = {

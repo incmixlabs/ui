@@ -1,5 +1,5 @@
+import { dashboardColorValues } from "@/lib/utils/colors"
 import { useThemeContext } from "@radix-ui/themes"
-import { dashboardColorValues } from "@utils"
 import { Suspense, lazy } from "react"
 
 const ReactApexChart = lazy(() => import("react-apexcharts"))

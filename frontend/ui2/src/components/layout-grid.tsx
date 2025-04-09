@@ -4,8 +4,8 @@ import { motion } from "framer-motion"
 // import Image from "next/image"
 import { useState } from "react"
 
-import { clx } from "@utils/clx/clx-merge"
-import { cn } from "@utils/cn"
+import { cn } from "@/lib/utils"
+import { clx } from "@/lib/utils/clx/clx-merge"
 
 const LayoutGridContainer = clx.div(
   "mx-auto grid h-full w-full max-w-7xl grid-cols-1 gap-4 md:grid-cols-3"

@@ -1,11 +1,11 @@
 import { Flex, Popover, ScrollArea, Text } from "@radix-ui/themes"
 import type React from "react"
 
-import { Avatar } from "@/components/radixui/avatar"
-import type { Sizes, User } from "./types"
+import { Avatar, type AvatarProps } from "@/components/radixui/avatar"
+import type { Sizes } from "./types"
 
 type UsersDropdownProps = {
-  users: User[]
+  users: AvatarProps[]
   size: Sizes
 }
 

@@ -1,5 +1,5 @@
-import { Text } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
+import { Text } from "@incmix/ui2"
 import type { WsMessage } from "@incmix/utils/types"
 import { useNavigate } from "@tanstack/react-router"
 import { useEffect, useMemo, useState } from "react"

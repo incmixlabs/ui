@@ -1,18 +1,8 @@
 "use client"
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  ReactiveButton,
-} from "@incmix/ui"
-import { Button } from "@incmix/ui"
 import { INTL_API_URL } from "@incmix/ui/constants"
+import {} from "@incmix/ui2"
+import { Button } from "@incmix/ui2"
 import { useMutation } from "@tanstack/react-query"
 import type { Row } from "@tanstack/react-table"
 import { Trash } from "lucide-react"
@@ -55,12 +45,12 @@ export function DeleteDialog({
   return (
     <Dialog {...props}>
       {showTrigger ? (
-        <DialogTrigger>
+        <Dialog.Trigger>
           <Button variant="outline" color="red">
             <Trash className="mr-2 size-4" />
             Delete ({items.length})
           </Button>
-        </DialogTrigger>
+        </Dialog.Trigger>
       ) : null}
       <DialogContent>
         <DialogHeader>

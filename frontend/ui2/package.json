@@ -9,10 +9,10 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
-
   "exports": {
     ".": "./src/components/index.ts",
     "./style/global.css": "./src/style/global.css",
+    "./theme": "./src/components/radixui/theme/index.ts",
     "./tauri": "./src/tauri.ts",
     "./types": "./src/components/types/index.ts",
     "./collapsible": "./src/primitives/collapsible.tsx",
@@ -25,6 +25,10 @@
     "./utils": "./src/lib/utils.ts",
     "./widgets": "./src/widgets/index.ts",
     "./date-picker": "./src/components/date-picker.tsx",
+    "./onboarding": "./src/components/onboarding/index.tsx",
+    "./card/flow-card": "./src/components/radixui/card/flow-card/index.ts",
+    "./shadcn": "./src/components/shadcn/index.ts",
+    "./radixui": "./src/components/radixui/index.ts"
     "./onboarding": "./src/components/onboarding/index.tsx",
     "./card/flow-card": "./src/components/radixui/card/flow-card/index.ts",
     "./shadcn": "./src/components/shadcn/index.ts",
@@ -91,6 +95,7 @@
     "@eslint/js": "catalog:",
     "@incmix/config": "workspace:",
     "@tailwindcss/vite": "catalog:",
+    "@types/node": "^22.13.4",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",

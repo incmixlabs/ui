@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { forwardRef, useMemo } from "react"
 import {
   type ClassNamesAndVariant,

@@ -1,6 +1,6 @@
 import type { ColumnDef } from "@tanstack/react-table"
 
-import { Checkbox, Flex, Input, Text } from "@incmix/ui"
+import { Checkbox, Flex, Input, Text } from "@incmix/ui2"
 import { ChevronDown, ChevronRight, EllipsisVertical } from "lucide-react"
 import { useState } from "react"
 import { roles } from "./mock"
