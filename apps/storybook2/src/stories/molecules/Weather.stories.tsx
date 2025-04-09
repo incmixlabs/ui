@@ -1,5 +1,5 @@
 import { useThemeStore } from "@incmix/store"
-import { WeatherWidget } from "@incmix/ui/widgets"
+import { WeatherWidget } from "@incmix/ui2/widgets"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof WeatherWidget> = {

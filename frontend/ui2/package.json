@@ -28,20 +28,17 @@
     "./onboarding": "./src/components/onboarding/index.tsx",
     "./card/flow-card": "./src/components/radixui/card/flow-card/index.ts",
     "./shadcn": "./src/components/shadcn/index.ts",
-    "./radixui": "./src/components/radixui/index.ts"
-    "./onboarding": "./src/components/onboarding/index.tsx",
-    "./card/flow-card": "./src/components/radixui/card/flow-card/index.ts",
-    "./shadcn": "./src/components/shadcn/index.ts",
     "./radixui": "./src/components/radixui/index.ts",
     "./utils/colors": "./src/lib/utils/colors/index.ts",
-    "./multiple-selector":"./src/components/multiple-selector/index.tsx",
+    "./multiple-selector": "./src/components/multiple-selector/index.tsx",
     "./stepper": "./src/components/stepper/index.ts",
-    "./table": "./src/components/table/index.ts",
-    "./base": "./src/components/base/index.ts",
+    "./base": "./src/components/base.ts",
     "./auth-wrapper": "./src/components/auth-wrapper.tsx",
     "./flow-form": "./src/components/form/index.ts",
-    "./flow-form/flow-text-input": "./src/components/form/flow/text-input/index.ts",
-    "./flow-form/label": "./src/components/form/label.tsx"
+    "./flow-form/input": "./src/components/form/input.tsx",
+    "./flow-form/label": "./src/components/form/label.tsx",
+    "./table": "./src/components/table.tsx",
+    "./file-folder-accordion": "./src/components/file-folder-accordion/index.tsx"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "1.4.0",

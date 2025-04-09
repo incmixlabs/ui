@@ -1,7 +1,7 @@
 import { AuthWrapper } from "@incmix/ui2/auth-wrapper"
 import { Button } from "@incmix/ui2/radixui"
 import { Checkbox } from "@incmix/ui2/radixui"
-import { TextInput } from "@incmix/ui2/flow-form/flow-text-input"
+import { Input } from "@incmix/ui2/flow-form/input"
 import { Label } from "@incmix/ui2/flow-form/label"
 
 import type { Meta, StoryObj } from "@storybook/react"
@@ -21,7 +21,7 @@ export const Default: Story = {
         <form className="mt-8 space-y-6">
           <div className="flex flex-col gap-y-2">
             <Label htmlFor="email">Your email</Label>
-            <TextInput
+            <Input
               id="email"
               name="email"
               placeholder="name@company.com"
@@ -30,7 +30,7 @@ export const Default: Story = {
           </div>
           <div className="flex flex-col gap-y-2">
             <Label htmlFor="password">Your password</Label>
-            <TextInput
+            <Input
               id="password"
               name="password"
               placeholder="••••••••"
@@ -39,7 +39,7 @@ export const Default: Story = {
           </div>
           <div className="flex flex-col gap-y-2">
             <Label htmlFor="confirmPassword">Confirm password</Label>
-            <TextInput
+            <Input
               id="confirmPassword"
               name="confirmPassword"
               placeholder="••••••••"

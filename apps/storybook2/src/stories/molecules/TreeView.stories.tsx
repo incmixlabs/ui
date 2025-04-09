@@ -1,5 +1,5 @@
-import { type TreeDataItem, TreeView } from "@incmix/ui"
-import { Box } from "@incmix/ui"
+import { type TreeDataItem, TreeView } from "@incmix/ui2/tree-view"
+import { Box } from "@incmix/ui2"
 import type { Meta, StoryObj } from "@storybook/react"
 import { FileIcon, FolderIcon, FolderOpenIcon } from "lucide-react"
 import { useState } from "react"
@@ -26,22 +26,26 @@ const sampleData: TreeDataItem[] = [
     name: "Documents",
     icon: FolderIcon,
     openIcon: FolderOpenIcon,
+    type: "folder",
     children: [
       {
         id: "1.1",
         name: "Work",
         icon: FolderIcon,
         openIcon: FolderOpenIcon,
+        type: "folder",
         children: [
           {
             id: "1.1.1",
             name: "Project A",
             icon: FileIcon,
+            type: "file",
           },
           {
             id: "1.1.2",
             name: "Project B",
             icon: FileIcon,
+            type: "file",
           },
         ],
       },
@@ -50,11 +54,13 @@ const sampleData: TreeDataItem[] = [
         name: "Personal",
         icon: FolderIcon,
         openIcon: FolderOpenIcon,
+        type: "folder",
         children: [
           {
             id: "1.2.1",
             name: "Photos",
             icon: FileIcon,
+            type: "file",
           },
         ],
       },
@@ -65,16 +71,19 @@ const sampleData: TreeDataItem[] = [
     name: "Downloads",
     icon: FolderIcon,
     openIcon: FolderOpenIcon,
+    type: "folder",
     children: [
       {
         id: "2.1",
         name: "Movies",
         icon: FileIcon,
+        type: "file",
       },
       {
         id: "2.2",
         name: "Music",
         icon: FileIcon,
+        type: "file",
       },
     ],
   },

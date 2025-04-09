@@ -1,11 +1,6 @@
 import { ArchiveIcon, FileIcon } from "@radix-ui/react-icons"
 import type React from "react"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../accordion/shadcn-accordion"
+import { Accordion } from "@incmix/ui2"
 import type { EnvironmentVariableRoot } from "./types"
 import { mapEnvironmentVariable } from "./utils"
 
@@ -30,27 +25,27 @@ function createAccordionItems(
         environmentVariable: variable,
         path: [key],
         leafMap: (leaf, path) => (
-          <AccordionItem value={path.join("/")} key={path.join("/")}>
-            <AccordionTrigger className="gap-2">
+          <Accordion.Item value={path.join("/")} key={path.join("/")}>
+            <Accordion.Trigger className="gap-2">
               <FileIcon />
               {leaf.label}
-            </AccordionTrigger>
-            <AccordionContent>{leaf.value}</AccordionContent>
-          </AccordionItem>
+            </Accordion.Trigger>
+            <Accordion.Content>{leaf.value}</Accordion.Content>
+          </Accordion.Item>
         ),
         folderMap: (folder, children, path) => {
           const items = Array.from(children.values())
 
           return (
-            <AccordionItem value={path.join("/")} key={path.join("/")}>
-              <AccordionTrigger className="gap-2">
+            <Accordion.Item value={path.join("/")} key={path.join("/")}>
+              <Accordion.Trigger className="gap-2">
                 <ArchiveIcon />
                 {folder.label}
-              </AccordionTrigger>
-              <AccordionContent>
-                <Accordion type="multiple">{items}</Accordion>
-              </AccordionContent>
-            </AccordionItem>
+              </Accordion.Trigger>
+              <Accordion.Content>
+                <Accordion.Root type="multiple">{items}</Accordion.Root>
+              </Accordion.Content>
+            </Accordion.Item>
           )
         },
       })
@@ -65,8 +60,8 @@ export const FileFolderAccordion: React.FC<FileFolderAccordionProps> = ({
   style,
 }) => {
   return (
-    <Accordion type="multiple" style={style}>
+    <Accordion.Root type="multiple" style={style}>
       {createAccordionItems(root)}
-    </Accordion>
+    </Accordion.Root>
   )
 }

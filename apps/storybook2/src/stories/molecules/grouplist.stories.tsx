@@ -1,5 +1,5 @@
 import { useThemeStore } from "@incmix/store"
-import { GroupList } from "@incmix/ui/widgets"
+import { GroupList } from "@incmix/ui2/widgets"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof GroupList> = {

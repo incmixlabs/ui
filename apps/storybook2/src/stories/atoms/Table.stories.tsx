@@ -2,11 +2,12 @@ import usersList from "@/data/users"
 import { Avatar } from "@incmix/ui2/radixui"
 import { Checkbox } from "@incmix/ui2/radixui"
 import { Label } from "@incmix/ui2/shadcn"
-import type { TableProps } from "@incmix/ui2/table"
-import { Table } from "@incmix/ui2/table"
+import { Table } from "@incmix/ui2/shadcn"
 import type { Meta, StoryObj } from "@storybook/react"
-usersList.length = 5
 import { twMerge } from "tailwind-merge"
+
+usersList.length = 5
+
 export interface User {
   email: string
   avatar: string
@@ -16,9 +17,14 @@ export interface User {
   status: string
 }
 
+// Create a primary component for Storybook to work with
+function TableWrapper(props: React.ComponentProps<typeof Table.Root>) {
+  return <Table.Root {...props} />
+}
+
 const meta = {
   title: "Atoms/Table",
-  component: Table,
+  component: TableWrapper,
   argTypes: {
     className: {
       description: "Example description",
@@ -29,24 +35,26 @@ const meta = {
       control: "text",
     },
   },
-} satisfies Meta<typeof Table>
+} satisfies Meta<typeof TableWrapper>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
-  render: () => {
+  render: (args) => {
     return (
-      <Table>
-        <Table.Head>
-          <Table.HeadCell>Product name</Table.HeadCell>
-          <Table.HeadCell>Color</Table.HeadCell>
-          <Table.HeadCell>Category</Table.HeadCell>
-          <Table.HeadCell>Price</Table.HeadCell>
-          <Table.HeadCell>
-            <span className="sr-only">Edit</span>
-          </Table.HeadCell>
-        </Table.Head>
+      <TableWrapper {...args}>
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeaderCell>Product name</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Color</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Category</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>Price</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell>
+              <span className="sr-only">Edit</span>
+            </Table.ColumnHeaderCell>
+          </Table.Row>
+        </Table.Header>
         <Table.Body className="divide-y">
           <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
             <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
@@ -129,38 +137,35 @@ export const Default: Story = {
             </Table.Cell>
           </Table.Row>
         </Table.Body>
-      </Table>
+      </TableWrapper>
     )
   },
-} as Story
+}
 
 export const UserTable: Story = {
-  render: () => {
+  render: (args) => {
     return (
-      <Table
-        compact={true}
+      <TableWrapper
+        {...args}
         className="min-w-full divide-y divide-gray-200 dark:divide-gray-600"
       >
-        <Table.Head
+        <Table.Header
           className="bg-gray-100 dark:bg-gray-700"
-          theme={{
-            cell: {
-              base: "text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400",
-            },
-          }}
         >
-          <Table.HeadCell>
-            <Label htmlFor="select-all" className="sr-only">
-              Select all
-            </Label>
-            <Checkbox id="select-all" name="select-all" />
-          </Table.HeadCell>
-          <Table.HeadCell>Name</Table.HeadCell>
-          <Table.HeadCell>Position</Table.HeadCell>
-          <Table.HeadCell>Country</Table.HeadCell>
-          <Table.HeadCell>Status</Table.HeadCell>
-          <Table.HeadCell />
-        </Table.Head>
+          <Table.Row>
+            <Table.ColumnHeaderCell className="text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">
+              <Label htmlFor="select-all" className="sr-only">
+                Select all
+              </Label>
+              <Checkbox id="select-all" name="select-all" />
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Name</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Position</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Country</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400">Status</Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="text-left text-xs font-medium uppercase text-gray-500 dark:text-gray-400" />
+          </Table.Row>
+        </Table.Header>
         <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
           {usersList.map((user) => (
             <Table.Row
@@ -201,7 +206,7 @@ export const UserTable: Story = {
             </Table.Row>
           ))}
         </Table.Body>
-      </Table>
+      </TableWrapper>
     )
   },
-} as Story
+}

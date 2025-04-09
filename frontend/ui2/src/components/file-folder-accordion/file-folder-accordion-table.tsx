@@ -1,6 +1,7 @@
 import { type FunctionComponent, useEffect, useRef, useState } from "react"
 
-import { Box, Flex, Text, TextField } from "@incmix/ui"
+import { Box, Flex, Text } from "@incmix/ui2"
+import { TextField } from "@incmix/ui2/radixui"
 import {
   ArrowRightIcon,
   ChevronDownIcon,
@@ -22,7 +23,7 @@ import {
 import type { DemoDataItem } from "./demo-data-static"
 
 import "./table.css"
-import { Button } from "../button/button"
+import { Button } from "@incmix/ui2"
 
 const GENERATED_CONTENT = generateData()
 const Demo: FunctionComponent = () => {

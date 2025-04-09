@@ -1,4 +1,4 @@
-import { PropertySheet } from "@incmix/ui/widgets"
+import { PropertySheet } from "@incmix/ui2/widgets"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof PropertySheet> = {

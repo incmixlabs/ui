@@ -463,7 +463,7 @@ importers:
         version: link:../../frontend/ui2
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.1.0(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)
+        version: 0.3.2(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)
       '@radix-ui/react-icons':
         specifier: 1.3.1
         version: 1.3.1(react@19.1.0)

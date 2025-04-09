@@ -1,6 +1,6 @@
-import { Button } from "@incmix/ui/button"
-import { Input } from "@incmix/ui/form"
-import { Label } from "@incmix/ui/label"
+import { Button } from "@incmix/ui2/base"
+import { Input } from "@incmix/ui2/base"
+import { Label } from "@incmix/ui2/base"
 import {
   Sheet,
   SheetClose,
@@ -10,7 +10,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@incmix/ui/sheet"
+} from "@incmix/ui2"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const meta = {

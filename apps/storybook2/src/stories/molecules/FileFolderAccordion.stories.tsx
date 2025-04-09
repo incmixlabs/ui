@@ -1,6 +1,6 @@
-import { FileFolderAccordion } from "@incmix/ui"
-import type { BuildingEnvironmentVariableRoot } from "@incmix/ui"
-import { buildEnvironmentVariable } from "@incmix/ui"
+import { FileFolderAccordion } from "@incmix/ui2/file-folder-accordion"
+import type { BuildingEnvironmentVariableRoot } from "@incmix/ui2/file-folder-accordion"
+import { buildEnvironmentVariable } from "@incmix/ui2/file-folder-accordion"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof FileFolderAccordion> = {
