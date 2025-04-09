@@ -9,8 +9,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@incmix/ui"
+  Dialog.Trigger,
+} from "@incmix/ui2"
 import type { UserAndProfile } from "@incmix/utils/types"
 import type { Row } from "@tanstack/react-table"
 import { Trash } from "lucide-react"
@@ -31,12 +31,12 @@ export function DeleteDialog({
   return (
     <Dialog {...props}>
       {showTrigger ? (
-        <DialogTrigger>
+        <Dialog.Trigger>
           <Button variant="outline">
             <Trash className="mr-2 size-4" />
             Delete ({items.length})
           </Button>
-        </DialogTrigger>
+        </Dialog.Trigger>
       ) : null}
       <DialogContent>
         <DialogHeader>

@@ -1,4 +1,3 @@
-import { Button, Flex, Tabs } from "@incmix/ui"
 import {
   Table,
   TableBody,
@@ -7,6 +6,7 @@ import {
   TableHeadCell,
   TableRow,
 } from "@incmix/ui/table"
+import { Button, Flex, Tabs } from "@incmix/ui2"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import {
   type ExpandedState,

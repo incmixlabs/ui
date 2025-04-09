@@ -12,7 +12,7 @@ import {
   FormField,
   ReactiveButton,
   toast,
-} from "@incmix/ui"
+} from "@incmix/ui2"
 import type { UserAndProfile } from "@incmix/utils/types"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"

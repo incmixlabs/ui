@@ -1,18 +1,6 @@
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Flex,
-  FormField,
-  ReactiveButton,
-} from "@incmix/ui"
-import { Button, Select, Text } from "@incmix/ui"
 import { INTL_API_URL } from "@incmix/ui/constants"
+import {} from "@incmix/ui2"
+import { Button, Select, Text } from "@incmix/ui2"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { I18n } from "i18n"
@@ -39,9 +27,9 @@ export const AddTranslationDialog: React.FC<AddTranslationDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen} {...props}>
-      <DialogTrigger>
+      <Dialog.Trigger>
         <Button>Add Translation</Button>
-      </DialogTrigger>
+      </Dialog.Trigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add Translation</DialogTitle>

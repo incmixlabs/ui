@@ -19,6 +19,7 @@
   },
   "scripts": {
     "build": "pnpm clean && echo 'Skipping build' && exit 0",
+    "tsc": "tsc -p tsconfig.json --outDir dist",
     "clean": "rm -rf dist *.tsbuildinfo",
     "typecheck": "tsc"
   },

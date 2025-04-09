@@ -272,7 +272,7 @@ importers:
         version: link:../../frontend/ui2
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.1.0(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)
+        version: 0.3.2(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)
       '@sentry/react':
         specifier: 8.51.0
         version: 8.51.0(react@19.1.0)
@@ -569,7 +569,7 @@ importers:
         version: link:../ui2
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.1.0(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)
+        version: 0.3.2(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.71.1(react@19.1.0)
@@ -1165,6 +1165,9 @@ importers:
       '@tailwindcss/vite':
         specifier: 'catalog:'
         version: 4.0.17(vite@6.2.4(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.3)(yaml@2.7.0))
+      '@types/node':
+        specifier: ^22.13.4
+        version: 22.13.14
       '@types/react':
         specifier: 'catalog:'
         version: 19.1.0

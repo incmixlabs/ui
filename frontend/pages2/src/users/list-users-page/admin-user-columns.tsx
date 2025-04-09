@@ -4,8 +4,8 @@ import {
   type DataTableRowAction,
   GoogleIcon,
   toast,
-} from "@incmix/ui"
-import { Badge, Checkbox, DropdownMenu, Spinner, Switch } from "@incmix/ui"
+} from "@incmix/ui2"
+import { Badge, Checkbox, DropdownMenu, Spinner, Switch } from "@incmix/ui2"
 import type { UserAndProfile } from "@incmix/utils/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { MoreHorizontal } from "lucide-react"

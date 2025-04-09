@@ -1,20 +1,5 @@
-import {
-  Button,
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Flex,
-  FormField,
-  ReactiveButton,
-  Select,
-  Text,
-} from "@incmix/ui"
 import { INTL_API_URL } from "@incmix/ui/constants"
+import {} from "@incmix/ui2"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import type { Row } from "@tanstack/react-table"

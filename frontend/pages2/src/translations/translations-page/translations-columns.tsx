@@ -5,7 +5,7 @@ import {
   DataTableColumnHeader,
   type DataTableRowAction,
   DropdownMenu,
-} from "@incmix/ui"
+} from "@incmix/ui2"
 import { MoreHorizontal } from "lucide-react"
 import type { TranslationMessage } from "./types"
 

@@ -2,6 +2,7 @@
   "compilerOptions": {
     "types": ["@types/wicg-file-system-access", "vite/client"],
     "rootDir": ".",
+    "outDir": "./dist",
     "baseUrl": "./src",
     "paths": {
       "@/i18n": ["./src/i18n"],

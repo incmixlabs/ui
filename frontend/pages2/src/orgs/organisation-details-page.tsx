@@ -1,13 +1,6 @@
-import { Link } from "@tanstack/react-router"
-import { ArrowLeft } from "lucide-react"
-import { forwardRef, useContext, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { toast } from "sonner"
-
-import { DashboardLayout } from "@/layouts/admin-panel/layout"
+import { LoadingPage } from "@common"
+import { Button, CardContainer } from "@incmix/ui2"
 import {
-  Button,
-  CardContainer,
   Container,
   Flex,
   Select,
@@ -22,14 +15,19 @@ import type {
   MemberRole,
   Organization,
 } from "@incmix/utils/types"
-
+import { ArrowLeft } from "lucide-react"
 import { useAuth } from "../auth"
 import { UserProfileImage } from "../common/components/user-profile-image"
-import LoadingPage from "../common/loading-page"
+
+import { DashboardLayout } from "@layouts/admin-panel/layout"
+import { Link } from "@tanstack/react-router"
+import React from "react"
+import { forwardRef, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { toast } from "sonner"
 import { EditableName } from "./components/editable-name"
 import { EditableRole } from "./components/editable-role"
-import { OrganizationLayout } from "./layouts/organisation-layout"
-import { OrganisationUsersRoute } from "./routes"
+import { OrganisationDetailsRoute } from "./routes"
 import {
   useAddMember,
   useDeleteOrganization,
@@ -93,7 +91,7 @@ const OrganizationHeader: React.FC<{
   onUpdateName: (newName: string) => Promise<void>
 }> = ({ organization, onUpdateName }) => {
   const { t } = useTranslation(["common"])
-  const ability = useContext(AbilityContext)
+  const ability = React.useContext(AbilityContext)
 
   return (
     <Flex direction="column" gap="4">
@@ -115,12 +113,12 @@ const OrganizationHeader: React.FC<{
 
 const UserRow: React.FC<{
   member: MemberDetails
-  orgHandle: string
+  orgId: string
   onUpdateRole: (member: MemberDetails, newRole: MemberRole) => Promise<void>
-}> = ({ member, orgHandle, onUpdateRole }) => {
+}> = ({ member, orgId, onUpdateRole }) => {
   const { authUser: currentUser } = useAuth()
   const { t } = useTranslation(["common"])
-  const ability = useContext(AbilityContext)
+  const ability = React.useContext(AbilityContext)
   return (
     <Table.Row key={member.userId}>
       <Table.Cell>
@@ -151,7 +149,7 @@ const UserRow: React.FC<{
       {(ability.can("update", "Member") || ability.can("delete", "Member")) && (
         <Table.Cell>
           <Flex align="center" className="h-full">
-            <RemoveButton member={member} orgHandle={orgHandle} />
+            <RemoveButton member={member} orgHandle={orgId} />
           </Flex>
         </Table.Cell>
       )}
@@ -205,7 +203,7 @@ const AddUserForm: React.FC<{
 
 const OrganizationDetailsPage: React.FC = () => {
   const { t } = useTranslation(["organizationDetails", "common"])
-  const { orgHandle } = OrganisationUsersRoute.useParams()
+  const { orgHandle } = OrganisationDetailsRoute.useParams()
   const { organization, isLoading: isOrgLoading } = useOrganization(orgHandle)
   const { members, isLoading: isMembersLoading } =
     useOrganizationMembers(orgHandle)
@@ -284,63 +282,57 @@ const OrganizationDetailsPage: React.FC = () => {
             label: organization.name,
             url: `/organization/${orgHandle}`,
           },
-          {
-            label: "Members",
-            url: `/organization/${orgHandle}/users`,
-          },
         ]}
       >
-        <OrganizationLayout activeTab="users">
-          <Container size="3">
-            <CardContainer>
-              <Flex direction="column" gap="4">
-                <OrganizationHeader
-                  organization={organization}
-                  onUpdateName={handleUpdateName}
-                />
-                <Separator size="4" />
-                <Table.Root>
-                  <Table.Header>
-                    <Table.Row>
+        <Container size="3">
+          <CardContainer>
+            <Flex direction="column" gap="4">
+              <OrganizationHeader
+                organization={organization}
+                onUpdateName={handleUpdateName}
+              />
+              <Separator size="4" />
+              <Table.Root>
+                <Table.Header>
+                  <Table.Row>
+                    <Table.ColumnHeaderCell>
+                      {t("organizationDetails:name")}
+                    </Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell>
+                      {t("organizationDetails:email")}
+                    </Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell>
+                      {t("organizationDetails:role")}
+                    </Table.ColumnHeaderCell>
+                    {ability.can("delete", "Member") && (
                       <Table.ColumnHeaderCell>
-                        {t("common:name")}
+                        {t("organizationDetails:actions")}
                       </Table.ColumnHeaderCell>
-                      <Table.ColumnHeaderCell>
-                        {t("common:email")}
-                      </Table.ColumnHeaderCell>
-                      <Table.ColumnHeaderCell>
-                        {t("organizationDetails:role")}
-                      </Table.ColumnHeaderCell>
-                      {ability.can("delete", "Member") && (
-                        <Table.ColumnHeaderCell>
-                          {t("organizationDetails:actions")}
-                        </Table.ColumnHeaderCell>
-                      )}
-                    </Table.Row>
-                  </Table.Header>
-                  <Table.Body>
-                    {members.map((member) => (
-                      <UserRow
-                        key={member.userId}
-                        member={member}
-                        orgHandle={orgHandle}
-                        onUpdateRole={handleRoleChange}
-                      />
-                    ))}
-                  </Table.Body>
-                </Table.Root>
-                <Can I="create" a="Member">
-                  <AddUserForm onAddMember={handleAddNewMember} />
-                </Can>
-                <Can I="delete" a="Organisation">
-                  <Button color="red" variant="soft" onClick={handleDelete}>
-                    {t("organizationDetails:deleteOrganization")}
-                  </Button>
-                </Can>
-              </Flex>
-            </CardContainer>
-          </Container>
-        </OrganizationLayout>
+                    )}
+                  </Table.Row>
+                </Table.Header>
+                <Table.Body>
+                  {members.map((member) => (
+                    <UserRow
+                      key={member.userId}
+                      member={member}
+                      orgId={orgHandle}
+                      onUpdateRole={handleRoleChange}
+                    />
+                  ))}
+                </Table.Body>
+              </Table.Root>
+              <Can I="create" a="Member">
+                <AddUserForm onAddMember={handleAddNewMember} />
+              </Can>
+              <Can I="delete" a="Organisation">
+                <Button color="red" variant="soft" onClick={handleDelete}>
+                  {t("organizationDetails:deleteOrganization")}
+                </Button>
+              </Can>
+            </Flex>
+          </CardContainer>
+        </Container>
       </DashboardLayout>
     </AbilityContext.Provider>
   )

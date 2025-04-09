@@ -17,7 +17,7 @@ import { useSidebarStore, useThemeStore } from "@incmix/store"
 import {
   Box,
   Button,
-  DropdownMenu,
+  DropdownMenuWrapper,
   Flex,
   IconButton,
   Link,
@@ -97,7 +97,7 @@ const ProfileDropdown: React.FC = () => {
   const { handleLogout, isPending: isLogoutLoading } = useLogout()
 
   return (
-    <DropdownMenu.Root
+    <DropdownMenuWrapper
       trigger={
         <motion.div whileHover={{ scale: 1.1 }} transition={{ duration: 0.2 }}>
           <IconButton
