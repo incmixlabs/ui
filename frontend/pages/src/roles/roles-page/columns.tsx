@@ -13,9 +13,32 @@ export const getColumns = (
 ): ColumnDef<PermissionsWithRole>[] => {
   const searchColumn: ColumnDef<PermissionsWithRole> = {
     header: () => {
-      return <Input placeholder="Search Permissions" />
+      return <></>
     },
-    accessorKey: "name",
+    accessorKey: "subject",
+    enableColumnFilter: true,
+    filterFn: (row, _columnId, value: string) => {
+      const subject = row.getValue<string>("subject")
+      const action = row.original.action
+
+      const cellValue = `${action} ${subject}`
+      const matches = cellValue.toLowerCase().includes(value.toLowerCase())
+
+      if (matches) return true
+
+      // Check if any subrow matches
+      if (row.subRows && row.subRows.length > 0) {
+        return row.subRows.some((subRow) => {
+          const subSubject = subRow.getValue<string>("subject")
+          const subAction = subRow.original.action
+          const subCellValue = `${subAction} ${subSubject}`
+
+          return subCellValue.toLowerCase().includes(value.toLowerCase())
+        })
+      }
+
+      return false
+    },
     cell: ({ row }) => {
       return (
         <Flex style={{ paddingLeft: `${row.depth * 2}rem` }}>
@@ -83,6 +106,7 @@ export const getColumns = (
         </Flex>
       )
     },
+    enableColumnFilter: false,
     accessorKey: role.name,
     cell: ({ row }) => {
       return <CheckboxCell row={row} role={role} />
@@ -101,7 +125,7 @@ const CheckboxCell = ({
 }) => {
   const { setChanges, setRawPermissions } = useContext(permissionsContext)
   const hasPermission = useMemo(() => {
-    let hasPermission: boolean | "intermediate" =
+    let hasPermission: boolean | "indeterminate" =
       row.original[role.name] ?? false
 
     if (row.subRows.length > 0) {
@@ -111,12 +135,17 @@ const CheckboxCell = ({
       const isAllFalse = row.subRows.every(
         (subRow) => !subRow.original[role.name]
       )
+
       if (isAllTrue) {
         hasPermission = true
       } else if (isAllFalse) {
         hasPermission = false
       } else {
-        hasPermission = "intermediate"
+        hasPermission = "indeterminate"
+      }
+
+      if (row.original[role.name]) {
+        hasPermission = true
       }
     }
 
@@ -174,6 +203,9 @@ const CheckboxCell = ({
     })
   }
   return (
-    <Checkbox checked={isChecked} onCheckedChange={(v) => handleChange(v)} />
+    <Checkbox
+      checked={isChecked}
+      onCheckedChange={(v) => handleChange(Boolean(v))}
+    />
   )
 }

@@ -24,7 +24,6 @@
     "typescript": "catalog:"
   },
   "dependencies": {
-    "@hono/zod-openapi": "0.18.3",
     "@incmix/utils": "catalog:",
     "@koale/useworker": "4.1.0",
     "@radix-ui/themes": "catalog:",
