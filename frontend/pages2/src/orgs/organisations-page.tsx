@@ -1,23 +1,18 @@
+import { DashboardLayout } from "@/layouts/admin-panel/layout"
 import { LoadingPage } from "@common"
 import {
   Button,
   CardContainer,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  FormField,
-} from "@incmix/ui"
-import {
   Container,
   Dialog,
   Flex,
+  FormField,
   Heading,
   Table,
   Text,
   TextField,
-} from "@incmix/ui"
+} from "@incmix/ui2"
 import type { Organization } from "@incmix/utils/types"
-import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useForm } from "@tanstack/react-form"
 import { Link } from "@tanstack/react-router"
 import { ChevronRight } from "lucide-react"
@@ -102,12 +97,12 @@ const CreateOrganizationDialog: React.FC<{
   })
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogTitle>{t("organizations:createNewOrganization")}</DialogTitle>
-        <DialogDescription className="sr-only">
+    <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
+      <Dialog.Content>
+        <Dialog.Title>{t("organizations:createNewOrganization")}</Dialog.Title>
+        <Dialog.Description className="sr-only">
           {t("organizations:createNewOrganization")}
-        </DialogDescription>
+        </Dialog.Description>
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -162,8 +157,8 @@ const CreateOrganizationDialog: React.FC<{
             </Button>
           </Flex>
         </form>
-      </DialogContent>
-    </Dialog>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }
 

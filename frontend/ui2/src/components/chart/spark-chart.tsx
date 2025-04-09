@@ -1,5 +1,5 @@
-import { Box } from "@incmix/ui"
-import { cn } from "@utils"
+import { Box } from "@/components/base"
+import { cn } from "@/lib/utils"
 import { lazy } from "react"
 const ReactApexChart = lazy(() => import("react-apexcharts"))
 
@@ -12,12 +12,7 @@ interface TaskCardProps {
   className?: string
 }
 
-export default function SparkChart({
-  title,
-  data,
-  color,
-  className,
-}: TaskCardProps) {
+export function SparkChart({ title, data, color, className }: TaskCardProps) {
   const chartData = {
     series: [
       {

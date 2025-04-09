@@ -1,4 +1,36 @@
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
+import type { ReactElement } from "react"
+
+export type AccordionItems = {
+  open?: boolean
+  value?: string
+  label: string
+  content?: string
+}
+export type AccordionProps = {
+  type?: "single" | "multiple"
+  items: AccordionItems[]
+  icon?: ReactElement
+  className?: string
+  triggerClassName?: string
+}
+
+export const AccordionWrapper = ({
+  type = "single",
+  items,
+}: AccordionProps) => {
+  return (
+    <Root type={type}>
+      {items.map((item, index) => (
+        <Item value={item.value ?? index.toString()} key={index}>
+          <Trigger>{item.label}</Trigger>
+          <Content>{item.content}</Content>
+        </Item>
+      ))}
+    </Root>
+  )
+}
+
 import { ChevronDownIcon } from "lucide-react"
 /* eslint-disable react-refresh/only-export-components */
 import type * as React from "react"

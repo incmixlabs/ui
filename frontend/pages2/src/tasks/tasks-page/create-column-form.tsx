@@ -11,13 +11,13 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  Dialog.Trigger,
   Flex,
   ReactiveButton,
   Select,
   TextField,
   toast,
-} from "@incmix/ui"
+} from "@incmix/ui2"
 import type { Column } from "@incmix/utils/types"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { nanoid } from "nanoid"
@@ -153,9 +153,9 @@ export function CreateColumnForm({
         reset()
       }}
     >
-      <DialogTrigger>
+      <Dialog.Trigger>
         <Button>Add Column</Button>
-      </DialogTrigger>
+      </Dialog.Trigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Column</DialogTitle>

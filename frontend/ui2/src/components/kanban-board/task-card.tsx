@@ -11,15 +11,24 @@ import { createPortal } from "react-dom"
 import invariant from "tiny-invariant"
 
 import {
+  Box,
+  Card,
+  Checkbox,
+  Flex,
+  Heading,
+  IconButton,
+  Text,
+} from "@/components/base"
+import { iconSize } from "@/components/icons/icon"
+import { isSafari } from "@/lib/utils/browser"
+import { isShallowEqual } from "@/lib/utils/objects"
+import {
   type Edge,
   attachClosestEdge,
   extractClosestEdge,
 } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
-import { isSafari } from "@utils/browser"
-import { isShallowEqual } from "@utils/objects"
 import { CalendarDays, MessageSquareText, Paperclip } from "lucide-react"
-import { IconButton } from "../button"
 import {
   type TCard,
   getCardData,
@@ -28,9 +37,8 @@ import {
   isDraggingACard,
 } from "./types"
 
-import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
-import { Box, Card, Checkbox, Flex, Heading, Text, iconSize } from "@incmix/ui"
-import { cn } from "@utils"
+import { cn } from "@/lib/utils"
+import { useKanbanDrawer } from "./hooks/use-kanban-drawer"
 
 type TCardState =
   | {
@@ -109,7 +117,7 @@ export function TaskCardDisplay({
       {state.type === "is-over" && state.closestEdge === "top" ? (
         <TaskCardShadow dragging={state.dragging} />
       ) : null}
-      <Card
+      <Card.Root
         className={cn(
           `relative cursor-pointer space-y-1.5 rounded-lg p-3 ${innerStyles[state.type]}`,
           kanbanFilter ? "flex items-center justify-between " : ""
@@ -278,7 +286,7 @@ export function TaskCardDisplay({
             </Flex>
           </>
         )}
-      </Card>
+      </Card.Root>
       {/* Put a shadow after the item if closer to the bottom edge */}
       {state.type === "is-over" && state.closestEdge === "bottom" ? (
         <TaskCardShadow dragging={state.dragging} />

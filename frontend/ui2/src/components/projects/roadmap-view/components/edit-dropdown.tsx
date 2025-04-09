@@ -1,5 +1,5 @@
 import ColorPicker, { type ColorSelectType } from "@/components/color-picker"
-import { Box, Button, DropdownMenu } from "@incmix/ui"
+import { Box, Button, DropdownMenu } from "@incmix/ui2"
 import {
   Clipboard,
   Copy,

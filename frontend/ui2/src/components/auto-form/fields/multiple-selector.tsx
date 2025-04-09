@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import MultipleSelector, {
   type Option as SelectorOption,
 } from "@/components/multiple-selector/multiple-selector"

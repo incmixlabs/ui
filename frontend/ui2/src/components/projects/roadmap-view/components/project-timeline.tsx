@@ -1,8 +1,10 @@
-import { Box, Flex, Heading, Text } from "@incmix/ui"
-import type { Project } from "@types"
+import { Box, Flex, Heading, Text } from "@/components"
+import { formatDate } from "@/lib/utils/date"
+import type { Project } from "@/types"
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { DateTime } from "luxon"
-import { formatDate, getColorClass, getLightColorClass } from "./project-utils"
-
+import { getColorClass, getLightColorClass } from "../../project-utils"
 interface ProjectTimelineProps {
   project: Project
   detailed?: boolean

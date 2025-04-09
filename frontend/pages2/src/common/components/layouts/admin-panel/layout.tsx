@@ -1,14 +1,14 @@
+import { Link, useLocation } from "@tanstack/react-router"
+import { MoonIcon, SunIcon } from "lucide-react"
+import { useTranslation } from "react-i18next"
+
 import { useThemeStore } from "@incmix/store"
+import { Button, Separator, iconSize } from "@incmix/ui2"
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@incmix/ui/sidebar"
-import { Button, Separator, iconSize } from "@incmix/ui2"
-import { Link, useLocation } from "@tanstack/react-router"
-import { MoonIcon, SunIcon } from "lucide-react"
-import type React from "react"
-import { useTranslation } from "react-i18next"
+} from "@incmix/ui2/sidebar"
 import { AppSidebar } from "./app-sidebar"
 
 type Props = {

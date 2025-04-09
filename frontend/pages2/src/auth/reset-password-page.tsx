@@ -1,7 +1,7 @@
 import { LoadingPage } from "@/common"
 import { I18n } from "@incmix/pages2/i18n"
-import { Box, Container, Flex, Heading, Text } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
+import { Box, Container, Flex, Heading, Text } from "@incmix/ui2"
 import { CardContainer, FormField, ReactiveButton, toast } from "@incmix/ui2"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"

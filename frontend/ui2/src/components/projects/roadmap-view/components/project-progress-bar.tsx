@@ -1,6 +1,6 @@
-import { Box, Text } from "@incmix/ui"
-import type { Project } from "@types"
-import { getColorClass } from "./project-utils"
+import { Box, Text } from "@/components/base"
+import type { Project } from "@/types"
+import { getColorClass } from "../../project-utils"
 
 interface ProjectProgressBarProps {
   project: Project

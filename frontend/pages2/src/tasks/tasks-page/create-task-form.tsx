@@ -10,11 +10,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  Dialog.Trigger,
   ReactiveButton,
   toast,
-} from "@incmix/ui"
-import { Button, Flex, Select, TextField } from "@incmix/ui"
+} from "@incmix/ui2"
+import { Button, Flex, Select, TextField } from "@incmix/ui2"
 import type { Task, TaskStatus } from "@incmix/utils/types"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { nanoid } from "nanoid"
@@ -111,9 +111,9 @@ export function CreateTaskForm({
         reset()
       }}
     >
-      <DialogTrigger>
+      <Dialog.Trigger>
         <Button>Add Task</Button>
-      </DialogTrigger>
+      </Dialog.Trigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add New Task</DialogTitle>

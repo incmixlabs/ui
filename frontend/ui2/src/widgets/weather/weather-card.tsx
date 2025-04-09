@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@incmix/ui"
+import { Box, Flex, Text } from "@incmix/ui2"
 import { getWeekDay } from "@incmix/utils/date"
 import { Send } from "lucide-react"
 import type React from "react"

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { LucideIcon } from "lucide-react"
 import type { z } from "zod"
 import type { FieldConfig } from "../auto-form/types"

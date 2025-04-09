@@ -2,19 +2,18 @@ import {
   Box,
   Button,
   Card,
-  CardContent,
   Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   Flex,
+  Grid,
   Heading,
-  Pushpin,
-} from "@incmix/ui"
-import { cn } from "@utils"
+  IconButton,
+  Input,
+  Label,
+  TextArea,
+} from "@/components/base"
+import { iconSize } from "@/components/icons/icon"
+import { Pushpin } from "@/components/icons/pushpin"
+import { cn } from "@/lib/utils"
 import {
   CalendarClock,
   Edit2,
@@ -22,10 +21,10 @@ import {
   Plus,
   SlidersHorizontal,
   Trash,
-  X,
 } from "lucide-react"
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Suspense, lazy, useRef, useState } from "react"
-import { Label } from "../label"
+
 import { type INote, notesData } from "./data"
 
 const TiptapEditor = lazy(() =>
@@ -57,19 +56,19 @@ export function NoteComponent() {
           <Heading size={"7"}>Notes</Heading>
           <Flex gap={"2"}>
             <Button variant="soft" color="gray">
-              <SlidersHorizontal className="h-5 w-5" />
+              <SlidersHorizontal className={iconSize} />
             </Button>
-            <Dialog>
-              <DialogTrigger>
+            <Dialog.Root>
+              <Dialog.Trigger>
                 <Button variant="solid">
-                  <Plus className="h-5 w-5" /> Add Note
+                  <Plus className={iconSize} /> Add Note
                 </Button>
-              </DialogTrigger>
-              <DialogContent className="border border-gray-4">
-                <DialogHeader className="relative">
-                  <DialogTitle>Add Note</DialogTitle>
-                </DialogHeader>
-                <DialogDescription className="space-y-4">
+              </Dialog.Trigger>
+              <Dialog.Content className="border border-gray-4">
+                <Dialog.Header>
+                  <Dialog.Title>Add Note</Dialog.Title>
+                </Dialog.Header>
+                <Dialog.Description className="space-y-4">
                   <Box className="space-y-2">
                     <Label>Title</Label>
                     <Input
@@ -87,17 +86,17 @@ export function NoteComponent() {
                       ref={descriptionInputRef}
                     />
                   </Box>
-                </DialogDescription>
-                <DialogFooter>
-                  <DialogClose>
+                </Dialog.Description>
+                <Dialog.Footer>
+                  <Dialog.Close>
                     <Button variant="soft" color="gray">
                       Cancel
                     </Button>
-                  </DialogClose>
+                  </Dialog.Close>
                   <Button variant="solid">Add Note</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+                </Dialog.Footer>
+              </Dialog.Content>
+            </Dialog.Root>
           </Flex>
         </Flex>
         <Grid
@@ -106,8 +105,8 @@ export function NoteComponent() {
           gap={"5"}
         >
           {notes.map((note) => (
-            <Card key={note.id}>
-              <CardContent className="p-0">
+            <Card.Root key={note.id}>
+              <Card.Content className="p-0">
                 <Flex
                   align={"center"}
                   justify={"between"}
@@ -142,16 +141,16 @@ export function NoteComponent() {
                   <h3 className="mb-2 font-medium text-lg">{note.title}</h3>
                   <p className="text-gray-11 text-sm">{note.content}</p>
                 </Box>
-              </CardContent>
-            </Card>
+              </Card.Content>
+            </Card.Root>
           ))}
         </Grid>
       </Box>
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="border border-gray-4">
-          <DialogHeader className="relative">
-            <DialogTitle>Add New Note</DialogTitle>
+      <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
+        <Dialog.Content className="border border-gray-4">
+          <Dialog.Header>
+            <Dialog.Title>Add New Note</Dialog.Title>
             <Flex
               align={"center"}
               className={cn(
@@ -199,8 +198,8 @@ export function NoteComponent() {
                 </>
               )}
             </Flex>
-          </DialogHeader>
-          <DialogDescription>
+          </Dialog.Header>
+          <Dialog.Description>
             {isEditing ? (
               <div className="space-y-4 pt-4">
                 <Suspense fallback={<div>Loading editor...</div>}>
@@ -215,9 +214,9 @@ export function NoteComponent() {
                 <p className="text-gray-11 text-sm">{modalData?.content}</p>
               </Box>
             )}
-          </DialogDescription>
-        </DialogContent>
-      </Dialog>
+          </Dialog.Description>
+        </Dialog.Content>
+      </Dialog.Root>
     </>
   )
 }

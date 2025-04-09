@@ -1,5 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
+import { cva } from "class-variance-authority"
+
+import { Box, Flex, Text } from "@/components/base"
+import { iconSize } from "@/components/icons/icon"
+import { Table } from "@/components/shadcn"
+import { cn } from "@/lib/utils"
 import {
   type Instruction,
   attachInstruction,
@@ -9,10 +16,7 @@ import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indi
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
-import { Box, Flex, Text, iconSize } from "@incmix/ui"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import { cn } from "@utils/cn"
-import { cva } from "class-variance-authority"
 import { produce } from "immer"
 import {
   ChevronDown,
@@ -21,12 +25,7 @@ import {
   Folder,
   FolderOpen,
 } from "lucide-react"
-import React, { useRef, useState, useEffect, useCallback } from "react"
-import { Table, TableHeader } from "../table"
-import { TableRow } from "../table"
-import { TableHead } from "../table"
-import { TableBody } from "../table"
-import { TableCell } from "../table"
+import React, { useRef, useState, useEffect, useCallback, useMemo } from "react"
 import { TreeContextMenu } from "./context-menu"
 import { EmptyTreeView } from "./empty-tree-view"
 import { TreeItemDialog } from "./tree-item-dialog"
@@ -250,7 +249,7 @@ const TreeView = React.forwardRef<HTMLDivElement, TreeProps>(
       })
     })
 
-    React.useEffect(() => {
+    useEffect(() => {
       setData?.(data)
     }, [data, setData])
 
@@ -305,16 +304,24 @@ const TreeView = React.forwardRef<HTMLDivElement, TreeProps>(
           className={cn("relative select-none", className)}
           {...props}
         >
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[20%]">Name</TableHead>
-                <TableHead className="w-[50%]">Value</TableHead>
-                <TableHead className="w-[12.5%]">Created By</TableHead>
-                <TableHead className="w-[12.5%]">Created On</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <Table.Root>
+            <Table.Header>
+              <Table.Row>
+                <Table.ColumnHeaderCell className="w-[20%]">
+                  Name
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="w-[50%]">
+                  Value
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="w-[12.5%]">
+                  Created By
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="w-[12.5%]">
+                  Created On
+                </Table.ColumnHeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
               {Array.isArray(data) && data.length === 0 ? (
                 <EmptyTreeView
                   onCreateItem={(item) => setInternalData([item])}
@@ -334,8 +341,8 @@ const TreeView = React.forwardRef<HTMLDivElement, TreeProps>(
                   setData={setInternalData}
                 />
               )}
-            </TableBody>
-          </Table>
+            </Table.Body>
+          </Table.Root>
         </Box>
       </TreeViewProvider>
     )
@@ -374,8 +381,8 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
       <>
         {dataArray.map((item, index) => (
           <React.Fragment key={`fragment-${item.id}`}>
-            <TableRow key={`row-${item.id}`}>
-              <TableCell>
+            <Table.Row key={`row-${item.id}`}>
+              <Table.Cell>
                 {item.type === "folder" ? (
                   <TreeNode
                     rootData={rootData}
@@ -404,8 +411,8 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                     />
                   </>
                 )}
-              </TableCell>
-            </TableRow>
+              </Table.Cell>
+            </Table.Row>
           </React.Fragment>
         ))}
       </>
@@ -524,7 +531,7 @@ const TreeNode = ({
     setIsEditing(false)
   }
 
-  const mode = React.useMemo(() => {
+  const mode = useMemo(() => {
     if (item.type === "folder" && expandedItemIds.includes(item.id)) {
       return "expanded"
     }

@@ -1,3 +1,4 @@
+import { INTL_API_URL } from "@incmix/ui/constants"
 import {
   DataTable,
   type DataTableAdvancedFilterField,
@@ -6,8 +7,7 @@ import {
   Flex,
   Spinner,
   useDataTable,
-} from "@incmix/ui"
-import { INTL_API_URL } from "@incmix/ui/constants"
+} from "@incmix/ui2"
 import { useQuery } from "@tanstack/react-query"
 import React, { useState } from "react"
 import { TranslationsRoute } from "translations/routes"
