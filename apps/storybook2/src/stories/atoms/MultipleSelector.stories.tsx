@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react"
 import { MultipleSelectorControlled } from "@incmix/ui"
+import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof MultipleSelectorControlled> = {
   title: "Atoms/MultipleSelector",
@@ -9,7 +9,6 @@ const meta: Meta<typeof MultipleSelectorControlled> = {
 
 export default meta
 type Story = StoryObj<typeof MultipleSelectorControlled>
-
 
 export const GrayTheme: Story = {
   args: {
@@ -24,18 +23,15 @@ export const CrimsonTheme: Story = {
 export const IndigoTheme: Story = {
   args: {
     themeColor: "indigo",
-
   },
 }
 export const CyanTheme: Story = {
   args: {
     themeColor: "cyan",
-
   },
 }
 export const OrangeTheme: Story = {
   args: {
     themeColor: "orange",
-
   },
 }

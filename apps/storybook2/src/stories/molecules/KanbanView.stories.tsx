@@ -27,11 +27,11 @@ interface TBoard {
 }
 
 const transformedData: TBoard = {
-  columns: data.map(column => ({
+  columns: data.map((column) => ({
     id: String(column.id),
     title: column.title,
-    cards: column.tasks
-  }))
+    cards: column.tasks,
+  })),
 }
 
 const meta = {
@@ -47,6 +47,6 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    initial: transformedData
-  }
+    initial: transformedData,
+  },
 }

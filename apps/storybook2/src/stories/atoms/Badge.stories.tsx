@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react"
 import { Badge } from "@incmix/ui2/radixui"
+import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof Badge> = {
   title: "Atoms/Badges",

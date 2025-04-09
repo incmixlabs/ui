@@ -10,7 +10,11 @@
     "ignore": [
       "node_modules",
       "apps/storybook",
+      "apps/storybook2",
+      "apps/fihi-app2",
       "frontend/form-builder",
+      "frontend/ui2",
+      "frontend/page2",
       "frontend/ui2/src/demos/**/*",
       "frontend/ui2/src/lib/**/*",
       "dist",

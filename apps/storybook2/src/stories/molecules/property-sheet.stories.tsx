@@ -11,6 +11,5 @@ export default meta
 type Story = StoryObj<typeof PropertySheet>
 
 export const Default: Story = {
-  args: {
-  },
+  args: {},
 }

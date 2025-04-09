@@ -1,4 +1,13 @@
-import { Badge, Box, Flex, Sidebar, SidebarMenu, SidebarMenuItem, SidebarMenuSubItem, SidebarProvider } from "@incmix/ui"
+import {
+  Badge,
+  Box,
+  Flex,
+  Sidebar,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuSubItem,
+  SidebarProvider,
+} from "@incmix/ui"
 
 import {
   DashboardIcon,
@@ -24,7 +33,7 @@ const meta: Meta<typeof Sidebar> = {
 
 export default meta
 
-const noop = () => {}
+const _noop = () => {}
 
 const DefaultContent = () => (
   <SidebarMenu>
@@ -68,15 +77,15 @@ export const Minified = () => {
 export const WithName = () => {
   return (
     <SidebarProvider>
-    <Sidebar>
-      <DefaultContent />
-    </Sidebar>
+      <Sidebar>
+        <DefaultContent />
+      </Sidebar>
     </SidebarProvider>
   )
 }
 
 export const WithMinifyButton = () => {
-  const [isMinified, setIsMinified] = useState(false)
+  const [_isMinified, _setIsMinified] = useState(false)
 
   return (
     <SidebarProvider>
