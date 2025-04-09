@@ -1,5 +1,5 @@
+import { Box, Button, DropdownMenu } from "@/components/base"
 import ColorPicker, { type ColorSelectType } from "@/components/color-picker"
-import { Box, Button, DropdownMenu } from "@incmix/ui2"
 import {
   Clipboard,
   Copy,
@@ -10,10 +10,11 @@ import {
   UserRoundPlus,
   X,
 } from "lucide-react"
+
 import { AnimatePresence, MotionConfig, motion } from "motion/react"
 import type React from "react"
 import { useState } from "react"
-import type { ExtendedColorType, Task } from "./gantt-chart"
+import type { Task } from "./gantt-chart"
 
 const transition = {
   type: "spring",

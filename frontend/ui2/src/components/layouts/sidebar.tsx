@@ -89,9 +89,7 @@ function SidebarProvider({
 
   // Helper to toggle the sidebar.
   const toggleSidebar = useCallback(() => {
-    return isMobile
-      ? setOpenMobile((open) => !open)
-      : setOpen((open) => !open)
+    return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open)
   }, [isMobile, setOpen])
 
   // Adds a keyboard shortcut to toggle the sidebar.
@@ -271,10 +269,7 @@ function SidebarTrigger({
 }
 SidebarTrigger.displayName = "SidebarTrigger"
 
-function SidebarRail({
-  className,
-  ...props
-}: React.ComponentProps<"button">) {
+function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
   const { toggleSidebar } = useSidebar()
 
   return (
@@ -299,10 +294,7 @@ function SidebarRail({
 }
 SidebarRail.displayName = "SidebarRail"
 
-function SidebarInset({
-  className,
-  ...props
-}: React.ComponentProps<"main">) {
+function SidebarInset({ className, ...props }: React.ComponentProps<"main">) {
   return (
     <main
       className={cn(
@@ -333,10 +325,7 @@ function SidebarInput({
 }
 SidebarInput.displayName = "SidebarInput"
 
-function SidebarHeader({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function SidebarHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-sidebar="header"
@@ -347,10 +336,7 @@ function SidebarHeader({
 }
 SidebarHeader.displayName = "SidebarHeader"
 
-function SidebarFooter({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-sidebar="footer"
@@ -375,10 +361,7 @@ function SidebarSeparator({
 }
 SidebarSeparator.displayName = "SidebarSeparator"
 
-function SidebarContent({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function SidebarContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-sidebar="content"
@@ -392,10 +375,7 @@ function SidebarContent({
 }
 SidebarContent.displayName = "SidebarContent"
 
-function SidebarGroup({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-sidebar="group"
@@ -464,10 +444,7 @@ function SidebarGroupContent({
 }
 SidebarGroupContent.displayName = "SidebarGroupContent"
 
-function SidebarMenu({
-  className,
-  ...props
-}: React.ComponentProps<"ul">) {
+function SidebarMenu({ className, ...props }: React.ComponentProps<"ul">) {
   return (
     <ul
       data-sidebar="menu"
@@ -478,10 +455,7 @@ function SidebarMenu({
 }
 SidebarMenu.displayName = "SidebarMenu"
 
-function SidebarMenuItem({
-  className,
-  ...props
-}: React.ComponentProps<"li">) {
+function SidebarMenuItem({ className, ...props }: React.ComponentProps<"li">) {
   return (
     <li
       data-sidebar="menu-item"
@@ -648,10 +622,7 @@ function SidebarMenuSkeleton({
 }
 SidebarMenuSkeleton.displayName = "SidebarMenuSkeleton"
 
-function SidebarMenuSub({
-  className,
-  ...props
-}: React.ComponentProps<"ul">) {
+function SidebarMenuSub({ className, ...props }: React.ComponentProps<"ul">) {
   return (
     <ul
       data-sidebar="menu-sub"

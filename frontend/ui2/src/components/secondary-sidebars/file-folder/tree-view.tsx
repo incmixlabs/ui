@@ -37,68 +37,68 @@ const Tree = ({
   className,
   ...props
 }: TreeProps) => {
-    const [selectedItemId, setSelectedItemId] = React.useState<
-      string | undefined
-    >(initialSelectedItemId)
+  const [selectedItemId, setSelectedItemId] = React.useState<
+    string | undefined
+  >(initialSelectedItemId)
 
-    const handleSelectChange = React.useCallback(
-      (item: TreeDataItem | undefined) => {
-        setSelectedItemId(item?.id)
-        if (onSelectChange) {
-          onSelectChange(item)
-        }
-      },
-      [onSelectChange]
-    )
-
-    const expandedItemIds = React.useMemo(() => {
-      if (!initialSelectedItemId) {
-        return [] as string[]
+  const handleSelectChange = React.useCallback(
+    (item: TreeDataItem | undefined) => {
+      setSelectedItemId(item?.id)
+      if (onSelectChange) {
+        onSelectChange(item)
       }
+    },
+    [onSelectChange]
+  )
 
-      const ids: string[] = []
+  const expandedItemIds = React.useMemo(() => {
+    if (!initialSelectedItemId) {
+      return [] as string[]
+    }
 
-      function walkTreeItems(
-        items: TreeDataItem[] | TreeDataItem,
-        targetId: string
-      ) {
-        if (Array.isArray(items)) {
-          // eslint-disable-next-line @typescript-eslint/prefer-for-of
-          for (let i = 0; i < items.length; i++) {
-            ids.push(items[i]?.id)
-            if (items[i] && walkTreeItems(items[i], targetId) && !expandAll) {
-              return true
-            }
-            if (!expandAll) ids.pop()
+    const ids: string[] = []
+
+    function walkTreeItems(
+      items: TreeDataItem[] | TreeDataItem,
+      targetId: string
+    ) {
+      if (Array.isArray(items)) {
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let i = 0; i < items.length; i++) {
+          ids.push(items[i]?.id)
+          if (items[i] && walkTreeItems(items[i], targetId) && !expandAll) {
+            return true
           }
-        } else if (!expandAll && items.id === targetId) {
-          return true
-        } else if (items.children) {
-          return walkTreeItems(items.children, targetId)
+          if (!expandAll) ids.pop()
         }
+      } else if (!expandAll && items.id === targetId) {
+        return true
+      } else if (items.children) {
+        return walkTreeItems(items.children, targetId)
       }
+    }
 
-      walkTreeItems(data, initialSelectedItemId)
-      return ids
-    }, [data, initialSelectedItemId])
+    walkTreeItems(data, initialSelectedItemId)
+    return ids
+  }, [data, initialSelectedItemId])
 
-    return (
-      <>
-        <Box className={cn("relative p-2 px-6", className)}>
-          <TreeItem
-            data={data}
-            selectedItemId={selectedItemId}
-            handleSelectChange={handleSelectChange}
-            expandedItemIds={expandedItemIds}
-            FolderIcon={folderIcon}
-            FolderIconOpen={folderIconOpen}
-            ItemIcon={itemIcon}
-            {...props}
-          />
-        </Box>
-      </>
-    )
-  }
+  return (
+    <>
+      <Box className={cn("relative p-2 px-6", className)}>
+        <TreeItem
+          data={data}
+          selectedItemId={selectedItemId}
+          handleSelectChange={handleSelectChange}
+          expandedItemIds={expandedItemIds}
+          FolderIcon={folderIcon}
+          FolderIconOpen={folderIconOpen}
+          ItemIcon={itemIcon}
+          {...props}
+        />
+      </Box>
+    </>
+  )
+}
 
 type TreeItemProps = TreeProps & {
   selectedItemId?: string
@@ -122,106 +122,106 @@ const TreeItem = ({
   FolderIconOpen,
   ...props
 }: TreeItemProps) => {
-    return (
-      <Box role="tree" className={className} {...props}>
-        <ul>
-          {Array.isArray(data) ? (
-            data.map((item) => (
-              <li key={item.id}>
-                {item.children ? (
-                  (() => {
-                    const [open, setOpen] = React.useState(
-                      expandedItemIds.includes(item.id)
-                    )
-                    const IconComp = item.icon
-                      ? item.icon
-                      : open && FolderIconOpen
-                        ? FolderIconOpen
-                        : FolderIcon
+  return (
+    <Box role="tree" className={className} {...props}>
+      <ul>
+        {Array.isArray(data) ? (
+          data.map((item) => (
+            <li key={item.id}>
+              {item.children ? (
+                (() => {
+                  const [open, setOpen] = React.useState(
+                    expandedItemIds.includes(item.id)
+                  )
+                  const IconComp = item.icon
+                    ? item.icon
+                    : open && FolderIconOpen
+                      ? FolderIconOpen
+                      : FolderIcon
 
-                    return (
-                      <AccordionPrimitive.Root
-                        type="multiple"
-                        value={open ? [item.id] : []}
-                        onValueChange={(value) =>
-                          setOpen(value.includes(item.id))
-                        }
+                  return (
+                    <AccordionPrimitive.Root
+                      type="multiple"
+                      value={open ? [item.id] : []}
+                      onValueChange={(value) =>
+                        setOpen(value.includes(item.id))
+                      }
+                    >
+                      <AccordionPrimitive.Item
+                        value={item.id}
+                        className={cn("", open && "relative ")}
                       >
-                        <AccordionPrimitive.Item
-                          value={item.id}
-                          className={cn("", open && "relative ")}
+                        <AccordionPrimitive.Trigger
+                          className={cn(
+                            `mt-1 flex h-10 w-full flex-1 select-none items-center justify-between gap-1 rounded-md ${padding} font-medium text-sm transition-all hover:bg-sidebar-secondary-active/10 hover:text-sidebar-secondary-active hover:no-underline [&[data-state=open]>svg]:rotate-90`,
+                            open &&
+                              "bg-sidebar-secondary-active/10 text-sidebar-secondary-active"
+                          )}
+                          onClick={() => handleSelectChange(item)}
                         >
-                          <AccordionPrimitive.Trigger
-                            className={cn(
-                              `mt-1 flex h-10 w-full flex-1 select-none items-center justify-between gap-1 rounded-md ${padding} font-medium text-sm transition-all hover:bg-sidebar-secondary-active/10 hover:text-sidebar-secondary-active hover:no-underline [&[data-state=open]>svg]:rotate-90`,
-                              open &&
-                                "bg-sidebar-secondary-active/10 text-sidebar-secondary-active"
+                          <Flex align={"center"} gap={"2"}>
+                            {IconComp && (
+                              <IconComp
+                                className={iconClass}
+                                aria-hidden="true"
+                              />
                             )}
-                            onClick={() => handleSelectChange(item)}
-                          >
-                            <Flex align={"center"} gap={"2"}>
-                              {IconComp && (
-                                <IconComp
-                                  className={iconClass}
-                                  aria-hidden="true"
-                                />
-                              )}
 
-                              <Text
-                                className={cn(
-                                  "truncate text-sidebar-secondary-text text-sm",
-                                  open && "text-sidebar-background"
-                                )}
-                              >
-                                {item.name}
-                              </Text>
-                            </Flex>
-                            <ChevronRight
+                            <Text
                               className={cn(
-                                " h-5 w-5 text-gray-8 transition-transform duration-200 hover:text-sidebar-background",
+                                "truncate text-sidebar-secondary-text text-sm",
                                 open && "text-sidebar-background"
                               )}
-                            />
-                          </AccordionPrimitive.Trigger>
-                          <AccordionPrimitive.Content className="pl-6">
-                            <TreeItem
-                              data={item.children ? item.children : item}
-                              selectedItemId={selectedItemId}
-                              handleSelectChange={handleSelectChange}
-                              expandedItemIds={expandedItemIds}
-                              FolderIcon={FolderIcon}
-                              ItemIcon={ItemIcon}
-                              FolderIconOpen={FolderIconOpen}
-                            />
-                          </AccordionPrimitive.Content>
-                        </AccordionPrimitive.Item>
-                      </AccordionPrimitive.Root>
-                    )
-                  })()
-                ) : (
-                  <Leaf
-                    item={item}
-                    isSelected={selectedItemId === item.id}
-                    onClick={() => handleSelectChange(item)}
-                    Icon={ItemIcon}
-                  />
-                )}
-              </li>
-            ))
-          ) : (
-            <li>
-              <Leaf
-                item={data}
-                isSelected={selectedItemId === data.id}
-                onClick={() => handleSelectChange(data)}
-                Icon={ItemIcon}
-              />
+                            >
+                              {item.name}
+                            </Text>
+                          </Flex>
+                          <ChevronRight
+                            className={cn(
+                              " h-5 w-5 text-gray-8 transition-transform duration-200 hover:text-sidebar-background",
+                              open && "text-sidebar-background"
+                            )}
+                          />
+                        </AccordionPrimitive.Trigger>
+                        <AccordionPrimitive.Content className="pl-6">
+                          <TreeItem
+                            data={item.children ? item.children : item}
+                            selectedItemId={selectedItemId}
+                            handleSelectChange={handleSelectChange}
+                            expandedItemIds={expandedItemIds}
+                            FolderIcon={FolderIcon}
+                            ItemIcon={ItemIcon}
+                            FolderIconOpen={FolderIconOpen}
+                          />
+                        </AccordionPrimitive.Content>
+                      </AccordionPrimitive.Item>
+                    </AccordionPrimitive.Root>
+                  )
+                })()
+              ) : (
+                <Leaf
+                  item={item}
+                  isSelected={selectedItemId === item.id}
+                  onClick={() => handleSelectChange(item)}
+                  Icon={ItemIcon}
+                />
+              )}
             </li>
-          )}
-        </ul>
-      </Box>
-    )
-  }
+          ))
+        ) : (
+          <li>
+            <Leaf
+              item={data}
+              isSelected={selectedItemId === data.id}
+              onClick={() => handleSelectChange(data)}
+              Icon={ItemIcon}
+            />
+          </li>
+        )}
+      </ul>
+    </Box>
+  )
+}
 
 type LeafProps = React.HTMLAttributes<HTMLDivElement> & {
   item: TreeDataItem

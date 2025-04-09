@@ -64,11 +64,7 @@ const Slot = (props: SlotProps) => {
     )
   }
 
-  return (
-    <SlotClone {...slotProps}>
-      {children}
-    </SlotClone>
-  )
+  return <SlotClone {...slotProps}>{children}</SlotClone>
 }
 
 Slot.displayName = "Slot"

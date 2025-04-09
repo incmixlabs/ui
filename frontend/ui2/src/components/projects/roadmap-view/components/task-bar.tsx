@@ -1,6 +1,7 @@
-import { Badge, Box, Flex, HoverCard, Text } from "@incmix/ui2"
 import { CalendarDays, Clipboard, User } from "lucide-react"
 import type { DateTime } from "luxon"
+
+import { Badge, Box, Flex, HoverCard, Text } from "@/components/base"
 import { ProjectsImages } from "../../images"
 import type { Task, ViewType } from "./gantt-chart"
 

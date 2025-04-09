@@ -53,6 +53,7 @@ export function OrganizationTable() {
 
   useEffect(() => {
     setFlattenedItems(flattenTree(treeData))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [treeData])
 
   // Function to toggle the expanded state of a folder
@@ -201,7 +202,7 @@ export function OrganizationTable() {
       {/* Hidden virtual row for top-level operations */}
       <div className="hidden">
         <TreeItemRow
-          rowRef={(instance) => topLevelRowRef.current = instance}
+          ref={topLevelRowRef}
           item={virtualRootItem}
           level={0}
           onToggleExpand={() => {}}

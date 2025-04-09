@@ -241,7 +241,11 @@ export const FileUploader = ({
 
 FileUploader.displayName = "FileUploader"
 
-export const FileUploaderContent = ({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
+export const FileUploaderContent = ({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => {
   const { orientation } = useFileUpload()
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -263,7 +267,12 @@ export const FileUploaderContent = ({ children, className, ...props }: React.HTM
 
 FileUploaderContent.displayName = "FileUploaderContent"
 
-export const FileUploaderItem = ({ className, index, children, ...props }: { index: number } & React.HTMLAttributes<HTMLDivElement>) => {
+export const FileUploaderItem = ({
+  className,
+  index,
+  children,
+  ...props
+}: { index: number } & React.HTMLAttributes<HTMLDivElement>) => {
   const { removeFileFromSet, activeIndex, direction } = useFileUpload()
   const isSelected = index === activeIndex
   return (
@@ -299,7 +308,13 @@ interface FileInputProps extends React.HTMLAttributes<HTMLDivElement> {
   parentclass?: string
   dropmsg?: string
 }
-export const FileInput = ({ className, parentclass, dropmsg, children, ...props }: FileInputProps) => {
+export const FileInput = ({
+  className,
+  parentclass,
+  dropmsg,
+  children,
+  ...props
+}: FileInputProps) => {
   const { dropzoneState, isFileTooBig, isLOF } = useFileUpload()
   const rootProps = isLOF ? {} : dropzoneState.getRootProps()
 

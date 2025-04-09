@@ -140,7 +140,7 @@ export const SmartDatetimeInput = function SmartDatetimeInput({
   "type" | "value" | "defaultValue" | "onBlur"
 > &
   SmartDatetimeInputProps & {
-    ref?: React.Ref<HTMLInputElement>;
+    ref?: React.Ref<HTMLInputElement>
   }) {
   const [Time, setTime] = React.useState<string>("")
 
@@ -182,7 +182,7 @@ export const SmartDatetimeInput = function SmartDatetimeInput({
       </div>
     </SmartDatetimeInputContext.Provider>
   )
-})
+}
 SmartDatetimeInput.displayName = "DatetimeInput"
 
 // Make it a standalone component
@@ -543,7 +543,7 @@ const NaturalLanguageInput = function NaturalLanguageInput({
       {...props}
     />
   )
-})
+}
 
 NaturalLanguageInput.displayName = "NaturalLanguageInput"
 

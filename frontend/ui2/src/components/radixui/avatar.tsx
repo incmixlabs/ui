@@ -18,19 +18,17 @@ export type AvatarProps = {
   style?: React.CSSProperties
 }
 
-export const Avatar = (
-  {
-    id,
-    size = "3",
-    name,
-    radius = "full",
-    variant = "solid",
-    className,
-    src,
-    style,
-    ...props
-  }: AvatarProps
-) => {
+export const Avatar = ({
+  id,
+  size = "3",
+  name,
+  radius = "full",
+  variant = "solid",
+  className,
+  src,
+  style,
+  ...props
+}: AvatarProps) => {
   const fallback = name ? (
     getInitials(name)
   ) : (

@@ -2,7 +2,7 @@ import {
   Button as RadixButton,
   type ButtonProps as RadixButtonProps,
 } from "@radix-ui/themes"
-import React from "react"
+import type React from "react"
 // eslint-disable-next-line react-refresh/only-export-components
 export { buttonPropDefs } from "@radix-ui/themes/src/components/button.props.js"
 
@@ -13,7 +13,13 @@ export type ButtonProps = RadixButtonProps & {
   mobileSidebarTrigger?: boolean
   variant?: RadixButtonProps["variant"] | "naked"
 }
-export const Button = ({ children, className, disabled, variant, ...props }: ButtonProps) => {
+export const Button = ({
+  children,
+  className,
+  disabled,
+  variant,
+  ...props
+}: ButtonProps) => {
   const defaultClassName = `${disabled ? "cursor-not-allowed" : "cursor-pointer"} `
   return (
     <RadixButton

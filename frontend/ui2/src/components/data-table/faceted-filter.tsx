@@ -1,15 +1,21 @@
 "use client"
 
 import { Check } from "lucide-react"
-import * as React from "react"
+import type * as React from "react"
 
 import { Command, Popover } from "@/components/base"
 import { cn } from "@/lib/utils"
 const FacetedFilter = Popover
 
-type FacetedFilterTriggerProps = React.ComponentPropsWithoutRef<typeof Popover.Trigger>
+type FacetedFilterTriggerProps = React.ComponentPropsWithoutRef<
+  typeof Popover.Trigger
+>
 
-function FacetedFilterTrigger({ className, children, ...props }: FacetedFilterTriggerProps) {
+function FacetedFilterTrigger({
+  className,
+  children,
+  ...props
+}: FacetedFilterTriggerProps) {
   return (
     <Popover.Trigger className={cn(className)} {...props}>
       {children}
@@ -18,9 +24,15 @@ function FacetedFilterTrigger({ className, children, ...props }: FacetedFilterTr
 }
 FacetedFilterTrigger.displayName = "FacetedFilterTrigger"
 
-type FacetedFilterContentProps = React.ComponentPropsWithoutRef<typeof Popover.Content>
+type FacetedFilterContentProps = React.ComponentPropsWithoutRef<
+  typeof Popover.Content
+>
 
-function FacetedFilterContent({ className, children, ...props }: FacetedFilterContentProps) {
+function FacetedFilterContent({
+  className,
+  children,
+  ...props
+}: FacetedFilterContentProps) {
   return (
     <Popover.Content
       className={cn("w-[12.5rem] p-0", className)}
@@ -46,7 +58,12 @@ interface FacetedFilterItemProps
   selected: boolean
 }
 
-function FacetedFilterItem({ className, children, selected, ...props }: FacetedFilterItemProps) {
+function FacetedFilterItem({
+  className,
+  children,
+  selected,
+  ...props
+}: FacetedFilterItemProps) {
   return (
     <Command.Item
       aria-selected={selected}

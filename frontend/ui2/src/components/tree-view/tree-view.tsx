@@ -180,171 +180,171 @@ function insertItem<T>(
 }
 
 const TreeView = ({
-    data: initialData,
-    setData,
-    initialSelectedItemId,
-    onSelectChange,
-    expandAll,
-    defaultLeafIcon,
-    defaultNodeIcon,
-    emptyMessage,
-    newFileButtonText = "New File",
-    newFolderButtonText = "New Folder",
-    fileFields = [],
-    folderFields = [],
-    className,
-    descriptions = DEFAULT_DESCRIPTIONS,
-    ...props
-  }: TreeProps & { ref?: React.Ref<HTMLDivElement> }) => {
-    const ref = props.ref
-    const NAME_FIELD: FormFieldConfig = {
-      name: "name",
-      type: "text",
-      label: descriptions.name,
-      required: true,
+  data: initialData,
+  setData,
+  initialSelectedItemId,
+  onSelectChange,
+  expandAll,
+  defaultLeafIcon,
+  defaultNodeIcon,
+  emptyMessage,
+  newFileButtonText = "New File",
+  newFolderButtonText = "New Folder",
+  fileFields = [],
+  folderFields = [],
+  className,
+  descriptions = DEFAULT_DESCRIPTIONS,
+  ...props
+}: TreeProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const ref = props.ref
+  const NAME_FIELD: FormFieldConfig = {
+    name: "name",
+    type: "text",
+    label: descriptions.name,
+    required: true,
+  }
+
+  const [selectedItemId, setSelectedItemId] = React.useState<
+    string | undefined
+  >(initialSelectedItemId)
+
+  const [data, setInternalData] = React.useState(() => {
+    if (!initialSelectedItemId && !expandAll) {
+      return initialData
     }
 
-    const [selectedItemId, setSelectedItemId] = React.useState<
-      string | undefined
-    >(initialSelectedItemId)
-
-    const [data, setInternalData] = React.useState(() => {
-      if (!initialSelectedItemId && !expandAll) {
-        return initialData
-      }
-
-      return produce(initialData, (draft) => {
-        function walkTreeItems(
-          items: TreeDataItem[] | TreeDataItem,
-          targetId: string
-        ) {
-          if (Array.isArray(items)) {
-            for (let i = 0; i < items.length; i++) {
-              if (items[i]) {
-                items[i].expanded = expandAll
-              }
-              if (items[i] && walkTreeItems(items[i], targetId) && !expandAll) {
-                if (items[i]) {
-                  items[i].expanded = true
-                }
-                return true
-              }
-            }
-          } else if (!expandAll && items.id === targetId) {
-            return true
-          } else if (items.type === "folder") {
-            items.expanded = expandAll
-            if (walkTreeItems(items.children, targetId)) {
-              items.expanded = true
-              return true
-            }
-          }
-          return false
-        }
-
-        walkTreeItems(draft, initialSelectedItemId || "")
-      })
-    })
-
-    useEffect(() => {
-      setData?.(data)
-    }, [data, setData])
-
-    const handleSelectChange = React.useCallback(
-      (item: TreeDataItem | undefined) => {
-        setSelectedItemId(item?.id)
-        if (onSelectChange) {
-          onSelectChange(item)
-        }
-      },
-      [onSelectChange]
-    )
-
-    const expandedItemIds = React.useMemo(() => {
-      if (!initialSelectedItemId) {
-        return [] as string[]
-      }
-
-      const ids: string[] = []
-
+    return produce(initialData, (draft) => {
       function walkTreeItems(
         items: TreeDataItem[] | TreeDataItem,
         targetId: string
       ) {
         if (Array.isArray(items)) {
           for (let i = 0; i < items.length; i++) {
-            ids.push(items[i]?.id)
+            if (items[i]) {
+              items[i].expanded = expandAll
+            }
             if (items[i] && walkTreeItems(items[i], targetId) && !expandAll) {
+              if (items[i]) {
+                items[i].expanded = true
+              }
               return true
             }
-            if (!expandAll) ids.pop()
           }
         } else if (!expandAll && items.id === targetId) {
           return true
         } else if (items.type === "folder") {
-          return walkTreeItems(items.children, targetId)
+          items.expanded = expandAll
+          if (walkTreeItems(items.children, targetId)) {
+            items.expanded = true
+            return true
+          }
         }
+        return false
       }
 
-      walkTreeItems(data, initialSelectedItemId)
-      return ids
-    }, [data, expandAll, initialSelectedItemId])
+      walkTreeItems(draft, initialSelectedItemId || "")
+    })
+  })
 
-    return (
-      <TreeViewProvider
-        fileFields={[NAME_FIELD, ...fileFields]}
-        folderFields={[NAME_FIELD, ...folderFields]}
-        descriptions={descriptions}
+  useEffect(() => {
+    setData?.(data)
+  }, [data, setData])
+
+  const handleSelectChange = React.useCallback(
+    (item: TreeDataItem | undefined) => {
+      setSelectedItemId(item?.id)
+      if (onSelectChange) {
+        onSelectChange(item)
+      }
+    },
+    [onSelectChange]
+  )
+
+  const expandedItemIds = React.useMemo(() => {
+    if (!initialSelectedItemId) {
+      return [] as string[]
+    }
+
+    const ids: string[] = []
+
+    function walkTreeItems(
+      items: TreeDataItem[] | TreeDataItem,
+      targetId: string
+    ) {
+      if (Array.isArray(items)) {
+        for (let i = 0; i < items.length; i++) {
+          ids.push(items[i]?.id)
+          if (items[i] && walkTreeItems(items[i], targetId) && !expandAll) {
+            return true
+          }
+          if (!expandAll) ids.pop()
+        }
+      } else if (!expandAll && items.id === targetId) {
+        return true
+      } else if (items.type === "folder") {
+        return walkTreeItems(items.children, targetId)
+      }
+    }
+
+    walkTreeItems(data, initialSelectedItemId)
+    return ids
+  }, [data, expandAll, initialSelectedItemId])
+
+  return (
+    <TreeViewProvider
+      fileFields={[NAME_FIELD, ...fileFields]}
+      folderFields={[NAME_FIELD, ...folderFields]}
+      descriptions={descriptions}
+    >
+      <Box
+        ref={ref}
+        className={cn("relative select-none", className)}
+        {...props}
       >
-        <Box
-          ref={ref}
-          className={cn("relative select-none", className)}
-          {...props}
-        >
-          <Table.Root>
-            <Table.Header>
-              <Table.Row>
-                <Table.ColumnHeaderCell className="w-[20%]">
-                  Name
-                </Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="w-[50%]">
-                  Value
-                </Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="w-[12.5%]">
-                  Created By
-                </Table.ColumnHeaderCell>
-                <Table.ColumnHeaderCell className="w-[12.5%]">
-                  Created On
-                </Table.ColumnHeaderCell>
-              </Table.Row>
-            </Table.Header>
-            <Table.Body>
-              {Array.isArray(data) && data.length === 0 ? (
-                <EmptyTreeView
-                  onCreateItem={(item) => setInternalData([item])}
-                  emptyMessage={emptyMessage}
-                  newFileButtonText={newFileButtonText}
-                  newFolderButtonText={newFolderButtonText}
-                />
-              ) : (
-                <TreeItem
-                  data={data}
-                  rootData={data}
-                  selectedItemId={selectedItemId}
-                  handleSelectChange={handleSelectChange}
-                  expandedItemIds={expandedItemIds}
-                  defaultLeafIcon={defaultLeafIcon}
-                  defaultNodeIcon={defaultNodeIcon}
-                  setData={setInternalData}
-                />
-              )}
-            </Table.Body>
-          </Table.Root>
-        </Box>
-      </TreeViewProvider>
-    )
-  }
-)
+        <Table.Root>
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeaderCell className="w-[20%]">
+                Name
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="w-[50%]">
+                Value
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="w-[12.5%]">
+                Created By
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="w-[12.5%]">
+                Created On
+              </Table.ColumnHeaderCell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {Array.isArray(data) && data.length === 0 ? (
+              <EmptyTreeView
+                onCreateItem={(item) => setInternalData([item])}
+                emptyMessage={emptyMessage}
+                newFileButtonText={newFileButtonText}
+                newFolderButtonText={newFolderButtonText}
+              />
+            ) : (
+              <TreeItem
+                data={data}
+                rootData={data}
+                selectedItemId={selectedItemId}
+                handleSelectChange={handleSelectChange}
+                expandedItemIds={expandedItemIds}
+                defaultLeafIcon={defaultLeafIcon}
+                defaultNodeIcon={defaultNodeIcon}
+                setData={setInternalData}
+              />
+            )}
+          </Table.Body>
+        </Table.Root>
+      </Box>
+    </TreeViewProvider>
+  )
+}
+
 TreeView.displayName = "TreeView"
 
 type TreeItemProps = TreeProps & {
@@ -358,61 +358,60 @@ type TreeItemProps = TreeProps & {
 }
 
 const TreeItem = ({
-      data,
-      rootData,
-      selectedItemId,
-      handleSelectChange,
-      expandedItemIds,
-      defaultNodeIcon,
-      defaultLeafIcon,
-      setData,
-      ref,
-    }: TreeItemProps & { ref?: React.Ref<HTMLDivElement> }) => {
-    const dataArray = Array.isArray(data) ? data : [data]
-    console.log("dataarray", dataArray)
+  data,
+  rootData,
+  selectedItemId,
+  handleSelectChange,
+  expandedItemIds,
+  defaultNodeIcon,
+  defaultLeafIcon,
+  setData,
+}: TreeItemProps & { ref?: React.Ref<HTMLDivElement> }) => {
+  const dataArray = Array.isArray(data) ? data : [data]
+  console.log("dataarray", dataArray)
 
-    return (
-      <>
-        {dataArray.map((item, index) => (
-          <React.Fragment key={`fragment-${item.id}`}>
-            <Table.Row key={`row-${item.id}`}>
-              <Table.Cell>
-                {item.type === "folder" ? (
-                  <TreeNode
+  return (
+    <>
+      {dataArray.map((item, index) => (
+        <React.Fragment key={`fragment-${item.id}`}>
+          <Table.Row key={`row-${item.id}`}>
+            <Table.Cell>
+              {item.type === "folder" ? (
+                <TreeNode
+                  rootData={rootData}
+                  item={item}
+                  selectedItemId={selectedItemId}
+                  expandedItemIds={expandedItemIds}
+                  handleSelectChange={handleSelectChange}
+                  defaultNodeIcon={defaultNodeIcon}
+                  defaultLeafIcon={defaultLeafIcon}
+                  index={index}
+                  siblings={dataArray}
+                  setData={setData}
+                />
+              ) : (
+                <>
+                  <TreeLeaf
                     rootData={rootData}
                     item={item}
-                    selectedItemId={selectedItemId}
-                    expandedItemIds={expandedItemIds}
+                    iconTrue={true}
                     handleSelectChange={handleSelectChange}
-                    defaultNodeIcon={defaultNodeIcon}
+                    selectedItemId={selectedItemId}
                     defaultLeafIcon={defaultLeafIcon}
                     index={index}
                     siblings={dataArray}
                     setData={setData}
                   />
-                ) : (
-                  <>
-                    <TreeLeaf
-                      rootData={rootData}
-                      item={item}
-                      iconTrue={true}
-                      handleSelectChange={handleSelectChange}
-                      selectedItemId={selectedItemId}
-                      defaultLeafIcon={defaultLeafIcon}
-                      index={index}
-                      siblings={dataArray}
-                      setData={setData}
-                    />
-                  </>
-                )}
-              </Table.Cell>
-            </Table.Row>
-          </React.Fragment>
-        ))}
-      </>
-    )
-  }
-)
+                </>
+              )}
+            </Table.Cell>
+          </Table.Row>
+        </React.Fragment>
+      ))}
+    </>
+  )
+}
+
 TreeItem.displayName = "TreeItem"
 
 const TreeNode = ({
@@ -737,286 +736,282 @@ const TreeNode = ({
 }
 
 const TreeLeaf = ({
-      rootData,
-      item,
-      handleSelectChange,
-      selectedItemId,
-      defaultLeafIcon,
-      index,
-      iconTrue = false,
-      siblings,
-      setData,
-      ref,
-      ...props
-    }: React.HTMLAttributes<HTMLDivElement> & {
-    rootData:
+  rootData,
+  item,
+  handleSelectChange,
+  selectedItemId,
+  defaultLeafIcon,
+  index,
+  iconTrue = false,
+  siblings,
+  setData,
+  ref,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & {
+  rootData:
+    | TreeDataItem<Record<string, string>, Record<string, string>>[]
+    | TreeDataItem<Record<string, string>, Record<string, string>>
+  item: TreeDataItem<Record<string, string>, Record<string, string>>
+  handleSelectChange: (
+    item:
+      | TreeDataItem<Record<string, string>, Record<string, string>>
+      | undefined
+  ) => void
+  selectedItemId?: string
+  iconTrue?: boolean
+  defaultLeafIcon?: any
+  index?: number
+  siblings?: TreeDataItem<Record<string, string>, Record<string, string>>[]
+  setData?: (
+    data:
       | TreeDataItem<Record<string, string>, Record<string, string>>[]
       | TreeDataItem<Record<string, string>, Record<string, string>>
-    item: TreeDataItem<Record<string, string>, Record<string, string>>
-    handleSelectChange: (
-      item:
-        | TreeDataItem<Record<string, string>, Record<string, string>>
-        | undefined
-    ) => void
-    selectedItemId?: string
-    iconTrue?: boolean
-    defaultLeafIcon?: any
-    index?: number
-    siblings?: TreeDataItem<Record<string, string>, Record<string, string>>[]
-    setData?: (
-      data:
-        | TreeDataItem<Record<string, string>, Record<string, string>>[]
-        | TreeDataItem<Record<string, string>, Record<string, string>>
-    ) => void
-    ref?: React.Ref<HTMLDivElement>
-  }) => {
-    const elementRef = useRef<HTMLDivElement>(null)
-    const [isDragging, setIsDragging] = useState(false)
-    const [instruction, setInstruction] = useState<Instruction | null>(null)
-    const [dialogOpen, setDialogOpen] = useState(false)
-    const [dialogType, setDialogType] = useState<"file" | "folder">("file")
-    const [dialogPosition, setDialogPosition] = useState<
-      "above" | "below" | "inside"
-    >("below")
-    const [isEditing, setIsEditing] = useState(false)
+  ) => void
+  ref?: React.Ref<HTMLDivElement>
+}) => {
+  const elementRef = useRef<HTMLDivElement>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const [instruction, setInstruction] = useState<Instruction | null>(null)
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [dialogType, setDialogType] = useState<"file" | "folder">("file")
+  const [dialogPosition, setDialogPosition] = useState<
+    "above" | "below" | "inside"
+  >("below")
+  const [isEditing, setIsEditing] = useState(false)
 
-    const handleAddItem = (
-      type: "file" | "folder",
-      position: "above" | "below" | "inside",
-      data: Record<string, string>
-    ) => {
-      if (!setData) return
+  const handleAddItem = (
+    type: "file" | "folder",
+    position: "above" | "below" | "inside",
+    data: Record<string, string>
+  ) => {
+    if (!setData) return
 
-      const newItem: TreeDataItem<
-        Record<string, string>,
-        Record<string, string>
-      > = type === "file"
-        ? {
-            type,
-            id: crypto.randomUUID(),
-            name: data.name,
-            data,
-          }
-        : {
-            type,
-            id: crypto.randomUUID(),
-            name: data.name,
-            children: [],
-            data,
-          }
-
-      const newData = produce(rootData, (draft) => {
-        const result = findParentArrayAndIndex(draft, item.id)
-        if (result) {
-          const { parentArray, index } = result
-          const insertIndex = position === "below" ? index + 1 : index
-          parentArray.splice(insertIndex, 0, newItem)
+    const newItem: TreeDataItem<
+      Record<string, string>,
+      Record<string, string>
+    > = type === "file"
+      ? {
+          type,
+          id: crypto.randomUUID(),
+          name: data.name,
+          data,
         }
-      })
+      : {
+          type,
+          id: crypto.randomUUID(),
+          name: data.name,
+          children: [],
+          data,
+        }
 
-      setData(newData)
-    }
-
-    const handleDelete = () => {
-      if (!setData) return
-      const newData = removeItemById(rootData, item.id)
-      setData(newData)
-    }
-
-    const mode = React.useMemo(() => {
-      if (siblings && index === siblings.length - 1) {
-        return "last-in-group"
+    const newData = produce(rootData, (draft) => {
+      const result = findParentArrayAndIndex(draft, item.id)
+      if (result) {
+        const { parentArray, index } = result
+        const insertIndex = position === "below" ? index + 1 : index
+        parentArray.splice(insertIndex, 0, newItem)
       }
-      return "standard"
-    }, [index, siblings])
+    })
 
-    const handleDrop = useCallback(
-      ({
-        source,
-        self,
-        location,
-      }: { source: any; self: any; location: any }) => {
-        const isInnermost =
-          location.current.dropTargets[0]?.element === elementRef.current
-
-        if (!isInnermost) return
-
-        if (!setData) return
-
-        if (source.data.id === item.id) return
-
-        const instruction = extractInstruction(self.data)
-        if (!instruction) return
-
-        const sourceItem = findItemById(rootData, source.data.id)
-        if (!sourceItem) return
-
-        const intermediateData = removeItemById(rootData, source.data.id)
-        const newData = insertItem(
-          intermediateData,
-          item.id,
-          sourceItem,
-          instruction
-        )
-
-        setData(newData)
-        setInstruction(null)
-      },
-      [rootData, item.id, setData]
-    )
-
-    const handleSubmit = (formData: Record<string, string>) => {
-      if (isEditing) {
-        if (!setData) return
-
-        setData(
-          produce(
-            rootData,
-            (
-              draft:
-                | TreeDataItem<Record<string, string>, Record<string, string>>[]
-                | TreeDataItem<Record<string, string>, Record<string, string>>
-            ) => {
-              const targetItem = findItemById(draft, item.id)
-              if (targetItem) {
-                targetItem.name = formData.name
-                targetItem.data = formData
-              }
-            }
-          )
-        )
-      } else {
-        handleAddItem(dialogType, dialogPosition, formData)
-      }
-      setDialogOpen(false)
-      setIsEditing(false)
-    }
-
-    const handleEdit = () => {
-      setDialogType(item.type)
-      setIsEditing(true)
-      setDialogOpen(true)
-    }
-
-    useEffect(() => {
-      const el = elementRef.current
-      if (!el) return
-
-      return combine(
-        draggable({
-          element: el,
-          getInitialData: () => ({
-            id: item.id,
-            type: "tree-item",
-          }),
-          onDragStart: () => setIsDragging(true),
-          onDrop: () => {
-            setIsDragging(false)
-            setInstruction(null)
-          },
-        }),
-        dropTargetForElements({
-          element: el,
-          getData: ({ input, element }) => {
-            const data = { id: item.id }
-            return attachInstruction(data, {
-              input,
-              element,
-              indentPerLevel: 24,
-              currentLevel: 0,
-              mode,
-            })
-          },
-          onDrag: ({ self, location }) => {
-            const isInnermost = location.current.dropTargets[0]?.element === el
-
-            if (isInnermost) {
-              const instruction = extractInstruction(self.data)
-              setInstruction(instruction)
-            } else {
-              setInstruction(null)
-            }
-          },
-          onDragLeave: () => {
-            setInstruction(null)
-          },
-          onDrop: handleDrop,
-        })
-      )
-    }, [item.id, mode, handleDrop])
-    console.log("TreeLeaf", item)
-    return (
-      <>
-        <TreeContextMenu
-          onAddFile={(position) => {
-            setDialogType("file")
-            setDialogPosition(position)
-            setIsEditing(false)
-            setDialogOpen(true)
-          }}
-          onAddFolder={(position) => {
-            setDialogType("folder")
-            setDialogPosition(position)
-            setIsEditing(false)
-            setDialogOpen(true)
-          }}
-          onDelete={handleDelete}
-          onEdit={handleEdit}
-          canDelete={!!setData}
-        >
-          <Flex
-            ref={elementRef}
-            className={cn(
-              "ml-5 cursor-move items-center py-2 text-left",
-              treeVariants(),
-              props.className,
-              selectedItemId === item.id && selectedTreeVariants(),
-              isDragging && "opacity-50"
-            )}
-            onClick={() => {
-              handleSelectChange(item)
-              item.onClick?.()
-            }}
-            {...props}
-          >
-            <Flex align="center" gap="2">
-              <Box className="flex items-center gap-1 ">
-                {iconTrue && (
-                  <TreeIcon
-                    item={item}
-                    isSelected={selectedItemId === item.id}
-                    default={defaultLeafIcon}
-                  />
-                )}
-                <Text className="truncate text-sm">{item?.name}</Text>
-              </Box>
-            </Flex>
-          </Flex>
-        </TreeContextMenu>
-        <TreeActions isSelected={selectedItemId === item.id}>
-          {item.actions}
-        </TreeActions>
-        {instruction && <DropIndicator instruction={instruction} />}
-        <TreeItemDialog
-          open={dialogOpen}
-          onOpenChange={(open) => {
-            setDialogOpen(open)
-            if (!open) setIsEditing(false)
-          }}
-          onSubmit={handleSubmit}
-          type={dialogType}
-          position={dialogPosition}
-          initialData={isEditing ? item.data : undefined}
-        />
-      </>
-    )
+    setData(newData)
   }
-)
+
+  const handleDelete = () => {
+    if (!setData) return
+    const newData = removeItemById(rootData, item.id)
+    setData(newData)
+  }
+
+  const mode = React.useMemo(() => {
+    if (siblings && index === siblings.length - 1) {
+      return "last-in-group"
+    }
+    return "standard"
+  }, [index, siblings])
+
+  const handleDrop = useCallback(
+    ({ source, self, location }: { source: any; self: any; location: any }) => {
+      const isInnermost =
+        location.current.dropTargets[0]?.element === elementRef.current
+
+      if (!isInnermost) return
+
+      if (!setData) return
+
+      if (source.data.id === item.id) return
+
+      const instruction = extractInstruction(self.data)
+      if (!instruction) return
+
+      const sourceItem = findItemById(rootData, source.data.id)
+      if (!sourceItem) return
+
+      const intermediateData = removeItemById(rootData, source.data.id)
+      const newData = insertItem(
+        intermediateData,
+        item.id,
+        sourceItem,
+        instruction
+      )
+
+      setData(newData)
+      setInstruction(null)
+    },
+    [rootData, item.id, setData]
+  )
+
+  const handleSubmit = (formData: Record<string, string>) => {
+    if (isEditing) {
+      if (!setData) return
+
+      setData(
+        produce(
+          rootData,
+          (
+            draft:
+              | TreeDataItem<Record<string, string>, Record<string, string>>[]
+              | TreeDataItem<Record<string, string>, Record<string, string>>
+          ) => {
+            const targetItem = findItemById(draft, item.id)
+            if (targetItem) {
+              targetItem.name = formData.name
+              targetItem.data = formData
+            }
+          }
+        )
+      )
+    } else {
+      handleAddItem(dialogType, dialogPosition, formData)
+    }
+    setDialogOpen(false)
+    setIsEditing(false)
+  }
+
+  const handleEdit = () => {
+    setDialogType(item.type)
+    setIsEditing(true)
+    setDialogOpen(true)
+  }
+
+  useEffect(() => {
+    const el = elementRef.current
+    if (!el) return
+
+    return combine(
+      draggable({
+        element: el,
+        getInitialData: () => ({
+          id: item.id,
+          type: "tree-item",
+        }),
+        onDragStart: () => setIsDragging(true),
+        onDrop: () => {
+          setIsDragging(false)
+          setInstruction(null)
+        },
+      }),
+      dropTargetForElements({
+        element: el,
+        getData: ({ input, element }) => {
+          const data = { id: item.id }
+          return attachInstruction(data, {
+            input,
+            element,
+            indentPerLevel: 24,
+            currentLevel: 0,
+            mode,
+          })
+        },
+        onDrag: ({ self, location }) => {
+          const isInnermost = location.current.dropTargets[0]?.element === el
+
+          if (isInnermost) {
+            const instruction = extractInstruction(self.data)
+            setInstruction(instruction)
+          } else {
+            setInstruction(null)
+          }
+        },
+        onDragLeave: () => {
+          setInstruction(null)
+        },
+        onDrop: handleDrop,
+      })
+    )
+  }, [item.id, mode, handleDrop])
+  console.log("TreeLeaf", item)
+  return (
+    <>
+      <TreeContextMenu
+        onAddFile={(position) => {
+          setDialogType("file")
+          setDialogPosition(position)
+          setIsEditing(false)
+          setDialogOpen(true)
+        }}
+        onAddFolder={(position) => {
+          setDialogType("folder")
+          setDialogPosition(position)
+          setIsEditing(false)
+          setDialogOpen(true)
+        }}
+        onDelete={handleDelete}
+        onEdit={handleEdit}
+        canDelete={!!setData}
+      >
+        <Flex
+          ref={elementRef}
+          className={cn(
+            "ml-5 cursor-move items-center py-2 text-left",
+            treeVariants(),
+            props.className,
+            selectedItemId === item.id && selectedTreeVariants(),
+            isDragging && "opacity-50"
+          )}
+          onClick={() => {
+            handleSelectChange(item)
+            item.onClick?.()
+          }}
+          {...props}
+        >
+          <Flex align="center" gap="2">
+            <Box className="flex items-center gap-1 ">
+              {iconTrue && (
+                <TreeIcon
+                  item={item}
+                  isSelected={selectedItemId === item.id}
+                  default={defaultLeafIcon}
+                />
+              )}
+              <Text className="truncate text-sm">{item?.name}</Text>
+            </Box>
+          </Flex>
+        </Flex>
+      </TreeContextMenu>
+      <TreeActions isSelected={selectedItemId === item.id}>
+        {item.actions}
+      </TreeActions>
+      {instruction && <DropIndicator instruction={instruction} />}
+      <TreeItemDialog
+        open={dialogOpen}
+        onOpenChange={(open) => {
+          setDialogOpen(open)
+          if (!open) setIsEditing(false)
+        }}
+        onSubmit={handleSubmit}
+        type={dialogType}
+        position={dialogPosition}
+        initialData={isEditing ? item.data : undefined}
+      />
+    </>
+  )
+}
+
 TreeLeaf.displayName = "TreeLeaf"
 
 const AccordionTrigger = ({
-  className, 
-  children, 
+  className,
+  children,
   ref,
   ...props
 }: React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> & {
@@ -1038,8 +1033,8 @@ const AccordionTrigger = ({
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName
 
 const AccordionContent = ({
-  className, 
-  children, 
+  className,
+  children,
   ref,
   ...props
 }: React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content> & {

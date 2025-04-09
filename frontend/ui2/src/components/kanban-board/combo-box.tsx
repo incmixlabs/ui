@@ -82,9 +82,7 @@ export function ComboBox({
   const [selectedValues, setSelectedValues] = useState<string[]>(defaultValue)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
-  const handleInputKeyDown = (
-    event: React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  const handleInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       setIsPopoverOpen(true)
     } else if (event.key === "Backspace" && !event.currentTarget.value) {
