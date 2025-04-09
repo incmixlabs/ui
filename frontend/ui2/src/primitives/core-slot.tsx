@@ -30,7 +30,7 @@ function isSlottable(child: React.ReactNode): child is React.ReactElement {
 /*                         SLOT                               */
 /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
-const Slot = React.forwardRef<HTMLElement, SlotProps>((props, forwardedRef) => {
+const Slot = (props: SlotProps) => {
   const { children, ...slotProps } = props
   const childrenArray = React.Children.toArray(children)
   const slottable = childrenArray.find(isSlottable)
@@ -56,7 +56,7 @@ const Slot = React.forwardRef<HTMLElement, SlotProps>((props, forwardedRef) => {
     })
 
     return (
-      <SlotClone {...slotProps} ref={forwardedRef}>
+      <SlotClone {...slotProps}>
         {React.isValidElement(newElement)
           ? React.cloneElement(newElement, undefined, newChildren)
           : null}
@@ -65,11 +65,11 @@ const Slot = React.forwardRef<HTMLElement, SlotProps>((props, forwardedRef) => {
   }
 
   return (
-    <SlotClone {...slotProps} ref={forwardedRef}>
+    <SlotClone {...slotProps}>
       {children}
     </SlotClone>
   )
-})
+}
 
 Slot.displayName = "Slot"
 
@@ -77,24 +77,18 @@ Slot.displayName = "Slot"
 /*                       SLOT CLONE                           */
 /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
-const SlotClone = React.forwardRef<any, SlotCloneProps>(
-  (props, forwardedRef) => {
-    const { children, ...slotProps } = props
+const SlotClone = (props: SlotCloneProps) => {
+  const { children, ...slotProps } = props
 
-    if (React.isValidElement(children)) {
-      return React.cloneElement(children, {
-        // @ts-ignore
-        ...mergeProps(slotProps, children.props),
-        // @ts-expect-error: No overload matches this call.
-        ref: forwardedRef
-          ? composeRefs(forwardedRef, (children as any).ref)
-          : (children as any).ref,
-      })
-    }
-
-    return React.Children.count(children) > 1 ? React.Children.only(null) : null
+  if (React.isValidElement(children)) {
+    return React.cloneElement(children, {
+      // @ts-ignore
+      ...mergeProps(slotProps, children.props),
+    })
   }
-)
+
+  return React.Children.count(children) > 1 ? React.Children.only(null) : null
+}
 
 SlotClone.displayName = "SlotClone"
 

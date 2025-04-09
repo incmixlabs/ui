@@ -55,53 +55,53 @@ const internalClassed = <
   } = parseClassNames(toParse)
 
   // eslint-disable-next-line react/display-name
-  const Comp = forwardRef(
-    ({ as, className: cName, ...props }: any, forwardedRef: any) => {
-      const Component = isClassed
+  const Comp = (
+    { as, className: cName, ...props }: any
+  ) => {
+    const Component = isClassed
+      ? elementType
+      : typeof elementType === "object"
         ? elementType
-        : typeof elementType === "object"
-          ? elementType
-          : as || elementType
+        : as || elementType
 
-      // Map props variant to className
-      const [variantClassNames, dataAttributeProps] = useMemo(() => {
-        const dataAttributeProps = getDataAttributes({
+    // Map props variant to className
+    const [variantClassNames, dataAttributeProps] = useMemo(() => {
+      const dataAttributeProps = getDataAttributes({
+        props,
+        dataAttributes,
+        variants,
+        defaultVariants,
+      })
+
+      return [
+        mapPropsToVariantClass(
+          { variants, defaultVariants, compoundVariants },
           props,
-          dataAttributes,
-          variants,
-          defaultVariants,
-        })
+          true
+        ),
+        dataAttributeProps,
+      ] as const
+    }, [props])
 
-        return [
-          mapPropsToVariantClass(
-            { variants, defaultVariants, compoundVariants },
-            props,
-            true
-          ),
-          dataAttributeProps,
-        ] as const
-      }, [props])
+    const merged = useMemo(
+      () => merger(className, variantClassNames, cName),
+      [className, cName, variantClassNames]
+    )
 
-      const merged = useMemo(
-        () => merger(className, variantClassNames, cName),
-        [className, cName, variantClassNames]
-      )
-
-      return (
-        <Component
-          className={merged}
-          {...props}
-          {...(isClassed && Object.keys(defaultVariants).length
-            ? defaultVariants
-            : {})}
-          {...dataAttributeProps}
-          {...defaultProps}
-          as={isClassed ? as : undefined}
-          ref={forwardedRef}
-        />
-      )
-    }
-  ) as unknown as ClassedComponentType<T, V>
+    return (
+      <Component
+        className={merged}
+        {...props}
+        {...(isClassed && Object.keys(defaultVariants).length
+          ? defaultVariants
+          : {})}
+        {...dataAttributeProps}
+        {...defaultProps}
+        as={isClassed ? as : undefined}
+      />
+    )
+  }
+  as unknown as ClassedComponentType<T, V>
 
   Comp.displayName =
     typeof elementType !== "string"
