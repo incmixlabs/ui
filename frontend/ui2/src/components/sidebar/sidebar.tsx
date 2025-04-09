@@ -20,8 +20,12 @@ import {
 } from "@/components/base"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@radix-ui/react-tooltip"
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "../sheet"
-import { TooltipContent, TooltipTrigger ,Tooltip} from "@radix-ui/react-tooltip"
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -124,9 +128,9 @@ const SidebarProvider = React.forwardRef<
         const newValue =
           typeof value === "function" ? value(secondaryOpen) : value
         if (setSecondaryOpenProp) {
-          setSecondaryOpenProp(newValue);
+          setSecondaryOpenProp(newValue)
         } else {
-          _setSecondaryOpen(newValue);
+          _setSecondaryOpen(newValue)
         }
       },
       [setSecondaryOpenProp, secondaryOpen]

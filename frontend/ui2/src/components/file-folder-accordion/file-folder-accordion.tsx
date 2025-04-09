@@ -1,6 +1,6 @@
+import { Accordion } from "@incmix/ui2"
 import { ArchiveIcon, FileIcon } from "@radix-ui/react-icons"
 import type React from "react"
-import { Accordion } from "@incmix/ui2"
 import type { EnvironmentVariableRoot } from "./types"
 import { mapEnvironmentVariable } from "./utils"
 

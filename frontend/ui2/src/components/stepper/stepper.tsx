@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-refresh/only-export-components */
- 
+
 "use client"
 import CheckIcon from "@/components/icons/check"
 import Loader from "@/components/icons/loader"
