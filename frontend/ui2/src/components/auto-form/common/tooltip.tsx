@@ -1,7 +1,6 @@
 import { IconButton } from "@/components/radixui/button"
 import { Tooltip } from "@/components/radixui/tooltip"
 import { HelpCircle } from "lucide-react"
-import type React from "react"
 
 import {
   buttonVariant,

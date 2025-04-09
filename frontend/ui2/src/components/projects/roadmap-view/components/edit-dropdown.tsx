@@ -12,7 +12,6 @@ import {
 } from "lucide-react"
 
 import { AnimatePresence, MotionConfig, motion } from "motion/react"
-import type React from "react"
 import { useState } from "react"
 import type { Task } from "./gantt-chart"
 

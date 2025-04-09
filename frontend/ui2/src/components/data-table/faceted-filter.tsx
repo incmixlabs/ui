@@ -7,9 +7,8 @@ import { Command, Popover } from "@/components/base"
 import { cn } from "@/lib/utils"
 const FacetedFilter = Popover
 
-type FacetedFilterTriggerProps = React.ComponentPropsWithoutRef<
-  typeof Popover.Trigger
->
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type FacetedFilterTriggerProps = any
 
 function FacetedFilterTrigger({
   className,
@@ -24,9 +23,8 @@ function FacetedFilterTrigger({
 }
 FacetedFilterTrigger.displayName = "FacetedFilterTrigger"
 
-type FacetedFilterContentProps = React.ComponentPropsWithoutRef<
-  typeof Popover.Content
->
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type FacetedFilterContentProps = any
 
 function FacetedFilterContent({
   className,
@@ -54,7 +52,7 @@ const FacetedFilterEmpty = Command.Empty
 const FacetedFilterGroup = Command.Group
 
 interface FacetedFilterItemProps
-  extends React.ComponentPropsWithoutRef<typeof Command.Item> {
+  extends React.ComponentProps<typeof Command.Item> {
   selected: boolean
 }
 

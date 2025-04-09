@@ -134,14 +134,12 @@ export const SmartDatetimeInput = function SmartDatetimeInput({
   removeInput,
   showCalendar = true,
   showTimePicker = true,
-  ref,
+  ...props
 }: Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   "type" | "value" | "defaultValue" | "onBlur"
 > &
-  SmartDatetimeInputProps & {
-    ref?: React.Ref<HTMLInputElement>
-  }) {
+  SmartDatetimeInputProps & {}) {
   const [Time, setTime] = React.useState<string>("")
 
   const onTimeChange = React.useCallback((time: string) => {
@@ -162,6 +160,7 @@ export const SmartDatetimeInput = function SmartDatetimeInput({
         showCalendar: shouldShowBoth ? true : showCalendar,
         showTimePicker: shouldShowBoth ? true : showTimePicker,
       }}
+      {...props}
     >
       <div className="w-full rounded-md bg-gray-3">
         <div
@@ -175,7 +174,7 @@ export const SmartDatetimeInput = function SmartDatetimeInput({
             <NaturalLanguageInput
               placeholder={placeholder}
               disabled={disabled}
-              ref={ref}
+              {...props}
             />
           )}
         </div>

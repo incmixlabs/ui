@@ -2,7 +2,6 @@ import {
   Button as RadixButton,
   type ButtonProps as RadixButtonProps,
 } from "@radix-ui/themes"
-import type React from "react"
 // eslint-disable-next-line react-refresh/only-export-components
 export { buttonPropDefs } from "@radix-ui/themes/src/components/button.props.js"
 

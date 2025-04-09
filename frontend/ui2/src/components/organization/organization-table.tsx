@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Checkbox } from "@/components/base"
 import { nanoid } from "nanoid"
 
@@ -240,8 +241,8 @@ export function OrganizationTable() {
             flattenedItems.map((item) => (
               <TreeItemRow
                 key={item.id}
-                rowRef={(instance) => {
-                  if (instance) rowRefs.current[item.id] = instance
+                ref={(el: any) => {
+                  if (el) rowRefs.current[item.id] = el
                 }}
                 item={item}
                 level={item.level}

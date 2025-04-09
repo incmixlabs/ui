@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 import { forwardRef, useMemo } from "react"
@@ -54,54 +56,54 @@ const internalClassed = <
     defaultProps,
   } = parseClassNames(toParse)
 
-  // eslint-disable-next-line react/display-name
-  const Comp = (
-    { as, className: cName, ...props }: any
-  ) => {
-    const Component = isClassed
-      ? elementType
-      : typeof elementType === "object"
+  const Comp = forwardRef(
+    ({ as, className: cName, ...props }: any, forwardedRef: any) => {
+      // eslint-disable-next-line no-nested-ternary
+      const Component = isClassed
         ? elementType
-        : as || elementType
+        : typeof elementType === "object"
+          ? elementType
+          : as || elementType
 
-    // Map props variant to className
-    const [variantClassNames, dataAttributeProps] = useMemo(() => {
-      const dataAttributeProps = getDataAttributes({
-        props,
-        dataAttributes,
-        variants,
-        defaultVariants,
-      })
-
-      return [
-        mapPropsToVariantClass(
-          { variants, defaultVariants, compoundVariants },
+      // Map props variant to className
+      const [variantClassNames, dataAttributeProps] = useMemo(() => {
+        const dataAttributeProps = getDataAttributes({
           props,
-          true
-        ),
-        dataAttributeProps,
-      ] as const
-    }, [props])
+          dataAttributes,
+          variants,
+          defaultVariants,
+        })
 
-    const merged = useMemo(
-      () => merger(className, variantClassNames, cName),
-      [className, cName, variantClassNames]
-    )
+        return [
+          mapPropsToVariantClass(
+            { variants, defaultVariants, compoundVariants },
+            props,
+            true
+          ),
+          dataAttributeProps,
+        ] as const
+      }, [props])
 
-    return (
-      <Component
-        className={merged}
-        {...props}
-        {...(isClassed && Object.keys(defaultVariants).length
-          ? defaultVariants
-          : {})}
-        {...dataAttributeProps}
-        {...defaultProps}
-        as={isClassed ? as : undefined}
-      />
-    )
-  }
-  as unknown as ClassedComponentType<T, V>
+      const merged = useMemo(
+        () => merger(className, variantClassNames, cName),
+        [cName, variantClassNames, merger]
+      )
+
+      return (
+        <Component
+          className={merged}
+          {...props}
+          {...(isClassed && Object.keys(defaultVariants).length
+            ? defaultVariants
+            : {})}
+          {...dataAttributeProps}
+          {...defaultProps}
+          as={isClassed ? as : undefined}
+          ref={forwardedRef}
+        />
+      )
+    }
+  ) as unknown as ClassedComponentType<T, V>
 
   Comp.displayName =
     typeof elementType !== "string"

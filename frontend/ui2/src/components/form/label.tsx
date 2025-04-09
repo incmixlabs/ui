@@ -12,7 +12,7 @@ const labelVariants = cva(
 const Label = ({
   className,
   ...props
-}: React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
+}: React.ComponentProps<typeof LabelPrimitive.Root> &
   VariantProps<typeof labelVariants>) => (
   <LabelPrimitive.Root className={cn(labelVariants(), className)} {...props} />
 )
