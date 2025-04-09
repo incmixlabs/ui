@@ -1,8 +1,8 @@
-import { colorPropDef } from "@/lib/utils/colors"
+import type { colorPropDef } from "@/lib/utils/colors"
 import { mergeDeep } from "@/lib/utils/objects"
 /* eslint-disable react-refresh/only-export-components */
 import { DropdownMenu as RadixDropdownMenu } from "@radix-ui/themes"
-type ColorProp = (typeof colorPropDef["color"]["values"])[number]
+type ColorProp = (typeof colorPropDef)["color"]["values"][number]
 export {
   dropdownMenuContentPropDefs,
   dropdownMenuItemPropDefs,
@@ -10,8 +10,8 @@ export {
   dropdownMenuRadioItemPropDefs,
 } from "@radix-ui/themes/src/components/dropdown-menu.props.js"
 
+import type { ReactNode } from "react"
 import { Button, type ButtonProps, buttonPropDefs } from "./button/button"
-import { ReactNode } from "react"
 
 export const dropdownButtonPropDefs = mergeDeep(buttonPropDefs, {})
 

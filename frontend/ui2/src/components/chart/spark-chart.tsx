@@ -1,6 +1,6 @@
-import { lazy } from "react"
 import { Box } from "@/components/base"
 import { cn } from "@/lib/utils"
+import { lazy } from "react"
 const ReactApexChart = lazy(() => import("react-apexcharts"))
 
 // Dynamically import ApexCharts to avoid SSR issues
@@ -12,12 +12,7 @@ interface TaskCardProps {
   className?: string
 }
 
-export function SparkChart({
-  title,
-  data,
-  color,
-  className,
-}: TaskCardProps) {
+export function SparkChart({ title, data, color, className }: TaskCardProps) {
   const chartData = {
     series: [
       {

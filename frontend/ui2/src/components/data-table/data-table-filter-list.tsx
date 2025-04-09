@@ -34,6 +34,7 @@ import { getFiltersStateParser } from "./lib/parsers"
 
 import { Calendar, Command, Input, Popover, Select } from "@/components/base"
 
+import { formatDate } from "@/lib/utils/date"
 import {
   FacetedFilter,
   FacetedFilterContent,
@@ -44,7 +45,6 @@ import {
   FacetedFilterList,
   FacetedFilterTrigger,
 } from "./faceted-filter"
-import { formatDate } from "@/lib/utils/date"
 
 interface DataTableFilterListProps<TData> {
   table: Table<TData>

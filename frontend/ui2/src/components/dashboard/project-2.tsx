@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-import { motion } from "motion/react"
-import { useState } from "react"
 import {
   Avatar,
   Box,
@@ -18,12 +14,15 @@ import {
   ScrollArea,
   Text,
 } from "@/components/base"
-import {
-  dashboardColorValues }  from "@/lib/utils/colors"
+import { dashboardColorValues } from "@/lib/utils/colors"
 import { Clipboard, Ellipsis, EllipsisVertical, Settings } from "lucide-react"
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+import { motion } from "motion/react"
+import { useState } from "react"
 
+import { SparkChart, WeeklyActivityChart } from "@/components/chart"
 import RadialTaskStatusChart from "../chart/radial-task-status-chart"
-import {SparkChart,WeeklyActivityChart} from "@/components/chart"
 import { KanbanImages } from "../kanban-board/images"
 import { revisionData } from "./data"
 import PostingCalendar from "./posting-calendar"

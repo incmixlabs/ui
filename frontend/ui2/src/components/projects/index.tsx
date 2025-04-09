@@ -1,12 +1,10 @@
-import { useState, Suspense, lazy  } from "react"
 import { LayoutGrid, List, Plus, SlidersHorizontal } from "lucide-react"
 import { motion } from "motion/react"
 import { nanoid } from "nanoid"
 import { useQueryState } from "nuqs"
+import { Suspense, lazy, useState } from "react"
 import { toast } from "sonner"
 
-import { saveFormProject } from "@incmix/store"
-import { cn } from "@/lib/utils"
 import {
   Box,
   Button,
@@ -17,6 +15,8 @@ import {
   Text,
 } from "@/components/base"
 import { iconSize } from "@/components/icons/icon"
+import { cn } from "@/lib/utils"
+import { saveFormProject } from "@incmix/store"
 import { MotionSheet } from "../custom-sheet"
 
 // Dynamically import heavy components

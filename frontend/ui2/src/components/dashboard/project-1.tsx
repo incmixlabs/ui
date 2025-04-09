@@ -1,8 +1,8 @@
+import { Ellipsis, EllipsisVertical, Settings } from "lucide-react"
+import { motion } from "motion/react"
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 import { useState } from "react"
-import { motion } from "motion/react"
-import { Ellipsis, EllipsisVertical, Settings } from "lucide-react"
 
 import {
   Avatar,
@@ -18,8 +18,12 @@ import {
   ScrollArea,
   Text,
 } from "@/components/base"
+import {
+  RadialBarChart,
+  StatisticsBarChartView,
+  StatsCard,
+} from "@/components/chart"
 import { dashboardColorValues } from "@/lib/utils/colors"
-import { RadialBarChart, StatisticsBarChartView, StatsCard } from "@/components/chart"
 
 import { SmartDatetimeInput } from "@/components/datetime-picker"
 import { KanbanImages } from "@/components/kanban-board/images"

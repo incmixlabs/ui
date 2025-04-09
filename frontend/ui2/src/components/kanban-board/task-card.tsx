@@ -11,16 +11,24 @@ import { createPortal } from "react-dom"
 import invariant from "tiny-invariant"
 
 import {
+  Box,
+  Card,
+  Checkbox,
+  Flex,
+  Heading,
+  IconButton,
+  Text,
+} from "@/components/base"
+import { iconSize } from "@/components/icons/icon"
+import { isSafari } from "@/lib/utils/browser"
+import { isShallowEqual } from "@/lib/utils/objects"
+import {
   type Edge,
   attachClosestEdge,
   extractClosestEdge,
 } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
-import { isSafari } from "@/lib/utils/browser"
-import { isShallowEqual } from "@/lib/utils/objects"
 import { CalendarDays, MessageSquareText, Paperclip } from "lucide-react"
-import { IconButton, Box, Card, Checkbox, Flex, Heading, Text } from "@/components/base"
-import { iconSize } from "@/components/icons/icon"
 import {
   type TCard,
   getCardData,
@@ -29,8 +37,8 @@ import {
   isDraggingACard,
 } from "./types"
 
-import { useKanbanDrawer } from "./hooks/use-kanban-drawer"
 import { cn } from "@/lib/utils"
+import { useKanbanDrawer } from "./hooks/use-kanban-drawer"
 
 type TCardState =
   | {

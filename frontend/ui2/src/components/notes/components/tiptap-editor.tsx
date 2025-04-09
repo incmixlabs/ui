@@ -1,3 +1,7 @@
+import { Box, Button, Flex } from "@/components/base"
+import { encodeHTML } from "@/lib/strings"
+import { EditorProvider, useCurrentEditor } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
 import {
   Bold,
   Code,
@@ -10,10 +14,6 @@ import {
   Redo,
   Undo,
 } from "lucide-react"
-import { Box, Button, Flex } from "@/components/base"
-import { EditorProvider, useCurrentEditor } from "@tiptap/react"
-import StarterKit from "@tiptap/starter-kit"
-import { encodeHTML } from "@/lib/strings"
 import type { INote } from "../data"
 
 interface TiptapEditorProps {

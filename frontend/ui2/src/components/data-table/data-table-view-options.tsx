@@ -4,9 +4,9 @@ import type { Table } from "@tanstack/react-table"
 import { Check, ChevronsUpDown, Settings2 } from "lucide-react"
 import * as React from "react"
 
-import { cn } from "@/lib/utils"
 import { Button, Command, Popover } from "@/components/base"
 import { toSentenceCase } from "@/lib/strings"
+import { cn } from "@/lib/utils"
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>

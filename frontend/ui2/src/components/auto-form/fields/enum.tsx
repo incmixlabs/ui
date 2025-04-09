@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import type * as z from "zod"
-import { Form } from "@/components/shadcn"
 import { Select } from "@/components/radixui/select"
+import { Form } from "@/components/shadcn"
+import type * as z from "zod"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"
 import type { AutoFormInputComponentProps } from "../types"
@@ -26,6 +26,8 @@ export default function AutoFormEnum({
     values = baseValues.map((value) => [value, value])
   }
 
+  //
+  // biome-ignore lint/correctness/noUnusedVariables: <explanation>
   function findItem(value: any) {
     return values.find((item) => item[0] === value)
   }
@@ -39,7 +41,7 @@ export default function AutoFormEnum({
           defaultValue={field.value}
           {...fieldProps}
         >
-          <Select.Trigger/>
+          <Select.Trigger />
           <Select.Content>
             {values.map(([value, label]) => (
               <Select.Item value={label} key={value}>

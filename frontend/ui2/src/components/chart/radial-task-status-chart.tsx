@@ -1,7 +1,7 @@
-import { lazy, useEffect, useState } from "react"
 import { Box } from "@/components/base"
 import { cn } from "@/lib/utils"
 import { dashboardColorValues } from "@/lib/utils/colors"
+import { lazy, useEffect, useState } from "react"
 // Dynamically import ApexCharts to avoid SSR issues
 const ReactApexChart = lazy(() => import("react-apexcharts"))
 

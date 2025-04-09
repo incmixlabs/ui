@@ -1,6 +1,7 @@
 "use client"
 
-import {  Box,
+import {
+  Box,
   Button,
   Flex,
   Grid,
@@ -11,8 +12,7 @@ import {  Box,
   Text,
 } from "@/components/base"
 
-import {
-  iconSize } from "@/components/icons/icon"
+import { iconSize } from "@/components/icons/icon"
 import type { ButtonProps } from "@radix-ui/themes"
 
 import { cn } from "@/lib/utils"

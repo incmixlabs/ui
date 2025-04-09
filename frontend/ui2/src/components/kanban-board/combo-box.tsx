@@ -1,6 +1,6 @@
-import { forwardRef, useState } from "react"
 import type { BadgeProps } from "@radix-ui/themes"
 import { CheckIcon, Plus } from "lucide-react"
+import { forwardRef, useState } from "react"
 
 import ColorPicker, { type ColorSelectType } from "@/components//color-picker"
 import {
@@ -80,8 +80,7 @@ export const ComboBox = forwardRef<HTMLButtonElement, MultiSelectProps>(
     setIsLabelFormOpen,
     handleAddNewLabel,
   }) => {
-    const [selectedValues, setSelectedValues] =
-      useState<string[]>(defaultValue)
+    const [selectedValues, setSelectedValues] = useState<string[]>(defaultValue)
     const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
     const handleInputKeyDown = (

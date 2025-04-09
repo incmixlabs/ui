@@ -1,10 +1,8 @@
 import { type Table as TanstackTable, flexRender } from "@tanstack/react-table"
 import * as React from "react"
 
+import { Table } from "@/components/shadcn/table"
 import { cn } from "@/lib/utils"
-import {
-  Table,
-} from "@/components/shadcn/table"
 import { DataTablePagination } from "./data-table-pagination"
 import { getCommonPinningStyles } from "./lib/data-table"
 

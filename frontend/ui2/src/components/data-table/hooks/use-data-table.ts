@@ -29,8 +29,8 @@ import {
 import * as React from "react"
 import type { DataTableFilterField, ExtendedSortingState } from "../lib/types"
 
-import { getSortingStateParser } from "../lib/parsers"
 import { useDebouncedCallback } from "@/hooks/use-debounced-callback"
+import { getSortingStateParser } from "../lib/parsers"
 
 interface UseDataTableProps<TData>
   extends Omit<

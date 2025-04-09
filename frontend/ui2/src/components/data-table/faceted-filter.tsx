@@ -3,11 +3,8 @@
 import { Check } from "lucide-react"
 import * as React from "react"
 
+import { Command, Popover } from "@/components/base"
 import { cn } from "@/lib/utils"
-import {
-  Command,
-  Popover
-} from "@/components/base"
 const FacetedFilter = Popover
 
 const FacetedFilterTrigger = React.forwardRef<

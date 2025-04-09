@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-import { useState } from "react"
-import { Download, FileArchive, X } from "lucide-react"
-import { motion } from "motion/react"
 import {
   Avatar,
   Box,
@@ -17,9 +12,14 @@ import {
 import { MotionSheet } from "@/components/custom-sheet"
 import { ComboBox } from "@/components/kanban-board/combo-box"
 import { attachments } from "@/components/kanban-board/data"
-import { useProjectDrawer } from "../hooks/use-project-drawer"
 import { cn } from "@/lib/utils"
+import { Download, FileArchive, X } from "lucide-react"
+import { motion } from "motion/react"
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+import { useState } from "react"
 import { members } from "../data"
+import { useProjectDrawer } from "../hooks/use-project-drawer"
 import ProjectChecklist from "./project-checklist"
 import ProjectComments from "./project-comments"
 import ProjectDetails from "./project-details"

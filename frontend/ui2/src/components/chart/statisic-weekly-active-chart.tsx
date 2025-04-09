@@ -1,8 +1,8 @@
 "use client"
 
-import { lazy, useEffect, useState } from "react"
 import { Box } from "@/components/base"
 import { cn } from "@/lib/utils"
+import { lazy, useEffect, useState } from "react"
 
 const ReactApexChart = lazy(() => import("react-apexcharts"))
 

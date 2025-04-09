@@ -1,30 +1,29 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { Suspense, lazy, useRef, useState } from "react"
-import {
-  CalendarClock,
-  Edit2,
-  Ellipsis,
-  Plus,
-  SlidersHorizontal,
-  Trash
-} from "lucide-react"
-import {
-  Pushpin } from "@/components/icons/pushpin"
 import {
   Box,
   Button,
   Card,
   Dialog,
   Flex,
+  Grid,
   Heading,
   IconButton,
   Input,
-  Grid,
   Label,
-  TextArea
+  TextArea,
 } from "@/components/base"
 import { iconSize } from "@/components/icons/icon"
+import { Pushpin } from "@/components/icons/pushpin"
 import { cn } from "@/lib/utils"
+import {
+  CalendarClock,
+  Edit2,
+  Ellipsis,
+  Plus,
+  SlidersHorizontal,
+  Trash,
+} from "lucide-react"
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Suspense, lazy, useRef, useState } from "react"
 
 import { type INote, notesData } from "./data"
 

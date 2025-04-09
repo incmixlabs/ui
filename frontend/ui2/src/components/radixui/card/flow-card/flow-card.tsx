@@ -1,10 +1,9 @@
-
 import type { ComponentProps, FC, JSX } from "react"
 import { twMerge } from "tailwind-merge"
 
-import type { DeepPartial } from "@/types"
 import { mergeDeep } from "@/lib/utils/objects"
 import { omit } from "@/lib/utils/objects/omit"
+import type { DeepPartial } from "@/types"
 import { type FlowCardTheme, cardTheme } from "./flow-card-theme"
 interface CommonCardProps extends ComponentProps<"div"> {
   horizontal?: boolean

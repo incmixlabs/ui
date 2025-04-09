@@ -11,6 +11,7 @@
       "node_modules",
       "apps/storybook",
       "apps/storybook2",
+      "frontend/ui/src",
       "frontend/ui2/src/demos",
       "frontend/ui2/src/lib",
       "frontend/pages2",

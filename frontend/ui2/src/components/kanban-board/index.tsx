@@ -2,7 +2,6 @@
 
 import invariant from "tiny-invariant"
 
-import { useEffect, useRef, useState,  Suspense, lazy } from "react"
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
 import { unsafeOverflowAutoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/unsafe-overflow/element"
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
@@ -11,13 +10,14 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types"
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder"
+import { Suspense, lazy, useEffect, useRef, useState } from "react"
 
 import { Box } from "@/components/radixui/box"
-import { useKanbanFilter } from "./hooks/use-kanban-filter"
 import { bindAll } from "bind-event-listener"
 import { BoardColumn } from "./board-column"
 import { initialData } from "./data"
 import { blockBoardPanningAttr } from "./data-attributes"
+import { useKanbanFilter } from "./hooks/use-kanban-filter"
 
 // Dynamically import heavy component
 const TaskCardDrawer = lazy(() => import("./task-card-drawer"))

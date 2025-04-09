@@ -1,5 +1,3 @@
-
-
 /**
  * @see https://github.com/radix-ui/primitives/blob/main/packages/core/primitive/src/primitive.tsx
  */
