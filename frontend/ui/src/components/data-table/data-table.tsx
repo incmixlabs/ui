@@ -1,5 +1,5 @@
 import { type Table as TanstackTable, flexRender } from "@tanstack/react-table"
-import type * as React from "react"
+import * as React from "react"
 
 import { cn } from "@utils/cn"
 import {
@@ -46,7 +46,7 @@ export function DataTable<TData>({
         <Table>
           <TableHead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <React.Fragment key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHeadCell
@@ -65,7 +65,7 @@ export function DataTable<TData>({
                     </TableHeadCell>
                   )
                 })}
-              </TableRow>
+              </React.Fragment>
             ))}
           </TableHead>
           <TableBody>

@@ -1,3 +1,7 @@
+// https://github.com/viktorbonino/radix-themes-tw
+// need to use above
+// /* https://www.youtube.com/watch?v=6zMa4qK63hQ */
+
 import aspectRatio from "@tailwindcss/aspect-ratio"
 import containerQueries from "@tailwindcss/container-queries"
 import forms from "@tailwindcss/forms"
@@ -97,6 +101,7 @@ export const incmixTailwindPreset: Config = {
         card: {
           DEFAULT: colors.alias("gray.1"),
           foreground: colors.alias("gray.12"),
+          "file-background": "hsl(var(--file-card-background))",
         },
 
         popover: {
@@ -162,7 +167,26 @@ export const incmixTailwindPreset: Config = {
           11: colors.alias("red.11"),
           12: colors.alias("red.12"),
         },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
 
+          // secondary sidebar colors
+          "secondary-background": "hsl(var(--sidebar-secondary-background))",
+          "secondary-header": "hsl(var(--sidebar-secondary-header))",
+          "secondary-muted": "hsl(var(--sidebar-secondary-muted))",
+          "secondary-text": "hsl(var(--sidebar-secondary-text))",
+          "secondary-active": "hsl(var(--sidebar-secondary-active))",
+        },
+        dashboard: {
+          orange: "hsl(var(--dashboard-orange))",
+        },
         border: colors.alias("gray.4"),
         ring: colors.alias("gray.4"),
 

@@ -6,8 +6,8 @@ import {
   useState,
 } from "react"
 
+import { Box, Button, Flex, Text, TextField } from "@incmix/ui"
 import { ChevronDownIcon, ChevronRightIcon } from "@radix-ui/react-icons"
-import { Box, Button, Flex, Text, TextField } from "@radix-ui/themes"
 import {
   type Row,
   type TreeNode,

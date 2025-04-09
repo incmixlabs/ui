@@ -1,10 +1,10 @@
 "use client"
 
+import { iconSize } from "@components/icons/icon"
+import { cn } from "@utils/cn"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import type * as React from "react"
 import { DayPicker } from "react-day-picker"
-
-import { cn } from "@utils/cn"
 import { buttonVariants } from "./button/shad-button"
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
@@ -20,7 +20,8 @@ function Calendar({
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
       classNames={{
-        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+        months:
+          "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 w-full",
         month: "space-y-4",
         caption: "flex justify-center pt-1 relative items-center",
         caption_label: "text-sm font-medium",
@@ -43,7 +44,7 @@ function Calendar({
         ),
         day_range_end: "day-range-end",
         day_selected:
-          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+          "bg-secondary text-secondary-foreground hover:bg-secondary hover:text-secondary-foreground focus:bg-secondary focus:text-secondary-foreground",
         day_today: "bg-accent text-accent-foreground",
         day_outside:
           "day-outside text-muted-foreground aria-selected:bg-accent/50 aria-selected:text-muted-foreground",
@@ -58,15 +59,17 @@ function Calendar({
         IconLeft: ({
           className,
           ...props
-        }: { className?: string; [key: string]: any }) => (
-          <ChevronLeft className={cn("h-4 w-4", className)} {...props} />
-        ),
+        }: {
+          className?: string
+          [key: string]: any
+        }) => <ChevronLeft className={cn(iconSize, className)} {...props} />,
         IconRight: ({
           className,
           ...props
-        }: { className?: string; [key: string]: any }) => (
-          <ChevronRight className={cn("h-4 w-4", className)} {...props} />
-        ),
+        }: {
+          className?: string
+          [key: string]: any
+        }) => <ChevronRight className={cn(iconSize, className)} {...props} />,
       }}
       {...props}
     />

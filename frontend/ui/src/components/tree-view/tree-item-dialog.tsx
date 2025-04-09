@@ -1,13 +1,6 @@
 "use client"
 
-import {
-  Button,
-  Flex,
-  Text,
-  TextArea,
-  TextField,
-  VisuallyHidden,
-} from "@radix-ui/themes"
+import { Button, Flex, Text, VisuallyHidden } from "@incmix/ui"
 import { useForm } from "@tanstack/react-form"
 import type { FieldApi } from "@tanstack/react-form"
 import { zodValidator } from "@tanstack/zod-form-adapter"
@@ -121,7 +114,9 @@ export function TreeItemDialog({
                 name={field.name}
                 validatorAdapter={zodValidator()}
                 validators={{
-                  onChange: z.string().min(10, "This field is required"),
+                  onChange: field.required
+                    ? z.string().min(1, "This field is required")
+                    : undefined,
                 }}
               >
                 {(fieldApi) => (

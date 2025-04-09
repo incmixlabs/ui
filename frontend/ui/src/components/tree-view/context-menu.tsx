@@ -1,10 +1,6 @@
 "use client"
 
-import {
-  Button,
-  ContextMenu as ContextMenuPrimitive,
-  Flex,
-} from "@radix-ui/themes"
+import { Button, ContextMenu as ContextMenuPrimitive, Flex } from "@incmix/ui"
 import { FilePlus, FolderPlus, Pencil, Trash } from "lucide-react"
 import type * as React from "react"
 import { useTreeViewContext } from "./tree-view-context"
@@ -74,7 +70,7 @@ export function TreeContextMenu({
             className="m-0 h-6 justify-between"
           >
             <Flex align="center" gap="2" className="p-1">
-              <Pencil className="h-4 w-4" />
+              <Pencil className="{`${iconSize`}" />
               {descriptions.edit}
             </Flex>
           </Button>
@@ -83,7 +79,7 @@ export function TreeContextMenu({
         <ContextMenuSub>
           <ContextMenuSubTrigger>
             <Flex align="center" gap="2">
-              <FilePlus className="h-4 w-4" />
+              <FilePlus className="{`${iconSize`}" />
               {descriptions.createFileContextMenu}
             </Flex>
           </ContextMenuSubTrigger>
@@ -117,7 +113,7 @@ export function TreeContextMenu({
         <ContextMenuSub>
           <ContextMenuSubTrigger>
             <Flex align="center" gap="2">
-              <FolderPlus className="h-4 w-4" />
+              <FolderPlus className="{`${iconSize`}" />
               {descriptions.createFolderContextMenu}
             </Flex>
           </ContextMenuSubTrigger>
@@ -156,7 +152,7 @@ export function TreeContextMenu({
             className="m-0 h-6 justify-between"
           >
             <Flex align="center" gap="2" className="p-1">
-              <Trash className="h-4 w-4" />
+              <Trash className="{`${iconSize`}" />
               {descriptions.delete}
             </Flex>
           </Button>

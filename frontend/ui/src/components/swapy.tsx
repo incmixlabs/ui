@@ -1,4 +1,5 @@
-import { Box, type BoxProps } from "@radix-ui/themes"
+import { Box } from "@incmix/ui"
+import type { BoxProps } from "@radix-ui/themes"
 import { useEffect, useRef } from "react"
 import { createSwapy } from "swapy"
 import { DragHandle } from "./drag-handle"

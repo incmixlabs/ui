@@ -1,4 +1,4 @@
-import { Flex } from "@radix-ui/themes"
+import { Flex } from "@incmix/ui"
 import type React from "react"
 import { Avatar } from "../../avatar"
 import { gaps } from "../constants"
@@ -25,15 +25,14 @@ export const SpreadLayout: React.FC<AvatarGroupProps> = ({
     >
       {sortedUsers.map((user) => (
         <Avatar
-          key={user.fullName}
+          key={user.id}
+          id={user.id}
           size={size}
-          imageUrl={user.imageUrl}
-          fullName={user.fullName}
+          src={user.src}
+          name={user.name}
         />
       ))}
-      {remainingCount > 0 && (
-        <Avatar size={size} fullName={`+${remainingCount}`} />
-      )}
+      {remainingCount > 0 && <Avatar size={size} name={`+${remainingCount}`} />}
     </Flex>
   )
 }

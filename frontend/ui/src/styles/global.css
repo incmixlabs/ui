@@ -54,14 +54,27 @@
     --radius: 0.5rem;
     --navbar-height: theme("width.14");
     --sidebar-width: theme("width.64");
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-background: 226 70% 55%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 224.3 76.3% 48%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
+    --sidebar-accent: 222 91% 63%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 220 7% 92%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-item-primary: 222 91% 63%;
+    --sidebar-trigger-border: 0 0% 85%;
+    --sidebar-trigger-background: 0 0% 100%;
+
+    --sidebar-secondary-background: 0 0% 100%;
+    --sidebar-secondary-header: 226 70% 55%;
+    --sidebar-secondary-muted: 216 7% 57%;
+    --sidebar-secondary-text: 218 8% 27%;
+    --sidebar-secondary-active: 226 66% 55%;
+
+    --file-card-background: 227 10% 21%;
+
+    --dashboard-orange: 22 100% 68%;
   }
 
   .dark {
@@ -93,14 +106,31 @@
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
 
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
+    --radius: 0.5rem;
+    --navbar-height: theme("width.14");
+    --sidebar-width: theme("width.64");
+
+    --sidebar-background: 226 70% 55%;
+    --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 222 91% 63%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 222 9% 22%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-item-primary: 222 91% 63%;
+    --sidebar-trigger-border: 0 0% 85%;
+    --sidebar-trigger-background: 0 0% 100%;
+
+    --sidebar-secondary-background: 218 10% 15%;
+    --sidebar-secondary-header: 0 0% 100%;
+    --sidebar-secondary-muted: 216 7% 57%;
+    --sidebar-secondary-text: 228 7% 73%;
+    --sidebar-secondary-active: 0 0% 93%;
+
+    --file-card-background: 0 0% 93%;
+
+    --dashboard-orange: 23 100% 68%;
   }
 }
 

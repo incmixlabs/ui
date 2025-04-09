@@ -1,351 +1,395 @@
-import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
+"use client"
+
+import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
+import { unsafeOverflowAutoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/unsafe-overflow/element"
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
-import { getReorderDestinationIndex } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index"
+import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge"
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
+import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types"
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder"
-import type { ColumnWithTasks, NestedColumns, Task } from "@incmix/utils/types"
-import { Card, Flex, Spinner } from "@radix-ui/themes"
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useKanbanFilter } from "@hooks/use-kanban-filter"
+import { bindAll } from "bind-event-listener"
+import { Suspense, lazy } from "react"
+import { useEffect, useRef, useState } from "react"
 import invariant from "tiny-invariant"
-import { CardContent } from "../card/card"
-import { Board } from "./board"
-import { BoardContext, type BoardContextValue } from "./board-context"
+import { BoardColumn } from "./board-column"
+import { initialData } from "./data"
+import { blockBoardPanningAttr } from "./data-attributes"
 
-export type ColumnMap = { [columnId: string]: ColumnWithTasks }
+import { Box } from "@incmix/ui"
 
-const flattenColumns = (cols: NestedColumns[]): ColumnWithTasks[] => {
-  return cols.flatMap((col) =>
-    col.children ? [col, ...flattenColumns(col.children)] : [col]
-  )
-}
+// Dynamically import heavy component
+const TaskCardDrawer = lazy(() => import("./task-card-drawer"))
+import type { TCard, TColumn, TCustomBoard } from "./types"
+import {
+  isCardData,
+  isCardDropTargetData,
+  isColumnData,
+  isDraggingACard,
+  isDraggingAColumn,
+} from "./types"
 
-const columnMap = (cols: ColumnWithTasks[]): ColumnMap => {
-  const columnMap: ColumnMap = {}
-  cols.forEach((col) => {
-    columnMap[col.id] = col
-  })
-  return columnMap
-}
+function convertCustomDataToBoardFormat(customData: TCustomBoard) {
+  const columns = customData.map((column) => {
+    // Convert tasks to cards
+    const cards: TCard[] = column.tasks.map((task) => ({
+      ...task,
+      id: task.id,
+    }))
 
-type Outcome =
-  | {
-      type: "card-reorder"
-      columnId: string
-      startIndex: number
-      finishIndex: number
-    }
-  | {
-      type: "card-move"
-      finishColumnId: string
-      itemIndexInStartColumn: number
-      itemIndexInFinishColumn: number
-    }
-
-type Trigger = "pointer" | "keyboard"
-
-type Operation = {
-  trigger: Trigger
-  outcome: Outcome
-}
-
-type BoardState = {
-  columnMap: ColumnMap
-  orderedColumnIds: string[]
-  lastOperation: Operation | null
-}
-
-type BoardProps = {
-  columns: NestedColumns[]
-  tasks: Task[]
-  updateTasks: (updatedTasks: Task[]) => void
-  isLoading?: boolean
-}
-
-export const KanbanBoard: React.FC<BoardProps> = ({
-  columns,
-  tasks,
-  updateTasks,
-  isLoading,
-}) => {
-  const data = useMemo<BoardState>(() => {
-    const flatColumns = flattenColumns(columns)
-    const base = columnMap(flatColumns)
     return {
-      columnMap: base,
-      orderedColumnIds: Object.keys(base),
-      lastOperation: null,
+      id: `column:${column.id}`,
+      title: column.title,
+      cards,
     }
-  }, [columns])
+  })
 
-  const stableData = useRef(data)
+  return {
+    columns,
+  }
+}
 
-  useEffect(() => {
-    stableData.current = data
-  }, [data])
+export function Board() {
+  const boardData = convertCustomDataToBoardFormat(initialData)
 
-  const getColumns = useCallback(() => {
-    const { columnMap, orderedColumnIds } = stableData.current
-    return orderedColumnIds.map((columnId) => columnMap[columnId])
-  }, [])
-
-  const reorderCard = useCallback(
-    ({
-      columnId,
-      startIndex,
-      finishIndex,
-    }: {
-      columnId: string
-      startIndex: number
-      finishIndex: number
-      trigger?: Trigger
-    }) => {
-      const sourceColumn = data.columnMap[columnId]
-      const updatedItems = reorder({
-        list: sourceColumn.tasks,
-        startIndex,
-        finishIndex,
-      })
-
-      updateTasks(updatedItems.map((item, i) => ({ ...item, taskOrder: i })))
-    },
-    [data, updateTasks]
-  )
-  const moveCard = useCallback(
-    ({
-      startColumnId,
-      finishColumnId,
-      itemIndexInStartColumn,
-      itemIndexInFinishColumn,
-    }: {
-      startColumnId: string
-      finishColumnId: string
-      itemIndexInStartColumn: number
-      itemIndexInFinishColumn?: number
-      trigger?: "pointer" | "keyboard"
-    }) => {
-      // invalid cross column movement
-      if (startColumnId === finishColumnId) {
-        return
-      }
-
-      const sourceColumn = data.columnMap[startColumnId]
-
-      const destinationColumn = data.columnMap[finishColumnId]
-
-      const item = sourceColumn.tasks[itemIndexInStartColumn]
-      invariant(item)
-      const destinationItems = Array.from(destinationColumn.tasks)
-      // Going into the first position if no index is provided
-      const newIndexInDestination = itemIndexInFinishColumn ?? 0
-
-      item.columnId = destinationColumn.id
-      destinationItems.splice(newIndexInDestination, 0, item)
-
-      const updatedMap = {
-        ...data.columnMap,
-        [startColumnId]: {
-          ...sourceColumn,
-          tasks: sourceColumn.tasks.filter((i) => i.id !== item.id),
-        },
-        [finishColumnId]: {
-          ...destinationColumn,
-          tasks: destinationItems,
-        },
-      }
-
-      updateTasks(
-        updatedMap[startColumnId].tasks.map((item, i) => ({
-          ...item,
-          taskOrder: i,
-        }))
-      )
-      updateTasks(
-        updatedMap[finishColumnId].tasks.map((item, i) => ({
-          ...item,
-          taskOrder: i,
-        }))
-      )
-    },
-    [updateTasks, data]
-  )
-
-  const [instanceId] = useState(() => Symbol("instance-id"))
+  const [data, setData] = useState(boardData)
+  const scrollableRef = useRef<HTMLDivElement | null>(null)
+  const { kanbanFilter } = useKanbanFilter()
 
   useEffect(() => {
+    const element = scrollableRef.current
+    invariant(element)
     return combine(
       monitorForElements({
-        canMonitor({ source }) {
-          return source.data.instanceId === instanceId
-        },
-        onDrop(args) {
-          const { location, source } = args
+        canMonitor: isDraggingACard,
+        onDrop({ source, location }) {
+          // setIsChecking(source);
 
-          // didn't drop on anything
-          if (!location.current.dropTargets.length) {
+          const dragging = source.data
+          if (!isCardData(dragging)) {
             return
           }
-          // need to handle drop
 
-          // 1. remove element from original position
-          // 2. move to new position
+          const innerMost = location.current.dropTargets[0]
 
-          // if (source.data.type === "column") {
-          //   const startIndex: number = data.orderedColumnIds.findIndex(
-          //     (columnId) => columnId === source.data.columnId
-          //   )
+          if (!innerMost) {
+            return
+          }
+          const dropTargetData = innerMost.data
+          const homeColumnIndex = data.columns.findIndex(
+            (column) => column.id === dragging.columnId
+          )
+          const home: TColumn | undefined = data.columns[homeColumnIndex]
 
-          //   const target = location.current.dropTargets[0]
-          //   const indexOfTarget: number = data.orderedColumnIds.findIndex(
-          //     (id) => id === target.data.columnId
-          //   )
-          //   const closestEdgeOfTarget: Edge | null = extractClosestEdge(
-          //     target.data
-          //   )
+          if (!home) {
+            return
+          }
+          const cardIndexInHome = home.cards.findIndex(
+            (card) => card.id === dragging.card.id
+          )
 
-          //   const finishIndex = getReorderDestinationIndex({
-          //     startIndex,
-          //     indexOfTarget,
-          //     closestEdgeOfTarget,
-          //     axis: "horizontal",
-          //   })
-
-          //   // reorderColumn({ startIndex, finishIndex, trigger: "pointer" });
-          // }
-          // Dragging a card
-          if (source.data.itemId) {
-            const itemId = source.data.itemId
-            invariant(typeof itemId === "string")
-            // TODO: these lines not needed if item has columnId on it
-            const [, startColumnRecord] = location.initial.dropTargets
-            const sourceId = startColumnRecord.data.columnId
-            invariant(typeof sourceId === "string")
-            const sourceColumn = data.columnMap[sourceId]
-            const itemIndex = sourceColumn.tasks.findIndex(
-              (item) => item.id === itemId
+          // dropping on a card
+          if (isCardDropTargetData(dropTargetData)) {
+            const destinationColumnIndex = data.columns.findIndex(
+              (column) => column.id === dropTargetData.columnId
             )
-            invariant(itemIndex !== undefined)
-            if (location.current.dropTargets.length === 1) {
-              const [destinationColumnRecord] = location.current.dropTargets
-              const destinationId = destinationColumnRecord.data.columnId
-              invariant(typeof destinationId === "string")
-              const destinationColumn = data.columnMap[destinationId]
-              invariant(destinationColumn)
+            const destination = data.columns[destinationColumnIndex]
+            // reordering in home column
+            if (home === destination) {
+              const cardFinishIndex = home.cards.findIndex(
+                (card) => card.id === dropTargetData.card.id
+              )
 
-              // reordering in same column
-              if (sourceColumn === destinationColumn) {
-                const destinationIndex = getReorderDestinationIndex({
-                  startIndex: itemIndex,
-                  indexOfTarget: sourceColumn.tasks.length - 1,
-                  closestEdgeOfTarget: null,
-                  axis: "vertical",
-                })
-                reorderCard({
-                  columnId: sourceColumn.id,
-                  startIndex: itemIndex,
-                  finishIndex: destinationIndex,
-                  trigger: "pointer",
-                })
+              // could not find cards needed
+              if (cardIndexInHome === -1 || cardFinishIndex === -1) {
                 return
               }
 
-              // moving to a new column
-              moveCard({
-                itemIndexInStartColumn: itemIndex,
-                startColumnId: sourceColumn.id,
-                finishColumnId: destinationColumn.id,
-                trigger: "pointer",
+              // no change needed
+              if (cardIndexInHome === cardFinishIndex) {
+                return
+              }
+
+              const closestEdge = extractClosestEdge(dropTargetData)
+
+              const reordered = reorderWithEdge({
+                axis: "vertical",
+                list: home.cards,
+                startIndex: cardIndexInHome,
+                indexOfTarget: cardFinishIndex,
+                closestEdgeOfTarget: closestEdge,
+              })
+
+              const updated: TColumn = {
+                ...home,
+                cards: reordered,
+              }
+              const columns = Array.from(data.columns)
+              columns[homeColumnIndex] = updated
+
+              setData((prevData) => {
+                const updatedColumns = [...prevData.columns]
+                updatedColumns[homeColumnIndex] = updated
+
+                return {
+                  ...prevData,
+                  columns: updatedColumns,
+                }
               })
               return
             }
 
-            // dropping in a column (relative to a card)
-            if (location.current.dropTargets.length === 2) {
-              const [destinationCardRecord, destinationColumnRecord] =
-                location.current.dropTargets
-              const destinationColumnId = destinationColumnRecord.data.columnId
+            // moving card from one column to another
 
-              invariant(typeof destinationColumnId === "string")
-              const destinationColumn = data.columnMap[destinationColumnId]
-
-              const indexOfTarget = destinationColumn.tasks.findIndex(
-                (item) => item.id === destinationCardRecord.data.itemId
-              )
-              const closestEdgeOfTarget: Edge | null = extractClosestEdge(
-                destinationCardRecord.data
-              )
-
-              // case 1: ordering in the same column
-              if (sourceColumn === destinationColumn) {
-                const destinationIndex = getReorderDestinationIndex({
-                  startIndex: itemIndex,
-                  indexOfTarget,
-                  closestEdgeOfTarget,
-                  axis: "vertical",
-                })
-                reorderCard({
-                  columnId: sourceColumn.id,
-                  startIndex: itemIndex,
-                  finishIndex: destinationIndex,
-                  trigger: "pointer",
-                })
-                return
-              }
-
-              // case 2: moving into a new column relative to a card
-
-              const destinationIndex =
-                closestEdgeOfTarget === "bottom"
-                  ? indexOfTarget + 1
-                  : indexOfTarget
-
-              moveCard({
-                itemIndexInStartColumn: itemIndex,
-                startColumnId: sourceColumn.id,
-                finishColumnId: destinationColumn.id,
-                itemIndexInFinishColumn: destinationIndex,
-                trigger: "pointer",
-              })
+            // unable to find destination
+            if (!destination) {
+              return
             }
+
+            const indexOfTarget = destination.cards.findIndex(
+              (card) => card.id === dropTargetData.card.id
+            )
+
+            const closestEdge = extractClosestEdge(dropTargetData)
+            const finalIndex =
+              closestEdge === "bottom" ? indexOfTarget + 1 : indexOfTarget
+
+            // remove card from home list
+            const homeCards = Array.from(home.cards)
+            homeCards.splice(cardIndexInHome, 1)
+
+            // insert into destination list
+            const destinationCards = Array.from(destination.cards)
+            destinationCards.splice(finalIndex, 0, dragging.card)
+
+            const columns = Array.from(data.columns)
+            columns[homeColumnIndex] = {
+              ...home,
+              cards: homeCards,
+            }
+            columns[destinationColumnIndex] = {
+              ...destination,
+              cards: destinationCards,
+            }
+            setData((prevData) => ({ ...prevData, columns }))
+            return
+          }
+
+          // dropping onto a column, but not onto a card
+          if (isColumnData(dropTargetData)) {
+            const destinationColumnIndex = data.columns.findIndex(
+              (column) => column.id === dropTargetData.column.id
+            )
+            const destination = data.columns[destinationColumnIndex]
+
+            if (!destination) {
+              return
+            }
+
+            // dropping on home
+            if (home === destination) {
+              // move to last position
+              const reordered = reorder({
+                list: home.cards,
+                startIndex: cardIndexInHome,
+                finishIndex: home.cards.length - 1,
+              })
+
+              const updated: TColumn = {
+                ...home,
+                cards: reordered,
+              }
+              const columns = Array.from(data.columns)
+              columns[homeColumnIndex] = updated
+              setData({ ...data, columns })
+              return
+            }
+
+            console.log("moving card to another column")
+
+            // remove card from home list
+
+            const homeCards = Array.from(home.cards)
+            homeCards.splice(cardIndexInHome, 1)
+
+            // insert into destination list
+            const destinationCards = Array.from(destination.cards)
+            destinationCards.splice(destination.cards.length, 0, dragging.card)
+
+            const columns = Array.from(data.columns)
+            columns[homeColumnIndex] = {
+              ...home,
+              cards: homeCards,
+            }
+            columns[destinationColumnIndex] = {
+              ...destination,
+              cards: destinationCards,
+            }
+            setData({ ...data, columns })
+            return
+          }
+        },
+      }),
+      // monitorForElements({
+      //   canMonitor: isDraggingAColumn,
+      //   onDrop({ source, location }) {
+      //     setIsChecking(source);
+      //     const dragging = source.data;
+      //     if (!isColumnData(dragging)) {
+      //       return;
+      //     }
+
+      //     const innerMost = location.current.dropTargets[0];
+
+      //     if (!innerMost) {
+      //       return;
+      //     }
+      //     const dropTargetData = innerMost.data;
+
+      //     if (!isColumnData(dropTargetData)) {
+      //       return;
+      //     }
+
+      //     const homeIndex = data.columns.findIndex((column) => column.id === dragging.column.id);
+      //     const destinationIndex = data.columns.findIndex(
+      //       (column) => column.id === dropTargetData.column.id,
+      //     );
+
+      //     if (homeIndex === -1 || destinationIndex === -1) {
+      //       return;
+      //     }
+
+      //     if (homeIndex === destinationIndex) {
+      //       return;
+      //     }
+
+      //     const reordered = reorder({
+      //       list: data.columns,
+      //       startIndex: homeIndex,
+      //       finishIndex: destinationIndex,
+      //     });
+      //     setData({ ...data, columns: reordered });
+      //   },
+      // }),
+      autoScrollForElements({
+        canScroll({ source }) {
+          return isDraggingACard({ source }) || isDraggingAColumn({ source })
+        },
+        element,
+      }),
+      unsafeOverflowAutoScrollForElements({
+        element,
+        canScroll({ source }) {
+          return isDraggingACard({ source }) || isDraggingAColumn({ source })
+        },
+        getOverflow() {
+          return {
+            forLeftEdge: {
+              top: 1000,
+              left: 1000,
+              bottom: 1000,
+            },
+            forRightEdge: {
+              top: 1000,
+              right: 1000,
+              bottom: 1000,
+            },
           }
         },
       })
     )
-  }, [data, instanceId, moveCard, reorderCard])
+  }, [data, setData])
 
-  const contextValue: BoardContextValue = useMemo(() => {
-    return {
-      getColumns,
-      // reorderColumn,
-      reorderCard,
-      moveCard,
+  // Panning the board
+  useEffect(() => {
+    let cleanupActive: CleanupFn | null = null
+    const scrollable = scrollableRef.current
+    invariant(scrollable)
 
-      instanceId,
+    function begin({ startX }: { startX: number }) {
+      let lastX = startX
+
+      const cleanupEvents = bindAll(
+        window,
+        [
+          {
+            type: "pointermove",
+            listener(event) {
+              const currentX = event.clientX
+              const diffX = lastX - currentX
+
+              lastX = currentX
+              scrollable?.scrollBy({ left: diffX })
+            },
+          },
+          // stop panning if we see any of these events
+          ...(
+            [
+              "pointercancel",
+              "pointerup",
+              "pointerdown",
+              "keydown",
+              "resize",
+              "click",
+              "visibilitychange",
+            ] as const
+          ).map((eventName) => ({
+            type: eventName,
+            listener: () => cleanupEvents(),
+          })),
+        ],
+
+        { capture: true }
+      )
+
+      cleanupActive = cleanupEvents
     }
-  }, [getColumns, reorderCard, moveCard, instanceId])
 
-  if (isLoading)
-    return (
-      <Flex
-        className="h-[calc((100vh-var(--navbar-height))-3rem)]"
-        align="center"
-        justify="center"
-      >
-        <Spinner className="size-10" />
-      </Flex>
-    )
-  if (!columns.length)
-    return (
-      <Card>
-        <CardContent>
-          <p className="text-center">No columns or tasks found</p>
-        </CardContent>
-      </Card>
-    )
+    const cleanupStart = bindAll(scrollable, [
+      {
+        type: "pointerdown",
+        listener(event) {
+          if (!(event.target instanceof HTMLElement)) {
+            return
+          }
+          // ignore interactive elements
+          if (event.target.closest(`[${blockBoardPanningAttr}]`)) {
+            return
+          }
+
+          begin({ startX: event.clientX })
+        },
+      },
+    ])
+
+    return function cleanupAll() {
+      cleanupStart()
+      cleanupActive?.()
+    }
+  }, [])
 
   return (
-    <BoardContext.Provider value={contextValue}>
-      <Board columns={columns} tasks={tasks} />
-    </BoardContext.Provider>
+    <>
+      <Box
+        className={`${kanbanFilter && "flex w-full gap-6 "} h-full overflow-hidden`}
+        ref={scrollableRef}
+      >
+        <Box
+          className={`${kanbanFilter ? "w-full space-y-5 " : "flex flex-row gap-4 2xl:gap-7"}`}
+        >
+          {data.columns.map((column) => (
+            <BoardColumn
+              key={column.id}
+              column={column}
+              kanbanFilter={kanbanFilter}
+            />
+          ))}
+        </Box>
+        <Suspense fallback={<Box className="p-4">Loading drawer...</Box>}>
+          <TaskCardDrawer kanbanFilter={kanbanFilter} />
+        </Suspense>
+      </Box>
+    </>
   )
 }

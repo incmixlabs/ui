@@ -1,13 +1,13 @@
+import { Box, Flex } from "@incmix/ui"
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons"
-import { Box, Flex } from "@radix-ui/themes"
 import { useRef, useState } from "react"
 import { Avatar } from "./avatar"
 import { Button } from "./button"
 
 type AvatarEditableProps = {
   size?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
-  imageUrl?: string | null
-  fullName?: string
+  src?: string | undefined
+  name?: string
   deletable?: boolean
   onImageChange?: (file: File) => Promise<void>
   onImageDelete?: () => Promise<void>
@@ -16,8 +16,8 @@ type AvatarEditableProps = {
 
 export const AvatarEditable: React.FC<AvatarEditableProps> = ({
   size = "3",
-  imageUrl,
-  fullName,
+  src,
+  name,
   deletable = true,
   onImageChange,
   onImageDelete,
@@ -35,7 +35,7 @@ export const AvatarEditable: React.FC<AvatarEditableProps> = ({
 
   return (
     <Box position="relative" className="rounded-full">
-      <Avatar size={size} imageUrl={imageUrl} fullName={fullName} />
+      <Avatar size={size} src={src} name={name} />
       <Flex
         position="absolute"
         inset="0"
@@ -63,7 +63,7 @@ export const AvatarEditable: React.FC<AvatarEditableProps> = ({
           onChange={handleFileUpload}
         />
       </Flex>
-      {deletable && imageUrl && (
+      {deletable && src && (
         <Button
           onClick={onImageDelete}
           variant="ghost"

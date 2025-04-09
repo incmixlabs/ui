@@ -10,7 +10,7 @@ import {
 } from "@components/carousel"
 import { Tabs, TabsList, TabsTrigger } from "@components/tabs"
 import { useRateLimitStore } from "@incmix/store"
-import { Spinner, Text } from "@radix-ui/themes"
+import { Spinner, Text } from "@incmix/ui"
 import { useQuery } from "@tanstack/react-query"
 import { LOCATION_API_URL } from "@utils/constants"
 import { DateTime } from "luxon"
@@ -145,14 +145,15 @@ export default function NewsWidget({ country }: NewsProps) {
   })
 
   const newsCards = useMemo(() => {
-    if (newsData)
-      return newsData.map((news) => {
+    if (newsData && Array.isArray(newsData))
+      return newsData?.map((news) => {
         return <NewsCard {...news} key={news.position} />
       })
+    return []
   }, [newsData])
 
   const tabs = useMemo(() => {
-    if (topicData?.topics)
+    if (topicData?.topics && Array.isArray(topicData.topics))
       return topicData.topics.map(({ topic_token, title }) => {
         return (
           <TabsTrigger key={`cat_${topic_token}`} value={topic_token}>

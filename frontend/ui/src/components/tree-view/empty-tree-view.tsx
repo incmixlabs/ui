@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, Flex, Text } from "@radix-ui/themes"
+import { Button, Flex, Text, TextArea, iconSize } from "@incmix/ui"
 import { FilePlus, FolderPlus } from "lucide-react"
 import React from "react"
 import { TreeItemDialog } from "./tree-item-dialog"
@@ -78,7 +78,7 @@ export function EmptyTreeView({
               setDialogOpen(true)
             }}
           >
-            <FilePlus className="mr-2 h-4 w-4" />
+            <FilePlus className={`mr-2 ${iconSize}`} />
             {newFileButtonText ?? "New File"}
           </Button>
           <Button
@@ -89,7 +89,7 @@ export function EmptyTreeView({
               setDialogOpen(true)
             }}
           >
-            <FolderPlus className="mr-2 h-4 w-4" />
+            <FolderPlus className={`mr-2 ${iconSize}`} />
             {newFolderButtonText ?? "New Folder"}
           </Button>
         </Flex>

@@ -1,4 +1,4 @@
-import { Box } from "@radix-ui/themes"
+import { Box } from "@incmix/ui"
 import { useEffect, useState } from "react"
 import { Battery, type BatteryInfo } from "./battery"
 
