@@ -1,9 +1,9 @@
 "use client"
 
-import { FilePlus, FolderPlus } from "lucide-react"
-
 import { Button, Flex, Text } from "@/components/base"
 import { iconSize } from "@/components/icons/icon"
+import { FilePlus, FolderPlus } from "lucide-react"
+import { useState } from "react"
 import { TreeItemDialog } from "./tree-item-dialog"
 import type { TreeDataItem } from "./tree-view"
 
@@ -20,8 +20,8 @@ export function EmptyTreeView({
   newFileButtonText,
   newFolderButtonText,
 }: EmptyTreeViewProps) {
-  const [dialogOpen, setDialogOpen] = React.useState(false)
-  const [itemType, setItemType] = React.useState<"file" | "folder">("file")
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [itemType, setItemType] = useState<"file" | "folder">("file")
 
   const handleCreateItem = <
     T extends Record<string, string>,

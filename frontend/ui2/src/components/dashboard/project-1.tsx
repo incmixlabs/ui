@@ -1,28 +1,32 @@
+import { Ellipsis, EllipsisVertical, Settings } from "lucide-react"
+import { motion } from "motion/react"
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+import { useState } from "react"
+
 import {
   Avatar,
   Box,
   Button,
+  Calendar,
   CardContainer,
   Checkbox,
   Flex,
   Grid,
   Heading,
   IconButton,
-  RadialBarChart,
   ScrollArea,
+  Text,
+} from "@/components/base"
+import {
+  RadialBarChart,
   StatisticsBarChartView,
   StatsCard,
-  Text,
-  dashboardColorValues,
-} from "@incmix/ui2"
+} from "@/components/chart"
+import { dashboardColorValues } from "@/lib/utils/colors"
 
-import { Ellipsis, EllipsisVertical, Settings } from "lucide-react"
-import { motion } from "motion/react"
-import type React from "react"
-import { useState } from "react"
-import { Calendar } from "../calendar"
-import { SmartDatetimeInput } from "../datetime-picker"
-import { KanbanImages } from "../kanban-board/images"
+import { SmartDatetimeInput } from "@/components/datetime-picker"
+import { KanbanImages } from "@/components/kanban-board/images"
 import { revisionData, taskStats } from "./data"
 import PostingCalendar from "./posting-calendar"
 import RecentActivity from "./recent-activity"

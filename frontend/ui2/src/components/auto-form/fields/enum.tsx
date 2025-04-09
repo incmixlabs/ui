@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Form } from "@/components/shadcn"
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/shadcn/select"
+import { Select } from "@/components/radixui/select"
+import { Form } from "@/components/shadcn"
 import type * as z from "zod"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"
@@ -32,6 +26,8 @@ export default function AutoFormEnum({
     values = baseValues.map((value) => [value, value])
   }
 
+  //
+  // biome-ignore lint/correctness/noUnusedVariables: <explanation>
   function findItem(value: any) {
     return values.find((item) => item[0] === value)
   }
@@ -40,24 +36,20 @@ export default function AutoFormEnum({
     <Form.Item className="flex w-full flex-row items-center justify-start space-x-2">
       <AutoFormLabel label={label} isRequired={isRequired} />
       <Form.Control>
-        <Select
+        <Select.Root
           onValueChange={field.onChange}
           defaultValue={field.value}
           {...fieldProps}
         >
-          <SelectTrigger className={fieldProps.className}>
-            <SelectValue placeholder={fieldConfigItem.inputProps?.placeholder}>
-              {field.value ? findItem(field.value)?.[1] : "Select an option"}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
+          <Select.Trigger />
+          <Select.Content>
             {values.map(([value, label]) => (
-              <SelectItem value={label} key={value}>
+              <Select.Item value={label} key={value}>
                 {label}
-              </SelectItem>
+              </Select.Item>
             ))}
-          </SelectContent>
-        </Select>
+          </Select.Content>
+        </Select.Root>
       </Form.Control>
       <AutoFormTooltip content={fieldConfigItem.description} />
       <Form.Message />

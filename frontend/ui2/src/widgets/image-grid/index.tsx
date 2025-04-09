@@ -95,7 +95,7 @@ export function ImageGrid() {
   }
 
   return (
-    <Card className="min-w-[48rem] max-w-7xl space-y-10">
+    <Card.Root className="min-w-[48rem] max-w-7xl space-y-10">
       <Flex gap="4" align="center" justify="end">
         <Button color="red" onClick={deleteAll}>
           <Trash />
@@ -129,6 +129,6 @@ export function ImageGrid() {
           </Text>
         )}
       </Box>
-    </Card>
+    </Card.Root>
   )
 }

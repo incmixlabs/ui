@@ -1,4 +1,5 @@
-import { cn } from "@utils"
+/* eslint-disable react-refresh/only-export-components */
+import { cn } from "@/lib/utils"
 import { Trash2 as RemoveIcon } from "lucide-react"
 import {
   type Dispatch,
