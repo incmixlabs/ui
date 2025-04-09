@@ -71,3 +71,6 @@ export * from "./badges"
 export * from "./multiple-selector"
 export * from "./skeleton"
 export * from "./tooltip"
+
+
+export * from "./types"

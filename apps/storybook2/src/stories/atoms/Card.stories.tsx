@@ -1,7 +1,7 @@
 import {
   FlowCard as Card,
   type FlowCardProps as CardProps,
-} from "@incmix/ui/flow-card"
+} from "@incmix/ui2/card/flow-card"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const meta = {

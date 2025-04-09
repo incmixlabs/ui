@@ -1,5 +1,5 @@
-import { Box } from "@incmix/ui"
-import { Calendar, type CalendarEvent } from "@incmix/ui/widgets"
+import { Box } from "@incmix/ui2"
+import { Calendar, type CalendarEvent } from "@incmix/ui2/widgets"
 import { createId as cuid } from "@paralleldrive/cuid2"
 import type { Meta, StoryObj } from "@storybook/react"
 import { DateTime } from "luxon"

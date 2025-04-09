@@ -1,11 +1,13 @@
-import { Button, Card, Flex, FormField, Text, cn } from "@incmix/ui"
-import { Step, type StepItem, Stepper, useStepper } from "@incmix/ui/stepper"
+import { Button, Card, Flex, Text  } from "@incmix/ui2/radixui"
+import { Step, type StepItem, Stepper, useStepper } from "@incmix/ui2/stepper"
 import * as Collapsible from "@radix-ui/react-collapsible"
 import { PersonIcon, QuoteIcon, StarIcon } from "@radix-ui/react-icons"
 import type { Meta, StoryObj } from "@storybook/react"
 import { useForm } from "@tanstack/react-form"
 import { zodValidator } from "@tanstack/zod-form-adapter"
 import { z } from "zod"
+import { Form } from "@incmix/ui2/shadcn"
+import { cn } from "@incmix/ui2/utils"
 
 const meta: Meta<typeof Stepper> = {
   title: "Atoms/NewStepper",
@@ -59,11 +61,11 @@ function StepperFooter({
   } = useStepper()
 
   const FinalCard = () => (
-    <Card className="my-2 h-40">
+    <Card.Root className="my-2 h-40">
       <Flex className="h-full" justify="center" align="center">
         <Text className="text-xl">Woohoo! All steps completed! 🎉</Text>
       </Flex>
-    </Card>
+    </Card.Root>
   )
 
   const Btn = formSubmit ? Button : Button
@@ -121,11 +123,11 @@ function StepperFooter({
 
 function StepCard({ index }: { index: number }) {
   return (
-    <Card className="my-2 h-40">
+    <Card.Root className="my-2 h-40">
       <Flex className="h-full" justify="center" align="center">
         <Text className="text-gray-10 text-xl">Step {index + 1}</Text>
       </Flex>
-    </Card>
+    </Card.Root>
   )
 }
 
@@ -133,7 +135,7 @@ export const Default: Story = {
   render: () => {
     return (
       <Flex direction="column" gap="4">
-        <Stepper steps={steps}>
+        <Stepper steps={steps} initialStep={0}>
           {steps.map((step, index) => (
             <Step
               key={step.label}
@@ -154,7 +156,7 @@ export const Horizontal: Story = {
   render: () => {
     return (
       <Flex direction="column" gap="4">
-        <Stepper steps={steps} orientation="horizontal">
+        <Stepper steps={steps} orientation="horizontal" initialStep={0}>
           {steps.map((step, index) => (
             <Step
               key={step.label}
@@ -175,7 +177,7 @@ export const Vertical: Story = {
   render: () => {
     return (
       <Flex direction="column" gap="4">
-        <Stepper steps={steps} orientation="vertical">
+        <Stepper steps={steps} orientation="vertical" initialStep={0}>
           {steps.map((step, index) => (
             <Step
               key={step.label}
@@ -196,7 +198,7 @@ export const Circle: Story = {
   render: () => {
     return (
       <Flex direction="column" gap="4">
-        <Stepper steps={steps} variant="circle">
+        <Stepper steps={steps} variant="circle" initialStep={0}>
           {steps.map((step, index) => (
             <Step
               key={step.label}
@@ -217,7 +219,7 @@ export const CircleAlt: Story = {
   render: () => {
     return (
       <Flex direction="column" gap="4">
-        <Stepper steps={steps} variant="circle-alt">
+        <Stepper steps={steps} variant="circle-alt" initialStep={0}>
           {steps.map((step, index) => (
             <Step
               key={step.label}
@@ -238,7 +240,7 @@ export const Line: Story = {
   render: () => {
     return (
       <Flex direction="column" gap="4">
-        <Stepper steps={steps} variant="line">
+        <Stepper steps={steps} variant="line" initialStep={0}>
           {steps.map((step, index) => (
             <Step
               key={step.label}
@@ -259,7 +261,7 @@ export const ErrorState: Story = {
   render: () => {
     return (
       <Flex direction="column" gap="4">
-        <Stepper steps={steps} state="error">
+        <Stepper steps={steps} state="error" initialStep={0}>
           {steps.map((step, index) => (
             <Step
               key={step.label}
@@ -280,7 +282,7 @@ export const LoadingState: Story = {
   render: () => {
     return (
       <Flex direction="column" gap="4">
-        <Stepper steps={steps} state="loading">
+        <Stepper steps={steps} state="loading" initialStep={0}>
           {steps.map((step, index) => (
             <Step
               key={step.label}
@@ -319,7 +321,7 @@ export const CustomIcons: Story = {
   render: () => {
     return (
       <Flex direction="column" gap="4">
-        <Stepper steps={customIconSteps}>
+        <Stepper steps={customIconSteps} initialStep={0}>
           {customIconSteps.map((step, index) => (
             <Step
               key={step.label}
@@ -341,7 +343,7 @@ export const FooterInside: Story = {
   render: () => {
     return (
       <Flex direction="column" gap="4">
-        <Stepper steps={steps} orientation="vertical">
+        <Stepper steps={steps} orientation="vertical" initialStep={0}>
           {steps.map((step, index) => (
             <Step
               key={step.label}
@@ -367,8 +369,7 @@ export const ClickableSteps: Story = {
           steps={steps}
           onClickStep={(step, setStep) => {
             setStep(step)
-          }}
-        >
+          } } initialStep={0}        >
           {steps.map((step, index) => (
             <Step
               key={step.label}
@@ -440,7 +441,7 @@ export const WithForm: Story = {
   render: () => {
     return (
       <Flex direction="column" gap="4">
-        <Stepper steps={formSteps}>
+        <Stepper steps={formSteps} initialStep={0}>
           {formSteps.map((step) => (
             <Step
               key={step.label}
@@ -458,6 +459,39 @@ export const WithForm: Story = {
     )
   },
 }
+
+// Custom form field wrapper component that works with the Form components
+const FormFieldWrapper = ({
+  name,
+  label,
+  type,
+  field
+}: {
+  name: string;
+  label: string;
+  type?: "number" | "search" | "textarea" | "time" | "text" | "hidden" | "tel" | "url" | "email" | "date" | "password" | "datetime-local" | "month" | "week";
+  field: any; // Using any for field API type to avoid complexity
+}) => {
+  return (
+    <Form.Item>
+      <Form.Label>{label}</Form.Label>
+      <Form.Control>
+        <input
+          className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          type={type || "text"}
+          value={field.state.value || ''}
+          onChange={e => field.handleChange(e.target.value)}
+          onBlur={field.handleBlur}
+        />
+      </Form.Control>
+      {field.state.meta.errors && (
+        <Form.Message>
+          {field.state.meta.errors.join(", ")}
+        </Form.Message>
+      )}
+    </Form.Item>
+  );
+};
 
 function StepForm({ fields }: { fields: (typeof formSteps)[0]["fields"] }) {
   const form = useForm({
@@ -488,7 +522,7 @@ function StepForm({ fields }: { fields: (typeof formSteps)[0]["fields"] }) {
             }}
           >
             {(fieldApi) => (
-              <FormField
+              <FormFieldWrapper
                 key={field.name}
                 name={field.name}
                 label={field.label}

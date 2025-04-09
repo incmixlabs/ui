@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-refresh/only-export-components */
-/* eslint-disable @typescript-eslint/no-unused-expressions */
+ 
 "use client"
 import CheckIcon from "@/components/icons/check"
 import Loader from "@/components/icons/loader"
@@ -749,7 +750,7 @@ const HorizontalContent = ({ children }: PropsWithChildren) => {
         if (!React.isValidElement(node)) {
           return null
         }
-        // @ts-ignore
+        // @ts-expect-error
         return React.Children.map(node.props.children, (childNode) => childNode)
       })}
     </>

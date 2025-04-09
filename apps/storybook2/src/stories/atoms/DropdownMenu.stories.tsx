@@ -1,12 +1,13 @@
+
 import {
   DropdownMenu,
-  type DropdownMenuItemProps,
-  dropdownContentPropDefs,
-} from "@incmix/ui"
-import { accentColorEnums } from "@incmix/ui/utils"
+  dropdownMenuContentPropDefs,
+} from "@incmix/ui2/radixui"
+import { accentColorEnums } from "@incmix/ui2/utils/colors"
 import type { Meta, StoryObj } from "@storybook/react"
+import React from "react"
 
-const { variant, size } = dropdownContentPropDefs
+const { variant, size } = dropdownMenuContentPropDefs
 
 const _variants = Object.fromEntries(variant.values.map((v) => [v, v]))
 const _sizes = Object.fromEntries(size.values.map((v) => [v, v]))
@@ -14,25 +15,27 @@ const _sizes = Object.fromEntries(size.values.map((v) => [v, v]))
 // @see https://storybook.js.org/docs/react/writing-stories/introduction
 const meta = {
   title: "Atoms/DropdownMenu",
-  component: DropdownMenu,
-  argTypes: {
-    className: {
-      description: "Example description",
-      table: {
-        type: { summary: "string" },
-        defaultValue: { summary: "bar" },
-      },
-      control: "text",
-    },
+  component: DropdownMenu.Root,
+  parameters: {
+    layout: 'centered',
   },
-} satisfies Meta<typeof DropdownMenu>
+} satisfies Meta<typeof DropdownMenu.Root>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 // @see https://storybook.js.org/docs/react/writing-stories/args
 
-const items: DropdownMenuItemProps[] = [
+type MenuItemType = {
+  label: string;
+  onClick?: () => void;
+  shortcut?: string;
+  separator?: boolean;
+  color?: string;
+}
+
+
+const items: MenuItemType[] = [
   {
     label: "Item 1",
     onClick: () => {
@@ -62,6 +65,7 @@ const items: DropdownMenuItemProps[] = [
     },
   },
 ]
+
 export const Default: Story = {
   render: () => {
     return (
@@ -69,22 +73,34 @@ export const Default: Story = {
         {variant.values.map((variant) => (
           <div className="flex items-baseline space-x-2" key={variant}>
             {size.values.map((size) => (
-              <DropdownMenu
-                triggerButtonText={`${variant}`}
-                triggerButton={{
-                  variant: variant,
-                  size: size,
-                }}
-                content={{
-                  size: size,
-                  variant: variant,
-                  highContrast: true,
-                }}
-                items={items}
-                key={`${variant}-${size}`}
-              >
-                {`${variant} (${size})`}
-              </DropdownMenu>
+              <DropdownMenu.Root key={`${variant}-${size}`}>
+                <DropdownMenu.Trigger>
+                  <button>{`${variant} (${size})`}</button>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content
+                  size={size}
+                  variant={variant}
+                  highContrast={true}
+                >
+                  {items.map((item, index) => (
+                    <React.Fragment key={index}>
+                      <DropdownMenu.Item
+                        color={item.color as any} // Use type assertion to bypass type checking
+                          onClick={item.onClick}
+                          >
+                            {item.label}
+                            {/* Replace the Shortcut component with a simple span for keyboard shortcuts */}
+                            {item.shortcut && (
+                              <span style={{ marginLeft: 'auto', fontSize: '0.85em', color: 'var(--gray-11)' }}>
+                                {item.shortcut}
+                              </span>
+                            )}
+                          </DropdownMenu.Item>
+                      {item.separator && <DropdownMenu.Separator />}
+                    </React.Fragment>
+                  ))}
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
             ))}
           </div>
         ))}

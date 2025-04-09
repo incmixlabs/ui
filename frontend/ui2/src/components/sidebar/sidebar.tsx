@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 import * as React from "react"
 
@@ -12,11 +13,11 @@ import {
   Input,
   Separator,
   Skeleton,
-  Tooltip,
 } from "@/components/base"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "../sheet"
+import { TooltipContent, TooltipTrigger ,Tooltip} from "@radix-ui/react-tooltip"
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -118,7 +119,11 @@ const SidebarProvider = React.forwardRef<
       (value: boolean | ((prev: boolean) => boolean)) => {
         const newValue =
           typeof value === "function" ? value(secondaryOpen) : value
-        setSecondaryOpenProp?.(newValue) || _setSecondaryOpen(newValue)
+        if (setSecondaryOpenProp) {
+          setSecondaryOpenProp(newValue);
+        } else {
+          _setSecondaryOpen(newValue);
+        }
       },
       [setSecondaryOpenProp, secondaryOpen]
     )

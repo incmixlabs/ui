@@ -1,7 +1,7 @@
 "use client"
 
-import type { DeepPartial } from "@types"
-import { mergeDeep } from "@utils/objects"
+import type { DeepPartial } from "@/types"
+import { mergeDeep } from "@/lib/objects"
 import { type ComponentPropsWithRef, forwardRef } from "react"
 import { twMerge } from "tailwind-merge"
 import { useTableBodyContext } from "./TableBodyContext"

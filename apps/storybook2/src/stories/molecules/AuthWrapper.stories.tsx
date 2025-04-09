@@ -1,8 +1,8 @@
-import { AuthWrapper } from "@incmix/ui/auth-wrapper"
-import { Button } from "@incmix/ui/button"
-import { Checkbox } from "@incmix/ui/checkbox"
-import { TextInput } from "@incmix/ui/flow-form"
-import { Label } from "@incmix/ui/label"
+import { AuthWrapper } from "@incmix/ui2/auth-wrapper"
+import { Button } from "@incmix/ui2/radixui"
+import { Checkbox } from "@incmix/ui2/radixui"
+import { TextInput } from "@incmix/ui2/flow-form/flow-text-input"
+import { Label } from "@incmix/ui2/flow-form/label"
 
 import type { Meta, StoryObj } from "@storybook/react"
 

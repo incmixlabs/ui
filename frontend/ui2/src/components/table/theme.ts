@@ -1,4 +1,4 @@
-import { createTheme } from "@utils/create-theme"
+import { createTheme } from "@/lib/utils/create-theme"
 import type { TableTheme } from "./Table"
 
 export const tableTheme: TableTheme = createTheme({

@@ -1,13 +1,17 @@
+import { Box, Badge } from "@incmix/ui2/radixui"
 import {
-  Badge,
-  Box,
-  Flex,
   Sidebar,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuSubItem,
   SidebarProvider,
-} from "@incmix/ui"
+  SidebarContent,
+  SidebarHeader,
+  SidebarHeaderLabel,
+  SidebarFooter,
+  SidebarSeparator,
+  SidebarMenuButton
+} from "@incmix/ui2/sidebar"
 
 import {
   DashboardIcon,
@@ -15,8 +19,24 @@ import {
   GearIcon,
   PersonIcon,
 } from "@radix-ui/react-icons"
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta } from "@storybook/react"
 import { useState } from "react"
+
+// CSS Variables required for sidebar styling
+const sidebarStyles = {
+  "--sidebar-width": "16rem",
+  "--sidebar-width-icon": "4rem",
+  "--sidebar-background": "hsl(0, 0%, 100%)",
+  "--sidebar-foreground": "hsl(20, 14.3%, 4.1%)",
+  "--sidebar-border": "hsl(240, 5.9%, 90%)",
+  "--sidebar-accent": "hsl(240, 4.8%, 95.9%)",
+  "--sidebar-accent-foreground": "hsl(240, 5.9%, 10%)",
+  "--sidebar-trigger-background": "hsl(0, 0%, 100%)",
+  "--sidebar-trigger-border": "hsl(240, 5.9%, 90%)",
+  "--sidebar-ring": "hsl(240, 5.9%, 90%)",
+  "--sidebar-item-primary": "hsl(240, 4.8%, 95.9%)",
+  "--sidebar-primary-foreground": "hsl(240, 5.9%, 10%)",
+} as React.CSSProperties;
 
 const meta: Meta<typeof Sidebar> = {
   title: "Layouts/Sidebar",
@@ -24,7 +44,7 @@ const meta: Meta<typeof Sidebar> = {
   tags: ["autodocs"],
   decorators: [
     (Story) => (
-      <Box className="h-full w-[300px]">
+      <Box className="h-screen w-[300px]" style={sidebarStyles}>
         <Story />
       </Box>
     ),
@@ -33,32 +53,48 @@ const meta: Meta<typeof Sidebar> = {
 
 export default meta
 
-const _noop = () => {}
-
 const DefaultContent = () => (
-  <SidebarMenu>
-    <SidebarMenuItem>
-      <DashboardIcon /> Dashboard
-    </SidebarMenuItem>
-    <SidebarMenuItem>
-      <EnvelopeClosedIcon /> Inbox
-      <Badge>3</Badge>
-    </SidebarMenuItem>
-    <SidebarMenuItem>
-      <PersonIcon /> Users
-      <SidebarMenuSubItem>Users List</SidebarMenuSubItem>
-      <SidebarMenuSubItem>Profile</SidebarMenuSubItem>
-      <SidebarMenuSubItem>Settings</SidebarMenuSubItem>
-    </SidebarMenuItem>
-    <SidebarMenuItem>
-      <GearIcon /> Settings
-    </SidebarMenuItem>
-  </SidebarMenu>
+  <>
+    <SidebarHeader>
+      <SidebarHeaderLabel>Sidebar</SidebarHeaderLabel>
+    </SidebarHeader>
+    <SidebarContent>
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton>
+            <DashboardIcon /> Dashboard
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton>
+            <EnvelopeClosedIcon /> Inbox
+          </SidebarMenuButton>
+          <Badge>3</Badge>
+        </SidebarMenuItem>
+        <SidebarSeparator />
+        <SidebarMenuItem>
+          <SidebarMenuButton>
+            <PersonIcon /> Users
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton>
+            <GearIcon /> Settings
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    </SidebarContent>
+    <SidebarFooter>
+      <div className="text-xs text-center text-sidebar-foreground/50">
+        Sidebar Footer
+      </div>
+    </SidebarFooter>
+  </>
 )
 
 export const Extended = () => {
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={true}>
       <Sidebar>
         <DefaultContent />
       </Sidebar>
@@ -66,17 +102,9 @@ export const Extended = () => {
   )
 }
 
-export const Minified = () => {
+export const Collapsed = () => {
   return (
-    <Sidebar>
-      <DefaultContent />
-    </Sidebar>
-  )
-}
-
-export const WithName = () => {
-  return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={false}>
       <Sidebar>
         <DefaultContent />
       </Sidebar>
@@ -84,11 +112,44 @@ export const WithName = () => {
   )
 }
 
-export const WithMinifyButton = () => {
-  const [_isMinified, _setIsMinified] = useState(false)
+export const WithSubItems = () => {
+  return (
+    <SidebarProvider defaultOpen={true}>
+      <Sidebar>
+        <SidebarHeader>
+          <SidebarHeaderLabel>With Sub-items</SidebarHeaderLabel>
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton>
+                <DashboardIcon /> Dashboard
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton>
+                <PersonIcon /> Users
+              </SidebarMenuButton>
+              <SidebarMenuSubItem>Users List</SidebarMenuSubItem>
+              <SidebarMenuSubItem>Profile</SidebarMenuSubItem>
+              <SidebarMenuSubItem>Settings</SidebarMenuSubItem>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarContent>
+      </Sidebar>
+    </SidebarProvider>
+  )
+}
+
+export const Toggleable = () => {
+  const [isExpanded, setIsExpanded] = useState(true)
 
   return (
-    <SidebarProvider>
+    <SidebarProvider
+      defaultOpen={isExpanded}
+      open={isExpanded}
+      onOpenChange={(open) => setIsExpanded(open)}
+    >
       <Sidebar>
         <DefaultContent />
       </Sidebar>

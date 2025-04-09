@@ -1,5 +1,5 @@
 import { useThemeStore } from "@incmix/store"
-import { type ClockSize, ClockWidget } from "@incmix/ui/widgets"
+import { type ClockSize, ClockWidget } from "@incmix/ui2/widgets"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof ClockWidget> = {

@@ -1,4 +1,4 @@
-import { MultipleSelectorControlled } from "@incmix/ui"
+import { MultipleSelectorControlled } from "@incmix/ui2/multiple-selector"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof MultipleSelectorControlled> = {

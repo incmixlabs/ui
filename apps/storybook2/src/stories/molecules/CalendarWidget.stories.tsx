@@ -1,5 +1,5 @@
-import { Box } from "@incmix/ui"
-import { CalendarWidget } from "@incmix/ui/widgets"
+import { Box } from "@incmix/ui2"
+import { CalendarWidget } from "@incmix/ui2/widgets"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const meta: Meta<typeof CalendarWidget> = {
