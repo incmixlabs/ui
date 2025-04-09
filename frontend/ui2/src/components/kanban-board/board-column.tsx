@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import {
@@ -15,11 +16,10 @@ import type { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist
 import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
 
-import { Box, Flex, Heading } from "@/components/base"
-import { IconButton } from "@/components/radixui/button/icon-button"
+import { Box, Flex, Heading, IconButton } from "@/components/base"
+import { isSafari } from "@/lib/utils/browser"
+import { isShallowEqual } from "@/lib/utils/objects"
 import { blockBoardPanningAttr } from "./data-attributes"
-import { isSafari } from "./is-safari"
-import { isShallowEqual } from "./is-shallow-equal"
 import { TaskCard, TaskCardShadow } from "./task-card"
 import {
   type TCardData,

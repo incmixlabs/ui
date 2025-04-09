@@ -1,6 +1,6 @@
-import { Box, Flex, Heading, Text } from "@/components/base"
 import { CalendarDays, DollarSign } from "lucide-react"
-import React from "react"
+
+import { Box, Flex, Heading, Text } from "@/components/base"
 
 import { ProjectsImages } from "../images"
 const projectDetails = [

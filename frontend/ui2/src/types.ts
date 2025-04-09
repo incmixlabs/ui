@@ -112,3 +112,18 @@ export interface Project {
   color: string
   subProjects?: Project[]
 }
+
+export interface DataItem {
+  name?: string
+  notes?: string
+  value?: string
+}
+
+export interface TreeDataItem {
+  children?: TreeDataItem[]
+  data?: DataItem
+  expanded?: boolean
+  id: string
+  name: string
+  type: "folder" | "file"
+}
