@@ -34,8 +34,8 @@ export function DeleteDialog({
           <Dialog.Description>
             This action cannot be undone. This will permanently delete{" "}
             <span className="font-medium capitalize">
-              {items.length === 1 
-                ? items[0]?.name 
+              {items.length === 1
+                ? items[0]?.name
                 : `${items.length} selected roles`}
             </span>{" "}
             and related permissions from our servers.
