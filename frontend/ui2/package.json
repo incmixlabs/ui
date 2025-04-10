@@ -37,8 +37,7 @@
     "./flow-form": "./src/components/form/index.ts",
     "./flow-form/input": "./src/components/form/input.tsx",
     "./flow-form/label": "./src/components/form/label.tsx",
-    "./table": "./src/components/table.tsx",
-    "./file-folder-accordion": "./src/components/file-folder-accordion/index.tsx"
+    "./table": "./src/components/table.tsx"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "1.4.0",
