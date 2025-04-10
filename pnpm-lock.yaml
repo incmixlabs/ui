@@ -661,9 +661,6 @@ importers:
 
   frontend/store:
     dependencies:
-      '@hono/zod-openapi':
-        specifier: 0.18.3
-        version: 0.18.3(hono@4.7.5)(zod@3.24.2)
       '@incmix/utils':
         specifier: 'catalog:'
         version: 0.3.2(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)

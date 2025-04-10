@@ -1,4 +1,4 @@
-import { Button, Flex, toast } from "@incmix/ui"
+import { Button, Flex, Input, toast } from "@incmix/ui"
 import {
   Table,
   TableBody,
@@ -9,13 +9,23 @@ import {
 } from "@incmix/ui/table"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import {
+  type Column,
+  type ColumnFiltersState,
   type ExpandedState,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
+  getFilteredRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { useContext, useMemo, useState } from "react"
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react"
 import { permissionsContext } from "."
 import { createPermissionSubrows, updateRolesPermissions } from "./actions"
 import { getColumns } from "./columns"
@@ -28,12 +38,19 @@ const PermissonsTable = () => {
 
   const [expandedRows, setExpandedRows] = useState<ExpandedState>({})
 
-  const { changes, rawPermissions, roles } = useContext(permissionsContext)
+  const { changes, setChanges, rawPermissions, roles } =
+    useContext(permissionsContext)
 
   const permissions = useMemo(() => {
-    const transformedPermissions = createPermissionSubrows(rawPermissions)
+    const transformedPermissions = createPermissionSubrows(
+      rawPermissions,
+      roles
+    )
+
     return transformedPermissions
-  }, [rawPermissions])
+  }, [rawPermissions, roles])
+
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
 
   const columns = getColumns(roles, setColumnAction)
   const table = useReactTable<PermissionsWithRole>({
@@ -41,9 +58,13 @@ const PermissonsTable = () => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     state: {
       expanded: expandedRows,
+      columnFilters,
     },
+    filterFromLeafRows: false,
+    onColumnFiltersChange: setColumnFilters,
     onExpandedChange: setExpandedRows,
     getSubRows: (row) => row.subRows,
   })
@@ -55,6 +76,7 @@ const PermissonsTable = () => {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ["roles-permissions"] })
       toast.success("Roles permissions updated")
+      setChanges([])
     },
     onError: (error) => {
       toast.error(error.message)
@@ -102,6 +124,11 @@ const PermissonsTable = () => {
                   header.column.columnDef.header,
                   header.getContext()
                 )}
+                {header.column.getCanFilter() ? (
+                  <div>
+                    <Filter column={header.column} />
+                  </div>
+                ) : null}
               </TableHeadCell>
             ))}
           </TableHead>
@@ -130,17 +157,75 @@ const PermissonsTable = () => {
           })
         }}
       />
-      <DeleteDialog
-        item={columnAction.role}
-        onSuccess={async () => {
-          setColumnAction(null)
-          await queryClient.invalidateQueries({
-            queryKey: ["roles-permissions"],
-          })
-        }}
-      />
+      {
+        <DeleteDialog
+          items={columnAction?.role ? [columnAction.role] : []}
+          open={columnAction?.type === "delete"}
+          onOpenChange={() => setColumnAction(null)}
+          onSuccess={async () => {
+            setColumnAction(null)
+            await queryClient.invalidateQueries({
+              queryKey: ["roles-permissions"],
+            })
+          }}
+        />
+      }
     </Flex>
   )
 }
 
+function Filter({ column }: { column: Column<PermissionsWithRole, unknown> }) {
+  const columnFilterValue = column.getFilterValue()
+  const [value, setValue] = useState<string>(
+    (columnFilterValue as string) || ""
+  )
+
+  // Use useRef to store the timeout ID to prevent it from causing re-renders
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Update local state when column filter value changes
+  useEffect(() => {
+    if (columnFilterValue !== value) {
+      setValue((columnFilterValue as string) || "")
+    }
+  }, [columnFilterValue])
+
+  // Clear the previous timeout and set a new one when value changes
+  const debouncedSetFilter = useCallback(
+    (newValue: string) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        column.setFilterValue(newValue)
+      }, 300)
+    },
+    [column]
+  )
+
+  // Only update the filter when value changes from user input
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value
+    setValue(newValue)
+    debouncedSetFilter(newValue)
+  }
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
+
+  return (
+    <Input
+      placeholder="Search Permissions"
+      value={value}
+      onChange={handleInputChange}
+    />
+  )
+}
 export default PermissonsTable

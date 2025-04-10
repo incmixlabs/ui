@@ -24,7 +24,8 @@ export async function getRolesPermissions() {
 }
 
 export function createPermissionSubrows(
-  permissions: PermissionsResponse[]
+  permissions: PermissionsResponse[],
+  roles: Role[]
 ): PermissionsWithRole[] {
   const transformedPermissions: PermissionsWithRole[] = []
 
@@ -71,12 +72,8 @@ export function createPermissionSubrows(
         const virtualManage: PermissionsWithRole = {
           subject: subject as (typeof subjects)[number],
           action: "manage",
-          [UserRoles.ROLE_ADMIN]: false,
-          [UserRoles.ROLE_EDITOR]: false,
-          [UserRoles.ROLE_VIEWER]: false,
-          [UserRoles.ROLE_OWNER]: false,
-          [UserRoles.ROLE_COMMENTER]: false,
-          subRows: crudPermissions.map((permission) => ({
+          ...Object.fromEntries(roles.map((r) => [r.name, false])),
+          subRows: crudPermissions.map<PermissionsWithRole>((permission) => ({
             ...permission,
             subRows: [],
           })),
