@@ -9,6 +9,11 @@ interface CardContainerProps extends React.ComponentPropsWithoutRef<typeof Card>
 export const CardContainer: React.FC<CardContainerProps> = ({
   children,
   className = "",
+  ...props
 }) => {
-  return <Card className={`bg-gray-2 p-6 ${className}`}>{children}</Card>
+  return (
+    <Card className={`bg-gray-2 p-6 ${className}`} {...props}>
+      {children}
+    </Card>
+  )
 }
