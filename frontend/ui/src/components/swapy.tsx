@@ -1,4 +1,4 @@
-import { Box } from "@incmix/ui"
+import { Box, cn } from "@incmix/ui"
 import type { BoxProps } from "@radix-ui/themes"
 import { useEffect, useRef } from "react"
 import { createSwapy } from "swapy"
@@ -16,10 +16,12 @@ type Config = {
 }
 
 type SwapyLayoutProps = {
+  id: string
   enable?: boolean
   onSwap?: (record: Record<string, string | null>) => void
   config?: Partial<Config>
-}
+  children: React.ReactNode
+} & BoxProps
 
 export const SwapyLayout = ({
   id,
@@ -28,46 +30,59 @@ export const SwapyLayout = ({
   config = {},
   children,
   ...props
-}: SwapyLayoutProps & BoxProps) => {
-  const swapy = useRef<ReturnType<typeof createSwapy>>()
+}: SwapyLayoutProps) => {
+  const containerRef = useRef<HTMLDivElement | null>(null)
+  const swapyRef = useRef<ReturnType<typeof createSwapy> | null>(null)
 
   useEffect(() => {
-    swapy.current = createSwapy(document.querySelector(`#${id}`), config)
-    swapy.current.enable(enable)
-    swapy.current.onSwap((event) => {
-      onSwap(event.data.object)
-    })
+    const container = containerRef.current
+    if (!container) return
+
+    const instance = createSwapy(container, config)
+    swapyRef.current = instance
+
+    instance.enable(enable)
+    instance.onSwap(
+      (event: { data: { object: Record<string, string | null> } }) => {
+        onSwap(event.data.object)
+      }
+    )
 
     return () => {
-      swapy.current?.destroy()
+      instance.destroy()
     }
-  }, [enable, onSwap, config, id])
+  }, [enable, onSwap, config])
 
   return (
-    <Box as="div" id={id} {...props}>
+    <Box as="div" id={id} ref={containerRef} {...props}>
       {children}
     </Box>
   )
 }
 
-type SwapySlotProps = BoxProps & {
+type SwapySlotProps = {
+  id: string
   showHandle?: boolean
-}
+  className?: string
+  children: React.ReactNode
+} & BoxProps
 
 export const SwapySlot = ({
   id,
   showHandle = true,
+  className,
   children,
   ...props
 }: SwapySlotProps) => {
   return (
     <Box
       as="div"
+      className={cn("h-full", className)}
       data-swapy-slot={id}
       style={{ position: "relative" }}
       {...props}
     >
-      <Box as="div" data-swapy-item={id}>
+      <Box as="div" className="h-full" data-swapy-item={id}>
         {showHandle && <DragHandle />}
         {children}
       </Box>
@@ -75,7 +90,11 @@ export const SwapySlot = ({
   )
 }
 
-export const SwapyExclude = ({ id, children, ...props }: BoxProps) => {
+type SwapyExcludeProps = {
+  children: React.ReactNode
+} & BoxProps
+
+export const SwapyExclude = ({ children, ...props }: SwapyExcludeProps) => {
   return (
     <Box as="div" data-swapy-exclude {...props}>
       {children}
