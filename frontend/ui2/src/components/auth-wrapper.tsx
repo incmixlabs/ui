@@ -1,5 +1,5 @@
 import { FlowCard as Card, Image } from "@/components/radixui/card/flow-card"
-import * as React from "react"
+import type * as React from "react"
 export type AuthWrapperProps = {
   image?: string
   step?: number

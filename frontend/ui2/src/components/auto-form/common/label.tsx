@@ -1,6 +1,6 @@
-import * as React from "react"
 import { Form } from "@/components/shadcn"
 import { cn } from "@/lib/utils"
+import * as React from "react"
 
 /**
  * Renders a form label with an optional required indicator.

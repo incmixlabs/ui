@@ -130,10 +130,18 @@ function EditDropdown({
                       <DropdownMenu.Item onSelect={handleEditClick}>
                         <Pencil size={16} /> Edit
                       </DropdownMenu.Item>
-                      <DropdownMenu.Item onSelect={(e: { preventDefault: () => any }) => e.preventDefault()}>
+                      <DropdownMenu.Item
+                        onSelect={(e: { preventDefault: () => any }) =>
+                          e.preventDefault()
+                        }
+                      >
                         <Clipboard size={16} /> Add Subtask
                       </DropdownMenu.Item>
-                      <DropdownMenu.Item onSelect={(e: { preventDefault: () => any }) => e.preventDefault()}>
+                      <DropdownMenu.Item
+                        onSelect={(e: { preventDefault: () => any }) =>
+                          e.preventDefault()
+                        }
+                      >
                         <UserRoundPlus size={16} /> Add Member
                       </DropdownMenu.Item>
                       <DropdownMenu.Item onSelect={handleDuplicate}>

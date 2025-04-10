@@ -125,7 +125,11 @@ export default function ProjectDrawer({
                     <Box className="gap-1 space-y-4">
                       {members?.map((member) => (
                         <Flex gap={"3"} className="" key={member?.id}>
-                          <Avatar src={member.avatar} name = {member.name} className="h-10 w-10" />
+                          <Avatar
+                            src={member.avatar}
+                            name={member.name}
+                            className="h-10 w-10"
+                          />
                           <Box>
                             <Heading size={"3"} className="font-medium">
                               {member?.name}

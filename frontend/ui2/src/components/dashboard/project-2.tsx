@@ -5,12 +5,12 @@ import {
   Calendar,
   CardContainer,
   Checkbox,
-  type ProgressProps,
   Flex,
   Grid,
   Heading,
   IconButton,
   Progress,
+  type ProgressProps,
   ScrollArea,
   Text,
 } from "@/components/base"

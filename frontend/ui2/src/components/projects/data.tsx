@@ -1,5 +1,5 @@
 import { ProjectsImages } from "./images"
-import type { Project, Member } from "./types"
+import type { Member, Project } from "./types"
 
 export const members: Member[] = [
   {
@@ -7,7 +7,7 @@ export const members: Member[] = [
     value: "shane-black",
     name: "Shane Black",
     label: "Shane Black",
-    avatar: ProjectsImages?.user??undefined,
+    avatar: ProjectsImages?.user ?? undefined,
     position: "UI/UX Designer",
     color: "blue",
   },
