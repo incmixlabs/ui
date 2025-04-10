@@ -331,7 +331,7 @@ export const updateEnvironmentVariable = (
   if (args.type === "folder") {
     if (node.type === "leaf") {
       throw new Error(
-        `Node on path ${path} is a leaf, while trying to update a folder`
+        `Node on path ${path} is a folder, while trying to update it as a leaf`
       )
     }
 

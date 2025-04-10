@@ -156,14 +156,19 @@ const Demo: FunctionComponent = () => {
           radius="full"
           className="size-3"
           onClick={() => {
-            const parentId = findParentId(content.data, row.data.id)
-            const newNodeId = addChildToTree(
-              parentId,
-              content,
-              setContent,
-              row.data.id
-            )
-            if (newNodeId) scrollToNode(newNodeId)
+            try {
+              const parentId = findParentId(content.data, row.data.id)
+              const newNodeId = addChildToTree(
+                parentId,
+                content,
+                setContent,
+                row.data.id
+              )
+              if (newNodeId) scrollToNode(newNodeId)
+            } catch (error) {
+              console.error("Failed to add sibling:", error)
+              // Optionally add user feedback here
+            }
           }}
           title="Add sibling"
         >

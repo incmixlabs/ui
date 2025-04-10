@@ -85,7 +85,7 @@ export const Default: Story = {
                   {items.map((item, index) => (
                     <React.Fragment key={index}>
                       <DropdownMenu.Item
-                        color={item.color as any} // Use type assertion to bypass type checking
+                        color={item.color as typeof accentColorEnums[keyof typeof accentColorEnums]} // Use type assertion to bypass type checking
                           onClick={item.onClick}
                           >
                             {item.label}

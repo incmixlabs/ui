@@ -59,9 +59,10 @@ export const FileFolderAccordion: React.FC<FileFolderAccordionProps> = ({
   root,
   style,
 }) => {
+  const items = createAccordionItems(root)
   return (
     <Accordion.Root type="multiple" style={style}>
-      {createAccordionItems(root)}
+      {items.length > 0 ? items : <div>No items found</div>}
     </Accordion.Root>
   )
 }
