@@ -1,8 +1,0 @@
-import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { Box, Flex, Heading, IconButton, Text } from "@/components/base";
-import { Ellipsis } from "lucide-react";
-import { activityGroups } from "./data";
-export default function RecentActivity() {
-    return (_jsxs(_Fragment, { children: [_jsxs("div", { className: "mb-4 flex items-center justify-between", children: [_jsx(Heading, { size: "4", children: "Recent Activity" }), _jsx(IconButton, { variant: "ghost", children: _jsx(Ellipsis, { className: "h-5 w-5" }) })] }), _jsx("div", { className: "space-y-6", children: activityGroups.map((group) => (_jsxs("div", { className: "", children: [_jsx(Heading, { size: "2", className: "pl-5 font-medium", children: group.date }), group.activities.map((activity) => (_jsxs(Flex, { className: "", children: [_jsxs(Box, { className: "relative mr-4 grid flex-shrink-0 place-content-center border-gray-5 border-r py-5 pr-3 text-right", children: [_jsx(Text, { className: "text-sm", children: activity.time }), _jsx(Box, { className: "-right-[2.5px] absolute top-[20%] bottom-[20%] h-[60%] w-1 flex-shrink-0 rounded-full", style: { backgroundColor: activity.color } })] }), _jsxs(Box, { className: "flex flex-1 flex-col justify-center ", children: [_jsx(Text, { className: "text-gray-500 text-sm ", children: activity.user }), _jsxs(Text, { className: "text-gray-900 text-sm dark:text-white", children: [activity.action, " ", _jsxs("span", { className: "text-blue-600", children: ["#", activity.projectNumber] })] })] })] }, activity.id)))] }, group.date))) })] }));
-}
-//# sourceMappingURL=recent-activity.js.map

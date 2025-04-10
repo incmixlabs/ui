@@ -1,1 +1,0 @@
-{"version":3,"file":"tree-view-context.d.ts","sourceRoot":"","sources":["tree-view-context.tsx"],"names":[],"mappings":"AAIA,OAAO,KAAK,EAAE,mBAAmB,EAAE,MAAM,SAAS,CAAA;AAIlD,wBAAgB,kBAAkB,wBAMjC;AAED,KAAK,qBAAqB,GAAG,mBAAmB,GAAG;IACjD,QAAQ,EAAE,KAAK,CAAC,SAAS,CAAA;CAC1B,CAAA;AAED,wBAAgB,gBAAgB,CAAC,EAC/B,QAAQ,EACR,UAAU,EACV,YAAY,EACZ,YAAY,GACb,EAAE,qBAAqB,2CAQvB"}
