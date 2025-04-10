@@ -24,7 +24,7 @@ import type { RxDatabase } from "rxdb"
 import { useRxDB } from "rxdb-hooks"
 
 interface CreateTaskProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog> {
+  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
   projectId: string
   onSuccess?: (data: Task) => void
 }
@@ -103,7 +103,7 @@ export function CreateTaskForm({
   }
 
   return (
-    <Dialog
+    <Dialog.Root
       {...props}
       open={isOpen}
       onOpenChange={(open) => {
@@ -111,10 +111,10 @@ export function CreateTaskForm({
         reset()
       }}
     >
-      <DialogTrigger>
+      <Dialog.Trigger>
         <Button>Add Task</Button>
-      </DialogTrigger>
-      <DialogContent>
+      </Dialog.Trigger>
+      <Dialog.Content>
         <DialogHeader>
           <DialogTitle>Add New Task</DialogTitle>
           <DialogDescription>Add New Task to Board</DialogDescription>
@@ -161,7 +161,7 @@ export function CreateTaskForm({
             </Button>
           </DialogClose>
         </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }

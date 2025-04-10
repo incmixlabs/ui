@@ -3,8 +3,6 @@
 import {
   Button,
   Dialog,
-  DialogClose,
-  DialogContent,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -23,7 +21,7 @@ import { z } from "zod"
 import { setPassword } from "./actions"
 
 interface PasswordDialogProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog> {
+  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
   items: Row<UserAndProfile>["original"][]
   onSuccess?: () => void
 }
@@ -57,10 +55,10 @@ export function PasswordDialog({
   })
 
   return (
-    <Dialog {...props}>
-      <DialogContent>
+    <Dialog.Root {...props}>
+      <Dialog.Content>
         <DialogHeader>
-          <DialogTitle>Change User Password</DialogTitle>
+          <Dialog.Title>Change User Password</Dialog.Title>
         </DialogHeader>
         <form
           onSubmit={(e) => {
@@ -99,13 +97,13 @@ export function PasswordDialog({
           </Flex>
         </form>
         <DialogFooter className="gap-2 sm:space-x-0">
-          <DialogClose>
+          <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </DialogClose>
+          </Dialog.Close>
         </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }

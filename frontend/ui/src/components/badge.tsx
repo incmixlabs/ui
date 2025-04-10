@@ -1,6 +1,6 @@
 import { Badge as RadixBadge } from "@radix-ui/themes"
 import type { BadgeProps } from "@radix-ui/themes"
-import { cn } from "@utils"
+import { cn } from "@utils/cn"
 
 export type ExtendedColorType = BadgeProps["color"] | "black"
 

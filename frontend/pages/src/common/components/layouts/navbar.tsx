@@ -11,6 +11,7 @@ import {
   Flex,
   IconButton,
   Link,
+  Text,
   TextField,
   iconSize,
 } from "@incmix/ui"
@@ -93,13 +94,12 @@ const NavbarExtraIcons: React.FC<{ children?: React.ReactNode }> = ({
 }
 
 const ProfileDropdown: React.FC = () => {
-  const navigate = useNavigate()
   const { t } = useTranslation("navbar")
   const { handleLogout, isPending: isLogoutLoading } = useLogout()
 
   return (
-    <DropdownMenu
-      trigger={
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger>
         <motion.div whileHover={{ scale: 1.1 }} transition={{ duration: 0.2 }}>
           <IconButton
             variant="ghost"
@@ -108,28 +108,32 @@ const ProfileDropdown: React.FC = () => {
             <CurrentUserProfileImage size="2" aria-label={t("profile")} />
           </IconButton>
         </motion.div>
-      }
-      items={[
-        {
-          icon: <PersonIcon />,
-          label: t("profile"),
-          onClick: () => navigate({ to: "/profile" }),
-        },
-        {
-          icon: <GearIcon />,
-          label: t("settings"),
-          onClick: () => navigate({ to: "/settings" }),
-          separator: true,
-        },
-        {
-          icon: <ExitIcon />,
-          label: t("logout"),
-          onClick: handleLogout,
-          disabled: isLogoutLoading,
-          color: "red",
-        },
-      ]}
-    />
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content>
+        <DropdownMenu.Item asChild>
+          <Link asChild href="/profile">
+            <Flex align="center" gap="2">
+              <PersonIcon />
+              <Text>{t("profile")}</Text>
+            </Flex>
+          </Link>
+        </DropdownMenu.Item>
+        <DropdownMenu.Item asChild>
+          <Link asChild href="/settings">
+            <Flex align="center" gap="2">
+              <GearIcon />
+              <Text>{t("settings")}</Text>
+            </Flex>
+          </Link>
+        </DropdownMenu.Item>
+        <DropdownMenu.Item onClick={handleLogout} disabled={isLogoutLoading}>
+          <Flex align="center" gap="2">
+            <ExitIcon />
+            <Text>{t("logout")}</Text>
+          </Flex>
+        </DropdownMenu.Item>
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
   )
 }
 

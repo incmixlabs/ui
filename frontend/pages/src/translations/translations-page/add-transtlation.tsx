@@ -21,7 +21,7 @@ import { useState } from "react"
 import { z } from "zod"
 import type { TranslationMessage } from "./types"
 interface AddTranslationDialogProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog> {
+  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
   onSuccess?: () => void
 }
 
@@ -38,27 +38,27 @@ export const AddTranslationDialog: React.FC<AddTranslationDialogProps> = ({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen} {...props}>
-      <DialogTrigger>
+    <Dialog.Root open={isOpen} onOpenChange={setIsOpen} {...props}>
+      <Dialog.Trigger>
         <Button>Add Translation</Button>
-      </DialogTrigger>
-      <DialogContent>
+      </Dialog.Trigger>
+      <Dialog.Content>
         <DialogHeader>
-          <DialogTitle>Add Translation</DialogTitle>
+          <Dialog.Title>Add Translation</Dialog.Title>
+          <Dialog.Description className="sr-only">
+            Add new Translation
+          </Dialog.Description>
         </DialogHeader>
-        <DialogDescription className="sr-only">
-          Add new Translation
-        </DialogDescription>
         <AddTranlationForm onSuccess={onSubmit} />
         <DialogFooter className="gap-2 sm:space-x-0">
-          <DialogClose>
+          <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </DialogClose>
+          </Dialog.Close>
         </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }
 

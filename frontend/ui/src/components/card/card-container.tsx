@@ -1,7 +1,7 @@
 import { Card, Container } from "@radix-ui/themes"
 import type React from "react"
 
-interface CardContainerProps {
+interface CardContainerProps extends React.ComponentPropsWithoutRef<typeof Card> {
   children: React.ReactNode
   className?: string
 }

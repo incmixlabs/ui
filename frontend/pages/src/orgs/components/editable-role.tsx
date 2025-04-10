@@ -1,13 +1,13 @@
 import { Button, Flex, Select, Spinner, Text, Tooltip } from "@incmix/ui"
-import type { MemberRole } from "@incmix/utils/types"
+import type { UserRole, UserRoles } from "@incmix/utils/types"
 import { CheckIcon, Cross1Icon, Pencil1Icon } from "@radix-ui/react-icons"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 
 interface EditableRoleProps {
-  currentRole: MemberRole
-  onUpdateRole: (newRole: MemberRole) => Promise<void>
+  currentRole: UserRole
+  onUpdateRole: (newRole: UserRole) => Promise<void>
   editable: boolean
 }
 
@@ -18,7 +18,7 @@ export const EditableRole: React.FC<EditableRoleProps> = ({
 }) => {
   const { t } = useTranslation(["common", "roles", "organizationDetails"])
   const [isEditing, setIsEditing] = useState(false)
-  const [selectedRole, setSelectedRole] = useState<MemberRole>(currentRole)
+  const [selectedRole, setSelectedRole] = useState<UserRole>(currentRole)
   const [isLoading, setIsLoading] = useState(false)
 
   const handleEdit = () => {
@@ -59,7 +59,7 @@ export const EditableRole: React.FC<EditableRoleProps> = ({
       <Flex gap="3" align="center">
         <Select.Root
           value={selectedRole}
-          onValueChange={(value) => setSelectedRole(value as MemberRole)}
+          onValueChange={(value) => setSelectedRole(value as UserRole)}
           disabled={isLoading}
         >
           <Select.Trigger />
