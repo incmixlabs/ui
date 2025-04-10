@@ -1,11 +1,12 @@
 import {
   Badge,
   Checkbox,
+  DropdownMenuWrapper,
+} from "@incmix/ui2"
+import {
   type ColumnDef,
   DataTableColumnHeader,
-  type DataTableRowAction,
-  DropdownMenu,
-} from "@incmix/ui2"
+  type DataTableRowAction} from "@incmix/ui2/data-table"
 import { MoreHorizontal } from "lucide-react"
 import type { TranslationMessage } from "./types"
 
@@ -90,7 +91,7 @@ export function getColumns({
       id: "actions",
       cell: function Cell({ row }) {
         return (
-          <DropdownMenu
+          <DropdownMenuWrapper
             button={{
               "aria-label": "Open menu",
               variant: "ghost",

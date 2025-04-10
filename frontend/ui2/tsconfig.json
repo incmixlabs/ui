@@ -3,6 +3,12 @@
   "exclude": ["node_modules", "dist", "./*.ts", "./src/demos", "./src/lib"],
   "include": ["src/"],
   "compilerOptions": {
+     "jsx": "react-jsx",
+     "lib": [
+      "es2019",
+      "dom"
+    ],
+     "esModuleInterop": true, // E
     "types": ["@types/wicg-file-system-access", "vite/client"],
     "rootDir": "src",
     "baseUrl": "./src",

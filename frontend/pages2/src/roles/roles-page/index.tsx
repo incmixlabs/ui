@@ -1,22 +1,16 @@
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeadCell,
-  TableRow,
-} from "@incmix/ui/table"
-import { Button, Flex, Tabs } from "@incmix/ui2"
-import { DashboardLayout } from "@layouts/admin-panel/layout"
-import {
   type ExpandedState,
   flexRender,
   getExpandedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
+import { useState } from "react"
 import { getCoreRowModel } from "@tanstack/react-table"
-import { PlusCircleIcon, PlusIcon } from "lucide-react"
-import React, { useState } from "react"
+import { PlusCircleIcon } from "lucide-react"
+import { Button, Flex, Tabs,
+  Table, } from "@incmix/ui2"
+import { DashboardLayout } from "../../common/components/layouts/admin-panel/layout"
+
 import { getColumns } from "./columns"
 import { groupedPermissions, permissionsWithRoles } from "./mock"
 import type { RoleWithPermissionsWithSubrows } from "./types"
@@ -52,31 +46,31 @@ const RolesPage = () => {
             <Button variant="soft">Save Changes</Button>
           </Flex>
         </Flex>
-        <Table>
+        <Table.Root>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableHead key={headerGroup.id}>
+            <Table.Header key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableHeadCell key={header.id}>
+                <Table.ColumnHeaderCell key={header.id}>
                   {flexRender(
                     header.column.columnDef.header,
                     header.getContext()
                   )}
-                </TableHeadCell>
+                </Table.ColumnHeaderCell>
               ))}
-            </TableHead>
+            </Table.Header>
           ))}
-          <TableBody>
+          <Table.Body>
             {table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
+              <Table.Row key={row.id}>
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
+                  <Table.Cell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
+                  </Table.Cell>
                 ))}
-              </TableRow>
+              </Table.Row>
             ))}
-          </TableBody>
-        </Table>
+          </Table.Body>
+        </Table.Root>
       </Flex>
     </DashboardLayout>
   )

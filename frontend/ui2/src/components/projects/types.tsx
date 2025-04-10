@@ -1,13 +1,13 @@
-import type { Option } from "@/components/multiple-selector/multiple-selector"
+import type { Option } from "../multiple-selector/multiple-selector"
+import type { AvatarProps } from "@/components/radixui/avatar"
 
-export interface Member {
-  id: string
-  name: string
-  avatar: string
+export type Member = Option & AvatarProps & {
+  avatar?: string
   color?: string
   label?: string
   value?: string
 }
+
 
 export interface Project {
   id: string
@@ -18,7 +18,7 @@ export interface Project {
   progress: number
   timeLeft: string
   timeType: "week" | "days"
-  members: Option[]
+  members: Member[]
   status: "all" | "started" | "on-hold" | "completed"
   startDate?: number
   endDate?: number

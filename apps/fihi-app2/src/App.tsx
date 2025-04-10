@@ -55,7 +55,7 @@ import {
   TestRoute,
   TranslationsRoute,
   WelcomeRoute,
-} from "@incmix/pages"
+} from "@incmix/pages2"
 
 const routeTree = RootRoute.addChildren([
   LoginRoute,

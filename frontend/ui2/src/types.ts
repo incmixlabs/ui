@@ -11,7 +11,6 @@ export const direction = {
   ltr: "ltr",
   rtl: "rtl",
 }
-
 export type IconProps = SVGProps<SVGSVGElement> & {
   size?: string | number
 }

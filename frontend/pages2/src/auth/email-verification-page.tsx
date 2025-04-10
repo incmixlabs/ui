@@ -3,9 +3,9 @@ import { useNavigate } from "@tanstack/react-router"
 import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 
-import { I18n } from "@incmix/pages2/i18n"
-import { cn } from "@incmix/ui/utils"
-import { Container, Flex, Spinner, Text, ThickCheckIcon } from "@incmix/ui2"
+import { cn } from "@incmix/ui2/utils"
+import { I18n } from "@/i18n"
+import { Container, Flex, Spinner, Text, ThickCheckIcon  } from "@incmix/ui2"
 import { AUTH_API_URL } from "@incmix/ui2/constants"
 import EmailVerificationRoute from "./routes/email-verification"
 

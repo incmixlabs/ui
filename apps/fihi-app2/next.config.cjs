@@ -8,7 +8,7 @@ const nextConfig = {
   //i18n,
   reactStrictMode: true,
   swcMinify: true,
-  transpilePackages: ["@incmix/store", "@incmix/ui", "@incmix/pages"],
+  transpilePackages: ["@incmix/store", "@incmix/ui", "@incmix/pages2"],
   images: {
     remotePatterns: [],
   },

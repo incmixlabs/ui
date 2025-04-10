@@ -1,4 +1,4 @@
-import { USERS_API_URL } from "@incmix/ui/constants"
+import { USERS_API_URL } from "@incmix/ui2/constants"
 
 export const setVerified = async ({
   id,

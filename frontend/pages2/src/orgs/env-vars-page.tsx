@@ -1,15 +1,15 @@
-import { DashboardLayout } from "@/layouts/admin-panel/layout"
+import { useTranslation } from "react-i18next"
+import { create } from "zustand"
+import { persist } from "zustand/middleware"
+
+import { DashboardLayout } from "../common/components/layouts/admin-panel/layout"
 import { CardContainer, Flex, Text } from "@incmix/ui2"
 import { OrganizationTable } from "@incmix/ui2"
 import type {
   FormFieldConfig,
   TreeDataItem,
   TreeViewDescriptions,
-} from "@incmix/ui2/tree-view"
-import { useTranslation } from "react-i18next"
-import { create } from "zustand"
-import { persist } from "zustand/middleware"
-
+} from "@incmix/ui2/tree-view-types"
 import { OrganizationLayout } from "./layouts/organisation-layout"
 import { OrganisationEnvVarsRoute } from "./routes"
 import { useOrganization } from "./utils"

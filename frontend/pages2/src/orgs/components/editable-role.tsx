@@ -4,8 +4,7 @@ import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 
 import { Button, Flex, Select, Spinner, Text, Tooltip } from "@incmix/ui2"
-import type { MemberRole } from "@incmix/utils/types"
-
+type MemberRole = "owner" | "admin" | "editor" | "commenter" | "viewer"
 interface EditableRoleProps {
   currentRole: MemberRole
   onUpdateRole: (newRole: MemberRole) => Promise<void>

@@ -1,5 +1,6 @@
 "use client"
 
+export { useKanbanFilter} from "./hooks/use-kanban-filter"
 import invariant from "tiny-invariant"
 
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"

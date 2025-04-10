@@ -12,7 +12,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@incmix/pages": "workspace: *",
+    "@incmix/pages2": "workspace: *",
     "@incmix/store": "workspace: *",
     "@incmix/ui2": "workspace: *",
     "@incmix/utils": "catalog:",

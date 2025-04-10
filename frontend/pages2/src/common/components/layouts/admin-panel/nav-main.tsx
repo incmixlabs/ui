@@ -10,7 +10,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@incmix/ui/sidebar"
+} from "@incmix/ui2/sidebar"
 import {
   Collapsible,
   CollapsibleContent,

@@ -42,6 +42,12 @@ export const getRelativeTime = (
   return relativeTime
 }
 
+export function formatDTDate(
+  date: DateTime,
+  format = "MMMM dd, yyyy"
+): string {
+  return date.toFormat(format)
+}
 export function formatDate(
   date: Date | string | number,
   opts: Intl.DateTimeFormatOptions = {}

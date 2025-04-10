@@ -1,16 +1,18 @@
 "use client"
+
+import { useQuery } from "@tanstack/react-query"
+import { Info } from "lucide-react"
+import AdminUsersTable from "./admin-users-table"
 import { useOrganizationStore } from "@incmix/store"
 
-import { I18n } from "@incmix/pages/i18n"
-import { USERS_API_URL } from "@incmix/ui/constants"
+import { I18n } from "@/i18n"
+import { USERS_API_URL } from "@incmix/ui2/constants"
 import { Flex, Spinner } from "@incmix/ui2"
 import { Callout } from "@incmix/ui2"
 import { createAbilityFromPermissions } from "@incmix/utils/casl"
 import type { AppAbility, Permission } from "@incmix/utils/types"
-import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { useQuery } from "@tanstack/react-query"
-import { Info } from "lucide-react"
-import AdminUsersTable from "./admin-users-table"
+import { DashboardLayout } from "../../common/components/layouts/admin-panel/layout"
+
 import OrgUsersTable from "./org-users-table"
 
 const ListUsersPage = () => {

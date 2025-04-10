@@ -6,7 +6,7 @@ import { useEffect } from "react"
 
 import { useCurrentUser } from "@/auth"
 import { LoadingPage } from "@/common"
-import { AUTH_API_URL } from "@incmix/ui/constants"
+import { AUTH_API_URL } from "@incmix/ui2/constants"
 import { Button, CardContainer, Container, Flex, Heading } from "@incmix/ui2"
 
 function HomePage() {

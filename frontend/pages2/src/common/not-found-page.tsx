@@ -2,8 +2,9 @@ import { Link, useLocation, useNavigate } from "@tanstack/react-router"
 import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 
-import { DashboardLayout } from "@/layouts/admin-panel/layout"
-import { Button, CardContainer, Flex, Heading, Text } from "@incmix/ui2"
+import { DashboardLayout } from "./components/layouts/admin-panel/layout"
+import { useThemeStore } from "@incmix/store"
+import { Button, CardContainer, Flex, Heading, layouts, Text } from "@incmix/ui2"
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <DashboardLayout breadcrumbItems={[]}>{children}</DashboardLayout>

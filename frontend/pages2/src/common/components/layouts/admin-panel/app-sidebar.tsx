@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/auth"
 import { useOrganizationStore } from "@incmix/store"
-import { FileFolder } from "@incmix/ui/secondary-sidebars/file-folder"
+import { FileFolder } from "@incmix/ui2/secondary-sidebars"
 import { ScrollArea } from "@incmix/ui2"
 import { USERS_API_URL } from "@incmix/ui2/constants"
 import {
@@ -21,7 +21,7 @@ import { createAbilityFromPermissions } from "@incmix/utils/casl"
 import type { Permission } from "@incmix/utils/types"
 import { useQuery } from "@tanstack/react-query"
 import { useLocation } from "@tanstack/react-router"
-import { I18n } from "i18n"
+import { I18n } from "@/i18n"
 import {
   BackpackIcon,
   BoxIcon,

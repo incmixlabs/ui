@@ -1,11 +1,13 @@
 import {
-  type ColumnDef,
-  DataTableColumnHeader,
-  type DataTableRowAction,
   GoogleIcon,
   toast,
 } from "@incmix/ui2"
-import { Badge, Checkbox, DropdownMenu, Spinner, Switch } from "@incmix/ui2"
+import {
+  type ColumnDef,
+  DataTableColumnHeader,
+  type DataTableRowAction,
+} from "@incmix/ui2/data-table"
+import { Badge, Checkbox, DropdownMenuWrapper, Spinner, Switch } from "@incmix/ui2"
 import type { UserAndProfile } from "@incmix/utils/types"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { MoreHorizontal } from "lucide-react"
@@ -146,7 +148,7 @@ export function getColumns({
       id: "actions",
       cell: function Cell({ row }) {
         return (
-          <DropdownMenu
+          <DropdownMenuWrapper
             button={{
               "aria-label": "Open menu",
               variant: "ghost",

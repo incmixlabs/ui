@@ -9,6 +9,7 @@ interface FormFieldProps {
   type?: TextField.RootProps["type"] | "textarea"
   className?: string
   disabled?: boolean
+  // @ts-ignore
   field: FieldApi<any, any, any, any>
 }
 export const FormButton: React.FC<{

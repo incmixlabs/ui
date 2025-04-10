@@ -141,7 +141,7 @@ export function ProjectCard({
               key={member.id}
               className="h-8 w-8 overflow-hidden rounded-full"
             >
-              <Avatar src={member.avatar} fallback={member.name} />
+              <Avatar src={member.avatar} name={member.name} />
             </Box>
           ))}
         </Flex>

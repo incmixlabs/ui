@@ -5,7 +5,7 @@
   "compilerOptions": {
     "moduleResolution": "Bundler",
     "module": "ESNext",
-    "lib": ["ESNext", "es6", "dom"],
+    "lib": ["ESNext", "es2017", "dom"],
     "target": "ESNext",
     "types": ["node", "vite/client"],
     "jsx": "react-jsx"

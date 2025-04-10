@@ -1,4 +1,4 @@
-import { Badge, Box, Flex, HoverCard, Text } from "@incmix/ui2"
+import { Badge, Box, Flex, HoverCard, Text } from "@/components/radixui"
 import { CalendarDays, Clipboard, User } from "lucide-react"
 import type { DateTime } from "luxon"
 import { ProjectsImages } from "../../images"

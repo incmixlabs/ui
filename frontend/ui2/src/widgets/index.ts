@@ -1,4 +1,5 @@
 export * from "./battery"
+export * from "./calendar"
 export * from "./image-grid"
 export * from "./clock"
 export * from "./news"

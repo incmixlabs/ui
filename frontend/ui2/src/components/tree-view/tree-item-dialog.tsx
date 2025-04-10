@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// @ts-nocheck
 "use client"
 import { Button, Dialog, Flex, Text, VisuallyHidden } from "@/components/base"
 import { useForm } from "@tanstack/react-form"

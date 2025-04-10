@@ -1,4 +1,10 @@
-import { LoadingPage } from "@common"
+import { forwardRef, useContext, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { toast } from "sonner"
+import { ArrowLeft } from "lucide-react"
+import { LoadingPage } from "@/common"
+import { Link } from "@tanstack/react-router"
+
 import { Button, CardContainer } from "@incmix/ui2"
 import {
   Container,
@@ -12,19 +18,13 @@ import {
 } from "@incmix/ui2"
 import type {
   MemberDetails,
-  MemberRole,
   Organization,
 } from "@incmix/utils/types"
-import { ArrowLeft } from "lucide-react"
-import { useAuth } from "../auth"
-import { UserProfileImage } from "../common/components/user-profile-image"
+import { useAuth } from "@/auth"
+import { UserProfileImage } from "@/common/components/user-profile-image"
+import { DashboardLayout } from "@/layouts/admin-panel/layout"
 
-import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { Link } from "@tanstack/react-router"
-import React from "react"
-import { forwardRef, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { toast } from "sonner"
+
 import { EditableName } from "./components/editable-name"
 import { EditableRole } from "./components/editable-role"
 import { OrganisationDetailsRoute } from "./routes"
@@ -39,7 +39,7 @@ import {
   useUpdateOrganization,
 } from "./utils"
 import { AbilityContext, Can } from "./utils/ability-context"
-
+type MemberRole = "owner" | "admin" | "viewer" | "commenter" | "editor"
 const RemoveButton: React.FC<{ member: MemberDetails; orgHandle: string }> = ({
   member,
   orgHandle,
@@ -91,7 +91,7 @@ const OrganizationHeader: React.FC<{
   onUpdateName: (newName: string) => Promise<void>
 }> = ({ organization, onUpdateName }) => {
   const { t } = useTranslation(["common"])
-  const ability = React.useContext(AbilityContext)
+  const ability = useContext(AbilityContext)
 
   return (
     <Flex direction="column" gap="4">
@@ -118,14 +118,14 @@ const UserRow: React.FC<{
 }> = ({ member, orgId, onUpdateRole }) => {
   const { authUser: currentUser } = useAuth()
   const { t } = useTranslation(["common"])
-  const ability = React.useContext(AbilityContext)
+  const ability = useContext(AbilityContext)
   return (
     <Table.Row key={member.userId}>
       <Table.Cell>
         <Flex align="center" gap="2">
           <UserProfileImage size="2" userId={member.userId} />
           <Text>
-            {member.name}
+            {member.fullName}
             {currentUser &&
               currentUser.id === member.userId &&
               ` (${t("common:you")})`}

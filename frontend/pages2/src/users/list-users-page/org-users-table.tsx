@@ -5,14 +5,14 @@ import {
   type DataTableFilterField,
   DataTableToolbar,
   useDataTable,
-} from "@incmix/ui2"
+} from "@incmix/ui2/data-table"
 import { useQuery } from "@tanstack/react-query"
 import React from "react"
 import { ToolbarActions } from "./org-toolbar-actions"
 
-import { I18n } from "@incmix/pages/i18n"
+import { I18n } from "@/i18n"
 import { useOrganizationStore } from "@incmix/store"
-import { ORG_API_URL } from "@incmix/ui/constants"
+import { ORG_API_URL } from "@incmix/ui2/constants"
 import { Spinner } from "@incmix/ui2"
 import type { MemberDetails } from "@incmix/utils/types"
 import { getColumns } from "./org-user-columns"

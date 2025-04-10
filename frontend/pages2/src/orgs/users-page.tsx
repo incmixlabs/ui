@@ -4,7 +4,7 @@ import { forwardRef, useContext, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 
-import { DashboardLayout } from "@/layouts/admin-panel/layout"
+import { DashboardLayout } from "../common/components/layouts/admin-panel/layout"
 import {
   Button,
   CardContainer,
@@ -19,7 +19,6 @@ import {
 } from "@incmix/ui2"
 import type {
   MemberDetails,
-  MemberRole,
   Organization,
 } from "@incmix/utils/types"
 
@@ -41,7 +40,7 @@ import {
   useUpdateOrganization,
 } from "./utils"
 import { AbilityContext, Can } from "./utils/ability-context"
-
+type MemberRole = "owner" | "admin" | "viewer" | "commenter" | "editor"
 const RemoveButton: React.FC<{ member: MemberDetails; orgHandle: string }> = ({
   member,
   orgHandle,
@@ -127,7 +126,7 @@ const UserRow: React.FC<{
         <Flex align="center" gap="2">
           <UserProfileImage size="2" userId={member.userId} />
           <Text>
-            {member.name}
+            {member.fullName}
             {currentUser &&
               currentUser.id === member.userId &&
               ` (${t("common:you")})`}

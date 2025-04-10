@@ -1,4 +1,4 @@
-import { RootRoute } from "@common"
+import { RootRoute } from "@/common"
 import { searchParamsSchema } from "@incmix/utils/data-table"
 import { createRoute } from "@tanstack/react-router"
 import type { z } from "zod"

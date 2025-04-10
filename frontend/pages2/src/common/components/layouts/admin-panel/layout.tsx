@@ -61,3 +61,4 @@ export function DashboardLayout({ children, navExtras }: Props) {
     </SidebarProvider>
   )
 }
+export default DashboardLayout

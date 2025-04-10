@@ -1,16 +1,9 @@
 "use client"
 
-import { useAuth } from "@auth"
+import { useAuth } from "@/auth"
 import type { TaskCollections } from "@incmix/store"
 import {
   Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  Dialog.Trigger,
   ReactiveButton,
   toast,
 } from "@incmix/ui2"
@@ -24,7 +17,7 @@ import type { RxDatabase } from "rxdb"
 import { useRxDB } from "rxdb-hooks"
 
 interface CreateTaskProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog> {
+  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
   projectId: string
   onSuccess?: (data: Task) => void
 }
@@ -103,7 +96,7 @@ export function CreateTaskForm({
   }
 
   return (
-    <Dialog
+    <Dialog.Root
       {...props}
       open={isOpen}
       onOpenChange={(open) => {
@@ -114,11 +107,11 @@ export function CreateTaskForm({
       <Dialog.Trigger>
         <Button>Add Task</Button>
       </Dialog.Trigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Add New Task</DialogTitle>
-          <DialogDescription>Add New Task to Board</DialogDescription>
-        </DialogHeader>
+      <Dialog.Content>
+        <Dialog.Header>
+          <Dialog.Title>Add New Task</Dialog.Title>
+          <Dialog.Description>Add New Task to Board</Dialog.Description>
+        </Dialog.Header>
 
         <form onSubmit={handleSubmit}>
           <Flex direction="column" gap="4">
@@ -154,14 +147,14 @@ export function CreateTaskForm({
           </Flex>
         </form>
 
-        <DialogFooter className="gap-2 sm:space-x-0">
-          <DialogClose>
+        <Dialog.Footer>
+          <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </Dialog.Close>
+        </Dialog.Footer>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }

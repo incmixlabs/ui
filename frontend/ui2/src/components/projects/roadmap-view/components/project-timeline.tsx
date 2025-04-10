@@ -1,5 +1,5 @@
 import { Box, Flex, Heading, Text } from "@/components"
-import { formatDate } from "@/lib/utils/date"
+import { formatDTDate } from "@/lib/utils/date"
 import type { Project } from "@/types"
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
@@ -45,7 +45,7 @@ export function ProjectTimeline({
         <Box className="-translate-x-1/2 absolute top-0 left-0 transform">
           <Box className="h-3 w-3 rounded-full bg-gray-400" />
           <Box className="mt-1 whitespace-nowrap text-gray-500 text-xs">
-            {formatDate(startDate)}
+            {formatDTDate(startDate)}
           </Box>
         </Box>
 
@@ -53,7 +53,7 @@ export function ProjectTimeline({
         <Box className="absolute top-0 right-0 translate-x-1/2 transform">
           <Box className="h-3 w-3 rounded-full bg-gray-400" />
           <Box className="mt-1 whitespace-nowrap text-gray-500 text-xs">
-            {formatDate(endDate)}
+            {formatDTDate(endDate)}
           </Box>
         </Box>
 

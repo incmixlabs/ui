@@ -1,16 +1,17 @@
-import { INTL_API_URL } from "@incmix/ui/constants"
+import React, { useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+
+import { INTL_API_URL } from "@incmix/ui2/constants"
 import {
   DataTable,
   type DataTableAdvancedFilterField,
   DataTableAdvancedToolbar,
   type DataTableRowAction,
-  Flex,
-  Spinner,
+
   useDataTable,
-} from "@incmix/ui2"
-import { useQuery } from "@tanstack/react-query"
-import React, { useState } from "react"
-import { TranslationsRoute } from "translations/routes"
+} from "@incmix/ui2/data-table"
+import { Flex, Spinner } from "@incmix/ui2"
+import { TranslationsRoute } from "../routes"
 import type { TranslationSearchParams } from "../routes/translations"
 import { DeleteDialog } from "./delete-dialog"
 import { EditTranslationDialog } from "./edit-translation"

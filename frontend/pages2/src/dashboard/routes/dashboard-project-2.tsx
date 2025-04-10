@@ -1,4 +1,4 @@
-import { RootRoute } from "@common"
+import { RootRoute } from "@/common"
 import { createRoute } from "@tanstack/react-router"
 import DashboardProject2 from "../pages/project-2"
 

@@ -1,5 +1,7 @@
-import { DashboardLayout } from "@/layouts/admin-panel/layout"
+import { useTranslation } from "react-i18next"
 import { FileManager } from "@incmix/ui2"
+import { DashboardLayout } from "../common/components/layouts/admin-panel/layout"
+
 
 const FileManagerPage = () => {
   return (

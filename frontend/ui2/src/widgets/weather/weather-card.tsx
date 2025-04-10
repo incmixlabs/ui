@@ -1,7 +1,7 @@
-import { Box, Flex, Text } from "@incmix/ui2"
+import { Box, Flex, Text } from "@/components/radixui"
 import { getWeekDay } from "@incmix/utils/date"
 import { Send } from "lucide-react"
-import type React from "react"
+
 import {
   Clouds,
   CloudsSun,

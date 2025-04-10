@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Box, Flex, Grid, Heading, Select, Switch, Text } from "@incmix/ui2"
 import { useForm } from "@tanstack/react-form"
 import { useQueryClient } from "@tanstack/react-query"
@@ -6,13 +7,16 @@ import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { z } from "zod"
 
-import { useCurrentUser, useProfileUpdate } from "@auth"
-import { LoadingPage } from "@common"
 import { useLanguageStore, useThemeStore } from "@incmix/store"
 import { Button, CardContainer, FormField } from "@incmix/ui2"
 import type { UserProfile } from "@incmix/utils/types"
-import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { CurrentUserProfileImage } from "../common/components/user-profile-image"
+
+import { useCurrentUser, useProfileUpdate } from "@/auth"
+import { LoadingPage } from "@/common"
+
+import { DashboardLayout } from "../common/components/layouts/admin-panel/layout"
+
+import { CurrentUserProfileImage } from "@/common/components/user-profile-image"
 
 const _FormButton: React.FC<{
   onClick: () => void

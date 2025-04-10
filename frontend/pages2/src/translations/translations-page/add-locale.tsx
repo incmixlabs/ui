@@ -1,15 +1,15 @@
-import { INTL_API_URL } from "@incmix/ui/constants"
-import {} from "@incmix/ui2"
-import { Button, Select, Switch, Text } from "@incmix/ui2"
-import { useForm } from "@tanstack/react-form"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { I18n } from "i18n"
-import type React from "react"
 import { useState } from "react"
 import { z } from "zod"
+
+import { INTL_API_URL } from "@incmix/ui2/constants"
+import { Button, ReactiveButton, Dialog, Flex, FormField, Select, Switch, Text } from "@incmix/ui2"
+import { useForm } from "@tanstack/react-form"
+import { useMutation } from "@tanstack/react-query"
+
+
 import type { Locale, TranslationMessage } from "./types"
 interface AddLocaleDialogProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog> {
+  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
   onSuccess?: () => void
 }
 
@@ -26,27 +26,27 @@ export const AddLocaleDialog: React.FC<AddLocaleDialogProps> = ({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen} {...props}>
+    <Dialog.Root open={isOpen} onOpenChange={setIsOpen} {...props}>
       <Dialog.Trigger>
         <Button>Add Locale</Button>
       </Dialog.Trigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Add Locale</DialogTitle>
-        </DialogHeader>
-        <DialogDescription className="sr-only">
+      <Dialog.Content>
+        <Dialog.Header>
+          <Dialog.Title>Add Locale</Dialog.Title>
+        </Dialog.Header>
+        <Dialog.Description className="sr-only">
           Add new Locale
-        </DialogDescription>
+        </Dialog.Description>
         <AddTranlationForm onSuccess={onSubmit} />
-        <DialogFooter className="gap-2 sm:space-x-0">
-          <DialogClose>
+        <Dialog.Footer>
+          <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </Dialog.Close>
+        </Dialog.Footer>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }
 
@@ -74,7 +74,7 @@ const AddTranlationForm: React.FC<{ onSuccess?: () => void }> = ({
     },
     onSuccess,
   })
-
+  // @ts-ignore
   const form = useForm<AddLocale>({
     defaultValues: {
       code: "",

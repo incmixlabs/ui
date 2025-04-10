@@ -1,5 +1,8 @@
-import { DashboardLayout } from "@/layouts/admin-panel/layout"
-import { LoadingPage } from "@common"
+import { ChevronRight } from "lucide-react"
+import { useState } from "react"
+import { useTranslation } from "react-i18next"
+import { DashboardLayout } from "../common/components/layouts/admin-panel/layout"
+import { LoadingPage } from "@/common/loading-page"
 import {
   Button,
   CardContainer,
@@ -15,9 +18,6 @@ import {
 import type { Organization } from "@incmix/utils/types"
 import { useForm } from "@tanstack/react-form"
 import { Link } from "@tanstack/react-router"
-import { ChevronRight } from "lucide-react"
-import { useState } from "react"
-import { useTranslation } from "react-i18next"
 import {
   useCreateOrganization,
   useOrganizations,

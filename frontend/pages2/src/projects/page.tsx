@@ -1,5 +1,5 @@
 import { ProjectPageComponents, RoadmapView } from "@incmix/ui2"
-import { DashboardLayout } from "@layouts/admin-panel/layout"
+import { DashboardLayout } from "../common/components/layouts/admin-panel/layout"
 
 const ProjectsPage = () => {
   return (

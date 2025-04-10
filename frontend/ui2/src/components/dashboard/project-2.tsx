@@ -5,7 +5,7 @@ import {
   Calendar,
   CardContainer,
   Checkbox,
-  type ExtendedColorType,
+  type ProgressProps,
   Flex,
   Grid,
   Heading,
@@ -46,7 +46,7 @@ interface ProgressItem {
   category: string
   value: number
   maxValue: number
-  color: ExtendedColorType
+  color: ProgressProps["color"]
 }
 
 export function Project2() {
@@ -274,7 +274,7 @@ export function Project2() {
                     <Progress
                       value={(item.value / item.maxValue) * 100}
                       className="h-2 bg-gray-100"
-                      color={item.color as ExtendedColorType}
+                      color={item.color}
                     />
                   </Box>
                 ))}
@@ -293,7 +293,7 @@ export function Project2() {
               className="w-full border-gray-5 border-b p-4"
             >
               <Flex gap={"3"} align={"center"}>
-                <Avatar src={KanbanImages?.user1} fallback="A" />
+                <Avatar src={KanbanImages?.user1} name="A" />
                 <Box className="space-y-0">
                   <Text as="p" className="font-medium text-gray-12">
                     ArtTemplate
