@@ -180,7 +180,7 @@ const DashboardProject2: React.FC = () => {
           {t("dashboard:title")}
         </Heading>
         <Flex gap={"5"} className="w-full">
-          {slottedWidgets.length && (
+          {slottedWidgets.length > 0 && (
             <SwapyLayout
               id="dashboard-container"
               enable={isEditing}
@@ -218,9 +218,11 @@ const DashboardProject2: React.FC = () => {
                   <Avatar src={KanbanImages?.user1} fallback="A" />
                   <Box className="space-y-0">
                     <Text as="p" className="font-medium text-gray-12">
-                      ArtTemplate
+                      {authUser?.email || "User"}
                     </Text>
-                    <Text className="text-gray-9">example@mail.com</Text>
+                    <Text className="text-gray-9">
+                      {authUser?.email || "No email provided"}
+                    </Text>
                   </Box>
                 </Flex>
                 <IconButton variant="ghost" className="cursor-pointer">
