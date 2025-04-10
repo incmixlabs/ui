@@ -57,7 +57,7 @@ interface WeeklyActivityChartProps {
   className?: string
 }
 
-export default function WeeklyActivityChart({
+export  function WeeklyActivityChart({
   values = [30, 65, 45, 80, 55, 40, 65],
   days = ["M", "T", "W", "T", "F", "S", "S"],
   primaryColor = "#3366FF",

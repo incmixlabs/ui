@@ -1,6 +1,15 @@
 import React, { useMemo } from "react"
 
-import { Box, Flex, Grid, Heading, IconButton, Text, Tooltip } from "@incmix/ui"
+import {
+  Box,
+  CardContainer,
+  Flex,
+  Grid,
+  Heading,
+  IconButton,
+  Text,
+  Tooltip,
+} from "@incmix/ui"
 import { cn } from "@utils"
 import { Ellipsis, Zap } from "lucide-react"
 
@@ -11,7 +20,7 @@ interface Task {
   description?: string
 }
 
-export default function PostingCalendar() {
+export function PostingTask() {
   const daysOfWeek = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"]
   const hoursOfDay = [
     "12AM",
@@ -199,7 +208,7 @@ export default function PostingCalendar() {
   }, [tasks])
 
   return (
-    <>
+    <CardContainer>
       <Flex justify={"between"} align={"center"} className="mb-4">
         <Heading size={"5"}>Posting Tasks</Heading>
         <IconButton variant="ghost">
@@ -236,7 +245,7 @@ export default function PostingCalendar() {
               key={hour}
               align={"end"}
               justify={"center"}
-              className=" h-10 pb-1 text-center text-gray-10 text-xs"
+              className=" h-8 pb-1 text-center text-gray-10 text-xs 2xl:h-10"
             >
               {hour}
             </Flex>
@@ -300,6 +309,6 @@ export default function PostingCalendar() {
           ))}
         </Grid>
       </Box>
-    </>
+    </CardContainer>
   )
 }
