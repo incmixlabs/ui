@@ -4,16 +4,16 @@ import { useQuery } from "@tanstack/react-query"
 import { RouterProvider, createRouter } from "@tanstack/react-router"
 import { Settings } from "luxon"
 
-import { LoadingPage } from "@incmix/pages/common"
-import { I18n, usei18n } from "@incmix/pages/i18n"
+import { LoadingPage } from "@incmix/pages2/common"
+import { I18n, usei18n } from "@incmix/pages2/i18n"
 import {
   type Language,
   database as db,
   useLanguageStore,
   useThemeStore,
 } from "@incmix/store"
-import { Theme, Toaster } from "@incmix/ui"
-import { DashboardPage } from "@incmix/ui/layouts"
+import { Theme, Toaster } from "@incmix/ui2"
+import { DashboardPage } from "@incmix/ui2/layouts"
 import { Provider as RxdbProvider } from "rxdb-hooks"
 import { translations } from "./translations"
 

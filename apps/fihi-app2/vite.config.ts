@@ -5,6 +5,7 @@ import react from "@vitejs/plugin-react"
 import { internalIpV4 } from "internal-ip"
 import { visualizer } from "rollup-plugin-visualizer"
 import { type PluginOption, defineConfig } from "vite"
+import tailwindcss from "@tailwindcss/vite"
 import bundlesize from "vite-plugin-bundlesize"
 import { chunkSplitPlugin } from "vite-plugin-chunk-split"
 import topLevelAwait from "vite-plugin-top-level-await"
@@ -40,6 +41,7 @@ export default defineConfig(async () => ({
   plugins: [
     bundlesize({ limits: [{ name: "**/*", limit: "3 mB" }] }),
     react(),
+    tailwindcss(),
     TanStackRouterVite(),
     tsconfigPaths(),
     chunkSplitPlugin(),

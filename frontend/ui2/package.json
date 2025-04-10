@@ -22,6 +22,7 @@
     "./data-table": "./dist/components/data-table/index.ts",
     "./hooks": "./dist/hooks/index.ts",
     "./kanban": "./dist/components/kanban-board/index.tsx",
+    "/layouts": "./dist/components/layouts/index.ts",
     "./sidebar": "./dist/components/sidebar/index.ts",
     "./secondary-sidebars": "./dist/components/secondary-sidebars/index.tsx",
     "./tree-view": "./dist/components/tree-view/index.ts",

@@ -1,5 +1,5 @@
-import "@incmix/ui/styles/global.css"
-import { NuqsReactAdaptor } from "@incmix/ui/data-table"
+import "@incmix/ui2/style/global.css"
+import { NuqsReactAdaptor } from "@incmix/ui2/data-table"
 import React from "react"
 import ReactDOM from "react-dom/client"
 import App from "./App"
