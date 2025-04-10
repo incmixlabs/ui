@@ -1,4 +1,12 @@
-import { Box, CardContainer, Flex, Heading, IconButton, Text,WeeklyActivityChart } from "@incmix/ui"
+import {
+  Box,
+  CardContainer,
+  Flex,
+  Heading,
+  IconButton,
+  Text,
+  WeeklyActivityChart,
+} from "@incmix/ui"
 import { Clipboard, Ellipsis } from "lucide-react"
 
 export function StatisticWidgets2() {

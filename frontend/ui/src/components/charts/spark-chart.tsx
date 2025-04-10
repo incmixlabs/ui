@@ -12,12 +12,7 @@ interface TaskCardProps {
   className?: string
 }
 
-export  function SparkChart({
-  title,
-  data,
-  color,
-  className,
-}: TaskCardProps) {
+export function SparkChart({ title, data, color, className }: TaskCardProps) {
   const chartData = {
     series: [
       {
