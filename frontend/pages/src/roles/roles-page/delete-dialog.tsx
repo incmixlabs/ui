@@ -33,8 +33,12 @@ export function DeleteDialog({
           <Dialog.Title>Are you absolutely sure?</Dialog.Title>
           <Dialog.Description>
             This action cannot be undone. This will permanently delete{" "}
-            <span className="font-medium capitalize">{items[0]?.name}</span>{" "}
-            role and related permissions from our servers.
+            <span className="font-medium capitalize">
+              {items.length === 1 
+                ? items[0]?.name 
+                : `${items.length} selected roles`}
+            </span>{" "}
+            and related permissions from our servers.
           </Dialog.Description>
         </DialogHeader>
         <DialogFooter className="gap-2 sm:space-x-0">
