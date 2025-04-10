@@ -1,4 +1,10 @@
-import { CardContainer, Heading, Text, dashboardColorValues,SparkChart } from "@incmix/ui"
+import {
+  CardContainer,
+  Heading,
+  SparkChart,
+  Text,
+  dashboardColorValues,
+} from "@incmix/ui"
 
 export function TotalTasksChart2() {
   return (

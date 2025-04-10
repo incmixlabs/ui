@@ -61,7 +61,7 @@ interface RadialTaskStatusChartProps {
   showLabels?: boolean
 }
 
-export  function RadialTaskStatusChart({
+export function RadialTaskStatusChart({
   tasks = [
     { name: "Ongoing", value: 420, color: dashboardColorValues.color3 },
     { name: "Hold", value: 210, color: dashboardColorValues.color2 },

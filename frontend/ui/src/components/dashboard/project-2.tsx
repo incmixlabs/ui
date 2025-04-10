@@ -3,6 +3,7 @@ import {
   Avatar,
   Box,
   Button,
+  Calendar,
   CardContainer,
   Checkbox,
   Container,
@@ -13,14 +14,13 @@ import {
   IconButton,
   PostingTask,
   Progress,
+  RadialTaskStatusChart,
   RecentActivity,
   ScrollArea,
-  Text,
-  dashboardColorValues,
-  Calendar,
-  RadialTaskStatusChart,
   SparkChart,
-  WeeklyActivityChart
+  Text,
+  WeeklyActivityChart,
+  dashboardColorValues,
 } from "@incmix/ui"
 
 import { Clipboard, Ellipsis, Settings } from "lucide-react"
