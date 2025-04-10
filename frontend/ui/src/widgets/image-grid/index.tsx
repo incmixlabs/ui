@@ -93,7 +93,7 @@ export function ImageGrid() {
   }
 
   return (
-    <Card className="min-w-[48rem] max-w-7xl space-y-10">
+    <Card className="w-full space-y-10">
       <Flex gap="4" align="center" justify="end">
         <Button color="red" onClick={deleteAll}>
           <TrashIcon />

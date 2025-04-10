@@ -1,4 +1,5 @@
 import {
+  ActiveTask,
   Avatar,
   Box,
   Button,
@@ -10,39 +11,28 @@ import {
   Grid,
   Heading,
   IconButton,
+  PostingTask,
   Progress,
+  RecentActivity,
   ScrollArea,
   Text,
   dashboardColorValues,
+  Calendar,
+  RadialTaskStatusChart,
+  SparkChart,
+  WeeklyActivityChart
 } from "@incmix/ui"
 
-import { Clipboard, Ellipsis, EllipsisVertical, Settings } from "lucide-react"
-import { motion } from "motion/react"
-import type React from "react"
+import { Clipboard, Ellipsis, Settings } from "lucide-react"
 import { useState } from "react"
-import { Calendar } from "../calendar"
-import RadialTaskStatusChart from "../chart/radial-task-status-chart"
-import SparkChart from "../chart/spark-chart"
-import WeeklyActivityChart from "../chart/statisic-weekly-active-chart"
 import { KanbanImages } from "../kanban-board/images"
-import { revisionData, taskStats } from "./data"
-import PostingCalendar from "./posting-calendar"
-import RecentActivity from "./recent-activity"
-interface ProjectRevision {
-  id: string
-  projectNumber: string
-  recipient: string
-  checked: boolean
-  color: string
-  type: string
-}
+
 const stats = [
   { label: "Ongoing", value: 420, color: dashboardColorValues.color1 },
   { label: "Hold", value: 210, color: dashboardColorValues.color2 },
   { label: "Done", value: 200, color: dashboardColorValues.color3 },
 ]
 
-type TabType = "month" | "week" | "day"
 interface ProgressItem {
   category: string
   value: number
@@ -77,14 +67,6 @@ export function Project2() {
       color: "green",
     },
   ])
-
-  const [activeTab, setActiveTab] = useState<TabType>("month")
-  const [revisions, setRevisions] = useState<ProjectRevision[]>(revisionData)
-
-  const handleFilterRevision = (tab: TabType) => {
-    setActiveTab(tab)
-    setRevisions(revisionData.filter((revision) => revision.type === tab))
-  }
 
   return (
     <div>
@@ -167,86 +149,8 @@ export function Project2() {
                 </Heading>
               </Flex>
             </CardContainer>
-
             <CardContainer className="col-span-7 2xl:col-span-8">
-              <Flex justify={"between"} align={"center"} className="pb-4">
-                <Heading size="5">Active Tasks</Heading>
-                <Flex
-                  align={"center"}
-                  gap={"2"}
-                  className="rounded-xl border border-gray-5 p-2 px-3"
-                >
-                  {(["month", "week", "day"] as const).map((tab) => (
-                    <Button
-                      key={tab}
-                      variant="ghost"
-                      onClick={() => {
-                        handleFilterRevision(tab)
-                      }}
-                      className={`relative inline-block flex-1 cursor-pointer rounded-xl px-4 py-1.5 font-medium text-sm transition-colors ${
-                        activeTab === tab ? "text-white" : ""
-                      }`}
-                    >
-                      {activeTab === tab && (
-                        <motion.span
-                          layoutId={"tab-indicator"}
-                          className="absolute inset-0 inline-block h-full w-full rounded-xl bg-indigo-9"
-                        />
-                      )}
-                      <span className="relative z-10 capitalize">{tab}</span>
-                    </Button>
-                  ))}
-                </Flex>
-              </Flex>
-              <Box className="space-y-3">
-                {revisions.length === 0 ? (
-                  <Text className="text-gray-8 text-sm">
-                    No revisions found
-                  </Text>
-                ) : (
-                  <>
-                    {" "}
-                    {revisions.map((revision) => (
-                      <Flex
-                        key={revision.id}
-                        align={"center"}
-                        className="relative rounded-lg border border-gray-5 p-3"
-                        style={{
-                          borderLeftWidth: "4px",
-                          borderLeftColor: revision.color,
-                        }}
-                      >
-                        <Box className="mr-3 flex-shrink-0">
-                          <Checkbox
-                            size={"3"}
-                            className="h-5 w-5 rounded-md border border-black bg-gray-12 text-secondary group-hover:bg-white "
-                          />
-                        </Box>
-
-                        <Box className="min-w-0 flex-1">
-                          <Text as="p" className="font-medium text-sm">
-                            {revision.recipient || "Regina Cooper"}
-                          </Text>
-                          <Text className="truncate text-gray-10 text-sm">
-                            Sending project{" "}
-                            <span className="text-blue-600">
-                              #{revision.projectNumber}
-                            </span>{" "}
-                            for revision to {revision.recipient}
-                          </Text>
-                        </Box>
-
-                        <IconButton
-                          variant="ghost"
-                          className="ml-2 flex-shrink-0 cursor-pointer"
-                        >
-                          <EllipsisVertical className="h-5 w-5" />
-                        </IconButton>
-                      </Flex>
-                    ))}
-                  </>
-                )}
-              </Box>
+              <ActiveTask />
             </CardContainer>
             <CardContainer className="col-span-5 2xl:col-span-4">
               <Flex justify={"between"} align={"center"}>
@@ -274,6 +178,7 @@ export function Project2() {
                     <Progress
                       value={(item.value / item.maxValue) * 100}
                       className="h-2 bg-gray-100"
+                      // @ts-ignore
                       color={item.color as ExtendedColorType}
                     />
                   </Box>
@@ -281,7 +186,7 @@ export function Project2() {
               </Box>
             </CardContainer>
             <CardContainer className="col-span-12">
-              <PostingCalendar />
+              <PostingTask />
             </CardContainer>
           </Box>
         </Box>

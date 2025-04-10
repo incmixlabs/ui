@@ -12,7 +12,7 @@ interface TaskCardProps {
   className?: string
 }
 
-export default function SparkChart({
+export  function SparkChart({
   title,
   data,
   color,
