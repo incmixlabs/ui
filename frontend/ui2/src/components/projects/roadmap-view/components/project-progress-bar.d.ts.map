@@ -1,0 +1,1 @@
+{"version":3,"file":"project-progress-bar.d.ts","sourceRoot":"","sources":["project-progress-bar.tsx"],"names":[],"mappings":"AACA,OAAO,KAAK,EAAE,OAAO,EAAE,MAAM,SAAS,CAAA;AAGtC,UAAU,uBAAuB;IAC/B,OAAO,EAAE,OAAO,CAAA;IAChB,OAAO,CAAC,EAAE,OAAO,CAAA;IACjB,WAAW,CAAC,EAAE,OAAO,CAAA;CACtB;AAED,wBAAgB,kBAAkB,CAAC,EACjC,OAAO,EACP,OAAe,EACf,WAAmB,GACpB,EAAE,uBAAuB,2CAwBzB"}

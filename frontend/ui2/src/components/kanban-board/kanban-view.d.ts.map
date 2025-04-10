@@ -1,0 +1,1 @@
+{"version":3,"file":"kanban-view.d.ts","sourceRoot":"","sources":["kanban-view.tsx"],"names":[],"mappings":"AACA,OAAO,KAAK,EAAE,EAAE,EAAE,MAAM,OAAO,CAAA;AAI/B,OAAO,KAAK,EAAE,eAAe,EAAE,MAAM,SAAS,CAAA;AAE9C,MAAM,MAAM,eAAe,GAAG;IAC5B,IAAI,EAAE,eAAe,CAAA;CACtB,CAAA;AACD,eAAO,MAAM,UAAU,EAAE,EAAE,CAAC,eAAe,CAiD1C,CAAA"}

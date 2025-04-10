@@ -1,0 +1,1 @@
+{"version":3,"file":"column-context.d.ts","sourceRoot":"","sources":["column-context.tsx"],"names":[],"mappings":"AAIA,MAAM,MAAM,kBAAkB,GAAG;IAC/B,QAAQ,EAAE,MAAM,CAAA;IAChB,YAAY,EAAE,CAAC,MAAM,EAAE,MAAM,KAAK,MAAM,CAAA;IACxC,WAAW,EAAE,MAAM,MAAM,CAAA;CAC1B,CAAA;AAED,eAAO,MAAM,aAAa,oDAAiD,CAAA;AAE3E,wBAAgB,gBAAgB,IAAI,kBAAkB,CAIrD"}

@@ -1,0 +1,27 @@
+import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import { Avatar, Box, Button, Flex, Heading, IconButton, ScrollArea, Select, Text, } from "@/components/base";
+import { MotionSheet } from "@/components/custom-sheet";
+import { ComboBox } from "@/components/kanban-board/combo-box";
+import { attachments } from "@/components/kanban-board/data";
+import { cn } from "@/lib/utils";
+import { Download, FileArchive, X } from "lucide-react";
+import { motion } from "motion/react";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+import { useState } from "react";
+import { members } from "../data";
+import { useProjectDrawer } from "../hooks/use-project-drawer";
+import ProjectChecklist from "./project-checklist";
+import ProjectComments from "./project-comments";
+import ProjectDetails from "./project-details";
+export default function ProjectDrawer({ listFilter, listFilterClassName = "w-full relative z-50 h-[84vh] shrink-0 rounded-xl", }) {
+    const { projectId, handleDrawerClose } = useProjectDrawer();
+    const [status, setStatus] = useState("started");
+    const [selectedMemebers, setSelectedMembers] = useState([
+        "regina-cooper",
+    ]);
+    return (_jsx(_Fragment, { children: _jsx(MotionSheet, { open: Boolean(projectId), onOpenChange: handleDrawerClose, showCloseButton: false, isFilterClassName: listFilterClassName, isFilter: listFilter, side: "right", className: `${listFilter ? "w-full flex-1" : "w-[53rem]"} p-0 py-0`, children: _jsx(Box, { className: cn(listFilter
+                    ? "relative z-50 h-full w-full shrink-0 rounded-xl"
+                    : "h-full w-full"), children: _jsx(motion.div, { className: cn("cursor-default rounded-lg bg-gray-3 dark:bg-gray-4", listFilter ? " h-full w-full" : " h-full w-full"), children: _jsx(ScrollArea, { className: listFilter ? "h-[84vh] rounded-lg" : "h-[98vh] rounded-lg", children: _jsxs(Flex, { align: "center", className: "h-full", children: [_jsxs(Box, { className: "bg-gray-1 p-4 dark:bg-gray-3", children: [_jsx(ProjectDetails, {}), _jsx(ProjectChecklist, {}), _jsx(ProjectComments, {})] }), _jsxs(Box, { className: cn("relative h-full w-72 shrink-0", listFilter ? "pt-5" : "pt-20"), children: [!listFilter && (_jsxs(IconButton, { color: "gray", variant: "soft", onClick: handleDrawerClose, className: "absolute top-5 right-3 ml-8 flex h-8 w-8 cursor-pointer items-center justify-center rounded-md", children: [_jsx(X, { "aria-hidden": "true" }), _jsx(Text, { className: "sr-only", children: "Close" })] })), _jsx(Box, { className: "space-y-3 px-3 pb-3", children: _jsxs(Select.Root, { "aria-label": "Project status", defaultValue: "started", value: status, onValueChange: setStatus, children: [_jsx(Select.Trigger, { className: "h-11 w-full" }), _jsxs(Select.Content, { className: "mx-auto w-[95%]", children: [_jsx(Select.Item, { value: "started", children: "Started" }), _jsx(Select.Item, { value: "on-hold", children: "On Hold" }), _jsx(Select.Item, { value: "completed", children: "Completed" })] })] }) }), _jsxs(Box, { className: "space-y-3 border-gray-6 border-t p-4 py-3", children: [_jsxs(Flex, { justify: "between", align: "center", children: [_jsx(Heading, { size: "4", className: " font-medium text-gray-10", children: "Members" }), _jsx(ComboBox, { options: members, onValueChange: setSelectedMembers, defaultValue: selectedMemebers, placeholder: "Find Person...", title: "Assign To" })] }), _jsx(Box, { className: "gap-1 space-y-4", children: members?.map((member) => (_jsxs(Flex, { gap: "3", className: "", children: [_jsx(Avatar, { src: member.avatar, name: member.name, className: "h-10 w-10" }), _jsxs(Box, { children: [_jsx(Heading, { size: "3", className: "font-medium", children: member?.name }), _jsx(Text, { as: "p", className: "text-gray-11 text-sm", children: member?.position })] })] }, member?.id))) })] }), _jsxs(Box, { className: "space-y-3 border-gray-6 border-t p-4 py-3", children: [_jsx(Heading, { size: "4", className: " font-medium text-gray-10", children: "FILES" }), _jsx(Box, { className: "space-y-5", children: attachments.map((attachment) => (_jsxs(Flex, { align: "center", className: " rounded-lg bg-gray-3 transition-colors dark:bg-gray-4", children: [attachment.type === "image" ? (_jsx(Box, { className: "h-12 w-12 shrink-0 overflow-hidden rounded-lg", children: _jsx("img", { src: attachment.thumbnailUrl, alt: attachment.name, className: "h-full w-full object-cover" }) })) : (_jsx(Box, { className: "flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-gray-8", children: _jsx(FileArchive, { className: "h-5 w-5 text-gray-8" }) })), _jsxs(Box, { className: "ml-4 grow", children: [_jsx(Heading, { className: "font-medium text-gray-12 text-sm", children: attachment.name }), _jsx(Text, { className: "pt-1 text-gray-11 text-sm", children: attachment.size })] }), _jsx(Flex, { className: "flex space-x-2", children: _jsx(Button, { variant: "soft", className: "h-9 cursor-pointer rounded-full bg-transparent p-2 transition-colors hover:bg-gray-4 dark:hover:bg-gray-7", children: _jsx(Download, { className: "h-5 w-5 text-gray-12" }) }) })] }, attachment.id))) })] })] })] }) }) }) }) }) }));
+}
+//# sourceMappingURL=project-drawer.js.map

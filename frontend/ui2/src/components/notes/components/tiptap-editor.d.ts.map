@@ -1,0 +1,1 @@
+{"version":3,"file":"tiptap-editor.d.ts","sourceRoot":"","sources":["tiptap-editor.tsx"],"names":[],"mappings":"AAgBA,OAAO,KAAK,EAAE,KAAK,EAAE,MAAM,SAAS,CAAA;AAEpC,UAAU,iBAAiB;IACzB,SAAS,EAAE,KAAK,GAAG,IAAI,CAAA;IACvB,QAAQ,CAAC,EAAE,CAAC,OAAO,EAAE,KAAK,KAAK,IAAI,CAAA;CACpC;AA+ED,wBAAgB,YAAY,CAAC,EAAE,SAAS,EAAE,EAAE,iBAAiB,2CAuC5D"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"drop-indicator.d.ts","sourceRoot":"","sources":["drop-indicator.tsx"],"names":[],"mappings":"AAIA,OAAO,KAAK,EAAE,IAAI,EAAE,MAAM,gDAAgD,CAAA;AAC1E,MAAM,MAAM,kBAAkB,GAAG;IAC/B;;;;;;;OAOG;IACH,IAAI,EAAE,IAAI,CAAA;IACV;;;;;;;;;OASG;IACH,GAAG,CAAC,EAAE,MAAM,CAAA;CACb,CAAA;AA4BD,wBAAgB,aAAa,CAAC,EAAE,IAAI,EAAE,GAAW,EAAE,EAAE,kBAAkB,2CAkBtE;AAED,eAAe,aAAa,CAAA"}
