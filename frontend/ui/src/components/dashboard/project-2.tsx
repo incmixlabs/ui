@@ -23,6 +23,7 @@ import {
   dashboardColorValues,
 } from "@incmix/ui"
 
+import type { BadgeProps } from "@radix-ui/themes"
 import { Clipboard, Ellipsis, Settings } from "lucide-react"
 import { useState } from "react"
 import { KanbanImages } from "../kanban-board/images"
@@ -178,8 +179,7 @@ export function Project2() {
                     <Progress
                       value={(item.value / item.maxValue) * 100}
                       className="h-2 bg-gray-100"
-                      // @ts-ignore
-                      color={item.color as ExtendedColorType}
+                      color={item.color as BadgeProps["color"]}
                     />
                   </Box>
                 ))}

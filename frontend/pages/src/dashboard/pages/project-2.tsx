@@ -15,6 +15,7 @@ import {
   SwapyLayout,
   SwapySlot,
   Text,
+  dashboardColorValues,
 } from "@incmix/ui"
 import {
   ActiveTask,
@@ -30,9 +31,9 @@ import {
   RecentActivity,
   StatisticWidgets,
   StatisticWidgets2,
+  TaskChart,
   TotalProject,
-  TotalTasksChart,
-  TotalTasksChart2,
+  TotalTasks,
   WeatherWidget,
   getBattery,
 } from "@incmix/ui/widgets"
@@ -104,8 +105,16 @@ const INITIAL_SLOT_ITEMS = [
 const TaskStats = () => {
   return (
     <Grid gap={"5"}>
-      <TotalTasksChart />
-      <TotalTasksChart2 />
+      <TaskChart
+        title="On Hold"
+        color={dashboardColorValues.color2}
+        total={820}
+      />{" "}
+      <TaskChart
+        title="Ongoing"
+        color={dashboardColorValues.color1}
+        total={520}
+      />
     </Grid>
   )
 }
