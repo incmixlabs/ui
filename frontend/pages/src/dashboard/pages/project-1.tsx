@@ -155,7 +155,7 @@ const DashboardProject1: React.FC = () => {
           {t("dashboard:title")}
         </Heading>
         <Flex gap={"5"} className="w-full">
-          {slottedWidgets.length && (
+          {slottedWidgets.length > 0 && (
             <SwapyLayout
               id="dashboard-container"
               enable={isEditing}
