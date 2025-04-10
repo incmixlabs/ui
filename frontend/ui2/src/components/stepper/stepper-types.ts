@@ -1,9 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { LucideIconType } from "@/components/icons/lucide-icon"
+import type { TextField } from "@radix-ui/themes"
+import type { z } from "zod"
 
 export interface FullStepProps extends StepProps, StepInternalConfig {}
 
 type IconType = LucideIconType | React.ComponentType<any> | undefined
+
+export type Field = {
+  name: string
+  label: string
+  type?: TextField.RootProps["type"] | "textarea"
+  initialValue?: string
+  validation?: z.ZodSchema<string>
+}
 
 export type StepItem = {
   id?: string
@@ -11,6 +21,7 @@ export type StepItem = {
   description?: string
   icon?: IconType
   optional?: boolean
+  fields?: Field[]
 }
 
 export type StepIconProps = {
