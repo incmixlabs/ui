@@ -7,7 +7,7 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "vite",
-    "tsc": "tsc -p tsconfig.json --outDir dist && rm -r dist/style && cp -r src/style dist/style",
+    "tsc": "tsc -p tsconfig.json --outDir dist && mkdir -p dist/style && rm -rf dist/style/* && cp -r src/style dist/",
     "lint": "eslint .",
     "preview": "vite preview"
   },

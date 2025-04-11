@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "types": ["@types/wicg-file-system-access", "vite/client"],
-    "rootDir": ".",
+    "rootDir": "src",
     "outDir": "./dist",
     "baseUrl": "./src",
      "jsx": "react-jsx",

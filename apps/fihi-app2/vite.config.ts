@@ -11,7 +11,7 @@ import { chunkSplitPlugin } from "vite-plugin-chunk-split"
 import topLevelAwait from "vite-plugin-top-level-await"
 import tsconfigPaths from "vite-tsconfig-paths"
 
-import { TanStackRouterVite } from "@tanstack/router-vite-plugin"
+// import { TanStackRouterVite } from "@tanstack/router-vite-plugin"
 
 // @ts-expect-error process is a nodejs global
 const mobile = !!/android|ios/.exec(process.env.TAURI_ENV_PLATFORM)
@@ -42,7 +42,7 @@ export default defineConfig(async () => ({
     bundlesize({ limits: [{ name: "**/*", limit: "3 mB" }] }),
     react(),
     tailwindcss(),
-    TanStackRouterVite(),
+    // TanStackRouterVite(),
     tsconfigPaths(),
     chunkSplitPlugin(),
     visualizer({ open: true }) as PluginOption,
