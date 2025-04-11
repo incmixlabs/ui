@@ -1,3 +1,4 @@
+import type { UserProfile } from "@incmix/utils/types"
 import type { AvatarProps } from "../avatar"
 
 export const sizes = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as const
@@ -9,6 +10,8 @@ export type Sizes = (typeof sizes)[number]
 export type Layout = (typeof layouts)[number]
 export type Direction = (typeof directions)[number]
 export type StackOrder = (typeof stackOrders)[number]
+
+export type User = UserProfile
 
 export type AvatarGroupProps = {
   users: AvatarProps[]

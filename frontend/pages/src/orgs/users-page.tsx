@@ -9,10 +9,11 @@ import {
   TextField,
   Tooltip,
 } from "@incmix/ui"
-import type {
-  MemberDetails,
-  MemberRole,
-  Organization,
+import {
+  type MemberDetails,
+  type Organization,
+  type UserRole,
+  UserRoles,
 } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { ArrowLeftIcon } from "@radix-ui/react-icons"
@@ -114,7 +115,7 @@ const OrganizationHeader: React.FC<{
 const UserRow: React.FC<{
   member: MemberDetails
   orgHandle: string
-  onUpdateRole: (member: MemberDetails, newRole: MemberRole) => Promise<void>
+  onUpdateRole: (member: MemberDetails, newRole: UserRole) => Promise<void>
 }> = ({ member, orgHandle, onUpdateRole }) => {
   const { authUser: currentUser } = useAuth()
   const { t } = useTranslation(["common"])
@@ -125,7 +126,7 @@ const UserRow: React.FC<{
         <Flex align="center" gap="2">
           <UserProfileImage size="2" userId={member.userId} />
           <Text>
-            {member.name}
+            {member.fullName}
             {currentUser &&
               currentUser.id === member.userId &&
               ` (${t("common:you")})`}
@@ -158,17 +159,19 @@ const UserRow: React.FC<{
 }
 
 const AddUserForm: React.FC<{
-  onAddMember: (email: string, role: MemberRole) => void
+  onAddMember: (email: string, role: UserRole) => void
 }> = ({ onAddMember }) => {
   const { t } = useTranslation(["organizationDetails", "common", "roles"])
   const [newMemberEmail, setNewMemberEmail] = useState("")
-  const [newMemberRole, setNewMemberRole] = useState<MemberRole>("viewer")
+  const [newMemberRole, setNewMemberRole] = useState<UserRole>(
+    UserRoles.ROLE_VIEWER
+  )
 
   const handleAddNewMember = () => {
     if (newMemberEmail && newMemberRole) {
       onAddMember(newMemberEmail, newMemberRole)
       setNewMemberEmail("")
-      setNewMemberRole("viewer")
+      setNewMemberRole(UserRoles.ROLE_VIEWER)
     }
   }
 
@@ -183,7 +186,7 @@ const AddUserForm: React.FC<{
       />
       <Select.Root
         value={newMemberRole}
-        onValueChange={(value) => setNewMemberRole(value as MemberRole)}
+        onValueChange={(value) => setNewMemberRole(value as UserRole)}
       >
         <Select.Trigger />
         <Select.Content>
@@ -228,7 +231,7 @@ const OrganizationDetailsPage: React.FC = () => {
     }
   }
 
-  const handleAddNewMember = async (email: string, role: MemberRole) => {
+  const handleAddNewMember = async (email: string, role: UserRole) => {
     if (organization) {
       try {
         await handleAddMember(organization.id, email, role)
@@ -241,10 +244,7 @@ const OrganizationDetailsPage: React.FC = () => {
     }
   }
 
-  const handleRoleChange = async (
-    member: MemberDetails,
-    newRole: MemberRole
-  ) => {
+  const handleRoleChange = async (member: MemberDetails, newRole: UserRole) => {
     if (organization) {
       await handleUpdateMemberRole(organization.id, member.userId, newRole)
     }

@@ -50,8 +50,10 @@ export function DeleteDialog({
           <Button
             aria-label="Delete selected rows"
             color="red"
-            onClick={() => {
-              deleteMutation.mutate(items[0].id)
+            onClick={async () => {
+              for (const item of items) {
+                await deleteMutation.mutateAsync(item.id)
+              }
             }}
           >
             Delete

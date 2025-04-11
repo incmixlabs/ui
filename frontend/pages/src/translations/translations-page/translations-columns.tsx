@@ -1,5 +1,6 @@
 import {
   Badge,
+  Button,
   Checkbox,
   type ColumnDef,
   DataTableColumnHeader,
@@ -90,37 +91,38 @@ export function getColumns({
       id: "actions",
       cell: function Cell({ row }) {
         return (
-          <DropdownMenu
-            button={{
-              "aria-label": "Open menu",
-              variant: "ghost",
-              className: "flex size-8 p-0 data-[state=open]:bg-muted",
-              icon: <DotsHorizontalIcon className="size-4" color="black" />,
-            }}
-            items={[
-              {
-                icon: <DotsHorizontalIcon />,
-                label: "Edit",
-                onClick: () => {
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <Button
+                aria-label="Open menu"
+                variant="ghost"
+                className="flex size-8 p-0 data-[state=open]:bg-muted"
+                icon={<DotsHorizontalIcon className="size-4" color="black" />}
+              />
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              <DropdownMenu.Item
+                onClick={() => {
                   setRowAction({
                     type: "update",
                     row,
                   })
-                },
-                separator: true,
-              },
-              {
-                icon: <DotsHorizontalIcon />,
-                label: "Delete",
-                onClick: () => {
+                }}
+              >
+                Edit
+              </DropdownMenu.Item>
+              <DropdownMenu.Item
+                onClick={() => {
                   setRowAction({
                     type: "delete",
                     row,
                   })
-                },
-              },
-            ]}
-          />
+                }}
+              >
+                Delete
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
         )
       },
       size: 40,
