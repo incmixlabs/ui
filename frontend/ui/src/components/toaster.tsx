@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { Toaster as SonnerToaster, type ToasterProps } from "sonner"
 export { toast } from "sonner"
 type Position = ToasterProps["position"]

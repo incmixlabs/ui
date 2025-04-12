@@ -1,16 +1,18 @@
 "use client"
+
+import { useQuery } from "@tanstack/react-query"
+import { Info } from "lucide-react"
+import AdminUsersTable from "./admin-users-table"
 import { useOrganizationStore } from "@incmix/store"
 
-import { I18n } from "@incmix/pages/i18n"
+import { I18n } from "@/i18n"
+import { USERS_API_URL } from "@incmix/ui/constants"
 import { Flex, Spinner } from "@incmix/ui"
 import { Callout } from "@incmix/ui"
-import { USERS_API_URL } from "@incmix/ui/constants"
 import { createAbilityFromPermissions } from "@incmix/utils/casl"
 import type { AppAbility, Permission } from "@incmix/utils/types"
-import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { InfoCircledIcon } from "@radix-ui/react-icons"
-import { useQuery } from "@tanstack/react-query"
-import AdminUsersTable from "./admin-users-table"
+import { DashboardLayout } from "../../common/components/layouts/admin-panel/layout"
+
 import OrgUsersTable from "./org-users-table"
 
 const ListUsersPage = () => {
@@ -70,7 +72,7 @@ const UserTable: React.FC<{ ability: AppAbility }> = ({ ability }) => {
   return (
     <Callout.Root color="red">
       <Callout.Icon>
-        <InfoCircledIcon />
+        <Info />
       </Callout.Icon>
       <Callout.Text>
         You do not have the necessary permissions to view this page.

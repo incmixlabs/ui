@@ -1,14 +1,17 @@
-import type { TaskCollections } from "@incmix/store"
-import { useOrganizationStore } from "@incmix/store"
-import { Board, CardContent, useKanbanFilter } from "@incmix/ui"
-import { Box, Card, Flex, IconButton, ScrollArea, Select } from "@incmix/ui"
-import type { Task } from "@incmix/utils/types"
-import { DashboardLayout } from "@layouts/admin-panel/layout"
+
+import { useEffect, useMemo, useState } from "react"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { Filter, FilterIcon, ListFilter } from "lucide-react"
-import { useEffect, useMemo, useState } from "react"
 import type { RxDatabase } from "rxdb"
 import { useRxDB } from "rxdb-hooks"
+
+import type { TaskCollections } from "@incmix/store"
+import { useOrganizationStore } from "@incmix/store"
+import { Board,  useKanbanFilter } from "@incmix/ui/kanban"
+import { Box, Card, Flex, IconButton, ScrollArea, Select } from "@incmix/ui"
+import type { Task } from "@incmix/utils/types"
+import { DashboardLayout } from "../../common/components/layouts/admin-panel/layout"
+
 
 import { generateBoard } from "./actions"
 import { CreateColumnForm } from "./create-column-form"
@@ -81,6 +84,7 @@ const TasksPage = () => {
   const [_boardLoading, setBoardLoading] = useState(true)
 
   const _board = useMemo(() => {
+    // @ts-ignore
     const board = generateBoard(columns ?? [], tasks ?? [])
 
     setBoardLoading(false)
@@ -120,13 +124,13 @@ const TasksPage = () => {
   if (!selectedOrganisation)
     return (
       <DashboardLayout breadcrumbItems={[{ label: "Tasks", url: "/tasks" }]}>
-        <Card>
-          <CardContent>
+        <Card.Root>
+          <Card.Content>
             <p className="text-center">
               Please add an organisation to manage projects
             </p>
-          </CardContent>
-        </Card>
+          </Card.Content>
+        </Card.Root>
       </DashboardLayout>
     )
 

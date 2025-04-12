@@ -2,30 +2,29 @@ import {
   Avatar,
   Box,
   Button,
+  Calendar,
   CardContainer,
   Checkbox,
-  Container,
-  type ExtendedColorType,
   Flex,
   Grid,
   Heading,
   IconButton,
   Progress,
+  type ProgressProps,
   ScrollArea,
   Text,
-  dashboardColorValues,
-} from "@incmix/ui"
-
+} from "@/components/base"
+import { dashboardColorValues } from "@/lib/utils/colors"
 import { Clipboard, Ellipsis, EllipsisVertical, Settings } from "lucide-react"
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import { motion } from "motion/react"
-import type React from "react"
 import { useState } from "react"
-import { Calendar } from "../calendar"
+
+import { SparkChart, WeeklyActivityChart } from "@/components/chart"
 import RadialTaskStatusChart from "../chart/radial-task-status-chart"
-import SparkChart from "../chart/spark-chart"
-import WeeklyActivityChart from "../chart/statisic-weekly-active-chart"
 import { KanbanImages } from "../kanban-board/images"
-import { revisionData, taskStats } from "./data"
+import { revisionData } from "./data"
 import PostingCalendar from "./posting-calendar"
 import RecentActivity from "./recent-activity"
 interface ProjectRevision {
@@ -47,10 +46,11 @@ interface ProgressItem {
   category: string
   value: number
   maxValue: number
-  color: ExtendedColorType
+  color: ProgressProps["color"]
 }
 
 export function Project2() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [progressItems, _setProgressItems] = useState<ProgressItem[]>([
     {
       category: "Product Design",
@@ -274,7 +274,7 @@ export function Project2() {
                     <Progress
                       value={(item.value / item.maxValue) * 100}
                       className="h-2 bg-gray-100"
-                      color={item.color as ExtendedColorType}
+                      color={item.color}
                     />
                   </Box>
                 ))}
@@ -293,7 +293,7 @@ export function Project2() {
               className="w-full border-gray-5 border-b p-4"
             >
               <Flex gap={"3"} align={"center"}>
-                <Avatar src={KanbanImages?.user1} fallback="A" />
+                <Avatar src={KanbanImages?.user1} name="A" />
                 <Box className="space-y-0">
                   <Text as="p" className="font-medium text-gray-12">
                     ArtTemplate

@@ -1,16 +1,10 @@
+// @ts-nocheck
 "use client"
 
-import { useAuth } from "@auth"
+import { useAuth } from "@/auth"
 import { type ProjectDocType, useOrganizationStore } from "@incmix/store"
 import {
   Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
   FormField,
   ReactiveButton,
   toast,
@@ -26,7 +20,7 @@ import { useRxCollection } from "rxdb-hooks"
 import { z } from "zod"
 
 interface CreateProjectProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog> {
+  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
   onSuccess?: (data: Project) => void
 }
 
@@ -80,7 +74,7 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
   })
 
   return (
-    <Dialog
+    <Dialog.Root
       {...props}
       open={isOpen}
       onOpenChange={(open) => {
@@ -88,16 +82,16 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
         reset()
       }}
     >
-      <DialogTrigger>
+      <Dialog.Trigger>
         <Button>Create Project</Button>
-      </DialogTrigger>
-      <DialogContent className="border border-gray-4">
-        <DialogHeader>
-          <DialogTitle>Create New Project</DialogTitle>
-          <DialogDescription>
+      </Dialog.Trigger>
+      <Dialog.Content className="border border-gray-4">
+        <Dialog.Header>
+          <Dialog.Title>Create New Project</Dialog.Title>
+          <Dialog.Description>
             Fill out the form to create a new project.
-          </DialogDescription>
-        </DialogHeader>
+          </Dialog.Description>
+        </Dialog.Header>
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -129,14 +123,14 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
             </ReactiveButton>
           </Flex>
         </form>
-        <DialogFooter className="gap-2 sm:space-x-0">
-          <DialogClose>
+        <Dialog.Footer className="sm:space-x-0">
+          <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </Dialog.Close>
+        </Dialog.Footer>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }

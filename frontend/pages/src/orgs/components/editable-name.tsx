@@ -1,5 +1,5 @@
 import { Button, Flex, Heading, TextField, Tooltip } from "@incmix/ui"
-import { CheckIcon, Cross1Icon, Pencil1Icon } from "@radix-ui/react-icons"
+import { Check, Pencil, X } from "lucide-react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
@@ -70,7 +70,7 @@ export const EditableName: React.FC<EditableNameProps> = ({
             onClick={handleConfirm}
             disabled={isLoading}
           >
-            {isLoading ? "..." : <CheckIcon />}
+            {isLoading ? "..." : <Check />}
           </Button>
         </Tooltip>
         <Tooltip content={t("common:cancel")}>
@@ -81,7 +81,7 @@ export const EditableName: React.FC<EditableNameProps> = ({
             onClick={handleCancel}
             disabled={isLoading}
           >
-            <Cross1Icon />
+            <X />
           </Button>
         </Tooltip>
       </Flex>
@@ -96,7 +96,7 @@ export const EditableName: React.FC<EditableNameProps> = ({
       {editable && (
         <Tooltip content={t("organizationDetails:editName")}>
           <Button size="2" variant="ghost" onClick={handleEdit}>
-            <Pencil1Icon />
+            <Pencil />
           </Button>
         </Tooltip>
       )}

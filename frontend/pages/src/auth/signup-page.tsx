@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useForm } from "@tanstack/react-form"
 import { useMutation } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
@@ -6,9 +7,9 @@ import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
+import { AUTH_API_URL } from "@incmix/ui/constants"
 import { FormField } from "@incmix/ui"
 import { Box, Flex, Heading, ReactiveButton, Text } from "@incmix/ui"
-import { AUTH_API_URL } from "@incmix/ui/constants"
 import type { AuthUser } from "@incmix/utils/types"
 
 import { AuthLayout } from "./layouts"

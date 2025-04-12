@@ -1,9 +1,8 @@
-import { Card, CardContent, CardTitle } from "@components/card/card"
-import { CarouselItem } from "@components/carousel"
-import { Box, Flex, Text } from "@incmix/ui"
-import { cn } from "@utils/cn"
+import { Box, Card, Flex, Text } from "@/components/base"
+import { CarouselItem } from "@/components/carousel"
+import { cn } from "@/lib/utils"
 
-import { getRelativeTime } from "@utils/date"
+import { getRelativeTime } from "@/lib/utils/date"
 
 export type NewsStory = {
   thumbnail?: string
@@ -22,8 +21,8 @@ export type NewsCardProps = {
 export function NewsCard({ position, highlight, stories }: NewsCardProps) {
   return (
     <CarouselItem>
-      <Card>
-        <CardContent className="p-4 pt-4 ">
+      <Card.Root>
+        <Card.Content className="p-4 pt-4 ">
           <Flex gap="6">
             <Box
               className={cn(
@@ -55,8 +54,8 @@ export function NewsCard({ position, highlight, stories }: NewsCardProps) {
               </Box>
             )}
           </Flex>
-        </CardContent>
-      </Card>
+        </Card.Content>
+      </Card.Root>
     </CarouselItem>
   )
 }
@@ -68,11 +67,11 @@ const NewsStory = ({
   return (
     <Box>
       <a target="_blank" href={story.link} rel="noreferrer">
-        <CardTitle
+        <Card.Title
           className={cn("hover:underline", isHighlight ? "text-lg" : "text-md")}
         >
           {story.title}
-        </CardTitle>
+        </Card.Title>
       </a>
       <Box>
         {story.source.authors && (

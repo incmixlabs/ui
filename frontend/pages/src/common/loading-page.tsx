@@ -1,6 +1,6 @@
 import { Flex, Spinner } from "@incmix/ui"
 
-const LoadingPage: React.FC = () => {
+export const LoadingPage: React.FC = () => {
   return (
     <Flex
       align="center"

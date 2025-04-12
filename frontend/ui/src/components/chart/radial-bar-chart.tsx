@@ -1,7 +1,6 @@
 import type ApexCharts from "apexcharts"
-import type React from "react"
-
 import { lazy, useMemo, useState } from "react"
+
 const Chart = lazy(() => import("react-apexcharts"))
 import { useThemeContext } from "@radix-ui/themes"
 

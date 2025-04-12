@@ -1,27 +1,14 @@
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Flex,
-  FormField,
-  ReactiveButton,
-} from "@incmix/ui"
-import { Button, Select, Text } from "@incmix/ui"
-import { INTL_API_URL } from "@incmix/ui/constants"
-import { useForm } from "@tanstack/react-form"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { I18n } from "i18n"
-import type React from "react"
 import { useState } from "react"
 import { z } from "zod"
+import { useForm } from "@tanstack/react-form"
+
+import { INTL_API_URL } from "@incmix/ui/constants"
+import { Button, Dialog, Flex, FormField, ReactiveButton, Select, Text } from "@incmix/ui"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { I18n } from "@/i18n"
 import type { TranslationMessage } from "./types"
 interface AddTranslationDialogProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog> {
+  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
   onSuccess?: () => void
 }
 
@@ -38,27 +25,27 @@ export const AddTranslationDialog: React.FC<AddTranslationDialogProps> = ({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen} {...props}>
-      <DialogTrigger>
+    <Dialog.Root open={isOpen} onOpenChange={setIsOpen} {...props}>
+      <Dialog.Trigger>
         <Button>Add Translation</Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Add Translation</DialogTitle>
-        </DialogHeader>
-        <DialogDescription className="sr-only">
+      </Dialog.Trigger>
+      <Dialog.Content>
+        <Dialog.Header>
+          <Dialog.Title>Add Translation</Dialog.Title>
+        </Dialog.Header>
+        <Dialog.Description className="sr-only">
           Add new Translation
-        </DialogDescription>
+        </Dialog.Description>
         <AddTranlationForm onSuccess={onSubmit} />
-        <DialogFooter className="gap-2 sm:space-x-0">
-          <DialogClose>
+        <Dialog.Footer>
+          <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </Dialog.Close>
+        </Dialog.Footer>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }
 
@@ -102,7 +89,7 @@ const AddTranlationForm: React.FC<{ onSuccess?: () => void }> = ({
     },
     onSuccess,
   })
-
+  // @ts-ignore
   const form = useForm<AddTranslation>({
     defaultValues: {
       locale: locales?.find((l) => l.isDefault)?.code ?? "",

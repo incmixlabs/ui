@@ -1,5 +1,6 @@
-import { RootRoute } from "@common"
 import { createRoute, redirect } from "@tanstack/react-router"
+
+import { RootRoute } from "@/common"
 import OrganisationUsersRoute from "./users"
 
 export default createRoute({

@@ -4,8 +4,11 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "types": ["vite/client", "./src/translations/i18n.d.ts"],
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "exclude": ["node_modules"],
-  "include": ["vite.config.ts"]
+  "include": ["src/**/*", "vite.config.ts"]
 }

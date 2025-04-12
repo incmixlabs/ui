@@ -1,4 +1,4 @@
-import { I18n } from "@incmix/pages/i18n"
+import { I18n } from "@/i18n"
 import { ORG_API_URL } from "@incmix/ui/constants"
 import { createAbilityFromPermissions } from "@incmix/utils/casl"
 import type {

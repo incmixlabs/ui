@@ -1,7 +1,15 @@
-import { Label } from "@components/label"
-import { Button, Flex, IconButton, Switch, Tabs, iconSize } from "@incmix/ui"
+import {
+  Button,
+  Flex,
+  IconButton,
+  Label,
+  Switch,
+  Tabs,
+} from "@/components/base"
+import { iconSize } from "@/components/icons/icon"
 import { X } from "lucide-react"
 import { useState } from "react"
+
 import { projectFolders } from "../data"
 import { ProjectActionsMenu } from "./project-actions-menu"
 

@@ -1,5 +1,6 @@
-import { FormLabel } from "@components/shadcn-form/form"
-import { cn } from "@utils/cn"
+import { Form } from "@/components/shadcn"
+import { cn } from "@/lib/utils"
+import * as React from "react"
 
 /**
  * Renders a form label with an optional required indicator.
@@ -26,10 +27,10 @@ function AutoFormLabel({
 }) {
   return (
     <>
-      <FormLabel className={cn("mt-2 w-[140px] space-y-0", className)}>
+      <Form.Label className={cn("mt-2 w-[140px] space-y-0", className)}>
         {label}
         {isRequired && <span className="text-destructive"> *</span>}
-      </FormLabel>
+      </Form.Label>
     </>
   )
 }

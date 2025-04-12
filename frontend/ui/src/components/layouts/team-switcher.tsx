@@ -1,7 +1,7 @@
 import { ChevronsUpDown, Plus } from "lucide-react"
 import * as React from "react"
 
-import { DropdownMenu } from "@incmix/ui"
+import { DropdownMenu } from "@/components/radixui"
 import {
   SidebarMenu,
   SidebarMenuButton,

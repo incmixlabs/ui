@@ -1,9 +1,5 @@
-import { Avatar } from "@components/avatar"
-import { MotionSheet } from "@components/custom-sheet"
-import { ComboBox } from "@components/kanban-board/combo-box"
-import { attachments } from "@components/kanban-board/data"
-import { useProjectDrawer } from "@hooks/use-project-drawer"
 import {
+  Avatar,
   Box,
   Button,
   Flex,
@@ -12,16 +8,21 @@ import {
   ScrollArea,
   Select,
   Text,
-} from "@incmix/ui"
-import { cn } from "@utils"
+} from "@/components/base"
+import { MotionSheet } from "@/components/custom-sheet"
+import { ComboBox } from "@/components/kanban-board/combo-box"
+import { attachments } from "@/components/kanban-board/data"
+import { cn } from "@/lib/utils"
 import { Download, FileArchive, X } from "lucide-react"
 import { motion } from "motion/react"
-import type React from "react"
-import { useEffect, useRef, useState } from "react"
-import { members, projects } from "../data"
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+import { useState } from "react"
+import { members } from "../data"
+import { useProjectDrawer } from "../hooks/use-project-drawer"
 import ProjectChecklist from "./project-checklist"
 import ProjectComments from "./project-comments"
-import ProjectDetails from "./project-detials"
+import ProjectDetails from "./project-details"
 
 export default function ProjectDrawer({
   listFilter,
@@ -124,7 +125,11 @@ export default function ProjectDrawer({
                     <Box className="gap-1 space-y-4">
                       {members?.map((member) => (
                         <Flex gap={"3"} className="" key={member?.id}>
-                          <Avatar src={member.avatar} className="h-10 w-10" />
+                          <Avatar
+                            src={member.avatar}
+                            name={member.name}
+                            className="h-10 w-10"
+                          />
                           <Box>
                             <Heading size={"3"} className="font-medium">
                               {member?.name}

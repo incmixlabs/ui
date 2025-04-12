@@ -1,4 +1,5 @@
-import { Box } from "@incmix/ui"
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Box } from "@/components/base"
 import { Suspense, lazy, useState } from "react"
 
 // Dynamically import component

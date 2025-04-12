@@ -1,16 +1,15 @@
-import {
-  CardContainer,
-  type FormFieldConfig,
-  type TreeDataItem,
-  TreeView,
-  type TreeViewDescriptions,
-} from "@incmix/ui"
-import { Flex, Text } from "@incmix/ui"
-import { OrganizationTable } from "@incmix/ui"
-import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useTranslation } from "react-i18next"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
+
+import { DashboardLayout } from "../common/components/layouts/admin-panel/layout"
+import { CardContainer, Flex, Text } from "@incmix/ui"
+import { OrganizationTable } from "@incmix/ui"
+import type {
+  FormFieldConfig,
+  TreeDataItem,
+  TreeViewDescriptions,
+} from "@incmix/ui/tree-view-types"
 import { OrganizationLayout } from "./layouts/organisation-layout"
 import { OrganisationEnvVarsRoute } from "./routes"
 import { useOrganization } from "./utils"

@@ -1,6 +1,6 @@
-import { Box, Flex, Text } from "@incmix/ui"
-import { LightningBoltIcon } from "@radix-ui/react-icons"
-import { cn } from "@utils/cn"
+import { Box, Flex, Text } from "@/components/radixui"
+import { cn } from "@/lib/utils"
+import { Bolt as LightningBoltIcon } from "lucide-react"
 
 function LowBatteryWarning() {
   return (

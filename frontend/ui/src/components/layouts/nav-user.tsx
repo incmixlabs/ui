@@ -9,8 +9,7 @@ import {
   Sparkles,
 } from "lucide-react"
 
-import { Avatar } from "@components/avatar"
-import { DropdownMenu } from "@incmix/ui"
+import { Avatar, DropdownMenu } from "@/components/base"
 import {
   SidebarMenu,
   SidebarMenuButton,

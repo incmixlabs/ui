@@ -1,5 +1,4 @@
 import { Text } from "@incmix/ui"
-import type React from "react"
 
 const TestPage: React.FC = () => {
   return (

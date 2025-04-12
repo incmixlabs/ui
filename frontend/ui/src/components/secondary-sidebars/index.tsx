@@ -1,12 +1,15 @@
+/* eslint-disable react-refresh/only-export-components */
 "use client"
-import { cn } from "@incmix/ui"
-import { Box, Flex } from "@incmix/ui"
+
+import { Box, Flex } from "@/components/base"
+import { cn } from "@/lib/utils"
 import type { JSX } from "react"
 import { useSidebar } from "../sidebar"
 export type SecondarySidebarProps = {
   children: JSX.Element
 }
 export * from "./fallback"
+export * from "./file-folder"
 export function SecondarySidebar({
   children,
 }: SecondarySidebarProps): JSX.Element {

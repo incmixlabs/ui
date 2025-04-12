@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Building2 } from "lucide-react"
 import type { StepSchema } from "./types"
 export const formSchema: { steps: StepSchema<any>[] } = {

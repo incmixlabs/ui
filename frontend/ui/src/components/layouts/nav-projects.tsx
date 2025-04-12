@@ -8,7 +8,7 @@ import {
   Trash2,
 } from "lucide-react"
 
-import { DropdownMenu } from "@incmix/ui"
+import { DropdownMenu } from "@/components/base"
 import {
   SidebarGroup,
   SidebarGroupLabel,

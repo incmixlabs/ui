@@ -1,8 +1,10 @@
 "use client"
 
+import { Link } from "@tanstack/react-router"
 import { Bell, ChevronsUpDown, LogOut, Settings2, UserIcon } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
-import { useLogout, useProfilePictureUrl, useUser } from "@auth"
+import { useLogout, useProfilePictureUrl, useUser } from "@/auth"
 import { Avatar, DropdownMenu } from "@incmix/ui"
 import {
   SidebarMenu,
@@ -10,8 +12,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@incmix/ui/sidebar"
-import { Link } from "@tanstack/react-router"
-import { useTranslation } from "react-i18next"
 
 export function NavUser({
   userId,
@@ -42,11 +42,11 @@ export function NavUser({
               <Avatar
                 src={avatarUrl}
                 className="h-8 w-8 rounded-lg"
-                fallback={""}
+                name="User Avatar"
               />
 
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.fullName}</span>
+                <span className="truncate font-semibold">{user.name}</span>
                 <span className="truncate text-xs">{user.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
@@ -63,11 +63,11 @@ export function NavUser({
                 <Avatar
                   src={avatarUrl}
                   className="h-8 w-8 rounded-lg"
-                  fallback={""}
+                  name="User Avatar"
                 />
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
-                    {user.fullName}
+                    {user.name}
                   </span>
                   <span className="truncate text-xs">{user.email}</span>
                 </div>

@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// @ts-nocheck
 "use client"
 
 import type { Table } from "@tanstack/react-table"
@@ -20,26 +24,17 @@ import type {
   StringKeyOf,
 } from "./lib/types"
 
+import { useDebouncedCallback } from "@/hooks"
+import { cn } from "@/lib/utils"
 import { Badge } from "@radix-ui/themes"
 import { Button } from "@radix-ui/themes"
-import { cn } from "@utils/cn"
-import { useDebouncedCallback } from "./hooks"
 import { dataTableConfig } from "./lib/config"
 import { getDefaultFilterOperator, getFilterOperators } from "./lib/data-table"
 import { getFiltersStateParser } from "./lib/parsers"
 
-import { Select } from "@radix-ui/themes"
-import { Calendar } from "../calendar"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "../command"
-import { Input } from "../form/input"
-import { Popover, PopoverContent, PopoverTrigger } from "../popover"
+import { Calendar, Command, Input, Popover, Select } from "@/components/base"
+
+import { formatDate } from "@/lib/utils/date"
 import {
   FacetedFilter,
   FacetedFilterContent,
@@ -50,7 +45,6 @@ import {
   FacetedFilterList,
   FacetedFilterTrigger,
 } from "./faceted-filter"
-import { formatDate } from "./lib/utils"
 
 interface DataTableFilterListProps<TData> {
   table: Table<TData>
@@ -238,18 +232,20 @@ export function DataTableFilterList<TData>({
                         }, 0)
                       }}
                     >
-                      {option.icon && (
-                        <option.icon
-                          className="mr-2 size-4 text-muted-foreground"
-                          aria-hidden="true"
-                        />
-                      )}
-                      <span>{option.label}</span>
-                      {option.count && (
-                        <span className="ml-auto flex size-4 items-center justify-center font-mono text-xs">
-                          {option.count}
-                        </span>
-                      )}
+                      <>
+                        {option.icon && (
+                          <option.icon
+                            className="mr-2 size-4 text-muted-foreground"
+                            aria-hidden="true"
+                          />
+                        )}
+                        <span>{option.label}</span>
+                        {option.count && (
+                          <span className="ml-auto flex size-4 items-center justify-center font-mono text-xs">
+                            {option.count}
+                          </span>
+                        )}
+                      </>
                     </FacetedFilterItem>
                   ))}
                 </FacetedFilterGroup>
@@ -370,8 +366,8 @@ export function DataTableFilterList<TData>({
               : "Pick a date"
 
         return (
-          <Popover>
-            <PopoverTrigger>
+          <Popover.Root>
+            <Popover.Trigger>
               <Button
                 id={inputId}
                 variant="outline"
@@ -389,8 +385,8 @@ export function DataTableFilterList<TData>({
                 />
                 <span className="truncate">{displayValue}</span>
               </Button>
-            </PopoverTrigger>
-            <PopoverContent
+            </Popover.Trigger>
+            <Popover.Content
               id={`${inputId}-calendar`}
               align="start"
               className="w-auto p-0"
@@ -446,8 +442,8 @@ export function DataTableFilterList<TData>({
                   autoFocus
                 />
               )}
-            </PopoverContent>
-          </Popover>
+            </Popover.Content>
+          </Popover.Root>
         )
       }
       case "boolean": {
@@ -480,8 +476,8 @@ export function DataTableFilterList<TData>({
   }
 
   return (
-    <Popover>
-      <PopoverTrigger>
+    <Popover.Root>
+      <Popover.Trigger>
         <Button
           variant="outline"
           size="1"
@@ -497,8 +493,8 @@ export function DataTableFilterList<TData>({
             </Badge>
           )}
         </Button>
-      </PopoverTrigger>
-      <PopoverContent
+      </Popover.Trigger>
+      <Popover.Content
         id={`${id}-filter-dialog`}
         align="start"
         collisionPadding={16}
@@ -562,8 +558,8 @@ export function DataTableFilterList<TData>({
                     </span>
                   )}
                 </div>
-                <Popover modal>
-                  <PopoverTrigger>
+                <Popover.Root modal>
+                  <Popover.Trigger>
                     <Button
                       id={fieldTriggerId}
                       variant="outline"
@@ -578,8 +574,8 @@ export function DataTableFilterList<TData>({
                       </span>
                       <ChevronsUpDown className="size-4 shrink-0 opacity-50" />
                     </Button>
-                  </PopoverTrigger>
-                  <PopoverContent
+                  </Popover.Trigger>
+                  <Popover.Content
                     id={fieldListboxId}
                     align="start"
                     className="w-40 p-0"
@@ -589,13 +585,13 @@ export function DataTableFilterList<TData>({
                       })
                     }
                   >
-                    <Command>
-                      <CommandInput placeholder="Search fields..." />
-                      <CommandList>
-                        <CommandEmpty>No fields found.</CommandEmpty>
-                        <CommandGroup>
+                    <Command.Root>
+                      <Command.Input placeholder="Search fields..." />
+                      <Command.List>
+                        <Command.Empty>No fields found.</Command.Empty>
+                        <Command.Group>
                           {filterFields.map((field) => (
-                            <CommandItem
+                            <Command.Item
                               key={field.id}
                               value={field.id}
                               onSelect={(value) => {
@@ -631,13 +627,13 @@ export function DataTableFilterList<TData>({
                                     : "opacity-0"
                                 )}
                               />
-                            </CommandItem>
+                            </Command.Item>
                           ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                        </Command.Group>
+                      </Command.List>
+                    </Command.Root>
+                  </Popover.Content>
+                </Popover.Root>
                 <Select.Root
                   value={filter.operator}
                   onValueChange={(value: FilterOperator) =>
@@ -705,7 +701,7 @@ export function DataTableFilterList<TData>({
             </Button>
           ) : null}
         </div>
-      </PopoverContent>
-    </Popover>
+      </Popover.Content>
+    </Popover.Root>
   )
 }

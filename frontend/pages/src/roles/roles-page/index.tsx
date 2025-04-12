@@ -1,84 +1,77 @@
-import { Callout, Spinner } from "@incmix/ui"
-import { Flex } from "@incmix/ui"
-import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { useQuery } from "@tanstack/react-query"
-import { AlertCircleIcon } from "lucide-react"
-import type React from "react"
-import { createContext, useEffect, useState } from "react"
-import { type Change, getRolesPermissions } from "./actions"
-import PermissonsTable from "./permissions-table"
-import type { PermissionsResponse, Role } from "./types"
+import {
+  type ExpandedState,
+  flexRender,
+  getExpandedRowModel,
+  useReactTable,
+} from "@tanstack/react-table"
+import { useState } from "react"
+import { getCoreRowModel } from "@tanstack/react-table"
+import { PlusCircleIcon } from "lucide-react"
+import { Button, Flex, Tabs,
+  Table, } from "@incmix/ui"
+import { DashboardLayout } from "../../common/components/layouts/admin-panel/layout"
 
-export const permissionsContext = createContext<{
-  changes: Change[]
-  setChanges: React.Dispatch<React.SetStateAction<Change[]>>
-  rawPermissions: PermissionsResponse[]
-  setRawPermissions: React.Dispatch<React.SetStateAction<PermissionsResponse[]>>
-  roles: Role[]
-}>({
-  changes: [],
-  setChanges: (prev) => prev,
-  rawPermissions: [],
-  setRawPermissions: (prev) => prev,
-  roles: [],
-})
-
+import { getColumns } from "./columns"
+import { groupedPermissions, permissionsWithRoles } from "./mock"
+import type { RoleWithPermissionsWithSubrows } from "./types"
 const RolesPage = () => {
-  const [changes, setChanges] = useState<Change[]>([])
-
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["roles-permissions"],
-    queryFn: getRolesPermissions,
+  const [expandedRows, setExpandedRows] = useState<ExpandedState>({})
+  console.log(permissionsWithRoles)
+  const columns = getColumns()
+  const table = useReactTable<RoleWithPermissionsWithSubrows>({
+    data: groupedPermissions,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    state: {
+      expanded: expandedRows,
+    },
+    onExpandedChange: setExpandedRows,
+    getSubRows: (row) => row.subRows,
   })
-
-  const [rawPermissions, setRawPermissions] = useState<PermissionsResponse[]>(
-    []
-  )
-
-  useEffect(() => {
-    setRawPermissions(data?.permissions ?? [])
-  }, [data])
-
-  if (isLoading) {
-    return (
-      <DashboardLayout breadcrumbItems={[{ label: "Roles", url: "/roles" }]}>
-        <Flex
-          className="h-[calc((100vh-var(--navbar-height))-3rem)]"
-          align="center"
-          justify="center"
-        >
-          <Spinner className="size-10" />
-        </Flex>
-      </DashboardLayout>
-    )
-  }
-
-  if (isError) {
-    return (
-      <DashboardLayout breadcrumbItems={[{ label: "Roles", url: "/roles" }]}>
-        <Callout.Root variant="surface" color="red">
-          <Callout.Icon>
-            <AlertCircleIcon className="size-4" />
-          </Callout.Icon>
-          <Callout.Text>{error.message}</Callout.Text>
-        </Callout.Root>
-      </DashboardLayout>
-    )
-  }
-
   return (
     <DashboardLayout breadcrumbItems={[{ label: "Roles", url: "/roles" }]}>
-      <permissionsContext.Provider
-        value={{
-          changes,
-          setChanges,
-          rawPermissions,
-          setRawPermissions,
-          roles: data?.roles ?? [],
-        }}
-      >
-        <PermissonsTable />
-      </permissionsContext.Provider>
+      <Flex className="px-2 pt-4 pb-4 2xl:p-2" direction="column" gap="3">
+        <Flex className="px-6" justify="between" gap="2" align="center">
+          <Tabs.Root defaultValue="permissions">
+            <Tabs.List>
+              <Tabs.Trigger value="users">Users</Tabs.Trigger>
+              <Tabs.Trigger value="permissions">Permissions</Tabs.Trigger>
+            </Tabs.List>
+          </Tabs.Root>
+          <Flex justify="end" gap="2" align="center">
+            <Button variant="outline">
+              <PlusCircleIcon /> Add New Role
+            </Button>
+            <Button variant="soft">Save Changes</Button>
+          </Flex>
+        </Flex>
+        <Table.Root>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <Table.Header key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <Table.ColumnHeaderCell key={header.id}>
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
+                </Table.ColumnHeaderCell>
+              ))}
+            </Table.Header>
+          ))}
+          <Table.Body>
+            {table.getRowModel().rows.map((row) => (
+              <Table.Row key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <Table.Cell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Table.Cell>
+                ))}
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table.Root>
+      </Flex>
     </DashboardLayout>
   )
 }

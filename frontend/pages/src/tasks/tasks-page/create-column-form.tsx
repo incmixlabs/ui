@@ -1,17 +1,10 @@
 "use client"
 
-import { useAuth } from "@auth"
+import { useAuth } from "@/auth"
 import type { TaskCollections } from "@incmix/store"
 import {
   Button,
   Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
   Flex,
   ReactiveButton,
   Select,
@@ -26,7 +19,7 @@ import { useMemo, useState } from "react"
 import type { RxDatabase } from "rxdb"
 import { useRxDB } from "rxdb-hooks"
 interface CreateColumnProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog> {
+  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
   projectId: string
   onSuccess?: (data: Column) => void
 }
@@ -145,7 +138,7 @@ export function CreateColumnForm({
   }, [columnOrderQuery.data])
 
   return (
-    <Dialog
+    <Dialog.Root
       {...props}
       open={isOpen}
       onOpenChange={(open) => {
@@ -153,14 +146,14 @@ export function CreateColumnForm({
         reset()
       }}
     >
-      <DialogTrigger>
+      <Dialog.Trigger>
         <Button>Add Column</Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Add New Column</DialogTitle>
-          <DialogDescription>Add New Column to Board</DialogDescription>
-        </DialogHeader>
+      </Dialog.Trigger>
+      <Dialog.Content>
+        <Dialog.Header>
+          <Dialog.Title>Add New Column</Dialog.Title>
+          <Dialog.Description>Add New Column to Board</Dialog.Description>
+        </Dialog.Header>
 
         <form onSubmit={handleSubmit}>
           <Flex direction="column" gap="4">
@@ -229,14 +222,14 @@ export function CreateColumnForm({
           </Flex>
         </form>
 
-        <DialogFooter className="gap-2 sm:space-x-0">
-          <DialogClose>
+        <Dialog.Footer>
+          <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </Dialog.Close>
+        </Dialog.Footer>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }

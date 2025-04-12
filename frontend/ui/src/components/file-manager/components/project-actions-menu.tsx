@@ -9,8 +9,9 @@ import {
   Trash2,
 } from "lucide-react"
 
-import { Button, DropdownMenu, iconSize } from "@incmix/ui"
-import { cn } from "@utils"
+import { Button, DropdownMenu } from "@/components/base"
+import { iconSize } from "@/components/icons/icon"
+import { cn } from "@/lib/utils"
 
 interface ProjectActionsMenuProps {
   projectId: string | undefined
@@ -36,6 +37,7 @@ export function ProjectActionsMenu({
       //   title: "Link copied",
       //   description: "Sharing link copied to clipboard",
       // })
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (_error) {
       // toast({
       //   title: "Error",

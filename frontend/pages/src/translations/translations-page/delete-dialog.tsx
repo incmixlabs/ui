@@ -1,26 +1,15 @@
 "use client"
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  ReactiveButton,
-} from "@incmix/ui"
-import { Button } from "@incmix/ui"
 import { INTL_API_URL } from "@incmix/ui/constants"
+import { ReactiveButton } from "@incmix/ui"
+import { Button, Dialog } from "@incmix/ui"
 import { useMutation } from "@tanstack/react-query"
 import type { Row } from "@tanstack/react-table"
 import { Trash } from "lucide-react"
-import { useState } from "react"
 import type { TranslationMessage } from "./types"
 
 interface DeleteDialogProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog> {
+  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
   items: Row<TranslationMessage>["original"][]
   showTrigger?: boolean
   onSuccess?: () => void
@@ -53,30 +42,30 @@ export function DeleteDialog({
   })
 
   return (
-    <Dialog {...props}>
+    <Dialog.Root {...props}>
       {showTrigger ? (
-        <DialogTrigger>
+        <Dialog.Trigger>
           <Button variant="outline" color="red">
             <Trash className="mr-2 size-4" />
             Delete ({items.length})
           </Button>
-        </DialogTrigger>
+        </Dialog.Trigger>
       ) : null}
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Are you absolutely sure?</DialogTitle>
-          <DialogDescription>
+      <Dialog.Content>
+        <Dialog.Header>
+          <Dialog.Title>Are you absolutely sure?</Dialog.Title>
+          <Dialog.Description>
             This action cannot be undone. This will permanently delete your{" "}
             <span className="font-medium">{items.length}</span>
             {items.length === 1 ? " item" : " items"} from our servers.
-          </DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="gap-2 sm:space-x-0">
-          <DialogClose>
+          </Dialog.Description>
+        </Dialog.Header>
+        <Dialog.Footer>
+          <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </DialogClose>
+          </Dialog.Close>
           <ReactiveButton
             onClick={() => onDelete()}
             loading={isPending}
@@ -84,8 +73,8 @@ export function DeleteDialog({
           >
             Delete
           </ReactiveButton>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </Dialog.Footer>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }

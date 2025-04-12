@@ -1,11 +1,5 @@
-import { iconSize } from "@components/icons/icon"
-import {
-  FormControl,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@components/shadcn-form/form"
-import { cn } from "@utils/cn"
+import { Form } from "@/components/shadcn"
+import { cn } from "@/lib/utils"
 import { useEffect, useState } from "react"
 import type {
   AutoFormInputComponentProps,
@@ -101,13 +95,13 @@ export default function AutoFormMultiCheckbox({
 
   return (
     <div className="flex w-full flex-col space-y-4">
-      <FormItem className="w-full">
+      <Form.Item className="w-full">
         <fieldset className="space-y-4">
           <legend className="mb-4">
-            <FormLabel className="font-medium text-gray-800 text-xl">
+            <Form.Label className="font-medium text-gray-800 text-xl">
               {label}
               {isRequired && <span className="text-destructive"> *</span>}
-            </FormLabel>
+            </Form.Label>
             {fieldConfigItem.description && (
               <p className="mt-1 text-muted-foreground text-sm">
                 {fieldConfigItem.description}
@@ -115,25 +109,27 @@ export default function AutoFormMultiCheckbox({
             )}
           </legend>
 
-          <FormControl>
+          <Form.Control>
             <div
               className={getLayoutClass(layout, gridCols)}
               aria-required={isRequired ? "true" : "false"}
             >
               {options.map((option) => (
-                <FormItem
+                <Form.Item
                   key={option.value}
                   className={cn(
                     getOptionWidthClass(layout),
                     "flex items-center space-x-2"
                   )}
                 >
-                  <FormControl>
+                  <Form.Control>
                     <div className="flex items-center">
                       <input
                         type="checkbox"
                         id={`checkbox-${option.value}`}
-                        className={`${iconSize} rounded border-gray-300 text-blue-600 focus:ring-blue-500`}
+                        className={
+                          " h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        }
                         value={option.value}
                         onChange={(e) => {
                           handleCheckboxChange(option.value, e.target.checked)
@@ -148,19 +144,19 @@ export default function AutoFormMultiCheckbox({
                         {option.label}
                       </label>
                     </div>
-                  </FormControl>
-                </FormItem>
+                  </Form.Control>
+                </Form.Item>
               ))}
             </div>
-          </FormControl>
+          </Form.Control>
           {isRequired && !hasSelection && touched && (
             <p className="mt-2 font-medium text-destructive text-sm">
               Please select at least one option
             </p>
           )}
-          <FormMessage />
+          <Form.Message />
         </fieldset>
-      </FormItem>
+      </Form.Item>
     </div>
   )
 }

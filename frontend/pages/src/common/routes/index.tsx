@@ -1,5 +1,6 @@
 "use client"
-import { HomePage, RootRoute } from "@common"
+
+import { HomePage, RootRoute } from "@/common"
 import { createRoute } from "@tanstack/react-router"
 
 export const IndexRoute = createRoute({

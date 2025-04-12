@@ -1,19 +1,5 @@
 import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
-
-import { I18n } from "@incmix/pages/i18n"
-import { useRateLimitStore } from "@incmix/store"
-import {
-  AUTH_API_URL,
-  RATELIMIT_API_URL,
-  USERS_API_URL,
-} from "@incmix/ui/constants"
-import { isTauri } from "@incmix/ui/tauri"
-import type {
-  AuthUserSession,
-  OptionalPresignedUrl,
-  UserProfile,
-} from "@incmix/utils/types"
 import {
   type QueryClient,
   useMutation,
@@ -23,7 +9,21 @@ import {
 import { useNavigate } from "@tanstack/react-router"
 import { invoke } from "@tauri-apps/api/core"
 import { listen } from "@tauri-apps/api/event"
-import { toast } from "sonner"
+
+import { I18n } from "@/i18n"
+import { useRateLimitStore } from "@incmix/store"
+import {
+  AUTH_API_URL,
+  RATELIMIT_API_URL,
+  USERS_API_URL,
+} from "@incmix/ui/constants"
+import { toast } from "@incmix/ui"
+import { isTauri } from "@incmix/ui/tauri"
+import type {
+  AuthUserSession,
+  OptionalPresignedUrl,
+  UserProfile,
+} from "@incmix/utils/types"
 
 export const useAuth = () => {
   const { data, isLoading, isError, fetchStatus } = useQuery({

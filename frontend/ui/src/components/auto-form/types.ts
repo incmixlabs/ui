@@ -28,7 +28,7 @@ export type FieldGroupConfig = {
 }
 
 export type FieldConfigItem = {
-  description?: React.ReactNode
+  description?: React.ReactNode | string
   inputProps?: React.InputHTMLAttributes<HTMLInputElement> & {
     showLabel?: boolean
     options?: MCQOption[]

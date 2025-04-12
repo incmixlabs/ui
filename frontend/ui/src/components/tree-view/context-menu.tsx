@@ -1,8 +1,12 @@
 "use client"
 
-import { Button, ContextMenu as ContextMenuPrimitive, Flex } from "@incmix/ui"
 import { FilePlus, FolderPlus, Pencil, Trash } from "lucide-react"
-import type * as React from "react"
+
+import {
+  Button,
+  ContextMenu as ContextMenuPrimitive,
+  Flex,
+} from "@/components/base"
 import { useTreeViewContext } from "./tree-view-context"
 
 const ContextMenu = ContextMenuPrimitive.Root

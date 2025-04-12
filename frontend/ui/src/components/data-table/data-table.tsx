@@ -1,15 +1,8 @@
 import { type Table as TanstackTable, flexRender } from "@tanstack/react-table"
 import * as React from "react"
 
-import { cn } from "@utils/cn"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeadCell,
-  TableRow,
-} from "../table/index"
+import { Table } from "@/components/shadcn/table"
+import { cn } from "@/lib/utils"
 import { DataTablePagination } from "./data-table-pagination"
 import { getCommonPinningStyles } from "./lib/data-table"
 
@@ -43,13 +36,13 @@ export function DataTable<TData>({
     >
       {children}
       <div className="overflow-hidden rounded-md border">
-        <Table>
-          <TableHead>
+        <Table.Root>
+          <Table.Header>
             {table.getHeaderGroups().map((headerGroup) => (
               <React.Fragment key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHeadCell
+                    <Table.ColumnHeaderCell
                       key={header.id}
                       colSpan={header.colSpan}
                       style={{
@@ -62,41 +55,41 @@ export function DataTable<TData>({
                             header.column.columnDef.header,
                             header.getContext()
                           )}
-                    </TableHeadCell>
+                    </Table.ColumnHeaderCell>
                   )
                 })}
               </React.Fragment>
             ))}
-          </TableHead>
-          <TableBody>
+          </Table.Header>
+          <Table.Body>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
+                <Table.Row
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <Table.Cell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
                       )}
-                    </TableCell>
+                    </Table.Cell>
                   ))}
-                </TableRow>
+                </Table.Row>
               ))
             ) : (
-              <TableRow>
-                <TableCell
+              <Table.Row>
+                <Table.Cell
                   colSpan={table.getAllColumns().length}
                   className="h-24 text-center"
                 >
                   No results.
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             )}
-          </TableBody>
-        </Table>
+          </Table.Body>
+        </Table.Root>
       </div>
       <div className="flex flex-col gap-2.5">
         <DataTablePagination table={table} />

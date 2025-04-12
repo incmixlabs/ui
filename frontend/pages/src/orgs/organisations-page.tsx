@@ -1,28 +1,23 @@
-import { LoadingPage } from "@common"
+import { ChevronRight } from "lucide-react"
+import { useState } from "react"
+import { useTranslation } from "react-i18next"
+import { DashboardLayout } from "../common/components/layouts/admin-panel/layout"
+import { LoadingPage } from "@/common/loading-page"
 import {
   Button,
   CardContainer,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  FormField,
-} from "@incmix/ui"
-import {
   Container,
   Dialog,
   Flex,
+  FormField,
   Heading,
   Table,
   Text,
   TextField,
 } from "@incmix/ui"
 import type { Organization } from "@incmix/utils/types"
-import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { ChevronRightIcon } from "@radix-ui/react-icons"
 import { useForm } from "@tanstack/react-form"
 import { Link } from "@tanstack/react-router"
-import { useState } from "react"
-import { useTranslation } from "react-i18next"
 import {
   useCreateOrganization,
   useOrganizations,
@@ -68,7 +63,7 @@ const OrganizationRow: React.FC<{ org: Organization }> = ({ org }) => {
           style={{ textDecoration: "none", color: "inherit", display: "block" }}
         >
           <Flex justify="end">
-            <ChevronRightIcon />
+            <ChevronRight />
           </Flex>
         </Link>
       </Table.Cell>
@@ -102,12 +97,12 @@ const CreateOrganizationDialog: React.FC<{
   })
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogTitle>{t("organizations:createNewOrganization")}</DialogTitle>
-        <DialogDescription className="sr-only">
+    <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
+      <Dialog.Content>
+        <Dialog.Title>{t("organizations:createNewOrganization")}</Dialog.Title>
+        <Dialog.Description className="sr-only">
           {t("organizations:createNewOrganization")}
-        </DialogDescription>
+        </Dialog.Description>
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -162,8 +157,8 @@ const CreateOrganizationDialog: React.FC<{
             </Button>
           </Flex>
         </form>
-      </DialogContent>
-    </Dialog>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }
 

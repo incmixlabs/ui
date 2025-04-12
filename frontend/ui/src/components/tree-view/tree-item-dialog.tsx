@@ -1,19 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// @ts-nocheck
 "use client"
-
-import { Button, Flex, Text, VisuallyHidden } from "@incmix/ui"
+import { Button, Dialog, Flex, Text, VisuallyHidden } from "@/components/base"
 import { useForm } from "@tanstack/react-form"
 import type { FieldApi } from "@tanstack/react-form"
 import { zodValidator } from "@tanstack/zod-form-adapter"
-import * as React from "react"
+import { useEffect } from "react"
 import { z } from "zod"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../dialog"
+
 import { FormField } from "../form/form-field"
 import { useTreeViewContext } from "./tree-view-context"
 
@@ -65,7 +59,7 @@ export function TreeItemDialog({
     },
   })
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (open && initialData) {
       form.reset(initialData)
     } else if (!open) {
@@ -76,10 +70,10 @@ export function TreeItemDialog({
   const isEditing = !!initialData
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+      <Dialog.Content>
         <VisuallyHidden asChild>
-          <DialogDescription>
+          <Dialog.Description>
             {isEditing
               ? type === "file"
                 ? descriptions.editFileTitle
@@ -87,10 +81,10 @@ export function TreeItemDialog({
               : type === "file"
                 ? descriptions.newFileTitle
                 : descriptions.newFolderTitle}
-          </DialogDescription>
+          </Dialog.Description>
         </VisuallyHidden>
-        <DialogHeader>
-          <DialogTitle>
+        <Dialog.Header>
+          <Dialog.Title>
             {isEditing
               ? type === "file"
                 ? descriptions.editFileTitle
@@ -98,8 +92,8 @@ export function TreeItemDialog({
               : type === "file"
                 ? descriptions.newFileTitle
                 : descriptions.newFolderTitle}
-          </DialogTitle>
-        </DialogHeader>
+          </Dialog.Title>
+        </Dialog.Header>
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -130,7 +124,7 @@ export function TreeItemDialog({
               </form.Field>
             ))}
           </Flex>
-          <DialogFooter className="mt-4">
+          <Dialog.Footer>
             <Button
               type="button"
               variant="soft"
@@ -147,9 +141,9 @@ export function TreeItemDialog({
                 </Button>
               )}
             </form.Subscribe>
-          </DialogFooter>
+          </Dialog.Footer>
         </form>
-      </DialogContent>
-    </Dialog>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }

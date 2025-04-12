@@ -1,6 +1,10 @@
-import { useState } from "react"
+import { LayoutGrid, List, Plus, SlidersHorizontal } from "lucide-react"
+import { motion } from "motion/react"
+import { nanoid } from "nanoid"
+import { useQueryState } from "nuqs"
+import { Suspense, lazy, useState } from "react"
+import { toast } from "sonner"
 
-import { saveFormProject } from "@incmix/store"
 import {
   Box,
   Button,
@@ -9,15 +13,10 @@ import {
   IconButton,
   ScrollArea,
   Text,
-  iconSize,
-} from "@incmix/ui"
-import { toast } from "@incmix/ui"
-import { cn } from "@utils"
-import { LayoutGrid, List, Plus, SlidersHorizontal, X } from "lucide-react"
-import { motion } from "motion/react"
-import { nanoid } from "nanoid"
-import { useQueryState } from "nuqs"
-import { Suspense, lazy } from "react"
+} from "@/components/base"
+import { iconSize } from "@/components/icons/icon"
+import { cn } from "@/lib/utils"
+import { saveFormProject } from "@incmix/store"
 import { MotionSheet } from "../custom-sheet"
 
 // Dynamically import heavy components
@@ -155,6 +154,7 @@ export function ProjectPageComponents() {
     if (filters.members.length > 0) {
       filtered = filtered.filter((project) =>
         project.members.some(
+          // @ts-ignore
           (member) => member.id && filters.members.includes(member.id)
         )
       )

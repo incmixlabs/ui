@@ -1,7 +1,8 @@
+/* eslint-disable react-refresh/only-export-components */
 "use client"
 
 import { createContext, useContext } from "react"
-import type { FormFieldConfig, TreeViewContextType } from "./types"
+import type { TreeViewContextType } from "./types"
 
 const TreeViewContext = createContext<TreeViewContextType | null>(null)
 

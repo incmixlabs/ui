@@ -6,7 +6,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@primitives/collapsible"
+} from "@/primitives/collapsible"
 import {
   SidebarGroup,
   SidebarGroupLabel,

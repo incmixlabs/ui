@@ -1,10 +1,5 @@
-import {
-  FormControl,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@components/shadcn-form/form"
-import { cn } from "@utils/cn"
+import { Form } from "@/components/shadcn"
+import { cn } from "@/lib/utils"
 import type {
   AutoFormInputComponentProps,
   MCQLayoutType,
@@ -69,12 +64,12 @@ export default function AutoFormMCQ({
 
   return (
     <div className="flex w-full flex-col space-y-4">
-      <FormItem className="w-full">
+      <Form.Item className="w-full">
         <div className="mb-4">
-          <FormLabel className="font-medium text-gray-800 text-xl">
+          <Form.Label className="font-medium text-gray-800 text-xl">
             {label}
             {isRequired && <span className="text-destructive"> *</span>}
-          </FormLabel>
+          </Form.Label>
           {fieldConfigItem.description && (
             <p className="mt-1 text-muted-foreground text-sm">
               {fieldConfigItem.description}
@@ -82,18 +77,18 @@ export default function AutoFormMCQ({
           )}
         </div>
 
-        <FormControl>
+        <Form.Control>
           <div
             className={getLayoutClass(layout, gridCols)}
             role="radiogroup"
             aria-required={isRequired ? "true" : "false"}
           >
             {options.map((option) => (
-              <FormItem
+              <Form.Item
                 key={option.value}
                 className={getOptionWidthClass(layout)}
               >
-                <FormControl>
+                <Form.Control>
                   <label>
                     <input
                       type="radio"
@@ -118,13 +113,13 @@ export default function AutoFormMCQ({
                       {option.label}
                     </div>
                   </label>
-                </FormControl>
-              </FormItem>
+                </Form.Control>
+              </Form.Item>
             ))}
           </div>
-        </FormControl>
-        <FormMessage />
-      </FormItem>
+        </Form.Control>
+        <Form.Message />
+      </Form.Item>
     </div>
   )
 }

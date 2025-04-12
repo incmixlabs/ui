@@ -1,6 +1,16 @@
-import { LoadingPage } from "@common"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { createSwapy } from "swapy"
 
-import { CardContainer, SwapyExclude, SwapyLayout, SwapySlot } from "@incmix/ui"
+import { useAuth } from "@/auth"
+import { LoadingPage } from "@/common"
+import { DashboardLayout } from "@/layouts/admin-panel/layout"
+import {
+  CardContainer,
+  SwapyExclude,
+  SwapyLayout,
+  SwapySlot,
+} from "@incmix/ui"
 import { Flex, Heading, Switch, Text } from "@incmix/ui"
 import {
   BatteryWidget,
@@ -11,11 +21,6 @@ import {
   WeatherWidget,
   getBattery,
 } from "@incmix/ui/widgets"
-import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { useEffect, useMemo, useRef, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { createSwapy } from "swapy"
-import { useAuth } from "../../auth"
 
 type Widget = {
   id: string

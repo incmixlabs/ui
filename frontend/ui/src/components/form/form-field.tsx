@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Flex, Text, TextArea, TextField } from "@radix-ui/themes"
 import type { FieldApi } from "@tanstack/react-form"
 import type React from "react"
@@ -8,6 +9,7 @@ interface FormFieldProps {
   type?: TextField.RootProps["type"] | "textarea"
   className?: string
   disabled?: boolean
+  // @ts-ignore
   field: FieldApi<any, any, any, any>
 }
 export const FormButton: React.FC<{

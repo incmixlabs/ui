@@ -1,38 +1,39 @@
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@components/tooltip"
+import { IconButton } from "@/components/radixui/button"
+import { Tooltip } from "@/components/radixui/tooltip"
 import { HelpCircle } from "lucide-react"
+import type React from "react"
 
-/**
- * Renders a tooltip icon with descriptive text for a form field if a description is provided.
- *
- * When the given field configuration object includes a 'description', a help icon is displayed
- * that triggers a tooltip containing the description text with specific styling. If no description
- * is present, nothing is rendered.
- *
- * @param fieldConfigItem - The configuration object for a form field, potentially including a 'description'.
- *
- * @returns A JSX element with a tooltip if a description exists; otherwise, an empty fragment.
- */
-function AutoFormTooltip({ fieldConfigItem }: { fieldConfigItem: any }) {
+import {
+  buttonVariant,
+  iconWidth,
+  radius as radiusConst,
+  size as sizeConst,
+} from "@/types"
+import type { ButtonVariant, Radius, Size } from "@/types"
+
+export type AutoFormTooltipProps = {
+  content?: string | React.ReactNode
+  Icon?: React.ComponentType<{ width?: number; height?: number }>
+  size?: Size
+  radius?: Radius
+  variant?: ButtonVariant
+}
+
+function AutoFormTooltip({
+  content,
+  Icon = HelpCircle,
+  size = sizeConst.sm as Size,
+  radius = radiusConst.full as Radius,
+  variant = buttonVariant.ghost as ButtonVariant,
+}: AutoFormTooltipProps) {
   return (
     <>
-      {fieldConfigItem?.description && (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <HelpCircle className="ml-[1px] size-4 text-gray-500 dark:text-white" />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="text-gray-500 text-sm dark:text-white">
-                {fieldConfigItem.description}
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+      {content && (
+        <Tooltip content={content}>
+          <IconButton radius={radius} size={size} variant={variant}>
+            <Icon width={iconWidth[size]} height={iconWidth[size]} />
+          </IconButton>
+        </Tooltip>
       )}
     </>
   )

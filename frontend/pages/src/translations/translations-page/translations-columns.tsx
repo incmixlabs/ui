@@ -1,12 +1,13 @@
 import {
   Badge,
   Checkbox,
+  DropdownMenuWrapper,
+} from "@incmix/ui"
+import {
   type ColumnDef,
   DataTableColumnHeader,
-  type DataTableRowAction,
-  DropdownMenu,
-} from "@incmix/ui"
-import { DotsHorizontalIcon } from "@radix-ui/react-icons"
+  type DataTableRowAction} from "@incmix/ui/data-table"
+import { MoreHorizontal } from "lucide-react"
 import type { TranslationMessage } from "./types"
 
 type GetColumnsProps = {
@@ -90,16 +91,16 @@ export function getColumns({
       id: "actions",
       cell: function Cell({ row }) {
         return (
-          <DropdownMenu
+          <DropdownMenuWrapper
             button={{
               "aria-label": "Open menu",
               variant: "ghost",
               className: "flex size-8 p-0 data-[state=open]:bg-muted",
-              icon: <DotsHorizontalIcon className="size-4" color="black" />,
+              icon: <MoreHorizontal className="size-4" color="black" />,
             }}
             items={[
               {
-                icon: <DotsHorizontalIcon />,
+                icon: <MoreHorizontal />,
                 label: "Edit",
                 onClick: () => {
                   setRowAction({
@@ -110,7 +111,7 @@ export function getColumns({
                 separator: true,
               },
               {
-                icon: <DotsHorizontalIcon />,
+                icon: <MoreHorizontal />,
                 label: "Delete",
                 onClick: () => {
                   setRowAction({

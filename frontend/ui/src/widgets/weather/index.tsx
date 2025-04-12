@@ -1,6 +1,6 @@
-import { Spinner, Text } from "@incmix/ui"
+import { Spinner, Text } from "@/components/base"
+import { LOCATION_API_URL } from "@/lib/utils/constants"
 import { useQuery } from "@tanstack/react-query"
-import { LOCATION_API_URL } from "@utils/constants"
 import { WeatherCard, type WeatherCardProps } from "./weather-card"
 import "./weather.css"
 

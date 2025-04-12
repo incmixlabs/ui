@@ -1,15 +1,17 @@
 "use client"
+
+import { useCallback, useEffect, useState } from "react"
+
 import {
   GridLayoutCard,
   LayoutGrid,
   type LayoutGridCard,
-} from "@components/layout-grid"
-import { toast } from "@components/toaster"
-import { useUploadFile } from "@hooks/use-upload-file"
-import { Box, Button, Card, Flex, Text } from "@incmix/ui"
-import { TrashIcon, UploadIcon } from "@radix-ui/react-icons"
-import { cn } from "@utils"
-import { useCallback, useEffect, useState } from "react"
+} from "@/components/layout-grid"
+import { Box, Button, Card, Flex, Text } from "@/components/radixui"
+import { toast } from "@/components/toaster"
+import { useUploadFile } from "@/hooks/use-upload-file"
+import { cn } from "@/lib/utils"
+import { Trash, Upload } from "lucide-react"
 
 type FileItem = { card: LayoutGridCard; handle: FileSystemFileHandle }
 
@@ -93,14 +95,14 @@ export function ImageGrid() {
   }
 
   return (
-    <Card className="min-w-[48rem] max-w-7xl space-y-10">
+    <Card.Root className="min-w-[48rem] max-w-7xl space-y-10">
       <Flex gap="4" align="center" justify="end">
         <Button color="red" onClick={deleteAll}>
-          <TrashIcon />
+          <Trash />
           Delete All
         </Button>
         <Button variant="outline" onClick={openFilePicker}>
-          <UploadIcon />
+          <Upload />
           Upload
         </Button>
       </Flex>
@@ -127,6 +129,6 @@ export function ImageGrid() {
           </Text>
         )}
       </Box>
-    </Card>
+    </Card.Root>
   )
 }

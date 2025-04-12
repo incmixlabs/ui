@@ -1,4 +1,4 @@
-import path from "node:path"
+import path from "path"
 import { Schema, ValidateEnv } from "@julr/vite-plugin-validate-env"
 // import { sentryVitePlugin } from "@sentry/vite-plugin"
 import react from "@vitejs/plugin-react"
@@ -31,8 +31,9 @@ export default defineConfig(async () => ({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(__dirname, "./src")
     },
+    preserveSymlinks: true
   },
   plugins: [
     bundlesize({ limits: [{ name: "**/*", limit: "3 mB" }] }),

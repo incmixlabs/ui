@@ -1,5 +1,5 @@
-import ColorPicker, { type ColorSelectType } from "@components/color-picker"
-import { Box, Button, DropdownMenu } from "@incmix/ui"
+import ColorPicker, { type ColorSelectType } from "@/components/color-picker"
+import { Box, Button, DropdownMenu } from "@/components/radixui"
 import {
   Clipboard,
   Copy,
@@ -13,7 +13,7 @@ import {
 import { AnimatePresence, MotionConfig, motion } from "motion/react"
 import type React from "react"
 import { useState } from "react"
-import type { ExtendedColorType, Task } from "./gantt-chart"
+import type { Task } from "./gantt-chart"
 
 const transition = {
   type: "spring",
@@ -104,7 +104,7 @@ function EditDropdown({
         </DropdownMenu.Trigger>
 
         <DropdownMenu.Content
-          onCloseAutoFocus={(e) => {
+          onCloseAutoFocus={(e: { preventDefault: () => void }) => {
             // Prevent focus management when in edit mode
             if (editMode) e.preventDefault()
           }}
@@ -130,10 +130,18 @@ function EditDropdown({
                       <DropdownMenu.Item onSelect={handleEditClick}>
                         <Pencil size={16} /> Edit
                       </DropdownMenu.Item>
-                      <DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
+                      <DropdownMenu.Item
+                        onSelect={(e: { preventDefault: () => any }) =>
+                          e.preventDefault()
+                        }
+                      >
                         <Clipboard size={16} /> Add Subtask
                       </DropdownMenu.Item>
-                      <DropdownMenu.Item onSelect={(e) => e.preventDefault()}>
+                      <DropdownMenu.Item
+                        onSelect={(e: { preventDefault: () => any }) =>
+                          e.preventDefault()
+                        }
+                      >
                         <UserRoundPlus size={16} /> Add Member
                       </DropdownMenu.Item>
                       <DropdownMenu.Item onSelect={handleDuplicate}>
@@ -165,7 +173,7 @@ function EditDropdown({
                         <Button
                           variant="soft"
                           color="red"
-                          onClick={(e) => {
+                          onClick={(e: { stopPropagation: () => void }) => {
                             e.stopPropagation()
                             handleCancel()
                           }}
@@ -174,7 +182,7 @@ function EditDropdown({
                           <X size={14} /> Cancel
                         </Button>
                         <Button
-                          onClick={(e) => {
+                          onClick={(e: { stopPropagation: () => void }) => {
                             e.stopPropagation()
                             handleSave()
                           }}

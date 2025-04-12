@@ -1,4 +1,3 @@
-import { INTL_API_URL } from "@incmix/ui/constants"
 import i18n, { type Resource, type InitOptions } from "i18next"
 import ChainedBackend, {
   type ChainedBackendOptions,
@@ -6,6 +5,8 @@ import ChainedBackend, {
 import HttpBackend from "i18next-http-backend"
 import resourcesToBackend from "i18next-resources-to-backend"
 import { initReactI18next } from "react-i18next"
+
+import { INTL_API_URL } from "@incmix/ui/constants"
 
 export async function usei18n<T extends InitOptions["resources"]>(
   resources?: T,

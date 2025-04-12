@@ -1,30 +1,14 @@
-import {
-  Button,
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Flex,
-  FormField,
-  ReactiveButton,
-  Select,
-  Text,
-} from "@incmix/ui"
-import { INTL_API_URL } from "@incmix/ui/constants"
+import type React from "react"
 import { useForm } from "@tanstack/react-form"
+import { z } from "zod"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import type { Row } from "@tanstack/react-table"
-import { I18n } from "i18n"
-import type React from "react"
-import { useState } from "react"
-import { z } from "zod"
+import { INTL_API_URL } from "@incmix/ui/constants"
+import { Button, Dialog, FormField, Flex, Select, Text, ReactiveButton } from "@incmix/ui"
+import { I18n } from "../../i18n"
 import type { TranslationMessage } from "./types"
 interface EditTranslationDialogProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog> {
+  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
   item?: Row<TranslationMessage>["original"]
   onSuccess?: () => void
 }
@@ -37,24 +21,24 @@ export const EditTranslationDialog: React.FC<EditTranslationDialogProps> = ({
 }) => {
   if (!item) return null
   return (
-    <Dialog {...props}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Edit Translation</DialogTitle>
-        </DialogHeader>
-        <DialogDescription className="sr-only">
+    <Dialog.Root {...props}>
+      <Dialog.Content>
+        <Dialog.Header>
+          <Dialog.Title>Edit Translation</Dialog.Title>
+        </Dialog.Header>
+        <Dialog.Description className="sr-only">
           Edit Translation
-        </DialogDescription>
+        </Dialog.Description>
         <EditTranlationForm item={item} onSuccess={onSuccess} />
-        <DialogFooter className="gap-2 sm:space-x-0">
-          <DialogClose>
+        <Dialog.Footer>
+          <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </DialogClose>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </Dialog.Close>
+        </Dialog.Footer>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }
 
@@ -99,7 +83,7 @@ const EditTranlationForm: React.FC<{
     },
     onSuccess,
   })
-
+  // @ts-ignore
   const form = useForm<EditTranslation>({
     defaultValues: item,
     onSubmit: ({ value }) => {

@@ -1,4 +1,4 @@
-import { projectFolders } from "@components/file-manager/data"
+import { projectFolders } from "@/components/file-manager/data"
 import { Book, FileText, type LucideIcon, Trash2 } from "lucide-react"
 
 interface SidebarItem {

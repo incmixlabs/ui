@@ -1,13 +1,23 @@
 import { Link as RouterLink, useNavigate } from "@tanstack/react-router"
 import { motion } from "framer-motion"
-import type React from "react"
+import {
+  Bell,
+  LogOut,
+  Menu,
+  Moon,
+  Search,
+  Settings,
+  Sun,
+  User,
+} from "lucide-react"
+import { useTranslation } from "react-i18next"
 
-import { useLogout } from "@auth"
+import { useLogout } from "@/auth"
 import { useSidebarStore, useThemeStore } from "@incmix/store"
 import {
   Box,
   Button,
-  DropdownMenu,
+  DropdownMenuWrapper,
   Flex,
   IconButton,
   Link,
@@ -15,17 +25,6 @@ import {
   iconSize,
 } from "@incmix/ui"
 
-import {
-  BellIcon,
-  ExitIcon,
-  GearIcon,
-  HamburgerMenuIcon,
-  MagnifyingGlassIcon,
-  MoonIcon,
-  PersonIcon,
-  SunIcon,
-} from "@radix-ui/react-icons"
-import { useTranslation } from "react-i18next"
 import { CurrentUserProfileImage } from "../user-profile-image"
 import OrgDropdown from "./org-dropdown"
 
@@ -58,7 +57,7 @@ const SearchBar: React.FC = () => {
       <TextField.Root placeholder={t("search")} className="rounded-4 bg-gray-7">
         <TextField.Slot />
         <TextField.Slot>
-          <MagnifyingGlassIcon className="text-gray-11" />
+          <Search className="text-gray-11" />
         </TextField.Slot>
       </TextField.Root>
     </Box>
@@ -72,9 +71,9 @@ const ThemeToggle: React.FC = () => {
   return (
     <Button variant="ghost" onClick={toggleTheme} aria-label={t("toggleTheme")}>
       {theme === "dark" ? (
-        <SunIcon className={style} />
+        <Sun className={style} />
       ) : (
-        <MoonIcon className={style} />
+        <Moon className={style} />
       )}
     </Button>
   )
@@ -98,7 +97,7 @@ const ProfileDropdown: React.FC = () => {
   const { handleLogout, isPending: isLogoutLoading } = useLogout()
 
   return (
-    <DropdownMenu
+    <DropdownMenuWrapper
       trigger={
         <motion.div whileHover={{ scale: 1.1 }} transition={{ duration: 0.2 }}>
           <IconButton
@@ -111,18 +110,18 @@ const ProfileDropdown: React.FC = () => {
       }
       items={[
         {
-          icon: <PersonIcon />,
+          icon: <User />,
           label: t("profile"),
           onClick: () => navigate({ to: "/profile" }),
         },
         {
-          icon: <GearIcon />,
+          icon: <Settings />,
           label: t("settings"),
           onClick: () => navigate({ to: "/settings" }),
           separator: true,
         },
         {
-          icon: <ExitIcon />,
+          icon: <LogOut />,
           label: t("logout"),
           onClick: handleLogout,
           disabled: isLogoutLoading,
@@ -142,7 +141,7 @@ const NavbarIcons: React.FC<{ extraIcons?: React.ReactNode }> = ({
       <NavbarExtraIcons>{extraIcons}</NavbarExtraIcons>
       <ThemeToggle />
       <RouterLink to="/notifications">
-        <BellIcon
+        <Bell
           className={`${iconSize} cursor-pointer text-gray-12`}
           aria-label={t("notifications")}
         />
@@ -172,7 +171,7 @@ export function NavbarMain({ extraIcons }: NavbarMainProps) {
                 onClick={toggleOpen}
                 aria-label={t("toggleSidebar")}
               >
-                <HamburgerMenuIcon className="h-6 w-6 text-gray-12 transition-colors duration-200 hover:text-white" />
+                <Menu className="h-6 w-6 text-gray-12 transition-colors duration-200 hover:text-white" />
               </Button>
               <NavbarLogo />
               <SearchBar />

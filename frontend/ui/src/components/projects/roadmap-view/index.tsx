@@ -1,4 +1,4 @@
-import { Box, Heading } from "@incmix/ui"
+import { Box, Heading } from "@/components/base"
 import { DateTime } from "luxon"
 import { GanttChart, type Task } from "./components/gantt-chart"
 const tasks: Task[] = [

@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, IconButton, Text } from "@incmix/ui"
+import { Box, Flex, Heading, IconButton, Text } from "@/components/base"
 import { Ellipsis } from "lucide-react"
 import { activityGroups } from "./data"
 

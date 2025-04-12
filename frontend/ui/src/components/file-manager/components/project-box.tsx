@@ -1,10 +1,10 @@
-import { Input } from "@components/form"
-import { FilterIcon } from "@components/icons/filter"
+import { Box, Button, Flex, IconButton, Input } from "@/components/base"
+import { FilterIcon } from "@/components/icons/filter"
 
-import { MotionSheet } from "@components/custom-sheet"
-import { useMediaQuery } from "@hooks/use-media-query"
-import { Box, Button, Flex, IconButton, iconSize } from "@incmix/ui"
-import { cn } from "@utils"
+import { MotionSheet } from "@/components/custom-sheet"
+import { iconSize } from "@/components/icons/icon"
+import { useMediaQuery } from "@/hooks/use-media-query"
+import { cn } from "@/lib/utils"
 import {
   ChevronLeft,
   Columns2,

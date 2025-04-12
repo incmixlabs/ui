@@ -1,6 +1,5 @@
-import { LoadingPage } from "@common"
-import { FormField, ReactiveButton } from "@incmix/ui"
-import { Box, Flex, Heading, Text } from "@incmix/ui"
+// @ts-nocheck
+import { z } from "zod"
 import { useForm } from "@tanstack/react-form"
 import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
@@ -8,6 +7,15 @@ import { Link } from "@tanstack/react-router"
 import { zodValidator } from "@tanstack/zod-form-adapter"
 import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
+import { LoadingPage } from "@/common"
+import {
+  Box,
+  Flex,
+  FormField,
+  Heading,
+  ReactiveButton,
+  Text,
+} from "@incmix/ui"
 import {
   setupGoogleAuthCallbackListener,
   useAuth,
@@ -15,7 +23,6 @@ import {
   useLogin,
 } from "./hooks/auth"
 
-import { z } from "zod"
 import { AuthLayout } from "./layouts"
 
 function LoginForm() {

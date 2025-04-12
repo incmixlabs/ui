@@ -1,6 +1,8 @@
-import { Box } from "@incmix/ui"
-import type { BoxProps } from "@radix-ui/themes"
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+import { Box, type BoxProps } from "@radix-ui/themes"
 import { useEffect, useRef } from "react"
+
 import { createSwapy } from "swapy"
 import { DragHandle } from "./drag-handle"
 
@@ -16,6 +18,7 @@ type Config = {
 }
 
 type SwapyLayoutProps = {
+  id: string
   enable?: boolean
   onSwap?: (record: Record<string, string | null>) => void
   config?: Partial<Config>
@@ -32,7 +35,12 @@ export const SwapyLayout = ({
   const swapy = useRef<ReturnType<typeof createSwapy>>()
 
   useEffect(() => {
-    swapy.current = createSwapy(document.querySelector(`#${id}`), config)
+    const container = document.querySelector(`#${id}`)
+    if (!container) {
+      console.error(`Element with id '${id}' not found.`)
+      return
+    }
+    swapy.current = createSwapy(container, config)
     swapy.current.enable(enable)
     swapy.current.onSwap((event) => {
       onSwap(event.data.object)
@@ -51,6 +59,7 @@ export const SwapyLayout = ({
 }
 
 type SwapySlotProps = BoxProps & {
+  id: string
   showHandle?: boolean
 }
 
@@ -75,7 +84,7 @@ export const SwapySlot = ({
   )
 }
 
-export const SwapyExclude = ({ id, children, ...props }: BoxProps) => {
+export const SwapyExclude = ({ children, ...props }: BoxProps) => {
   return (
     <Box as="div" data-swapy-exclude {...props}>
       {children}

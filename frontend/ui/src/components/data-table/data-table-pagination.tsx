@@ -6,8 +6,7 @@ import {
   ChevronsRight,
 } from "lucide-react"
 
-import { Button } from "@radix-ui/themes"
-import { Select } from "@radix-ui/themes"
+import { Button, Select } from "@/components/base"
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>

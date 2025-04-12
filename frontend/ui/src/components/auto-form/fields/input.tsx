@@ -1,15 +1,10 @@
-import { Input } from "@components/form/input"
-import {
-  FormControl,
-  FormItem,
-  FormMessage,
-} from "@components/shadcn-form/form"
+import { Form, Input } from "@/components/shadcn"
 import { Eye, EyeOff } from "lucide-react"
 import { useEffect, useState } from "react"
 import React from "react"
 import { useFormContext } from "react-hook-form"
 import AutoFormLabel from "../common/label"
-import AutoFormTooltip from "../common/tooltip"
+// import AutoFormTooltip from "../common/tooltip"
 import type { AutoFormInputComponentProps } from "../types"
 
 /**
@@ -70,7 +65,7 @@ export default function AutoFormInput({
   }
 
   return (
-    <FormItem className=" flex w-full flex-col">
+    <Form.Item className=" flex w-full flex-col">
       {showLabel && (
         <div className="mb-1">
           <AutoFormLabel
@@ -86,7 +81,7 @@ export default function AutoFormInput({
             {getInputIcon()}
           </div>
         )}
-        <FormControl>
+        <Form.Control>
           <Input
             {...restFieldProps}
             type={inputType}
@@ -97,7 +92,7 @@ export default function AutoFormInput({
               restFieldProps.placeholder || `Enter ${label.toLowerCase()}`
             }
           />
-        </FormControl>
+        </Form.Control>
 
         {/* Password toggle button */}
         {type === "password" && (
@@ -121,8 +116,8 @@ export default function AutoFormInput({
 
       {/* Fixed height error message container to prevent layout shift */}
       <div>
-        <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
+        <Form.Message className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
       </div>
-    </FormItem>
+    </Form.Item>
   )
 }

@@ -1,5 +1,5 @@
 "use client"
-import { RootRoute } from "@common"
+import { RootRoute } from "@/common"
 import { createRoute } from "@tanstack/react-router"
 import GoogleAuthCallbackPage from "../google-auth-callback-page"
 

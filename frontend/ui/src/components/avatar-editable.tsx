@@ -1,11 +1,10 @@
-import { Box, Flex } from "@incmix/ui"
-import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons"
+import type { ExtendSize } from "@/types"
+import { Pencil, Trash2 } from "lucide-react"
 import { useRef, useState } from "react"
-import { Avatar } from "./avatar"
-import { Button } from "./button"
+import { Avatar, Box, Button, Flex } from "./base"
 
 type AvatarEditableProps = {
-  size?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+  size?: ExtendSize
   src?: string | undefined
   name?: string
   deletable?: boolean
@@ -53,7 +52,7 @@ export const AvatarEditable: React.FC<AvatarEditableProps> = ({
           }`}
           onClick={() => fileInputRef.current?.click()}
         >
-          <Pencil1Icon color="white" width="33%" height="33%" />
+          <Pencil color="white" width="33%" height="33%" />
         </Flex>
         <input
           ref={fileInputRef}
@@ -71,7 +70,7 @@ export const AvatarEditable: React.FC<AvatarEditableProps> = ({
           disabled={isDeletingImage}
           className="absolute top-0 right-0 rounded-full bg-red-3 p-1"
         >
-          <TrashIcon width="16" height="16" />
+          <Trash2 width="16" height="16" />
         </Button>
       )}
     </Box>

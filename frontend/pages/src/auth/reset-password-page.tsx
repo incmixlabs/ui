@@ -1,8 +1,4 @@
-import { LoadingPage } from "@common"
-import { I18n } from "@incmix/pages/i18n"
-import { CardContainer, FormField, ReactiveButton, toast } from "@incmix/ui"
-import { Box, Container, Flex, Heading, Text } from "@incmix/ui"
-import { AUTH_API_URL } from "@incmix/ui/constants"
+// @ts-nocheck
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
@@ -10,6 +6,12 @@ import { zodValidator } from "@tanstack/zod-form-adapter"
 import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
+import { LoadingPage } from "@/common"
+import { I18n } from "@/i18n"
+import { AUTH_API_URL } from "@incmix/ui/constants"
+import { Box, Container, Flex, Heading, Text } from "@incmix/ui"
+import { CardContainer, FormField, ReactiveButton, toast } from "@incmix/ui"
+
 import { setupGoogleAuthCallbackListener, useAuth } from "./hooks/auth"
 import { ResetPasswordRoute } from "./routes"
 

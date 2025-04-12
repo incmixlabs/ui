@@ -1,5 +1,5 @@
-import { Box } from "@incmix/ui"
-import { HamburgerMenuIcon } from "@radix-ui/react-icons"
+import { Menu } from "lucide-react"
+import { Box } from "./base"
 
 export const DragHandle = () => {
   return (
@@ -8,7 +8,7 @@ export const DragHandle = () => {
       data-swapy-handle
       className="absolute z-10 cursor-grab p-2 text-gray-11 transition-opacity hover:opacity-100"
     >
-      <HamburgerMenuIcon width={16} height={16} />
+      <Menu width={16} height={16} />
     </Box>
   )
 }

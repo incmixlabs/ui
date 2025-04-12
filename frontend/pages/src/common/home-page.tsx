@@ -1,12 +1,13 @@
 "use client"
-import { useCurrentUser } from "@auth"
-import { LoadingPage } from "@common"
-import { CardContainer } from "@incmix/ui"
-import { Button, Container, Flex, Heading } from "@incmix/ui"
-import { AUTH_API_URL } from "@incmix/ui/constants"
+
 import { useMutation } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { useEffect } from "react"
+
+import { useCurrentUser } from "@/auth"
+import { LoadingPage } from "@/common"
+import { AUTH_API_URL } from "@incmix/ui/constants"
+import { Button, CardContainer, Container, Flex, Heading } from "@incmix/ui"
 
 function HomePage() {
   const { user, isLoading, isError } = useCurrentUser()

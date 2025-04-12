@@ -1,10 +1,10 @@
-import { Button, Flex, Select, Spinner, Text, Tooltip } from "@incmix/ui"
-import type { MemberRole } from "@incmix/utils/types"
-import { CheckIcon, Cross1Icon, Pencil1Icon } from "@radix-ui/react-icons"
+import { Check, Pencil, X } from "lucide-react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 
+import { Button, Flex, Select, Spinner, Text, Tooltip } from "@incmix/ui"
+type MemberRole = "owner" | "admin" | "editor" | "commenter" | "viewer"
 interface EditableRoleProps {
   currentRole: MemberRole
   onUpdateRole: (newRole: MemberRole) => Promise<void>
@@ -79,7 +79,7 @@ export const EditableRole: React.FC<EditableRoleProps> = ({
             onClick={handleConfirm}
             disabled={isLoading}
           >
-            {isLoading ? <Spinner size="1" /> : <CheckIcon />}
+            {isLoading ? <Spinner size="1" /> : <Check />}
           </Button>
         </Tooltip>
         <Tooltip content={t("common:cancel")}>
@@ -90,7 +90,7 @@ export const EditableRole: React.FC<EditableRoleProps> = ({
             onClick={handleCancel}
             disabled={isLoading}
           >
-            <Cross1Icon />
+            <X />
           </Button>
         </Tooltip>
       </Flex>
@@ -103,7 +103,7 @@ export const EditableRole: React.FC<EditableRoleProps> = ({
       <Tooltip content={t("organizationDetails:editRole")}>
         {editable && (
           <Button size="1" variant="ghost" onClick={handleEdit}>
-            <Pencil1Icon />
+            <Pencil />
           </Button>
         )}
       </Tooltip>

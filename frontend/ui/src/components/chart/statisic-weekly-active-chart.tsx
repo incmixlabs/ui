@@ -1,7 +1,7 @@
 "use client"
 
-import { Box } from "@incmix/ui"
-import { cn } from "@utils"
+import { Box } from "@/components/base"
+import { cn } from "@/lib/utils"
 import { lazy, useEffect, useState } from "react"
 
 const ReactApexChart = lazy(() => import("react-apexcharts"))
@@ -57,7 +57,7 @@ interface WeeklyActivityChartProps {
   className?: string
 }
 
-export default function WeeklyActivityChart({
+export function WeeklyActivityChart({
   values = [30, 65, 45, 80, 55, 40, 65],
   days = ["M", "T", "W", "T", "F", "S", "S"],
   primaryColor = "#3366FF",

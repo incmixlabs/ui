@@ -1,4 +1,4 @@
-import { Box } from "@incmix/ui"
+import { Box } from "@/components/radixui/box"
 import { useEffect, useState } from "react"
 import { Battery, type BatteryInfo } from "./battery"
 

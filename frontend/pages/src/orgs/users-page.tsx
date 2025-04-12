@@ -1,5 +1,13 @@
-import { Button, CardContainer } from "@incmix/ui"
+import { Link } from "@tanstack/react-router"
+import { ArrowLeft } from "lucide-react"
+import { forwardRef, useContext, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { toast } from "sonner"
+
+import { DashboardLayout } from "../common/components/layouts/admin-panel/layout"
 import {
+  Button,
+  CardContainer,
   Container,
   Flex,
   Select,
@@ -8,20 +16,13 @@ import {
   Text,
   TextField,
   Tooltip,
-} from "@incmix/ui"
+} from "@incmix/ui2"
 import type {
   MemberDetails,
-  MemberRole,
   Organization,
 } from "@incmix/utils/types"
-import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { ArrowLeftIcon } from "@radix-ui/react-icons"
-import { Link } from "@tanstack/react-router"
-import { forwardRef, useContext, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { toast } from "sonner"
+
 import { useAuth } from "../auth"
-import { PageLayout } from "../common/components/layouts/page-layout"
 import { UserProfileImage } from "../common/components/user-profile-image"
 import LoadingPage from "../common/loading-page"
 import { EditableName } from "./components/editable-name"
@@ -39,7 +40,7 @@ import {
   useUpdateOrganization,
 } from "./utils"
 import { AbilityContext, Can } from "./utils/ability-context"
-
+type MemberRole = "owner" | "admin" | "viewer" | "commenter" | "editor"
 const RemoveButton: React.FC<{ member: MemberDetails; orgHandle: string }> = ({
   member,
   orgHandle,
@@ -98,7 +99,7 @@ const OrganizationHeader: React.FC<{
       <Flex justify="between" align="center">
         <Link to="/organizations">
           <Button variant="ghost" size="2">
-            <ArrowLeftIcon /> {t("common:back")}
+            <ArrowLeft /> {t("common:back")}
           </Button>
         </Link>
       </Flex>
@@ -125,7 +126,7 @@ const UserRow: React.FC<{
         <Flex align="center" gap="2">
           <UserProfileImage size="2" userId={member.userId} />
           <Text>
-            {member.name}
+            {member.fullName}
             {currentUser &&
               currentUser.id === member.userId &&
               ` (${t("common:you")})`}

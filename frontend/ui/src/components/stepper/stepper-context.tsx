@@ -1,8 +1,9 @@
+/* eslint-disable react-refresh/only-export-components */
 "use client"
 
 import { createContext, useContext, useEffect, useRef, useState } from "react"
-import type { StepperProps } from "./stepper-types"
 
+import type { StepperProps } from "./stepper-types"
 interface StepperContextValue extends StepperProps {
   clickable?: boolean
   isError?: boolean
@@ -82,7 +83,7 @@ const StepperProvider = ({ value, children }: StepperContextProviderProps) => {
 
 // TODO: Export this in @/registry/hooks
 function usePrevious<T>(value: T): T | undefined {
-  const ref = useRef<T>()
+  const ref = useRef<T | undefined>(undefined)
 
   useEffect(() => {
     ref.current = value
@@ -92,14 +93,14 @@ function usePrevious<T>(value: T): T | undefined {
 }
 
 //
-function useStepper() {
+export function useStepper() {
   const context = useContext(StepperContext)
 
   if (context === undefined) {
     throw new Error("useStepper must be used within a StepperProvider")
   }
 
-  const { children, className, ...rest } = context
+  const { ...rest } = context
 
   const isLastStep = context.activeStep === context.steps.length - 1
   const hasCompletedAllSteps = context.activeStep === context.steps.length
@@ -122,4 +123,4 @@ function useStepper() {
   }
 }
 
-export { StepperContext, StepperProvider, useStepper }
+export { StepperProvider }

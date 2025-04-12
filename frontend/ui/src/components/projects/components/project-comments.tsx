@@ -1,8 +1,9 @@
-import { commentsData } from "@components/kanban-board/data"
-import { Box, Button, Flex, Heading, Tabs, Text } from "@incmix/ui"
 import { Image, Paperclip, Smile } from "lucide-react"
-import type React from "react"
 import { useState } from "react"
+
+import { Box, Button, Flex, Heading, Tabs, Text } from "@/components/base"
+import { commentsData } from "@/components/kanban-board/data"
+
 function ProjectComments() {
   const [comment, setComment] = useState("")
 

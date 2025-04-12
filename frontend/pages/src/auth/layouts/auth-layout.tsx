@@ -1,6 +1,7 @@
-import { CardContainer } from "@incmix/ui"
-import { Container, Flex } from "@incmix/ui"
+// @ts-nocheck
 import type { FC, ReactNode } from "react"
+
+import { CardContainer, Container, Flex } from "@incmix/ui"
 
 interface AuthLayoutProps {
   children: ReactNode

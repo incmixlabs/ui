@@ -5,7 +5,7 @@ const nextConfig = {
     "@incmix/ui",
     "@incmix/utils/i18n",
     "@incmix/store",
-    "@incmix/pages2",
+    "@incmix/pages",
   ],
 }
 

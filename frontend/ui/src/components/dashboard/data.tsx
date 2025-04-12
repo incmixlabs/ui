@@ -3,7 +3,7 @@ import {
   ClipBoardAdd,
   ClipBoardCheck,
   ClipBoardStatus,
-} from "@incmix/ui"
+} from "@/components/icons"
 interface TaskStat {
   count: number
   label: string
