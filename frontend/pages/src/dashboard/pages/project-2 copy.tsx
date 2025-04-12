@@ -199,7 +199,7 @@ const DashboardProject2: React.FC = () => {
 
           <Box className=" sticky top-0 h-screen w-80 shrink-0 rounded-xl border border-gray-5 bg-white dark:bg-gray-2 ">
             <ScrollArea className="h-full">
-              <ProfileSettings/>
+              <ProfileSettings />
               <Box className="w-full border-gray-5 border-b p-4">
                 <Calendar
                   id={"calendar"}
@@ -208,7 +208,7 @@ const DashboardProject2: React.FC = () => {
                   initialFocus
                 />
               </Box>
-                <RecentActivity />
+              <RecentActivity />
             </ScrollArea>
           </Box>
         </Flex>
