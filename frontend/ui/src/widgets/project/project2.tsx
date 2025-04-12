@@ -12,9 +12,9 @@ import {
 import { Ellipsis } from "lucide-react"
 
 const stats = [
-  { label: "Ongoing", value: 420, color: dashboardColorValues.color3 },
+  { label: "Ongoing", value: 420, color: dashboardColorValues.color1 },
   { label: "Hold", value: 210, color: dashboardColorValues.color2 },
-  { label: "Done", value: 200, color: dashboardColorValues.color1 },
+  { label: "Done", value: 200, color: dashboardColorValues.color3 },
 ]
 
 export function ProjectWidgets2() {

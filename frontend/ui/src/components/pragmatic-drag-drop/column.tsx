@@ -1,8 +1,5 @@
-import { Avatar, Button, Heading, cn } from "@incmix/ui"
-/** @jsx jsx */
+import { Heading, cn } from "@incmix/ui"
 import { memo, useEffect, useRef, useState } from "react"
-
-import { css } from "@emotion/react"
 
 import {
   type Edge,
@@ -15,53 +12,10 @@ import {
   draggable,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
-import { token } from "@atlaskit/tokens"
 
-import { cardGap, columnGap } from "./constants"
 import type { ColumnType } from "./people"
 
 import { Card } from "./card"
-
-// Custom motion values
-const easeInOut = "cubic-bezier(0.4, 0, 0.2, 1)"
-const mediumDurationMs = 300
-
-const _columnStyles = css({
-  display: "flex",
-  width: 250,
-  flexDirection: "column",
-  background: token("elevation.surface.sunken", "#F7F8F9"),
-  borderRadius: "calc(var(--grid) * 2)",
-  transition: `background ${mediumDurationMs}ms ${easeInOut}`,
-  position: "relative",
-})
-
-const _scrollContainerStyles = css({
-  height: "100%",
-  overflowY: "auto",
-})
-
-const _cardListStyles = css({
-  display: "flex",
-  boxSizing: "border-box",
-  minHeight: "100%",
-  padding: "var(--grid)",
-  gap: cardGap,
-  flexDirection: "column",
-})
-
-const _columnHeaderStyles = css({
-  display: "flex",
-  padding: "calc(var(--grid) * 2) calc(var(--grid) * 2) calc(var(--grid) * 1)",
-  justifyContent: "space-between",
-  flexDirection: "row",
-  color: token("color.text.subtlest", "#626F86"),
-  userSelect: "none",
-})
-
-const _isDraggingOverColumnStyles = css({
-  background: token("color.background.selected.hovered", "#CCE0FF"),
-})
 
 export const Column = memo(function Column({ column }: { column: ColumnType }) {
   const columnId = column.columnId

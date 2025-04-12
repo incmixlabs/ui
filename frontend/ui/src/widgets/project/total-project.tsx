@@ -68,7 +68,7 @@ export function TotalProject() {
               </Text>
             </Flex>
             <Progress
-              value={(item.value / item.maxValue) * 100}
+              value={Math.min((item.value / item.maxValue) * 100, 100)}
               className="h-2 bg-gray-100"
               color={item.color as BadgeProps["color"]}
             />
