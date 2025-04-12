@@ -92,13 +92,12 @@ export function SortableItem({
     <Box ref={ref} className="relative h-full w-full">
       {isDraggingAny && isDropTarget && (
         <Box className="pointer-events-none absolute inset-0 z-10">
-          <Box className="h-full w-full rounded-lg border-2 border-primary ring-2 ring-primary ring-opacity-30" />
+          <Box className="h-full w-full rounded-lg border-2 border-blue-10 ring-2 ring-blue-10 ring-opacity-30" />
         </Box>
       )}
-
       <Box
         ref={setNodeRef}
-        className={`relative h-full rounded-lg ${isDragging ? "opacity-30" : ""}`}
+        className={`relative h-full rounded-lg ${isDragging ? "opacity-20" : ""}`}
       >
         {isEditing && (
           <Box
