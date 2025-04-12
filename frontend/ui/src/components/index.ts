@@ -6,13 +6,12 @@ export * from "./charts"
 export * from "@utils/colors"
 export * from "./data-table"
 export * from "./drag-handle"
-
-export * from "./icons/icon"
 export { useDropzone } from "react-dropzone"
 export * from "./layout-grid"
 export * from "./sidebar"
 export * from "./swapy"
-
+export * from "./pragmatic-drag-drop"
+export * from "./dnd-kit"
 export * from "./tree-view"
 // Dynamically import heavy components
 export { Board } from "./kanban-board"

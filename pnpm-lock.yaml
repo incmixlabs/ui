@@ -734,6 +734,9 @@ importers:
       '@atlaskit/pragmatic-drag-and-drop-auto-scroll':
         specifier: 2.1.0
         version: 2.1.0
+      '@atlaskit/pragmatic-drag-and-drop-autoscroll':
+        specifier: ^0.5.4
+        version: 0.5.4(react@19.1.0)
       '@atlaskit/pragmatic-drag-and-drop-hitbox':
         specifier: 1.0.3
         version: 1.0.3
@@ -743,6 +746,9 @@ importers:
       '@atlaskit/pragmatic-drag-and-drop-react-drop-indicator':
         specifier: 1.1.4
         version: 1.1.4(@types/react@19.1.0)(react@19.1.0)
+      '@atlaskit/pragmatic-drag-and-drop-react-indicator':
+        specifier: ^0.18.0
+        version: 0.18.0(@types/react@19.1.0)(react@19.1.0)
       '@conform-to/react':
         specifier: ^1.2.2
         version: 1.3.0(react@19.1.0)
@@ -1245,6 +1251,11 @@ packages:
     peerDependencies:
       react: ^18.2.0
 
+  '@atlaskit/ds-lib@2.7.0':
+    resolution: {integrity: sha512-+U4aPE2dBRFUBYWCM9vkrwJGrLAYVcK30ZpEiQDNpM2D7K41223TfEijC8azaN4VM3tsCgwSKBWwniloNxqYbA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+
   '@atlaskit/ds-lib@3.5.1':
     resolution: {integrity: sha512-8olLZ+Oj+7GWAuT3zTQ24dyPjAS9TfzuFGT6cBbuLyWgUIT2jFaF1OecuJS3yAksx8DiBcKoPaR2dIbF0u34sg==}
     peerDependencies:
@@ -1253,11 +1264,23 @@ packages:
   '@atlaskit/feature-gate-js-client@5.0.0':
     resolution: {integrity: sha512-ZK/1HqPIL9/cNfbZDGr4bf+etgva2XJK9UJSyhwHcTlCaWw4XmFu2BIpswS21y0izHk2ePqmo66VXl90XKHaUw==}
 
+  '@atlaskit/platform-feature-flags@0.3.0':
+    resolution: {integrity: sha512-/0u5fFJ0Rw2j4M5wzsXgaHO6Ey12oekPCDTRvmmAIp4GO9T2Swbl80bavLAPSOmSHMhHTSuvRxiJveZXfQ21IQ==}
+
   '@atlaskit/platform-feature-flags@1.1.1':
     resolution: {integrity: sha512-YKuy3RsqCEoNALiMHVma0GGHkzZMSIBsEgZlV/2TPw65QRzOWJvKA3ZIKucmXzr3m7AUqg1XHwXvVlUuNZhUgg==}
 
   '@atlaskit/pragmatic-drag-and-drop-auto-scroll@2.1.0':
     resolution: {integrity: sha512-E52y8/0BTTf4ai6BJyFYgdVHFgQ1AES33KvAVQpZ41jMkoukLIq6UoCudOXku7xs3qoPygQdpC+vitVUuEFJXw==}
+
+  '@atlaskit/pragmatic-drag-and-drop-autoscroll@0.5.4':
+    resolution: {integrity: sha512-+F59/gFxpfetCvyLtgfx2dblYrCSbFRA/zZJeaVlZALMz0H4D1GZvhgSemd/vwJQkColYx0VY4lNP10J0VrbHA==}
+    deprecated: '@atlaskit/pragmatic-drag-and-drop-autoscroll has been renamed to @atlaskit/pragmatic-drag-and-drop-react-beautiful-dnd-autoscroll. Please also consider moving to our new auto scroller package @atlaskit/pragmatic-drag-and-drop-auto-scroll which has improved performance, user experience and flexibility.'
+    peerDependencies:
+      react: ^16.8.0
+
+  '@atlaskit/pragmatic-drag-and-drop-hitbox@0.12.1':
+    resolution: {integrity: sha512-kasSifl+wIYGUCEqF+VMbxPxgoQjW6S5rj5MzQ8ULZnOgqDJ5xuiMAcI2px0osftEg6wusX0jRkPOWpSeEXz3Q==}
 
   '@atlaskit/pragmatic-drag-and-drop-hitbox@1.0.3':
     resolution: {integrity: sha512-/Sbu/HqN2VGLYBhnsG7SbRNg98XKkbF6L7XDdBi+izRybfaK1FeMfodPpm/xnBHPJzwYMdkE0qtLyv6afhgMUA==}
@@ -1270,8 +1293,24 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
 
+  '@atlaskit/pragmatic-drag-and-drop-react-indicator@0.18.0':
+    resolution: {integrity: sha512-ep6SKPjM0RtCByBG3YOMnMN1lCQRkX3WzCAfOEP/NSvPL8WQ3jkbOvG4eT6OQMnDLOVKca66Eu0IxwkPySfu+w==}
+    peerDependencies:
+      react: ^16.8.0
+
+  '@atlaskit/pragmatic-drag-and-drop@0.19.0':
+    resolution: {integrity: sha512-LqsYTmRwuZur4ErCgdKj+vqIz2pNmnu2+NS03fH7x9PPzpCDILUTAWBU1TDWJoQya8OWPSr7ALkUisABzphObw==}
+
+  '@atlaskit/pragmatic-drag-and-drop@0.25.0':
+    resolution: {integrity: sha512-odIEqRtKhBqSNnAOfqVCVKP9aEy5oWO80bmQORXGCiBv0sIexWdn0RH4j8NUf6Glce/iV/tJLOh/irqcqtGo4Q==}
+
   '@atlaskit/pragmatic-drag-and-drop@1.4.0':
     resolution: {integrity: sha512-qRY3PTJIcxfl/QB8Gwswz+BRvlmgAC5pB+J2hL6dkIxgqAgVwOhAamMUKsrOcFU/axG2Q7RbNs1xfoLKDuhoPg==}
+
+  '@atlaskit/tokens@1.61.0':
+    resolution: {integrity: sha512-gRkBDZOaQffJHg9g+hYFgPjQ0Hz4XIDaK5WEttIGyhi2USsGsvDvUeED8liqcQNwssH/5UFxIFp3FmEwo0DoFA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
 
   '@atlaskit/tokens@3.3.2':
     resolution: {integrity: sha512-NgNUNwlZ4ow9IRa3dK24ZF1TBY3SyHGQJnt7WruoR/yyZjsaqQy3jcKwtiNJ1SMzZO7UkgfwwVWhlqdVnul6hA==}
@@ -5751,6 +5790,9 @@ packages:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
 
+  bind-event-listener@2.1.1:
+    resolution: {integrity: sha512-O+a5c0D2se/u2VlBJmPRn45IB6R4mYMh1ok3dWxrIZ2pmLqzggBhb875mbq73508ylzofc0+hT9W41x4Y2s8lg==}
+
   bind-event-listener@3.0.0:
     resolution: {integrity: sha512-PJvH288AWQhKs2v9zyfYdPzlPqf5bXbGMmhmUIY9x4dAUGIWgomO771oBQNwJnMQSnUIXhKu6sgzpBRXTlvb8Q==}
 
@@ -6179,6 +6221,9 @@ packages:
 
   crypto-js@4.2.0:
     resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
+
+  css-box-model@1.2.1:
+    resolution: {integrity: sha512-a7Vr4Q/kd/aw96bnJG332W9V9LkJO69JRcaCYDUqjp6/z0w6VcZjgAcTbgFxEPfBgdnAwlh3iwu+hLopa+flJw==}
 
   css.escape@1.5.1:
     resolution: {integrity: sha512-YUifsXXuknHlUsmlgyY0PKzgPOr7/FjCePfHNt0jxm83wHZi44VDMQ7/fGNkjY3/jV1MC+1CmZbaHzugyeRtpg==}
@@ -10295,6 +10340,16 @@ snapshots:
       '@babel/runtime': 7.27.0
       react: 19.1.0
 
+  '@atlaskit/ds-lib@2.7.0(@types/react@19.1.0)(react@19.1.0)':
+    dependencies:
+      '@atlaskit/platform-feature-flags': 0.3.0
+      '@babel/runtime': 7.27.0
+      bind-event-listener: 3.0.0
+      react: 19.1.0
+      react-uid: 2.4.0(@types/react@19.1.0)(react@19.1.0)
+    transitivePeerDependencies:
+      - '@types/react'
+
   '@atlaskit/ds-lib@3.5.1(@types/react@19.1.0)(react@19.0.0)':
     dependencies:
       '@atlaskit/platform-feature-flags': 1.1.1(react@19.0.0)
@@ -10335,6 +10390,10 @@ snapshots:
     transitivePeerDependencies:
       - react
 
+  '@atlaskit/platform-feature-flags@0.3.0':
+    dependencies:
+      '@babel/runtime': 7.27.0
+
   '@atlaskit/platform-feature-flags@1.1.1(react@19.0.0)':
     dependencies:
       '@atlaskit/feature-gate-js-client': 5.0.0(react@19.0.0)
@@ -10352,6 +10411,18 @@ snapshots:
   '@atlaskit/pragmatic-drag-and-drop-auto-scroll@2.1.0':
     dependencies:
       '@atlaskit/pragmatic-drag-and-drop': 1.4.0
+      '@babel/runtime': 7.27.0
+
+  '@atlaskit/pragmatic-drag-and-drop-autoscroll@0.5.4(react@19.1.0)':
+    dependencies:
+      '@atlaskit/pragmatic-drag-and-drop': 0.19.0
+      '@babel/runtime': 7.27.0
+      css-box-model: 1.2.1
+      react: 19.1.0
+
+  '@atlaskit/pragmatic-drag-and-drop-hitbox@0.12.1':
+    dependencies:
+      '@atlaskit/pragmatic-drag-and-drop': 0.25.0
       '@babel/runtime': 7.27.0
 
   '@atlaskit/pragmatic-drag-and-drop-hitbox@1.0.3':
@@ -10387,11 +10458,48 @@ snapshots:
       - '@types/react'
       - supports-color
 
+  '@atlaskit/pragmatic-drag-and-drop-react-indicator@0.18.0(@types/react@19.1.0)(react@19.1.0)':
+    dependencies:
+      '@atlaskit/pragmatic-drag-and-drop': 0.25.0
+      '@atlaskit/pragmatic-drag-and-drop-hitbox': 0.12.1
+      '@atlaskit/tokens': 1.61.0(@types/react@19.1.0)(react@19.1.0)
+      '@babel/runtime': 7.27.0
+      '@emotion/react': 11.14.0(@types/react@19.1.0)(react@19.1.0)
+      react: 19.1.0
+    transitivePeerDependencies:
+      - '@types/react'
+      - supports-color
+
+  '@atlaskit/pragmatic-drag-and-drop@0.19.0':
+    dependencies:
+      '@babel/runtime': 7.27.0
+      bind-event-listener: 2.1.1
+      raf-schd: 4.0.3
+
+  '@atlaskit/pragmatic-drag-and-drop@0.25.0':
+    dependencies:
+      '@babel/runtime': 7.27.0
+      bind-event-listener: 2.1.1
+      raf-schd: 4.0.3
+
   '@atlaskit/pragmatic-drag-and-drop@1.4.0':
     dependencies:
       '@babel/runtime': 7.27.0
       bind-event-listener: 3.0.0
       raf-schd: 4.0.3
+
+  '@atlaskit/tokens@1.61.0(@types/react@19.1.0)(react@19.1.0)':
+    dependencies:
+      '@atlaskit/ds-lib': 2.7.0(@types/react@19.1.0)(react@19.1.0)
+      '@atlaskit/platform-feature-flags': 0.3.0
+      '@babel/runtime': 7.27.0
+      '@babel/traverse': 7.27.0
+      '@babel/types': 7.27.0
+      bind-event-listener: 3.0.0
+      react: 19.1.0
+    transitivePeerDependencies:
+      - '@types/react'
+      - supports-color
 
   '@atlaskit/tokens@3.3.2(@types/react@19.1.0)(react@19.0.0)':
     dependencies:
@@ -16461,6 +16569,8 @@ snapshots:
 
   binary-extensions@2.3.0: {}
 
+  bind-event-listener@2.1.1: {}
+
   bind-event-listener@3.0.0: {}
 
   bindings@1.5.0:
@@ -16943,6 +17053,10 @@ snapshots:
       which: 2.0.2
 
   crypto-js@4.2.0: {}
+
+  css-box-model@1.2.1:
+    dependencies:
+      tiny-invariant: 1.3.1
 
   css.escape@1.5.1: {}
 
