@@ -12,14 +12,14 @@ import {
 import { Ellipsis } from "lucide-react"
 import React from "react"
 // Colors for the chart segments
-const ongoingColor = dashboardColorValues.color1
+const ongoingColor = dashboardColorValues.color3
 const onHoldColor = dashboardColorValues.color2
-const completedColor = dashboardColorValues.color3
+const completedColor = dashboardColorValues.color1
 
 const stats = [
-  { label: "Ongoing", value: 420, color: dashboardColorValues.color1 },
+  { label: "Ongoing", value: 420, color: dashboardColorValues.color3 },
   { label: "Hold", value: 210, color: dashboardColorValues.color2 },
-  { label: "Done", value: 200, color: dashboardColorValues.color3 },
+  { label: "Done", value: 200, color: dashboardColorValues.color1 },
 ]
 
 export function ProjectWidgets() {

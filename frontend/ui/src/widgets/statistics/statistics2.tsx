@@ -9,7 +9,9 @@ import {
 } from "@incmix/ui"
 import { Clipboard, Ellipsis } from "lucide-react"
 
-export function StatisticWidgets2() {
+export function StatisticWidgets2({
+  completedProjects = 874,
+}: { completedProjects?: number }) {
   return (
     <>
       <CardContainer className="h-full">
@@ -36,7 +38,7 @@ export function StatisticWidgets2() {
             </Box>
           </Flex>
           <Heading size="5" className="font-medium">
-            874
+            {completedProjects}
           </Heading>
         </Flex>
       </CardContainer>
