@@ -228,20 +228,16 @@ const DashboardProject1: React.FC = () => {
     const { active, over } = event
 
     if (over && active.id !== over.id) {
-      // Get the component IDs for the source and target slots
       const sourceComponentId =
         slotMapping[active.id as keyof typeof slotMapping]
       const targetComponentId = slotMapping[over.id as keyof typeof slotMapping]
 
-      // Create a new mapping with the components swapped
       const newMapping = { ...slotMapping }
       newMapping[active.id as keyof typeof slotMapping] = targetComponentId
       newMapping[over.id as keyof typeof slotMapping] = sourceComponentId
 
-      // Update the component mapping
       setSlotMapping(newMapping)
 
-      // Swap grid slots configuration
       const newGridSlots = [...gridSlots]
       const sourceIndex = newGridSlots.findIndex(
         (slot) => slot.slotId === active.id

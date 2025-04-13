@@ -10,18 +10,43 @@ import {
 import { Clipboard, Ellipsis } from "lucide-react"
 
 export function StatisticWidgets2({
+  title = "Statistics",
   completedProjects = 874,
-}: { completedProjects?: number }) {
+  chartValues = [30, 65, 45, 80, 55, 40, 65],
+  chartDays = ["M", "T", "W", "T", "F", "S", "S"],
+  primaryColor = "#3366FF",
+  highlightColor = "#FF9D66",
+  highlightDay = 3,
+  onMoreOptionsClick,
+  onClipboardClick,
+}: {
+  title?: string
+  completedProjects?: number
+  chartValues?: number[]
+  chartDays?: string[]
+  primaryColor?: string
+  highlightColor?: string
+  highlightDay?: number
+  onMoreOptionsClick?: () => void
+  onClipboardClick?: () => void
+}) {
   return (
     <>
       <CardContainer className="h-full">
         <Flex align={"center"} gap={"2"} justify={"between"}>
           <Heading size="5">Statistics</Heading>
-          <IconButton>
+          <IconButton onClick={onMoreOptionsClick}>
             <Ellipsis size={16} />
           </IconButton>
         </Flex>
-        <WeeklyActivityChart className="h-72" />
+        <WeeklyActivityChart
+          className="h-72"
+          values={chartValues}
+          days={chartDays}
+          primaryColor={primaryColor}
+          highlightColor={highlightColor}
+          highlightDay={highlightDay}
+        />
         <Flex
           align={"center"}
           gap={"2"}
@@ -29,7 +54,7 @@ export function StatisticWidgets2({
           className="border-gray-5 border-t pt-2"
         >
           <Flex align={"center"} gap={"2"}>
-            <IconButton>
+            <IconButton onClick={onClipboardClick}>
               <Clipboard size={16} />
             </IconButton>
             <Box>

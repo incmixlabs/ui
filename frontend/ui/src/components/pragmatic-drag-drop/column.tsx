@@ -51,7 +51,9 @@ export const Column = memo(function Column({ column }: { column: ColumnType }) {
       }),
       dropTargetForElements({
         element: columnRef.current,
-        canDrop: (args) => args.source.data.type === "column",
+        canDrop: (args) =>
+          args.source.data.type === "column" &&
+          args.source.data.columnId !== columnId,
         getIsSticky: () => true,
         getData: ({ input, element }) => {
           const data = {
