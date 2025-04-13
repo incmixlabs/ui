@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build:fe": "vite build --mode production",
+    "build": "NODE_OPTIONS=\"--max-old-space-size=8192\" vite build",
+    "build:fe": "NODE_OPTIONS=\"--max-old-space-size=8192\" vite build --mode production",
     "preview": "vite preview",
     "tauri": "tauri",
     "typecheck": "tsc"
