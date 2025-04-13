@@ -95,15 +95,16 @@ export function SortableItem({
           <Box className="h-full w-full rounded-lg border-2 border-blue-10 ring-2 ring-blue-10 ring-opacity-30" />
         </Box>
       )}
+
       <Box
         ref={setNodeRef}
-        className={`relative h-full rounded-lg ${isDragging ? "opacity-20" : ""}`}
+        className={`relative h-full rounded-lg ${isDragging ? "opacity-30" : ""}`}
       >
         {isEditing && (
           <Box
             {...attributes}
             {...listeners}
-            className="absolute top-2 right-2 z-20 flex h-8 w-8 cursor-move items-center justify-center rounded-lg bg-gray-5 opacity-70 shadow-md hover:opacity-100"
+            className="absolute top-2 right-2 z-20 flex h-8 w-8 cursor-move items-center justify-center rounded-lg bg-gray-5 opacity-70 hover:opacity-100"
           >
             <GripVertical className="h-5 w-5 text-gray-12" />
           </Box>
