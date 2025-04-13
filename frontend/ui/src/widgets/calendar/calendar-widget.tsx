@@ -1,3 +1,4 @@
+import { CardContainer } from "@components"
 import { createId as cuid } from "@paralleldrive/cuid2"
 import { DateTime } from "luxon"
 import { useCallback, useEffect, useState } from "react"
@@ -61,11 +62,13 @@ export function CalendarWidget({ storageKey }: CalendarWidgetProps) {
   )
 
   return (
-    <Calendar
-      events={events}
-      onAddEvent={handleAddEvent}
-      onRemoveEvent={handleRemoveEvent}
-      onEditEvent={handleEditEvent}
-    />
+    <CardContainer>
+      <Calendar
+        events={events}
+        onAddEvent={handleAddEvent}
+        onRemoveEvent={handleRemoveEvent}
+        onEditEvent={handleEditEvent}
+      />
+    </CardContainer>
   )
 }

@@ -10,7 +10,7 @@ import {
 } from "@components/carousel"
 import { Tabs, TabsList, TabsTrigger } from "@components/tabs"
 import { useRateLimitStore } from "@incmix/store"
-import { Spinner, Text } from "@incmix/ui"
+import { CardContainer, Spinner, Text } from "@incmix/ui"
 import { useQuery } from "@tanstack/react-query"
 import { LOCATION_API_URL } from "@utils/constants"
 import { DateTime } from "luxon"
@@ -169,7 +169,7 @@ export default function NewsWidget({ country }: NewsProps) {
     return <Text color="red">Failed to fetch News</Text>
 
   return (
-    <div>
+    <CardContainer>
       <Tabs
         value={selectedTopic}
         onValueChange={setSelectedTopic}
@@ -196,7 +196,7 @@ export default function NewsWidget({ country }: NewsProps) {
           <CarouselNext />
         </Carousel>
       )}
-    </div>
+    </CardContainer>
   )
 }
 
