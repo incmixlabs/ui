@@ -166,8 +166,7 @@ const DashboardProject1: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false)
 
   const [slotMapping, setSlotMapping] = useState(INITIAL_SLOT_MAPPING)
-  // State for grid slots configuration
-  const [gridSlots, setGridSlots] = useState<GridSlot[]>(INITIAL_GRID_SLOTS)
+  const [gridSlots] = useState<GridSlot[]>(INITIAL_GRID_SLOTS)
 
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
   const [overSlotId, setOverSlotId] = useState<UniqueIdentifier | null>(null)
@@ -223,44 +222,23 @@ const DashboardProject1: React.FC = () => {
     const { active, over } = event
 
     if (over && active.id !== over.id) {
+      // Get the component IDs for the source and target slots
       const sourceComponentId =
         slotMapping[active.id as keyof typeof slotMapping]
       const targetComponentId = slotMapping[over.id as keyof typeof slotMapping]
 
+      // Create a new mapping with the components swapped
       const newMapping = { ...slotMapping }
       newMapping[active.id as keyof typeof slotMapping] = targetComponentId
       newMapping[over.id as keyof typeof slotMapping] = sourceComponentId
 
+      // Update the component mapping
       setSlotMapping(newMapping)
 
-      const newGridSlots = [...gridSlots]
-      const sourceIndex = newGridSlots.findIndex(
-        (slot) => slot.slotId === active.id
-      )
-      const targetIndex = newGridSlots.findIndex(
-        (slot) => slot.slotId === over.id
-      )
-
-      if (sourceIndex !== -1 && targetIndex !== -1) {
-        const sourceGridSlot = { ...newGridSlots[sourceIndex] }
-        const targetGridSlot = { ...newGridSlots[targetIndex] }
-
-        const tempColSpan = sourceGridSlot.colSpan
-        const tempClassName = sourceGridSlot.className
-
-        sourceGridSlot.colSpan = targetGridSlot.colSpan
-        sourceGridSlot.className = targetGridSlot.className
-
-        targetGridSlot.colSpan = tempColSpan
-        targetGridSlot.className = tempClassName
-
-        newGridSlots[sourceIndex] = sourceGridSlot
-        newGridSlots[targetIndex] = targetGridSlot
-
-        setGridSlots(newGridSlots)
-      }
+      // No longer swapping grid slots configuration - grid layout remains fixed
     }
 
+    // Reset state
     setActiveId(null)
     setOverSlotId(null)
     setIsDragging(false)
@@ -302,7 +280,7 @@ const DashboardProject1: React.FC = () => {
           onDragCancel={handleDragCancel}
         >
           <SortableContext items={gridSlots.map((slot) => slot.slotId)}>
-            <Grid columns={"12"} gap="4" className="p-4">
+            <Grid columns={"12"} className="p-4" gap="4">
               {gridSlots.map((slot) => (
                 <Box
                   key={slot.slotId}
