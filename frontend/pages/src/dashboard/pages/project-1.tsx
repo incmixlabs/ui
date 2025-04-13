@@ -4,7 +4,10 @@ import {
   DndContext,
   DragOverlay,
   KeyboardSensor,
+  MouseSensor,
   PointerSensor,
+  TouchSensor,
+  type UniqueIdentifier,
   closestCenter,
   defaultDropAnimationSideEffects,
   useSensor,
@@ -16,7 +19,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { useCallback, useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import type { ReactNode } from "react"
 import { useTranslation } from "react-i18next"
 import { useAuth } from "../../auth"
@@ -163,19 +166,27 @@ const DashboardProject1: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false)
 
   const [slotMapping, setSlotMapping] = useState(INITIAL_SLOT_MAPPING)
+  // State for grid slots configuration
   const [gridSlots, setGridSlots] = useState<GridSlot[]>(INITIAL_GRID_SLOTS)
 
-  const [activeId, setActiveId] = useState<string | null>(null)
-  const [overSlotId, setOverSlotId] = useState<string | null>(null)
+  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
+  const [overSlotId, setOverSlotId] = useState<UniqueIdentifier | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [_slotDimensions, setSlotDimensions] = useState<
     Record<string, DOMRect>
   >({})
+  const lastOverId = useRef<UniqueIdentifier | null>(null)
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
+    useSensor(MouseSensor, {
       activationConstraint: {
-        distance: 8,
+        distance: 5,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 100,
+        tolerance: 5,
       },
     }),
     useSensor(KeyboardSensor, {
@@ -183,10 +194,8 @@ const DashboardProject1: React.FC = () => {
     })
   )
 
-  // Memoize the handleMeasure function to prevent it from changing on every render
   const handleMeasure = useCallback((id: string, rect: DOMRect) => {
     setSlotDimensions((prev) => {
-      // Only update if the dimensions have changed or don't exist yet
       const prevRect = prev[id]
       if (!prevRect || isRectDifferent(prevRect, rect)) {
         return {
@@ -202,13 +211,17 @@ const DashboardProject1: React.FC = () => {
     const { active } = event
     setActiveId(active.id)
     setIsDragging(true)
+    lastOverId.current = null
   }
 
   const handleDragOver = (event: any) => {
-    if (event.over) {
-      setOverSlotId(event.over.id)
+    const { over } = event
+
+    if (over) {
+      setOverSlotId(over.id)
+      lastOverId.current = over.id
     } else {
-      setOverSlotId(null)
+      setOverSlotId(lastOverId.current)
     }
   }
 
@@ -257,12 +270,14 @@ const DashboardProject1: React.FC = () => {
     setActiveId(null)
     setOverSlotId(null)
     setIsDragging(false)
+    lastOverId.current = null
   }
 
   const handleDragCancel = () => {
     setActiveId(null)
     setOverSlotId(null)
     setIsDragging(false)
+    lastOverId.current = null
   }
 
   const activeComponentId = activeId
