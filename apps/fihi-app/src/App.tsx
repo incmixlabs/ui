@@ -55,6 +55,7 @@ import {
   TestRoute,
   TranslationsRoute,
   WelcomeRoute,
+  OnboardingRoute,
 } from "@incmix/pages"
 
 const routeTree = RootRoute.addChildren([
@@ -87,6 +88,7 @@ const routeTree = RootRoute.addChildren([
   ProjectsRoute,
   TranslationsRoute,
   RolesRoute,
+  OnboardingRoute,
 ])
 
 const router = createRouter({ routeTree })

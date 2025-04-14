@@ -16,7 +16,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "./sidebar"
+} from "@incmix/ui"
 
 export function NavUser({
   user,
