@@ -104,12 +104,12 @@ export default function AutoFormMultiCheckbox({
       <FormItem className="w-full">
         <fieldset className="space-y-4">
           <legend className="mb-4">
-            <FormLabel className="font-medium text-gray-800 text-xl">
+            <FormLabel className="font-medium text-gray-800 dark:text-white text-xl">
               {label}
               {isRequired && <span className="text-destructive"> *</span>}
             </FormLabel>
             {fieldConfigItem.description && (
-              <p className="mt-1 text-muted-foreground text-sm">
+              <p className="mt-1 text-muted-foreground text-sm dark:text-gray-400">
                 {fieldConfigItem.description}
               </p>
             )}
@@ -133,7 +133,7 @@ export default function AutoFormMultiCheckbox({
                       <input
                         type="checkbox"
                         id={`checkbox-${option.value}`}
-                        className={`${iconSize} rounded border-gray-300 text-blue-600 focus:ring-blue-500`}
+                        className={`${iconSize} rounded border-gray-300 dark:border-gray-600 text-blue-600 dark:text-blue-500 focus:ring-blue-500 dark:focus:ring-blue-400 dark:bg-gray-800`}
                         value={option.value}
                         onChange={(e) => {
                           handleCheckboxChange(option.value, e.target.checked)
@@ -143,7 +143,7 @@ export default function AutoFormMultiCheckbox({
                       />
                       <label
                         htmlFor={`checkbox-${option.value}`}
-                        className="ml-2 font-medium text-gray-700 text-sm"
+                        className="ml-2 font-medium text-gray-700 dark:text-gray-300 text-sm"
                       >
                         {option.label}
                       </label>
@@ -154,11 +154,11 @@ export default function AutoFormMultiCheckbox({
             </div>
           </FormControl>
           {isRequired && !hasSelection && touched && (
-            <p className="mt-2 font-medium text-destructive text-sm">
+            <p className="mt-2 font-medium text-destructive dark:text-red-400 text-sm">
               Please select at least one option
             </p>
           )}
-          <FormMessage />
+          <FormMessage className="dark:text-red-400" />
         </fieldset>
       </FormItem>
     </div>

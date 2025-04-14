@@ -39,6 +39,7 @@ import {
   NotFoundRoute,
   NotesRoute,
   NotificationsRoute,
+  OnboardingRoute,
   OrganisationDetailsRoute,
   OrganisationEnvVarsRoute,
   OrganisationUsersRoute,
@@ -55,7 +56,6 @@ import {
   TestRoute,
   TranslationsRoute,
   WelcomeRoute,
-  OnboardingRoute,
 } from "@incmix/pages"
 
 const routeTree = RootRoute.addChildren([

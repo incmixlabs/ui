@@ -1,5 +1,5 @@
-import React from "react"
 import { Onboarding } from "@incmix/ui/onboarding"
+import React from "react"
 
 const OnboardingPage = () => {
   return (

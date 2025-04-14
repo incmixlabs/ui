@@ -4,7 +4,7 @@ export const formSchema: { steps: StepSchema<any>[] } = {
   steps: [
     {
       label: "Company Details",
-      stepIcon: "Building", // Now works with the updated type
+      stepIcon: "Building",
       formSchema: {
         type: "object",
         properties: {
@@ -23,7 +23,7 @@ export const formSchema: { steps: StepSchema<any>[] } = {
           description: "Company Name",
           inputProps: {
             placeholder: "Enter your company name",
-            icon: Building2, // Now works with the updated type
+            icon: Building2,
           },
         },
       },

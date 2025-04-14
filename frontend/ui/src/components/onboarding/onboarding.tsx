@@ -1,16 +1,12 @@
 import { useMediaQuery } from "@hooks/use-media-query"
-import { Button, Card, Flex } from "@incmix/ui"
-import { Step, Stepper, StepperProvider, useStepper } from "@incmix/ui/stepper"
 import { useState } from "react"
 import { formSchema } from "./form-schema"
-
 import { StepForm } from "./step-form"
+import { StepperProvider } from "@incmix/ui/stepper"
 
 export const Onboarding = () => {
   const [stepData, setStepData] = useState<Record<number, any>>({})
   const isDesktop = useMediaQuery("(min-width: 768px)")
-
-  console.log(" Step Data: ", stepData)
 
   const handleFinalSubmit = (finalData: Record<number, any>) => {
     // Combine all step data using Object.assign instead of spread
@@ -22,48 +18,24 @@ export const Onboarding = () => {
   }
 
   return (
-    <div className="h-full w-[1000px] p-4 ">
-      <Flex
-        className="h-full"
-        direction="column"
-        justify="center"
-        align="center"
+    <div className="h-screen w-full bg-white dark:bg-gray-900">
+      <StepperProvider
+        value={{
+          steps: formSchema.steps.map((step) => ({
+            label: step.label,
+            icon: typeof step.stepIcon === 'string' ? undefined : step.stepIcon,
+            description: typeof step.stepIcon === 'string' ? step.stepIcon : undefined,
+          })),
+          initialStep: 0,
+        }}
       >
-        <Card className="w-full p-6">
-          <Flex direction="column" gap="4">
-            <StepperProvider
-              value={{
-                steps: formSchema.steps.map((step) => ({
-                  label: step.label,
-                  description: step.stepIcon,
-                })),
-                initialStep: 0,
-              }}
-            >
-              <Stepper
-                steps={formSchema.steps}
-                orientation={isDesktop ? "horizontal" : "vertical"}
-              >
-                {formSchema.steps.map((step, index) => (
-                  <Step
-                    key={step.label}
-                    label={step.label}
-                    description={step.stepIcon}
-                  >
-                    <StepForm
-                      step={step}
-                      index={index}
-                      stepData={stepData}
-                      setStepData={setStepData}
-                      onFinalSubmit={handleFinalSubmit}
-                    />
-                  </Step>
-                ))}
-              </Stepper>
-            </StepperProvider>
-          </Flex>
-        </Card>
-      </Flex>
+        <StepForm
+          steps={formSchema.steps}
+          stepData={stepData}
+          setStepData={setStepData}
+          onFinalSubmit={handleFinalSubmit}
+        />
+      </StepperProvider>
     </div>
   )
 }

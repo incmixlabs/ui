@@ -1,7 +1,7 @@
 import { LoadingPage } from "@common"
 import { I18n } from "@incmix/pages/i18n"
-import { CardContainer, FormField, ReactiveButton, toast } from "@incmix/ui"
-import { Box, Container, Flex, Heading, Text } from "@incmix/ui"
+import { FormField, ReactiveButton, toast } from "@incmix/ui"
+import { Box, Flex, Heading, Text } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -10,7 +10,46 @@ import { zodValidator } from "@tanstack/zod-form-adapter"
 import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
+import type React from "react"
 import { setupGoogleAuthCallbackListener, useAuth } from "./hooks/auth"
+
+// AuthLayout component to match the onboarding style
+function AuthLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex h-screen w-full">
+      {/* Left side - Form content */}
+      <div className="flex w-full items-center justify-center bg-white md:w-1/2 dark:bg-gray-900">
+        <div className="w-full max-w-md px-6 py-8 md:px-8">
+          {/* Logo centered */}
+          <div className="mb-8 flex w-full items-center justify-center lg:mb-10">
+            <img
+              src="/images/logos/app/32x32.svg"
+              alt=""
+              className="mr-4 h-11 w-11"
+            />
+            <span className="self-center whitespace-nowrap font-semibold text-2xl text-gray-900 dark:text-white">
+              Incmix
+            </span>
+          </div>
+
+          {/* Form content */}
+          {children}
+        </div>
+      </div>
+
+      {/* Right side - Image */}
+      <div className="hidden h-full md:block md:w-1/2">
+        <div className="h-full w-full bg-blue-500">
+          <img
+            src="/images/onboarding/step2.png"
+            alt=""
+            className="h-full w-full object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function ForgotPasswordForm() {
   const { t } = useTranslation(["login", "forgotPassword", "common"])
@@ -47,8 +86,8 @@ function ForgotPasswordForm() {
   })
 
   return (
-    <CardContainer>
-      <Heading size="4" mb="4" align="center">
+    <>
+      <Heading size="4" mb="4" className="text-gray-900 dark:text-white">
         {t("forgotPassword:title")}
       </Heading>
       <form
@@ -102,7 +141,7 @@ function ForgotPasswordForm() {
           <Text color="blue">{t("forgotPassword:loginPrompt")}</Text>
         </Link>
       </Box>
-    </CardContainer>
+    </>
   )
 }
 
@@ -135,11 +174,9 @@ function ForgotPasswordPage() {
 
   if (isError || !authUser) {
     return (
-      <Container>
-        <Flex height="100vh" align="center" justify="center">
-          <ForgotPasswordForm />
-        </Flex>
-      </Container>
+      <AuthLayout>
+        <ForgotPasswordForm />
+      </AuthLayout>
     )
   }
 

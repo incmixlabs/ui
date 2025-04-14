@@ -16,7 +16,44 @@ import {
 } from "./hooks/auth"
 
 import { z } from "zod"
-import { AuthLayout } from "./layouts"
+
+// Modified AuthLayout component to match the onboarding style
+function AuthLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex h-screen w-full">
+      {/* Left side - Form content */}
+      <div className="flex w-full items-center justify-center bg-white md:w-1/2 dark:bg-gray-900">
+        <div className="w-full max-w-md px-6 py-8 md:px-8">
+          {/* Logo centered */}
+          <div className="mb-8 flex w-full items-center justify-center lg:mb-10">
+            <img
+              src="/images/logos/app/32x32.svg"
+              alt=""
+              className="mr-4 h-11 w-11"
+            />
+            <span className="self-center whitespace-nowrap font-semibold text-2xl text-gray-900 dark:text-white">
+              Incmix
+            </span>
+          </div>
+
+          {/* Form content */}
+          {children}
+        </div>
+      </div>
+
+      {/* Right side - Image */}
+      <div className="hidden h-full md:block md:w-1/2">
+        <div className="h-full w-full bg-blue-500">
+          <img
+            src="/images/onboarding/step2.png"
+            alt=""
+            className="h-full w-full object-cover"
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
 
 function LoginForm() {
   const { t } = useTranslation(["login", "common"])
@@ -45,7 +82,7 @@ function LoginForm() {
 
   return (
     <>
-      <Heading size="4" mb="4" align="center">
+      <Heading size="4" mb="4" className="text-gray-900 dark:text-white">
         {t("title")}
       </Heading>
       <form
@@ -111,16 +148,30 @@ function LoginForm() {
           </ReactiveButton>
         </Flex>
       </form>
+
+      {/* OR separator */}
+      <div className="relative my-4 flex w-full items-center">
+        <div className="flex-grow">
+          <div className="h-px w-full bg-gray-200 dark:bg-gray-700" />
+        </div>
+        <div className="px-3">
+          <span className="text-gray-500 text-sm dark:text-gray-400">OR</span>
+        </div>
+        <div className="flex-grow">
+          <div className="h-px w-full bg-gray-200 dark:bg-gray-700" />
+        </div>
+      </div>
+
       <ReactiveButton
         onClick={handleGoogleLogin}
         color="red"
-        mt="4"
         className="w-full"
         loading={isGoogleLoginLoading}
         success={isGoogleLoginSuccess}
       >
         {t("googleLogin")}
       </ReactiveButton>
+
       <Box mt="4" className="text-center">
         <Link to="/signup">
           <Text color="blue">{t("signupPrompt")}</Text>
