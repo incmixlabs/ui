@@ -8,9 +8,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { zodValidator } from "@tanstack/zod-form-adapter"
 import { useEffect } from "react"
+import type React from "react"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
-import type React from "react"
 import { setupGoogleAuthCallbackListener, useAuth } from "./hooks/auth"
 
 // AuthLayout component to match the onboarding style
