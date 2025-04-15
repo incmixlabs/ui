@@ -208,7 +208,7 @@ export function PostingTask() {
   }, [tasks])
 
   return (
-    <CardContainer>
+    <CardContainer className="h-full">
       <Flex justify={"between"} align={"center"} className="mb-4">
         <Heading size={"5"}>Posting Tasks</Heading>
         <IconButton variant="ghost">
