@@ -16,7 +16,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "./sidebar"
+} from "@incmix/ui"
 
 export function NavMain({
   items,

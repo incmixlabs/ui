@@ -8,7 +8,7 @@ import {
 } from "@components/breadcrumb"
 import { Separator } from "@components/separator"
 import { AppSidebar } from "./app-sidebar"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "./sidebar"
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@incmix/ui"
 
 export function DashboardPage() {
   return (

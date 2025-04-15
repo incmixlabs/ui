@@ -16,7 +16,7 @@ import {
 } from "./hooks/auth"
 
 import { z } from "zod"
-import { AuthLayout } from "./layouts"
+import { AuthLayout } from "./layouts/auth-layout"
 
 function LoginForm() {
   const { t } = useTranslation(["login", "common"])
@@ -45,7 +45,7 @@ function LoginForm() {
 
   return (
     <>
-      <Heading size="4" mb="4" align="center">
+      <Heading size="4" mb="4" className="text-gray-900 dark:text-white">
         {t("title")}
       </Heading>
       <form
@@ -111,16 +111,30 @@ function LoginForm() {
           </ReactiveButton>
         </Flex>
       </form>
+
+      {/* OR separator */}
+      <div className="relative my-4 flex w-full items-center">
+        <div className="flex-grow">
+          <div className="h-px w-full bg-gray-200 dark:bg-gray-700" />
+        </div>
+        <div className="px-3">
+          <span className="text-gray-500 text-sm dark:text-gray-400">OR</span>
+        </div>
+        <div className="flex-grow">
+          <div className="h-px w-full bg-gray-200 dark:bg-gray-700" />
+        </div>
+      </div>
+
       <ReactiveButton
         onClick={handleGoogleLogin}
         color="red"
-        mt="4"
         className="w-full"
         loading={isGoogleLoginLoading}
         success={isGoogleLoginSuccess}
       >
         {t("googleLogin")}
       </ReactiveButton>
+
       <Box mt="4" className="text-center">
         <Link to="/signup">
           <Text color="blue">{t("signupPrompt")}</Text>

@@ -24,7 +24,7 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "./sidebar"
+} from "@incmix/ui"
 import { TeamSwitcher } from "./team-switcher"
 
 // This is sample data.

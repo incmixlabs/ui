@@ -59,7 +59,6 @@ export default function AutoFormMCQ({
   isRequired,
   field,
   fieldConfigItem,
-  // fieldProps,
 }: AutoFormInputComponentProps) {
   const options = (fieldConfigItem.inputProps?.options || []) as MCQOption[]
   const layout = (fieldConfigItem.inputProps?.layout || "grid") as MCQLayoutType
@@ -71,12 +70,12 @@ export default function AutoFormMCQ({
     <div className="flex w-full flex-col space-y-4">
       <FormItem className="w-full">
         <div className="mb-4">
-          <FormLabel className="font-medium text-gray-800 text-xl">
+          <FormLabel className="font-medium text-gray-800 dark:text-white text-xl">
             {label}
             {isRequired && <span className="text-destructive"> *</span>}
           </FormLabel>
           {fieldConfigItem.description && (
-            <p className="mt-1 text-muted-foreground text-sm">
+            <p className="mt-1 text-muted-foreground text-sm dark:text-gray-400">
               {fieldConfigItem.description}
             </p>
           )}
@@ -101,16 +100,18 @@ export default function AutoFormMCQ({
                       value={option.value}
                       onChange={(e) => field.onChange(e.target.value)}
                       checked={field.value === option.value}
-                      required={isRequired} // Add required attribute based on isRequired
+                      required={isRequired}
                     />
                     <div
                       className={cn(
-                        "flex items-center justify-center rounded-lg border-2 border-gray-200",
+                        "flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-900",
+"dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-300",
                         "cursor-pointer transition-all duration-200",
-                        "hover:border-blue-100 hover:bg-blue-50",
+                        "hover:border-blue-100 hover:bg-blue-50 dark:hover:border-blue-900 dark:hover:bg-blue-900/30",
                         "peer-checked:border-blue-500 peer-checked:bg-blue-500 peer-checked:text-white",
-                        "focus-within:ring-2 focus-within:ring-blue-500", // Add focus state
-                        "font-medium text-gray-600",
+                        "focus-within:ring-2 focus-within:ring-blue-500",
+                        "font-medium text-gray-600 dark:text-gray-300 dark:border-gray-700",
+                        "dark:bg-gray-800/50",
                         sizeStyles[optionSize],
                         layout === "row" && "min-w-[120px]"
                       )}
@@ -123,7 +124,7 @@ export default function AutoFormMCQ({
             ))}
           </div>
         </FormControl>
-        <FormMessage />
+        <FormMessage className="dark:text-red-400" />
       </FormItem>
     </div>
   )

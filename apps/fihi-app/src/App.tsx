@@ -39,6 +39,7 @@ import {
   NotFoundRoute,
   NotesRoute,
   NotificationsRoute,
+  OnboardingRoute,
   OrganisationDetailsRoute,
   OrganisationEnvVarsRoute,
   OrganisationUsersRoute,
@@ -87,6 +88,7 @@ const routeTree = RootRoute.addChildren([
   ProjectsRoute,
   TranslationsRoute,
   RolesRoute,
+  OnboardingRoute,
 ])
 
 const router = createRouter({ routeTree })
