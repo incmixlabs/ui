@@ -104,7 +104,8 @@ export default function AutoFormMCQ({
                     />
                     <div
                       className={cn(
-                        "flex items-center justify-center rounded-lg border-2",
+                        "flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-900",
+"dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-300",
                         "cursor-pointer transition-all duration-200",
                         "hover:border-blue-100 hover:bg-blue-50 dark:hover:border-blue-900 dark:hover:bg-blue-900/30",
                         "peer-checked:border-blue-500 peer-checked:bg-blue-500 peer-checked:text-white",

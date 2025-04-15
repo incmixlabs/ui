@@ -23,7 +23,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({
     <div className="flex h-screen w-full">
       {/* Left side - Form content */}
       <div className="flex w-full md:w-1/2 items-center justify-center bg-white dark:bg-gray-900">
-        <div className="w-full max-w-md px-6 py-8 md:px-8">
+        <div className="w-full max-w-md px-1 py-8 md:px-2">
           {/* Only this div is centered */}
           <div className="mb-8 flex items-center justify-center w-full lg:mb-10">
             <img
