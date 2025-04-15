@@ -43,7 +43,7 @@ catalog:
   zustand: 5.0.3
   "@casl/react": 5.0.0
   "@eslint/js": 9.21.0
-  "@incmix/utils": 0.3.2
+  "@incmix/utils": 0.3.4
   "@radix-ui/themes": 3.2.1
   "@tailwindcss/typography": 0.5.16
   "@tailwindcss/vite": 4.0.17
