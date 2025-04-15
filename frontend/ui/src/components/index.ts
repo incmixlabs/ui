@@ -27,6 +27,7 @@ export * from "./pragmatic-drag-drop"
 export * from "./dnd-kit"
 export * from "./calendar"
 export * from "./tree-view"
+export * from "./react-grid-layout"
 // Dynamically import heavy components
 export { Board } from "./kanban-board"
 export { FileManager } from "./file-manager"

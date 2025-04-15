@@ -8,6 +8,7 @@ export function NewTasks() {
       count={136}
       label="New Tasks"
       iconClassName="bg-orange-3"
+      className="h-full"
       icon={<ClipBoardAdd size="20" />}
     />
   )
