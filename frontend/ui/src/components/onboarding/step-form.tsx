@@ -65,8 +65,8 @@ export const StepForm = ({
     if (isLastStep) {
       // Call final submit with all data
       onFinalSubmit(updatedStepData)
-      // Move to completed state
-      nextStep()
+      // Don't move to next step if it's the last step
+      // This prevents going to a "completed" state that might show errors
     } else {
       // Move to next step
       nextStep()
