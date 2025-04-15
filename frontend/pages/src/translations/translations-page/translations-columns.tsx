@@ -2,11 +2,12 @@ import {
   Badge,
   Button,
   Checkbox,
-  type ColumnDef,
-  DataTableColumnHeader,
-  type DataTableRowAction,
   DropdownMenu,
 } from "@incmix/ui"
+import {
+  type ColumnDef,
+  DataTableColumnHeader,
+  type DataTableRowAction } from "@incmix/ui/data-table"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import type { TranslationMessage } from "./types"
 

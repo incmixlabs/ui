@@ -7,12 +7,11 @@ import {
   DataTableAdvancedToolbar,
   type DataTableFilterField,
   type DataTableRowAction,
-  Flex,
   useDataTable,
-} from "@incmix/ui"
+} from "@incmix/ui/data-table"
 import { useQuery } from "@tanstack/react-query"
 
-import { Spinner } from "@incmix/ui"
+import {  Flex, Spinner } from "@incmix/ui"
 import { USERS_API_URL } from "@incmix/ui/constants"
 import type { UserAndProfile, UserProfilePaginated } from "@incmix/utils/types"
 import { ListUsersRoute } from "@users/routes"

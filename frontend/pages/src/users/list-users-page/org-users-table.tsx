@@ -5,7 +5,7 @@ import {
   type DataTableFilterField,
   DataTableToolbar,
   useDataTable,
-} from "@incmix/ui"
+} from "@incmix/ui/data-table"
 import { useQuery } from "@tanstack/react-query"
 import React from "react"
 import { ToolbarActions } from "./org-toolbar-actions"

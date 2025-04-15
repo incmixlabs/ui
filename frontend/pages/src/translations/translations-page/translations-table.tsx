@@ -3,10 +3,9 @@ import {
   type DataTableAdvancedFilterField,
   DataTableAdvancedToolbar,
   type DataTableRowAction,
-  Flex,
-  Spinner,
   useDataTable,
-} from "@incmix/ui"
+} from "@incmix/ui/data-table"
+import { Flex, Spinner } from "@incmix/ui"
 import { INTL_API_URL } from "@incmix/ui/constants"
 import { useQuery } from "@tanstack/react-query"
 import React, { useState } from "react"

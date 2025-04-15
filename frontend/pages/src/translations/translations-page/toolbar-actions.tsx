@@ -3,7 +3,8 @@
 import type { Table } from "@tanstack/react-table"
 import { Download } from "lucide-react"
 
-import { Button, exportTableToCSV } from "@incmix/ui"
+import { Button } from "@incmix/ui"
+import { exportTableToCSV } from "@incmix/ui/data-table"
 import { AddLocaleDialog } from "./add-locale"
 import { AddTranslationDialog } from "./add-transtlation"
 import { DeleteDialog } from "./delete-dialog"

@@ -2,15 +2,18 @@ import {
   Badge,
   Button,
   Checkbox,
-  type ColumnDef,
-  DataTableColumnHeader,
-  type DataTableRowAction,
   DropdownMenu,
   GoogleIcon,
   Spinner,
   Switch,
   toast,
 } from "@incmix/ui"
+import {
+
+  type ColumnDef,
+  DataTableColumnHeader,
+  type DataTableRowAction,
+} from "@incmix/ui/data-table"
 import type { UserAndProfile } from "@incmix/utils/types"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
