@@ -102,7 +102,7 @@ const CreateOrganizationDialog: React.FC<{
   })
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogTitle>{t("organizations:createNewOrganization")}</DialogTitle>
         <DialogDescription className="sr-only">
@@ -163,7 +163,7 @@ const CreateOrganizationDialog: React.FC<{
           </Flex>
         </form>
       </DialogContent>
-    </Dialog>
+    </Dialog.Root>
   )
 }
 

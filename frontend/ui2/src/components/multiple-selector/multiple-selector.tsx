@@ -134,58 +134,51 @@ function isOptionsExist(groupOption: GroupOption, targetOption: Option[]) {
  *
  * @reference: https://github.com/hsuanyi-chou/shadcn-ui-expansions/issues/34#issuecomment-1949561607
  **/
-const CommandEmpty = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<typeof CommandPrimitive.Empty>
->(function CommandEmpty({ className, ...props }, ref) {
+function CommandEmpty({
+  className,
+  ...props
+}: React.ComponentProps<typeof CommandPrimitive.Empty>) {
   const render = useCommandState((state) => state.filtered.count === 0)
 
   if (!render) return null
 
   return (
     <div
-      ref={ref}
       className={cn("py-6 text-center text-sm", className)}
       cmdk-empty=""
       role="presentation"
       {...props}
     />
   )
-})
+}
 
 CommandEmpty.displayName = "CommandEmpty"
 
-const MultipleSelector = React.forwardRef<
-  MultipleSelectorRef,
-  MultipleSelectorProps
->(function MultipleSelector(
-  {
-    value,
-    onChange,
-    placeholder,
-    defaultOptions: arrayDefaultOptions = [],
-    options: arrayOptions,
-    delay,
-    onSearch,
-    onSearchSync,
-    loadingIndicator,
-    emptyIndicator,
-    maxSelected = Number.MAX_SAFE_INTEGER,
-    onMaxSelected,
-    hidePlaceholderWhenSelected,
-    disabled,
-    groupBy,
-    className,
-    badgeClassName,
-    selectFirstItem = true,
-    creatable = false,
-    triggerSearchOnFocus = false,
-    commandProps,
-    inputProps,
-    hideClearAllButton = false,
-  },
-  ref
-) {
+function MultipleSelector({
+  value,
+  onChange,
+  placeholder,
+  defaultOptions: arrayDefaultOptions = [],
+  options: arrayOptions,
+  delay,
+  onSearch,
+  onSearchSync,
+  loadingIndicator,
+  emptyIndicator,
+  maxSelected = Number.MAX_SAFE_INTEGER,
+  onMaxSelected,
+  hidePlaceholderWhenSelected,
+  disabled,
+  groupBy,
+  className,
+  badgeClassName,
+  selectFirstItem = true,
+  creatable = false,
+  triggerSearchOnFocus = false,
+  commandProps,
+  inputProps,
+  hideClearAllButton = false,
+}: MultipleSelectorProps) {
   const inputRef = React.useRef<HTMLInputElement>(null)
   const [open, setOpen] = React.useState(false)
   const [onScrollbar, setOnScrollbar] = React.useState(false)
@@ -199,16 +192,7 @@ const MultipleSelector = React.forwardRef<
   const [inputValue, setInputValue] = React.useState("")
   const debouncedSearchTerm = useDebounce(inputValue, delay || 500)
 
-  React.useImperativeHandle(
-    ref,
-    () => ({
-      selectedValue: [...selected],
-      input: inputRef.current as HTMLInputElement,
-      focus: () => inputRef?.current?.focus(),
-      reset: () => setSelected([]),
-    }),
-    [selected]
-  )
+  // No useImperativeHandle needed, we'll expose methods directly on the component
 
   const handleClickOutside = (event: MouseEvent | TouchEvent) => {
     if (
@@ -605,7 +589,18 @@ const MultipleSelector = React.forwardRef<
       </div>
     </Command.Root>
   )
+}
+
+// Add methods to the component
+MultipleSelector.displayName = "MultipleSelector"
+
+// Create a wrapper to expose methods
+const MultipleSelectorWithMethods = Object.assign(MultipleSelector, {
+  getSelectedValue: (selected: Option[]) => [...selected],
+  focus: (inputRef: React.RefObject<HTMLInputElement>) =>
+    inputRef?.current?.focus(),
+  reset: (setSelected: React.Dispatch<React.SetStateAction<Option[]>>) =>
+    setSelected([]),
 })
 
-MultipleSelector.displayName = "MultipleSelector"
-export default MultipleSelector
+export default MultipleSelectorWithMethods

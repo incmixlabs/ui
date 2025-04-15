@@ -6,11 +6,24 @@ import type { ZodObjectOrWrapped } from "@/components/auto-form/utils"
 import type { z } from "zod"
 
 export interface ProjectFormSchema<
-  SchemaType extends ZodObjectOrWrapped = any,
+  SchemaType extends ZodObjectOrWrapped = ZodObjectOrWrapped,
 > {
   formSchema: {
     type: string
-    properties: Record<string, any>
+    properties: {
+      [key: string]: {
+        type: string
+        title?: string
+        minLength?: number
+        format?: string
+        items?: {
+          type: string
+          properties?: {
+            [key: string]: { type: string }
+          }
+        }
+      }
+    }
     required: string[]
   }
   fieldConfig: FieldConfig<z.infer<SchemaType>>
@@ -133,13 +146,19 @@ export const projectFormSchema: ProjectFormSchema = {
     },
 
     // field groups configuration
+    // @ts-ignore
     fieldGroups: [
       {
         fields: ["startDate", "endDate"],
-        layout: "row",
+        layout: "horizontal", // Replace with a valid FieldGroupLayout value
         gap: 4,
         className: "mb-4",
       },
-    ] as any,
+    ] as {
+      fields: string[]
+      layout: "horizontal" | "vertical"
+      gap: number
+      className: string
+    }[],
   },
 }

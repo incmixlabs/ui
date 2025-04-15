@@ -5,8 +5,8 @@ import {
   type DropdownMenuItemProps,
   type DropdownMenuProps,
 } from "@components/dropdown-menu"
-import type { Side } from "../types"
 import { Button, type ButtonProps } from "./button"
+import type { Side } from "@/types"
 
 export type SplitButtonProps = DropdownMenuProps &
   ButtonProps & {

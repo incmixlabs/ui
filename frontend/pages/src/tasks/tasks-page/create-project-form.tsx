@@ -26,7 +26,7 @@ import { useRxCollection } from "rxdb-hooks"
 import { z } from "zod"
 
 interface CreateProjectProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog> {
+  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
   onSuccess?: (data: Project) => void
 }
 
@@ -80,7 +80,7 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
   })
 
   return (
-    <Dialog
+    <Dialog.Root
       {...props}
       open={isOpen}
       onOpenChange={(open) => {
@@ -88,15 +88,15 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
         reset()
       }}
     >
-      <DialogTrigger>
+      <Dialog.Trigger>
         <Button>Create Project</Button>
-      </DialogTrigger>
-      <DialogContent className="border border-gray-4">
+      </Dialog.Trigger>
+      <Dialog.Content className="border border-gray-4">
         <DialogHeader>
-          <DialogTitle>Create New Project</DialogTitle>
-          <DialogDescription>
+          <Dialog.Title>Create New Project</Dialog.Title>
+          <Dialog.Description>
             Fill out the form to create a new project.
-          </DialogDescription>
+          </Dialog.Description>
         </DialogHeader>
         <form
           onSubmit={(e) => {
@@ -130,13 +130,13 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
           </Flex>
         </form>
         <DialogFooter className="gap-2 sm:space-x-0">
-          <DialogClose>
+          <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </DialogClose>
+          </Dialog.Close>
         </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }

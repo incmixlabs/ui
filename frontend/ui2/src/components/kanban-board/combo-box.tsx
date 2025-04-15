@@ -1,22 +1,21 @@
-import { Flex, Popover, Text, iconSize } from "@incmix/ui"
 import type { BadgeProps } from "@radix-ui/themes"
 import { CheckIcon, Plus } from "lucide-react"
-import * as React from "react"
-import { cn } from "utils"
-import { Avatar } from "../avatar"
-import { Badge } from "../badge"
-import { Button, IconButton } from "../button"
-import ColorPicker, { type ColorSelectType } from "../color-picker"
+import { forwardRef, useState } from "react"
+
+import ColorPicker, { type ColorSelectType } from "@/components//color-picker"
 import {
+  Avatar,
+  Badge,
+  Button,
   Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "../command"
-import { Input } from "../form"
+  Flex,
+  IconButton,
+  Input,
+  Popover,
+  Text,
+} from "@/components/base"
+import { iconSize } from "@/components/icons/icon"
+import { cn } from "@/lib/utils"
 
 export type ExtendedColorType = BadgeProps["color"] | "blue"
 
@@ -65,7 +64,7 @@ interface MultiSelectProps
   handleAddNewLabel?: (e: React.FormEvent) => void
 }
 
-export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
+export const ComboBox = forwardRef<HTMLButtonElement, MultiSelectProps>(
   ({
     options,
     onValueChange,
@@ -81,9 +80,8 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
     setIsLabelFormOpen,
     handleAddNewLabel,
   }) => {
-    const [selectedValues, setSelectedValues] =
-      React.useState<string[]>(defaultValue)
-    const [isPopoverOpen, setIsPopoverOpen] = React.useState(false)
+    const [selectedValues, setSelectedValues] = useState<string[]>(defaultValue)
+    const [isPopoverOpen, setIsPopoverOpen] = useState(false)
 
     const handleInputKeyDown = (
       event: React.KeyboardEvent<HTMLInputElement>
@@ -136,20 +134,20 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
           width="280px"
         >
           {title && <h1 className="font-medium">{title}</h1>}
-          <Command className="bg-transparent">
-            <CommandInput
+          <Command.Root className="bg-transparent">
+            <Command.Input
               placeholder={placeholder}
               onKeyDown={handleInputKeyDown}
             />
-            <CommandList>
-              <CommandEmpty>No results found.</CommandEmpty>
-              <CommandGroup>
+            <Command.List>
+              <Command.Empty>No results found.</Command.Empty>
+              <Command.Group>
                 {options.map((option) => {
                   const isSelected = selectedValues.includes(option.value)
                   const isDisabled = option.disable
 
                   return (
-                    <CommandItem
+                    <Command.Item
                       key={option.value}
                       onSelect={() => !isDisabled && toggleOption(option.value)}
                       className={cn(
@@ -189,12 +187,12 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                       >
                         {!isDisabled && <CheckIcon className={iconSize} />}
                       </Flex>
-                    </CommandItem>
+                    </Command.Item>
                   )
                 })}
-              </CommandGroup>
+              </Command.Group>
               {/* <CommandSeparator /> */}
-              <CommandGroup>
+              <Command.Group>
                 {addNewLabel ? (
                   <>
                     {isLabelFormOpen ? (
@@ -271,25 +269,25 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                       className="font-medium"
                     >
                       {selectedValues.length > 0 && (
-                        <CommandItem
+                        <Command.Item
                           onSelect={handleClear}
                           className="h-10 flex-1 cursor-pointer justify-center "
                         >
                           Clear
-                        </CommandItem>
+                        </Command.Item>
                       )}
-                      <CommandItem
+                      <Command.Item
                         onSelect={() => setIsPopoverOpen(false)}
                         className="h-10 max-w-full flex-1 cursor-pointer justify-center "
                       >
                         Close
-                      </CommandItem>
+                      </Command.Item>
                     </Flex>
                   </>
                 )}
-              </CommandGroup>
-            </CommandList>
-          </Command>
+              </Command.Group>
+            </Command.List>
+          </Command.Root>
         </Popover.Content>
       </Popover.Root>
     )

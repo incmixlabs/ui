@@ -3,3 +3,34 @@ export function camelToCapitalized(str: string): string {
     .replace(/([A-Z])/g, " $1")
     .replace(/^./, (str) => str.toUpperCase())
 }
+export const getInitials = (name: string) => {
+  if (!name) return ""
+  return (
+    name
+      .match(/(\b\S)?/g)
+      ?.join("")
+      .match(/(^\S|\S$)?/g)
+      ?.join("")
+      .toUpperCase() || ""
+  )
+}
+
+
+export function toSentenceCase(str: string) {
+  return str
+    .replace(/_/g, " ")
+    .replace(/([A-Z])/g, " $1")
+    .toLowerCase()
+    .replace(/^\w/, (c) => c.toUpperCase())
+    .replace(/\s+/g, " ")
+    .trim()
+}
+
+export function encodeHTML(str: string) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;")
+}

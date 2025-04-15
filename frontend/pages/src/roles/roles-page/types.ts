@@ -1,26 +1,21 @@
+import type { Action, subjects } from "@incmix/utils/types"
+
 export type Role = {
-  id: string
+  id: number
   name: string
 }
 
-export type Permission = {
-  id: string
-  name: string
-  subject: string
-}
-export type PermissionWithSubrows = Permission & {
-  subRows?: Permission[]
+export type PermissionsResponse = {
+  subject: (typeof subjects)[number]
+  action: Action
+  [key: string]: any
 }
 
-export type RolePermission = {
-  roleId: string
-  permissionId: string
+export type PermissionsWithRole = PermissionsResponse & {
+  subRows: PermissionsWithRole[]
 }
 
-export type RoleWithPermissions = Permission & {
-  [key: string]: boolean
-}
-
-export type RoleWithPermissionsWithSubrows = RoleWithPermissions & {
-  subRows?: RoleWithPermissions[]
+export type ColumnAction = {
+  role: Role
+  type: "update" | "delete"
 }

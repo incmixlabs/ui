@@ -30,7 +30,7 @@ const AdminUsersTable = () => {
 
   const filterFields: DataTableFilterField<UserAndProfile>[] = [
     {
-      id: "fullName",
+      id: "name",
       label: "Full Name",
       placeholder: "Filter Full Name...",
     },
@@ -38,7 +38,7 @@ const AdminUsersTable = () => {
 
   const advancedFilter: DataTableAdvancedFilterField<UserAndProfile>[] = [
     {
-      id: "fullName",
+      id: "name",
       label: "Full Name",
       type: "text",
     },

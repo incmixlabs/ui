@@ -26,7 +26,7 @@ import { useMemo, useState } from "react"
 import type { RxDatabase } from "rxdb"
 import { useRxDB } from "rxdb-hooks"
 interface CreateColumnProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog> {
+  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
   projectId: string
   onSuccess?: (data: Column) => void
 }
@@ -145,7 +145,7 @@ export function CreateColumnForm({
   }, [columnOrderQuery.data])
 
   return (
-    <Dialog
+    <Dialog.Root
       {...props}
       open={isOpen}
       onOpenChange={(open) => {
@@ -153,13 +153,13 @@ export function CreateColumnForm({
         reset()
       }}
     >
-      <DialogTrigger>
+      <Dialog.Trigger>
         <Button>Add Column</Button>
-      </DialogTrigger>
-      <DialogContent>
+      </Dialog.Trigger>
+      <Dialog.Content>
         <DialogHeader>
-          <DialogTitle>Add New Column</DialogTitle>
-          <DialogDescription>Add New Column to Board</DialogDescription>
+          <Dialog.Title>Add New Column</Dialog.Title>
+          <Dialog.Description>Add New Column to Board</Dialog.Description>
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
@@ -236,7 +236,7 @@ export function CreateColumnForm({
             </Button>
           </DialogClose>
         </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }

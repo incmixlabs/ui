@@ -1,27 +1,25 @@
 import {
+  Button,
   Dialog,
   DialogClose,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger,
   Flex,
   FormField,
   ReactiveButton,
+  Switch,
+  Text,
 } from "@incmix/ui"
-import { Button, Select, Switch, Text } from "@incmix/ui"
 import { INTL_API_URL } from "@incmix/ui/constants"
 import { useForm } from "@tanstack/react-form"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { I18n } from "i18n"
+import { useMutation } from "@tanstack/react-query"
 import type React from "react"
 import { useState } from "react"
 import { z } from "zod"
-import type { Locale, TranslationMessage } from "./types"
+import type { Locale } from "./types"
 interface AddLocaleDialogProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog> {
+  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
   onSuccess?: () => void
 }
 
@@ -38,13 +36,13 @@ export const AddLocaleDialog: React.FC<AddLocaleDialogProps> = ({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen} {...props}>
-      <DialogTrigger>
+    <Dialog.Root open={isOpen} onOpenChange={setIsOpen} {...props}>
+      <Dialog.Trigger>
         <Button>Add Locale</Button>
-      </DialogTrigger>
-      <DialogContent>
+      </Dialog.Trigger>
+      <Dialog.Content>
         <DialogHeader>
-          <DialogTitle>Add Locale</DialogTitle>
+          <Dialog.Title>Add Locale</Dialog.Title>
         </DialogHeader>
         <DialogDescription className="sr-only">
           Add new Locale
@@ -57,8 +55,8 @@ export const AddLocaleDialog: React.FC<AddLocaleDialogProps> = ({
             </Button>
           </DialogClose>
         </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }
 

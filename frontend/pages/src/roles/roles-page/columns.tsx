@@ -1,17 +1,44 @@
-import type { ColumnDef } from "@tanstack/react-table"
+import type { ColumnDef, Row } from "@tanstack/react-table"
 
-import { Checkbox, Flex, Input, Text } from "@incmix/ui"
+import { Checkbox, DropdownMenu, Flex, Input, Text } from "@incmix/ui"
 import { ChevronDown, ChevronRight, EllipsisVertical } from "lucide-react"
-import { useState } from "react"
-import { roles } from "./mock"
-import type { RoleWithPermissions } from "./types"
+import { useContext, useMemo, useState } from "react"
 
-export const getColumns = (): ColumnDef<RoleWithPermissions>[] => {
-  const searchColumn: ColumnDef<RoleWithPermissions> = {
+import { permissionsContext } from "."
+import type { ColumnAction, PermissionsWithRole, Role } from "./types"
+
+export const getColumns = (
+  roles: Role[],
+  setColumnAction: React.Dispatch<React.SetStateAction<ColumnAction | null>>
+): ColumnDef<PermissionsWithRole>[] => {
+  const searchColumn: ColumnDef<PermissionsWithRole> = {
     header: () => {
-      return <Input placeholder="Search Permissions" />
+      return <></>
     },
-    accessorKey: "name",
+    accessorKey: "subject",
+    enableColumnFilter: true,
+    filterFn: (row, _columnId, value: string) => {
+      const subject = row.getValue<string>("subject")
+      const action = row.original.action
+
+      const cellValue = `${action} ${subject}`
+      const matches = cellValue.toLowerCase().includes(value.toLowerCase())
+
+      if (matches) return true
+
+      // Check if any subrow matches
+      if (row.subRows && row.subRows.length > 0) {
+        return row.subRows.some((subRow) => {
+          const subSubject = subRow.getValue<string>("subject")
+          const subAction = subRow.original.action
+          const subCellValue = `${subAction} ${subSubject}`
+
+          return subCellValue.toLowerCase().includes(value.toLowerCase())
+        })
+      }
+
+      return false
+    },
     cell: ({ row }) => {
       return (
         <Flex style={{ paddingLeft: `${row.depth * 2}rem` }}>
@@ -30,14 +57,14 @@ export const getColumns = (): ColumnDef<RoleWithPermissions>[] => {
             </button>
           )}
           <div className="font-medium capitalize">
-            {`${row.getValue("name")} (${row.original.subject})`}
+            {`${row.original.action} ${row.original.subject}`}
           </div>
         </Flex>
       )
     },
   }
 
-  const columns = roles.map<ColumnDef<RoleWithPermissions>>((role) => ({
+  const columns = roles.map<ColumnDef<PermissionsWithRole>>((role) => ({
     header: () => {
       return (
         <Flex direction="column" gap="1">
@@ -45,7 +72,33 @@ export const getColumns = (): ColumnDef<RoleWithPermissions>[] => {
             <Text size="1" className="uppercase">
               Role
             </Text>
-            <EllipsisVertical className="size-4" />
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <EllipsisVertical className="size-4" />
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                <DropdownMenu.Item
+                  onClick={() =>
+                    setColumnAction({
+                      role,
+                      type: "update",
+                    })
+                  }
+                >
+                  Edit
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  onClick={() =>
+                    setColumnAction({
+                      role,
+                      type: "delete",
+                    })
+                  }
+                >
+                  Delete
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
           </Flex>
           <Text size="2" className="capitalize">
             {role.name}
@@ -53,18 +106,106 @@ export const getColumns = (): ColumnDef<RoleWithPermissions>[] => {
         </Flex>
       )
     },
+    enableColumnFilter: false,
     accessorKey: role.name,
     cell: ({ row }) => {
-      const hasPermission = row.original[role.name] ?? false
-      const [isChecked, setIsChecked] = useState(hasPermission)
-      return (
-        <Checkbox
-          checked={isChecked}
-          onCheckedChange={(v) => setIsChecked(Boolean(v))}
-        />
-      )
+      return <CheckboxCell row={row} role={role} />
     },
   }))
 
   return [searchColumn, ...columns]
+}
+
+const CheckboxCell = ({
+  row,
+  role,
+}: {
+  row: Row<PermissionsWithRole>
+  role: Role
+}) => {
+  const { setChanges, setRawPermissions } = useContext(permissionsContext)
+  const hasPermission = useMemo(() => {
+    let hasPermission: boolean | "indeterminate" =
+      row.original[role.name] ?? false
+
+    if (row.subRows.length > 0) {
+      const isAllTrue = row.subRows.every(
+        (subRow) => subRow.original[role.name]
+      )
+      const isAllFalse = row.subRows.every(
+        (subRow) => !subRow.original[role.name]
+      )
+
+      if (isAllTrue) {
+        hasPermission = true
+      } else if (isAllFalse) {
+        hasPermission = false
+      } else {
+        hasPermission = "indeterminate"
+      }
+
+      if (row.original[role.name]) {
+        hasPermission = true
+      }
+    }
+
+    return hasPermission
+  }, [row, role])
+
+  const [isChecked, setIsChecked] = useState(hasPermission)
+  const handleChange = (v: boolean) => {
+    setIsChecked(v)
+
+    setRawPermissions((prev) => {
+      return prev.map((permission) => {
+        if (
+          row.original.action === "manage" &&
+          permission.subject === row.original.subject
+        ) {
+          return {
+            ...permission,
+            [role.name]: v,
+          }
+        }
+
+        return permission.subject === row.original.subject &&
+          permission.action === row.original.action
+          ? { ...permission, [role.name]: v }
+          : permission
+      })
+    })
+
+    setChanges((prev) => {
+      const existingChange = prev.find(
+        (change) =>
+          change.roleId === role.id &&
+          change.action === row.original.action &&
+          change.subject === row.original.subject
+      )
+      if (existingChange) {
+        return prev.map((change) =>
+          change.roleId === role.id &&
+          change.action === row.original.action &&
+          change.subject === row.original.subject
+            ? { ...change, allowed: v }
+            : change
+        )
+      }
+      return [
+        ...prev,
+        {
+          roleId: role.id,
+          action: row.original.action,
+          subject: row.original.subject,
+          allowed: v,
+        },
+      ]
+    })
+  }
+  return (
+    <Checkbox
+      checked={isChecked}
+      onCheckedChange={(v) => handleChange(Boolean(v))}
+    />
+  )
 }

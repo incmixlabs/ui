@@ -24,7 +24,7 @@ import { useState } from "react"
 import { z } from "zod"
 import type { TranslationMessage } from "./types"
 interface EditTranslationDialogProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog> {
+  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
   item?: Row<TranslationMessage>["original"]
   onSuccess?: () => void
 }
@@ -37,24 +37,24 @@ export const EditTranslationDialog: React.FC<EditTranslationDialogProps> = ({
 }) => {
   if (!item) return null
   return (
-    <Dialog {...props}>
-      <DialogContent>
+    <Dialog.Root {...props}>
+      <Dialog.Content>
         <DialogHeader>
-          <DialogTitle>Edit Translation</DialogTitle>
+          <Dialog.Title>Edit Translation</Dialog.Title>
+          <Dialog.Description className="sr-only">
+            Edit Translation
+          </Dialog.Description>
         </DialogHeader>
-        <DialogDescription className="sr-only">
-          Edit Translation
-        </DialogDescription>
         <EditTranlationForm item={item} onSuccess={onSuccess} />
         <DialogFooter className="gap-2 sm:space-x-0">
-          <DialogClose>
+          <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </DialogClose>
+          </Dialog.Close>
         </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }
 

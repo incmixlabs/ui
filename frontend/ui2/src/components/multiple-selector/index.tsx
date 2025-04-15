@@ -1,5 +1,5 @@
 import React from "react"
-import MultipleSelector from "./multiple-selector"
+import MSelector from "./multiple-selector"
 import type { Option } from "./multiple-selector"
 
 const OPTIONS: Option[] = [
@@ -30,7 +30,7 @@ export const MultipleSelectorControlled: React.FC<
   return (
     <div className="flex w-[30rem] flex-col gap-5 px-10 ">
       {/* <p className="text-primary">Your selection: {value.map((val) => val.label).join(', ')}</p> */}
-      <MultipleSelector
+      <MSelector
         value={value}
         onChange={setValue}
         // Removed defaultColor={themeColor} as it's not defined in the component props
@@ -46,3 +46,5 @@ export const MultipleSelectorControlled: React.FC<
     </div>
   )
 }
+
+export { MSelector as MultipleSelector }
