@@ -46,7 +46,7 @@ export function TotalProject() {
     },
   ])
   return (
-    <CardContainer className="col-span-5 2xl:col-span-4">
+    <CardContainer className="col-span-5 h-full 2xl:col-span-4">
       <Flex justify={"between"} align={"center"}>
         <Heading className="font-poppins text-[20px]">Total Projects</Heading>
         <IconButton

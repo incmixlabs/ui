@@ -4,12 +4,9 @@ import {
   DndContext,
   DragOverlay,
   KeyboardSensor,
-  MouseSensor,
   PointerSensor,
-  TouchSensor,
   type UniqueIdentifier,
   closestCenter,
-  defaultDropAnimationSideEffects,
   useSensor,
   useSensors,
 } from "@dnd-kit/core"
@@ -31,6 +28,7 @@ import {
   CalendarWidget,
   DoneTasks,
   Grid,
+  GridLayoutExample,
   Heading,
   InProgressTask,
   NewTasks,
@@ -166,17 +164,17 @@ const DashboardProject1: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false)
 
   const [slotMapping, setSlotMapping] = useState(INITIAL_SLOT_MAPPING)
-  const [gridSlots] = useState<GridSlot[]>(INITIAL_GRID_SLOTS)
+  const [_gridSlots] = useState<GridSlot[]>(INITIAL_GRID_SLOTS)
 
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
-  const [overSlotId, setOverSlotId] = useState<UniqueIdentifier | null>(null)
-  const [isDragging, setIsDragging] = useState(false)
+  const [_overSlotId, setOverSlotId] = useState<UniqueIdentifier | null>(null)
+  const [_isDragging, setIsDragging] = useState(false)
   const [_slotDimensions, setSlotDimensions] = useState<
     Record<string, DOMRect>
   >({})
   const lastOverId = useRef<UniqueIdentifier | null>(null)
 
-  const sensors = useSensors(
+  const _sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 8,
@@ -187,7 +185,7 @@ const DashboardProject1: React.FC = () => {
     })
   )
 
-  const handleMeasure = useCallback((id: string, rect: DOMRect) => {
+  const _handleMeasure = useCallback((id: string, rect: DOMRect) => {
     setSlotDimensions((prev) => {
       const prevRect = prev[id]
       if (!prevRect || isRectDifferent(prevRect, rect)) {
@@ -200,14 +198,14 @@ const DashboardProject1: React.FC = () => {
     })
   }, [])
 
-  const handleDragStart = (event: any) => {
+  const _handleDragStart = (event: any) => {
     const { active } = event
     setActiveId(active.id)
     setIsDragging(true)
     lastOverId.current = null
   }
 
-  const handleDragOver = (event: any) => {
+  const _handleDragOver = (event: any) => {
     const { over } = event
 
     if (over) {
@@ -218,7 +216,7 @@ const DashboardProject1: React.FC = () => {
     }
   }
 
-  const handleDragEnd = (event: any) => {
+  const _handleDragEnd = (event: any) => {
     const { active, over } = event
 
     if (over && active.id !== over.id) {
@@ -245,7 +243,7 @@ const DashboardProject1: React.FC = () => {
     lastOverId.current = null
   }
 
-  const handleDragCancel = () => {
+  const _handleDragCancel = () => {
     setActiveId(null)
     setOverSlotId(null)
     setIsDragging(false)
@@ -255,7 +253,7 @@ const DashboardProject1: React.FC = () => {
   const activeComponentId = activeId
     ? slotMapping[activeId as keyof typeof slotMapping]
     : null
-  const activeComponent = activeComponentId
+  const _activeComponent = activeComponentId
     ? COMPONENT_ITEMS.find((item) => item.id === activeComponentId)
     : null
 
@@ -270,8 +268,8 @@ const DashboardProject1: React.FC = () => {
         <Heading size="6" className="pb-4">
           {t("dashboard:title")}
         </Heading>
-
-        <DndContext
+        <GridLayoutExample isEditing={isEditing} />
+        {/* <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragStart={handleDragStart}
@@ -322,7 +320,7 @@ const DashboardProject1: React.FC = () => {
               </Box>
             ) : null}
           </DragOverlay>
-        </DndContext>
+        </DndContext> */}
         {/* <DashboardGrid isEditing={isEditing}/> */}
       </Box>
     </DashboardLayout>
