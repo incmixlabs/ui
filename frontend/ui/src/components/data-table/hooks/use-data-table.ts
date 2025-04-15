@@ -30,7 +30,7 @@ import * as React from "react"
 import type { DataTableFilterField, ExtendedSortingState } from "../lib/types"
 
 import { getSortingStateParser } from "../lib/parsers"
-import { useDebouncedCallback } from "./use-debounced-callback"
+import { useDebouncedCallback } from "@hooks/use-debounced-callback"
 
 interface UseDataTableProps<TData>
   extends Omit<

@@ -23,7 +23,7 @@ import type {
 import { Badge } from "@radix-ui/themes"
 import { Button } from "@radix-ui/themes"
 import { cn } from "@utils/cn"
-import { useDebouncedCallback } from "./hooks"
+import { useDebouncedCallback } from "@hooks/use-debounced-callback"
 import { dataTableConfig } from "./lib/config"
 import { getDefaultFilterOperator, getFilterOperators } from "./lib/data-table"
 import { getFiltersStateParser } from "./lib/parsers"
@@ -50,7 +50,7 @@ import {
   FacetedFilterList,
   FacetedFilterTrigger,
 } from "./faceted-filter"
-import { formatDate } from "./lib/utils"
+import { formatDate } from "@utils/date"
 
 interface DataTableFilterListProps<TData> {
   table: Table<TData>
