@@ -1,11 +1,5 @@
 import { useThemeStore } from "@incmix/store"
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
   Button,
   Separator,
   iconSize,
@@ -40,17 +34,18 @@ export function DashboardLayout({ children, navExtras }: Props) {
       <SidebarInset>
         <header className="container mx-auto flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex w-full items-center gap-2 px-4">
-            {pathname.includes("/file-manager") && (
-              <>
-                <SidebarTrigger
-                  isSecondary
-                  mobileSidebarTrigger
-                  className="-ml-1"
-                  aria-label={t("toggleSecondarySidebar")}
-                />
-                <Separator orientation="vertical" className="mr-2 h-4" />
-              </>
-            )}
+            {pathname.includes("/file-manager") ||
+              (pathname.includes("dashboard") && (
+                <>
+                  <SidebarTrigger
+                    isSecondary
+                    mobileSidebarTrigger
+                    className="-ml-1"
+                    aria-label={t("toggleSecondarySidebar")}
+                  />
+                  <Separator orientation="vertical" className="mr-2 h-4" />
+                </>
+              ))}
             <Button
               className="ml-auto"
               variant="soft"
