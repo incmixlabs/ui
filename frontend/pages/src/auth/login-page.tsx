@@ -16,7 +16,7 @@ import {
 } from "./hooks/auth"
 
 import { z } from "zod"
-import { OnboardingAuthLayout } from "./layouts/onboarding-auth-layout"
+import { AuthLayout } from "./layouts/auth-layout"
 
 function LoginForm() {
   const { t } = useTranslation(["login", "common"])
@@ -173,9 +173,9 @@ function LoginPage() {
 
   if (isError || !authUser) {
     return (
-      <OnboardingAuthLayout>
+      <AuthLayout>
         <LoginForm />
-      </OnboardingAuthLayout>
+      </AuthLayout>
     )
   }
 

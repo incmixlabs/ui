@@ -12,7 +12,7 @@ import type React from "react"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 import { setupGoogleAuthCallbackListener, useAuth } from "./hooks/auth"
-import { OnboardingAuthLayout } from "./layouts/onboarding-auth-layout"
+import { AuthLayout } from "./layouts/auth-layout"
 
 function ForgotPasswordForm() {
   const { t } = useTranslation(["login", "forgotPassword", "common"])
@@ -137,9 +137,9 @@ function ForgotPasswordPage() {
 
   if (isError || !authUser) {
     return (
-      <OnboardingAuthLayout>
+      <AuthLayout>
         <ForgotPasswordForm />
-      </OnboardingAuthLayout>
+      </AuthLayout>
     )
   }
 
