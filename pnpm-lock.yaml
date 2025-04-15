@@ -13,8 +13,8 @@ catalogs:
       specifier: 9.21.0
       version: 9.21.0
     '@incmix/utils':
-      specifier: 0.3.2
-      version: 0.3.2
+      specifier: 0.3.4
+      version: 0.3.4
     '@radix-ui/themes':
       specifier: 3.2.1
       version: 3.2.1
@@ -178,7 +178,7 @@ importers:
         version: link:../../frontend/ui
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.3.2(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)
+        version: 0.3.4(@types/luxon@3.4.2)(luxon@3.5.0)
       '@sentry/react':
         specifier: 8.51.0
         version: 8.51.0(react@19.1.0)
@@ -272,7 +272,7 @@ importers:
         version: link:../../frontend/ui2
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.3.2(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)
+        version: 0.3.4(@types/luxon@3.4.2)(luxon@3.5.0)
       '@sentry/react':
         specifier: 8.51.0
         version: 8.51.0(react@19.1.0)
@@ -369,7 +369,7 @@ importers:
         version: link:../../frontend/ui
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.3.2(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)
+        version: 0.3.4(@types/luxon@3.4.2)(luxon@3.5.0)
       '@radix-ui/react-icons':
         specifier: 1.3.1
         version: 1.3.1(react@19.1.0)
@@ -463,7 +463,7 @@ importers:
         version: link:../ui
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.3.2(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)
+        version: 0.3.4(@types/luxon@3.4.2)(luxon@3.5.0)
       '@radix-ui/themes':
         specifier: 'catalog:'
         version: 3.2.1(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -569,7 +569,7 @@ importers:
         version: link:../ui2
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.3.2(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)
+        version: 0.3.4(@types/luxon@3.4.2)(luxon@3.5.0)
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.71.1(react@19.1.0)
@@ -663,7 +663,7 @@ importers:
     dependencies:
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.3.2(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)
+        version: 0.3.4(@types/luxon@3.4.2)(luxon@3.5.0)
       '@koale/useworker':
         specifier: 4.1.0
         version: 4.1.0(react@19.1.0)
@@ -769,7 +769,7 @@ importers:
         version: link:../store
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.3.2(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)
+        version: 0.3.4(@types/luxon@3.4.2)(luxon@3.5.0)
       '@mantine/hooks':
         specifier: 7.14.1
         version: 7.14.1(react@19.1.0)
@@ -1043,7 +1043,7 @@ importers:
         version: link:../store
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.3.2(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)
+        version: 0.3.4(@types/luxon@3.4.2)(luxon@3.5.0)
       '@radix-ui/react-dialog':
         specifier: 1.1.6
         version: 1.1.6(@types/react-dom@19.1.0(@types/react@19.1.0))(@types/react@19.1.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -1206,13 +1206,13 @@ importers:
     dependencies:
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.3.2(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)
+        version: 0.3.4(@types/luxon@3.4.2)(luxon@3.5.0)
 
   shared/config:
     dependencies:
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.3.2(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)
+        version: 0.3.4(@types/luxon@3.4.2)(luxon@3.5.0)
     devDependencies:
       next:
         specifier: 15.1.4
@@ -1239,11 +1239,6 @@ packages:
 
   '@asamuzakjp/css-color@3.1.1':
     resolution: {integrity: sha512-hpRD68SV2OMcZCsrbdkccTw5FXjNDLo5OuqSHyHZfwweGsDWZwDJ2+gONyNAbazZclobMirACLw0lk8WVxIqxA==}
-
-  '@asteasolutions/zod-to-openapi@7.3.0':
-    resolution: {integrity: sha512-7tE/r1gXwMIvGnXVUdIqUhCU1RevEFC4Jk6Bussa0fk1ecbnnINkZzj1EOAJyE/M3AI25DnHT/zKQL1/FPFi8Q==}
-    peerDependencies:
-      zod: ^3.20.2
 
   '@atlaskit/atlassian-context@0.2.0':
     resolution: {integrity: sha512-msLRSp0qck6eflkShplgyIoOogNKxKRc6QIWGQlSvKGxHQNEbLEkRGcDzdh8PuBxSs1gda7OqYrdtQYQiPbpTQ==}
@@ -2779,19 +2774,6 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
-  '@hono/zod-openapi@0.18.3':
-    resolution: {integrity: sha512-bNlRDODnp7P9Fs13ZPajEOt13G0XwXKfKRHMEFCphQsFiD1Y+twzHaglpNAhNcflzR1DQwHY92ZS06b4LTPbIQ==}
-    engines: {node: '>=16.0.0'}
-    peerDependencies:
-      hono: '>=4.3.6'
-      zod: 3.*
-
-  '@hono/zod-validator@0.4.3':
-    resolution: {integrity: sha512-xIgMYXDyJ4Hj6ekm9T9Y27s080Nl9NXHcJkOvkXPhubOLj8hZkOL8pDnnXfvCf5xEE8Q4oMFenQUZZREUY2gqQ==}
-    peerDependencies:
-      hono: '>=3.9.0'
-      zod: ^3.19.1
-
   '@hookform/resolvers@3.10.0':
     resolution: {integrity: sha512-79Dv+3mDF7i+2ajj7SkypSKHhl1cbln1OGavqrsF7p6mbUv11xpqpacPsGDCTRvCSjEEIez2ef1NveSVL3b0Ag==}
     peerDependencies:
@@ -2922,8 +2904,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@incmix/utils@0.3.2':
-    resolution: {integrity: sha512-q2pwtz0pNZh5nAm4QG979IvZ7vr/vm3Rv8V1wjZSw0M6tEGa1ZaatTw6kyi1xtFNC/Xb20YbP/RpxUc744KRWA==}
+  '@incmix/utils@0.3.4':
+    resolution: {integrity: sha512-1+X16WbSlVilBmpVg1Gnp6cWphQuKGSrs0tRqkMTqHUYVOHvuHEIXhKN7f3O95NmPUceOwEzb64yxjpIrD+IQg==}
     engines: {node: '>=22.13.0'}
     peerDependencies:
       '@types/luxon': '>=3.0'
@@ -6992,10 +6974,6 @@ packages:
   hoist-non-react-statics@3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
 
-  hono@4.7.5:
-    resolution: {integrity: sha512-fDOK5W2C1vZACsgLONigdZTRZxuBqFtcKh7bUQ5cVSbwI2RWjloJDcgFOVzbQrlI6pCmhlTsVYZ7zpLj4m4qMQ==}
-    engines: {node: '>=16.9.0'}
-
   html-encoding-sniffer@4.0.0:
     resolution: {integrity: sha512-Y22oTqIU4uuPgEemfz7NDJz6OeKf12Lsu+QC+s3BVpda64lTiMYCyGwg5ki4vFxkMwQdeZDl2adZoqUgdFuTgQ==}
     engines: {node: '>=18'}
@@ -8325,9 +8303,6 @@ packages:
   open@8.4.2:
     resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
     engines: {node: '>=12'}
-
-  openapi3-ts@4.4.0:
-    resolution: {integrity: sha512-9asTNB9IkKEzWMcHmVZE7Ts3kC9G7AFHfs8i7caD8HbI76gEjdkId4z/AkP83xdZsH7PLAnnbl47qZkXuxpArw==}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -10309,11 +10284,6 @@ snapshots:
       '@csstools/css-parser-algorithms': 3.0.4(@csstools/css-tokenizer@3.0.3)
       '@csstools/css-tokenizer': 3.0.3
       lru-cache: 10.4.3
-
-  '@asteasolutions/zod-to-openapi@7.3.0(zod@3.24.2)':
-    dependencies:
-      openapi3-ts: 4.4.0
-      zod: 3.24.2
 
   '@atlaskit/atlassian-context@0.2.0(react@19.0.0)':
     dependencies:
@@ -12530,18 +12500,6 @@ snapshots:
       protobufjs: 7.4.0
       yargs: 17.7.2
 
-  '@hono/zod-openapi@0.18.3(hono@4.7.5)(zod@3.24.2)':
-    dependencies:
-      '@asteasolutions/zod-to-openapi': 7.3.0(zod@3.24.2)
-      '@hono/zod-validator': 0.4.3(hono@4.7.5)(zod@3.24.2)
-      hono: 4.7.5
-      zod: 3.24.2
-
-  '@hono/zod-validator@0.4.3(hono@4.7.5)(zod@3.24.2)':
-    dependencies:
-      hono: 4.7.5
-      zod: 3.24.2
-
   '@hookform/resolvers@3.10.0(react-hook-form@7.54.2(react@19.0.0))':
     dependencies:
       react-hook-form: 7.54.2(react@19.0.0)
@@ -12638,15 +12596,12 @@ snapshots:
   '@img/sharp-win32-x64@0.33.5':
     optional: true
 
-  '@incmix/utils@0.3.2(@types/luxon@3.4.2)(hono@4.7.5)(luxon@3.5.0)(zod@3.24.2)':
+  '@incmix/utils@0.3.4(@types/luxon@3.4.2)(luxon@3.5.0)':
     dependencies:
       '@casl/ability': 6.7.3
-      '@hono/zod-openapi': 0.18.3(hono@4.7.5)(zod@3.24.2)
       '@types/luxon': 3.4.2
       luxon: 3.5.0
-    transitivePeerDependencies:
-      - hono
-      - zod
+      zod: 3.24.2
 
   '@isaacs/cliui@8.0.2':
     dependencies:
@@ -18048,8 +18003,6 @@ snapshots:
     dependencies:
       react-is: 16.13.1
 
-  hono@4.7.5: {}
-
   html-encoding-sniffer@4.0.0:
     dependencies:
       whatwg-encoding: 3.1.1
@@ -19460,10 +19413,6 @@ snapshots:
       define-lazy-prop: 2.0.0
       is-docker: 2.2.1
       is-wsl: 2.2.0
-
-  openapi3-ts@4.4.0:
-    dependencies:
-      yaml: 2.7.0
 
   optionator@0.9.4:
     dependencies:
