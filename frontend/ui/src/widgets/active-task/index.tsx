@@ -70,7 +70,7 @@ export function ActiveTask() {
     setRevisions(revisionData.filter((revision) => revision.type === tab))
   }
   return (
-    <CardContainer>
+    <CardContainer className="h-full">
       <Flex justify={"between"} align={"center"} className="pb-4">
         <Heading size="5">Active Tasks</Heading>
         <Flex

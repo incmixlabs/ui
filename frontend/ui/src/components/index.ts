@@ -28,6 +28,7 @@ export * from "./dnd-kit"
 export * from "./calendar"
 export * from "./tree-view"
 export * from "./react-grid-layout"
+export * from "./dashboard"
 // Dynamically import heavy components
 export { Board } from "./kanban-board"
 export { FileManager } from "./file-manager"
