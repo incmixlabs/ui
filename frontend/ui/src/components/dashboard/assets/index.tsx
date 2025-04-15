@@ -1,0 +1,13 @@
+import activeTaskImg from "./active-tasks.png"
+import newTaskImg from "./new-task.png"
+import postingTaskImg from "./posting-task.png"
+import totalProjectImg from "./total-projects.png"
+import totalTaskImg from "./total-task.png"
+
+export const dashboardImg = {
+  activeTaskImg,
+  newTaskImg,
+  totalTaskImg,
+  totalProjectImg,
+  postingTaskImg,
+}

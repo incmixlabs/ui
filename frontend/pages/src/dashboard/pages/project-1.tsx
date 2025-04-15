@@ -16,7 +16,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useMemo, useRef, useState } from "react"
 import type { ReactNode } from "react"
 import { useTranslation } from "react-i18next"
 import { useAuth } from "../../auth"
@@ -35,228 +35,628 @@ import {
   PostingTask,
   ProfileSettings,
   ProjectWidgets,
+  ProjectWidgets2,
   RecentActivity,
   SortableItem,
   StatisticWidgets,
+  StatisticWidgets2,
+  TotalProject,
   TotalTasks,
   isRectDifferent,
 } from "@incmix/ui"
 import { GripVertical } from "lucide-react"
-interface GridSlot {
+import { Responsive, WidthProvider } from "react-grid-layout"
+
+import "react-grid-layout/css/styles.css"
+import "react-resizable/css/styles.css"
+interface LayoutItem {
+  i: string
+  x: number
+  y: number
+  w: number
+  h: number
+  moved?: boolean
+  static?: boolean
+  resizeHandles?: ReadonlyArray<"s" | "w" | "e" | "n">
+  [key: string]: any
+}
+
+type Breakpoint = "lg" | "md" | "sm" | "xs" | "xxs"
+type ResponsiveLayout = Record<Breakpoint, LayoutItem[]>
+
+const _ResponsiveGridLayout = WidthProvider(Responsive)
+interface ComponentSlot {
   slotId: string
-  colSpan: string
-  className?: string
-}
-
-interface ComponentItem {
-  id: string
-  component: ReactNode
-  name: string
-}
-const TaskStats = () => {
-  return (
-    <>
-      <Grid columns={"2"} gap="4" className="relative">
-        <TotalTasks />
-        <NewTasks />
-        <InProgressTask />
-        <DoneTasks />
-      </Grid>
-    </>
-  )
-}
-const ProfileCalender = () => {
-  return (
-    <>
-      <ProfileSettings />
-      <CalendarWidget storageKey={"calendar_events_dashboard"} />
-    </>
-  )
-}
-const COMPONENT_ITEMS: ComponentItem[] = [
-  {
-    id: "task-stats",
-    component: <TaskStats />,
-    name: "Task Statistics",
-  },
-  {
-    id: "statistic-widgets",
-    component: <StatisticWidgets />,
-    name: "Statistics",
-  },
-  {
-    id: "profile-calender",
-    component: <ProfileCalender />,
-    name: "Profile Calender",
-  },
-  {
-    id: "project-widgets",
-    component: <ProjectWidgets />,
-    name: "Projects",
-  },
-  {
-    id: "active-task",
-    component: <ActiveTask />,
-    name: "Active Tasks",
-  },
-  {
-    id: "recent-activity",
-    component: <RecentActivity />,
-    name: "Recent Activity",
-  },
-  {
-    id: "posting-task",
-    component: <PostingTask />,
-    name: "Post New Task",
-  },
-]
-
-const INITIAL_GRID_SLOTS: GridSlot[] = [
-  {
-    slotId: "slot1",
-    colSpan: "xl:col-span-3 col-span-12 2xl:col-span-3",
-  },
-  {
-    slotId: "slot2",
-    colSpan: "xl:col-span-6 col-span-12 2xl:col-span-6",
-    className: "bg-gray-2",
-  },
-  {
-    slotId: "slot3",
-    colSpan: "xl:col-span-3 col-span-12 2xl:col-span-3",
-    className: "bg-gray-2",
-  },
-  {
-    slotId: "slot4",
-    colSpan: "xl:col-span-3 col-span-12 2xl:col-span-3",
-    className: "bg-gray-2",
-  },
-  {
-    slotId: "slot5",
-    colSpan: "xl:col-span-6 col-span-12 2xl:col-span-6",
-    className: "bg-gray-2",
-  },
-  {
-    slotId: "slot6",
-    colSpan: "xl:col-span-3 col-span-12 2xl:col-span-3",
-    className: "bg-gray-2",
-  },
-  {
-    slotId: "slot7",
-    colSpan: "col-span-12",
-    className: "bg-gray-2",
-  },
-]
-
-const INITIAL_SLOT_MAPPING = {
-  slot1: "task-stats",
-  slot2: "statistic-widgets",
-  slot3: "profile-calender",
-  slot4: "project-widgets",
-  slot5: "active-task",
-  slot6: "recent-activity",
-  slot7: "posting-task",
+  component: React.ReactNode
+  title: string
 }
 
 const DashboardProject1: React.FC = () => {
   const { t } = useTranslation(["dashboard", "common"])
   const { authUser, isLoading } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
+  // Available components for the sidebar
+  const [availableComponents, _setAvailableComponents] = useState<
+    ComponentSlot[]
+  >([
+    {
+      slotId: "newTasks",
+      component: <NewTasks />,
+      title: "New Tasks",
+    },
+    {
+      slotId: "totalTasks",
+      component: <TotalTasks />,
+      title: "Total Tasks",
+    },
+    {
+      slotId: "projectWidgets",
+      component: <ProjectWidgets2 />,
+      title: "Project Widgets",
+    },
+    {
+      slotId: "statisticWidgets",
+      component: <StatisticWidgets2 />,
+      title: "Statistic Widgets",
+    },
+    {
+      slotId: "activeTask",
+      component: <ActiveTask />,
+      title: "Active Task",
+    },
+    {
+      slotId: "totalProject",
+      component: <TotalProject />,
+      title: "Total Project",
+    },
+    {
+      slotId: "postingTask",
+      component: <PostingTask />,
+      title: "Posting Task",
+    },
+  ])
+  // Components currently in the grid
+  const [gridComponents, setGridComponents] = useState<ComponentSlot[]>([
+    {
+      slotId: "a",
+      component: <NewTasks />,
+      title: "New Tasks",
+    },
+    {
+      slotId: "b",
+      component: <TotalTasks />,
+      title: "Total Tasks",
+    },
+    {
+      slotId: "c",
+      component: <ProjectWidgets2 />,
+      title: "Project Widgets",
+    },
+    {
+      slotId: "d",
+      component: <StatisticWidgets2 />,
+      title: "Statistic Widgets",
+    },
+    {
+      slotId: "e",
+      component: <ActiveTask />,
+      title: "Active Task",
+    },
+    {
+      slotId: "f",
+      component: <TotalProject />,
+      title: "Total Project",
+    },
+    {
+      slotId: "g",
+      component: <PostingTask />,
+      title: "Posting Task",
+    },
+  ])
 
-  const [slotMapping, setSlotMapping] = useState(INITIAL_SLOT_MAPPING)
-  const [_gridSlots] = useState<GridSlot[]>(INITIAL_GRID_SLOTS)
-
-  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
-  const [_overSlotId, setOverSlotId] = useState<UniqueIdentifier | null>(null)
-  const [_isDragging, setIsDragging] = useState(false)
-  const [_slotDimensions, setSlotDimensions] = useState<
-    Record<string, DOMRect>
-  >({})
-  const lastOverId = useRef<UniqueIdentifier | null>(null)
-
-  const _sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
+  const [initialLayouts, _setInitialLayouts] = useState({
+    lg: [
+      {
+        w: 2,
+        h: 6,
+        x: 0,
+        y: 6,
+        i: "a",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
       },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
+      {
+        w: 2,
+        h: 6,
+        x: 0,
+        y: 0,
+        i: "b",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 3,
+        h: 12,
+        x: 2,
+        y: 0,
+        i: "c",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 5,
+        h: 12,
+        x: 5,
+        y: 0,
+        i: "d",
 
-  const _handleMeasure = useCallback((id: string, rect: DOMRect) => {
-    setSlotDimensions((prev) => {
-      const prevRect = prev[id]
-      if (!prevRect || isRectDifferent(prevRect, rect)) {
-        return {
-          ...prev,
-          [id]: rect,
-        }
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 5,
+        h: 12,
+        x: 0,
+        y: 12,
+        i: "e",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 5,
+        h: 12,
+        x: 5,
+        y: 12,
+        i: "f",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 10,
+        h: 13,
+        x: 0,
+        y: 24,
+        i: "g",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+    ],
+    md: [
+      {
+        w: 2,
+        h: 6,
+        x: 0,
+        y: 6,
+        i: "a",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 2,
+        h: 6,
+        x: 0,
+        y: 0,
+        i: "b",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 4,
+        h: 12,
+        x: 2,
+        y: 0,
+        i: "c",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 4,
+        h: 12,
+        x: 6,
+        y: 0,
+        i: "d",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 5,
+        h: 12,
+        x: 0,
+        y: 12,
+        i: "e",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 5,
+        h: 12,
+        x: 5,
+        y: 12,
+        i: "f",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 10,
+        h: 13,
+        x: 0,
+        y: 24,
+        i: "g",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+    ],
+    sm: [
+      {
+        w: 2,
+        h: 6,
+        x: 0,
+        y: 0,
+        i: "a",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 2,
+        h: 6,
+        x: 4,
+        y: 0,
+        i: "b",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 6,
+        h: 6,
+        x: 0,
+        y: 6,
+        i: "c",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 6,
+        h: 6,
+        x: 0,
+        y: 12,
+        i: "d",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 6,
+        h: 6,
+        x: 0,
+        y: 18,
+        i: "e",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 6,
+        h: 6,
+        x: 0,
+        y: 24,
+        i: "f",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 6,
+        h: 8,
+        x: 0,
+        y: 30,
+        i: "g",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+    ],
+    xs: [
+      {
+        w: 2,
+        h: 6,
+        x: 0,
+        y: 0,
+        i: "a",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 2,
+        h: 6,
+        x: 4,
+        y: 0,
+        i: "b",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 6,
+        h: 6,
+        x: 0,
+        y: 6,
+        i: "c",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 6,
+        h: 6,
+        x: 0,
+        y: 12,
+        i: "d",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 6,
+        h: 6,
+        x: 0,
+        y: 18,
+        i: "e",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 6,
+        h: 6,
+        x: 0,
+        y: 24,
+        i: "f",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 6,
+        h: 8,
+        x: 0,
+        y: 30,
+        i: "g",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+    ],
+    xxs: [
+      {
+        w: 2,
+        h: 6,
+        x: 0,
+        y: 0,
+        i: "a",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 2,
+        h: 6,
+        x: 4,
+        y: 0,
+        i: "b",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 6,
+        h: 6,
+        x: 0,
+        y: 6,
+        i: "c",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 6,
+        h: 6,
+        x: 0,
+        y: 12,
+        i: "d",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 6,
+        h: 6,
+        x: 0,
+        y: 18,
+        i: "e",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 6,
+        h: 6,
+        x: 0,
+        y: 24,
+        i: "f",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+      {
+        w: 6,
+        h: 8,
+        x: 0,
+        y: 30,
+        i: "g",
+        moved: false,
+        static: false,
+        resizeHandles: ["s", "w", "e", "n"] as const,
+      },
+    ],
+  })
+
+  const [defaultLayouts, setDefaultLayouts] = useState(initialLayouts)
+
+  const _getLayoutsWithStaticFlag = useMemo(() => {
+    const result = {} as ResponsiveLayout
+
+    ;(Object.keys(defaultLayouts) as Breakpoint[]).forEach((breakpoint) => {
+      if (Array.isArray(defaultLayouts[breakpoint])) {
+        result[breakpoint] = defaultLayouts[breakpoint].map((item) => ({
+          ...item,
+          moved: false,
+          static: !isEditing,
+        }))
       }
-      return prev
     })
-  }, [])
 
-  const _handleDragStart = (event: any) => {
-    const { active } = event
-    setActiveId(active.id)
-    setIsDragging(true)
-    lastOverId.current = null
+    return result
+  }, [defaultLayouts, isEditing])
+
+  const _handleLayoutChange = (layout: any, allLayouts: any) => {
+    console.log(layout, allLayouts)
+
+    setDefaultLayouts(allLayouts)
   }
+  // Handle component drop from sidebar
+  const handleDrop = (componentId: string) => {
+    // Find the component in available components
+    const componentToAdd = availableComponents.find(
+      (comp) => comp.slotId === componentId
+    )
 
-  const _handleDragOver = (event: any) => {
-    const { over } = event
+    if (!componentToAdd) return
 
-    if (over) {
-      setOverSlotId(over.id)
-      lastOverId.current = over.id
-    } else {
-      setOverSlotId(lastOverId.current)
-    }
-  }
+    // Generate a unique ID for the new component
+    const newId = `widget-${Date.now()}`
 
-  const _handleDragEnd = (event: any) => {
-    const { active, over } = event
-
-    if (over && active.id !== over.id) {
-      // Get the component IDs for the source and target slots
-      const sourceComponentId =
-        slotMapping[active.id as keyof typeof slotMapping]
-      const targetComponentId = slotMapping[over.id as keyof typeof slotMapping]
-
-      // Create a new mapping with the components swapped
-      const newMapping = { ...slotMapping }
-      newMapping[active.id as keyof typeof slotMapping] = targetComponentId
-      newMapping[over.id as keyof typeof slotMapping] = sourceComponentId
-
-      // Update the component mapping
-      setSlotMapping(newMapping)
-
-      // No longer swapping grid slots configuration - grid layout remains fixed
+    // Create a new grid component
+    const newGridComponent: ComponentSlot = {
+      slotId: newId,
+      component: componentToAdd.component,
+      title: componentToAdd.title,
     }
 
-    // Reset state
-    setActiveId(null)
-    setOverSlotId(null)
-    setIsDragging(false)
-    lastOverId.current = null
+    // Add to grid components
+    setGridComponents([...gridComponents, newGridComponent])
+
+    // Generate default layout item for each breakpoint
+    const newLayouts = { ...defaultLayouts }
+
+    // Add to each breakpoint
+    ;(Object.keys(newLayouts) as Breakpoint[]).forEach((breakpoint) => {
+      if (!Array.isArray(newLayouts[breakpoint])) {
+        newLayouts[breakpoint] = []
+      }
+
+      // Default position and size based on breakpoint
+      let newItem: LayoutItem
+
+      switch (breakpoint) {
+        case "lg":
+          newItem = {
+            i: newId,
+            x: 0,
+            y: 0,
+            w: 4,
+            h: 6,
+            resizeHandles: ["s", "w", "e", "n"] as const,
+          }
+          break
+        case "md":
+          newItem = {
+            i: newId,
+            x: 0,
+            y: 0,
+            w: 5,
+            h: 6,
+            resizeHandles: ["s", "w", "e", "n"] as const,
+          }
+          break
+        default:
+          newItem = {
+            i: newId,
+            x: 0,
+            y: 0,
+            w: 6,
+            h: 6,
+            resizeHandles: ["s", "w", "e", "n"] as const,
+          }
+          break
+      }
+
+      newLayouts[breakpoint] = [...newLayouts[breakpoint], newItem]
+    })
+
+    setDefaultLayouts(newLayouts)
+  }
+  const _handleResize = (layout: any, oldItem: any, newItem: any) => {
+    console.log(layout, oldItem, newItem)
+  }
+  const _handleRemoveComponent = (componentId: string) => {
+    console.log(componentId)
+
+    setGridComponents(
+      gridComponents.filter((comp) => comp.slotId !== componentId)
+    )
+
+    const newLayouts = { ...defaultLayouts }
+
+    ;(Object.keys(newLayouts) as Breakpoint[]).forEach((breakpoint) => {
+      if (Array.isArray(newLayouts[breakpoint])) {
+        newLayouts[breakpoint] = newLayouts[breakpoint].filter(
+          (item) => item.i !== componentId
+        )
+      }
+    })
+
+    setDefaultLayouts(newLayouts)
   }
 
-  const _handleDragCancel = () => {
-    setActiveId(null)
-    setOverSlotId(null)
-    setIsDragging(false)
-    lastOverId.current = null
+  const _DraggableComponent = ({ component }: { component: ComponentSlot }) => {
+    const handleDragStart = () => {}
+
+    const handleDragEnd = () => {
+      handleDrop(component.slotId)
+    }
+
+    return (
+      <div
+        className="mb-2 cursor-grab rounded border border-gray-300 bg-gray-100 p-2"
+        draggable
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="flex items-center">
+          <span className="mr-2">☰</span>
+          <span>{component.title}</span>
+        </div>
+      </div>
+    )
   }
-
-  const activeComponentId = activeId
-    ? slotMapping[activeId as keyof typeof slotMapping]
-    : null
-  const _activeComponent = activeComponentId
-    ? COMPONENT_ITEMS.find((item) => item.id === activeComponentId)
-    : null
-
   if (isLoading) return <LoadingPage />
   if (!authUser) return null
   return (
@@ -264,64 +664,46 @@ const DashboardProject1: React.FC = () => {
       breadcrumbItems={[]}
       navExtras={<EditWidgetsControl onEditChange={setIsEditing} />}
     >
-      <Box as="div" className="container mx-auto overflow-x-hidden">
-        <Heading size="6" className="pb-4">
-          {t("dashboard:title")}
-        </Heading>
-        <GridLayoutExample isEditing={isEditing} />
-        {/* <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragOver={handleDragOver}
-          onDragEnd={handleDragEnd}
-          onDragCancel={handleDragCancel}
-        >
-          <SortableContext items={gridSlots.map((slot) => slot.slotId)}>
-            <Grid columns={"12"} className="p-4" gap="4">
-              {gridSlots.map((slot) => (
-                <Box
-                  key={slot.slotId}
-                  className={`h-fit ${slot.colSpan} ${slot.className || ""}`}
-                >
-                  <SortableItem
-                    slotId={slot.slotId}
-                    componentId={
-                      slotMapping[slot.slotId as keyof typeof slotMapping]
-                    }
-                    components={COMPONENT_ITEMS}
-                    gridSlot={slot}
-                    isDropTarget={
-                      overSlotId === slot.slotId && activeId !== slot.slotId
-                    }
-                    isDraggingAny={isDragging}
-                    onMeasure={handleMeasure}
-                    isEditing={isEditing}
-                  />
-                </Box>
+      <Box as="div" className="container mx-auto flex overflow-x-hidden">
+        {/* <aside className="h-screen w-60 bg-gray-4 rounded-lg">
+          {isEditing && (
+            <div className="w-64 p-4 bg-gray-50 border-r border-gray-200 mr-4">
+              <h2 className="font-bold mb-4">Available Widgets</h2>
+              {availableComponents.map((component) => (
+                <DraggableComponent
+                  key={component.slotId}
+                  component={component}
+                />
               ))}
-            </Grid>
-          </SortableContext>
-          <DragOverlay
-            adjustScale={false}
-            dropAnimation={{
-              duration: 200,
-              easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
-            }}
+            </div>
+          )}
+        </aside> */}
+        <Box className="w-full">
+          <Heading size="6" className="pb-4">
+            {t("dashboard:title")}
+          </Heading>
+          {/* <ResponsiveGridLayout
+            className="layout"
+            layouts={getLayoutsWithStaticFlag}
+            rowHeight={30}
+            breakpoints={{ lg: 1536, md: 996, sm: 768, xs: 480, xxs: 0 }}
+            cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+            onLayoutChange={handleLayoutChange}
+            onResize={handleResize}
           >
-            {activeId && activeComponent ? (
-              <Box className="rounded-lg bg-gray-5">
-                <Box className="relative h-full">
-                  <Box className="absolute top-2 right-2 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-gray-100">
-                    <GripVertical className="h-5 w-5 text-gray-500" />
-                  </Box>
-                  {activeComponent.component}
-                </Box>
-              </Box>
-            ) : null}
-          </DragOverlay>
-        </DndContext> */}
-        {/* <DashboardGrid isEditing={isEditing}/> */}
+            {gridComponents.map((item) => (
+              <div
+                key={item.slotId}
+                className={`rounded-xl relative ${isEditing ? "bg-gray-100 p-2 shadow" : ""}`}
+              >
+                <div className="widget-content relative">
+                  {item.component}
+                </div>
+              </div>
+            ))}
+          </ResponsiveGridLayout> */}
+          <GridLayoutExample isEditing={isEditing} />
+        </Box>
       </Box>
     </DashboardLayout>
   )

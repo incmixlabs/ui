@@ -1,4 +1,4 @@
 export * from "./assets"
 export * from "./sidebar"
 export * from "./drappable-area"
-export * from "./widget-drop-zone
+export * from "./widget-drop-zone"

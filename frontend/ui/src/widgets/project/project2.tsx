@@ -27,7 +27,7 @@ export function ProjectWidgets2() {
             <Ellipsis size={16} />
           </IconButton>
         </Flex>
-        <RadialTaskStatusChart className="h-72" />
+        <RadialTaskStatusChart className="mx-auto h-72 w-fit" />
         <Grid columns={"3"} gap="4" className="mt-2">
           {stats.map((stat) => (
             <div
