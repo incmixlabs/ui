@@ -438,7 +438,6 @@ export function DataTableFilterList<TData>({
                       document.getElementById(inputId)?.click()
                     }, 0)
                   }}
-                  autoFocus
                 />
               )}
             </Popover.Content>

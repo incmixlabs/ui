@@ -33,6 +33,7 @@ interface MultipleSelectorProps {
   emptyIndicator?: React.ReactNode
   /** Debounce time for async search. Only work with `onSearch`. */
   delay?: number
+  defaultColor?: string
   /**
    * Only work with `onSearch` prop. Trigger search when `onFocus`.
    * For example, when user click on the input, it will trigger the search to get initial options.

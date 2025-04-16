@@ -5,12 +5,7 @@ import { motion } from "framer-motion"
 import { useState } from "react"
 
 import { cn } from "@utils/cn"
-import { clx } from "@utils/clx/clx-merge"
-
-const LayoutGridContainer = clx.div(
-  "mx-auto grid h-full w-full max-w-7xl grid-cols-1 gap-4 md:grid-cols-3"
-)
-const LayoutGridCardContainer = clx.div("max-h-80")
+import { Card, Container, CardContainer } from "@base"
 
 export type LayoutGridCard = {
   id: number
@@ -20,23 +15,16 @@ export type LayoutGridCard = {
 }
 
 export function GridLayoutCard() {
-  const Card = clx.div()
-  // @ts-ignore
-  const CardTitle = clx.p({ as: "p", className: "text-4xl font-bold text-white" })
-  const CardDescription = clx.p({
-    // @ts-ignore
-    as: "p",
-    className: "my-4 max-w-lg text-base font-normal text-neutral-200",
-  })
+
 
   return (
-    <Card>
-      <CardTitle>Lorem ipsum</CardTitle>
-        <CardDescription>
+    <Card.Root>
+      <Card.Title>Lorem ipsum</Card.Title>
+        <Card.Description>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
           tempor incididunt ut labore et dolore magna aliqua.
-        </CardDescription>
-    </Card>
+        </Card.Description>
+    </Card.Root>
   )
 }
 
@@ -59,9 +47,9 @@ export function LayoutGrid({ cards }: { cards: LayoutGridCard[] }) {
   }
 
   return (
-    <LayoutGridContainer>
+    <Container className="mx-auto grid h-full w-full max-w-7xl grid-cols-1 gap-4 md:grid-cols-3">
       {cards.map((card) => (
-        <LayoutGridCardContainer key={card.id}>
+        <CardContainer key={card.id} className={"max-h-80"}>
           <motion.div
             onClick={() => handleClick(card)}
             className={cn(
@@ -80,7 +68,7 @@ export function LayoutGrid({ cards }: { cards: LayoutGridCard[] }) {
             )}
             <GridLayoutBlurImage card={card} />
           </motion.div>
-        </LayoutGridCardContainer>
+        </CardContainer>
       ))}
 
       <motion.div
@@ -91,7 +79,7 @@ export function LayoutGrid({ cards }: { cards: LayoutGridCard[] }) {
         )}
         animate={{ opacity: selected?.id ? 0.3 : 0 }}
       />
-    </LayoutGridContainer>
+    </Container>
   )
 }
 

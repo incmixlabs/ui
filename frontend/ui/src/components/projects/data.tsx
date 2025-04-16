@@ -1,8 +1,7 @@
-import type { Option } from "../multiple-selector/multiple-selector"
 import { ProjectsImages } from "./images"
-import type { Project } from "./types"
+import type { Project, Member } from "./types"
 
-export const members: Option[] = [
+export const members: Member[] = [
   {
     id: "1",
     value: "shane-black",

@@ -7,6 +7,7 @@ export interface Member {
   color?: string
   label?: string
   value?: string
+  position?: string
 }
 
 export interface Project {
@@ -18,10 +19,10 @@ export interface Project {
   progress: number
   timeLeft: string
   timeType: "week" | "days"
-  members: Option[]
+  members: Member[]
   status: "all" | "started" | "on-hold" | "completed"
   startDate?: number
   endDate?: number
   budget?: number
-  fileData?: File | null
+  files?: File[]
 }

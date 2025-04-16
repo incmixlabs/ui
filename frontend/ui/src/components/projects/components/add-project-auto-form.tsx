@@ -72,7 +72,7 @@ export function AddProjectAutoForm({
         : Date.now() + 7 * 24 * 60 * 60 * 1000,
       budget: data.budget ? Number.parseFloat(data.budget) : 0,
       // Just pass the file data as is - our improved saveFormProject will handle it
-      fileData: fileData,
+    
     }
 
     onAddProject(newProject)

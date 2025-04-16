@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react"
 
-import { cva } from "@/lib/cva"
+import { cva } from "@utils/cva"
 import { cn } from "@utils/cn"
 import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/types"
 export type DropIndicatorProps = {

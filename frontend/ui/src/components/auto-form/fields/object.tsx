@@ -1,8 +1,8 @@
 import {
   Accordion,
+  Form
 } from "@base"
 
-import { Form } from "@components/shadcn"
 import { type useForm, useFormContext } from "react-hook-form"
 import type * as z from "zod"
 import { DEFAULT_ZOD_HANDLERS, INPUT_COMPONENTS } from "../config"
@@ -429,8 +429,8 @@ export default function AutoFormObject<
     .filter(Boolean) // Remove null values
 
   return (
-    <Accordion type="multiple" className="space-y-5 border-none">
+    <Accordion.Root type="multiple" className="space-y-5 border-none">
       {renderedFields}
-    </Accordion>
+    </Accordion.Root>
   )
 }

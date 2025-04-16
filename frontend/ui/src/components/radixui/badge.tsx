@@ -1,3 +1,4 @@
+// TBD validate badge
 import { cn } from "@utils/cn"
 import { Badge as RadixBadge } from "@radix-ui/themes"
 import type { BadgeProps as RBadgeProps } from "@radix-ui/themes"
@@ -28,7 +29,7 @@ export const Badge = ({
           variant === "solid" &&
           "bg-white text-black dark:bg-black dark:text-white"
       )}
-      color={isBlackColor ? undefined : (color as BadgeProps["color"])}
+      color={!isBlackColor ? (color as Exclude<BadgeProps["color"], "black">) : undefined}
       {...props}
     >
       {children}

@@ -13,7 +13,7 @@ import {
   useEffect,
   useState,
 } from "react"
-import { Button } from "@radixui"
+import { Button } from "@shadcn/button"
 
 import Autoplay from "embla-carousel-autoplay"
 import { iconSize } from "./icons/icon"

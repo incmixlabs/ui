@@ -8,7 +8,7 @@ import {
   Command,
   Popover
 } from "@base"
-const FacetedFilter = Popover
+const FacetedFilter = Popover.Root
 
 const FacetedFilterTrigger = React.forwardRef<
   React.ComponentRef<typeof Popover.Trigger>,

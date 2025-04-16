@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "exports": {
-    ".": "./src/components/index.ts",
+    ".": "./src/index.ts",
     "./preset": "./src/preset.ts",
     "./styles/global.css": "./src/styles/global.css",
     "./theme": "./src/components/radixui/theme/index.ts",
@@ -122,6 +122,7 @@
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:",
-    "vite": "catalog:"
+    "vite": "catalog:",
+    "vitest": "catalog:"
   }
 }

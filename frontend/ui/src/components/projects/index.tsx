@@ -1,3 +1,5 @@
+// TBD
+// validate
 import { useState } from "react"
 
 import { saveFormProject } from "@incmix/store"
@@ -11,7 +13,7 @@ import {
   Text,
   iconSize,
 } from "@base"
-import { toast } from "@incmix/ui"
+import { toast } from "@base"
 import { cn } from "@utils/cn"
 import { LayoutGrid, List, Plus, SlidersHorizontal, X } from "lucide-react"
 import { motion } from "motion/react"
@@ -90,8 +92,14 @@ export function ProjectPageComponents() {
     }
 
     try {
-      // Save to RxDB
-      await saveFormProject(projectWithId)
+      // TBD - Check / Validate - Save to RxDB
+      await saveFormProject({
+        ...projectWithId,
+        members: projectWithId.members.map((member) => ({
+          label: member.label || "",
+          value: member.id,
+        })),
+      })
 
       // Update local state
       const updatedProjects = [...projects, projectWithId]

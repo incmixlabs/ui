@@ -65,12 +65,12 @@ export default function AutoFormMCQ({
 
   return (
     <div className="flex w-full flex-col space-y-4">
-      <FormItem className="w-full">
+      <Form.Item className="w-full">
         <div className="mb-4">
-          <FormLabel className="font-medium text-gray-800 dark:text-white text-xl">
+          <Form.Label className="font-medium text-gray-800 dark:text-white text-xl">
             {label}
             {isRequired && <span className="text-destructive"> *</span>}
-          </FormLabel>
+          </Form.Label>
           {fieldConfigItem.description && (
             <p className="mt-1 text-muted-foreground text-sm dark:text-gray-400">
               {fieldConfigItem.description}
@@ -78,18 +78,18 @@ export default function AutoFormMCQ({
           )}
         </div>
 
-        <FormControl>
+        <Form.Control>
           <div
             className={getLayoutClass(layout, gridCols)}
             role="radiogroup"
             aria-required={isRequired ? "true" : "false"}
           >
             {options.map((option) => (
-              <FormItem
+              <Form.Item
                 key={option.value}
                 className={getOptionWidthClass(layout)}
               >
-                <FormControl>
+                <Form.Control>
                   <label>
                     <input
                       type="radio"
@@ -116,13 +116,13 @@ export default function AutoFormMCQ({
                       {option.label}
                     </div>
                   </label>
-                </FormControl>
-              </FormItem>
+                </Form.Control>
+              </Form.Item>
             ))}
           </div>
-        </FormControl>
-        <FormMessage className="dark:text-red-400" />
-      </FormItem>
+        </Form.Control>
+        <Form.Message className="dark:text-red-400" />
+      </Form.Item>
     </div>
   )
 }
