@@ -1,4 +1,4 @@
-import { useProjectDrawer } from "@hooks/use-project-drawer"
+import { useProjectDrawer } from "../hooks/use-project-drawer"
 import {
   Box,
   Card,

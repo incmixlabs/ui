@@ -2,20 +2,11 @@ import type { Column } from "@tanstack/react-table"
 import { Check, PlusCircle } from "lucide-react"
 import type { Option } from "./lib/types"
 
-import { Badge } from "@radix-ui/themes"
-import { Button } from "@radix-ui/themes"
-import { Separator } from "@radix-ui/themes"
-import { cn } from "@utils"
+import { Badge, Button, Separator, Popover } from "@radixui"
+import { cn } from "@utils/cn"
 import {
   Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "../command"
-import { Popover, PopoverContent, PopoverTrigger } from "../popover"
+} from "@shadcn/command"
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>
@@ -33,8 +24,8 @@ export function DataTableFacetedFilter<TData, TValue>({
     Array.isArray(unknownValue) ? unknownValue : []
   )
   return (
-    <Popover>
-      <PopoverTrigger>
+    <Popover.Root>
+      <Popover.Trigger>
         <Button variant="outline" size="1" className="h-8 border-dashed">
           <PlusCircle className="mr-2 size-4" />
           {title}
@@ -65,18 +56,18 @@ export function DataTableFacetedFilter<TData, TValue>({
             </>
           )}
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[12.5rem] p-0" align="start">
-        <Command>
-          <CommandInput placeholder={title} />
-          <CommandList className="max-h-full">
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup className="max-h-[18.75rem] overflow-y-auto overflow-x-hidden">
+      </Popover.Trigger>
+      <Popover.Content className="w-[12.5rem] p-0" align="start">
+        <Command.Root>
+          <Command.Input placeholder={title} />
+          <Command.List className="max-h-full">
+            <Command.Empty>No results found.</Command.Empty>
+            <Command.Group className="max-h-[18.75rem] overflow-y-auto overflow-x-hidden">
               {options.map((option) => {
                 const isSelected = selectedValues.has(option.value)
 
                 return (
-                  <CommandItem
+                  <Command.Item
                     key={option.value}
                     onSelect={() => {
                       if (isSelected) {
@@ -112,26 +103,26 @@ export function DataTableFacetedFilter<TData, TValue>({
                         {option.count}
                       </span>
                     )}
-                  </CommandItem>
+                  </Command.Item>
                 )
               })}
-            </CommandGroup>
+            </Command.Group>
             {selectedValues.size > 0 && (
               <>
-                <CommandSeparator />
-                <CommandGroup>
-                  <CommandItem
+                <Command.Separator />
+                <Command.Group>
+                  <Command.Item
                     onSelect={() => column?.setFilterValue(undefined)}
                     className="justify-center text-center"
                   >
                     Clear filters
-                  </CommandItem>
-                </CommandGroup>
+                  </Command.Item>
+                </Command.Group>
               </>
             )}
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+          </Command.List>
+        </Command.Root>
+      </Popover.Content>
+    </Popover.Root>
   )
 }

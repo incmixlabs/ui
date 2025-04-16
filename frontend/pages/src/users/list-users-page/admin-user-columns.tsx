@@ -9,7 +9,6 @@ import {
   toast,
 } from "@incmix/ui"
 import {
-
   type ColumnDef,
   DataTableColumnHeader,
   type DataTableRowAction,

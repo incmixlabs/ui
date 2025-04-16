@@ -1,4 +1,4 @@
-import { cn } from "@utils"
+import { cn } from "@utils/cn"
 import { Check } from "lucide-react"
 import { iconSize } from "./icons/icon"
 export interface ColorSelectType {
@@ -61,7 +61,7 @@ function cssVarToHex(varName: string) {
   return hex.toUpperCase()
 }
 
-const ColorPicker = ({
+export const ColorPicker = ({
   onColorSelect,
   colorType = "all",
   activeColor,

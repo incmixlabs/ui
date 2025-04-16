@@ -1,10 +1,8 @@
 import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@components/accordion/shadcn-accordion"
-import { Button } from "@components/button"
-import { Separator } from "@components/separator"
+  Accordion,
+  Button,
+  Separator
+} from "@base"
 import { Plus, Trash } from "lucide-react"
 import { useFieldArray, type useForm } from "react-hook-form"
 import type * as z from "zod"
@@ -31,9 +29,9 @@ export default function AutoFormArray({
   const title = item._def.description ?? beautifyObjectName(name)
 
   return (
-    <AccordionItem value={name} className="border-none">
-      <AccordionTrigger>{title}</AccordionTrigger>
-      <AccordionContent>
+    <Accordion.Item value={name} className="border-none">
+      <Accordion.Trigger>{title}</Accordion.Trigger>
+      <Accordion.Content>
         {fields.map((_field, index) => {
           const key = [...path, index.toString()].join(".")
           return (
@@ -69,7 +67,7 @@ export default function AutoFormArray({
           <Plus className="mr-2" size={16} />
           Add
         </Button>
-      </AccordionContent>
-    </AccordionItem>
+      </Accordion.Content>
+    </Accordion.Item>
   )
 }

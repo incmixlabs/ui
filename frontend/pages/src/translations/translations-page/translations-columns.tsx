@@ -1,14 +1,10 @@
-import {
-  Badge,
-  Button,
-  Checkbox,
-  DropdownMenu,
-} from "@incmix/ui"
+import { Badge, Checkbox, DropdownMenu } from "@incmix/ui"
 import {
   type ColumnDef,
   DataTableColumnHeader,
-  type DataTableRowAction } from "@incmix/ui/data-table"
-import { DotsHorizontalIcon } from "@radix-ui/react-icons"
+  type DataTableRowAction,
+} from "@incmix/ui/data-table"
+import { MoreHorizontal } from "lucide-react"
 import type { TranslationMessage } from "./types"
 
 type GetColumnsProps = {
@@ -92,38 +88,37 @@ export function getColumns({
       id: "actions",
       cell: function Cell({ row }) {
         return (
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger>
-              <Button
-                aria-label="Open menu"
-                variant="ghost"
-                className="flex size-8 p-0 data-[state=open]:bg-muted"
-                icon={<DotsHorizontalIcon className="size-4" color="black" />}
-              />
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content>
-              <DropdownMenu.Item
-                onClick={() => {
+          <DropdownMenu
+            button={{
+              "aria-label": "Open menu",
+              variant: "ghost",
+              className: "flex size-8 p-0 data-[state=open]:bg-muted",
+              icon: <MoreHorizontal className="size-4" color="black" />,
+            }}
+            items={[
+              {
+                icon: <MoreHorizontal />,
+                label: "Edit",
+                onClick: () => {
                   setRowAction({
                     type: "update",
                     row,
                   })
-                }}
-              >
-                Edit
-              </DropdownMenu.Item>
-              <DropdownMenu.Item
-                onClick={() => {
+                },
+                separator: true,
+              },
+              {
+                icon: <MoreHorizontal />,
+                label: "Delete",
+                onClick: () => {
                   setRowAction({
                     type: "delete",
                     row,
                   })
-                }}
-              >
-                Delete
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
+                },
+              },
+            ]}
+          />
         )
       },
       size: 40,

@@ -1,4 +1,5 @@
-import { camelToCapitalized } from "../strings"
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { camelToCapitalized } from "@utils/strings"
 export type AffixObj = {
   parent?: object
   child?: object | string

@@ -2,15 +2,10 @@ import { LoadingPage } from "@common"
 import {
   Button,
   CardContainer,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-  FormField,
-} from "@incmix/ui"
-import {
   Container,
   Dialog,
   Flex,
+  Form,
   Heading,
   Table,
   Text,
@@ -103,11 +98,11 @@ const CreateOrganizationDialog: React.FC<{
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogTitle>{t("organizations:createNewOrganization")}</DialogTitle>
-        <DialogDescription className="sr-only">
+      <Dialog.Content>
+        <Dialog.Title>{t("organizations:createNewOrganization")}</Dialog.Title>
+        <Dialog.Description className="sr-only">
           {t("organizations:createNewOrganization")}
-        </DialogDescription>
+        </Dialog.Description>
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -126,7 +121,7 @@ const CreateOrganizationDialog: React.FC<{
               }}
             >
               {(field) => (
-                <FormField
+                <Form.Field
                   name="organizationName"
                   label={t("organizations:organizationName")}
                   field={field}
@@ -162,7 +157,7 @@ const CreateOrganizationDialog: React.FC<{
             </Button>
           </Flex>
         </form>
-      </DialogContent>
+      </Dialog.Content>
     </Dialog.Root>
   )
 }

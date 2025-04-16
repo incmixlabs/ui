@@ -1,5 +1,5 @@
 import { LoadingPage } from "@common"
-import { FormField, ReactiveButton } from "@incmix/ui"
+import { Form, ReactiveButton } from "@incmix/ui"
 import { Box, Flex, Heading, Text } from "@incmix/ui"
 import { useForm } from "@tanstack/react-form"
 import { useQueryClient } from "@tanstack/react-query"
@@ -64,7 +64,7 @@ function LoginForm() {
             }}
           >
             {(field) => (
-              <FormField
+              <Form.Field
                 name="email"
                 label={t("common:email")}
                 type="email"
@@ -81,7 +81,7 @@ function LoginForm() {
             }}
           >
             {(field) => (
-              <FormField
+              <Form.Field
                 name="password"
                 label={t("common:password")}
                 type="password"

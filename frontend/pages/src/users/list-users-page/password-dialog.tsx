@@ -1,16 +1,6 @@
 "use client"
 
-import {
-  Button,
-  Dialog,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  Flex,
-  FormField,
-  ReactiveButton,
-  toast,
-} from "@incmix/ui"
+import { Button, Dialog, Flex, Form, ReactiveButton, toast } from "@incmix/ui"
 import type { UserAndProfile } from "@incmix/utils/types"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -76,7 +66,7 @@ export function PasswordDialog({
               }}
             >
               {(field) => (
-                <FormField
+                <Form.Field
                   name="password"
                   label={t("settings:newPassword")}
                   type="password"

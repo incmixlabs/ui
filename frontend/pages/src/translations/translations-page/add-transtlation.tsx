@@ -1,16 +1,4 @@
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Flex,
-  FormField,
-  ReactiveButton,
-} from "@incmix/ui"
+import {} from "@incmix/ui"
 import { Button, Select, Text } from "@incmix/ui"
 import { INTL_API_URL } from "@incmix/ui/constants"
 import { useForm } from "@tanstack/react-form"
@@ -21,7 +9,7 @@ import { useState } from "react"
 import { z } from "zod"
 import type { TranslationMessage } from "./types"
 interface AddTranslationDialogProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
+  extends React.ComponentPropsWithoutRef<typeof Dialog> {
   onSuccess?: () => void
 }
 
@@ -38,27 +26,27 @@ export const AddTranslationDialog: React.FC<AddTranslationDialogProps> = ({
   }
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={setIsOpen} {...props}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen} {...props}>
       <Dialog.Trigger>
         <Button>Add Translation</Button>
       </Dialog.Trigger>
-      <Dialog.Content>
+      <DialogContent>
         <DialogHeader>
-          <Dialog.Title>Add Translation</Dialog.Title>
-          <Dialog.Description className="sr-only">
-            Add new Translation
-          </Dialog.Description>
+          <DialogTitle>Add Translation</DialogTitle>
         </DialogHeader>
+        <DialogDescription className="sr-only">
+          Add new Translation
+        </DialogDescription>
         <AddTranlationForm onSuccess={onSubmit} />
         <DialogFooter className="gap-2 sm:space-x-0">
-          <Dialog.Close>
+          <DialogClose>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </Dialog.Close>
+          </DialogClose>
         </DialogFooter>
-      </Dialog.Content>
-    </Dialog.Root>
+      </DialogContent>
+    </Dialog>
   )
 }
 

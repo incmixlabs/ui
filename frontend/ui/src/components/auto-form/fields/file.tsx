@@ -1,7 +1,7 @@
-import { Input } from "@components/form/input"
-import { FormControl, FormMessage } from "@components/shadcn-form/form"
-import { Plus, Trash2 } from "lucide-react"
 import { type ChangeEvent, useEffect, useRef, useState } from "react"
+
+import { Form, Input } from "@base"
+import { Plus, Trash2 } from "lucide-react"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 
@@ -110,7 +110,7 @@ export default function AutoFormFile({
       <div className="relative h-28 w-36 rounded-lg">
         {!localFile ? (
           <div className="relative h-full w-full">
-            <FormControl>
+            <Form.Control>
               <Input
                 type="file"
                 ref={fileInputRef}
@@ -119,7 +119,7 @@ export default function AutoFormFile({
                 value={undefined} // Must be undefined for file inputs
                 className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
               />
-            </FormControl>
+            </Form.Control>
 
             {/* Empty state with dashed outline and plus icon */}
             <div className="absolute inset-0 flex h-full w-full flex-col items-center justify-center rounded-lg outline-dashed outline-2 outline-gray-4">
@@ -163,7 +163,7 @@ export default function AutoFormFile({
       </div>
 
       <div className="w-full text-center">
-        <FormMessage />
+        <Form.Message />
       </div>
     </div>
   )

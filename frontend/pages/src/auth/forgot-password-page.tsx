@@ -1,16 +1,16 @@
+import { useEffect } from "react"
+import { useTranslation } from "react-i18next"
+import { z } from "zod"
+
 import { LoadingPage } from "@common"
 import { I18n } from "@incmix/pages/i18n"
-import { FormField, ReactiveButton, toast } from "@incmix/ui"
+import { Form, ReactiveButton, toast } from "@incmix/ui"
 import { Box, Flex, Heading, Text } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { zodValidator } from "@tanstack/zod-form-adapter"
-import { useEffect } from "react"
-import type React from "react"
-import { useTranslation } from "react-i18next"
-import { z } from "zod"
 import { setupGoogleAuthCallbackListener, useAuth } from "./hooks/auth"
 import { AuthLayout } from "./layouts/auth-layout"
 
@@ -69,7 +69,7 @@ function ForgotPasswordForm() {
             }}
           >
             {(field) => (
-              <FormField
+              <Form.Field
                 name="email"
                 label={t("common:email")}
                 type="email"

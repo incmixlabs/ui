@@ -1,9 +1,6 @@
 import {
-  FormControl,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@components/shadcn-form/form"
+  Form,
+} from "@shadcn"
 import { cn } from "@utils/cn"
 import type {
   AutoFormInputComponentProps,

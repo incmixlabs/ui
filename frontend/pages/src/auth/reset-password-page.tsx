@@ -1,6 +1,6 @@
 import { LoadingPage } from "@common"
 import { I18n } from "@incmix/pages/i18n"
-import { CardContainer, FormField, ReactiveButton, toast } from "@incmix/ui"
+import { CardContainer, Form, ReactiveButton, toast } from "@incmix/ui"
 import { Box, Container, Flex, Heading, Text } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import { useForm } from "@tanstack/react-form"
@@ -77,7 +77,7 @@ function ResetPasswordForm() {
             }}
           >
             {(field) => (
-              <FormField
+              <Form.Field
                 name="newPassword"
                 label={t("common:password")}
                 type="password"

@@ -26,7 +26,7 @@ import {
   SecondarySidebar,
   SidebarErrorFallback,
 } from "@incmix/ui/secondary-sidebars"
-import { FileFolder } from "@incmix/ui/secondary-sidebars/file-folder"
+import { FileFolder } from "@incmix/ui/secondary-sidebars"
 import {
   Sidebar,
   SidebarContent,

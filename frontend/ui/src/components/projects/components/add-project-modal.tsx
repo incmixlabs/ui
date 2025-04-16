@@ -4,29 +4,19 @@ import {
   FileUploader,
   FileUploaderContent,
   FileUploaderItem,
-} from "@components/file-upload"
-import { Input } from "@components/form"
-import { Label } from "@components/label"
+} from "@components/"
+import { Box, Button, Dialog, Flex, Grid, Input, Label, Text } from "base"
+
 import MultipleSelector, {
   type Option,
 } from "@components/multiple-selector/multiple-selector"
-import { Textarea } from "@components/textarea"
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  Flex,
-  Grid,
-  Text,
-} from "@incmix/ui"
-import { Calendar, Paperclip, Plus, X } from "lucide-react"
-import Image from "next/image"
+
+import { Plus } from "lucide-react"
+
 import { useEffect, useState } from "react"
 import { members } from "../data"
 import { ProjectsImages } from "../images"
-import type { Member, Project } from "../types"
+import type { Project } from "../types"
 
 interface AddProjectModalProps {
   isOpen: boolean

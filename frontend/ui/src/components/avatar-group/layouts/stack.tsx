@@ -1,6 +1,6 @@
+import { Avatar } from "@components/radixui/avatar"
 import { Flex } from "@radix-ui/themes"
 import type React from "react"
-import { Avatar } from "../../avatar"
 import { stackBorderWidths, stackOffsets } from "../constants"
 import type { AvatarGroupProps } from "../types"
 import { getVisibleCount } from "../utils"

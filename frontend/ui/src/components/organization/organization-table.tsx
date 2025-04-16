@@ -1,22 +1,15 @@
-import { Checkbox, Dialog, Input } from "@incmix/ui"
-import { Button } from "@incmix/ui"
-import { produce } from "immer"
 import { useEffect, useRef, useState } from "react"
-import type { TreeDataItem } from "../../types"
+
+import { Button, Checkbox } from "@components/base"
+import { nanoid } from "nanoid"
+import { Table } from "@components/shadcn/table"
 import {
   findItemById,
   removeItemById,
   useEnvVarsStore,
-} from "../../utils/env-vars-store"
-import { Label } from "../form/label"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../table"
+} from "@utils/env-vars-store"
+import type { TreeDataItem } from "@/types"
+import { produce } from "immer"
 import { TreeItemRow, type TreeItemRowRef } from "./tree-item-row"
 
 interface FlattenedItem extends TreeDataItem {
@@ -85,7 +78,7 @@ export function OrganizationTable() {
       type === "file"
         ? {
             type,
-            id: crypto.randomUUID(),
+            id: nanoid(),
             name: formData.name,
             data: {
               name: formData.name,
@@ -95,7 +88,7 @@ export function OrganizationTable() {
           }
         : {
             type,
-            id: crypto.randomUUID(),
+            id: nanoid(),
             name: formData.name,
             children: [],
             expanded: true,
@@ -218,24 +211,30 @@ export function OrganizationTable() {
         />
       </div>
 
-      <Table className="border-collapse border border-gray-200">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-12 border border-gray-200">
+      <Table.Root className="border-collapse border border-gray-200">
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeaderCell className="w-12 border border-gray-200">
               <Checkbox />
-            </TableHead>
-            <TableHead className="border border-gray-200">
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="border border-gray-200">
               Description
-            </TableHead>
-            <TableHead className="w-64 border border-gray-200">Value</TableHead>
-            <TableHead className="border border-gray-200">Created on</TableHead>
-            <TableHead className="border border-gray-200">Created by</TableHead>
-            <TableHead className="w-10 border border-gray-200">
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-64 border border-gray-200">
+              Value
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="border border-gray-200">
+              Created on
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="border border-gray-200">
+              Created by
+            </Table.ColumnHeaderCell>
+            <Table.ColumnHeaderCell className="w-10 border border-gray-200">
               Actions
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+            </Table.ColumnHeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
           {flattenedItems.length > 0 ? (
             flattenedItems.map((item) => (
               <TreeItemRow
@@ -252,15 +251,15 @@ export function OrganizationTable() {
               />
             ))
           ) : (
-            <TableRow>
-              <TableCell colSpan={6} className="py-4 text-center">
+            <Table.Row>
+              <Table.Cell colSpan={6} className="py-4 text-center">
                 No environment variables. Create a new variable or folder to get
                 started.
-              </TableCell>
-            </TableRow>
+              </Table.Cell>
+            </Table.Row>
           )}
-        </TableBody>
-      </Table>
+        </Table.Body>
+      </Table.Root>
     </div>
   )
 }

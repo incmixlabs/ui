@@ -1,5 +1,5 @@
-import { Box, Grid, Text } from "@incmix/ui"
-import { cn } from "@utils"
+import { Box, Grid, Text } from "@base"
+import { cn } from "@utils/cn"
 import { DateTime } from "luxon"
 import type { ViewType } from "./gantt-chart"
 

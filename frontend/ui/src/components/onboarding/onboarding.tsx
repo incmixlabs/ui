@@ -1,8 +1,9 @@
-import { useMediaQuery } from "@hooks/use-media-query"
 import { useState } from "react"
+import { useMediaQuery } from "@hooks/use-media-query"
+
 import { formSchema } from "./form-schema"
 import { StepForm } from "./step-form"
-import { StepperProvider } from "@incmix/ui/stepper"
+import { StepperProvider } from "../stepper"
 
 export const Onboarding = () => {
   const [stepData, setStepData] = useState<Record<number, any>>({})

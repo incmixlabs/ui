@@ -1,17 +1,20 @@
-import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
 import {
+  Avatar,
+  Badge,
   Box,
   Button,
   Checkbox,
   DropdownMenu,
+  type ExtendedColorType,
   Flex,
   Grid,
   Heading,
+  IconButton,
   ScrollArea,
   Tabs,
   Text,
-} from "@incmix/ui"
-import { cn } from "@utils"
+} from "@components/base"
+import { cn } from "@utils/cn"
 import {
   Check,
   Download,
@@ -33,18 +36,15 @@ import {
   useDragControls,
   useMotionValue,
 } from "motion/react"
-import type React from "react"
-import { useEffect, useRef, useState } from "react"
-import { Avatar } from "../avatar"
-import { Badge } from "../badge"
-import type { ExtendedColorType } from "../badge"
-import { IconButton } from "../button"
+import { useRef, useState } from "react"
+
 import { MotionSheet } from "../custom-sheet"
 import { SmartDatetimeInput } from "../datetime-picker"
 import { TaskIcon } from "../icons/task"
 import X from "../icons/x"
 import { ComboBox } from "./combo-box"
 import { assignData, attachments, commentsData, labelsData } from "./data"
+import { useKanbanDrawer } from "./hooks/use-kanban-drawer"
 import { KanbanImages } from "./images"
 
 /**

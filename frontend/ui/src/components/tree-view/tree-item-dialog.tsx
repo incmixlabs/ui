@@ -8,13 +8,8 @@ import * as React from "react"
 import { z } from "zod"
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../dialog"
-import { FormField } from "../form/form-field"
+  Form
+} from "@base"
 import { useTreeViewContext } from "./tree-view-context"
 
 type FormData = Record<string, string>
@@ -32,7 +27,7 @@ type TreeItemDialogProps = {
   initialData?: Record<string, string>
 }
 
-export function FieldInfo({ field }: { field: FieldApi<any, any, any, any> }) {
+export function FieldInfo({ field }: { field: FieldApi<any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any> }) {
   return (
     <>
       {field.state.meta.isTouched && field.state.meta.errors ? (
@@ -76,10 +71,10 @@ export function TreeItemDialog({
   const isEditing = !!initialData
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+      <Dialog.Content>
         <VisuallyHidden asChild>
-          <DialogDescription>
+          <Dialog.Description>
             {isEditing
               ? type === "file"
                 ? descriptions.editFileTitle
@@ -87,10 +82,10 @@ export function TreeItemDialog({
               : type === "file"
                 ? descriptions.newFileTitle
                 : descriptions.newFolderTitle}
-          </DialogDescription>
+          </Dialog.Description>
         </VisuallyHidden>
-        <DialogHeader>
-          <DialogTitle>
+        <Dialog.Header>
+          <Dialog.Title>
             {isEditing
               ? type === "file"
                 ? descriptions.editFileTitle
@@ -98,8 +93,8 @@ export function TreeItemDialog({
               : type === "file"
                 ? descriptions.newFileTitle
                 : descriptions.newFolderTitle}
-          </DialogTitle>
-        </DialogHeader>
+          </Dialog.Title>
+        </Dialog.Header>
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -120,7 +115,7 @@ export function TreeItemDialog({
                 }}
               >
                 {(fieldApi) => (
-                  <FormField
+                  <Form.Field
                     name={field.name}
                     label={field.label}
                     type={field.type === "textarea" ? "textarea" : "text"}
@@ -130,7 +125,7 @@ export function TreeItemDialog({
               </form.Field>
             ))}
           </Flex>
-          <DialogFooter className="mt-4">
+          <Dialog.Footer className="mt-4">
             <Button
               type="button"
               variant="soft"
@@ -147,9 +142,9 @@ export function TreeItemDialog({
                 </Button>
               )}
             </form.Subscribe>
-          </DialogFooter>
+          </Dialog.Footer>
         </form>
-      </DialogContent>
-    </Dialog>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }

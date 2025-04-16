@@ -1,13 +1,9 @@
-import { Input } from "@components"
 import ColorPicker from "@components/color-picker"
 import { KanbanImages } from "@components/kanban-board/images"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select"
+  Input,
+  Select
+} from "@base"
 import {
   Box,
   Button,
@@ -124,19 +120,19 @@ export function PropertySheet() {
             {/* <Text className="w-full p-2 px-3 ">json</Text> */}
 
             <Box className="w-full">
-              <Select
+              <Select.Root
                 value={propertyType}
+                defaultValue="json"
                 onValueChange={(value) => setPropertyType(value)}
               >
-                <SelectTrigger className="border-none shadow-none">
-                  <SelectValue placeholder="json" />
-                </SelectTrigger>
-                <SelectContent className="border-gray-5">
-                  <SelectItem value="json">json</SelectItem>
-                  <SelectItem value="xml">xml</SelectItem>
-                  <SelectItem value="csv">csv</SelectItem>
-                </SelectContent>
-              </Select>
+                <Select.Trigger>
+                </Select.Trigger>
+                <Select.Content>
+                  <Select.Item value="json">json</Select.Item>
+                  <Select.Item value="xml">xml</Select.Item>
+                  <Select.Item value="csv">csv</Select.Item>
+                </Select.Content>
+              </Select.Root>
             </Box>
           </Flex>
           <Flex align={"center"}>

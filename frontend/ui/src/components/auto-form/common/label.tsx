@@ -1,4 +1,4 @@
-import { FormLabel } from "@components/shadcn-form/form"
+import { Form } from "@shadcn/form"
 import { cn } from "@utils/cn"
 
 /**
@@ -26,10 +26,10 @@ function AutoFormLabel({
 }) {
   return (
     <>
-      <FormLabel className={cn("mt-2 w-[140px] space-y-0", className)}>
+      <Form.Label className={cn("mt-2 w-[140px] space-y-0", className)}>
         {label}
         {isRequired && <span className="text-destructive"> *</span>}
-      </FormLabel>
+      </Form.Label>
     </>
   )
 }

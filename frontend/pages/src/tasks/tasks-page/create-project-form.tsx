@@ -2,19 +2,7 @@
 
 import { useAuth } from "@auth"
 import { type ProjectDocType, useOrganizationStore } from "@incmix/store"
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  FormField,
-  ReactiveButton,
-  toast,
-} from "@incmix/ui"
+import { Dialog, Form, ReactiveButton, toast } from "@incmix/ui"
 import { Button, Flex } from "@incmix/ui"
 import type { Project } from "@incmix/utils/types"
 import { useForm } from "@tanstack/react-form"
@@ -92,12 +80,12 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
         <Button>Create Project</Button>
       </Dialog.Trigger>
       <Dialog.Content className="border border-gray-4">
-        <DialogHeader>
+        <Dialog.Header>
           <Dialog.Title>Create New Project</Dialog.Title>
           <Dialog.Description>
             Fill out the form to create a new project.
           </Dialog.Description>
-        </DialogHeader>
+        </Dialog.Header>
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -114,7 +102,7 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
               }}
             >
               {(field) => (
-                <FormField name="name" label="Project Name" field={field} />
+                <Form.Field name="name" label="Project Name" field={field} />
               )}
             </form.Field>
 
@@ -129,13 +117,13 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
             </ReactiveButton>
           </Flex>
         </form>
-        <DialogFooter className="gap-2 sm:space-x-0">
+        <Dialog.Footer>
           <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
           </Dialog.Close>
-        </DialogFooter>
+        </Dialog.Footer>
       </Dialog.Content>
     </Dialog.Root>
   )

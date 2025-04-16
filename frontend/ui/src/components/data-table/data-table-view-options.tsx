@@ -5,16 +5,7 @@ import { Check, ChevronsUpDown, Settings2 } from "lucide-react"
 import * as React from "react"
 
 import { cn } from "@utils/cn"
-import { Button } from "../button"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "../command"
-import { Popover, PopoverContent, PopoverTrigger } from "../popover"
+import { Button, Command, Popover } from "@base"
 import { toSentenceCase } from "./lib/utils"
 
 interface DataTableViewOptionsProps<TData> {
@@ -22,13 +13,13 @@ interface DataTableViewOptionsProps<TData> {
 }
 
 export function DataTableViewOptions<TData>({
-  table,
+  table
 }: DataTableViewOptionsProps<TData>) {
   const triggerRef = React.useRef<HTMLButtonElement>(null)
 
   return (
-    <Popover modal>
-      <PopoverTrigger>
+    <Popover.Root modal>
+      <Popover.Trigger>
         <Button
           ref={triggerRef}
           aria-label="Toggle columns"
@@ -40,17 +31,17 @@ export function DataTableViewOptions<TData>({
           View
           <ChevronsUpDown className="ml-auto size-4 shrink-0 opacity-50" />
         </Button>
-      </PopoverTrigger>
-      <PopoverContent
+      </Popover.Trigger>
+      <Popover.Content
         align="end"
         className="w-44 p-0"
         onCloseAutoFocus={() => triggerRef.current?.focus()}
       >
-        <Command>
-          <CommandInput placeholder="Search columns..." />
-          <CommandList>
-            <CommandEmpty>No columns found.</CommandEmpty>
-            <CommandGroup>
+        <Command.Root>
+          <Command.Input placeholder="Search columns..." />
+          <Command.List>
+            <Command.Empty>No columns found.</Command.Empty>
+            <Command.Group>
               {table
                 .getAllColumns()
                 .filter(
@@ -60,7 +51,7 @@ export function DataTableViewOptions<TData>({
                 )
                 .map((column) => {
                   return (
-                    <CommandItem
+                    <Command.Item
                       key={column.id}
                       onSelect={() =>
                         column.toggleVisibility(!column.getIsVisible())
@@ -75,13 +66,13 @@ export function DataTableViewOptions<TData>({
                           column.getIsVisible() ? "opacity-100" : "opacity-0"
                         )}
                       />
-                    </CommandItem>
+                    </Command.Item>
                   )
                 })}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+            </Command.Group>
+          </Command.List>
+        </Command.Root>
+      </Popover.Content>
+    </Popover.Root>
   )
 }

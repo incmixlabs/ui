@@ -1,43 +1,29 @@
-export function camelize(str: string) {
-  return str.replace(
-    /(?:^\w|[A-Z]|\b\w|\s+)/g,
-    (match: string, index: number) => {
-      if (+match === 0) return "" // or if (/\s+/.test(match)) for white spaces
-      return index === 0 ? match.toLowerCase() : match.toUpperCase()
-    }
+export function camelToCapitalized(str: string): string {
+  return str
+    .replace(/([A-Z])/g, " $1")
+    .replace(/^./, (str) => str.toUpperCase())
+}
+export const getInitials = (name: string) => {
+  if (!name) return ""
+  return (
+    name
+      .match(/(\b\S)?/g)
+      ?.join("")
+      .match(/(^\S|\S$)?/g)
+      ?.join("")
+      .toUpperCase() || ""
   )
 }
 
-export function capitalize(str: string) {
-  return String(str).charAt(0).toUpperCase() + String(str).slice(1)
-}
 
-export function strEnum<T extends string>(o: T[]): { [K in T]: K } {
-  return o.reduce((res, key) => {
-    res[key] = key
-    return res
-  }, Object.create(null))
-}
-
-// console.log(camelToCapitalize('camelCaseString')); // Output: CAMEL CASE STRING
-export function camelToCapitalized(str: string) {
+export function toSentenceCase(str: string) {
   return str
-    .replace(/([a-z])([A-Z])/g, "$1 $2")
-    .replace(/^./, (char) => char.toUpperCase())
-}
-
-// console.log(capitalizedToCamel("This Is A Capitalized Sentence"); // Output: thisIsACapitalizedSentence
-export function capitalizedToCamel(str: string): string {
-  const words = str.trim().split(" ")
-  const camelCase = words
-    .map((word, index) => {
-      if (index === 0) {
-        return word.toLowerCase()
-      }
-      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    })
-    .join("")
-  return camelCase
+    .replace(/_/g, " ")
+    .replace(/([A-Z])/g, " $1")
+    .toLowerCase()
+    .replace(/^\w/, (c) => c.toUpperCase())
+    .replace(/\s+/g, " ")
+    .trim()
 }
 
 export function encodeHTML(str: string) {

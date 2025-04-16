@@ -1,8 +1,9 @@
 "use client"
 
-import { Button } from "@components/button"
+import type { ButtonProps } from "@radix-ui/themes"
 
 import {
+  Button,
   Box,
   Flex,
   Grid,
@@ -12,27 +13,17 @@ import {
   Select,
   Text,
   iconSize,
-} from "@incmix/ui"
-import type { ButtonProps } from "@radix-ui/themes"
-
-import { cn } from "@utils"
+} from "@base"
+import { cn } from "@utils/cn"
 import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Clipboard,
-  Copy,
-  Delete,
-  Edit,
-  EllipsisVertical,
-  Pencil,
   Plus,
   SlidersHorizontal,
-  Trash2,
-  UserRoundPlus,
 } from "lucide-react"
 import { DateTime } from "luxon"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { CalendarHeader } from "./calendar-header"
 import EditDropdown from "./edit-dropdown"
 import { TaskBar } from "./task-bar"

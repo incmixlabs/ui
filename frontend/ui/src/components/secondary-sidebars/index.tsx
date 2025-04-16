@@ -1,8 +1,9 @@
 "use client"
-import { cn } from "@incmix/ui"
-import { Box, Flex } from "@incmix/ui"
+import { cn } from "@utils/cn"
+import { Box, Flex } from "@base"
 import type { JSX } from "react"
 import { useSidebar } from "../sidebar"
+export * from "./file-folder"
 export type SecondarySidebarProps = {
   children: JSX.Element
 }

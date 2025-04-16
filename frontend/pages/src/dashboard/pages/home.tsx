@@ -1,7 +1,7 @@
 import { LoadingPage } from "@common"
 
-import { CardContainer, SwapyExclude, SwapyLayout, SwapySlot } from "@incmix/ui"
-import { Flex, Heading, Switch, Text } from "@incmix/ui"
+import { CardContainer, Flex, Heading, Switch, Text } from "@incmix/ui"
+import { SwapyExclude, SwapyLayout, SwapySlot } from "@incmix/ui/swapy"
 import {
   BatteryWidget,
   CalendarWidget,

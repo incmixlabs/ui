@@ -1,13 +1,15 @@
-import { ScrollArea } from "@incmix/ui"
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-refresh/only-export-components */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
+import { Button, Calendar, ScrollArea, Popover,  type  CalendarProps  } from "@base"
+import { cn } from "@utils/cn"
 import { parseDate } from "chrono-node"
+import { CalendarIcon } from "lucide-react"
 import React from "react"
 import type { ActiveModifiers } from "react-day-picker"
-import { cn } from "utils"
-import { Button } from "./button"
-import { Calendar } from "./calendar"
-import type { CalendarProps } from "./calendar"
-import { CalendarIcon } from "./icons/calender"
-import { Popover, PopoverContent, PopoverTrigger } from "./popover"
 
 /* -------------------------------------------------------------------------- */
 /*                               Inspired By:                                 */
@@ -126,63 +128,60 @@ export const SmartDatetimeInput = React.forwardRef<
     "type" | "ref" | "value" | "defaultValue" | "onBlur"
   > &
     SmartDatetimeInputProps
->(
-  (
-    {
-      className,
-      value,
-      onValueChange,
-      placeholder,
-      disabled,
-      removeInput,
-      showCalendar = true,
-      showTimePicker = true,
-    },
-    ref
-  ) => {
-    const [Time, setTime] = React.useState<string>("")
+>(function SmartDatetimeInput(
+  {
+    className,
+    value,
+    onValueChange,
+    placeholder,
+    disabled,
+    removeInput,
+    showCalendar = true,
+    showTimePicker = true,
+  },
+  ref
+) {
+  const [Time, setTime] = React.useState<string>("")
 
-    const onTimeChange = React.useCallback((time: string) => {
-      setTime(time)
-    }, [])
+  const onTimeChange = React.useCallback((time: string) => {
+    setTime(time)
+  }, [])
 
-    // If neither calendar nor timepicker is specified, show both
-    const shouldShowBoth = showCalendar === showTimePicker
+  // If neither calendar nor timepicker is specified, show both
+  const shouldShowBoth = showCalendar === showTimePicker
 
-    return (
-      <SmartDatetimeInputContext.Provider
-        value={{
-          value,
-          onValueChange,
-          Time,
-          onTimeChange,
-          removeInput,
-          showCalendar: shouldShowBoth ? true : showCalendar,
-          showTimePicker: shouldShowBoth ? true : showTimePicker,
-        }}
-      >
-        <div className="w-full rounded-md bg-gray-3">
-          <div
-            className={cn(
-              "flex w-full items-center gap-0 rounded-md border border-gray-5 bg-gray-5 p-1 transition-all",
-              className
-            )}
-          >
-            <DateTimeLocalInput />
-            {!removeInput && (
-              <NaturalLanguageInput
-                placeholder={placeholder}
-                disabled={disabled}
-                ref={ref}
-              />
-            )}
-          </div>
+  return (
+    <SmartDatetimeInputContext.Provider
+      value={{
+        value,
+        onValueChange,
+        Time,
+        onTimeChange,
+        removeInput,
+        showCalendar: shouldShowBoth ? true : showCalendar,
+        showTimePicker: shouldShowBoth ? true : showTimePicker,
+      }}
+    >
+      <div className="w-full rounded-md bg-gray-3">
+        <div
+          className={cn(
+            "flex w-full items-center gap-0 rounded-md border border-gray-5 bg-gray-5 p-1 transition-all",
+            className
+          )}
+        >
+          <DateTimeLocalInput />
+          {!removeInput && (
+            <NaturalLanguageInput
+              placeholder={placeholder}
+              disabled={disabled}
+              ref={ref}
+            />
+          )}
         </div>
-      </SmartDatetimeInputContext.Provider>
-    )
-  }
-)
-
+      </div>
+    </SmartDatetimeInputContext.Provider>
+  )
+})
 SmartDatetimeInput.displayName = "DatetimeInput"
 
 // Make it a standalone component
@@ -441,7 +440,7 @@ const NaturalLanguageInput = React.forwardRef<
     placeholder?: string
     disabled?: boolean
   }
->(({ placeholder, ...props }, ref) => {
+>(function NaturalLanguageInput({ placeholder, ...props }, ref) {
   const { value, onValueChange, onTimeChange, showCalendar, showTimePicker } =
     useSmartDateInput()
 
@@ -469,7 +468,7 @@ const NaturalLanguageInput = React.forwardRef<
       ).padStart(2, "0")} ${hour >= 12 ? "PM" : "AM"}`
       onTimeChange(timeVal)
     }
-  }, [value, showCalendar, showTimePicker])
+  }, [value, showCalendar, showTimePicker, onTimeChange])
 
   const handleParse = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -513,7 +512,7 @@ const NaturalLanguageInput = React.forwardRef<
         }
       }
     },
-    [value, showCalendar, showTimePicker]
+    [value, showCalendar, showTimePicker, onValueChange]
   )
 
   const handleKeydown = React.useCallback(
@@ -582,8 +581,8 @@ const DateTimeLocalInput = ({
   )
 
   return (
-    <Popover>
-      <PopoverTrigger>
+    <Popover.Root>
+      <Popover.Trigger>
         <Button
           className={cn(
             "flex items-center justify-center bg-gray-5 px-1 font-normal dark:bg-gray-12",
@@ -593,8 +592,8 @@ const DateTimeLocalInput = ({
           <CalendarIcon />
           <span className="sr-only">calendar</span>
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto border-none p-0 " sideOffset={8}>
+      </Popover.Trigger>
+      <Popover.Content className="w-auto border-none p-0 " sideOffset={8}>
         <div className="flex gap-1">
           {showCalendar && (
             <Calendar
@@ -609,8 +608,8 @@ const DateTimeLocalInput = ({
           )}
           {showTimePicker && <TimePicker />}
         </div>
-      </PopoverContent>
-    </Popover>
+      </Popover.Content>
+    </Popover.Root>
   )
 }
 

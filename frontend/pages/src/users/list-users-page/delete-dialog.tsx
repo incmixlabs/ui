@@ -1,16 +1,6 @@
 "use client"
 
-import {
-  Button,
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@incmix/ui"
+import { Button, Dialog } from "@incmix/ui"
 import type { UserAndProfile } from "@incmix/utils/types"
 import type { Row } from "@tanstack/react-table"
 import { Trash } from "lucide-react"
@@ -39,22 +29,22 @@ export function DeleteDialog({
         </Dialog.Trigger>
       ) : null}
       <Dialog.Content>
-        <DialogHeader>
+        <Dialog.Header>
           <Dialog.Title>Are you absolutely sure?</Dialog.Title>
           <Dialog.Description>
             This action cannot be undone. This will permanently delete your{" "}
             <span className="font-medium">{items.length}</span>
             {items.length === 1 ? " user" : " users"} from our servers.
           </Dialog.Description>
-        </DialogHeader>
-        <DialogFooter className="gap-2 sm:space-x-0">
+        </Dialog.Header>
+        <Dialog.Footer>
           <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
           </Dialog.Close>
           <Button aria-label="Delete selected rows">Delete</Button>
-        </DialogFooter>
+        </Dialog.Footer>
       </Dialog.Content>
     </Dialog.Root>
   )

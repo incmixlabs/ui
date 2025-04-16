@@ -5,10 +5,9 @@ import RClock from "react-clock"
 import "react-clock/dist/Clock.css"
 import { useThemeStore } from "@incmix/store"
 export { ClockIcon as Icon } from "@radix-ui/react-icons"
-import { CardContainer } from "@components/card/card-container"
-import { Flex, Text, Theme } from "@incmix/ui"
+import { CardContainer, Flex, Text, type  TextProps} from "@base"
+import { Theme } from "@components/radixui/theme"
 import { getDate } from "@incmix/utils/date"
-import type { TextProps } from "@radix-ui/themes"
 
 import "./clock.css"
 

@@ -9,7 +9,7 @@ import { z } from "zod"
 import { useCurrentUser, useProfileUpdate } from "@auth"
 import { LoadingPage } from "@common"
 import { useLanguageStore, useThemeStore } from "@incmix/store"
-import { Button, CardContainer, FormField } from "@incmix/ui"
+import { Button, CardContainer, Form } from "@incmix/ui"
 import type { UserProfile } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { CurrentUserProfileImage } from "../common/components/user-profile-image"
@@ -123,7 +123,7 @@ const GeneralInfoForm: React.FC<ReturnType<typeof useGeneralInfoForm>> = ({
             }}
           >
             {(field) => (
-              <FormField name="name" label={t("common:name")} field={field} />
+              <Form.Field name="name" label={t("common:name")} field={field} />
             )}
           </form.Field>
           <Button type="submit" disabled={isUpdatingUser}>
@@ -163,7 +163,7 @@ const PasswordChangeForm: React.FC<
             }}
           >
             {(field) => (
-              <FormField
+              <Form.Field
                 name="currentPassword"
                 label={t("currentPassword")}
                 type="password"
@@ -179,7 +179,7 @@ const PasswordChangeForm: React.FC<
             }}
           >
             {(field) => (
-              <FormField
+              <Form.Field
                 name="newPassword"
                 label={t("newPassword")}
                 type="password"
@@ -195,7 +195,7 @@ const PasswordChangeForm: React.FC<
             }}
           >
             {(field) => (
-              <FormField
+              <Form.Field
                 name="confirmPassword"
                 label={t("confirmNewPassword")}
                 type="password"

@@ -1,10 +1,7 @@
 import { iconSize } from "@components/icons/icon"
 import {
-  FormControl,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@components/shadcn-form/form"
+  Form
+} from "@shadcn"
 import { cn } from "@utils/cn"
 import { useEffect, useState } from "react"
 import type {
@@ -101,13 +98,13 @@ export default function AutoFormMultiCheckbox({
 
   return (
     <div className="flex w-full flex-col space-y-4">
-      <FormItem className="w-full">
+      <Form.Item className="w-full">
         <fieldset className="space-y-4">
           <legend className="mb-4">
-            <FormLabel className="font-medium text-gray-800 dark:text-white text-xl">
+            <Form.Label className="font-medium text-gray-800 dark:text-white text-xl">
               {label}
               {isRequired && <span className="text-destructive"> *</span>}
-            </FormLabel>
+            </Form.Label>
             {fieldConfigItem.description && (
               <p className="mt-1 text-muted-foreground text-sm dark:text-gray-400">
                 {fieldConfigItem.description}
@@ -115,20 +112,20 @@ export default function AutoFormMultiCheckbox({
             )}
           </legend>
 
-          <FormControl>
+          <Form.Control>
             <div
               className={getLayoutClass(layout, gridCols)}
               aria-required={isRequired ? "true" : "false"}
             >
               {options.map((option) => (
-                <FormItem
+                <Form.Item
                   key={option.value}
                   className={cn(
                     getOptionWidthClass(layout),
                     "flex items-center space-x-2"
                   )}
                 >
-                  <FormControl>
+                  <Form.Control>
                     <div className="flex items-center">
                       <input
                         type="checkbox"
@@ -148,19 +145,19 @@ export default function AutoFormMultiCheckbox({
                         {option.label}
                       </label>
                     </div>
-                  </FormControl>
-                </FormItem>
+                  </Form.Control>
+                </Form.Item>
               ))}
             </div>
-          </FormControl>
+          </Form.Control>
           {isRequired && !hasSelection && touched && (
             <p className="mt-2 font-medium text-destructive dark:text-red-400 text-sm">
               Please select at least one option
             </p>
           )}
-          <FormMessage className="dark:text-red-400" />
+          <Form.Message className="dark:text-red-400" />
         </fieldset>
-      </FormItem>
+      </Form.Item>
     </div>
   )
 }

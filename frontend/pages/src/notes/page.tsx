@@ -1,4 +1,4 @@
-import { NoteComponent } from "@incmix/ui"
+import { NoteComponent } from "@incmix/ui/notes"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 
 const NotesPage = () => {

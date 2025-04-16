@@ -1,5 +1,4 @@
-import { Label } from "@components/label"
-import { Button, Flex, IconButton, Switch, Tabs, iconSize } from "@incmix/ui"
+import { Button, Flex, IconButton, Label, Switch, Tabs, iconSize } from "@incmix/ui"
 import { X } from "lucide-react"
 import { useState } from "react"
 import { projectFolders } from "../data"

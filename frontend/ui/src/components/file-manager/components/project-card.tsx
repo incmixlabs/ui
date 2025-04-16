@@ -1,6 +1,6 @@
 import { useMediaQuery } from "@hooks/use-media-query"
 import { Box, Flex } from "@incmix/ui"
-import { cn } from "@utils"
+import { cn } from "@utils/cn"
 import type { ElementType } from "react"
 import type { FileItem } from "../data"
 import { ProjectActionsMenu } from "./project-actions-menu"

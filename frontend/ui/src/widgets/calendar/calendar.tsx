@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Text, TextField } from "@incmix/ui"
+import { Box, Flex, Heading, Text, TextField } from "@base"
 import {
   ChevronLeftIcon,
   ChevronRightIcon,

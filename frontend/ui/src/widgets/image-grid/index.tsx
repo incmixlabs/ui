@@ -4,11 +4,10 @@ import {
   LayoutGrid,
   type LayoutGridCard,
 } from "@components/layout-grid"
-import { toast } from "@components/toaster"
 import { useUploadFile } from "@hooks/use-upload-file"
-import { Box, Button, Card, Flex, Text } from "@incmix/ui"
+import { Box, Button, Card, Flex, Text, toast } from "@base"
 import { TrashIcon, UploadIcon } from "@radix-ui/react-icons"
-import { cn } from "@utils"
+import { cn } from "@utils/cn"
 import { useCallback, useEffect, useState } from "react"
 
 type FileItem = { card: LayoutGridCard; handle: FileSystemFileHandle }

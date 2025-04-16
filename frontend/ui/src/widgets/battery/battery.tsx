@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@incmix/ui"
+import { Box, Flex, Text } from "@base"
 import { LightningBoltIcon } from "@radix-ui/react-icons"
 import { cn } from "@utils/cn"
 

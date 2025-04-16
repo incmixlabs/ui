@@ -7,7 +7,7 @@ import type { DataTableFilterField } from "./lib/types"
 
 import { Button } from "@radix-ui/themes"
 import { TextField } from "@radix-ui/themes"
-import { cn } from "@utils"
+import { cn } from "@utils/cn"
 import { DataTableFacetedFilter } from "./data-table-faceted-filter"
 import { DataTableViewOptions } from "./data-table-view-options"
 

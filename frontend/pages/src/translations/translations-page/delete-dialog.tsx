@@ -1,20 +1,16 @@
 "use client"
 
-import {
-  Button,
-  Dialog,
-  DialogFooter,
-  DialogHeader,
-  ReactiveButton,
-} from "@incmix/ui"
+import {} from "@incmix/ui"
+import { Button } from "@incmix/ui"
 import { INTL_API_URL } from "@incmix/ui/constants"
 import { useMutation } from "@tanstack/react-query"
 import type { Row } from "@tanstack/react-table"
 import { Trash } from "lucide-react"
+import { useState } from "react"
 import type { TranslationMessage } from "./types"
 
 interface DeleteDialogProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
+  extends React.ComponentPropsWithoutRef<typeof Dialog> {
   items: Row<TranslationMessage>["original"][]
   showTrigger?: boolean
   onSuccess?: () => void
@@ -47,7 +43,7 @@ export function DeleteDialog({
   })
 
   return (
-    <Dialog.Root {...props}>
+    <Dialog {...props}>
       {showTrigger ? (
         <Dialog.Trigger>
           <Button variant="outline" color="red">
@@ -56,21 +52,21 @@ export function DeleteDialog({
           </Button>
         </Dialog.Trigger>
       ) : null}
-      <Dialog.Content>
+      <DialogContent>
         <DialogHeader>
-          <Dialog.Title>Are you absolutely sure?</Dialog.Title>
-          <Dialog.Description>
+          <DialogTitle>Are you absolutely sure?</DialogTitle>
+          <DialogDescription>
             This action cannot be undone. This will permanently delete your{" "}
             <span className="font-medium">{items.length}</span>
             {items.length === 1 ? " item" : " items"} from our servers.
-          </Dialog.Description>
+          </DialogDescription>
         </DialogHeader>
         <DialogFooter className="gap-2 sm:space-x-0">
-          <Dialog.Close>
+          <DialogClose>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </Dialog.Close>
+          </DialogClose>
           <ReactiveButton
             onClick={() => onDelete()}
             loading={isPending}
@@ -79,7 +75,7 @@ export function DeleteDialog({
             Delete
           </ReactiveButton>
         </DialogFooter>
-      </Dialog.Content>
-    </Dialog.Root>
+      </DialogContent>
+    </Dialog>
   )
 }

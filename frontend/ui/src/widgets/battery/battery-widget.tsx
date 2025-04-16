@@ -1,4 +1,4 @@
-import { Box } from "@incmix/ui"
+import { Box } from "@base"
 import { useEffect, useState } from "react"
 import { Battery, type BatteryInfo } from "./battery"
 

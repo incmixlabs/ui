@@ -1,3 +1,4 @@
+import { motion } from "motion/react"
 import {
   Avatar,
   Box,
@@ -8,20 +9,18 @@ import {
   Grid,
   Heading,
   IconButton,
-  RadialBarChart,
   ScrollArea,
-  StatisticsBarChartView,
-  StatsCard,
   Text,
-  dashboardColorValues,
-} from "@incmix/ui"
+} from "@base"
+import { RadialBarChart, StatisticsBarChartView, StatsCard,
+  dashboardColorValues } from "@charts"
 
 import { Ellipsis, EllipsisVertical, Settings } from "lucide-react"
-import { motion } from "motion/react"
-import type React from "react"
+
+
 import { useState } from "react"
-import { Calendar } from "../calendar"
-import { SmartDatetimeInput } from "../datetime-picker"
+import { Calendar } from "@shadcn/calendar"
+import { SmartDatetimeInput } from "@components/datetime-picker"
 import { KanbanImages } from "../kanban-board/images"
 import { revisionData, taskStats } from "./data"
 import PostingCalendar from "./posting-calendar"

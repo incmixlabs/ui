@@ -1,10 +1,9 @@
 "use client"
 
 import type { Table } from "@tanstack/react-table"
-import type * as React from "react"
 import type { DataTableAdvancedFilterField } from "./lib/types"
 
-import { cn } from "@utils"
+import { cn } from "@utils/cn"
 import { DataTableFilterList } from "./data-table-filter-list"
 import { DataTableViewOptions } from "./data-table-view-options"
 

@@ -1,15 +1,7 @@
 import {
+  Form,
   Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select"
-import {
-  FormControl,
-  FormItem,
-  FormMessage,
-} from "@components/shadcn-form/form"
+} from "@base"
 import type * as z from "zod"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"
@@ -39,30 +31,27 @@ export default function AutoFormEnum({
   }
 
   return (
-    <FormItem className="flex w-full flex-row items-center justify-start space-x-2">
+    <Form.Item className="flex w-full flex-row items-center justify-start space-x-2">
       <AutoFormLabel label={label} isRequired={isRequired} />
-      <FormControl>
-        <Select
+      <Form.Control>
+        <Select.Root
           onValueChange={field.onChange}
-          defaultValue={field.value}
           {...fieldProps}
+          defaultValue={field.value ? findItem(field.value)?.[1] : "Select an option"}
         >
-          <SelectTrigger className={fieldProps.className}>
-            <SelectValue placeholder={fieldConfigItem.inputProps?.placeholder}>
-              {field.value ? findItem(field.value)?.[1] : "Select an option"}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
+          <Select.Trigger className={fieldProps.className}/>
+
+          <Select.Content>
             {values.map(([value, label]) => (
-              <SelectItem value={label} key={value}>
+              <Select.Item value={label} key={value}>
                 {label}
-              </SelectItem>
+              </Select.Item>
             ))}
-          </SelectContent>
-        </Select>
-      </FormControl>
+          </Select.Content>
+        </Select.Root>
+      </Form.Control>
       <AutoFormTooltip fieldConfigItem={fieldConfigItem} />
-      <FormMessage />
-    </FormItem>
+      <Form.Message />
+    </Form.Item>
   )
 }

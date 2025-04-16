@@ -1,10 +1,11 @@
 "use client"
 
-import { Box, Flex, Text, iconSize } from "@incmix/ui"
+import React, { type ComponentType } from "react"
+import { Box, Flex, Text, iconSize } from "@base"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import { cn } from "@utils/cn"
 import { ChevronRight, type LucideIcon } from "lucide-react"
-import React, { type ComponentType } from "react"
+
 import type { IconProps } from "./icons/types"
 
 interface TreeDataItem {

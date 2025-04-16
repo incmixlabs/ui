@@ -1,5 +1,6 @@
 import { LoadingPage } from "@common"
-import { Flex, Heading, Project1 } from "@incmix/ui"
+import { Flex, Heading } from "@incmix/ui"
+import { Project1 } from "@incmix/ui/dashboard"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useTranslation } from "react-i18next"
 import { useAuth } from "../../auth"

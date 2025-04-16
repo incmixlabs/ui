@@ -1,4 +1,3 @@
-import { FileTextIcon, ImageIcon } from "lucide-react"
 import type React from "react"
 import { FolderClose } from "../secondary-sidebars/file-folder/icons/folder-close"
 import { FolderOpen } from "../secondary-sidebars/file-folder/icons/folder-open"

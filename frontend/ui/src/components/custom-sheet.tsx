@@ -1,5 +1,5 @@
 import { Box, Flex, Heading, IconButton, Text } from "@incmix/ui"
-import { cn } from "@utils"
+import { cn } from "@utils/cn"
 import { AnimatePresence, motion } from "framer-motion"
 import { X } from "lucide-react"
 import type React from "react"

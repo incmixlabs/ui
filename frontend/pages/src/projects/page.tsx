@@ -1,4 +1,4 @@
-import { ProjectPageComponents, RoadmapView } from "@incmix/ui"
+import { ProjectPageComponents, RoadmapView } from "@incmix/ui/projects"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 
 const ProjectsPage = () => {
@@ -7,7 +7,7 @@ const ProjectsPage = () => {
       breadcrumbItems={[{ label: "Projects", url: "/projects" }]}
     >
       <ProjectPageComponents />
-      {/* <RoadmapView /> */}
+      <RoadmapView />
     </DashboardLayout>
   )
 }

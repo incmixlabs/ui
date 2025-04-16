@@ -1,6 +1,6 @@
-import { Flex } from "@incmix/ui"
+import { Avatar } from "@components/radixui/avatar"
+import { Flex } from "@components/radixui/flex"
 import type React from "react"
-import { Avatar } from "../../avatar"
 import { gaps } from "../constants"
 import type { AvatarGroupProps } from "../types"
 import { getVisibleCount } from "../utils"

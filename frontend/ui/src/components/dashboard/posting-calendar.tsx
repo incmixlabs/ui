@@ -1,7 +1,7 @@
 import React, { useMemo } from "react"
 
-import { Box, Flex, Grid, Heading, IconButton, Text, Tooltip } from "@incmix/ui"
-import { cn } from "@utils"
+import { Box, Flex, Grid, Heading, IconButton, Text, Tooltip } from "@base"
+import { cn } from "@utils/cn"
 import { Ellipsis, Zap } from "lucide-react"
 
 interface Task {

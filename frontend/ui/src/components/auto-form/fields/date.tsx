@@ -1,9 +1,7 @@
 import { SmartDatetimeInput } from "@components/datetime-picker"
 import {
-  FormControl,
-  FormItem,
-  FormMessage,
-} from "@components/shadcn-form/form"
+  Form
+} from "@shadcn/form"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 
@@ -48,7 +46,7 @@ export default function AutoFormDate({
   }
 
   return (
-    <FormItem className="flex w-full flex-col space-y-2">
+    <Form.Item className="flex w-full flex-col space-y-2">
       <div className="mb-2">
         <AutoFormLabel
           label={label}
@@ -56,7 +54,7 @@ export default function AutoFormDate({
           className="w-auto font-medium text-base"
         />
       </div>
-      <FormControl>
+      <Form.Control>
         <SmartDatetimeInput
           value={validDate}
           onValueChange={handleDateChange}
@@ -67,8 +65,8 @@ export default function AutoFormDate({
           }
           className={fieldProps?.className || "w-full bg-gray-2 dark:bg-gray-1"}
         />
-      </FormControl>
-      <FormMessage />
-    </FormItem>
+      </Form.Control>
+      <Form.Message />
+    </Form.Item>
   )
 }

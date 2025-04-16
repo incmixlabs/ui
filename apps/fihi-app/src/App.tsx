@@ -12,8 +12,8 @@ import {
   useLanguageStore,
   useThemeStore,
 } from "@incmix/store"
-import { Theme, Toaster } from "@incmix/ui"
-import { DashboardPage } from "@incmix/ui/layouts"
+import { Toaster } from "@incmix/ui"
+import { Theme } from "@incmix/ui/theme"
 import { Provider as RxdbProvider } from "rxdb-hooks"
 import { translations } from "./translations"
 
@@ -111,11 +111,10 @@ function App() {
     }
   }, [language])
 
-  const isMock = useMemo(() => {
+  const _isMock = useMemo(() => {
     const search = window.location.search
     return search.includes("mock")
   }, [])
-
   return (
     <Theme
       accentColor="indigo"
@@ -128,7 +127,7 @@ function App() {
       <RxdbProvider db={db}>
         <Suspense fallback={<LoadingPage />}>
           <Toaster />
-          {isMock ? <DashboardPage /> : <RouterProvider router={router} />}
+          <RouterProvider router={router} />
         </Suspense>
       </RxdbProvider>
     </Theme>

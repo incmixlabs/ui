@@ -1,4 +1,4 @@
-import { FileManager } from "@incmix/ui"
+import { FileManager } from "@incmix/ui/file-manager"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 
 const FileManagerPage = () => {

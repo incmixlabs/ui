@@ -1,4 +1,4 @@
-import { Button, Card, Flex, FormField, Text, cn } from "@incmix/ui"
+import { Button, Card, Flex, Form, Text, cn } from "@incmix/ui"
 import { Step, type StepItem, Stepper, useStepper } from "@incmix/ui/stepper"
 import * as Collapsible from "@radix-ui/react-collapsible"
 import { PersonIcon, QuoteIcon, StarIcon } from "@radix-ui/react-icons"
@@ -488,7 +488,7 @@ function StepForm({ fields }: { fields: (typeof formSteps)[0]["fields"] }) {
             }}
           >
             {(fieldApi) => (
-              <FormField
+              <Form.Field
                 key={field.name}
                 name={field.name}
                 label={field.label}

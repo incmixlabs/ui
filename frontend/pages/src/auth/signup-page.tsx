@@ -1,13 +1,13 @@
-import { useForm } from "@tanstack/react-form"
-import { useMutation } from "@tanstack/react-query"
-import { Link, useNavigate } from "@tanstack/react-router"
-import { zodValidator } from "@tanstack/zod-form-adapter"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 
-import { FormField } from "@incmix/ui"
-import { Box, Flex, Heading, ReactiveButton, Text } from "@incmix/ui"
+import { useForm } from "@tanstack/react-form"
+import { useMutation } from "@tanstack/react-query"
+import { Link, useNavigate } from "@tanstack/react-router"
+import { zodValidator } from "@tanstack/zod-form-adapter"
+
+import { Box, Flex, Form, Heading, ReactiveButton, Text } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import type { AuthUser } from "@incmix/utils/types"
 
@@ -88,7 +88,7 @@ function SignupForm() {
             }}
           >
             {(field) => (
-              <FormField name="name" label={t("common:name")} field={field} />
+              <Form.Field name="name" label={t("common:name")} field={field} />
             )}
           </form.Field>
 
@@ -100,7 +100,7 @@ function SignupForm() {
             }}
           >
             {(field) => (
-              <FormField
+              <Form.Field
                 name="email"
                 label={t("common:email")}
                 type="email"
@@ -117,7 +117,7 @@ function SignupForm() {
             }}
           >
             {(field) => (
-              <FormField
+              <Form.Field
                 name="password"
                 label={t("common:password")}
                 type="password"

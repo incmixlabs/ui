@@ -1,19 +1,4 @@
-import {
-  Button,
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Flex,
-  FormField,
-  ReactiveButton,
-  Select,
-  Text,
-} from "@incmix/ui"
+import {} from "@incmix/ui"
 import { INTL_API_URL } from "@incmix/ui/constants"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQuery } from "@tanstack/react-query"
@@ -24,7 +9,7 @@ import { useState } from "react"
 import { z } from "zod"
 import type { TranslationMessage } from "./types"
 interface EditTranslationDialogProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
+  extends React.ComponentPropsWithoutRef<typeof Dialog> {
   item?: Row<TranslationMessage>["original"]
   onSuccess?: () => void
 }
@@ -37,24 +22,24 @@ export const EditTranslationDialog: React.FC<EditTranslationDialogProps> = ({
 }) => {
   if (!item) return null
   return (
-    <Dialog.Root {...props}>
-      <Dialog.Content>
+    <Dialog {...props}>
+      <DialogContent>
         <DialogHeader>
-          <Dialog.Title>Edit Translation</Dialog.Title>
-          <Dialog.Description className="sr-only">
-            Edit Translation
-          </Dialog.Description>
+          <DialogTitle>Edit Translation</DialogTitle>
         </DialogHeader>
+        <DialogDescription className="sr-only">
+          Edit Translation
+        </DialogDescription>
         <EditTranlationForm item={item} onSuccess={onSuccess} />
         <DialogFooter className="gap-2 sm:space-x-0">
-          <Dialog.Close>
+          <DialogClose>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </Dialog.Close>
+          </DialogClose>
         </DialogFooter>
-      </Dialog.Content>
-    </Dialog.Root>
+      </DialogContent>
+    </Dialog>
   )
 }
 

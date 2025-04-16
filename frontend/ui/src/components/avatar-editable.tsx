@@ -1,8 +1,7 @@
-import { Box, Flex } from "@incmix/ui"
 import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons"
 import { useRef, useState } from "react"
-import { Avatar } from "./avatar"
-import { Button } from "./button"
+
+import { Avatar,Box, Button, Flex } from "@radixui"
 
 type AvatarEditableProps = {
   size?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"

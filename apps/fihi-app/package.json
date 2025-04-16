@@ -22,8 +22,9 @@
     "@tauri-apps/api": ">=2.0.0-beta.0",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-router-dom": "7.5.0",
-    "rxdb-hooks": "catalog:"
+    "react-router-dom": "catalog:",
+    "rxdb-hooks": "catalog:",
+    "windy-radix-palette": "2.0.0-beta.7"
   },
   "devDependencies": {
     "@incmix/config": "workspace: *",

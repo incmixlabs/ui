@@ -1,12 +1,5 @@
 import { Button, Flex, Input, toast } from "@incmix/ui"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeadCell,
-  TableRow,
-} from "@incmix/ui/table"
+import { Table } from "@incmix/ui/table"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import {
   type Column,
@@ -115,11 +108,11 @@ const PermissonsTable = () => {
           </Button>
         </Flex>
       </Flex>
-      <Table>
+      <Table.Root>
         {table.getHeaderGroups().map((headerGroup) => (
-          <TableHead key={headerGroup.id}>
+          <Table.Header key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
-              <TableHeadCell key={header.id}>
+              <Table.ColumnHeaderCell key={header.id}>
                 {flexRender(
                   header.column.columnDef.header,
                   header.getContext()
@@ -129,22 +122,22 @@ const PermissonsTable = () => {
                     <Filter column={header.column} />
                   </div>
                 ) : null}
-              </TableHeadCell>
+              </Table.ColumnHeaderCell>
             ))}
-          </TableHead>
+          </Table.Header>
         ))}
-        <TableBody>
+        <Table.Body>
           {table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id}>
+            <Table.Row key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
+                <Table.Cell key={cell.id}>
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
+                </Table.Cell>
               ))}
-            </TableRow>
+            </Table.Row>
           ))}
-        </TableBody>
-      </Table>
+        </Table.Body>
+      </Table.Root>
       <RoleEditorModal
         title="Edit Role"
         role={columnAction?.role}

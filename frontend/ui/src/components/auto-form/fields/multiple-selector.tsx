@@ -1,10 +1,8 @@
+// @ts-ignore
 import MultipleSelector from "@components/multiple-selector/multiple-selector"
 import {
-  FormControl,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@components/shadcn-form/form"
+  Form
+} from "@shadcn"
 import type { AutoFormInputComponentProps } from "../types"
 
 // Define the allowed color types to match the component's requirements
@@ -52,14 +50,14 @@ export default function MultipleSelectorField({
     : "gray"
 
   return (
-    <FormItem>
+    <Form.Item>
       {fieldConfigItem.inputProps?.showLabel !== false && (
-        <FormLabel>
+        <Form.Label>
           {label} {isRequired && <span className="text-destructive">*</span>}
-        </FormLabel>
+        </Form.Label>
       )}
 
-      <FormControl>
+      <Form.Control>
         <MultipleSelector
           value={field.value || []}
           onChange={field.onChange}
@@ -70,13 +68,13 @@ export default function MultipleSelectorField({
           className={fieldConfigItem.inputProps?.className}
           defaultColor={safeColor}
         />
-      </FormControl>
+      </Form.Control>
       {/*
       {fieldConfigItem.description && (
         <FormDescription>{fieldConfigItem.description}</FormDescription>
       )} */}
 
-      <FormMessage />
-    </FormItem>
+      <Form.Message />
+    </Form.Item>
   )
 }

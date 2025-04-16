@@ -1,11 +1,8 @@
 import {
   Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@components/accordion/shadcn-accordion"
+} from "@base"
 
-import { SCNformField } from "@components/shadcn-form/form"
+import { Form } from "@components/shadcn"
 import { type useForm, useFormContext } from "react-hook-form"
 import type * as z from "zod"
 import { DEFAULT_ZOD_HANDLERS, INPUT_COMPONENTS } from "../config"
@@ -75,9 +72,9 @@ function renderField({
   // Handle ZodObject
   if (zodBaseType === "ZodObject") {
     return (
-      <AccordionItem value={name} key={key} className="border-none">
-        <AccordionTrigger>{itemName}</AccordionTrigger>
-        <AccordionContent className="p-2">
+      <Accordion.Item value={name} key={key} className="border-none">
+        <Accordion.Trigger>{itemName}</Accordion.Trigger>
+        <Accordion.Content className="p-2">
           <AutoFormObject
             schema={item as unknown as z.ZodObject<any, any>}
             form={form}
@@ -86,8 +83,8 @@ function renderField({
             }
             path={[...path, name]}
           />
-        </AccordionContent>
-      </AccordionItem>
+        </Accordion.Content>
+      </Accordion.Item>
     )
   }
 
@@ -106,8 +103,8 @@ function renderField({
       zodInputProps.required || fieldConfigItem.inputProps?.required || false
 
     return (
-      <SCNformField
-        control={form.control}
+      <Form.Field
+        control={form.control as any}
         name={key}
         key={key}
         render={({ field }) => {
@@ -170,8 +167,9 @@ function renderField({
     zodInputProps.required || fieldConfigItem.inputProps?.required || false
 
   return (
-    <SCNformField
-      control={form.control}
+    <Form.Field
+      control={form.control as any}
+      defaultValue={fieldConfigItem.inputProps?.defaultValue}
       name={key}
       key={key}
       render={({ field }) => {

@@ -1,20 +1,10 @@
-import {
-  Button,
-  Dialog,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  Flex,
-  FormField,
-  ReactiveButton,
-  toast,
-} from "@incmix/ui"
 import { useForm } from "@tanstack/react-form"
 import { useMutation } from "@tanstack/react-query"
 import { zodValidator } from "@tanstack/zod-form-adapter"
 import { PlusCircleIcon } from "lucide-react"
 import { z } from "zod"
+
+import { Button, Dialog, Flex, Form, ReactiveButton, toast } from "@incmix/ui"
 import { createRole, updateRole } from "./actions"
 
 type RoleEditorModalProps = {
@@ -30,6 +20,7 @@ const RoleEditorModal = ({
   open,
   onOpenChange,
   title,
+  // biome-ignore lint/correctness/noUnusedVariables: <explanation>
   showTrigger,
   onSuccess,
 }: RoleEditorModalProps) => {
@@ -78,18 +69,16 @@ const RoleEditorModal = ({
         }
       }}
     >
-      {showTrigger && (
-        <Dialog.Trigger>
-          <Button variant="outline">
-            <PlusCircleIcon /> Add New Role
-          </Button>
-        </Dialog.Trigger>
-      )}
+      <Dialog.Trigger asChild>
+        <Button size="2">
+          <PlusCircleIcon /> Add New Role
+        </Button>
+      </Dialog.Trigger>
       <Dialog.Content>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription className="sr-only">{title}</DialogDescription>
-        </DialogHeader>
+        <Dialog.Header>
+          <Dialog.Title>{title}</Dialog.Title>
+          <Dialog.Description className="sr-only">{title}</Dialog.Description>
+        </Dialog.Header>
 
         <form
           onSubmit={(e) => {
@@ -107,7 +96,7 @@ const RoleEditorModal = ({
               }}
             >
               {(field) => (
-                <FormField
+                <Form.Field
                   name="name"
                   label="Role Name"
                   type="text"
@@ -128,13 +117,13 @@ const RoleEditorModal = ({
             </ReactiveButton>
           </Flex>
         </form>
-        <DialogFooter className="mt-4 gap-2 sm:space-x-0">
+        <Dialog.Footer>
           <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
           </Dialog.Close>
-        </DialogFooter>
+        </Dialog.Footer>
       </Dialog.Content>
     </Dialog.Root>
   )
