@@ -17,10 +17,14 @@ import {
   Input,
   Separator,
   Skeleton,
-  Tooltip,
 } from "@/components/base"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@radix-ui/react-tooltip"
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from "../sheet"
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
@@ -123,7 +127,11 @@ const SidebarProvider = React.forwardRef<
       (value: boolean | ((prev: boolean) => boolean)) => {
         const newValue =
           typeof value === "function" ? value(secondaryOpen) : value
-        setSecondaryOpenProp?.(newValue) || _setSecondaryOpen(newValue)
+        if (setSecondaryOpenProp) {
+          setSecondaryOpenProp(newValue)
+        } else {
+          _setSecondaryOpen(newValue)
+        }
       },
       [setSecondaryOpenProp, secondaryOpen]
     )
