@@ -1,4 +1,5 @@
-import { Button, Card, Flex, Form, Text, cn } from "@incmix/ui"
+import { Button, Card, Flex, Form, Text } from "@incmix/ui"
+import { cn } from "@incmix/ui/utils"
 import { Step, type StepItem, Stepper, useStepper } from "@incmix/ui/stepper"
 import * as Collapsible from "@radix-ui/react-collapsible"
 import { PersonIcon, QuoteIcon, StarIcon } from "@radix-ui/react-icons"

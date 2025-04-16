@@ -1,9 +1,5 @@
 import usersList from "@/data/users"
-import { Avatar } from "@incmix/ui/avatar"
-import { Checkbox } from "@incmix/ui"
-import { Label } from "@incmix/ui/label"
-import type { TableProps } from "@incmix/ui/table"
-import { Table } from "@incmix/ui/table"
+import { Avatar, Checkbox, Label, Table } from "@incmix/ui"
 import type { Meta, StoryObj } from "@storybook/react"
 usersList.length = 5
 import { twMerge } from "tailwind-merge"
@@ -18,16 +14,8 @@ export interface User {
 
 const meta = {
   title: "Atoms/Table",
-  component: Table,
+  component: Table.Root,
   argTypes: {
-    className: {
-      description: "Example description",
-      table: {
-        type: { summary: "string" },
-        defaultValue: { summary: "bar" },
-      },
-      control: "text",
-    },
   },
 } satisfies Meta<typeof Table>
 
@@ -37,16 +25,16 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   render: () => {
     return (
-      <Table>
-        <Table.Head>
-          <Table.HeadCell>Product name</Table.HeadCell>
-          <Table.HeadCell>Color</Table.HeadCell>
-          <Table.HeadCell>Category</Table.HeadCell>
-          <Table.HeadCell>Price</Table.HeadCell>
-          <Table.HeadCell>
+      <Table.Root>
+        <Table.Header>
+          <Table.ColumnHeaderCell>Product name</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>Color</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>Category</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>Price</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>
             <span className="sr-only">Edit</span>
-          </Table.HeadCell>
-        </Table.Head>
+          </Table.ColumnHeaderCell>
+        </Table.Header>
         <Table.Body className="divide-y">
           <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
             <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
@@ -129,7 +117,7 @@ export const Default: Story = {
             </Table.Cell>
           </Table.Row>
         </Table.Body>
-      </Table>
+      </Table.Root>
     )
   },
 } as Story
@@ -149,17 +137,17 @@ export const UserTable: Story = {
             },
           }}
         >
-          <Table.HeadCell>
+          <Table.ColumnHeaderCell>
             <Label htmlFor="select-all" className="sr-only">
               Select all
             </Label>
             <Checkbox id="select-all" name="select-all" />
-          </Table.HeadCell>
-          <Table.HeadCell>Name</Table.HeadCell>
-          <Table.HeadCell>Position</Table.HeadCell>
-          <Table.HeadCell>Country</Table.HeadCell>
-          <Table.HeadCell>Status</Table.HeadCell>
-          <Table.HeadCell />
+          </Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>Position</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>Country</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell />
         </Table.Head>
         <Table.Body className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
           {usersList.map((user) => (

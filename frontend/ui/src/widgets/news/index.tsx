@@ -199,5 +199,5 @@ export default function NewsWidget({ country }: NewsProps) {
     </div>
   )
 }
-
-export { NewsWidget }
+export type {  NewsStory } from "./news-card"
+export { NewsWidget , }

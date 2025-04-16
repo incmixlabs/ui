@@ -1,5 +1,5 @@
 import { useThemeStore } from "@incmix/store"
-import { Carousel, CarouselContent } from "@incmix/ui"
+import { Carousel, CarouselContent } from "@incmix/ui/carousel"
 import { NewsCard, type NewsStory } from "@incmix/ui/widgets"
 import type { Meta, StoryObj } from "@storybook/react"
 

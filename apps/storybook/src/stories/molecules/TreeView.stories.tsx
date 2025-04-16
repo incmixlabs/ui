@@ -1,4 +1,4 @@
-import { type TreeDataItem, TreeView } from "@incmix/ui"
+import { type TreeDataItem, TreeView } from "@incmix/ui/tree-view"
 import { Box } from "@incmix/ui"
 import type { Meta, StoryObj } from "@storybook/react"
 import { FileIcon, FolderIcon, FolderOpenIcon } from "lucide-react"

@@ -1,7 +1,4 @@
 export * from "./components"
 export * from "./hooks"
-export * from "./components/icons"
-export * from "./widgets"
-export * from "./preset"
-export * from "./tauri"
 export * from "./utils"
+export { Theme  } from "@radix-ui/themes"

@@ -1,4 +1,4 @@
-import { Board } from "@incmix/ui"
+import { Board } from "@incmix/ui/kanban"
 import type { Meta, StoryObj } from "@storybook/react"
 import data from "../../data/kanban"
 

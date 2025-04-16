@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react"
-import { MultipleSelectorControlled } from "@incmix/ui"
+import { MultipleSelectorControlled } from "@incmix/ui/multiple-selector"
 
 const meta: Meta<typeof MultipleSelectorControlled> = {
   title: "Atoms/MultipleSelector",

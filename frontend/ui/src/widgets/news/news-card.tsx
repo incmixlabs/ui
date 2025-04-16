@@ -67,11 +67,11 @@ const NewsStory = ({
   return (
     <Box>
       <a target="_blank" href={story.link} rel="noreferrer">
-        <CardTitle
+        <Card.Title
           className={cn("hover:underline", isHighlight ? "text-lg" : "text-md")}
         >
           {story.title}
-        </CardTitle>
+        </Card.Title>
       </a>
       <Box>
         {story.source.authors && (
