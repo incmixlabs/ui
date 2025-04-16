@@ -9,6 +9,7 @@ export const Toaster: React.FC<{ position?: Position }> = ({
     <SonnerToaster
       position={position}
       closeButton
+      richColors
       duration={3000}
       visibleToasts={5}
       toastOptions={{

@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@casl/react": "5.0.0",
+    "@dnd-kit/modifiers": "^9.0.0",
     "@incmix/store": "workspace: *",
     "@incmix/ui": "workspace: *",
     "@incmix/utils": "catalog:",

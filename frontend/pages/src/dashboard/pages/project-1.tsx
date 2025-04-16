@@ -1,41 +1,41 @@
-import { LoadingPage } from "@common"
+"use client"
 
+import type React from "react"
+
+import { LoadingPage } from "@common"
+import {
+  DndContext,
+  type DragEndEvent,
+  DragOverlay,
+  type DragStartEvent,
+} from "@dnd-kit/core"
+import {
+  ActiveTask,
+  Box,
+  DashboardSidebar,
+  DroppableArea,
+  NewTasks,
+  PostingTask,
+  ProjectWidgets2,
+  StatisticWidgets2,
+  TotalProject,
+  TotalTasks,
+  createLayoutItemForAllBreakpoints,
+  dashboardImg,
+  sidebarComponents,
+} from "@incmix/ui"
+import { Heading } from "@incmix/ui"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { useCallback, useMemo, useRef, useState } from "react"
-import type { ReactNode } from "react"
+import { useMemo, useState } from "react"
+import { Responsive, WidthProvider } from "react-grid-layout"
 import { useTranslation } from "react-i18next"
 import { useAuth } from "../../auth"
 import { EditWidgetsControl } from "./home"
 
-import {
-  ActiveTask,
-  Box,
-  CalendarWidget,
-  DoneTasks,
-  Grid,
-  GridLayoutExample,
-  Heading,
-  InProgressTask,
-  NewTasks,
-  PostingTask,
-  ProfileSettings,
-  ProjectWidgets,
-  ProjectWidgets2,
-  RecentActivity,
-  SortableItem,
-  StatisticWidgets,
-  StatisticWidgets2,
-  TotalProject,
-  TotalTasks,
-  dashboardImg,
-  isRectDifferent,
-} from "@incmix/ui"
-import { GripVertical } from "lucide-react"
-import { Responsive, WidthProvider } from "react-grid-layout"
-
 import "react-grid-layout/css/styles.css"
 import "react-resizable/css/styles.css"
-interface LayoutItem {
+
+export interface LayoutItem {
   i: string
   x: number
   y: number
@@ -47,10 +47,11 @@ interface LayoutItem {
   [key: string]: any
 }
 
-type Breakpoint = "lg" | "md" | "sm" | "xs" | "xxs"
+export type Breakpoint = "lg" | "md" | "sm" | "xs" | "xxs"
 type ResponsiveLayout = Record<Breakpoint, LayoutItem[]>
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
+
 interface ComponentSlot {
   slotId: string
   component: React.ReactNode
@@ -58,13 +59,24 @@ interface ComponentSlot {
   compImage?: string
 }
 
+// Default sizes for different breakpoints
+const DEFAULT_SIZES: Record<Breakpoint, { w: number; h: number }> = {
+  lg: { w: 3, h: 6 },
+  md: { w: 3, h: 6 },
+  sm: { w: 3, h: 6 },
+  xs: { w: 3, h: 6 },
+  xxs: { w: 2, h: 6 },
+}
+
 const DashboardProject1: React.FC = () => {
   const { t } = useTranslation(["dashboard", "common"])
   const { authUser, isLoading } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
-  // Available components for the sidebar
+  const [activeDragId, setActiveDragId] = useState<string | null>(null)
+  const [activeDragData, setActiveDragData] = useState<any>(null)
 
-  const [gridComponents, _setGridComponents] = useState<ComponentSlot[]>([
+  // State for grid components
+  const [gridComponents, setGridComponents] = useState<ComponentSlot[]>([
     {
       slotId: "a",
       component: <NewTasks />,
@@ -99,7 +111,6 @@ const DashboardProject1: React.FC = () => {
       slotId: "f",
       component: <TotalProject />,
       compImage: dashboardImg?.totalProjectImg,
-
       title: "Total Project",
     },
     {
@@ -110,7 +121,7 @@ const DashboardProject1: React.FC = () => {
     },
   ])
 
-  const [initialLayouts, _setInitialLayouts] = useState({
+  const [initialLayouts, _setInitialLayouts] = useState<ResponsiveLayout>({
     lg: [
       {
         w: 2,
@@ -148,7 +159,6 @@ const DashboardProject1: React.FC = () => {
         x: 5,
         y: 0,
         i: "d",
-
         moved: false,
         static: false,
         resizeHandles: ["s", "w", "e", "n"] as const,
@@ -493,54 +503,121 @@ const DashboardProject1: React.FC = () => {
 
   const handleLayoutChange = (layout: any, allLayouts: any) => {
     console.log(layout, allLayouts)
-
     setDefaultLayouts(allLayouts)
+  }
+
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event
+    setActiveDragId(active.id as string)
+    setActiveDragData(active.data.current)
+  }
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event
+
+    setActiveDragId(null)
+    setActiveDragData(null)
+
+    if (!isEditing || !over || over.id !== "grid-layout") return
+
+    const draggedSlotId = active.id as string
+    const dragData = active.data.current
+
+    if (!dragData) return
+
+    const isAlreadyInGrid = gridComponents.some(
+      (comp) => comp.slotId === draggedSlotId
+    )
+
+    if (isAlreadyInGrid) return
+
+    const draggedComponent = sidebarComponents.find(
+      (comp) => comp.slotId === draggedSlotId
+    )
+
+    if (!draggedComponent) return
+
+    setGridComponents([...gridComponents, draggedComponent])
+
+    const newLayouts = createLayoutItemForAllBreakpoints(
+      defaultLayouts,
+      draggedSlotId,
+      DEFAULT_SIZES
+    )
+
+    setDefaultLayouts(newLayouts)
   }
 
   if (isLoading) return <LoadingPage />
   if (!authUser) return null
+
   return (
-    <DashboardLayout
-      breadcrumbItems={[]}
-      navExtras={<EditWidgetsControl onEditChange={setIsEditing} />}
-    >
-      <Box as="div" className="container mx-auto flex overflow-x-hidden">
-        <Box className="w-full">
-          <Heading size="6" className="pb-4">
-            {t("dashboard:title")}
-          </Heading>
-          <ResponsiveGridLayout
-            className="layout"
-            layouts={getLayoutsWithStaticFlag}
-            rowHeight={30}
-            breakpoints={{ lg: 1536, md: 996, sm: 768, xs: 480, xxs: 0 }}
-            cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-            onLayoutChange={handleLayoutChange}
-          >
-            {gridComponents.map((item) => (
-              <div
-                key={item.slotId}
-                className={`relative h-full rounded-xl ${isEditing ? "bg-gray-100 p-2 shadow" : ""}`}
+    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <DashboardLayout
+        breadcrumbItems={[]}
+        navExtras={<EditWidgetsControl onEditChange={setIsEditing} />}
+      >
+        <Box as="div" className="container mx-auto flex overflow-x-hidden">
+          <Box className="w-full">
+            <Heading size="6" className="pb-4">
+              {t("dashboard:title")}
+            </Heading>
+            <DroppableArea id="grid-layout" isEditing={isEditing}>
+              <ResponsiveGridLayout
+                className="gridLayout"
+                layouts={getLayoutsWithStaticFlag}
+                rowHeight={30}
+                breakpoints={{ lg: 1536, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                onLayoutChange={handleLayoutChange}
+                droppingItem={{ i: "__dropping-elem__", w: 3, h: 6 }}
               >
-                <div className="widget-content relative h-full">
-                  {isEditing ? (
-                    <>
-                      <img
-                        src={item.compImage}
-                        alt={item.title}
-                        className="h-full w-full rounded-lg"
-                      />
-                    </>
-                  ) : (
-                    <>{item.component}</>
-                  )}
-                </div>
-              </div>
-            ))}
-          </ResponsiveGridLayout>
+                {gridComponents.map((item) => (
+                  <div
+                    key={item.slotId}
+                    className={`relative h-full rounded-xl ${isEditing ? "bg-gray-100 p-2 shadow" : ""}`}
+                  >
+                    <div className="widget-content relative h-full">
+                      {isEditing ? (
+                        <>
+                          <img
+                            src={
+                              item.compImage ||
+                              "/placeholder.svg?height=150&width=150"
+                            }
+                            alt={item.title}
+                            className="h-full w-full rounded-lg"
+                          />
+                        </>
+                      ) : (
+                        <>{item.component}</>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </ResponsiveGridLayout>
+            </DroppableArea>
+          </Box>
         </Box>
-      </Box>
-    </DashboardLayout>
+      </DashboardLayout>
+
+      <DragOverlay>
+        {activeDragId && activeDragData && (
+          <div
+            className="pointer-events-none rounded-lg border border-gray-5 opacity-100 shadow"
+            style={{ width: "150px", height: "100px" }}
+          >
+            <img
+              src={
+                activeDragData.image || "/placeholder.svg?height=150&width=150"
+              }
+              alt={activeDragData.title || "Component"}
+              className="h-full w-full rounded-lg"
+            />
+          </div>
+        )}
+      </DragOverlay>
+    </DndContext>
   )
 }
 

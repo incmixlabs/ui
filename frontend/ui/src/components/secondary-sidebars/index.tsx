@@ -31,7 +31,7 @@ export function SecondarySidebar({
             : `${secondaryOpen ? "flex w-[250px] xl:min-w-[270px]" : "hidden w-0"}`
         )}
       >
-        <Flex direction={"column"} className="h-full overflow-hidden">
+        <Flex direction={"column"} className="h-full">
           {children}
         </Flex>
       </Box>
