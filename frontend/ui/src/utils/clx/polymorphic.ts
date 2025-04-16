@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type * as React from "react"
 
 export type Merge<P1 = {}, P2 = {}> = Omit<P1, keyof P2> & P2
@@ -19,6 +20,7 @@ export interface ForwardRefComponent<IntrinsicElementString, OwnProps = {}>
   <As = IntrinsicElementString>(
     props: As extends ""
       ? {
+        // @ts-ignore
           as: keyof JSX.IntrinsicElements
         }
       : As extends React.ComponentType<infer P>

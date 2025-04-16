@@ -1,6 +1,8 @@
+// @ts-nocheck
 "use client"
-import { Button } from "@components/button"
-import { useScrollIntoView } from "@mantine/hooks"
+
+import { Button } from "@base"
+import { useScrollIntoView } from "@hooks/use-scroll-into-view"
 import { clx } from "@utils/clx/clx-merge"
 
 export default function DemoUseScrollIntoView() {

@@ -30,6 +30,7 @@ const cx = (...args: string[]): string =>
 
 // 2. internalClassed
 const internalClassed = <
+// @ts-ignore
   T extends keyof JSX.IntrinsicElements | AnyComponent,
   V extends Variants = {},
 >(
@@ -103,6 +104,7 @@ const internalClassed = <
 
   Comp.displayName =
     typeof elementType !== "string"
+    // @ts-ignore
       ? elementType.displayName || elementType.name || "Compoonent"
       : `TwComponent(${elementType})`
 

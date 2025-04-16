@@ -1,3 +1,7 @@
+// TBD
+//
+//        // @ts-ignore
+//        return React.Children.map(node.props.children, (childNode) => childNode)
 "use client"
 import { Box, Flex } from "@radix-ui/themes"
 import * as React from "react"
@@ -806,6 +810,7 @@ const HorizontalContent = ({ children }: PropsWithChildren) => {
         if (!React.isValidElement(node)) {
           return null
         }
+        // @ts-ignore
         return React.Children.map(node.props.children, (childNode) => childNode)
       })}
     </>

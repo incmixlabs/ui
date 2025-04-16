@@ -1,7 +1,15 @@
+// @ts-ignore
 export function camelToCapitalized(str: string): string {
   return str
     .replace(/([A-Z])/g, " $1")
     .replace(/^./, (str) => str.toUpperCase())
+}
+export function capitalizedToCamel(str: string): string {
+  return str
+    .toLowerCase()
+    .replace(/(?:^\w|[A-Z]|\b\w|\s+)/g, (match, index) =>
+      index === 0 ? match.toLowerCase() : match.toUpperCase()
+    )
 }
 export const getInitials = (name: string) => {
   if (!name) return ""

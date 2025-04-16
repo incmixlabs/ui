@@ -1,5 +1,4 @@
-import { Box } from "@incmix/ui"
-import type { BoxProps } from "@radix-ui/themes"
+import { Box, type BoxProps } from "@base"
 import { useEffect, useRef } from "react"
 import { createSwapy } from "swapy"
 import { DragHandle } from "./drag-handle"
@@ -29,7 +28,7 @@ export const SwapyLayout = ({
   children,
   ...props
 }: SwapyLayoutProps & BoxProps) => {
-  const swapy = useRef<ReturnType<typeof createSwapy>>()
+  const swapy = useRef<ReturnType<typeof createSwapy> | null>(null)
 
   useEffect(() => {
     swapy.current = createSwapy(document.querySelector(`#${id}`), config)

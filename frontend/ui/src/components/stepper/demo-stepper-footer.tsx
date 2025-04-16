@@ -1,4 +1,4 @@
-import { Button } from "@components/button"
+import { Button } from "@base/button"
 import { useStepper } from "./stepper"
 
 // TODO import

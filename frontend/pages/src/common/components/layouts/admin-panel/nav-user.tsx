@@ -41,8 +41,8 @@ export function NavUser({
             >
               <Avatar
                 src={avatarUrl}
-                className="h-8 w-8 rounded-lg"
-                fallback={""}
+                size="1"
+                name={""}
               />
 
               <div className="grid flex-1 text-left text-sm leading-tight">
