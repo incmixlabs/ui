@@ -2,7 +2,7 @@
 
 import { useDraggable } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
-import { Box } from "@incmix/ui"
+import { Box, sidebarComponents } from "@incmix/ui"
 import type React from "react"
 import { forwardRef, useEffect, useState } from "react"
 
@@ -25,7 +25,8 @@ export const DraggableComponent = forwardRef<
     _ref
   ) => {
     const [isDraggingLocal, setIsDraggingLocal] = useState(false)
-
+    const componentData = sidebarComponents.find((comp) => comp.slotId === id)
+    const layouts = componentData?.layouts
     const { attributes, listeners, setNodeRef, transform, isDragging } =
       useDraggable({
         id,
@@ -35,11 +36,11 @@ export const DraggableComponent = forwardRef<
           title,
           component,
           image,
+          layouts,
         },
         disabled,
       })
 
-    // Update local dragging state and call parent handlers
     useEffect(() => {
       if (isDragging && !isDraggingLocal) {
         setIsDraggingLocal(true)
@@ -61,18 +62,12 @@ export const DraggableComponent = forwardRef<
       if (disabled) {
         e.preventDefault()
         e.stopPropagation()
-        // toast({
-        //   title: "Editing mode is disabled",
-        //   description: "Please enable editing mode to drag and drop components.",
-        //   variant: "destructive",
-        // })
         return
       }
     }
 
     return (
       <Box className="relative">
-        {/* Semi-transparent placeholder that stays in place when dragging */}
         {isDragging && (
           <div className="absolute z-50 rounded-lg border border-gray-400 border-dashed bg-gray-100 opacity-50">
             <img
@@ -83,7 +78,6 @@ export const DraggableComponent = forwardRef<
           </div>
         )}
 
-        {/* Actual draggable element */}
         <Box
           ref={setNodeRef}
           style={style}
@@ -102,7 +96,9 @@ export const DraggableComponent = forwardRef<
             className="h-full w-full rounded-lg"
           />
           <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/30 opacity-0 transition-opacity hover:opacity-100">
-            <span className="font-medium text-white">{title}</span>
+            <span className="text-center font-medium text-sm text-white">
+              {title}
+            </span>
           </div>
         </Box>
       </Box>

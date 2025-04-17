@@ -13,49 +13,97 @@ import {
 import { useState } from "react"
 import { DraggableComponent } from "./draggable-component"
 
-// Define and export the available components so they can be used elsewhere
 export const sidebarComponents = [
   {
     slotId: "h",
     component: <NewTasks />,
     compImage: dashboardImg?.newTaskImg,
     title: "New Tasks",
+    layouts: {
+      lg: { w: 2, h: 6 },
+      md: { w: 2, h: 6 },
+      sm: { w: 3, h: 6 },
+      xs: { w: 4, h: 6 },
+      xxs: { w: 2, h: 6 },
+    },
   },
   {
     slotId: "i",
     component: <TotalTasks />,
     compImage: dashboardImg?.totalTaskImg,
     title: "Total Tasks",
+    layouts: {
+      lg: { w: 2, h: 6 },
+      md: { w: 2, h: 6 },
+      sm: { w: 3, h: 6 },
+      xs: { w: 4, h: 6 },
+      xxs: { w: 2, h: 6 },
+    },
   },
   {
     slotId: "j",
     component: <ProjectWidgets2 />,
     compImage: dashboardImg?.ProjectImg,
     title: "Project Widgets",
+    layouts: {
+      lg: { w: 3, h: 12 },
+      md: { w: 4, h: 12 },
+      sm: { w: 6, h: 6 },
+      xs: { w: 6, h: 6 },
+      xxs: { w: 6, h: 6 },
+    },
   },
   {
     slotId: "k",
     component: <StatisticWidgets2 />,
     compImage: dashboardImg?.statisticsImg,
     title: "Statistic Widgets",
+    layouts: {
+      lg: { w: 5, h: 12 },
+      md: { w: 4, h: 12 },
+      sm: { w: 6, h: 6 },
+      xs: { w: 6, h: 6 },
+      xxs: { w: 6, h: 6 },
+    },
   },
   {
     slotId: "l",
     component: <ActiveTask />,
     compImage: dashboardImg?.activeTaskImg,
     title: "Active Task",
+    layouts: {
+      lg: { w: 5, h: 12 },
+      md: { w: 5, h: 12 },
+      sm: { w: 6, h: 6 },
+      xs: { w: 6, h: 6 },
+      xxs: { w: 6, h: 6 },
+    },
   },
   {
     slotId: "m",
     component: <TotalProject />,
     compImage: dashboardImg?.totalProjectImg,
     title: "Total Project",
+    layouts: {
+      lg: { w: 5, h: 12 },
+      md: { w: 5, h: 12 },
+      sm: { w: 6, h: 6 },
+      xs: { w: 6, h: 6 },
+      xxs: { w: 6, h: 6 },
+    },
   },
   {
     slotId: "n",
     component: <PostingTask />,
     compImage: dashboardImg?.postingTaskImg,
     title: "Posting Task",
+    layouts: {
+      lg: { w: 10, h: 13 },
+      md: { w: 10, h: 13 },
+      sm: { w: 6, h: 8 },
+      xs: { w: 6, h: 8 },
+      xxs: { w: 6, h: 8 },
+    },
   },
 ]
 

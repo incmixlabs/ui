@@ -17,7 +17,7 @@ import {
 import React from "react"
 
 import { useAuth, useCurrentUser } from "@auth"
-import { useOrganizationStore } from "@incmix/store"
+import { useEditingStore, useOrganizationStore } from "@incmix/store"
 import { DashboardSidebar, ScrollArea } from "@incmix/ui"
 import { USERS_API_URL } from "@incmix/ui/constants"
 import {
@@ -48,6 +48,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation(["common", "sidebar"])
   const { pathname } = useLocation()
   const { authUser: user } = useAuth()
+  const { isEditing } = useEditingStore()
 
   const { selectedOrganisation } = useOrganizationStore()
 
@@ -296,7 +297,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SecondarySidebar>
         </ErrorBoundary>
       )}
-      {pathname.includes("/dashboard") && (
+
+      {pathname.includes("/dashboard") && isEditing && (
         <ErrorBoundary
           fallback={<SidebarErrorFallback message="dashboard sidebar" />}
         >
