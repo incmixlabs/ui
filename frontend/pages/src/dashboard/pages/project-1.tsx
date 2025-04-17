@@ -14,6 +14,7 @@ import {
   Box,
   DashboardSidebar,
   DroppableArea,
+  IconButton,
   NewTasks,
   PostingTask,
   ProjectWidgets2,
@@ -23,6 +24,7 @@ import {
   createLayoutItemForAllBreakpoints,
   dashboardImg,
   sidebarComponents,
+  toast,
 } from "@incmix/ui"
 import { Heading } from "@incmix/ui"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
@@ -34,6 +36,8 @@ import { EditWidgetsControl } from "./home"
 
 import "react-grid-layout/css/styles.css"
 import "react-resizable/css/styles.css"
+import { useEditingStore } from "@incmix/store"
+import { Trash } from "lucide-react"
 
 export interface LayoutItem {
   i: string
@@ -59,7 +63,6 @@ interface ComponentSlot {
   compImage?: string
 }
 
-// Default sizes for different breakpoints
 const DEFAULT_SIZES: Record<Breakpoint, { w: number; h: number }> = {
   lg: { w: 3, h: 6 },
   md: { w: 3, h: 6 },
@@ -71,11 +74,15 @@ const DEFAULT_SIZES: Record<Breakpoint, { w: number; h: number }> = {
 const DashboardProject1: React.FC = () => {
   const { t } = useTranslation(["dashboard", "common"])
   const { authUser, isLoading } = useAuth()
-  const [isEditing, setIsEditing] = useState(false)
+  const { isEditing, setIsEditing } = useEditingStore()
   const [activeDragId, setActiveDragId] = useState<string | null>(null)
   const [activeDragData, setActiveDragData] = useState<any>(null)
 
-  // State for grid components
+  const [lastRemovedComponent, setLastRemovedComponent] = useState<{
+    component: ComponentSlot | null
+    layouts: Record<Breakpoint, LayoutItem[]>
+  } | null>(null)
+
   const [gridComponents, setGridComponents] = useState<ComponentSlot[]>([
     {
       slotId: "a",
@@ -127,7 +134,7 @@ const DashboardProject1: React.FC = () => {
         w: 2,
         h: 6,
         x: 0,
-        y: 6,
+        y: 0,
         i: "a",
         moved: false,
         static: false,
@@ -137,7 +144,7 @@ const DashboardProject1: React.FC = () => {
         w: 2,
         h: 6,
         x: 0,
-        y: 0,
+        y: 6,
         i: "b",
         moved: false,
         static: false,
@@ -503,6 +510,7 @@ const DashboardProject1: React.FC = () => {
 
   const handleLayoutChange = (layout: any, allLayouts: any) => {
     console.log(layout, allLayouts)
+
     setDefaultLayouts(allLayouts)
   }
 
@@ -528,8 +536,12 @@ const DashboardProject1: React.FC = () => {
     const isAlreadyInGrid = gridComponents.some(
       (comp) => comp.slotId === draggedSlotId
     )
-
-    if (isAlreadyInGrid) return
+    if (isAlreadyInGrid) {
+      toast.error(
+        "This component is already added to the grid. Please remove it first if you want to add it again."
+      )
+      return
+    }
 
     const draggedComponent = sidebarComponents.find(
       (comp) => comp.slotId === draggedSlotId
@@ -539,13 +551,126 @@ const DashboardProject1: React.FC = () => {
 
     setGridComponents([...gridComponents, draggedComponent])
 
+    const componentLayouts = draggedComponent.layouts || DEFAULT_SIZES
+
     const newLayouts = createLayoutItemForAllBreakpoints(
       defaultLayouts,
       draggedSlotId,
-      DEFAULT_SIZES
+      componentLayouts
     )
 
     setDefaultLayouts(newLayouts)
+
+    toast.success("Component added", {
+      description: `${draggedComponent.title} has been added to your dashboard.`,
+    })
+  }
+
+  const handleRemoveComponent = (slotId: string) => {
+    if (!isEditing) {
+      toast.error(
+        "Editing mode is disabled. Please enable editing mode to remove components."
+      )
+      return
+    }
+
+    const component = gridComponents.find((comp) => comp.slotId === slotId)
+
+    if (!component) return
+
+    const removedLayouts: ResponsiveLayout = {} as ResponsiveLayout
+
+    Object.keys(defaultLayouts).forEach((breakpoint) => {
+      const breakpointLayouts = defaultLayouts[breakpoint as Breakpoint]
+      const layoutItem = breakpointLayouts.find((item) => item.i === slotId)
+
+      if (layoutItem) {
+        removedLayouts[breakpoint as Breakpoint] = [layoutItem]
+      } else {
+        removedLayouts[breakpoint as Breakpoint] = []
+      }
+    })
+
+    const removedComponent = {
+      component,
+      layouts: removedLayouts,
+    }
+
+    const updatedComponents = gridComponents.filter(
+      (comp) => comp.slotId !== slotId
+    )
+    setGridComponents(updatedComponents)
+
+    const updatedLayouts = { ...defaultLayouts }
+    Object.keys(updatedLayouts).forEach((breakpoint) => {
+      updatedLayouts[breakpoint as Breakpoint] = updatedLayouts[
+        breakpoint as Breakpoint
+      ].filter((item) => item.i !== slotId)
+    })
+
+    setDefaultLayouts(updatedLayouts)
+
+    setLastRemovedComponent(removedComponent)
+
+    toast.error("Component removed", {
+      description: `${component.title} has been removed from your dashboard.`,
+      action: {
+        label: "Undo",
+        onClick: () => {
+          if (removedComponent?.component) {
+            setGridComponents((prev) => [...prev, removedComponent.component])
+
+            const restoredLayouts = { ...updatedLayouts }
+            Object.keys(removedComponent.layouts).forEach((breakpoint) => {
+              const layoutItems =
+                removedComponent.layouts[breakpoint as Breakpoint]
+              if (layoutItems && layoutItems.length > 0) {
+                restoredLayouts[breakpoint as Breakpoint] = [
+                  ...restoredLayouts[breakpoint as Breakpoint],
+                  ...layoutItems,
+                ]
+              }
+            })
+
+            setDefaultLayouts(restoredLayouts)
+
+            toast.success("Component restored", {
+              description: `${removedComponent.component.title} has been restored to your dashboard.`,
+            })
+
+            setLastRemovedComponent(null)
+          }
+        },
+      },
+      duration: 5000,
+    })
+  }
+
+  const _handleUndoRemove = () => {
+    if (!lastRemovedComponent || !lastRemovedComponent.component) return
+
+    setGridComponents([...gridComponents, lastRemovedComponent.component])
+
+    const updatedLayouts = { ...defaultLayouts }
+
+    Object.keys(lastRemovedComponent.layouts).forEach((breakpoint) => {
+      const layoutItems = lastRemovedComponent.layouts[breakpoint as Breakpoint]
+
+      if (layoutItems && layoutItems.length > 0) {
+        updatedLayouts[breakpoint as Breakpoint] = [
+          ...updatedLayouts[breakpoint as Breakpoint],
+          ...layoutItems,
+        ]
+      }
+    })
+
+    setDefaultLayouts(updatedLayouts)
+
+    toast.success("Component restored", {
+      description: `${lastRemovedComponent.component.title} has been restored to your dashboard.`,
+    })
+
+    setLastRemovedComponent(null)
   }
 
   if (isLoading) return <LoadingPage />
@@ -575,8 +700,19 @@ const DashboardProject1: React.FC = () => {
                 {gridComponents.map((item) => (
                   <div
                     key={item.slotId}
-                    className={`relative h-full rounded-xl ${isEditing ? "bg-gray-100 p-2 shadow" : ""}`}
+                    className={`relative h-full rounded-xl ${isEditing ? "bg-gray-5 p-2 shadow" : ""}`}
                   >
+                    {isEditing && (
+                      <IconButton
+                        className="absolute top-3 right-3 z-[2]"
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onTouchStart={(e) => e.stopPropagation()}
+                        color="red"
+                        onClick={() => handleRemoveComponent(item.slotId)}
+                      >
+                        <Trash size={16} />
+                      </IconButton>
+                    )}
                     <div className="widget-content relative h-full">
                       {isEditing ? (
                         <>
@@ -586,7 +722,7 @@ const DashboardProject1: React.FC = () => {
                               "/placeholder.svg?height=150&width=150"
                             }
                             alt={item.title}
-                            className="h-full w-full rounded-lg"
+                            className="h-full w-full rounded-lg object-contain"
                           />
                         </>
                       ) : (

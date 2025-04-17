@@ -1,5 +1,6 @@
 import { LoadingPage } from "@common"
 
+import { useEditingStore } from "@incmix/store"
 import {
   Box,
   CardContainer,
@@ -124,8 +125,8 @@ const renderWidget = (widget: Widget) => {
 const DashboardHomePage: React.FC = () => {
   const { t } = useTranslation(["dashboard", "common"])
   const { authUser, isLoading } = useAuth()
+  const { isEditing, setIsEditing } = useEditingStore()
 
-  const [isEditing, setIsEditing] = useState(false)
   const [widgets, setWidgets] = useState<Widget[]>([])
   const [slotItemsMap, setSlotItemsMap] = useState<typeof INITIAL_SLOT_ITEMS>(
     []

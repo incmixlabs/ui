@@ -1,4 +1,4 @@
-import { useThemeStore } from "@incmix/store"
+import { useEditingStore, useThemeStore } from "@incmix/store"
 import {
   Button,
   Separator,
@@ -27,6 +27,8 @@ export function DashboardLayout({ children, navExtras }: Props) {
   const { theme, toggleTheme } = useThemeStore()
   const { t } = useTranslation("navbar")
   const { pathname } = useLocation()
+  const { isEditing } = useEditingStore()
+
   const style = `${iconSize} text-gray-12`
   return (
     <SidebarProvider>
@@ -35,7 +37,7 @@ export function DashboardLayout({ children, navExtras }: Props) {
         <header className="container mx-auto flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex w-full items-center gap-2 px-4">
             {pathname.includes("/file-manager") ||
-              (pathname.includes("/dashboard") && (
+              (pathname.includes("/dashboard") && isEditing && (
                 <>
                   <SidebarTrigger
                     isSecondary
