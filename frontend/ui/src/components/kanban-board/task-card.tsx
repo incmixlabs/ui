@@ -29,7 +29,8 @@ import {
 } from "./types"
 
 import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
-import { Box, Card, Checkbox, Flex, Heading, Text, iconSize } from "@incmix/ui"
+import { Box, Checkbox, Flex, Heading, Text, iconSize } from "@incmix/ui"
+import { Card } from "@card/card"
 import { cn } from "@utils"
 
 type TCardState =

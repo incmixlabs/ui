@@ -122,13 +122,13 @@ const TasksPage = () => {
   if (!selectedOrganisation)
     return (
       <DashboardLayout breadcrumbItems={[{ label: "Tasks", url: "/tasks" }]}>
-        <Card>
+        <Card.Root>
           <CardContent>
             <p className="text-center">
               Please add an organisation to manage projects
             </p>
           </CardContent>
-        </Card>
+        </Card.Root>
       </DashboardLayout>
     )
 
