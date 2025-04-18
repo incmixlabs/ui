@@ -1,5 +1,8 @@
+// TBD - fix Avatar name
 "use client"
 
+import { Link } from "@tanstack/react-router"
+import { useTranslation } from "react-i18next"
 import { Bell, ChevronsUpDown, LogOut, Settings2, UserIcon } from "lucide-react"
 
 import { useLogout, useProfilePictureUrl, useUser } from "@auth"
@@ -10,8 +13,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@incmix/ui/sidebar"
-import { Link } from "@tanstack/react-router"
-import { useTranslation } from "react-i18next"
 
 export function NavUser({
   userId,
@@ -42,7 +43,7 @@ export function NavUser({
               <Avatar
                 src={avatarUrl}
                 size="1"
-                name={""}
+                name={user.name}
               />
 
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -63,7 +64,7 @@ export function NavUser({
                 <Avatar
                   src={avatarUrl}
                   className="h-8 w-8 rounded-lg"
-                  fallback={""}
+                  name={user.name}
                 />
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">{user.name}</span>

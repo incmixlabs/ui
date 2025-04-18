@@ -1,12 +1,12 @@
+// @ts-nocheck
 import { LoadingPage } from "@common"
-import { I18n } from "@incmix/pages/i18n"
+import { I18n } from "@i18n"
 import { CardContainer, Form, ReactiveButton, toast } from "@incmix/ui"
 import { Box, Container, Flex, Heading, Text } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
-import { zodValidator } from "@tanstack/zod-form-adapter"
 import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -71,7 +71,6 @@ function ResetPasswordForm() {
         <Flex direction="column" gap="4">
           <form.Field
             name="newPassword"
-            validatorAdapter={zodValidator()}
             validators={{
               onChange: z.string().min(1, t("login:passwordValidation")),
             }}

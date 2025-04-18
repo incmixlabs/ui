@@ -73,7 +73,7 @@ export const UserProfileImage: React.FC<UserProfileImageProps> = ({
 
   if (!editable) {
     return (
-      <Avatar size={size} src={avatarUrl} fallback={user?.name?.charAt(0)} />
+      <Avatar size={size} src={avatarUrl} name={user.name} />
     )
   }
 

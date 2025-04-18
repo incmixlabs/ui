@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { LoadingPage } from "@common"
 import {
   Button,

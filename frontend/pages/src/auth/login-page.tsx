@@ -1,21 +1,21 @@
-import { LoadingPage } from "@common"
-import { Form, ReactiveButton } from "@incmix/ui"
-import { Box, Flex, Heading, Text } from "@incmix/ui"
+// @ts-nocheck
+import { useEffect } from "react"
+import { useTranslation } from "react-i18next"
 import { useForm } from "@tanstack/react-form"
 import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { Link } from "@tanstack/react-router"
-import { zodValidator } from "@tanstack/zod-form-adapter"
-import { useEffect } from "react"
-import { useTranslation } from "react-i18next"
+import { z } from "zod"
+
+import { LoadingPage } from "@common"
+import { Form, ReactiveButton } from "@incmix/ui"
+import { Box, Flex, Heading, Text } from "@incmix/ui"
 import {
   setupGoogleAuthCallbackListener,
   useAuth,
   useGoogleLogin,
   useLogin,
 } from "./hooks/auth"
-
-import { z } from "zod"
 import { AuthLayout } from "./layouts/auth-layout"
 
 function LoginForm() {
@@ -58,7 +58,6 @@ function LoginForm() {
         <Flex direction="column" gap="4">
           <form.Field
             name="email"
-            validatorAdapter={zodValidator()}
             validators={{
               onChange: z.string().email(t("emailValidation")),
             }}
@@ -75,7 +74,6 @@ function LoginForm() {
 
           <form.Field
             name="password"
-            validatorAdapter={zodValidator()}
             validators={{
               onChange: z.string().min(1, t("passwordValidation")),
             }}

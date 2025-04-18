@@ -6,6 +6,9 @@
     "types": ["@types/wicg-file-system-access", "vite/client"],
     "rootDir": "src",
     "baseUrl": "./src",
+
+    "target": "es2022", // or esnext, es2020, etc.
+    "module": "es2022", // or 
     "paths": {
       "@/*": ["./*"],
       "@base": ["./components/base"],

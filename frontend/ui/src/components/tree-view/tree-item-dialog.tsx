@@ -109,7 +109,6 @@ export function TreeItemDialog({
               <form.Field
                 key={field.name}
                 name={field.name}
-                validatorAdapter={zodValidator()}
                 validators={{
                   onChange: field.required
                     ? z.string().min(1, "This field is required")

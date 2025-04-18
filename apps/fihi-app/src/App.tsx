@@ -116,21 +116,22 @@ function App() {
     return search.includes("mock")
   }, [])
   return (
-    <Theme
-      accentColor="indigo"
-      grayColor="slate"
-      panelBackground="solid"
-      scaling="100%"
-      radius="large"
-      appearance={theme}
-    >
-      <RxdbProvider db={db}>
-        <Suspense fallback={<LoadingPage />}>
-          <Toaster />
-          <RouterProvider router={router} />
-        </Suspense>
-      </RxdbProvider>
-    </Theme>
+
+    <RxdbProvider db={db}>
+      <Theme
+        accentColor="indigo"
+        grayColor="slate"
+        panelBackground="solid"
+        scaling="100%"
+        radius="large"
+        appearance={theme}
+      >
+          <Suspense fallback={<LoadingPage />}>
+            <Toaster />
+            <RouterProvider router={router} />
+          </Suspense>
+      </Theme>
+    </RxdbProvider>
   )
 }
 

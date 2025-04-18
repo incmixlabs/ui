@@ -1,4 +1,4 @@
-import { Badge, Checkbox, DropdownMenu } from "@incmix/ui"
+import { Badge, Checkbox, DropdownMenuWrapper } from "@incmix/ui"
 import {
   type ColumnDef,
   DataTableColumnHeader,
@@ -88,7 +88,7 @@ export function getColumns({
       id: "actions",
       cell: function Cell({ row }) {
         return (
-          <DropdownMenu
+          <DropdownMenuWrapper
             button={{
               "aria-label": "Open menu",
               variant: "ghost",

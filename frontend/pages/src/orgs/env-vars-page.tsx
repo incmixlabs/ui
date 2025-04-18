@@ -1,7 +1,7 @@
 import { CardContainer } from "@incmix/ui"
 import { Flex, Text } from "@incmix/ui"
 import { OrganizationTable } from "@incmix/ui/organization"
-import type { TreeDataItem, TreeViewDescriptions } from "@incmix/ui/tree-view"
+import type { FormFieldConfig, TreeDataItem, TreeViewDescriptions } from "@incmix/ui/tree-view"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useTranslation } from "react-i18next"
 import { create } from "zustand"

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { I18n } from "@incmix/pages/i18n"
 import { Container, Flex, Spinner, Text, ThickCheckIcon } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"

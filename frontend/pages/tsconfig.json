@@ -4,10 +4,8 @@
     "rootDir": ".",
     "baseUrl": "./src",
     "paths": {
-      "@i18n": ["./src/i18n"],
-      "@i18n/*": ["./src/i18n/*"],
-      "@pages": ["./src/index.ts"],
-      "@pages/*": ["./src/*"],
+      "@i18n": ["./i18n"],
+      "@i18n/*": ["./i18n/*"],
       "@layouts": ["./common/components/layouts"],
       "@layouts/*": ["./common/components/layouts/*"],
       "@auth": ["./auth"],

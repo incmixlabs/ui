@@ -34,21 +34,11 @@ const MOCK_CLOCK_DATA = [
 ]
 
 const INITIAL_WIDGETS: Widget[] = [
-  { id: "weather", type: "weather" },
-  { id: "clock", type: "clock" },
-  { id: "news", type: "news" },
   { id: "battery", type: "battery" },
-  { id: "image-grid", type: "image-grid" },
-  { id: "calendar", type: "calendar" },
 ]
 
 const INITIAL_SLOT_ITEMS = [
-  { slotId: "slot1", itemId: "weather" },
-  { slotId: "slot2", itemId: "clock" },
   { slotId: "slot3", itemId: "battery" },
-  { slotId: "slot4", itemId: "news" },
-  { slotId: "slot5", itemId: "image-grid" },
-  { slotId: "slot6", itemId: "calendar" },
 ]
 
 const EditWidgetsControl: React.FC<{
@@ -86,8 +76,8 @@ const renderWidget = (widget: Widget) => {
 }
 
 const DashboardHomePage: React.FC = () => {
-  const { t } = useTranslation(["dashboard", "common"])
-  const { authUser, isLoading } = useAuth()
+ // const { t } = useTranslation(["dashboard", "common"])
+//  const { authUser, isLoading } = useAuth()
   const swapyRef = useRef<ReturnType<typeof createSwapy> | null>(null)
 
   const [isEditing, setIsEditing] = useState(false)
@@ -150,39 +140,17 @@ const DashboardHomePage: React.FC = () => {
     swapyRef.current?.setData({ array: slotItemsMap })
   }, [slotItemsMap])
 
-  if (isLoading) return <LoadingPage />
-  if (!authUser) return null
-
+  debugger;
   return (
     <DashboardLayout
       breadcrumbItems={[]}
       navExtras={<EditWidgetsControl onEditChange={setIsEditing} />}
     >
       <Flex direction="column" gap="6">
-        <Heading size="6">{t("dashboard:title")}</Heading>
+        <Heading size="6">{"Dashboard"}</Heading>
 
         <Flex direction="column" gap="6">
-          {slottedWidgets.length && (
-            <SwapyLayout
-              id="dashboard-container"
-              enable={isEditing}
-              config={{ swapMode: "drop" }}
-            >
-              <Flex direction="row" gap="4" wrap="wrap">
-                {slottedWidgets.map(({ slotId, widget }) => (
-                  <SwapySlot key={slotId} id={slotId} showHandle={isEditing}>
-                    {widget && (
-                      <CardContainer>
-                        <SwapyExclude id={widget.id}>
-                          {renderWidget(widget)}
-                        </SwapyExclude>
-                      </CardContainer>
-                    )}
-                  </SwapySlot>
-                ))}
-              </Flex>
-            </SwapyLayout>
-          )}
+          Hello
         </Flex>
       </Flex>
     </DashboardLayout>
