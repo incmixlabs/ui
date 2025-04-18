@@ -1,15 +1,17 @@
 import {
+
+  FormControl,
+  FormItem,
+  FormMessage,
+} from "@base"
+import {
+
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@components/select"
-import {
-  FormControl,
-  FormItem,
-  FormMessage,
-} from "@components/shadcn-form/form"
+} from "@shadcn/select"
 import type * as z from "zod"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"

@@ -1,14 +1,8 @@
-import { Input } from "@components"
-import ColorPicker from "@components/color-picker"
-import { KanbanImages } from "@components/kanban-board/images"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@components/select"
-import {
+
+import { useState } from "react"
+
+import { Input,
+
   Box,
   Button,
   Card,
@@ -17,9 +11,18 @@ import {
   Heading,
   Popover,
   Text,
-  iconSize,
-} from "@incmix/ui"
-import { useState } from "react"
+  iconSize } from "@base"
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@shadcn/select"
+
+import ColorPicker from "@components/color-picker"
+import { KanbanImages } from "@components/kanban-board/images"
 
 export const themeData = [
   {

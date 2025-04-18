@@ -1,15 +1,12 @@
-import { Input } from "@components/form"
+import { Box, Button, Flex, Select, Input } from "@base"
 import { Search, X } from "lucide-react"
 import { useState } from "react"
 import { members } from "../data"
-import { Member } from "../types"
 
 import { SmartDatetimeInput } from "@components/datetime-picker"
 import MultipleSelector, {
   type Option,
 } from "@components/multiple-selector/multiple-selector"
-import { Box, Button, Flex, Select } from "@incmix/ui"
-import Image from "next/image"
 
 interface ProjectFilterProps {
   onApplyFilters: (filters: {

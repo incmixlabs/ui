@@ -1,24 +1,16 @@
 "use client"
 import * as React from "react"
-
 import { Slot } from "@radix-ui/react-slot"
+
 import { type VariantProps, cva } from "@utils/cva"
 import { ChevronsLeft, PanelLeft } from "lucide-react"
 
 import { useIsMobile } from "@hooks/use-mobile"
 import { cn } from "@utils/cn"
-import type { Button } from "../button/button"
-import { IconButton } from "../button/icon-button"
-import { Input } from "../form/input"
-import { Separator } from "../separator"
-import { Sheet, SheetContent, SheetDescription, SheetTitle } from "../sheet"
-import { Skeleton } from "../skeleton"
-import {
-  Tooltip,
+import { Button, IconButton, Input, Separator, Sheet, SheetContent, SheetDescription, SheetTitle, Skeleton,  Tooltip,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
-} from "../tooltip"
+  TooltipTrigger,} from "@base"
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7

@@ -4,8 +4,8 @@ import * as React from "react"
 import { forwardRef, useEffect } from "react"
 
 import { cn } from "@utils"
-import { Badge } from "../badge"
-import { Command, CommandGroup, CommandItem, CommandList } from "../command"
+import { Badge, Command, CommandGroup, CommandItem, CommandList } from "@base"
+
 
 export interface Option {
   value: string

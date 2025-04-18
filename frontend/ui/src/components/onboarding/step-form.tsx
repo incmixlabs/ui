@@ -4,7 +4,7 @@ import { AuthWrapper } from "../auth-wrapper"
 import AutoForm from "../auto-form"
 import { useStepper } from "../stepper"
 import { StepperFooter } from "./stepper-footer"
-import { Separator } from "../separator"
+import { Separator } from "@base"
 
 interface StepFormProps {
   steps: any[]

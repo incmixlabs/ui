@@ -1,7 +1,10 @@
+import { useState } from "react"
+
 import {
   Avatar,
   Box,
   Button,
+  Calendar,
   CardContainer,
   Checkbox,
   Container,
@@ -13,17 +16,15 @@ import {
   Progress,
   ScrollArea,
   Text,
-  dashboardColorValues,
-} from "@incmix/ui"
-
+} from "@base"
+import {
+  dashboardColorValues,} from "../charts"
 import { Clipboard, Ellipsis, EllipsisVertical, Settings } from "lucide-react"
 import { motion } from "motion/react"
-import type React from "react"
-import { useState } from "react"
-import { Calendar } from "../calendar"
-import RadialTaskStatusChart from "../chart/radial-task-status-chart"
-import SparkChart from "../chart/spark-chart"
-import WeeklyActivityChart from "../chart/statisic-weekly-active-chart"
+
+import RadialTaskStatusChart from "../charts/radial-task-status-chart"
+import SparkChart from "../charts/spark-chart"
+import WeeklyActivityChart from "../charts/statisic-weekly-active-chart"
 import { KanbanImages } from "../kanban-board/images"
 import { revisionData, taskStats } from "./data"
 import PostingCalendar from "./posting-calendar"

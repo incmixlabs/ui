@@ -80,7 +80,7 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
   })
 
   return (
-    <Dialog.Root
+    <Dialog
       {...props}
       open={isOpen}
       onOpenChange={(open) => {
@@ -88,15 +88,15 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
         reset()
       }}
     >
-      <Dialog.Trigger>
+      <DialogTrigger>
         <Button>Create Project</Button>
-      </Dialog.Trigger>
-      <Dialog.Content className="border border-gray-4">
+      </DialogTrigger>
+      <DialogContent className="border border-gray-4">
         <DialogHeader>
-          <Dialog.Title>Create New Project</Dialog.Title>
-          <Dialog.Description>
+          <DialogTitle>Create New Project</DialogTitle>
+          <DialogDescription>
             Fill out the form to create a new project.
-          </Dialog.Description>
+          </DialogDescription>
         </DialogHeader>
         <form
           onSubmit={(e) => {
@@ -130,13 +130,13 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
           </Flex>
         </form>
         <DialogFooter className="gap-2 sm:space-x-0">
-          <Dialog.Close>
+          <DialogClose>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </Dialog.Close>
+          </DialogClose>
         </DialogFooter>
-      </Dialog.Content>
-    </Dialog.Root>
+      </DialogContent>
+    </Dialog>
   )
 }

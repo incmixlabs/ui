@@ -17,7 +17,7 @@ import {
 } from "@incmix/ui/sidebar"
 import { Link, useLocation } from "@tanstack/react-router"
 import { MoonIcon, SunIcon } from "lucide-react"
-import React from "react"
+import type React from "react"
 import { useTranslation } from "react-i18next"
 import { AppSidebar } from "./app-sidebar"
 
@@ -29,11 +29,7 @@ type Props = {
   }[]
   navExtras?: React.ReactNode
 }
-export function DashboardLayout({
-  children,
-  breadcrumbItems,
-  navExtras,
-}: Props) {
+export function DashboardLayout({ children, navExtras }: Props) {
   const { theme, toggleTheme } = useThemeStore()
   const { t } = useTranslation("navbar")
   const { pathname } = useLocation()
@@ -55,27 +51,6 @@ export function DashboardLayout({
                 <Separator orientation="vertical" className="mr-2 h-4" />
               </>
             )}
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink asChild>
-                    <Link to="/">Home</Link>
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                {breadcrumbItems.map((b, i, a) => (
-                  <React.Fragment key={b.label}>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                      <BreadcrumbLink asChild>
-                        <Link to={b.url} disabled={i >= a.length - 1}>
-                          {b.label}
-                        </Link>
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                  </React.Fragment>
-                ))}
-              </BreadcrumbList>
-            </Breadcrumb>
             <Button
               className="ml-auto"
               variant="soft"

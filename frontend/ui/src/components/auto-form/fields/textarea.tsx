@@ -2,8 +2,8 @@ import {
   FormControl,
   FormItem,
   FormMessage,
-} from "@components/shadcn-form/form"
-import { Textarea } from "@components/textarea"
+  TextArea
+} from "@base"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 
@@ -39,7 +39,7 @@ export default function AutoFormTextarea({
         </div>
       )}
       <FormControl>
-        <Textarea
+        <TextArea
           className=" w-full resize-none rounded-md border-0 bg-zinc-950 text-white focus-visible:ring-0 focus-visible:ring-offset-0"
           placeholder={
             fieldPropsWithoutShowLabel?.placeholder ||

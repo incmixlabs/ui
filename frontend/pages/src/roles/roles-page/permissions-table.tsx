@@ -1,12 +1,15 @@
-import { Button, Flex, Input, toast } from "@incmix/ui"
 import {
+  Button,
+  Flex,
+  Input,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeadCell,
   TableRow,
-} from "@incmix/ui/table"
+  toast,
+} from "@incmix/ui"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import {
   type Column,

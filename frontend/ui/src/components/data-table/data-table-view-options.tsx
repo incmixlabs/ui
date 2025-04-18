@@ -5,16 +5,13 @@ import { Check, ChevronsUpDown, Settings2 } from "lucide-react"
 import * as React from "react"
 
 import { cn } from "@utils/cn"
-import { Button } from "../button"
-import {
-  Command,
+import { Button, Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList,
-} from "../command"
-import { Popover, PopoverContent, PopoverTrigger } from "../popover"
+  CommandList, Popover, PopoverContent, PopoverTrigger} from "@base"
+
 import { toSentenceCase } from "./lib/utils"
 
 interface DataTableViewOptionsProps<TData> {

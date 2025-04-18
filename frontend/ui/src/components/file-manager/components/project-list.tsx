@@ -1,18 +1,20 @@
-import { Checkbox } from "@components/checkbox"
+import { useState } from "react"
+import { ChevronDown, ChevronUp } from "lucide-react"
+
 import {
+  iconSize,
+  Checkbox,
+  ScrollArea,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "@components/table"
+} from "@base"
 import { useMediaQuery } from "@hooks/use-media-query"
-import { ScrollArea, iconSize } from "@incmix/ui"
 import { cn } from "@utils"
 import { getBytes } from "@utils/getBytes"
-import { ChevronDown, ChevronUp } from "lucide-react"
-import { useState } from "react"
 import type { FileItem } from "../data"
 import { ProjectActionsMenu } from "./project-actions-menu"
 

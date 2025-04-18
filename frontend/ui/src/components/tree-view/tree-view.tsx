@@ -1,5 +1,6 @@
 "use client"
 
+import React, { useRef, useState, useEffect, useCallback } from "react"
 import {
   type Instruction,
   attachInstruction,
@@ -9,9 +10,6 @@ import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indi
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
-import { Box, Flex, Text, iconSize } from "@incmix/ui"
-import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import { cn } from "@utils/cn"
 import { cva } from "class-variance-authority"
 import { produce } from "immer"
 import {
@@ -21,12 +19,10 @@ import {
   Folder,
   FolderOpen,
 } from "lucide-react"
-import React, { useRef, useState, useEffect, useCallback } from "react"
-import { Table, TableHeader } from "../table"
-import { TableRow } from "../table"
-import { TableHead } from "../table"
-import { TableBody } from "../table"
-import { TableCell } from "../table"
+
+import { Box, Flex, Text, iconSize, Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@base"
+import * as AccordionPrimitive from "@radix-ui/react-accordion"
+import { cn } from "@utils/cn"
 import { TreeContextMenu } from "./context-menu"
 import { EmptyTreeView } from "./empty-tree-view"
 import { TreeItemDialog } from "./tree-item-dialog"

@@ -1,13 +1,10 @@
-import { ScrollArea } from "@incmix/ui"
-import { parseDate } from "chrono-node"
 import React from "react"
 import type { ActiveModifiers } from "react-day-picker"
+
+import { Button, Calendar, type CalendarProps, Popover, PopoverContent, PopoverTrigger, ScrollArea } from "@base"
+import { parseDate } from "chrono-node"
 import { cn } from "utils"
-import { Button } from "./button"
-import { Calendar } from "./calendar"
-import type { CalendarProps } from "./calendar"
 import { CalendarIcon } from "./icons/calender"
-import { Popover, PopoverContent, PopoverTrigger } from "./popover"
 
 /* -------------------------------------------------------------------------- */
 /*                               Inspired By:                                 */

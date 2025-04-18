@@ -13,8 +13,8 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
-} from "../command"
-import { Popover, PopoverContent, PopoverTrigger } from "../popover"
+  Popover, PopoverContent, PopoverTrigger
+} from "@base"
 
 const FacetedFilter = Popover
 

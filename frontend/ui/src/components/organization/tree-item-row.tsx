@@ -1,22 +1,16 @@
 "use client"
 
-import { Checkbox, DropdownMenu, Input } from "@incmix/ui"
-import { IconButton } from "@radix-ui/themes"
-import { ChevronDown, ChevronRight, MoreVertical } from "lucide-react"
 import { forwardRef, useImperativeHandle, useRef, useState } from "react"
-import type { TreeDataItem } from "../../types"
-import { Button } from "../button"
-import {
-  Dialog,
+import { Button, Checkbox,  Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-} from "../dialog"
-import { Label } from "../label"
-import { TableCell, TableRow } from "../table"
-import { Textarea } from "../textarea"
+  DialogTitle, DropdownMenu,  Input, Label, TextArea, TableCell, TableRow } from "@incmix/ui"
+
+import { ChevronDown, ChevronRight, MoreVertical } from "lucide-react"
+import type { TreeDataItem } from "../../types"
+
 interface TreeItemRowProps {
   item: TreeDataItem
   level: number
@@ -267,7 +261,7 @@ export const TreeItemRow = forwardRef<TreeItemRowRef, TreeItemRowProps>(
                 <div key={field.name} className="space-y-2">
                   <Label htmlFor={field.name}>{field.label}</Label>
                   {field.type === "textarea" ? (
-                    <Textarea
+                    <TextArea
                       id={field.name}
                       value={formData[field.name] || ""}
                       onChange={(e) =>

@@ -1,3 +1,14 @@
+
+export const getInitials = (name:string) => {
+  if (!name)
+      return "";
+  return (name
+      .match(/(\b\S)?/g)
+      ?.join("")
+      .match(/(^\S|\S$)?/g)
+      ?.join("")
+      .toUpperCase() || "");
+};
 export function camelize(str: string) {
   return str.replace(
     /(?:^\w|[A-Z]|\b\w|\s+)/g,

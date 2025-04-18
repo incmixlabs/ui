@@ -7,7 +7,7 @@ export type LucideIconType = {
   color?: string
   size?: number
 }
-const LucideIcon = ({ name, color, size }: LucideIconType) => {
+export const LucideIcon = ({ name, color, size }: LucideIconType) => {
   const LucideIcon = icons[name]
 
   return <LucideIcon color={color} size={size} />

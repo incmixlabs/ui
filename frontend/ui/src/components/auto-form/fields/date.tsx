@@ -3,7 +3,7 @@ import {
   FormControl,
   FormItem,
   FormMessage,
-} from "@components/shadcn-form/form"
+} from "@base"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 

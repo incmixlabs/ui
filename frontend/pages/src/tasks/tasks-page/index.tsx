@@ -1,7 +1,9 @@
 import type { TaskCollections } from "@incmix/store"
 import { useOrganizationStore } from "@incmix/store"
-import { Board, CardContent, useKanbanFilter } from "@incmix/ui"
 import { Box, Card, Flex, IconButton, ScrollArea, Select } from "@incmix/ui"
+import { CardContent } from "@incmix/ui/card"
+import { useKanbanFilter } from "@incmix/ui/hooks"
+import { Board } from "@incmix/ui/kanban"
 import type { Task } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useMutation, useQuery } from "@tanstack/react-query"
@@ -120,13 +122,13 @@ const TasksPage = () => {
   if (!selectedOrganisation)
     return (
       <DashboardLayout breadcrumbItems={[{ label: "Tasks", url: "/tasks" }]}>
-        <Card>
+        <Card.Root>
           <CardContent>
             <p className="text-center">
               Please add an organisation to manage projects
             </p>
           </CardContent>
-        </Card>
+        </Card.Root>
       </DashboardLayout>
     )
 

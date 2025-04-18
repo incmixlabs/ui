@@ -2,13 +2,13 @@ import { useProjectDrawer } from "@hooks/use-project-drawer"
 import {
   Box,
   Card,
-  DropdownMenu,
   Flex,
   Heading,
   IconButton,
   Progress,
   Text,
 } from "@incmix/ui"
+import { DropdownMenu } from "@incmix/ui/dropdown-menu"
 import {
   Clock,
   Ellipsis,
@@ -37,7 +37,7 @@ export function ProjectCard({
 }: ProjectCardProps) {
   const { handleDrawerOpen } = useProjectDrawer()
   return (
-    <Card
+    <Card.Root
       onClick={() => {
         if (isListFilter) {
           handleDrawerOpen(project.id.toString())
@@ -156,6 +156,6 @@ export function ProjectCard({
           ))}
         </Flex>
       </Flex>
-    </Card>
+    </Card.Root>
   )
 }

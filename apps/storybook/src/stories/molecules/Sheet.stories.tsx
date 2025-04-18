@@ -1,7 +1,4 @@
-import { Button } from "@incmix/ui/button"
-import { Input } from "@incmix/ui/form"
-import { Label } from "@incmix/ui/label"
-import {
+import { Button, Input, Label,
   Sheet,
   SheetClose,
   SheetContent,
@@ -10,7 +7,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@incmix/ui/sheet"
+} from "@incmix/ui"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const meta = {
