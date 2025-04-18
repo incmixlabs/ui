@@ -1,4 +1,4 @@
-import { Button, buttonPropDefs } from "@incmix/ui/button"
+import { Button, buttonPropDefs } from "@incmix/ui"
 import type { Meta, StoryObj } from "@storybook/react"
 
 const { variant, size, radius } = buttonPropDefs
