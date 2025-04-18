@@ -1,10 +1,10 @@
-import { iconSize } from "@components/icons/icon"
 import {
   FormControl,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@components/shadcn-form/form"
+  iconSize,
+} from "@base"
 import { cn } from "@utils/cn"
 import { useEffect, useState } from "react"
 import type {

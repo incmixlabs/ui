@@ -3,7 +3,8 @@
 import { Bell, ChevronsUpDown, LogOut, Settings2, UserIcon } from "lucide-react"
 
 import { useLogout, useProfilePictureUrl, useUser } from "@auth"
-import { Avatar, DropdownMenu } from "@incmix/ui"
+import { Avatar } from "@incmix/ui"
+import { DropdownMenu } from "@incmix/ui/dropdown-menu"
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -42,7 +43,7 @@ export function NavUser({
               <Avatar
                 src={avatarUrl}
                 className="h-8 w-8 rounded-lg"
-                fallback={""}
+                name={user.name}
               />
 
               <div className="grid flex-1 text-left text-sm leading-tight">
@@ -63,7 +64,7 @@ export function NavUser({
                 <Avatar
                   src={avatarUrl}
                   className="h-8 w-8 rounded-lg"
-                  fallback={""}
+                  name={user.name}
                 />
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">{user.name}</span>

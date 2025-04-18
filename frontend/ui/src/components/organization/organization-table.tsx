@@ -1,5 +1,10 @@
-import { Checkbox, Dialog, Input } from "@incmix/ui"
-import { Button } from "@incmix/ui"
+import { Button, Checkbox,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow, } from "@base"
+
 import { produce } from "immer"
 import { useEffect, useRef, useState } from "react"
 import type { TreeDataItem } from "../../types"
@@ -8,15 +13,6 @@ import {
   removeItemById,
   useEnvVarsStore,
 } from "../../utils/env-vars-store"
-import { Label } from "../form/label"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "../table"
 import { TreeItemRow, type TreeItemRowRef } from "./tree-item-row"
 
 interface FlattenedItem extends TreeDataItem {

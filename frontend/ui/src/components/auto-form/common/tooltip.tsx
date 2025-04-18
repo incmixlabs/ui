@@ -3,7 +3,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@components/tooltip"
+} from "@base"
 import { HelpCircle } from "lucide-react"
 
 /**

@@ -9,7 +9,7 @@ import {
   TableHead,
   TableHeadCell,
   TableRow,
-} from "../table/index"
+} from "@base"
 import { DataTablePagination } from "./data-table-pagination"
 import { getCommonPinningStyles } from "./lib/data-table"
 

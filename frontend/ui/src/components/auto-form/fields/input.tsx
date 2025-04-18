@@ -1,13 +1,13 @@
-import { Input } from "@components/form/input"
-import {
-  FormControl,
-  FormItem,
-  FormMessage,
-} from "@components/shadcn-form/form"
-import { Eye, EyeOff } from "lucide-react"
 import { useEffect, useState } from "react"
 import React from "react"
 import { useFormContext } from "react-hook-form"
+
+import {  FormControl,
+  FormItem,
+  FormMessage,
+  Input
+} from "@base"
+import { Eye, EyeOff } from "lucide-react"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"
 import type { AutoFormInputComponentProps } from "../types"

@@ -2,20 +2,15 @@ import type { Column } from "@tanstack/react-table"
 import { Check, PlusCircle } from "lucide-react"
 import type { Option } from "./lib/types"
 
-import { Badge } from "@radix-ui/themes"
-import { Button } from "@radix-ui/themes"
-import { Separator } from "@radix-ui/themes"
-import { cn } from "@utils"
-import {
-  Command,
+import { Badge, Button, Separator,  Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "../command"
-import { Popover, PopoverContent, PopoverTrigger } from "../popover"
+  Popover, PopoverContent, PopoverTrigger } from "@base"
+import { cn } from "@utils"
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>

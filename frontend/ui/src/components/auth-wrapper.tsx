@@ -1,5 +1,3 @@
-import type React from "react"
-
 export type AuthWrapperProps = {
   image?: string
   step?: number

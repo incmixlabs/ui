@@ -1,26 +1,24 @@
+import { useState } from "react"
+import { Ellipsis, EllipsisVertical, Settings } from "lucide-react"
+
 import {
   Avatar,
   Box,
   Button,
+  Calendar,
   CardContainer,
   Checkbox,
   Flex,
   Grid,
   Heading,
   IconButton,
-  RadialBarChart,
   ScrollArea,
-  StatisticsBarChartView,
-  StatsCard,
   Text,
+} from "@base"
+import { StatisticsBarChartView,
   dashboardColorValues,
-} from "@incmix/ui"
-
-import { Ellipsis, EllipsisVertical, Settings } from "lucide-react"
+  StatsCard, } from "../charts"
 import { motion } from "motion/react"
-import type React from "react"
-import { useState } from "react"
-import { Calendar } from "../calendar"
 import { SmartDatetimeInput } from "../datetime-picker"
 import { KanbanImages } from "../kanban-board/images"
 import { revisionData, taskStats } from "./data"

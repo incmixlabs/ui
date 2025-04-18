@@ -19,7 +19,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { isSafari } from "@utils/browser"
 import { isShallowEqual } from "@utils/objects"
 import { CalendarDays, MessageSquareText, Paperclip } from "lucide-react"
-import { IconButton } from "../button"
+import { IconButton } from "@base"
 import {
   type TCard,
   getCardData,

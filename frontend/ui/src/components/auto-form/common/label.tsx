@@ -1,4 +1,4 @@
-import { FormLabel } from "@components/shadcn-form/form"
+import { FormLabel } from "@base"
 import { cn } from "@utils/cn"
 
 /**

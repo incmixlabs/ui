@@ -4,7 +4,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@components/shadcn-form/form"
+} from "@base"
 import type { AutoFormInputComponentProps } from "../types"
 
 // Define the allowed color types to match the component's requirements

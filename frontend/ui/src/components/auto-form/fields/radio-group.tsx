@@ -1,11 +1,12 @@
-import { RadioGroup, RadioGroupItem } from "@components/radio-group"
+import type * as z from "zod"
+
 import {
   FormControl,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@components/shadcn-form/form"
-import type * as z from "zod"
+  RadioGroup
+} from "@base"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"
 import type { AutoFormInputComponentProps } from "../types"
@@ -34,7 +35,7 @@ export default function AutoFormRadioGroup({
       <FormItem className="flex w-full flex-row items-center justify-start">
         <AutoFormLabel label={label} isRequired={isRequired} />
         <FormControl>
-          <RadioGroup
+          <RadioGroup.Root
             onValueChange={field.onChange}
             defaultValue={field.value}
             className="flex h-10 w-full flex-row items-center space-x-1 rounded-md border p-2 text-black focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -46,12 +47,12 @@ export default function AutoFormRadioGroup({
                 key={value}
               >
                 <FormControl>
-                  <RadioGroupItem value={value} />
+                  <RadioGroup.Item value={value} />
                 </FormControl>
                 <FormLabel className="font-normal">{value}</FormLabel>
               </FormItem>
             ))}
-          </RadioGroup>
+          </RadioGroup.Root>
         </FormControl>
         <FormMessage />
       </FormItem>

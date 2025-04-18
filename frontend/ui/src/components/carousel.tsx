@@ -13,7 +13,7 @@ import {
   useEffect,
   useState,
 } from "react"
-import { Button } from "./button/shad-button"
+import { Button } from "@shadcn/button"
 
 import Autoplay from "embla-carousel-autoplay"
 import { iconSize } from "./icons/icon"

@@ -20,26 +20,18 @@ import type {
   StringKeyOf,
 } from "./lib/types"
 
-import { Badge } from "@radix-ui/themes"
-import { Button } from "@radix-ui/themes"
+import { Badge, Button, Select,  Calendar, Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList, Input, Popover, PopoverContent, PopoverTrigger } from "@base"
 import { cn } from "@utils/cn"
 import { useDebouncedCallback } from "./hooks"
 import { dataTableConfig } from "./lib/config"
 import { getDefaultFilterOperator, getFilterOperators } from "./lib/data-table"
 import { getFiltersStateParser } from "./lib/parsers"
 
-import { Select } from "@radix-ui/themes"
-import { Calendar } from "../calendar"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "../command"
-import { Input } from "../form/input"
-import { Popover, PopoverContent, PopoverTrigger } from "../popover"
 import {
   FacetedFilter,
   FacetedFilterContent,

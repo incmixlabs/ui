@@ -3,9 +3,9 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@components/accordion/shadcn-accordion"
+  FormField
+} from "@base"
 
-import { SCNformField } from "@components/shadcn-form/form"
 import { type useForm, useFormContext } from "react-hook-form"
 import type * as z from "zod"
 import { DEFAULT_ZOD_HANDLERS, INPUT_COMPONENTS } from "../config"
@@ -106,7 +106,7 @@ function renderField({
       zodInputProps.required || fieldConfigItem.inputProps?.required || false
 
     return (
-      <SCNformField
+      <FormField
         control={form.control}
         name={key}
         key={key}
@@ -170,7 +170,7 @@ function renderField({
     zodInputProps.required || fieldConfigItem.inputProps?.required || false
 
   return (
-    <SCNformField
+    <FormField
       control={form.control}
       name={key}
       key={key}

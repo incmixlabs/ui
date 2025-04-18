@@ -8,7 +8,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@components/carousel"
-import { Tabs, TabsList, TabsTrigger } from "@components/tabs"
+import { Tabs, TabsList, TabsTrigger } from "@base"
 import { useRateLimitStore } from "@incmix/store"
 import { Spinner, Text } from "@incmix/ui"
 import { useQuery } from "@tanstack/react-query"

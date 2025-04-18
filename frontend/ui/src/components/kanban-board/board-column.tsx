@@ -15,10 +15,9 @@ import type { DragLocationHistory } from "@atlaskit/pragmatic-drag-and-drop/dist
 import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
 
-import { Box, Flex, Heading } from "@incmix/ui"
+import { Box, Flex, Heading, IconButton  } from "@base"
 import { isSafari } from "@utils/browser"
 import { isShallowEqual } from "@utils/objects"
-import { IconButton } from "../button"
 import { blockBoardPanningAttr } from "./data-attributes"
 import { TaskCard, TaskCardShadow } from "./task-card"
 import {

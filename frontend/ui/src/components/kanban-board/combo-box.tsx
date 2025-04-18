@@ -3,20 +3,15 @@ import type { BadgeProps } from "@radix-ui/themes"
 import { CheckIcon, Plus } from "lucide-react"
 import * as React from "react"
 import { cn } from "utils"
-import { Avatar } from "../avatar"
-import { Badge } from "../badge"
-import { Button, IconButton } from "../button"
-import ColorPicker, { type ColorSelectType } from "../color-picker"
-import {
-  Command,
+import { Avatar, Badge, Button, Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
-} from "../command"
-import { Input } from "../form"
+  CommandSeparator, IconButton, Input } from "@base"
+import ColorPicker, { type ColorSelectType } from "../color-picker"
+
 
 export type ExtendedColorType = BadgeProps["color"] | "blue"
 

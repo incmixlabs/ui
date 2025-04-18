@@ -1,5 +1,7 @@
 import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
 import {
+  Avatar,
+  Badge,
   Box,
   Button,
   Checkbox,
@@ -7,10 +9,12 @@ import {
   Flex,
   Grid,
   Heading,
+  IconButton,
   ScrollArea,
   Tabs,
   Text,
-} from "@incmix/ui"
+  type ExtendedColorType
+} from "@base"
 import { cn } from "@utils"
 import {
   Check,
@@ -35,10 +39,6 @@ import {
 } from "motion/react"
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
-import { Avatar } from "../avatar"
-import { Badge } from "../badge"
-import type { ExtendedColorType } from "../badge"
-import { IconButton } from "../button"
 import { MotionSheet } from "../custom-sheet"
 import { SmartDatetimeInput } from "../datetime-picker"
 import { TaskIcon } from "../icons/task"

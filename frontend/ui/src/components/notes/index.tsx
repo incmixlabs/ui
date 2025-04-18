@@ -1,8 +1,9 @@
+import { Suspense, lazy, useRef, useState } from "react"
+
+import { cn } from "@utils"
 import {
   Box,
   Button,
-  Card,
-  CardContent,
   Dialog,
   DialogClose,
   DialogContent,
@@ -13,8 +14,11 @@ import {
   Flex,
   Heading,
   Pushpin,
-} from "@incmix/ui"
-import { cn } from "@utils"
+  Label
+} from "@base"
+import {
+  Card,
+  CardContent} from "../card/card"
 import {
   CalendarClock,
   Edit2,
@@ -24,8 +28,6 @@ import {
   Trash,
   X,
 } from "lucide-react"
-import { Suspense, lazy, useRef, useState } from "react"
-import { Label } from "../label"
 import { type INote, notesData } from "./data"
 
 const TiptapEditor = lazy(() =>

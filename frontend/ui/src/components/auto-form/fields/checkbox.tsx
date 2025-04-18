@@ -1,6 +1,5 @@
-import { Checkbox } from "@components/checkbox"
+import { Checkbox, FormControl, FormItem, FormLabel } from "@base"
 
-import { FormControl, FormItem, FormLabel } from "@components/shadcn-form/form"
 import { cn } from "@utils/cn"
 import AutoFormTooltip from "../common/tooltip"
 import type { AutoFormInputComponentProps } from "../types"

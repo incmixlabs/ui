@@ -1,10 +1,4 @@
-import { Input } from "@components/form"
-import { FilterIcon } from "@components/icons/filter"
-
-import { MotionSheet } from "@components/custom-sheet"
-import { useMediaQuery } from "@hooks/use-media-query"
-import { Box, Button, Flex, IconButton, iconSize } from "@incmix/ui"
-import { cn } from "@utils"
+import { type SetStateAction, useState } from "react"
 import {
   ChevronLeft,
   Columns2,
@@ -15,7 +9,12 @@ import {
   Upload,
 } from "lucide-react"
 import { useQueryState } from "nuqs"
-import { type SetStateAction, useState } from "react"
+
+import { FilterIcon } from "@components/icons/filter"
+import { MotionSheet } from "@components/custom-sheet"
+import { useMediaQuery } from "@hooks/use-media-query"
+import { Box, Button, Flex, IconButton, iconSize, Input } from "@base"
+import { cn } from "@utils"
 import { type FileItem, projectFolders } from "../data"
 import ProjectCard from "./project-card"
 import { ProjectDetails } from "./project-details"

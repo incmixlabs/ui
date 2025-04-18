@@ -1,9 +1,7 @@
 "use client"
-
-import { Button } from "@components/button"
-
 import {
   Box,
+  Button,
   Flex,
   Grid,
   Heading,
@@ -12,6 +10,7 @@ import {
   Select,
   Text,
   iconSize,
+  
 } from "@incmix/ui"
 import type { ButtonProps } from "@radix-ui/themes"
 

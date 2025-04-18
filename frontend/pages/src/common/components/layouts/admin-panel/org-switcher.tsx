@@ -2,7 +2,7 @@ import { ChevronsUpDown } from "lucide-react"
 import * as React from "react"
 
 import { useOrganizationStore } from "@incmix/store"
-import { DropdownMenu } from "@incmix/ui"
+import { DropdownMenu } from "@incmix/ui/dropdown-menu"
 import {
   SidebarMenu,
   SidebarMenuButton,

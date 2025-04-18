@@ -1,20 +1,16 @@
 "use client"
 
-import { Button, Flex, Text, VisuallyHidden } from "@incmix/ui"
+import { Button, Flex, Text,  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle, FormField, VisuallyHidden } from "@incmix/ui"
 import { useForm } from "@tanstack/react-form"
 import type { FieldApi } from "@tanstack/react-form"
 import { zodValidator } from "@tanstack/zod-form-adapter"
 import * as React from "react"
 import { z } from "zod"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../dialog"
-import { FormField } from "../form/form-field"
 import { useTreeViewContext } from "./tree-view-context"
 
 type FormData = Record<string, string>
