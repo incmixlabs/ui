@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, Dialog, DialogFooter, DialogHeader } from "@incmix/ui"
+import { Button, Dialog } from "@incmix/ui/base"
 import { useMutation } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { deleteRole } from "./actions"
@@ -29,7 +29,7 @@ export function DeleteDialog({
   return (
     <Dialog.Root {...props}>
       <Dialog.Content>
-        <DialogHeader>
+        <Dialog.Header>
           <Dialog.Title>Are you absolutely sure?</Dialog.Title>
           <Dialog.Description>
             This action cannot be undone. This will permanently delete{" "}
@@ -40,8 +40,8 @@ export function DeleteDialog({
             </span>{" "}
             and related permissions from our servers.
           </Dialog.Description>
-        </DialogHeader>
-        <DialogFooter className="gap-2 sm:space-x-0">
+        </Dialog.Header>
+        <Dialog.Footer className="gap-2 sm:space-x-0">
           <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
@@ -58,7 +58,7 @@ export function DeleteDialog({
           >
             Delete
           </Button>
-        </DialogFooter>
+        </Dialog.Footer>
       </Dialog.Content>
     </Dialog.Root>
   )

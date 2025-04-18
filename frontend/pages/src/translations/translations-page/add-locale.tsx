@@ -1,16 +1,12 @@
 import {
   Button,
   Dialog,
-  DialogClose,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
   Flex,
   FormField,
   ReactiveButton,
   Switch,
   Text,
-} from "@incmix/ui"
+} from "@incmix/ui/base"
 import { INTL_API_URL } from "@incmix/ui/constants"
 import { useForm } from "@tanstack/react-form"
 import { useMutation } from "@tanstack/react-query"
@@ -41,20 +37,20 @@ export const AddLocaleDialog: React.FC<AddLocaleDialogProps> = ({
         <Button>Add Locale</Button>
       </Dialog.Trigger>
       <Dialog.Content>
-        <DialogHeader>
+        <Dialog.Header>
           <Dialog.Title>Add Locale</Dialog.Title>
-        </DialogHeader>
-        <DialogDescription className="sr-only">
+        </Dialog.Header>
+        <Dialog.Description className="sr-only">
           Add new Locale
-        </DialogDescription>
+        </Dialog.Description>
         <AddTranlationForm onSuccess={onSubmit} />
-        <DialogFooter className="gap-2 sm:space-x-0">
-          <DialogClose>
+        <Dialog.Footer className="gap-2 sm:space-x-0">
+          <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </DialogClose>
-        </DialogFooter>
+          </Dialog.Close>
+        </Dialog.Footer>
       </Dialog.Content>
     </Dialog.Root>
   )

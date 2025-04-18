@@ -3,14 +3,11 @@
 import {
   Button,
   Dialog,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   Flex,
   FormField,
   ReactiveButton,
   toast,
-} from "@incmix/ui"
+} from "@incmix/ui/base"
 import type { UserAndProfile } from "@incmix/utils/types"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -57,9 +54,9 @@ export function PasswordDialog({
   return (
     <Dialog.Root {...props}>
       <Dialog.Content>
-        <DialogHeader>
+        <Dialog.Header>
           <Dialog.Title>Change User Password</Dialog.Title>
-        </DialogHeader>
+        </Dialog.Header>
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -96,13 +93,13 @@ export function PasswordDialog({
             </ReactiveButton>
           </Flex>
         </form>
-        <DialogFooter className="gap-2 sm:space-x-0">
+        <Dialog.Footer className="gap-2 sm:space-x-0">
           <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
           </Dialog.Close>
-        </DialogFooter>
+        </Dialog.Footer>
       </Dialog.Content>
     </Dialog.Root>
   )
