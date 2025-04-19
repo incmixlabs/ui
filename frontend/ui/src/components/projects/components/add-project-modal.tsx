@@ -15,8 +15,8 @@ import {
   Box,
   Button,
   Dialog,
-  DialogContent,
-  DialogTitle,
+  Dialog.Content,
+  Dialog.Title,
   Flex,
   Grid,
   Text,
@@ -122,8 +122,8 @@ export function AddProjectModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent maxWidth="500px">
-        <DialogTitle className="font-medium">Add Project</DialogTitle>
+      <Dialog.Content maxWidth="500px">
+        <Dialog.Title className="font-medium">Add Project</Dialog.Title>
         <Grid className="py-4" gap={"4"}>
           <Flex justify={"center"} className="mb-4">
             <FileUploader
@@ -265,7 +265,7 @@ export function AddProjectModal({
             Create
           </Button>
         </Flex>
-      </DialogContent>
+      </Dialog.Content>
     </Dialog>
   )
 }

@@ -1,19 +1,12 @@
 import {
   Button,
   Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
   Flex,
   FormField,
   ReactiveButton,
   Select,
   Text,
-} from "@incmix/ui"
+} from "@incmix/ui/base"
 import { INTL_API_URL } from "@incmix/ui/constants"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQuery } from "@tanstack/react-query"
@@ -39,20 +32,20 @@ export const EditTranslationDialog: React.FC<EditTranslationDialogProps> = ({
   return (
     <Dialog.Root {...props}>
       <Dialog.Content>
-        <DialogHeader>
+        <Dialog.Header>
           <Dialog.Title>Edit Translation</Dialog.Title>
           <Dialog.Description className="sr-only">
             Edit Translation
           </Dialog.Description>
-        </DialogHeader>
+        </Dialog.Header>
         <EditTranlationForm item={item} onSuccess={onSuccess} />
-        <DialogFooter className="gap-2 sm:space-x-0">
+        <Dialog.Footer className="gap-2 sm:space-x-0">
           <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
           </Dialog.Close>
-        </DialogFooter>
+        </Dialog.Footer>
       </Dialog.Content>
     </Dialog.Root>
   )

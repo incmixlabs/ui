@@ -1,16 +1,10 @@
 "use client"
 
-import { forwardRef, useImperativeHandle, useRef, useState } from "react"
-import { Button, Checkbox,  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle, DropdownMenu,  Input, Label, TextArea, TableCell, TableRow } from "@incmix/ui"
-
+import { Button, Checkbox, Dialog,IconButton, Input, Label, TableCell, TableRow, TextArea  } from "@base"
 import { ChevronDown, ChevronRight, MoreVertical } from "lucide-react"
+import { forwardRef, useImperativeHandle, useRef, useState } from "react"
+import {  DropdownMenu } from "@radixui/dropdown-menu"
 import type { TreeDataItem } from "../../types"
-
 interface TreeItemRowProps {
   item: TreeDataItem
   level: number
@@ -241,20 +235,20 @@ export const TreeItemRow = forwardRef<TreeItemRowRef, TreeItemRowProps>(
         </TableCell>
 
         {/* Dialog */}
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
+        <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
+          <Dialog.Content>
+            <Dialog.Header>
+              <Dialog.Title>
                 {isEditing
                   ? `Edit ${dialogType === "file" ? "Variable" : "Folder"}`
                   : `New ${dialogType === "file" ? "Variable" : "Folder"}`}
-              </DialogTitle>
-              <DialogDescription>
+              </Dialog.Title>
+              <Dialog.Description>
                 {isEditing
                   ? `Edit the ${dialogType === "file" ? "variable" : "folder"} details below.`
                   : `Add a new ${dialogType === "file" ? "variable" : "folder"} ${dialogPosition} the selected item.`}
-              </DialogDescription>
-            </DialogHeader>
+              </Dialog.Description>
+            </Dialog.Header>
 
             <div className="space-y-4 py-4">
               {dialogFields.map((field) => (
@@ -290,7 +284,7 @@ export const TreeItemRow = forwardRef<TreeItemRowRef, TreeItemRowProps>(
               ))}
             </div>
 
-            <DialogFooter>
+            <Dialog.Footer>
               <Button
                 variant="outline"
                 onClick={() => {
@@ -311,9 +305,9 @@ export const TreeItemRow = forwardRef<TreeItemRowRef, TreeItemRowProps>(
                   ? "Save"
                   : `Add ${dialogType === "file" ? "Variable" : "Folder"}`}
               </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog.Root>
       </TableRow>
     )
   }

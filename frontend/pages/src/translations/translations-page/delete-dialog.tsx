@@ -1,12 +1,6 @@
 "use client"
 
-import {
-  Button,
-  Dialog,
-  DialogFooter,
-  DialogHeader,
-  ReactiveButton,
-} from "@incmix/ui"
+import { Button, Dialog, ReactiveButton } from "@incmix/ui/base"
 import { INTL_API_URL } from "@incmix/ui/constants"
 import { useMutation } from "@tanstack/react-query"
 import type { Row } from "@tanstack/react-table"
@@ -57,15 +51,15 @@ export function DeleteDialog({
         </Dialog.Trigger>
       ) : null}
       <Dialog.Content>
-        <DialogHeader>
+        <Dialog.Header>
           <Dialog.Title>Are you absolutely sure?</Dialog.Title>
           <Dialog.Description>
             This action cannot be undone. This will permanently delete your{" "}
             <span className="font-medium">{items.length}</span>
             {items.length === 1 ? " item" : " items"} from our servers.
           </Dialog.Description>
-        </DialogHeader>
-        <DialogFooter className="gap-2 sm:space-x-0">
+        </Dialog.Header>
+        <Dialog.Footer className="gap-2 sm:space-x-0">
           <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
@@ -78,7 +72,7 @@ export function DeleteDialog({
           >
             Delete
           </ReactiveButton>
-        </DialogFooter>
+        </Dialog.Footer>
       </Dialog.Content>
     </Dialog.Root>
   )

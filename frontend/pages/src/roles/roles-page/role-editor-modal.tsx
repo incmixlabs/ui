@@ -1,15 +1,11 @@
 import {
   Button,
   Dialog,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   Flex,
   FormField,
   ReactiveButton,
   toast,
-} from "@incmix/ui"
+} from "@incmix/ui/base"
 import { useForm } from "@tanstack/react-form"
 import { useMutation } from "@tanstack/react-query"
 import { zodValidator } from "@tanstack/zod-form-adapter"
@@ -86,10 +82,10 @@ const RoleEditorModal = ({
         </Dialog.Trigger>
       )}
       <Dialog.Content>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription className="sr-only">{title}</DialogDescription>
-        </DialogHeader>
+        <Dialog.Header>
+          <Dialog.Title>{title}</Dialog.Title>
+          <Dialog.Description className="sr-only">{title}</Dialog.Description>
+        </Dialog.Header>
 
         <form
           onSubmit={(e) => {

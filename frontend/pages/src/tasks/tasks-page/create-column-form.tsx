@@ -5,19 +5,12 @@ import type { TaskCollections } from "@incmix/store"
 import {
   Button,
   Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
   Flex,
   ReactiveButton,
   Select,
   TextField,
   toast,
-} from "@incmix/ui"
+} from "@incmix/ui/base"
 import type { Column } from "@incmix/utils/types"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { nanoid } from "nanoid"
@@ -157,10 +150,10 @@ export function CreateColumnForm({
         <Button>Add Column</Button>
       </Dialog.Trigger>
       <Dialog.Content>
-        <DialogHeader>
+        <Dialog.Header>
           <Dialog.Title>Add New Column</Dialog.Title>
           <Dialog.Description>Add New Column to Board</Dialog.Description>
-        </DialogHeader>
+        </Dialog.Header>
 
         <form onSubmit={handleSubmit}>
           <Flex direction="column" gap="4">
@@ -229,13 +222,13 @@ export function CreateColumnForm({
           </Flex>
         </form>
 
-        <DialogFooter className="gap-2 sm:space-x-0">
-          <DialogClose>
+        <Dialog.Footer className="gap-2 sm:space-x-0">
+          <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </DialogClose>
-        </DialogFooter>
+          </Dialog.Close>
+        </Dialog.Footer>
       </Dialog.Content>
     </Dialog.Root>
   )

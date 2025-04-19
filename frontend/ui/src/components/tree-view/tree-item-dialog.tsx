@@ -1,11 +1,6 @@
 "use client"
 
-import { Button, Flex, Text,  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle, FormField, VisuallyHidden } from "@incmix/ui"
+import { Button, Dialog, Flex, FormField,  Text, VisuallyHidden } from "@incmix/ui/base"
 import { useForm } from "@tanstack/react-form"
 import type { FieldApi } from "@tanstack/react-form"
 import { zodValidator } from "@tanstack/zod-form-adapter"
@@ -72,10 +67,10 @@ export function TreeItemDialog({
   const isEditing = !!initialData
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+    <Dialog.Root open={open} onOpenChange={onOpenChange}>
+      <Dialog.Content>
         <VisuallyHidden asChild>
-          <DialogDescription>
+          <Dialog.Description>
             {isEditing
               ? type === "file"
                 ? descriptions.editFileTitle
@@ -83,10 +78,10 @@ export function TreeItemDialog({
               : type === "file"
                 ? descriptions.newFileTitle
                 : descriptions.newFolderTitle}
-          </DialogDescription>
+          </Dialog.Description>
         </VisuallyHidden>
-        <DialogHeader>
-          <DialogTitle>
+        <Dialog.Header>
+          <Dialog.Title>
             {isEditing
               ? type === "file"
                 ? descriptions.editFileTitle
@@ -94,8 +89,8 @@ export function TreeItemDialog({
               : type === "file"
                 ? descriptions.newFileTitle
                 : descriptions.newFolderTitle}
-          </DialogTitle>
-        </DialogHeader>
+          </Dialog.Title>
+        </Dialog.Header>
         <form
           onSubmit={(e) => {
             e.preventDefault()
@@ -126,7 +121,7 @@ export function TreeItemDialog({
               </form.Field>
             ))}
           </Flex>
-          <DialogFooter className="mt-4">
+          <Dialog.Footer className="mt-4">
             <Button
               type="button"
               variant="soft"
@@ -143,9 +138,9 @@ export function TreeItemDialog({
                 </Button>
               )}
             </form.Subscribe>
-          </DialogFooter>
+          </Dialog.Footer>
         </form>
-      </DialogContent>
-    </Dialog>
+      </Dialog.Content>
+    </Dialog.Root>
   )
 }

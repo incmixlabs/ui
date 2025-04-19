@@ -2,6 +2,7 @@ import { type SetStateAction, useState } from "react"
 import {
   ChevronLeft,
   Columns2,
+  FilterIcon,
   LayoutGrid,
   List,
   Plus,
@@ -10,7 +11,6 @@ import {
 } from "lucide-react"
 import { useQueryState } from "nuqs"
 
-import { FilterIcon } from "@components/icons/filter"
 import { MotionSheet } from "@components/custom-sheet"
 import { useMediaQuery } from "@hooks/use-media-query"
 import { Box, Button, Flex, IconButton, iconSize, Input } from "@base"
@@ -121,11 +121,11 @@ const ProjectBox = ({ title }: FileGridProps) => {
                 />
               </Box>
             )}
-            <Button variant="solid" className="h-11">
-              <Plus /> Add Folder
+            <Button>
+              <Plus className={iconSize} /> Add Folder
             </Button>
-            <Button variant="solid" className="h-11">
-              <Upload /> Upload
+            <Button>
+              <Upload className={iconSize}/> Upload
             </Button>
           </Flex>
           <Flex align={"center"} justify={"between"} className="mb-4">
@@ -146,52 +146,32 @@ const ProjectBox = ({ title }: FileGridProps) => {
                     className="absolute top-0 left-0 hidden h-full w-full bg-transparent md:block md:pl-8"
                   />
                 </Box>
-                <Box className="h-9 w-9 rounded-md border border-gray-5">
-                  <IconButton
-                    className={cn(
-                      "grid h-full w-full cursor-pointer place-content-center border-none bg-transparent"
-                    )}
-                    onClick={() => setViewMode("grid")}
-                  >
-                    <FilterIcon className="h-5 w-5 stroke-gray-8" />
-                  </IconButton>
-                </Box>
               </Flex>
               <Flex
                 align={"center"}
                 gap={"1"}
                 className="h-9 rounded-md border border-gray-5 p-1"
               >
+                 <IconButton
+
+                    onClick={() => setViewMode("grid")}
+                  >
+                    <FilterIcon className={iconSize}/>
+                  </IconButton>
                 <IconButton
-                  className={cn(
-                    " h-7 cursor-pointer border-none ",
-                    viewMode === "list"
-                      ? "bg-sidebar-secondary-active dark:bg-sidebar-secondary-active/20 "
-                      : "bg-transparent text-gray-10"
-                  )}
+
                   onClick={() => setViewMode("list")}
                 >
-                  <List className="h-5 w-5" />
+                  <List className={iconSize} />
                 </IconButton>
                 <IconButton
-                  className={cn(
-                    " h-7 cursor-pointer border-none",
-                    viewMode === "grid"
-                      ? "bg-sidebar-secondary-active dark:bg-sidebar-secondary-active/20 "
-                      : "bg-transparent text-gray-10"
-                  )}
                   onClick={() => setViewMode("grid")}
                 >
-                  <LayoutGrid className={cn("h-5 w-5")} />
+                  <LayoutGrid className={iconSize} />
                 </IconButton>
                 {isMobile && (
                   <IconButton
-                    className={cn(
-                      " h-7 cursor-pointer border-none",
-                      viewMode === "side"
-                        ? "bg-sidebar-secondary-active dark:bg-sidebar-secondary-active/20 "
-                        : "bg-transparent text-gray-10"
-                    )}
+
                     onClick={() => setViewMode("side")}
                   >
                     <Columns2 className={cn("h-5 w-5")} />

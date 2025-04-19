@@ -4,21 +4,17 @@ import { cn } from "@utils"
 import {
   Box,
   Button,
+  Card,
   Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+  IconButton,
   Flex,
+  Grid,
   Heading,
   Pushpin,
-  Label
+  Input,
+  Label,
+  TextArea
 } from "@base"
-import {
-  Card,
-  CardContent} from "../card/card"
 import {
   CalendarClock,
   Edit2,
@@ -61,17 +57,17 @@ export function NoteComponent() {
             <Button variant="soft" color="gray">
               <SlidersHorizontal className="h-5 w-5" />
             </Button>
-            <Dialog>
-              <DialogTrigger>
+            <Dialog.Root>
+              <Dialog.Trigger asChild>
                 <Button variant="solid">
                   <Plus className="h-5 w-5" /> Add Note
                 </Button>
-              </DialogTrigger>
-              <DialogContent className="border border-gray-4">
-                <DialogHeader className="relative">
-                  <DialogTitle>Add Note</DialogTitle>
-                </DialogHeader>
-                <DialogDescription className="space-y-4">
+              </Dialog.Trigger>
+              <Dialog.Content>
+                <Dialog.Header>
+                  <Dialog.Title>Add Note</Dialog.Title>
+                </Dialog.Header>
+                <Dialog.Description>
                   <Box className="space-y-2">
                     <Label>Title</Label>
                     <Input
@@ -89,17 +85,17 @@ export function NoteComponent() {
                       ref={descriptionInputRef}
                     />
                   </Box>
-                </DialogDescription>
-                <DialogFooter>
-                  <DialogClose>
+                </Dialog.Description>
+                <Dialog.Footer>
+                  <Dialog.Close asChild>
                     <Button variant="soft" color="gray">
                       Cancel
                     </Button>
-                  </DialogClose>
+                  </Dialog.Close>
                   <Button variant="solid">Add Note</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+                </Dialog.Footer>
+              </Dialog.Content>
+            </Dialog.Root>
           </Flex>
         </Flex>
         <Grid
@@ -108,8 +104,8 @@ export function NoteComponent() {
           gap={"5"}
         >
           {notes.map((note) => (
-            <Card key={note.id}>
-              <CardContent className="p-0">
+            <Card.Root key={note.id}>
+              <Card.Content className="p-0">
                 <Flex
                   align={"center"}
                   justify={"between"}
@@ -144,16 +140,16 @@ export function NoteComponent() {
                   <h3 className="mb-2 font-medium text-lg">{note.title}</h3>
                   <p className="text-gray-11 text-sm">{note.content}</p>
                 </Box>
-              </CardContent>
-            </Card>
+              </Card.Content>
+            </Card.Root>
           ))}
         </Grid>
       </Box>
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="border border-gray-4">
-          <DialogHeader className="relative">
-            <DialogTitle>Add New Note</DialogTitle>
+      <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
+        <Dialog.Content className="border border-gray-4">
+          <Dialog.Header className="relative">
+            <Dialog.Title>Add New Note</Dialog.Title>
             <Flex
               align={"center"}
               className={cn(
@@ -201,8 +197,8 @@ export function NoteComponent() {
                 </>
               )}
             </Flex>
-          </DialogHeader>
-          <DialogDescription>
+          </Dialog.Header>
+          <Dialog.Description>
             {isEditing ? (
               <div className="space-y-4 pt-4">
                 <Suspense fallback={<div>Loading editor...</div>}>
@@ -217,9 +213,9 @@ export function NoteComponent() {
                 <p className="text-gray-11 text-sm">{modalData?.content}</p>
               </Box>
             )}
-          </DialogDescription>
-        </DialogContent>
-      </Dialog>
+          </Dialog.Description>
+        </Dialog.Content>
+      </Dialog.Root>
     </>
   )
 }

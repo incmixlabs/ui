@@ -1,17 +1,12 @@
 import {
+  Button,
   Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
   Flex,
   FormField,
   ReactiveButton,
-} from "@incmix/ui"
-import { Button, Select, Text } from "@incmix/ui"
+  Select,
+  Text,
+} from "@incmix/ui/base"
 import { INTL_API_URL } from "@incmix/ui/constants"
 import { useForm } from "@tanstack/react-form"
 import { useMutation, useQuery } from "@tanstack/react-query"
@@ -43,20 +38,20 @@ export const AddTranslationDialog: React.FC<AddTranslationDialogProps> = ({
         <Button>Add Translation</Button>
       </Dialog.Trigger>
       <Dialog.Content>
-        <DialogHeader>
+        <Dialog.Header>
           <Dialog.Title>Add Translation</Dialog.Title>
           <Dialog.Description className="sr-only">
             Add new Translation
           </Dialog.Description>
-        </DialogHeader>
+        </Dialog.Header>
         <AddTranlationForm onSuccess={onSubmit} />
-        <DialogFooter className="gap-2 sm:space-x-0">
+        <Dialog.Footer className="gap-2 sm:space-x-0">
           <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
           </Dialog.Close>
-        </DialogFooter>
+        </Dialog.Footer>
       </Dialog.Content>
     </Dialog.Root>
   )

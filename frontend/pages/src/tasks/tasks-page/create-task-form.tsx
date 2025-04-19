@@ -3,18 +3,14 @@
 import { useAuth } from "@auth"
 import type { TaskCollections } from "@incmix/store"
 import {
+  Button,
   Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  Flex,
   ReactiveButton,
+  Select,
+  TextField,
   toast,
-} from "@incmix/ui"
-import { Button, Flex, Select, TextField } from "@incmix/ui"
+} from "@incmix/ui/base"
 import type { Task, TaskStatus } from "@incmix/utils/types"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { nanoid } from "nanoid"
@@ -115,10 +111,10 @@ export function CreateTaskForm({
         <Button>Add Task</Button>
       </Dialog.Trigger>
       <Dialog.Content>
-        <DialogHeader>
-          <DialogTitle>Add New Task</DialogTitle>
-          <DialogDescription>Add New Task to Board</DialogDescription>
-        </DialogHeader>
+        <Dialog.Header>
+          <Dialog.Title>Add New Task</Dialog.Title>
+          <Dialog.Description>Add New Task to Board</Dialog.Description>
+        </Dialog.Header>
 
         <form onSubmit={handleSubmit}>
           <Flex direction="column" gap="4">
@@ -154,13 +150,13 @@ export function CreateTaskForm({
           </Flex>
         </form>
 
-        <DialogFooter className="gap-2 sm:space-x-0">
-          <DialogClose>
+        <Dialog.Footer>
+          <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
-          </DialogClose>
-        </DialogFooter>
+          </Dialog.Close>
+        </Dialog.Footer>
       </Dialog.Content>
     </Dialog.Root>
   )
