@@ -145,18 +145,6 @@ const ProjectBox = ({ title }: FileGridProps) => {
                     onChange={(e) => setProjectSearchQuery(e.target.value)}
                     className="absolute top-0 left-0 hidden h-full w-full bg-transparent md:block md:pl-8"
                   />
-
-                <IconButton
-                    className={cn(
-                      " h-7 cursor-pointer border-none",
-                      viewMode === "side"
-                        ? "bg-sidebar-secondary-active dark:bg-sidebar-secondary-active/20 "
-                        : "bg-transparent text-gray-10"
-                    )}
-                    onClick={() => setViewMode("grid")}
-                  >
-                    <FilterIcon className={iconSize}/>
-                  </IconButton>
                 </Box>
               </Flex>
               <Flex
@@ -165,7 +153,7 @@ const ProjectBox = ({ title }: FileGridProps) => {
                 className="h-9 rounded-md border border-gray-5 p-1"
               >
                  <IconButton
-                    
+
                     onClick={() => setViewMode("grid")}
                   >
                     <FilterIcon className={iconSize}/>

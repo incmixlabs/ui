@@ -87,7 +87,7 @@ export function NoteComponent() {
                   </Box>
                 </Dialog.Description>
                 <Dialog.Footer>
-                  <Dialog.Close>
+                  <Dialog.Close asChild>
                     <Button variant="soft" color="gray">
                       Cancel
                     </Button>
