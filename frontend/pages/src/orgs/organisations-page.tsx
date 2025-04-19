@@ -192,11 +192,9 @@ const OrganizationsPage: React.FC = () => {
       <Table.Root>
         <Table.Header>
           <Table.Row>
-            <Table.ColumnHeaderCell>{t("common:name")}</Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell>
-              {t("common:members")}
-            </Table.ColumnHeaderCell>
-            <Table.ColumnHeaderCell />
+            <Table.HeaderCell>{t("common:name")}</Table.HeaderCell>
+            <Table.HeaderCell>{t("common:members")}</Table.HeaderCell>
+            <Table.HeaderCell />
           </Table.Row>
         </Table.Header>
         <Table.Body>

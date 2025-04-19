@@ -20,7 +20,7 @@ import {
   FolderOpen,
 } from "lucide-react"
 
-import { Box, Flex, Text, iconSize, Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@base"
+import { Box, Flex, Text, iconSize, Table } from "@base"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import { cn } from "@utils/cn"
 import { TreeContextMenu } from "./context-menu"
@@ -301,16 +301,16 @@ const TreeView = React.forwardRef<HTMLDivElement, TreeProps>(
           className={cn("relative select-none", className)}
           {...props}
         >
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[20%]">Name</TableHead>
-                <TableHead className="w-[50%]">Value</TableHead>
-                <TableHead className="w-[12.5%]">Created By</TableHead>
-                <TableHead className="w-[12.5%]">Created On</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+          <Table.Root>
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell className="w-[20%]">Name</Table.HeaderCell>
+                <Table.HeaderCell className="w-[50%]">Value</Table.HeaderCell>
+                <Table.HeaderCell className="w-[12.5%]">Created By</Table.HeaderCell>
+                <Table.HeaderCell className="w-[12.5%]">Created On</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
               {Array.isArray(data) && data.length === 0 ? (
                 <EmptyTreeView
                   onCreateItem={(item) => setInternalData([item])}
@@ -330,8 +330,8 @@ const TreeView = React.forwardRef<HTMLDivElement, TreeProps>(
                   setData={setInternalData}
                 />
               )}
-            </TableBody>
-          </Table>
+            </Table.Body>
+          </Table.Root>
         </Box>
       </TreeViewProvider>
     )
@@ -370,8 +370,8 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
       <>
         {dataArray.map((item, index) => (
           <React.Fragment key={`fragment-${item.id}`}>
-            <TableRow key={`row-${item.id}`}>
-              <TableCell>
+            <Table.Row key={`row-${item.id}`}>
+              <Table.Cell>
                 {item.type === "folder" ? (
                   <TreeNode
                     rootData={rootData}
@@ -400,8 +400,8 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                     />
                   </>
                 )}
-              </TableCell>
-            </TableRow>
+              </Table.Cell>
+            </Table.Row>
           </React.Fragment>
         ))}
       </>
@@ -702,10 +702,10 @@ const TreeNode = ({
           {instruction && <DropIndicator instruction={instruction} />}
         </div>
       </Box>
-      {/* <TableCell>
+      {/* <Table.Cell>
         <TreeActions isSelected={selectedItemId === item.id}>{item.actions}</TreeActions>
-      </TableCell> */}
-      {/* <TableCell>
+      </Table.Cell> */}
+      {/* <Table.Cell>
         {item.type === "folder" && (
           <button
             onClick={() => onValueChange(value.includes(item.id) ? [] : [item.id])}
@@ -714,7 +714,7 @@ const TreeNode = ({
             {value.includes(item.id) ? "Collapse" : "Expand"}
           </button>
         )}
-      </TableCell> */}
+      </Table.Cell> */}
 
       <TreeItemDialog
         open={dialogOpen}
