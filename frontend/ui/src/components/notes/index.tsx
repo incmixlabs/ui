@@ -58,7 +58,7 @@ export function NoteComponent() {
               <SlidersHorizontal className="h-5 w-5" />
             </Button>
             <Dialog.Root>
-              <Dialog.Trigger>
+              <Dialog.Trigger asChild>
                 <Button variant="solid">
                   <Plus className="h-5 w-5" /> Add Note
                 </Button>
