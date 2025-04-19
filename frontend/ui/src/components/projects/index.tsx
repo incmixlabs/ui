@@ -265,32 +265,32 @@ export function ProjectPageComponents() {
           <Box className="absolute top-0 right-0 z-10 flex rounded-md ">
             <IconButton
               variant={viewMode === "list" ? "soft" : "solid"}
-              className="h-10 w-10 cursor-pointer rounded-r-none border-0"
+              size="1"
               onClick={() => setViewMode("grid")}
             >
               <LayoutGrid size={16} />
             </IconButton>
             <IconButton
               variant={viewMode === "grid" ? "soft" : "solid"}
-              className="h-10 w-10 cursor-pointer rounded-l-none border-0"
+              size="1"
               onClick={handleOpenListView}
             >
-              <List size={20} />
+              <List size={16} />
             </IconButton>
             <Flex align={"center"} gap={"2"} className=" pl-2">
               <IconButton
                 color="gray"
                 variant="soft"
                 onClick={() => setIsFilterOpen(true)}
-                className="h-10 w-10 cursor-pointer"
+                size="1"
               >
-                <SlidersHorizontal size={20} />
+                <SlidersHorizontal size={16} />
               </IconButton>
 
               <Button
                 onClick={() => setIsAddModalOpen(true)}
                 variant="solid"
-                className="h-10 cursor-pointer"
+                size="1"
               >
                 <Plus size={16} />
                 Add Project
