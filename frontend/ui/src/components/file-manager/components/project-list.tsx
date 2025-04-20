@@ -6,11 +6,6 @@ import {
   Checkbox,
   ScrollArea,
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
 } from "@base"
 import { useMediaQuery } from "@hooks/use-media-query"
 import { cn } from "@utils"
@@ -99,10 +94,10 @@ export function ProjectListView({
       className="w-full rounded-md border border-gray-5"
       scrollbars="horizontal"
     >
-      <Table className="w-full overflow-hidden">
-        <TableHeader className="bg-gray-3">
-          <TableRow className="border-gray-5 ">
-            <TableHead className="w-8 md:w-12">
+      <Table.Root className="w-full overflow-hidden">
+        <Table.Header className="bg-gray-3">
+          <Table.Row className="border-gray-5 ">
+            <Table.HeaderCell className="w-8 md:w-12">
               <Checkbox
                 checked={
                   selectedFiles.length === files.length && files.length > 0
@@ -110,43 +105,43 @@ export function ProjectListView({
                 onCheckedChange={toggleSelectAll}
                 aria-label="Select all files"
               />
-            </TableHead>
-            <TableHead
+            </Table.HeaderCell>
+            <Table.HeaderCell
               className="cursor-pointer"
               onClick={() => handleSort("name")}
             >
               <div className="flex items-center gap-2">
                 Files {getSortIcon("name")}
               </div>
-            </TableHead>
+            </Table.HeaderCell>
             {isMobile && (
               <>
-                <TableHead
+                <Table.HeaderCell
                   className="cursor-pointer text-right"
                   onClick={() => handleSort("modified")}
                 >
                   <div className="flex items-center justify-end gap-2">
                     Date {getSortIcon("modified")}
                   </div>
-                </TableHead>
+                </Table.HeaderCell>
 
-                <TableHead
+                <Table.HeaderCell
                   className="cursor-pointer text-right"
                   onClick={() => handleSort("size")}
                 >
                   <div className="flex items-center justify-end gap-2">
                     Size {getSortIcon("size")}
                   </div>
-                </TableHead>
+                </Table.HeaderCell>
               </>
             )}
 
-            <TableHead className="w-10 text-right md:w-20 lg:w-32">
+            <Table.HeaderCell className="w-10 text-right md:w-20 lg:w-32">
               Action
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody className="px-2">
+            </Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body className="px-2">
           {sortedFiles.map((file) => {
             const IconComponent =
               selectedProjectId === file.id
@@ -154,7 +149,7 @@ export function ProjectListView({
                 : file.closeIcon || null
 
             return (
-              <TableRow
+              <Table.Row
                 key={file.id}
                 className={cn(
                   "h-14 cursor-pointer border-gray-5 border-t hover:bg-sidebar-secondary-active/15 ",
@@ -163,7 +158,7 @@ export function ProjectListView({
                 )}
                 onClick={() => onFileClick(file)}
               >
-                <TableCell
+                <Table.Cell
                   className="w-8 px-2 md:w-12"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -178,8 +173,8 @@ export function ProjectListView({
                     }}
                     aria-label={`Select ${file.name}`}
                   />
-                </TableCell>
-                <TableCell>
+                </Table.Cell>
+                <Table.Cell>
                   <div className="flex items-center gap-3">
                     {IconComponent && (
                       <IconComponent
@@ -191,19 +186,19 @@ export function ProjectListView({
                     )}
                     <span className="font-medium">{file.name}</span>
                   </div>
-                </TableCell>
+                </Table.Cell>
                 {isMobile && (
                   <>
-                    <TableCell className="text-right text-muted-foreground">
+                    <Table.Cell className="text-right text-muted-foreground">
                       {file.modified}
-                    </TableCell>
-                    <TableCell className="text-right text-muted-foreground">
+                    </Table.Cell>
+                    <Table.Cell className="text-right text-muted-foreground">
                       {file.size.value} {file.size.unit}
-                    </TableCell>
+                    </Table.Cell>
                   </>
                 )}
 
-                <TableCell
+                <Table.Cell
                   className="w-10 text-right md:w-20 lg:w-32"
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -211,12 +206,12 @@ export function ProjectListView({
                     projectId={file?.id}
                     className="mr-1 h-5 w-5 cursor-pointer sm:mr-2 sm:h-6 sm:w-6"
                   />
-                </TableCell>
-              </TableRow>
+                </Table.Cell>
+              </Table.Row>
             )
           })}
-        </TableBody>
-      </Table>
+        </Table.Body>
+      </Table.Root>
     </ScrollArea>
   )
 }

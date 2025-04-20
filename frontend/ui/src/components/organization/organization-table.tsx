@@ -1,9 +1,5 @@
 import { Button, Checkbox,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow, } from "@base"
+  Table } from "@base"
 
 import { produce } from "immer"
 import { useEffect, useRef, useState } from "react"
@@ -214,24 +210,24 @@ export function OrganizationTable() {
         />
       </div>
 
-      <Table className="border-collapse border border-gray-200">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-12 border border-gray-200">
+      <Table.Root className="border-collapse border border-gray-200">
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell className="w-12 border border-gray-200">
               <Checkbox />
-            </TableHead>
-            <TableHead className="border border-gray-200">
+            </Table.HeaderCell>
+            <Table.HeaderCell className="border border-gray-200">
               Description
-            </TableHead>
-            <TableHead className="w-64 border border-gray-200">Value</TableHead>
-            <TableHead className="border border-gray-200">Created on</TableHead>
-            <TableHead className="border border-gray-200">Created by</TableHead>
-            <TableHead className="w-10 border border-gray-200">
+            </Table.HeaderCell>
+            <Table.HeaderCell className="w-64 border border-gray-200">Value</Table.HeaderCell>
+            <Table.HeaderCell className="border border-gray-200">Created on</Table.HeaderCell>
+            <Table.HeaderCell className="border border-gray-200">Created by</Table.HeaderCell>
+            <Table.HeaderCell className="w-10 border border-gray-200">
               Actions
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+            </Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
           {flattenedItems.length > 0 ? (
             flattenedItems.map((item) => (
               <TreeItemRow
@@ -248,15 +244,15 @@ export function OrganizationTable() {
               />
             ))
           ) : (
-            <TableRow>
-              <TableCell colSpan={6} className="py-4 text-center">
+            <Table.Row>
+              <Table.Cell colSpan={6} className="py-4 text-center">
                 No environment variables. Create a new variable or folder to get
                 started.
-              </TableCell>
-            </TableRow>
+              </Table.Cell>
+            </Table.Row>
           )}
-        </TableBody>
-      </Table>
+        </Table.Body>
+      </Table.Root>
     </div>
   )
 }

@@ -295,19 +295,19 @@ const OrganizationDetailsPage: React.FC = () => {
               <Table.Root>
                 <Table.Header>
                   <Table.Row>
-                    <Table.ColumnHeaderCell>
+                    <Table.HeaderCell>
                       {t("organizationDetails:name")}
-                    </Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell>
+                    </Table.HeaderCell>
+                    <Table.HeaderCell>
                       {t("organizationDetails:email")}
-                    </Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell>
+                    </Table.HeaderCell>
+                    <Table.HeaderCell>
                       {t("organizationDetails:role")}
-                    </Table.ColumnHeaderCell>
+                    </Table.HeaderCell>
                     {ability.can("delete", "Member") && (
-                      <Table.ColumnHeaderCell>
+                      <Table.HeaderCell>
                         {t("organizationDetails:actions")}
-                      </Table.ColumnHeaderCell>
+                      </Table.HeaderCell>
                     )}
                   </Table.Row>
                 </Table.Header>

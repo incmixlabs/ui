@@ -1,15 +1,4 @@
-import {
-  Button,
-  Flex,
-  Input,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeadCell,
-  TableRow,
-  toast,
-} from "@incmix/ui"
+import { Button, Flex, Input, Table, toast } from "@incmix/ui/base"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import {
   type Column,
@@ -118,36 +107,38 @@ const PermissonsTable = () => {
           </Button>
         </Flex>
       </Flex>
-      <Table>
+      <Table.Root>
         {table.getHeaderGroups().map((headerGroup) => (
-          <TableHead key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <TableHeadCell key={header.id}>
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext()
-                )}
-                {header.column.getCanFilter() ? (
-                  <div>
-                    <Filter column={header.column} />
-                  </div>
-                ) : null}
-              </TableHeadCell>
-            ))}
-          </TableHead>
-        ))}
-        <TableBody>
-          {table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
+          <Table.Header key={headerGroup.id}>
+            <Table.Row>
+              {headerGroup.headers.map((header) => (
+                <Table.HeaderCell key={header.id}>
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
+                  {header.column.getCanFilter() ? (
+                    <div>
+                      <Filter column={header.column} />
+                    </div>
+                  ) : null}
+                </Table.HeaderCell>
               ))}
-            </TableRow>
+            </Table.Row>
+          </Table.Header>
+        ))}
+        <Table.Body>
+          {table.getRowModel().rows.map((row) => (
+            <Table.Row key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <Table.Cell key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </Table.Cell>
+              ))}
+            </Table.Row>
           ))}
-        </TableBody>
-      </Table>
+        </Table.Body>
+      </Table.Root>
       <RoleEditorModal
         title="Edit Role"
         role={columnAction?.role}

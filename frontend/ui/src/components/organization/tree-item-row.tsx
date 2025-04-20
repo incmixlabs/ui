@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, Checkbox, Dialog,IconButton, Input, Label, TableCell, TableRow, TextArea  } from "@base"
+import { Button, Checkbox, Dialog,IconButton, Input, Label, Table, TextArea  } from "@base"
 import { ChevronDown, ChevronRight, MoreVertical } from "lucide-react"
 import { forwardRef, useImperativeHandle, useRef, useState } from "react"
 import {  DropdownMenu } from "@radixui/dropdown-menu"
@@ -120,11 +120,11 @@ export const TreeItemRow = forwardRef<TreeItemRowRef, TreeItemRowProps>(
           ]
 
     return (
-      <TableRow>
-        <TableCell className="w-12 border border-gray-200">
+      <Table.Row>
+        <Table.Cell className="w-12 border border-gray-200">
           <Checkbox />
-        </TableCell>
-        <TableCell className="border border-gray-200">
+        </Table.Cell>
+        <Table.Cell className="border border-gray-200">
           <div
             className="flex items-center"
             style={{ paddingLeft: `${level * 24}px` }}
@@ -147,8 +147,8 @@ export const TreeItemRow = forwardRef<TreeItemRowRef, TreeItemRowProps>(
               {item.name}
             </span>
           </div>
-        </TableCell>
-        <TableCell className="max-w-xs border border-gray-200">
+        </Table.Cell>
+        <Table.Cell className="max-w-xs border border-gray-200">
           {item.type === "file" && item.data?.value ? (
             <div className="truncate" title={item.data.value}>
               {item.data.value}
@@ -156,14 +156,14 @@ export const TreeItemRow = forwardRef<TreeItemRowRef, TreeItemRowProps>(
           ) : (
             ""
           )}
-        </TableCell>
-        <TableCell className="border border-gray-200">
+        </Table.Cell>
+        <Table.Cell className="border border-gray-200">
           {/* Created on would go here */}
-        </TableCell>
-        <TableCell className="border border-gray-200">
+        </Table.Cell>
+        <Table.Cell className="border border-gray-200">
           {/* Created by would go here */}
-        </TableCell>
-        <TableCell className="w-10 border border-gray-200">
+        </Table.Cell>
+        <Table.Cell className="w-10 border border-gray-200">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
               <button
@@ -232,7 +232,7 @@ export const TreeItemRow = forwardRef<TreeItemRowRef, TreeItemRowProps>(
               </DropdownMenu.Item>
             </DropdownMenu.Content>
           </DropdownMenu.Root>
-        </TableCell>
+        </Table.Cell>
 
         {/* Dialog */}
         <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -308,7 +308,7 @@ export const TreeItemRow = forwardRef<TreeItemRowRef, TreeItemRowProps>(
             </Dialog.Footer>
           </Dialog.Content>
         </Dialog.Root>
-      </TableRow>
+      </Table.Row>
     )
   }
 )
