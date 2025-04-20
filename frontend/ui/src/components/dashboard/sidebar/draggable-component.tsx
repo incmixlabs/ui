@@ -69,13 +69,13 @@ export const DraggableComponent = forwardRef<
     return (
       <Box className="relative">
         {isDragging && (
-          <div className="absolute z-50 rounded-lg border border-gray-400 border-dashed bg-gray-100 opacity-50">
+          <Box className="absolute z-50 rounded-lg border border-gray-400 border-dashed bg-gray-100 opacity-50">
             <img
               src={image || "/placeholder.svg?height=150&width=150"}
               alt={title}
               className="h-full w-full rounded-lg"
             />
-          </div>
+          </Box>
         )}
 
         <Box
