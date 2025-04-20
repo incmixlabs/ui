@@ -20,6 +20,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
   MoreHorizontal,
+  Check
 } from "lucide-react"
 
 import { Button } from "../button/shad-button"
@@ -35,6 +36,10 @@ import {
   TableRow,
 } from "../tan-table"
 
+// Constants
+const PAGE_SIZE_OPTIONS = [10, 20, 30, 40, 50]
+
+// Types
 export type ColumnType = "String" | "Number" | "Currency" | "Date" | "Tag" | "Boolean" | "Status"
 
 export interface DataTableColumn<TData> {
@@ -74,6 +79,463 @@ interface DataTableProps<TData> {
   isPaginationLoading?: boolean
 }
 
+interface PaginationInfo {
+  currentPage: number
+  pageSize: number
+  totalItems: number
+  totalPages: number
+  canPreviousPage: boolean
+  canNextPage: boolean
+}
+
+// Cell Renderer Components
+const TagCell: React.FC<{ value: string[] }> = ({ value }) => {
+  if (!Array.isArray(value)) return <>{String(value)}</>
+
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {value.map((tag, i) => (
+        <span
+          key={i}
+          className="inline-flex items-center rounded-full bg-primary-50 dark:bg-primary-950/50 px-2 py-1 text-xs font-medium text-primary-700 dark:text-primary-300 ring-1 ring-inset ring-primary-700/10 dark:ring-primary-300/20"
+        >
+          {tag}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+const StatusCell: React.FC<{ value: string }> = ({ value }) => {
+  const statusMap: Record<string, { color: string }> = {
+    success: {
+      color: "bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-950/50 dark:text-green-400 dark:ring-green-500/30"
+    },
+    failed: {
+      color: "bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-950/50 dark:text-red-400 dark:ring-red-500/30"
+    },
+    processing: {
+      color: "bg-yellow-50 text-yellow-700 ring-yellow-600/20 dark:bg-yellow-950/50 dark:text-yellow-400 dark:ring-yellow-500/30"
+    },
+    pending: {
+      color: "bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-950/50 dark:text-blue-400 dark:ring-blue-500/30"
+    },
+    canceled: {
+      color: "bg-gray-50 text-gray-700 ring-gray-600/20 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-500/30"
+    },
+  }
+
+  const status = String(value).toLowerCase()
+  const statusStyle = statusMap[status] || {
+    color: "bg-gray-50 text-gray-700 ring-gray-600/20 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-500/30"
+  }
+
+  return (
+    <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset capitalize ${statusStyle.color}`}>
+      {String(value)}
+    </span>
+  )
+}
+
+const BooleanCell: React.FC<{ value: boolean }> = ({ value }) => (
+  <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ${
+    value
+      ? 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-950/50 dark:text-green-400 dark:ring-green-500/30'
+      : 'bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-950/50 dark:text-red-400 dark:ring-red-500/30'
+  }`}>
+    {value ? 'Yes' : 'No'}
+  </span>
+)
+
+const CurrencyCell: React.FC<{ value: number }> = ({ value }) => (
+  <span className="block text-left font-medium">
+    {new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value)}
+  </span>
+)
+
+const NumberCell: React.FC<{ value: number }> = ({ value }) => (
+  <span className="block text-left">
+    {value.toLocaleString()}
+  </span>
+)
+
+const DateCell: React.FC<{ value: string | Date }> = ({ value }) => {
+  if (value instanceof Date || (typeof value === 'string' && !isNaN(Date.parse(value as string)))) {
+    const date = value instanceof Date ? value : new Date(value as string);
+
+    // Format: Apr 18, 2025 17:05 (with time if available)
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    };
+
+    // Check if the time is not midnight (00:00:00) to determine if time was provided
+    if (date.getHours() !== 0 || date.getMinutes() !== 0 || date.getSeconds() !== 0) {
+      options.hour = '2-digit';
+      options.minute = '2-digit';
+    }
+
+    return (
+      <span className="font-mono text-sm text-gray-600 dark:text-gray-300">
+        {date.toLocaleString(undefined, options)}
+      </span>
+    );
+  }
+  return <>{String(value)}</>
+}
+
+const StringCell: React.FC<{ value: any }> = ({ value }) => (
+  <div className="truncate max-w-[300px] text-left">
+    {value !== null && value !== undefined ? String(value) : ''}
+  </div>
+)
+
+// Utility functions
+function getCellRenderer(type: ColumnType, value: any): React.ReactNode {
+  switch (type) {
+    case "Date":
+      return <DateCell value={value} />
+    case "Tag":
+      return <TagCell value={value} />
+    case "Status":
+      return <StatusCell value={value} />
+    case "Boolean":
+      return <BooleanCell value={value} />
+    case "Currency":
+      return <CurrencyCell value={value} />
+    case "Number":
+      return <NumberCell value={value} />
+    case "String":
+    default:
+      return <StringCell value={value} />
+  }
+}
+
+function createColumnDefinitions<TData>(
+  columns: DataTableColumn<TData>[],
+  enableRowSelection: boolean,
+  enableSorting: boolean,
+  rowActions?: (row: TData) => { label: string; onClick: () => void }[]
+): ColumnDef<TData>[] {
+  const defs: ColumnDef<TData>[] = []
+
+  // Add selection column if enabled
+  if (enableRowSelection) {
+    defs.push({
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+          className="translate-y-[2px]"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+          className="translate-y-[2px]"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    })
+  }
+
+  // Add data columns
+  columns.forEach((column) => {
+    const def: ColumnDef<TData> = {
+      accessorKey: column.accessorKey as string,
+      header: ({ column: col }) => {
+        // Remove conditional alignment based on numeric column type
+        if (column.enableSorting) {
+          return (
+            <div className="flex justify-start w-full">
+              <Button
+                variant="ghost"
+                onClick={() => col.toggleSorting(col.getIsSorted() === "asc")}
+                className="p-0 font-medium text-sm hover:bg-transparent hover:text-primary text-left"
+              >
+                {column.headingName}
+                <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          );
+        }
+
+        return (
+          <div className="w-full text-left">
+            {column.headingName}
+          </div>
+        );
+      },
+      enableSorting: column.enableSorting ?? enableSorting,
+      enableHiding: column.enableHiding ?? true,
+      cell: column.cell
+        ? column.cell
+        : ({ row }) => {
+            const value = row.getValue(column.accessorKey as string)
+            return getCellRenderer(column.type, value)
+          },
+    }
+
+    defs.push(def)
+  })
+
+  // Add actions column if needed
+  if (rowActions) {
+    defs.push({
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const rowData = row.original
+        const actions = rowActions(rowData)
+
+        const actionItems = actions.map((action) => ({
+          label: action.label,
+          onClick: action.onClick
+        }))
+
+        return (
+          <DropdownMenu
+            trigger={
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            }
+            items={[
+              {
+                label: "Actions",
+                separator: true,
+                disabled: true
+              },
+              ...actionItems
+            ]}
+          />
+        )
+      },
+    })
+  }
+
+  return defs
+}
+
+function calculatePaginationInfo(
+  serverPagination: boolean,
+  table: any,
+  currentPage: number,
+  pageSize: number,
+  totalItems: number
+): PaginationInfo {
+  if (serverPagination) {
+    const totalPages = Math.ceil(totalItems / pageSize)
+    return {
+      currentPage,
+      pageSize,
+      totalItems,
+      totalPages,
+      canPreviousPage: currentPage > 0,
+      canNextPage: currentPage < totalPages - 1
+    }
+  } else {
+    return {
+      currentPage: table.getState().pagination?.pageIndex || 0,
+      pageSize: table.getState().pagination?.pageSize || 10,
+      totalItems: table.getFilteredRowModel().rows.length,
+      totalPages: table.getPageCount(),
+      canPreviousPage: table.getCanPreviousPage(),
+      canNextPage: table.getCanNextPage()
+    }
+  }
+}
+
+// Sub-components
+interface TableFiltersProps<TData> {
+  table: any
+  filterColumn?: keyof TData | string
+  filterPlaceholder: string
+  visibilityItems: { label: string; onClick: () => void }[]
+}
+
+const TableFilters = <TData extends object>({
+  table,
+  filterColumn,
+  filterPlaceholder,
+  visibilityItems
+}: TableFiltersProps<TData>) => {
+  return (
+    <div className="flex items-center py-4 gap-2">
+      {filterColumn && (
+        <div className="flex-1 max-w-sm">
+          <Input
+            placeholder={filterPlaceholder}
+            value={(table.getColumn(filterColumn as string)?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn(filterColumn as string)?.setFilterValue(event.target.value)
+            }
+            className="h-9 border-gray-200 dark:border-gray-800"
+          />
+        </div>
+      )}
+
+      <div className="ml-auto">
+        <DropdownMenu
+          button={{
+            label: "Columns",
+            variant: "outline",
+            icon: <ChevronDown className="ml-2 h-4 w-4" />,
+            className: "h-9 border-gray-200 dark:border-gray-800"
+          }}
+          items={visibilityItems}
+          content={{
+            color: "gray"
+          }}
+        />
+      </div>
+    </div>
+  )
+}
+
+interface TablePaginationProps {
+  paginationInfo: PaginationInfo
+  handlePageChange: (page: number) => void
+  handlePageSizeChange: (size: number) => void
+  showRowCount: boolean
+  selectedRowCount: number
+  filteredRowCount: number
+  isPaginationLoading: boolean
+  serverPagination: boolean
+}
+
+const TablePagination: React.FC<TablePaginationProps> = ({
+  paginationInfo,
+  handlePageChange,
+  handlePageSizeChange,
+  showRowCount,
+  selectedRowCount,
+  filteredRowCount,
+  isPaginationLoading,
+  serverPagination
+}) => {
+  return (
+    <div className="flex items-center justify-between space-x-2 py-4">
+      {showRowCount && (
+        <div className="text-sm text-muted-foreground dark:text-gray-400">
+          {selectedRowCount} of{" "}
+          {serverPagination ? paginationInfo.totalItems : filteredRowCount} row(s) selected.
+        </div>
+      )}
+
+      <div className="flex items-center space-x-2 ml-auto">
+        <div className="flex text-sm text-muted-foreground dark:text-gray-400 items-center gap-1">
+          <div>
+            Rows per page
+          </div>
+          <select
+            value={paginationInfo.pageSize}
+            onChange={e => handlePageSizeChange(Number(e.target.value))}
+            className="h-8 bg-transparent border-0 text-muted-foreground dark:text-gray-400"
+          >
+            {PAGE_SIZE_OPTIONS.map(pageSize => (
+              <option key={pageSize} value={pageSize}>
+                {pageSize}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="flex text-sm text-muted-foreground dark:text-gray-400 items-center gap-1">
+          Page {paginationInfo.currentPage + 1} of{' '}
+          {paginationInfo.totalPages || 1}
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            className="h-8 w-8 p-0"
+            onClick={() => handlePageChange(0)}
+            disabled={!paginationInfo.canPreviousPage || isPaginationLoading}
+          >
+            <span className="sr-only">Go to first page</span>
+            <ChevronsLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            className="h-8 w-8 p-0"
+            onClick={() => handlePageChange(paginationInfo.currentPage - 1)}
+            disabled={!paginationInfo.canPreviousPage || isPaginationLoading}
+          >
+            <span className="sr-only">Go to previous page</span>
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            className="h-8 w-8 p-0"
+            onClick={() => handlePageChange(paginationInfo.currentPage + 1)}
+            disabled={!paginationInfo.canNextPage || isPaginationLoading}
+          >
+            <span className="sr-only">Go to next page</span>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            className="h-8 w-8 p-0"
+            onClick={() => handlePageChange(paginationInfo.totalPages - 1)}
+            disabled={!paginationInfo.canNextPage || isPaginationLoading}
+          >
+            <span className="sr-only">Go to last page</span>
+            <ChevronsRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+interface LoadingRowProps {
+  colSpan: number
+}
+
+const LoadingRow: React.FC<LoadingRowProps> = ({ colSpan }) => (
+  <TableRow className="dark:border-gray-800">
+    <TableCell
+      colSpan={colSpan}
+      className="h-24 text-center dark:text-gray-400"
+    >
+      <div className="flex justify-center items-center">
+        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+        <span className="ml-2">Loading data...</span>
+      </div>
+    </TableCell>
+  </TableRow>
+)
+
+interface EmptyRowProps {
+  colSpan: number
+}
+
+const EmptyRow: React.FC<EmptyRowProps> = ({ colSpan }) => (
+  <TableRow className="dark:border-gray-800">
+    <TableCell
+      colSpan={colSpan}
+      className="h-24 px-4 text-left dark:text-gray-400"
+    >
+      No results.
+    </TableCell>
+  </TableRow>
+)
+
+// Main component
 export function DataTable<TData extends object>({
   columns,
   data,
@@ -101,222 +563,11 @@ export function DataTable<TData extends object>({
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
-  const columnDefs = React.useMemo<ColumnDef<TData>[]>(() => {
-    const defs: ColumnDef<TData>[] = []
-
-    if (enableRowSelection) {
-      defs.push({
-        id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
-            className="translate-y-[2px]"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-            className="translate-y-[2px]"
-          />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-      })
-    }
-
-    columns.forEach((column) => {
-      const def: ColumnDef<TData> = {
-        accessorKey: column.accessorKey as string,
-        header: ({ column: col }) => {
-          const isNumeric = column.type === "Number" || column.type === "Currency";
-
-          if (column.enableSorting) {
-            return (
-              <Button
-                variant="ghost"
-                onClick={() => col.toggleSorting(col.getIsSorted() === "asc")}
-                className="p-0 font-medium text-sm hover:bg-transparent hover:text-primary text-left"
-              >
-                {column.headingName}
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-              </Button>
-            );
-          }
-
-          return (
-            <div className="text-left">
-              {column.headingName}
-            </div>
-          );
-        },
-        enableSorting: column.enableSorting ?? enableSorting,
-        enableHiding: column.enableHiding ?? true,
-        cell: column.cell
-          ? column.cell
-          : ({ row }) => {
-              const value = row.getValue(column.accessorKey as string)
-
-              switch (column.type) {
-                case "Date":
-                  if (value instanceof Date || (typeof value === 'string' && !isNaN(Date.parse(value as string)))) {
-                    const date = value instanceof Date ? value : new Date(value as string);
-
-                    // Format: Apr 18, 2025 17:05 (with time if available)
-                    const options: Intl.DateTimeFormatOptions = {
-                      year: 'numeric',
-                      month: 'short',
-                      day: 'numeric'
-                    };
-
-                    // Check if the time is not midnight (00:00:00) to determine if time was provided
-                    if (date.getHours() !== 0 || date.getMinutes() !== 0 || date.getSeconds() !== 0) {
-                      options.hour = '2-digit';
-                      options.minute = '2-digit';
-                    }
-
-                    return (
-                      <span className="font-mono text-sm text-gray-600 dark:text-gray-300">
-                        {date.toLocaleString(undefined, options)}
-                      </span>
-                    );
-                  }
-                  return String(value)
-
-                case "Tag":
-                  if (Array.isArray(value)) {
-                    return (
-                      <div className="flex flex-wrap gap-1.5">
-                        {value.map((tag, i) => (
-                          <span
-                            key={i}
-                            className="inline-flex items-center rounded-full bg-primary-50 dark:bg-primary-950/50 px-2 py-1 text-xs font-medium text-primary-700 dark:text-primary-300 ring-1 ring-inset ring-primary-700/10 dark:ring-primary-300/20"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )
-                  }
-                  return String(value)
-
-                case "Status":
-                  const statusMap: Record<string, { color: string }> = {
-                    success: {
-                      color: "bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-950/50 dark:text-green-400 dark:ring-green-500/30"
-                    },
-                    failed: {
-                      color: "bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-950/50 dark:text-red-400 dark:ring-red-500/30"
-                    },
-                    processing: {
-                      color: "bg-yellow-50 text-yellow-700 ring-yellow-600/20 dark:bg-yellow-950/50 dark:text-yellow-400 dark:ring-yellow-500/30"
-                    },
-                    pending: {
-                      color: "bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-950/50 dark:text-blue-400 dark:ring-blue-500/30"
-                    },
-                    canceled: {
-                      color: "bg-gray-50 text-gray-700 ring-gray-600/20 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-500/30"
-                    },
-                  }
-
-                  const status = String(value).toLowerCase()
-                  const statusStyle = statusMap[status] || {
-                    color: "bg-gray-50 text-gray-700 ring-gray-600/20 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-500/30"
-                  }
-
-                  return (
-                    <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset capitalize ${statusStyle.color}`}>
-                      {String(value)}
-                    </span>
-                  )
-
-                case "Boolean":
-                  return (
-                    <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ${
-                      value
-                        ? 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-950/50 dark:text-green-400 dark:ring-green-500/30'
-                        : 'bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-950/50 dark:text-red-400 dark:ring-red-500/30'
-                    }`}>
-                      {value ? 'Yes' : 'No'}
-                    </span>
-                  )
-
-                case "Currency":
-                  return typeof value === "number" ? (
-                    <div className="text-left">
-                      {new Intl.NumberFormat("en-US", {
-                        style: "currency",
-                        currency: "USD",
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                      }).format(value)}
-                    </div>
-                  ) : value
-
-                case "Number":
-                  return typeof value === "number"
-                    ? <div className="text-left">
-                        {value.toLocaleString()}
-                      </div>
-                    : value
-
-                case "String":
-                default:
-                  return (
-                    <div className="truncate max-w-[300px] text-left">
-                      {value !== null && value !== undefined ? String(value) : ''}
-                    </div>
-                  )
-              }
-            },
-      }
-
-      defs.push(def)
-    })
-
-    if (rowActions) {
-      defs.push({
-        id: "actions",
-        enableHiding: false,
-        cell: ({ row }) => {
-          const rowData = row.original
-          const actions = rowActions(rowData)
-
-          const actionItems = actions.map((action) => ({
-            label: action.label,
-            onClick: action.onClick
-          }))
-
-          return (
-            <DropdownMenu
-              trigger={
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              }
-              items={[
-                {
-                  label: "Actions",
-                  separator: true,
-                  disabled: true
-                },
-                ...actionItems
-              ]}
-            />
-          )
-        },
-      })
-    }
-
-    return defs
-  }, [columns, enableRowSelection, enableSorting, rowActions])
+  // Memoize column definitions
+  const columnDefs = React.useMemo(
+    () => createColumnDefinitions(columns, enableRowSelection, enableSorting, rowActions),
+    [columns, enableRowSelection, enableSorting, rowActions]
+  )
 
   // For server-side pagination, we need to control the pagination state
   const pagination = React.useMemo(
@@ -378,6 +629,7 @@ export function DataTable<TData extends object>({
     [serverPagination, onPageSizeChange, table]
   )
 
+  // Memoize visibility items
   const visibilityItems = React.useMemo(() => {
     return table
       .getAllColumns()
@@ -385,74 +637,41 @@ export function DataTable<TData extends object>({
       .map((column) => {
         // Find the matching column definition to get the headingName
         const columnDef = columns.find(col => col.accessorKey.toString() === column.id);
+        const isVisible = column.getIsVisible();
+
         return {
           label: columnDef?.headingName ||
             (typeof column.id === 'string'
               ? column.id.charAt(0).toUpperCase() + column.id.slice(1)
               : String(column.id)),
-          onClick: () => column.toggleVisibility(!column.getIsVisible()),
+          onClick: () => column.toggleVisibility(!isVisible),
+          checked: isVisible, // This will now update correctly when visibility changes
+          checkedIcon: <Check className="h-4 w-4" />,
         };
-      })
-  }, [table, columns])
+      });
+  }, [table, columns, columnVisibility]);
 
   // Calculate pagination info for server-side pagination
-  const paginationInfo = React.useMemo(() => {
-    if (serverPagination) {
-      const totalPages = Math.ceil(totalItems / pageSize)
-      return {
-        currentPage,
-        pageSize,
-        totalItems,
-        totalPages,
-        canPreviousPage: currentPage > 0,
-        canNextPage: currentPage < totalPages - 1
-      }
-    } else {
-      return {
-        currentPage: table.getState().pagination?.pageIndex || 0,
-        pageSize: table.getState().pagination?.pageSize || 10,
-        totalItems: table.getFilteredRowModel().rows.length,
-        totalPages: table.getPageCount(),
-        canPreviousPage: table.getCanPreviousPage(),
-        canNextPage: table.getCanNextPage()
-      }
-    }
-  }, [serverPagination, table, currentPage, pageSize, totalItems])
+  const paginationInfo = React.useMemo(
+    () => calculatePaginationInfo(
+      serverPagination,
+      table,
+      currentPage,
+      pageSize,
+      totalItems
+    ),
+    [serverPagination, table, currentPage, pageSize, totalItems]
+  )
 
   return (
     <div className={className || "w-full"}>
       {(enableFiltering || enableColumnVisibility) && (
-        <div className="flex items-center py-4 gap-2">
-          {enableFiltering && filterColumn && (
-            <div className="flex-1 max-w-sm">
-              <Input
-                placeholder={filterPlaceholder}
-                value={(table.getColumn(filterColumn as string)?.getFilterValue() as string) ?? ""}
-                onChange={(event) =>
-                  table.getColumn(filterColumn as string)?.setFilterValue(event.target.value)
-                }
-                className="h-9 border-gray-200 dark:border-gray-800"
-              />
-            </div>
-          )}
-
-          {enableColumnVisibility && (
-            <div className="ml-auto">
-              <DropdownMenu
-                button={{
-                  label: "Columns",
-                  variant: "outline",
-                  icon: <ChevronDown className="ml-2 h-4 w-4" />,
-                  className: "h-9 border-gray-200 dark:border-gray-800"
-                }}
-                items={visibilityItems}
-                content={{
-                  color: "gray"
-                }}
-              />
-            </div>
-          )}
-        </div>
+        <TableFilters
+          table={table}
+          filterColumn={enableFiltering ? filterColumn : undefined}
+          filterPlaceholder={filterPlaceholder}
+          visibilityItems={enableColumnVisibility ? visibilityItems : []}
+        />
       )}
 
       <div className="rounded-md border border-gray-200 dark:border-gray-800">
@@ -467,16 +686,16 @@ export function DataTable<TData extends object>({
 
                   return (
                     <TableHead
-                      key={header.id}
-                      className="dark:text-gray-400 h-10 px-4 text-left"
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
+  key={header.id}
+  className="dark:text-gray-400 h-10 px-4 text-left"
+>
+  {header.isPlaceholder
+    ? null
+    : flexRender(
+        header.column.columnDef.header,
+        header.getContext()
+      )}
+</TableHead>
                   );
                 })}
               </TableRow>
@@ -484,17 +703,7 @@ export function DataTable<TData extends object>({
           </TableHeader>
           <TableBody>
             {isPaginationLoading ? (
-              <TableRow className="dark:border-gray-800">
-                <TableCell
-                  colSpan={columnDefs.length}
-                  className="h-24 text-center dark:text-gray-400"
-                >
-                  <div className="flex justify-center items-center">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-                    <span className="ml-2">Loading data...</span>
-                  </div>
-                </TableCell>
-              </TableRow>
+              <LoadingRow colSpan={columnDefs.length} />
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
@@ -509,104 +718,36 @@ export function DataTable<TData extends object>({
 
                     return (
                       <TableCell
-                        key={cell.id}
-                        className="px-4 text-left"
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
+  key={cell.id}
+  className="px-4 text-left"
+>
+  {flexRender(
+    cell.column.columnDef.cell,
+    cell.getContext()
+  )}
+</TableCell>
                     );
                   })}
                 </TableRow>
               ))
             ) : (
-              <TableRow className="dark:border-gray-800">
-                <TableCell
-                  colSpan={columnDefs.length}
-                  className="h-24 px-4 text-left dark:text-gray-400"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
+              <EmptyRow colSpan={columnDefs.length} />
             )}
           </TableBody>
         </Table>
       </div>
 
       {(enablePagination || showRowCount) && (
-        <div className="flex items-center justify-between space-x-2 py-4">
-          {showRowCount && enableRowSelection && (
-            <div className="text-sm text-muted-foreground dark:text-gray-400">
-              {table.getFilteredSelectedRowModel().rows.length} of{" "}
-              {serverPagination ? totalItems : table.getFilteredRowModel().rows.length} row(s) selected.
-            </div>
-          )}
-
-          {enablePagination && (
-            <div className="flex items-center space-x-2 ml-auto">
-              <div className="flex text-sm text-muted-foreground dark:text-gray-400 items-center gap-1">
-                <div>
-                  Rows per page
-                </div>
-                <select
-                  value={paginationInfo.pageSize}
-                  onChange={e => handlePageSizeChange(Number(e.target.value))}
-                  className="h-8 bg-transparent border-0 text-muted-foreground dark:text-gray-400"
-                >
-                  {[10, 20, 30, 40, 50].map(pageSize => (
-                    <option key={pageSize} value={pageSize}>
-                      {pageSize}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="flex text-sm text-muted-foreground dark:text-gray-400 items-center gap-1">
-                Page {paginationInfo.currentPage + 1} of{' '}
-                {paginationInfo.totalPages || 1}
-              </div>
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  className="h-8 w-8 p-0"
-                  onClick={() => handlePageChange(0)}
-                  disabled={!paginationInfo.canPreviousPage || isPaginationLoading}
-                >
-                  <span className="sr-only">Go to first page</span>
-                  <ChevronsLeft className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  className="h-8 w-8 p-0"
-                  onClick={() => handlePageChange(paginationInfo.currentPage - 1)}
-                  disabled={!paginationInfo.canPreviousPage || isPaginationLoading}
-                >
-                  <span className="sr-only">Go to previous page</span>
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  className="h-8 w-8 p-0"
-                  onClick={() => handlePageChange(paginationInfo.currentPage + 1)}
-                  disabled={!paginationInfo.canNextPage || isPaginationLoading}
-                >
-                  <span className="sr-only">Go to next page</span>
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  className="h-8 w-8 p-0"
-                  onClick={() => handlePageChange(paginationInfo.totalPages - 1)}
-                  disabled={!paginationInfo.canNextPage || isPaginationLoading}
-                >
-                  <span className="sr-only">Go to last page</span>
-                  <ChevronsRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          )}
-        </div>
+        <TablePagination
+          paginationInfo={paginationInfo}
+          handlePageChange={handlePageChange}
+          handlePageSizeChange={handlePageSizeChange}
+          showRowCount={showRowCount && enableRowSelection}
+          selectedRowCount={table.getFilteredSelectedRowModel().rows.length}
+          filteredRowCount={table.getFilteredRowModel().rows.length}
+          isPaginationLoading={isPaginationLoading}
+          serverPagination={serverPagination}
+        />
       )}
     </div>
   )

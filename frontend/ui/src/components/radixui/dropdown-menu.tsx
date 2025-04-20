@@ -41,6 +41,8 @@ export type DropdownMenuItemProps = {
   onClick?: (event: React.MouseEvent<HTMLDivElement>) => void
   disabled?: boolean
   icon?: ReactNode
+  checked?: boolean // Flag to indicate if the item is selected
+  checkedIcon?: ReactNode // Custom icon to display when checked
   shortcut?: string
   separator?: boolean
   asChild?: boolean
@@ -68,6 +70,8 @@ export const DropdownMenuItem = ({
   separator,
   children,
   icon, // Explicitly extract the icon prop
+  checked, // Add checked prop extraction
+  checkedIcon, // Add checkedIcon prop extraction
   ...props
 }: DropdownMenuItemProps) => {
   return (
@@ -89,9 +93,16 @@ export const DropdownMenuItem = ({
       ) : (
         // @ts-ignore
         <RadixDropdownMenu.Item {...props}>
-          <div className="flex items-center">
-            {icon && <span className="mr-2">{icon}</span>}
-            {label}
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center">
+              {icon && <span className="mr-2">{icon}</span>}
+              {label}
+            </div>
+            {checked && (
+              <span className="ml-2 text-primary-600 dark:text-primary-400">
+                {checkedIcon}
+              </span>
+            )}
           </div>
         </RadixDropdownMenu.Item>
       )}
