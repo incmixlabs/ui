@@ -8,12 +8,13 @@ import {
   type DragEndEvent,
   DragOverlay,
   type DragStartEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
 } from "@dnd-kit/core"
 import {
   ActiveTask,
   Box,
-  DashboardSidebar,
-  DroppableArea,
   IconButton,
   NewTasks,
   PostingTask,
@@ -21,14 +22,14 @@ import {
   StatisticWidgets2,
   TotalProject,
   TotalTasks,
-  createLayoutItemForAllBreakpoints,
+  WidgetDropZone,
   dashboardImg,
   sidebarComponents,
   toast,
 } from "@incmix/ui"
 import { Heading } from "@incmix/ui"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { Responsive, WidthProvider } from "react-grid-layout"
 import { useTranslation } from "react-i18next"
 import { useAuth } from "../../auth"
@@ -78,7 +79,15 @@ const DashboardProject1: React.FC = () => {
   const [activeDragId, setActiveDragId] = useState<string | null>(null)
   const [activeDragData, setActiveDragData] = useState<any>(null)
 
-  const [lastRemovedComponent, setLastRemovedComponent] = useState<{
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  )
+
+  const [_lastRemovedComponent, setLastRemovedComponent] = useState<{
     component: ComponentSlot | null
     layouts: Record<Breakpoint, LayoutItem[]>
   } | null>(null)
@@ -508,16 +517,134 @@ const DashboardProject1: React.FC = () => {
     return result
   }, [defaultLayouts, isEditing])
 
-  const handleLayoutChange = (layout: any, allLayouts: any) => {
-    console.log(layout, allLayouts)
-
-    setDefaultLayouts(allLayouts)
-  }
+  const handleLayoutChange = useCallback(
+    (_layout: any, allLayouts: any) => {
+      const hasChanged =
+        JSON.stringify(allLayouts) !== JSON.stringify(defaultLayouts)
+      if (hasChanged) {
+        setDefaultLayouts(allLayouts)
+      }
+    },
+    [defaultLayouts]
+  )
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event
     setActiveDragId(active.id as string)
     setActiveDragData(active.data.current)
+  }
+
+  const addComponentToGrid = (
+    draggedSlotId: string,
+    targetWidgetId?: string
+  ) => {
+    const isAlreadyInGrid = gridComponents.some(
+      (comp) => comp.slotId === draggedSlotId
+    )
+    if (isAlreadyInGrid) {
+      toast.error(
+        "This component is already added to the grid. Please remove it first if you want to add it again."
+      )
+      return false
+    }
+
+    const draggedComponent = sidebarComponents.find(
+      (comp) => comp.slotId === draggedSlotId
+    )
+    if (!draggedComponent) {
+      return false
+    }
+
+    setGridComponents((prev) => [...prev, draggedComponent])
+
+    const componentLayouts = draggedComponent.layouts || DEFAULT_SIZES
+
+    const newLayouts = { ...defaultLayouts }
+    ;(Object.keys(newLayouts) as Breakpoint[]).forEach((breakpoint) => {
+      const { w, h } = componentLayouts[breakpoint]
+      const currentLayout = [...newLayouts[breakpoint]]
+
+      if (targetWidgetId) {
+        const targetIndex = currentLayout.findIndex(
+          (item) => item.i === targetWidgetId
+        )
+
+        if (targetIndex !== -1) {
+          const targetWidget = currentLayout[targetIndex]
+          const newItem = {
+            i: draggedSlotId,
+            x: targetWidget.x,
+            y: targetWidget.y,
+            w,
+            h,
+            moved: false,
+            static: false,
+            resizeHandles: ["s", "w", "e", "n"] as const,
+          }
+
+          const shiftedItems = currentLayout.map((item, index) => {
+            if (index >= targetIndex) {
+              return {
+                ...item,
+                y: item.y + h,
+              }
+            }
+            return item
+          })
+
+          newLayouts[breakpoint] = [
+            ...shiftedItems.slice(0, targetIndex),
+            newItem,
+            ...shiftedItems.slice(targetIndex),
+          ]
+        } else {
+          const newItem = {
+            i: draggedSlotId,
+            x: 0,
+            y: 0,
+            w,
+            h,
+            moved: false,
+            static: false,
+            resizeHandles: ["s", "w", "e", "n"] as const,
+          }
+
+          const shiftedItems = currentLayout.map((item) => ({
+            ...item,
+            y: item.y + h,
+          }))
+
+          newLayouts[breakpoint] = [newItem, ...shiftedItems]
+        }
+      } else {
+        const newItem = {
+          i: draggedSlotId,
+          x: 0,
+          y: 0,
+          w,
+          h,
+          moved: false,
+          static: false,
+          resizeHandles: ["s", "w", "e", "n"] as const,
+        }
+
+        const shiftedItems = currentLayout.map((item) => ({
+          ...item,
+          y: item.y + h,
+        }))
+
+        newLayouts[breakpoint] = [newItem, ...shiftedItems]
+      }
+    })
+
+    // Update layouts
+    setDefaultLayouts(newLayouts)
+
+    toast.success("Component added", {
+      description: `${draggedComponent.title} has been added to your dashboard.`,
+    })
+
+    return true
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -526,44 +653,29 @@ const DashboardProject1: React.FC = () => {
     setActiveDragId(null)
     setActiveDragData(null)
 
-    if (!isEditing || !over || over.id !== "grid-layout") return
+    if (!isEditing) {
+      return
+    }
 
     const draggedSlotId = active.id as string
     const dragData = active.data.current
 
-    if (!dragData) return
-
-    const isAlreadyInGrid = gridComponents.some(
-      (comp) => comp.slotId === draggedSlotId
-    )
-    if (isAlreadyInGrid) {
-      toast.error(
-        "This component is already added to the grid. Please remove it first if you want to add it again."
-      )
+    if (!dragData) {
       return
     }
 
-    const draggedComponent = sidebarComponents.find(
-      (comp) => comp.slotId === draggedSlotId
-    )
-
-    if (!draggedComponent) return
-
-    setGridComponents([...gridComponents, draggedComponent])
-
-    const componentLayouts = draggedComponent.layouts || DEFAULT_SIZES
-
-    const newLayouts = createLayoutItemForAllBreakpoints(
-      defaultLayouts,
-      draggedSlotId,
-      componentLayouts
-    )
-
-    setDefaultLayouts(newLayouts)
-
-    toast.success("Component added", {
-      description: `${draggedComponent.title} has been added to your dashboard.`,
-    })
+    if (over) {
+      if (over.id.toString().startsWith("widget-")) {
+        const widgetId = over.id.toString().replace("widget-", "")
+        addComponentToGrid(draggedSlotId, widgetId)
+      } else if (over.id === "grid-drop-zone") {
+        addComponentToGrid(draggedSlotId)
+      } else {
+        toast.error("Please drop the component on a valid target area.")
+      }
+    } else {
+      toast.error("Please drop the component on a valid target area.")
+    }
   }
 
   const handleRemoveComponent = (slotId: string) => {
@@ -609,7 +721,6 @@ const DashboardProject1: React.FC = () => {
     })
 
     setDefaultLayouts(updatedLayouts)
-
     setLastRemovedComponent(removedComponent)
 
     toast.error("Component removed", {
@@ -646,93 +757,89 @@ const DashboardProject1: React.FC = () => {
     })
   }
 
-  const _handleUndoRemove = () => {
-    if (!lastRemovedComponent || !lastRemovedComponent.component) return
-
-    setGridComponents([...gridComponents, lastRemovedComponent.component])
-
-    const updatedLayouts = { ...defaultLayouts }
-
-    Object.keys(lastRemovedComponent.layouts).forEach((breakpoint) => {
-      const layoutItems = lastRemovedComponent.layouts[breakpoint as Breakpoint]
-
-      if (layoutItems && layoutItems.length > 0) {
-        updatedLayouts[breakpoint as Breakpoint] = [
-          ...updatedLayouts[breakpoint as Breakpoint],
-          ...layoutItems,
-        ]
-      }
-    })
-
-    setDefaultLayouts(updatedLayouts)
-
-    toast.success("Component restored", {
-      description: `${lastRemovedComponent.component.title} has been restored to your dashboard.`,
-    })
-
-    setLastRemovedComponent(null)
-  }
-
   if (isLoading) return <LoadingPage />
   if (!authUser) return null
 
+  const isEmpty = gridComponents.length === 0
+
   return (
-    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+    <DndContext
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      sensors={sensors}
+    >
       <DashboardLayout
         breadcrumbItems={[]}
         navExtras={<EditWidgetsControl onEditChange={setIsEditing} />}
       >
         <Box as="div" className="container mx-auto flex overflow-x-hidden">
-          <Box className="w-full">
+          <Box className="h-full w-full overflow-hidden ">
             <Heading size="6" className="pb-4">
               {t("dashboard:title")}
             </Heading>
-            <DroppableArea id="grid-layout" isEditing={isEditing}>
-              <ResponsiveGridLayout
-                className="gridLayout"
-                layouts={getLayoutsWithStaticFlag}
-                rowHeight={30}
-                breakpoints={{ lg: 1536, md: 996, sm: 768, xs: 480, xxs: 0 }}
-                cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-                onLayoutChange={handleLayoutChange}
-                droppingItem={{ i: "__dropping-elem__", w: 3, h: 6 }}
-              >
-                {gridComponents.map((item) => (
-                  <div
-                    key={item.slotId}
-                    className={`relative h-full rounded-xl ${isEditing ? "bg-gray-5 p-2 shadow" : ""}`}
-                  >
-                    {isEditing && (
-                      <IconButton
-                        className="absolute top-3 right-3 z-[2]"
-                        onMouseDown={(e) => e.stopPropagation()}
-                        onTouchStart={(e) => e.stopPropagation()}
-                        color="red"
-                        onClick={() => handleRemoveComponent(item.slotId)}
-                      >
-                        <Trash size={16} />
-                      </IconButton>
-                    )}
-                    <div className="widget-content relative h-full">
-                      {isEditing ? (
-                        <>
-                          <img
-                            src={
-                              item.compImage ||
-                              "/placeholder.svg?height=150&width=150"
-                            }
-                            alt={item.title}
-                            className="h-full w-full rounded-lg object-contain"
-                          />
-                        </>
-                      ) : (
-                        <>{item.component}</>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </ResponsiveGridLayout>
-            </DroppableArea>
+            <Box
+              className={`h-full rounded-lg transition-colors duration-200 ${
+                isEditing && !isEmpty
+                  ? "border-2 border-indigo-8 border-dashed bg-indigo-2 "
+                  : ""
+              }`}
+            >
+              {isEmpty && isEditing ? (
+                <Box className="flex h-[200px] items-center justify-center text-gray-5">
+                  <p>Drag and drop components here to build your dashboard</p>
+                </Box>
+              ) : (
+                <ResponsiveGridLayout
+                  className="gridLayout"
+                  layouts={getLayoutsWithStaticFlag}
+                  rowHeight={30}
+                  breakpoints={{ lg: 1536, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                  cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                  onLayoutChange={handleLayoutChange}
+                  preventCollision={false}
+                  compactType="vertical"
+                  useCSSTransforms={true}
+                >
+                  {gridComponents.map((item) => (
+                    <Box key={item.slotId} className="relative h-full ">
+                      <WidgetDropZone id={item.slotId} isEditing={isEditing}>
+                        <Box
+                          className={`h-full w-full ${isEditing ? "rounded-lg bg-gray-5 p-2 shadow" : ""}`}
+                        >
+                          {isEditing && (
+                            <IconButton
+                              className="absolute top-3 right-3 z-[2]"
+                              onMouseDown={(e) => e.stopPropagation()}
+                              onTouchStart={(e) => e.stopPropagation()}
+                              color="red"
+                              onClick={() => handleRemoveComponent(item.slotId)}
+                            >
+                              <Trash size={16} />
+                            </IconButton>
+                          )}
+                          <Box className="widget-content relative h-full overflow-hidden rounded-lg ">
+                            {isEditing ? (
+                              <>
+                                <img
+                                  src={
+                                    item.compImage ||
+                                    "/placeholder.svg?height=150&width=150"
+                                  }
+                                  alt={item.title}
+                                  className="h-full w-full rounded-lg object-contain"
+                                />
+                              </>
+                            ) : (
+                              <>{item.component}</>
+                            )}
+                          </Box>
+                        </Box>
+                      </WidgetDropZone>
+                    </Box>
+                  ))}
+                </ResponsiveGridLayout>
+              )}
+            </Box>
           </Box>
         </Box>
       </DashboardLayout>
