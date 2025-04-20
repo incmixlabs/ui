@@ -39,14 +39,14 @@ export default function AutoFormEnum({
       <FormControl>
         <Select.Root
           onValueChange={field.onChange}
-          defaultValue={field.value ? findItem(field.value)?.[1] : "Select an option"}
+          defaultValue={field.value??''}
           {...fieldProps}
         >
           <Select.Trigger className={fieldProps.className}/>
 
           <Select.Content>
             {values.map(([value, label]) => (
-              <Select.Item value={label} key={value}>
+              <Select.Item value={value} aria-label={label} key={label}>
                 {label}
               </Select.Item>
             ))}

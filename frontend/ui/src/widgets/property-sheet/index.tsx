@@ -162,7 +162,7 @@ export function PropertySheet() {
             <Box className="w-full">
               <Select.Root
                 value={position}
-                defaultValue="Left"
+                defaultValue="left"
                 onValueChange={(value) => setPosition(value)}
               >
                 <Select.Trigger className="border-none shadow-none"/>
