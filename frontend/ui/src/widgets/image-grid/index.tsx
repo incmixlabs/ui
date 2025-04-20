@@ -4,9 +4,8 @@ import {
   LayoutGrid,
   type LayoutGridCard,
 } from "@components/layout-grid"
-import { toast } from "@components/toaster"
+import { toast,  Box, Button,  Flex, Text } from "@base"
 import { useUploadFile } from "@hooks/use-upload-file"
-import { Box, Button,  Flex, Text } from "@incmix/ui"
 import { Card } from "@card/card"
 import { TrashIcon, UploadIcon } from "@radix-ui/react-icons"
 import { cn } from "@utils"

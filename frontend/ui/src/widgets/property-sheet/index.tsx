@@ -10,16 +10,10 @@ import { Input,
   Flex,
   Heading,
   Popover,
+  Select,
   Text,
   iconSize } from "@base"
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@shadcn/select"
 
 import ColorPicker from "@components/color-picker"
 import { KanbanImages } from "@components/kanban-board/images"
@@ -68,7 +62,7 @@ export function PropertySheet() {
   }
 
   return (
-    <Card className="w-96 rounded-none p-0 ">
+    <Card.Root className="w-96 rounded-none p-0 ">
       <Box>
         <Heading as="h2" className="bg-gray-2 p-2 font-medium">
           Layout
@@ -127,19 +121,18 @@ export function PropertySheet() {
             {/* <Text className="w-full p-2 px-3 ">json</Text> */}
 
             <Box className="w-full">
-              <Select
+              <Select.Root
                 value={propertyType}
+                defaultValue="json"
                 onValueChange={(value) => setPropertyType(value)}
               >
-                <SelectTrigger className="border-none shadow-none">
-                  <SelectValue placeholder="json" />
-                </SelectTrigger>
-                <SelectContent className="border-gray-5">
-                  <SelectItem value="json">json</SelectItem>
-                  <SelectItem value="xml">xml</SelectItem>
-                  <SelectItem value="csv">csv</SelectItem>
-                </SelectContent>
-              </Select>
+                <Select.Trigger/>
+                <Select.Content className="border-gray-5">
+                  <Select.Item value="json">json</Select.Item>
+                  <Select.Item value="xml">xml</Select.Item>
+                  <Select.Item value="csv">csv</Select.Item>
+                </Select.Content>
+              </Select.Root>
             </Box>
           </Flex>
           <Flex align={"center"}>
@@ -167,34 +160,33 @@ export function PropertySheet() {
               Position
             </Text>
             <Box className="w-full">
-              <Select
+              <Select.Root
                 value={position}
+                defaultValue="left"
                 onValueChange={(value) => setPosition(value)}
               >
-                <SelectTrigger className="border-none shadow-none">
-                  <SelectValue placeholder="Left" />
-                </SelectTrigger>
-                <SelectContent className="border-gray-5">
-                  <SelectItem value="left">left</SelectItem>
-                  <SelectItem value="right">right</SelectItem>
-                  <SelectItem value="top">top</SelectItem>
-                  <SelectItem value="bottom">bottom</SelectItem>
-                </SelectContent>
-              </Select>
+                <Select.Trigger className="border-none shadow-none"/>
+
+                <Select.Content className="border-gray-5">
+                  <Select.Item value="left">left</Select.Item>
+                  <Select.Item value="right">right</Select.Item>
+                  <Select.Item value="top">top</Select.Item>
+                  <Select.Item value="bottom">bottom</Select.Item>
+                </Select.Content>
+              </Select.Root>
             </Box>
           </Flex>
           <Flex align={"center"}>
             <Text className="w-44 border-gray-4 border-r py-2 pl-3">Theme</Text>
             <Box className="relative w-full">
-              <Select value={theme} onValueChange={(value) => setTheme(value)}>
-                <SelectTrigger className="border-none shadow-none">
-                  <SelectValue placeholder="light" />
-                </SelectTrigger>
-                <SelectContent className="border-gray-5">
-                  <SelectItem value="dark">dark</SelectItem>
-                  <SelectItem value="light">light</SelectItem>
-                </SelectContent>
-              </Select>
+              <Select.Root value={theme} defaultValue="light" onValueChange={(value) => setTheme(value)}>
+                <Select.Trigger className="border-none shadow-none"/>
+
+                <Select.Content className="border-gray-5">
+                  <Select.Item value="dark">dark</Select.Item>
+                  <Select.Item value="light">light</Select.Item>
+                </Select.Content>
+              </Select.Root>
             </Box>
           </Flex>
         </Box>
@@ -238,6 +230,6 @@ export function PropertySheet() {
           </Flex>
         </Flex>
       </Box>
-    </Card>
+    </Card.Root>
   )
 }
