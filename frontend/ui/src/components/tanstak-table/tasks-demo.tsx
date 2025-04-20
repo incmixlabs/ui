@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, useCallback } from "react"
-import { DataTable } from "./tanstak-table"
+import { DataTable, DataTableFacet } from "./tanstak-table"
 
 // Define User interface
 interface User {
@@ -37,7 +37,36 @@ const SAMPLE_USERS: User[] = [
     plan: "pending",
     balance: 1250,
   },
-  // ... remaining users unchanged
+  {
+    id: "user3",
+    name: "Carol Williams",
+    email: "carol@example.com",
+    joinDate: "2023-03-10",
+    isActive: true,
+    tags: ["admin"],
+    plan: "success",
+    balance: 3200,
+  },
+  {
+    id: "user4",
+    name: "David Brown",
+    email: "david@example.com",
+    joinDate: "2023-04-05",
+    isActive: true,
+    tags: ["developer"],
+    plan: "pending",
+    balance: 1890,
+  },
+  {
+    id: "user5",
+    name: "Eva Garcia",
+    email: "eva@example.com",
+    joinDate: "2023-05-12",
+    isActive: false,
+    tags: ["customer"],
+    plan: "failed",
+    balance: 750,
+  },
   {
     id: "user15",
     name: "Olivia Green",
@@ -50,47 +79,85 @@ const SAMPLE_USERS: User[] = [
   },
 ]
 
-// Column definitions moved outside to prevent recreating on each render
+// Modified column definitions with explicit IDs to ensure filters work
 const USER_TABLE_COLUMNS = [
   {
     headingName: "Name",
     type: "String" as const,
     accessorKey: "name",
+    id: "name", // Explicit ID
     enableSorting: true,
   },
   {
     headingName: "Email",
     type: "String" as const,
     accessorKey: "email",
+    id: "email", // Explicit ID
     enableSorting: true,
   },
   {
     headingName: "Joined",
     type: "Date" as const,
     accessorKey: "joinDate",
+    id: "joinDate", // Explicit ID
     enableSorting: true,
   },
   {
     headingName: "Status",
     type: "Boolean" as const,
     accessorKey: "isActive",
+    id: "isActive", // Explicit ID matching the facet column
+    enableSorting: true,
   },
   {
     headingName: "Tags",
     type: "Tag" as const,
     accessorKey: "tags",
+    id: "tags", // Explicit ID matching the facet column
   },
   {
     headingName: "Plan",
     type: "Status" as const,
     accessorKey: "plan",
+    id: "plan", // Explicit ID matching the facet column - this one works
   },
   {
     headingName: "Balance",
     type: "Currency" as const,
     accessorKey: "balance",
+    id: "balance", // Explicit ID
     enableSorting: true,
   },
+]
+
+// Modified faceted filter configurations - keeping the same structure as the working "plan" filter
+const USER_TABLE_FACETS: DataTableFacet<User>[] = [
+  {
+    column: "isActive", // Match exactly with column id
+    title: "Status",
+    options: [
+      { label: "Active", value: true },
+      { label: "Inactive", value: false }
+    ]
+  },
+  {
+    column: "plan", // This one works fine
+    title: "Plan",
+    options: [
+      { label: "Success", value: "success" },
+      { label: "Pending", value: "pending" },
+      { label: "Failed", value: "failed" }
+    ]
+  },
+  {
+    column: "tags", // Match exactly with column id
+    title: "Role",
+    options: [
+      { label: "Admin", value: "admin" },
+      { label: "Developer", value: "developer" },
+      { label: "Customer", value: "customer" }
+    ]
+  }
 ]
 
 /**
@@ -172,6 +239,11 @@ const UsersTableDemo = () => {
     },
   ], [])
 
+  // For debugging - log to console to see which columns are available
+  useEffect(() => {
+    console.log("Table data loaded:", users);
+  }, [users]);
+
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-2xl font-bold mb-4">Users Management</h1>
@@ -186,6 +258,8 @@ const UsersTableDemo = () => {
         filterColumn="name"
         filterPlaceholder="Filter by name..."
         rowActions={getRowActions}
+        // Add faceted filters
+        facets={USER_TABLE_FACETS}
         // Server pagination props
         serverPagination={true}
         currentPage={currentPage}
