@@ -20,7 +20,8 @@ import {
   ChevronsLeft,
   ChevronsRight,
   MoreHorizontal,
-  Check
+  Check,
+  X
 } from "lucide-react"
 
 import { Button } from "../button/shad-button"
@@ -46,11 +47,26 @@ export interface DataTableColumn<TData> {
   headingName: string
   type: ColumnType
   accessorKey: keyof TData | string
+  id?: string // Add optional id property
   enableSorting?: boolean
   enableFiltering?: boolean
   enableHiding?: boolean
   className?: string
   cell?: (info: any) => React.ReactNode
+}
+
+// New interface for faceted filter options
+export interface FilterOption {
+  label: string
+  value: string | boolean | number
+  icon?: React.ReactNode
+}
+
+// New interface for faceted filter configuration
+export interface DataTableFacet<TData> {
+  column: keyof TData | string
+  title: string
+  options: FilterOption[]
 }
 
 interface DataTableProps<TData> {
@@ -69,6 +85,8 @@ interface DataTableProps<TData> {
     label: string;
     onClick: () => void;
   }[]
+  // New faceted filter prop
+  facets?: DataTableFacet<TData>[]
   // Server pagination props
   serverPagination?: boolean
   currentPage?: number
@@ -196,6 +214,87 @@ const StringCell: React.FC<{ value: any }> = ({ value }) => (
   </div>
 )
 
+// New component for faceted filters
+interface FacetedFilterProps<TData> {
+  table: any
+  facet: DataTableFacet<TData>
+}
+
+const FacetedFilter = <TData extends object>({
+  table,
+  facet
+}: FacetedFilterProps<TData>) => {
+  const column = table.getColumn(facet.column)
+  if (!column) {
+    console.warn(`Column ${String(facet.column)} not found for filter ${facet.title}`);
+    return null;
+  }
+
+  const filterValue = column.getFilterValue() as any[]
+  const selectedCount = filterValue?.length || 0
+
+  // Create dropdown items
+  const items = [
+    {
+      label: facet.title,
+      disabled: true,
+      separator: true
+    },
+    ...facet.options.map(option => {
+      const isSelected = filterValue?.includes(option.value) || false
+
+      return {
+        label: option.label,
+        onClick: () => {
+          if (isSelected) {
+            // Remove from filter
+            column.setFilterValue(
+              filterValue?.filter(val => val !== option.value) || []
+            )
+          } else {
+            // Add to filter
+            column.setFilterValue(
+              filterValue ? [...filterValue, option.value] : [option.value]
+            )
+          }
+        },
+        checked: isSelected,
+        checkedIcon: <Check className="h-4 w-4" />
+      }
+    })
+  ]
+
+  // Add clear button if filters are applied
+  if (selectedCount > 0) {
+    items.push({
+      label: "Clear",
+      onClick: () => column.setFilterValue(undefined),
+      separator: true,
+      disabled: false
+    })
+  }
+
+  // Use a string for label
+  const buttonLabel = selectedCount > 0
+    ? `${facet.title} (${selectedCount})`
+    : facet.title;
+
+  return (
+    <DropdownMenu
+      button={{
+        label: buttonLabel,
+        variant: "outline",
+        icon: <ChevronDown className="ml-2 h-4 w-4" />,
+        className: "h-9 border-gray-200 dark:border-gray-800"
+      }}
+      items={items}
+      content={{
+        color: "gray"
+      }}
+    />
+  )
+}
+
 // Utility functions
 function getCellRenderer(type: ColumnType, value: any): React.ReactNode {
   switch (type) {
@@ -257,6 +356,8 @@ function createColumnDefinitions<TData>(
   columns.forEach((column) => {
     const def: ColumnDef<TData> = {
       accessorKey: column.accessorKey as string,
+      // Use explicit id if provided, otherwise use accessorKey
+      id: column.id || column.accessorKey.toString(),
       header: ({ column: col }) => {
         // Remove conditional alignment based on numeric column type
         if (column.enableSorting) {
@@ -332,6 +433,40 @@ function createColumnDefinitions<TData>(
   return defs
 }
 
+// Improved custom filter function for faceted filters
+const facetedFilterFn = (row: any, columnId: string, filterValue: any[]) => {
+  if (!filterValue || filterValue.length === 0) return true;
+
+  const value = row.getValue(columnId);
+
+  // Debug logging
+  console.log(`Filtering column ${columnId}:`, {
+    type: typeof value,
+    isArray: Array.isArray(value),
+    value: value,
+    filterValue: filterValue
+  });
+
+  // Handle array values (like tags)
+  if (Array.isArray(value)) {
+    // Check if any value in the filter matches any tag in the array
+    return filterValue.some(fv => value.includes(fv));
+  }
+  // Handle boolean values explicitly
+  else if (typeof value === 'boolean') {
+    // Convert both to same type for comparison
+    return filterValue.some(fv => {
+      if (typeof fv === 'boolean') return value === fv;
+      if (typeof fv === 'string') return String(value) === fv.toLowerCase();
+      return false;
+    });
+  }
+  // Handle other value types (strings, numbers, etc.)
+  else {
+    return filterValue.includes(value);
+  }
+}
+
 function calculatePaginationInfo(
   serverPagination: boolean,
   table: any,
@@ -366,17 +501,32 @@ interface TableFiltersProps<TData> {
   table: any
   filterColumn?: keyof TData | string
   filterPlaceholder: string
-  visibilityItems: { label: string; onClick: () => void }[]
+  visibilityItems: { label: string; onClick: () => void; checked?: boolean; checkedIcon?: React.ReactNode }[]
+  facets?: DataTableFacet<TData>[]
 }
 
 const TableFilters = <TData extends object>({
   table,
   filterColumn,
   filterPlaceholder,
-  visibilityItems
+  visibilityItems,
+  facets
 }: TableFiltersProps<TData>) => {
+  const isFiltered = table.getState().columnFilters.length > 0
+
+  // Debug logging for which columns are available
+  React.useEffect(() => {
+    if (facets && facets.length > 0) {
+      console.log("Available columns in table:", table.getAllColumns().map((col:any) => col.id));
+      facets.forEach(facet => {
+        const column = table.getColumn(String(facet.column));
+        console.log(`Column '${String(facet.column)}' exists for filter '${facet.title}':`, !!column);
+      });
+    }
+  }, [table, facets]);
+
   return (
-    <div className="flex items-center py-4 gap-2">
+    <div className="flex items-center py-4 gap-2 flex-wrap">
       {filterColumn && (
         <div className="flex-1 max-w-sm">
           <Input
@@ -388,6 +538,25 @@ const TableFilters = <TData extends object>({
             className="h-9 border-gray-200 dark:border-gray-800"
           />
         </div>
+      )}
+
+      {facets && facets.length > 0 && (
+        <div className="flex items-center space-x-2">
+          {facets.map((facet, index) => (
+            <FacetedFilter key={index} table={table} facet={facet} />
+          ))}
+        </div>
+      )}
+
+      {isFiltered && (
+        <Button
+          variant="ghost"
+          onClick={() => table.resetColumnFilters()}
+          className="h-9 px-2"
+        >
+          Reset
+          <X className="ml-2 h-4 w-4" />
+        </Button>
       )}
 
       <div className="ml-auto">
@@ -549,6 +718,7 @@ export function DataTable<TData extends object>({
   filterPlaceholder = "Filter...",
   className,
   rowActions,
+  facets, // New prop for faceted filters
   // Server pagination props
   serverPagination = false,
   currentPage = 0,
@@ -563,11 +733,30 @@ export function DataTable<TData extends object>({
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
-  // Memoize column definitions
-  const columnDefs = React.useMemo(
-    () => createColumnDefinitions(columns, enableRowSelection, enableSorting, rowActions),
-    [columns, enableRowSelection, enableSorting, rowActions]
-  )
+const columnDefs = React.useMemo(() => {
+  // Create column definitions first
+  const defs = createColumnDefinitions(columns, enableRowSelection, enableSorting, rowActions)
+
+  // For client-side filtering, apply the filter function to each column that has a facet
+  // REMOVE the !serverPagination condition to allow filters with server pagination
+  if (facets && facets.length > 0) {
+    facets.forEach(facet => {
+      const columnKey = facet.column.toString()
+
+      // Find the column by ID
+      const colDef = defs.find(col => col.id === columnKey)
+
+      if (colDef) {
+        // Apply the faceted filter function
+        colDef.filterFn = facetedFilterFn
+      } else {
+        console.warn(`Column with ID ${columnKey} not found for facet ${facet.title}`)
+      }
+    })
+  }
+
+  return defs
+}, [columns, enableRowSelection, enableSorting, rowActions, facets])
 
   // For server-side pagination, we need to control the pagination state
   const pagination = React.useMemo(
@@ -594,6 +783,7 @@ export function DataTable<TData extends object>({
     onRowSelectionChange: setRowSelection,
     // Use manual pagination for server-side pagination
     manualPagination: serverPagination,
+    manualFiltering: false,
     // If using server pagination, provide the total row count
     pageCount: serverPagination ? Math.ceil(totalItems / pageSize) : undefined,
     state: {
@@ -603,7 +793,16 @@ export function DataTable<TData extends object>({
       rowSelection,
       ...(serverPagination ? { pagination } : {}),
     },
+    // Important! Set this debugging flag to true to detect issues
+    debugAll: process.env.NODE_ENV !== 'production',
   })
+
+  // Debug effect to log the column filters state
+  React.useEffect(() => {
+    if (columnFilters.length > 0) {
+      console.log("Current column filters:", columnFilters);
+    }
+  }, [columnFilters]);
 
   // Handle page change for server-side pagination
   const handlePageChange = React.useCallback(
@@ -636,7 +835,10 @@ export function DataTable<TData extends object>({
       .filter((column) => column.getCanHide())
       .map((column) => {
         // Find the matching column definition to get the headingName
-        const columnDef = columns.find(col => col.accessorKey.toString() === column.id);
+        const columnDef = columns.find(col =>
+          col.accessorKey.toString() === column.id ||
+          col.id === column.id
+        );
         const isVisible = column.getIsVisible();
 
         return {
@@ -671,6 +873,7 @@ export function DataTable<TData extends object>({
           filterColumn={enableFiltering ? filterColumn : undefined}
           filterPlaceholder={filterPlaceholder}
           visibilityItems={enableColumnVisibility ? visibilityItems : []}
+          facets={enableFiltering ? facets : undefined}
         />
       )}
 
@@ -681,21 +884,24 @@ export function DataTable<TData extends object>({
               <TableRow key={headerGroup.id} className="hover:bg-muted/50 dark:hover:bg-muted/20 border-gray-200 dark:border-gray-800">
                 {headerGroup.headers.map((header) => {
                   // Get column type from our original columns definition
-                  const columnDef = columns.find(col => col.accessorKey.toString() === header.id);
+                  const columnDef = columns.find(col =>
+                    col.accessorKey.toString() === header.id ||
+                    col.id === header.id
+                  );
                   const isNumeric = columnDef?.type === "Number" || columnDef?.type === "Currency";
 
                   return (
                     <TableHead
-  key={header.id}
-  className="dark:text-gray-400 h-10 px-4 text-left"
->
-  {header.isPlaceholder
-    ? null
-    : flexRender(
-        header.column.columnDef.header,
-        header.getContext()
-      )}
-</TableHead>
+                      key={header.id}
+                      className="dark:text-gray-400 h-10 px-4 text-left"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
                   );
                 })}
               </TableRow>
@@ -713,19 +919,22 @@ export function DataTable<TData extends object>({
                 >
                   {row.getVisibleCells().map((cell) => {
                     // Get column type from our original columns definition
-                    const columnDef = columns.find(col => col.accessorKey.toString() === cell.column.id);
+                    const columnDef = columns.find(col =>
+                      col.accessorKey.toString() === cell.column.id ||
+                      col.id === cell.column.id
+                    );
                     const isNumeric = columnDef?.type === "Number" || columnDef?.type === "Currency";
 
                     return (
                       <TableCell
-  key={cell.id}
-  className="px-4 text-left"
->
-  {flexRender(
-    cell.column.columnDef.cell,
-    cell.getContext()
-  )}
-</TableCell>
+                        key={cell.id}
+                        className="px-4 text-left"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
                     );
                   })}
                 </TableRow>
