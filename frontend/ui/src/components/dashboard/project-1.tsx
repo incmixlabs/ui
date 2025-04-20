@@ -16,6 +16,7 @@ import {
   Text,
 } from "@base"
 import { StatisticsBarChartView,
+  RadialBarChart,
   dashboardColorValues,
   StatsCard, } from "../charts"
 import { motion } from "motion/react"
