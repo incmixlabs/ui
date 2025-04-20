@@ -57,7 +57,7 @@ const Demo: FunctionComponent = () => {
     )
   }
 
-  const renderEdiTable.Cell = (row: Row<DemoDataItem>) => {
+  const renderEdiTableCell = (row: Row<DemoDataItem>) => {
     return (
       <TextField.Root
         type="text"
@@ -138,7 +138,7 @@ const Demo: FunctionComponent = () => {
           grow={0}
         />
         <TreeTable.Column
-          renderCell={renderEdiTable.Cell}
+          renderCell={renderEdiTableCell}
           renderHeaderCell={renderHeaderCell("Contact person")}
         />
       </TreeTable>
