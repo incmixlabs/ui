@@ -63,17 +63,23 @@ export type DropdownMenuProps = {
   items: DropdownMenuItemProps[]
 }
 
-export const DropdownMenuItem = ({
+const DropdownMenuItem = ({
   label,
   separator,
   children,
+  icon, // Explicitly extract the icon prop
   ...props
 }: DropdownMenuItemProps) => {
   return (
     <>
       {children ? (
         <RadixDropdownMenu.Sub>
-          <RadixDropdownMenu.SubTrigger>{label}</RadixDropdownMenu.SubTrigger>
+          <RadixDropdownMenu.SubTrigger>
+            <div className="flex items-center">
+              {icon && <span className="mr-2">{icon}</span>}
+              {label}
+            </div>
+          </RadixDropdownMenu.SubTrigger>
           <RadixDropdownMenu.SubContent>
             {children.map((item, index) => (
               <DropdownMenuItem {...item} key={index} />
@@ -81,7 +87,13 @@ export const DropdownMenuItem = ({
           </RadixDropdownMenu.SubContent>
         </RadixDropdownMenu.Sub>
       ) : (
-        <RadixDropdownMenu.Item {...props}>{label}</RadixDropdownMenu.Item>
+        // @ts-ignore
+        <RadixDropdownMenu.Item {...props}>
+          <div className="flex items-center">
+            {icon && <span className="mr-2">{icon}</span>}
+            {label}
+          </div>
+        </RadixDropdownMenu.Item>
       )}
       {separator && <RadixDropdownMenu.Separator />}
     </>
