@@ -44,7 +44,8 @@
     "./utils/cn": "./src/utils/cn.ts",
     "./widgets": "./src/widgets/index.ts",
     "./date-picker": "./src/components/date-picker.tsx",
-    "./onboarding": "./src/components/onboarding/index.tsx"
+    "./onboarding": "./src/components/onboarding/index.tsx",
+    "./tanstak-table": "./src/components/tanstak-table/index.ts"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "1.4.0",
