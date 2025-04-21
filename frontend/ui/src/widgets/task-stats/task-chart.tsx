@@ -5,6 +5,19 @@ import {
   Text,
   dashboardColorValues,
 } from "@incmix/ui"
+import { Task } from "@incmix/utils/types";
+interface TaskChartProps {
+    /** Title for the chart */
+  title?: string;
+  /** Data points for the sparkline chart */
+  data?: number[];
+  /** Total value to display */
+  total?: number;
+  /** Color for the chart bars */
+  color?: string;
+  /** Label text to display under the chart */
+  label?: string;
+}
 
 export function TaskChart({
   title = "On Hold",
@@ -12,7 +25,7 @@ export function TaskChart({
   total = 820,
   color = dashboardColorValues.color2,
   label = "Total Task",
-}) {
+}: TaskChartProps) {
   return (
     <CardContainer className="h-full space-y-2 text-center">
       <SparkChart title={title} className="h-24" data={data} color={color} />

@@ -1,5 +1,5 @@
 // components/NewTasks.tsx
-import { StatsCard } from "@components"
+import { StatsCard } from "@incmix/ui/charts"
 import { ClipBoardAdd } from "@incmix/ui"
 
 export function NewTasks() {
