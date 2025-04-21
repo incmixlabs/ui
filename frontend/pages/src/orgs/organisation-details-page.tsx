@@ -10,11 +10,10 @@ import {
   TextField,
   Tooltip,
 } from "@incmix/ui"
-import {
-  type MemberDetails,
-  type Organization,
-  type UserRole,
-  UserRoles,
+import type {
+  MemberDetails,
+  MemberRole,
+  Organization,
 } from "@incmix/utils/types"
 import { ArrowLeftIcon } from "@radix-ui/react-icons"
 import { useAuth } from "../auth"
@@ -115,7 +114,7 @@ const OrganizationHeader: React.FC<{
 const UserRow: React.FC<{
   member: MemberDetails
   orgId: string
-  onUpdateRole: (member: MemberDetails, newRole: UserRole) => Promise<void>
+  onUpdateRole: (member: MemberDetails, newRole: MemberRole) => Promise<void>
 }> = ({ member, orgId, onUpdateRole }) => {
   const { authUser: currentUser } = useAuth()
   const { t } = useTranslation(["common"])
@@ -126,7 +125,7 @@ const UserRow: React.FC<{
         <Flex align="center" gap="2">
           <UserProfileImage size="2" userId={member.userId} />
           <Text>
-            {member.fullName}
+            {member.name}
             {currentUser &&
               currentUser.id === member.userId &&
               ` (${t("common:you")})`}
@@ -159,19 +158,17 @@ const UserRow: React.FC<{
 }
 
 const AddUserForm: React.FC<{
-  onAddMember: (email: string, role: UserRole) => void
+  onAddMember: (email: string, role: MemberRole) => void
 }> = ({ onAddMember }) => {
   const { t } = useTranslation(["organizationDetails", "common", "roles"])
   const [newMemberEmail, setNewMemberEmail] = useState("")
-  const [newMemberRole, setNewMemberRole] = useState<UserRole>(
-    UserRoles.ROLE_VIEWER
-  )
+  const [newMemberRole, setNewMemberRole] = useState<MemberRole>("viewer")
 
   const handleAddNewMember = () => {
     if (newMemberEmail && newMemberRole) {
       onAddMember(newMemberEmail, newMemberRole)
       setNewMemberEmail("")
-      setNewMemberRole(UserRoles.ROLE_VIEWER)
+      setNewMemberRole("viewer")
     }
   }
 
@@ -186,7 +183,7 @@ const AddUserForm: React.FC<{
       />
       <Select.Root
         value={newMemberRole}
-        onValueChange={(value) => setNewMemberRole(value as UserRole)}
+        onValueChange={(value) => setNewMemberRole(value as MemberRole)}
       >
         <Select.Trigger />
         <Select.Content>
@@ -231,7 +228,7 @@ const OrganizationDetailsPage: React.FC = () => {
     }
   }
 
-  const handleAddNewMember = async (email: string, role: UserRole) => {
+  const handleAddNewMember = async (email: string, role: MemberRole) => {
     if (organization) {
       try {
         await handleAddMember(organization.id, email, role)
@@ -244,7 +241,10 @@ const OrganizationDetailsPage: React.FC = () => {
     }
   }
 
-  const handleRoleChange = async (member: MemberDetails, newRole: UserRole) => {
+  const handleRoleChange = async (
+    member: MemberDetails,
+    newRole: MemberRole
+  ) => {
     if (organization) {
       await handleUpdateMemberRole(organization.id, member.userId, newRole)
     }
@@ -295,19 +295,19 @@ const OrganizationDetailsPage: React.FC = () => {
               <Table.Root>
                 <Table.Header>
                   <Table.Row>
-                    <Table.HeaderCell>
+                    <Table.ColumnHeaderCell>
                       {t("organizationDetails:name")}
-                    </Table.HeaderCell>
-                    <Table.HeaderCell>
+                    </Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell>
                       {t("organizationDetails:email")}
-                    </Table.HeaderCell>
-                    <Table.HeaderCell>
+                    </Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell>
                       {t("organizationDetails:role")}
-                    </Table.HeaderCell>
+                    </Table.ColumnHeaderCell>
                     {ability.can("delete", "Member") && (
-                      <Table.HeaderCell>
+                      <Table.ColumnHeaderCell>
                         {t("organizationDetails:actions")}
-                      </Table.HeaderCell>
+                      </Table.ColumnHeaderCell>
                     )}
                   </Table.Row>
                 </Table.Header>

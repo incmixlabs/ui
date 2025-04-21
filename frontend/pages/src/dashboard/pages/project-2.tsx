@@ -23,22 +23,30 @@ import { useAuth } from "../../auth"
 import { EditWidgetsControl } from "./home"
 
 import {
-  ActiveTask,
   Box,
-  CalendarWidget,
   Grid,
   Heading,
+} from "@incmix/ui"
+import {
+  ActiveTask,
+  CalendarWidget,
   PostingTask,
   ProfileSettings,
   ProjectWidgets2,
   RecentActivity,
-  SortableItem,
+
   StatisticWidgets2,
   TaskChart,
   TotalProject,
-  dashboardColorValues,
+} from "@incmix/ui/widgets"
+
+import {
+  SortableItem,
   isRectDifferent,
-} from "@incmix/ui"
+} from "@incmix/ui/dnd-kit"
+import {
+  dashboardColorValues,
+} from "@incmix/ui/charts"
 import { GripVertical } from "lucide-react"
 interface GridSlot {
   slotId: string

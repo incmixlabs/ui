@@ -9,11 +9,10 @@ import {
   TextField,
   Tooltip,
 } from "@incmix/ui"
-import {
-  type MemberDetails,
-  type Organization,
-  type UserRole,
-  UserRoles,
+import type {
+  MemberDetails,
+  MemberRole,
+  Organization,
 } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { ArrowLeftIcon } from "@radix-ui/react-icons"

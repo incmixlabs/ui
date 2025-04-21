@@ -9,7 +9,7 @@ import {
   StatisticWidgets2,
   TotalProject,
   TotalTasks,
-} from "@incmix/ui"
+} from "@incmix/ui/widgets"
 import { useState } from "react"
 import { DraggableComponent } from "./draggable-component"
 
