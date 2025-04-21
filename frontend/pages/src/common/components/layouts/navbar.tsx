@@ -25,7 +25,7 @@ import {
   Moon as MoonIcon,
   User as PersonIcon,
   Sun as SunIcon,
-} from "lucide-react";
+} from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { CurrentUserProfileImage } from "../user-profile-image"
 import OrgDropdown from "./org-dropdown"

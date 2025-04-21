@@ -1,5 +1,5 @@
-import { ArrowLeft as ArrowLeftIcon } from "lucide-react"
 import { Link } from "@tanstack/react-router"
+import { ArrowLeft as ArrowLeftIcon } from "lucide-react"
 import { forwardRef, useContext, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
@@ -16,10 +16,7 @@ import {
   TextField,
   Tooltip,
 } from "@incmix/ui/base"
-import type {
-  MemberDetails,
-  Organization,
-} from "@incmix/utils/types"
+import type { MemberDetails, Organization } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 
 import { useAuth } from "../auth"
