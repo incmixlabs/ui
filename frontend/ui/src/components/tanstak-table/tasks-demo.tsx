@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react"
 import { DataTable, DataTableFacet } from "./tanstak-table"
 
-// Define User interface
+
 interface User {
   id: string
   name: string
@@ -15,7 +15,6 @@ interface User {
   balance: number
 }
 
-// Sample user data - moved outside the component to prevent recreating on each render
 const SAMPLE_USERS: User[] = [
   {
     id: "user1",
@@ -79,61 +78,59 @@ const SAMPLE_USERS: User[] = [
   },
 ]
 
-// Modified column definitions with explicit IDs to ensure filters work
 const USER_TABLE_COLUMNS = [
   {
     headingName: "Name",
     type: "String" as const,
     accessorKey: "name",
-    id: "name", // Explicit ID
+    id: "name",
     enableSorting: true,
   },
   {
     headingName: "Email",
     type: "String" as const,
     accessorKey: "email",
-    id: "email", // Explicit ID
+    id: "email",
     enableSorting: true,
   },
   {
     headingName: "Joined",
     type: "Date" as const,
     accessorKey: "joinDate",
-    id: "joinDate", // Explicit ID
+    id: "joinDate",
     enableSorting: true,
   },
   {
     headingName: "Status",
     type: "Boolean" as const,
     accessorKey: "isActive",
-    id: "isActive", // Explicit ID matching the facet column
+    id: "isActive",
     enableSorting: true,
   },
   {
     headingName: "Tags",
     type: "Tag" as const,
     accessorKey: "tags",
-    id: "tags", // Explicit ID matching the facet column
+    id: "tags",
   },
   {
     headingName: "Plan",
     type: "Status" as const,
     accessorKey: "plan",
-    id: "plan", // Explicit ID matching the facet column - this one works
+    id: "plan",
   },
   {
     headingName: "Balance",
     type: "Currency" as const,
     accessorKey: "balance",
-    id: "balance", // Explicit ID
+    id: "balance",
     enableSorting: true,
   },
 ]
 
-// Modified faceted filter configurations - keeping the same structure as the working "plan" filter
 const USER_TABLE_FACETS: DataTableFacet<User>[] = [
   {
-    column: "isActive", // Match exactly with column id
+    column: "isActive",
     title: "Status",
     options: [
       { label: "Active", value: true },
@@ -141,7 +138,7 @@ const USER_TABLE_FACETS: DataTableFacet<User>[] = [
     ]
   },
   {
-    column: "plan", // This one works fine
+    column: "plan",
     title: "Plan",
     options: [
       { label: "Success", value: "success" },
@@ -150,7 +147,7 @@ const USER_TABLE_FACETS: DataTableFacet<User>[] = [
     ]
   },
   {
-    column: "tags", // Match exactly with column id
+    column: "tags",
     title: "Role",
     options: [
       { label: "Admin", value: "admin" },
