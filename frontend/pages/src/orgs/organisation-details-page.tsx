@@ -15,7 +15,7 @@ import type {
   MemberRole,
   Organization,
 } from "@incmix/utils/types"
-import { ArrowLeftIcon } from "@radix-ui/react-icons"
+import { ArrowLeft as ArrowLeftIcon } from "lucide-react"
 import { useAuth } from "../auth"
 import { UserProfileImage } from "../common/components/user-profile-image"
 

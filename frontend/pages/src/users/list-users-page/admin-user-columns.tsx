@@ -12,7 +12,7 @@ import {
   toast,
 } from "@incmix/ui"
 import type { UserAndProfile } from "@incmix/utils/types"
-import { DotsHorizontalIcon } from "@radix-ui/react-icons"
+import { MoreHorizontal as DotsHorizontalIcon } from "lucide-react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { setEnabled, setVerified } from "./actions"
 

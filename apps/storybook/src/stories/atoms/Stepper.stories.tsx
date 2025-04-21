@@ -1,7 +1,7 @@
 import { Button, Card, Flex, FormField, Text, cn } from "@incmix/ui"
 import { Step, type StepItem, Stepper, useStepper } from "@incmix/ui/stepper"
 import * as Collapsible from "@radix-ui/react-collapsible"
-import { PersonIcon, QuoteIcon, StarIcon } from "@radix-ui/react-icons"
+import { User as PersonIcon, MessageSquare as QuoteIcon, Star as StarIcon } from 'lucide-react';
 import type { Meta, StoryObj } from "@storybook/react"
 import { useForm } from "@tanstack/react-form"
 import { zodValidator } from "@tanstack/zod-form-adapter"

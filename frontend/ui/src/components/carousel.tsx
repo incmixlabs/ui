@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeftIcon, ArrowRightIcon } from "@radix-ui/react-icons"
+import { ArrowLeft as ArrowLeftIcon, ArrowRight as ArrowRightIcon } from "lucide-react"
 import { cn } from "@utils/cn"
 import useEmblaCarousel, {
   type UseEmblaCarouselType,

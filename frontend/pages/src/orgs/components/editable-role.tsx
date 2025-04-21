@@ -1,6 +1,6 @@
 import { Button, Flex, Select, Spinner, Text, Tooltip } from "@incmix/ui"
-import type { UserRole, UserRoles } from "@incmix/utils/types"
-import { CheckIcon, Cross1Icon, Pencil1Icon } from "@radix-ui/react-icons"
+import type { UserRole } from "@incmix/utils/types"
+import { Check as CheckIcon } from "lucide-react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"

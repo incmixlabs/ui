@@ -12,7 +12,7 @@ import {
 } from "@incmix/ui/base"
 import type { Organization } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { ChevronRightIcon } from "@radix-ui/react-icons"
+import { ChevronRight as ChevronRightIcon } from "lucide-react"
 import { useForm } from "@tanstack/react-form"
 import { Link } from "@tanstack/react-router"
 import { useState } from "react"

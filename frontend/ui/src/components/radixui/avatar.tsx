@@ -1,3 +1,7 @@
+<<<<<<< HEAD:frontend/ui/src/components/radixui/avatar.tsx
+=======
+import { User as PersonIcon } from "lucide-react"
+>>>>>>> 8b0f517 (chore: fix build issues):frontend/ui/src/components/avatar.tsx
 import {
   Avatar as RadixAvatar,
   type AvatarProps as RadixProps,

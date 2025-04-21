@@ -1,6 +1,7 @@
-import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons"
 import { useRef, useState } from "react"
-import { Avatar, Box, Button, Flex } from "@base"
+import { Trash as TrashIcon } from "lucide-react"
+
+import { Avatar, Box, Button, Flex } from "@radixui"
 
 type AvatarEditableProps = {
   size?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
