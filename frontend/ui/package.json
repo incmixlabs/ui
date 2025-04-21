@@ -14,6 +14,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./styles/global.css": "./src/styles/global.css",
+    "./types": "./src/types/index.ts",
     "./avatar-group": "./src/components/avatar-group/index.tsx",
     "./avatar-editable": "./src/components/avatar-editable.tsx",
     "./auth-wrapper": "./src/components/auth-wrapper.tsx",
@@ -39,7 +40,6 @@
     "./slot": "./src/primitives/slot.ts",
     "./stepper": "./src/components/stepper/index.ts",
     "./tauri": "./src/tauri.ts",
-    "./types": "./src/types/index.ts",
     "./utils": "./src/utils/index.ts",
     "./utils/cn": "./src/utils/cn.ts",
     "./widgets": "./src/widgets/index.ts",

@@ -1,5 +1,12 @@
-import { Button, CardContainer } from "@incmix/ui"
+import { ArrowLeft as ArrowLeftIcon } from "lucide-react"
+import { Link } from "@tanstack/react-router"
+import { forwardRef, useContext, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { toast } from "sonner"
+
 import {
+  Button,
+  CardContainer,
   Container,
   Flex,
   Select,
@@ -8,18 +15,13 @@ import {
   Text,
   TextField,
   Tooltip,
-} from "@incmix/ui"
+} from "@incmix/ui/base"
 import type {
   MemberDetails,
-  MemberRole,
   Organization,
 } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { ArrowLeft as ArrowLeftIcon } from "lucide-react"
-import { Link } from "@tanstack/react-router"
-import { forwardRef, useContext, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { toast } from "sonner"
+
 import { useAuth } from "../auth"
 import { UserProfileImage } from "../common/components/user-profile-image"
 import LoadingPage from "../common/loading-page"

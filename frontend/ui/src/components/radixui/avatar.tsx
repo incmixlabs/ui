@@ -1,7 +1,4 @@
-<<<<<<< HEAD:frontend/ui/src/components/radixui/avatar.tsx
-=======
-import { User as PersonIcon } from "lucide-react"
->>>>>>> 8b0f517 (chore: fix build issues):frontend/ui/src/components/avatar.tsx
+
 import {
   Avatar as RadixAvatar,
   type AvatarProps as RadixProps,
@@ -10,7 +7,7 @@ import {
 import { User as PersonIcon } from "lucide-react"
 export { avatarPropDefs } from "@radix-ui/themes/src/components/avatar.props.js"
 import { getInitials } from "@utils/strings"
-import type { ExtendSize } from "@/types"
+import type { ExtendSize } from "@incmix/ui/types"
 import { forwardRef } from "react"
 export type AvatarProps = {
   id?: string
