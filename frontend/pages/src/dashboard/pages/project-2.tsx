@@ -22,11 +22,7 @@ import { useTranslation } from "react-i18next"
 import { useAuth } from "../../auth"
 import { EditWidgetsControl } from "./home"
 
-import {
-  Box,
-  Grid,
-  Heading,
-} from "@incmix/ui"
+import { Box, Grid, Heading } from "@incmix/ui"
 import {
   ActiveTask,
   CalendarWidget,
@@ -34,19 +30,13 @@ import {
   ProfileSettings,
   ProjectWidgets2,
   RecentActivity,
-
   StatisticWidgets2,
   TaskChart,
   TotalProject,
 } from "@incmix/ui/widgets"
 
-import {
-  SortableItem,
-  isRectDifferent,
-} from "@incmix/ui/dnd-kit"
-import {
-  dashboardColorValues,
-} from "@incmix/ui/charts"
+import { dashboardColorValues } from "@incmix/ui/charts"
+import { SortableItem, isRectDifferent } from "@incmix/ui/dnd-kit"
 import { GripVertical } from "lucide-react"
 interface GridSlot {
   slotId: string

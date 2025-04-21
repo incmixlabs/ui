@@ -1,9 +1,5 @@
 import { useEditingStore, useThemeStore } from "@incmix/store"
-import {
-  Button,
-  Separator,
-  iconSize,
-} from "@incmix/ui"
+import { Button, Separator, iconSize } from "@incmix/ui"
 import {
   SidebarInset,
   SidebarProvider,

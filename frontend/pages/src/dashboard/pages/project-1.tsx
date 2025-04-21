@@ -12,12 +12,12 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core"
+import { Box, Heading, IconButton, toast } from "@incmix/ui"
 import {
-  Box,
-  Heading,
-  IconButton,
-  toast,
-} from "@incmix/ui"
+  WidgetDropZone,
+  dashboardImg,
+  sidebarComponents,
+} from "@incmix/ui/dashboard"
 import {
   ActiveTask,
   NewTasks,
@@ -26,11 +26,7 @@ import {
   StatisticWidgets2,
   TotalProject,
   TotalTasks,
-
 } from "@incmix/ui/widgets"
-import { WidgetDropZone,
-  dashboardImg,
-  sidebarComponents } from "@incmix/ui/dashboard"
 
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useCallback, useMemo, useState } from "react"

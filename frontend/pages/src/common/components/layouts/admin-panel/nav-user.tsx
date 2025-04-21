@@ -3,7 +3,7 @@
 import { Bell, ChevronsUpDown, LogOut, Settings2, UserIcon } from "lucide-react"
 
 import { useLogout, useProfilePictureUrl, useUser } from "@auth"
-import { Avatar, DropdownMenu  } from "@incmix/ui"
+import { Avatar, DropdownMenu } from "@incmix/ui"
 import {
   SidebarMenu,
   SidebarMenuButton,
