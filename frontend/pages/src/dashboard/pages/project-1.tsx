@@ -147,7 +147,6 @@ const DashboardProject1: React.FC = () => {
         i: "a",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
         w: 2,
@@ -157,57 +156,51 @@ const DashboardProject1: React.FC = () => {
         i: "b",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 3,
+        w: 4,
         h: 12,
         x: 2,
         y: 0,
         i: "c",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 5,
+        w: 6,
         h: 12,
-        x: 5,
+        x: 6,
         y: 0,
         i: "d",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 5,
+        w: 7,
         h: 12,
         x: 0,
         y: 12,
         i: "e",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
         w: 5,
         h: 12,
-        x: 5,
+        x: 7,
         y: 12,
         i: "f",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 10,
+        w: 12,
         h: 13,
         x: 0,
         y: 24,
         i: "g",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
     ],
     md: [
@@ -215,287 +208,259 @@ const DashboardProject1: React.FC = () => {
         w: 2,
         h: 6,
         x: 0,
-        y: 6,
+        y: 0,
         i: "a",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
         w: 2,
         h: 6,
         x: 0,
-        y: 0,
+        y: 6,
         i: "b",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 4,
+        w: 5,
         h: 12,
         x: 2,
         y: 0,
         i: "c",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 4,
+        w: 5,
         h: 12,
-        x: 6,
+        x: 7,
         y: 0,
         i: "d",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 5,
+        w: 7,
         h: 12,
         x: 0,
         y: 12,
         i: "e",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
         w: 5,
         h: 12,
-        x: 5,
+        x: 7,
         y: 12,
         i: "f",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 10,
+        w: 12,
         h: 13,
         x: 0,
         y: 24,
         i: "g",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
     ],
     sm: [
       {
-        w: 2,
+        w: 4,
         h: 6,
         x: 0,
         y: 0,
         i: "a",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 2,
-        h: 6,
-        x: 4,
-        y: 0,
-        i: "b",
-        moved: false,
-        static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
-      },
-      {
-        w: 6,
+        w: 4,
         h: 6,
         x: 0,
         y: 6,
+        i: "b",
+        moved: false,
+        static: false,
+      },
+      {
+        w: 8,
+        h: 12,
+        x: 4,
+        y: 0,
         i: "c",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 6,
-        h: 6,
+        w: 12,
+        h: 12,
         x: 0,
         y: 12,
         i: "d",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 6,
-        h: 6,
+        w: 7,
+        h: 12,
         x: 0,
-        y: 18,
+        y: 24,
         i: "e",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 6,
-        h: 6,
-        x: 0,
+        w: 5,
+        h: 12,
+        x: 7,
         y: 24,
         i: "f",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 6,
-        h: 8,
+        w: 12,
+        h: 13,
         x: 0,
-        y: 30,
+        y: 36,
         i: "g",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
     ],
     xs: [
       {
-        w: 2,
+        w: 4,
         h: 6,
         x: 0,
         y: 0,
         i: "a",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 2,
-        h: 6,
-        x: 4,
-        y: 0,
-        i: "b",
-        moved: false,
-        static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
-      },
-      {
-        w: 6,
+        w: 4,
         h: 6,
         x: 0,
         y: 6,
+        i: "b",
+        moved: false,
+        static: false,
+      },
+      {
+        w: 8,
+        h: 12,
+        x: 4,
+        y: 0,
         i: "c",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 6,
-        h: 6,
+        w: 12,
+        h: 12,
         x: 0,
         y: 12,
         i: "d",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 6,
-        h: 6,
+        w: 12,
+        h: 12,
         x: 0,
-        y: 18,
+        y: 24,
         i: "e",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 6,
-        h: 6,
+        w: 12,
+        h: 12,
         x: 0,
-        y: 24,
+        y: 36,
         i: "f",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 6,
-        h: 8,
+        w: 12,
+        h: 13,
         x: 0,
-        y: 30,
+        y: 48,
         i: "g",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
     ],
     xxs: [
       {
-        w: 2,
+        w: 4,
         h: 6,
         x: 0,
         y: 0,
         i: "a",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 2,
-        h: 6,
-        x: 4,
-        y: 0,
-        i: "b",
-        moved: false,
-        static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
-      },
-      {
-        w: 6,
+        w: 4,
         h: 6,
         x: 0,
         y: 6,
+        i: "b",
+        moved: false,
+        static: false,
+      },
+      {
+        w: 8,
+        h: 12,
+        x: 4,
+        y: 0,
         i: "c",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 6,
-        h: 6,
+        w: 12,
+        h: 12,
         x: 0,
         y: 12,
         i: "d",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 6,
-        h: 6,
+        w: 12,
+        h: 12,
         x: 0,
-        y: 18,
+        y: 24,
         i: "e",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 6,
-        h: 6,
+        w: 12,
+        h: 12,
         x: 0,
-        y: 24,
+        y: 36,
         i: "f",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
       {
-        w: 6,
-        h: 8,
+        w: 12,
+        h: 13,
         x: 0,
-        y: 30,
+        y: 48,
         i: "g",
         moved: false,
         static: false,
-        resizeHandles: ["s", "w", "e", "n"] as const,
       },
     ],
   })
@@ -522,6 +487,8 @@ const DashboardProject1: React.FC = () => {
       const hasChanged =
         JSON.stringify(allLayouts) !== JSON.stringify(defaultLayouts)
       if (hasChanged) {
+        console.log(allLayouts)
+
         setDefaultLayouts(allLayouts)
       }
     },
@@ -579,7 +546,6 @@ const DashboardProject1: React.FC = () => {
             h,
             moved: false,
             static: false,
-            resizeHandles: ["s", "w", "e", "n"] as const,
           }
 
           const shiftedItems = currentLayout.map((item, index) => {
@@ -606,7 +572,6 @@ const DashboardProject1: React.FC = () => {
             h,
             moved: false,
             static: false,
-            resizeHandles: ["s", "w", "e", "n"] as const,
           }
 
           const shiftedItems = currentLayout.map((item) => ({
@@ -625,7 +590,6 @@ const DashboardProject1: React.FC = () => {
           h,
           moved: false,
           static: false,
-          resizeHandles: ["s", "w", "e", "n"] as const,
         }
 
         const shiftedItems = currentLayout.map((item) => ({
@@ -793,12 +757,13 @@ const DashboardProject1: React.FC = () => {
                   className="gridLayout"
                   layouts={getLayoutsWithStaticFlag}
                   rowHeight={30}
-                  breakpoints={{ lg: 1536, md: 996, sm: 768, xs: 480, xxs: 0 }}
-                  cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                  breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                  cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
                   onLayoutChange={handleLayoutChange}
                   preventCollision={false}
                   compactType="vertical"
                   useCSSTransforms={true}
+                  resizeHandles={["s", "w", "e", "n"]}
                 >
                   {gridComponents.map((item) => (
                     <Box key={item.slotId} className="relative h-full ">
@@ -818,20 +783,7 @@ const DashboardProject1: React.FC = () => {
                             </IconButton>
                           )}
                           <Box className="widget-content relative h-full overflow-hidden rounded-lg ">
-                            {isEditing ? (
-                              <>
-                                <img
-                                  src={
-                                    item.compImage ||
-                                    "/placeholder.svg?height=150&width=150"
-                                  }
-                                  alt={item.title}
-                                  className="h-full w-full rounded-lg object-contain"
-                                />
-                              </>
-                            ) : (
-                              <>{item.component}</>
-                            )}
+                            {item.component}
                           </Box>
                         </Box>
                       </WidgetDropZone>
