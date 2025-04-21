@@ -45,7 +45,7 @@
     "react-error-boundary": "5.0.0",
     "react-i18next": "15.4.0",
     "rxdb": "16.11.0",
-    "rxdb-premium":"16.11.0",
+    "rxdb-premium": "16.11.0",
     "rxdb-hooks": "5.0.2",
     "swapy": "0.4.2",
     "tailwind-merge": "2.3.0",
