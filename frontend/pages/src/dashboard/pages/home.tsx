@@ -1,6 +1,14 @@
 import { LoadingPage } from "@common"
 
-import { CardContainer, SwapyExclude, SwapyLayout, SwapySlot } from "@incmix/ui"
+import { useEditingStore } from "@incmix/store"
+import {
+  Box,
+  CardContainer,
+  Grid,
+  SwapyExclude,
+  SwapyLayout,
+  SwapySlot,
+} from "@incmix/ui"
 import { Flex, Heading, Switch, Text } from "@incmix/ui"
 import {
   BatteryWidget,
@@ -14,7 +22,6 @@ import {
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { createSwapy } from "swapy"
 import { useAuth } from "../../auth"
 
 type Widget = {
@@ -36,22 +43,51 @@ const MOCK_CLOCK_DATA = [
 const INITIAL_WIDGETS: Widget[] = [
   { id: "weather", type: "weather" },
   { id: "clock", type: "clock" },
+  { id: "calendar", type: "calendar" },
   { id: "news", type: "news" },
   { id: "battery", type: "battery" },
   { id: "image-grid", type: "image-grid" },
-  { id: "calendar", type: "calendar" },
 ]
 
 const INITIAL_SLOT_ITEMS = [
-  { slotId: "slot1", itemId: "weather" },
-  { slotId: "slot2", itemId: "clock" },
-  { slotId: "slot3", itemId: "battery" },
-  { slotId: "slot4", itemId: "news" },
-  { slotId: "slot5", itemId: "image-grid" },
-  { slotId: "slot6", itemId: "calendar" },
+  {
+    slotId: "slot1",
+    colSpan: "xl:col-span-2 col-span-2 2xl:col-span-2",
+    itemId: "weather",
+  },
+  {
+    slotId: "slot2",
+    colSpan: "xl:col-span-4 col-span-4 2xl:col-span-4",
+    className: "bg-gray-2",
+    itemId: "clock",
+  },
+  {
+    slotId: "slot3",
+    colSpan: "xl:col-span-1 col-span-1 2xl:col-span-1",
+    className: "bg-gray-2",
+    itemId: "battery",
+  },
+  {
+    slotId: "slot4",
+    colSpan: "xl:col-span-5 col-span-5 2xl:col-span-5",
+    className: "bg-gray-2",
+    itemId: "calendar",
+  },
+  {
+    slotId: "slot5",
+    colSpan: "col-span-6",
+    className: "bg-gray-2",
+    itemId: "news",
+  },
+  {
+    slotId: "slot6",
+    colSpan: "col-span-6",
+    className: "bg-gray-2",
+    itemId: "image-grid",
+  },
 ]
 
-const EditWidgetsControl: React.FC<{
+export const EditWidgetsControl: React.FC<{
   onEditChange: (checked: boolean) => void
 }> = ({ onEditChange }) => {
   const { t } = useTranslation(["dashboard", "common"])
@@ -72,14 +108,15 @@ const renderWidget = (widget: Widget) => {
       return <WeatherWidget location={MOCK_WEATHER_DATA} />
     case "clock":
       return <ClockWidget flip clocks={MOCK_CLOCK_DATA} size="1" />
+    case "calendar":
+      return <CalendarWidget storageKey={"calendar_events_dashboard"} />
     case "news":
       return <NewsWidget country="us" />
     case "battery":
       return <BatteryWidget />
     case "image-grid":
       return <ImageGrid />
-    case "calendar":
-      return <CalendarWidget storageKey={"calendar_events_dashboard"} />
+
     default:
       return null
   }
@@ -88,18 +125,19 @@ const renderWidget = (widget: Widget) => {
 const DashboardHomePage: React.FC = () => {
   const { t } = useTranslation(["dashboard", "common"])
   const { authUser, isLoading } = useAuth()
-  const swapyRef = useRef<ReturnType<typeof createSwapy> | null>(null)
+  const { isEditing, setIsEditing } = useEditingStore()
 
-  const [isEditing, setIsEditing] = useState(false)
   const [widgets, setWidgets] = useState<Widget[]>([])
   const [slotItemsMap, setSlotItemsMap] = useState<typeof INITIAL_SLOT_ITEMS>(
     []
   )
 
   const slottedWidgets = useMemo(() => {
-    return slotItemsMap.map(({ slotId, itemId }) => ({
+    return slotItemsMap.map(({ slotId, itemId, colSpan, className }) => ({
       slotId,
       itemId,
+      colSpan,
+      className,
       widget: widgets.find((w) => w.id === itemId),
     }))
   }, [widgets, slotItemsMap])
@@ -123,33 +161,6 @@ const DashboardHomePage: React.FC = () => {
     initializeWidgets()
   }, [])
 
-  useEffect(() => {
-    const container = document.querySelector("#dashboard-container")
-    if (!container) return
-
-    swapyRef.current = createSwapy(container, {
-      manualSwap: true,
-      swapMode: "drop",
-    })
-
-    swapyRef.current.onSwap(({ data }) => {
-      setSlotItemsMap(
-        data.array.filter(
-          (item): item is { slotId: string; itemId: string } =>
-            item.itemId !== null
-        )
-      )
-    })
-
-    return () => {
-      swapyRef.current?.destroy()
-    }
-  }, [])
-
-  useEffect(() => {
-    swapyRef.current?.setData({ array: slotItemsMap })
-  }, [slotItemsMap])
-
   if (isLoading) return <LoadingPage />
   if (!authUser) return null
 
@@ -158,33 +169,44 @@ const DashboardHomePage: React.FC = () => {
       breadcrumbItems={[]}
       navExtras={<EditWidgetsControl onEditChange={setIsEditing} />}
     >
-      <Flex direction="column" gap="6">
-        <Heading size="6">{t("dashboard:title")}</Heading>
+      <Box className="container mx-auto overflow-x-hidden">
+        <Heading size="6" className="pb-4">
+          {t("dashboard:title")}
+        </Heading>
 
         <Flex direction="column" gap="6">
           {slottedWidgets.length && (
             <SwapyLayout
               id="dashboard-container"
               enable={isEditing}
-              config={{ swapMode: "drop" }}
+              config={{ swapMode: "hover" }}
             >
-              <Flex direction="row" gap="4" wrap="wrap">
-                {slottedWidgets.map(({ slotId, widget }) => (
-                  <SwapySlot key={slotId} id={slotId} showHandle={isEditing}>
-                    {widget && (
-                      <CardContainer>
-                        <SwapyExclude id={widget.id}>
-                          {renderWidget(widget)}
-                        </SwapyExclude>
-                      </CardContainer>
-                    )}
-                  </SwapySlot>
-                ))}
-              </Flex>
+              <Grid gap="5" columns="12" className="w-full">
+                {slottedWidgets.map(
+                  ({ slotId, colSpan, className, widget }) => (
+                    <SwapySlot
+                      className={`${colSpan} h-fit rounded-xl bg-gray-4 dark:bg-gray-2`}
+                      key={slotId}
+                      id={slotId}
+                      showHandle={isEditing}
+                    >
+                      {widget && (
+                        <Box
+                          className={`relative h-full w-full rounded-xl ${className}`}
+                        >
+                          <SwapyExclude id={widget.id}>
+                            {renderWidget(widget)}
+                          </SwapyExclude>
+                        </Box>
+                      )}
+                    </SwapySlot>
+                  )
+                )}
+              </Grid>
             </SwapyLayout>
           )}
         </Flex>
-      </Flex>
+      </Box>
     </DashboardLayout>
   )
 }

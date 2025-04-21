@@ -1,5 +1,3 @@
-"use client"
-
 import {
   BackpackIcon,
   BoxIcon,
@@ -19,8 +17,8 @@ import {
 import React from "react"
 
 import { useAuth, useCurrentUser } from "@auth"
-import { useOrganizationStore } from "@incmix/store"
-import { ScrollArea } from "@incmix/ui"
+import { useEditingStore, useOrganizationStore } from "@incmix/store"
+import { DashboardSidebar, ScrollArea } from "@incmix/ui"
 import { USERS_API_URL } from "@incmix/ui/constants"
 import {
   SecondarySidebar,
@@ -50,6 +48,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation(["common", "sidebar"])
   const { pathname } = useLocation()
   const { authUser: user } = useAuth()
+  const { isEditing } = useEditingStore()
 
   const { selectedOrganisation } = useOrganizationStore()
 
@@ -261,7 +260,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   return (
     <>
-      <Sidebar isDefaultMobile={false} collapsible="icon" {...props}>
+      <Sidebar isDefaultMobile={true} collapsible="icon" {...props}>
         <SidebarHeader>
           <OrgSwitcher />
           <SidebarHeaderLabel asChild>
@@ -281,7 +280,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <ScrollArea className="h-full">
             <NavMain items={navItems} />
           </ScrollArea>
-          {/* <NavProjects projects={data.projects} /> */}
         </SidebarContent>
         {user && (
           <SidebarFooter>
@@ -291,9 +289,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarRail />
       </Sidebar>
       {pathname.includes("/file-manager") && (
-        <ErrorBoundary fallback={<SidebarErrorFallback />}>
+        <ErrorBoundary
+          fallback={<SidebarErrorFallback message="secondary sidebar" />}
+        >
           <SecondarySidebar>
             <FileFolder />
+          </SecondarySidebar>
+        </ErrorBoundary>
+      )}
+
+      {pathname.includes("/dashboard") && isEditing && (
+        <ErrorBoundary
+          fallback={<SidebarErrorFallback message="dashboard sidebar" />}
+        >
+          <SecondarySidebar>
+            <DashboardSidebar />
           </SecondarySidebar>
         </ErrorBoundary>
       )}

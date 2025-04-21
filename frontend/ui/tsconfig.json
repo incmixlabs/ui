@@ -12,6 +12,8 @@
       "@base/*": ["./components/base/*"],
       "@card": ["./components/card"],
       "@card/*": ["./components/card/*"],
+      "@charts": ["./components/charts"],
+      "@charts/*": ["./components/charts/*"],
       "@components/*": ["./components/*"],
       "@components": ["./components"],
       "@hooks": ["./hooks"],

@@ -1,0 +1,5 @@
+export { DoneTasks } from "./done-task"
+export { InProgressTask } from "./in-progress"
+export { NewTasks } from "./new-task"
+export { TotalTasks } from "./total-task"
+export { TaskChart } from "./task-chart"

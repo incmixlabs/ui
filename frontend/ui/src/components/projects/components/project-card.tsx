@@ -2,13 +2,13 @@ import { useProjectDrawer } from "@hooks/use-project-drawer"
 import {
   Box,
   Card,
+  DropdownMenu,
   Flex,
   Heading,
   IconButton,
   Progress,
   Text,
 } from "@incmix/ui"
-import { DropdownMenu } from "@incmix/ui/dropdown-menu"
 import {
   Clock,
   Ellipsis,
