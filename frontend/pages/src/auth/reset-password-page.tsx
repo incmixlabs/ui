@@ -1,13 +1,21 @@
 import { LoadingPage } from "@common"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { I18n } from "@incmix/pages/i18n"
-import { CardContainer, FormField, ReactiveButton, toast } from "@incmix/ui"
+import { CardContainer, ReactiveButton, toast } from "@incmix/ui"
 import { Box, Container, Flex, Heading, Text } from "@incmix/ui"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
-import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
-import { zodValidator } from "@tanstack/zod-form-adapter"
 import { useEffect } from "react"
+import { useForm as useHookForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
 import { setupGoogleAuthCallbackListener, useAuth } from "./hooks/auth"
@@ -47,61 +55,66 @@ function ResetPasswordForm() {
     },
   })
 
-  const form = useForm({
+  // Define form schema
+  const formSchema = z.object({
+    newPassword: z.string().min(1, t("login:passwordValidation")),
+  })
+
+  // Use react-hook-form
+  const form = useHookForm({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       newPassword: "",
     },
-    onSubmit: ({ value }) => {
-      if (code && email) mutate({ newPassword: value.newPassword, code, email })
-    },
   })
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    if (code && email) mutate({ newPassword: values.newPassword, code, email })
+  }
 
   return (
     <CardContainer>
       <Heading size="4" mb="4" align="center">
         {t("resetPassword:title")}
       </Heading>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          form.handleSubmit()
-        }}
-      >
-        <Flex direction="column" gap="4">
-          <form.Field
-            name="newPassword"
-            validatorAdapter={zodValidator()}
-            validators={{
-              onChange: z.string().min(1, t("login:passwordValidation")),
-            }}
-          >
-            {(field) => (
-              <FormField
-                name="newPassword"
-                label={t("common:password")}
-                type="password"
-                field={field}
-              />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <Flex direction="column" gap="4">
+            <FormField
+              control={form.control}
+              name="newPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("common:password")}</FormLabel>
+                  <FormControl>
+                    <input
+                      type="password"
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {isError && (
+              <Text color="red" size="2">
+                {error.message}
+              </Text>
             )}
-          </form.Field>
-          {isError && (
-            <Text color="red" size="2">
-              {error.message}
-            </Text>
-          )}
 
-          <ReactiveButton
-            type="submit"
-            color="blue"
-            loading={isPending}
-            success={isSuccess}
-            className="w-full"
-          >
-            {t("resetPassword:submit")}
-          </ReactiveButton>
-        </Flex>
-      </form>
+            <ReactiveButton
+              type="submit"
+              color="blue"
+              loading={isPending}
+              success={isSuccess}
+              className="w-full"
+            >
+              {t("resetPassword:submit")}
+            </ReactiveButton>
+          </Flex>
+        </form>
+      </Form>
       <Box mt="4" className="text-center">
         <Link to="/login">
           <Text color="blue">{t("resetPassword:loginPrompt")}</Text>
