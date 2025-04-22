@@ -81,7 +81,14 @@ const DynamicDashboardPage: React.FC = () => {
   const { authUser, isLoading } = useAuth()
   const { isEditing, setIsEditing } = useEditingStore()
   const [activeDragId, setActiveDragId] = useState<string | null>(null)
-  const [activeDragData, setActiveDragData] = useState<any>(null)
+  interface DragData {
+    title?: string
+    image?: string
+    [key: string]: any
+  }
+  const [activeDragData, setActiveDragData] = useState<
+    DragData | null | undefined
+  >(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
