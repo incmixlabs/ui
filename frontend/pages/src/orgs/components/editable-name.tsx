@@ -1,5 +1,9 @@
 import { Button, Flex, Heading, TextField, Tooltip } from "@incmix/ui"
-import { Check as CheckIcon, X as Cross1Icon, Pencil as PencilIcon } from "lucide-react"
+import {
+  Check as CheckIcon,
+  X as Cross1Icon,
+  Pencil as PencilIcon,
+} from "lucide-react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
