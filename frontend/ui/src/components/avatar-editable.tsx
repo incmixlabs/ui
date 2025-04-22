@@ -1,5 +1,5 @@
 import { useRef, useState } from "react"
-import { Trash as TrashIcon } from "lucide-react"
+import { Trash as TrashIcon, Pencil as PencilIcon } from "lucide-react"
 
 import { Avatar, Box, Button, Flex } from "@radixui"
 
@@ -52,7 +52,7 @@ export const AvatarEditable: React.FC<AvatarEditableProps> = ({
           }`}
           onClick={() => fileInputRef.current?.click()}
         >
-          <Pencil1Icon color="white" width="33%" height="33%" />
+          <PencilIcon color="white" size={24} />
         </Flex>
         <input
           ref={fileInputRef}

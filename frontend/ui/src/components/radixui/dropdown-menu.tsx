@@ -91,8 +91,7 @@ const DropdownMenuItem = ({
           </RadixDropdownMenu.SubContent>
         </RadixDropdownMenu.Sub>
       ) : (
-        // @ts-ignore
-        <RadixDropdownMenu.Item {...props}>
+        <RadixDropdownMenu.Item role="menuitemcheckbox"  aria-checked={checked} {...props}>
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center">
               {icon && <span className="mr-2">{icon}</span>}

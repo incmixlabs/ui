@@ -1,5 +1,5 @@
 import { Button, Flex, Heading, TextField, Tooltip } from "@incmix/ui"
-import { Check as CheckIcon } from "lucide-react"
+import { Check as CheckIcon, X as Cross1Icon, Pencil as PencilIcon } from "lucide-react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
@@ -96,7 +96,7 @@ export const EditableName: React.FC<EditableNameProps> = ({
       {editable && (
         <Tooltip content={t("organizationDetails:editName")}>
           <Button size="2" variant="ghost" onClick={handleEdit}>
-            <Pencil1Icon />
+            <PencilIcon />
           </Button>
         </Tooltip>
       )}

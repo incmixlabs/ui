@@ -272,7 +272,7 @@ const FacetedFilter = <TData extends object>({
     : facet.title;
 
   return (
-    <DropdownMenu
+    <DropdownMenuWrapper
       button={{
         label: buttonLabel,
         variant: "outline",
