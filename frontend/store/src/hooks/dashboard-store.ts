@@ -8,7 +8,7 @@ export type TProject = {
 
 type DashboardStore = {
   projects: TProject[]
-  addProject: (name: string) => TProject // ✅
+  addProject: (name: string) => TProject
   getProjectById: (id: string) => TProject | undefined
 }
 
@@ -17,7 +17,7 @@ export const useDashboardStore = create<DashboardStore>()(
     (set, get) => ({
       projects: [],
       addProject: (name) => {
-        const id = name.toLowerCase().replace(/\s+/g, "-")
+        const id = `${name.toLowerCase().replace(/\s+/g, "-")}-${Date.now()}`
         const newProject = { id, name }
         set((state) => ({
           projects: [...state.projects, newProject],

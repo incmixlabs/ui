@@ -103,9 +103,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         isSelected: pathname.includes("/dashboard"),
         isActive:
           pathname.startsWith("/dashboard") ||
-          pathname.includes("/home") ||
+          pathname.includes("/dashboard/home") ||
           dashboards.some((dashboard) =>
-            pathname.includes(`/project/${dashboard.id}`)
+            pathname.includes(`/dashboard/project/${dashboard.id}`)
           ),
         items: ability.can("read", "Member")
           ? dashboardSubItems
