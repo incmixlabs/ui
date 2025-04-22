@@ -62,8 +62,8 @@ catalog:
   "@tanstack/router-devtools": 1.115.0
   "@tiptap/react": 2.11.5
   "@tiptap/starter-kit": 2.11.5
-  "@types/react": 19.1.0
-  "@types/react-dom": 19.1.0
+  "@types/react": 19.1.1
+  "@types/react-dom": 19.1.2
   "@vitejs/plugin-react": 4.3.4
   "@vitejs/plugin-react-swc": 3.9.0
   "@types/wicg-file-system-access": 2023.10.5
