@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@incmix/config": "workspace: *",
-    "@julr/vite-plugin-validate-env": "1.2.0",
+    "@julr/vite-plugin-validate-env": "catalog:",
     "@sentry/vite-plugin": "3.0.0",
     "@tauri-apps/cli": ">=2.0.0-beta.0",
     "@tauri-apps/plugin-shell": ">=2.0.0-beta.0",

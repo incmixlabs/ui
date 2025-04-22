@@ -17,15 +17,15 @@ import {
 } from "@incmix/ui"
 
 import {
-  BellIcon,
-  ExitIcon,
-  GearIcon,
-  HamburgerMenuIcon,
-  MagnifyingGlassIcon,
-  MoonIcon,
-  PersonIcon,
-  SunIcon,
-} from "@radix-ui/react-icons"
+  Bell as BellIcon,
+  LogOut as ExitIcon,
+  Settings as GearIcon,
+  Menu as HamburgerMenuIcon,
+  Search as MagnifyingGlassIcon,
+  Moon as MoonIcon,
+  User as PersonIcon,
+  Sun as SunIcon,
+} from "lucide-react"
 import { useTranslation } from "react-i18next"
 import { CurrentUserProfileImage } from "../user-profile-image"
 import OrgDropdown from "./org-dropdown"

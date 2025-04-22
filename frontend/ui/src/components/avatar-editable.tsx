@@ -1,6 +1,7 @@
-import { Pencil1Icon, TrashIcon } from "@radix-ui/react-icons"
 import { useRef, useState } from "react"
-import { Avatar, Box, Button, Flex } from "@base"
+import { Trash as TrashIcon, Pencil as PencilIcon } from "lucide-react"
+
+import { Avatar, Box, Button, Flex } from "@radixui"
 
 type AvatarEditableProps = {
   size?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
@@ -51,7 +52,7 @@ export const AvatarEditable: React.FC<AvatarEditableProps> = ({
           }`}
           onClick={() => fileInputRef.current?.click()}
         >
-          <Pencil1Icon color="white" width="33%" height="33%" />
+          <PencilIcon color="white" size={24} />
         </Flex>
         <input
           ref={fileInputRef}

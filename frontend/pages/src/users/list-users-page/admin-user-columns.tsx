@@ -12,8 +12,8 @@ import {
   toast,
 } from "@incmix/ui"
 import type { UserAndProfile } from "@incmix/utils/types"
-import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { MoreHorizontal as DotsHorizontalIcon } from "lucide-react"
 import { setEnabled, setVerified } from "./actions"
 
 type GetColumnsProps = {
