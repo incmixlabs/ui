@@ -1,10 +1,9 @@
 "use client"
 
-import { SelectIcon } from "@radix-ui/react-select"
 import type { Column } from "@tanstack/react-table"
 import { ArrowDown, ArrowUp, ChevronsUpDown, EyeOff } from "lucide-react"
 
-import { Flex, Select } from "@radix-ui/themes"
+import { Flex, IconButton, Select } from "@base"
 import { cn } from "@utils/cn"
 
 interface DataTableColumnHeaderProps<TData, TValue>
@@ -55,7 +54,7 @@ export function DataTableColumnHeader<TData, TValue>({
         >
           <Flex as="span" align="center" gap="2">
             {title}
-            <SelectIcon asChild>
+            <IconButton  asChild>
               {column.getCanSort() && column.getIsSorted() === "desc" ? (
                 <ArrowDown className="ml-2.5 size-4" aria-hidden="true" />
               ) : column.getIsSorted() === "asc" ? (
@@ -63,7 +62,7 @@ export function DataTableColumnHeader<TData, TValue>({
               ) : (
                 <ChevronsUpDown className="ml-2.5 size-4" aria-hidden="true" />
               )}
-            </SelectIcon>
+            </IconButton>
           </Flex>
         </Select.Trigger>
         <Select.Content align="start">
