@@ -1,10 +1,10 @@
 import { Box, Flex, Heading, Text, TextField } from "@incmix/ui"
 import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  MinusIcon,
-  PlusIcon,
-} from "@radix-ui/react-icons"
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
+  Minus as MinusIcon,
+  Plus as PlusIcon,
+} from "lucide-react"
 import { cn } from "@utils/cn"
 import { AnimatePresence, motion } from "framer-motion"
 import { DateTime, Info } from "luxon"

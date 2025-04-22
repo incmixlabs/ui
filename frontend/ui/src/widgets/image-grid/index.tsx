@@ -7,7 +7,7 @@ import {
 import { toast,  Box, Button,  Flex, Text } from "@base"
 import { useUploadFile } from "@hooks/use-upload-file"
 import { Card } from "@card/card"
-import { TrashIcon, UploadIcon } from "@radix-ui/react-icons"
+import { Trash as TrashIcon, Upload as UploadIcon } from "lucide-react"
 import { cn } from "@utils"
 import { useCallback, useEffect, useState } from "react"
 
