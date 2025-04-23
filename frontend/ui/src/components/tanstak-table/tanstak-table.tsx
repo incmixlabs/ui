@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -11,7 +11,9 @@ import {
   getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
+  RowSelectionState,
+  CellContext
+} from "@tanstack/react-table";
 import {
   ArrowUpDown,
   ChevronDown,
@@ -21,300 +23,77 @@ import {
   ChevronsRight,
   MoreHorizontal,
   Check,
-  X
-} from "lucide-react"
+  X,
+  Download
+} from "lucide-react";
 
-import { Button, Checkbox, DropdownMenuWrapper, Input } from "@base"
+import { Button, Checkbox, DropdownMenuWrapper, Input } from "@base";
+import { Table } from "@shadcn";
+import { getCellRenderer } from "./cell-renderers";
 import {
-  Table,
-} from "@shadcn"
+  DataTableProps,
+  DataTableColumn,
+  ColumnGroup,
+  ColumnType,
+  PaginationInfo,
+  DataTableFacet,
+  RowAction
+} from "./types";
 
 // Constants
-const PAGE_SIZE_OPTIONS = [10, 20, 30, 40, 50]
+const PAGE_SIZE_OPTIONS = [10, 20, 30, 40, 50];
 
-// Types
-export type ColumnType = "String" | "Number" | "Currency" | "Date" | "Tag" | "Boolean" | "Status"
-
-export interface DataTableColumn<TData> {
-  headingName: string
-  type: ColumnType
-  accessorKey: keyof TData | string
-  id?: string // Add optional id property
-  enableSorting?: boolean
-  enableFiltering?: boolean
-  enableHiding?: boolean
-  className?: string
-  cell?: (info: any) => React.ReactNode
+// Type guard for column group
+function isColumnGroup<TData>(obj: any): obj is ColumnGroup<TData> {
+  return obj && typeof obj === 'object' && 'title' in obj && 'columns' in obj;
 }
 
-// New interface for faceted filter options
-export interface FilterOption {
-  label: string
-  value: string | boolean | number
-  icon?: React.ReactNode
-}
-
-// New interface for faceted filter configuration
-export interface DataTableFacet<TData> {
-  column: keyof TData | string
-  title: string
-  options: FilterOption[]
-}
-
-interface DataTableProps<TData> {
-  columns: DataTableColumn<TData>[]
-  data: TData[]
-  enableFiltering?: boolean
-  enableSorting?: boolean
-  enablePagination?: boolean
-  enableRowSelection?: boolean
-  enableColumnVisibility?: boolean
-  showRowCount?: boolean
-  filterColumn?: keyof TData | string
-  filterPlaceholder?: string
-  className?: string
-  rowActions?: (row: TData) => {
-    label: string;
-    onClick: () => void;
-  }[]
-  // New faceted filter prop
-  facets?: DataTableFacet<TData>[]
-  // Server pagination props
-  serverPagination?: boolean
-  currentPage?: number
-  pageSize?: number
-  totalItems?: number
-  onPageChange?: (page: number) => void
-  onPageSizeChange?: (pageSize: number) => void
-  isPaginationLoading?: boolean
-}
-
-interface PaginationInfo {
-  currentPage: number
-  pageSize: number
-  totalItems: number
-  totalPages: number
-  canPreviousPage: boolean
-  canNextPage: boolean
-}
-
-// Cell Renderer Components
-const TagCell: React.FC<{ value: string[] }> = ({ value }) => {
-  if (!Array.isArray(value)) return <>{String(value)}</>
-
-  return (
-    <div className="flex flex-wrap gap-1.5">
-      {value.map((tag, i) => (
-        <span
-          key={i}
-          className="inline-flex items-center rounded-full bg-primary-50 dark:bg-primary-950/50 px-2 py-1 text-xs font-medium text-primary-700 dark:text-primary-300 ring-1 ring-inset ring-primary-700/10 dark:ring-primary-300/20"
-        >
-          {tag}
-        </span>
-      ))}
-    </div>
-  )
-}
-
-const StatusCell: React.FC<{ value: string }> = ({ value }) => {
-  const statusMap: Record<string, { color: string }> = {
-    success: {
-      color: "bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-950/50 dark:text-green-400 dark:ring-green-500/30"
-    },
-    failed: {
-      color: "bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-950/50 dark:text-red-400 dark:ring-red-500/30"
-    },
-    processing: {
-      color: "bg-yellow-50 text-yellow-700 ring-yellow-600/20 dark:bg-yellow-950/50 dark:text-yellow-400 dark:ring-yellow-500/30"
-    },
-    pending: {
-      color: "bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-950/50 dark:text-blue-400 dark:ring-blue-500/30"
-    },
-    canceled: {
-      color: "bg-gray-50 text-gray-700 ring-gray-600/20 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-500/30"
-    },
-  }
-
-  const status = String(value).toLowerCase()
-  const statusStyle = statusMap[status] || {
-    color: "bg-gray-50 text-gray-700 ring-gray-600/20 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-500/30"
-  }
-
-  return (
-    <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset capitalize ${statusStyle.color}`}>
-      {String(value)}
-    </span>
-  )
-}
-
-const BooleanCell: React.FC<{ value: boolean }> = ({ value }) => (
-  <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ${
-    value
-      ? 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-950/50 dark:text-green-400 dark:ring-green-500/30'
-      : 'bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-950/50 dark:text-red-400 dark:ring-red-500/30'
-  }`}>
-    {value ? 'Yes' : 'No'}
-  </span>
-)
-
-const CurrencyCell: React.FC<{ value: number }> = ({ value }) => (
-  <span className="block text-left font-medium">
-    {new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(value)}
-  </span>
-)
-
-const NumberCell: React.FC<{ value: number }> = ({ value }) => (
-  <span className="block text-left">
-    {value.toLocaleString()}
-  </span>
-)
-
-const DateCell: React.FC<{ value: string | Date }> = ({ value }) => {
-  if (value instanceof Date || (typeof value === 'string' && !isNaN(Date.parse(value as string)))) {
-    const date = value instanceof Date ? value : new Date(value as string);
-
-    // Format: Apr 18, 2025 17:05 (with time if available)
-    const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    };
-
-    // Check if the time is not midnight (00:00:00) to determine if time was provided
-    if (date.getHours() !== 0 || date.getMinutes() !== 0 || date.getSeconds() !== 0) {
-      options.hour = '2-digit';
-      options.minute = '2-digit';
+// Flatten column groups into a flat array of columns
+function flattenColumns<TData>(
+  columns: (DataTableColumn<TData> | ColumnGroup<TData>)[]
+): DataTableColumn<TData>[] {
+  return columns.flatMap(col => {
+    if (isColumnGroup<TData>(col)) {
+      return col.columns;
     }
-
-    return (
-      <span className="font-mono text-sm text-gray-600 dark:text-gray-300">
-        {date.toLocaleString(undefined, options)}
-      </span>
-    );
-  }
-  return <>{String(value)}</>
+    return col;
+  });
 }
 
-const StringCell: React.FC<{ value: any }> = ({ value }) => (
-  <div className="truncate max-w-[300px] text-left">
-    {value !== null && value !== undefined ? String(value) : ''}
-  </div>
-)
+// Improved faceted filter function
+const facetedFilterFn = (row: any, columnId: string, filterValue: any[]) => {
+  if (!filterValue || filterValue.length === 0) return true;
 
-// New component for faceted filters
-interface FacetedFilterProps<TData> {
-  table: any
-  facet: DataTableFacet<TData>
-}
+  const value = row.getValue(columnId);
 
-const FacetedFilter = <TData extends object>({
-  table,
-  facet
-}: FacetedFilterProps<TData>) => {
-  const column = table.getColumn(facet.column)
-  if (!column) {
-    console.warn(`Column ${String(facet.column)} not found for filter ${facet.title}`);
-    return null;
+  // Handle array values (like tags)
+  if (Array.isArray(value)) {
+    // Check if any value in the filter matches any tag in the array
+    return filterValue.some(fv => value.includes(fv));
   }
-
-  const filterValue = column.getFilterValue() as any[]
-  const selectedCount = filterValue?.length || 0
-
-  // Create dropdown items
-  const items = [
-    {
-      label: facet.title,
-      disabled: true,
-      separator: true
-    },
-    ...facet.options.map(option => {
-      const isSelected = filterValue?.includes(option.value) || false
-
-      return {
-        label: option.label,
-        onClick: () => {
-          if (isSelected) {
-            // Remove from filter
-            column.setFilterValue(
-              filterValue?.filter(val => val !== option.value) || []
-            )
-          } else {
-            // Add to filter
-            column.setFilterValue(
-              filterValue ? [...filterValue, option.value] : [option.value]
-            )
-          }
-        },
-        checked: isSelected,
-        checkedIcon: <Check className="h-4 w-4" />
-      }
-    })
-  ]
-
-  // Add clear button if filters are applied
-  if (selectedCount > 0) {
-    items.push({
-      label: "Clear",
-      onClick: () => column.setFilterValue(undefined),
-      separator: true,
-      disabled: false
-    })
+  // Handle boolean values explicitly
+  else if (typeof value === 'boolean') {
+    // Convert both to same type for comparison
+    return filterValue.some(fv => {
+      if (typeof fv === 'boolean') return value === fv;
+      if (typeof fv === 'string') return String(value) === fv.toLowerCase();
+      return false;
+    });
   }
-
-  // Use a string for label
-  const buttonLabel = selectedCount > 0
-    ? `${facet.title} (${selectedCount})`
-    : facet.title;
-
-  return (
-    <DropdownMenuWrapper
-      button={{
-        label: buttonLabel,
-        variant: "outline",
-        icon: <ChevronDown className="ml-2 h-4 w-4" />,
-        className: "h-9 border-gray-200 dark:border-gray-800"
-      }}
-      items={items}
-      content={{
-        color: "gray"
-      }}
-    />
-  )
-}
-
-// Utility functions
-function getCellRenderer(type: ColumnType, value: any): React.ReactNode {
-  switch (type) {
-    case "Date":
-      return <DateCell value={value} />
-    case "Tag":
-      return <TagCell value={value} />
-    case "Status":
-      return <StatusCell value={value} />
-    case "Boolean":
-      return <BooleanCell value={value} />
-    case "Currency":
-      return <CurrencyCell value={value} />
-    case "Number":
-      return <NumberCell value={value} />
-    case "String":
-    default:
-      return <StringCell value={value} />
+  // Handle other value types (strings, numbers, etc.)
+  else {
+    return filterValue.includes(value);
   }
-}
+};
 
+// Utility function to create column definitions
 function createColumnDefinitions<TData>(
   columns: DataTableColumn<TData>[],
   enableRowSelection: boolean,
   enableSorting: boolean,
-  rowActions?: (row: TData) => { label: string; onClick: () => void }[]
+  rowActions?: (row: TData) => RowAction[]
 ): ColumnDef<TData>[] {
-  const defs: ColumnDef<TData>[] = []
+  const defs: ColumnDef<TData>[] = [];
 
   // Add selection column if enabled
   if (enableRowSelection) {
@@ -341,17 +120,15 @@ function createColumnDefinitions<TData>(
       ),
       enableSorting: false,
       enableHiding: false,
-    })
+    });
   }
 
   // Add data columns
   columns.forEach((column) => {
     const def: ColumnDef<TData> = {
       accessorKey: column.accessorKey as string,
-      // Use explicit id if provided, otherwise use accessorKey
       id: column.id || column.accessorKey.toString(),
       header: ({ column: col }) => {
-        // Remove conditional alignment based on numeric column type
         if (column.enableSorting) {
           return (
             <div className="flex justify-start w-full">
@@ -376,15 +153,40 @@ function createColumnDefinitions<TData>(
       enableSorting: column.enableSorting ?? enableSorting,
       enableHiding: column.enableHiding ?? true,
       cell: column.cell
-        ? column.cell
-        : ({ row }) => {
-            const value = row.getValue(column.accessorKey as string)
-            return getCellRenderer(column.type, value)
-          },
+  ? column.cell
+  : column.renderer
+  ? ({ row }) => column.renderer!(row.getValue(column.accessorKey as string), row.original)
+  : ({ row }) => {
+      const value = row.getValue(column.accessorKey as string);
+      const formatOptions = column.format;
+
+      // Handle different formatting options based on column type
+      if (column.type === "Date" && formatOptions?.dateFormat) {
+        return getCellRenderer(column.type, value, formatOptions.dateFormat);
+      } else if (["Number", "Currency"].includes(column.type) && formatOptions?.numberFormat) {
+        // Pass the entire numberFormat object as options
+        return getCellRenderer(column.type, value, formatOptions.numberFormat);
+      } else if (formatOptions?.formatter) {
+        return formatOptions.formatter(value, row.original);
+      } else {
+        return getCellRenderer(column.type as ColumnType, value);
+      }
+    },
+    };
+
+    // Apply size constraints if provided
+    if (column.width) {
+      def.size = typeof column.width === 'number' ? column.width : parseInt(column.width);
+    }
+    if (column.minWidth) {
+      def.minSize = typeof column.minWidth === 'number' ? column.minWidth : parseInt(column.minWidth);
+    }
+    if (column.maxWidth) {
+      def.maxSize = typeof column.maxWidth === 'number' ? column.maxWidth : parseInt(column.maxWidth);
     }
 
-    defs.push(def)
-  })
+    defs.push(def);
+  });
 
   // Add actions column if needed
   if (rowActions) {
@@ -392,13 +194,15 @@ function createColumnDefinitions<TData>(
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const rowData = row.original
-        const actions = rowActions(rowData)
+        const rowData = row.original;
+        const actions = rowActions(rowData);
 
         const actionItems = actions.map((action) => ({
           label: action.label,
-          onClick: action.onClick
-        }))
+          onClick: action.onClick,
+          icon: action.icon,
+          disabled: action.disabled
+        }));
 
         return (
           <DropdownMenuWrapper
@@ -417,48 +221,15 @@ function createColumnDefinitions<TData>(
               ...actionItems
             ]}
           />
-        )
+        );
       },
-    })
-  }
-
-  return defs
-}
-
-// Improved custom filter function for faceted filters
-const facetedFilterFn = (row: any, columnId: string, filterValue: any[]) => {
-  if (!filterValue || filterValue.length === 0) return true;
-
-  const value = row.getValue(columnId);
-
-  // Debug logging
-  console.log(`Filtering column ${columnId}:`, {
-    type: typeof value,
-    isArray: Array.isArray(value),
-    value: value,
-    filterValue: filterValue
-  });
-
-  // Handle array values (like tags)
-  if (Array.isArray(value)) {
-    // Check if any value in the filter matches any tag in the array
-    return filterValue.some(fv => value.includes(fv));
-  }
-  // Handle boolean values explicitly
-  else if (typeof value === 'boolean') {
-    // Convert both to same type for comparison
-    return filterValue.some(fv => {
-      if (typeof fv === 'boolean') return value === fv;
-      if (typeof fv === 'string') return String(value) === fv.toLowerCase();
-      return false;
     });
   }
-  // Handle other value types (strings, numbers, etc.)
-  else {
-    return filterValue.includes(value);
-  }
+
+  return defs;
 }
 
+// Calculate pagination info
 function calculatePaginationInfo(
   serverPagination: boolean,
   table: any,
@@ -467,7 +238,7 @@ function calculatePaginationInfo(
   totalItems: number
 ): PaginationInfo {
   if (serverPagination) {
-    const totalPages = Math.ceil(totalItems / pageSize)
+    const totalPages = Math.ceil(totalItems / pageSize);
     return {
       currentPage,
       pageSize,
@@ -475,7 +246,7 @@ function calculatePaginationInfo(
       totalPages,
       canPreviousPage: currentPage > 0,
       canNextPage: currentPage < totalPages - 1
-    }
+    };
   } else {
     return {
       currentPage: table.getState().pagination?.pageIndex || 0,
@@ -484,38 +255,118 @@ function calculatePaginationInfo(
       totalPages: table.getPageCount(),
       canPreviousPage: table.getCanPreviousPage(),
       canNextPage: table.getCanNextPage()
-    }
+    };
   }
 }
 
 // Sub-components
 interface TableFiltersProps<TData> {
-  table: any
-  filterColumn?: keyof TData | string
-  filterPlaceholder: string
-  visibilityItems: { label: string; onClick: () => void; checked?: boolean; checkedIcon?: React.ReactNode }[]
-  facets?: DataTableFacet<TData>[]
+  table: any;
+  filterColumn?: keyof TData | string;
+  filterPlaceholder: string;
+  visibilityItems: { label: string; onClick: () => void; checked?: boolean; checkedIcon?: React.ReactNode }[];
+  facets?: DataTableFacet<TData>[];
+  exportOptions?: {
+    enabled?: boolean;
+    formats?: ("csv" | "excel" | "pdf")[];
+    onExport: (format: string) => void;
+  };
 }
+
+const FacetedFilter = <TData extends object>({
+  table,
+  facet
+}: {
+  table: any;
+  facet: DataTableFacet<TData>;
+}) => {
+  const column = table.getColumn(facet.column);
+  if (!column) {
+    console.warn(`Column ${String(facet.column)} not found for filter ${facet.title}`);
+    return null;
+  }
+
+  const filterValue = column.getFilterValue() as any[];
+  const selectedCount = filterValue?.length || 0;
+
+  // Create dropdown items
+  const items = [
+    {
+      label: facet.title,
+      disabled: true,
+      separator: true
+    },
+    ...facet.options.map(option => {
+      const isSelected = filterValue?.includes(option.value) || false;
+
+      return {
+        label: option.label,
+        onClick: () => {
+          if (isSelected) {
+            // Remove from filter
+            column.setFilterValue(
+              filterValue?.filter(val => val !== option.value) || []
+            );
+          } else {
+            // Add to filter
+            column.setFilterValue(
+              filterValue ? [...filterValue, option.value] : [option.value]
+            );
+          }
+        },
+        checked: isSelected,
+        checkedIcon: <Check className="h-4 w-4" />,
+        icon: option.icon
+      };
+    })
+  ];
+
+  // Add clear button if filters are applied
+  if (selectedCount > 0) {
+    items.push({
+      label: "Clear",
+      onClick: () => column.setFilterValue(undefined),
+      separator: true,
+      disabled: false
+    });
+  }
+
+  const buttonLabel = selectedCount > 0
+    ? `${facet.title} (${selectedCount})`
+    : facet.title;
+
+  return (
+    <DropdownMenuWrapper
+      button={{
+        label: buttonLabel,
+        variant: "outline",
+        icon: <ChevronDown className="ml-2 h-4 w-4" />,
+        className: "h-9 border-gray-200 dark:border-gray-800"
+      }}
+      items={items}
+      content={{
+        color: "gray"
+      }}
+    />
+  );
+};
 
 const TableFilters = <TData extends object>({
   table,
   filterColumn,
   filterPlaceholder,
   visibilityItems,
-  facets
+  facets,
+  exportOptions
 }: TableFiltersProps<TData>) => {
-  const isFiltered = table.getState().columnFilters.length > 0
+  const isFiltered = table.getState().columnFilters.length > 0;
 
-  // Debug logging for which columns are available
-  React.useEffect(() => {
-    if (facets && facets.length > 0) {
-      console.log("Available columns in table:", table.getAllColumns().map((col:any) => col.id));
-      facets.forEach(facet => {
-        const column = table.getColumn(String(facet.column));
-        console.log(`Column '${String(facet.column)}' exists for filter '${facet.title}':`, !!column);
-      });
-    }
-  }, [table, facets]);
+  // Create export dropdown items
+  const exportItems = exportOptions?.formats?.map(format => ({
+    label: `Export as ${format.toUpperCase()}`,
+    onClick: () => exportOptions.onExport(format),
+    icon: <Download className="h-4 w-4 mr-2" />
+  })) || [];
 
   return (
     <div className="flex items-center py-4 gap-2 flex-wrap">
@@ -551,33 +402,50 @@ const TableFilters = <TData extends object>({
         </Button>
       )}
 
-      <div className="ml-auto">
-        <DropdownMenuWrapper
-          button={{
-            label: "Columns",
-            variant: "outline",
-            icon: <ChevronDown className="ml-2 h-4 w-4" />,
-            className: "h-9 border-gray-200 dark:border-gray-800"
-          }}
-          items={visibilityItems}
-          content={{
-            color: "gray"
-          }}
-        />
+      <div className="ml-auto flex gap-2">
+        {exportOptions?.enabled && exportItems.length > 0 && (
+          <DropdownMenuWrapper
+            button={{
+              label: "Export",
+              variant: "outline",
+              icon: <Download className="ml-2 h-4 w-4" />,
+              className: "h-9 border-gray-200 dark:border-gray-800"
+            }}
+            items={exportItems}
+            content={{
+              color: "gray"
+            }}
+          />
+        )}
+
+        {visibilityItems.length > 0 && (
+          <DropdownMenuWrapper
+            button={{
+              label: "Columns",
+              variant: "outline",
+              icon: <ChevronDown className="ml-2 h-4 w-4" />,
+              className: "h-9 border-gray-200 dark:border-gray-800"
+            }}
+            items={visibilityItems}
+            content={{
+              color: "gray"
+            }}
+          />
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
 interface TablePaginationProps {
-  paginationInfo: PaginationInfo
-  handlePageChange: (page: number) => void
-  handlePageSizeChange: (size: number) => void
-  showRowCount: boolean
-  selectedRowCount: number
-  filteredRowCount: number
-  isPaginationLoading: boolean
-  serverPagination: boolean
+  paginationInfo: PaginationInfo;
+  handlePageChange: (page: number) => void;
+  handlePageSizeChange: (size: number) => void;
+  showRowCount: boolean;
+  selectedRowCount: number;
+  filteredRowCount: number;
+  isPaginationLoading: boolean;
+  serverPagination: boolean;
 }
 
 const TablePagination: React.FC<TablePaginationProps> = ({
@@ -660,11 +528,11 @@ const TablePagination: React.FC<TablePaginationProps> = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 interface LoadingRowProps {
-  colSpan: number
+  colSpan: number;
 }
 
 const LoadingRow: React.FC<LoadingRowProps> = ({ colSpan }) => (
@@ -679,10 +547,10 @@ const LoadingRow: React.FC<LoadingRowProps> = ({ colSpan }) => (
       </div>
     </Table.Cell>
   </Table.Row>
-)
+);
 
 interface EmptyRowProps {
-  colSpan: number
+  colSpan: number;
 }
 
 const EmptyRow: React.FC<EmptyRowProps> = ({ colSpan }) => (
@@ -694,7 +562,93 @@ const EmptyRow: React.FC<EmptyRowProps> = ({ colSpan }) => (
       No results.
     </Table.Cell>
   </Table.Row>
-)
+);
+
+// Expanded row component
+interface ExpandedRowProps<TData> {
+  row: TData;
+  colSpan: number;
+  renderContent: (row: TData) => React.ReactNode;
+}
+
+const ExpandedRow = <TData extends object>({
+  row,
+  colSpan,
+  renderContent
+}: ExpandedRowProps<TData>) => (
+  <Table.Row className="dark:border-gray-800 bg-muted/20">
+    <Table.Cell colSpan={colSpan} className="p-4">
+      {renderContent(row)}
+    </Table.Cell>
+  </Table.Row>
+);
+
+// Export utilities
+const exportTableData = <TData extends object>(
+  data: TData[],
+  columns: DataTableColumn<TData>[],
+  format: string,
+  filename: string = "table-export"
+) => {
+  switch (format) {
+    case "csv":
+      exportCSV(data, columns, filename);
+      break;
+    case "excel":
+      alert("Excel export not implemented in this demo - would use a library like xlsx");
+      break;
+    case "pdf":
+      alert("PDF export not implemented in this demo - would use a library like jsPDF");
+      break;
+    default:
+      console.warn(`Unsupported export format: ${format}`);
+  }
+};
+
+const exportCSV = <TData extends object>(
+  data: TData[],
+  columns: DataTableColumn<TData>[],
+  filename: string
+) => {
+  // Get column headers
+  const headers = columns.map(col => col.headingName);
+
+  // Get data rows
+  const rows = data.map(item =>
+    columns.map(col => {
+      const key = col.accessorKey;
+      const value = item[key as keyof TData];
+
+      // Handle different data types
+      if (Array.isArray(value)) {
+        return value.join(', ');
+      } else if (value instanceof Date) {
+        return value.toISOString();
+      } else {
+        return String(value);
+      }
+    })
+  );
+
+  // Combine headers and rows
+  const csvContent = [
+    headers.join(','),
+    ...rows.map(row => row.join(','))
+  ].join('\n');
+
+  // Create and download file
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+
+  link.setAttribute('href', url);
+  link.setAttribute('download', `${filename}.csv`);
+  link.style.visibility = 'hidden';
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
 
 // Main component
 export function DataTable<TData extends object>({
@@ -705,13 +659,14 @@ export function DataTable<TData extends object>({
   enablePagination = true,
   enableRowSelection = true,
   enableColumnVisibility = true,
+  enableColumnResizing = false,
+  enableColumnReordering = false,
   showRowCount = true,
   filterColumn,
   filterPlaceholder = "Filter...",
   className,
   rowActions,
-  facets, // New prop for faceted filters
-  // Server pagination props
+  facets,
   serverPagination = false,
   currentPage = 0,
   pageSize = 10,
@@ -719,46 +674,93 @@ export function DataTable<TData extends object>({
   onPageChange,
   onPageSizeChange,
   isPaginationLoading = false,
+  // New features
+  export: exportOptions,
+  expandableRows,
+  onRowClick,
+  onSelectionChange,
+  onColumnReorder
 }: DataTableProps<TData>) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
 
-const columnDefs = React.useMemo(() => {
-  // Create column definitions first
-  const defs = createColumnDefinitions(columns, enableRowSelection, enableSorting, rowActions)
+  // Handle row expansion
+  const toggleRowExpanded = useCallback((rowId: string) => {
+    if (expandableRows?.singleExpand) {
+      // If single expand mode, close all other rows
+      setExpandedRows(prev => ({
+        [rowId]: !prev[rowId]
+      }));
+    } else {
+      // Toggle just this row
+      setExpandedRows(prev => ({
+        ...prev,
+        [rowId]: !prev[rowId]
+      }));
+    }
+  }, [expandableRows]);
 
-  // For client-side filtering, apply the filter function to each column that has a facet
-  // REMOVE the !serverPagination condition to allow filters with server pagination
-  if (facets && facets.length > 0) {
-    facets.forEach(facet => {
-      const columnKey = facet.column.toString()
+  // Flatten column groups if necessary
+  const flatColumns = useMemo(() => {
+    return isColumnGroup(columns[0])
+      ? flattenColumns(columns as (DataTableColumn<TData> | ColumnGroup<TData>)[])
+      : columns as DataTableColumn<TData>[];
+  }, [columns]);
 
-      // Find the column by ID
-      const colDef = defs.find(col => col.id === columnKey)
+  // Create column definitions
+  const columnDefs = useMemo(() => {
+    // Create column definitions first
+    const defs = createColumnDefinitions(flatColumns, enableRowSelection, enableSorting, rowActions);
 
-      if (colDef) {
-        // Apply the faceted filter function
-        colDef.filterFn = facetedFilterFn
-      } else {
-        console.warn(`Column with ID ${columnKey} not found for facet ${facet.title}`)
-      }
-    })
-  }
+    // If expandable rows are enabled, add expand/collapse functionality to row clicking
+    if (expandableRows && expandableRows.expandOnClick) {
+      defs.forEach(col => {
+        const originalCellFn = col.cell;
+        col.cell = (info) => {
+          return (
+            <div
+              onClick={() => toggleRowExpanded(info.row.id)}
+              className="cursor-pointer"
+            >
+              {typeof originalCellFn === 'function'
+                ? originalCellFn(info)
+                : info.getValue()}
+            </div>
+          );
+        };
+      });
+    }
 
-  return defs
-}, [columns, enableRowSelection, enableSorting, rowActions, facets])
+    // For client-side filtering, apply the filter function to each column that has a facet
+    if (facets && facets.length > 0) {
+      facets.forEach(facet => {
+        const columnKey = facet.column.toString();
+        const colDef = defs.find(col => col.id === columnKey);
+
+        if (colDef) {
+          colDef.filterFn = facetedFilterFn;
+        } else {
+          console.warn(`Column with ID ${columnKey} not found for facet ${facet.title}`);
+        }
+      });
+    }
+
+    return defs;
+  }, [flatColumns, enableRowSelection, enableSorting, rowActions, facets, expandableRows, toggleRowExpanded]);
 
   // For server-side pagination, we need to control the pagination state
-  const pagination = React.useMemo(
+  const pagination = useMemo(
     () => ({
       pageIndex: serverPagination ? currentPage : 0,
       pageSize: serverPagination ? pageSize : 10,
     }),
     [serverPagination, currentPage, pageSize]
-  )
+  );
 
+  // Create table instance
   const table = useReactTable({
     data,
     columns: columnDefs,
@@ -772,7 +774,21 @@ const columnDefs = React.useMemo(() => {
     getSortedRowModel: enableSorting ? getSortedRowModel() : undefined,
     getFilteredRowModel: enableFiltering ? getFilteredRowModel() : undefined,
     onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: (updatedSelection) => {
+      setRowSelection(updatedSelection as RowSelectionState);
+      // Call the selection change handler if provided
+      if (onSelectionChange) {
+        const selectedRowIds = Object.keys(updatedSelection).filter(id =>
+          (updatedSelection as Record<string, boolean>)[id]);
+
+        const selectedRowData = selectedRowIds.map(id => {
+          const row = table.getRow(id);
+          return row.original;
+        });
+
+        onSelectionChange(selectedRowData);
+      }
+    },
     // Use manual pagination for server-side pagination
     manualPagination: serverPagination,
     manualFiltering: false,
@@ -787,47 +803,55 @@ const columnDefs = React.useMemo(() => {
     },
     // Important! Set this debugging flag to true to detect issues
     debugAll: process.env.NODE_ENV !== 'production',
-  })
-
-  // Debug effect to log the column filters state
-  React.useEffect(() => {
-    if (columnFilters.length > 0) {
-      console.log("Current column filters:", columnFilters);
-    }
-  }, [columnFilters]);
+  });
 
   // Handle page change for server-side pagination
-  const handlePageChange = React.useCallback(
+  const handlePageChange = useCallback(
     (newPage: number) => {
       if (serverPagination && onPageChange) {
-        onPageChange(newPage)
+        onPageChange(newPage);
       } else {
-        table.setPageIndex(newPage)
+        table.setPageIndex(newPage);
       }
     },
     [serverPagination, onPageChange, table]
-  )
+  );
 
   // Handle page size change for server-side pagination
-  const handlePageSizeChange = React.useCallback(
+  const handlePageSizeChange = useCallback(
     (newPageSize: number) => {
       if (serverPagination && onPageSizeChange) {
-        onPageSizeChange(newPageSize)
+        onPageSizeChange(newPageSize);
       } else {
-        table.setPageSize(newPageSize)
+        table.setPageSize(newPageSize);
       }
     },
     [serverPagination, onPageSizeChange, table]
-  )
+  );
+
+  // Handle export
+  const handleExport = useCallback(
+    (format: string) => {
+      // Use either visible data or all data based on serverPagination
+      const dataToExport = serverPagination ? data : table.getFilteredRowModel().rows.map(row => row.original);
+      exportTableData(
+        dataToExport,
+        flatColumns,
+        format,
+        exportOptions?.filename || "table-export"
+      );
+    },
+    [data, flatColumns, exportOptions, table, serverPagination]
+  );
 
   // Memoize visibility items
-  const visibilityItems = React.useMemo(() => {
+  const visibilityItems = useMemo(() => {
     return table
       .getAllColumns()
       .filter((column) => column.getCanHide())
       .map((column) => {
         // Find the matching column definition to get the headingName
-        const columnDef = columns.find(col =>
+        const columnDef = flatColumns.find(col =>
           col.accessorKey.toString() === column.id ||
           col.id === column.id
         );
@@ -839,14 +863,14 @@ const columnDefs = React.useMemo(() => {
               ? column.id.charAt(0).toUpperCase() + column.id.slice(1)
               : String(column.id)),
           onClick: () => column.toggleVisibility(!isVisible),
-          checked: isVisible, // This will now update correctly when visibility changes
+          checked: isVisible,
           checkedIcon: <Check className="h-4 w-4" />,
         };
       });
-  }, [table, columns, columnVisibility]);
+  }, [table, flatColumns, columnVisibility]);
 
   // Calculate pagination info for server-side pagination
-  const paginationInfo = React.useMemo(
+  const paginationInfo = useMemo(
     () => calculatePaginationInfo(
       serverPagination,
       table,
@@ -855,17 +879,22 @@ const columnDefs = React.useMemo(() => {
       totalItems
     ),
     [serverPagination, table, currentPage, pageSize, totalItems]
-  )
+  );
 
   return (
     <div className={className || "w-full"}>
-      {(enableFiltering || enableColumnVisibility) && (
+      {(enableFiltering || enableColumnVisibility || (exportOptions?.enabled)) && (
         <TableFilters
           table={table}
           filterColumn={enableFiltering ? filterColumn : undefined}
           filterPlaceholder={filterPlaceholder}
           visibilityItems={enableColumnVisibility ? visibilityItems : []}
           facets={enableFiltering ? facets : undefined}
+          exportOptions={exportOptions?.enabled ? {
+            enabled: true,
+            formats: exportOptions.formats,
+            onExport: handleExport
+          } : undefined}
         />
       )}
 
@@ -876,16 +905,20 @@ const columnDefs = React.useMemo(() => {
               <Table.Row key={headerGroup.id} className="hover:bg-muted/50 dark:hover:bg-muted/20 border-gray-200 dark:border-gray-800">
                 {headerGroup.headers.map((header) => {
                   // Get column type from our original columns definition
-                  const columnDef = columns.find(col =>
+                  const columnDef = flatColumns.find(col =>
                     col.accessorKey.toString() === header.id ||
                     col.id === header.id
                   );
-                  const isNumeric = columnDef?.type === "Number" || columnDef?.type === "Currency";
 
                   return (
                     <Table.HeaderCell
                       key={header.id}
                       className="dark:text-gray-400 h-10 px-4 text-left"
+                      style={{
+                        width: columnDef?.width,
+                        minWidth: columnDef?.minWidth,
+                        maxWidth: columnDef?.maxWidth
+                      }}
                     >
                       {header.isPlaceholder
                         ? null
@@ -903,34 +936,62 @@ const columnDefs = React.useMemo(() => {
             {isPaginationLoading ? (
               <LoadingRow colSpan={columnDefs.length} />
             ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <Table.Row
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className="border-gray-200 dark:border-gray-800 dark:data-[state=selected]:bg-muted/20"
-                >
-                  {row.getVisibleCells().map((cell) => {
-                    // Get column type from our original columns definition
-                    const columnDef = columns.find(col =>
-                      col.accessorKey.toString() === cell.column.id ||
-                      col.id === cell.column.id
-                    );
-                    const isNumeric = columnDef?.type === "Number" || columnDef?.type === "Currency";
+              table.getRowModel().rows.map((row) => {
+                // Determine if this row is expanded
+                const isExpanded = expandableRows && expandedRows[row.id];
 
-                    return (
-                      <Table.Cell
-                        key={cell.id}
-                        className="px-4 text-left"
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </Table.Cell>
-                    );
-                  })}
-                </Table.Row>
-              ))
+                return (
+                  <React.Fragment key={row.id}>
+                    <Table.Row
+                      data-state={row.getIsSelected() && "selected"}
+                      className={`border-gray-200 dark:border-gray-800 dark:data-[state=selected]:bg-muted/20 ${
+                        onRowClick || (expandableRows?.expandOnClick) ? "cursor-pointer" : ""
+                      } ${isExpanded ? "bg-muted/10" : ""}`}
+                      onClick={() => {
+                        if (onRowClick) {
+                          onRowClick(row.original);
+                        } else if (expandableRows && !expandableRows.expandOnClick) {
+                          toggleRowExpanded(row.id);
+                        }
+                      }}
+                    >
+                      {row.getVisibleCells().map((cell) => {
+                        // Get column type from our original columns definition
+                        const columnDef = flatColumns.find(col =>
+                          col.accessorKey.toString() === cell.column.id ||
+                          col.id === cell.column.id
+                        );
+
+                        return (
+                          <Table.Cell
+                            key={cell.id}
+                            className="px-4 text-left"
+                            style={{
+                              width: columnDef?.width,
+                              minWidth: columnDef?.minWidth,
+                              maxWidth: columnDef?.maxWidth
+                            }}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </Table.Cell>
+                        );
+                      })}
+                    </Table.Row>
+
+                    {/* Render expanded content if this row is expanded */}
+                    {isExpanded && expandableRows?.render && (
+                      <ExpandedRow
+                        row={row.original}
+                        colSpan={row.getVisibleCells().length}
+                        renderContent={expandableRows.render}
+                      />
+                    )}
+                  </React.Fragment>
+                );
+              })
             ) : (
               <EmptyRow colSpan={columnDefs.length} />
             )}
@@ -951,5 +1012,5 @@ const columnDefs = React.useMemo(() => {
         />
       )}
     </div>
-  )
+  );
 }
