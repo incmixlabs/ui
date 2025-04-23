@@ -10,7 +10,7 @@ export type ColumnType =
   | "Tag"
   | "Boolean"
   | "Status"
-  | "Rating"  // Add any custom types you've registered
+  | "Rating"
   | "Image"
   | "Link"
   | "Custom";
@@ -36,11 +36,11 @@ export interface DataTableColumn<TData> {
   format?: {
     dateFormat?: string;
     numberFormat?: {
-      style?: string;  // Changed from a more restrictive type to string
+      style?: string;
       currency?: string;
       minimumFractionDigits?: number;
       maximumFractionDigits?: number;
-      [key: string]: any;  // Allow any other standard Intl.NumberFormatOptions properties
+      [key: string]: any;
     };
     formatter?: (value: any, row: TData) => string;
   };
@@ -108,6 +108,25 @@ export interface ExpandableRowOptions<TData> {
   singleExpand?: boolean;
 }
 
+// NEW: Sidebar filter type
+export type SidebarFilterType =
+  | "select"
+  | "multiSelect"
+  | "date"
+  | "dateRange"
+  | "boolean"
+  | "text";
+
+// NEW: Sidebar filter configuration
+export interface SidebarFilterConfig<TData> {
+  type: SidebarFilterType;
+  column: keyof TData | string;
+  title: string;
+  options?: FilterOption[]; // For select/multiSelect types
+  icon?: ReactNode;         // Optional icon to display next to title
+  initialCollapsed?: boolean; // Whether this filter group starts collapsed
+}
+
 // Main DataTable props
 export interface DataTableProps<TData> {
   columns: DataTableColumn<TData>[] | ColumnGroup<TData>[];
@@ -134,6 +153,11 @@ export interface DataTableProps<TData> {
   // Advanced filtering
   facets?: DataTableFacet<TData>[];
   advancedFilters?: AdvancedFilter<TData>[];
+
+  // NEW: Sidebar filtering
+  enableSidebarFilters?: boolean;
+  sidebarFilters?: SidebarFilterConfig<TData>[];
+  initialSidebarOpen?: boolean;
 
   // Server pagination
   serverPagination?: boolean;

@@ -24,8 +24,11 @@ import {
   MoreHorizontal,
   Check,
   X,
-  Download
+  Download,
+  Filter,
+  SlidersHorizontal
 } from "lucide-react";
+import { TableSidebar } from "./sidebar-filter";
 
 import { Button, Checkbox, DropdownMenuWrapper, Input } from "@base";
 import { Table } from "@shadcn";
@@ -84,6 +87,43 @@ const facetedFilterFn = (row: any, columnId: string, filterValue: any[]) => {
   else {
     return filterValue.includes(value);
   }
+};
+
+// Date range filter function
+const dateRangeFilterFn = (row: any, columnId: string, filterValue: { start?: string; end?: string }) => {
+  if (!filterValue || (!filterValue.start && !filterValue.end)) return true;
+
+  const value = row.getValue(columnId);
+  if (!value) return false;
+
+  const date = value instanceof Date ? value : new Date(value);
+
+  if (filterValue.start && filterValue.end) {
+    const startDate = new Date(filterValue.start);
+    const endDate = new Date(filterValue.end);
+    // Set end date to end of day
+    endDate.setHours(23, 59, 59, 999);
+    return date >= startDate && date <= endDate;
+  } else if (filterValue.start) {
+    const startDate = new Date(filterValue.start);
+    return date >= startDate;
+  } else if (filterValue.end) {
+    const endDate = new Date(filterValue.end);
+    // Set end date to end of day
+    endDate.setHours(23, 59, 59, 999);
+    return date <= endDate;
+  }
+
+  return true;
+};
+
+// Text filter function
+const textFilterFn = (row: any, columnId: string, filterValue: string) => {
+  if (!filterValue) return true;
+  const value = row.getValue(columnId);
+  if (value === null || value === undefined) return false;
+
+  return String(value).toLowerCase().includes(filterValue.toLowerCase());
 };
 
 // Utility function to create column definitions
@@ -271,6 +311,9 @@ interface TableFiltersProps<TData> {
     formats?: ("csv" | "excel" | "pdf")[];
     onExport: (format: string) => void;
   };
+  onToggleSidebar?: () => void;
+  sidebarOpen?: boolean;
+  enableSidebarFilters?: boolean;
 }
 
 const FacetedFilter = <TData extends object>({
@@ -357,7 +400,10 @@ const TableFilters = <TData extends object>({
   filterPlaceholder,
   visibilityItems,
   facets,
-  exportOptions
+  exportOptions,
+  onToggleSidebar,
+  sidebarOpen,
+  enableSidebarFilters
 }: TableFiltersProps<TData>) => {
   const isFiltered = table.getState().columnFilters.length > 0;
 
@@ -370,6 +416,27 @@ const TableFilters = <TData extends object>({
 
   return (
     <div className="flex items-center py-4 gap-2 flex-wrap">
+      {/* Sidebar toggle button - now styled to match the screenshot */}
+      {enableSidebarFilters && onToggleSidebar && (
+        <Button
+
+          onClick={onToggleSidebar}
+          className="flex items-center h-9"
+        >
+          {sidebarOpen ? (
+            <>
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Hide Filters
+            </>
+          ) : (
+            <>
+              <SlidersHorizontal className="h-4 w-4 mr-1" />
+              Show Filters
+            </>
+          )}
+        </Button>
+      )}
+
       {filterColumn && (
         <div className="flex-1 max-w-sm">
           <Input
@@ -679,13 +746,22 @@ export function DataTable<TData extends object>({
   expandableRows,
   onRowClick,
   onSelectionChange,
-  onColumnReorder
+  onColumnReorder,
+  enableSidebarFilters = false,
+  sidebarFilters = [],
+  initialSidebarOpen = true,
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+  const [sidebarOpen, setSidebarOpen] = useState(initialSidebarOpen);
+
+  // Toggle sidebar function
+  const toggleSidebar = useCallback(() => {
+    setSidebarOpen(prev => !prev);
+  }, []);
 
   // Handle row expansion
   const toggleRowExpanded = useCallback((rowId: string) => {
@@ -748,8 +824,34 @@ export function DataTable<TData extends object>({
       });
     }
 
+    // Apply filter functions to sidebar filter columns
+    if (sidebarFilters && sidebarFilters.length > 0) {
+      sidebarFilters.forEach(filter => {
+        const columnKey = filter.column.toString();
+        const colDef = defs.find(col => col.id === columnKey);
+
+        if (colDef) {
+          // Apply appropriate filter function based on filter type
+          switch (filter.type) {
+            case "dateRange":
+              colDef.filterFn = dateRangeFilterFn;
+              break;
+            case "text":
+              colDef.filterFn = textFilterFn;
+              break;
+            case "multiSelect":
+              colDef.filterFn = facetedFilterFn;
+              break;
+            // Add other filter types as needed
+          }
+        } else {
+          console.warn(`Column with ID ${columnKey} not found for sidebar filter ${filter.title}`);
+        }
+      });
+    }
+
     return defs;
-  }, [flatColumns, enableRowSelection, enableSorting, rowActions, facets, expandableRows, toggleRowExpanded]);
+  }, [flatColumns, enableRowSelection, enableSorting, rowActions, facets, sidebarFilters, expandableRows, toggleRowExpanded]);
 
   // For server-side pagination, we need to control the pagination state
   const pagination = useMemo(
@@ -883,134 +985,160 @@ export function DataTable<TData extends object>({
 
   return (
     <div className={className || "w-full"}>
-      {(enableFiltering || enableColumnVisibility || (exportOptions?.enabled)) && (
-        <TableFilters
-          table={table}
-          filterColumn={enableFiltering ? filterColumn : undefined}
-          filterPlaceholder={filterPlaceholder}
-          visibilityItems={enableColumnVisibility ? visibilityItems : []}
-          facets={enableFiltering ? facets : undefined}
-          exportOptions={exportOptions?.enabled ? {
-            enabled: true,
-            formats: exportOptions.formats,
-            onExport: handleExport
-          } : undefined}
-        />
-      )}
-
-      <div className="rounded-md border border-gray-200 dark:border-gray-800">
-        <Table.Root>
-          <Table.Header>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <Table.Row key={headerGroup.id} className="hover:bg-muted/50 dark:hover:bg-muted/20 border-gray-200 dark:border-gray-800">
-                {headerGroup.headers.map((header) => {
-                  // Get column type from our original columns definition
-                  const columnDef = flatColumns.find(col =>
-                    col.accessorKey.toString() === header.id ||
-                    col.id === header.id
-                  );
-
-                  return (
-                    <Table.HeaderCell
-                      key={header.id}
-                      className="dark:text-gray-400 h-10 px-4 text-left"
-                      style={{
-                        width: columnDef?.width,
-                        minWidth: columnDef?.minWidth,
-                        maxWidth: columnDef?.maxWidth
-                      }}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </Table.HeaderCell>
-                  );
-                })}
-              </Table.Row>
-            ))}
-          </Table.Header>
-          <Table.Body>
-            {isPaginationLoading ? (
-              <LoadingRow colSpan={columnDefs.length} />
-            ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => {
-                // Determine if this row is expanded
-                const isExpanded = expandableRows && expandedRows[row.id];
-
-                return (
-                  <React.Fragment key={row.id}>
-                    <Table.Row
-                      data-state={row.getIsSelected() && "selected"}
-                      className={`border-gray-200 dark:border-gray-800 dark:data-[state=selected]:bg-muted/20 ${
-                        onRowClick || (expandableRows?.expandOnClick) ? "cursor-pointer" : ""
-                      } ${isExpanded ? "bg-muted/10" : ""}`}
-                      onClick={() => {
-                        if (onRowClick) {
-                          onRowClick(row.original);
-                        } else if (expandableRows && !expandableRows.expandOnClick) {
-                          toggleRowExpanded(row.id);
-                        }
-                      }}
-                    >
-                      {row.getVisibleCells().map((cell) => {
-                        // Get column type from our original columns definition
-                        const columnDef = flatColumns.find(col =>
-                          col.accessorKey.toString() === cell.column.id ||
-                          col.id === cell.column.id
-                        );
-
-                        return (
-                          <Table.Cell
-                            key={cell.id}
-                            className="px-4 text-left"
-                            style={{
-                              width: columnDef?.width,
-                              minWidth: columnDef?.minWidth,
-                              maxWidth: columnDef?.maxWidth
-                            }}
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </Table.Cell>
-                        );
-                      })}
-                    </Table.Row>
-
-                    {/* Render expanded content if this row is expanded */}
-                    {isExpanded && expandableRows?.render && (
-                      <ExpandedRow
-                        row={row.original}
-                        colSpan={row.getVisibleCells().length}
-                        renderContent={expandableRows.render}
-                      />
-                    )}
-                  </React.Fragment>
-                );
-              })
-            ) : (
-              <EmptyRow colSpan={columnDefs.length} />
+      {/* Main layout with proper alignment */}
+      <div className="flex">
+        {/* Sidebar (always in DOM, but width is 0 when closed) */}
+        {enableSidebarFilters && (
+          <div className={`transition-all duration-300 ease-in-out ${
+            sidebarOpen ? "w-64 opacity-100 mr-6" : "w-0 opacity-0 mr-0 overflow-hidden"
+          }`}>
+            {sidebarOpen && (
+              <TableSidebar
+                filters={sidebarFilters}
+                table={table}
+                isOpen={sidebarOpen}
+                onToggle={toggleSidebar}
+              />
             )}
-          </Table.Body>
-        </Table.Root>
-      </div>
+          </div>
+        )}
 
-      {(enablePagination || showRowCount) && (
-        <TablePagination
-          paginationInfo={paginationInfo}
-          handlePageChange={handlePageChange}
-          handlePageSizeChange={handlePageSizeChange}
-          showRowCount={showRowCount && enableRowSelection}
-          selectedRowCount={table.getFilteredSelectedRowModel().rows.length}
-          filteredRowCount={table.getFilteredRowModel().rows.length}
-          isPaginationLoading={isPaginationLoading}
-          serverPagination={serverPagination}
-        />
-      )}
+        {/* Main content area */}
+        <div className="flex-1">
+          {/* Top filters row */}
+          <TableFilters
+            table={table}
+            filterColumn={enableFiltering ? filterColumn : undefined}
+            filterPlaceholder={filterPlaceholder}
+            visibilityItems={enableColumnVisibility ? visibilityItems : []}
+            facets={enableFiltering ? facets : undefined}
+            exportOptions={exportOptions?.enabled ? {
+              enabled: true,
+              formats: exportOptions.formats,
+              onExport: handleExport
+            } : undefined}
+            onToggleSidebar={enableSidebarFilters ? toggleSidebar : undefined}
+            sidebarOpen={sidebarOpen}
+            enableSidebarFilters={enableSidebarFilters}
+          />
+
+          {/* Table component */}
+          <div className="rounded-md border border-gray-200 dark:border-gray-800">
+            <Table.Root>
+              <Table.Header>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <Table.Row key={headerGroup.id} className="hover:bg-muted/50 dark:hover:bg-muted/20 border-gray-200 dark:border-gray-800">
+                    {headerGroup.headers.map((header) => {
+                      // Get column type from our original columns definition
+                      const columnDef = flatColumns.find(col =>
+                        col.accessorKey.toString() === header.id ||
+                        col.id === header.id
+                      );
+
+                      return (
+                        <Table.HeaderCell
+                          key={header.id}
+                          className="dark:text-gray-400 h-10 px-4 text-left"
+                          style={{
+                            width: columnDef?.width,
+                            minWidth: columnDef?.minWidth,
+                            maxWidth: columnDef?.maxWidth
+                          }}
+                        >
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </Table.HeaderCell>
+                      );
+                    })}
+                  </Table.Row>
+                ))}
+              </Table.Header>
+              <Table.Body>
+                {isPaginationLoading ? (
+                  <LoadingRow colSpan={columnDefs.length} />
+                ) : table.getRowModel().rows?.length ? (
+                  table.getRowModel().rows.map((row) => {
+                    // Determine if this row is expanded
+                    const isExpanded = expandableRows && expandedRows[row.id];
+
+                    return (
+                      <React.Fragment key={row.id}>
+                        <Table.Row
+                          data-state={row.getIsSelected() && "selected"}
+                          className={`border-gray-200 dark:border-gray-800 dark:data-[state=selected]:bg-muted/20 ${
+                            onRowClick || (expandableRows?.expandOnClick) ? "cursor-pointer" : ""
+                          } ${isExpanded ? "bg-muted/10" : ""}`}
+                          onClick={() => {
+                            if (onRowClick) {
+                              onRowClick(row.original);
+                            } else if (expandableRows && !expandableRows.expandOnClick) {
+                              toggleRowExpanded(row.id);
+                            }
+                          }}
+                        >
+                          {row.getVisibleCells().map((cell) => {
+                            // Get column type from our original columns definition
+                            const columnDef = flatColumns.find(col =>
+                              col.accessorKey.toString() === cell.column.id ||
+                              col.id === cell.column.id
+                            );
+
+                            return (
+                              <Table.Cell
+                                key={cell.id}
+                                className="px-4 text-left"
+                                style={{
+                                  width: columnDef?.width,
+                                  minWidth: columnDef?.minWidth,
+                                  maxWidth: columnDef?.maxWidth
+                                }}
+                              >
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </Table.Cell>
+                            );
+                          })}
+                        </Table.Row>
+
+                        {/* Render expanded content if this row is expanded */}
+                        {isExpanded && expandableRows?.render && (
+                          <ExpandedRow
+                            row={row.original}
+                            colSpan={row.getVisibleCells().length}
+                            renderContent={expandableRows.render}
+                          />
+                        )}
+                      </React.Fragment>
+                    );
+                  })
+                ) : (
+                  <EmptyRow colSpan={columnDefs.length} />
+                )}
+              </Table.Body>
+            </Table.Root>
+          </div>
+
+          {/* Pagination */}
+          {(enablePagination || showRowCount) && (
+            <TablePagination
+              paginationInfo={paginationInfo}
+              handlePageChange={handlePageChange}
+              handlePageSizeChange={handlePageSizeChange}
+              showRowCount={showRowCount && enableRowSelection}
+              selectedRowCount={table.getFilteredSelectedRowModel().rows.length}
+              filteredRowCount={table.getFilteredRowModel().rows.length}
+              isPaginationLoading={isPaginationLoading}
+              serverPagination={serverPagination}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }
