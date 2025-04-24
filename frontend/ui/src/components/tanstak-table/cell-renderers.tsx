@@ -19,8 +19,13 @@ export const TagCell: React.FC<{ value: string[] }> = ({ value }) => {
   );
 };
 
-export const StatusCell: React.FC<{ value: string }> = ({ value }) => {
-  const statusMap: Record<string, { color: string }> = {
+export const StatusCell: React.FC<{
+  value: string;
+  statusMap?: Record<string, { color: string }>;
+  defaultColor?: string;
+}> = ({
+  value,
+  statusMap = {
     success: {
       color: "bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-950/50 dark:text-green-400 dark:ring-green-500/30"
     },
@@ -36,12 +41,11 @@ export const StatusCell: React.FC<{ value: string }> = ({ value }) => {
     canceled: {
       color: "bg-gray-50 text-gray-700 ring-gray-600/20 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-500/30"
     },
-  };
-
+  },
+  defaultColor = "bg-gray-50 text-gray-700 ring-gray-600/20 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-500/30"
+}) => {
   const status = String(value).toLowerCase();
-  const statusStyle = statusMap[status] || {
-    color: "bg-gray-50 text-gray-700 ring-gray-600/20 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-500/30"
-  };
+  const statusStyle = statusMap[status] || { color: defaultColor };
 
   return (
     <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset capitalize ${statusStyle.color}`}>
@@ -139,7 +143,7 @@ export const defaultCellRenderers: Record<string, CellRendererFn> = {
   "Currency": (value: any, options?: any) => <CurrencyCell value={value} options={options} />,
   "Date": (value: any, format?: string) => <DateCell value={value} format={format} />,
   "Tag": (value: any) => <TagCell value={value} />,
-  "Status": (value: any) => <StatusCell value={value} />,
+  "Status": (value: any, statusMap?: Record<string, { color: string }>, defaultColor?: string) => <StatusCell value={value} statusMap={statusMap} defaultColor={defaultColor} />,
   "Boolean": (value: any) => <BooleanCell value={value} />,
 };
 

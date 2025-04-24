@@ -4,6 +4,195 @@ import { ChevronDown, ChevronRight, Calendar, Check } from "lucide-react";
 import { Button, Input, Checkbox } from "@base";
 import { SidebarFilterConfig, FilterOption } from "./types";
 
+// Individual Filter Type Components
+const TextFilter: React.FC<{
+  column: string;
+  title: string;
+  value: string;
+  onChange: (column: string, value: any) => void;
+}> = ({ column, title, value, onChange }) => (
+  <div className="my-2 px-6">
+    <Input
+      placeholder={`Filter by ${title.toLowerCase()}...`}
+      value={value || ""}
+      onChange={(e) => onChange(column, e.target.value)}
+      className="h-8 w-full"
+    />
+  </div>
+);
+
+const SelectFilter: React.FC<{
+  column: string;
+  options?: FilterOption[];
+  value: any;
+  onChange: (column: string, value: any) => void;
+}> = ({ column, options, value, onChange }) => (
+  <div className="space-y-1 my-2 px-6">
+    {options?.map((option) => (
+      <div key={String(option.value)} className="flex items-center">
+        <button
+          className={`text-sm w-full text-left py-1.5 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between ${
+            value === option.value ? "bg-gray-100 dark:bg-gray-800" : ""
+          }`}
+          onClick={() => onChange(column, value === option.value ? undefined : option.value)}
+        >
+          <span>{option.label}</span>
+          {value === option.value && <Check className="h-4 w-4" />}
+        </button>
+      </div>
+    ))}
+  </div>
+);
+
+const MultiSelectFilter: React.FC<{
+  column: string;
+  options?: FilterOption[];
+  value: any[];
+  onChange: (column: string, value: any) => void;
+}> = ({ column, options, value, onChange }) => {
+  const values = value || [];
+  
+  return (
+    <div className="space-y-1.5 my-2 px-6">
+      {options?.map((option) => {
+        const isSelected = values.includes(option.value);
+        return (
+          <div key={String(option.value)} className="flex items-center">
+            <Checkbox
+              id={`${column}-${String(option.value)}`}
+              checked={isSelected}
+              onCheckedChange={() => {
+                if (isSelected) {
+                  onChange(
+                    column,
+                    values.filter((val) => val !== option.value)
+                  );
+                } else {
+                  onChange(column, [...values, option.value]);
+                }
+              }}
+              className="mr-2"
+            />
+            <label
+              htmlFor={`${column}-${String(option.value)}`}
+              className="text-sm cursor-pointer"
+            >
+              {option.label}
+            </label>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+const BooleanFilter: React.FC<{
+  column: string;
+  value: boolean | undefined;
+  onChange: (column: string, value: any) => void;
+}> = ({ column, value, onChange }) => (
+  <div className="space-y-1.5 my-2 px-6">
+    <div className="flex items-center">
+      <Checkbox
+        id={`${column}-true`}
+        checked={value === true}
+        onCheckedChange={() => onChange(column, value === true ? undefined : true)}
+        className="mr-2"
+      />
+      <label htmlFor={`${column}-true`} className="text-sm cursor-pointer">
+        Yes
+      </label>
+    </div>
+    <div className="flex items-center">
+      <Checkbox
+        id={`${column}-false`}
+        checked={value === false}
+        onCheckedChange={() => onChange(column, value === false ? undefined : false)}
+        className="mr-2"
+      />
+      <label htmlFor={`${column}-false`} className="text-sm cursor-pointer">
+        No
+      </label>
+    </div>
+  </div>
+);
+
+const DateFilter: React.FC<{
+  column: string;
+  title: string;
+  value: string;
+  onChange: (column: string, value: any) => void;
+}> = ({ column, title, value, onChange }) => (
+  <div className="my-3 px-6">
+    <div className="relative">
+      <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 block">
+        {title}
+      </label>
+      <div className="relative rounded-md shadow-sm">
+        <Input
+          type="date"
+          value={value || ""}
+          onChange={(e) => onChange(column, e.target.value)}
+          className="h-9 w-full pl-3 pr-10 rounded-md border-gray-200 dark:border-gray-800 focus-visible:ring-primary"
+        />
+        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+          <Calendar className="h-4 w-4 text-gray-400" />
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const DateRangeFilter: React.FC<{
+  column: string;
+  value: { start?: string; end?: string };
+  onChange: (column: string, value: any) => void;
+}> = ({ column, value, onChange }) => {
+  const dateRange = value || {};
+  
+  return (
+    <div className="space-y-3 my-3 px-6">
+      <div>
+        <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 block">
+          From
+        </label>
+        <div className="relative rounded-md shadow-sm">
+          <Input
+            type="date"
+            value={dateRange.start || ""}
+            onChange={(e) =>
+              onChange(column, { ...dateRange, start: e.target.value })
+            }
+            className="h-9 w-full pl-3 pr-10 rounded-md border-gray-200 dark:border-gray-800 focus-visible:ring-primary"
+          />
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <Calendar className="h-4 w-4 text-gray-400" />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 block">
+          To
+        </label>
+        <div className="relative rounded-md shadow-sm">
+          <Input
+            type="date"
+            value={dateRange.end || ""}
+            onChange={(e) =>
+              onChange(column, { ...dateRange, end: e.target.value })
+            }
+            className="h-9 w-full pl-3 pr-10 rounded-md border-gray-200 dark:border-gray-800 focus-visible:ring-primary"
+          />
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <Calendar className="h-4 w-4 text-gray-400" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Individual Filter Group Component
 interface FilterGroupProps<TData> {
   filter: SidebarFilterConfig<TData>;
@@ -32,163 +221,60 @@ export function FilterGroup<TData>({
     switch (filter.type) {
       case "text":
         return (
-          <div className="my-2 px-6">
-            <Input
-              placeholder={`Filter by ${filter.title.toLowerCase()}...`}
-              value={(currentValue as string) || ""}
-              onChange={(e) => onFilterChange(column, e.target.value)}
-              className="h-8 w-full"
-            />
-          </div>
+          <TextFilter
+            column={column}
+            title={filter.title}
+            value={currentValue as string}
+            onChange={onFilterChange}
+          />
         );
 
       case "select":
         return (
-          <div className="space-y-1 my-2 px-6">
-            {filter.options?.map((option) => (
-              <div key={String(option.value)} className="flex items-center">
-                <button
-                  className={`text-sm w-full text-left py-1.5 px-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-between ${
-                    currentValue === option.value ? "bg-gray-100 dark:bg-gray-800" : ""
-                  }`}
-                  onClick={() => onFilterChange(column, currentValue === option.value ? undefined : option.value)}
-                >
-                  <span>{option.label}</span>
-                  {currentValue === option.value && <Check className="h-4 w-4" />}
-                </button>
-              </div>
-            ))}
-          </div>
+          <SelectFilter
+            column={column}
+            options={filter.options}
+            value={currentValue}
+            onChange={onFilterChange}
+          />
         );
 
       case "multiSelect":
-        const values = (currentValue || []) as any[];
         return (
-          <div className="space-y-1.5 my-2 px-6">
-            {filter.options?.map((option) => {
-              const isSelected = values.includes(option.value);
-              return (
-                <div key={String(option.value)} className="flex items-center">
-                  <Checkbox
-                    id={`${column}-${String(option.value)}`}
-                    checked={isSelected}
-                    onCheckedChange={() => {
-                      if (isSelected) {
-                        onFilterChange(
-                          column,
-                          values.filter((val) => val !== option.value)
-                        );
-                      } else {
-                        onFilterChange(column, [...values, option.value]);
-                      }
-                    }}
-                    className="mr-2"
-                  />
-                  <label
-                    htmlFor={`${column}-${String(option.value)}`}
-                    className="text-sm cursor-pointer"
-                  >
-                    {option.label}
-                  </label>
-                </div>
-              );
-            })}
-          </div>
+          <MultiSelectFilter
+            column={column}
+            options={filter.options}
+            value={currentValue as any[]}
+            onChange={onFilterChange}
+          />
         );
 
       case "boolean":
         return (
-          <div className="space-y-1.5 my-2 px-6">
-            <div className="flex items-center">
-              <Checkbox
-                id={`${column}-true`}
-                checked={currentValue === true}
-                onCheckedChange={() => onFilterChange(column, currentValue === true ? undefined : true)}
-                className="mr-2"
-              />
-              <label htmlFor={`${column}-true`} className="text-sm cursor-pointer">
-                Yes
-              </label>
-            </div>
-            <div className="flex items-center">
-              <Checkbox
-                id={`${column}-false`}
-                checked={currentValue === false}
-                onCheckedChange={() => onFilterChange(column, currentValue === false ? undefined : false)}
-                className="mr-2"
-              />
-              <label htmlFor={`${column}-false`} className="text-sm cursor-pointer">
-                No
-              </label>
-            </div>
-          </div>
+          <BooleanFilter
+            column={column}
+            value={currentValue as boolean}
+            onChange={onFilterChange}
+          />
         );
 
       case "date":
         return (
-          <div className="my-3 px-6">
-            <div className="relative">
-              {/* Add a small label for consistency */}
-              <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 block">
-                {filter.title}
-              </label>
-              <div className="relative rounded-md shadow-sm">
-                <Input
-                  type="date"
-                  value={(currentValue as string) || ""}
-                  onChange={(e) => onFilterChange(column, e.target.value)}
-                  className="h-9 w-full pl-3 pr-10 rounded-md border-gray-200 dark:border-gray-800 focus-visible:ring-primary"
-                />
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <Calendar className="h-4 w-4 text-gray-400" />
-                </div>
-              </div>
-            </div>
-          </div>
+          <DateFilter
+            column={column}
+            title={filter.title}
+            value={currentValue as string}
+            onChange={onFilterChange}
+          />
         );
 
       case "dateRange":
-        const dateRange = (currentValue || {}) as { start?: string; end?: string };
         return (
-          <div className="space-y-3 my-3 px-6">
-            <div>
-              <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 block">
-                From
-              </label>
-              <div className="relative rounded-md shadow-sm">
-                <Input
-                  type="date"
-                  value={dateRange.start || ""}
-                  onChange={(e) =>
-                    onFilterChange(column, { ...dateRange, start: e.target.value })
-                  }
-                  className="h-9 w-full pl-3 pr-10 rounded-md border-gray-200 dark:border-gray-800 focus-visible:ring-primary"
-                />
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <Calendar className="h-4 w-4 text-gray-400" />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <label className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1 block">
-                To
-              </label>
-              <div className="relative rounded-md shadow-sm">
-                <Input
-                  type="date"
-                  value={dateRange.end || ""}
-                  onChange={(e) =>
-                    onFilterChange(column, { ...dateRange, end: e.target.value })
-                  }
-                  className="h-9 w-full pl-3 pr-10 rounded-md border-gray-200 dark:border-gray-800 focus-visible:ring-primary"
-                />
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                  <Calendar className="h-4 w-4 text-gray-400" />
-                </div>
-              </div>
-            </div>
-          </div>
+          <DateRangeFilter
+            column={column}
+            value={currentValue as { start?: string; end?: string }}
+            onChange={onFilterChange}
+          />
         );
 
       default:
