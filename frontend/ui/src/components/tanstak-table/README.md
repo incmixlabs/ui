@@ -1,5 +1,7 @@
 # TanStack Table Component Documentation
 
+This documentation provides a comprehensive guide to using the TanStack Table component, a powerful and customizable data table built on TanStack's React Table library. The component supports filtering, sorting, pagination, row selection, expandable rows, and many other advanced features.
+
 ## Table of Contents
 
 1. [Basic Usage](#basic-usage)
@@ -9,14 +11,15 @@
 5. [Advanced Usage Examples](#advanced-usage-examples)
 6. [Custom Cell Renderers](#custom-cell-renderers)
 7. [Real-World Examples](#real-world-examples)
+8. [Troubleshooting](#troubleshooting)
 
 ## Basic Usage
 
 Here's a simple example of using the TanStack Table component:
 
 ```tsx
-import { DataTable } from "path/to/tanstak-table";
-import { DataTableColumn } from "path/to/tanstak-table/types";
+import { DataTable } from "@incmix/ui/components/tanstak-table";
+import { DataTableColumn } from "@incmix/ui/components/tanstak-table/types";
 
 // Sample data
 const data = [
@@ -64,6 +67,13 @@ function MyTable() {
 }
 ```
 
+By default, the table includes:
+- Row selection (checkboxes)
+- Sorting (click on column headers)
+- Pagination (10 rows per page)
+- Column visibility toggle
+- Basic filtering
+
 ## Column Configuration
 
 Columns are defined using the `DataTableColumn` interface. Each column can have the following properties:
@@ -78,21 +88,21 @@ Columns are defined using the `DataTableColumn` interface. Each column can have 
 
 ### Column Types
 
-The component supports the following column types, each with its own renderer:
+The component includes built-in renderers for these column types:
 
-| Type | Description | Example Value |
-|------|-------------|---------------|
-| `String` | Plain text | `"Hello World"` |
-| `Number` | Numeric values | `42` |
-| `Currency` | Money values | `199.99` |
-| `Date` | Date values | `"2023-01-15"` or `new Date()` |
-| `Tag` | Array of tags | `["React", "TypeScript"]` |
-| `Boolean` | True/false values | `true` or `false` |
-| `Status` | Status indicators | `"active"`, `"pending"`, `"failed"` |
-| `Rating` | Rating values | `4` |
-| `Image` | Image URLs | `"https://example.com/image.jpg"` |
-| `Link` | Hyperlinks | `"https://example.com"` |
-| `Custom` | Custom rendering | Any value with a custom renderer |
+| Type | Description | Example Value | Rendering Behavior |
+|------|-------------|---------------|-------------------|
+| `String` | Plain text | `"Hello World"` | Basic text with truncation for long content |
+| `Number` | Numeric values | `42` | Right-aligned with optional formatting |
+| `Currency` | Money values | `199.99` | Formatted with currency symbol and proper decimal places |
+| `Date` | Date values | `"2023-01-15"` or `new Date()` | Formatted date/time |
+| `Tag` | Array of tags | `["React", "TypeScript"]` | Individual badge-style elements |
+| `Boolean` | True/false values | `true` or `false` | "Yes"/"No" with colored indicators |
+| `Status` | Status indicators | `"active"`, `"pending"`, `"failed"` | Color-coded status indicators |
+| `Rating` | Rating values | `4` | Visual star rating (requires custom renderer) |
+| `Image` | Image URLs | `"https://example.com/image.jpg"` | Thumbnail images |
+| `Link` | Hyperlinks | `"https://example.com"` | Clickable links |
+| `Custom` | Custom rendering | Any value with a custom renderer | Whatever your renderer returns |
 
 ### Optional Properties
 
@@ -146,7 +156,7 @@ You can apply custom formatting to columns using the `format` property:
 You can group columns under a common header:
 
 ```tsx
-import { ColumnGroup } from "path/to/tanstak-table/types";
+import { ColumnGroup } from "@incmix/ui/components/tanstak-table/types";
 
 const columnGroups: ColumnGroup<typeof data[0]>[] = [
   {
@@ -208,10 +218,10 @@ The table has built-in filtering capabilities. You can specify a column to use f
 
 ### Faceted Filtering
 
-Faceted filters provide multi-select filtering options:
+Faceted filters provide multi-select filtering options that appear above the table:
 
 ```tsx
-import { DataTableFacet } from "path/to/tanstak-table/types";
+import { DataTableFacet } from "@incmix/ui/components/tanstak-table/types";
 
 const facets: DataTableFacet<typeof data[0]>[] = [
   {
@@ -243,10 +253,10 @@ const facets: DataTableFacet<typeof data[0]>[] = [
 
 ### Sidebar Filtering
 
-For more advanced filtering, you can use the sidebar filters:
+For more advanced filtering, you can use the sidebar filters, which provide a collapsible sidebar with various filter types:
 
 ```tsx
-import { SidebarFilterConfig } from "path/to/tanstak-table/types";
+import { SidebarFilterConfig } from "@incmix/ui/components/tanstak-table/types";
 import { Calendar, UserCircle, Check, Tag, FileText } from "lucide-react";
 
 const sidebarFilters: SidebarFilterConfig<typeof data[0]>[] = [
@@ -388,7 +398,7 @@ The component includes built-in renderers for common data types, but you can als
 You can create and register custom cell renderers for specialized column types:
 
 ```tsx
-import { registerCellRenderer } from "path/to/tanstak-table/cell-renderers";
+import { registerCellRenderer } from "@incmix/ui/components/tanstak-table/cell-renderers";
 
 // Create a custom rating cell renderer
 const RatingCell: React.FC<{ value: number }> = ({ value }) => {
@@ -510,8 +520,8 @@ Create expandable rows to show additional details:
         </div>
       </div>
     ),
-    expandOnClick: true,
-    singleExpand: true
+    expandOnClick: true, // Click anywhere on the row to expand
+    singleExpand: true // Only one row can be expanded at a time
   }}
 />
 ```
@@ -591,7 +601,7 @@ Here are some complete examples demonstrating different usage scenarios:
 
 ```tsx
 import React from "react";
-import { DataTable } from "./tanstak-table";
+import { DataTable } from "@incmix/ui/components/tanstak-table";
 
 const UsersTableDemo = () => {
   // Define columns
@@ -695,3 +705,27 @@ For a complete working example of a table with advanced features like sidebar fi
 - `users-demo.tsx`: Basic table implementation
 - `tasks-demo.tsx`: Advanced table with custom renderers and expandable rows
 - `sidebarfilter-demo.tsx`: Table with sidebar filters
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Table not rendering correctly**
+   - Ensure you've provided the required `columns` and `data` props
+   - Check that column `accessorKey` values match your data object properties
+   - Verify column `type` is supported or you've registered a custom renderer
+
+2. **Filtering not working**
+   - For sidebar filters, ensure `enableSidebarFilters` is set to `true`
+   - For faceted filters, check that the `column` values in your facets match your column accessorKeys
+   - Verify filter options have the correct format with `label` and `value` properties
+
+3. **Custom renderers not displaying**
+   - Make sure you're importing from the correct paths
+   - Check that you've registered your custom renderer before using it
+   - Verify the type in your column definition matches the registered type
+
+4. **Server pagination issues**
+   - Ensure all required server pagination props are provided
+   - Verify that `onPageChange` and `onPageSizeChange` handlers are updating state
+   - Check that `totalItems` is correctly set to enable proper page calculations
