@@ -1,4 +1,5 @@
 import { useDroppable } from "@dnd-kit/core"
+import { Box } from "@incmix/ui/base"
 import type { ReactNode } from "react"
 
 interface DroppableAreaProps {
@@ -21,19 +22,19 @@ export function DroppableArea({
   const isOver = isOverProp !== undefined ? isOverProp : isOverInternal
 
   return (
-    <div
+    <Box
       ref={setNodeRef}
       className={` w-full overflow-x-hidden transition-colors duration-200 ${
         isOver
           ? isEditing
-            ? "rounded-lg bg-blue-100/30 ring-2 ring-blue-300 ring-inset"
-            : "rounded-lg bg-red-100/30 ring-2 ring-red-300 ring-inset"
+            ? "rounded-lg bg-blue-100/30 ring-2 ring-blue-4 ring-inset"
+            : "rounded-lg bg-red-100/30 ring-2 ring-red-4 ring-inset"
           : ""
       }`}
       data-editing={isEditing ? "true" : "false"}
       data-over={isOver ? "true" : "false"}
     >
       {children}
-    </div>
+    </Box>
   )
 }

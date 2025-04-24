@@ -17,7 +17,6 @@ export function WidgetGroup({ id, title, isEditing, children, onUngroup, onRemov
   const [isHovered, setIsHovered] = useState(false)
 
   return (
-    <WidgetDropZone id={id} isEditing={isEditing}>
       <Box
         className={`relative h-full w-full rounded-lg border-2 ${
           isEditing ? "border-blue-300 bg-blue-50/10" : "border-transparent"
@@ -55,6 +54,5 @@ export function WidgetGroup({ id, title, isEditing, children, onUngroup, onRemov
         )}
         <div className="grid h-full w-full grid-cols-1 gap-2 p-3 md:grid-cols-2">{children}</div>
       </Box>
-    </WidgetDropZone>
   )
 }

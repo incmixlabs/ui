@@ -1,3 +1,4 @@
+import { Box } from "@incmix/ui/base";
 import { useEffect, useState } from "react"
 
 interface SelectionRectangleProps {
@@ -36,8 +37,8 @@ export function SelectionRectangle({ startPoint, endPoint }: SelectionRectangleP
   if (!startPoint || !endPoint) return null
 
   return (
-    <div
-      className="fixed pointer-events-none border-2 border-blue-500 bg-blue-100/20 z-50"
+    <Box
+      className="fixed pointer-events-none border-2 border-indigo-10 bg-indigo-10/20 z-50"
       style={{
         display: style.display,
         left: style.left,

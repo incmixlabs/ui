@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Grid, dashboardImg } from "@incmix/ui"
+import { Box, Grid, Heading, dashboardImg, useSelectionStore } from "@incmix/ui"
 import {
   ActiveTask,
   NewTasks,
@@ -112,6 +112,8 @@ interface DashboardSidebarProps {
 }
 
 export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
+  const { selectedWidgets, setSelectedWidgets, clearSelection } =
+  useSelectionStore();
   const [availableComponents] = useState(sidebarComponents)
   const [_draggingComponentId, setDraggingComponentId] = useState<
     string | null
@@ -127,8 +129,8 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
 
   return (
     <Box className="p-2">
-      <h1 className="py-2 font-semibold text-lg">Drag Components</h1>
-      <Grid columns={"2"} gap="2">
+      <Heading className="py-2 font-semibold text-lg">Drag Components</Heading>
+      <Grid columns={"2"} gap="2"  className="relative">
         {availableComponents?.map((comp) => (
           <DraggableComponent
             key={comp.slotId}
@@ -136,7 +138,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
             title={comp.title}
             image={comp.compImage}
             component={comp.component}
-            disabled={!isEditing}
+            disabled={!isEditing || selectedWidgets.length > 0}
             onDragStart={() => handleDragStart(comp.slotId)}
             onDragEnd={handleDragEnd}
           />

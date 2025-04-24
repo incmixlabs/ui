@@ -19,6 +19,7 @@ import {
   IconButton,
   toast,
   useMarqueeSelection,
+  useSelectionStore,
 } from "@incmix/ui"
 import {
   GroupingToolbar,
@@ -26,7 +27,6 @@ import {
   SelectionRectangle,
   WidgetDropZone,
   WidgetGroup,
-  WidgetSelection,
   dashboardImg,
   sidebarComponents,
 } from "@incmix/ui/dashboard"
@@ -42,7 +42,7 @@ import {
 } from "@incmix/ui/widgets"
 
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { useCallback, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Responsive, WidthProvider } from "react-grid-layout"
 import { useTranslation } from "react-i18next"
 import { useAuth } from "../../auth"
@@ -53,6 +53,7 @@ import "react-resizable/css/styles.css"
 import { useDashboardStore, useEditingStore } from "@incmix/store"
 import { useParams } from "@tanstack/react-router"
 import { Trash, Users } from "lucide-react"
+import { initialLayouts } from "./data"
 
 export interface LayoutItem {
   i: string
@@ -96,15 +97,16 @@ const GROUP_SIZES: Record<Breakpoint, { w: number; h: number }> = {
 }
 
 const DynamicDashboardPage: React.FC = () => {
-  const { projectId } = useParams({ from: "/dashboard/project/$projectId" })
-  const _project = useDashboardStore((state) => state.getProjectById(projectId))
-
   const { authUser, isLoading } = useAuth()
+  const { projectId } = useParams({ from: "/dashboard/project/$projectId" })
+  const project = useDashboardStore((state) => state.getProjectById(projectId))
+
   const { isEditing, setIsEditing } = useEditingStore()
   const [activeDragId, setActiveDragId] = useState<string | null>(null)
   const [activeDragData, setActiveDragData] = useState<any>(null)
-  const [isSelectionMode, setIsSelectionMode] = useState(false)
-  const [selectedWidgets, setSelectedWidgets] = useState<string[]>([])
+  const { selectedWidgets, setSelectedWidgets, clearSelection } =
+    useSelectionStore()
+  const [isHoveringWidget, setIsHoveringWidget] = useState(false)
   const [widgetGroups, setWidgetGroups] = useState<IWidgetGroup[]>([])
   const gridContainerRef = useRef<HTMLDivElement>(null)
 
@@ -116,13 +118,33 @@ const DynamicDashboardPage: React.FC = () => {
     })
   )
 
-  const { startPoint, endPoint } = useMarqueeSelection({
-    containerRef: gridContainerRef,
-    isActive: isSelectionMode && isEditing,
-    onSelectionChange: (ids) => {
-      setSelectedWidgets(ids)
-    },
-  })
+  // Set up marquee selection
+  const { startPoint, endPoint, selectedIds, isSelecting, isShiftPressed } =
+    useMarqueeSelection({
+      containerRef: gridContainerRef,
+      isActive: isEditing,
+      onSelectionChange: (ids) => {
+        // console.log("Selection changed:", ids)
+        setSelectedWidgets(ids)
+      },
+    })
+
+  useEffect(() => {
+    if (!isEditing) return
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const element = document.elementFromPoint(e.clientX, e.clientY)
+      if (!element) return
+
+      const isOverWidget = !!element.closest("[data-widget-id]")
+      setIsHoveringWidget(isOverWidget)
+    }
+
+    document.addEventListener("mousemove", handleMouseMove)
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove)
+    }
+  }, [isEditing])
 
   const [_lastRemovedComponent, setLastRemovedComponent] = useState<{
     component: ComponentSlot | null
@@ -180,379 +202,6 @@ const DynamicDashboardPage: React.FC = () => {
     },
   ])
 
-  const [initialLayouts, _setInitialLayouts] = useState<ResponsiveLayout>({
-    lg: [
-      {
-        w: 2,
-        h: 6,
-        x: 0,
-        y: 0,
-        i: "a",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 2,
-        h: 6,
-        x: 0,
-        y: 6,
-        i: "b",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 4,
-        h: 12,
-        x: 2,
-        y: 0,
-        i: "c",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 4,
-        h: 12,
-        x: 6,
-        y: 0,
-        i: "d",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 5,
-        h: 12,
-        x: 0,
-        y: 12,
-        i: "e",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 5,
-        h: 12,
-        x: 5,
-        y: 12,
-        i: "f",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 10,
-        h: 13,
-        x: 0,
-        y: 24,
-        i: "g",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 4,
-        h: 37,
-        x: 10,
-        y: 0,
-        i: "h",
-        moved: false,
-        static: false,
-      },
-    ],
-    md: [
-      {
-        w: 3,
-        h: 6,
-        x: 0,
-        y: 0,
-        i: "a",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 3,
-        h: 6,
-        x: 0,
-        y: 6,
-        i: "b",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 7,
-        h: 12,
-        x: 3,
-        y: 0,
-        i: "c",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 5,
-        h: 12,
-        x: 0,
-        y: 12,
-        i: "d",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 10,
-        h: 12,
-        x: 0,
-        y: 24,
-        i: "e",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 5,
-        h: 12,
-        x: 5,
-        y: 12,
-        i: "f",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 14,
-        h: 13,
-        x: 0,
-        y: 36,
-        i: "g",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 4,
-        h: 36,
-        x: 10,
-        y: 0,
-        i: "h",
-        moved: false,
-        static: false,
-      },
-    ],
-    sm: [
-      {
-        w: 3,
-        h: 6,
-        x: 0,
-        y: 0,
-        i: "a",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 3,
-        h: 6,
-        x: 0,
-        y: 6,
-        i: "b",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 6,
-        h: 12,
-        x: 3,
-        y: 0,
-        i: "c",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 5,
-        h: 12,
-        x: 0,
-        y: 12,
-        i: "d",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 9,
-        h: 12,
-        x: 0,
-        y: 24,
-        i: "e",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 4,
-        h: 12,
-        x: 5,
-        y: 12,
-        i: "f",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 14,
-        h: 13,
-        x: 0,
-        y: 36,
-        i: "g",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 5,
-        h: 36,
-        x: 9,
-        y: 0,
-        i: "h",
-        moved: false,
-        static: false,
-      },
-    ],
-    xs: [
-      {
-        w: 4,
-        h: 6,
-        x: 0,
-        y: 0,
-        i: "a",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 4,
-        h: 6,
-        x: 4,
-        y: 0,
-        i: "b",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 8,
-        h: 12,
-        x: 0,
-        y: 6,
-        i: "c",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 8,
-        h: 12,
-        x: 0,
-        y: 18,
-        i: "d",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 8,
-        h: 12,
-        x: 0,
-        y: 30,
-        i: "e",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 14,
-        h: 9,
-        x: 0,
-        y: 42,
-        i: "f",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 14,
-        h: 13,
-        x: 0,
-        y: 51,
-        i: "g",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 6,
-        h: 42,
-        x: 8,
-        y: 0,
-        i: "h",
-        moved: false,
-        static: false,
-      },
-    ],
-    xxs: [
-      {
-        w: 4,
-        h: 6,
-        x: 0,
-        y: 0,
-        i: "a",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 4,
-        h: 6,
-        x: 4,
-        y: 0,
-        i: "b",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 8,
-        h: 12,
-        x: 0,
-        y: 6,
-        i: "c",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 8,
-        h: 12,
-        x: 0,
-        y: 18,
-        i: "d",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 8,
-        h: 12,
-        x: 0,
-        y: 30,
-        i: "e",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 14,
-        h: 9,
-        x: 0,
-        y: 42,
-        i: "f",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 14,
-        h: 13,
-        x: 0,
-        y: 51,
-        i: "g",
-        moved: false,
-        static: false,
-      },
-      {
-        w: 6,
-        h: 42,
-        x: 8,
-        y: 0,
-        i: "h",
-        moved: false,
-        static: false,
-      },
-    ],
-  })
-
   const [defaultLayouts, setDefaultLayouts] = useState(initialLayouts)
 
   // Memoize layouts with static flag to prevent unnecessary recalculations
@@ -563,13 +212,13 @@ const DynamicDashboardPage: React.FC = () => {
         result[breakpoint] = defaultLayouts[breakpoint].map((item) => ({
           ...item,
           moved: false,
-          static: !isEditing || isSelectionMode,
+          static: !isEditing || isShiftPressed || isSelecting,
         }))
       }
     })
 
     return result
-  }, [defaultLayouts, isEditing, isSelectionMode])
+  }, [defaultLayouts, isEditing, isShiftPressed, isSelecting])
 
   // Memoize layout change handler to prevent unnecessary re-renders
   const handleLayoutChange = useCallback(
@@ -830,23 +479,6 @@ const DynamicDashboardPage: React.FC = () => {
     })
   }
 
-  const handleWidgetSelection = (id: string, selected: boolean) => {
-    if (selected) {
-      setSelectedWidgets((prev) => [...prev, id])
-    } else {
-      setSelectedWidgets((prev) => prev.filter((widgetId) => widgetId !== id))
-    }
-  }
-
-  const toggleSelectionMode = () => {
-    if (isSelectionMode) {
-      setIsSelectionMode(false)
-      setSelectedWidgets([])
-    } else {
-      setIsSelectionMode(true)
-    }
-  }
-
   const groupSelectedWidgets = () => {
     if (selectedWidgets.length < 2) {
       toast.error("Please select at least two widgets to group.")
@@ -922,9 +554,10 @@ const DynamicDashboardPage: React.FC = () => {
 
     setDefaultLayouts(newLayouts)
 
-    setIsSelectionMode(false)
-    setSelectedWidgets([])
+    // setSelectedWidgets([])
 
+    // Clear selection after grouping
+    clearSelection()
     toast.success("Widgets grouped", {
       description: `${selectedWidgets.length} widgets have been grouped together.`,
     })
@@ -1027,9 +660,11 @@ const DynamicDashboardPage: React.FC = () => {
 
   const isEmpty = gridComponents.length === 0
 
-  const visibleComponents = gridComponents.filter(
-    (comp) => !comp?.isGrouped || isSelectionMode
-  )
+  // const visibleComponents = gridComponents.filter(
+  //   (comp) => !comp?.isGrouped || isEditing,
+  // );
+
+  console.log(gridComponents)
 
   return (
     <DndContext
@@ -1040,39 +675,28 @@ const DynamicDashboardPage: React.FC = () => {
       <DashboardLayout
         breadcrumbItems={[]}
         navExtras={
-          <div className="flex items-center gap-2">
-            {isEditing && (
-              <Button
-                variant={isSelectionMode ? "outline" : "outline"}
-                onClick={toggleSelectionMode}
-                className="flex items-center gap-2"
-              >
-                <Users size={16} />
-                {isSelectionMode ? "Cancel Selection" : "Group Widgets"}
-              </Button>
-            )}
+          <Box className="flex items-center gap-2">
             <EditWidgetsControl onEditChange={setIsEditing} />
-          </div>
+          </Box>
         }
       >
         <Box as="div" className="container mx-auto flex overflow-x-hidden">
           <Box className="w-full">
             <Heading size="6" className="pb-4">
-              {"dashboard:title"}
+              {project?.name}
             </Heading>
-            {/* <GridDropZone isEditing={isEditing} isEmpty={isEmpty}> */}
-            <div
+            <Box
               ref={gridContainerRef}
-              className={`min-h-[200px] rounded-lg transition-colors duration-200 ${
+              className={`rounded-lg transition-colors duration-200 ${
                 isEditing && !isEmpty
                   ? "border-2 border-blue-400 border-dashed bg-blue-50/10"
                   : ""
-              } ${isSelectionMode ? "cursor-crosshair bg-blue-50/5" : ""}`}
+              } ${!isHoveringWidget && isEditing ? "cursor-crosshair" : ""}`}
             >
               {isEmpty && isEditing ? (
-                <div className="flex h-[200px] items-center justify-center text-gray-500">
+                <Box className="flex h-[200px] items-center justify-center text-gray-500">
                   <p>Drag and drop components here to build your dashboard</p>
-                </div>
+                </Box>
               ) : (
                 <ResponsiveGridLayout
                   className="gridLayout"
@@ -1085,57 +709,26 @@ const DynamicDashboardPage: React.FC = () => {
                   compactType="vertical"
                   useCSSTransforms={true}
                 >
-                  {/* Render individual widgets */}
-                  {visibleComponents.map((item) => (
-                    <div
+                  {gridComponents.map((item) => (
+                    <Box
                       key={item.slotId}
                       className="relative h-full rounded-xl"
                       data-widget-id={item.slotId}
                     >
-                      {isSelectionMode ? (
-                        <WidgetSelection
-                          id={item.slotId}
-                          isSelected={selectedWidgets.includes(item.slotId)}
-                          onSelect={handleWidgetSelection}
-                        >
-                          <div
-                            className={`h-full w-full ${isEditing ? "bg-gray-5 p-2 shadow" : ""}`}
-                          >
-                            <div className="widget-content relative h-full">
-                              {item.component}
-                            </div>
-                          </div>
-                        </WidgetSelection>
-                      ) : (
-                        <WidgetDropZone id={item.slotId} isEditing={isEditing}>
-                          <div
-                            className={`h-full w-full ${isEditing ? "bg-gray-5 p-2 shadow" : ""}`}
-                          >
-                            {isEditing && (
-                              <IconButton
-                                className="absolute top-3 right-3 z-[2]"
-                                onMouseDown={(e) => e.stopPropagation()}
-                                onTouchStart={(e) => e.stopPropagation()}
-                                color="red"
-                                onClick={() =>
-                                  handleRemoveComponent(item.slotId)
-                                }
-                              >
-                                <Trash size={16} />
-                              </IconButton>
-                            )}
-                            <div className="widget-content relative h-full">
-                              {item.component}
-                            </div>
-                          </div>
-                        </WidgetDropZone>
-                      )}
-                    </div>
+                      <WidgetDropZone
+                        id={item.slotId}
+                        isEditing={isEditing}
+                        handleRemoveComponent={handleRemoveComponent}
+                      >
+                        <Box className="relative h-full">{item.component}</Box>
+                      </WidgetDropZone>
+                    </Box>
                   ))}
 
                   {widgetGroups.map((group) => (
-                    <div
+                    <Box
                       key={group.groupId}
+                      data-widget-id={group.groupId}
                       className="relative h-full rounded-xl"
                     >
                       <WidgetGroup
@@ -1145,7 +738,6 @@ const DynamicDashboardPage: React.FC = () => {
                         onUngroup={() => ungroupWidgets(group.groupId)}
                         onRemove={() => removeWidgetGroup(group.groupId)}
                       >
-                        {/* Render group members */}
                         {group.memberIds.map((memberId) => {
                           const component = gridComponents.find(
                             (comp) => comp.slotId === memberId
@@ -1153,22 +745,22 @@ const DynamicDashboardPage: React.FC = () => {
                           if (!component) return null
 
                           return (
-                            <div
+                            <Box
                               key={memberId}
                               className="relative h-full rounded-lg bg-white p-2 shadow-sm"
                             >
                               <div className="widget-content relative h-full">
                                 {component.component}
                               </div>
-                            </div>
+                            </Box>
                           )
                         })}
                       </WidgetGroup>
-                    </div>
+                    </Box>
                   ))}
                 </ResponsiveGridLayout>
               )}
-            </div>
+            </Box>
           </Box>
         </Box>
       </DashboardLayout>
@@ -1176,20 +768,12 @@ const DynamicDashboardPage: React.FC = () => {
       <SelectionRectangle startPoint={startPoint} endPoint={endPoint} />
 
       {/* Grouping toolbar */}
-      {isSelectionMode && (
-        <GroupingToolbar
-          selectedCount={selectedWidgets.length}
-          onGroup={groupSelectedWidgets}
-          onCancelSelection={() => {
-            setIsSelectionMode(false)
-            setSelectedWidgets([])
-          }}
-        />
+      {isEditing && selectedWidgets.length > 0 && (
+        <GroupingToolbar onGroup={groupSelectedWidgets} />
       )}
-
       <DragOverlay>
         {activeDragId && activeDragData && (
-          <div
+          <Box
             className="pointer-events-none rounded-lg border border-gray-5 opacity-100 shadow"
             style={{ width: "150px", height: "100px" }}
           >
@@ -1200,7 +784,7 @@ const DynamicDashboardPage: React.FC = () => {
               alt={activeDragData.title || "Component"}
               className="h-full w-full rounded-lg"
             />
-          </div>
+          </Box>
         )}
       </DragOverlay>
     </DndContext>
