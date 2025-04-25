@@ -1,6 +1,5 @@
 
-import { UsersTableDemo } from "@incmix/ui/tanstak-table";
-import { TasksTableDemo } from "@incmix/ui/tanstak-table";
+import { SidebarFilterDemo, UsersTableDemo,TasksTableDemo } from "@incmix/ui/tanstack-table";
 
 import type { Meta, StoryObj } from "@storybook/react";
 
@@ -24,4 +23,9 @@ export const Users: Story = {
 export const Tasks: Story = {
   render: () => <TasksTableDemo />,
   name: "Tasks Management Table",
+};
+
+export const SidebarFilter: Story = {
+  render: () => <SidebarFilterDemo />,
+  name: "Sidebar Filter Table",
 };

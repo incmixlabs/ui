@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { DataTable } from "./tanstak-table"
+import { DataTable } from "./tanstack-table"
 
 const UsersTableDemo = () => {
   // Define your columns with the updated property name "headingName"
