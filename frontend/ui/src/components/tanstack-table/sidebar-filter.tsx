@@ -1,6 +1,6 @@
 // File: components/DataTable/SidebarFilters.tsx
 import React, { useState } from "react";
-import { ChevronDown, ChevronRight, Calendar, Check } from "lucide-react";
+import { ChevronDown, ChevronRight, Calendar, Check, X } from "lucide-react";
 import { Button, Input, Checkbox } from "@base";
 import { SidebarFilterConfig, FilterOption } from "./types";
 
@@ -62,12 +62,10 @@ const MultiSelectFilter: React.FC<{
               id={`${column}-${String(option.value)}`}
               checked={isSelected}
               onCheckedChange={() => {
-                onChange(
-                  column,
-                  (prevValues: any[] = []) => prevValues.includes(option.value)
-                    ? prevValues.filter((val: any) => val !== option.value)
-                    : [...prevValues, option.value]
-                );
+                const next = isSelected
+                  ? values.filter((val) => val !== option.value)
+                  : [...values, option.value];
+                onChange(column, next);
               }}
               className="mr-2"
             />
@@ -324,8 +322,21 @@ export function TableSidebar<TData>({
   };
 
   return (
-    <div className={`h-full rounded-md overflow-hidden transition-all duration-300`}>
-      <div className="bg-white dark:bg-gray-950 h-full overflow-y-auto border border-gray-200 dark:border-gray-800 rounded-md">
+    <div 
+      className={`
+        h-full rounded-md overflow-hidden transition-all duration-300
+        ${isOpen ? "max-w-xs w-full opacity-100" : "max-w-0 w-0 opacity-0 pointer-events-none"}
+      `}
+    >
+      <div className="bg-white dark:bg-gray-950 h-full overflow-y-auto border border-gray-200 dark:border-gray-800 rounded-md relative">
+        <button 
+          onClick={onToggle}
+          className="absolute right-2 top-2 p-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800"
+          aria-label="Close sidebar"
+        >
+          <X className="h-4 w-4" />
+        </button>
+        
         {filters.map((filter, index) => (
           <FilterGroup
             key={`${String(filter.column)}-${index}`}

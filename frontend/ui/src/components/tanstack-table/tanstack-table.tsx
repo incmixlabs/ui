@@ -808,20 +808,24 @@ export function DataTable<TData extends object>({
     const defs = createColumnDefinitions(flatColumns, enableRowSelection, enableSorting, rowActions);
 
     // If expandable rows are enabled, add expand/collapse functionality to row clicking
+    let finalDefs = defs;
     if (expandableRows && expandableRows.expandOnClick) {
-      defs.forEach(col => {
+      finalDefs = defs.map(col => {
         const originalCellFn = col.cell;
-        col.cell = (info) => {
-          return (
-            <div
-              onClick={() => toggleRowExpanded(info.row.id)}
-              className="cursor-pointer"
-            >
-              {typeof originalCellFn === 'function'
-                ? originalCellFn(info)
-                : info.getValue()}
-            </div>
-          );
+        return {
+          ...col,
+          cell: (info) => {
+            return (
+              <div
+                onClick={() => toggleRowExpanded(info.row.id)}
+                className="cursor-pointer"
+              >
+                {typeof originalCellFn === 'function'
+                  ? originalCellFn(info)
+                  : info.getValue()}
+              </div>
+            );
+          }
         };
       });
     }
@@ -830,7 +834,7 @@ export function DataTable<TData extends object>({
     if (facets && facets.length > 0) {
       facets.forEach(facet => {
         const columnKey = facet.column.toString();
-        const colDef = defs.find(col => col.id === columnKey);
+        const colDef = finalDefs.find(col => col.id === columnKey);
 
         if (colDef) {
           colDef.filterFn = facetedFilterFn;
@@ -844,7 +848,7 @@ export function DataTable<TData extends object>({
     if (sidebarFilters && sidebarFilters.length > 0) {
       sidebarFilters.forEach(filter => {
         const columnKey = filter.column.toString();
-        const colDef = defs.find(col => col.id === columnKey);
+        const colDef = finalDefs.find(col => col.id === columnKey);
 
         if (colDef) {
           // Apply appropriate filter function based on filter type
@@ -866,7 +870,7 @@ export function DataTable<TData extends object>({
       });
     }
 
-    return defs;
+    return finalDefs;
   }, [flatColumns, enableRowSelection, enableSorting, rowActions, facets, sidebarFilters, expandableRows, toggleRowExpanded]);
 
   // For server-side pagination, we need to control the pagination state
