@@ -5,14 +5,17 @@ import { Check, ChevronsUpDown, Settings2 } from "lucide-react"
 import * as React from "react"
 
 import { cn } from "@utils/cn"
-import { Button, Command,
+import {
+  Button,
+  Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList, Popover, PopoverContent, PopoverTrigger} from "@base"
-
+  CommandList,
+  Popover} from "@base"
 import { toSentenceCase } from "./lib/utils"
+import { fr } from "chrono-node"
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>
@@ -24,8 +27,8 @@ export function DataTableViewOptions<TData>({
   const triggerRef = React.useRef<HTMLButtonElement>(null)
 
   return (
-    <Popover modal>
-      <PopoverTrigger>
+    <Popover.Root modal>
+      <Popover.Trigger>
         <Button
           ref={triggerRef}
           aria-label="Toggle columns"
@@ -37,8 +40,8 @@ export function DataTableViewOptions<TData>({
           View
           <ChevronsUpDown className="ml-auto size-4 shrink-0 opacity-50" />
         </Button>
-      </PopoverTrigger>
-      <PopoverContent
+      </Popover.Trigger>
+      <Popover.Content
         align="end"
         className="w-44 p-0"
         onCloseAutoFocus={() => triggerRef.current?.focus()}
@@ -78,7 +81,7 @@ export function DataTableViewOptions<TData>({
             </CommandGroup>
           </CommandList>
         </Command>
-      </PopoverContent>
-    </Popover>
+      </Popover.Content>
+    </Popover.Root>
   )
 }

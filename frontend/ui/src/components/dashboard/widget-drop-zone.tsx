@@ -1,7 +1,7 @@
-import { useDroppable } from "@dnd-kit/core"
-import { Box } from "@incmix/ui"
-import type React from "react"
 import { memo } from "react"
+import { useDroppable } from "@dnd-kit/core"
+import { Box } from "@base"
+import type React from "react"
 
 interface WidgetDropZoneProps {
   id: string

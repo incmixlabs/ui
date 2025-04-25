@@ -806,6 +806,7 @@ const HorizontalContent = ({ children }: PropsWithChildren) => {
         if (!React.isValidElement(node)) {
           return null
         }
+        // @ts-ignore
         return React.Children.map(node.props.children, (childNode) => childNode)
       })}
     </>

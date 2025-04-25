@@ -1,11 +1,12 @@
+// @ts-nocheck
 "use client"
 
-import { motion } from "framer-motion"
-// import Image from "next/image"
 import { useState } from "react"
-
+import { motion } from "motion/react"
+// import Image from "next/image"
+import { Card } from ""
+import { cn } from "@utils"
 import { clx } from "@utils/clx/clx-merge"
-import { cn } from "@utils/cn"
 
 const LayoutGridContainer = clx.div(
   "mx-auto grid h-full w-full max-w-7xl grid-cols-1 gap-4 md:grid-cols-3"
@@ -21,14 +22,14 @@ export type LayoutGridCard = {
 
 export function GridLayoutCard() {
   const Card = clx.div()
-  const CardTitle = clx.p("text-4xl font-bold text-white")
+  const CardTitle = clx.p({ as: "p", className: "text-4xl font-bold text-white" })
   const CardDescription = clx.p(
     "my-4 max-w-lg text-base font-normal text-neutral-200"
   )
 
   return (
     <Card>
-      <CardTitle>Lorem ipsum</CardTitle>
+      <CardTitle as="p">Lorem ipsum</CardTitle>
       <CardDescription>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua.

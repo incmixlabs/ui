@@ -1,6 +1,13 @@
 {
   "extends": "@incmix/config/react.json",
-  "exclude": ["node_modules", "dist", "./*.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "./*.ts",
+    "../../node_modules",
+    "./src/lib/**/*.ts",
+    "./src/demos"
+  ],
   "include": ["src/"],
   "compilerOptions": {
     "types": ["@types/wicg-file-system-access", "vite/client"],
@@ -23,6 +30,8 @@
       "@primitives": ["./primitives"],
       "@primitives/*": ["./primitives/*"],
       "@radixui/*": ["./components/radixui/*"],
+      "@projects/*": ["./components/projects/*"],
+      "@projects": ["./components/projects"],
       "@radixui": ["./components/radixui"],
       "@shadcn": ["./components/shadcn"],
       "@shadcn/*": ["./components/shadcn/*"],

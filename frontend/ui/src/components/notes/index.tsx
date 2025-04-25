@@ -16,6 +16,8 @@ import {
   TextArea
 } from "@base"
 import {
+  iconSize } from "@icons"
+import {
   CalendarClock,
   Edit2,
   Ellipsis,
@@ -58,9 +60,9 @@ export function NoteComponent() {
               <SlidersHorizontal className="h-5 w-5" />
             </Button>
             <Dialog.Root>
-              <Dialog.Trigger asChild>
+              <Dialog.Trigger>
                 <Button variant="solid">
-                  <Plus className="h-5 w-5" /> Add Note
+                  <Plus className={iconSize} /> Add Note
                 </Button>
               </Dialog.Trigger>
               <Dialog.Content>
@@ -87,7 +89,7 @@ export function NoteComponent() {
                   </Box>
                 </Dialog.Description>
                 <Dialog.Footer>
-                  <Dialog.Close asChild>
+                  <Dialog.Close>
                     <Button variant="soft" color="gray">
                       Cancel
                     </Button>
@@ -147,8 +149,8 @@ export function NoteComponent() {
       </Box>
 
       <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
-        <Dialog.Content className="border border-gray-4">
-          <Dialog.Header className="relative">
+        <Dialog.Content>
+          <Dialog.Header>
             <Dialog.Title>Add New Note</Dialog.Title>
             <Flex
               align={"center"}

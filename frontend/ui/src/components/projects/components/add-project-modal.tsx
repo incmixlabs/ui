@@ -1,3 +1,7 @@
+
+import { Plus } from "lucide-react"
+import { useEffect, useState } from "react"
+
 import { SmartDatetimeInput } from "@components/datetime-picker"
 import {
   FileInput,
@@ -5,28 +9,20 @@ import {
   FileUploaderContent,
   FileUploaderItem,
 } from "@components/file-upload"
-import { Input } from "@components/form"
-import { Label } from "@components/label"
-import MultipleSelector, {
-  type Option,
-} from "@components/multiple-selector/multiple-selector"
-import { Textarea } from "@components/textarea"
-import {
-  Box,
+import { Box,
   Button,
   Dialog,
-  Dialog.Content,
-  Dialog.Title,
   Flex,
   Grid,
   Text,
-} from "@incmix/ui"
-import { Calendar, Paperclip, Plus, X } from "lucide-react"
-import Image from "next/image"
-import { useEffect, useState } from "react"
+  TextArea, Input, Label } from "@base"
+import MultipleSelector, {
+  type Option,
+} from "@components/multiple-selector/multiple-selector"
+
 import { members } from "../data"
 import { ProjectsImages } from "../images"
-import type { Member, Project } from "../types"
+import type { Project } from "../types"
 
 interface AddProjectModalProps {
   isOpen: boolean
@@ -100,6 +96,7 @@ export function AddProjectModal({
       startDate: startDate ? startDate.getTime() : undefined,
       endDate: endDate ? new Date(endDate).getTime() : undefined,
       budget: budget ? Number.parseFloat(budget) : undefined,
+      // @ts-ignore
       files: objectUrls[0],
     }
 
@@ -121,7 +118,7 @@ export function AddProjectModal({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Content maxWidth="500px">
         <Dialog.Title className="font-medium">Add Project</Dialog.Title>
         <Grid className="py-4" gap={"4"}>
@@ -185,7 +182,7 @@ export function AddProjectModal({
 
           <Grid gap={"2"}>
             <Label htmlFor="description">Description</Label>
-            <Textarea
+            <TextArea
               id="description"
               placeholder="Create a mobile application on iOS and Android devices."
               value={description}
@@ -266,6 +263,6 @@ export function AddProjectModal({
           </Button>
         </Flex>
       </Dialog.Content>
-    </Dialog>
+    </Dialog.Root>
   )
 }

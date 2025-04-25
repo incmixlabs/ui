@@ -1,5 +1,4 @@
-import { Flex, Popover, ScrollArea, Text } from "@radix-ui/themes"
-import { Avatar } from "../radixui/avatar"
+import { Flex, Popover, ScrollArea, Text, Avatar } from "@base"
 import type { Sizes, User } from "./types"
 
 type UsersDropdownProps = {
@@ -21,7 +20,7 @@ export const UsersDropdown: React.FC<UsersDropdownProps> = ({
         <Flex direction="column" gap="2">
           {users.map((user) => (
             <Flex key={user.name} align="center" gap="2">
-              <Avatar size={size} src={user.src} name={user.name} />
+              <Avatar size={size} src={user.avatar??undefined} name={user.name} />
               <Text size={size}>{user.name}</Text>
             </Flex>
           ))}
