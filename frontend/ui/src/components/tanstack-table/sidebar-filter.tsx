@@ -62,14 +62,12 @@ const MultiSelectFilter: React.FC<{
               id={`${column}-${String(option.value)}`}
               checked={isSelected}
               onCheckedChange={() => {
-                if (isSelected) {
-                  onChange(
-                    column,
-                    values.filter((val) => val !== option.value)
-                  );
-                } else {
-                  onChange(column, [...values, option.value]);
-                }
+                onChange(
+                  column,
+                  (prevValues: any[] = []) => prevValues.includes(option.value)
+                    ? prevValues.filter((val: any) => val !== option.value)
+                    : [...prevValues, option.value]
+                );
               }}
               className="mr-2"
             />

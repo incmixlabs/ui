@@ -45,7 +45,7 @@ export interface DataTableColumn<TData> {
     formatter?: (value: any, row: TData) => string;
   };
 
-  // Custom renderer
+  // Custom renderer - fixed type to be more flexible with value types
   renderer?: (value: any, row: TData) => ReactNode;
 }
 
@@ -91,7 +91,7 @@ export interface ExportOptions {
   enabled?: boolean;
   formats?: ("csv" | "excel" | "pdf")[];
   filename?: string;
-  customExporter?: (data: any[], columns: DataTableColumn<any>[]) => void;
+  customExporter?: <T>(data: T[], columns: DataTableColumn<T>[]) => void;
 }
 
 // Virtualization options
@@ -108,7 +108,7 @@ export interface ExpandableRowOptions<TData> {
   singleExpand?: boolean;
 }
 
-// NEW: Sidebar filter type
+// Sidebar filter type
 export type SidebarFilterType =
   | "select"
   | "multiSelect"
@@ -117,7 +117,7 @@ export type SidebarFilterType =
   | "boolean"
   | "text";
 
-// NEW: Sidebar filter configuration
+// Sidebar filter configuration
 export interface SidebarFilterConfig<TData> {
   type: SidebarFilterType;
   column: keyof TData | string;

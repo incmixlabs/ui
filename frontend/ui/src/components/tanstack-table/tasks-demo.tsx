@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react"
 import { DataTable } from "./tanstack-table"
-import { registerCellRenderer } from "./cell-renderers"
+import { registerCellRenderer, cellRendererRegistry } from "./cell-renderers"
 import { RowAction } from "./types"
 
 // Custom rating cell renderer (example of extending the table with a new column type)
@@ -23,8 +23,10 @@ const RatingCell: React.FC<{ value: number }> = ({ value }) => {
   )
 }
 
-// Register the custom cell renderer
-registerCellRenderer("Rating", (value) => <RatingCell value={value} />)
+// Register the custom cell renderer (with idempotency check)
+if (!cellRendererRegistry["Rating"]) {
+  registerCellRenderer("Rating", (value) => <RatingCell value={value} />)
+}
 
 // Define user interface
 interface User {

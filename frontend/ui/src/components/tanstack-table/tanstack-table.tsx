@@ -10,6 +10,7 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  getPaginationRowModel,
   useReactTable,
   RowSelectionState,
 } from "@tanstack/react-table";
@@ -886,7 +887,7 @@ export function DataTable<TData extends object>({
     getCoreRowModel: getCoreRowModel(),
     // Only use client pagination if server pagination is disabled
     ...(enablePagination && !serverPagination
-      ? { getPaginationRowModel: getCoreRowModel() }
+      ? { getPaginationRowModel: getPaginationRowModel() }
       : {}),
     getSortedRowModel: enableSorting ? getSortedRowModel() : undefined,
     getFilteredRowModel: enableFiltering ? getFilteredRowModel() : undefined,

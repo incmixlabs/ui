@@ -18,8 +18,8 @@ This documentation provides a comprehensive guide to using the TanStack Table co
 Here's a simple example of using the TanStack Table component:
 
 ```tsx
-import { DataTable } from "@incmix/ui/components/tanstak-table";
-import { DataTableColumn } from "@incmix/ui/components/tanstak-table/types";
+import { DataTable } from "@incmix/ui/components/tanstack-table";
+import { DataTableColumn } from "@incmix/ui/components/tanstack-table/types";
 
 // Sample data
 const data = [
@@ -156,7 +156,7 @@ You can apply custom formatting to columns using the `format` property:
 You can group columns under a common header:
 
 ```tsx
-import { ColumnGroup } from "@incmix/ui/components/tanstak-table/types";
+import { ColumnGroup } from "@incmix/ui/components/tanstack-table/types";
 
 const columnGroups: ColumnGroup<typeof data[0]>[] = [
   {
@@ -221,7 +221,7 @@ The table has built-in filtering capabilities. You can specify a column to use f
 Faceted filters provide multi-select filtering options that appear above the table:
 
 ```tsx
-import { DataTableFacet } from "@incmix/ui/components/tanstak-table/types";
+import { DataTableFacet } from "@incmix/ui/components/tanstack-table/types";
 
 const facets: DataTableFacet<typeof data[0]>[] = [
   {
@@ -256,7 +256,7 @@ const facets: DataTableFacet<typeof data[0]>[] = [
 For more advanced filtering, you can use the sidebar filters, which provide a collapsible sidebar with various filter types:
 
 ```tsx
-import { SidebarFilterConfig } from "@incmix/ui/components/tanstak-table/types";
+import { SidebarFilterConfig } from "@incmix/ui/components/tanstack-table/types";
 import { Calendar, UserCircle, Check, Tag, FileText } from "lucide-react";
 
 const sidebarFilters: SidebarFilterConfig<typeof data[0]>[] = [
@@ -398,7 +398,7 @@ The component includes built-in renderers for common data types, but you can als
 You can create and register custom cell renderers for specialized column types:
 
 ```tsx
-import { registerCellRenderer } from "@incmix/ui/components/tanstak-table/cell-renderers";
+import { registerCellRenderer } from "@incmix/ui/components/tanstack-table/cell-renderers";
 
 // Create a custom rating cell renderer
 const RatingCell: React.FC<{ value: number }> = ({ value }) => {
@@ -601,7 +601,7 @@ Here are some complete examples demonstrating different usage scenarios:
 
 ```tsx
 import React from "react";
-import { DataTable } from "@incmix/ui/components/tanstak-table";
+import { DataTable } from "@incmix/ui/components/tanstack-table";
 
 const UsersTableDemo = () => {
   // Define columns
