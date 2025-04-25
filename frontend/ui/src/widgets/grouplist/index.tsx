@@ -259,11 +259,7 @@ export const GroupList = ({
             ))}
           </Box>
         </Box>
-<<<<<<< HEAD
       </CardContainer>
-=======
-      </Card.Root>
->>>>>>> b023370 (chore: fix build issues)
     </>
   )
 }

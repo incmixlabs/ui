@@ -17,7 +17,7 @@ import { RxDBAttachmentsPlugin } from "rxdb/plugins/attachments"
 import { RxDBMigrationSchemaPlugin } from "rxdb/plugins/migration-schema"
 import { replicateRxCollection } from "rxdb/plugins/replication"
 import { RxDBUpdatePlugin } from "rxdb/plugins/update"
-import { wrappedValidateAjvStorage } from "rxdb/plugins/validate-ajv"
+import { wrappedValidateZSchemaStorage } from "rxdb/plugins/validate-z-schema"
 
 addRxPlugin(RxDBUpdatePlugin)
 addRxPlugin(RxDBMigrationSchemaPlugin)
@@ -27,7 +27,9 @@ if (import.meta.env.MODE === "development") {
   addRxPlugin(RxDBDevModePlugin)
 }
 
-const storage = wrappedValidateAjvStorage({ storage: getRxStorageIndexedDB() })
+const storage = wrappedValidateZSchemaStorage({
+  storage: getRxStorageIndexedDB(),
+})
 
 export const database = await createRxDatabase<TaskCollections>({
   storage,
