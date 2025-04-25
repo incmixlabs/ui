@@ -1,7 +1,7 @@
-import { IconButton } from "@components"
-import { Box, Flex, Heading, ScrollArea, Text ,CardContainer} from "@incmix/ui"
+import { useState } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import React, { useState } from "react"
+
+import { Box, Flex, Heading, IconButton, ScrollArea, Text ,CardContainer} from "@base"
 
 type Movie = {
   id: number
@@ -259,7 +259,11 @@ export const GroupList = ({
             ))}
           </Box>
         </Box>
+<<<<<<< HEAD
       </CardContainer>
+=======
+      </Card.Root>
+>>>>>>> b023370 (chore: fix build issues)
     </>
   )
 }

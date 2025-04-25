@@ -10,6 +10,7 @@ import { getInitials } from "@utils/strings"
 import type { ExtendSize } from "@incmix/ui/types"
 import { forwardRef } from "react"
 export type AvatarProps = {
+  email?: string
   id?: string
   size?: ExtendSize
   src?: string

@@ -12,6 +12,8 @@ export const StackLayout: React.FC<AvatarGroupProps> = ({
   direction = "left",
   stackOrder = "descending",
 }) => {
+  // @ts-ignore
+  // TBD - UseProfile and AvatarProps mapping
   const { visibleCount, remainingCount } = getVisibleCount(users, maxVisible)
   const visibleUsers = users.slice(0, visibleCount)
   const flipOrder =

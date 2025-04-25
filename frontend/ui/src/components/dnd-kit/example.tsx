@@ -15,21 +15,17 @@ import {
   useSortable,
 } from "@dnd-kit/sortable"
 import {
-  ActiveTask,
   Box,
-  CalendarWidget,
-  DoneTasks,
   Grid,
-  Heading,
+} from "@incmix/ui/base"
+import {  ActiveTask,
+  DoneTasks,
   InProgressTask,
   NewTasks,
   PostingTask,
-  ProfileSettings,
   ProjectWidgets,
-  RecentActivity,
   StatisticWidgets,
-  TotalTasks,
-} from "@incmix/ui"
+  TotalTasks,} from "@widgets"
 import { GripVertical } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { ReactNode } from "react"

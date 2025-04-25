@@ -8,13 +8,18 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./i18n": "./src/i18n/index.ts",
     "./auth": "./src/auth/index.ts",
     "./common": "./src/common/index.ts",
     "./dashboard": "./src/dashboard/index.ts",
-    "./layouts": "./src/layouts/index.ts",
+    "./file-manager": "./src/file-manager/index.ts",
+    "./i18n": "./src/i18n/index.ts",
+    "./notes": "./src/notes/index.ts",
+    "./onboarding": "./src/onboarding/index.ts",
     "./orgs": "./src/orgs/index.ts",
+    "./projects": "./src/projects/index.ts",
+    "./roles": "./src/roles/index.ts",
     "./tasks": "./src/tasks/index.ts",
+    "./translations": "./src/translations/index.ts",
     "./users": "./src/users/index.ts"
   },
   "scripts": {

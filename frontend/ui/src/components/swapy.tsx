@@ -37,12 +37,13 @@ export const SwapyLayout = ({
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
-
+    // @ts-ignore
     const instance = createSwapy(container, config)
     swapyRef.current = instance
 
     instance.enable(enable)
     instance.onSwap(
+      // @ts-ignore
       (event: { data: { object: Record<string, string | null> } }) => {
         onSwap(event.data.object)
       }

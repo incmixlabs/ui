@@ -1,41 +1,39 @@
 "use client"
 
 import { forwardRef } from "react"
-import { format } from "date-fns"
+import { DateTime} from "luxon"
 import { Calendar as CalendarIcon } from "lucide-react"
 
-import { Button, Calendar, Popover, PopoverContent, PopoverTrigger } from "@base"
-import { cn } from "@utils"
+import { Button, Calendar, Popover, type ButtonProps } from "@base"
 
-export const DatePicker = forwardRef<
+export const DatePicker =  forwardRef<
   HTMLDivElement,
   {
     date?: Date
+    variant?: ButtonProps["variant"]
+    className?: string
+    width?: string
     setDate: (date?: Date) => void
   }
->(function DatePickerCmp({ date, setDate }, ref) {
+>(function DatePickerCmp({ date, variant="soft", width="16", setDate }, ref) {
   return (
-    <Popover>
-      <PopoverTrigger>
+    <Popover.Root>
+      <Popover.Trigger>
         <Button
-          variant={"outline"}
-          className={cn(
-            "w-full justify-start text-left font-normal",
-            !date && "text-muted-foreground"
-          )}
+          variant={variant}
         >
-          <CalendarIcon className="mr-2 size-4" />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
+          <CalendarIcon width={width} />
+          {date ? DateTime.fromJSDate(date).toFormat("PPP") : <span>Pick a date</span>}
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" ref={ref}>
+      </Popover.Trigger>
+      <Popover.Content width="auto" ref={ref}>
         <Calendar
           mode="single"
           selected={date}
           onSelect={setDate}
-          initialFocus
+          autoFocus
         />
-      </PopoverContent>
-    </Popover>
+      </Popover.Content>
+    </Popover.Root>
   )
 })
