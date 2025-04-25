@@ -1,7 +1,7 @@
 "use client"
 
 import { forwardRef } from "react"
-import { DateTime} from "luxon"
+import { format} from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
 
 import { Button, Calendar, Popover, type ButtonProps } from "@base"
@@ -22,8 +22,8 @@ export const DatePicker =  forwardRef<
         <Button
           variant={variant}
         >
-          <CalendarIcon width={width} />
-          {date ? DateTime.fromJSDate(date).toFormat("PPP") : <span>Pick a date</span>}
+          <CalendarIcon width={width} height={width}/>
+          {date ? format(date, "PPP") : <span>Pick a date</span>}
         </Button>
       </Popover.Trigger>
       <Popover.Content width="auto" ref={ref}>

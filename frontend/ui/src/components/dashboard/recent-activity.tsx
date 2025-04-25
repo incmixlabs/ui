@@ -1,4 +1,3 @@
-import React from "react"
 import { Box, Flex, Heading, IconButton, Text } from "@base"
 import { Ellipsis } from "lucide-react"
 import { activityGroups } from "./data"
@@ -6,12 +5,12 @@ import { activityGroups } from "./data"
 export default function RecentActivity() {
   return (
     <>
-      <div className="mb-4 flex items-center justify-between">
+      <Flex align="center" justify="between" className="mb-4">
         <Heading size={"4"}>Recent Activity</Heading>
-        <IconButton variant="ghost">
+        <IconButton variant="ghost" aria-label="More options">
           <Ellipsis className="h-5 w-5" />
         </IconButton>
-      </div>
+      </Flex>
 
       <div className="space-y-6">
         {activityGroups.map((group) => (

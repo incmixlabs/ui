@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import React from "react"
 type ActiveModifiers = {
   [modifier: string]: boolean | undefined;

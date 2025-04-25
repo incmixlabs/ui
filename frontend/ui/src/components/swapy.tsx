@@ -38,7 +38,7 @@ export const SwapyLayout = ({
     const container = containerRef.current
     if (!container) return
     // @ts-ignore
-    const instance = createSwapy(container, config)
+    const instance = createSwapy(container as HTMLElement, config)
     swapyRef.current = instance
 
     instance.enable(enable)
