@@ -4,6 +4,7 @@ import { useEditingStore } from "@incmix/store"
 import {
   Box,
   CardContainer,
+  CreateProjectModal,
   Grid,
   SwapyExclude,
   SwapyLayout,
@@ -173,7 +174,7 @@ const DashboardHomePage: React.FC = () => {
         <Heading size="6" className="pb-4">
           {t("dashboard:title")}
         </Heading>
-
+        <CreateProjectModal />
         <Flex direction="column" gap="6">
           {slottedWidgets.length && (
             <SwapyLayout

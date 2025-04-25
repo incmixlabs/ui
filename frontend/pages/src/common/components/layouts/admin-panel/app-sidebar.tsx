@@ -17,7 +17,11 @@ import {
 import React from "react"
 
 import { useAuth, useCurrentUser } from "@auth"
-import { useEditingStore, useOrganizationStore } from "@incmix/store"
+import {
+  useDashboardStore,
+  useEditingStore,
+  useOrganizationStore,
+} from "@incmix/store"
 import { DashboardSidebar, ScrollArea } from "@incmix/ui"
 import { USERS_API_URL } from "@incmix/ui/constants"
 import {
@@ -46,6 +50,7 @@ import { OrgSwitcher } from "./org-switcher"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation(["common", "sidebar"])
+  const dashboards = useDashboardStore((state) => state.projects)
   const { pathname } = useLocation()
   const { authUser: user } = useAuth()
   const { isEditing } = useEditingStore()
@@ -75,6 +80,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const ability = createAbilityFromPermissions(permissions ?? [])
 
   const navItems = React.useMemo(() => {
+    const dashboardSubItems = [
+      {
+        title: t("sidebar:home"),
+        url: "/dashboard/home",
+        isSelected: pathname.includes("/dashboard/home"),
+      },
+      ...(dashboards.length > 0
+        ? dashboards.map((dashboard) => ({
+            title: dashboard.name || `Project ${dashboard.id}`,
+            url: `/dashboard/project/${dashboard.id}`,
+            isSelected: pathname.includes(`/dashboard/project/${dashboard.id}`),
+          }))
+        : []),
+    ]
+
     return [
       {
         title: t("sidebar:dashboard"),
@@ -83,44 +103,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         isSelected: pathname.includes("/dashboard"),
         isActive:
           pathname.startsWith("/dashboard") ||
-          pathname.includes("/home") ||
-          pathname.includes("/project-1") ||
-          pathname.includes("/project-2"),
+          pathname.includes("/dashboard/home") ||
+          dashboards.some((dashboard) =>
+            pathname.includes(`/dashboard/project/${dashboard.id}`)
+          ),
         items: ability.can("read", "Member")
-          ? [
-              {
-                title: t("sidebar:home"),
-                url: "/dashboard/home",
-                isSelected: pathname.includes("/dashboard/home"),
-              },
-              {
-                title: t("sidebar:project-1"),
-                url: "/dashboard/project-1",
-                isSelected: pathname.includes("/dashboard/project-1"),
-              },
-              {
-                title: t("sidebar:project-2"),
-                url: "/dashboard/project-2",
-                isSelected: pathname.includes("/dashboard/project-2"),
-              },
-            ]
-          : [
-              {
-                title: t("sidebar:home"),
-                url: "/dashboard/home",
-                isSelected: pathname.includes("/dashboard/home"),
-              },
-              {
-                title: t("sidebar:project-1"),
-                url: "/dashboard/project-1",
-                isSelected: pathname.includes("/dashboard/project-1"),
-              },
-              {
-                title: t("sidebar:project-2"),
-                url: "/dashboard/project-2",
-                isSelected: pathname.includes("/dashboard/project-2"),
-              },
-            ],
+          ? dashboardSubItems
+          : dashboardSubItems,
       },
       {
         title: t("sidebar:inbox"),

@@ -38,7 +38,8 @@ import { EditWidgetsControl } from "./home"
 
 import "react-grid-layout/css/styles.css"
 import "react-resizable/css/styles.css"
-import { useEditingStore } from "@incmix/store"
+import { useDashboardStore, useEditingStore } from "@incmix/store"
+import { useParams } from "@tanstack/react-router"
 import { Trash } from "lucide-react"
 
 export interface LayoutItem {
@@ -73,12 +74,21 @@ const DEFAULT_SIZES: Record<Breakpoint, { w: number; h: number }> = {
   xxs: { w: 2, h: 6 },
 }
 
-const DashboardProject1: React.FC = () => {
-  const { t } = useTranslation(["dashboard", "common"])
+const DynamicDashboardPage: React.FC = () => {
+  const { projectId } = useParams({ from: "/dashboard/project/$projectId" })
+  const project = useDashboardStore((state) => state.getProjectById(projectId))
+
   const { authUser, isLoading } = useAuth()
   const { isEditing, setIsEditing } = useEditingStore()
   const [activeDragId, setActiveDragId] = useState<string | null>(null)
-  const [activeDragData, setActiveDragData] = useState<any>(null)
+  interface DragData {
+    title?: string
+    image?: string
+    [key: string]: any
+  }
+  const [activeDragData, setActiveDragData] = useState<
+    DragData | null | undefined
+  >(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -776,6 +786,8 @@ const DashboardProject1: React.FC = () => {
   if (isLoading) return <LoadingPage />
   if (!authUser) return null
 
+  if (!project) return <div>Project not found</div>
+
   const isEmpty = gridComponents.length === 0
 
   return (
@@ -790,8 +802,8 @@ const DashboardProject1: React.FC = () => {
       >
         <Box as="div" className="container mx-auto flex overflow-x-hidden">
           <Box className="h-full w-full overflow-hidden ">
-            <Heading size="6" className="pb-4">
-              {t("dashboard:title")}
+            <Heading size="6" className="pb-4 capitalize">
+              {project.name}
             </Heading>
             <Box
               className={`h-full rounded-lg transition-colors duration-200 ${
@@ -868,4 +880,4 @@ const DashboardProject1: React.FC = () => {
   )
 }
 
-export default DashboardProject1
+export default DynamicDashboardPage

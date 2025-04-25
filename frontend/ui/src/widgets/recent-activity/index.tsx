@@ -1,4 +1,4 @@
-import { Box, CardContainer, Flex, Heading, IconButton, Text } from "@incmix/ui"
+import { Box, CardContainer, cn, Flex, Heading, IconButton, Text } from "@incmix/ui"
 import { Ellipsis } from "lucide-react"
 interface ActivityItem {
   id: string
@@ -112,19 +112,19 @@ const activityGroups: ActivityGroup[] = [
   },
 ]
 
-export function RecentActivity() {
+export function RecentActivity({className}: {className?: string}) {
   return (
-    <CardContainer>
-      <div className="mb-4 flex items-center justify-between">
+    <Box className={cn("", className)}>
+      <Flex align={"center"} justify={"between"} className="mb-4">
         <Heading size={"4"}>Recent Activity</Heading>
         <IconButton variant="ghost">
           <Ellipsis className="h-5 w-5" />
         </IconButton>
-      </div>
+      </Flex>
 
-      <div className="space-y-6">
+      <Box className="space-y-6">
         {activityGroups.map((group) => (
-          <div key={group.date} className="">
+          <Box key={group.date} className="">
             <Heading size={"2"} className="pl-5 font-medium">
               {group.date}
             </Heading>
@@ -152,9 +152,9 @@ export function RecentActivity() {
                 </Box>
               </Flex>
             ))}
-          </div>
+          </Box>
         ))}
-      </div>
-    </CardContainer>
+      </Box>
+    </Box>
   )
 }
