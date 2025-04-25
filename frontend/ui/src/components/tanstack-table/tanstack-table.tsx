@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useMemo, useState, useCallback, useEffect } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,7 +12,6 @@ import {
   getSortedRowModel,
   useReactTable,
   RowSelectionState,
-  CellContext
 } from "@tanstack/react-table";
 import {
   ArrowUpDown,
@@ -25,7 +24,7 @@ import {
   Check,
   X,
   Download,
-  Filter,
+
   SlidersHorizontal
 } from "lucide-react";
 import { TableSidebar } from "./sidebar-filter";

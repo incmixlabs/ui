@@ -8,8 +8,8 @@ This documentation provides a comprehensive guide to using the TanStack Table co
 2. [Column Configuration](#column-configuration)
 3. [Filtering Options](#filtering-options)
 4. [Props Reference](#props-reference)
-5. [Advanced Usage Examples](#advanced-usage-examples)
-6. [Custom Cell Renderers](#custom-cell-renderers)
+5. [Custom Cell Renderers](#custom-cell-renderers)
+6. [Advanced Usage Examples](#advanced-usage-examples)
 7. [Real-World Examples](#real-world-examples)
 8. [Troubleshooting](#troubleshooting)
 

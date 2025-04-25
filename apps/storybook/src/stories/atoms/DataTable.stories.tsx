@@ -1,5 +1,5 @@
 
-import { SidebarFilterDemo, UsersTableDemo,TasksTableDemo } from "@incmix/ui/tanstak-table";
+import { SidebarFilterDemo, UsersTableDemo,TasksTableDemo } from "@incmix/ui/tanstack-table";
 
 import type { Meta, StoryObj } from "@storybook/react";
 
