@@ -102,26 +102,26 @@ const dateRangeFilterFn = (row: any, columnId: string, filterValue: { start?: st
   if (filterValue.start && filterValue.end) {
     const startDate = new Date(filterValue.start);
     const endDate = new Date(filterValue.end);
-    
+
     // Check for invalid dates
     if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) return false;
-    
+
     // Set end date to end of day
     endDate.setHours(23, 59, 59, 999);
     return date >= startDate && date <= endDate;
   } else if (filterValue.start) {
     const startDate = new Date(filterValue.start);
-    
+
     // Check for invalid date
     if (Number.isNaN(startDate.getTime())) return false;
-    
+
     return date >= startDate;
   } else if (filterValue.end) {
     const endDate = new Date(filterValue.end);
-    
+
     // Check for invalid date
     if (Number.isNaN(endDate.getTime())) return false;
-    
+
     // Set end date to end of day
     endDate.setHours(23, 59, 59, 999);
     return date <= endDate;
@@ -711,10 +711,13 @@ const exportCSV = <TData extends object>(
   );
 
   // Combine headers and rows
-  const csvContent = [
-    headers.join(','),
-    ...rows.map(row => row.join(','))
-  ].join('\n');
+  // TBD - move to utils/string
+    const escape = (v: string) =>
+      `"${v.replace(/"/g, '""').replace(/\n/g, '\\n')}"`;
+    const csvContent = [
+      headers.map(escape).join(','),
+         ...rows.map(r => r.map(v => escape(String(v))).join(','))
+        ].join('\n');
 
   // Create and download file
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
