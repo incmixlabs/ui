@@ -205,9 +205,9 @@ export function FilterGroup<TData>({
   currentValue,
   table
 }: FilterGroupProps<TData>) {
-  // Always start collapsed, regardless of initialCollapsed prop
-  // This makes all sidebar items collapsed by default
-  const [isOpen, setIsOpen] = useState(false);
+  // Initialize collapsed state based on initialCollapsed prop
+  // When initialCollapsed is true or undefined, the filter starts collapsed
+  const [isOpen, setIsOpen] = useState(!filter.initialCollapsed);
 
   const toggleGroup = () => {
     setIsOpen(!isOpen);
