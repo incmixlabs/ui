@@ -16,7 +16,12 @@ import {
   TextField,
   Tooltip,
 } from "@incmix/ui/base"
-import type { MemberDetails, Organization } from "@incmix/utils/types"
+import {
+  UserRoles,
+  type MemberDetails,
+  type Organization,
+  type UserRole,
+} from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 
 import { useAuth } from "../auth"

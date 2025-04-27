@@ -13,6 +13,9 @@ import {
   getObjectFormSchema,
 } from "./utils"
 
+export type * from "./types"
+export * from "./utils"
+
 export function AutoFormSubmit({
   children,
   className,
