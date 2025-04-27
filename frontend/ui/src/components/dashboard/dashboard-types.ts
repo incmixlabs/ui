@@ -12,6 +12,7 @@ export interface IWidgetGroup {
   groupId: string
   title: string
   memberIds: string[]
+  arrangement: "vertical" | "horizontal"
 }
 
 export interface ILayoutItem {

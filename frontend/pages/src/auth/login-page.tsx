@@ -1,11 +1,17 @@
 import { LoadingPage } from "@common"
-import { FormField, ReactiveButton } from "@incmix/ui"
 import { Box, Flex, Heading, Text } from "@incmix/ui"
-import { useForm } from "@tanstack/react-form"
+import { ReactiveButton } from "@incmix/ui"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@incmix/ui"
 import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { Link } from "@tanstack/react-router"
-import { zodValidator } from "@tanstack/zod-form-adapter"
 import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import {
@@ -15,6 +21,8 @@ import {
   useLogin,
 } from "./hooks/auth"
 
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm as useHookForm } from "react-hook-form"
 import { z } from "zod"
 import { AuthLayout } from "./layouts/auth-layout"
 
@@ -33,84 +41,91 @@ function LoginForm() {
     isSuccess: isLoginSuccess,
   } = useLogin()
 
-  const form = useForm({
+  // Define the form validation schema
+  const formSchema = z.object({
+    email: z.string().email(t("emailValidation")),
+    password: z.string().min(1, t("passwordValidation")),
+  })
+
+  // Use react-hook-form instead of TanStack form
+  const form = useHookForm({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
     },
-    onSubmit: ({ value }) => {
-      handleLogin(value.email, value.password)
-    },
   })
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    handleLogin(values.email, values.password)
+  }
 
   return (
     <>
       <Heading size="4" mb="4" className="text-gray-900 dark:text-white">
         {t("title")}
       </Heading>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          form.handleSubmit()
-        }}
-      >
-        <Flex direction="column" gap="4">
-          <form.Field
-            name="email"
-            validatorAdapter={zodValidator()}
-            validators={{
-              onChange: z.string().email(t("emailValidation")),
-            }}
-          >
-            {(field) => (
-              <FormField
-                name="email"
-                label={t("common:email")}
-                type="email"
-                field={field}
-              />
-            )}
-          </form.Field>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <Flex direction="column" gap="4">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("common:email")}</FormLabel>
+                  <FormControl>
+                    <input
+                      type="email"
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <form.Field
-            name="password"
-            validatorAdapter={zodValidator()}
-            validators={{
-              onChange: z.string().min(1, t("passwordValidation")),
-            }}
-          >
-            {(field) => (
-              <FormField
-                name="password"
-                label={t("common:password")}
-                type="password"
-                field={field}
-              />
-            )}
-          </form.Field>
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("common:password")}</FormLabel>
+                  <FormControl>
+                    <input
+                      type="password"
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {loginError && (
-            <Text color="red" size="2">
-              {loginError.message}
-            </Text>
-          )}
-          <Box className="text-left">
-            <Link to="/forgot-password">
-              <Text color="blue">{t("login:forgotPassword")}</Text>
-            </Link>
-          </Box>
-          <ReactiveButton
-            type="submit"
-            color="blue"
-            loading={isLoginLoading}
-            success={isLoginSuccess}
-            className="w-full"
-          >
-            {t("submit")}
-          </ReactiveButton>
-        </Flex>
-      </form>
+            {loginError && (
+              <Text color="red" size="2">
+                {loginError.message}
+              </Text>
+            )}
+            <Box className="text-left">
+              <Link to="/forgot-password">
+                <Text color="blue">{t("login:forgotPassword")}</Text>
+              </Link>
+            </Box>
+            <ReactiveButton
+              type="submit"
+              color="blue"
+              loading={isLoginLoading}
+              success={isLoginSuccess}
+              className="w-full"
+            >
+              {t("submit")}
+            </ReactiveButton>
+          </Flex>
+        </form>
+      </Form>
 
       {/* OR separator */}
       <div className="relative my-4 flex w-full items-center">

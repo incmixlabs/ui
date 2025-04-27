@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 
 import { LoadingPage } from "@common"
@@ -27,6 +25,7 @@ import {
   SelectionRectangle,
   WidgetDropZone,
   WidgetGroup,
+  WidgetSelection,
   dashboardImg,
   sidebarComponents,
 } from "@incmix/ui/dashboard"
@@ -88,7 +87,7 @@ const DEFAULT_SIZES: Record<Breakpoint, { w: number; h: number }> = {
   xxs: { w: 2, h: 6 },
 }
 
-const GROUP_SIZES: Record<Breakpoint, { w: number; h: number }> = {
+const _GROUP_SIZES: Record<Breakpoint, { w: number; h: number }> = {
   lg: { w: 6, h: 12 },
   md: { w: 6, h: 12 },
   sm: { w: 6, h: 12 },
@@ -479,7 +478,7 @@ const DynamicDashboardPage: React.FC = () => {
     })
   }
 
-  const groupSelectedWidgets = () => {
+  const groupSelectedWidgets = (arrangement: "vertical" | "horizontal") => {
     if (selectedWidgets.length < 2) {
       toast.error("Please select at least two widgets to group.")
       return
@@ -488,6 +487,7 @@ const DynamicDashboardPage: React.FC = () => {
     // Create a new group ID
     const groupId = `group-${Date.now()}`
 
+    // Create a group title based on the first few widgets
     const selectedComponents = gridComponents.filter((comp) =>
       selectedWidgets.includes(comp.slotId)
     )
@@ -496,14 +496,18 @@ const DynamicDashboardPage: React.FC = () => {
         ? `${selectedComponents[0].title}, ${selectedComponents[1].title}, +${selectedComponents.length - 2}`
         : selectedComponents.map((comp) => comp.title).join(", ")
 
+    // Create the new group
     const newGroup: IWidgetGroup = {
       groupId,
       title: groupTitle,
       memberIds: [...selectedWidgets],
+      arrangement,
     }
 
+    // Update widget groups
     setWidgetGroups((prev) => [...prev, newGroup])
 
+    // Mark components as grouped
     setGridComponents((prev) =>
       prev.map((comp) => {
         if (selectedWidgets.includes(comp.slotId)) {
@@ -517,34 +521,58 @@ const DynamicDashboardPage: React.FC = () => {
       })
     )
 
+    // Calculate the dimensions for the group based on the selected widgets
     const newLayouts = { ...defaultLayouts }
 
+    // Process each breakpoint
     Object.keys(newLayouts).forEach((breakpoint) => {
       const breakpointLayout = newLayouts[breakpoint as Breakpoint]
-
-      const firstWidgetLayout = breakpointLayout.find(
-        (item) => item.i === selectedWidgets[0]
+      const selectedLayouts = breakpointLayout.filter((item) =>
+        selectedWidgets.includes(item.i)
       )
 
-      if (firstWidgetLayout) {
-        const { x, y } = firstWidgetLayout
-        const { w, h } = GROUP_SIZES[breakpoint as Breakpoint]
+      if (selectedLayouts.length > 0) {
+        // Calculate the bounding box for the selected widgets
+        let minX = Number.POSITIVE_INFINITY
+        let minY = Number.POSITIVE_INFINITY
+        let maxX = Number.NEGATIVE_INFINITY
+        let maxY = Number.NEGATIVE_INFINITY
+        let totalWidth = 0
+        let totalHeight = 0
 
+        selectedLayouts.forEach((item) => {
+          minX = Math.min(minX, item.x)
+          minY = Math.min(minY, item.y)
+          maxX = Math.max(maxX, item.x + item.w)
+          maxY = Math.max(maxY, item.y + item.h)
+
+          if (arrangement === "horizontal") {
+            totalWidth += item.w
+            totalHeight = Math.max(totalHeight, item.h)
+          } else {
+            totalWidth = Math.max(totalWidth, item.w)
+            totalHeight += item.h
+          }
+        })
+
+        // Create a new layout item for the group
         const groupLayoutItem: LayoutItem = {
           i: groupId,
-          x,
-          y,
-          w,
-          h,
+          x: minX,
+          y: minY,
+          w: arrangement === "horizontal" ? totalWidth : maxX - minX,
+          h: arrangement === "vertical" ? totalHeight : maxY - minY,
           moved: false,
           static: false,
           resizeHandles: ["s", "w", "e", "n"] as const,
         }
 
+        // Remove the selected widgets from the layout
         const filteredLayout = breakpointLayout.filter(
           (item) => !selectedWidgets.includes(item.i)
         )
 
+        // Add the group layout item
         newLayouts[breakpoint as Breakpoint] = [
           groupLayoutItem,
           ...filteredLayout,
@@ -552,14 +580,14 @@ const DynamicDashboardPage: React.FC = () => {
       }
     })
 
+    // Update layouts
     setDefaultLayouts(newLayouts)
-
-    // setSelectedWidgets([])
 
     // Clear selection after grouping
     clearSelection()
+
     toast.success("Widgets grouped", {
-      description: `${selectedWidgets.length} widgets have been grouped together.`,
+      description: `${selectedWidgets.length} widgets have been grouped together in a ${arrangement} arrangement.`,
     })
   }
 
@@ -655,14 +683,26 @@ const DynamicDashboardPage: React.FC = () => {
     })
   }
 
+  // Combine all items for rendering (both individual widgets and groups)
+  const allItems = [
+    ...gridComponents
+      .filter((comp) => !comp.isGrouped)
+      .map((item) => ({
+        id: item.slotId,
+        type: "widget",
+        data: item,
+      })),
+    ...widgetGroups.map((group) => ({
+      id: group.groupId,
+      type: "group",
+      data: group,
+    })),
+  ]
+
   if (isLoading) return <LoadingPage />
   if (!authUser) return null
 
   const isEmpty = gridComponents.length === 0
-
-  // const visibleComponents = gridComponents.filter(
-  //   (comp) => !comp?.isGrouped || isEditing,
-  // );
 
   console.log(gridComponents)
 
@@ -709,54 +749,90 @@ const DynamicDashboardPage: React.FC = () => {
                   compactType="vertical"
                   useCSSTransforms={true}
                 >
-                  {gridComponents.map((item) => (
-                    <Box
-                      key={item.slotId}
+                  {allItems.map((item) => (
+                    <div
+                      key={item.id}
                       className="relative h-full rounded-xl"
-                      data-widget-id={item.slotId}
+                      data-widget-id={item.id}
                     >
-                      <WidgetDropZone
-                        id={item.slotId}
-                        isEditing={isEditing}
-                        handleRemoveComponent={handleRemoveComponent}
-                      >
-                        <Box className="relative h-full">{item.component}</Box>
-                      </WidgetDropZone>
-                    </Box>
-                  ))}
-
-                  {widgetGroups.map((group) => (
-                    <Box
-                      key={group.groupId}
-                      data-widget-id={group.groupId}
-                      className="relative h-full rounded-xl"
-                    >
-                      <WidgetGroup
-                        id={group.groupId}
-                        title={group.title}
-                        isEditing={isEditing}
-                        onUngroup={() => ungroupWidgets(group.groupId)}
-                        onRemove={() => removeWidgetGroup(group.groupId)}
-                      >
-                        {group.memberIds.map((memberId) => {
-                          const component = gridComponents.find(
-                            (comp) => comp.slotId === memberId
-                          )
-                          if (!component) return null
-
-                          return (
-                            <Box
-                              key={memberId}
-                              className="relative h-full rounded-lg bg-white p-2 shadow-sm"
+                      {item.type === "widget" ? (
+                        isEditing ? (
+                          <WidgetSelection id={item.id}>
+                            <div
+                              className={`h-full w-full ${isEditing ? "bg-gray-5 p-2 shadow" : ""}`}
                             >
+                              {isEditing && (
+                                <IconButton
+                                  className="absolute top-3 right-3 z-[2]"
+                                  onMouseDown={(e) => e.stopPropagation()}
+                                  onTouchStart={(e) => e.stopPropagation()}
+                                  color="red"
+                                  onClick={() => handleRemoveComponent(item.id)}
+                                >
+                                  <Trash size={16} />
+                                </IconButton>
+                              )}
                               <div className="widget-content relative h-full">
-                                {component.component}
+                                {item.data.component}
                               </div>
-                            </Box>
-                          )
-                        })}
-                      </WidgetGroup>
-                    </Box>
+                            </div>
+                          </WidgetSelection>
+                        ) : (
+                          <WidgetDropZone
+                            id={item.id}
+                            isEditing={isEditing}
+                            handleRemoveComponent={handleRemoveComponent}
+                          >
+                            <div
+                              className={`h-full w-full ${isEditing ? "bg-gray-5 p-2 shadow" : ""}`}
+                            >
+                              {isEditing && (
+                                <IconButton
+                                  className="absolute top-3 right-3 z-[2]"
+                                  onMouseDown={(e) => e.stopPropagation()}
+                                  onTouchStart={(e) => e.stopPropagation()}
+                                  color="red"
+                                  onClick={() => handleRemoveComponent(item.id)}
+                                >
+                                  <Trash size={16} />
+                                </IconButton>
+                              )}
+                              <div className="widget-content relative h-full">
+                                {item.data.component}
+                              </div>
+                            </div>
+                          </WidgetDropZone>
+                        )
+                      ) : (
+                        <WidgetGroup
+                          id={item.id}
+                          title={item.data.title}
+                          isEditing={isEditing}
+                          onUngroup={() => ungroupWidgets(item.id)}
+                          onRemove={() => removeWidgetGroup(item.id)}
+                          arrangement={item.data.arrangement}
+                        >
+                          {/* Render group members */}
+                          {item.data.memberIds.map((memberId) => {
+                            const component = gridComponents.find(
+                              (comp) => comp.slotId === memberId
+                            )
+                            if (!component) return null
+
+                            return (
+                              <div
+                                key={memberId}
+                                className="relative h-full rounded-lg bg-white p-2 shadow-sm"
+                              >
+                                <div className="widget-content relative h-full">
+                                  {component.component}
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </WidgetGroup>
+                      )}
+                    </div>
                   ))}
                 </ResponsiveGridLayout>
               )}
@@ -769,7 +845,10 @@ const DynamicDashboardPage: React.FC = () => {
 
       {/* Grouping toolbar */}
       {isEditing && selectedWidgets.length > 0 && (
-        <GroupingToolbar onGroup={groupSelectedWidgets} />
+        <GroupingToolbar
+          onGroupVertical={() => groupSelectedWidgets("vertical")}
+          onGroupHorizontal={() => groupSelectedWidgets("horizontal")}
+        />
       )}
       <DragOverlay>
         {activeDragId && activeDragData && (

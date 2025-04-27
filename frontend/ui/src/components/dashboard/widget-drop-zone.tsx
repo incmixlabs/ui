@@ -6,77 +6,78 @@ import { memo } from "react";
 import { useSelectionStore } from "@hooks";
 import { Checkbox, IconButton,Box} from "@incmix/ui/base";
 import { cn } from "@utils";
-import { Trash } from "lucide-react";
+import { Link, Trash } from "lucide-react";
 
 interface WidgetDropZoneProps {
-  id: string;
-  isEditing: boolean;
-  handleRemoveComponent: (id: string) => void;
-  children: React.ReactNode;
+  id: string
+  isEditing: boolean
+  handleRemoveComponent: (id: string) => void
+  isGrouped?: boolean
+  groupId?: string
+  children: React.ReactNode
 }
 
 export const WidgetDropZone = memo(function WidgetDropZone({
   id,
   isEditing,
   handleRemoveComponent,
+  isGrouped = false,
+  groupId,
   children,
 }: WidgetDropZoneProps) {
-  const { selectedWidgets, toggleSelectedWidget } = useSelectionStore();
-  const isSelected = selectedWidgets.includes(id);
+  const { selectedWidgets, toggleSelectedWidget } = useSelectionStore()
+  const isSelected = selectedWidgets.includes(id)
   const { isOver, setNodeRef } = useDroppable({
     id: `widget-${id}`,
     disabled: !isEditing,
     data: {
       widgetId: id,
       type: "widget-drop-zone",
+      groupId,
     },
-  });
+  })
 
   return (
-    <Box
+    <div
       ref={setNodeRef}
       className={cn(
-        "relative h-full w-full transition-all duration-150 ",
-        isEditing && "p-2 ",
-        isEditing && isOver ? "bg-indigo-9 p-2 rounded-xl":"bg-gray-5 shadow rounded-xl" ,
+        "relative h-full w-full transition-all duration-150",
+        isOver && isEditing && "ring-2 ring-blue-500 ring-inset bg-blue-100/30",
+        isSelected && isEditing && "ring-2 ring-blue-500 ring-inset bg-blue-100/30",
+        isGrouped && "group-widget",
       )}
       data-widget-id={id}
+      data-group-id={groupId}
     >
-      {isEditing && (
-        <div
-          className={`absolute inset-0  rounded-lg transition-colors ${
-            isSelected && "ring-2 ring-indigo-9 z-[1] ring-inset bg-blue-100/30"
-          }`}
-          data-widget-id={id}
-        ></div>
-      )}
-      {isEditing && (
-        <>
-            <Checkbox
-             onMouseDown={(e) => e.stopPropagation()}
-             onTouchStart={(e) => e.stopPropagation()}
-              checked={isSelected}
-              onCheckedChange={() => toggleSelectedWidget(id)}
-              className="absolute left-3 top-3 z-[2] h-5 w-5 border-2 border-indigo-9 bg-white"
-            />
-        </>
-      )}
       {isEditing && (
         <>
           <IconButton
-            className="absolute top-3 right-3 z-[2]"
+            className="absolute top-3 right-3 z-20"
             onMouseDown={(e) => e.stopPropagation()}
             onTouchStart={(e) => e.stopPropagation()}
             color="red"
-            disabled={isSelected}
             onClick={() => handleRemoveComponent(id)}
           >
             <Trash size={16} />
           </IconButton>
+          <div className="absolute left-2 top-2 z-20 flex items-center gap-1">
+            <Checkbox
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
+              checked={isSelected}
+              onCheckedChange={() => toggleSelectedWidget(id)}
+              className="h-5 w-5 border-2 border-blue-500 bg-white"
+            />
+            {isGrouped && (
+              <div className="bg-blue-100 rounded-full p-1 ml-1">
+                <Link size={12} className="text-blue-600" />
+              </div>
+            )}
+          </div>
         </>
       )}
 
       {children}
-    </Box>
-  );
-});
+    </div>
+  )
+})
