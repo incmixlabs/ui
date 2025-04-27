@@ -38,7 +38,7 @@ export const WidgetDropZone = memo(function WidgetDropZone({
   })
 
   return (
-    <div
+    <Box
       ref={setNodeRef}
       className={cn(
         "relative h-full w-full transition-all duration-150",
@@ -60,7 +60,7 @@ export const WidgetDropZone = memo(function WidgetDropZone({
           >
             <Trash size={16} />
           </IconButton>
-          <div className="absolute left-2 top-2 z-20 flex items-center gap-1">
+          <Box className="absolute left-2 top-2 z-20 flex items-center gap-1">
             <Checkbox
               onMouseDown={(e) => e.stopPropagation()}
               onTouchStart={(e) => e.stopPropagation()}
@@ -73,11 +73,11 @@ export const WidgetDropZone = memo(function WidgetDropZone({
                 <Link size={12} className="text-blue-600" />
               </div>
             )}
-          </div>
+          </Box>
         </>
       )}
 
       {children}
-    </div>
+    </Box>
   )
 })

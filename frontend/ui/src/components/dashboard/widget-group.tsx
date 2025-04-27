@@ -1,6 +1,6 @@
 "use client";
 
-import { IconButton } from "@incmix/ui";
+import { Box, Flex, Heading, IconButton } from "@incmix/ui/base";
 import {
   LayoutGridIcon as LayoutHorizontal,
   LayoutGridIcon as LayoutVertical,
@@ -29,18 +29,18 @@ export function WidgetGroup({
   arrangement,
 }: WidgetGroupProps) {
   return (
-    <div className="group-container h-full w-full rounded-lg border-2 border-dashed border-blue-400 bg-blue-50/10 p-3">
-      <div className="mb-2 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+    <Box className="group-container h-full w-full rounded-lg border-2 border-dashed border-blue-400 bg-blue-50/10 p-3">
+      <Flex justify={"between"} align={"center"} className="mb-2">
+        <Flex align={"center"} gap={"2"}>
           {arrangement === "vertical" ? (
             <LayoutVertical size={16} className="text-blue-500" />
           ) : (
             <LayoutHorizontal size={16} className="text-blue-500" />
           )}
-          <h3 className="text-sm font-medium">{title}</h3>
-        </div>
+          <Heading>{title}</Heading>
+        </Flex>
         {isEditing && (
-          <div className="flex items-center gap-1">
+          <Flex align={"center"} gap={"1"}>
             <IconButton
               color="blue"
               onClick={(e) => {
@@ -61,10 +61,10 @@ export function WidgetGroup({
             >
               <Trash size={14} />
             </IconButton>
-          </div>
+          </Flex>
         )}
-      </div>
-      <div
+      </Flex>
+      <Box
         className={`grid h-[calc(100%-2rem)] gap-2 ${
           arrangement === "vertical"
             ? "grid-cols-1"
@@ -72,7 +72,7 @@ export function WidgetGroup({
         }`}
       >
         {children}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }

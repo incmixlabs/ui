@@ -1,5 +1,5 @@
 import { useSelectionStore } from "@hooks"
-import { Button } from "@incmix/ui/base"
+import { Box, Button, Flex } from "@incmix/ui/base"
 import { X, LayoutGridIcon as LayoutHorizontal, LayoutGridIcon as LayoutVertical } from "lucide-react"
 
 interface GroupingToolbarProps {
@@ -11,9 +11,9 @@ export function GroupingToolbar({ onGroupVertical, onGroupHorizontal }: Grouping
   const selectedCount = selectedWidgets.length
 
   return (
-    <div className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-lg bg-white p-2 shadow-lg">
-      <div className="flex items-center gap-4">
-        <span className="text-sm font-medium">{selectedCount} widgets selected</span>
+    <Box className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 rounded-lg bg-white p-2 shadow-lg">
+      <Flex align={"center"} gap={"4"}>
+        <Box as="span" className="text-sm font-medium">{selectedCount} widgets selected</Box>
         <Button  onClick={onGroupVertical} disabled={selectedCount < 2} className="flex items-center gap-2">
           <LayoutVertical size={16} />
           Group Vertically
@@ -26,7 +26,7 @@ export function GroupingToolbar({ onGroupVertical, onGroupHorizontal }: Grouping
           <X size={16} />
           Cancel
         </Button>
-      </div>
-    </div>
+      </Flex>
+    </Box>
   )
 }

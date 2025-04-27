@@ -118,7 +118,7 @@ const DynamicDashboardPage: React.FC = () => {
   )
 
   // Set up marquee selection
-  const { startPoint, endPoint, selectedIds, isSelecting, isShiftPressed } =
+  const { startPoint, endPoint, isSelecting, isShiftPressed } =
     useMarqueeSelection({
       containerRef: gridContainerRef,
       isActive: isEditing,
