@@ -4,8 +4,6 @@ export interface ComponentSlot {
   component: React.ReactNode
   title: string
   compImage?: string
-  isGrouped?: boolean
-  groupId?: string
 }
 
 export interface IWidgetGroup {
@@ -24,6 +22,9 @@ export interface ILayoutItem {
   moved?: boolean
   static?: boolean
   resizeHandles?: ReadonlyArray<"s" | "w" | "e" | "n">
+  // Support for nesting
+  isContainer?: boolean
+  children?: ILayoutItem[]
   [key: string]: any
 }
 

@@ -49,7 +49,7 @@ export const WidgetDropZone = memo(function WidgetDropZone({
       data-widget-id={id}
       data-group-id={groupId}
     >
-      {isEditing && (
+      {/* {isEditing && (
         <>
           <IconButton
             className="absolute top-3 right-3 z-20"
@@ -75,7 +75,7 @@ export const WidgetDropZone = memo(function WidgetDropZone({
             )}
           </Box>
         </>
-      )}
+      )} */}
 
       {children}
     </Box>
