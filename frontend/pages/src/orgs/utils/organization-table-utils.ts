@@ -1,7 +1,7 @@
+import type { Organization } from "@incmix/utils/types"
 // utils/organization-table-utils.tsx
 import { ChevronRight } from "lucide-react"
 import React from "react"
-import type { Organization } from "@incmix/utils/types"
 
 /**
  * DataTable column definitions for organizations
@@ -19,7 +19,7 @@ export const getOrganizationColumns = (t: (key: string) => string) => [
     accessorKey: "members" as const,
     enableSorting: true,
     // Custom renderer to display the length of members array
-    renderer: (value: any, row: Organization) => row.members.length,
+    renderer: (_value: any, row: Organization) => row.members.length,
   },
 ]
 

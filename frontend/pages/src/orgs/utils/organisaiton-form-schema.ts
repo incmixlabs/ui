@@ -1,6 +1,6 @@
-import type { z } from "zod"
 import type { ZodObjectOrWrapped } from "@incmix/ui/auto-form"
 import type { FieldConfig } from "@incmix/ui/auto-form"
+import type { z } from "zod"
 
 export interface OrganizationFormSchema<
   SchemaType extends ZodObjectOrWrapped = any,
