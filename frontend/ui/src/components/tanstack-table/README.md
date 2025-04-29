@@ -344,6 +344,7 @@ The `DataTable` component accepts the following props:
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `showRowCount` | boolean | `true` | Show row count in the footer |
+| `showPagination` | boolean | `undefined` | Explicitly control pagination visibility. When undefined, pagination is shown only when there are multiple pages of data (smart pagination) |
 | `filterColumn` | keyof TData \| string | undefined | Column to use for global filtering |
 | `filterPlaceholder` | string | `"Filter..."` | Placeholder text for the filter input |
 | `className` | string | undefined | Additional CSS class for the table |
@@ -378,6 +379,45 @@ The `DataTable` component accepts the following props:
 | `onRowClick` | (row: TData) => void | undefined | Row click handler |
 | `onSelectionChange` | (selectedRows: TData[]) => void | undefined | Selection change handler |
 | `onColumnReorder` | (newOrder: string[]) => void | undefined | Column reorder handler |
+
+## Smart Pagination
+
+The DataTable component includes smart pagination visibility that automatically determines when to show or hide the pagination controls based on the data:
+
+- When there are multiple pages of data, pagination controls are shown
+- When there's only a single page with fewer items than the page size, pagination controls are hidden
+- You can override this behavior using the `showPagination` prop:
+  - `showPagination={true}` always shows pagination controls regardless of data size
+  - `showPagination={false}` always hides pagination controls regardless of data size
+  - `showPagination={undefined}` (default) uses the smart pagination behavior
+
+```tsx
+// With smart pagination (default)
+<DataTable
+  columns={columns}
+  data={data}
+  enablePagination={true}
+  // showPagination is undefined, so pagination will only show when there are multiple pages
+/>
+
+// Always show pagination controls
+<DataTable
+  columns={columns}
+  data={data}
+  enablePagination={true}
+  showPagination={true}
+/>
+
+// Always hide pagination controls
+<DataTable
+  columns={columns}
+  data={data}
+  enablePagination={true}
+  showPagination={false}
+/>
+```
+
+Note: The `showRowCount` feature will still work even when pagination controls are hidden, allowing users to see how many rows are selected when row selection is enabled.
 
 ## Custom Cell Renderers
 
