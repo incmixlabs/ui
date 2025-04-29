@@ -1,6 +1,6 @@
-import { Box, CardContainer, cn, ComponentSlot, dashboardImg, initialLayouts } from "@incmix/ui";
-import { useState, useMemo, useEffect } from "react";
-import RGL, { WidthProvider, Layout } from "react-grid-layout";
+import { Box, CardContainer, cn, ComponentSlot, dashboardImg, initialLayouts, TBreakpoint, TResponsiveLayout } from "@incmix/ui";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import RGL, { WidthProvider, Layout, Layouts, Responsive } from "react-grid-layout";
 import {
   ActiveTask,
   NewTasks,
@@ -11,34 +11,45 @@ import {
   TotalTasks,
   UserPanelOverview,
 } from "@incmix/ui/widgets"
-const ReactGridLayout = WidthProvider(RGL);
+const ResponsiveGridLayout = WidthProvider(Responsive)
 
+const ReactGridLayout = WidthProvider(RGL);
 
 export default function DashboardApp({isEditing}: {isEditing: boolean}) {
 
-  const [count, setCount] = useState(0);
- const [layout, setLayout] = useState<Layout[]>(
-    initialLayouts.lg.map((item) => ({
-      ...item,
-      static: true, // default everything is static: true
-    }))
+ const [defaultLayouts, setDefaultLayouts] = useState<Record<TBreakpoint, Layout[]>>(
+    initialLayouts
   );
 
+
+
   const [nestedLayouts, setNestedLayouts] = useState<Record<string, Layout[]>>({
-    "grid-1": [
-      { w: 12, h: 6, x: 0, y: 0, i: "0|grid-a", moved: false, static: true  },
-      { w: 12, h: 5, x: 0, y: 6, i: "1|grid-b", moved: false, static: true  },
+    "grid-a": [ 
+      { w: 12, h: 6, x: 0, y: 0, i: "grid-a|0", moved: false, static: true  },
+      { w: 12, h: 5, x: 0, y: 6, i: "grid-a|1", moved: false, static: true  },
     ],
   });
+  
+
 
 
   useEffect(() => {
-    setLayout((prev) =>
-      prev.map((item) => ({
-        ...item,
-        static: !isEditing, // if editing → static false, otherwise true
-      }))
-    );
+    setDefaultLayouts((prev) => {
+      const updated: Record<TBreakpoint, Layout[]> = {
+        lg: [],
+        md: [],
+        sm: [],
+        xs: [],
+        xxs: []
+      };
+      Object.entries(prev).forEach(([breakpoint, layout]) => {
+        updated[breakpoint as TBreakpoint] = layout.map((item) => ({
+          ...item,
+          static: !isEditing,
+        }));
+      });
+      return updated;
+    });
     setNestedLayouts((prev) => {
       const updated: Record<string, Layout[]> = {};
       for (const key in prev) {
@@ -87,15 +98,14 @@ export default function DashboardApp({isEditing}: {isEditing: boolean}) {
         title: "User Panel Overview",
         compImage: dashboardImg?.postingTaskImg,
       },
-      // Adding nested components for the first two grid items
       {
-        slotId: "0|grid-a",
+        slotId: "grid-a|0",
         component: <NewTasks />,
         title: "Nested New Tasks 1",
         compImage: dashboardImg?.newTaskImg,
       },
       {
-        slotId: "1|grid-b",
+        slotId: "grid-a|1",
         component: <TotalTasks />,
         title: "Nested New Tasks 2",
         compImage: dashboardImg?.newTaskImg,
@@ -103,63 +113,35 @@ export default function DashboardApp({isEditing}: {isEditing: boolean}) {
     
     ])
   
-  // for nested layouts, handle the layout change manually
-  const onLayoutChange = (newLayout: Layout[],itemKey: string) => {
-    setLayout(newLayout);
-    if (onNestedLayoutChange) {
-      onNestedLayoutChange(newLayout, itemKey);
-    }
-  };
+    const handleLayoutChange = useCallback(
+      (_layout: any, allLayouts: any) => {
+        const hasChanged =
+          JSON.stringify(allLayouts) !== JSON.stringify(defaultLayouts)
+        if (hasChanged) {
+          console.log(allLayouts)
+  
+          setDefaultLayouts(allLayouts)
+        }
+      },
+      [defaultLayouts]
+    )
 
   const onNestedLayoutChange = (nestedLayout: Layout[], itemKey: string) => {
-    const index = layout.findIndex((item) => item.i === itemKey);
-    if (index !== -1) {
-      const updatedItem = {
-        ...layout[index],
-        layout: nestedLayout,
-      };
-      const updatedLayout = [...layout];
-      updatedLayout[index] = updatedItem;
-      setLayout(updatedLayout);
-    }
+    setNestedLayouts((prevLayouts) => ({
+      ...prevLayouts,
+      [itemKey]: nestedLayout,
+    }));
     console.log("Nested layout changed for", itemKey, nestedLayout);
   };
 
-  // const addItem = () => {
-  //   setCount(count + 1);
-  //   setLayout([
-  //     ...layout,
-  //     {
-  //       i: `${count}${itemKey ? `|${itemKey}` : ""}`,
-  //       x: (layout.length * 2) % 12,
-  //       y: Infinity,
-  //       w: 2,
-  //       h: 2,
-  //     },
-  //   ]);
-  // };
 
-  // const addGridItem = () => {
-  //   setCount(count + 1);
-  //   setLayout([
-  //     ...layout,
-  //     {
-  //       i: `grid-${count}${itemKey ? `|${itemKey}` : ""}`,
-  //       x: (layout.length * 2) % 12,
-  //       y: Infinity,
-  //       w: 5,
-  //       h: 5,
-  //       layout: [],
-  //     },
-  //   ]);
-  // };
 
   const generateDOM = () => {
-    return layout.map((item) => {
+    return defaultLayouts?.lg?.map((item) => {
       const gridComponent = gridComponents.find((comp) => comp.slotId === item.i);
       if (item.i.startsWith("grid-")) {
         const nested = nestedLayouts[item.i] || [];
-        // console.log("Nested for", item.i, nested);
+        console.log("Nested for", item.i, nested);
   
         return (
           <Box key={item.i} className={cn("",isEditing && "rounded-lg bg-gray-8 p-0 shadow")}>
@@ -168,7 +150,6 @@ export default function DashboardApp({isEditing}: {isEditing: boolean}) {
               layout={nested}
               cols={12}
               rowHeight={30}
-              width={800}
               onDragStart={(a, b, c, d, e) => {
                 e.stopPropagation();
               }}
@@ -180,7 +161,7 @@ export default function DashboardApp({isEditing}: {isEditing: boolean}) {
               }
               resizeHandles={['n', 's', 'e', 'w']}
             >
-             {nested.map((nestedItem) => {
+             {nested?.map((nestedItem) => {
               const nestedComponent = gridComponents.find(
                 (comp) => comp.slotId === nestedItem.i
               );
@@ -191,6 +172,7 @@ export default function DashboardApp({isEditing}: {isEditing: boolean}) {
                 </Box>
               );
             })}
+            {/* hello */}
             </ReactGridLayout>
           </Box>
         );
@@ -204,29 +186,21 @@ export default function DashboardApp({isEditing}: {isEditing: boolean}) {
     });
   };
 
-console.log(layout);
-
   return (
     <>
   
-      {/* {!props.nested && (
-        <>
-          <button onClick={addItem}>Add Item</button>
-          <button onClick={addGridItem}>Add Grid Item</button>
-        </>
-      )} */}
-      <ReactGridLayout
+      <ResponsiveGridLayout
         onDragStart={(a, b, c, d, e) => e.stopPropagation()}
-        layout={layout}
-        onLayoutChange={onLayoutChange}
+        layouts={defaultLayouts}
+        onLayoutChange={handleLayoutChange}
         className="layout"
         rowHeight={30}
-        cols={12}
+        breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+        cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
         resizeHandles={['n', 's', 'e', 'w']}
-
       >
         {generateDOM()}
-      </ReactGridLayout>
+      </ResponsiveGridLayout>
     </>
   );
 }

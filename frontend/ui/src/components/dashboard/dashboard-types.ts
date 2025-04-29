@@ -28,5 +28,5 @@ export interface ILayoutItem {
   [key: string]: any
 }
 
-export type Breakpoint = "lg" | "md" | "sm" | "xs" | "xxs"
-export type ResponsiveLayout = Record<Breakpoint, ILayoutItem[]>
+export type TBreakpoint = "lg" | "md" | "sm" | "xs" | "xxs"
+export type TResponsiveLayout = Record<TBreakpoint, ILayoutItem[]>

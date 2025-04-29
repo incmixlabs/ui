@@ -7,7 +7,7 @@ export const initialLayouts = {
       y: 0,
       i: "grid-a",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 5,
@@ -16,7 +16,7 @@ export const initialLayouts = {
       y: 0,
       i: "c",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 4,
@@ -25,7 +25,7 @@ export const initialLayouts = {
       y: 12,
       i: "d",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 4,
@@ -34,7 +34,7 @@ export const initialLayouts = {
       y: 12,
       i: "e",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 8,
@@ -43,7 +43,7 @@ export const initialLayouts = {
       y: 24,
       i: "f",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 12,
@@ -52,7 +52,7 @@ export const initialLayouts = {
       y: 37,
       i: "g",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 4,
@@ -61,18 +61,18 @@ export const initialLayouts = {
       y: 0,
       i: "h",
       moved: false,
-      static: false,
+      static: true,
     },
   ],
   md: [
     {
       w: 3,
-      h: 6,
+      h: 12,
       x: 0,
       y: 0,
-      i: "a",
+      i: "grid-a",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 3,
@@ -81,7 +81,7 @@ export const initialLayouts = {
       y: 6,
       i: "b",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 7,
@@ -90,7 +90,7 @@ export const initialLayouts = {
       y: 0,
       i: "c",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 5,
@@ -99,7 +99,7 @@ export const initialLayouts = {
       y: 12,
       i: "d",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 10,
@@ -108,7 +108,7 @@ export const initialLayouts = {
       y: 24,
       i: "e",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 5,
@@ -117,7 +117,7 @@ export const initialLayouts = {
       y: 12,
       i: "f",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 14,
@@ -126,7 +126,7 @@ export const initialLayouts = {
       y: 36,
       i: "g",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 4,
@@ -135,27 +135,18 @@ export const initialLayouts = {
       y: 0,
       i: "h",
       moved: false,
-      static: false,
+      static: true,
     },
   ],
   sm: [
     {
       w: 3,
-      h: 6,
+      h: 12,
       x: 0,
       y: 0,
-      i: "a",
+      i: "grid-a",
       moved: false,
-      static: false,
-    },
-    {
-      w: 3,
-      h: 6,
-      x: 0,
-      y: 6,
-      i: "b",
-      moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 6,
@@ -164,7 +155,7 @@ export const initialLayouts = {
       y: 0,
       i: "c",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 5,
@@ -173,7 +164,7 @@ export const initialLayouts = {
       y: 12,
       i: "d",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 9,
@@ -182,7 +173,7 @@ export const initialLayouts = {
       y: 24,
       i: "e",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 4,
@@ -191,7 +182,7 @@ export const initialLayouts = {
       y: 12,
       i: "f",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 14,
@@ -200,7 +191,7 @@ export const initialLayouts = {
       y: 36,
       i: "g",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 5,
@@ -209,27 +200,18 @@ export const initialLayouts = {
       y: 0,
       i: "h",
       moved: false,
-      static: false,
+      static: true,
     },
   ],
   xs: [
     {
-      w: 4,
-      h: 6,
+      w: 3,
+      h: 12,
       x: 0,
       y: 0,
-      i: "a",
+      i: "grid-a",
       moved: false,
-      static: false,
-    },
-    {
-      w: 4,
-      h: 6,
-      x: 4,
-      y: 0,
-      i: "b",
-      moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 8,
@@ -238,7 +220,7 @@ export const initialLayouts = {
       y: 6,
       i: "c",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 8,
@@ -247,7 +229,7 @@ export const initialLayouts = {
       y: 18,
       i: "d",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 8,
@@ -256,7 +238,7 @@ export const initialLayouts = {
       y: 30,
       i: "e",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 14,
@@ -265,7 +247,7 @@ export const initialLayouts = {
       y: 42,
       i: "f",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 14,
@@ -274,7 +256,7 @@ export const initialLayouts = {
       y: 51,
       i: "g",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 6,
@@ -283,27 +265,18 @@ export const initialLayouts = {
       y: 0,
       i: "h",
       moved: false,
-      static: false,
+      static: true,
     },
   ],
   xxs: [
     {
-      w: 4,
-      h: 6,
+      w: 3,
+      h: 12,
       x: 0,
       y: 0,
-      i: "a",
+      i: "grid-a",
       moved: false,
-      static: false,
-    },
-    {
-      w: 4,
-      h: 6,
-      x: 4,
-      y: 0,
-      i: "b",
-      moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 8,
@@ -312,7 +285,7 @@ export const initialLayouts = {
       y: 6,
       i: "c",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 8,
@@ -321,7 +294,7 @@ export const initialLayouts = {
       y: 18,
       i: "d",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 8,
@@ -330,7 +303,7 @@ export const initialLayouts = {
       y: 30,
       i: "e",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 14,
@@ -339,7 +312,7 @@ export const initialLayouts = {
       y: 42,
       i: "f",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 14,
@@ -348,7 +321,7 @@ export const initialLayouts = {
       y: 51,
       i: "g",
       moved: false,
-      static: false,
+      static: true,
     },
     {
       w: 6,
@@ -357,7 +330,7 @@ export const initialLayouts = {
       y: 0,
       i: "h",
       moved: false,
-      static: false,
+      static: true,
     },
   ],
 };
