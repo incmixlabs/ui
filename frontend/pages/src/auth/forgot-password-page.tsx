@@ -1,21 +1,21 @@
 import { LoadingPage } from "@common"
 import { I18n } from "@incmix/pages/i18n"
-import { FormField, ReactiveButton, toast } from "@incmix/ui"
+import { ReactiveButton, toast } from "@incmix/ui"
 import { Box, Flex, Heading, Text } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
-import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
-import { zodValidator } from "@tanstack/zod-form-adapter"
-import { useEffect } from "react"
-import type React from "react"
+import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { z } from "zod"
 import { setupGoogleAuthCallbackListener, useAuth } from "./hooks/auth"
 import { AuthLayout } from "./layouts/auth-layout"
+import { forgotPasswordSchema } from "./forgot-password-form-schema"
+import AutoForm from "@incmix/ui/auto-form"
 
 function ForgotPasswordForm() {
   const { t } = useTranslation(["login", "forgotPassword", "common"])
+  const [formValues, setFormValues] = useState({ email: "" })
+
   const { mutate, data, isPending, isSuccess, error, isError } = useMutation({
     mutationFn: async ({ email }: { email: string }) => {
       const response = await fetch(`${AUTH_API_URL}/reset-password/send`, {
@@ -39,66 +39,66 @@ function ForgotPasswordForm() {
     },
   })
 
-  const form = useForm({
-    defaultValues: {
-      email: "",
+  // Create a schema with translated validation messages
+  const schemaWithTranslations = {
+    ...forgotPasswordSchema.formSchema,
+    properties: {
+      ...forgotPasswordSchema.formSchema.properties,
+      email: {
+        ...forgotPasswordSchema.formSchema.properties.email,
+        errorMessage: {
+          format: t("login:emailValidation"),
+        },
+      },
     },
-    onSubmit: ({ value }) => {
-      mutate({ email: value.email })
-    },
-  })
+  }
+
+  // Handle form submission
+  const handleSubmit = (values: { [key: string]: any }) => {
+    mutate({ email: values.email as string })
+  }
+
+  // Handle form value changes
+  const handleValuesChange = (values: any) => {
+    setFormValues(values)
+  }
 
   return (
     <>
       <Heading size="4" mb="4" className="text-gray-900 dark:text-white">
         {t("forgotPassword:title")}
       </Heading>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          form.handleSubmit()
-        }}
-      >
-        <Flex direction="column" gap="4">
-          <form.Field
-            name="email"
-            validatorAdapter={zodValidator()}
-            validators={{
-              onChange: z.string().email(t("login:emailValidation")),
-            }}
-          >
-            {(field) => (
-              <FormField
-                name="email"
-                label={t("common:email")}
-                type="email"
-                field={field}
-              />
-            )}
-          </form.Field>
-          {isError && (
-            <Text color="red" size="2">
-              {error.message}
-            </Text>
-          )}
-          {isSuccess && (
-            <Text color="green" size="2">
-              {data.message}
-            </Text>
-          )}
 
-          <ReactiveButton
-            color="blue"
-            type="submit"
-            loading={isPending}
-            success={isSuccess}
-            className="w-full"
-          >
-            {t("forgotPassword:submit")}
-          </ReactiveButton>
-        </Flex>
-      </form>
+      <AutoForm
+        formSchema={schemaWithTranslations}
+        fieldConfig={forgotPasswordSchema.fieldConfig}
+        onSubmit={handleSubmit}
+        onValuesChange={handleValuesChange}
+        values={formValues}
+        className="space-y-4"
+      >
+        {isError && (
+          <Text color="red" size="2">
+            {error.message}
+          </Text>
+        )}
+        {isSuccess && (
+          <Text color="green" size="2">
+            {data.message}
+          </Text>
+        )}
+
+        <ReactiveButton
+          color="blue"
+          type="submit"
+          loading={isPending}
+          success={isSuccess}
+          className="w-full"
+        >
+          {t("forgotPassword:submit")}
+        </ReactiveButton>
+      </AutoForm>
+
       <Box mt="4" className="text-center">
         <Link to="/login">
           <Text color="blue">{t("forgotPassword:loginPrompt")}</Text>

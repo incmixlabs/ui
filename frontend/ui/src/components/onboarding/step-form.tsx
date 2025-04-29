@@ -1,4 +1,3 @@
-import jsonSchemaToZod from "json-schema-to-zod"
 import { z } from "zod"
 import { AuthWrapper } from "../auth-wrapper"
 import AutoForm from "../auto-form"
@@ -23,25 +22,6 @@ export const StepForm = ({
 
   // Get current step
   const step = steps[activeStep]
-
-  // Simplified conversion - using json-schema-to-zod directly
-  const convertToZod = (schema: any) => {
-    try {
-      // Generate Zod code from JSON Schema
-      const zodString = jsonSchemaToZod(schema)
-
-      // Create a function that returns the Zod schema
-      const zodSchemaFunction = new Function("z", `return ${zodString}`)
-
-      // Return the Zod schema
-      return zodSchemaFunction(z)
-    } catch (error) {
-      console.error("Error converting to Zod:", error, {
-        schemaId: schema.id || "unknown",
-      })
-      return null
-    }
-  }
 
   // Handle form values change
   const handleValuesChange = (values: any) => {
@@ -73,9 +53,6 @@ export const StepForm = ({
     }
   }
 
-  // Convert the JSON schema to Zod schema
-  const zodSchema = convertToZod(step.formSchema)
-
   // Configure title and subtitle based on step
   const title = ""
   const subtitle = activeStep === 0 ? "Hi! Welcome to Incmix" :
@@ -89,11 +66,12 @@ export const StepForm = ({
       step={activeStep + 1}
       showFooterLinks={activeStep === 0}
     >
+      {/* Pass JSON schema directly to AutoForm */}
       <AutoForm
         key={`form-${activeStep}`}
         onSubmit={handleSubmit}
         onValuesChange={handleValuesChange}
-        formSchema={zodSchema}
+        formSchema={step.formSchema}
         values={stepData[activeStep] || {}}
         fieldConfig={step?.fieldConfig ?? {}}
         dependencies={step?.dependencies ?? {}}
