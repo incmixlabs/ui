@@ -143,6 +143,7 @@ export interface DataTableProps<TData> {
 
   // Display options
   showRowCount?: boolean;
+  showPagination?: boolean; // Optional flag to explicitly control pagination visibility
   filterColumn?: keyof TData | string;
   filterPlaceholder?: string;
   className?: string;

@@ -139,6 +139,37 @@ const textFilterFn = (row: any, columnId: string, filterValue: string) => {
   return String(value).toLowerCase().includes(filterValue.toLowerCase());
 };
 
+// Function to determine if pagination should be visible
+function shouldPaginationBeVisible<TData>(
+  showPagination: boolean | undefined,
+  enablePagination: boolean,
+  totalItems: number,
+  pageSize: number,
+  currentPage: number
+): boolean {
+  // If explicit showPagination flag is provided, use it
+  if (typeof showPagination !== 'undefined') {
+    return showPagination;
+  }
+  
+  // If pagination is disabled, don't show it
+  if (!enablePagination) {
+    return false;
+  }
+  
+  // Calculate total pages
+  const totalPages = Math.ceil(totalItems / pageSize);
+  
+  // Always show pagination if there are multiple pages
+  if (totalPages > 1) {
+    return true;
+  }
+  
+  // If we're on the only page and it has fewer items than page size,
+  // hide pagination as it's not needed
+  return false;
+}
+
 // Utility function to create column definitions
 function createColumnDefinitions<TData>(
   columns: DataTableColumn<TData>[],
@@ -757,6 +788,7 @@ export function DataTable<TData extends object>({
   onPageChange,
   onPageSizeChange,
   isPaginationLoading = false,
+  showPagination,
   // New features
   export: exportOptions,
   expandableRows,
@@ -1003,6 +1035,29 @@ export function DataTable<TData extends object>({
     [serverPagination, table, currentPage, pageSize, totalItems]
   );
 
+  // Add memoized value to compute if pagination should be visible
+  const isPaginationVisible = useMemo(() => {
+    const totalItemCount = serverPagination 
+      ? totalItems 
+      : table.getFilteredRowModel().rows.length;
+    
+    return shouldPaginationBeVisible(
+      showPagination,
+      enablePagination,
+      totalItemCount,
+      paginationInfo.pageSize,
+      paginationInfo.currentPage
+    );
+  }, [
+    showPagination,
+    enablePagination,
+    serverPagination,
+    totalItems,
+    table,
+    paginationInfo.pageSize,
+    paginationInfo.currentPage
+  ]);
+
   return (
     <div className={className || "w-full"}>
       {/* Main layout with proper alignment */}
@@ -1145,7 +1200,7 @@ export function DataTable<TData extends object>({
           </div>
 
           {/* Pagination */}
-          {(enablePagination || showRowCount) && (
+          {(isPaginationVisible || (showRowCount && enableRowSelection)) && (
             <TablePagination
               paginationInfo={paginationInfo}
               handlePageChange={handlePageChange}
