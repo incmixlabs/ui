@@ -1,17 +1,12 @@
-import {
-  Button,
-  Dialog,
-  Flex,
-  FormField,
-  ReactiveButton,
-  toast,
-} from "@incmix/ui/base"
-import { useForm } from "@tanstack/react-form"
+import { Button, Dialog, Flex, ReactiveButton, toast } from "@incmix/ui/base"
 import { useMutation } from "@tanstack/react-query"
-import { zodValidator } from "@tanstack/zod-form-adapter"
+import jsonSchemaToZod from "json-schema-to-zod"
 import { PlusCircleIcon } from "lucide-react"
+import { useRef, useState, useEffect } from "react"
 import { z } from "zod"
 import { createRole, updateRole } from "./actions"
+import { roleFormSchema } from "./role-form-schema"
+import AutoForm from "@incmix/ui/auto-form"
 
 type RoleEditorModalProps = {
   role?: { id: number; name: string }
@@ -21,6 +16,7 @@ type RoleEditorModalProps = {
   showTrigger?: boolean
   onSuccess?: () => void
 }
+
 const RoleEditorModal = ({
   role,
   open,
@@ -29,6 +25,20 @@ const RoleEditorModal = ({
   showTrigger,
   onSuccess,
 }: RoleEditorModalProps) => {
+  const [formData, setFormData] = useState<Record<string, any>>({
+    name: role?.name ?? "",
+  })
+  const formRef = useRef<HTMLFormElement>(null)
+
+  // Update form data when role prop changes
+  useEffect(() => {
+    if (role) {
+      setFormData({ name: role.name })
+    } else {
+      setFormData({ name: "" })
+    }
+  }, [role])
+
   const createRoleMutation = useMutation({
     mutationFn: (name: string) => createRole(name),
     onSuccess: () => {
@@ -51,18 +61,41 @@ const RoleEditorModal = ({
     },
   })
 
-  const form = useForm({
-    defaultValues: {
-      name: role?.name ?? "",
-    },
-    onSubmit: ({ value }) => {
-      if (role) {
-        updateRoleMutation.mutate({ id: role.id, name: value.name })
-      } else if (value.name.length > 0) {
-        createRoleMutation.mutate(value.name)
-      }
-    },
-  })
+  // Convert JSON schema to Zod schema
+  const convertToZod = (schema: any) => {
+    try {
+      // Generate Zod code from JSON Schema
+      const zodString = jsonSchemaToZod(schema)
+
+      // Create a function that returns the Zod schema
+      const zodSchemaFunction = new Function("z", `return ${zodString}`)
+
+      // Return the Zod schema
+      return zodSchemaFunction(z)
+    } catch (error) {
+      console.error("Error converting to Zod:", error, {
+        schemaId: schema.id || "unknown",
+      })
+      return null
+    }
+  }
+
+  // Handle form values change
+  const handleValuesChange = (values: any) => {
+    setFormData(values)
+  }
+
+  // Handle form submission
+  const handleSubmit = (data: any) => {
+    if (role) {
+      updateRoleMutation.mutate({ id: role.id, name: data.name })
+    } else if (data.name.length > 0) {
+      createRoleMutation.mutate(data.name)
+    }
+  }
+
+  // Convert the JSON schema to Zod schema
+  const zodSchema = convertToZod(roleFormSchema.formSchema)
 
   return (
     <Dialog.Root
@@ -70,7 +103,11 @@ const RoleEditorModal = ({
       onOpenChange={(open) => {
         onOpenChange?.(open)
         if (!open) {
-          form.reset()
+          // Reset form when dialog closes
+          setFormData({ name: role?.name ?? "" })
+          if (formRef.current) {
+            formRef.current.reset()
+          }
         }
       }}
     >
@@ -88,49 +125,44 @@ const RoleEditorModal = ({
         </Dialog.Header>
 
         <form
+          ref={formRef}
           onSubmit={(e) => {
             e.preventDefault()
             e.stopPropagation()
-            form.handleSubmit()
+            // Let AutoForm handle submission
           }}
         >
           <Flex direction="column" gap="4">
-            <form.Field
-              name="name"
-              validatorAdapter={zodValidator()}
-              validators={{
-                onChange: z.string().min(1, "Role Name is required"),
-              }}
-            >
-              {(field) => (
-                <FormField
-                  name="name"
-                  label="Role Name"
-                  type="text"
-                  field={field}
-                />
-              )}
-            </form.Field>
-
-            <ReactiveButton
-              type="submit"
-              color="blue"
-              loading={
-                createRoleMutation.isPending || updateRoleMutation.isPending
-              }
-              className="w-full"
-            >
-              {role ? "Update" : "Create"}
-            </ReactiveButton>
+            {zodSchema && (
+              <AutoForm
+                formSchema={zodSchema}
+                onSubmit={handleSubmit}
+                onValuesChange={handleValuesChange}
+                values={formData}
+                fieldConfig={roleFormSchema.fieldConfig}
+              >
+                <ReactiveButton
+                  type="submit"
+                  color="blue"
+                  loading={
+                    createRoleMutation.isPending || updateRoleMutation.isPending
+                  }
+                  className="w-full"
+                >
+                  {role ? "Update" : "Create"}
+                </ReactiveButton>
+              </AutoForm>
+            )}
           </Flex>
         </form>
-        <DialogFooter className="mt-4 gap-2 sm:space-x-0">
+
+        <Dialog.Footer>
           <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
           </Dialog.Close>
-        </DialogFooter>
+        </Dialog.Footer>
       </Dialog.Content>
     </Dialog.Root>
   )
