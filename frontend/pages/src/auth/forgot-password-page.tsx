@@ -2,15 +2,15 @@ import { LoadingPage } from "@common"
 import { I18n } from "@incmix/pages/i18n"
 import { ReactiveButton, toast } from "@incmix/ui"
 import { Box, Flex, Heading, Text } from "@incmix/ui"
+import AutoForm from "@incmix/ui/auto-form"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
+import { forgotPasswordSchema } from "./forgot-password-form-schema"
 import { setupGoogleAuthCallbackListener, useAuth } from "./hooks/auth"
 import { AuthLayout } from "./layouts/auth-layout"
-import { forgotPasswordSchema } from "./forgot-password-form-schema"
-import AutoForm from "@incmix/ui/auto-form"
 
 function ForgotPasswordForm() {
   const { t } = useTranslation(["login", "forgotPassword", "common"])

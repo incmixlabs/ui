@@ -1,8 +1,8 @@
-// utils/organization-members-table-utils.tsx
-import type React from "react"
 import { Flex, Text } from "@incmix/ui/base"
 import type { MemberDetails, UserRole } from "@incmix/utils/types"
 import type { TFunction } from "i18next"
+// utils/organization-members-table-utils.tsx
+import type React from "react"
 
 /**
  * Get column definitions for the organization members table

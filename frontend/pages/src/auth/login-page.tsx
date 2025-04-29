@@ -13,9 +13,9 @@ import {
   useLogin,
 } from "./hooks/auth"
 
+import AutoForm from "@incmix/ui/auto-form"
 import { AuthLayout } from "./layouts/auth-layout"
 import { loginFormSchema } from "./login-form-schema"
-import AutoForm from "@incmix/ui/auto-form"
 
 function LoginForm() {
   const { t } = useTranslation(["login", "common"])

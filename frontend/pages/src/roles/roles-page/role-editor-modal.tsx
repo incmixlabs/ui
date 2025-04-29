@@ -1,12 +1,12 @@
+import AutoForm from "@incmix/ui/auto-form"
 import { Button, Dialog, Flex, ReactiveButton, toast } from "@incmix/ui/base"
 import { useMutation } from "@tanstack/react-query"
 import jsonSchemaToZod from "json-schema-to-zod"
 import { PlusCircleIcon } from "lucide-react"
-import { useRef, useState, useEffect } from "react"
+import { useEffect, useRef, useState } from "react"
 import { z } from "zod"
 import { createRole, updateRole } from "./actions"
 import { roleFormSchema } from "./role-form-schema"
-import AutoForm from "@incmix/ui/auto-form"
 
 type RoleEditorModalProps = {
   role?: { id: number; name: string }

@@ -2,15 +2,15 @@ import { LoadingPage } from "@common"
 import { I18n } from "@incmix/pages/i18n"
 import { CardContainer, ReactiveButton, toast } from "@incmix/ui"
 import { Box, Container, Flex, Heading, Text } from "@incmix/ui"
+import AutoForm from "@incmix/ui/auto-form"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import AutoForm from "@incmix/ui/auto-form"
 import { setupGoogleAuthCallbackListener, useAuth } from "./hooks/auth"
-import { ResetPasswordRoute } from "./routes"
 import { resetPasswordSchema } from "./reset-password-form-schema"
+import { ResetPasswordRoute } from "./routes"
 
 function ResetPasswordForm() {
   const { code, email } = ResetPasswordRoute.useSearch()
