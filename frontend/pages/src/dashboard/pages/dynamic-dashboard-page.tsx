@@ -1,8 +1,6 @@
-"use client";
+import type React from "react"
 
-import type React from "react";
-
-import { LoadingPage } from "@common";
+import { LoadingPage } from "@common"
 import {
   DndContext,
   type DragEndEvent,
@@ -11,16 +9,27 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-} from "@dnd-kit/core";
-import { Box, cn, Heading, IconButton, toast } from "@incmix/ui";
+} from "@dnd-kit/core"
 import {
-  NestedGridLayout,
-  TBreakpoint,
+  ActiveBtn,
+  Box,
+  Flex,
+  Heading,
+  IconButton,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  type btnItem,
+  cn,
+  toast,
+} from "@incmix/ui"
+import {
+  type TBreakpoint,
   WidgetDropZone,
   dashboardImg,
   initialLayouts,
   sidebarComponents,
-} from "@incmix/ui/dashboard";
+} from "@incmix/ui/dashboard"
 import {
   ActiveTask,
   NewTasks,
@@ -30,45 +39,51 @@ import {
   TotalProject,
   TotalTasks,
   UserPanelOverview,
-} from "@incmix/ui/widgets";
+} from "@incmix/ui/widgets"
 
-import { DashboardLayout } from "@layouts/admin-panel/layout";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import RGL, { Layout, Responsive, WidthProvider } from "react-grid-layout";
-import { useTranslation } from "react-i18next";
-import { useAuth } from "../../auth";
-import { EditWidgetsControl } from "./home";
+import { DashboardLayout } from "@layouts/admin-panel/layout"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import RGL, { type Layout, Responsive, WidthProvider } from "react-grid-layout"
+import { useAuth } from "../../auth"
+import { EditWidgetsControl } from "./home"
 
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
-import { useDashboardStore, useEditingStore } from "@incmix/store";
-import { useParams } from "@tanstack/react-router";
-import { Trash } from "lucide-react";
-import DashboardApp from "./dashboard-app";
+import "react-grid-layout/css/styles.css"
+import "react-resizable/css/styles.css"
+import { useDashboardStore, useEditingStore } from "@incmix/store"
+import { useParams } from "@tanstack/react-router"
+import { Laptop, Monitor, Tablet } from "lucide-react"
+import { Layouts } from "react-grid-layout"
 
 export interface LayoutItem {
-  i: string;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  moved?: boolean;
-  static?: boolean;
-  resizeHandles?: ReadonlyArray<"s" | "w" | "e" | "n">;
-  [key: string]: any;
+  i: string
+  x: number
+  y: number
+  w: number
+  h: number
+  moved?: boolean
+  static?: boolean
+  resizeHandles?: ReadonlyArray<"s" | "w" | "e" | "n">
+  [key: string]: any
 }
 
-export type Breakpoint = "lg" | "md" | "sm" | "xs" | "xxs";
-type ResponsiveLayout = Record<Breakpoint, LayoutItem[]>;
-const ReactGridLayout = WidthProvider(RGL);
+export interface CustomLayout extends Layout {
+  compactType?: "horizontal" | "vertical"
+  nestedLayouts?: Layout[]
+}
+export interface CustomLayouts {
+  [breakpoint: string]: CustomLayout[]
+}
+export type Breakpoint = "lg" | "md" | "sm" | "xs" | "xxs"
+type ResponsiveLayout = Record<Breakpoint, LayoutItem[]>
+const ReactGridLayout = WidthProvider(RGL)
 
-const ResponsiveGridLayout = WidthProvider(Responsive);
+const ResponsiveGridLayout = WidthProvider(Responsive)
 
 interface ComponentSlot {
-  slotId: string;
-  component: React.ReactNode;
-  title: string;
-  compImage?: string;
+  slotId: string
+  component: React.ReactNode
+  title: string
+  compImage?: string
 }
 
 const DEFAULT_SIZES: Record<Breakpoint, { w: number; h: number }> = {
@@ -77,47 +92,123 @@ const DEFAULT_SIZES: Record<Breakpoint, { w: number; h: number }> = {
   sm: { w: 3, h: 6 },
   xs: { w: 3, h: 6 },
   xxs: { w: 2, h: 6 },
-};
+}
 
 const DynamicDashboardPage: React.FC = () => {
-  const { projectId } = useParams({ from: "/dashboard/project/$projectId" });
-  const project = useDashboardStore((state) => state.getProjectById(projectId));
+  const { projectId } = useParams({ from: "/dashboard/project/$projectId" })
+  const project = useDashboardStore((state) => state.getProjectById(projectId))
+  const [activeDevice, setActiveDevice] = useState("desktop")
 
-  const { authUser, isLoading } = useAuth();
-  const { isEditing, setIsEditing } = useEditingStore();
+  // Device tabs using lucide icons
+  const deviceTabs: btnItem[] = [
+    {
+      id: "desktop",
+      label: "Desktop",
+      icon: <Monitor className="h-4 w-4" />,
+    },
+    {
+      id: "laptop",
+      label: "Laptop",
+      icon: <Laptop className="h-4 w-4" />,
+    },
+    {
+      id: "tablet",
+      label: "Tablet",
+      icon: <Tablet className="h-4 w-4" />,
+    },
+  ]
 
-  const [activeDragId, setActiveDragId] = useState<string | null>(null);
+  const { authUser, isLoading } = useAuth()
+  const { isEditing, setIsEditing } = useEditingStore()
+
+  const [activeDragId, setActiveDragId] = useState<string | null>(null)
   interface DragData {
-    title?: string;
-    image?: string;
-    [key: string]: any;
+    title?: string
+    image?: string
+    [key: string]: any
   }
   const [activeDragData, setActiveDragData] = useState<
     DragData | null | undefined
-  >(null);
+  >(null)
+
+  const [actualWidth, setActualWidth] = useState<number | null>(null)
+
+  const boxRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!boxRef.current) return
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setActualWidth(Math.round(entry.contentRect.width))
+      }
+    })
+
+    resizeObserver.observe(boxRef.current)
+
+    return () => {
+      resizeObserver.disconnect()
+    }
+  }, [])
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 8,
       },
-    }),
-  );
+    })
+  )
 
-  const [lastRemovedComponent, setLastRemovedComponent] = useState<{
-    component: ComponentSlot | null;
-    layouts: Record<Breakpoint, LayoutItem[]>;
-  } | null>(null);
+  const [_lastRemovedComponent, setLastRemovedComponent] = useState<{
+    component: ComponentSlot | null
+    layouts: Record<Breakpoint, LayoutItem[]>
+  } | null>(null)
 
   const [defaultLayouts, setDefaultLayouts] =
-    useState<Record<TBreakpoint, Layout[]>>(initialLayouts);
+    useState<CustomLayouts>(initialLayouts)
 
-  const [nestedLayouts, setNestedLayouts] = useState<Record<string, Layout[]>>({
+  const [nestedLayouts, setNestedLayouts] = useState<Record<string, Layout>>({
     "grid-a": [
-      { w: 12, h: 6, x: 0, y: 0, i: "grid-a|0", moved: false, static: true },
-      { w: 12, h: 5, x: 0, y: 6, i: "grid-a|1", moved: false, static: true },
+      {
+        w: 12,
+        h: 12,
+        x: 0,
+        y: 0,
+        i: "grid-a|0",
+        moved: false,
+        static: false,
+      },
+      {
+        w: 12,
+        h: 11,
+        x: 0,
+        y: 12,
+        i: "grid-a|1",
+        moved: false,
+        static: false,
+      },
     ],
-  });
+    "grid-b": [
+      {
+        w: 6,
+        h: 24,
+        x: 0,
+        y: 0,
+        i: "grid-b|0",
+        moved: false,
+        static: false,
+      },
+      {
+        w: 6,
+        h: 24,
+        x: 6,
+        y: 0,
+        i: "grid-b|1",
+        moved: false,
+        static: false,
+      },
+    ],
+  })
 
   useEffect(() => {
     setDefaultLayouts((prev) => {
@@ -127,26 +218,26 @@ const DynamicDashboardPage: React.FC = () => {
         sm: [],
         xs: [],
         xxs: [],
-      };
+      }
       Object.entries(prev).forEach(([breakpoint, layout]) => {
         updated[breakpoint as TBreakpoint] = layout.map((item) => ({
           ...item,
           static: !isEditing,
-        }));
-      });
-      return updated;
-    });
+        }))
+      })
+      return updated
+    })
     setNestedLayouts((prev) => {
-      const updated: Record<string, Layout[]> = {};
+      const updated: Record<string, Layout[]> = {}
       for (const key in prev) {
         updated[key] = prev[key].map((item) => ({
           ...item,
           static: !isEditing,
-        }));
+        }))
       }
-      return updated;
-    });
-  }, [isEditing]);
+      return updated
+    })
+  }, [isEditing])
 
   const [gridComponents, setGridComponents] = useState<ComponentSlot[]>([
     {
@@ -156,13 +247,13 @@ const DynamicDashboardPage: React.FC = () => {
       compImage: dashboardImg?.ProjectImg,
     },
     {
-      slotId: "d",
+      slotId: "grid-b|0",
       component: <StatisticWidgets2 />,
       title: "Statistic Widgets",
       compImage: dashboardImg?.statisticsImg,
     },
     {
-      slotId: "e",
+      slotId: "grid-b|1",
       component: <ActiveTask />,
       compImage: dashboardImg?.activeTaskImg,
       title: "Active Task",
@@ -197,46 +288,52 @@ const DynamicDashboardPage: React.FC = () => {
       title: "Nested New Tasks 2",
       compImage: dashboardImg?.newTaskImg,
     },
-  ]);
+  ])
 
-
-  const handleNestedLayoutChange = (nestedLayout: Layout[], itemKey: string) => {
+  const handleNestedLayoutChange = (nestedLayout: Layout, itemKey: string) => {
     setNestedLayouts((prevLayouts) => ({
       ...prevLayouts,
       [itemKey]: nestedLayout,
-    }));
-    console.log("Nested layout changed for", itemKey, nestedLayout);
-  };
-
-
+    }))
+    console.log("Nested layout changed for", itemKey, nestedLayout)
+  }
 
   const handleLayoutChange = useCallback(
     (_layout: any, allLayouts: any) => {
       const hasChanged =
-        JSON.stringify(allLayouts) !== JSON.stringify(defaultLayouts);
+        JSON.stringify(allLayouts) !== JSON.stringify(defaultLayouts)
       if (hasChanged) {
-        console.log(allLayouts);
+        console.log(allLayouts)
 
-        setDefaultLayouts(allLayouts);
+        setDefaultLayouts(allLayouts)
       }
     },
-    [defaultLayouts],
-  );
+    [defaultLayouts]
+  )
 
   const handleDragStart = (event: DragStartEvent) => {
-    const { active } = event;
-    setActiveDragId(active.id as string);
-    setActiveDragData(active.data.current);
-  };
+    const { active } = event
+    setActiveDragId(active.id as string)
+    setActiveDragData(active.data.current)
+  }
 
-  const addComponentToNestedGrid = (draggedSlotId: string, targetGroupId: string) => {
-    const isAlreadyInGrid = gridComponents.some((comp) => comp.slotId === draggedSlotId)
+  const addComponentToNestedGrid = (
+    draggedSlotId: string,
+    targetGroupId: string
+  ) => {
+    const isAlreadyInGrid = gridComponents.some(
+      (comp) => comp.slotId === draggedSlotId
+    )
     if (isAlreadyInGrid) {
-      toast.error("This component is already added to the grid. Please remove it first if you want to add it again.")
+      toast.error(
+        "This component is already added to the grid. Please remove it first if you want to add it again."
+      )
       return false
     }
 
-    const draggedComponent = sidebarComponents.find((comp) => comp.slotId === draggedSlotId)
+    const draggedComponent = sidebarComponents.find(
+      (comp) => comp.slotId === draggedSlotId
+    )
     if (!draggedComponent) {
       return false
     }
@@ -285,41 +382,41 @@ const DynamicDashboardPage: React.FC = () => {
 
   const addComponentToGrid = (
     draggedSlotId: string,
-    targetWidgetId?: string,
+    targetWidgetId?: string
   ) => {
     const isAlreadyInGrid = gridComponents.some(
-      (comp) => comp.slotId === draggedSlotId,
-    );
+      (comp) => comp.slotId === draggedSlotId
+    )
     if (isAlreadyInGrid) {
       toast.error(
-        "This component is already added to the grid. Please remove it first if you want to add it again.",
-      );
-      return false;
+        "This component is already added to the grid. Please remove it first if you want to add it again."
+      )
+      return false
     }
 
     const draggedComponent = sidebarComponents.find(
-      (comp) => comp.slotId === draggedSlotId,
-    );
+      (comp) => comp.slotId === draggedSlotId
+    )
     if (!draggedComponent) {
-      return false;
+      return false
     }
 
-    setGridComponents((prev) => [...prev, draggedComponent]);
+    setGridComponents((prev) => [...prev, draggedComponent])
 
-    const componentLayouts = draggedComponent.layouts || DEFAULT_SIZES;
+    const componentLayouts = draggedComponent.layouts || DEFAULT_SIZES
 
-    const newLayouts = { ...defaultLayouts };
-    (Object.keys(newLayouts) as Breakpoint[]).forEach((breakpoint) => {
-      const { w, h } = componentLayouts[breakpoint];
-      const currentLayout = [...newLayouts[breakpoint]];
+    const newLayouts = { ...defaultLayouts }
+    ;(Object.keys(newLayouts) as Breakpoint[]).forEach((breakpoint) => {
+      const { w, h } = componentLayouts[breakpoint]
+      const currentLayout = [...newLayouts[breakpoint]]
 
       if (targetWidgetId) {
         const targetIndex = currentLayout.findIndex(
-          (item) => item.i === targetWidgetId,
-        );
+          (item) => item.i === targetWidgetId
+        )
 
         if (targetIndex !== -1) {
-          const targetWidget = currentLayout[targetIndex];
+          const targetWidget = currentLayout[targetIndex]
           const newItem = {
             i: draggedSlotId,
             x: targetWidget.x,
@@ -328,23 +425,23 @@ const DynamicDashboardPage: React.FC = () => {
             h,
             moved: false,
             static: false,
-          };
+          }
 
           const shiftedItems = currentLayout.map((item, index) => {
             if (index >= targetIndex) {
               return {
                 ...item,
                 y: item.y + h,
-              };
+              }
             }
-            return item;
-          });
+            return item
+          })
 
           newLayouts[breakpoint] = [
             ...shiftedItems.slice(0, targetIndex),
             newItem,
             ...shiftedItems.slice(targetIndex),
-          ];
+          ]
         } else {
           const newItem = {
             i: draggedSlotId,
@@ -354,14 +451,14 @@ const DynamicDashboardPage: React.FC = () => {
             h,
             moved: false,
             static: false,
-          };
+          }
 
           const shiftedItems = currentLayout.map((item) => ({
             ...item,
             y: item.y + h,
-          }));
+          }))
 
-          newLayouts[breakpoint] = [newItem, ...shiftedItems];
+          newLayouts[breakpoint] = [newItem, ...shiftedItems]
         }
       } else {
         const newItem = {
@@ -372,26 +469,26 @@ const DynamicDashboardPage: React.FC = () => {
           h,
           moved: false,
           static: false,
-        };
+        }
 
         const shiftedItems = currentLayout.map((item) => ({
           ...item,
           y: item.y + h,
-        }));
+        }))
 
-        newLayouts[breakpoint] = [newItem, ...shiftedItems];
+        newLayouts[breakpoint] = [newItem, ...shiftedItems]
       }
-    });
+    })
 
     // Update layouts
-    setDefaultLayouts(newLayouts);
+    setDefaultLayouts(newLayouts)
 
     toast.success("Component added", {
       description: `${draggedComponent.title} has been added to your dashboard.`,
-    });
+    })
 
-    return true;
-  };
+    return true
+  }
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
@@ -411,30 +508,23 @@ const DynamicDashboardPage: React.FC = () => {
     }
 
     if (over) {
-      // Check if the drop target is a widget drop zone
       if (over.id.toString().startsWith("widget-")) {
         const widgetId = over.id.toString().replace("widget-", "")
 
-        // Check if this is a nested widget by examining the data
         const overData = over.data.current
 
         if (overData && overData.type === "widget-drop-zone") {
-          // If the widget has a groupId, it's part of a nested layout
-          if (overData && overData.groupId && overData.groupId.startsWith("grid-")) {
-            // Add to the nested grid instead of the main grid
+          if (overData?.groupId?.startsWith("grid-")) {
             addComponentToNestedGrid(draggedSlotId, overData.groupId)
             return
           }
 
-          // Regular widget, add to main grid
           addComponentToGrid(draggedSlotId, widgetId)
         }
       } else if (over.id.toString().startsWith("grid-")) {
-        // Direct drop on a grid container
         const gridId = over.id.toString()
         addComponentToNestedGrid(draggedSlotId, gridId)
       } else if (over.id === "grid-drop-zone") {
-        // Drop on the main grid area
         addComponentToGrid(draggedSlotId)
       } else {
         toast.error("Please drop the component on a valid target area.")
@@ -444,169 +534,186 @@ const DynamicDashboardPage: React.FC = () => {
     }
   }
 
+  const handleRemoveNestedComponent = (slotId: string, groupId?: string) => {
+    if (groupId && nestedLayouts[groupId]) {
+      const groupLayouts = nestedLayouts[groupId]
+      const updatedGroupLayouts = groupLayouts.filter(
+        (item) => item.i !== slotId
+      )
 
+      // Find the removed component
+      const removedComponent = gridComponents.find(
+        (comp) => comp.slotId === slotId
+      )
+      if (!removedComponent) return
 
-const handleRemoveNestedComponent = (slotId: string, groupId?: string) => {
-  if (groupId && nestedLayouts[groupId]) {
-    const groupLayouts = nestedLayouts[groupId];
-    const updatedGroupLayouts = groupLayouts.filter(item => item.i !== slotId);
+      // Save removed state for undo
+      const removedData = {
+        component: removedComponent,
+        layout: groupLayouts.find((item) => item.i === slotId),
+        groupId,
+      }
 
-    // Find the removed component
-    const removedComponent = gridComponents.find((comp) => comp.slotId === slotId);
-    if (!removedComponent) return;
+      // Update state
+      setNestedLayouts((prev) => ({
+        ...prev,
+        [groupId]: updatedGroupLayouts,
+      }))
+      setGridComponents((prev) => prev.filter((comp) => comp.slotId !== slotId))
+      setLastRemovedComponent(removedData as RemovedNestedComponentData)
 
-    // Save removed state for undo
-    const removedData = {
-      component: removedComponent,
-      layout: groupLayouts.find(item => item.i === slotId),
-      groupId,
-    };
+      toast.error("Component removed", {
+        description: `${removedComponent.title} has been removed.`,
+        action: {
+          label: "Undo",
+          onClick: () => {
+            if (
+              removedData?.component &&
+              removedData.layout &&
+              removedData.groupId
+            ) {
+              setGridComponents((prev) => [...prev, removedData.component])
+              setNestedLayouts((prev: Record<string, Layout[]>) => ({
+                ...prev,
+                [removedData.groupId]: [
+                  ...prev[removedData.groupId],
+                  ...(removedData.layout ? [removedData.layout] : []),
+                ],
+              }))
 
-    // Update state
-    setNestedLayouts(prev => ({
-      ...prev,
-      [groupId]: updatedGroupLayouts,
-    }));
-    setGridComponents(prev => prev.filter(comp => comp.slotId !== slotId));
-    setLastRemovedComponent(removedData as RemovedNestedComponentData);
+              toast.success("Component restored", {
+                description: `${removedData.component.title} has been restored.`,
+              })
 
-    toast.error("Component removed", {
-      description: `${removedComponent.title} has been removed.`,
-      action: {
-        label: "Undo",
-        onClick: () => {
-          if (removedData?.component && removedData.layout && removedData.groupId) {
-            setGridComponents(prev => [...prev, removedData.component]);
-            setNestedLayouts((prev: Record<string, Layout[]>) => ({
-              ...prev,
-              [removedData.groupId]: [
-                ...prev[removedData.groupId],
-                ...(removedData.layout ? [removedData.layout] : []),
-              ],
-            }));
-
-            toast.success("Component restored", {
-              description: `${removedData.component.title} has been restored.`,
-            });
-
-            setLastRemovedComponent(null);
-          }
+              setLastRemovedComponent(null)
+            }
+          },
         },
-      },
-      duration: 5000,
-    });
+        duration: 5000,
+      })
 
-    return; // Exit early, skip defaultLayouts logic
+      return // Exit early, skip defaultLayouts logic
+    }
   }
-}
   const handleRemoveComponent = (slotId: string) => {
     if (!isEditing) {
       toast.error(
-        "Editing mode is disabled. Please enable editing mode to remove components.",
-      );
-      return;
+        "Editing mode is disabled. Please enable editing mode to remove components."
+      )
+      return
     }
-  
-    const component = gridComponents.find((comp) => comp.slotId === slotId);
-    if (!component) return;
-  
-    const removedLayouts: ResponsiveLayout = {} as ResponsiveLayout;
+
+    const component = gridComponents.find((comp) => comp.slotId === slotId)
+    if (!component) return
+
+    const removedLayouts: ResponsiveLayout = {} as ResponsiveLayout
     Object.keys(defaultLayouts).forEach((breakpoint) => {
-      const layoutItem = defaultLayouts[breakpoint as Breakpoint].find(item => item.i === slotId);
-      removedLayouts[breakpoint as Breakpoint] = layoutItem ? [layoutItem] : [];
-    });
-  
+      const layoutItem = defaultLayouts[breakpoint as Breakpoint].find(
+        (item) => item.i === slotId
+      )
+      removedLayouts[breakpoint as Breakpoint] = layoutItem ? [layoutItem] : []
+    })
+
     const removedComponent = {
       component,
       layouts: removedLayouts,
-    };
-  
-    const updatedComponents = gridComponents.filter(comp => comp.slotId !== slotId);
-    setGridComponents(updatedComponents);
-  
-    const updatedLayouts = { ...defaultLayouts };
+    }
+
+    const updatedComponents = gridComponents.filter(
+      (comp) => comp.slotId !== slotId
+    )
+    setGridComponents(updatedComponents)
+
+    const updatedLayouts = { ...defaultLayouts }
     Object.keys(updatedLayouts).forEach((breakpoint) => {
-      updatedLayouts[breakpoint as Breakpoint] = updatedLayouts[breakpoint as Breakpoint]
-        .filter(item => item.i !== slotId);
-    });
-  
-    setDefaultLayouts(updatedLayouts);
-    setLastRemovedComponent(removedComponent);
-  
+      updatedLayouts[breakpoint as Breakpoint] = updatedLayouts[
+        breakpoint as Breakpoint
+      ].filter((item) => item.i !== slotId)
+    })
+
+    setDefaultLayouts(updatedLayouts)
+    setLastRemovedComponent(removedComponent)
+
     toast.error("Component removed", {
       description: `${component.title} has been removed from your dashboard.`,
       action: {
         label: "Undo",
         onClick: () => {
           if (removedComponent?.component) {
-            setGridComponents((prev) => [...prev, removedComponent.component]);
-  
-            const restoredLayouts = { ...updatedLayouts };
+            setGridComponents((prev) => [...prev, removedComponent.component])
+
+            const restoredLayouts = { ...updatedLayouts }
             Object.keys(removedComponent.layouts).forEach((breakpoint) => {
-              const layoutItems = removedComponent.layouts[breakpoint as Breakpoint];
+              const layoutItems =
+                removedComponent.layouts[breakpoint as Breakpoint]
               if (layoutItems && layoutItems.length > 0) {
                 restoredLayouts[breakpoint as Breakpoint] = [
                   ...restoredLayouts[breakpoint as Breakpoint],
                   ...layoutItems,
-                ];
+                ]
               }
-            });
-  
-            setDefaultLayouts(restoredLayouts);
-  
+            })
+
+            setDefaultLayouts(restoredLayouts)
+
             toast.success("Component restored", {
               description: `${removedComponent.component.title} has been restored to your dashboard.`,
-            });
-  
-            setLastRemovedComponent(null);
+            })
+
+            setLastRemovedComponent(null)
           }
         },
       },
       duration: 5000,
-    });
-  };
+    })
+  }
 
   const generateDOM = () => {
     return defaultLayouts?.lg?.map((item) => {
       const gridComponent = gridComponents.find(
-        (comp) => comp.slotId === item.i,
-      );
+        (comp) => comp.slotId === item.i
+      )
       if (item.i.startsWith("grid-")) {
-        const nested = nestedLayouts[item.i] || [];
-        console.log("Nested for", item.i, nested);
-
+        const nested = nestedLayouts[item.i] || []
         return (
           <Box
             key={item.i}
-            className={cn("", isEditing && "rounded-lg bg-gray-8 p-0 shadow overflow-hidden")}
+            className={cn(
+              "",
+              isEditing &&
+                "overflow-hidden rounded-lg border-2 border-green-8 border-dashed bg-green-4 p-0 shadow"
+            )}
           >
             <ReactGridLayout
               className="nested-layout"
               layout={nested}
               cols={12}
-              rowHeight={30}
-              onDragStart={(a, b, c, d, e) => {
-                e.stopPropagation();
+              rowHeight={10}
+              onDragStart={(_a, _b, _c, _d, e) => {
+                e.stopPropagation()
               }}
-              onResizeStart={(a, b, c, d, e) => {
-                e.stopPropagation();
+              onResizeStart={(_a, _b, _c, _d, e) => {
+                e.stopPropagation()
               }}
               onLayoutChange={(nestedLayout) =>
                 handleNestedLayoutChange(nestedLayout, item.i)
               }
               resizeHandles={["n", "s", "e", "w"]}
+              preventCollision={false}
+              compactType={item.compactType}
+              useCSSTransforms={true}
             >
               {nested?.map((nestedItem) => {
                 const nestedComponent = gridComponents.find(
-                  (comp) => comp.slotId === nestedItem.i,
-                );
+                  (comp) => comp.slotId === nestedItem.i
+                )
 
                 return (
                   <Box
                     key={nestedItem.i}
                     className={cn(
                       "",
-                      isEditing && "rounded-lg bg-gray-2 p-0 shadow",
+                      isEditing && "rounded-lg bg-gray-2 shadow"
                     )}
                   >
                     <WidgetDropZone
@@ -616,52 +723,56 @@ const handleRemoveNestedComponent = (slotId: string, groupId?: string) => {
                       handleRemoveComponent={handleRemoveNestedComponent}
                     >
                       {nestedComponent ? (
-                      nestedComponent.component
-                    ) : (
-                      <span>{nestedItem.i}</span>
-                    )}
+                        nestedComponent.component
+                      ) : (
+                        <span>{nestedItem.i}</span>
+                      )}
                     </WidgetDropZone>
                   </Box>
-                );
+                )
               })}
             </ReactGridLayout>
           </Box>
-        );
-      } else {
-        return (
-          <Box
-            key={item.i}
-            className={cn("", isEditing && "rounded-lg bg-gray-5 p-0 shadow")}
-          >
-            <WidgetDropZone
-              id={item.i}
-              isEditing={isEditing}
-              handleRemoveComponent={handleRemoveComponent}
-            >
-              {isEditing && (
-                <IconButton
-                  className="absolute top-3 right-3 z-[2]"
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onTouchStart={(e) => e.stopPropagation()}
-                  color="red"
-                  onClick={() => handleRemoveComponent(item.i)}
-                >
-                  <Trash size={16} />
-                </IconButton>
-              )}
-              {gridComponent ? gridComponent.component : <span>{item.i}</span>}
-            </WidgetDropZone>
-          </Box>
-        );
+        )
       }
-    });
-  };
-  if (isLoading) return <LoadingPage />;
-  if (!authUser) return null;
+      return (
+        <Box
+          key={item.i}
+          className={cn("", isEditing && "rounded-lg bg-gray-5 p-0 shadow")}
+        >
+          <WidgetDropZone
+            id={item.i}
+            isEditing={isEditing}
+            handleRemoveComponent={handleRemoveComponent}
+          >
+            {gridComponent ? gridComponent.component : <span>{item.i}</span>}
+          </WidgetDropZone>
+        </Box>
+      )
+    })
+  }
 
-  if (!project) return <div>Project not found</div>;
+  const getViewportWidth = () => {
+    switch (activeDevice) {
+      case "desktop":
+        return "100%"
+      case "laptop":
+        return "1005px"
+      case "tablet":
+        return "776px"
+      default:
+        return "100%"
+    }
+  }
 
-  const isEmpty = gridComponents.length === 0;
+  if (isLoading) return <LoadingPage />
+  if (!authUser) return null
+
+  if (!project) return <div>Project not found</div>
+
+  console.log(defaultLayouts)
+
+  const isEmpty = gridComponents.length === 0
 
   return (
     <DndContext
@@ -673,37 +784,57 @@ const handleRemoveNestedComponent = (slotId: string, groupId?: string) => {
         breadcrumbItems={[]}
         navExtras={<EditWidgetsControl onEditChange={setIsEditing} />}
       >
-        <Box as="div" className="container mx-auto flex overflow-x-hidden">
+        <Box as="div" className=" container mx-auto flex overflow-x-hidden">
           <Box className="h-full w-full overflow-hidden ">
-            <Heading size="6" className="pb-4 capitalize">
-              {project.name}
-            </Heading>
+            <Flex justify={"between"} align={"center"} className="pb-4">
+              <Heading
+                size="6"
+                className={`${isEditing ? "" : "px-4"} capitalize`}
+              >
+                {project.name}
+              </Heading>
+              {isEditing && (
+                <ActiveBtn
+                  items={deviceTabs}
+                  defaultActiveId={activeDevice}
+                  onChange={setActiveDevice}
+                  activeClassName="text-white"
+                />
+              )}
+            </Flex>
+
             <Box
-              className={`h-full rounded-lg transition-colors duration-200 ${
+              ref={boxRef}
+              className={`relative mx-auto h-full rounded-lg transition-all duration-200 ${
                 isEditing && !isEmpty
                   ? "border-2 border-indigo-8 border-dashed bg-indigo-2 "
                   : ""
               }`}
+              style={{
+                width: getViewportWidth(),
+                maxWidth: "100%",
+                overflow: "hidden",
+              }}
             >
-              {isEmpty && isEditing ? (
-                <Box className="flex h-[200px] items-center justify-center text-gray-5">
-                  <p>Drag and drop components here to build your dashboard</p>
-                </Box>
-              ) : (
-                <ResponsiveGridLayout
-                onDragStart={(a, b, c, d, e) => e.stopPropagation()}
+              <span className="absolute top-2 right-2 z-50 rounded-md border border-gray-200 bg-gray-100 px-2 py-1">
+                Current width:{" "}
+                {actualWidth ? `${actualWidth}px` : "Measuring..."}
+              </span>
+              <ResponsiveGridLayout
+                onDragStart={(_a, _b, _c, _d, e) => e.stopPropagation()}
                 layouts={defaultLayouts}
                 onLayoutChange={handleLayoutChange}
-                className="layout"
-                rowHeight={30}
+                className="gridLayout"
+                rowHeight={10}
                 breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                 cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
-                resizeHandles={['n', 's', 'e', 'w']}
+                resizeHandles={["n", "s", "e", "w"]}
+                preventCollision={false}
+                compactType="vertical"
+                useCSSTransforms={true}
               >
                 {generateDOM()}
               </ResponsiveGridLayout>
-                // <DashboardApp isEditing={isEditing} />
-              )}
             </Box>
           </Box>
         </Box>
@@ -726,7 +857,7 @@ const handleRemoveNestedComponent = (slotId: string, groupId?: string) => {
         )}
       </DragOverlay>
     </DndContext>
-  );
-};
+  )
+}
 
-export default DynamicDashboardPage;
+export default DynamicDashboardPage

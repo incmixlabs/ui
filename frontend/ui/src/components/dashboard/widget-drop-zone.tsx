@@ -15,6 +15,8 @@ interface WidgetDropZoneProps {
   isGrouped?: boolean
   groupId?: string
   children: React.ReactNode
+  className?: string
+  btnClassName?: string
 }
 
 export const WidgetDropZone = memo(function WidgetDropZone({
@@ -23,6 +25,8 @@ export const WidgetDropZone = memo(function WidgetDropZone({
   handleRemoveComponent,
   groupId,
   children,
+  className,
+  btnClassName,
 }: WidgetDropZoneProps) {
   const { isOver, setNodeRef } = useDroppable({
     id: `widget-${id}`,
@@ -38,8 +42,9 @@ export const WidgetDropZone = memo(function WidgetDropZone({
     <Box
       ref={setNodeRef}
       className={cn(
-        "relative h-full w-full transition-all duration-150",
-        isOver && isEditing && "ring-2 ring-blue-500 ring-inset bg-blue-100/30",
+        "relative h-full w-full transition-all duration-150 ",
+        isOver && isEditing && " bg-indigo-9 rounded-lg p-2",
+        className
       )}
       data-widget-id={id}
       data-group-id={groupId}
@@ -47,7 +52,7 @@ export const WidgetDropZone = memo(function WidgetDropZone({
       {isEditing && (
         <>
           <IconButton
-            className="absolute top-3 right-3 z-20"
+            className={cn("absolute top-4 right-4 z-20",btnClassName)}
             onMouseDown={(e) => e.stopPropagation()}
             onTouchStart={(e) => e.stopPropagation()}
             color="red"
