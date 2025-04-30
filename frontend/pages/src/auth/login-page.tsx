@@ -17,6 +17,11 @@ import AutoForm from "@incmix/ui/auto-form"
 import { AuthLayout } from "./layouts/auth-layout"
 import { loginFormSchema } from "./login-form-schema"
 
+/**
+ * Renders a login form with email/password and Google authentication options.
+ *
+ * The form uses schema-driven validation with translated error messages and manages local state for input values. Displays error messages, loading, and success states for both login methods, and provides navigation links for password recovery and account signup.
+ */
 function LoginForm() {
   const { t } = useTranslation(["login", "common"])
   const [formValues, setFormValues] = useState({ email: "", password: "" })

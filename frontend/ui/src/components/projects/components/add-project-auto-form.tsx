@@ -12,8 +12,13 @@ interface AddProjectAutoFormProps {
 }
 
 /**
- * Renders a dialog with an auto-generated form for creating a new project.
- * Uses the enhanced AutoForm that supports JSON schema directly.
+ * Displays a modal dialog with an auto-generated form for creating a new project.
+ *
+ * When submitted, collects form data (including file uploads), applies default values for certain fields, and invokes {@link onAddProject} with the new project data. Resets the form and closes the dialog after submission.
+ *
+ * @param isOpen - Whether the dialog is visible.
+ * @param onClose - Callback to close the dialog.
+ * @param onAddProject - Callback invoked with the new project data (excluding the project ID) upon form submission.
  */
 export function AddProjectAutoForm({
   isOpen,

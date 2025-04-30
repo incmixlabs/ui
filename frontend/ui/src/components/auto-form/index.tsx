@@ -28,7 +28,10 @@ export type JSONSchema = {
 }
 
 /**
- * Type guard to check if a schema is a JSON schema
+ * Determines whether the provided object is a JSON Schema.
+ *
+ * @param schema - The object to check.
+ * @returns True if {@link schema} has the structure of a JSON Schema; otherwise, false.
  */
 function isJsonSchema(schema: any): schema is JSONSchema {
   return (
@@ -40,7 +43,12 @@ function isJsonSchema(schema: any): schema is JSONSchema {
 }
 
 /**
- * Converts a JSON schema to a Zod schema
+ * Converts a JSON Schema object to a Zod schema.
+ *
+ * @param schema - The JSON Schema to convert.
+ * @returns A Zod schema equivalent to the provided JSON Schema.
+ *
+ * @throws {Error} If the conversion fails due to invalid or unsupported schema structure.
  */
 function convertJsonSchemaToZod(schema: JSONSchema): z.ZodType {
   try {
@@ -53,6 +61,12 @@ function convertJsonSchemaToZod(schema: JSONSchema): z.ZodType {
   }
 }
 
+/**
+ * Renders a submit button for use within an auto-generated form.
+ *
+ * @param children - Optional button label. Defaults to "Submit" if not provided.
+ * @param className - Optional CSS class names for the button.
+ */
 export function AutoFormSubmit({
   children,
   className,
@@ -67,6 +81,24 @@ export function AutoFormSubmit({
   )
 }
 
+/**
+ * Renders an auto-generated form based on a Zod schema or JSON Schema, handling validation, value changes, and submission.
+ *
+ * Accepts either a Zod schema or a JSON Schema as the form definition. Automatically converts JSON Schema to Zod for validation and parsing. Invokes provided callbacks on value changes, successful parsing, and form submission.
+ *
+ * @param formSchema - The schema defining the form structure, either as a Zod schema or JSON Schema.
+ * @param values - Optional initial or controlled form values.
+ * @param onValuesChange - Optional callback invoked with current form values on any change.
+ * @param onParsedValuesChange - Optional callback invoked with parsed and validated values on change.
+ * @param onSubmit - Optional callback invoked with parsed and validated values on form submission.
+ * @param fieldConfig - Optional configuration for customizing individual form fields.
+ * @param children - Optional React nodes rendered inside the form.
+ * @param className - Optional CSS class names for the form.
+ * @param dependencies - Optional field dependency configuration for conditional field behavior.
+ *
+ * @remark
+ * If a JSON Schema is provided, it is converted to a Zod schema internally. Errors during conversion will throw at runtime.
+ */
 function AutoForm<SchemaType extends ZodObjectOrWrapped>({
   formSchema,
   values: valuesProp,

@@ -12,6 +12,11 @@ import { forgotPasswordSchema } from "./forgot-password-form-schema"
 import { setupGoogleAuthCallbackListener, useAuth } from "./hooks/auth"
 import { AuthLayout } from "./layouts/auth-layout"
 
+/**
+ * Renders a form for users to request a password reset by submitting their email address.
+ *
+ * Displays validation errors and success messages based on the API response. Handles form state, localization, and triggers a password reset request to the authentication API.
+ */
 function ForgotPasswordForm() {
   const { t } = useTranslation(["login", "forgotPassword", "common"])
   const [formValues, setFormValues] = useState({ email: "" })

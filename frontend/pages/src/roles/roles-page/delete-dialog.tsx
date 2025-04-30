@@ -11,6 +11,17 @@ type DeleteDialogProps = {
   onOpenChange?: (open: boolean) => void
 }
 
+/**
+ * Displays a confirmation dialog for permanently deleting one or more roles.
+ *
+ * Renders a modal dialog that lists the selected roles and prompts the user to confirm deletion. Upon confirmation, each role is deleted sequentially, and a success or error toast is shown based on the outcome.
+ *
+ * @param items - The roles to be deleted, each with an `id` and `name`.
+ * @param onSuccess - Optional callback invoked after all deletions succeed.
+ *
+ * @remark
+ * Deletion is performed sequentially for each role in the {@link items} array. The dialog can be controlled externally via props.
+ */
 export function DeleteDialog({
   items,
   onSuccess,

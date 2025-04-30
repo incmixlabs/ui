@@ -139,7 +139,16 @@ const textFilterFn = (row: any, columnId: string, filterValue: string) => {
   return String(value).toLowerCase().includes(filterValue.toLowerCase());
 };
 
-// Function to determine if pagination should be visible
+/**
+ * Determines whether pagination controls should be displayed based on explicit flags and data size.
+ *
+ * @param showPagination - Optional explicit flag to show or hide pagination.
+ * @param enablePagination - Whether pagination is enabled.
+ * @param totalItems - Total number of items in the dataset.
+ * @param pageSize - Number of items per page.
+ * @param currentPage - The current page index.
+ * @returns True if pagination controls should be visible; otherwise, false.
+ */
 function shouldPaginationBeVisible<TData>(
   showPagination: boolean | undefined,
   enablePagination: boolean,
@@ -170,7 +179,17 @@ function shouldPaginationBeVisible<TData>(
   return false;
 }
 
-// Utility function to create column definitions
+/**
+ * Generates column definitions for a data table, including selection, sorting, and actions columns as configured.
+ *
+ * Adds a selection column if row selection is enabled, configures sorting and formatting for data columns, applies size constraints, and appends an actions column if row actions are provided.
+ *
+ * @param columns - The array of data table columns to define.
+ * @param enableRowSelection - Whether to include a selection checkbox column.
+ * @param enableSorting - Whether sorting is enabled by default for columns.
+ * @param rowActions - Optional function to generate row-specific actions for the actions column.
+ * @returns An array of column definitions suitable for use with the table component.
+ */
 function createColumnDefinitions<TData>(
   columns: DataTableColumn<TData>[],
   enableRowSelection: boolean,
@@ -764,7 +783,49 @@ const exportCSV = <TData extends object>(
   document.body.removeChild(link);
 };
 
-// Main component
+/**
+ * Renders a highly customizable data table with filtering, sorting, pagination, row selection, column visibility, export, and expandable row support.
+ *
+ * This component supports both client-side and server-side pagination, faceted and sidebar filters, column grouping, and custom row actions. It integrates with the `@tanstack/react-table` library for table logic and provides a rich set of UI controls for user interaction.
+ *
+ * @template TData - The shape of the table's row data.
+ *
+ * @param columns - Array of column definitions or column groups for the table.
+ * @param data - The data to display in the table.
+ * @param enableFiltering - Enables text and faceted filtering controls.
+ * @param enableSorting - Enables column sorting.
+ * @param enablePagination - Enables pagination controls.
+ * @param enableRowSelection - Enables row selection with checkboxes.
+ * @param enableColumnVisibility - Enables column visibility toggling.
+ * @param enableColumnResizing - Enables column resizing (if supported).
+ * @param enableColumnReordering - Enables column drag-and-drop reordering (if supported).
+ * @param showRowCount - Shows the count of selected and filtered rows.
+ * @param filterColumn - The column key to use for the main text filter.
+ * @param filterPlaceholder - Placeholder text for the main filter input.
+ * @param className - Additional CSS classes for the table container.
+ * @param rowActions - Optional row actions to display in an actions column.
+ * @param facets - Faceted filter definitions for supported columns.
+ * @param serverPagination - Enables server-side pagination mode.
+ * @param currentPage - The current page index (zero-based) for server pagination.
+ * @param pageSize - The number of rows per page.
+ * @param totalItems - The total number of items (for server pagination).
+ * @param onPageChange - Callback when the page changes (server pagination).
+ * @param onPageSizeChange - Callback when the page size changes (server pagination).
+ * @param isPaginationLoading - Whether pagination is currently loading.
+ * @param showPagination - Explicitly controls pagination visibility.
+ * @param export - Export options for table data (CSV, Excel, PDF).
+ * @param expandableRows - Configuration for expandable rows and their content.
+ * @param onRowClick - Callback when a row is clicked.
+ * @param onSelectionChange - Callback when the row selection changes.
+ * @param onColumnReorder - Callback when columns are reordered.
+ * @param enableSidebarFilters - Enables a sidebar for additional filters.
+ * @param sidebarFilters - Sidebar filter definitions.
+ * @param initialSidebarOpen - Whether the sidebar is open by default.
+ *
+ * @remark
+ * - When `serverPagination` is enabled, pagination and filtering are handled externally, and callbacks must be provided.
+ * - The table supports both grouped and flat column definitions.
+ */
 export function DataTable<TData extends object>({
   columns,
   data,

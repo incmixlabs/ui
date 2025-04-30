@@ -12,6 +12,11 @@ import { setupGoogleAuthCallbackListener, useAuth } from "./hooks/auth"
 import { resetPasswordSchema } from "./reset-password-form-schema"
 import { ResetPasswordRoute } from "./routes"
 
+/**
+ * Renders a password reset form that allows users to set a new password using a code and email from the URL.
+ *
+ * Displays validation errors, handles form submission to the password reset API, and redirects to the login page on success.
+ */
 function ResetPasswordForm() {
   const { code, email } = ResetPasswordRoute.useSearch()
   const navigate = useNavigate()

@@ -18,6 +18,15 @@ interface ProjectListViewProps {
 type SortField = "name" | "modified" | "size"
 type SortDirection = "asc" | "desc"
 
+/**
+ * Displays a sortable and selectable list of files in a scrollable data table view.
+ *
+ * Renders file items with manual sorting and selection logic, allowing users to sort by column, select individual or all files, and trigger a callback when a file is clicked. The table layout adapts to mobile and desktop screen sizes.
+ *
+ * @param files - The array of file items to display.
+ * @param onFileClick - Callback invoked when a file row is clicked.
+ * @param selectedProjectId - The ID of the currently selected project, used to highlight or distinguish files.
+ */
 export function ProjectListView({
   files,
   onFileClick,
