@@ -19,7 +19,7 @@ import { loginFormSchema } from "./login-form-schema"
 
 function LoginForm() {
   const { t } = useTranslation(["login", "common"])
-  
+
   const {
     handleGoogleLogin,
     isLoading: isGoogleLoginLoading,

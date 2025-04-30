@@ -247,11 +247,13 @@ const OrganizationDetailsPage: React.FC = () => {
     return (
       <Flex align="center" className="h-full">
         {isDisabled || !canDelete ? (
-          <Tooltip content={
-            isDisabled
-              ? t("organizationDetails:cannotRemoveSelf")
-              : t("organizationDetails:cannotRemoveMember")
-          }>
+          <Tooltip
+            content={
+              isDisabled
+                ? t("organizationDetails:cannotRemoveSelf")
+                : t("organizationDetails:cannotRemoveMember")
+            }
+          >
             <Button color="red" variant="soft" size="1" disabled={true}>
               {t("common:remove")}
             </Button>

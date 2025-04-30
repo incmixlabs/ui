@@ -207,19 +207,21 @@ const OrganizationDetailsPage: React.FC = () => {
   }
 
   const renderActions = (member: MemberDetails) => {
-    if (!ability) return null;
-    
+    if (!ability) return null
+
     const isDisabled = isCurrentUser(member.userId)
     const canDelete = ability.can("delete", "Member")
 
     return (
       <Flex align="center" className="h-full">
         {isDisabled || !canDelete ? (
-          <Tooltip content={
-            isDisabled 
-              ? t("organizationDetails:cannotRemoveSelf") 
-              : t("organizationDetails:cannotRemoveMember")
-          }>
+          <Tooltip
+            content={
+              isDisabled
+                ? t("organizationDetails:cannotRemoveSelf")
+                : t("organizationDetails:cannotRemoveMember")
+            }
+          >
             <Button color="red" variant="soft" size="1" disabled={true}>
               {t("common:remove")}
             </Button>
