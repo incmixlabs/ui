@@ -1,18 +1,10 @@
 import { LoadingPage } from "@common"
 import { Box, Flex, Heading, Text } from "@incmix/ui"
 import { ReactiveButton } from "@incmix/ui"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@incmix/ui"
 import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { Link } from "@tanstack/react-router"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import {
   setupGoogleAuthCallbackListener,
@@ -21,13 +13,13 @@ import {
   useLogin,
 } from "./hooks/auth"
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm as useHookForm } from "react-hook-form"
-import { z } from "zod"
+import AutoForm from "@incmix/ui/auto-form"
 import { AuthLayout } from "./layouts/auth-layout"
+import { loginFormSchema } from "./login-form-schema"
 
 function LoginForm() {
   const { t } = useTranslation(["login", "common"])
+
   const {
     handleGoogleLogin,
     isLoading: isGoogleLoginLoading,
@@ -41,23 +33,29 @@ function LoginForm() {
     isSuccess: isLoginSuccess,
   } = useLogin()
 
-  // Define the form validation schema
-  const formSchema = z.object({
-    email: z.string().email(t("emailValidation")),
-    password: z.string().min(1, t("passwordValidation")),
-  })
-
-  // Use react-hook-form instead of TanStack form
-  const form = useHookForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
+  // Create a schema with translated validation messages
+  const schemaWithTranslations = {
+    ...loginFormSchema.formSchema,
+    properties: {
+      ...loginFormSchema.formSchema.properties,
+      email: {
+        ...loginFormSchema.formSchema.properties.email,
+        errorMessage: {
+          format: t("emailValidation"),
+        },
+      },
+      password: {
+        ...loginFormSchema.formSchema.properties.password,
+        errorMessage: {
+          minLength: t("passwordValidation"),
+        },
+      },
     },
-  })
+  }
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    handleLogin(values.email, values.password)
+  // Fixed: Use a more generic type that matches what AutoForm expects
+  const handleSubmit = (values: { [key: string]: any }) => {
+    handleLogin(values.email as string, values.password as string)
   }
 
   return (
@@ -65,67 +63,35 @@ function LoginForm() {
       <Heading size="4" mb="4" className="text-gray-900 dark:text-white">
         {t("title")}
       </Heading>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Flex direction="column" gap="4">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("common:email")}</FormLabel>
-                  <FormControl>
-                    <input
-                      type="email"
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("common:password")}</FormLabel>
-                  <FormControl>
-                    <input
-                      type="password"
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+      <AutoForm
+        formSchema={schemaWithTranslations}
+        fieldConfig={loginFormSchema.fieldConfig}
+        onSubmit={handleSubmit}
+        className="space-y-4"
+      >
+        {loginError && (
+          <Text color="red" size="2" className="mt-2">
+            {loginError.message}
+          </Text>
+        )}
 
-            {loginError && (
-              <Text color="red" size="2">
-                {loginError.message}
-              </Text>
-            )}
-            <Box className="text-left">
-              <Link to="/forgot-password">
-                <Text color="blue">{t("login:forgotPassword")}</Text>
-              </Link>
-            </Box>
-            <ReactiveButton
-              type="submit"
-              color="blue"
-              loading={isLoginLoading}
-              success={isLoginSuccess}
-              className="w-full"
-            >
-              {t("submit")}
-            </ReactiveButton>
-          </Flex>
-        </form>
-      </Form>
+        <Box className="text-left">
+          <Link to="/forgot-password">
+            <Text color="blue">{t("login:forgotPassword")}</Text>
+          </Link>
+        </Box>
+
+        <ReactiveButton
+          type="submit"
+          color="blue"
+          loading={isLoginLoading}
+          success={isLoginSuccess}
+          className="w-full"
+        >
+          {t("submit")}
+        </ReactiveButton>
+      </AutoForm>
 
       {/* OR separator */}
       <div className="relative my-4 flex w-full items-center">

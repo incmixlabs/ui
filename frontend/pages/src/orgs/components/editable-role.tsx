@@ -1,6 +1,6 @@
 import { Button, Flex, Select, Spinner, Text, Tooltip } from "@incmix/ui"
 import type { UserRole } from "@incmix/utils/types"
-import { Check as CheckIcon } from "lucide-react"
+import { Check as CheckIcon, CrossIcon, PencilIcon } from "lucide-react"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
@@ -90,7 +90,7 @@ export const EditableRole: React.FC<EditableRoleProps> = ({
             onClick={handleCancel}
             disabled={isLoading}
           >
-            <Cross1Icon />
+            <CrossIcon />
           </Button>
         </Tooltip>
       </Flex>
@@ -103,7 +103,7 @@ export const EditableRole: React.FC<EditableRoleProps> = ({
       <Tooltip content={t("organizationDetails:editRole")}>
         {editable && (
           <Button size="1" variant="ghost" onClick={handleEdit}>
-            <Pencil1Icon />
+            <PencilIcon />
           </Button>
         )}
       </Tooltip>

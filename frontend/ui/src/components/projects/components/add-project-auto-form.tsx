@@ -1,8 +1,6 @@
-import AutoForm from "@components/auto-form"
-import { Button, Dialog } from "@radix-ui/themes"
-import jsonSchemaToZod from "json-schema-to-zod"
 import { useState } from "react"
-import { z } from "zod"
+import { Button, Dialog } from "@radix-ui/themes"
+import AutoForm from "@components/auto-form"
 import { ProjectsImages } from "../images"
 import type { Project } from "../types"
 import { projectFormSchema } from "./project-form-schema"
@@ -15,7 +13,7 @@ interface AddProjectAutoFormProps {
 
 /**
  * Renders a dialog with an auto-generated form for creating a new project.
- * Fixed to properly handle file uploads.
+ * Uses the enhanced AutoForm that supports JSON schema directly.
  */
 export function AddProjectAutoForm({
   isOpen,
@@ -23,25 +21,6 @@ export function AddProjectAutoForm({
   onAddProject,
 }: AddProjectAutoFormProps) {
   const [formData, setFormData] = useState<Record<string, any>>({})
-
-  // Convert JSON schema to Zod schema
-  const convertToZod = (schema: any) => {
-    try {
-      // Generate Zod code from JSON Schema
-      const zodString = jsonSchemaToZod(schema)
-
-      // Create a function that returns the Zod schema
-      const zodSchemaFunction = new Function("z", `return ${zodString}`)
-
-      // Return the Zod schema
-      return zodSchemaFunction(z)
-    } catch (error) {
-      console.error("Error converting to Zod:", error, {
-        schemaId: schema.id || "unknown",
-      })
-      return null
-    }
-  }
 
   // Handle form values change
   const handleValuesChange = (values: any) => {
@@ -80,30 +59,26 @@ export function AddProjectAutoForm({
     onClose()
   }
 
-  // Convert the JSON schema to Zod schema
-  const zodSchema = convertToZod(projectFormSchema.formSchema)
-
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Content maxWidth="500px">
         <Dialog.Title className="font-medium">Add Project</Dialog.Title>
 
         <div className="py-4">
-          {zodSchema && (
-            <AutoForm
-              formSchema={zodSchema}
-              onSubmit={handleSubmit}
-              onValuesChange={handleValuesChange}
-              values={formData}
-              fieldConfig={projectFormSchema.fieldConfig}
-            >
-              <div className="mt-4 flex justify-end">
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
-                  Create
-                </Button>
-              </div>
-            </AutoForm>
-          )}
+          {/* We're now passing the JSON schema directly to AutoForm */}
+          <AutoForm
+            formSchema={projectFormSchema.formSchema}
+            onSubmit={handleSubmit}
+            onValuesChange={handleValuesChange}
+            values={formData}
+            fieldConfig={projectFormSchema.fieldConfig}
+          >
+            <div className="mt-4 flex justify-end">
+              <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                Create
+              </Button>
+            </div>
+          </AutoForm>
         </div>
       </Dialog.Content>
     </Dialog.Root>
