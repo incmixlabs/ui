@@ -1,4 +1,5 @@
 import { PaginationInfo } from "../types";
+import { Table } from "@tanstack/react-table";
 
 // Constants
 export const PAGE_SIZE_OPTIONS = [10, 20, 30, 40, 50];
@@ -6,7 +7,7 @@ export const PAGE_SIZE_OPTIONS = [10, 20, 30, 40, 50];
 // Calculate pagination info
 export function calculatePaginationInfo(
   serverPagination: boolean,
-  table: any,
+  table: Table<any>,
   currentPage: number,
   pageSize: number,
   totalItems: number

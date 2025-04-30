@@ -30,21 +30,21 @@ export function applyColumnSizeConstraints<TData>(
   def: ColumnDef<TData>,
   constraints: ColumnSizeConstraints
 ): void {
-  if (constraints.width) {
-    def.size = typeof constraints.width === 'number' 
-      ? constraints.width 
-      : parseInt(constraints.width);
-  }
+  if (typeof constraints.width === "number") {
+    def.size = constraints.width;
+  } else if (constraints.width && /^\d+$/.test(constraints.width)) {
+    def.size = Number(constraints.width); // pixels
+  } // otherwise leave undefined – let CSS handle %, rem, etc.
   
-  if (constraints.minWidth) {
-    def.minSize = typeof constraints.minWidth === 'number' 
-      ? constraints.minWidth 
-      : parseInt(constraints.minWidth);
-  }
+  if (typeof constraints.minWidth === "number") {
+    def.minSize = constraints.minWidth;
+  } else if (constraints.minWidth && /^\d+$/.test(constraints.minWidth)) {
+    def.minSize = Number(constraints.minWidth); // pixels
+  } // otherwise leave undefined – let CSS handle %, rem, etc.
   
-  if (constraints.maxWidth) {
-    def.maxSize = typeof constraints.maxWidth === 'number' 
-      ? constraints.maxWidth 
-      : parseInt(constraints.maxWidth);
-  }
+  if (typeof constraints.maxWidth === "number") {
+    def.maxSize = constraints.maxWidth;
+  } else if (constraints.maxWidth && /^\d+$/.test(constraints.maxWidth)) {
+    def.maxSize = Number(constraints.maxWidth); // pixels
+  } // otherwise leave undefined – let CSS handle %, rem, etc.
 }

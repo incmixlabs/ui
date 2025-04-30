@@ -12,10 +12,10 @@ export const exportTableData = <TData extends object>(
       exportCSV(data, columns, filename);
       break;
     case "excel":
-      alert("Excel export not implemented in this demo - would use a library like xlsx");
+      console.info("Excel export not implemented in this demo - would use a library like xlsx");
       break;
     case "pdf":
-      alert("PDF export not implemented in this demo - would use a library like jsPDF");
+      console.info("PDF export not implemented in this demo - would use a library like jsPDF");
       break;
     default:
       console.warn(`Unsupported export format: ${format}`);

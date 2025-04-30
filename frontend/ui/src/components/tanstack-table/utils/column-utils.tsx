@@ -4,23 +4,7 @@ import { DataTableColumn, ColumnGroup, RowAction, ColumnType } from "../types";
 import { getCellRenderer } from "../cell-renderers";
 import React from "react";
 import { Button, Checkbox, DropdownMenuWrapper } from "../../../components/base";
-
-// Type guard for column group
-export function isColumnGroup<TData>(obj: any): obj is ColumnGroup<TData> {
-  return obj && typeof obj === 'object' && 'title' in obj && 'columns' in obj;
-}
-
-// Flatten column groups into a flat array of columns
-export function flattenColumns<TData>(
-  columns: (DataTableColumn<TData> | ColumnGroup<TData>)[]
-): DataTableColumn<TData>[] {
-  return columns.flatMap(col => {
-    if (isColumnGroup<TData>(col)) {
-      return col.columns;
-    }
-    return col;
-  });
-}
+import { isColumnGroup, flattenColumns } from "./column-utils";
 
 // Utility function to create column definitions
 export function createColumnDefinitions<TData>(

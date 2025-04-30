@@ -214,10 +214,10 @@ export function DataTable<TData extends object>({
         const selectedRowIds = Object.keys(updatedSelection).filter(id =>
           (updatedSelection as Record<string, boolean>)[id]);
 
-        const selectedRowData = selectedRowIds.map(id => {
-          const row = table.getRow(id);
-          return row.original;
-        });
+        const selectedRowData = selectedRowIds
+          .map(id => table.getRow(id))
+          .filter((row): row is typeof row & { original: TData } => !!row)
+          .map(row => row.original);
 
         onSelectionChange(selectedRowData);
       }
