@@ -13,10 +13,8 @@ import { DataTable } from "@incmix/ui/tanstack-table"
 import type { Organization } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useNavigate } from "@tanstack/react-router"
-import jsonSchemaToZod from "json-schema-to-zod"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
-import { z } from "zod"
 import {
   useCreateOrganization,
   useOrganizations,
@@ -53,25 +51,6 @@ const CreateOrganizationDialog: React.FC<{
     useCreateOrganization()
   const [formData, setFormData] = useState<Record<string, any>>({})
 
-  // Convert JSON schema to Zod schema
-  const convertToZod = (schema: any) => {
-    try {
-      // Generate Zod code from JSON Schema
-      const zodString = jsonSchemaToZod(schema)
-
-      // Create a function that returns the Zod schema
-      const zodSchemaFunction = new Function("z", `return ${zodString}`)
-
-      // Return the Zod schema
-      return zodSchemaFunction(z)
-    } catch (error) {
-      console.error("Error converting to Zod:", error, {
-        schemaId: schema.id || "unknown",
-      })
-      return null
-    }
-  }
-
   // Handle form values change
   const handleValuesChange = (values: any) => {
     setFormData(values)
@@ -83,9 +62,6 @@ const CreateOrganizationDialog: React.FC<{
     setFormData({}) // Reset form
     onCreateOrganization()
   }
-
-  // Convert the JSON schema to Zod schema
-  const zodSchema = convertToZod(organizationFormSchema.formSchema)
 
   // Add custom validation for the organization handle field
   const fieldConfigWithValidation = {
@@ -110,26 +86,24 @@ const CreateOrganizationDialog: React.FC<{
           {t("organizations:createNewOrganization")}
         </Dialog.Description>
         <div className="py-4">
-          {zodSchema && (
-            <AutoForm
-              formSchema={zodSchema}
-              onSubmit={handleSubmit}
-              onValuesChange={handleValuesChange}
-              values={formData}
-              fieldConfig={fieldConfigWithValidation}
-            >
-              <div className="mt-4 flex justify-end">
-                <Button
-                  type="submit"
-                  disabled={isCreatingOrganization || isValidating}
-                >
-                  {isCreatingOrganization
-                    ? t("common:creating")
-                    : t("common:create")}
-                </Button>
-              </div>
-            </AutoForm>
-          )}
+          <AutoForm
+            formSchema={organizationFormSchema.formSchema}
+            onSubmit={handleSubmit}
+            onValuesChange={handleValuesChange}
+            values={formData}
+            fieldConfig={fieldConfigWithValidation}
+          >
+            <div className="mt-4 flex justify-end">
+              <Button
+                type="submit"
+                disabled={isCreatingOrganization || isValidating}
+              >
+                {isCreatingOrganization
+                  ? t("common:creating")
+                  : t("common:create")}
+              </Button>
+            </div>
+          </AutoForm>
         </div>
       </Dialog.Content>
     </Dialog.Root>

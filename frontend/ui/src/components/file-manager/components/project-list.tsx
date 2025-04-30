@@ -1,13 +1,9 @@
 import { useState } from "react"
-import { ChevronDown, ChevronUp } from "lucide-react"
 import { ScrollArea } from "@base"
 import { DataTable } from "@incmix/ui/tanstack-table"
 import { useMediaQuery } from "@hooks/use-media-query"
-import { cn } from "@utils"
-import { getBytes } from "@utils/getBytes"
 import type { FileItem } from "../data"
 import { getProjectListColumns, sortFiles } from "./project-list-utils"
-import { ProjectActionsMenu } from "./project-actions-menu"
 
 interface ProjectListViewProps {
   files: FileItem[]
@@ -67,7 +63,7 @@ export function ProjectListView({
   // Get columns for DataTable using our utility
   const columns = getProjectListColumns(
     sortField,
-    sortDirection, 
+    sortDirection,
     selectedFiles,
     isMobile,
     selectedProjectId,

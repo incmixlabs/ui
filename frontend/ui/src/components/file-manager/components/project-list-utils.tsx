@@ -5,29 +5,33 @@ import { getBytes } from "@utils/getBytes"
 import type { FileItem } from "../data"
 import { ProjectActionsMenu } from "./project-actions-menu"
 import React, { ReactNode } from "react"
+import { DataTable } from "@incmix/ui/tanstack-table"
 
-// Column type definition based on usage pattern in the codebase
-interface ColumnDef<T> {
+type ColumnType = "String" | "Number" | "Currency" | "Date" | "Tag" | "Boolean" | "Status" | "Rating" | "Image" | "Link" | "Custom";
+
+// Export TableColumn type to be used in project-list.tsx
+export interface TableColumn<T> {
   headingName: string | ReactNode;
-  type: "Custom" | "String" | "Number" | "Date" | "Boolean";
-  accessorKey: string;
-  width?: number;
-  renderer: (value: any, row: T) => ReactNode;
-  cell?: () => ReactNode;
+  accessorKey: keyof T | string;
+  type?: ColumnType;
+  enableSorting?: boolean;
+  width?: number | string;
+  renderer?: (value: any, row: T) => ReactNode;
+  cell?: (info: any) => ReactNode;
   className?: string;
 }
 
 // Extract checkbox cell into a reusable component
-export const FileCheckbox = ({ 
-  checked, 
-  onChange, 
+export const FileCheckbox = ({
+  checked,
+  onChange,
   stopPropagation,
-  ariaLabel 
-}: { 
-  checked: boolean; 
-  onChange: () => void; 
+  ariaLabel
+}: {
+  checked: boolean;
+  onChange: () => void;
   stopPropagation?: (e: React.MouseEvent) => void;
-  ariaLabel: string 
+  ariaLabel: string
 }) => (
   <div className="flex items-center justify-center">
     <Checkbox
@@ -40,14 +44,14 @@ export const FileCheckbox = ({
 );
 
 // Extract file name cell into a reusable component
-export const FileNameCell = ({ 
-  name, 
-  IconComponent, 
-  isFolder 
-}: { 
-  name: string; 
-  IconComponent: React.ElementType | null; 
-  isFolder: boolean 
+export const FileNameCell = ({
+  name,
+  IconComponent,
+  isFolder
+}: {
+  name: string;
+  IconComponent: React.ElementType | null;
+  isFolder: boolean
 }) => (
   <div className="flex items-center gap-3">
     {IconComponent && (
@@ -60,26 +64,26 @@ export const FileNameCell = ({
 );
 
 // Extract sort header into a reusable component
-export const SortHeader = ({ 
-  label, 
-  field, 
-  sortField, 
+export const SortHeader = ({
+  label,
+  field,
+  sortField,
   sortDirection,
   onClick,
   justify = "start"
-}: { 
-  label: string; 
-  field: "name" | "modified" | "size"; 
-  sortField: string; 
+}: {
+  label: string;
+  field: "name" | "modified" | "size";
+  sortField: string;
   sortDirection: "asc" | "desc";
   onClick: () => void;
   justify?: "start" | "end"
 }) => {
   const isActive = sortField === field;
   const direction = sortDirection === "asc";
-  
+
   return (
-    <div 
+    <div
       className={`flex cursor-pointer items-center ${justify === "end" ? "justify-end" : ""} gap-2`}
       onClick={onClick}
     >
@@ -94,7 +98,7 @@ export const SortHeader = ({
 /**
  * Get column definitions for the project list table
  */
-export const getProjectListColumns = (
+export const getProjectListColumns = <T extends FileItem>(
   sortField: "name" | "modified" | "size",
   sortDirection: "asc" | "desc",
   selectedFiles: string[],
@@ -107,53 +111,51 @@ export const getProjectListColumns = (
     stopPropagation: (e: React.MouseEvent) => void,
     onFileClick: (file: FileItem) => void,
   }
-): ColumnDef<FileItem>[] => {
+): TableColumn<T>[] => {
   const { toggleSelectAll, handleSort, toggleSelectFile, stopPropagation } = handlers;
 
   // Base columns
-  const columns: ColumnDef<FileItem>[] = [
+  const columns: TableColumn<T>[] = [
     {
       headingName: "",
-      type: "Custom",
       accessorKey: "checkbox",
       width: 60,
-      renderer: (_: any, file: FileItem) => (
-        <FileCheckbox 
+      cell: () => (
+        <FileCheckbox
+          checked={selectedFiles.length > 0}
+          onChange={toggleSelectAll}
+          ariaLabel="Select all files"
+        />
+      ),
+      renderer: (_: any, file: T) => (
+        <FileCheckbox
           checked={selectedFiles.includes(file.id)}
           onChange={() => toggleSelectFile(file.id)}
           stopPropagation={stopPropagation}
           ariaLabel={`Select ${file.name}`}
         />
       ),
-      cell: () => (
-        <FileCheckbox 
-          checked={selectedFiles.length > 0}
-          onChange={toggleSelectAll}
-          ariaLabel="Select all files"
-        />
-      ),
     },
     {
       headingName: (
-        <SortHeader 
-          label="Files" 
-          field="name" 
-          sortField={sortField} 
+        <SortHeader
+          label="Files"
+          field="name"
+          sortField={sortField}
           sortDirection={sortDirection}
           onClick={() => handleSort("name")}
         />
       ),
-      type: "Custom",
       accessorKey: "name",
-      renderer: (name: string, file: FileItem) => {
-        const IconComponent = selectedProjectId === file.id 
-          ? file.openIcon || null 
+      renderer: (name: string, file: T) => {
+        const IconComponent = selectedProjectId === file.id
+          ? file.openIcon || null
           : file.closeIcon || null;
-          
+
         return (
-          <FileNameCell 
-            name={name} 
-            IconComponent={IconComponent} 
+          <FileNameCell
+            name={name}
+            IconComponent={IconComponent}
             isFolder={file.type === "folder"}
           />
         );
@@ -166,16 +168,15 @@ export const getProjectListColumns = (
     columns.push(
       {
         headingName: (
-          <SortHeader 
-            label="Date" 
-            field="modified" 
-            sortField={sortField} 
+          <SortHeader
+            label="Date"
+            field="modified"
+            sortField={sortField}
             sortDirection={sortDirection}
             onClick={() => handleSort("modified")}
             justify="end"
           />
         ),
-        type: "Custom",
         accessorKey: "modified",
         renderer: (modified: string) => (
           <div className="text-right text-muted-foreground">{modified}</div>
@@ -183,16 +184,15 @@ export const getProjectListColumns = (
       },
       {
         headingName: (
-          <SortHeader 
-            label="Size" 
-            field="size" 
-            sortField={sortField} 
+          <SortHeader
+            label="Size"
+            field="size"
+            sortField={sortField}
             sortDirection={sortDirection}
             onClick={() => handleSort("size")}
             justify="end"
           />
         ),
-        type: "Custom",
         accessorKey: "size",
         renderer: (size: {value: string, unit: string}) => (
           <div className="text-right text-muted-foreground">
@@ -206,10 +206,9 @@ export const getProjectListColumns = (
   // Always add actions column
   columns.push({
     headingName: "Action",
-    type: "Custom",
     accessorKey: "actions",
     width: isMobile ? 100 : 60,
-    renderer: (_: any, file: FileItem) => (
+    renderer: (_: any, file: T) => (
       <div className="text-right" onClick={stopPropagation}>
         <ProjectActionsMenu
           projectId={file.id}
@@ -226,8 +225,8 @@ export const getProjectListColumns = (
  * Sort files based on sort field and direction
  */
 export const sortFiles = (
-  files: FileItem[], 
-  sortField: "name" | "modified" | "size", 
+  files: FileItem[],
+  sortField: "name" | "modified" | "size",
   sortDirection: "asc" | "desc"
 ): FileItem[] => {
   return [...files].sort((a, b) => {

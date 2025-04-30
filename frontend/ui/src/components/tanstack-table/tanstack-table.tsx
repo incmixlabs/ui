@@ -140,12 +140,11 @@ const textFilterFn = (row: any, columnId: string, filterValue: string) => {
 };
 
 // Function to determine if pagination should be visible
-function shouldPaginationBeVisible<TData>(
+function shouldPaginationBeVisible(
   showPagination: boolean | undefined,
   enablePagination: boolean,
   totalItems: number,
-  pageSize: number,
-  currentPage: number
+  pageSize: number
 ): boolean {
   // If explicit showPagination flag is provided, use it
   if (typeof showPagination !== 'undefined') {
@@ -157,8 +156,9 @@ function shouldPaginationBeVisible<TData>(
     return false;
   }
   
-  // Calculate total pages
-  const totalPages = Math.ceil(totalItems / pageSize);
+  // Calculate total pages with safety guard against division by zero
+  const safePageSize = Math.max(pageSize, 1);
+  const totalPages = Math.ceil(totalItems / safePageSize);
   
   // Always show pagination if there are multiple pages
   if (totalPages > 1) {
@@ -1045,8 +1045,7 @@ export function DataTable<TData extends object>({
       showPagination,
       enablePagination,
       totalItemCount,
-      paginationInfo.pageSize,
-      paginationInfo.currentPage
+      paginationInfo.pageSize
     );
   }, [
     showPagination,
@@ -1054,8 +1053,7 @@ export function DataTable<TData extends object>({
     serverPagination,
     totalItems,
     table,
-    paginationInfo.pageSize,
-    paginationInfo.currentPage
+    paginationInfo.pageSize
   ]);
 
   return (

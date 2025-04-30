@@ -10,7 +10,7 @@ export const resetPasswordSchema = {
     properties: {
       newPassword: {
         type: "string",
-        minLength: 1,
+        minLength: 6,
         title: "New Password",
       },
     },

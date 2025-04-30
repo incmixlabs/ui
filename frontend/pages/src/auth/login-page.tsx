@@ -19,8 +19,7 @@ import { loginFormSchema } from "./login-form-schema"
 
 function LoginForm() {
   const { t } = useTranslation(["login", "common"])
-  const [formValues, setFormValues] = useState({ email: "", password: "" })
-
+  
   const {
     handleGoogleLogin,
     isLoading: isGoogleLoginLoading,
@@ -59,10 +58,6 @@ function LoginForm() {
     handleLogin(values.email as string, values.password as string)
   }
 
-  const handleValuesChange = (values: any) => {
-    setFormValues(values)
-  }
-
   return (
     <>
       <Heading size="4" mb="4" className="text-gray-900 dark:text-white">
@@ -73,8 +68,6 @@ function LoginForm() {
         formSchema={schemaWithTranslations}
         fieldConfig={loginFormSchema.fieldConfig}
         onSubmit={handleSubmit}
-        onValuesChange={handleValuesChange}
-        values={formValues}
         className="space-y-4"
       >
         {loginError && (
