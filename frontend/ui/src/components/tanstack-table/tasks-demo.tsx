@@ -1,9 +1,9 @@
 "use client"
 
 import React, { useState, useEffect, useCallback } from "react"
-import { DataTable } from "./tanstack-table"
 import { registerCellRenderer, cellRendererRegistry } from "./cell-renderers"
 import { RowAction } from "./types"
+import { DataTable } from "./components/DataTable"
 
 // Custom rating cell renderer (example of extending the table with a new column type)
 const RatingCell: React.FC<{ value: number }> = ({ value }) => {

@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, useCallback } from "react"
-import { DataTable } from "./tanstack-table"
+import { DataTable } from "./components/DataTable"
 import { registerCellRenderer, cellRendererRegistry } from "./cell-renderers"
 import { RowAction, SidebarFilterConfig } from "./types"
 import { Calendar, Clock, FileText, UserCircle, Tag, BarChart4, Check } from "lucide-react"
