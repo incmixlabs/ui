@@ -1,19 +1,22 @@
 import type React from "react"
-export interface ComponentSlot {
-  slotId: string
-  component: React.ReactNode
-  title: string
-  compImage?: string
+import type { Layout } from "react-grid-layout"
+export interface LayoutPreset {
+  id: string
+  name: string
+  image: string
+  description: string
+  mainLayouts: CustomLayouts
+  nestedLayouts: Record<string, Layout[]>
 }
 
-export interface IWidgetGroup {
-  groupId: string
-  title: string
-  memberIds: string[]
-  arrangement: "vertical" | "horizontal"
+export interface LayoutPresetsProps {
+  presets: LayoutPreset[]
+  onSelectPreset: (preset: LayoutPreset) => void
+  activePresetId?: string
+  isEditing: boolean
 }
 
-export interface ILayoutItem {
+export interface LayoutItem {
   i: string
   x: number
   y: number
@@ -22,11 +25,39 @@ export interface ILayoutItem {
   moved?: boolean
   static?: boolean
   resizeHandles?: ReadonlyArray<"s" | "w" | "e" | "n">
-  // Support for nesting
-  isContainer?: boolean
-  children?: ILayoutItem[]
   [key: string]: any
 }
 
-export type TBreakpoint = "lg" | "md" | "sm" | "xs" | "xxs"
-export type TResponsiveLayout = Record<TBreakpoint, ILayoutItem[]>
+export interface CustomLayout extends Layout {
+  compactType?: "horizontal" | "vertical"
+  nestedLayouts?: Layout[]
+}
+
+export interface CustomLayouts {
+  [breakpoint: string]: CustomLayout[]
+}
+
+export type Breakpoint = "lg" | "md" | "sm" | "xs" | "xxs"
+export type ResponsiveLayout = Record<Breakpoint, LayoutItem[]>
+
+export interface ComponentSlot {
+  slotId: string
+  component: React.ReactNode
+  title: string
+  compImage?: string
+  layouts?: Record<Breakpoint, { w: number; h: number }>
+}
+
+export interface DragData {
+  title?: string
+  image?: string
+  [key: string]: any
+}
+
+export const DEFAULT_SIZES: Record<Breakpoint, { w: number; h: number }> = {
+  lg: { w: 3, h: 6 },
+  md: { w: 3, h: 6 },
+  sm: { w: 3, h: 6 },
+  xs: { w: 3, h: 6 },
+  xxs: { w: 2, h: 6 },
+}

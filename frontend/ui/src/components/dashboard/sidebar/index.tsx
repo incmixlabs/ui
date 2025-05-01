@@ -1,6 +1,4 @@
-"use client"
-
-import { Box, Grid, Heading, dashboardImg, useSelectionStore } from "@incmix/ui"
+import { Box, Grid, Heading, LayoutPresetsSection, dashboardImg,    useSelectionStore } from "@incmix/ui"
 import {
   ActiveTask,
   NewTasks,
@@ -10,9 +8,9 @@ import {
   TotalProject,
   TotalTasks,
 } from "@incmix/ui/widgets"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { DraggableComponent } from "./draggable-component"
-
+import { presetLayouts } from "../data"
 export const sidebarComponents = [
   {
     slotId: "h",
@@ -119,6 +117,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
     string | null
   >(null)
 
+
   const handleDragStart = (componentId: string) => {
     setDraggingComponentId(componentId)
   }
@@ -144,6 +143,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
           />
         ))}
       </Grid>
+      <LayoutPresetsSection />
     </Box>
   )
 }

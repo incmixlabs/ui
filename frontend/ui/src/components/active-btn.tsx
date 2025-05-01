@@ -1,5 +1,4 @@
-"use client"
-
+import { Box } from "@incmix/ui/base"
 import { cn } from "@utils"
 import type React from "react"
 
@@ -62,7 +61,7 @@ export  function ActiveBtn({
   }
 
   return (
-    <div className={cn("relative", className)} ref={containerRef}>
+    <Box className={cn("relative border rounded-full border-gray-5", className)} ref={containerRef}>
       <ul className="flex justify-center gap-2">
         {items.map((item) => (
           <li key={item.id}>
@@ -91,6 +90,6 @@ export  function ActiveBtn({
           width: `${indicatorStyle.width}px`,
         }}
       />
-    </div>
+    </Box>
   )
 }
