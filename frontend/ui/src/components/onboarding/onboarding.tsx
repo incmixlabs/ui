@@ -1,20 +1,60 @@
 import { useMediaQuery } from "@hooks/use-media-query"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { formSchema } from "./form-schema"
 import { StepForm } from "./step-form"
 import { StepperProvider } from "@incmix/ui/stepper"
 
-export const Onboarding = () => {
+export type OnboardingProps = {
+  onComplete: (data: any, userData: any) => Promise<void>
+  onError?: (error: Error) => void
+}
+
+export const Onboarding = ({ onComplete, onError }: OnboardingProps) => {
   const [stepData, setStepData] = useState<Record<number, any>>({})
+  const [userData, setUserData] = useState<any>(null)
   const isDesktop = useMediaQuery("(min-width: 768px)")
 
-  const handleFinalSubmit = (finalData: Record<number, any>) => {
-    // Combine all step data using Object.assign instead of spread
-    const combinedData = Object.values(finalData).reduce((acc, curr) => {
+  useEffect(() => {
+    // Retrieve user data from localStorage
+    const storedUserData = localStorage.getItem("signupUserData")
+    if (storedUserData) {
+      setUserData(JSON.parse(storedUserData))
+    }
+  }, [])
+
+  const handleFinalSubmit = async (finalData: Record<number, any>) => {
+    if (!userData) {
+      console.error("User data not found")
+      return
+    }
+
+    // Combine all step data
+    const onboardingData = Object.values(finalData).reduce((acc, curr) => {
       return Object.assign(acc, curr)
     }, {})
 
-    console.log("Final Combined Data:", combinedData)
+    // Add user data from signup
+    const completeData = {
+      ...onboardingData,
+      userId: userData.userId,
+      email: userData.email
+    }
+
+    console.log("Final Combined Data:", completeData)
+
+    try {
+      // Call the onComplete callback with the combined data
+      await onComplete(completeData, userData)
+    } catch (error) {
+      console.error("Onboarding submission error:", error)
+      onError?.(error instanceof Error ? error : new Error(String(error)))
+    }
+  }
+
+  if (!userData) {
+    return <div className="flex h-screen items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    </div>
   }
 
   return (

@@ -5,6 +5,7 @@ export type AuthWrapperProps = {
   subTitle?: string
   children: React.ReactNode
   showFooterLinks?: boolean
+  totalSteps?: number
 }
 
 export const AuthWrapper: React.FC<AuthWrapperProps> = ({
@@ -14,6 +15,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({
   subTitle,
   children,
   showFooterLinks = false,
+  totalSteps = 6,
 }: AuthWrapperProps) => {
   image = !image ? `step${step}` : image
 
@@ -59,9 +61,9 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({
             {/* Progress indicator */}
             <div className="mt-4">
               <div className="flex items-center">
-                <span className="text-sm text-gray-500 dark:text-gray-400">{step} of 7</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400">{step} of {totalSteps}</span>
                 <div className="ml-2 flex-1 space-x-1 flex">
-                  {Array.from({ length: 7 }).map((_, i) => (
+                  {Array.from({ length: totalSteps }).map((_, i) => (
                     <div
                       key={i}
                       className={`h-1 flex-1 rounded-full ${i < step ? "bg-blue-500" : "bg-gray-200 dark:bg-gray-700"}`}
