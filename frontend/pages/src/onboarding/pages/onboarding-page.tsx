@@ -2,9 +2,9 @@ import { useMutation } from "@tanstack/react-query"
 import { useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
 
+import { Text } from "@incmix/ui"
 import { USERS_API_URL } from "@incmix/ui/constants"
 import { Onboarding } from "@incmix/ui/onboarding"
-import { Text } from "@incmix/ui"
 
 interface OnboardingData {
   email: string
