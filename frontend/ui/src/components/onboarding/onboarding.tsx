@@ -16,15 +16,20 @@ export const Onboarding = ({ onComplete, onError }: OnboardingProps) => {
 
   useEffect(() => {
     // Retrieve user data from localStorage
-    const storedUserData = localStorage.getItem("signupUserData")
-    if (storedUserData) {
-      setUserData(JSON.parse(storedUserData))
+    try {
+      const raw = localStorage.getItem("signupUserData")
+      if (raw) setUserData(JSON.parse(raw))
+    } catch (e) {
+      console.error("Corrupted signupUserData in localStorage", e)
+      onError?.(e instanceof Error ? e : new Error(String(e)))
     }
   }, [])
 
   const handleFinalSubmit = async (finalData: Record<number, any>) => {
     if (!userData) {
-      console.error("User data not found")
+      const error = new Error("User data not found for onboarding. Please sign up again.")
+      console.error(error.message)
+      onError?.(error)
       return
     }
 

@@ -8,6 +8,7 @@ import { Onboarding } from "@incmix/ui/onboarding"
 
 interface OnboardingData {
   email: string
+  userId: string
   companyName: string
   companySize: string
   teamSize: string
@@ -37,6 +38,7 @@ const OnboardingPage = () => {
       // Prepare request payload
       const requestData: OnboardingData = {
         email: userData.email,
+        userId: userData.userId,
         companyName: formData.companyName || "",
         companySize: formData.companySize || "",
         teamSize: formData.teamSize || "",
@@ -52,23 +54,42 @@ const OnboardingPage = () => {
       // Log the request data for debugging
       console.log("Sending onboarding data:", JSON.stringify(requestData))
 
-      // Call the users/onboarding API endpoint
-      const response = await fetch(`${USERS_API_URL}/onboarding`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-        credentials: "include",
-      })
+      try {
+        // Create AbortController for request cancellation
+        const controller = new AbortController()
 
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.message || "Failed to submit onboarding data")
+        // Call the users/onboarding API endpoint
+        const response = await fetch(`${USERS_API_URL}/onboarding`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+          credentials: "include",
+          signal: controller.signal,
+        })
+
+        // Handle empty successful responses
+        if (response.status === 204 || response.status === 205) {
+          return null
+        }
+
+        // Safely parse JSON (might be empty)
+        const payload = await response.json().catch(() => ({}))
+
+        // Check if response was not successful
+        if (!response.ok) {
+          throw new Error(payload.message || "Failed to submit onboarding data")
+        }
+
+        return payload
+      } catch (error) {
+        // Handle fetch errors (network issues, etc.)
+        console.error("API call failed:", error)
+        throw error instanceof Error
+          ? error
+          : new Error("Network error or service unavailable")
       }
-
-      const user = await response.json()
-      return user
     },
     onSuccess: (_responseData, variables) => {
       // Get userData from the variables that were passed to mutate()
@@ -92,20 +113,21 @@ const OnboardingPage = () => {
 
   // Handle onboarding completion
 
-  // biome-ignore lint/suspicious/useAwait: <explanation>
   const handleOnboardingComplete = async (
     formData: any,
     userData: UserData
   ) => {
-    try {
-      // Add additional validation and logging before mutation
-      console.log("Form data received:", formData)
-      console.log("referralSources type:", typeof formData.referralSources)
-      console.log("referralSources value:", formData.referralSources)
+    // Add additional validation and logging before mutation
+    console.log("Form data received:", formData)
+    console.log("referralSources type:", typeof formData.referralSources)
+    console.log("referralSources value:", formData.referralSources)
 
-      onboardingMutation.mutate({ formData, userData })
+    try {
+      // Use mutateAsync with await to catch errors locally
+      await onboardingMutation.mutateAsync({ formData, userData })
     } catch (err) {
       console.error("Error in handleOnboardingComplete:", err)
+      // Note: The onError callback in useMutation will also fire
       setError(err instanceof Error ? err.message : String(err))
     }
   }
