@@ -23,7 +23,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({
     <div className="flex h-screen w-full">
       {/* Left side - Form content */}
       <div className="flex w-full md:w-1/2 items-center justify-center bg-white dark:bg-gray-900">
-        <div className="w-full max-w-md px-1 py-8 md:px-2">
+        <div className="w-full max-w-xl px-4 py-8 md:px-6">
           {/* Only this div is centered */}
           <div className="mb-8 flex items-center justify-center w-full lg:mb-10">
             <img
@@ -49,9 +49,9 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({
           </div>
 
           {/* Footer area with progress bar and optional links */}
-          <div className="mt-16 w-full">
+          <div className="mt-6 w-full">
             {showFooterLinks && (
-              <div className="mb-8 flex justify-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
+              <div className="mb-4 flex justify-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
                 <a href="#" className="hover:underline">Terms of Service</a>
                 <span>•</span>
                 <a href="#" className="hover:underline">Privacy Policy</a>
@@ -59,7 +59,7 @@ export const AuthWrapper: React.FC<AuthWrapperProps> = ({
             )}
 
             {/* Progress indicator */}
-            <div className="mt-4">
+            <div className="mt-2">
               <div className="flex items-center">
                 <span className="text-sm text-gray-500 dark:text-gray-400">{step} of {totalSteps}</span>
                 <div className="ml-2 flex-1 space-x-1 flex">
