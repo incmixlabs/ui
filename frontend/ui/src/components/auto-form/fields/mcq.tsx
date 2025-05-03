@@ -22,12 +22,12 @@ const getLayoutClass = (layout: MCQLayoutType, gridCols = 2): string => {
         baseClasses,
         gridCols === 2
           ? // Force grid items to take equal width with fr units
-            "grid grid-cols-1 sm:grid-cols-2 sm:grid-template-columns:1fr 1fr"
+            "grid grid-cols-1 sm:grid-cols-2"
           : gridCols === 3
-            ? "grid grid-cols-1 sm:grid-cols-3 sm:grid-template-columns:1fr 1fr 1fr"
+            ? "grid grid-cols-1 sm:grid-cols-3"
             : gridCols === 4
-              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 sm:grid-template-columns:1fr 1fr lg:grid-template-columns:1fr 1fr 1fr 1fr"
-              : "grid grid-cols-1 sm:grid-cols-2 sm:grid-template-columns:1fr 1fr",
+              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+              : "grid grid-cols-1 sm:grid-cols-2",
       );
     case "row":
       return cn(baseClasses, "flex flex-row flex-wrap justify-between");
@@ -36,7 +36,7 @@ const getLayoutClass = (layout: MCQLayoutType, gridCols = 2): string => {
     default:
       return cn(
         baseClasses,
-        "grid grid-cols-1 sm:grid-cols-2 sm:grid-template-columns:1fr 1fr",
+        "grid grid-cols-1 sm:grid-cols-2",
       );
   }
 };
