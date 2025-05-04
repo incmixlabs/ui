@@ -51,14 +51,9 @@ const OnboardingPage = () => {
           : [],
       }
 
-      // Log the request data for debugging
-      console.log("Sending onboarding data:", JSON.stringify(requestData))
-
       try {
-        // Create AbortController for request cancellation
         const controller = new AbortController()
 
-        // Call the users/onboarding API endpoint
         const response = await fetch(`${USERS_API_URL}/onboarding`, {
           method: "POST",
           headers: {
@@ -94,7 +89,6 @@ const OnboardingPage = () => {
     onSuccess: (_responseData, variables) => {
       // Get userData from the variables that were passed to mutate()
       const { userData } = variables
-      console.log("User Data from onboarding:", userData)
 
       // Clear the signup data from localStorage after successful submission
       localStorage.removeItem("signupUserData")
@@ -117,11 +111,6 @@ const OnboardingPage = () => {
     formData: any,
     userData: UserData
   ) => {
-    // Add additional validation and logging before mutation
-    console.log("Form data received:", formData)
-    console.log("referralSources type:", typeof formData.referralSources)
-    console.log("referralSources value:", formData.referralSources)
-
     try {
       // Use mutateAsync with await to catch errors locally
       await onboardingMutation.mutateAsync({ formData, userData })

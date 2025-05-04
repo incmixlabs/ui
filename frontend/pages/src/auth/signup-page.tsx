@@ -37,7 +37,6 @@ function SignupForm() {
 
       // Parse the response data
       const userData = await response.json()
-      console.log("User Data from signup:", userData)
 
       // Return with proper typing as ExtendedAuthUser
       return {

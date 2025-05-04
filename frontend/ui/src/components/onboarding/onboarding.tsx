@@ -45,7 +45,7 @@ export const Onboarding = ({ onComplete, onError }: OnboardingProps) => {
       email: userData.email
     }
 
-    console.log("Final Combined Data:", completeData)
+
 
     try {
       // Call the onComplete callback with the combined data
