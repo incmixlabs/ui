@@ -61,16 +61,20 @@ export  function ActiveBtn({
   }
 
   return (
-    <Box className={cn("relative border rounded-full border-gray-5", className)} ref={containerRef}>
+    <Box className={cn("relative  rounded-full border-gray-5", className)} ref={containerRef}>
       <ul className="flex justify-center gap-2">
         {items.map((item) => (
           <li key={item.id}>
             <Button
+              role="tab"  
+              aria-selected={activeId === item.id}  
+              variant={"soft"}
+              tabIndex={activeId === item.id ? 0 : -1}  
               data-item-id={item.id}
               onClick={() => handleItemClick(item.id)}
               className={cn(
-                "flex items-center gap-2 px-4 py-2 relative z-[2] rounded-full text-sm font-medium transition-colors",
-                activeId === item.id ? activeClassName : inactiveClassName,
+                "flex items-center gap-2 px-4 py-2  relative z-[2] rounded-full text-sm font-medium",
+                activeId === item.id ? "text-gray-1" : "text-gray-12",
               )}
               onKeyDown={(e) => {  
                 if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return  
