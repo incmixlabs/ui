@@ -80,11 +80,7 @@ const DynamicDashboardPage: React.FC = () => {
     sensors,
     handleDragStart,
     handleDragEnd,
-  } = useDragAndDrop(
-    isEditing,
-    gridComponents,
-    setGridComponents,
-  )
+  } = useDragAndDrop(isEditing, gridComponents, setGridComponents)
   if (isLoading) return <LoadingPage />
   if (!authUser) return null
   if (!project) return <div>Project not found</div>

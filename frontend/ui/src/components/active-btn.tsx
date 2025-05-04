@@ -1,4 +1,4 @@
-import { Box } from "@incmix/ui/base"
+import { Box, Button } from "@incmix/ui/base"
 import { cn } from "@utils"
 import type React from "react"
 
@@ -65,17 +65,32 @@ export  function ActiveBtn({
       <ul className="flex justify-center gap-2">
         {items.map((item) => (
           <li key={item.id}>
-            <button
+            <Button
               data-item-id={item.id}
               onClick={() => handleItemClick(item.id)}
               className={cn(
                 "flex items-center gap-2 px-4 py-2 relative z-[2] rounded-full text-sm font-medium transition-colors",
                 activeId === item.id ? activeClassName : inactiveClassName,
               )}
+              onKeyDown={(e) => {  
+                if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return  
+        
+                const currentIndex = items.findIndex(item => item.id === activeId)  
+                let nextIndex = currentIndex  
+        
+                if (e.key === 'ArrowLeft') {  
+                  nextIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1  
+                } else if (e.key === 'ArrowRight') {  
+                  nextIndex = currentIndex < items.length - 1 ? currentIndex + 1 : 0  
+                }  
+        
+                const nextId = items[nextIndex].id  
+                handleItemClick(nextId)  
+              }}
             >
               {item.icon}
               {item.label}
-            </button>
+            </Button>
           </li>
         ))}
       </ul>

@@ -3,7 +3,7 @@ import type React from "react"
 import { useState } from "react"
 import { toast, useLayoutStore } from "@incmix/ui"
 import { type DragEndEvent, type DragStartEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core"
-import type { ComponentSlot, DragData, Breakpoint } from "@incmix/ui/dashboard"
+import type { ComponentSlot, DragData, Breakpoint, LayoutItem } from "@incmix/ui/dashboard"
 import { DEFAULT_SIZES as DEFAULT_SIZES_CONST } from "@incmix/ui/dashboard"
 import { sidebarComponents } from "@incmix/ui/dashboard"
 
@@ -33,7 +33,63 @@ export function useDragAndDrop(
     setActiveDragId(active.id as string)
     setActiveDragData(active.data.current)
   }
-
+  const calculateGridPosition = (  
+    currentLayout: LayoutItem[],  
+    targetWidgetId: string | undefined,  
+    w: number,  
+    h: number,  
+    draggedSlotId: string  
+  ) => {  
+    if (targetWidgetId) {  
+      const targetIndex = currentLayout.findIndex((item) => item.i === targetWidgetId)  
+  
+      if (targetIndex !== -1) {  
+        // Target widget found, position the new item at the same coordinates  
+        const targetWidget = currentLayout[targetIndex]  
+        const newItem = {  
+          i: draggedSlotId,  
+          x: targetWidget.x,  
+          y: targetWidget.y,  
+          w,  
+          h,  
+          moved: false,  
+          static: false,  
+        }  
+  
+        // Shift items below the insertion point  
+        const shiftedItems = currentLayout.map((item, index) => {  
+          if (index >= targetIndex) {  
+            return { ...item, y: item.y + h }  
+          }  
+          return item  
+        })  
+  
+        return [  
+          ...shiftedItems.slice(0, targetIndex),  
+          newItem,  
+          ...shiftedItems.slice(targetIndex),  
+        ]  
+      }  
+    }  
+  
+    // Default case: add to top and shift everything down  
+    const newItem = {  
+      i: draggedSlotId,  
+      x: 0,  
+      y: 0,  
+      w,  
+      h,  
+      moved: false,  
+      static: false,  
+    }  
+  
+    const shiftedItems = currentLayout.map((item) => ({  
+      ...item,  
+      y: item.y + h,  
+    }))  
+  
+    return [newItem, ...shiftedItems]  
+  } 
   const addComponentToNestedGrid = (draggedSlotId: string, targetGroupId: string) => {
     const isAlreadyInGrid = gridComponents.some((comp) => comp.slotId === draggedSlotId)
     if (isAlreadyInGrid) {
@@ -90,101 +146,46 @@ export function useDragAndDrop(
     return true
   }
 
-  const addComponentToGrid = (draggedSlotId: string, targetWidgetId?: string) => {
-    const isAlreadyInGrid = gridComponents.some((comp) => comp.slotId === draggedSlotId)
-    if (isAlreadyInGrid) {
-      toast.error("This component is already added to the grid. Please remove it first if you want to add it again.")
-      return false
-    }
-
-    const draggedComponent = sidebarComponents.find((comp) => comp.slotId === draggedSlotId)
-    if (!draggedComponent) {
-      return false
-    }
-
-    setGridComponents((prev) => [...prev, draggedComponent])
-
-    const defaultLayouts = useLayoutStore.getState().defaultLayouts
-    
-    const componentLayouts = draggedComponent.layouts || DEFAULT_SIZES_CONST
-
-    const newLayouts = { ...defaultLayouts }
-    ;(Object.keys(newLayouts) as Breakpoint[]).forEach((breakpoint) => {
-      const { w, h } = componentLayouts[breakpoint]
-      const currentLayout = [...newLayouts[breakpoint]]
-
-      if (targetWidgetId) {
-        const targetIndex = currentLayout.findIndex((item) => item.i === targetWidgetId)
-
-        if (targetIndex !== -1) {
-          const targetWidget = currentLayout[targetIndex]
-          const newItem = {
-            i: draggedSlotId,
-            x: targetWidget.x,
-            y: targetWidget.y,
-            w,
-            h,
-            moved: false,
-            static: false,
-          }
-
-          const shiftedItems = currentLayout.map((item, index) => {
-            if (index >= targetIndex) {
-              return {
-                ...item,
-                y: item.y + h,
-              }
-            }
-            return item
-          })
-
-          newLayouts[breakpoint] = [...shiftedItems.slice(0, targetIndex), newItem, ...shiftedItems.slice(targetIndex)]
-        } else {
-          const newItem = {
-            i: draggedSlotId,
-            x: 0,
-            y: 0,
-            w,
-            h,
-            moved: false,
-            static: false,
-          }
-
-          const shiftedItems = currentLayout.map((item) => ({
-            ...item,
-            y: item.y + h,
-          }))
-
-          newLayouts[breakpoint] = [newItem, ...shiftedItems]
-        }
-      } else {
-        const newItem = {
-          i: draggedSlotId,
-          x: 0,
-          y: 0,
-          w,
-          h,
-          moved: false,
-          static: false,
-        }
-
-        const shiftedItems = currentLayout.map((item) => ({
-          ...item,
-          y: item.y + h,
-        }))
-
-        newLayouts[breakpoint] = [newItem, ...shiftedItems]
-      }
-    })
-
-    setDefaultLayouts(newLayouts)
-
-    toast.success("Component added", {
-      description: `${draggedComponent.title} has been added to your dashboard.`,
-    })
-
-    return true
-  }
+  const addComponentToGrid = (draggedSlotId: string, targetWidgetId?: string) => {  
+    const isAlreadyInGrid = gridComponents.some((comp) => comp.slotId === draggedSlotId)  
+    if (isAlreadyInGrid) {  
+      toast.error(  
+        "This component is already added to the grid. Please remove it first if you want to add it again."  
+      )  
+      return false  
+    }  
+  
+    const draggedComponent = sidebarComponents.find((comp) => comp.slotId === draggedSlotId)  
+    if (!draggedComponent) {  
+      return false  
+    }  
+  
+    setGridComponents((prev) => [...prev, draggedComponent])  
+  
+    const defaultLayouts = useLayoutStore.getState().defaultLayouts  
+    const componentLayouts = draggedComponent.layouts || DEFAULT_SIZES_CONST  
+    const newLayouts = { ...defaultLayouts }  
+  
+    ;(Object.keys(newLayouts) as Breakpoint[]).forEach((breakpoint) => {  
+      const { w, h } = componentLayouts[breakpoint]  
+      const currentLayout = [...newLayouts[breakpoint]]  
+      newLayouts[breakpoint] = calculateGridPosition(  
+        currentLayout,  
+        targetWidgetId,  
+        w,  
+        h,  
+        draggedSlotId  
+      )  
+    })  
+  
+    setDefaultLayouts(newLayouts)  
+  
+    toast.success("Component added", {  
+      description: `${draggedComponent.title} has been added to your dashboard.`,  
+    })  
+  
+    return true  
+  } 
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
