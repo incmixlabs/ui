@@ -1,24 +1,15 @@
-import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
-import { useForm as useHookForm } from "react-hook-form"
 import { useTranslation } from "react-i18next"
-import { z } from "zod"
 
 import { Box, Flex, Heading, ReactiveButton, Text } from "@incmix/ui"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@incmix/ui"
+import AutoForm from "@incmix/ui/auto-form"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import type { AuthUser } from "@incmix/utils/types"
 
 import { AuthLayout } from "./layouts"
+import { signupFormSchema } from "./signup-form-schema"
 
 function SignupForm() {
   const { t } = useTranslation(["signup", "common"])
@@ -43,45 +34,73 @@ function SignupForm() {
         const data = (await response.json()) as any
         throw new Error(data.message || t("error.signup"))
       }
-      const user = (await response.json()) as AuthUser
+
+      // Parse the response data
+      const userData = await response.json()
+
+      // Return with proper typing as ExtendedAuthUser
       return {
-        email: user.email,
-        emailVerified: user.emailVerified,
-        id: user.id,
+        email: userData.email,
+        emailVerified: userData.emailVerified,
+        id: userData.id,
         slug: "",
-        userId: user.id,
-        userType: user.userType,
-      }
+        userId: userData.id,
+        userType: userData.userType,
+      } as AuthUser
     },
     onSuccess: (data) => {
       setErrorMessage(null)
 
-      navigate({ to: "/welcome", search: { email: data.email } })
+      // Store user data in localStorage for retrieval after onboarding
+      localStorage.setItem(
+        "signupUserData",
+        JSON.stringify({
+          email: data.email,
+          userId: data.id,
+        })
+      )
+
+      // Redirect to onboarding page
+      navigate({ to: "/onboarding" })
     },
     onError: (error: Error) => {
       setErrorMessage(error.message)
     },
   })
 
-  // Define form schema
-  const formSchema = z.object({
-    name: z.string().min(1, t("nameValidation")),
-    email: z.string().email(t("emailValidation")),
-    password: z.string().min(6, t("passwordValidation")),
-  })
-
-  // Use react-hook-form
-  const form = useHookForm({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
+  // Create a schema with translated validation messages
+  const schemaWithTranslations = {
+    ...signupFormSchema.formSchema,
+    properties: {
+      ...signupFormSchema.formSchema.properties,
+      name: {
+        ...signupFormSchema.formSchema.properties.name,
+        errorMessage: {
+          minLength: t("nameValidation"),
+        },
+      },
+      email: {
+        ...signupFormSchema.formSchema.properties.email,
+        errorMessage: {
+          format: t("emailValidation"),
+        },
+      },
+      password: {
+        ...signupFormSchema.formSchema.properties.password,
+        errorMessage: {
+          minLength: t("passwordValidation"),
+        },
+      },
     },
-  })
+  }
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    signupMutation.mutate(values)
+  // Handle form submission
+  const handleSubmit = (values: { [key: string]: any }) => {
+    signupMutation.mutate({
+      name: values.name as string,
+      email: values.email as string,
+      password: values.password as string,
+    })
   }
 
   return (
@@ -89,84 +108,36 @@ function SignupForm() {
       <Heading size="4" mb="4" align="center">
         {t("title")}
       </Heading>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <Flex direction="column" gap="4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("common:name")}</FormLabel>
-                  <FormControl>
-                    <input
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("common:email")}</FormLabel>
-                  <FormControl>
-                    <input
-                      type="email"
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+      <Flex direction="column" gap="4">
+        <AutoForm
+          formSchema={schemaWithTranslations}
+          fieldConfig={signupFormSchema.fieldConfig}
+          onSubmit={handleSubmit}
+          className="space-y-4"
+        >
+          {signupMutation.isError && (
+            <Text color="red" size="2" className="mt-2">
+              {errorMessage}
+            </Text>
+          )}
 
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("common:password")}</FormLabel>
-                  <FormControl>
-                    <input
-                      type="password"
-                      className="w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          {signupMutation.isSuccess && (
+            <Text color="green" size="2" className="mt-2">
+              {t("signupSuccess")}
+            </Text>
+          )}
 
-            {signupMutation.isError && (
-              <Text color="red" size="2">
-                {errorMessage}
-              </Text>
-            )}
-
-            {signupMutation.isSuccess && (
-              <Text color="green" size="2">
-                {t("signupSuccess")}
-              </Text>
-            )}
-
-            <ReactiveButton
-              type="submit"
-              loading={signupMutation.isPending}
-              success={signupMutation.isSuccess}
-            >
-              {t("submit")}
-            </ReactiveButton>
-          </Flex>
-        </form>
-      </Form>
+          <ReactiveButton
+            type="submit"
+            loading={signupMutation.isPending}
+            success={signupMutation.isSuccess}
+            className="w-full"
+          >
+            {t("submit")}
+          </ReactiveButton>
+        </AutoForm>
+      </Flex>
 
       <Box mt="4" className="text-center">
         <Link to="/login">
