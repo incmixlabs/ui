@@ -15,8 +15,6 @@ type ActiveBtnProps = {
   defaultActiveId?: string
   onChange?: (id: string) => void
   className?: string
-  activeClassName?: string
-  inactiveClassName?: string
   indicatorClassName?: string
 }
 
@@ -25,12 +23,13 @@ export  function ActiveBtn({
   defaultActiveId,
   onChange,
   className = "",
-  activeClassName = "text-white",
-  inactiveClassName = "text-gray-11 hover:bg-gray-4",
   indicatorClassName = "bg-indigo-10",
 }: ActiveBtnProps) {
   const [activeId, setActiveId] = useState(defaultActiveId || (items.length > 0 ? items[0].id : ""))
   const containerRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (defaultActiveId) setActiveId(defaultActiveId)
+  }, [defaultActiveId])
   const [indicatorStyle, setIndicatorStyle] = useState({
     left: 0,
     width: 0,
@@ -61,7 +60,9 @@ export  function ActiveBtn({
   }
 
   return (
-    <Box className={cn("relative  rounded-full border-gray-5", className)} ref={containerRef}>
+    <Box className={cn("relative  rounded-full border-gray-5", className)} ref={containerRef}
+     role="tablist"
+    >
       <ul className="flex justify-center gap-2">
         {items.map((item) => (
           <li key={item.id}>
@@ -73,7 +74,7 @@ export  function ActiveBtn({
               data-item-id={item.id}
               onClick={() => handleItemClick(item.id)}
               className={cn(
-                "flex items-center gap-2 px-4 py-2  relative z-[2] rounded-full text-sm font-medium",
+                "flex items-center gap-2 px-4 py-2 relative z-[2] rounded-full text-sm font-medium",
                 activeId === item.id ? "text-gray-1" : "text-gray-12",
               )}
               onKeyDown={(e) => {  
