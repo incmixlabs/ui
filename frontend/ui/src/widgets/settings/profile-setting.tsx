@@ -10,7 +10,7 @@ export function ProfileSettings() {
         className="w-full border-gray-5 border-b p-4"
       >
         <Flex gap={"3"} align={"center"}>
-          <Avatar src={KanbanImages?.user1} fallback="A" />
+          <Avatar src={KanbanImages?.user1} name="A" />
           <Box className="space-y-0">
             <Text as="p" className="font-medium text-gray-12">
               User

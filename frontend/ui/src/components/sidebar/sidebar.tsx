@@ -7,10 +7,8 @@ import { ChevronsLeft, PanelLeft } from "lucide-react"
 
 import { useIsMobile } from "@hooks/use-mobile"
 import { cn } from "@utils/cn"
-import { Button, IconButton, Input, Separator, Sheet, SheetContent, SheetDescription, SheetTitle,  Skeleton,  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger, } from "@base"
+import { Button, IconButton, Input, Separator, Sheet, SheetContent, SheetDescription, SheetTitle,  Skeleton } from "@base"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip"
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7

@@ -1,22 +1,23 @@
 import { LoadingPage } from "@common"
 import { I18n } from "@incmix/pages/i18n"
-import { CardContainer, FormField, ReactiveButton, toast } from "@incmix/ui"
+import { CardContainer, ReactiveButton, toast } from "@incmix/ui"
 import { Box, Container, Flex, Heading, Text } from "@incmix/ui"
+import AutoForm from "@incmix/ui/auto-form"
 import { AUTH_API_URL } from "@incmix/ui/constants"
-import { useForm } from "@tanstack/react-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Link, useNavigate } from "@tanstack/react-router"
-import { zodValidator } from "@tanstack/zod-form-adapter"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { z } from "zod"
 import { setupGoogleAuthCallbackListener, useAuth } from "./hooks/auth"
+import { resetPasswordSchema } from "./reset-password-form-schema"
 import { ResetPasswordRoute } from "./routes"
 
 function ResetPasswordForm() {
   const { code, email } = ResetPasswordRoute.useSearch()
   const navigate = useNavigate()
   const { t } = useTranslation(["login", "resetPassword", "common"])
+  const [formValues, setFormValues] = useState({ newPassword: "" })
+
   const { mutate, isPending, isSuccess, error, isError } = useMutation({
     mutationFn: async ({
       email,
@@ -47,61 +48,67 @@ function ResetPasswordForm() {
     },
   })
 
-  const form = useForm({
-    defaultValues: {
-      newPassword: "",
+  // Create a schema with translated validation messages
+  const schemaWithTranslations = {
+    ...resetPasswordSchema.formSchema,
+    properties: {
+      ...resetPasswordSchema.formSchema.properties,
+      newPassword: {
+        ...resetPasswordSchema.formSchema.properties.newPassword,
+        errorMessage: {
+          minLength: t("login:passwordValidation"),
+        },
+      },
     },
-    onSubmit: ({ value }) => {
-      if (code && email) mutate({ newPassword: value.newPassword, code, email })
-    },
-  })
+  }
+
+  // Handle form submission
+  const handleSubmit = (values: { [key: string]: any }) => {
+    if (code && email) {
+      mutate({
+        newPassword: values.newPassword as string,
+        code,
+        email,
+      })
+    }
+  }
+
+  // Handle form value changes
+  const handleValuesChange = (values: any) => {
+    setFormValues(values)
+  }
 
   return (
     <CardContainer>
       <Heading size="4" mb="4" align="center">
         {t("resetPassword:title")}
       </Heading>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          form.handleSubmit()
-        }}
-      >
-        <Flex direction="column" gap="4">
-          <form.Field
-            name="newPassword"
-            validatorAdapter={zodValidator()}
-            validators={{
-              onChange: z.string().min(1, t("login:passwordValidation")),
-            }}
-          >
-            {(field) => (
-              <FormField
-                name="newPassword"
-                label={t("common:password")}
-                type="password"
-                field={field}
-              />
-            )}
-          </form.Field>
-          {isError && (
-            <Text color="red" size="2">
-              {error.message}
-            </Text>
-          )}
 
-          <ReactiveButton
-            type="submit"
-            color="blue"
-            loading={isPending}
-            success={isSuccess}
-            className="w-full"
-          >
-            {t("resetPassword:submit")}
-          </ReactiveButton>
-        </Flex>
-      </form>
+      <AutoForm
+        formSchema={schemaWithTranslations}
+        fieldConfig={resetPasswordSchema.fieldConfig}
+        onSubmit={handleSubmit}
+        onValuesChange={handleValuesChange}
+        values={formValues}
+        className="space-y-4"
+      >
+        {isError && (
+          <Text color="red" size="2">
+            {error.message}
+          </Text>
+        )}
+
+        <ReactiveButton
+          type="submit"
+          color="blue"
+          loading={isPending}
+          success={isSuccess}
+          className="w-full"
+        >
+          {t("resetPassword:submit")}
+        </ReactiveButton>
+      </AutoForm>
+
       <Box mt="4" className="text-center">
         <Link to="/login">
           <Text color="blue">{t("resetPassword:loginPrompt")}</Text>

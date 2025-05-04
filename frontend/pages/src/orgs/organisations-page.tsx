@@ -1,4 +1,5 @@
 import { LoadingPage } from "@common"
+import AutoForm from "@incmix/ui/auto-form"
 import {
   Button,
   CardContainer,
@@ -6,15 +7,12 @@ import {
   Dialog,
   Flex,
   Heading,
-  Table,
   Text,
-  TextField,
 } from "@incmix/ui/base"
+import { DataTable } from "@incmix/ui/tanstack-table"
 import type { Organization } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { ChevronRightIcon } from "@radix-ui/react-icons"
-import { useForm } from "@tanstack/react-form"
-import { Link } from "@tanstack/react-router"
+import { useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import {
@@ -22,6 +20,11 @@ import {
   useOrganizations,
   useValidateHandle,
 } from "./utils"
+import { organizationFormSchema } from "./utils/organisaiton-form-schema"
+import {
+  getOrganizationColumns,
+  getOrganizationRowActions,
+} from "./utils/organization-table-utils"
 
 const OrganizationHeader: React.FC<{ onCreateClick: () => void }> = ({
   onCreateClick,
@@ -37,39 +40,6 @@ const OrganizationHeader: React.FC<{ onCreateClick: () => void }> = ({
   )
 }
 
-const OrganizationRow: React.FC<{ org: Organization }> = ({ org }) => {
-  return (
-    <Table.Row key={org.id} style={{ cursor: "pointer" }}>
-      <Table.Cell>
-        <Link
-          to={`/organization/${org.handle}`}
-          style={{ textDecoration: "none", color: "inherit", display: "block" }}
-        >
-          {org.name}
-        </Link>
-      </Table.Cell>
-      <Table.Cell>
-        <Link
-          to={`/organization/${org.handle}`}
-          style={{ textDecoration: "none", color: "inherit", display: "block" }}
-        >
-          {org.members.length}
-        </Link>
-      </Table.Cell>
-      <Table.Cell>
-        <Link
-          to={`/organization/${org.handle}`}
-          style={{ textDecoration: "none", color: "inherit", display: "block" }}
-        >
-          <Flex justify="end">
-            <ChevronRightIcon />
-          </Flex>
-        </Link>
-      </Table.Cell>
-    </Table.Row>
-  )
-}
-
 const CreateOrganizationDialog: React.FC<{
   isOpen: boolean
   onOpenChange: (open: boolean) => void
@@ -79,21 +49,34 @@ const CreateOrganizationDialog: React.FC<{
   const { handleValidateOrganization, isValidating } = useValidateHandle()
   const { handleCreateOrganization, isCreatingOrganization } =
     useCreateOrganization()
+  const [formData, setFormData] = useState<Record<string, any>>({})
 
-  const form = useForm({
-    defaultValues: {
-      organizationName: "",
-      organizationHandle: "",
+  // Handle form values change
+  const handleValuesChange = (values: any) => {
+    setFormData(values)
+  }
+
+  // Handle form submission
+  const handleSubmit = (data: any) => {
+    handleCreateOrganization(data.organizationName, data.organizationHandle, [])
+    setFormData({}) // Reset form
+    onCreateOrganization()
+  }
+
+  // Add custom validation for the organization handle field
+  const fieldConfigWithValidation = {
+    ...organizationFormSchema.fieldConfig,
+    organizationHandle: {
+      ...organizationFormSchema.fieldConfig.organizationHandle,
+      validate: (value: string) => {
+        const isValid = handleValidateOrganization(value)
+        if (!isValid) {
+          return "Organization handle is already taken"
+        }
+        return true
+      },
     },
-    onSubmit: ({ value }) => {
-      handleCreateOrganization(
-        value.organizationName,
-        value.organizationHandle,
-        []
-      )
-      onCreateOrganization()
-    },
-  })
+  }
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
@@ -102,60 +85,26 @@ const CreateOrganizationDialog: React.FC<{
         <Dialog.Description className="sr-only">
           {t("organizations:createNewOrganization")}
         </Dialog.Description>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            form.handleSubmit()
-          }}
-        >
-          <Flex direction="column" gap="2">
-            <form.Field
-              name="organizationName"
-              validators={{
-                onChange: ({ value }) =>
-                  !value || value.trim() === ""
-                    ? "Organization name is required"
-                    : undefined,
-              }}
-            >
-              {(field) => (
-                <FormField
-                  name="organizationName"
-                  label={t("organizations:organizationName")}
-                  field={field}
-                />
-              )}
-            </form.Field>
-
-            <form.Field
-              name="organizationHandle"
-              validators={{
-                onChange: ({ value }) => {
-                  const isValid = handleValidateOrganization(value)
-                  if (!isValid) {
-                    return "Organization handle is already taken"
-                  }
-                  return
-                },
-              }}
-            >
-              {(field) => (
-                <TextField.Root
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                  placeholder={t("organizations:organizationHandle")}
-                />
-              )}
-            </form.Field>
-            <Button disabled={isCreatingOrganization || isValidating}>
-              {isCreatingOrganization
-                ? t("common:creating")
-                : t("common:create")}
-            </Button>
-          </Flex>
-        </form>
+        <div className="py-4">
+          <AutoForm
+            formSchema={organizationFormSchema.formSchema}
+            onSubmit={handleSubmit}
+            onValuesChange={handleValuesChange}
+            values={formData}
+            fieldConfig={fieldConfigWithValidation}
+          >
+            <div className="mt-4 flex justify-end">
+              <Button
+                type="submit"
+                disabled={isCreatingOrganization || isValidating}
+              >
+                {isCreatingOrganization
+                  ? t("common:creating")
+                  : t("common:create")}
+              </Button>
+            </div>
+          </AutoForm>
+        </div>
       </Dialog.Content>
     </Dialog.Root>
   )
@@ -164,8 +113,18 @@ const CreateOrganizationDialog: React.FC<{
 const OrganizationsPage: React.FC = () => {
   const { t } = useTranslation(["organizations", "common"])
   const { organizations, isLoading, isError } = useOrganizations()
-
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const navigate = useNavigate()
+
+  // Handle navigation to organization details
+  const handleNavigateToOrg = (handle: string) => {
+    navigate({ to: `/organization/${handle}` })
+  }
+
+  // Handle row click
+  const handleRowClick = (org: Organization) => {
+    handleNavigateToOrg(org.handle)
+  }
 
   const renderContent = () => {
     if (isLoading) {
@@ -188,21 +147,27 @@ const OrganizationsPage: React.FC = () => {
       )
     }
 
+    // Need to transform organizations here to include a calculated field for members count
+    // since the DataTable will be using a direct accessorKey
+    const tableData = organizations.map((org) => ({
+      ...org,
+      // Add a members count field for the DataTable to use
+      members: org.members,
+    }))
+
     return (
-      <Table.Root>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>{t("common:name")}</Table.HeaderCell>
-            <Table.HeaderCell>{t("common:members")}</Table.HeaderCell>
-            <Table.HeaderCell />
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {organizations.map((org) => (
-            <OrganizationRow key={org.id} org={org} />
-          ))}
-        </Table.Body>
-      </Table.Root>
+      <DataTable
+        columns={getOrganizationColumns(t)}
+        data={tableData}
+        enableRowSelection={false}
+        enableSorting={true}
+        enablePagination={false}
+        filterColumn="name"
+        filterPlaceholder={t("common:filterByName")}
+        onRowClick={handleRowClick}
+        rowActions={getOrganizationRowActions(handleNavigateToOrg)}
+        className="w-full"
+      />
     )
   }
 

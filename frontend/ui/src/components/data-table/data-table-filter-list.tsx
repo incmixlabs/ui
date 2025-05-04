@@ -1,5 +1,7 @@
 "use client"
 
+import * as React from "react"
+import { parseAsStringEnum, useQueryState } from "nuqs"
 import type { Table } from "@tanstack/react-table"
 import {
   CalendarIcon,
@@ -9,8 +11,7 @@ import {
   Trash2,
 } from "lucide-react"
 import { customAlphabet } from "nanoid"
-import { parseAsStringEnum, useQueryState } from "nuqs"
-import * as React from "react"
+
 
 import type {
   DataTableAdvancedFilterField,
@@ -20,12 +21,15 @@ import type {
   StringKeyOf,
 } from "./lib/types"
 
-import { Badge, Button, Select,  Calendar, Command,
+import { Badge, Button, Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList, Input, Popover, PopoverContent, PopoverTrigger } from "@base"
+  CommandList,
+  Calendar,
+  Input,
+  Popover, Select } from "@base"
 import { cn } from "@utils/cn"
 import { useDebouncedCallback } from "./hooks"
 import { dataTableConfig } from "./lib/config"
@@ -42,7 +46,7 @@ import {
   FacetedFilterList,
   FacetedFilterTrigger,
 } from "./faceted-filter"
-import { formatDate } from "./lib/utils"
+import { formatDate } from "@utils/date"
 
 interface DataTableFilterListProps<TData> {
   table: Table<TData>
@@ -362,8 +366,8 @@ export function DataTableFilterList<TData>({
               : "Pick a date"
 
         return (
-          <Popover>
-            <PopoverTrigger>
+          <Popover.Root>
+            <Popover.Trigger>
               <Button
                 id={inputId}
                 variant="outline"
@@ -376,13 +380,12 @@ export function DataTableFilterList<TData>({
                 )}
               >
                 <CalendarIcon
-                  className="size-3.5 shrink-0"
-                  aria-hidden="true"
+                  width="16" height="16"
                 />
                 <span className="truncate">{displayValue}</span>
               </Button>
-            </PopoverTrigger>
-            <PopoverContent
+            </Popover.Trigger>
+            <Popover.Content
               id={`${inputId}-calendar`}
               align="start"
               className="w-auto p-0"
@@ -438,8 +441,8 @@ export function DataTableFilterList<TData>({
                   autoFocus
                 />
               )}
-            </PopoverContent>
-          </Popover>
+            </Popover.Content>
+          </Popover.Root>
         )
       }
       case "boolean": {
@@ -472,8 +475,8 @@ export function DataTableFilterList<TData>({
   }
 
   return (
-    <Popover>
-      <PopoverTrigger>
+    <Popover.Root>
+      <Popover.Trigger>
         <Button
           variant="outline"
           size="1"
@@ -489,8 +492,8 @@ export function DataTableFilterList<TData>({
             </Badge>
           )}
         </Button>
-      </PopoverTrigger>
-      <PopoverContent
+      </Popover.Trigger>
+      <Popover.Content
         id={`${id}-filter-dialog`}
         align="start"
         collisionPadding={16}
@@ -554,8 +557,8 @@ export function DataTableFilterList<TData>({
                     </span>
                   )}
                 </div>
-                <Popover modal>
-                  <PopoverTrigger>
+                <Popover.Root modal>
+                  <Popover.Trigger>
                     <Button
                       id={fieldTriggerId}
                       variant="outline"
@@ -570,8 +573,8 @@ export function DataTableFilterList<TData>({
                       </span>
                       <ChevronsUpDown className="size-4 shrink-0 opacity-50" />
                     </Button>
-                  </PopoverTrigger>
-                  <PopoverContent
+                  </Popover.Trigger>
+                  <Popover.Content
                     id={fieldListboxId}
                     align="start"
                     className="w-40 p-0"
@@ -628,8 +631,8 @@ export function DataTableFilterList<TData>({
                         </CommandGroup>
                       </CommandList>
                     </Command>
-                  </PopoverContent>
-                </Popover>
+                  </Popover.Content>
+                </Popover.Root>
                 <Select.Root
                   value={filter.operator}
                   onValueChange={(value: FilterOperator) =>
@@ -697,7 +700,7 @@ export function DataTableFilterList<TData>({
             </Button>
           ) : null}
         </div>
-      </PopoverContent>
-    </Popover>
+      </Popover.Content>
+    </Popover.Root>
   )
 }

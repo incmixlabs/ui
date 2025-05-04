@@ -1,8 +1,9 @@
 import { type DefaultValues, useForm } from "react-hook-form"
-import type { z } from "zod"
+import  { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import jsonSchemaToZod from "json-schema-to-zod"
 
 import { Button, Form } from "@base"
-import { zodResolver } from "@hookform/resolvers/zod"
 import { cn } from "@utils/cn"
 
 import AutoFormObject from "./fields/object"
@@ -12,6 +13,45 @@ import {
   getDefaultValues,
   getObjectFormSchema,
 } from "./utils"
+
+export type * from "./types"
+export * from "./utils"
+
+/**
+ * Represents a JSON Schema structure that can be converted to a Zod schema
+ */
+export type JSONSchema = {
+  type: string
+  properties: Record<string, any>
+  required?: string[]
+  [key: string]: any
+}
+
+/**
+ * Type guard to check if a schema is a JSON schema
+ */
+function isJsonSchema(schema: any): schema is JSONSchema {
+  return (
+    typeof schema === "object" &&
+    schema !== null &&
+    "type" in schema &&
+    "properties" in schema
+  )
+}
+
+/**
+ * Converts a JSON schema to a Zod schema
+ */
+function convertJsonSchemaToZod(schema: JSONSchema): z.ZodType {
+  try {
+    const zodString = jsonSchemaToZod(schema)
+    const zodSchemaFunction = new Function("z", `return ${zodString}`)
+    return zodSchemaFunction(z)
+  } catch (error) {
+    console.error("Error converting JSON schema to Zod:", error)
+    throw new Error("Failed to convert JSON schema to Zod schema")
+  }
+}
 
 export function AutoFormSubmit({
   children,
@@ -38,7 +78,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
   className,
   dependencies,
 }: {
-  formSchema: SchemaType
+  formSchema: SchemaType | JSONSchema
   values?: Partial<z.infer<SchemaType>>
   onValuesChange?: (values: Partial<z.infer<SchemaType>>) => void
   onParsedValuesChange?: (values: Partial<z.infer<SchemaType>>) => void
@@ -58,19 +98,24 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
     }
   >
 }) {
-  const objectFormSchema = getObjectFormSchema(formSchema)
+  // Convert JSON schema to Zod schema if needed
+  const zodFormSchema = isJsonSchema(formSchema)
+    ? (convertJsonSchemaToZod(formSchema) as SchemaType)
+    : formSchema
+
+  const objectFormSchema = getObjectFormSchema(zodFormSchema)
   const defaultValues: DefaultValues<z.infer<typeof objectFormSchema>> | null =
     getDefaultValues(objectFormSchema)
 
   const form = useForm<z.infer<typeof objectFormSchema>>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(zodFormSchema),
     defaultValues: defaultValues ?? undefined,
     values: valuesProp,
     mode: "onSubmit", // changed from default "onChange" to "onSubmit"
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const parsedValues = formSchema.safeParse(values)
+  function onSubmit(values: z.infer<typeof zodFormSchema>) {
+    const parsedValues = zodFormSchema.safeParse(values)
     if (parsedValues.success) {
       onSubmitProp?.(parsedValues.data)
     }
@@ -87,7 +132,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
           onChange={() => {
             const values = form.getValues()
             onValuesChangeProp?.(values)
-            const parsedValues = formSchema.safeParse(values)
+            const parsedValues = zodFormSchema.safeParse(values)
             if (parsedValues.success) {
               onParsedValuesChange?.(parsedValues.data)
             }

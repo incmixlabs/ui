@@ -15,7 +15,17 @@ export const getDate = (timezone = "America/New_York") => {
     date: date[0],
   }
 }
-
+export function formatDate(
+  date: Date | string | number,
+  opts: Intl.DateTimeFormatOptions = {}
+) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: opts.month ?? "long",
+    day: opts.day ?? "numeric",
+    year: opts.year ?? "numeric",
+    ...opts,
+  }).format(new Date(date))
+}
 export const getWeekDay = (dateTime: string | Date) => {
   const date = DateTime.fromJSDate(new Date(dateTime))
   return date.weekdayShort

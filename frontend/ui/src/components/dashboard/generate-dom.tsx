@@ -1,13 +1,12 @@
 "use client"
 import RGL, { WidthProvider } from "react-grid-layout"
 import { Box, cn } from "@incmix/ui"
-import { WidgetDropZone,ComponentSlot } from "@incmix/ui/dashboard"
+import { WidgetDropZone,ComponentSlot, Breakpoint } from "@incmix/ui/dashboard"
 import type { Layout } from "react-grid-layout"
-
 const ReactGridLayout = WidthProvider(RGL)
 
 export function generateDOM(
-  defaultLayouts: any,
+  defaultLayouts: Record<Breakpoint, Layout[]>,
   gridComponents: ComponentSlot[],
   nestedLayouts: Record<string, Layout[]>,
   handleNestedLayoutChange: (nestedLayout: Layout[], itemKey: string) => void,

@@ -1,5 +1,5 @@
 import { Box, Flex, Text } from "@incmix/ui"
-import { LightningBoltIcon } from "@radix-ui/react-icons"
+import { BatteryCharging as LightningBoltIcon } from "lucide-react"
 import { cn } from "@utils/cn"
 
 function LowBatteryWarning() {

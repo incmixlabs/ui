@@ -10,32 +10,31 @@ import {
 } from "@incmix/ui/widgets"
 import { useEffect, useState } from "react"
 import { DraggableComponent } from "./draggable-component"
-import { presetLayouts } from "../data"
 export const sidebarComponents = [
   {
-    slotId: "h",
+    slotId: "i",
     component: <NewTasks />,
     compImage: dashboardImg?.newTaskImg,
     title: "New Tasks",
     layouts: {
-      lg: { w: 2, h: 6 },
-      md: { w: 2, h: 6 },
-      sm: { w: 3, h: 6 },
-      xs: { w: 4, h: 6 },
-      xxs: { w: 2, h: 6 },
+      lg: { w: 2, h: 12 },
+      md: { w: 2, h: 12 },
+      sm: { w: 3, h: 12 },
+      xs: { w: 4, h: 12 },
+      xxs: { w: 2, h: 12 },
     },
   },
   {
-    slotId: "i",
+    slotId: "h",
     component: <TotalTasks />,
     compImage: dashboardImg?.totalTaskImg,
     title: "Total Tasks",
     layouts: {
-      lg: { w: 2, h: 6 },
-      md: { w: 2, h: 6 },
-      sm: { w: 3, h: 6 },
-      xs: { w: 4, h: 6 },
-      xxs: { w: 2, h: 6 },
+      lg: { w: 2, h: 12 },
+      md: { w: 2, h: 12 },
+      sm: { w: 3, h: 12 },
+      xs: { w: 4, h: 12 },
+      xxs: { w: 2, h: 12 },
     },
   },
   {

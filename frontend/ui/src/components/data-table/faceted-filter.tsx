@@ -13,33 +13,33 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
-  Popover, PopoverContent, PopoverTrigger
+  Popover
 } from "@base"
 
-const FacetedFilter = Popover
+const FacetedFilter = Popover.Root
 
 const FacetedFilterTrigger = React.forwardRef<
-  React.ComponentRef<typeof PopoverTrigger>,
-  React.ComponentPropsWithoutRef<typeof PopoverTrigger>
+  React.ComponentRef<typeof Popover.Trigger>,
+  React.ComponentPropsWithoutRef<typeof Popover.Trigger>
 >(({ className, children, ...props }, ref) => (
-  <PopoverTrigger ref={ref} className={cn(className)} {...props}>
+  <Popover.Trigger ref={ref} className={cn(className)} {...props}>
     {children}
-  </PopoverTrigger>
+  </Popover.Trigger>
 ))
 FacetedFilterTrigger.displayName = "FacetedFilterTrigger"
 
 const FacetedFilterContent = React.forwardRef<
-  React.ComponentRef<typeof PopoverContent>,
-  React.ComponentPropsWithoutRef<typeof PopoverContent>
+  React.ComponentRef<typeof Popover.Content>,
+  React.ComponentPropsWithoutRef<typeof Popover.Content>
 >(({ className, children, ...props }, ref) => (
-  <PopoverContent
+  <Popover.Content
     ref={ref}
     className={cn("w-[12.5rem] p-0", className)}
     align="start"
     {...props}
   >
     <Command>{children}</Command>
-  </PopoverContent>
+  </Popover.Content>
 ))
 FacetedFilterContent.displayName = "FacetedFilterContent"
 

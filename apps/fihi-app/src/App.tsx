@@ -2,7 +2,7 @@ import React, { Suspense, useEffect, useMemo } from "react"
 
 import { useQuery } from "@tanstack/react-query"
 import { RouterProvider, createRouter } from "@tanstack/react-router"
-import { Settings } from "luxon"
+import { setDefaultOptions } from "date-fns"
 
 import { LoadingPage } from "@incmix/pages/common"
 import { I18n, usei18n } from "@incmix/pages/i18n"
@@ -16,7 +16,7 @@ import { Theme, Toaster } from "@incmix/ui"
 import { Provider as RxdbProvider } from "rxdb-hooks"
 import { translations } from "./translations"
 
-const luxonLocale: Record<Language, string> = {
+export const dateFNSLocale: Record<Language, string> = {
   en: "en",
   pt: "pt-BR",
 }
@@ -104,7 +104,9 @@ function App() {
   useEffect(() => {
     if (language) {
       I18n.changeLanguage(language)
-      Settings.defaultLocale = luxonLocale[language]
+      // @ts-ignore
+      // TBD typed language map
+      setDefaultOptions({ locale: language })
     }
   }, [language])
 

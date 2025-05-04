@@ -1,7 +1,8 @@
 import React from "react"
-import type { ActiveModifiers } from "react-day-picker"
-
-import { Button, Calendar, type CalendarProps, Popover, PopoverContent, PopoverTrigger, ScrollArea } from "@base"
+type ActiveModifiers = {
+  [modifier: string]: boolean | undefined;
+};
+import { Button, Calendar, type CalendarProps, Popover,  ScrollArea, Text, type ButtonProps } from "@base"
 import { parseDate } from "chrono-node"
 import { cn } from "utils"
 import { CalendarIcon } from "./icons/calender"
@@ -92,6 +93,7 @@ const DEFAULT_SIZE = 96
 
 interface SmartDatetimeInputProps {
   value?: Date
+  variant?: ButtonProps["variant"]
   onValueChange: (date: Date) => void
   showCalendar?: boolean
   removeInput?: boolean
@@ -131,6 +133,7 @@ export const SmartDatetimeInput = React.forwardRef<
       onValueChange,
       placeholder,
       disabled,
+      variant,
       removeInput,
       showCalendar = true,
       showTimePicker = true,
@@ -542,10 +545,12 @@ const NaturalLanguageInput = React.forwardRef<
 
 NaturalLanguageInput.displayName = "NaturalLanguageInput"
 
-type DateTimeLocalInputProps = {} & CalendarProps
+type DateTimeLocalInputProps = {width?:string} & ButtonProps & CalendarProps
 
 const DateTimeLocalInput = ({
   className,
+  variant="soft",
+  width="16",
   ...props
 }: DateTimeLocalInputProps) => {
   const { value, onValueChange, showCalendar, showTimePicker } =
@@ -579,19 +584,16 @@ const DateTimeLocalInput = ({
   )
 
   return (
-    <Popover>
-      <PopoverTrigger>
+    <Popover.Root>
+      <Popover.Trigger>
         <Button
-          className={cn(
-            "flex items-center justify-center bg-gray-5 px-1 font-normal dark:bg-gray-12",
-            !value && "text-muted-foreground"
-          )}
+          variant={variant}
         >
-          <CalendarIcon />
+          <CalendarIcon width={width} height={width}/>
           <span className="sr-only">calendar</span>
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto border-none p-0 " sideOffset={8}>
+      </Popover.Trigger>
+      <Popover.Content className="w-auto border-none p-0 " sideOffset={8}>
         <div className="flex gap-1">
           {showCalendar && (
             <Calendar
@@ -606,8 +608,8 @@ const DateTimeLocalInput = ({
           )}
           {showTimePicker && <TimePicker />}
         </div>
-      </PopoverContent>
-    </Popover>
+      </Popover.Content>
+    </Popover.Root>
   )
 }
 

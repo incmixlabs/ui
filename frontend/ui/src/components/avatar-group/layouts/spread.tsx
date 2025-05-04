@@ -9,7 +9,9 @@ export const SpreadLayout: React.FC<AvatarGroupProps> = ({
   size = "3",
   direction = "left",
 }) => {
-  const { visibleCount, remainingCount } = getVisibleCount(users, maxVisible)
+  // @ts-ignore
+  // TBD - UseProfile and AvatarProps mapping
+  const { visibleCount, remainingCount } = getVisibleCount(mappedUsers, maxVisible)
   const visibleUsers = users.slice(0, visibleCount)
 
   const sortedUsers =

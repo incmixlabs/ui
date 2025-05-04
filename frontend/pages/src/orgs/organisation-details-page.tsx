@@ -5,17 +5,14 @@ import {
   Flex,
   Select,
   Separator,
-  Table,
   Text,
   TextField,
   Tooltip,
 } from "@incmix/ui"
-import type {
-  MemberDetails,
-  MemberRole,
-  Organization,
-} from "@incmix/utils/types"
-import { ArrowLeftIcon } from "@radix-ui/react-icons"
+import { DataTable } from "@incmix/ui/tanstack-table"
+import type { MemberDetails, Organization, UserRole } from "@incmix/utils/types"
+import { UserRoles } from "@incmix/utils/types"
+import { ArrowLeft as ArrowLeftIcon } from "lucide-react"
 import { useAuth } from "../auth"
 import { UserProfileImage } from "../common/components/user-profile-image"
 
@@ -39,52 +36,7 @@ import {
   useUpdateOrganization,
 } from "./utils"
 import { AbilityContext, Can } from "./utils/ability-context"
-
-const RemoveButton: React.FC<{ member: MemberDetails; orgHandle: string }> = ({
-  member,
-  orgHandle,
-}) => {
-  const { organization } = useOrganization(orgHandle)
-  const { authUser: currentUser } = useAuth()
-  const { t } = useTranslation(["organizationDetails", "common"])
-  const { handleRemoveMembers } = useRemoveMembers()
-
-  const handleRemove = () => {
-    if (organization) {
-      handleRemoveMembers(organization.id, [member.userId])
-    }
-  }
-
-  const BareRemoveButton = forwardRef<
-    HTMLButtonElement,
-    React.ComponentProps<typeof Button>
-  >((props, ref) => {
-    const { t } = useTranslation(["common"])
-    return (
-      <Button
-        color="red"
-        variant="soft"
-        size="1"
-        onClick={handleRemove}
-        disabled={!!currentUser && currentUser.id === member.userId}
-        ref={ref}
-        {...props}
-      >
-        {t("common:remove")}
-      </Button>
-    )
-  })
-
-  const isCurrentUser = currentUser && currentUser.id === member.userId
-
-  return isCurrentUser ? (
-    <Tooltip content={t("organizationDetails:cannotRemoveSelf")}>
-      <BareRemoveButton />
-    </Tooltip>
-  ) : (
-    <BareRemoveButton />
-  )
-}
+import { getOrganizationDetailsMembersColumns } from "./utils/organization-details-table-utils"
 
 const OrganizationHeader: React.FC<{
   organization: Organization
@@ -111,64 +63,20 @@ const OrganizationHeader: React.FC<{
   )
 }
 
-const UserRow: React.FC<{
-  member: MemberDetails
-  orgId: string
-  onUpdateRole: (member: MemberDetails, newRole: MemberRole) => Promise<void>
-}> = ({ member, orgId, onUpdateRole }) => {
-  const { authUser: currentUser } = useAuth()
-  const { t } = useTranslation(["common"])
-  const ability = React.useContext(AbilityContext)
-  return (
-    <Table.Row key={member.userId}>
-      <Table.Cell>
-        <Flex align="center" gap="2">
-          <UserProfileImage size="2" userId={member.userId} />
-          <Text>
-            {member.name}
-            {currentUser &&
-              currentUser.id === member.userId &&
-              ` (${t("common:you")})`}
-          </Text>
-        </Flex>
-      </Table.Cell>
-      <Table.Cell>
-        <Flex align="center" className="h-full">
-          {member.email}
-        </Flex>
-      </Table.Cell>
-      <Table.Cell>
-        <Flex align="center" className="h-full">
-          <EditableRole
-            currentRole={member.role}
-            onUpdateRole={(newRole) => onUpdateRole(member, newRole)}
-            editable={ability.can("update", "Member")}
-          />
-        </Flex>
-      </Table.Cell>
-      {(ability.can("update", "Member") || ability.can("delete", "Member")) && (
-        <Table.Cell>
-          <Flex align="center" className="h-full">
-            <RemoveButton member={member} orgHandle={orgId} />
-          </Flex>
-        </Table.Cell>
-      )}
-    </Table.Row>
-  )
-}
-
 const AddUserForm: React.FC<{
-  onAddMember: (email: string, role: MemberRole) => void
+  onAddMember: (email: string, role: UserRole) => void
 }> = ({ onAddMember }) => {
   const { t } = useTranslation(["organizationDetails", "common", "roles"])
   const [newMemberEmail, setNewMemberEmail] = useState("")
-  const [newMemberRole, setNewMemberRole] = useState<MemberRole>("viewer")
+  const [newMemberRole, setNewMemberRole] = useState<UserRole>(
+    UserRoles.ROLE_VIEWER
+  )
 
   const handleAddNewMember = () => {
     if (newMemberEmail && newMemberRole) {
       onAddMember(newMemberEmail, newMemberRole)
       setNewMemberEmail("")
-      setNewMemberRole("viewer")
+      setNewMemberRole(UserRoles.ROLE_VIEWER)
     }
   }
 
@@ -183,15 +91,25 @@ const AddUserForm: React.FC<{
       />
       <Select.Root
         value={newMemberRole}
-        onValueChange={(value) => setNewMemberRole(value as MemberRole)}
+        onValueChange={(value) => setNewMemberRole(value as UserRole)}
       >
         <Select.Trigger />
         <Select.Content>
-          <Select.Item value="owner">{t("roles:owner")}</Select.Item>
-          <Select.Item value="admin">{t("roles:admin")}</Select.Item>
-          <Select.Item value="viewer">{t("roles:viewer")}</Select.Item>
-          <Select.Item value="commenter">{t("roles:commenter")}</Select.Item>
-          <Select.Item value="editor">{t("roles:editor")}</Select.Item>
+          <Select.Item value={UserRoles.ROLE_OWNER}>
+            {t("roles:owner")}
+          </Select.Item>
+          <Select.Item value={UserRoles.ROLE_ADMIN}>
+            {t("roles:admin")}
+          </Select.Item>
+          <Select.Item value={UserRoles.ROLE_VIEWER}>
+            {t("roles:viewer")}
+          </Select.Item>
+          <Select.Item value={UserRoles.ROLE_COMMENTER}>
+            {t("roles:commenter")}
+          </Select.Item>
+          <Select.Item value={UserRoles.ROLE_EDITOR}>
+            {t("roles:editor")}
+          </Select.Item>
         </Select.Content>
       </Select.Root>
       <Button onClick={handleAddNewMember}>
@@ -213,6 +131,8 @@ const OrganizationDetailsPage: React.FC = () => {
   const { handleDeleteOrganization } = useDeleteOrganization()
   const { ability, isLoading: isAbilityLoading } =
     useOrganizationMemberAbility(orgHandle)
+  const { authUser: currentUser } = useAuth()
+  const { handleRemoveMembers } = useRemoveMembers()
 
   const handleUpdateName = async (newName: string) => {
     if (organization) {
@@ -228,7 +148,7 @@ const OrganizationDetailsPage: React.FC = () => {
     }
   }
 
-  const handleAddNewMember = async (email: string, role: MemberRole) => {
+  const handleAddNewMember = async (email: string, role: UserRole) => {
     if (organization) {
       try {
         await handleAddMember(organization.id, email, role)
@@ -241,13 +161,20 @@ const OrganizationDetailsPage: React.FC = () => {
     }
   }
 
-  const handleRoleChange = async (
-    member: MemberDetails,
-    newRole: MemberRole
-  ) => {
+  const handleRoleChange = async (member: MemberDetails, newRole: UserRole) => {
     if (organization) {
       await handleUpdateMemberRole(organization.id, member.userId, newRole)
     }
+  }
+
+  const handleRemoveMember = (userId: string) => {
+    if (organization) {
+      handleRemoveMembers(organization.id, [userId])
+    }
+  }
+
+  const isCurrentUser = (userId: string) => {
+    return currentUser?.id === userId
   }
 
   const handleDelete = async () => {
@@ -263,6 +190,56 @@ const OrganizationDetailsPage: React.FC = () => {
     }
   }
 
+  // Render functions for table columns
+  const renderRole = (role: UserRole, member: MemberDetails) => {
+    // We've already checked ability exists before rendering, but TS doesn't know that
+    if (!ability) return null
+
+    return (
+      <Flex align="center" className="h-full">
+        <EditableRole
+          currentRole={role}
+          onUpdateRole={(newRole) => handleRoleChange(member, newRole)}
+          editable={ability.can("update", "Member")}
+        />
+      </Flex>
+    )
+  }
+
+  const renderActions = (member: MemberDetails) => {
+    if (!ability) return null
+
+    const isDisabled = isCurrentUser(member.userId)
+    const canDelete = ability.can("delete", "Member")
+
+    return (
+      <Flex align="center" className="h-full">
+        {isDisabled || !canDelete ? (
+          <Tooltip
+            content={
+              isDisabled
+                ? t("organizationDetails:cannotRemoveSelf")
+                : t("organizationDetails:cannotRemoveMember")
+            }
+          >
+            <Button color="red" variant="soft" size="1" disabled={true}>
+              {t("common:remove")}
+            </Button>
+          </Tooltip>
+        ) : (
+          <Button
+            color="red"
+            variant="soft"
+            size="1"
+            onClick={() => handleRemoveMember(member.userId)}
+          >
+            {t("common:remove")}
+          </Button>
+        )}
+      </Flex>
+    )
+  }
+
   if (isOrgLoading || isMembersLoading || isAbilityLoading) {
     return <LoadingPage />
   }
@@ -273,6 +250,15 @@ const OrganizationDetailsPage: React.FC = () => {
     if (!members) console.error("No members found")
     return <div>{t("organizationDetails:notFound")}</div>
   }
+
+  // Get columns for the DataTable
+  const columns = getOrganizationDetailsMembersColumns(
+    t,
+    currentUser?.id,
+    ability,
+    renderRole,
+    renderActions
+  )
 
   return (
     <AbilityContext.Provider value={ability}>
@@ -292,36 +278,15 @@ const OrganizationDetailsPage: React.FC = () => {
                 onUpdateName={handleUpdateName}
               />
               <Separator size="4" />
-              <Table.Root>
-                <Table.Header>
-                  <Table.Row>
-                    <Table.ColumnHeaderCell>
-                      {t("organizationDetails:name")}
-                    </Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell>
-                      {t("organizationDetails:email")}
-                    </Table.ColumnHeaderCell>
-                    <Table.ColumnHeaderCell>
-                      {t("organizationDetails:role")}
-                    </Table.ColumnHeaderCell>
-                    {ability.can("delete", "Member") && (
-                      <Table.ColumnHeaderCell>
-                        {t("organizationDetails:actions")}
-                      </Table.ColumnHeaderCell>
-                    )}
-                  </Table.Row>
-                </Table.Header>
-                <Table.Body>
-                  {members.map((member) => (
-                    <UserRow
-                      key={member.userId}
-                      member={member}
-                      orgId={orgHandle}
-                      onUpdateRole={handleRoleChange}
-                    />
-                  ))}
-                </Table.Body>
-              </Table.Root>
+              <DataTable
+                columns={columns}
+                data={members}
+                enableRowSelection={false}
+                enableSorting={true}
+                enablePagination={false}
+                enableColumnVisibility={false}
+                className="w-full"
+              />
               <Can I="create" a="Member">
                 <AddUserForm onAddMember={handleAddNewMember} />
               </Can>

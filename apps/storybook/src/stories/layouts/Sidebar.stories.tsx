@@ -1,11 +1,5 @@
 import { Badge, Box, Flex, Sidebar, SidebarMenu, SidebarMenuItem, SidebarMenuSubItem, SidebarProvider } from "@incmix/ui"
-
-import {
-  DashboardIcon,
-  EnvelopeClosedIcon,
-  GearIcon,
-  PersonIcon,
-} from "@radix-ui/react-icons"
+import { LayoutDashboard as   DashboardIcon, Mail as EnvelopeClosedIcon, Settings as  GearIcon, User as  PersonIcon} from "lucide-react";
 import type { Meta, StoryObj } from "@storybook/react"
 import { useState } from "react"
 

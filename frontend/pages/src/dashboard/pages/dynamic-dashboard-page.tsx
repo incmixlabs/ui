@@ -70,7 +70,6 @@ const DynamicDashboardPage: React.FC = () => {
   const {
     gridComponents,
     setGridComponents,
-    setLastRemovedComponent,
     handleRemoveComponent,
     handleRemoveNestedComponent,
   } = useGridComponents(isEditing)
@@ -85,7 +84,6 @@ const DynamicDashboardPage: React.FC = () => {
     isEditing,
     gridComponents,
     setGridComponents,
-    setLastRemovedComponent
   )
   if (isLoading) return <LoadingPage />
   if (!authUser) return null

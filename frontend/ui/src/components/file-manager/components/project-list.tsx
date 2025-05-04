@@ -1,17 +1,9 @@
 import { useState } from "react"
-import { ChevronDown, ChevronUp } from "lucide-react"
-
-import {
-  iconSize,
-  Checkbox,
-  ScrollArea,
-  Table,
-} from "@base"
+import { ScrollArea } from "@base"
+import { DataTable } from "@incmix/ui/tanstack-table"
 import { useMediaQuery } from "@hooks/use-media-query"
-import { cn } from "@utils"
-import { getBytes } from "@utils/getBytes"
 import type { FileItem } from "../data"
-import { ProjectActionsMenu } from "./project-actions-menu"
+import { getProjectListColumns, sortFiles } from "./project-list-utils"
 
 interface ProjectListViewProps {
   files: FileItem[]
@@ -42,35 +34,7 @@ export function ProjectListView({
     }
   }
 
-  const sortedFiles = [...files].sort((a, b) => {
-    let comparison = 0
-
-    if (sortField === "name") {
-      comparison = a.name.localeCompare(b.name)
-    } else if (sortField === "modified") {
-      try {
-        const dateA = new Date(a.modified).getTime()
-        const dateB = new Date(b.modified).getTime()
-        if (Number.isNaN(dateA) || Number.isNaN(dateB)) {
-          comparison = 0
-        } else {
-          comparison = dateA - dateB
-        }
-      } catch (error) {
-        console.error("Error parsing dates:", error)
-        comparison = 0
-      }
-    } else if (sortField === "size") {
-      try {
-        comparison = getBytes(a) - getBytes(b)
-      } catch (error) {
-        console.error("Error comparing file sizes:", error)
-        comparison = 0
-      }
-    }
-
-    return sortDirection === "asc" ? comparison : -comparison
-  })
+  const sortedFiles = sortFiles(files, sortField, sortDirection);
 
   const toggleSelectAll = () => {
     if (selectedFiles.length === files.length) {
@@ -80,138 +44,53 @@ export function ProjectListView({
     }
   }
 
-  const getSortIcon = (field: SortField) => {
-    if (sortField !== field) return null
-    return sortDirection === "asc" ? (
-      <ChevronUp className={`${iconSize}`} />
-    ) : (
-      <ChevronDown className={`${iconSize}`} />
+  const toggleSelectFile = (fileId: string) => {
+    setSelectedFiles((prev) =>
+      prev.includes(fileId)
+        ? prev.filter((id) => id !== fileId)
+        : [...prev, fileId]
     )
   }
+
+  const stopPropagation = (e: React.MouseEvent) => {
+    e.stopPropagation()
+  }
+
+  const handleRowClick = (file: FileItem) => {
+    onFileClick(file)
+  }
+
+  // Get columns for DataTable using our utility
+  const columns = getProjectListColumns(
+    sortField,
+    sortDirection,
+    selectedFiles,
+    isMobile,
+    selectedProjectId,
+    {
+      toggleSelectAll,
+      handleSort,
+      toggleSelectFile,
+      stopPropagation,
+      onFileClick,
+    }
+  );
 
   return (
     <ScrollArea
       className="w-full rounded-md border border-gray-5"
       scrollbars="horizontal"
     >
-      <Table.Root className="w-full overflow-hidden">
-        <Table.Header className="bg-gray-3">
-          <Table.Row className="border-gray-5 ">
-            <Table.HeaderCell className="w-8 md:w-12">
-              <Checkbox
-                checked={
-                  selectedFiles.length === files.length && files.length > 0
-                }
-                onCheckedChange={toggleSelectAll}
-                aria-label="Select all files"
-              />
-            </Table.HeaderCell>
-            <Table.HeaderCell
-              className="cursor-pointer"
-              onClick={() => handleSort("name")}
-            >
-              <div className="flex items-center gap-2">
-                Files {getSortIcon("name")}
-              </div>
-            </Table.HeaderCell>
-            {isMobile && (
-              <>
-                <Table.HeaderCell
-                  className="cursor-pointer text-right"
-                  onClick={() => handleSort("modified")}
-                >
-                  <div className="flex items-center justify-end gap-2">
-                    Date {getSortIcon("modified")}
-                  </div>
-                </Table.HeaderCell>
-
-                <Table.HeaderCell
-                  className="cursor-pointer text-right"
-                  onClick={() => handleSort("size")}
-                >
-                  <div className="flex items-center justify-end gap-2">
-                    Size {getSortIcon("size")}
-                  </div>
-                </Table.HeaderCell>
-              </>
-            )}
-
-            <Table.HeaderCell className="w-10 text-right md:w-20 lg:w-32">
-              Action
-            </Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body className="px-2">
-          {sortedFiles.map((file) => {
-            const IconComponent =
-              selectedProjectId === file.id
-                ? file.openIcon || null
-                : file.closeIcon || null
-
-            return (
-              <Table.Row
-                key={file.id}
-                className={cn(
-                  "h-14 cursor-pointer border-gray-5 border-t hover:bg-sidebar-secondary-active/15 ",
-                  selectedProjectId === file.id &&
-                    "bg-sidebar-secondary-active/15"
-                )}
-                onClick={() => onFileClick(file)}
-              >
-                <Table.Cell
-                  className="w-8 px-2 md:w-12"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Checkbox
-                    checked={selectedFiles.includes(file.id)}
-                    onCheckedChange={() => {
-                      setSelectedFiles((prev) =>
-                        prev.includes(file.id)
-                          ? prev.filter((id) => id !== file.id)
-                          : [...prev, file.id]
-                      )
-                    }}
-                    aria-label={`Select ${file.name}`}
-                  />
-                </Table.Cell>
-                <Table.Cell>
-                  <div className="flex items-center gap-3">
-                    {IconComponent && (
-                      <IconComponent
-                        className={cn(
-                          "h-5 w-5",
-                          file.type !== "folder" && "text-gray-500"
-                        )}
-                      />
-                    )}
-                    <span className="font-medium">{file.name}</span>
-                  </div>
-                </Table.Cell>
-                {isMobile && (
-                  <>
-                    <Table.Cell className="text-right text-muted-foreground">
-                      {file.modified}
-                    </Table.Cell>
-                    <Table.Cell className="text-right text-muted-foreground">
-                      {file.size.value} {file.size.unit}
-                    </Table.Cell>
-                  </>
-                )}
-
-                <Table.Cell
-                  className="w-10 text-right md:w-20 lg:w-32"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <ProjectActionsMenu
-                    projectId={file?.id}
-                    className="mr-1 h-5 w-5 cursor-pointer sm:mr-2 sm:h-6 sm:w-6"
-                  />
-                </Table.Cell>
-              </Table.Row>
-            )
-          })}
-        </Table.Body>
-      </Table.Root>
+      <DataTable
+        columns={columns as any}
+        data={sortedFiles}
+        onRowClick={handleRowClick}
+        enableSorting={false} // We're handling sorting manually
+        enableRowSelection={false} // We're handling selection manually
+        enablePagination={false}
+        enableColumnVisibility={false}
+        className="w-full overflow-hidden"
+      />
     </ScrollArea>
   )
 }

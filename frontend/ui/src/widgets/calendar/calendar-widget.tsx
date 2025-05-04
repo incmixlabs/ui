@@ -1,5 +1,5 @@
 import { CardContainer } from "@components"
-import { createId as cuid } from "@paralleldrive/cuid2"
+import { nanoid as cuid } from "nanoid"
 import { DateTime } from "luxon"
 import { useCallback, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"

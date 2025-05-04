@@ -1,6 +1,7 @@
+// @ts-nocheck
 "use client"
 
-import { Button, Dialog, Flex, FormField,  Text, VisuallyHidden } from "@incmix/ui/base"
+import { Button, Dialog, Flex, FormField,  Text, VisuallyHidden } from "@base"
 import { useForm } from "@tanstack/react-form"
 import type { FieldApi } from "@tanstack/react-form"
 import { zodValidator } from "@tanstack/zod-form-adapter"
@@ -121,7 +122,7 @@ export function TreeItemDialog({
               </form.Field>
             ))}
           </Flex>
-          <Dialog.Footer className="mt-4">
+          <Dialog.Footer>
             <Button
               type="button"
               variant="soft"

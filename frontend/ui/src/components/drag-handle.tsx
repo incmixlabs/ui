@@ -1,6 +1,7 @@
 import { Box } from "@incmix/ui"
-import { HamburgerMenuIcon } from "@radix-ui/react-icons"
+
 import { GripHorizontal } from "lucide-react"
+
 
 export const DragHandle = () => {
   return (

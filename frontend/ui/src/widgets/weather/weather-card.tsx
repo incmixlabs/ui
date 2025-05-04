@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@incmix/ui"
 import { getWeekDay } from "@incmix/utils/date"
-import { PaperPlaneIcon } from "@radix-ui/react-icons"
+import { MapPin as PaperPlaneIcon } from "lucide-react"
 import type React from "react"
 import {
   Clouds,
@@ -72,7 +72,7 @@ export function WeatherCard({ days, location }: WeatherCardProps) {
               {location ?? "Unknown"}
             </Text>
             <Text>
-              <PaperPlaneIcon className="location-icon" width="12" />
+              <PaperPlaneIcon className="location-icon" size="12" />
             </Text>
           </Flex>
           <Text size="8">{formatTemp(today.temperatureAvg)}</Text>

@@ -1,12 +1,5 @@
-import type { LayoutPreset } from '@hooks/use-layout-store'
 import { Box,cn,Flex, Grid, Heading, presetLayouts, useLayoutStore } from '@incmix/ui'
 
-interface LayoutPresetsProps {
-  presets: LayoutPreset[]
-  onSelectPreset: (preset: LayoutPreset) => void
-  activePresetId?: string
-  isEditing: boolean
-}
 
 export function LayoutPresetsSection() {
   const { activePresetId, applyPreset } = useLayoutStore()

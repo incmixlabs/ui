@@ -82,7 +82,7 @@ const StepperProvider = ({ value, children }: StepperContextProviderProps) => {
 
 // TODO: Export this in @/registry/hooks
 function usePrevious<T>(value: T): T | undefined {
-  const ref = useRef<T>()
+  const ref = useRef<T | undefined>(undefined)
 
   useEffect(() => {
     ref.current = value

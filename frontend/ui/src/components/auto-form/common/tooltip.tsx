@@ -1,8 +1,6 @@
 import {
+  IconButton,
   Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
 } from "@base"
 import { HelpCircle } from "lucide-react"
 
@@ -21,18 +19,16 @@ function AutoFormTooltip({ fieldConfigItem }: { fieldConfigItem: any }) {
   return (
     <>
       {fieldConfigItem?.description && (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <HelpCircle className="ml-[1px] size-4 text-gray-500 dark:text-white" />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="text-gray-500 text-sm dark:text-white">
+        <Tooltip content={
+          <p className="text-gray-500 text-sm dark:text-white">
                 {fieldConfigItem.description}
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+            </p>
+        }>
+          <IconButton variant="ghost">
+            <HelpCircle/>
+          </IconButton>
+        </Tooltip>
+
       )}
     </>
   )

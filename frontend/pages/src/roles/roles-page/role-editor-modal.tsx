@@ -1,17 +1,10 @@
-import {
-  Button,
-  Dialog,
-  Flex,
-  FormField,
-  ReactiveButton,
-  toast,
-} from "@incmix/ui/base"
-import { useForm } from "@tanstack/react-form"
+import AutoForm from "@incmix/ui/auto-form"
+import { Button, Dialog, Flex, ReactiveButton, toast } from "@incmix/ui/base"
 import { useMutation } from "@tanstack/react-query"
-import { zodValidator } from "@tanstack/zod-form-adapter"
 import { PlusCircleIcon } from "lucide-react"
-import { z } from "zod"
+import { useEffect, useState } from "react"
 import { createRole, updateRole } from "./actions"
+import { roleFormSchema } from "./role-form-schema"
 
 type RoleEditorModalProps = {
   role?: { id: number; name: string }
@@ -21,6 +14,7 @@ type RoleEditorModalProps = {
   showTrigger?: boolean
   onSuccess?: () => void
 }
+
 const RoleEditorModal = ({
   role,
   open,
@@ -29,6 +23,19 @@ const RoleEditorModal = ({
   showTrigger,
   onSuccess,
 }: RoleEditorModalProps) => {
+  const [formData, setFormData] = useState<Record<string, any>>({
+    name: role?.name ?? "",
+  })
+
+  // Update form data when role prop changes
+  useEffect(() => {
+    if (role) {
+      setFormData({ name: role.name })
+    } else {
+      setFormData({ name: "" })
+    }
+  }, [role])
+
   const createRoleMutation = useMutation({
     mutationFn: (name: string) => createRole(name),
     onSuccess: () => {
@@ -51,18 +58,19 @@ const RoleEditorModal = ({
     },
   })
 
-  const form = useForm({
-    defaultValues: {
-      name: role?.name ?? "",
-    },
-    onSubmit: ({ value }) => {
-      if (role) {
-        updateRoleMutation.mutate({ id: role.id, name: value.name })
-      } else if (value.name.length > 0) {
-        createRoleMutation.mutate(value.name)
-      }
-    },
-  })
+  // Handle form values change
+  const handleValuesChange = (values: any) => {
+    setFormData(values)
+  }
+
+  // Handle form submission
+  const handleSubmit = (data: any) => {
+    if (role) {
+      updateRoleMutation.mutate({ id: role.id, name: data.name })
+    } else if (data.name.length > 0) {
+      createRoleMutation.mutate(data.name)
+    }
+  }
 
   return (
     <Dialog.Root
@@ -70,7 +78,8 @@ const RoleEditorModal = ({
       onOpenChange={(open) => {
         onOpenChange?.(open)
         if (!open) {
-          form.reset()
+          // Reset form when dialog closes
+          setFormData({ name: role?.name ?? "" })
         }
       }}
     >
@@ -87,31 +96,14 @@ const RoleEditorModal = ({
           <Dialog.Description className="sr-only">{title}</Dialog.Description>
         </Dialog.Header>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            form.handleSubmit()
-          }}
-        >
-          <Flex direction="column" gap="4">
-            <form.Field
-              name="name"
-              validatorAdapter={zodValidator()}
-              validators={{
-                onChange: z.string().min(1, "Role Name is required"),
-              }}
-            >
-              {(field) => (
-                <FormField
-                  name="name"
-                  label="Role Name"
-                  type="text"
-                  field={field}
-                />
-              )}
-            </form.Field>
-
+        <Flex direction="column" gap="4">
+          <AutoForm
+            formSchema={roleFormSchema.formSchema}
+            onSubmit={handleSubmit}
+            onValuesChange={handleValuesChange}
+            values={formData}
+            fieldConfig={roleFormSchema.fieldConfig}
+          >
             <ReactiveButton
               type="submit"
               color="blue"
@@ -122,15 +114,16 @@ const RoleEditorModal = ({
             >
               {role ? "Update" : "Create"}
             </ReactiveButton>
-          </Flex>
-        </form>
-        <DialogFooter className="mt-4 gap-2 sm:space-x-0">
+          </AutoForm>
+        </Flex>
+
+        <Dialog.Footer>
           <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
             </Button>
           </Dialog.Close>
-        </DialogFooter>
+        </Dialog.Footer>
       </Dialog.Content>
     </Dialog.Root>
   )

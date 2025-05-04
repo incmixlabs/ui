@@ -41,6 +41,8 @@ export type DropdownMenuItemProps = {
   onClick?: (event: React.MouseEvent<HTMLDivElement>) => void
   disabled?: boolean
   icon?: ReactNode
+  checked?: boolean // Flag to indicate if the item is selected
+  checkedIcon?: ReactNode // Custom icon to display when checked
   shortcut?: string
   separator?: boolean
   asChild?: boolean
@@ -63,17 +65,25 @@ export type DropdownMenuProps = {
   items: DropdownMenuItemProps[]
 }
 
-export const DropdownMenuItem = ({
+const DropdownMenuItem = ({
   label,
   separator,
   children,
+  icon, // Explicitly extract the icon prop
+  checked, // Add checked prop extraction
+  checkedIcon, // Add checkedIcon prop extraction
   ...props
 }: DropdownMenuItemProps) => {
   return (
     <>
       {children ? (
         <RadixDropdownMenu.Sub>
-          <RadixDropdownMenu.SubTrigger>{label}</RadixDropdownMenu.SubTrigger>
+          <RadixDropdownMenu.SubTrigger>
+            <div className="flex items-center">
+              {icon && <span className="mr-2">{icon}</span>}
+              {label}
+            </div>
+          </RadixDropdownMenu.SubTrigger>
           <RadixDropdownMenu.SubContent>
             {children.map((item, index) => (
               <DropdownMenuItem {...item} key={index} />
@@ -81,7 +91,19 @@ export const DropdownMenuItem = ({
           </RadixDropdownMenu.SubContent>
         </RadixDropdownMenu.Sub>
       ) : (
-        <RadixDropdownMenu.Item {...props}>{label}</RadixDropdownMenu.Item>
+        <RadixDropdownMenu.Item role="menuitemcheckbox"  aria-checked={checked} {...props}>
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center">
+              {icon && <span className="mr-2">{icon}</span>}
+              {label}
+            </div>
+            {checked && (
+              <span className="ml-2 text-primary-600 dark:text-primary-400">
+                {checkedIcon}
+              </span>
+            )}
+          </div>
+        </RadixDropdownMenu.Item>
       )}
       {separator && <RadixDropdownMenu.Separator />}
     </>

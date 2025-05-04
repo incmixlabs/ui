@@ -7,7 +7,7 @@ import {
   type DataTableRowAction,
   DropdownMenu,
 } from "@incmix/ui"
-import { DotsHorizontalIcon } from "@radix-ui/react-icons"
+import { MoreHorizontal as DotsHorizontalIcon } from "lucide-react"
 import type { TranslationMessage } from "./types"
 
 type GetColumnsProps = {
