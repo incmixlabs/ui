@@ -5514,13 +5514,6 @@ packages:
 
   date-fns-jalali@4.1.0-0:
     resolution: {integrity: sha512-hTIP/z+t+qKwBDcmmsnmjWTduxCg+5KfdqWQvb2X/8C9+knYY6epN/pfxdDuyVlSVeFz0sM5eEfwIUQ70U4ckg==}
-<<<<<<< HEAD
-
-  date-fns@2.30.0:
-    resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
-    engines: {node: '>=0.11'}
-=======
->>>>>>> origin/main
 
   date-fns@4.1.0:
     resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
@@ -9448,17 +9441,7 @@ snapshots:
       bind-event-listener: 3.0.0
       raf-schd: 4.0.3
 
-<<<<<<< HEAD
-  '@atlaskit/tokens@1.61.0(@types/react@19.1.0)(react@19.1.0)':
-=======
-  '@atlaskit/pragmatic-drag-and-drop@1.5.2':
-    dependencies:
-      '@babel/runtime': 7.27.0
-      bind-event-listener: 3.0.0
-      raf-schd: 4.0.3
-
   '@atlaskit/tokens@1.61.0(@types/react@19.1.1)(react@19.1.0)':
->>>>>>> origin/main
     dependencies:
       '@atlaskit/ds-lib': 2.7.0(@types/react@19.1.1)(react@19.1.0)
       '@atlaskit/platform-feature-flags': 0.3.0
@@ -14628,13 +14611,6 @@ snapshots:
       whatwg-url: 14.2.0
 
   date-fns-jalali@4.1.0-0: {}
-<<<<<<< HEAD
-
-  date-fns@2.30.0:
-    dependencies:
-      '@babel/runtime': 7.27.0
-=======
->>>>>>> origin/main
 
   date-fns@4.1.0: {}
 

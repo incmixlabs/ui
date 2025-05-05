@@ -26,7 +26,7 @@ function AutoFormLabel({
 }) {
   return (
     <>
-      <FormLabel className={cn("mt-2 w-[140px] space-y-0", className)}>
+      <FormLabel className={cn("flex-shrink-0 min-w-[90px] w-auto mr-2", className)}>
         {label}
         {isRequired && <span className="text-destructive"> *</span>}
       </FormLabel>

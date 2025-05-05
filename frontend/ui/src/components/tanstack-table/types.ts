@@ -178,6 +178,13 @@ export interface DataTableProps<TData> {
   onRowClick?: (row: TData) => void;
   onSelectionChange?: (selectedRows: TData[]) => void;
   onColumnReorder?: (newOrder: string[]) => void;
+
+  // Edit functionality
+  enableRowEdit?: boolean;
+  editFormSchema?: any;
+  editFieldConfig?: any;
+  onRowEdit?: (oldData: TData, newData: TData) => void;
+  editDialogTitle?: string;
 }
 
 // Pagination info
