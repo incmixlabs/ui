@@ -61,7 +61,7 @@
     "@dnd-kit/utilities": "3.2.2",
     "@floating-ui/react-dom": "2.1.2",
     "@hookform/resolvers": "3.10.0",
-    "@incmix/react-grid-layout": "1.5.1",
+    "@incmix/react-grid-layout": "1.5.2",
     "@incmix/store": "workspace: *",
     "@incmix/utils": "catalog:",
     "@mantine/hooks": "7.14.1",

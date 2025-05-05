@@ -489,18 +489,6 @@ export function GridLayoutExample({ isEditing }: { isEditing: boolean }) {
             )
           })}
       </ResponsiveGridLayout>
-      {/* <ResponsiveGridLayout
-        layouts={{ lg: layout }}
-        onDrag={handleDrag}
-        cols={{ lg: 12 }}
-        rowHeight={20}
-      >
-        {layout.map((item) => (
-          <div key={item.i} style={{ border: "1px solid black" }}>
-            {item.i}
-          </div>
-        ))}
-      </ResponsiveGridLayout> */}
     </>
   )
 }

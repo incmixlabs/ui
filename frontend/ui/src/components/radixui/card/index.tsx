@@ -17,9 +17,12 @@ interface CardContainerProps {
 const CardContainer: React.FC<CardContainerProps> = ({
   children,
   className = "",
+  ...props
 }) => {
   return (
-    <RadixCard className={`bg-gray-2 p-6 ${className}`}>{children}</RadixCard>
+    <RadixCard className={`bg-gray-2 p-6 ${className}`} {...props}>
+      {children}
+    </RadixCard>
   )
 }
 export { CardContainer }

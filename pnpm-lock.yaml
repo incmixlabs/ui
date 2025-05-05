@@ -574,8 +574,8 @@ importers:
         specifier: 3.10.0
         version: 3.10.0(react-hook-form@7.54.2(react@19.1.0))
       '@incmix/react-grid-layout':
-        specifier: 1.5.1
-        version: 1.5.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 1.5.2
+        version: 1.5.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@incmix/store':
         specifier: 'workspace: *'
         version: link:../store
@@ -895,9 +895,6 @@ packages:
 
   '@atlaskit/pragmatic-drag-and-drop@1.4.0':
     resolution: {integrity: sha512-qRY3PTJIcxfl/QB8Gwswz+BRvlmgAC5pB+J2hL6dkIxgqAgVwOhAamMUKsrOcFU/axG2Q7RbNs1xfoLKDuhoPg==}
-
-  '@atlaskit/pragmatic-drag-and-drop@1.5.2':
-    resolution: {integrity: sha512-fDuTwlDD11r3ev5tLJ6JnzQUiG9v77c8zGcNdO7RRNtZZbOHam8CFhmyFGY4E/mLjvgYng0UkcyCrSBc4FXYZw==}
 
   '@atlaskit/tokens@1.61.0':
     resolution: {integrity: sha512-gRkBDZOaQffJHg9g+hYFgPjQ0Hz4XIDaK5WEttIGyhi2USsGsvDvUeED8liqcQNwssH/5UFxIFp3FmEwo0DoFA==}
@@ -2314,8 +2311,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@incmix/react-grid-layout@1.5.1':
-    resolution: {integrity: sha512-p/w3AHOF0QpoFmlX51kUJH5LJgMjwDWRuqZgapdDISiqbU7Pidk3SvNyK2qlIhlg1EMSCtwuV0DfFUzDnZh7cg==}
+  '@incmix/react-grid-layout@1.5.2':
+    resolution: {integrity: sha512-HnhDPUbuLOIpiindyVvcFkdvSRD/BKrwySX0sUkg0GJDFOfllxTtCmcJ9kCGuP8lw+g1n9BDL5psKmlWO00PYQ==}
     peerDependencies:
       react: '>= 19.0.0'
       react-dom: '>= 19.0.0'
@@ -5517,6 +5514,13 @@ packages:
 
   date-fns-jalali@4.1.0-0:
     resolution: {integrity: sha512-hTIP/z+t+qKwBDcmmsnmjWTduxCg+5KfdqWQvb2X/8C9+knYY6epN/pfxdDuyVlSVeFz0sM5eEfwIUQ70U4ckg==}
+<<<<<<< HEAD
+
+  date-fns@2.30.0:
+    resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
+    engines: {node: '>=0.11'}
+=======
+>>>>>>> origin/main
 
   date-fns@4.1.0:
     resolution: {integrity: sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==}
@@ -9444,6 +9448,9 @@ snapshots:
       bind-event-listener: 3.0.0
       raf-schd: 4.0.3
 
+<<<<<<< HEAD
+  '@atlaskit/tokens@1.61.0(@types/react@19.1.0)(react@19.1.0)':
+=======
   '@atlaskit/pragmatic-drag-and-drop@1.5.2':
     dependencies:
       '@babel/runtime': 7.27.0
@@ -9451,6 +9458,7 @@ snapshots:
       raf-schd: 4.0.3
 
   '@atlaskit/tokens@1.61.0(@types/react@19.1.1)(react@19.1.0)':
+>>>>>>> origin/main
     dependencies:
       '@atlaskit/ds-lib': 2.7.0(@types/react@19.1.1)(react@19.1.0)
       '@atlaskit/platform-feature-flags': 0.3.0
@@ -11264,9 +11272,8 @@ snapshots:
   '@img/sharp-win32-x64@0.33.5':
     optional: true
 
-  '@incmix/react-grid-layout@1.5.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@incmix/react-grid-layout@1.5.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
-      '@atlaskit/pragmatic-drag-and-drop': 1.5.2
       clsx: 2.1.0
       fast-equals: 5.2.2
       prop-types: 15.8.1
@@ -14621,6 +14628,13 @@ snapshots:
       whatwg-url: 14.2.0
 
   date-fns-jalali@4.1.0-0: {}
+<<<<<<< HEAD
+
+  date-fns@2.30.0:
+    dependencies:
+      '@babel/runtime': 7.27.0
+=======
+>>>>>>> origin/main
 
   date-fns@4.1.0: {}
 

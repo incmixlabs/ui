@@ -95,11 +95,11 @@ export const DraggableComponent = forwardRef<
             alt={title}
             className="h-full w-full rounded-lg"
           />
-          <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/30 opacity-0 transition-opacity hover:opacity-100">
+          <Box className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/30 opacity-0 transition-opacity hover:opacity-100">
             <span className="text-center font-medium text-sm text-white">
               {title}
             </span>
-          </div>
+          </Box>
         </Box>
       </Box>
     )

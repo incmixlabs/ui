@@ -11,6 +11,7 @@ export const Toaster: React.FC<{ position?: Position }> = ({
       position={position}
       closeButton
       duration={3000}
+      richColors
       visibleToasts={5}
       toastOptions={{
         classNames: {

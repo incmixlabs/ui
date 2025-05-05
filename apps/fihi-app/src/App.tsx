@@ -25,8 +25,6 @@ export const dateFNSLocale: Record<Language, string> = {
 
 import {
   DashboardHomeRoute,
-  DashboardProject1Route,
-  DashboardProject2Route,
   DynamicDashboard,
   EmailVerificationRoute,
   FileManagerRoute,
@@ -81,8 +79,6 @@ const routeTree = RootRoute.addChildren([
   FileManagerRoute,
   DashboardHomeRoute,
   NotesRoute,
-  DashboardProject1Route,
-  DashboardProject2Route,
   DynamicDashboard,
   ListUsersRoute,
   TasksRoute,

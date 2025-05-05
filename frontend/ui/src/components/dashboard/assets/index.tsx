@@ -5,6 +5,8 @@ import ProjectImg from "./projects.png"
 import statisticsImg from "./statistics.png"
 import totalProjectImg from "./total-projects.png"
 import totalTaskImg from "./total-task.png"
+import defaultPreset from "./default-presets.png"
+import presetsImg from "./presets2.png"
 export const dashboardImg = {
   activeTaskImg,
   newTaskImg,
@@ -13,4 +15,6 @@ export const dashboardImg = {
   postingTaskImg,
   statisticsImg,
   totalProjectImg,
+  defaultPreset,
+  presetsImg,
 }
