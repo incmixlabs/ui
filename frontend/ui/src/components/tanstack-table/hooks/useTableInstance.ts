@@ -184,8 +184,11 @@ export function useTableInstance<TData>({
     enablePagination,
     serverPagination,
     totalItems,
-    table,
-    paginationInfo.pageSize
+    paginationInfo.pageSize,
+    table.getState().columnFilters,
+    table.getState().sorting,
+    table.getState().rowSelection,
+    data // fallback for data mutations
   ]);
 
   return {

@@ -22,8 +22,8 @@ export function useTableFeatures<TData>({
   exportOptions?: any;
   serverPagination?: boolean;
 }) {
-  // Memoize visibility items
-  const visibilityItems = useMemo(() => {
+  // Compute visibility items on each render to ensure fresh state
+  const visibilityItems = (() => {
     return table
       .getAllColumns()
       .filter((column: any) => column.getCanHide())
@@ -45,21 +45,31 @@ export function useTableFeatures<TData>({
           checkedIcon: React.createElement(Check, { className: "h-4 w-4" }),
         };
       });
-  }, [table, flatColumns]);
+  })();
 
   // Handle export
+  const SUPPORTED_FORMATS = ["csv", "excel"] as const;
+  type ExportFormat = typeof SUPPORTED_FORMATS[number];
+
   const handleExport = useCallback(
     (format: string) => {
+      // Validate format is supported
+      if (!SUPPORTED_FORMATS.includes(format as ExportFormat)) {
+        console.warn(`Unsupported export format: ${format}`);
+        return;
+      }
+      
       // Use either visible data or all data based on serverPagination
       const dataToExport = serverPagination 
         ? data 
         : table.getFilteredRowModel().rows.map((row: any) => row.original);
         
-      // Use type assertion to handle the generic type issue
+      // Type assertion is necessary due to the generic constraints of exportTableData
+      // This is safe as we only use this component with proper object data
       exportTableData(
         dataToExport as any,
         flatColumns as any,
-        format,
+        format as ExportFormat,
         exportOptions?.filename || "table-export"
       );
     },

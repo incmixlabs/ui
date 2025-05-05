@@ -3,6 +3,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Button, Dialog } from "@radix-ui/themes";
 import AutoForm from "@components/auto-form";
+import type { FieldConfig } from "@components/auto-form/types";
+import { z } from "zod";
+import type { JSONSchema } from "@components/auto-form";
+import { ZodObjectOrWrapped } from "@components/auto-form/utils";
 
 /**
  * EditTableForm component for editing row data in a dialog
@@ -13,8 +17,8 @@ interface EditTableFormProps<TData> {
   onClose: () => void;
   onEditRow: (oldData: TData, newData: TData) => void;
   rowData: TData | null;
-  formSchema: any;
-  fieldConfig?: any;
+  formSchema: ZodObjectOrWrapped | JSONSchema;
+  fieldConfig?: Record<string, any>; // Using Record<string, any> for compatibility
   title?: string;
 }
 
@@ -43,11 +47,9 @@ function EditTableForm<TData>({
         console.log("Converted rating to string:", processedData.rating);
       }
 
-      // Force a small delay to ensure the form fully mounts before setting values
-      setTimeout(() => {
-        console.log("Pre-filling form with processed data:", processedData);
-        setFormData(processedData);
-      }, 10);
+      // Initialize form data immediately
+      console.log("Pre-filling form with processed data:", processedData);
+      setFormData(processedData);
     }
   }, [rowData]);
 
@@ -67,10 +69,21 @@ function EditTableForm<TData>({
     onClose();
   };
 
+  // Reset form when dialog closes
+  useEffect(() => {
+    if (!isOpen) {
+      setFormData({});
+    }
+  }, [isOpen]);
+
   // Create a memoized form element to reduce re-renders
   const formElement = useMemo(() => {
+    // Create a unique key for the form based on rowData to ensure remounting when data changes
+    const formKey = rowData ? `form-${JSON.stringify(rowData)}` : 'form-new';
+    
     return (
       <AutoForm
+        key={formKey}
         formSchema={formSchema}
         onSubmit={handleSubmit}
         onValuesChange={handleValuesChange}
@@ -84,7 +97,7 @@ function EditTableForm<TData>({
         </div>
       </AutoForm>
     );
-  }, [formSchema, fieldConfig, formData, handleSubmit, handleValuesChange]);
+  }, [formSchema, fieldConfig, formData, handleSubmit, handleValuesChange, rowData]);
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>

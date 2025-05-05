@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useCallback } from "react";
-import { Check } from "lucide-react";
+import { Table } from "@shadcn";
 
 // Import UI components
 import { TableFilters } from "./TableFilters";

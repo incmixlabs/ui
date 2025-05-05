@@ -48,7 +48,7 @@ export function TableBody<TData extends object>({
                 onClick={() => {
                   if (onRowClick) {
                     onRowClick(row.original);
-                  } else if (expandableRows && !expandableRows.expandOnClick) {
+                  } else if (expandableRows && expandableRows.expandOnClick) {
                     toggleRowExpanded(row.id);
                   }
                 }}

@@ -37,6 +37,7 @@ export function useTableColumns<TData>({
 }) {
   // Flatten column groups if necessary
   const flatColumns = useMemo(() => {
+    if (columns.length === 0) return [];
     return isColumnGroup(columns[0])
       ? flattenColumns(columns as (DataTableColumn<TData> | ColumnGroup<TData>)[])
       : columns as DataTableColumn<TData>[];
@@ -66,7 +67,11 @@ export function useTableColumns<TData>({
               : info.getValue();
               
             return React.createElement('div', {
-              onClick: () => toggleRowExpanded(info.row.id),
+              onClick: (e: React.MouseEvent) => {
+                // Preserve child handlers for interactive elements
+                if ((e.target as HTMLElement).closest("a,button")) return;
+                toggleRowExpanded(info.row.id);
+              },
               className: "cursor-pointer"
             }, cellValue);
           }
