@@ -1,5 +1,4 @@
 import {
-
   FormControl,
   FormItem,
   FormMessage,
@@ -34,27 +33,30 @@ export default function AutoFormEnum({
   }
 
   return (
-    <FormItem className="flex w-full flex-row items-center justify-start space-x-2">
-      <AutoFormLabel label={label} isRequired={isRequired} />
-      <FormControl>
-        <Select.Root
-          onValueChange={field.onChange}
-          defaultValue={field.value??''}
-          {...fieldProps}
-        >
-          <Select.Trigger className={fieldProps.className}/>
+    <div className="flex flex-row items-center gap-2">
+      <FormItem className="flex flex-row items-center justify-start gap-2 ">
+        <AutoFormLabel label={label} isRequired={isRequired} />
+        <FormControl >
+          <Select.Root
+            onValueChange={field.onChange}
+            defaultValue={field.value??''}
+            {...fieldProps}
 
-          <Select.Content>
-            {values.map(([value, label]) => (
-              <Select.Item value={value} aria-label={label} key={label}>
-                {label}
-              </Select.Item>
-            ))}
-          </Select.Content>
-        </Select.Root>
-      </FormControl>
-      <AutoFormTooltip fieldConfigItem={fieldConfigItem} />
-      <FormMessage />
-    </FormItem>
+          >
+            <Select.Trigger className={fieldProps.className}/>
+
+            <Select.Content>
+              {values.map(([value, label]) => (
+                <Select.Item value={value} aria-label={label} key={label} >
+                  {label}
+                </Select.Item>
+              ))}
+            </Select.Content>
+          </Select.Root>
+        </FormControl>
+        <FormMessage />
+      </FormItem>
+      {/* <AutoFormTooltip fieldConfigItem={fieldConfigItem} /> */}
+    </div>
   )
 }
