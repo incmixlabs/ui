@@ -7,6 +7,7 @@ import { LoadingRow, EmptyRow, ExpandedRow } from "./TableUtilityRows";
 import { DataTableColumn } from "../types";
 import { Row, Cell } from "@tanstack/react-table";
 import { EditableCell } from "./EditableCell";
+import { EditableDateCell } from "./EditableDateCell";
 
 interface TableBodyProps<TData> {
   table: any;
@@ -82,8 +83,13 @@ export function TableBody<TData extends object>({
                   // Check if this cell supports inline editing
                   const isEditableCell = enableInlineCellEdit &&
                     (inlineEditableColumns.includes(cell.column.id as any) || columnDef?.enableInlineEdit) &&
-                    columnDef?.type === "String" &&
                     isEditing && isSelected && selectCell && startEditing && cancelEditing && saveEdit;
+                  
+                  // Check if this is a date column that supports inline editing
+                  const isEditableDateCell = isEditableCell && columnDef?.type === "Date";
+                  
+                  // Check if this is a string column that supports inline editing
+                  const isEditableStringCell = isEditableCell && columnDef?.type === "String";
 
                   // Get the cell value
                   const cellValue = cell.getValue();
@@ -98,7 +104,21 @@ export function TableBody<TData extends object>({
                         maxWidth: columnDef?.maxWidth
                       }}
                     >
-                      {isEditableCell ? (
+                      {isEditableDateCell ? (
+                        <EditableDateCell
+                          value={cellValue as string}
+                          rowData={row.original}
+                          columnId={cell.column.id}
+                          onSave={saveEdit}
+                          isEditing={isEditing(row.id, cell.column.id)}
+                          isSelected={isSelected(row.id, cell.column.id)}
+                          onSelect={() => selectCell(row.id, cell.column.id)}
+                          onStartEdit={() => startEditing(row.id, cell.column.id)}
+                          onCancelEdit={cancelEditing}
+                          className=""
+                          dateFormat={columnDef?.format?.dateFormat}
+                        />
+                      ) : isEditableStringCell ? (
                         <EditableCell
                           value={cellValue as string}
                           rowData={row.original}

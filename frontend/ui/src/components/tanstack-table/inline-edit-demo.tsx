@@ -142,7 +142,8 @@ const USER_TABLE_COLUMNS = [
     accessorKey: "joinDate" as const,
     id: "joinDate",
     enableSorting: true,
-    // Example of custom date formatting
+    enableInlineEdit: true, // Enable inline editing for date
+    // Date formatting
     format: {
       dateFormat: "YYYY-MM-DD HH:mm"
     }
@@ -305,7 +306,7 @@ const InlineEditDemo = () => {
     <div className="container mx-auto py-10">
       <h1 className="text-2xl font-bold mb-4">Inline Cell Editing Demo</h1>
       <p className="text-gray-600 mb-6">
-        Click once on a name or email to select it, then click again to edit.
+        Click once on a name, email, or date to select it, then click again to edit.
       </p>
 
       <DataTable
@@ -323,7 +324,7 @@ const InlineEditDemo = () => {
 
         // Inline editing functionality
         enableInlineCellEdit={true}
-        inlineEditableColumns={["name", "email"]} // Alternative to individual column settings
+        inlineEditableColumns={["name", "email", "joinDate"]} // Added joinDate for date editing
         onCellEdit={handleCellEdit}
       />
 
