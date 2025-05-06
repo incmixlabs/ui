@@ -6,6 +6,7 @@ import { Table } from "@shadcn";
 import { LoadingRow, EmptyRow, ExpandedRow } from "./TableUtilityRows";
 import { DataTableColumn } from "../types";
 import { Row, Cell } from "@tanstack/react-table";
+import { EditableCell } from "./EditableCell";
 
 interface TableBodyProps<TData> {
   table: any;
@@ -15,6 +16,15 @@ interface TableBodyProps<TData> {
   expandedRows: Record<string, boolean>;
   toggleRowExpanded: (rowId: string) => void;
   onRowClick?: (row: TData) => void;
+  // Inline editing props
+  enableInlineCellEdit?: boolean;
+  inlineEditableColumns?: (keyof TData | string)[];
+  isEditing?: (rowId: string, columnId: string) => boolean;
+  isSelected?: (rowId: string, columnId: string) => boolean;
+  selectCell?: (rowId: string, columnId: string) => void;
+  startEditing?: (rowId: string, columnId: string) => void;
+  cancelEditing?: () => void;
+  saveEdit?: (rowData: TData, columnId: string, newValue: any) => void;
 }
 
 /**
@@ -28,6 +38,15 @@ export function TableBody<TData extends object>({
   expandedRows,
   toggleRowExpanded,
   onRowClick,
+  // Inline editing props
+  enableInlineCellEdit = false,
+  inlineEditableColumns = [],
+  isEditing,
+  isSelected,
+  selectCell,
+  startEditing,
+  cancelEditing,
+  saveEdit,
 }: TableBodyProps<TData>) {
   return (
     <Table.Body>
@@ -60,6 +79,15 @@ export function TableBody<TData extends object>({
                     col.id === cell.column.id
                   );
 
+                  // Check if this cell supports inline editing
+                  const isEditableCell = enableInlineCellEdit &&
+                    (inlineEditableColumns.includes(cell.column.id as any) || columnDef?.enableInlineEdit) &&
+                    columnDef?.type === "String" &&
+                    isEditing && isSelected && selectCell && startEditing && cancelEditing && saveEdit;
+
+                  // Get the cell value
+                  const cellValue = cell.getValue();
+
                   return (
                     <Table.Cell
                       key={cell.id}
@@ -70,9 +98,24 @@ export function TableBody<TData extends object>({
                         maxWidth: columnDef?.maxWidth
                       }}
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
+                      {isEditableCell ? (
+                        <EditableCell
+                          value={cellValue as string}
+                          rowData={row.original}
+                          columnId={cell.column.id}
+                          onSave={saveEdit}
+                          isEditing={isEditing(row.id, cell.column.id)}
+                          isSelected={isSelected(row.id, cell.column.id)}
+                          onSelect={() => selectCell(row.id, cell.column.id)}
+                          onStartEdit={() => startEditing(row.id, cell.column.id)}
+                          onCancelEdit={cancelEditing}
+                          className=""
+                        />
+                      ) : (
+                        flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )
                       )}
                     </Table.Cell>
                   );

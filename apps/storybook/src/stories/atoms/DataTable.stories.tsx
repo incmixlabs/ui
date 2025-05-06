@@ -1,5 +1,5 @@
 
-import { SidebarFilterDemo, UsersTableDemo,TasksTableDemo, EditableUsersTableDemo } from "@incmix/ui/tanstack-table";
+import { SidebarFilterDemo, UsersTableDemo,TasksTableDemo, EditableUsersTableDemo, InlineEditDemo } from "@incmix/ui/tanstack-table";
 
 import type { Meta, StoryObj } from "@storybook/react";
 
@@ -33,4 +33,9 @@ export const SidebarFilter: Story = {
 export const EditableUsers: Story = {
   render: () => <EditableUsersTableDemo />,
   name: "Editable Users Table",
+};
+
+export const InlineEdit: Story = {
+  render: () => <InlineEditDemo />,
+  name: "Inline Edit Table",
 };

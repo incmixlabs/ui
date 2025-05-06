@@ -16,6 +16,7 @@ import { useTableEdit } from "../hooks/useTableEdit";
 import { useTableColumns } from "../hooks/useTableColumns";
 import { useTableInstance } from "../hooks/useTableInstance";
 import { useTableFeatures } from "../hooks/useTableFeatures";
+import { useTableInlineEdit } from "../hooks/useTableInlineEdit";
 
 // Import types
 import { DataTableProps } from "../types";
@@ -63,6 +64,10 @@ export function DataTable<TData extends object>({
   editFieldConfig,
   onRowEdit,
   editDialogTitle = "Edit Item",
+  // Inline cell editing functionality
+  enableInlineCellEdit = false,
+  inlineEditableColumns = [],
+  onCellEdit,
 }: DataTableProps<TData>) {
   // Use our extracted hooks to organize the component
   const tableState = useTableState(initialSidebarOpen);
@@ -113,6 +118,27 @@ export function DataTable<TData extends object>({
     setIsEditDialogOpen,
     setCurrentRowData,
   });
+
+  // Inline cell editing functionality
+  const {
+    isEditing,
+    isSelected,
+    selectCell,
+    startEditing,
+    cancelEditing,
+    saveEdit,
+  } = useTableInlineEdit({
+    onCellEdit,
+  });
+
+  // Create a wrapper for the saveEdit function to prevent unnecessary table reloads
+  const handleCellEdit = useCallback(
+    (rowData: TData, columnId: string, newValue: any) => {
+      // Use the saveEdit function from the hook
+      saveEdit(rowData, columnId, newValue);
+    },
+    [saveEdit]
+  );
 
   // Column definitions
   const { flatColumns, columnDefs } = useTableColumns({
@@ -210,6 +236,14 @@ export function DataTable<TData extends object>({
             expandedRows={expandedRows}
             toggleRowExpanded={toggleRowExpanded}
             onRowClick={onRowClick}
+            enableInlineCellEdit={enableInlineCellEdit}
+            inlineEditableColumns={inlineEditableColumns}
+            isEditing={isEditing}
+            isSelected={isSelected}
+            selectCell={selectCell}
+            startEditing={startEditing}
+            cancelEditing={cancelEditing}
+            saveEdit={handleCellEdit}
           />
 
           {/* Pagination */}
