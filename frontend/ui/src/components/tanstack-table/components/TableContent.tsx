@@ -14,6 +14,15 @@ interface TableContentProps<TData extends object> {
   expandedRows: Record<string, boolean>;
   toggleRowExpanded: (rowId: string) => void;
   onRowClick?: (row: TData) => void;
+  // Inline editing props
+  enableInlineCellEdit?: boolean;
+  inlineEditableColumns?: (keyof TData | string)[];
+  isEditing?: (rowId: string, columnId: string) => boolean;
+  isSelected?: (rowId: string, columnId: string) => boolean;
+  selectCell?: (rowId: string, columnId: string) => void;
+  startEditing?: (rowId: string, columnId: string) => void;
+  cancelEditing?: () => void;
+  saveEdit?: (rowData: TData, columnId: string, newValue: any) => void;
 }
 
 /**
@@ -27,6 +36,15 @@ export function TableContent<TData extends object>({
   expandedRows,
   toggleRowExpanded,
   onRowClick,
+  // Inline editing props
+  enableInlineCellEdit,
+  inlineEditableColumns,
+  isEditing,
+  isSelected,
+  selectCell,
+  startEditing,
+  cancelEditing,
+  saveEdit,
 }: TableContentProps<TData>) {
   return (
     <div className="rounded-md border border-gray-200 dark:border-gray-800">
@@ -43,6 +61,14 @@ export function TableContent<TData extends object>({
           expandedRows={expandedRows}
           toggleRowExpanded={toggleRowExpanded}
           onRowClick={onRowClick}
+          enableInlineCellEdit={enableInlineCellEdit}
+          inlineEditableColumns={inlineEditableColumns}
+          isEditing={isEditing}
+          isSelected={isSelected}
+          selectCell={selectCell}
+          startEditing={startEditing}
+          cancelEditing={cancelEditing}
+          saveEdit={saveEdit}
         />
       </Table.Root>
     </div>
