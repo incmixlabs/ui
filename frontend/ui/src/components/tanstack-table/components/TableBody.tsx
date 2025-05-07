@@ -97,7 +97,7 @@ export function TableBody<TData extends object>({
                   return (
                     <Table.Cell
                       key={cell.id}
-                      className="px-4 text-left"
+                      className="px-4 text-left h-12 align-middle"
                       style={{
                         width: columnDef?.width,
                         minWidth: columnDef?.minWidth,

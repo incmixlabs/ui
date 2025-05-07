@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { cn } from "../../../utils";
-import { SmartDatetimeInput } from "../../../components/datetime-picker";
+import { format, parse } from "date-fns";
 
 interface EditableDateCellProps {
   value: string;
@@ -36,12 +36,12 @@ export const EditableDateCell: React.FC<EditableDateCellProps> = ({
   dateFormat,
 }) => {
   const cellRef = useRef<HTMLDivElement>(null);
-  
-  // Parse the date value
-  const dateValue = value ? new Date(value) : undefined;
-  
+
+  // Parse the date value - ensure it's a valid date
+  const dateValue = value && !isNaN(new Date(value).getTime()) ? new Date(value) : undefined;
+
   // Format date for display
-  const formattedDate = dateValue ? 
+  const formattedDate = dateValue ?
     dateValue.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -53,16 +53,16 @@ export const EditableDateCell: React.FC<EditableDateCellProps> = ({
       } : {})
     }) : "";
 
-  // Handle document-wide click to deselect 
+  // Handle document-wide click to deselect
   useEffect(() => {
     if (!isSelected) return;
-    
+
     const handleOutsideClick = (e: MouseEvent) => {
       if (cellRef.current && !cellRef.current.contains(e.target as Node)) {
         onCancelEdit(); // This also cancels selection
       }
     };
-    
+
     document.addEventListener('mousedown', handleOutsideClick);
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
@@ -71,7 +71,7 @@ export const EditableDateCell: React.FC<EditableDateCellProps> = ({
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    
+
     if (isSelected) {
       // If already selected, enter edit mode
       onStartEdit();
@@ -81,34 +81,39 @@ export const EditableDateCell: React.FC<EditableDateCellProps> = ({
     }
   };
 
-  const handleDateChange = (date: Date) => {
-    onSave(rowData, columnId, date.toISOString());
+  const handleDateChange = (date?: Date) => {
+    if (date) {
+      onSave(rowData, columnId, date.toISOString());
+    }
   };
 
   if (isEditing) {
     return (
-      <div 
-        className="relative z-10"
+      <div className="w-full h-full flex items-center p-1"
         onClick={(e) => e.stopPropagation()}
       >
-        <SmartDatetimeInput
-          value={dateValue}
-          onValueChange={handleDateChange}
-          showCalendar={true}
-          showTimePicker={dateFormat?.includes("HH:mm")}
-          className="bg-white dark:bg-gray-800 w-full p-1"
+        <input
+          type="date"
+          value={dateValue ? dateValue.toISOString().split('T')[0] : ''}
+          onChange={(e) => {
+            if (e.target.value) {
+              const newDate = new Date(e.target.value + 'T00:00:00');
+              handleDateChange(newDate);
+            }
+          }}
+          className="w-full h-8 px-2 py-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md text-sm"
         />
       </div>
     );
   }
 
   return (
-    <div 
+    <div
       ref={cellRef}
       onClick={handleClick}
       className={cn(
         className,
-        "cursor-pointer w-full p-1 transition-colors duration-150",
+        "cursor-pointer w-full h-full p-1 transition-colors duration-150",
         isSelected && "bg-blue-100 dark:bg-blue-900/30 rounded"
       )}
     >
