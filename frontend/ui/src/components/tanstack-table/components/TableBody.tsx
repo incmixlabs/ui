@@ -8,6 +8,8 @@ import { DataTableColumn } from "../types";
 import { Row, Cell } from "@tanstack/react-table";
 import { EditableCell } from "./EditableCell";
 import { EditableDateCell } from "./EditableDateCell";
+import { EditableBooleanCell } from "./EditableBooleanCell";
+import { EditableTagCell } from "./EditableTagCell";
 
 interface TableBodyProps<TData> {
   table: any;
@@ -90,6 +92,12 @@ export function TableBody<TData extends object>({
                   
                   // Check if this is a string column that supports inline editing
                   const isEditableStringCell = isEditableCell && columnDef?.type === "String";
+                  
+                  // Check if this is a boolean column that supports inline editing
+                  const isEditableBooleanCell = isEditableCell && columnDef?.type === "Boolean";
+                  
+                  // Check if this is a tag column that supports inline editing
+                  const isEditableTagCell = isEditableCell && columnDef?.type === "Tag";
 
                   // Get the cell value
                   const cellValue = cell.getValue();
@@ -117,6 +125,32 @@ export function TableBody<TData extends object>({
                           onCancelEdit={cancelEditing}
                           className=""
                           dateFormat={columnDef?.format?.dateFormat}
+                        />
+                      ) : isEditableBooleanCell ? (
+                        <EditableBooleanCell
+                          value={cellValue as boolean}
+                          rowData={row.original}
+                          columnId={cell.column.id}
+                          onSave={saveEdit}
+                          isEditing={isEditing(row.id, cell.column.id)}
+                          isSelected={isSelected(row.id, cell.column.id)}
+                          onSelect={() => selectCell(row.id, cell.column.id)}
+                          onStartEdit={() => startEditing(row.id, cell.column.id)}
+                          onCancelEdit={cancelEditing}
+                          className=""
+                        />
+                      ) : isEditableTagCell ? (
+                        <EditableTagCell
+                          value={cellValue as string[]}
+                          rowData={row.original}
+                          columnId={cell.column.id}
+                          onSave={saveEdit}
+                          isEditing={isEditing(row.id, cell.column.id)}
+                          isSelected={isSelected(row.id, cell.column.id)}
+                          onSelect={() => selectCell(row.id, cell.column.id)}
+                          onStartEdit={() => startEditing(row.id, cell.column.id)}
+                          onCancelEdit={cancelEditing}
+                          className=""
                         />
                       ) : isEditableStringCell ? (
                         <EditableCell

@@ -134,7 +134,7 @@ const USER_TABLE_COLUMNS = [
     accessorKey: "email" as const,
     id: "email",
     enableSorting: true,
-    enableInlineEdit: true // Enable inline editing for this column
+    enableInlineEdit: true  
   },
   {
     headingName: "Joined",
@@ -142,7 +142,7 @@ const USER_TABLE_COLUMNS = [
     accessorKey: "joinDate" as const,
     id: "joinDate",
     enableSorting: true,
-    enableInlineEdit: true, // Enable inline editing for date
+    enableInlineEdit: true, 
     // Date formatting
     format: {
       dateFormat: "YYYY-MM-DD HH:mm"
@@ -153,13 +153,15 @@ const USER_TABLE_COLUMNS = [
     type: "Boolean" as const,
     accessorKey: "isActive" as const,
     id: "isActive",
-    enableSorting: true
+    enableSorting: true,
+    enableInlineEdit: true 
   },
   {
     headingName: "Tags",
     type: "Tag" as const,
     accessorKey: "tags" as const,
-    id: "tags"
+    id: "tags",
+    enableInlineEdit: true 
   },
   {
     headingName: "Plan",
@@ -269,8 +271,9 @@ const InlineEditDemo = () => {
   /**
    * Handle cell edit - key functionality for inline editing
    * This implementation prevents full table reloads by immutably updating only the changed data
+   * Now supports multiple data types: string, date, boolean, and arrays (tags)
    */
-  const handleCellEdit = useCallback((rowData: User, columnId: string, newValue: string) => {
+  const handleCellEdit = useCallback((rowData: User, columnId: string, newValue: any) => {
     console.log(`Editing cell ${columnId} for user ${rowData.id}:`, newValue)
 
     // Track which cell was just edited (for visual feedback)
@@ -324,7 +327,7 @@ const InlineEditDemo = () => {
 
         // Inline editing functionality
         enableInlineCellEdit={true}
-        inlineEditableColumns={["name", "email", "joinDate"]} // Added joinDate for date editing
+        inlineEditableColumns={["name", "email", "joinDate", "isActive", "tags"]} // Added boolean and tag editing
         onCellEdit={handleCellEdit}
       />
 
