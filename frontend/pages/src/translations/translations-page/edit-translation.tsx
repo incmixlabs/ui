@@ -1,16 +1,12 @@
-import {
-  Button,
-  Dialog,
-  ReactiveButton,
-} from "@incmix/ui/base"
-import { INTL_API_URL } from "@incmix/ui/constants"
 import AutoForm from "@incmix/ui/auto-form"
+import { Button, Dialog, ReactiveButton } from "@incmix/ui/base"
+import { INTL_API_URL } from "@incmix/ui/constants"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import type { Row } from "@tanstack/react-table"
 import { I18n } from "i18n"
 import type React from "react"
-import type { TranslationMessage } from "./types"
 import { translationFormSchema } from "./schemas/translation-form-schema"
+import type { TranslationMessage } from "./types"
 interface EditTranslationDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
   item?: Row<TranslationMessage>["original"]
@@ -87,7 +83,7 @@ const EditTranlationForm: React.FC<{
     },
     onSuccess,
   })
-  
+
   const handleSubmit = (values: { [key: string]: any }) => {
     // Make sure to preserve the id in the edit operation
     editTranslation({
@@ -102,7 +98,7 @@ const EditTranlationForm: React.FC<{
 
   if (localesLoading) return "Loading Locales..."
   if (!locales?.length) return "No Locales Found"
-  
+
   // Create a customized schema with dynamic locale options
   const customizedSchema = {
     ...translationFormSchema,
@@ -110,9 +106,9 @@ const EditTranlationForm: React.FC<{
       ...translationFormSchema.fieldConfig,
       locale: {
         ...translationFormSchema.fieldConfig.locale,
-        options: locales.map(locale => ({ 
-          label: locale.code, 
-          value: locale.code 
+        options: locales.map((locale) => ({
+          label: locale.code,
+          value: locale.code,
         })),
       },
     },
@@ -126,9 +122,9 @@ const EditTranlationForm: React.FC<{
       values={item}
       className="space-y-4"
     >
-      <ReactiveButton 
-        type="submit" 
-        loading={isPending} 
+      <ReactiveButton
+        type="submit"
+        loading={isPending}
         success={isSuccess}
         className="w-full"
       >

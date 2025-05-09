@@ -48,7 +48,7 @@ export const translationFormSchema = {
     },
     required: ["locale", "namespace", "key", "value", "type"],
   } as JSONSchema,
-  
+
   fieldConfig: {
     locale: {
       description: "The language code for this translation",

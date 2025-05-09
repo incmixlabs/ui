@@ -1,8 +1,8 @@
 import { Box, Flex, Grid, Heading, Select, Switch, Text } from "@incmix/ui"
+import AutoForm from "@incmix/ui/auto-form"
 import { useQueryClient } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
-import AutoForm from "@incmix/ui/auto-form"
 
 import { useCurrentUser, useProfileUpdate } from "@auth"
 import { LoadingPage } from "@common"

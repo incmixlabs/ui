@@ -1,11 +1,11 @@
+import AutoForm from "@incmix/ui/auto-form"
 import { Button, Dialog, ReactiveButton } from "@incmix/ui/base"
 import { INTL_API_URL } from "@incmix/ui/constants"
-import AutoForm from "@incmix/ui/auto-form"
 import { useMutation } from "@tanstack/react-query"
 import type React from "react"
 import { useState } from "react"
-import type { Locale } from "./types"
 import { localeFormSchema } from "./schemas/locale-form-schema"
+import type { Locale } from "./types"
 interface AddLocaleDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
   onSuccess?: () => void
