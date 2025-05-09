@@ -1,20 +1,12 @@
-import {
-  Button,
-  Dialog,
-  Flex,
-  FormField,
-  ReactiveButton,
-  Select,
-  Text,
-} from "@incmix/ui/base"
+import { Button, Dialog, ReactiveButton } from "@incmix/ui/base"
 import { INTL_API_URL } from "@incmix/ui/constants"
-import { useForm } from "@tanstack/react-form"
+import AutoForm from "@incmix/ui/auto-form"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { I18n } from "i18n"
 import type React from "react"
 import { useState } from "react"
-import { z } from "zod"
 import type { TranslationMessage } from "./types"
+import { translationFormSchema } from "./schemas/translation-form-schema"
 interface AddTranslationDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
   onSuccess?: () => void
@@ -45,7 +37,7 @@ export const AddTranslationDialog: React.FC<AddTranslationDialogProps> = ({
           </Dialog.Description>
         </Dialog.Header>
         <AddTranlationForm onSuccess={onSubmit} />
-        <Dialog.Footer className="gap-2 sm:space-x-0">
+        <Dialog.Footer>
           <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
@@ -60,22 +52,29 @@ export const AddTranslationDialog: React.FC<AddTranslationDialogProps> = ({
 const AddTranlationForm: React.FC<{ onSuccess?: () => void }> = ({
   onSuccess,
 }) => {
-  const { data: locales, isLoading: localesLoading } = useQuery<
+  // Query to fetch available locales
+  const { data: locales = [], isLoading: localesLoading } = useQuery<
     { code: string; isDefault: boolean }[]
   >({
     queryKey: ["all-locales"],
     queryFn: async () => {
-      const res = await fetch(`${INTL_API_URL}/locales`, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "accept-language": I18n.language ?? "en",
-        },
-      })
-      return await res.json()
+      try {
+        const res = await fetch(`${INTL_API_URL}/locales`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            "accept-language": I18n.language ?? "en",
+          },
+        })
+        return await res.json()
+      } catch (error) {
+        console.error("Error fetching locales:", error)
+        return [] // Return empty array on error
+      }
     },
   })
 
+  // Mutation to add a new translation
   const {
     mutate: addTranslation,
     isPending,
@@ -98,139 +97,59 @@ const AddTranlationForm: React.FC<{ onSuccess?: () => void }> = ({
     onSuccess,
   })
 
-  const form = useForm<AddTranslation>({
-    defaultValues: {
-      locale: locales?.find((l) => l.isDefault)?.code ?? "",
-      namespace: "",
-      key: "",
-      value: "",
-      type: "label",
-    },
-    onSubmit: ({ value }) => {
-      addTranslation(value)
-    },
-  })
+  // Handle form submission
+  const handleSubmit = (values: { [key: string]: any }) => {
+    addTranslation({
+      locale: values.locale as string,
+      namespace: values.namespace as string,
+      key: values.key as string,
+      value: values.value as string,
+      type: values.type as "frag" | "label",
+    })
+  }
 
   if (localesLoading) return "Loading Locales..."
   if (!locales?.length) return "No Locales Found"
 
+  // Create the initial values with the default locale
+  const initialValues = {
+    locale: locales.find((l) => l.isDefault)?.code ?? "",
+    namespace: "",
+    key: "",
+    value: "",
+    type: "label",
+  }
+
+  // Use the predefined field config from the schema file
+  // This is the same approach used in add-locale.tsx which works correctly
+  const fieldConfig = {
+    ...translationFormSchema.fieldConfig,
+    // Only override the locale field to add dynamic options based on the API response
+    locale: {
+      ...translationFormSchema.fieldConfig.locale,
+      options: locales.map((locale) => ({
+        label: locale.code,
+        value: locale.code,
+      })),
+    },
+  }
+
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        form.handleSubmit()
-      }}
+    <AutoForm
+      formSchema={translationFormSchema.formSchema}
+      fieldConfig={fieldConfig}
+      onSubmit={handleSubmit}
+      values={initialValues}
+      className="space-y-4"
     >
-      <Flex direction="column" gap="4">
-        <form.Field
-          name="locale"
-          validators={{
-            onChange: z.string().min(1, "Locale is required"),
-          }}
-        >
-          {(field) => (
-            <Flex direction="column" gap="1">
-              <Text as="label" size="2" htmlFor={field.name}>
-                Locale
-              </Text>
-              <Select.Root
-                value={field.state.value}
-                onValueChange={(v) => field.handleChange(v)}
-                name={field.name}
-              >
-                <Select.Trigger placeholder="Select Locale" />
-                <Select.Content>
-                  {locales.map((locale) => (
-                    <Select.Item key={locale.code} value={locale.code}>
-                      {locale.code}
-                    </Select.Item>
-                  ))}
-                </Select.Content>
-              </Select.Root>
-            </Flex>
-          )}
-        </form.Field>
-        <form.Field
-          name="namespace"
-          validators={{
-            onChange: z.string().min(1, "Namespace is required"),
-          }}
-        >
-          {(field) => (
-            <FormField
-              name={field.name}
-              label="Namespace"
-              type="text"
-              field={field}
-            />
-          )}
-        </form.Field>
-        <form.Field
-          name="key"
-          validators={{
-            onChange: z.string().min(1, "Key is required"),
-          }}
-        >
-          {(field) => (
-            <FormField
-              name={field.name}
-              label="Key"
-              type="text"
-              field={field}
-            />
-          )}
-        </form.Field>
-        <form.Field
-          name="value"
-          validators={{
-            onChange: z.string().min(1, "Value is required"),
-          }}
-        >
-          {(field) => (
-            <FormField
-              name={field.name}
-              label="Value"
-              type="text"
-              field={field}
-            />
-          )}
-        </form.Field>
-        <form.Field
-          name="type"
-          validators={{
-            onChange: z.enum(["frag", "label"]),
-          }}
-        >
-          {(field) => (
-            <Flex direction="column" gap="1">
-              <Text as="label" size="2" htmlFor={field.name}>
-                Type
-              </Text>
-              <Select.Root
-                value={field.state.value}
-                onValueChange={(v) => field.handleChange(v as "frag" | "label")}
-                name={field.name}
-              >
-                <Select.Trigger placeholder="Select Type" />
-                <Select.Content>
-                  {[
-                    { label: "Frag", value: "frag" },
-                    { label: "Label", value: "label" },
-                  ].map((type) => (
-                    <Select.Item key={type.value} value={type.value}>
-                      {type.label}
-                    </Select.Item>
-                  ))}
-                </Select.Content>
-              </Select.Root>
-            </Flex>
-          )}
-        </form.Field>
-        <ReactiveButton type="submit" loading={isPending} success={isSuccess}>
-          Add
-        </ReactiveButton>
-      </Flex>
-    </form>
+      <ReactiveButton
+        type="submit"
+        loading={isPending}
+        success={isSuccess}
+        className="w-full"
+      >
+        Add
+      </ReactiveButton>
+    </AutoForm>
   )
 }

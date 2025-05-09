@@ -18,14 +18,33 @@ export default function AutoFormEnum({
   zodItem,
   fieldProps,
 }: AutoFormInputComponentProps) {
-  const baseValues = (getBaseSchema(zodItem) as unknown as z.ZodEnum<any>)._def
-    .values
-
+  // Default to empty array for values
   let values: [string, string][] = []
-  if (!Array.isArray(baseValues)) {
-    values = Object.entries(baseValues)
-  } else {
-    values = baseValues.map((value) => [value, value])
+  
+  // First try to get options from fieldConfigItem.inputProps
+  if (fieldConfigItem?.inputProps?.options) {
+    values = fieldConfigItem.inputProps.options.map(opt => [
+      String(opt.value), 
+      String(opt.label)
+    ])
+  } 
+  // Then try to get values from Zod schema
+  else {
+    let baseValues
+    try {
+      baseValues = (getBaseSchema(zodItem) as unknown as z.ZodEnum<any>)?._def?.values
+      
+      if (baseValues) {
+        if (!Array.isArray(baseValues)) {
+          values = Object.entries(baseValues)
+        } else {
+          values = baseValues.map((value) => [String(value), String(value)])
+        }
+      }
+    } catch (e) {
+      // Handle case where zodItem doesn't have the expected structure
+      console.warn('Error getting enum values from schema:', e)
+    }
   }
 
   function findItem(value: any) {

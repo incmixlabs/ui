@@ -2,22 +2,14 @@
 
 import { useAuth } from "@auth"
 import { type ProjectDocType, useOrganizationStore } from "@incmix/store"
-import {
-  Button,
-  Dialog,
-  Flex,
-  FormField,
-  ReactiveButton,
-  toast,
-} from "@incmix/ui/base"
+import { Button, Dialog, Flex, ReactiveButton, toast } from "@incmix/ui/base"
+import AutoForm from "@incmix/ui/auto-form"
 import type { Project } from "@incmix/utils/types"
-import { useForm } from "@tanstack/react-form"
 import { useMutation } from "@tanstack/react-query"
-import { zodValidator } from "@tanstack/zod-form-adapter"
 import { nanoid } from "nanoid"
 import { useState } from "react"
 import { useRxCollection } from "rxdb-hooks"
-import { z } from "zod"
+import { createProjectFormSchema } from "./create-project-schema"
 
 interface CreateProjectProps
   extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
@@ -62,16 +54,11 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
     },
   })
 
-  const form = useForm({
-    defaultValues: {
-      name: "",
-    },
-    onSubmit: ({ value }) => {
-      if (selectedOrganisation) {
-        mutate({ name: value.name, orgId: selectedOrganisation.id })
-      }
-    },
-  })
+  const handleSubmit = (values: { [key: string]: any }) => {
+    if (selectedOrganisation) {
+      mutate({ name: values.name as string, orgId: selectedOrganisation.id })
+    }
+  }
 
   return (
     <Dialog.Root
@@ -92,38 +79,23 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
             Fill out the form to create a new project.
           </Dialog.Description>
         </Dialog.Header>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            form.handleSubmit()
-          }}
+        <AutoForm
+          formSchema={createProjectFormSchema.formSchema}
+          fieldConfig={createProjectFormSchema.fieldConfig}
+          onSubmit={handleSubmit}
+          className="space-y-4"
         >
-          <Flex direction="column" gap="4">
-            <form.Field
-              name="name"
-              validatorAdapter={zodValidator()}
-              validators={{
-                onChange: z.string().min(1, "Name is Required"),
-              }}
-            >
-              {(field) => (
-                <FormField name="name" label="Project Name" field={field} />
-              )}
-            </form.Field>
-
-            <ReactiveButton
-              type="submit"
-              color="blue"
-              loading={isPending}
-              success={isSuccess}
-              className="w-full"
-            >
-              Create
-            </ReactiveButton>
-          </Flex>
-        </form>
-        <Dialog.Footer className="gap-2 sm:space-x-0">
+          <ReactiveButton
+            type="submit"
+            color="blue"
+            loading={isPending}
+            success={isSuccess}
+            className="w-full"
+          >
+            Create
+          </ReactiveButton>
+        </AutoForm>
+        <Dialog.Footer>
           <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
