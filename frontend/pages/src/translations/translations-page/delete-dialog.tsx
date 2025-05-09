@@ -59,7 +59,7 @@ export function DeleteDialog({
             {items.length === 1 ? " item" : " items"} from our servers.
           </Dialog.Description>
         </Dialog.Header>
-        <Dialog.Footer className="gap-2 sm:space-x-0">
+        <Dialog.Footer>
           <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel

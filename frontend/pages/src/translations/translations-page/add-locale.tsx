@@ -1,18 +1,10 @@
-import {
-  Button,
-  Dialog,
-  Flex,
-  FormField,
-  ReactiveButton,
-  Switch,
-  Text,
-} from "@incmix/ui/base"
+import AutoForm from "@incmix/ui/auto-form"
+import { Button, Dialog, ReactiveButton } from "@incmix/ui/base"
 import { INTL_API_URL } from "@incmix/ui/constants"
-import { useForm } from "@tanstack/react-form"
 import { useMutation } from "@tanstack/react-query"
 import type React from "react"
 import { useState } from "react"
-import { z } from "zod"
+import { localeFormSchema } from "./schemas/locale-form-schema"
 import type { Locale } from "./types"
 interface AddLocaleDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
@@ -44,7 +36,7 @@ export const AddLocaleDialog: React.FC<AddLocaleDialogProps> = ({
           Add new Locale
         </Dialog.Description>
         <AddTranlationForm onSuccess={onSubmit} />
-        <Dialog.Footer className="gap-2 sm:space-x-0">
+        <Dialog.Footer>
           <Dialog.Close>
             <Button variant="soft" color="gray">
               Cancel
@@ -81,58 +73,34 @@ const AddTranlationForm: React.FC<{ onSuccess?: () => void }> = ({
     onSuccess,
   })
 
-  const form = useForm<AddLocale>({
-    defaultValues: {
-      code: "",
-      isDefault: false,
-    },
-    onSubmit: ({ value }) => {
-      addLocale(value)
-    },
-  })
+  const handleSubmit = (values: { [key: string]: any }) => {
+    addLocale({
+      code: values.code as string,
+      isDefault: values.isDefault as boolean,
+    })
+  }
+
+  const defaultValues = {
+    code: "",
+    isDefault: false,
+  }
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        form.handleSubmit()
-      }}
+    <AutoForm
+      formSchema={localeFormSchema.formSchema}
+      fieldConfig={localeFormSchema.fieldConfig}
+      onSubmit={handleSubmit}
+      values={defaultValues}
+      className="space-y-4"
     >
-      <Flex direction="column" gap="4">
-        <form.Field
-          name="code"
-          validators={{
-            onChange: z.string().min(1, "Code is required"),
-          }}
-        >
-          {(field) => (
-            <FormField
-              name={field.name}
-              label="Code"
-              type="text"
-              field={field}
-            />
-          )}
-        </form.Field>
-        <form.Field name="isDefault">
-          {(field) => (
-            <Flex align="center" gap="2">
-              <Text as="label" size="2" htmlFor={field.name}>
-                Is Default?
-              </Text>
-              <Switch
-                checked={field.state.value}
-                onCheckedChange={(value) => field.handleChange(value)}
-              />
-            </Flex>
-          )}
-        </form.Field>
-
-        <ReactiveButton type="submit" loading={isPending} success={isSuccess}>
-          Add
-        </ReactiveButton>
-      </Flex>
-    </form>
+      <ReactiveButton
+        type="submit"
+        loading={isPending}
+        success={isSuccess}
+        className="w-full"
+      >
+        Add
+      </ReactiveButton>
+    </AutoForm>
   )
 }

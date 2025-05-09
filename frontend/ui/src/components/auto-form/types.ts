@@ -29,6 +29,8 @@ export type FieldGroupConfig = {
 
 export type FieldConfigItem = {
   description?: React.ReactNode
+  // Support options at top level (like in translationFormSchema)
+  options?: MCQOption[]
   inputProps?: React.InputHTMLAttributes<HTMLInputElement> & {
     showLabel?: boolean
     options?: MCQOption[]
