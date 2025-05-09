@@ -127,6 +127,7 @@ const AddTranlationForm: React.FC<{ onSuccess?: () => void }> = ({
     // Only override the locale field to add dynamic options based on the API response
     locale: {
       ...translationFormSchema.fieldConfig.locale,
+      // Add options directly on the field config, matching the pattern used by the type field
       options: locales.map((locale) => ({
         label: locale.code,
         value: locale.code,

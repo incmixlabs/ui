@@ -20,20 +20,27 @@ export default function AutoFormEnum({
 }: AutoFormInputComponentProps) {
   // Default to empty array for values
   let values: [string, string][] = []
-  
-  // First try to get options from fieldConfigItem.inputProps
-  if (fieldConfigItem?.inputProps?.options) {
-    values = fieldConfigItem.inputProps.options.map(opt => [
-      String(opt.value), 
+
+  // First check for options directly on the field config (like in translationFormSchema)
+  if (fieldConfigItem?.options) {
+    values = fieldConfigItem.options.map((opt: any) => [
+      String(opt.value),
       String(opt.label)
     ])
-  } 
-  // Then try to get values from Zod schema
+  }
+  // Then try to get options from fieldConfigItem.inputProps
+  else if (fieldConfigItem?.inputProps?.options) {
+    values = fieldConfigItem.inputProps.options.map(opt => [
+      String(opt.value),
+      String(opt.label)
+    ])
+  }
+  // Finally try to get values from Zod schema
   else {
     let baseValues
     try {
       baseValues = (getBaseSchema(zodItem) as unknown as z.ZodEnum<any>)?._def?.values
-      
+
       if (baseValues) {
         if (!Array.isArray(baseValues)) {
           values = Object.entries(baseValues)
@@ -58,9 +65,9 @@ export default function AutoFormEnum({
         <FormControl >
           <Select.Root
             onValueChange={field.onChange}
-            defaultValue={field.value??''}
+            value={field.value ?? ''}
+            defaultValue={field.value ?? ''}
             {...fieldProps}
-
           >
             <Select.Trigger className={fieldProps.className}/>
 

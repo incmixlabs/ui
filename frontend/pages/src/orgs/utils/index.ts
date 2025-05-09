@@ -177,8 +177,10 @@ export function useUpdateOrganization() {
     },
   })
 
-  const handleUpdateOrganization = (orgHandle: string, name: string) =>
+  const handleUpdateOrganization = (orgHandle: string, name: string) => {
+    console.log("trying to update orgname: ", orgHandle, name)
     updateOrgMutation.mutateAsync({ orgHandle, name })
+  }
 
   return {
     handleUpdateOrganization,
