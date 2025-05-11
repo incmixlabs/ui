@@ -50,7 +50,7 @@ interface RadialTaskStatusChartProps {
 
   /**
    * Track background color
-   * @default "#F2F4F7"
+   * @default var(--color-track)
    */
   trackBackground?: string
 

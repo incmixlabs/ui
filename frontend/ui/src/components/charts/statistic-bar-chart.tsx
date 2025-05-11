@@ -90,7 +90,7 @@ export const StatisticsBarChartView: React.FC<StatisticsBarChartViewProps> = ({
           left: 12,
         },
       },
-      colors: [dashboardColorValues.color5, dashboardColorValues.color3],
+      colors: [dashboardColorValues.color2, dashboardColorValues.color3],
       states: {
         hover: {
           filter: {

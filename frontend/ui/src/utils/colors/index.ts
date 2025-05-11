@@ -12,13 +12,16 @@ export const dashboardColors = [
   "color4",
   "color5",
 ] as const
+
+
 export const dashboardColorValues = {
-  color1: "#FFCC33", // Previously "done"
-  color2: "#3366FF", // Previously "hold"
-  color3: "#FF9D66", // Previously "ongoing"
-  color4: "#f2f4f7", // Previously "track"
-  color5: "#4f46e5",
+  color1: "var(--color-done)",
+  color2: "var(--color-hold)",
+  color3: "var(--color-ongoing)",
+  color4: "var(--color-track)",
+  color5: "var(--color-blue)",
 }
+
 
 export const accentColors = radixAccentColors
 export const grayColors = radixGrayColors

@@ -24,7 +24,7 @@ const activityGroups: ActivityGroup[] = [
         user: "Regina Cooper",
         action: "Added new project",
         projectNumber: "443",
-        color: "#4263eb", // blue
+        color: "var(--color-blue)", // blue
       },
       {
         id: "2",
@@ -32,7 +32,7 @@ const activityGroups: ActivityGroup[] = [
         user: "Kristin Edwards",
         action: "Updated project",
         projectNumber: "488",
-        color: "#f59f00", // yellow
+        color: "var(--color-yellow)", // yellow
       },
       {
         id: "3",
@@ -40,7 +40,7 @@ const activityGroups: ActivityGroup[] = [
         user: "Regina Cooper",
         action: "Closed project",
         projectNumber: "129",
-        color: "#fd7e14", // orange
+        color: "var(--color-ongoing)", // orange
       },
     ],
   },
@@ -53,7 +53,7 @@ const activityGroups: ActivityGroup[] = [
         user: "Jorge Robertson",
         action: "Completed project",
         projectNumber: "389",
-        color: "#37b24d", // green
+        color: "var(--color-light-green)", // green
       },
       {
         id: "5",
@@ -61,7 +61,7 @@ const activityGroups: ActivityGroup[] = [
         user: "Regina Cooper",
         action: "Closed project",
         projectNumber: "401",
-        color: "#fd7e14", // orange
+        color: "var(--color-hold)", // orange
       },
       {
         id: "6",
@@ -69,7 +69,7 @@ const activityGroups: ActivityGroup[] = [
         user: "Stella Pena",
         action: "Added new project",
         projectNumber: "442",
-        color: "#4263eb", // blue
+        color:"var(--color-secondary)", // blue
       },
       {
         id: "7",
@@ -77,7 +77,7 @@ const activityGroups: ActivityGroup[] = [
         user: "Priscilla Russell",
         action: "Updated project",
         projectNumber: "324",
-        color: "#f59f00", // yellow
+        color: "var(--color-done)", // yellow
       },
     ],
   },
@@ -90,7 +90,7 @@ const activityGroups: ActivityGroup[] = [
         user: "Leslie Miles",
         action: "Added new project",
         projectNumber: "441",
-        color: "#4263eb", // blue
+        color: "var(--color-light-green)", // blue
       },
       {
         id: "9",
@@ -98,7 +98,7 @@ const activityGroups: ActivityGroup[] = [
         user: "Regina Cooper",
         action: "Added new project",
         projectNumber: "440",
-        color: "#4263eb", // blue
+        color: "var(--color-secondary)", // blue
       },
       {
         id: "10",
@@ -106,7 +106,7 @@ const activityGroups: ActivityGroup[] = [
         user: "Regina Warren",
         action: "Updated project",
         projectNumber: "274",
-        color: "#f59f00", // yellow
+        color: "var(--color-done)", // yellow
       },
     ],
   },
