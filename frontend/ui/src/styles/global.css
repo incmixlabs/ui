@@ -23,6 +23,20 @@
   }
 
   :root {
+    --color-done: #FFCC33;
+    --color-yellow: #FFD240;
+    --color-hold: #3366FF;
+    --color-ongoing: #FF9D66;
+    --color-track: #F2F4F7;
+    --color-ordinary: #4F46E5;
+    --color-blue: #1b54ff;
+    --color-secondary: #4294FF;
+    --color-primary:#111111;
+    --color-foreground:#FCFCFC;
+    --color-muted:#7B7B7B;
+    --color-light-green:#49C96D;
+    --color-light-blue:#5AC8F5;
+
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
 
@@ -78,6 +92,10 @@
   }
 
   .dark {
+    --color-primary:#FCFCFC;
+    --color-foreground:#111111;
+    --color-muted:#838383;
+    
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
 

@@ -1,7 +1,7 @@
 "use client"
 
 import { Box } from "@incmix/ui"
-import { cn } from "@utils"
+import { cn, dashboardColorValues } from "@utils"
 import { lazy, useEffect, useState } from "react"
 
 const ReactApexChart = lazy(() => import("react-apexcharts"))
@@ -21,13 +21,13 @@ interface WeeklyActivityChartProps {
 
   /**
    * Primary color for bars
-   * @default "#4361EE"
+   * @default dashboardColorValues.color2
    */
   primaryColor?: string
 
   /**
    * Highlight color for the specified day
-   * @default "#FF9D66"
+   * @default dashboardColorValues.color3
    */
   highlightColor?: string
 
@@ -60,8 +60,8 @@ interface WeeklyActivityChartProps {
 export function WeeklyActivityChart({
   values = [30, 65, 45, 80, 55, 40, 65],
   days = ["M", "T", "W", "T", "F", "S", "S"],
-  primaryColor = "#3366FF",
-  highlightColor = "#FF9D66",
+  primaryColor = dashboardColorValues.color2,
+  highlightColor = dashboardColorValues.color3,
   highlightDay = 3,
   barWidth = "40%",
   borderRadius = 10,
@@ -114,7 +114,7 @@ export function WeeklyActivityChart({
       },
       labels: {
         style: {
-          colors: Array(days.length).fill("#9CA3AF"),
+          colors: Array(days.length).fill("var(--color-muted)"),
           fontSize: "14px",
         },
       },

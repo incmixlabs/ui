@@ -44,7 +44,7 @@ const resolveColorVariable = (colorVar: string) => {
 }
 
 export function PropertySheet() {
-  const [color, setColor] = useState("#f76b15")
+  const [color, setColor] = useState("var(--color-ongoing)")
 
   const [width, setWidth] = useState(200)
   const [height, setHeight] = useState(480)

@@ -3,7 +3,7 @@ import dynamicIconImports from "lucide-react/dynamicIconImports"
 import { Suspense, lazy } from "react"
 
 const fallbackIconComp = (
-  <div style={{ background: "#ddd", width: 24, height: 24 }} />
+  <div style={{ background:"var(--color-primary)", width: 24, height: 24 }} />
 )
 
 interface IconProps extends Omit<LucideProps, "ref"> {
