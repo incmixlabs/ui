@@ -6,7 +6,7 @@ export function LayoutPresetsSection() {
   
   return (
     <Box className="mb-6">
-      <Heading size={"4"} className="py-2  pt-5 ">Layout Presets</Heading>
+      <Heading size={"3"} className="py-2  pt-5 ">Layout Presets</Heading>
       <Grid columns={"2"} className="pb-2" gap={"2"}>
         {presetLayouts.map((preset) => (
           <Box

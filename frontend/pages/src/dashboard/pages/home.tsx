@@ -3,7 +3,6 @@ import { LoadingPage } from "@common"
 import { useEditingStore } from "@incmix/store"
 import {
   Box,
-  CardContainer,
   CreateProjectModal,
   Grid,
   RadialTaskStatusChart,
@@ -178,9 +177,6 @@ const DashboardHomePage: React.FC = () => {
           {t("dashboard:title")}
         </Heading>
         <CreateProjectModal />
-        <RadialTaskStatusChart />
-        <StatisticsBarChartView />
-        <WeeklyActivityChart />
         <Flex direction="column" gap="6">
           {slottedWidgets.length && (
             <SwapyLayout
