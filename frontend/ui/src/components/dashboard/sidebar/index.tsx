@@ -5,6 +5,7 @@ import {
   Heading,
   Input,
   LayoutPresetsSection,
+  ScrollArea,
   dashboardImg,
   useSelectionStore,
 } from "@incmix/ui";
@@ -20,6 +21,9 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { DraggableComponent } from "./draggable-component";
 import { Search } from "lucide-react";
+import { TemplatesSidebar } from "./templates";
+import { useParams } from "@tanstack/react-router";
+
 export const sidebarComponents = [
   {
     slotId: "i",
@@ -126,6 +130,8 @@ interface DashboardSidebarProps {
 }
 
 export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
+  const { projectId } = useParams({ from: "/dashboard/project/$projectId" });
+
   const { selectedWidgets, setSelectedWidgets, clearSelection } =
     useSelectionStore();
   const [availableComponents] = useState(sidebarComponents);
@@ -155,48 +161,56 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
   }, [availableComponents, searchQuery]);
 
   return (
-    <Box className="p-2">
-      <Heading size={"3"} className="py-2  pt-5 ">Components/Widgets </Heading>
-
-      <Box className="mb-4 relative">
-        <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search components..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-8 w-full bg-gray-3"
-        />
-      </Box>
-      {filteredComponents.length === 0 ? (
-        <div className="text-center py-4 text-muted-foreground">
-          No components match your search
-        </div>
-      ) : (
-        <Grid columns={"2"} gap="2" className="relative">
-          {filteredComponents.map((comp) => (
-            <div key={comp.slotId} className="relative">
-              <DraggableComponent
-                id={comp.slotId}
-                title={comp.title}
-                image={comp.compImage}
-                component={comp.component}
-                disabled={!isEditing || selectedWidgets.length > 0}
-                onDragStart={() => handleDragStart(comp.slotId)}
-                onDragEnd={handleDragEnd}
-              />
-              {/* <div className="absolute bottom-1 left-1 flex flex-wrap gap-1 max-w-[90%]">
+    <Box className="h-screen">
+      <ScrollArea className="h-full p-2">
+          <Heading size={"3"} className="py-2  pt-5 ">
+            Components/Widgets{" "}
+          </Heading>
+          <Box className="mb-4 relative">
+            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search components..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8 w-full bg-gray-3"
+            />
+          </Box>
+          {filteredComponents.length === 0 ? (
+            <div className="text-center py-4 text-muted-foreground">
+              No components match your search
+            </div>
+          ) : (
+            <Grid columns={"2"} gap="2" className="relative">
+              {filteredComponents.map((comp) => (
+                <div key={comp.slotId} className="relative">
+                  <DraggableComponent
+                    id={comp.slotId}
+                    title={comp.title}
+                    image={comp.compImage}
+                    component={comp.component}
+                    disabled={!isEditing || selectedWidgets.length > 0}
+                    onDragStart={() => handleDragStart(comp.slotId)}
+                    onDragEnd={handleDragEnd}
+                  />
+                  {/* <div className="absolute bottom-1 left-1 flex flex-wrap gap-1 max-w-[90%]">
                 {comp.tags.map((tag, index) => (
                   <Badge key={index} variant="solid" className="text-xs">
                     {tag}
                   </Badge>
                 ))}
               </div> */}
-            </div>
-          ))}
-        </Grid>
-      )}
-
-      <LayoutPresetsSection />
+                </div>
+              ))}
+            </Grid>
+          )}
+          <TemplatesSidebar
+            projectId={projectId}
+            onSelectTemplate={function (templateId: string): void {
+              throw new Error("Function not implemented.");
+            }}
+          />
+        <LayoutPresetsSection />
+      </ScrollArea>
     </Box>
   );
 }

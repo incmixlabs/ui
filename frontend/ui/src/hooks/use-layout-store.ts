@@ -23,7 +23,8 @@ interface LayoutState {
   activePresetId: string
   
   // Actions
-  applyPreset: (presetId: string) => void
+  applyPreset: (presetId?: string) => void
+  applyTemplates: (mainLayouts?: CustomLayouts,nestedLayouts?: Record<string, Layout[]>,templateId?: string) => void
   setDefaultLayouts: (layouts: CustomLayouts) => void
   setNestedLayouts: (layouts: Record<string, Layout[]>) => void
   handleLayoutChange: (_layout: any, allLayouts: any) => void
@@ -47,7 +48,13 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
       activePresetId: preset.id,
     });
   },
-  
+  applyTemplates: (mainLayouts,nestedLayouts,templateId) => {
+    set({
+      defaultLayouts: mainLayouts,
+      nestedLayouts: nestedLayouts,
+      activePresetId: templateId,
+    });
+  },
   setDefaultLayouts: (layouts) => {
     set({ defaultLayouts: layouts });
   },

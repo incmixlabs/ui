@@ -4,8 +4,12 @@ import { useDashboardStore, useEditingStore } from "@incmix/store"
 import {
   ActiveBtn,
   Box,
+  Button,
+  Dialog,
   Flex,
   Heading,
+  ReactiveButton,
+  SaveTemplateDialog,
   generateDOM,
   useDevicePreview,
   useDragAndDrop,
@@ -22,7 +26,7 @@ import { EditWidgetsControl } from "./home"
 import "react-grid-layout/css/styles.css"
 import "react-resizable/css/styles.css"
 
-import { initialLayouts } from "@incmix/ui/dashboard"
+import { Save } from "lucide-react"
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
 
@@ -31,6 +35,7 @@ const DynamicDashboardPage: React.FC = () => {
   const project = useDashboardStore((state) => state.getProjectById(projectId))
   const { authUser, isLoading } = useAuth()
   const { isEditing, setIsEditing } = useEditingStore()
+
   const {
     defaultLayouts,
     nestedLayouts,
@@ -39,6 +44,7 @@ const DynamicDashboardPage: React.FC = () => {
     updateStaticProperty,
   } = useLayoutStore()
 
+  const [openSaveDialog, setOpenSaveDialog] = useState(false)
   useEffect(() => {
     updateStaticProperty(isEditing)
   }, [isEditing, updateStaticProperty])
@@ -107,12 +113,20 @@ const DynamicDashboardPage: React.FC = () => {
                 {project.name}
               </Heading>
               {isEditing && (
-                <ActiveBtn
-                  items={deviceTabs}
-                  defaultActiveId={activeDevice}
-                  onChange={setActiveDevice}
-                  activeClassName="text-white"
-                />
+                <Flex align={"center"} gap="2">
+                  <ActiveBtn
+                    items={deviceTabs}
+                    defaultActiveId={activeDevice}
+                    onChange={setActiveDevice}
+                  />
+                  <SaveTemplateDialog
+                    projectId={projectId}
+                    layouts={defaultLayouts}
+                    nestedLayouts={nestedLayouts}
+                    open={openSaveDialog}
+                    onOpenChange={setOpenSaveDialog}
+                  />
+                </Flex>
               )}
             </Flex>
             <Box

@@ -23,7 +23,7 @@ export  function ActiveBtn({
   defaultActiveId,
   onChange,
   className = "",
-  indicatorClassName = "bg-indigo-10",
+  indicatorClassName = "bg-indigo-10 text-gray-12",
 }: ActiveBtnProps) {
   const [activeId, setActiveId] = useState(defaultActiveId || (items.length > 0 ? items[0].id : ""))
   const containerRef = useRef<HTMLDivElement>(null)
