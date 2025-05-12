@@ -5,9 +5,12 @@ import {
   Box,
   CreateProjectModal,
   Grid,
+  RadialTaskStatusChart,
+  StatisticsBarChartView,
   SwapyExclude,
   SwapyLayout,
   SwapySlot,
+  WeeklyActivityChart,
 } from "@incmix/ui"
 import { Flex, Heading, Switch, Text } from "@incmix/ui"
 import {
@@ -174,7 +177,6 @@ const DashboardHomePage: React.FC = () => {
           {t("dashboard:title")}
         </Heading>
         <CreateProjectModal />
-
         <Flex direction="column" gap="6">
           {slottedWidgets.length && (
             <SwapyLayout

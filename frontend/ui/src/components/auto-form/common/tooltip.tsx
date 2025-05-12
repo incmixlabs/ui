@@ -20,10 +20,10 @@ function AutoFormTooltip({ fieldConfigItem }: { fieldConfigItem: any }) {
     <>
       {fieldConfigItem?.description && (
         <Tooltip content={
-          <p className="text-gray-500 text-sm dark:text-white">
+          <p className="text-sm">
                 {fieldConfigItem.description}
             </p>
-        }>
+        } >
           <IconButton variant="ghost">
             <HelpCircle/>
           </IconButton>

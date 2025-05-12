@@ -13,16 +13,16 @@ export default function AutoFormCheckbox({
   className,
 }: AutoFormInputComponentProps) {
   return (
-    <div className="flex flex-row items-center space-x-2">
-      <FormItem className="flex w-full flex-row items-center justify-start">
-        <FormLabel className="mt-3 w-[117px]">
+    <div className="flex flex-row items-center py-2 ">
+      <FormItem className="flex flex-row items-center justify-start gap-4">
+        <FormLabel className="ml-2 text-sm font-medium">
           {label}
           {isRequired && <span className="text-destructive"> *</span>}
         </FormLabel>
         <FormControl>
           <Checkbox
             className={cn(
-              "data-[state=checked]:bg-zinc-500 data-[state=checked]:text-white",
+              "h-5 w-5  data-[state=checked]:text-white",
               className
             )}
             checked={field.value}
@@ -31,7 +31,7 @@ export default function AutoFormCheckbox({
           />
         </FormControl>
       </FormItem>
-      <AutoFormTooltip fieldConfigItem={fieldConfigItem} />
+      {/* <AutoFormTooltip fieldConfigItem={fieldConfigItem} /> */}
     </div>
   )
 }
