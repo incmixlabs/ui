@@ -6,6 +6,7 @@ import {
   type TaskCollections,
   type TaskDocType,
   columnSchemaLiteral,
+  dashboardTemplateSchemaLiteral,
   formProjectSchemaLiteral,
   projectSchemaLiteral,
   taskSchemaLiteral,
@@ -42,6 +43,10 @@ await database.addCollections({
   projects: { schema: projectSchemaLiteral, autoMigrate: true },
   formProjects: {
     schema: formProjectSchemaLiteral,
+    autoMigrate: true,
+  },
+  dashboardsTemplates: {
+    schema: dashboardTemplateSchemaLiteral,
     autoMigrate: true,
   },
 })

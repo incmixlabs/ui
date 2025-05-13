@@ -1,6 +1,10 @@
 import { LoadingPage } from "@common"
 import { DndContext, DragOverlay } from "@dnd-kit/core"
-import { useDashboardStore, useEditingStore } from "@incmix/store"
+import {
+  useDashboardStore,
+  useEditingStore,
+  useTemplateStore,
+} from "@incmix/store"
 import {
   ActiveBtn,
   Box,
@@ -25,6 +29,7 @@ import { useAuth } from "../../auth"
 import { EditWidgetsControl } from "./home"
 import "react-grid-layout/css/styles.css"
 import "react-resizable/css/styles.css"
+import { useQueryState } from "nuqs"
 
 import { Save } from "lucide-react"
 
@@ -32,16 +37,18 @@ const ResponsiveGridLayout = WidthProvider(Responsive)
 
 const DynamicDashboardPage: React.FC = () => {
   const { projectId } = useParams({ from: "/dashboard/project/$projectId" })
+  const [isTemplate] = useQueryState("template")
   const project = useDashboardStore((state) => state.getProjectById(projectId))
   const { authUser, isLoading } = useAuth()
   const { isEditing, setIsEditing } = useEditingStore()
-
+  const { getTemplateById } = useTemplateStore()
   const {
     defaultLayouts,
     nestedLayouts,
     handleLayoutChange,
     handleNestedLayoutChange,
     updateStaticProperty,
+    applyTemplates,
   } = useLayoutStore()
 
   const [openSaveDialog, setOpenSaveDialog] = useState(false)
@@ -49,6 +56,14 @@ const DynamicDashboardPage: React.FC = () => {
     updateStaticProperty(isEditing)
   }, [isEditing, updateStaticProperty])
 
+  useEffect(() => {
+    if (isEditing && isTemplate) {
+      const template = getTemplateById(isTemplate)
+      if (template) {
+        applyTemplates(template.layouts, template.nestedLayouts, template.id)
+      }
+    }
+  }, [isTemplate, isEditing])
   // Device preview hooks
   const { activeDevice, setActiveDevice, deviceTabs, getViewportWidth } =
     useDevicePreview()

@@ -34,6 +34,7 @@ interface LayoutState {
 }
 
 export const useLayoutStore = create<LayoutState>((set, get) => ({
+  
   defaultLayouts: presetLayouts[0].mainLayouts,
   nestedLayouts: presetLayouts[0].nestedLayouts,
   activePresetId: presetLayouts[0].id,
@@ -49,6 +50,8 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
     });
   },
   applyTemplates: (mainLayouts,nestedLayouts,templateId) => {
+
+ 
     set({
       defaultLayouts: mainLayouts,
       nestedLayouts: nestedLayouts,

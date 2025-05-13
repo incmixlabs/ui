@@ -1,7 +1,7 @@
 import type { Layout } from "react-grid-layout"
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-
+import { database } from "../sql/main"
 export type Breakpoint = "lg" | "md" | "sm" | "xs" | "xxs"
 
 export interface DashboardTemplate {
@@ -17,74 +17,132 @@ export interface DashboardTemplate {
 
 interface TemplateState {
   templates: DashboardTemplate[]
+  isLoading: boolean
+  error: string | null
+  initialized: boolean
+  initialize: () => Promise<void>
   addTemplate: (
     template: Omit<DashboardTemplate, "id" | "createdAt" | "updatedAt">
-  ) => void
-  updateTemplate: (id: string, template: Partial<DashboardTemplate>) => void
-  deleteTemplate: (id: string) => void
+  ) => Promise<string>
+  updateTemplate: (
+    id: string,
+    template: Partial<DashboardTemplate>
+  ) => Promise<void>
+  deleteTemplate: (id: string) => Promise<void>
   getTemplatesByProjectId: (projectId: string) => DashboardTemplate[]
   getTemplatesByTag: (tag: string) => DashboardTemplate[]
   getTemplateById: (id: string) => DashboardTemplate | undefined
 }
 
-export const useTemplateStore = create<TemplateState>()(
-  persist(
-    (set, get) => ({
-      templates: [],
+export const useTemplateStore = create<TemplateState>()((set, get) => ({
+  templates: [],
+  isLoading: false,
+  error: null,
+  initialized: false,
 
-      addTemplate: (template) => {
-        const id = `template-${Date.now()}`
-        const now = Date.now()
+  initialize: async () => {
+    if (get().initialized) return
 
-        set((state) => ({
-          templates: [
-            ...state.templates,
-            {
-              ...template,
-              id,
-              createdAt: now,
-              updatedAt: now,
-            },
-          ],
-        }))
+    set({ isLoading: true, error: null })
 
-        return id
-      },
+    try {
+      // Get the dashboardsTemplates collection from your existing database
+      const templatesCollection = database.dashboardsTemplates
 
-      updateTemplate: (id, template) => {
-        set((state) => ({
-          templates: state.templates.map((t) =>
-            t.id === id
-              ? {
-                  ...t,
-                  ...template,
-                  updatedAt: Date.now(),
-                }
-              : t
-          ),
-        }))
-      },
+      // Initial load of templates
+      const templates = await templatesCollection.find().exec()
 
-      deleteTemplate: (id) => {
-        set((state) => ({
-          templates: state.templates.filter((t) => t.id !== id),
-        }))
-      },
-
-      getTemplatesByProjectId: (projectId) => {
-        return get().templates.filter((t) => t.projectId === projectId)
-      },
-
-      getTemplatesByTag: (tag) => {
-        return get().templates.filter((t) => t.tags.includes(tag))
-      },
-
-      getTemplateById: (id) => {
-        return get().templates.find((t) => t.id === id)
-      },
-    }),
-    {
-      name: "dashboard-templates",
+      set({ templates: templates.map((t) => t.toJSON()), initialized: true })
+      set({ isLoading: false })
+    } catch (error) {
+      console.error("Failed to initialize RxDB templates:", error)
+      set({
+        error: "Failed to initialize templates database",
+        isLoading: false,
+      })
     }
-  )
-)
+  },
+
+  addTemplate: async (template) => {
+    set({ isLoading: true, error: null })
+
+    try {
+      const templatesCollection = database.dashboardsTemplates
+      const id = `template-${Date.now()}`
+      const now = Date.now()
+
+      const newTemplate = {
+        ...template,
+        id,
+        createdAt: now,
+        updatedAt: now,
+      }
+
+      await templatesCollection.insert(newTemplate)
+      set({ isLoading: false })
+
+      return id
+    } catch (error) {
+      console.error("Failed to add template:", error)
+      set({ error: "Failed to add template", isLoading: false })
+      throw error
+    }
+  },
+
+  updateTemplate: async (id, template) => {
+    set({ isLoading: true, error: null })
+
+    try {
+      const templatesCollection = database.dashboardsTemplates
+      const existingTemplate = await templatesCollection.findOne(id).exec()
+
+      if (!existingTemplate) {
+        throw new Error("Template not found")
+      }
+
+      await existingTemplate.update({
+        $set: {
+          ...template,
+          updatedAt: Date.now(),
+        },
+      })
+
+      set({ isLoading: false })
+    } catch (error) {
+      console.error("Failed to update template:", error)
+      set({ error: "Failed to update template", isLoading: false })
+      throw error
+    }
+  },
+
+  deleteTemplate: async (id) => {
+    set({ isLoading: true, error: null })
+
+    try {
+      const templatesCollection = database.dashboardsTemplates
+      const template = await templatesCollection.findOne(id).exec()
+
+      if (template) {
+        await template.remove()
+      }
+
+      set({ isLoading: false })
+    } catch (error) {
+      console.error("Failed to delete template:", error)
+      set({ error: "Failed to delete template", isLoading: false })
+      throw error
+    }
+  },
+
+  getTemplatesByProjectId: (projectId) => {
+    return get().templates.filter((t) => t.projectId === projectId)
+  },
+
+  getTemplatesByTag: (tag) => {
+    return get().templates.filter((t) => t.tags.includes(tag))
+  },
+
+  getTemplateById: (id) => {
+    return get().templates.find((t) => t.id === id)
+  },
+}))
