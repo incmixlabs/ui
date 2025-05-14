@@ -112,16 +112,14 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
         throw new Error("Template not found")
       }
 
-      const updated = await existingTemplate.update({
-        $set: {
-          ...template,
-          updatedAt: Date.now(),
-        },
+      const timestamp = Date.now()
+      await existingTemplate.update({
+        $set: { ...template, updatedAt: timestamp },
       })
 
       set((state) => ({
         templates: state.templates.map((t) =>
-          t.id === id ? { ...t, ...updated } : t
+          t.id === id ? { ...t, ...template, updatedAt: timestamp } : t
         ),
         isLoading: false,
       }))
