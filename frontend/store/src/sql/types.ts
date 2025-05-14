@@ -147,10 +147,10 @@ export const dashboardTemplateSchemaLiteral = {
       type: "object",
     },
     createdAt: {
-      type: "number",
+      type: "string",
     },
     updatedAt: {
-      type: "number",
+      type: "string",
     },
   },
   required: [
@@ -326,5 +326,5 @@ export type TaskCollections = {
   columns: RxCollection<ColumnDocType>
   projects: RxCollection<ProjectDocType>
   formProjects: RxCollection<FormProjectDocType>
-  dashboardsTemplates: RxCollection<DashboardTemplateDocType>
+  dashboardTemplates: RxCollection<DashboardTemplateDocType>
 }

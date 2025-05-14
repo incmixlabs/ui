@@ -47,7 +47,7 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
 
     try {
       // Get the dashboardsTemplates collection from your existing database
-      const templatesCollection = database.dashboardsTemplates
+      const templatesCollection = database.dashboardTemplates
 
       // Initial load of templates
       const templates = await templatesCollection.find().exec()
@@ -67,7 +67,7 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
     set({ isLoading: true, error: null })
 
     try {
-      const templatesCollection = database.dashboardsTemplates
+      const templatesCollection = database.dashboardTemplates
       const id = `template-${Date.now()}`
       const now = Date.now()
 
@@ -79,7 +79,10 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
       }
 
       await templatesCollection.insert(newTemplate)
-      set({ isLoading: false })
+      set((state) => ({
+        templates: [...state.templates, newTemplate],
+        isLoading: false,
+      }))
 
       return id
     } catch (error) {
@@ -93,21 +96,26 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
     set({ isLoading: true, error: null })
 
     try {
-      const templatesCollection = database.dashboardsTemplates
+      const templatesCollection = database.dashboardTemplates
       const existingTemplate = await templatesCollection.findOne(id).exec()
 
       if (!existingTemplate) {
         throw new Error("Template not found")
       }
 
-      await existingTemplate.update({
+      const updated = await existingTemplate.update({
         $set: {
           ...template,
           updatedAt: Date.now(),
         },
       })
 
-      set({ isLoading: false })
+      set((state) => ({
+        templates: state.templates.map((t) =>
+          t.id === id ? { ...t, ...updated } : t
+        ),
+        isLoading: false,
+      }))
     } catch (error) {
       console.error("Failed to update template:", error)
       set({ error: "Failed to update template", isLoading: false })
@@ -119,14 +127,18 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
     set({ isLoading: true, error: null })
 
     try {
-      const templatesCollection = database.dashboardsTemplates
+      const templatesCollection = database.dashboardTemplates
       const template = await templatesCollection.findOne(id).exec()
 
       if (template) {
         await template.remove()
+        set((state) => ({
+          templates: state.templates.filter((t) => t.id !== id),
+          isLoading: false,
+        }))
+      } else {
+        set({ isLoading: false })
       }
-
-      set({ isLoading: false })
     } catch (error) {
       console.error("Failed to delete template:", error)
       set({ error: "Failed to delete template", isLoading: false })

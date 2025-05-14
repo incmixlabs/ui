@@ -41,11 +41,8 @@ await database.addCollections({
   tasks: { schema: taskSchemaLiteral, autoMigrate: true },
   columns: { schema: columnSchemaLiteral, autoMigrate: true },
   projects: { schema: projectSchemaLiteral, autoMigrate: true },
-  formProjects: {
-    schema: formProjectSchemaLiteral,
-    autoMigrate: true,
-  },
-  dashboardsTemplates: {
+  formProjects: { schema: formProjectSchemaLiteral, autoMigrate: true },
+  dashboardTemplates: {
     schema: dashboardTemplateSchemaLiteral,
     autoMigrate: true,
   },

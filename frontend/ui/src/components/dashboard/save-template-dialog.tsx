@@ -38,7 +38,7 @@ export function SaveTemplateDialog({
   useEffect(() => {
     const updateTemplateData = async (templateId: string) => {
       try {
-        const templatesCollection = database.dashboardsTemplates;
+        const templatesCollection = database.dashboardTemplates;
         const existingTemplate = await templatesCollection
           .findOne(templateId)
           .exec();
@@ -81,13 +81,13 @@ export function SaveTemplateDialog({
     }
   };
   console.log(isTemplate, tags);
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!templateName.trim()) {
       toast.error("Please enter a template name");
       return;
     }
 
-    addTemplate({
+   await addTemplate({
       name: templateName.trim(),
       projectId,
       tags,
@@ -101,19 +101,19 @@ export function SaveTemplateDialog({
     onOpenChange(false);
   };
   const handleUpdateTemplate = async (id: string) => {
-    const templatesCollection = database.dashboardsTemplates;
-    const existingTemplate = await templatesCollection.findOne(id).exec();
-    if (!existingTemplate) {
-      throw new Error("Template not found");
-    }
-    updateTemplate(id, {
-      name: existingTemplate?.name,
-      projectId,
-      tags,
-      layouts,
-      nestedLayouts,
-    });
-    toast.success("Template updated successfully");
+    const templatesCollection = database.dashboardTemplates;  
+    const existingTemplate = await templatesCollection.findOne(id).exec();  
+    if (!existingTemplate) {  
+      throw new Error("Template not found");  
+    }  
+    await updateTemplate(id, {  
+      name: templateName.trim(),  
+      projectId,  
+      tags,  
+      layouts,  
+      nestedLayouts,  
+    });  
+    toast.success("Template updated successfully"); 
     setIsTemplate(null);
     setTemplateName("");
     setTags([]);

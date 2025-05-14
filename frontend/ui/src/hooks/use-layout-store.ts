@@ -50,11 +50,12 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
     });
   },
   applyTemplates: (mainLayouts,nestedLayouts,templateId) => {
-
+       // Use existing layouts as fallbacks if new ones aren't provided
+     const { defaultLayouts, nestedLayouts: currentNestedLayouts } = get();
  
     set({
-      defaultLayouts: mainLayouts,
-      nestedLayouts: nestedLayouts,
+      defaultLayouts: mainLayouts || defaultLayouts,
+      nestedLayouts: nestedLayouts || currentNestedLayouts,
       activePresetId: templateId,
     });
   },
