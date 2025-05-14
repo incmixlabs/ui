@@ -1,11 +1,19 @@
 import { LoadingPage } from "@common"
 import { DndContext, DragOverlay } from "@dnd-kit/core"
-import { useDashboardStore, useEditingStore } from "@incmix/store"
+import {
+  useDashboardStore,
+  useEditingStore,
+  useTemplateStore,
+} from "@incmix/store"
 import {
   ActiveBtn,
   Box,
+  Button,
+  Dialog,
   Flex,
   Heading,
+  ReactiveButton,
+  SaveTemplateDialog,
   generateDOM,
   useDevicePreview,
   useDragAndDrop,
@@ -21,23 +29,64 @@ import { useAuth } from "../../auth"
 import { EditWidgetsControl } from "./home"
 import "react-grid-layout/css/styles.css"
 import "react-resizable/css/styles.css"
+import { useQueryState } from "nuqs"
 
-import { initialLayouts } from "@incmix/ui/dashboard"
+import { Save } from "lucide-react"
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
 
 const DynamicDashboardPage: React.FC = () => {
   const { projectId } = useParams({ from: "/dashboard/project/$projectId" })
+  const [isTemplate, setIsTemplate] = useQueryState("template")
   const project = useDashboardStore((state) => state.getProjectById(projectId))
   const { authUser, isLoading } = useAuth()
   const { isEditing, setIsEditing } = useEditingStore()
+  const { getTemplateById, getActiveTemplate } = useTemplateStore()
+
   const {
     defaultLayouts,
     nestedLayouts,
     handleLayoutChange,
     handleNestedLayoutChange,
     updateStaticProperty,
+    applyTemplates,
   } = useLayoutStore()
+
+  const [openSaveDialog, setOpenSaveDialog] = useState(false)
+
+  useEffect(() => {
+    const fetchTemplate = async () => {
+      if (isTemplate) {
+        try {
+          const template = await getTemplateById(isTemplate)
+          if (!template) {
+            setIsTemplate(null)
+            return
+          }
+          applyTemplates(template.layouts, template.nestedLayouts, template.id)
+          updateStaticProperty(isEditing)
+        } catch (error) {
+          console.error("Failed to load template:", error)
+        }
+      } else {
+        try {
+          const activeTemplate = await getActiveTemplate(projectId)
+          if (activeTemplate) {
+            applyTemplates(
+              activeTemplate.layouts,
+              activeTemplate.nestedLayouts,
+              activeTemplate.id
+            )
+            updateStaticProperty(isEditing)
+          }
+        } catch (error) {
+          console.error("Failed to load active template:", error)
+        }
+      }
+    }
+
+    fetchTemplate()
+  }, [isTemplate, projectId])
 
   useEffect(() => {
     updateStaticProperty(isEditing)
@@ -107,12 +156,20 @@ const DynamicDashboardPage: React.FC = () => {
                 {project.name}
               </Heading>
               {isEditing && (
-                <ActiveBtn
-                  items={deviceTabs}
-                  defaultActiveId={activeDevice}
-                  onChange={setActiveDevice}
-                  activeClassName="text-white"
-                />
+                <Flex align={"center"} gap="2">
+                  <ActiveBtn
+                    items={deviceTabs}
+                    defaultActiveId={activeDevice}
+                    onChange={setActiveDevice}
+                  />
+                  <SaveTemplateDialog
+                    projectId={projectId}
+                    layouts={defaultLayouts}
+                    nestedLayouts={nestedLayouts}
+                    open={openSaveDialog}
+                    onOpenChange={setOpenSaveDialog}
+                  />
+                </Flex>
               )}
             </Flex>
             <Box

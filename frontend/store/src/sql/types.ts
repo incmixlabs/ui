@@ -117,6 +117,56 @@ export const columnSchemaLiteral = {
   ],
 } as const
 
+export const dashboardTemplateSchemaLiteral = {
+  title: "dashboard template schema",
+  version: 0,
+  description: "Schema for dashboard templates",
+  primaryKey: "id",
+  type: "object",
+  properties: {
+    id: {
+      type: "string",
+      maxLength: 100,
+    },
+    isActive: {
+      type: "boolean",
+      default: false,
+    },
+    name: {
+      type: "string",
+    },
+    projectId: {
+      type: "string",
+    },
+    tags: {
+      type: "array",
+      items: {
+        type: "string",
+      },
+    },
+    layouts: {
+      type: "object",
+    },
+    nestedLayouts: {
+      type: "object",
+    },
+    createdAt: {
+      type: "number",
+    },
+    updatedAt: {
+      type: "number",
+    },
+  },
+  required: [
+    "id",
+    "name",
+    "projectId",
+    "layouts",
+    "nestedLayouts",
+    "createdAt",
+    "updatedAt",
+  ],
+} as const
 // Project Schema with required fields added
 export const projectSchemaLiteral = {
   title: "projects schema",
@@ -252,6 +302,9 @@ const tasksTyped = toTypedRxJsonSchema(taskSchemaLiteral)
 const columnsTyped = toTypedRxJsonSchema(columnSchemaLiteral)
 const projectTyped = toTypedRxJsonSchema(projectSchemaLiteral)
 const formProjectTyped = toTypedRxJsonSchema(formProjectSchemaLiteral)
+const dashboardTemplateTyped = toTypedRxJsonSchema(
+  dashboardTemplateSchemaLiteral
+)
 
 export type TaskDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof tasksTyped
@@ -268,9 +321,14 @@ export type FormProjectDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof formProjectTyped
 >
 
+export type DashboardTemplateDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
+  typeof dashboardTemplateTyped
+>
+
 export type TaskCollections = {
   tasks: RxCollection<TaskDocType>
   columns: RxCollection<ColumnDocType>
   projects: RxCollection<ProjectDocType>
   formProjects: RxCollection<FormProjectDocType>
+  dashboardTemplates: RxCollection<DashboardTemplateDocType>
 }

@@ -1,74 +1,91 @@
-import { create } from 'zustand'
-import type { CustomLayouts } from '@incmix/ui/dashboard'
-import type { Layout } from 'react-grid-layout'
-import { initialLayouts, presetLayouts } from '@incmix/ui/dashboard'
+import { create } from "zustand";
+import type { CustomLayouts } from "@incmix/ui/dashboard";
+import type { Layout } from "react-grid-layout";
+import { initialLayouts, presetLayouts } from "@incmix/ui/dashboard";
+import { useEditingStore } from "@incmix/store";
 
 export interface LayoutPreset {
-  id: string
-  name: string
-  description: string
-  image: string
-  mainLayouts: CustomLayouts
-  nestedLayouts: Record<string, Layout[]>
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  mainLayouts: CustomLayouts;
+  nestedLayouts: Record<string, Layout[]>;
 }
-
-
 
 interface LayoutState {
   // Layout state
-  defaultLayouts: CustomLayouts
-  nestedLayouts: Record<string, Layout[]>
-  
-  // Preset state
-  activePresetId: string
-  
-  // Actions
-  applyPreset: (presetId: string) => void
-  setDefaultLayouts: (layouts: CustomLayouts) => void
-  setNestedLayouts: (layouts: Record<string, Layout[]>) => void
-  handleLayoutChange: (_layout: any, allLayouts: any) => void
-  handleNestedLayoutChange: (nestedLayout: Layout[], itemKey: string) => void
+  defaultLayouts: CustomLayouts;
+  nestedLayouts: Record<string, Layout[]>;
 
-  updateStaticProperty: (isEditing: boolean) => void
+  // Preset state
+  activePresetId: string;
+
+  // Actions
+  applyPreset: (presetId?: string) => void;
+  applyTemplates: (
+    mainLayouts?: CustomLayouts,
+    nestedLayouts?: Record<string, Layout[]>,
+    templateId?: string,
+  ) => void;
+  setDefaultLayouts: (layouts: CustomLayouts) => void;
+  setNestedLayouts: (layouts: Record<string, Layout[]>) => void;
+  handleLayoutChange: (_layout: any, allLayouts: any) => void;
+  handleNestedLayoutChange: (nestedLayout: Layout[], itemKey: string) => void;
+  updateStaticProperty: (isEditing: boolean) => void;
 }
 
 export const useLayoutStore = create<LayoutState>((set, get) => ({
   defaultLayouts: presetLayouts[0].mainLayouts,
   nestedLayouts: presetLayouts[0].nestedLayouts,
   activePresetId: presetLayouts[0].id,
-  
+
   applyPreset: (presetId) => {
-    const preset = presetLayouts.find(p => p.id === presetId);
+    const preset = presetLayouts.find((p) => p.id === presetId);
     if (!preset) return;
-    
+
     set({
       defaultLayouts: preset.mainLayouts,
       nestedLayouts: preset.nestedLayouts,
       activePresetId: preset.id,
     });
   },
-  
+  applyTemplates: (mainLayouts, nestedLayouts, templateId) => {
+    // Use existing layouts as fallbacks if new ones aren't provided
+    const { defaultLayouts, nestedLayouts: currentNestedLayouts } = get();
+
+    set({
+      defaultLayouts: mainLayouts || defaultLayouts,
+      nestedLayouts: nestedLayouts || currentNestedLayouts,
+      activePresetId: templateId,
+    });
+
+    // const { updateStaticProperty } = get();
+    // const { isEditing } = useEditingStore.getState();
+    // updateStaticProperty(isEditing);
+  },
   setDefaultLayouts: (layouts) => {
     set({ defaultLayouts: layouts });
   },
-  
+
   setNestedLayouts: (layouts) => {
     set({ nestedLayouts: layouts });
   },
-  
+
   handleLayoutChange: (_layout, allLayouts) => {
-    console.log("All_Layouts",allLayouts);
+    // console.log("All_Layouts",allLayouts);
 
     const { defaultLayouts } = get();
-    const hasChanged = JSON.stringify(allLayouts) !== JSON.stringify(defaultLayouts);
+    const hasChanged =
+      JSON.stringify(allLayouts) !== JSON.stringify(defaultLayouts);
     if (hasChanged) {
       set({ defaultLayouts: allLayouts });
     }
   },
-  
+
   handleNestedLayoutChange: (nestedLayout, itemKey) => {
-    console.log("Nested Layout",nestedLayout);
-    
+    // console.log("Nested Layout",nestedLayout);
+
     set((state) => ({
       nestedLayouts: {
         ...state.nestedLayouts,
@@ -78,26 +95,26 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
   },
   updateStaticProperty: (isEditing) => {
     const { defaultLayouts, nestedLayouts } = get();
-    
+
     const updatedDefaultLayouts: CustomLayouts = {};
     Object.entries(defaultLayouts).forEach(([breakpoint, layouts]) => {
-      updatedDefaultLayouts[breakpoint] = layouts.map(item => ({
+      updatedDefaultLayouts[breakpoint] = layouts.map((item) => ({
         ...item,
         static: !isEditing,
       }));
     });
-    
+
     const updatedNestedLayouts: Record<string, Layout[]> = {};
     Object.entries(nestedLayouts).forEach(([key, layouts]) => {
-      updatedNestedLayouts[key] = layouts.map(item => ({
+      updatedNestedLayouts[key] = layouts.map((item) => ({
         ...item,
         static: !isEditing,
       }));
     });
-    
+
     set({
       defaultLayouts: updatedDefaultLayouts,
       nestedLayouts: updatedNestedLayouts,
     });
-  }
+  },
 }));

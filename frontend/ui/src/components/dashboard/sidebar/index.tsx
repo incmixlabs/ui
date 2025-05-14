@@ -1,10 +1,14 @@
 import {
   Badge,
   Box,
+  Button,
+  Flex,
   Grid,
   Heading,
   Input,
   LayoutPresetsSection,
+  ScrollArea,
+  cn,
   dashboardImg,
   useSelectionStore,
 } from "@incmix/ui";
@@ -19,7 +23,10 @@ import {
 } from "@incmix/ui/widgets";
 import { useEffect, useMemo, useState } from "react";
 import { DraggableComponent } from "./draggable-component";
-import { Search } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
+import { TemplatesSidebar } from "./templates";
+import { useParams } from "@tanstack/react-router";
+
 export const sidebarComponents = [
   {
     slotId: "i",
@@ -126,6 +133,8 @@ interface DashboardSidebarProps {
 }
 
 export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
+  const { projectId } = useParams({ from: "/dashboard/project/$projectId" });
+
   const { selectedWidgets, setSelectedWidgets, clearSelection } =
     useSelectionStore();
   const [availableComponents] = useState(sidebarComponents);
@@ -133,6 +142,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
     string | null
   >(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleDragStart = (componentId: string) => {
     setDraggingComponentId(componentId);
@@ -155,48 +165,78 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
   }, [availableComponents, searchQuery]);
 
   return (
-    <Box className="p-2">
-      <Heading size={"3"} className="py-2  pt-5 ">Components/Widgets </Heading>
+    <Box className="h-screen bg-gray-3">
+      <ScrollArea className="h-full p-2">
+        <Box
+          className={`bg-gray-1 p-2 rounded-xl relative border border-gray-6 transition-all duration-300 ${isExpanded ? "h-fit " : "h-96 overflow-hidden"}`}
+        >
+          {!isExpanded && (
+            <Box className="-bottom-2 absolute left-0 z-40 h-28 w-full bg-gradient-to-t from-gray-1"></Box>
+          )}
 
-      <Box className="mb-4 relative">
-        <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search components..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-8 w-full bg-gray-3"
-        />
-      </Box>
-      {filteredComponents.length === 0 ? (
-        <div className="text-center py-4 text-muted-foreground">
-          No components match your search
-        </div>
-      ) : (
-        <Grid columns={"2"} gap="2" className="relative">
-          {filteredComponents.map((comp) => (
-            <div key={comp.slotId} className="relative">
-              <DraggableComponent
-                id={comp.slotId}
-                title={comp.title}
-                image={comp.compImage}
-                component={comp.component}
-                disabled={!isEditing || selectedWidgets.length > 0}
-                onDragStart={() => handleDragStart(comp.slotId)}
-                onDragEnd={handleDragEnd}
+          <Flex justify="between" align="center">
+            <Heading size="2" className="mb-2 font-medium">
+              Components/Widgets
+            </Heading>
+            <Button
+              variant="ghost"
+              color="gray"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="hover:bg-transparent"
+            >
+              <ChevronDown
+                className={cn(
+                  "transition-transform duration-300",
+                  isExpanded && "transform rotate-180",
+                )}
               />
-              {/* <div className="absolute bottom-1 left-1 flex flex-wrap gap-1 max-w-[90%]">
+              <span className="sr-only">
+                {isExpanded ? "Collapse templates" : "Expand templates"}
+              </span>
+            </Button>
+          </Flex>
+          <Box className="mb-4 relative">
+            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search components..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8 w-full bg-gray-4"
+            />
+          </Box>
+          {filteredComponents.length === 0 ? (
+            <Box className="text-center py-4 text-muted-foreground">
+              No components match your search
+            </Box>
+          ) : (
+            <Grid columns={"2"} gap="2" className="relative">
+              {filteredComponents.map((comp) => (
+                <div key={comp.slotId} className="relative">
+                  <DraggableComponent
+                    id={comp.slotId}
+                    title={comp.title}
+                    image={comp.compImage}
+                    component={comp.component}
+                    disabled={!isEditing || selectedWidgets.length > 0}
+                    onDragStart={() => handleDragStart(comp.slotId)}
+                    onDragEnd={handleDragEnd}
+                  />
+                  {/* <div className="absolute bottom-1 left-1 flex flex-wrap gap-1 max-w-[90%]">
                 {comp.tags.map((tag, index) => (
                   <Badge key={index} variant="solid" className="text-xs">
                     {tag}
                   </Badge>
                 ))}
               </div> */}
-            </div>
-          ))}
-        </Grid>
-      )}
+                </div>
+              ))}
+            </Grid>
+          )}
+        </Box>
 
-      <LayoutPresetsSection />
+        <TemplatesSidebar projectId={projectId} />
+        <LayoutPresetsSection />
+      </ScrollArea>
     </Box>
   );
 }
