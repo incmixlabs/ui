@@ -1,6 +1,6 @@
 import { Box, Flex, Grid, Heading, Select, Switch, Text } from "@incmix/ui"
 import AutoForm from "@incmix/ui/auto-form"
-import { useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 
@@ -8,6 +8,7 @@ import { useCurrentUser, useProfileUpdate } from "@auth"
 import { LoadingPage } from "@common"
 import { useLanguageStore, useThemeStore } from "@incmix/store"
 import { Button, CardContainer, ReactiveButton } from "@incmix/ui"
+import { AUTH_API_URL } from "@incmix/ui/constants"
 import type { UserProfile } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { CurrentUserProfileImage } from "../common/components/user-profile-image"
@@ -60,6 +61,34 @@ const useGeneralInfoForm = (userId: string, initialName: string) => {
 const usePasswordChangeForm = () => {
   const { t } = useTranslation(["profile"])
 
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: async ({
+      currentPassword,
+      newPassword,
+    }: { currentPassword: string; newPassword: string }) => {
+      const response = await fetch(`${AUTH_API_URL}/reset-password`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+        credentials: "include",
+      })
+
+      if (!response.ok) {
+        throw new Error(t("error.changePassword"))
+      }
+
+      return response.json() as Promise<{ message: string }>
+    },
+    onSuccess: (data) => {
+      toast.success(data.message)
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
+
   // Create a schema with translated validation messages
   const schemaWithTranslations = {
     ...passwordChangeFormSchema.formSchema,
@@ -88,9 +117,14 @@ const usePasswordChangeForm = () => {
 
   const handleSubmit = (values: { [key: string]: any }) => {
     try {
-      // TODO: Implement password change logic here
-      console.log(values)
-      toast.success(t("success.changePassword"))
+      if (values.newPassword !== values.confirmPassword) {
+        toast.error(t("error.confirmPassword"))
+        return
+      }
+      mutate({
+        currentPassword: values.currentPassword,
+        newPassword: values.newPassword,
+      })
     } catch (error) {
       const message =
         error instanceof Error ? error.message : t("error.changePassword")
@@ -101,6 +135,8 @@ const usePasswordChangeForm = () => {
   return {
     schemaWithTranslations,
     handleSubmit,
+    isPasswordChangePending: isPending,
+    passwordChangeError: error,
   }
 }
 
@@ -156,7 +192,12 @@ const GeneralInfoForm: React.FC<ReturnType<typeof useGeneralInfoForm>> = ({
 
 const PasswordChangeForm: React.FC<
   ReturnType<typeof usePasswordChangeForm>
-> = ({ schemaWithTranslations, handleSubmit }) => {
+> = ({
+  schemaWithTranslations,
+  handleSubmit,
+  isPasswordChangePending,
+  passwordChangeError,
+}) => {
   const { t } = useTranslation(["settings", "common"])
   return (
     <CardContainer>
@@ -169,7 +210,15 @@ const PasswordChangeForm: React.FC<
         onSubmit={handleSubmit}
         className="space-y-4"
       >
-        <ReactiveButton type="submit" color="blue" className="w-full">
+        {passwordChangeError && (
+          <Text color="red">{passwordChangeError.message}</Text>
+        )}
+        <ReactiveButton
+          type="submit"
+          color="blue"
+          loading={isPasswordChangePending}
+          className="w-full"
+        >
           {t("changePassword")}
         </ReactiveButton>
       </AutoForm>
