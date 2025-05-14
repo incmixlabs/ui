@@ -17,7 +17,7 @@ interface EditableCellProps {
 
 /**
  * Editable cell component that switches between display, selected, and edit modes
- * First click selects the cell, second click enters edit mode
+ * Supports keyboard navigation and editing similar to Excel
  */
 export const EditableCell: React.FC<EditableCellProps> = ({
   value,
@@ -50,11 +50,19 @@ export const EditableCell: React.FC<EditableCellProps> = ({
   }, [isEditing]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Always stop propagation in edit mode to prevent table navigation
     e.stopPropagation();
+
     if (e.key === "Enter") {
+      // Save changes on Enter
       onSave(rowData, columnId, editValue);
     } else if (e.key === "Escape") {
+      // Cancel edit on Escape
       onCancelEdit();
+    } else if (e.key === "Tab") {
+      // Save changes and let the table's keyboard handler manage navigation
+      onSave(rowData, columnId, editValue);
+      // Don't stopPropagation() here to allow the table handler to handle tab navigation
     }
   };
 
@@ -69,7 +77,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    
+
     if (isSelected) {
       // If already selected, enter edit mode
       onStartEdit();
@@ -78,17 +86,17 @@ export const EditableCell: React.FC<EditableCellProps> = ({
       onSelect();
     }
   };
-  
-  // Handle document-wide click to deselect 
+
+  // Handle document-wide click to deselect
   useEffect(() => {
     if (!isSelected) return;
-    
+
     const handleOutsideClick = (e: MouseEvent) => {
       if (cellRef.current && !cellRef.current.contains(e.target as Node)) {
         onCancelEdit(); // This also cancels selection
       }
     };
-    
+
     document.addEventListener('mousedown', handleOutsideClick);
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
@@ -114,11 +122,23 @@ export const EditableCell: React.FC<EditableCellProps> = ({
   }
 
   return (
-    <div 
+    <div
       ref={cellRef}
       onClick={handleClick}
-      className={`${className} cursor-pointer w-full h-full p-1 transition-colors duration-150 
+      className={`${className} cursor-pointer w-full h-full p-1 transition-colors duration-150
         ${isSelected ? "bg-blue-100 dark:bg-blue-900/30 rounded" : ""}`}
+      // Add tabIndex to make div focusable, but only when selected
+      tabIndex={isSelected ? 0 : -1}
+      // This handles Tab navigation when not in edit mode but cell is selected
+      onKeyDown={(e) => {
+        if (isSelected && !isEditing) {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            onStartEdit();
+          }
+          // Let other keys (arrows, tab) propagate to the table handler
+        }
+      }}
     >
       {value}
     </div>

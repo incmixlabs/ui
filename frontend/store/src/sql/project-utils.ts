@@ -161,6 +161,7 @@ const ensureFileObject = async (fileData: any): Promise<File | null> => {
  * @param projectData The project data from the form
  * @returns The saved RxDB document
  */
+
 export const saveFormProject = async (projectData: ProjectFormData) => {
   try {
     const now = Date.now()
