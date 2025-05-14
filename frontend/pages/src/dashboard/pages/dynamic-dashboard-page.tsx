@@ -37,11 +37,12 @@ const ResponsiveGridLayout = WidthProvider(Responsive)
 
 const DynamicDashboardPage: React.FC = () => {
   const { projectId } = useParams({ from: "/dashboard/project/$projectId" })
-  const [isTemplate] = useQueryState("template")
+  const [isTemplate, setIsTemplate] = useQueryState("template")
   const project = useDashboardStore((state) => state.getProjectById(projectId))
   const { authUser, isLoading } = useAuth()
   const { isEditing, setIsEditing } = useEditingStore()
-  const { getTemplateById } = useTemplateStore()
+  const { getTemplateById, getActiveTemplate } = useTemplateStore()
+
   const {
     defaultLayouts,
     nestedLayouts,
@@ -52,18 +53,45 @@ const DynamicDashboardPage: React.FC = () => {
   } = useLayoutStore()
 
   const [openSaveDialog, setOpenSaveDialog] = useState(false)
+
+  useEffect(() => {
+    const fetchTemplate = async () => {
+      if (isTemplate) {
+        try {
+          const template = await getTemplateById(isTemplate)
+          if (!template) {
+            setIsTemplate(null)
+            return
+          }
+          applyTemplates(template.layouts, template.nestedLayouts, template.id)
+          updateStaticProperty(isEditing)
+        } catch (error) {
+          console.error("Failed to load template:", error)
+        }
+      } else {
+        try {
+          const activeTemplate = await getActiveTemplate(projectId)
+          if (activeTemplate) {
+            applyTemplates(
+              activeTemplate.layouts,
+              activeTemplate.nestedLayouts,
+              activeTemplate.id
+            )
+            updateStaticProperty(isEditing)
+          }
+        } catch (error) {
+          console.error("Failed to load active template:", error)
+        }
+      }
+    }
+
+    fetchTemplate()
+  }, [isTemplate, projectId])
+
   useEffect(() => {
     updateStaticProperty(isEditing)
   }, [isEditing, updateStaticProperty])
 
-  useEffect(() => {
-    if (isEditing && isTemplate) {
-      const template = getTemplateById(isTemplate)
-      if (template) {
-        applyTemplates(template.layouts, template.nestedLayouts, template.id)
-      }
-    }
-  }, [isTemplate, isEditing])
   // Device preview hooks
   const { activeDevice, setActiveDevice, deviceTabs, getViewportWidth } =
     useDevicePreview()

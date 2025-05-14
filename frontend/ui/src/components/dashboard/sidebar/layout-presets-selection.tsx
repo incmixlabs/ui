@@ -17,11 +17,11 @@ export function LayoutPresetsSection() {
 
   return (
     <Box
-      className={`bg-gray-3 p-2 mt-4 rounded-xl relative border border-gray-5 transition-all duration-300 ${isExpanded ? "h-fit " : "h-52 overflow-hidden"}`}
+      className={`bg-gray-1 p-2 mt-4 rounded-xl relative border border-gray-5 transition-all duration-300 ${isExpanded ? "h-fit " : "h-52 overflow-hidden"}`}
     >
-      {/* {!isExpanded &&
-      <Box className="-bottom-2 absolute left-0 h-28 w-full bg-gradient-to-t from-gray-3"></Box>
-      } */}
+      {!isExpanded &&
+      <Box className="-bottom-2 absolute left-0 h-28 w-full bg-gradient-to-t from-gray-1"></Box>
+      }
       <Flex justify="between" align="center">
         <Heading size="2" className="mb-2 font-medium">
           Layout Presets

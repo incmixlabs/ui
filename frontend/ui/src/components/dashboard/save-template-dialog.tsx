@@ -80,7 +80,6 @@ export function SaveTemplateDialog({
       handleAddTag();
     }
   };
-  console.log(isTemplate, tags);
   const handleSave = async () => {
     if (!templateName.trim()) {
       toast.error("Please enter a template name");
@@ -93,6 +92,7 @@ export function SaveTemplateDialog({
       tags,
       layouts,
       nestedLayouts,
+      isActive: false,
     });
     setIsTemplate(null);
     toast.success("Template saved successfully");

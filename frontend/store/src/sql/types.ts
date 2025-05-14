@@ -128,6 +128,10 @@ export const dashboardTemplateSchemaLiteral = {
       type: "string",
       maxLength: 100,
     },
+    isActive: {
+      type: "boolean",
+      default: false,
+    },
     name: {
       type: "string",
     },
@@ -147,10 +151,10 @@ export const dashboardTemplateSchemaLiteral = {
       type: "object",
     },
     createdAt: {
-      type: "string",
+      type: "number",
     },
     updatedAt: {
-      type: "string",
+      type: "number",
     },
   },
   required: [

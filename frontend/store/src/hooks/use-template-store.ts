@@ -13,6 +13,7 @@ export interface DashboardTemplate {
   nestedLayouts: Record<string, Layout[]>
   createdAt: number
   updatedAt: number
+  isActive?: boolean
 }
 
 interface TemplateState {
@@ -20,7 +21,7 @@ interface TemplateState {
   isLoading: boolean
   error: string | null
   initialized: boolean
-  initialize: () => Promise<void>
+  initialize: (projectId: string) => Promise<void>
   addTemplate: (
     template: Omit<DashboardTemplate, "id" | "createdAt" | "updatedAt">
   ) => Promise<string>
@@ -29,9 +30,11 @@ interface TemplateState {
     template: Partial<DashboardTemplate>
   ) => Promise<void>
   deleteTemplate: (id: string) => Promise<void>
+  templateActive: (id: string) => Promise<DashboardTemplate | null>
   getTemplatesByProjectId: (projectId: string) => DashboardTemplate[]
   getTemplatesByTag: (tag: string) => DashboardTemplate[]
-  getTemplateById: (id: string) => DashboardTemplate | undefined
+  getTemplateById: (id: string) => Promise<DashboardTemplate | null>
+  getActiveTemplate: (projectId: string) => Promise<DashboardTemplate | null>
 }
 
 export const useTemplateStore = create<TemplateState>()((set, get) => ({
@@ -40,7 +43,7 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
   error: null,
   initialized: false,
 
-  initialize: async () => {
+  initialize: async (projectId: string) => {
     if (get().initialized) return
 
     set({ isLoading: true, error: null })
@@ -50,7 +53,13 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
       const templatesCollection = database.dashboardTemplates
 
       // Initial load of templates
-      const templates = await templatesCollection.find().exec()
+      const templates = await templatesCollection
+        .find({
+          selector: {
+            projectId: projectId,
+          },
+        })
+        .exec()
 
       set({ templates: templates.map((t) => t.toJSON()), initialized: true })
       set({ isLoading: false })
@@ -145,7 +154,82 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
       throw error
     }
   },
+  templateActive: async (id) => {
+    set({ isLoading: true, error: null })
 
+    try {
+      const templatesCollection = database.dashboardTemplates
+
+      const templateToActivate = await templatesCollection.findOne(id).exec()
+
+      if (!templateToActivate) {
+        throw new Error("Template not found")
+      }
+
+      const activeTemplates = await templatesCollection
+        .find({
+          selector: {
+            projectId: templateToActivate.get("projectId"),
+            isActive: true,
+          },
+        })
+        .exec()
+
+      for (const activeTemplate of activeTemplates) {
+        if (activeTemplate.id !== id) {
+          await activeTemplate.update({
+            $set: { isActive: false },
+          })
+        }
+      }
+
+      await templateToActivate.update({
+        $set: { isActive: true },
+      })
+
+      set((state) => ({
+        templates: state.templates.map((t) =>
+          t.id === id
+            ? { ...t, isActive: true }
+            : t.projectId === templateToActivate.get("projectId")
+              ? { ...t, isActive: false }
+              : t
+        ),
+        isLoading: false,
+      }))
+
+      // Return the activated template
+      return templateToActivate.toJSON()
+    } catch (error) {
+      console.error("Failed to activate template:", error)
+      set({
+        error: "Failed to activate template",
+        isLoading: false,
+      })
+      return null
+    }
+  },
+
+  getActiveTemplate: async (projectId: string) => {
+    try {
+      const templatesCollection = database.dashboardTemplates
+
+      // Find a template that matches both projectId and isActive=true
+      const activeTemplate = await templatesCollection
+        .findOne({
+          selector: {
+            projectId: projectId,
+            isActive: true,
+          },
+        })
+        .exec()
+
+      return activeTemplate ? activeTemplate.toJSON() : null
+    } catch (error) {
+      console.error("Failed to get active template:", error)
+      return null
+    }
+  },
   getTemplatesByProjectId: (projectId) => {
     return get().templates.filter((t) => t.projectId === projectId)
   },
@@ -154,7 +238,9 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
     return get().templates.filter((t) => t.tags.includes(tag))
   },
 
-  getTemplateById: (id) => {
-    return get().templates.find((t) => t.id === id)
+  getTemplateById: async (id) => {
+    const templatesCollection = database.dashboardTemplates
+    const existingTemplate = await templatesCollection.findOne(id).exec()
+    return existingTemplate?.toJSON() ?? null // convert to plain object
   },
 }))

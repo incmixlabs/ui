@@ -165,73 +165,73 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
   }, [availableComponents, searchQuery]);
 
   return (
-    <Box className="h-screen">
+    <Box className="h-screen bg-gray-3">
       <ScrollArea className="h-full p-2">
-      <Box className={`bg-gray-3 p-2 rounded-xl relative border border-gray-5 transition-all duration-300 ${isExpanded ? "h-fit " : "h-96 overflow-hidden"}`}
-      >
-        {!isExpanded &&
-<Box className="-bottom-2 absolute left-0 z-40 h-28 w-full bg-gradient-to-t from-gray-3"></Box>
-}
+        <Box
+          className={`bg-gray-1 p-2 rounded-xl relative border border-gray-6 transition-all duration-300 ${isExpanded ? "h-fit " : "h-96 overflow-hidden"}`}
+        >
+          {!isExpanded && (
+            <Box className="-bottom-2 absolute left-0 z-40 h-28 w-full bg-gradient-to-t from-gray-1"></Box>
+          )}
 
-        <Flex justify="between" align="center">
-
-          <Heading size="2" className="mb-2 font-medium">
-            Components/Widgets
-          </Heading>
-          <Button
-            variant="ghost"
-            color="gray"
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="hover:bg-transparent"
-          >
-            <ChevronDown
-              className={cn(
-                "transition-transform duration-300",
-                isExpanded && "transform rotate-180",
-              )}
+          <Flex justify="between" align="center">
+            <Heading size="2" className="mb-2 font-medium">
+              Components/Widgets
+            </Heading>
+            <Button
+              variant="ghost"
+              color="gray"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="hover:bg-transparent"
+            >
+              <ChevronDown
+                className={cn(
+                  "transition-transform duration-300",
+                  isExpanded && "transform rotate-180",
+                )}
+              />
+              <span className="sr-only">
+                {isExpanded ? "Collapse templates" : "Expand templates"}
+              </span>
+            </Button>
+          </Flex>
+          <Box className="mb-4 relative">
+            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search components..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8 w-full bg-gray-4"
             />
-            <span className="sr-only">
-              {isExpanded ? "Collapse templates" : "Expand templates"}
-            </span>
-          </Button>
-        </Flex>
-        <Box className="mb-4 relative">
-          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search components..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-8 w-full bg-gray-1"
-          />
-        </Box>
-        {filteredComponents.length === 0 ? (
-          <Box className="text-center py-4 text-muted-foreground">
-            No components match your search
           </Box>
-        ) : (
-          <Grid columns={"2"} gap="2" className="relative">
-            {filteredComponents.map((comp) => (
-              <div key={comp.slotId} className="relative">
-                <DraggableComponent
-                  id={comp.slotId}
-                  title={comp.title}
-                  image={comp.compImage}
-                  component={comp.component}
-                  disabled={!isEditing || selectedWidgets.length > 0}
-                  onDragStart={() => handleDragStart(comp.slotId)}
-                  onDragEnd={handleDragEnd}
-                />
-                {/* <div className="absolute bottom-1 left-1 flex flex-wrap gap-1 max-w-[90%]">
+          {filteredComponents.length === 0 ? (
+            <Box className="text-center py-4 text-muted-foreground">
+              No components match your search
+            </Box>
+          ) : (
+            <Grid columns={"2"} gap="2" className="relative">
+              {filteredComponents.map((comp) => (
+                <div key={comp.slotId} className="relative">
+                  <DraggableComponent
+                    id={comp.slotId}
+                    title={comp.title}
+                    image={comp.compImage}
+                    component={comp.component}
+                    disabled={!isEditing || selectedWidgets.length > 0}
+                    onDragStart={() => handleDragStart(comp.slotId)}
+                    onDragEnd={handleDragEnd}
+                  />
+                  {/* <div className="absolute bottom-1 left-1 flex flex-wrap gap-1 max-w-[90%]">
                 {comp.tags.map((tag, index) => (
                   <Badge key={index} variant="solid" className="text-xs">
                     {tag}
                   </Badge>
                 ))}
               </div> */}
-              </div>
-            ))}
-          </Grid>
-        )}
+                </div>
+              ))}
+            </Grid>
+          )}
         </Box>
 
         <TemplatesSidebar projectId={projectId} />
