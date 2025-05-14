@@ -50,19 +50,22 @@ export const EditableCell: React.FC<EditableCellProps> = ({
   }, [isEditing]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    // Always stop propagation in edit mode to prevent table navigation
+    if (e.key === "Tab") {
+      // Save and let the table handle focus movement
+      onSave(rowData, columnId, editValue);
+      return; // Allow event to bubble up for proper tab navigation
+    }
+    
+    // For every other key we keep the event local to the cell
     e.stopPropagation();
-
+    
     if (e.key === "Enter") {
       // Save changes on Enter
+      e.preventDefault(); // Prevent form submission
       onSave(rowData, columnId, editValue);
     } else if (e.key === "Escape") {
       // Cancel edit on Escape
       onCancelEdit();
-    } else if (e.key === "Tab") {
-      // Save changes and let the table's keyboard handler manage navigation
-      onSave(rowData, columnId, editValue);
-      // Don't stopPropagation() here to allow the table handler to handle tab navigation
     }
   };
 

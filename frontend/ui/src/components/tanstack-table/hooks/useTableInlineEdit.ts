@@ -14,9 +14,11 @@ interface CellPosition {
 export function useTableInlineEdit<TData>({
   onCellEdit,
   tableRef,
+  disableBuiltInHandlers = false,
 }: {
   onCellEdit?: (rowData: TData, columnId: string, newValue: any) => void;
   tableRef?: RefObject<HTMLElement | null> | null;
+  disableBuiltInHandlers?: boolean;
 }) {
   // Track which cell is being edited [rowId_columnId]
   const [editingCell, setEditingCell] = useState<string | null>(null);
@@ -69,16 +71,21 @@ export function useTableInlineEdit<TData>({
 
   // Navigate to a specific cell by position indices
   const navigateToCell = useCallback((rowIndex: number, colIndex: number) => {
+    // Safety check: if either dimension is empty, navigation is not possible
+    if (cellMatrix.rowIds.length === 0 || cellMatrix.colIds.length === 0) {
+      return false;
+    }
+    
     // Ensure indexes are within bounds
     if (
-      rowIndex >= 0 &&
-      rowIndex < cellMatrix.rowIds.length &&
-      colIndex >= 0 &&
+      rowIndex >= 0 && 
+      rowIndex < cellMatrix.rowIds.length && 
+      colIndex >= 0 && 
       colIndex < cellMatrix.colIds.length
     ) {
       const rowId = cellMatrix.rowIds[rowIndex];
       const colId = cellMatrix.colIds[colIndex];
-
+      
       selectCell(rowId, colId);
       return true;
     }
@@ -142,8 +149,8 @@ export function useTableInlineEdit<TData>({
   // Attach keyboard event handlers to the table
   useEffect(() => {
     const tableElement = tableRef?.current;
-    if (!tableElement) return;
-
+    if (!tableElement || disableBuiltInHandlers) return;
+    
     const handleKeyDown = (e: KeyboardEvent) => {
       // Only process if we have a selected cell and not in an input/editing mode
       if (!selectedPosition || editingCell) return;
@@ -152,6 +159,11 @@ export function useTableInlineEdit<TData>({
       const rowId = cellMatrix.rowIds[selectedPosition.rowIndex];
       const colId = cellMatrix.colIds[selectedPosition.colIndex];
 
+      // Safety check: if there are no rows or columns, don't attempt navigation
+      if (cellMatrix.rowIds.length === 0 || cellMatrix.colIds.length === 0) {
+        return;
+      }
+      
       switch (e.key) {
         case 'ArrowLeft':
           if (navigateLeft()) e.preventDefault();
