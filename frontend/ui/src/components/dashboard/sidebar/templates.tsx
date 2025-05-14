@@ -80,25 +80,26 @@ export function TemplatesSidebar({ projectId }: TemplatesSidebarProps) {
 
   const handleDeleteTemplate = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    deleteTemplate(id);
-    toast.success("Template deleted successfully");
+    if (window.confirm("Are you sure you want to delete this template?")) {  
+      deleteTemplate(id);  
+      toast.success("Template deleted successfully");  
+    }  
   };
 
   const handleSelectTag = (tag: string) => {
     setSelectedTag(selectedTag === tag ? null : tag);
   };
-  // Add the loadTemplate function here
+
+
   const loadTemplateLayout = (templateId: string) => {
     const template = getTemplateById(templateId);
-    // console.log("loadtemplate",template);
-    setIsTemplate(templateId);
     if (!template) {
       toast.error("Template not found");
       return;
     }
+    setIsTemplate(templateId);
 
-    // Update layouts in the parent component
-    applyTemplates(template.layouts, template.nestedLayouts, template.id);
+    applyTemplates(template.layouts, template.nestedLayouts, template.id);    
 
     toast.success(`Template "${template.name}" loaded successfully`);
   };
