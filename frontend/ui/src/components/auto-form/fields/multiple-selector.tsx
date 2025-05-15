@@ -1,4 +1,4 @@
-import MultipleSelector from "@components/multiple-selector/multiple-selector"
+import { MultipleSelector } from "@components/multiple-selector/multiple-selector"
 import {
   FormControl,
   FormItem,

@@ -2,9 +2,11 @@ import {
   Badge,
   Box,
   Button,
+  DropdownMenu,
   Flex,
   Grid,
   Heading,
+  IconButton,
   Input,
   LayoutPresetsSection,
   ScrollArea,
@@ -23,9 +25,10 @@ import {
 } from "@incmix/ui/widgets";
 import { useEffect, useMemo, useState } from "react";
 import { DraggableComponent } from "./draggable-component";
-import { ChevronDown, Search } from "lucide-react";
+import { ChevronDown, Filter, Minus, Plus, Search, X } from "lucide-react";
 import { TemplatesSidebar } from "./templates";
 import { useParams } from "@tanstack/react-router";
+import { useTemplateStore } from "@incmix/store";
 
 export const sidebarComponents = [
   {
@@ -137,12 +140,109 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
 
   const { selectedWidgets, setSelectedWidgets, clearSelection } =
     useSelectionStore();
+  const {
+    templates,
+    initialized,
+    initialize,
+    deleteTemplate,
+    getTemplateById,
+    templateActive,
+  } = useTemplateStore();
   const [availableComponents] = useState(sidebarComponents);
   const [_draggingComponentId, setDraggingComponentId] = useState<
     string | null
   >(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [filterType, setFilterType] = useState<
+    "widgets" | "templates" | "both"
+  >("both");
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+
+  const [isWidgetExpanded, setIsWidgetExpanded] = useState(false);
+  const [isTemplateExpanded, setIsTemplateExpanded] = useState(false);
+
+  useEffect(() => {
+    if (!initialized && projectId) {
+      initialize(projectId);
+    }
+  }, [initialized, initialize, projectId]);
+
+
+
+// Filtered templates or empty if filterType excludes templates
+const filteredTemplates = useMemo(() => {
+  if (filterType === "widgets") return [];
+
+  const query = searchQuery.toLowerCase().trim();
+
+  return templates.filter((template) => {
+    const matchesSearch =
+      !query ||
+      template.name.toLowerCase().includes(query) ||
+      template.tags.some((tag) => tag.toLowerCase().includes(query));
+
+    const matchesTag = !selectedTag || template.tags.includes(selectedTag);
+
+    return matchesSearch && matchesTag;
+  });
+}, [templates, searchQuery, selectedTag, filterType]);
+
+const filteredWidgets = useMemo(() => {
+  if (filterType === "templates") return [];
+
+  const query = searchQuery.toLowerCase().trim();
+
+  return availableComponents.filter((comp) => {
+    const matchesSearch =
+      !query ||
+      comp.title.toLowerCase().includes(query) ||
+      comp.tags.some((tag) => tag.toLowerCase().includes(query));
+
+    const matchesTag = !selectedTag || comp.tags.includes(selectedTag);
+
+    return matchesSearch && matchesTag;
+  });
+}, [availableComponents, searchQuery, selectedTag, filterType]);
+
+useEffect(() => {
+  const userSearchedOrFiltered = !!searchQuery.trim() || !!selectedTag;
+
+  if (userSearchedOrFiltered) {
+    if (filterType === "both") {
+      setIsTemplateExpanded(filteredTemplates.length > 0);
+      setIsWidgetExpanded(filteredWidgets.length > 0);
+    } else if (filterType === "widgets") {
+      setIsTemplateExpanded(false);
+      setIsWidgetExpanded(filteredWidgets.length > 0);
+    } else if (filterType === "templates") {
+      setIsTemplateExpanded(filteredTemplates.length > 0);
+      setIsWidgetExpanded(false);
+    }
+  } else {
+    // no search/tag interaction
+    if (filterType === "widgets") {
+      setIsTemplateExpanded(false);
+      setIsWidgetExpanded(true);
+    } else if (filterType === "templates") {
+      setIsTemplateExpanded(true);
+      setIsWidgetExpanded(false);
+    } else {
+      setIsTemplateExpanded(false);
+      setIsWidgetExpanded(false);
+    }
+  }
+}, [searchQuery, selectedTag, filterType, filteredTemplates, filteredWidgets]);
+
+
+  
+
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    templates.forEach((t) => t.tags.forEach(tagSet.add, tagSet));
+    availableComponents.forEach((w) => w.tags.forEach(tagSet.add, tagSet));
+    return Array.from(tagSet);
+  }, [templates, availableComponents]);
+
 
   const handleDragStart = (componentId: string) => {
     setDraggingComponentId(componentId);
@@ -152,89 +252,149 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
     setDraggingComponentId(null);
   };
 
-  // Filter components based on search query
-  const filteredComponents = useMemo(() => {
-    if (!searchQuery.trim()) return availableComponents;
-
-    const query = searchQuery.toLowerCase();
-    return availableComponents.filter(
-      (comp) =>
-        comp.title.toLowerCase().includes(query) ||
-        comp.tags.some((tag) => tag.toLowerCase().includes(query)),
-    );
-  }, [availableComponents, searchQuery]);
-
   return (
     <Box className="h-screen bg-gray-3">
       <ScrollArea className="h-full p-2">
-        <Box
-          className={`bg-gray-1 p-2 rounded-xl relative border border-gray-6 transition-all duration-300 ${isExpanded ? "h-fit " : "h-96 overflow-hidden"}`}
-        >
-          {!isExpanded && (
-            <Box className="-bottom-2 absolute left-0 z-40 h-28 w-full bg-gradient-to-t from-gray-1"></Box>
+        <Flex align={"center"} gap="2" className="mb-4">
+          <Box className=" relative">
+            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8 w-full bg-gray-1"
+            />
+          </Box>
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <IconButton
+                variant="solid"
+              >
+                <Filter size={16} />
+                <span className="sr-only">Filter</span>
+              </IconButton>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content className="w-48 rounded-lg">
+              <DropdownMenu.Item onClick={() => setFilterType("both")} className={filterType === "both" ? "bg-indigo-600 text-white" : ""}>
+                <span>All</span>
+              </DropdownMenu.Item>
+              <DropdownMenu.Item onClick={() => setFilterType("widgets")} className={filterType === "widgets" ? "bg-indigo-600 text-white" : ""}>
+                <span>Widgets</span>
+              </DropdownMenu.Item>
+              <DropdownMenu.Item onClick={() => setFilterType("templates")} className={filterType === "templates" ? "bg-indigo-600 text-white" : ""}>
+                <span>Templates</span>
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        </Flex>
+        <Flex className="w-60" align={"center"} justify={"between"}>
+          {allTags.length > 0 && (
+            <ScrollArea
+              type="hover"
+              scrollbars="horizontal"
+              className=" shrink-0 w-52 pb-3 h-fit"
+            >
+              <Flex gap={"2"}>
+                {allTags.map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant={selectedTag === tag ? "solid" : "outline"}
+                    className={cn(
+                      "cursor-pointer",
+                      selectedTag === tag &&
+                        "bg-primary text-primary-foreground",
+                    )}
+                    onClick={() =>
+                      setSelectedTag(selectedTag === tag ? null : tag)
+                    }
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+              </Flex>
+            </ScrollArea>
           )}
 
+      
+              <IconButton
+                variant="soft"
+                color="red"
+                onClick={() => {
+                  setSearchQuery("");
+                  setFilterType("both");
+                  setSelectedTag(null);
+                }}
+                className="-translate-y-1.5 translate-x-2"
+              >
+                <X size={16} />
+                <span className="sr-only">Filter</span>
+              </IconButton>
+   
+        </Flex>
+
+        <Box
+          className={`bg-gray-1 p-2 mt-2 rounded-xl relative border border-gray-6 transition-all duration-300`}
+        >
           <Flex justify="between" align="center">
-            <Heading size="2" className="mb-2 font-medium">
+            <Heading size="2" className=" font-medium">
               Components/Widgets
             </Heading>
             <Button
               variant="ghost"
               color="gray"
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={() => setIsWidgetExpanded(!isWidgetExpanded)}
               className="hover:bg-transparent"
             >
-              <ChevronDown
-                className={cn(
-                  "transition-transform duration-300",
-                  isExpanded && "transform rotate-180",
-                )}
-              />
-              <span className="sr-only">
-                {isExpanded ? "Collapse templates" : "Expand templates"}
-              </span>
+              {isWidgetExpanded ? <Minus /> : <Plus />}
+
+              <Box as="span" className="sr-only">
+                {isWidgetExpanded ? "Collapse Widgets" : "Expand Widgets"}
+              </Box>
             </Button>
           </Flex>
-          <Box className="mb-4 relative">
-            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search components..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 w-full bg-gray-4"
-            />
-          </Box>
-          {filteredComponents.length === 0 ? (
-            <Box className="text-center py-4 text-muted-foreground">
-              No components match your search
-            </Box>
-          ) : (
-            <Grid columns={"2"} gap="2" className="relative">
-              {filteredComponents.map((comp) => (
-                <div key={comp.slotId} className="relative">
-                  <DraggableComponent
-                    id={comp.slotId}
-                    title={comp.title}
-                    image={comp.compImage}
-                    component={comp.component}
-                    disabled={!isEditing || selectedWidgets.length > 0}
-                    onDragStart={() => handleDragStart(comp.slotId)}
-                    onDragEnd={handleDragEnd}
-                  />
-                  {/* <div className="absolute bottom-1 left-1 flex flex-wrap gap-1 max-w-[90%]">
+          {isWidgetExpanded && (
+            <>
+              {filteredWidgets.length === 0 ? (
+                <Box className="text-center py-4 mt-2 text-muted-foreground">
+                  No components match your search
+                </Box>
+              ) : (
+                <Grid columns={"2"} gap="2" className="relative mt-2">
+                  {filteredWidgets.map((comp) => (
+                    <div key={comp.slotId} className="relative">
+                      <DraggableComponent
+                        id={comp.slotId}
+                        title={comp.title}
+                        image={comp.compImage}
+                        component={comp.component}
+                        disabled={!isEditing || selectedWidgets.length > 0}
+                        onDragStart={() => handleDragStart(comp.slotId)}
+                        onDragEnd={handleDragEnd}
+                      />
+                      {/* <div className="absolute bottom-1 left-1 flex flex-wrap gap-1 max-w-[90%]">
                 {comp.tags.map((tag, index) => (
                   <Badge key={index} variant="solid" className="text-xs">
                     {tag}
                   </Badge>
                 ))}
               </div> */}
-                </div>
-              ))}
-            </Grid>
+                    </div>
+                  ))}
+                </Grid>
+              )}
+            </>
           )}
         </Box>
 
-        <TemplatesSidebar projectId={projectId} />
+        <TemplatesSidebar
+        filteredTemplates={filteredTemplates}
+          templates={templates}
+          deleteTemplate={deleteTemplate}
+          templateActive={templateActive}
+          getTemplateById={getTemplateById}
+          isTemplateExpanded={isTemplateExpanded}
+          setIsTemplateExpanded={setIsTemplateExpanded}
+        />
         <LayoutPresetsSection />
       </ScrollArea>
     </Box>

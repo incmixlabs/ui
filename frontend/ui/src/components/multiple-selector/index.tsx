@@ -1,5 +1,5 @@
 import React from "react"
-import MultipleSelector from "./multiple-selector"
+import {MultipleSelector} from "./multiple-selector"
 import type { Option } from "./multiple-selector"
 
 const OPTIONS: Option[] = [

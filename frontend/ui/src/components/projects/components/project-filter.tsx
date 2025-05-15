@@ -4,9 +4,11 @@ import { useState } from "react"
 import { members } from "../data"
 
 import { SmartDatetimeInput } from "@components/datetime-picker"
-import MultipleSelector, {
+import {
   type Option,
 } from "@components/multiple-selector/multiple-selector"
+
+import {MultipleSelector} from "@components/multiple-selector/multiple-selector"
 
 interface ProjectFilterProps {
   onApplyFilters: (filters: {
