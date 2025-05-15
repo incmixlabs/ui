@@ -8,7 +8,7 @@ import {
   presetLayouts,
   useLayoutStore,
 } from "@incmix/ui";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Minus, Plus } from "lucide-react";
 import { useState } from "react";
 
 export function LayoutPresetsSection() {
@@ -17,32 +17,27 @@ export function LayoutPresetsSection() {
 
   return (
     <Box
-      className={`bg-gray-1 p-2 mt-4 rounded-xl relative border border-gray-5 transition-all duration-300 ${isExpanded ? "h-fit " : "h-52 overflow-hidden"}`}
+      className={`bg-gray-1 p-2 mt-2 rounded-xl relative border border-gray-5 transition-all duration-300`}
     >
-      {!isExpanded &&
-      <Box className="-bottom-2 absolute left-0 h-28 w-full bg-gradient-to-t from-gray-1"></Box>
-      }
-      <Flex justify="between" align="center">
-        <Heading size="2" className="mb-2 font-medium">
-          Layout Presets
+        <Flex justify="between" align="center">
+        <Heading size="2" className="font-medium">
+        Layout Presets
         </Heading>
         <Button
           variant="ghost"
           color="gray"
-          onClick={() => setIsExpanded(!isExpanded)} // Toggle expanded state
+          onClick={() => setIsExpanded(!isExpanded)}
           className="hover:bg-transparent"
         >
-          <ChevronDown
-            className={cn(
-              "transition-transform duration-300",
-              isExpanded && "transform rotate-180", // Rotate icon when expanded
-            )}
-          />
-          <Box as="span" className="sr-only">
-            {isExpanded ? "Collapse templates" : "Expand templates"}
-          </Box>
+          {isExpanded ? <Minus /> : <Plus />}
+
+          <span className="sr-only">
+            {isExpanded ? "Collapse layout presets" : "Expand layout presets"}
+          </span>
         </Button>
       </Flex>
+
+      {isExpanded && (
       <Grid columns={"2"} className="pb-2" gap={"2"}>
         {presetLayouts.map((preset) => (
           <Box
@@ -65,6 +60,7 @@ export function LayoutPresetsSection() {
           </Box>
         ))}
       </Grid>
+      )}
     </Box>
   );
 }

@@ -100,25 +100,35 @@ export function SaveTemplateDialog({
     setTags([]);
     onOpenChange(false);
   };
-  const handleUpdateTemplate = async (id: string) => {
-    const templatesCollection = database.dashboardTemplates;  
-    const existingTemplate = await templatesCollection.findOne(id).exec();  
-    if (!existingTemplate) {  
-      throw new Error("Template not found");  
-    }  
-    await updateTemplate(id, {  
-      name: templateName.trim(),  
-      projectId,  
-      tags,  
-      layouts,  
-      nestedLayouts,  
-    });  
-    toast.success("Template updated successfully"); 
-    setIsTemplate(null);
-    setTemplateName("");
-    setTags([]);
-    onOpenChange(false);
-  };
+
+const handleUpdateTemplate = async (id: string) => {
+  try {
+     const templatesCollection = database.dashboardTemplates;
+     const existingTemplate = await templatesCollection.findOne(id).exec();
+     if (!existingTemplate) {
+       throw new Error("Template not found");
+     }
+     await updateTemplate(id, {
+       name: templateName.trim(),
+       projectId,
+       tags,
+       layouts,
+       nestedLayouts,
+     });
+     toast.success("Template updated successfully");
+     setIsTemplate(null);
+     setTemplateName("");
+     setTags([]);
+     onOpenChange(false);
+  } catch (error) {
+     console.error(error);
+     toast.error(
+       "Failed to update template: " +
+         (error instanceof Error ? error.message : "Unknown error"),
+     );
+  }
+ };
+
 const handleCancelUpdate= ()=>{
   setIsTemplate(null);
   setTemplateName("");
@@ -162,13 +172,12 @@ const handleCancelUpdate= ()=>{
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="template-tags">Tags</Label>
-
               <MultipleSelector
               value={tags.map((tag) => ({ value: tag, label: tag }))}
         defaultOptions={tags.map((tag) => ({ value: tag, label: tag }))}
         defaultColor="indigo"
         onChange={(options) => setTags(options.map((option) => option.value))}
-        placeholder="Type something that does not exist in dropdowns..."
+        placeholder="Add Tags"
         creatable
         emptyIndicator={
           <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
@@ -176,6 +185,7 @@ const handleCancelUpdate= ()=>{
           </p>
         }
       />
+           
             </div>
           </div>
 
