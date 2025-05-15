@@ -20,40 +20,56 @@ import {
   Layout,
   ChevronDown,
   CheckCheck,
-  Minus,
-  Plus,
 } from "lucide-react";
 import { shortFormatDistanceToNow, toast, useLayoutStore } from "@incmix/ui";
 import { cn } from "@incmix/ui";
 import { formatDistanceToNow } from "date-fns";
 import { useQueryState } from "nuqs";
-import { DashboardTemplate } from "@incmix/store";
 
 interface TemplatesSidebarProps {
-  filteredTemplates:DashboardTemplate[]
-  templates: DashboardTemplate[];
-  deleteTemplate: (id: string) => Promise<void>;
-  templateActive: (id: string) => Promise<DashboardTemplate | null>;
-  getTemplateById: (id: string) => Promise<DashboardTemplate | null>;
-  isTemplateExpanded:boolean
-  setIsTemplateExpanded: (expanded: boolean) => void
+  projectId: string;
 }
 
-export function TemplatesSidebar({
-  filteredTemplates,
-  templates,
-  deleteTemplate,
-  templateActive,
-  getTemplateById,
-
-  isTemplateExpanded,
-  setIsTemplateExpanded,
-}: TemplatesSidebarProps) {
+export function TemplatesSidebar({ projectId }: TemplatesSidebarProps) {
   const { applyTemplates } = useLayoutStore();
   const [isTemplate, setIsTemplate] = useQueryState("template");
-  // const [searchTerm, setSearchTerm] = useState("");
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const {
+    templates,
+    initialized,
+    initialize,
+    deleteTemplate,
+    getTemplateById,
+    templateActive,
+  } = useTemplateStore();
+
+  // Initialize RxDB on component mount
+  useEffect(() => {
+    if (!initialized && projectId) {
+      initialize(projectId);
+    }
+  }, [initialized, initialize, projectId]);
+
+  const allTags = Array.from(new Set(templates.flatMap((t) => t.tags)));
 
 
+
+  const filteredTemplates = useMemo(() => {
+    const query = searchTerm.toLowerCase().trim();
+
+    return templates.filter((template) => {
+      const matchesSearch =
+        !query ||
+        template.name.toLowerCase().includes(query) ||
+        template.tags.some((tag) => tag.toLowerCase().includes(query));
+
+      const matchesTag = !selectedTag || template.tags.includes(selectedTag);
+
+      return matchesSearch && matchesTag;
+    });
+  }, [templates, searchTerm, selectedTag]);
 
   const handleDeleteTemplate = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -79,6 +95,10 @@ export function TemplatesSidebar({
     }
   };
 
+  const handleSelectTag = (tag: string) => {
+    setSelectedTag(selectedTag === tag ? null : tag);
+  };
+
   const loadTemplateLayout = async (templateId: string) => {
     const template = await getTemplateById(templateId);
     if (!template) {
@@ -90,125 +110,156 @@ export function TemplatesSidebar({
     toast.success(`Template "${template?.name}" loaded successfully`);
   };
 
+  console.log("checking", templates);
 
   return (
     <Flex
       direction="column"
-      className={`bg-gray-1 p-2 mt-2 rounded-xl relative border border-gray-5 transition-all duration-300`}
+      className={`bg-gray-1 p-2 mt-4 rounded-xl relative border border-gray-5 transition-all duration-300 ${isExpanded ? "h-fit " : "h-48 overflow-hidden"}`}
     >
+      {!isExpanded && (
+        <Box className="-bottom-2 absolute left-0 h-28 w-full bg-gradient-to-t from-gray-1 z-[2]"></Box>
+      )}
       <Flex justify="between" align="center">
-        <Heading size="2" className="font-medium">
+        <Heading size="2" className="mb-2 font-medium">
           Saved Templates
         </Heading>
         <Button
           variant="ghost"
           color="gray"
-          onClick={() => setIsTemplateExpanded(!isTemplateExpanded)}
+          onClick={() => setIsExpanded(!isExpanded)} // Toggle expanded state
           className="hover:bg-transparent"
         >
-          {isTemplateExpanded ? <Minus /> : <Plus />}
-
+          <ChevronDown
+            className={cn(
+              "transition-transform duration-300",
+              isExpanded && "transform rotate-180", // Rotate icon when expanded
+            )}
+          />
           <span className="sr-only">
-            {isTemplateExpanded ? "Collapse templates" : "Expand templates"}
+            {isExpanded ? "Collapse templates" : "Expand templates"}
           </span>
         </Button>
       </Flex>
-      {isTemplateExpanded && (
-        <>
-          {filteredTemplates.length > 0 ? 
-          (
-            <Grid columns={"2"} gap={"2"} className="mt-2">
-              {filteredTemplates.map((template) => (
-                <Box
-                  key={template.id}
+      <Box className="relative">
+        <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          placeholder="Search templates..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-8 bg-gray-3"
+        />
+      </Box>
+
+      {allTags.length > 0 && (
+        <Box className="py-2">
+          <ScrollArea
+            type="hover"
+            scrollbars="horizontal"
+            className="w-56 mx-auto pb-3"
+          >
+            <Flex gap={"2"}>
+              {allTags.map((tag) => (
+                <Badge
+                  key={tag}
+                  variant={selectedTag === tag ? "solid" : "outline"}
                   className={cn(
-                    `border  relative border-gray-5 rounded-md pt-1 bg-gray-1  hover:bg-gray-2 cursor-pointer transition-colors`,
-                    template?.isActive &&
-                      "border-4 border-green-8 bg-green-4 hover:bg-green-3",
-                    template?.id === isTemplate &&
-                      "border-4 border-indigo-8 bg-indigo-4 hover:bg-indigo-3",
+                    "cursor-pointer hover:bg-muted",
+                    selectedTag === tag && "bg-primary text-primary-foreground",
                   )}
-                  onClick={() => loadTemplateLayout(template.id)}
+                  onClick={() => handleSelectTag(tag)}
                 >
-                  <Box className="px-2 ">
-                    <Heading size="1" className="font-medium">
-                      {template.name}
-                    </Heading>
-                    <Flex
-                      align={"center"}
-                      className="text-xs text-muted-foreground mt-1"
-                    >
-                      <Box as="span">
-                        {shortFormatDistanceToNow(new Date(template.updatedAt))}{" "}
-                        ago
-                      </Box>
-                    </Flex>
+                  {tag}
+                </Badge>
+              ))}
+            </Flex>
+          </ScrollArea>
+        </Box>
+      )}
 
-                    {template.tags.length > 0 && (
-                      <Flex  align={"center"} className="mt-2 flex-wrap gap-1">
-                        {template.tags.slice(0, 2).map((tag) => (
-                          <Badge key={tag} variant="solid" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </Flex>
-                    )}
+      {filteredTemplates.length > 0 ? (
+        <Grid columns={"2"} gap={"2"}>
+          {filteredTemplates.map((template) => (
+            <Box
+              key={template.id}
+              className={cn(`border  relative border-gray-5 rounded-md pt-1 bg-gray-1  hover:bg-gray-2 cursor-pointer transition-colors`, template?.isActive && "border-4 border-green-8 bg-green-4 hover:bg-green-3", template?.id === isTemplate && "border-4 border-indigo-8 bg-indigo-4 hover:bg-indigo-3")}
+              onClick={() => loadTemplateLayout(template.id)}
+            >
+          
+            <Box className="px-2 ">
 
-                    <Flex
-                      align={"center"}
-                      className=" mt-2 text-xs text-muted-foreground"
-                    >
-                      <Box as="span">
-                        {template.layouts.lg
-                          ? Object.values(template.layouts.lg).length
-                          : 0}{" "}
-                        w, {Object.keys(template.nestedLayouts).length} ng
-                      </Box>
-                    </Flex>
+                <Heading size="1" className="font-medium">
+                  {template.name}
+                </Heading>
+                <Flex align={"center"} className="text-xs text-muted-foreground mt-1">
+                  <Box as="span">
+                    {shortFormatDistanceToNow(new Date(template.updatedAt))} ago
                   </Box>
+                </Flex>
 
-                  <Flex
-                    align={"center"}
-                    justify={"between"}
-                    className={cn(
-                      template?.isActive && "bg-green-8 px-1 py-0.5 rounded",
-                    )}
-                  >
-                    {!template?.isActive ? (
-                      <Button
-                        variant="ghost"
-                        className="h-8 w-8 "
-                        onClick={(e) => handleActiveTemplate(template.id, e)}
-                      >
-                        <CheckCheck className="h-5 w-5" />
-                        <span className="sr-only">active</span>
-                      </Button>
-                    ) : (
-                      <Text
-                        size={"1"}
-                        className="bg-green-8 px-1 py-0.5 rounded"
-                      >
-                        Active
-                      </Text>
-                    )}
+                {template.tags.length > 0 && (
+                  <div className="flex items-center mt-2 flex-wrap gap-1">
+                    {template.tags.slice(0, 2).map((tag) => (
+                      <Badge key={tag} variant="solid" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+
+                <Flex align={"center"} className=" mt-2 text-xs text-muted-foreground">
+                  <Box as="span">
+                    {template.layouts.lg
+                      ? Object.values(template.layouts.lg).length
+                      : 0}{" "}
+                    w, {Object.keys(template.nestedLayouts).length} ng
+                  </Box>
+                </Flex>
+            </Box>
+
+                <Flex align={"center"} justify={"between"} className={cn(template?.isActive && "bg-green-8 px-1 py-0.5 rounded")}>
+                  {!template?.isActive ? (
                     <Button
                       variant="ghost"
-                      className="h-8 w-8 p-0 text-destructive"
-                      onClick={(e) => handleDeleteTemplate(template.id, e)}
+                      className="h-8 w-8 "
+                      onClick={(e) => handleActiveTemplate(template.id, e)}
                     >
-                      <Trash2 className="h-4 w-4" />
-                      <span className="sr-only">Delete template</span>
+                      <CheckCheck className="h-5 w-5" />
+                      <span className="sr-only">active</span>
                     </Button>
-                  </Flex>
-                </Box>
-              ))}
-            </Grid>
-          ):(
-            <Box className="text-center py-4 mt-2 text-muted-foreground">
-            No templates match your search
-          </Box>
+                  ):<Text size={"1"} className="bg-green-8 px-1 py-0.5 rounded">Active</Text>}
+                  <Button
+                    variant="ghost"
+                    className="h-8 w-8 p-0 text-destructive"
+                    onClick={(e) => handleDeleteTemplate(template.id, e)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    <span className="sr-only">Delete template</span>
+                  </Button>
+                </Flex>
+            </Box>
+          ))}
+        </Grid>
+      ) : (
+        <Box className="flex flex-col items-center justify-center h-40 text-muted-foreground">
+          <Layout className="h-8 w-8 mb-2 opacity-50" />
+          <p className="text-sm">No templates found</p>
+          {searchTerm || selectedTag ? (
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setSearchTerm("");
+                setSelectedTag(null);
+              }}
+            >
+              Clear filters
+            </Button>
+          ) : (
+            <p className="text-xs mt-1">
+              Save your first template to see it here
+            </p>
           )}
-        </>
+        </Box>
       )}
     </Flex>
   );

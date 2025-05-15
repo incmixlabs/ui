@@ -162,6 +162,7 @@ const handleCancelUpdate= ()=>{
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="template-tags">Tags</Label>
+
               <MultipleSelector
               value={tags.map((tag) => ({ value: tag, label: tag }))}
         defaultOptions={tags.map((tag) => ({ value: tag, label: tag }))}
@@ -175,7 +176,6 @@ const handleCancelUpdate= ()=>{
           </p>
         }
       />
-           
             </div>
           </div>
 
