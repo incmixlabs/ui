@@ -31,7 +31,6 @@ import "react-grid-layout/css/styles.css"
 import "react-resizable/css/styles.css"
 import { useQueryState } from "nuqs"
 
-
 const ResponsiveGridLayout = WidthProvider(Responsive)
 
 const DynamicDashboardPage: React.FC = () => {
