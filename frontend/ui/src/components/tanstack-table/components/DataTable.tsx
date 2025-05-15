@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useCallback } from "react";
+import React, { useCallback, useRef, useEffect } from "react";
 import { Table } from "@shadcn";
 
 // Import UI components
@@ -71,7 +71,7 @@ export function DataTable<TData extends object>({
 }: DataTableProps<TData>) {
   // Use our extracted hooks to organize the component
   const tableState = useTableState(initialSidebarOpen);
-  
+
   const {
     sidebarOpen,
     setSidebarOpen,
@@ -105,11 +105,11 @@ export function DataTable<TData extends object>({
   }, [expandableRows, setExpandedRows]);
 
   // Edit functionality
-  const { 
-    handleEditClick, 
-    handleCloseEditDialog, 
-    handleEditSubmit, 
-    enhancedRowActions 
+  const {
+    handleEditClick,
+    handleCloseEditDialog,
+    handleEditSubmit,
+    enhancedRowActions
   } = useTableEdit({
     enableRowEdit,
     editFormSchema,
@@ -119,6 +119,9 @@ export function DataTable<TData extends object>({
     setCurrentRowData,
   });
 
+  // Create table ref for keyboard navigation
+  const tableRef = useRef<HTMLDivElement>(null);
+  
   // Inline cell editing functionality
   const {
     isEditing,
@@ -127,18 +130,11 @@ export function DataTable<TData extends object>({
     startEditing,
     cancelEditing,
     saveEdit,
+    updateCellMatrix,
   } = useTableInlineEdit({
     onCellEdit,
+    tableRef // Pass the actual tableRef to use the hook's built-in keyboard handling
   });
-
-  // Create a wrapper for the saveEdit function to prevent unnecessary table reloads
-  const handleCellEdit = useCallback(
-    (rowData: TData, columnId: string, newValue: any) => {
-      // Use the saveEdit function from the hook
-      saveEdit(rowData, columnId, newValue);
-    },
-    [saveEdit]
-  );
 
   // Column definitions
   const { flatColumns, columnDefs } = useTableColumns({
@@ -156,9 +152,9 @@ export function DataTable<TData extends object>({
   });
 
   // Table instance
-  const { 
-    table, 
-    paginationInfo, 
+  const {
+    table,
+    paginationInfo,
     isPaginationVisible,
     handlePageChange,
     handlePageSizeChange
@@ -179,6 +175,76 @@ export function DataTable<TData extends object>({
     tableState,
   });
 
+
+  
+  // Ensure the table is keyboard-navigable
+  useEffect(() => {
+    if (tableRef.current && enableInlineCellEdit) {
+      // Make the table container focusable
+      tableRef.current.setAttribute('tabindex', '0');
+      
+      // Add click handler to ensure the table keeps focus after clicking a cell
+      const handleClick = () => {
+        // Small delay to ensure focus happens after other handlers
+        setTimeout(() => {
+          // Only focus if we have a selection
+          if (table) {
+            const hasSelection = table.getRowModel().rows.some(row => 
+              table.getVisibleLeafColumns().some(col => isSelected(row.id, col.id))
+            );
+            
+            if (hasSelection && tableRef.current) {
+              tableRef.current.focus();
+            }
+          }
+        }, 10);
+      };
+      
+      tableRef.current.addEventListener('click', handleClick);
+      return () => {
+        if (tableRef.current) {
+          tableRef.current.removeEventListener('click', handleClick);
+        }
+      };
+    }
+  }, [tableRef, table, enableInlineCellEdit, isSelected]);
+
+  // Now that we have the table instance, we can create our cell edit handler
+  const handleCellEdit = useCallback(
+    (rowData: TData, columnId: string, newValue: any) => {
+      // Use the saveEdit function from the hook
+      saveEdit(rowData, columnId, newValue);
+      
+      // After saving, immediately re-select the cell to maintain navigation state
+      if (table) {
+        const row = table.getRowModel().rows.find(r => r.original === rowData);
+        if (row) {
+          selectCell(row.id, columnId);
+          
+          // Move table container back into focus
+          if (tableRef.current) {
+            tableRef.current.focus();
+          }
+        }
+      }
+    },
+    [saveEdit, table, selectCell]
+  );
+  
+  // Update cell matrix for keyboard navigation
+  useEffect(() => {
+    if (enableInlineCellEdit && table) {
+      const visibleRows = table.getRowModel().rows;
+      const visibleColumns = table.getVisibleLeafColumns();
+      
+      // Extract row IDs and column IDs for the navigation matrix
+      const rowIds = visibleRows.map(row => row.id);
+      const colIds = visibleColumns.map(col => col.id);
+      
+      updateCellMatrix(rowIds, colIds);
+    }
+  }, [enableInlineCellEdit, table, updateCellMatrix]);
+
   // Table features
   const { visibilityItems, handleExport } = useTableFeatures({
     table,
@@ -189,7 +255,7 @@ export function DataTable<TData extends object>({
   });
 
   return (
-    <div className={className || "w-full"}>
+    <div className={className || "w-full"} ref={tableRef} tabIndex={enableInlineCellEdit ? 0 : undefined}>
       {/* Main layout with proper alignment */}
       <div className="flex">
         {/* Sidebar (always in DOM, but width is 0 when closed) */}
@@ -261,7 +327,7 @@ export function DataTable<TData extends object>({
           )}
         </div>
       </div>
-      
+
       {/* Edit Dialog */}
       {enableRowEdit && editFormSchema && (
         <EditTableForm
