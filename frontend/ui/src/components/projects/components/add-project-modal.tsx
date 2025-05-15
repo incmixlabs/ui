@@ -16,9 +16,12 @@ import { Box,
   Grid,
   Text,
   TextArea, Input, Label } from "@base"
-import MultipleSelector, {
-  type Option,
-} from "@components/multiple-selector/multiple-selector"
+  
+  import {
+    type Option,
+  } from "@components/multiple-selector/multiple-selector"
+  
+  import {MultipleSelector} from "@components/multiple-selector/multiple-selector"
 
 import { members } from "../data"
 import { ProjectsImages } from "../images"

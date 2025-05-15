@@ -31,7 +31,6 @@ import "react-grid-layout/css/styles.css"
 import "react-resizable/css/styles.css"
 import { useQueryState } from "nuqs"
 
-import { Save } from "lucide-react"
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
 
