@@ -8,7 +8,7 @@ import { Dialog } from "@incmix/ui/base";
 import { Save, X, Tag } from "lucide-react";
 import { database, useTemplateStore } from "@incmix/store";
 import { Badge } from "@incmix/ui/base";
-import { toast } from "@incmix/ui";
+import { MultipleSelector, MultipleSelectorControlled, toast } from "@incmix/ui";
 import type { Layout } from "react-grid-layout";
 import type { Breakpoint } from "@incmix/ui/dashboard";
 import { useQueryState } from "nuqs";
@@ -162,40 +162,20 @@ const handleCancelUpdate= ()=>{
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="template-tags">Tags</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="template-tags"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Add tags..."
-                />
-                <Button type="button" onClick={handleAddTag}>
-                  <Tag className="h-4 w-4 mr-1" />
-                  Add
-                </Button>
-              </div>
-              {tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {tags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="solid"
-                      className="flex items-center gap-1"
-                    >
-                      {tag}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveTag(tag)}
-                        className="ml-1 rounded-full hover:bg-muted p-0.5"
-                      >
-                        <X className="h-3 w-3" />
-                        <span className="sr-only">Remove {tag} tag</span>
-                      </button>
-                    </Badge>
-                  ))}
-                </div>
-              )}
+              <MultipleSelector
+              value={tags.map((tag) => ({ value: tag, label: tag }))}
+        defaultOptions={tags.map((tag) => ({ value: tag, label: tag }))}
+        defaultColor="indigo"
+        onChange={(options) => setTags(options.map((option) => option.value))}
+        placeholder="Type something that does not exist in dropdowns..."
+        creatable
+        emptyIndicator={
+          <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+            no results found.
+          </p>
+        }
+      />
+           
             </div>
           </div>
 
