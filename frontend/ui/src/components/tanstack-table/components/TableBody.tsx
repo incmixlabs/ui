@@ -151,11 +151,12 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           return (
             <Table.Cell
               key={cell.id}
-              className={`p-2 ${columnDef?.className || ""}`}
+              className={`p-2 ${columnDef?.className || ""} overflow-hidden`}
               style={{
                 width: columnDef?.width,
                 minWidth: columnDef?.minWidth,
-                maxWidth: columnDef?.maxWidth
+                maxWidth: columnDef?.maxWidth,
+                position: 'relative' // For absolute positioning of editable content
               }}
             >
               {isEditableDateCell ? (

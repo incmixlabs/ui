@@ -97,7 +97,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
 
   if (isEditing) {
     return (
-      <div className="relative w-full h-full flex items-stretch">
+      <div className="absolute inset-0 z-10 flex items-center justify-start px-1">
         <input
           ref={inputRef}
           type="text"
@@ -105,9 +105,13 @@ export const EditableCell: React.FC<EditableCellProps> = ({
           onChange={(e) => setEditValue(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
-          className="absolute inset-0 w-full h-full px-2 py-1.5 border border-gray-300 dark:border-gray-700 rounded box-border flex-grow"
+          className="w-full border border-blue-300 dark:border-blue-600 rounded-sm px-2 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
           onClick={(e) => e.stopPropagation()}
-          style={{ minWidth: 0, lineHeight: '1.5rem' }}
+          style={{ 
+            minWidth: 0, 
+            maxWidth: '100%',
+            height: '28px'
+          }}
         />
       </div>
     );
@@ -117,7 +121,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
     <div 
       ref={cellRef}
       onClick={handleClick}
-      className={`${className} cursor-pointer w-full h-full p-1 transition-colors duration-150 
+      className={`${className} cursor-pointer w-full h-full p-2 transition-colors duration-150 
         ${isSelected ? "bg-blue-100 dark:bg-blue-900/30 rounded" : ""}`}
     >
       {value}
