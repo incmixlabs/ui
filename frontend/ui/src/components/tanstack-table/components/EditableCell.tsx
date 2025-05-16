@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { useEditableCellKeyboard } from "../hooks/useEditableCellKeyboard";
 
 interface EditableCellProps {
   value: string;
@@ -33,7 +34,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
 }) => {
   const [editValue, setEditValue] = useState(value);
   const inputRef = useRef<HTMLInputElement>(null);
-  const cellRef = useRef<HTMLDivElement>(null);
+  const divRef = useRef<HTMLDivElement>(null);
 
   // Reset edit value when the displayed value changes or editing starts
   useEffect(() => {
@@ -48,22 +49,9 @@ export const EditableCell: React.FC<EditableCellProps> = ({
       inputRef.current.select();
     }
   }, [isEditing]);
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    e.stopPropagation();
-    if (e.key === "Enter") {
-      onSave(rowData, columnId, editValue);
-    } else if (e.key === "Escape") {
-      onCancelEdit();
-    } else if (e.key === "Tab") {
-      // Allow Tab to complete editing and move to next cell
-      e.preventDefault();
-      onSave(rowData, columnId, editValue);
-    }
-  };
-
-  const handleBlur = () => {
-    // Save on blur if the value has changed
+  
+  // Handle value save
+  const handleSave = () => {
     if (editValue !== value) {
       onSave(rowData, columnId, editValue);
     } else {
@@ -71,16 +59,30 @@ export const EditableCell: React.FC<EditableCellProps> = ({
     }
   };
 
+  // Get handlers and refs from the keyboard hook
+  const { handleKeyDown, handleCellClick, cellRef, getAriaAttributes } = useEditableCellKeyboard({
+    rowId: rowData.id || 'row', // Use rowData.id as rowId or fallback to 'row'
+    columnId,
+    isEditing,
+    isSelected,
+    selectCell: () => onSelect(),
+    startEditing: () => onStartEdit(),
+    cancelEditing: () => onCancelEdit(),
+    saveEdit: () => handleSave(),
+    autoFocus: true,
+  });
+  
+  // Get accessibility attributes
+  const ariaAttributes = getAriaAttributes();
+
+  const handleBlur = () => {
+    // Save on blur if the value has changed
+    handleSave();
+  };
+  
+  // Simple click handler that just calls the hook's handler
   const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    
-    if (isSelected) {
-      // If already selected, enter edit mode
-      onStartEdit();
-    } else {
-      // First click selects the cell
-      onSelect();
-    }
+    handleCellClick(e);
   };
   
   // Handle document-wide click to deselect 
@@ -88,7 +90,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
     if (!isSelected) return;
     
     const handleOutsideClick = (e: MouseEvent) => {
-      if (cellRef.current && !cellRef.current.contains(e.target as Node)) {
+      if (divRef.current && !divRef.current.contains(e.target as Node)) {
         onCancelEdit(); // This also cancels selection
       }
     };
@@ -103,7 +105,11 @@ export const EditableCell: React.FC<EditableCellProps> = ({
     return (
       <div className="absolute inset-0 z-10 flex items-center justify-start px-1">
         <input
-          ref={inputRef}
+          ref={(el) => {
+            // Connect both refs to the input element
+            inputRef.current = el;
+            cellRef.current = el;
+          }}
           type="text"
           value={editValue}
           onChange={(e) => setEditValue(e.target.value)}
@@ -116,6 +122,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
             maxWidth: '100%',
             height: '28px'
           }}
+          aria-label={`Edit ${columnId}`}
         />
       </div>
     );
@@ -123,10 +130,17 @@ export const EditableCell: React.FC<EditableCellProps> = ({
 
   return (
     <div 
-      ref={cellRef}
+      ref={(el) => {
+        // Connect both refs to the div element
+        divRef.current = el;
+        cellRef.current = el;
+      }}
       onClick={handleClick}
+      onKeyDown={handleKeyDown}
       className={`${className} cursor-pointer w-full h-full p-2 transition-colors duration-150 
         ${isSelected ? "bg-blue-100 dark:bg-blue-900/30 rounded" : ""}`}
+      {...ariaAttributes}
+      aria-label={`${columnId}: ${value || 'Empty'}`}
     >
       {value}
     </div>

@@ -3,6 +3,7 @@ import { Table as TanStackTable } from "@tanstack/react-table";
 import { Check, ChevronDown, ChevronLeft, Download, SlidersHorizontal, X } from "lucide-react";
 import { Button, DropdownMenuWrapper, Input } from "@base";
 import { DataTableFacet } from "../types";
+import { KeyboardShortcutsHelp } from "./KeyboardShortcutsHelp";
 
 interface FacetedFilterProps<TData> {
   table: TanStackTable<TData>;
@@ -99,6 +100,8 @@ export interface TableFiltersProps<TData> {
   onToggleSidebar?: () => void;
   sidebarOpen?: boolean;
   enableSidebarFilters?: boolean;
+  // Whether inline cell editing is enabled
+  enableInlineCellEdit?: boolean;
 }
 
 // Internal component that will be memoized
@@ -111,7 +114,8 @@ export const TableFiltersComponent = <TData extends object>({
   exportOptions,
   onToggleSidebar,
   sidebarOpen,
-  enableSidebarFilters
+  enableSidebarFilters,
+  enableInlineCellEdit
 }: TableFiltersProps<TData>) => {
   // Use state for debounced filtering
   const [inputValue, setInputValue] = useState<string>(
@@ -218,8 +222,13 @@ export const TableFiltersComponent = <TData extends object>({
             }}
           />
         )}
-
-        {visibilityItems.length > 0 && (
+        
+        {/* Show keyboard shortcuts help when inline editing is enabled */}
+        {enableInlineCellEdit && (
+          <KeyboardShortcutsHelp className="mr-2" />
+        )}
+        
+        {visibilityItems?.length > 0 && (
           <DropdownMenuWrapper
             button={{
               label: "Columns",

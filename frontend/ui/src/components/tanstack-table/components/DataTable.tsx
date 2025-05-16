@@ -9,6 +9,7 @@ import { TableFilters } from "./TableFilters";
 import { TablePagination } from "./TablePagination";
 import { TableSidebar } from "../sidebar-filter";
 import { TableContent } from "./TableContent";
+import { KeyboardShortcutsHelp } from "./KeyboardShortcutsHelp";
 // Import EditTableForm and wrap it with memo for better performance
 import EditTableFormComponent from "./EditTableForm";
 const EditTableForm = memo(EditTableFormComponent);
@@ -279,6 +280,7 @@ function DataTableComponent<TData extends object>({
             onToggleSidebar={enableSidebarFilters ? toggleSidebar : undefined}
             sidebarOpen={sidebarOpen}
             enableSidebarFilters={enableSidebarFilters}
+            enableInlineCellEdit={enableInlineCellEdit}
           />
 
           {/* Table component */}

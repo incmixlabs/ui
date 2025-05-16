@@ -54,9 +54,17 @@ function TableContentComponent<TData extends object>({
 }: TableContentProps<TData>) {
   return (
     <div 
-      className="rounded-md border border-gray-200 dark:border-gray-800"
-      tabIndex={enableInlineCellEdit ? 0 : undefined} // Add tabIndex for keyboard focus
-      data-keyboard-navigable={enableInlineCellEdit ? "true" : undefined} // Mark as keyboard navigable
+      className="rounded-md border border-gray-200 dark:border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      tabIndex={enableInlineCellEdit ? 0 : undefined}
+      role={enableInlineCellEdit ? "grid" : undefined}
+      aria-label={enableInlineCellEdit ? "Data table with keyboard navigation" : undefined}
+      aria-readonly="false"
+      aria-multiselectable="false"
+      data-keyboard-navigable={enableInlineCellEdit ? "true" : undefined}
+      // Add keyboard instructions for screen readers
+      aria-description={enableInlineCellEdit ? 
+        "Use Tab to enter the table, arrow keys to navigate between cells, Enter to edit a cell, and Escape to cancel." : 
+        undefined}
     >
       <Table.Root>
         <TableHeader 

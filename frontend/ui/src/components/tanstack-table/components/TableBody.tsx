@@ -78,6 +78,8 @@ interface RowProps<TData extends object> {
   startEditing?: (rowId: string, columnId: string) => void;
   cancelEditing?: () => void;
   saveEdit?: (rowData: TData, columnId: string, newValue: any) => void;
+  // Accessibility props
+  rowIndex?: number; // Index of the row for ARIA attributes
 }
 
 /**
@@ -99,7 +101,9 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
     selectCell,
     startEditing,
     cancelEditing,
-    saveEdit
+    saveEdit,
+    // Accessibility props
+    rowIndex
   } = props;
   
   // Determine if this row is expanded
@@ -125,6 +129,9 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           onRowClick || (expandableRows?.expandOnClick) ? "cursor-pointer" : ""
         } ${isExpanded ? "bg-muted/10" : ""}`}
         onClick={handleRowClick}
+        role={enableInlineCellEdit ? "row" : undefined}
+        aria-rowindex={rowIndex !== undefined ? rowIndex + 1 : undefined} // ARIA indices are 1-based
+        aria-selected={row.getIsSelected() || isExpanded ? "true" : undefined}
       >
         {visibleCells.map(cell => {
           // Get column definition for styling and type information
@@ -151,13 +158,18 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           return (
             <Table.Cell
               key={cell.id}
-              className={`p-2 ${columnDef?.className || ""} overflow-hidden`}
+              className={`p-2 ${columnDef?.className || ""} overflow-hidden ${isEditableCell && isSelected?.(row.id, cell.column.id) ? "bg-blue-50 dark:bg-blue-900/20" : ""}`}
               style={{
                 width: columnDef?.width,
                 minWidth: columnDef?.minWidth,
                 maxWidth: columnDef?.maxWidth,
                 position: 'relative' // For absolute positioning of editable content
               }}
+              role={enableInlineCellEdit ? "gridcell" : undefined}
+              aria-colindex={columnDef ? flatColumns.indexOf(columnDef) + 1 : undefined} // ARIA indices are 1-based
+              aria-selected={isEditableCell && isSelected?.(row.id, cell.column.id) ? "true" : undefined}
+              aria-readonly={isEditableCell ? "false" : "true"}
+              tabIndex={isEditableCell && isSelected?.(row.id, cell.column.id) ? 0 : -1} // Make selected cell focusable
             >
               {isEditableDateCell ? (
                 <EditableDateCell
@@ -268,12 +280,17 @@ function TableBodyComponent<TData extends object>({
   const columnCount = useMemo(() => table.getAllColumns().length, [table.getAllColumns().length]);
 
   return (
-    <Table.Body>
+    <Table.Body 
+      className="divide-y divide-gray-200 dark:divide-gray-800"
+      role={enableInlineCellEdit ? "rowgroup" : undefined}
+    >
       {isPaginationLoading ? (
-        <LoadingRow colSpan={columnCount} />
-      ) : rows?.length ? (
-        // Map through rows and render each with our memoized row component
-        rows.map((row) => (
+        <LoadingRow colSpan={flatColumns.length} />
+      ) : table.getRowModel().rows.length === 0 ? (
+        <EmptyRow colSpan={flatColumns.length} />
+      ) : (
+        // Render rows with optimized rendering
+        table.getRowModel().rows.map((row, rowIndex) => (
           <MemoizedRow
             key={row.id}
             row={row}
@@ -290,10 +307,9 @@ function TableBodyComponent<TData extends object>({
             startEditing={startEditing}
             cancelEditing={cancelEditing}
             saveEdit={saveEdit}
+            rowIndex={rowIndex} // Pass row index for ARIA attributes
           />
         ))
-      ) : (
-        <EmptyRow colSpan={columnCount} />
       )}
     </Table.Body>
   );

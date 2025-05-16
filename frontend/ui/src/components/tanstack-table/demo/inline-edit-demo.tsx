@@ -310,6 +310,7 @@ const InlineEditDemo = () => {
       <h1 className="text-2xl font-bold mb-4">Inline Cell Editing Demo</h1>
 
 
+
       <DataTable
         columns={USER_TABLE_COLUMNS}
         data={users}
