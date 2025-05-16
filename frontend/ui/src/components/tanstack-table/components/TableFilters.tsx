@@ -1,18 +1,20 @@
-import React from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Table as TanStackTable } from "@tanstack/react-table";
 import { Check, ChevronDown, ChevronLeft, Download, SlidersHorizontal, X } from "lucide-react";
 import { Button, DropdownMenuWrapper, Input } from "@base";
 import { DataTableFacet } from "../types";
 
 interface FacetedFilterProps<TData> {
-  table: any;
+  table: TanStackTable<TData>;
   facet: DataTableFacet<TData>;
 }
 
-export const FacetedFilter = <TData extends object>({
+// Internal component that will be memoized
+const FacetedFilterComponent = <TData extends object>({
   table,
   facet
 }: FacetedFilterProps<TData>) => {
-  const column = table.getColumn(facet.column);
+  const column = table.getColumn(String(facet.column));
   if (!column) {
     console.warn(`Column ${String(facet.column)} not found for filter ${facet.title}`);
     return null;
@@ -84,7 +86,7 @@ export const FacetedFilter = <TData extends object>({
 };
 
 export interface TableFiltersProps<TData> {
-  table: any;
+  table: TanStackTable<TData>;
   filterColumn?: keyof TData | string;
   filterPlaceholder: string;
   visibilityItems: { label: string; onClick: () => void; checked?: boolean; checkedIcon?: React.ReactNode }[];
@@ -99,7 +101,8 @@ export interface TableFiltersProps<TData> {
   enableSidebarFilters?: boolean;
 }
 
-export const TableFilters = <TData extends object>({
+// Internal component that will be memoized
+export const TableFiltersComponent = <TData extends object>({
   table,
   filterColumn,
   filterPlaceholder,
@@ -110,14 +113,43 @@ export const TableFilters = <TData extends object>({
   sidebarOpen,
   enableSidebarFilters
 }: TableFiltersProps<TData>) => {
-  const isFiltered = table.getState().columnFilters.length > 0;
+  // Use state for debounced filtering
+  const [inputValue, setInputValue] = useState<string>(
+    (table.getColumn(filterColumn as string)?.getFilterValue() as string) ?? ""
+  );
+  
+  // Apply the filter after a delay to reduce renders during typing
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (filterColumn) {
+        table.getColumn(filterColumn as string)?.setFilterValue(inputValue);
+      }
+    }, 300); // 300ms debounce
+    
+    return () => clearTimeout(timeoutId);
+  }, [inputValue, filterColumn, table]);
+  
+  // Memoize if filters are applied
+  const isFiltered = useMemo(() => {
+    return table.getState().columnFilters.length > 0;
+  }, [table.getState().columnFilters.length]);
 
-  // Create export dropdown items
-  const exportItems = exportOptions?.formats?.map(format => ({
-    label: `Export as ${format.toUpperCase()}`,
-    onClick: () => exportOptions.onExport(format),
-    icon: <Download className="h-4 w-4 mr-2" />
-  })) || [];
+  // Create export dropdown items - memoized to prevent recreating on every render
+  const exportItems = useMemo(() => {
+    return exportOptions?.formats?.map(format => ({
+      label: `Export as ${format.toUpperCase()}`,
+      onClick: () => exportOptions.onExport(format),
+      icon: <Download className="h-4 w-4 mr-2" />
+    })) || [];
+  }, [exportOptions]);
+
+  const handleInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  }, []);
+
+  const handleResetFilters = useCallback(() => {
+    table.resetColumnFilters();
+  }, [table]);
 
   return (
     <div className="flex items-center py-4 gap-2 flex-wrap">
@@ -145,10 +177,8 @@ export const TableFilters = <TData extends object>({
         <div className="flex-1 max-w-sm">
           <Input
             placeholder={filterPlaceholder}
-            value={(table.getColumn(filterColumn as string)?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn(filterColumn as string)?.setFilterValue(event.target.value)
-            }
+            value={inputValue}
+            onChange={handleInputChange}
             className="h-9 border-gray-200 dark:border-gray-800"
           />
         </div>
@@ -157,7 +187,7 @@ export const TableFilters = <TData extends object>({
       {facets && facets.length > 0 && (
         <div className="flex items-center space-x-2">
           {facets.map((facet, index) => (
-            <FacetedFilter key={index} table={table} facet={facet} />
+            <FacetedFilterComponent key={index} table={table} facet={facet} />
           ))}
         </div>
       )}
@@ -165,7 +195,7 @@ export const TableFilters = <TData extends object>({
       {isFiltered && (
         <Button
           variant="ghost"
-          onClick={() => table.resetColumnFilters()}
+          onClick={handleResetFilters}
           className="h-9 px-2"
         >
           Reset
@@ -207,3 +237,9 @@ export const TableFilters = <TData extends object>({
     </div>
   );
 };
+
+// Export a named version for direct imports
+export const TableFilters = TableFiltersComponent;
+
+// Export the faceted filter component for reuse
+export const FacetedFilter = FacetedFilterComponent;

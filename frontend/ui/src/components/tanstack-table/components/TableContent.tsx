@@ -1,16 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { memo } from "react";
+import { Table as TanStackTable } from "@tanstack/react-table";
 import { Table } from "@shadcn";
 import { TableHeader } from "./TableHeader";
 import { TableBody } from "./TableBody";
 import { DataTableColumn } from "../types";
 
 interface TableContentProps<TData extends object> {
-  table: any;
+  table: TanStackTable<TData>;
   flatColumns: DataTableColumn<TData>[];
   isPaginationLoading?: boolean;
-  expandableRows?: any;
+  expandableRows?: {
+    render: (row: TData) => React.ReactNode;
+    expandOnClick?: boolean;
+    singleExpand?: boolean;
+  };
   expandedRows: Record<string, boolean>;
   toggleRowExpanded: (rowId: string) => void;
   onRowClick?: (row: TData) => void;
@@ -27,8 +32,9 @@ interface TableContentProps<TData extends object> {
 
 /**
  * TableContent component that combines header and body
+ * Memoized to prevent unnecessary re-renders
  */
-export function TableContent<TData extends object>({
+function TableContentComponent<TData extends object>({
   table,
   flatColumns,
   isPaginationLoading,
@@ -74,3 +80,6 @@ export function TableContent<TData extends object>({
     </div>
   );
 }
+
+// Export memoized version for better performance
+export const TableContent = memo(TableContentComponent) as typeof TableContentComponent;

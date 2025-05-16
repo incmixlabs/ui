@@ -47,7 +47,7 @@ export interface DataTableColumn<TData> {
 
   // Custom renderer - fixed type to be more flexible with value types
   renderer?: (value: any, row: TData) => ReactNode;
-  
+
   // New property for inline editing
   enableInlineEdit?: boolean;
 }
@@ -188,7 +188,7 @@ export interface DataTableProps<TData> {
   editFieldConfig?: any;
   onRowEdit?: (oldData: TData, newData: TData) => void;
   editDialogTitle?: string;
-  
+
   // Inline cell editing functionality
   enableInlineCellEdit?: boolean;
   inlineEditableColumns?: (keyof TData | string)[];

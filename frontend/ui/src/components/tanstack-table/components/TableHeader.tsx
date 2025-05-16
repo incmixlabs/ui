@@ -1,24 +1,25 @@
 "use client";
 
 import React from "react";
-import { flexRender } from "@tanstack/react-table";
+import { flexRender, Table as TanStackTable } from "@tanstack/react-table";
 import { Table } from "@shadcn";
 import { DataTableColumn } from "../types";
 
 interface TableHeaderProps<TData> {
-  table: any;
+  table: TanStackTable<TData>;
   flatColumns: DataTableColumn<TData>[];
 }
 
 /**
  * Table header component rendering column headers
+ * Memoized to prevent unnecessary re-renders
  */
-export function TableHeader<TData>({ table, flatColumns }: TableHeaderProps<TData>) {
+function TableHeaderComponent<TData>({ table, flatColumns }: TableHeaderProps<TData>) {
   return (
     <Table.Header>
-      {table.getHeaderGroups().map((headerGroup:any) => (
+      {table.getHeaderGroups().map((headerGroup) => (
         <Table.Row key={headerGroup.id} className="hover:bg-muted/50 dark:hover:bg-muted/20 border-gray-200 dark:border-gray-800">
-          {headerGroup.headers.map((header:any) => {
+          {headerGroup.headers.map((header) => {
             // Get column type from our original columns definition
             const columnDef = flatColumns.find(col =>
               col.accessorKey?.toString() === header.id ||
@@ -49,3 +50,6 @@ export function TableHeader<TData>({ table, flatColumns }: TableHeaderProps<TDat
     </Table.Header>
   );
 }
+
+// Export memoized version to prevent unnecessary re-renders
+export const TableHeader = React.memo(TableHeaderComponent) as typeof TableHeaderComponent;

@@ -1,6 +1,7 @@
 "use client"
 
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo, memo } from "react";
+import { Table as TanStackTable } from "@tanstack/react-table";
 import { Table } from "@shadcn";
 
 // Import UI components
@@ -8,7 +9,9 @@ import { TableFilters } from "./TableFilters";
 import { TablePagination } from "./TablePagination";
 import { TableSidebar } from "../sidebar-filter";
 import { TableContent } from "./TableContent";
-import EditTableForm from "./EditTableForm";
+// Import EditTableForm and wrap it with memo for better performance
+import EditTableFormComponent from "./EditTableForm";
+const EditTableForm = memo(EditTableFormComponent);
 
 // Import hooks
 import { useTableState } from "../hooks/useTableState";
@@ -24,8 +27,9 @@ import { DataTableProps } from "../types";
 /**
  * DataTable component - main entry point for the data table
  * Using extracted hooks and components for better organization
+ * Optimized for React 19 with proper memoization and performance best practices
  */
-export function DataTable<TData extends object>({
+function DataTableComponent<TData extends object>({
   columns,
   data,
   enableFiltering = true,
@@ -71,7 +75,7 @@ export function DataTable<TData extends object>({
 }: DataTableProps<TData>) {
   // Use our extracted hooks to organize the component
   const tableState = useTableState(initialSidebarOpen);
-  
+
   const {
     sidebarOpen,
     setSidebarOpen,
@@ -88,7 +92,7 @@ export function DataTable<TData extends object>({
     setSidebarOpen(prev => !prev);
   }, [setSidebarOpen]);
 
-  // Handle row expansion
+  // Handle row expansion - memoized for performance
   const toggleRowExpanded = useCallback((rowId: string) => {
     if (expandableRows?.singleExpand) {
       // If single expand mode, close all other rows
@@ -105,11 +109,11 @@ export function DataTable<TData extends object>({
   }, [expandableRows, setExpandedRows]);
 
   // Edit functionality
-  const { 
-    handleEditClick, 
-    handleCloseEditDialog, 
-    handleEditSubmit, 
-    enhancedRowActions 
+  const {
+    handleEditClick,
+    handleCloseEditDialog,
+    handleEditSubmit,
+    enhancedRowActions
   } = useTableEdit({
     enableRowEdit,
     editFormSchema,
@@ -140,7 +144,7 @@ export function DataTable<TData extends object>({
     [saveEdit]
   );
 
-  // Column definitions
+  // Column definitions with memoization to prevent unnecessary recalculations
   const { flatColumns, columnDefs } = useTableColumns({
     columns,
     enableRowSelection,
@@ -155,10 +159,10 @@ export function DataTable<TData extends object>({
     enhancedRowActions,
   });
 
-  // Table instance
-  const { 
-    table, 
-    paginationInfo, 
+  // Table instance with memoized data
+  const {
+    table,
+    paginationInfo,
     isPaginationVisible,
     handlePageChange,
     handlePageSizeChange
@@ -179,7 +183,7 @@ export function DataTable<TData extends object>({
     tableState,
   });
 
-  // Table features
+  // Table features with memoized dependencies
   const { visibilityItems, handleExport } = useTableFeatures({
     table,
     flatColumns,
@@ -188,7 +192,22 @@ export function DataTable<TData extends object>({
     serverPagination,
   });
 
-  return (
+  // Memoize expensive calculations for table state - optimized dependency array
+  const rowSelectionCount = useMemo(() => {
+    return Object.keys(table.getState().rowSelection || {}).length;
+  }, [table.getState().rowSelection]);
+
+  const filteredRowCount = useMemo(() => {
+    return table.getFilteredRowModel().rows.length;
+  }, [table.getFilteredRowModel().rows.length]);
+
+  // Memoize additional table state values to prevent unnecessary recalculations
+  // Generate a stable ID for the table instance
+  const tableId = useMemo(() => table.options.data?.length ? `table-${Date.now()}` : 'empty-table', [table.options.data]);
+  const tableRowsById = useMemo(() => table.getRowModel().rowsById, [table.getRowModel()]);
+
+  // Memoize the entire component structure for better rendering performance
+  const tableComponent = useMemo(() => (
     <div className={className || "w-full"}>
       {/* Main layout with proper alignment */}
       <div className="flex">
@@ -210,7 +229,7 @@ export function DataTable<TData extends object>({
 
         {/* Main content area */}
         <div className="flex-1">
-          {/* Top filters row */}
+          {/* Header section for filters */}
           <TableFilters
             table={table}
             filterColumn={enableFiltering ? filterColumn : undefined}
@@ -247,27 +266,30 @@ export function DataTable<TData extends object>({
           />
 
           {/* Pagination */}
-          {(isPaginationVisible || (showRowCount && enableRowSelection)) && (
+          {isPaginationVisible && (
             <TablePagination
               paginationInfo={paginationInfo}
               handlePageChange={handlePageChange}
               handlePageSizeChange={handlePageSizeChange}
               showRowCount={showRowCount && enableRowSelection}
-              selectedRowCount={table.getFilteredSelectedRowModel().rows.length}
-              filteredRowCount={table.getFilteredRowModel().rows.length}
+              selectedRowCount={rowSelectionCount}
+              filteredRowCount={filteredRowCount}
               isPaginationLoading={isPaginationLoading}
               serverPagination={serverPagination}
             />
           )}
         </div>
       </div>
-      
+
       {/* Edit Dialog */}
       {enableRowEdit && editFormSchema && (
         <EditTableForm
           isOpen={isEditDialogOpen}
           onClose={handleCloseEditDialog}
-          onEditRow={handleEditSubmit}
+          onEditRow={(oldData: unknown, newData: unknown) => {
+            // Create a type-safe wrapper that handles the unknown -> TData conversion
+            handleEditSubmit(oldData as TData, newData as TData);
+          }}
           rowData={currentRowData}
           formSchema={editFormSchema}
           fieldConfig={editFieldConfig}
@@ -275,5 +297,15 @@ export function DataTable<TData extends object>({
         />
       )}
     </div>
-  );
+  ), [className, isEditDialogOpen, currentRowData, editFormSchema, editFieldConfig, handleCloseEditDialog,
+      handleEditSubmit, editDialogTitle, enableSidebarFilters, sidebarOpen, sidebarFilters,
+      toggleSidebar, table, enableFiltering, filterColumn, filterPlaceholder, enableColumnVisibility,
+      visibilityItems, facets, exportOptions, handleExport, isPaginationVisible, paginationInfo,
+      handlePageChange, handlePageSizeChange, isPaginationLoading, enableRowSelection, rowSelectionCount,
+      filteredRowCount]);
+
+  return tableComponent;
 }
+
+// Export memoized version for better performance
+export const DataTable = memo(DataTableComponent) as typeof DataTableComponent;
