@@ -87,6 +87,21 @@ export const EditableDateCell: React.FC<EditableDateCellProps> = ({
     }
   };
 
+  // Handle keyboard events in edit mode
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    e.stopPropagation();
+    if (e.key === "Escape") {
+      onCancelEdit();
+    } else if (e.key === "Tab") {
+      // Allow Tab to complete editing and move to next cell
+      e.preventDefault();
+      if (e.target instanceof HTMLInputElement && e.target.value) {
+        const newDate = new Date(e.target.value + 'T00:00:00');
+        handleDateChange(newDate);
+      }
+    }
+  };
+
   if (isEditing) {
     return (
       <div className="w-full h-full flex items-center p-1"
@@ -101,7 +116,9 @@ export const EditableDateCell: React.FC<EditableDateCellProps> = ({
               handleDateChange(newDate);
             }
           }}
+          onKeyDown={handleKeyDown}
           className="w-full h-8 px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+          autoFocus
         />
       </div>
     );

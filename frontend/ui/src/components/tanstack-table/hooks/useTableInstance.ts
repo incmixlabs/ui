@@ -204,6 +204,7 @@ export function useTableInstance<TData>({
     paginationInfo,
     isPaginationVisible,
     handlePageChange,
-    handlePageSizeChange
+    handlePageSizeChange,
+    rowModel: table.getRowModel() // Expose row model for keyboard navigation
   };
 }

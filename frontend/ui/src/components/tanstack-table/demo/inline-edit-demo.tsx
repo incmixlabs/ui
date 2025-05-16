@@ -308,9 +308,7 @@ const InlineEditDemo = () => {
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-2xl font-bold mb-4">Inline Cell Editing Demo</h1>
-      <p className="text-gray-600 mb-6">
-        Click once on a name, email, or date to select it, then click again to edit.
-      </p>
+
 
       <DataTable
         columns={USER_TABLE_COLUMNS}
@@ -325,9 +323,9 @@ const InlineEditDemo = () => {
         facets={USER_TABLE_FACETS}
         isPaginationLoading={loading}
 
-        // Inline editing functionality
+        // Inline editing functionality with keyboard navigation
         enableInlineCellEdit={true}
-        inlineEditableColumns={["name", "email", "joinDate", "isActive", "tags"]} // Added boolean and tag editing
+        inlineEditableColumns={["name", "email", "joinDate", "isActive", "tags"]}
         onCellEdit={handleCellEdit}
       />
 

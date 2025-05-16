@@ -71,14 +71,24 @@ export const EditableTagCell: React.FC<EditableTagCellProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && inputValue.trim()) {
+    if (e.key === 'Enter') {
       e.preventDefault();
-      if (!tags.includes(inputValue.trim())) {
+      if (inputValue.trim() && !tags.includes(inputValue.trim())) {
         const newTags = [...tags, inputValue.trim()];
         setTags(newTags);
         onSave(rowData, columnId, newTags);
+        setInputValue('');
+      } else if (!inputValue.trim()) {
+        // If input is empty and Enter is pressed, complete editing
+        onSave(rowData, columnId, tags);
       }
-      setInputValue('');
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      onCancelEdit();
+    } else if (e.key === 'Tab') {
+      // Allow Tab to complete editing and move to next cell
+      e.preventDefault();
+      onSave(rowData, columnId, tags);
     }
   };
 

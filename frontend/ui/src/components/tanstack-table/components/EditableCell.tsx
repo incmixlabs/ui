@@ -55,6 +55,10 @@ export const EditableCell: React.FC<EditableCellProps> = ({
       onSave(rowData, columnId, editValue);
     } else if (e.key === "Escape") {
       onCancelEdit();
+    } else if (e.key === "Tab") {
+      // Allow Tab to complete editing and move to next cell
+      e.preventDefault();
+      onSave(rowData, columnId, editValue);
     }
   };
 

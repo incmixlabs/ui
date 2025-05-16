@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useCallback, useMemo, memo } from "react";
+import React, { useCallback, useMemo, memo, useEffect } from "react";
 import { Table as TanStackTable } from "@tanstack/react-table";
 import { Table } from "@shadcn";
 
@@ -123,7 +123,7 @@ function DataTableComponent<TData extends object>({
     setCurrentRowData,
   });
 
-  // Inline cell editing functionality
+  // Inline cell editing functionality with keyboard navigation
   const {
     isEditing,
     isSelected,
@@ -131,6 +131,8 @@ function DataTableComponent<TData extends object>({
     startEditing,
     cancelEditing,
     saveEdit,
+    initializeEditableCells,
+    selectFirstCell,
   } = useTableInlineEdit({
     onCellEdit,
   });
@@ -165,7 +167,8 @@ function DataTableComponent<TData extends object>({
     paginationInfo,
     isPaginationVisible,
     handlePageChange,
-    handlePageSizeChange
+    handlePageSizeChange,
+    rowModel,  // Added to access row model for cell navigation
   } = useTableInstance({
     data,
     columnDefs,
@@ -191,6 +194,38 @@ function DataTableComponent<TData extends object>({
     exportOptions,
     serverPagination,
   });
+
+  // Initialize the editable cells map for keyboard navigation
+  useEffect(() => {
+    if (enableInlineCellEdit && inlineEditableColumns.length > 0) {
+      // Extract row information
+      const rows = rowModel.rows.map((row, index) => ({
+        id: row.id,
+        index,
+      }));
+
+      // Extract column information from visible columns
+      const columns = table.getAllLeafColumns()
+        .filter(col => col.getIsVisible())
+        .map((col, index) => ({
+          id: col.id,
+          index,
+        }));
+
+      // Initialize the map of editable cells
+      initializeEditableCells(rows, columns, inlineEditableColumns as string[]);
+      
+      // This adds the ability to hit Tab to start keyboard navigation
+      if (rows.length > 0 && columns.length > 0) {
+        // Delay to ensure DOM is ready when selecting first cell
+        const timeoutId = setTimeout(() => {
+          // Optional: Auto-select the first cell for immediate keyboard navigation
+          // selectFirstCell();
+        }, 100);
+        return () => clearTimeout(timeoutId);
+      }
+    }
+  }, [enableInlineCellEdit, inlineEditableColumns, rowModel.rows, table, initializeEditableCells]);
 
   // Memoize expensive calculations for table state - optimized dependency array
   const rowSelectionCount = useMemo(() => {

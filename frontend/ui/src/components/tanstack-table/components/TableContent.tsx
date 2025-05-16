@@ -53,7 +53,11 @@ function TableContentComponent<TData extends object>({
   saveEdit,
 }: TableContentProps<TData>) {
   return (
-    <div className="rounded-md border border-gray-200 dark:border-gray-800">
+    <div 
+      className="rounded-md border border-gray-200 dark:border-gray-800"
+      tabIndex={enableInlineCellEdit ? 0 : undefined} // Add tabIndex for keyboard focus
+      data-keyboard-navigable={enableInlineCellEdit ? "true" : undefined} // Mark as keyboard navigable
+    >
       <Table.Root>
         <TableHeader 
           table={table} 
