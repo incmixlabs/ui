@@ -345,27 +345,56 @@ function TableBodyComponent<TData extends object>({
                   renderGroupHeader={rowGrouping.renderGroupHeader}
                 />
                 
-                {/* Render rows in this group if not collapsed */}
-                {!group.isCollapsed && group.rows.map((row, rowIndex) => (
-                  <MemoizedRow
-                    key={row.id}
-                    row={row}
-                    flatColumns={flatColumns}
-                    expandableRows={expandableRows}
-                    expandedRows={expandedRows}
-                    toggleRowExpanded={toggleRowExpanded}
-                    onRowClick={onRowClick}
-                    enableInlineCellEdit={enableInlineCellEdit}
-                    inlineEditableColumns={inlineEditableColumns}
-                    isEditing={isEditing}
-                    isSelected={isSelected}
-                    selectCell={selectCell}
-                    startEditing={startEditing}
-                    cancelEditing={cancelEditing}
-                    saveEdit={saveEdit}
-                    rowIndex={rowIndex} // Pass row index for ARIA attributes
-                  />
-                ))}
+                {/* Only render the content if the group is not collapsed */}
+                {!group.isCollapsed && (
+                  <>
+                    {/* Column headers for this group */}
+                    <Table.Row className="border-t border-b border-gray-100 bg-gray-50">
+                      {table.getHeaderGroups()[0].headers.map(header => {
+                        // Skip the status column if it's hidden
+                        if (header.id === 'status' && !header.column.getIsVisible()) {
+                          return null;
+                        }
+                        
+                        return (
+                          <Table.Cell 
+                            key={header.id}
+                            className="px-2 py-2 text-xs font-medium text-gray-500"
+                          >
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                          </Table.Cell>
+                        );
+                      })}
+                    </Table.Row>
+                    
+                    {/* Render rows in this group */}
+                    {group.rows.map((row, rowIndex) => (
+                      <MemoizedRow
+                        key={row.id}
+                        row={row}
+                        flatColumns={flatColumns}
+                        expandableRows={expandableRows}
+                        expandedRows={expandedRows}
+                        toggleRowExpanded={toggleRowExpanded}
+                        onRowClick={onRowClick}
+                        enableInlineCellEdit={enableInlineCellEdit}
+                        inlineEditableColumns={inlineEditableColumns}
+                        isEditing={isEditing}
+                        isSelected={isSelected}
+                        selectCell={selectCell}
+                        startEditing={startEditing}
+                        cancelEditing={cancelEditing}
+                        saveEdit={saveEdit}
+                        rowIndex={rowIndex} // Pass row index for ARIA attributes
+                      />
+                    ))}
+                  </>
+                )}
               </React.Fragment>
             );
           })}

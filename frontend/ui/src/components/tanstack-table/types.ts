@@ -199,6 +199,7 @@ export interface DataTableProps<TData extends object> {
   // Row grouping
   enableRowGrouping?: boolean;
   rowGrouping?: RowGroupingOptions<TData>;
+  hideMainHeader?: boolean; // Hide the main table header when using group headers
 
   // Callbacks
   onRowClick?: (row: TData) => void;

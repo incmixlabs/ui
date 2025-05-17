@@ -256,6 +256,8 @@ export default function GroupedTasksDemo() {
         initialColumnVisibility={initialColumnVisibility} // Set initial hidden columns
         enablePagination={false}
         className="border-none"
+        // Custom props to hide main header and show at group level
+        hideMainHeader={true}
       />
     </div>
   )

@@ -67,6 +67,7 @@ function DataTableComponent<TData extends object>({
   // Row grouping
   enableRowGrouping = false,
   rowGrouping,
+  hideMainHeader = false,
   // Edit functionality
   enableRowEdit = false,
   editFormSchema,
@@ -298,6 +299,7 @@ function DataTableComponent<TData extends object>({
             onRowClick={onRowClick}
             enableRowGrouping={enableRowGrouping}
             rowGrouping={rowGrouping}
+            hideMainHeader={hideMainHeader}
             enableInlineCellEdit={enableInlineCellEdit}
             inlineEditableColumns={inlineEditableColumns}
             isEditing={isEditing}

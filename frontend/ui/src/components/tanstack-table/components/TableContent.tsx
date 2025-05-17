@@ -22,6 +22,7 @@ interface TableContentProps<TData extends object> {
   // Row grouping props
   enableRowGrouping?: boolean;
   rowGrouping?: RowGroupingOptions<TData>;
+  hideMainHeader?: boolean;
   // Inline editing props
   enableInlineCellEdit?: boolean;
   inlineEditableColumns?: (keyof TData | string)[];
@@ -48,6 +49,7 @@ function TableContentComponent<TData extends object>({
   // Row grouping props
   enableRowGrouping,
   rowGrouping,
+  hideMainHeader = false,
   // Inline editing props
   enableInlineCellEdit,
   inlineEditableColumns,
@@ -73,10 +75,13 @@ function TableContentComponent<TData extends object>({
         undefined}
     >
       <Table.Root>
-        <TableHeader 
-          table={table} 
-          flatColumns={flatColumns} 
-        />
+        {/* Only render the main header if not hidden */}
+        {!hideMainHeader && (
+          <TableHeader 
+            table={table} 
+            flatColumns={flatColumns} 
+          />
+        )}
         <TableBody
           table={table}
           flatColumns={flatColumns}
