@@ -4,7 +4,9 @@ import React, { useMemo, memo } from "react";
 import { flexRender, Table as TanStackTable, Row, Cell } from "@tanstack/react-table";
 import { Table } from "@shadcn";
 import { LoadingRow, EmptyRow } from "./TableUtilityRows";
-import { DataTableColumn } from "../types";
+import { DataTableColumn, RowGroupingOptions } from "../types";
+import { GroupHeaderRow } from "./GroupHeaderRow";
+import { useTableGrouping } from "../hooks/useTableGrouping";
 
 // Import editable cell components
 import { EditableCell } from "./EditableCell";
@@ -48,6 +50,9 @@ interface TableBodyProps<TData extends object> {
   expandedRows: Record<string, boolean>;
   toggleRowExpanded: (rowId: string) => void;
   onRowClick?: (row: TData) => void;
+  // Row grouping props
+  enableRowGrouping?: boolean;
+  rowGrouping?: RowGroupingOptions<TData>;
   // Inline editing props
   enableInlineCellEdit?: boolean;
   inlineEditableColumns?: (keyof TData | string)[];
@@ -125,7 +130,7 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
     <React.Fragment>
       <Table.Row
         data-state={row.getIsSelected() && "selected"}
-        className={`border-gray-200 dark:border-gray-800 dark:data-[state=selected]:bg-muted/20 ${
+        className={`border-gray-100 dark:border-gray-800 dark:data-[state=selected]:bg-muted/20 ${
           onRowClick || (expandableRows?.expandOnClick) ? "cursor-pointer" : ""
         } ${isExpanded ? "bg-muted/10" : ""}`}
         onClick={handleRowClick}
@@ -158,7 +163,7 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           return (
             <Table.Cell
               key={cell.id}
-              className={`p-2 ${columnDef?.className || ""} overflow-hidden ${isEditableCell && isSelected?.(row.id, cell.column.id) ? "bg-blue-50 dark:bg-blue-900/20" : ""}`}
+              className={`px-2 py-3 ${columnDef?.className || ""} overflow-hidden ${isEditableCell && isSelected?.(row.id, cell.column.id) ? "bg-blue-50 dark:bg-blue-900/20" : ""}`}
               style={{
                 width: columnDef?.width,
                 minWidth: columnDef?.minWidth,
@@ -265,6 +270,9 @@ function TableBodyComponent<TData extends object>({
   expandedRows,
   toggleRowExpanded,
   onRowClick,
+  // Row grouping props
+  enableRowGrouping = false,
+  rowGrouping,
   // Inline editing props
   enableInlineCellEdit = false,
   inlineEditableColumns = [],
@@ -278,19 +286,93 @@ function TableBodyComponent<TData extends object>({
   // Memoize the row model to prevent unnecessary recalculations
   const rows = useMemo(() => table.getRowModel().rows, [table.getRowModel().rows]);
   const columnCount = useMemo(() => table.getAllColumns().length, [table.getAllColumns().length]);
+  
+  // Initialize row grouping if enabled
+  const grouping = useTableGrouping(
+    rows,
+    rowGrouping || { groupByColumn: '' },  // Default to empty string if no grouping is provided
+    enableRowGrouping && !!rowGrouping
+  );
+  
+  // Destructure grouping values
+  const { 
+    groupedRows, 
+    toggleGroupCollapsed, 
+    isRowVisible, 
+    groupKeys, 
+    getGroupRowCount,
+    getRowGroupValue 
+  } = grouping;
+
+  // Early return for loading and empty states
+  if (isPaginationLoading) {
+    return (
+      <Table.Body className="divide-y divide-gray-100 dark:divide-gray-800">
+        <LoadingRow colSpan={flatColumns.length} />
+      </Table.Body>
+    );
+  }
+  
+  if (rows.length === 0) {
+    return (
+      <Table.Body className="divide-y divide-gray-100 dark:divide-gray-800">
+        <EmptyRow colSpan={flatColumns.length} />
+      </Table.Body>
+    );
+  }
 
   return (
     <Table.Body 
-      className="divide-y divide-gray-200 dark:divide-gray-800"
+      className="divide-y divide-gray-100 dark:divide-gray-800"
       role={enableInlineCellEdit ? "rowgroup" : undefined}
     >
-      {isPaginationLoading ? (
-        <LoadingRow colSpan={flatColumns.length} />
-      ) : table.getRowModel().rows.length === 0 ? (
-        <EmptyRow colSpan={flatColumns.length} />
+      {enableRowGrouping && rowGrouping ? (
+        // Render grouped rows with headers
+        <>
+          {groupKeys.map(groupKey => {
+            const group = groupedRows[groupKey];
+            const rowCount = getGroupRowCount(groupKey);
+            
+            return (
+              <React.Fragment key={`group-${groupKey}`}>
+                {/* Render group header */}
+                <GroupHeaderRow
+                  groupKey={groupKey}
+                  rowCount={rowCount}
+                  isCollapsed={group.isCollapsed}
+                  toggleCollapsed={toggleGroupCollapsed}
+                  colSpan={flatColumns.length}
+                  renderGroupHeader={rowGrouping.renderGroupHeader}
+                />
+                
+                {/* Render rows in this group if not collapsed */}
+                {!group.isCollapsed && group.rows.map((row, rowIndex) => (
+                  <MemoizedRow
+                    key={row.id}
+                    row={row}
+                    flatColumns={flatColumns}
+                    expandableRows={expandableRows}
+                    expandedRows={expandedRows}
+                    toggleRowExpanded={toggleRowExpanded}
+                    onRowClick={onRowClick}
+                    enableInlineCellEdit={enableInlineCellEdit}
+                    inlineEditableColumns={inlineEditableColumns}
+                    isEditing={isEditing}
+                    isSelected={isSelected}
+                    selectCell={selectCell}
+                    startEditing={startEditing}
+                    cancelEditing={cancelEditing}
+                    saveEdit={saveEdit}
+                    rowIndex={rowIndex} // Pass row index for ARIA attributes
+                  />
+                ))}
+              </React.Fragment>
+            );
+          })}
+        </>
       ) : (
-        // Render rows with optimized rendering
-        table.getRowModel().rows.map((row, rowIndex) => (
+        // Regular non-grouped rows
+        rows.map((row, rowIndex) => (
           <MemoizedRow
             key={row.id}
             row={row}

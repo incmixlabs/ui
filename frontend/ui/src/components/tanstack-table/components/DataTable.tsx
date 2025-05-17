@@ -38,6 +38,7 @@ function DataTableComponent<TData extends object>({
   enablePagination = true,
   enableRowSelection = true,
   enableColumnVisibility = true,
+  initialColumnVisibility,
   enableColumnResizing = false,
   enableColumnReordering = false,
   showRowCount = true,
@@ -63,6 +64,9 @@ function DataTableComponent<TData extends object>({
   enableSidebarFilters = false,
   sidebarFilters = [],
   initialSidebarOpen = true,
+  // Row grouping
+  enableRowGrouping = false,
+  rowGrouping,
   // Edit functionality
   enableRowEdit = false,
   editFormSchema,
@@ -75,7 +79,7 @@ function DataTableComponent<TData extends object>({
   onCellEdit,
 }: DataTableProps<TData>) {
   // Use our extracted hooks to organize the component
-  const tableState = useTableState(initialSidebarOpen);
+  const tableState = useTableState(initialSidebarOpen, initialColumnVisibility);
 
   const {
     sidebarOpen,
@@ -292,6 +296,8 @@ function DataTableComponent<TData extends object>({
             expandedRows={expandedRows}
             toggleRowExpanded={toggleRowExpanded}
             onRowClick={onRowClick}
+            enableRowGrouping={enableRowGrouping}
+            rowGrouping={rowGrouping}
             enableInlineCellEdit={enableInlineCellEdit}
             inlineEditableColumns={inlineEditableColumns}
             isEditing={isEditing}

@@ -86,7 +86,7 @@ export function useTableInstance<TData>({
     [serverPagination, currentPage, pageSize]
   );
 
-  // Create table instance
+  // Check if the file exists - this is a placeholder to help find the filetance
   const table = useReactTable({
     data,
     columns: columnDefs,

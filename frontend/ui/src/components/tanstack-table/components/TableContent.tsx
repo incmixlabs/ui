@@ -5,7 +5,7 @@ import { Table as TanStackTable } from "@tanstack/react-table";
 import { Table } from "@shadcn";
 import { TableHeader } from "./TableHeader";
 import { TableBody } from "./TableBody";
-import { DataTableColumn } from "../types";
+import { DataTableColumn, RowGroupingOptions } from "../types";
 
 interface TableContentProps<TData extends object> {
   table: TanStackTable<TData>;
@@ -19,6 +19,9 @@ interface TableContentProps<TData extends object> {
   expandedRows: Record<string, boolean>;
   toggleRowExpanded: (rowId: string) => void;
   onRowClick?: (row: TData) => void;
+  // Row grouping props
+  enableRowGrouping?: boolean;
+  rowGrouping?: RowGroupingOptions<TData>;
   // Inline editing props
   enableInlineCellEdit?: boolean;
   inlineEditableColumns?: (keyof TData | string)[];
@@ -42,6 +45,9 @@ function TableContentComponent<TData extends object>({
   expandedRows,
   toggleRowExpanded,
   onRowClick,
+  // Row grouping props
+  enableRowGrouping,
+  rowGrouping,
   // Inline editing props
   enableInlineCellEdit,
   inlineEditableColumns,
@@ -79,6 +85,8 @@ function TableContentComponent<TData extends object>({
           expandedRows={expandedRows}
           toggleRowExpanded={toggleRowExpanded}
           onRowClick={onRowClick}
+          enableRowGrouping={enableRowGrouping}
+          rowGrouping={rowGrouping}
           enableInlineCellEdit={enableInlineCellEdit}
           inlineEditableColumns={inlineEditableColumns}
           isEditing={isEditing}

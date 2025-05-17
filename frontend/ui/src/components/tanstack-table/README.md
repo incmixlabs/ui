@@ -7,11 +7,12 @@ This documentation provides a comprehensive guide to using the TanStack Table co
 1. [Basic Usage](#basic-usage)
 2. [Column Configuration](#column-configuration)
 3. [Filtering Options](#filtering-options)
-4. [Props Reference](#props-reference)
-5. [Custom Cell Renderers](#custom-cell-renderers)
-6. [Advanced Usage Examples](#advanced-usage-examples)
-7. [Real-World Examples](#real-world-examples)
-8. [Troubleshooting](#troubleshooting)
+4. [Row Grouping](#row-grouping)
+5. [Props Reference](#props-reference)
+6. [Custom Cell Renderers](#custom-cell-renderers)
+7. [Advanced Usage Examples](#advanced-usage-examples)
+8. [Real-World Examples](#real-world-examples)
+9. [Troubleshooting](#troubleshooting)
 
 ## Basic Usage
 
@@ -314,6 +315,76 @@ const sidebarFilters: SidebarFilterConfig<typeof data[0]>[] = [
 | `date` | Single date picker | `{ type: "date", column: "fieldName", title: "Display Name" }` |
 | `dateRange` | Date range picker | `{ type: "dateRange", column: "fieldName", title: "Display Name" }` |
 | `boolean` | Yes/No filter | `{ type: "boolean", column: "fieldName", title: "Display Name" }` |
+
+## Row Grouping
+
+The DataTable component supports grouping rows by a specific column value, ideal for organizing related data. Each group can be collapsed/expanded to show or hide its rows.
+
+```tsx
+import { DataTable } from "@incmix/ui/components/tanstack-table";
+
+// Sample data with a category/status to group by
+const tasks = [
+  { id: 1, name: "Create Navbar", status: "Todo", priority: "Normal" },
+  { id: 2, name: "Update Sidebar", status: "Todo", priority: "Normal" },
+  { id: 3, name: "Customize Page", status: "In Design", priority: "Medium" },
+  { id: 4, name: "Pricing Card", status: "In Design", priority: "Normal" },
+  { id: 5, name: "GitHub Integration", status: "In Review", priority: "High" },
+];
+
+// Define columns - note that 'status' is deliberately NOT included as a column
+// since we're grouping by it and don't need to show it in each row
+const columns = [
+  { headingName: "Name", accessorKey: "name", type: "String" },
+  { headingName: "Priority", accessorKey: "priority", type: "Status" },
+  // The 'status' field exists in the data but isn't included as a visible column
+  // because it would be redundant when rows are already grouped by status
+];
+
+// Custom renderer for group headers (optional)
+const renderGroupHeader = (groupValue, count) => (
+  <div className="flex items-center">
+    {/* Optional: Icon based on group value */}
+    {groupValue === "Todo" && <ClockIcon className="mr-2 h-4 w-4" />}
+    {groupValue === "In Design" && <PencilIcon className="mr-2 h-4 w-4" />}
+    
+    <span className="font-medium">{groupValue}</span>
+    <span className="ml-2 text-muted-foreground">({count} items)</span>
+  </div>
+);
+
+// Use the DataTable with grouping enabled
+function GroupedTasksTable() {
+  return (
+    <DataTable
+      columns={columns}
+      data={tasks}
+      // Enable row grouping
+      enableRowGrouping={true}
+      // Configure grouping options
+      rowGrouping={{
+        // Column to group by
+        groupByColumn: "status",
+        // Optional custom renderer for group headers
+        renderGroupHeader: renderGroupHeader,
+        // Whether groups start collapsed
+        initiallyCollapsed: false,
+        // Whether clicking the header toggles the group
+        toggleOnClick: true
+      }}
+    />
+  );
+}
+```
+
+### Row Grouping Options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `groupByColumn` | `string \| function` | The column key to group by, or a function that returns a grouping value for each row |
+| `renderGroupHeader` | `function` | Optional custom renderer for group headers. Receives group value and row count |
+| `initiallyCollapsed` | `boolean` | Whether groups should start in collapsed state (default: false) |
+| `toggleOnClick` | `boolean` | Whether clicking the group header toggles the group (default: true) |
 
 ## Props Reference
 

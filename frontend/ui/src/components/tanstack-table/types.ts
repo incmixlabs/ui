@@ -130,9 +130,23 @@ export interface SidebarFilterConfig<TData> {
   initialCollapsed?: boolean; // Whether this filter group starts collapsed
 }
 
+// Row grouping configuration
+export interface RowGroupingOptions<TData extends object> {
+  // Column to group by - can be a key of the data or a function that derives a grouping value
+  groupByColumn: keyof TData | string | ((row: TData) => string);
+  // Custom render function for group header (optional)
+  renderGroupHeader?: (groupValue: string, count: number) => ReactNode;
+  // Whether all groups should start collapsed
+  initiallyCollapsed?: boolean;
+  // Whether clicking the group header should toggle the group
+  toggleOnClick?: boolean;
+}
+
 // Main DataTable props
-export interface DataTableProps<TData> {
+export interface DataTableProps<TData extends object> {
+  // Column definitions
   columns: DataTableColumn<TData>[] | ColumnGroup<TData>[];
+  // Data array
   data: TData[];
 
   // Basic features
@@ -141,6 +155,7 @@ export interface DataTableProps<TData> {
   enablePagination?: boolean;
   enableRowSelection?: boolean;
   enableColumnVisibility?: boolean;
+  initialColumnVisibility?: Record<string, boolean>;
   enableColumnResizing?: boolean;
   enableColumnReordering?: boolean;
 
@@ -172,12 +187,20 @@ export interface DataTableProps<TData> {
   onPageSizeChange?: (pageSize: number) => void;
   isPaginationLoading?: boolean;
 
-  // New features
+  // Export functionality
   export?: ExportOptions;
+
+  // Virtualization options
   virtualization?: VirtualizationOptions;
+
+  // Expandable rows
   expandableRows?: ExpandableRowOptions<TData>;
 
-  // Events
+  // Row grouping
+  enableRowGrouping?: boolean;
+  rowGrouping?: RowGroupingOptions<TData>;
+
+  // Callbacks
   onRowClick?: (row: TData) => void;
   onSelectionChange?: (selectedRows: TData[]) => void;
   onColumnReorder?: (newOrder: string[]) => void;

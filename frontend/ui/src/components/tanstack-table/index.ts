@@ -4,6 +4,7 @@ export { default as TasksTableDemo } from "./demo/tasks-demo";
 export { default as SidebarFilterDemo } from "./demo/sidebarfilter-demo";
 export { default as EditableUsersTableDemo } from "./demo/users-edit-demo";
 export { default as InlineEditDemo } from "./demo/inline-edit-demo";
+export { default as GroupedDemo } from "./demo/grouped-demo";
 
 // Export the main DataTable component
 export { DataTable } from "./components/DataTable";
