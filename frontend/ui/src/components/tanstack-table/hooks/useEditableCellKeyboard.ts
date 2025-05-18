@@ -53,9 +53,17 @@ export function useEditableCellKeyboard({
       cellRef.current.focus();
 
       // For input elements, try to position cursor at the end
-      if (cellRef.current instanceof HTMLInputElement) {
-        const length = cellRef.current.value.length;
-        cellRef.current.setSelectionRange(length, length);
+      // Focus and move cursor to end of text for text inputs, but only for input types that support it
+      const inputElement = cellRef.current as HTMLInputElement;
+      const length = inputElement.value?.length || 0;
+      
+      // Only use setSelectionRange for input types that support it (not for date, color, etc.)
+      if (inputElement.type && !['date', 'color', 'range', 'file', 'checkbox', 'radio'].includes(inputElement.type)) {
+        try {
+          inputElement.setSelectionRange(length, length);
+        } catch (error) {
+          console.warn('Could not set selection range on input element', error);
+        }
       }
     }
   }, [isEditing]);
