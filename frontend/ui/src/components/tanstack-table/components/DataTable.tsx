@@ -220,7 +220,7 @@ function DataTableComponent<TData extends object>({
 
       // Initialize the map of editable cells
       initializeEditableCells(rows, columns, inlineEditableColumns as string[]);
-      
+
       // This adds the ability to hit Tab to start keyboard navigation
       if (rows.length > 0 && columns.length > 0) {
         // Delay to ensure DOM is ready when selecting first cell
@@ -325,6 +325,7 @@ function DataTableComponent<TData extends object>({
           )}
         </div>
       </div>
+
 
       {/* Edit Dialog */}
       {enableRowEdit && editFormSchema && (

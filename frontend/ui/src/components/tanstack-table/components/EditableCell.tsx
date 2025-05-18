@@ -18,7 +18,7 @@ interface EditableCellProps {
 
 /**
  * Editable cell component that switches between display, selected, and edit modes
- * First click selects the cell, second click enters edit mode
+ * Supports keyboard navigation and editing similar to Excel
  */
 export const EditableCell: React.FC<EditableCellProps> = ({
   value,
@@ -49,7 +49,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
       inputRef.current.select();
     }
   }, [isEditing]);
-  
+
   // Handle value save
   const handleSave = () => {
     if (editValue !== value) {
@@ -71,7 +71,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
     saveEdit: () => handleSave(),
     autoFocus: true,
   });
-  
+
   // Get accessibility attributes
   const ariaAttributes = getAriaAttributes();
 
@@ -79,22 +79,22 @@ export const EditableCell: React.FC<EditableCellProps> = ({
     // Save on blur if the value has changed
     handleSave();
   };
-  
+
   // Simple click handler that just calls the hook's handler
   const handleClick = (e: React.MouseEvent) => {
     handleCellClick(e);
   };
-  
-  // Handle document-wide click to deselect 
+
+  // Handle document-wide click to deselect
   useEffect(() => {
     if (!isSelected) return;
-    
+
     const handleOutsideClick = (e: MouseEvent) => {
       if (divRef.current && !divRef.current.contains(e.target as Node)) {
         onCancelEdit(); // This also cancels selection
       }
     };
-    
+
     document.addEventListener('mousedown', handleOutsideClick);
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
@@ -117,8 +117,8 @@ export const EditableCell: React.FC<EditableCellProps> = ({
           onBlur={handleBlur}
           className="w-full border border-blue-300 dark:border-blue-600 rounded-sm px-2 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
           onClick={(e) => e.stopPropagation()}
-          style={{ 
-            minWidth: 0, 
+          style={{
+            minWidth: 0,
             maxWidth: '100%',
             height: '28px'
           }}
@@ -129,7 +129,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
   }
 
   return (
-    <div 
+    <div
       ref={(el) => {
         // Connect both refs to the div element
         divRef.current = el;
@@ -137,7 +137,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
       }}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      className={`${className} cursor-pointer w-full h-full p-2 transition-colors duration-150 
+      className={`${className} cursor-pointer w-full h-full p-2 transition-colors duration-150
         ${isSelected ? "bg-blue-100 dark:bg-blue-900/30 rounded" : ""}`}
       {...ariaAttributes}
       aria-label={`${columnId}: ${value || 'Empty'}`}
