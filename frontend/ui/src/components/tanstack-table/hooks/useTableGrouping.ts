@@ -43,24 +43,30 @@ export function useTableGrouping<TData extends object>(
   // Function to get the group value for a row
   const getRowGroupValue = useCallback(
     (row: Row<TData>): string => {
+      // Get the raw group value
+      let rawValue: string;
       if (typeof options.groupByColumn === "function") {
-        return options.groupByColumn(row.original);
+        rawValue = options.groupByColumn(row.original);
+      } else {
+        const columnKey = options.groupByColumn as string;
+        if (row.original && columnKey in row.original) {
+          const value = (row.original as any)[columnKey];
+          rawValue = value?.toString() || "Unknown";
+        } else {
+          const value = row.getValue(columnKey) as string | number | boolean;
+          rawValue = value?.toString() || "Unknown";
+        }
       }
 
-      const columnKey = options.groupByColumn as string;
-      
-      // Access the value directly from the original data if it exists there
-      // This is more reliable than using row.getValue() which might not work for non-visible columns
-      if (row.original && columnKey in row.original) {
-        const value = (row.original as any)[columnKey];
-        return value?.toString() || "Unknown";
+      // Apply category mapping if provided
+      if (options.categoryMapping?.valueToIdentifier && rawValue in options.categoryMapping.valueToIdentifier) {
+        // Map display value to standardized identifier
+        return options.categoryMapping.valueToIdentifier[rawValue];
       }
       
-      // Fallback to using getValue
-      const value = row.getValue(columnKey) as string | number | boolean;
-      return value?.toString() || "Unknown";
+      return rawValue;
     },
-    [options.groupByColumn]
+    [options.groupByColumn, options.categoryMapping]
   );
 
   // Group rows by the grouping column

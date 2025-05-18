@@ -130,16 +130,19 @@ export interface SidebarFilterConfig<TData> {
   initialCollapsed?: boolean; // Whether this filter group starts collapsed
 }
 
-// Row grouping configuration
-export interface RowGroupingOptions<TData extends object> {
-  // Column to group by - can be a key of the data or a function that derives a grouping value
-  groupByColumn: keyof TData | string | ((row: TData) => string);
-  // Custom render function for group header (optional)
-  renderGroupHeader?: (groupValue: string, count: number) => ReactNode;
-  // Whether all groups should start collapsed
+// Row grouping options
+export interface RowGroupingOptions<TData> {
+  groupByColumn: string | ((row: TData) => string);
   initiallyCollapsed?: boolean;
-  // Whether clicking the group header should toggle the group
   toggleOnClick?: boolean;
+  renderGroupHeader?: (groupValue: string, count: number) => React.ReactNode;
+  // Optional mapping for standardized category identifiers
+  categoryMapping?: {
+    // Maps display values (e.g., "In Progress") to standardized identifiers (e.g., "in_progress")
+    valueToIdentifier?: Record<string, string>;
+    // Maps standardized identifiers to display labels
+    identifierToLabel?: Record<string, string>;
+  };
 }
 
 // Main DataTable props

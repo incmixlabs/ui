@@ -8,6 +8,7 @@ interface Task {
   id: string
   name: string
   status: 'Todo' | 'In Design' | 'In Review' | 'Done'
+  category: string
   startDate: string
   dueDate: string
   priority: 'Low' | 'Normal' | 'Medium' | 'High' | '' // Empty string for "Add" state
@@ -72,13 +73,30 @@ const PriorityCell = ({ value }: { value: string }) => {
   );
 };
 
-// Sample data for tasks
+// Define standardized category identifiers and their display labels
+const categoryMapping = {
+  valueToIdentifier: {
+    "Todo": "todo",
+    "In Design": "in_design",
+    "In Review": "in_review",
+    "Done": "done"
+  },
+  identifierToLabel: {
+    "todo": "Todo",
+    "in_design": "In Design",
+    "in_review": "In Review",
+    "done": "Done"
+  }
+};
+
+// Sample task data with category field containing standardized identifiers
 const SAMPLE_TASKS: Task[] = [
   // Todo tasks
   {
     id: "task1",
     name: "Create more options for Navbar",
-    status: "Todo",
+    status: "Todo",             // For backwards compatibility 
+    category: "todo",           // Standardized identifier
     startDate: "2023-12-12",
     dueDate: "2023-12-20",
     priority: "Normal",
@@ -88,10 +106,11 @@ const SAMPLE_TASKS: Task[] = [
     id: "task2",
     name: "Update Sidebar",
     status: "Todo",
+    category: "todo",
     startDate: "2023-12-14",
     dueDate: "2023-12-16",
     priority: "",
-    people: [""]
+    people: []
   },
   
   // In Design tasks
@@ -99,6 +118,7 @@ const SAMPLE_TASKS: Task[] = [
     id: "task3",
     name: "Customize Setting Page",
     status: "In Design",
+    category: "in_design",
     startDate: "2023-12-16",
     dueDate: "2023-12-18",
     priority: "Medium",
@@ -108,15 +128,17 @@ const SAMPLE_TASKS: Task[] = [
     id: "task4",
     name: "Pricing Card",
     status: "In Design",
+    category: "in_design",
     startDate: "2023-12-14",
     dueDate: "2023-12-16",
     priority: "Normal",
-    people: ["JD"]
+    people: ["MJ"]
   },
   {
     id: "task5",
     name: "Use Projects to organize content",
     status: "In Design",
+    category: "in_design",
     startDate: "2023-12-24",
     dueDate: "2024-01-01",
     priority: "Low",
@@ -128,6 +150,7 @@ const SAMPLE_TASKS: Task[] = [
     id: "task6",
     name: "Connect Github to Gitlab",
     status: "In Review",
+    category: "in_review",
     startDate: "2023-12-16",
     dueDate: "2023-12-18",
     priority: "",
@@ -137,6 +160,7 @@ const SAMPLE_TASKS: Task[] = [
     id: "task7",
     name: "Create Foundation Color",
     status: "In Review",
+    category: "in_review",
     startDate: "2023-12-18",
     dueDate: "2023-12-21",
     priority: "High",
@@ -146,6 +170,7 @@ const SAMPLE_TASKS: Task[] = [
     id: "task8",
     name: "Redesign Homepage + Details Product",
     status: "In Review",
+    category: "in_review",
     startDate: "2023-12-24",
     dueDate: "2024-01-01",
     priority: "Normal",
@@ -157,6 +182,7 @@ const SAMPLE_TASKS: Task[] = [
     id: "task9",
     name: "Implement Auth System",
     status: "Done",
+    category: "done",
     startDate: "2023-12-01",
     dueDate: "2023-12-10",
     priority: "High",
@@ -166,6 +192,7 @@ const SAMPLE_TASKS: Task[] = [
     id: "task10",
     name: "Create Base Components",
     status: "Done",
+    category: "done",
     startDate: "2023-11-15",
     dueDate: "2023-11-30",
     priority: "Medium",
@@ -174,8 +201,7 @@ const SAMPLE_TASKS: Task[] = [
 ]
 
 // Column definitions for tasks table
-// Important: We MUST include the status column in our definition for proper grouping,
-// even though we'll hide it from display
+// We include both status and category columns for flexibility, but hide them from display
 const TASK_TABLE_COLUMNS = [
   {
     headingName: "Name",
@@ -206,34 +232,66 @@ const TASK_TABLE_COLUMNS = [
   },
   {
     headingName: "Priority",
-    type: "Custom" as const,
+    type: "String" as const,
     accessorKey: "priority" as const,
     id: "priority",
     enableSorting: true,
-    cell: (info: any) => <PriorityCell value={info.getValue()} />
+    cell: ({ getValue }: { getValue: () => any }) => {
+      const value = getValue();
+      if (!value) return <div className="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-gray-100 text-gray-800">Add</div>;
+      const priorityDisplayMap: Record<string, React.ReactNode> = {
+        Low: <div className="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-gray-100 text-gray-800">Low</div>,
+        Normal: <div className="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-purple-100 text-purple-800">Normal</div>,
+        Medium: <div className="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-amber-100 text-amber-800">Medium</div>,
+        High: <div className="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors border-transparent bg-red-100 text-red-800">High</div>
+      };
+      return priorityDisplayMap[value] || value;
+    }
   },
   {
     headingName: "People",
-    type: "Custom" as const,
+    type: "String" as const,
     accessorKey: "people" as const,
     id: "people",
-    cell: (info: any) => <PeopleCell value={info.getValue()} />
+    enableSorting: false,
+    cell: ({ getValue }: { getValue: () => any }) => {
+      const people = getValue() as string[];
+      if (!people.length) return <span className="text-muted-foreground">None</span>;
+      return (
+        <div className="flex -space-x-2">
+          {people.map((initial, index) => (
+            <div key={index} className="ring-2 ring-white" style={{ zIndex: 10 - index }}>
+              <Avatar initial={initial} />
+            </div>
+          ))}
+        </div>
+      );
+    }
   },
-  // Include status column but we'll hide it - this is crucial for grouping to work correctly
   {
     headingName: "Status",
     type: "String" as const,
     accessorKey: "status" as const,
     id: "status",
-    enableHiding: true, // Allow the column to be hidden
+    enableSorting: true,
+    enableHiding: true,   // Hide status column as we're using category for grouping
+  },
+  {
+    headingName: "Category",
+    type: "String" as const,
+    accessorKey: "category" as const,
+    id: "category",
+    enableSorting: true,
+    enableHiding: true,   // We'll hide this from display but use it for grouping
   }
-]
+];
 
 // Main demo component
 export default function GroupedTasksDemo() {
   // Set initial column visibility to hide the status column
   const initialColumnVisibility = {
-    status: false // Hide the status column since we're grouping by it
+    status: false, // Hide the status column since we're grouping by it
+    category: false // Hide the category column since we're grouping by it
   };
   
   return (
@@ -241,12 +299,14 @@ export default function GroupedTasksDemo() {
       <DataTable
         columns={TASK_TABLE_COLUMNS}
         data={SAMPLE_TASKS}
-        // Enabling row grouping feature
+        // Enabling row grouping feature with the category field
         enableRowGrouping={true}
         rowGrouping={{
-          groupByColumn: "status",
+          groupByColumn: "category", // Using standardized category identifiers
           initiallyCollapsed: false,
-          toggleOnClick: true
+          toggleOnClick: true,
+          // Pass category mapping for standardized identifiers
+          categoryMapping: categoryMapping
         }}
         // Other options
         enableRowSelection={true}

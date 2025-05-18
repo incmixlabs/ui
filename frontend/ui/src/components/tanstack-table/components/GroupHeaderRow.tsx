@@ -1,7 +1,7 @@
 "use client";
 
 import React, { memo } from "react";
-import { Minus, Plus, PlusCircle } from "lucide-react";
+import { ChevronRight, ChevronDown, Plus } from "lucide-react";
 
 import { Table } from "@shadcn";
 
@@ -15,9 +15,17 @@ interface GroupHeaderRowProps {
   renderGroupHeader?: (groupValue: string, count: number) => React.ReactNode;
 }
 
-// Define status styles mapping
+// Define category styles mapping using standardized identifiers
 // This should match your design system
-const statusStyleMap: Record<string, { color: string, textColor: string, bgColor: string }> = {
+const categoryStyleMap: Record<string, { color: string, textColor: string, bgColor: string, label?: string }> = {
+  // Standard identifiers
+  "todo": { color: "bg-purple-500", textColor: "text-purple-800", bgColor: "bg-purple-100", label: "Todo" },
+  "in_design": { color: "bg-violet-500", textColor: "text-violet-800", bgColor: "bg-violet-100", label: "In Design" },
+  "in_review": { color: "bg-orange-500", textColor: "text-orange-800", bgColor: "bg-orange-100", label: "In Review" },
+  "working": { color: "bg-blue-500", textColor: "text-blue-800", bgColor: "bg-blue-100", label: "Working" },
+  "done": { color: "bg-green-500", textColor: "text-green-800", bgColor: "bg-green-100", label: "Done" },
+  
+  // Legacy support for display values (for backward compatibility)
   "Todo": { color: "bg-purple-500", textColor: "text-purple-800", bgColor: "bg-purple-100" },
   "In Design": { color: "bg-violet-500", textColor: "text-violet-800", bgColor: "bg-violet-100" },
   "In Review": { color: "bg-orange-500", textColor: "text-orange-800", bgColor: "bg-orange-100" },
@@ -42,11 +50,14 @@ function GroupHeaderRowComponent({
     toggleCollapsed(groupKey);
   };
 
-  // Get the styles for this status category or use defaults
-  const styles = statusStyleMap[groupKey] || { color: "bg-gray-400", textColor: "text-gray-600", bgColor: "bg-gray-50" };
+  // Get the styles for this category or use defaults
+  const styles = categoryStyleMap[groupKey] || { color: "bg-gray-400", textColor: "text-gray-600", bgColor: "bg-gray-50" };
   const bulletColor = styles.color;
   const textColor = styles.textColor;
   const bgColor = styles.bgColor;
+  
+  // Use the display label if available, otherwise use the groupKey
+  const displayLabel = styles.label || groupKey;
 
   return (
     <Table.Row
@@ -66,7 +77,7 @@ function GroupHeaderRowComponent({
             <span className={`h-2 w-2 rounded-full ${bulletColor} mr-2`}></span>
             
             {/* Category name */}
-            <span className={`font-medium ${textColor}`}>{groupKey}</span>
+            <span className={`font-medium ${textColor}`}>{displayLabel}</span>
             
             {/* Count */}
             <span className="text-muted-foreground ml-1">  
@@ -74,20 +85,11 @@ function GroupHeaderRowComponent({
             </span>
           </div>
 
-          {/* Right section: Add button and toggle icon */}
-          <div className="flex items-center space-x-4">
-            {/* Add new task button */}
-            <div className="cursor-pointer rounded-full p-1 hover:bg-white/30 border border-transparent hover:border-gray-200">
-              <Plus className="h-4 w-4 text-gray-500" />
-            </div>
-            
-            {/* Expand/collapse button */}
-            <div>
-              {isCollapsed ? (
-                <Plus className="h-4 w-4 text-gray-500" />
-              ) : (
-                <Minus className="h-4 w-4 text-gray-500" />
-              )}
+          {/* Right section: Only chevron icon for expand/collapse */}
+          <div className="flex items-center">
+            {/* Expand/collapse button with chevron icon and smooth rotation */}
+            <div className={`transition-transform duration-200 ease-in-out ${isCollapsed ? '' : 'rotate-90'}`}>
+              <ChevronRight className="h-4 w-4 text-gray-500" />
             </div>
           </div>
         </div>
