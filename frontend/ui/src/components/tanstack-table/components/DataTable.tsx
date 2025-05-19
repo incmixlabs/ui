@@ -201,37 +201,44 @@ function DataTableComponent<TData extends object>({
     serverPagination,
   });
 
-  // Initialize the editable cells map for keyboard navigation
-  useEffect(() => {
-    if (enableInlineCellEdit && inlineEditableColumns.length > 0) {
-      // Extract row information
-      const rows = rowModel.rows.map((row, index) => ({
-        id: row.id,
+  // Memoize row and column data to prevent unnecessary recalculations
+  const memoizedRowData = useMemo(() => {
+    if (!enableInlineCellEdit || inlineEditableColumns.length === 0) return null;
+    
+    return rowModel.rows.map((row, index) => ({
+      id: row.id,
+      index,
+    }));
+  }, [enableInlineCellEdit, inlineEditableColumns.length, rowModel.rows]);
+
+  const memoizedColumnData = useMemo(() => {
+    if (!enableInlineCellEdit || inlineEditableColumns.length === 0) return null;
+    
+    return table.getAllLeafColumns()
+      .filter(col => col.getIsVisible())
+      .map((col, index) => ({
+        id: col.id,
         index,
       }));
+  }, [enableInlineCellEdit, inlineEditableColumns.length, table.getAllLeafColumns(), table.getState().columnVisibility]);
 
-      // Extract column information from visible columns
-      const columns = table.getAllLeafColumns()
-        .filter(col => col.getIsVisible())
-        .map((col, index) => ({
-          id: col.id,
-          index,
-        }));
-
-      // Initialize the map of editable cells
-      initializeEditableCells(rows, columns, inlineEditableColumns as string[]);
+  // Initialize the editable cells map for keyboard navigation using the memoized data
+  useEffect(() => {
+    if (!memoizedRowData || !memoizedColumnData || inlineEditableColumns.length === 0) return;
+    
+    // Initialize the map of editable cells - only when row/column structure actually changes
+    if (memoizedRowData.length > 0 && memoizedColumnData.length > 0) {
+      initializeEditableCells(memoizedRowData, memoizedColumnData, inlineEditableColumns as string[]);
 
       // This adds the ability to hit Tab to start keyboard navigation
-      if (rows.length > 0 && columns.length > 0) {
-        // Delay to ensure DOM is ready when selecting first cell
-        const timeoutId = setTimeout(() => {
-          // Optional: Auto-select the first cell for immediate keyboard navigation
-          // selectFirstCell();
-        }, 100);
-        return () => clearTimeout(timeoutId);
-      }
+      // Delay to ensure DOM is ready when selecting first cell
+      const timeoutId = setTimeout(() => {
+        // Optional: Auto-select the first cell for immediate keyboard navigation
+        // selectFirstCell();
+      }, 100);
+      return () => clearTimeout(timeoutId);
     }
-  }, [enableInlineCellEdit, inlineEditableColumns, rowModel.rows, table, initializeEditableCells]);
+  }, [memoizedRowData, memoizedColumnData, inlineEditableColumns, initializeEditableCells]);
 
   // Memoize expensive calculations for table state - optimized dependency array
   const rowSelectionCount = useMemo(() => {
@@ -243,9 +250,18 @@ function DataTableComponent<TData extends object>({
   }, [table.getFilteredRowModel().rows.length]);
 
   // Memoize additional table state values to prevent unnecessary recalculations
-  // Generate a stable ID for the table instance
-  const tableId = useMemo(() => table.options.data?.length ? `table-${Date.now()}` : 'empty-table', [table.options.data]);
-  const tableRowsById = useMemo(() => table.getRowModel().rowsById, [table.getRowModel()]);
+  // Generate a stable ID for the table instance based on data characteristics
+  const tableId = useMemo(() => {
+    // Create a stable ID that only changes when the data or visible columns change
+    return table.options.data?.length
+      ? `table-${table.options.data.length}-${Object.keys(table.getState().columnVisibility || {}).length}`
+      : 'empty-table';
+  }, [table.options.data, table.getState().columnVisibility]);
+  
+  const tableRowsById = useMemo(
+    () => table.getRowModel().rowsById,
+    [table.getRowModel()]
+  );
 
   // Memoize the entire component structure for better rendering performance
   const tableComponent = useMemo(() => (
