@@ -66,8 +66,8 @@ function TableContentComponent<TData extends object>({
       tabIndex={enableInlineCellEdit ? 0 : undefined}
       role={enableInlineCellEdit ? "grid" : undefined}
       aria-label={enableInlineCellEdit ? "Data table with keyboard navigation" : undefined}
-      aria-readonly="false"
-      aria-multiselectable="false"
+      aria-readonly={enableInlineCellEdit ? "false" : undefined}
+      aria-multiselectable={enableInlineCellEdit ? "false" : undefined}
       data-keyboard-navigable={enableInlineCellEdit ? "true" : undefined}
       // Add keyboard instructions for screen readers
       aria-description={enableInlineCellEdit ? 

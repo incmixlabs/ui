@@ -21,14 +21,15 @@ export function KeyboardShortcutsHelp({
 }: KeyboardShortcutsHelpProps) {
   const [isOpen, setIsOpen] = useState(false);
   
-  const shortcuts: KeyboardShortcut[] = [
+  // Use useMemo to prevent recreation of shortcuts array on every render
+  const shortcuts = React.useMemo<KeyboardShortcut[]>(() => [
     { key: "Tab", description: "Enter table navigation" },
     { key: "Arrow Keys", description: "Navigate between cells" },
-    { key: "Enter", description: "Edit selected cell" },
-    { key: "Enter", description: "Save changes" },
+    { key: "Enter (on selected cell)", description: "Start editing cell" },
+    { key: "Enter (while editing)", description: "Save changes" },
     { key: "Escape", description: "Cancel editing" },
     { key: "Tab (while editing)", description: "Save and move to next cell" },
-  ];
+  ], []);
 
   return (
     <div className={`relative inline-flex ${className}`}>

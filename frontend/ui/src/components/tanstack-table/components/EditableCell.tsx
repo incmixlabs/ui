@@ -61,7 +61,9 @@ export const EditableCell: React.FC<EditableCellProps> = ({
 
   // Get handlers and refs from the keyboard hook
   const { handleKeyDown, handleCellClick, cellRef, getAriaAttributes } = useEditableCellKeyboard({
-    rowId: rowData.id || 'row', // Use rowData.id as rowId or fallback to 'row'
+    // Generate a unique rowId even if rowData.id is falsy by using columnId as part of the fallback
+    // This ensures we don't have duplicate keys in the keyboard navigation map
+    rowId: rowData.id ?? `row-${columnId}-${rowData.__index ?? Math.random().toString(36).substring(2, 9)}`,
     columnId,
     isEditing,
     isSelected,

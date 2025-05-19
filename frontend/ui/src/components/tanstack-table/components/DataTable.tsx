@@ -343,12 +343,40 @@ function DataTableComponent<TData extends object>({
         />
       )}
     </div>
-  ), [className, isEditDialogOpen, currentRowData, editFormSchema, editFieldConfig, handleCloseEditDialog,
-      handleEditSubmit, editDialogTitle, enableSidebarFilters, sidebarOpen, sidebarFilters,
-      toggleSidebar, table, enableFiltering, filterColumn, filterPlaceholder, enableColumnVisibility,
-      visibilityItems, facets, exportOptions, handleExport, isPaginationVisible, paginationInfo,
-      handlePageChange, handlePageSizeChange, isPaginationLoading, enableRowSelection, rowSelectionCount,
-      filteredRowCount]);
+  ), [
+    // UI structure and styling
+    className,
+    
+    // Edit dialog props
+    isEditDialogOpen, currentRowData, editFormSchema, editFieldConfig, handleCloseEditDialog,
+    handleEditSubmit, editDialogTitle, 
+    
+    // Sidebar filter props
+    enableSidebarFilters, sidebarOpen, sidebarFilters, toggleSidebar, 
+    
+    // Table core props
+    table, enableFiltering, filterColumn, filterPlaceholder, enableColumnVisibility,
+    visibilityItems, facets, 
+    
+    // Export functionality
+    exportOptions, handleExport, 
+    
+    // Pagination props
+    isPaginationVisible, paginationInfo, handlePageChange, handlePageSizeChange, isPaginationLoading, 
+    
+    // Row selection
+    enableRowSelection, rowSelectionCount, filteredRowCount,
+    
+    // Row expansion props - previously missing
+    expandableRows, expandedRows, toggleRowExpanded, onRowClick,
+    
+    // Row grouping props - previously missing
+    enableRowGrouping, rowGrouping, hideMainHeader,
+    
+    // Inline editing props - previously missing
+    enableInlineCellEdit, inlineEditableColumns, isEditing, isSelected,
+    selectCell, startEditing, cancelEditing, handleCellEdit
+  ]);
 
   return tableComponent;
 }

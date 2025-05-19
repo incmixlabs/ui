@@ -340,11 +340,14 @@ export function useTableInlineEdit<TData>({
 
   // Setup event listeners for keyboard navigation
   useEffect(() => {
+    // Only add global keydown listener if built-in handlers are enabled
+    if (disableBuiltInHandlers) return;
+    
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [handleKeyDown]);
+  }, [handleKeyDown, disableBuiltInHandlers]);
 
   return {
     isEditing,

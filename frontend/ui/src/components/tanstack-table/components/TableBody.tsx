@@ -91,12 +91,12 @@ interface RowProps<TData extends object> {
  * Memoized row component to prevent unnecessary re-renders
  */
 function TableRowComponent<TData extends object>(props: RowProps<TData>) {
-  const { 
-    row, 
-    flatColumns, 
-    expandableRows, 
-    expandedRows, 
-    toggleRowExpanded, 
+  const {
+    row,
+    flatColumns,
+    expandableRows,
+    expandedRows,
+    toggleRowExpanded,
     onRowClick,
     // Inline editing props
     enableInlineCellEdit = false,
@@ -110,7 +110,7 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
     // Accessibility props
     rowIndex
   } = props;
-  
+
   // Determine if this row is expanded
   const isExpanded = expandableRows && expandedRows[row.id];
 
@@ -146,8 +146,8 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           );
 
           // Determine if this cell is editable
-          const isEditableCell = enableInlineCellEdit && 
-            columnDef && 
+          const isEditableCell = enableInlineCellEdit &&
+            columnDef &&
             (inlineEditableColumns.includes(cell.column.id as any) || columnDef.enableInlineEdit) &&
             isEditing && isSelected && selectCell && startEditing && cancelEditing && saveEdit;
 
@@ -286,22 +286,22 @@ function TableBodyComponent<TData extends object>({
   // Memoize the row model to prevent unnecessary recalculations
   const rows = useMemo(() => table.getRowModel().rows, [table.getRowModel().rows]);
   const columnCount = useMemo(() => table.getAllColumns().length, [table.getAllColumns().length]);
-  
+
   // Initialize row grouping if enabled
   const grouping = useTableGrouping(
     rows,
     rowGrouping || { groupByColumn: '' },  // Default to empty string if no grouping is provided
     enableRowGrouping && !!rowGrouping
   );
-  
+
   // Destructure grouping values
-  const { 
-    groupedRows, 
-    toggleGroupCollapsed, 
-    isRowVisible, 
-    groupKeys, 
+  const {
+    groupedRows,
+    toggleGroupCollapsed,
+    isRowVisible,
+    groupKeys,
     getGroupRowCount,
-    getRowGroupValue 
+    getRowGroupValue
   } = grouping;
 
   // Early return for loading and empty states
@@ -312,7 +312,7 @@ function TableBodyComponent<TData extends object>({
       </Table.Body>
     );
   }
-  
+
   if (rows.length === 0) {
     return (
       <Table.Body className="divide-y divide-gray-100 dark:divide-gray-800">
@@ -322,7 +322,7 @@ function TableBodyComponent<TData extends object>({
   }
 
   return (
-    <Table.Body 
+    <Table.Body
       className="divide-y divide-gray-100 dark:divide-gray-800"
       role={enableInlineCellEdit ? "rowgroup" : undefined}
     >
@@ -332,7 +332,7 @@ function TableBodyComponent<TData extends object>({
           {groupKeys.map(groupKey => {
             const group = groupedRows[groupKey];
             const rowCount = getGroupRowCount(groupKey);
-            
+
             return (
               <React.Fragment key={`group-${groupKey}`}>
                 {/* Render group header */}
@@ -344,7 +344,7 @@ function TableBodyComponent<TData extends object>({
                   colSpan={flatColumns.length}
                   renderGroupHeader={rowGrouping.renderGroupHeader}
                 />
-                
+
                 {/* Only render the content if the group is not collapsed */}
                 {!group.isCollapsed && (
                   <>
@@ -355,9 +355,9 @@ function TableBodyComponent<TData extends object>({
                         if (header.id === 'status' && !header.column.getIsVisible()) {
                           return null;
                         }
-                        
+
                         return (
-                          <Table.Cell 
+                          <Table.Cell
                             key={header.id}
                             className="px-2 py-2 text-xs font-medium text-gray-500"
                           >
@@ -371,7 +371,7 @@ function TableBodyComponent<TData extends object>({
                         );
                       })}
                     </Table.Row>
-                    
+
                     {/* Render rows in this group */}
                     {group.rows.map((row, rowIndex) => (
                       <MemoizedRow

@@ -26,14 +26,24 @@ const TablePaginationComponent: React.FC<TablePaginationProps> = ({
   isPaginationLoading,
   serverPagination
 }) => {
+  // Hoist the memoized text above the JSX to comply with Rules of Hooks
+  const selectedRowText = useMemo(() => {
+    const totalCount = serverPagination
+      ? paginationInfo.totalItems
+      : filteredRowCount;
+    return `${selectedRowCount} of ${totalCount} row(s) selected.`;
+  }, [
+    selectedRowCount,
+    serverPagination,
+    paginationInfo.totalItems,
+    filteredRowCount,
+  ]);
+  
   return (
     <div className="flex items-center justify-between space-x-2 py-4">
       {showRowCount && (
         <div className="text-sm text-muted-foreground dark:text-gray-400">
-          {useMemo(() => {
-            const totalCount = serverPagination ? paginationInfo.totalItems : filteredRowCount;
-            return `${selectedRowCount} of ${totalCount} row(s) selected.`;
-          }, [selectedRowCount, serverPagination, paginationInfo.totalItems, filteredRowCount])}
+          {selectedRowText}
         </div>
       )}
 

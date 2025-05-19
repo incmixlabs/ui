@@ -66,9 +66,10 @@ export const EditableDateCell: React.FC<EditableDateCellProps> = ({
   // Handle saving the date value
   const handleDateSave = (newDateStr: string) => {
     if (newDateStr) {
-      const newDate = new Date(`${newDateStr}T00:00:00`);
-      if (!isNaN(newDate.getTime())) {
-        onSave(rowData, columnId, newDate.toISOString());
+      // Preserve the selected calendar day across time-zones
+      const isoDate = `${newDateStr}T00:00:00.000Z`;
+      if (!isNaN(Date.parse(isoDate))) {
+        onSave(rowData, columnId, isoDate);
       }
     }
   };
@@ -117,6 +118,7 @@ export const EditableDateCell: React.FC<EditableDateCellProps> = ({
   if (isEditing) {
     return (
       <div 
+        ref={cellRef} /* Needed for proper outside-click detection */
         className="w-full h-full flex items-center p-1"
         onClick={(e) => e.stopPropagation()}
       >

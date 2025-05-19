@@ -71,28 +71,34 @@ function GroupHeaderRowComponent({
         colSpan={colSpan}
         className="p-0 relative"
       >
-        <div className="flex justify-between items-center h-10 px-3 w-full">
-          {/* Left section: bullet, name, count */}
-          <div className="flex items-center">
-            <span className={`h-2 w-2 rounded-full ${bulletColor} mr-2`}></span>
-            
-            {/* Category name */}
-            <span className={`font-medium ${textColor}`}>{displayLabel}</span>
-            
-            {/* Count */}
-            <span className="text-muted-foreground ml-1">  
-              {rowCount}
-            </span>
-          </div>
+        {renderGroupHeader ? (
+          // Use custom renderer if provided
+          renderGroupHeader(groupKey, rowCount)
+        ) : (
+          // Default rendering
+          <div className="flex justify-between items-center h-10 px-3 w-full">
+            {/* Left section: bullet, name, count */}
+            <div className="flex items-center">
+              <span className={`h-2 w-2 rounded-full ${bulletColor} mr-2`}></span>
+              
+              {/* Category name */}
+              <span className={`font-medium ${textColor}`}>{displayLabel}</span>
+              
+              {/* Count */}
+              <span className="text-muted-foreground ml-1">  
+                {rowCount}
+              </span>
+            </div>
 
-          {/* Right section: Only chevron icon for expand/collapse */}
-          <div className="flex items-center">
-            {/* Expand/collapse button with chevron icon and smooth rotation */}
-            <div className={`transition-transform duration-200 ease-in-out ${isCollapsed ? '' : 'rotate-90'}`}>
-              <ChevronRight className="h-4 w-4 text-gray-500" />
+            {/* Right section: Only chevron icon for expand/collapse */}
+            <div className="flex items-center">
+              {/* Expand/collapse button with chevron icon and smooth rotation */}
+              <div className={`transition-transform duration-200 ease-in-out ${isCollapsed ? '' : 'rotate-90'}`}>
+                <ChevronRight className="h-4 w-4 text-gray-500" />
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </Table.Cell>
     </Table.Row>
   );

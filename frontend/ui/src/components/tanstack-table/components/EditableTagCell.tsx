@@ -110,6 +110,7 @@ export const EditableTagCell: React.FC<EditableTagCellProps> = ({
   if (isEditing) {
     return (
       <div 
+        ref={cellRef} /* Keep outside-click detection working */
         className="w-full h-full flex flex-col p-1"
         onClick={(e) => e.stopPropagation()}
       >
