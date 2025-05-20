@@ -163,7 +163,7 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           return (
             <Table.Cell
               key={cell.id}
-              className={`px-2 py-3 ${columnDef?.className || ""} overflow-hidden ${isEditableCell && isSelected?.(row.id, cell.column.id) ? "bg-blue-50 dark:bg-blue-900/20" : ""}`}
+              className={`px-2 py-1.5 ${columnDef?.className || ""} overflow-hidden`}
               style={{
                 width: columnDef?.width,
                 minWidth: columnDef?.minWidth,

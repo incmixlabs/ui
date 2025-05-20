@@ -122,7 +122,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
           style={{
             minWidth: 0,
             maxWidth: '100%',
-            height: '28px'
+            height: '24px' // Reduced height
           }}
           aria-label={`Edit ${columnId}`}
         />
@@ -139,8 +139,9 @@ export const EditableCell: React.FC<EditableCellProps> = ({
       }}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      className={`${className} cursor-pointer w-full h-full p-2 transition-colors duration-150
-        ${isSelected ? "bg-blue-100 dark:bg-blue-900/30 rounded" : ""}`}
+      className={`${className} cursor-pointer w-full h-full py-1.5 px-1 transition-colors duration-150
+        ${isSelected ? "bg-blue-500/20 dark:bg-blue-700/30 outline-none" : ""}`}
+      style={{ outline: 'none' }}
       {...ariaAttributes}
       aria-label={`${columnId}: ${value || 'Empty'}`}
     >
