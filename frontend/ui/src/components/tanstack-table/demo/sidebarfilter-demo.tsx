@@ -1,11 +1,12 @@
 "use client"
 
 import React, { useState, useEffect, useCallback } from "react"
-import { registerCellRenderer, cellRendererRegistry } from "./cell-renderers"
-import { RowAction } from "./types"
-import { DataTable } from "./components/DataTable"
+import { DataTable } from "../components/DataTable"
+import { registerCellRenderer, cellRendererRegistry } from "../cell-renderers"
+import { RowAction, SidebarFilterConfig } from "../types"
+import { Calendar, Clock, FileText, UserCircle, Tag, BarChart4, Check } from "lucide-react"
 
-// Custom rating cell renderer (example of extending the table with a new column type)
+// Custom rating cell renderer
 const RatingCell: React.FC<{ value: number }> = ({ value }) => {
   return (
     <div className="flex items-center">
@@ -151,7 +152,6 @@ const USER_TABLE_COLUMNS = [
     accessorKey: "joinDate" as const,
     id: "joinDate",
     enableSorting: true,
-    // Example of custom date formatting
     format: {
       dateFormat: "YYYY-MM-DD HH:mm"
     }
@@ -181,7 +181,6 @@ const USER_TABLE_COLUMNS = [
     accessorKey: "balance" as const,
     id: "balance",
     enableSorting: true,
-    // Example of custom currency formatting
     format: {
       numberFormat: {
         style: "currency",
@@ -200,16 +199,8 @@ const USER_TABLE_COLUMNS = [
   }
 ]
 
-// Filter definitions
+// Faceted filter definitions (for top filters)
 const USER_TABLE_FACETS = [
-  {
-    column: "isActive",
-    title: "Status",
-    options: [
-      { label: "Active", value: true },
-      { label: "Inactive", value: false }
-    ]
-  },
   {
     column: "plan",
     title: "Plan",
@@ -217,15 +208,6 @@ const USER_TABLE_FACETS = [
       { label: "Success", value: "success" },
       { label: "Pending", value: "pending" },
       { label: "Failed", value: "failed" }
-    ]
-  },
-  {
-    column: "tags",
-    title: "Role",
-    options: [
-      { label: "Admin", value: "admin" },
-      { label: "Developer", value: "developer" },
-      { label: "Customer", value: "customer" }
     ]
   },
   {
@@ -241,10 +223,59 @@ const USER_TABLE_FACETS = [
   }
 ]
 
+// Sidebar filter definitions
+const SIDEBAR_FILTERS: SidebarFilterConfig<User>[] = [
+  {
+    type: "dateRange",
+    column: "joinDate",
+    title: "Time Range",
+    icon: <Calendar className="h-4 w-4" />,
+    initialCollapsed: true
+  },
+  {
+    type: "text",
+    column: "name",
+    title: "Name",
+    icon: <UserCircle className="h-4 w-4" />,
+    initialCollapsed: true
+  },
+  {
+    type: "boolean",
+    column: "isActive",
+    title: "Active",
+    icon: <Check className="h-4 w-4" />,
+    initialCollapsed: true
+  },
+  {
+    type: "multiSelect",
+    column: "tags",
+    title: "Tags",
+    icon: <Tag className="h-4 w-4" />,
+    options: [
+      { label: "Admin", value: "admin" },
+      { label: "Developer", value: "developer" },
+      { label: "Customer", value: "customer" }
+    ],
+    initialCollapsed: true
+  },
+  {
+    type: "select",
+    column: "plan",
+    title: "Plan",
+    icon: <FileText className="h-4 w-4" />,
+    options: [
+      { label: "Success", value: "success" },
+      { label: "Pending", value: "pending" },
+      { label: "Failed", value: "failed" }
+    ],
+    initialCollapsed: true
+  }
+]
+
 /**
- * Enhanced UsersTableDemo - Example usage of the improved DataTable component
+ * Enhanced UsersTableDemo with Sidebar Filters
  */
-const EnhancedUsersTableDemo = () => {
+const SidebarFilterDemo = () => {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(0)
   const [pageSize, setPageSize] = useState(10)
@@ -379,7 +410,14 @@ const EnhancedUsersTableDemo = () => {
         filterColumn="name"
         filterPlaceholder="Filter by name..."
         rowActions={getRowActions}
+
+        // Top faceted filters
         facets={USER_TABLE_FACETS}
+
+        // NEW: Sidebar filters
+        enableSidebarFilters={true}
+        sidebarFilters={SIDEBAR_FILTERS}
+        initialSidebarOpen={true}
 
         // Server pagination props
         serverPagination={true}
@@ -411,4 +449,4 @@ const EnhancedUsersTableDemo = () => {
   )
 }
 
-export default EnhancedUsersTableDemo
+export default SidebarFilterDemo

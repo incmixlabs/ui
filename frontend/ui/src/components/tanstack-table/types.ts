@@ -47,7 +47,7 @@ export interface DataTableColumn<TData> {
 
   // Custom renderer - fixed type to be more flexible with value types
   renderer?: (value: any, row: TData) => ReactNode;
-  
+
   // New property for inline editing
   enableInlineEdit?: boolean;
 }
@@ -130,9 +130,26 @@ export interface SidebarFilterConfig<TData> {
   initialCollapsed?: boolean; // Whether this filter group starts collapsed
 }
 
+// Row grouping options
+export interface RowGroupingOptions<TData> {
+  groupByColumn: string | ((row: TData) => string);
+  initiallyCollapsed?: boolean;
+  toggleOnClick?: boolean;
+  renderGroupHeader?: (groupValue: string, count: number) => React.ReactNode;
+  // Optional mapping for standardized category identifiers
+  categoryMapping?: {
+    // Maps display values (e.g., "In Progress") to standardized identifiers (e.g., "in_progress")
+    valueToIdentifier?: Record<string, string>;
+    // Maps standardized identifiers to display labels
+    identifierToLabel?: Record<string, string>;
+  };
+}
+
 // Main DataTable props
-export interface DataTableProps<TData> {
+export interface DataTableProps<TData extends object> {
+  // Column definitions
   columns: DataTableColumn<TData>[] | ColumnGroup<TData>[];
+  // Data array
   data: TData[];
 
   // Basic features
@@ -141,6 +158,7 @@ export interface DataTableProps<TData> {
   enablePagination?: boolean;
   enableRowSelection?: boolean;
   enableColumnVisibility?: boolean;
+  initialColumnVisibility?: Record<string, boolean>;
   enableColumnResizing?: boolean;
   enableColumnReordering?: boolean;
 
@@ -172,12 +190,21 @@ export interface DataTableProps<TData> {
   onPageSizeChange?: (pageSize: number) => void;
   isPaginationLoading?: boolean;
 
-  // New features
+  // Export functionality
   export?: ExportOptions;
+
+  // Virtualization options
   virtualization?: VirtualizationOptions;
+
+  // Expandable rows
   expandableRows?: ExpandableRowOptions<TData>;
 
-  // Events
+  // Row grouping
+  enableRowGrouping?: boolean;
+  rowGrouping?: RowGroupingOptions<TData>;
+  hideMainHeader?: boolean; // Hide the main table header when using group headers
+
+  // Callbacks
   onRowClick?: (row: TData) => void;
   onSelectionChange?: (selectedRows: TData[]) => void;
   onColumnReorder?: (newOrder: string[]) => void;
@@ -188,7 +215,7 @@ export interface DataTableProps<TData> {
   editFieldConfig?: any;
   onRowEdit?: (oldData: TData, newData: TData) => void;
   editDialogTitle?: string;
-  
+
   // Inline cell editing functionality
   enableInlineCellEdit?: boolean;
   inlineEditableColumns?: (keyof TData | string)[];
