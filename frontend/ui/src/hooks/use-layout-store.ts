@@ -2,7 +2,6 @@ import { create } from "zustand"
 import type { CustomLayouts, LayoutItemWithNested } from "@incmix/ui/dashboard"
 import type { Layout } from "@incmix/react-grid-layout"
 import { presetLayouts } from "@incmix/ui/dashboard"
-import { ensureNestedLayoutsInAllBreakpoints, validateLayouts } from "../utils/validate-layouts"
 import { Breakpoint } from "@/utils"
 
 export interface LayoutPreset {
@@ -14,26 +13,15 @@ export interface LayoutPreset {
 }
 
 interface LayoutState {
-  // Layout state
   defaultLayouts: CustomLayouts
-
-  // Preset state
   activePresetId: string
-
-  // Actions
   applyPreset: (presetId?: string) => void
   applyTemplates: (mainLayouts?: CustomLayouts, templateId?: string) => void
   setDefaultLayouts: (layouts: CustomLayouts) => void
   handleLayoutChange: (_layout: any, allLayouts: any) => void
   handleNestedLayoutChange: (nestedLayout: Layout, itemKey: string) => void
-  // updateStaticProperty: (isEditing: boolean) => void
 }
 
-// Validate the preset layouts before using them
-const validationResult = validateLayouts(presetLayouts[0].mainLayouts)
-if (!validationResult.isValid) {
-  console.error("Preset layouts validation failed:", validationResult.errors)
-}
 
 
 export const useLayoutStore = create<LayoutState>((set, get) => ({
@@ -42,46 +30,23 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
   activePresetId: presetLayouts[0].id,
 
   applyPreset: (presetId) => {
-    const preset = presetLayouts.find((p) => p.id === presetId)
-    if (!preset) return
-
-    // Validate and ensure nested layouts before applying
-    const validationResult = validateLayouts(preset.mainLayouts)
-    if (!validationResult.isValid) {
-      console.error(`Preset ${presetId} layouts validation failed:`, validationResult.errors)
-    }
-
-    const validatedLayouts = ensureNestedLayoutsInAllBreakpoints(preset.mainLayouts)
+    const preset = presetLayouts.find((p) => p.id === presetId);
+    if (!preset) return;
 
     set({
-      defaultLayouts: validatedLayouts,
+      defaultLayouts: preset.mainLayouts,
       activePresetId: preset.id,
-    })
+    });
   },
 
   applyTemplates: (mainLayouts, templateId) => {
     // Use existing layouts as fallbacks if new ones aren't provided
-    const { defaultLayouts } = get()
+    const { defaultLayouts } = get();
 
-    if (mainLayouts) {
-      // Validate and ensure nested layouts before applying
-      const validationResult = validateLayouts(mainLayouts)
-      if (!validationResult.isValid) {
-        console.error(`Template ${templateId} layouts validation failed:`, validationResult.errors)
-      }
-
-      const validatedLayouts = ensureNestedLayoutsInAllBreakpoints(mainLayouts)
-
-      set({
-        defaultLayouts: validatedLayouts,
-        activePresetId: templateId,
-      })
-    } else {
-      set({
-        defaultLayouts,
-        activePresetId: templateId,
-      })
-    }
+    set({
+      defaultLayouts: mainLayouts || defaultLayouts,
+      activePresetId: templateId,
+    });
   },
 
   setDefaultLayouts: (layouts) => {
@@ -138,7 +103,6 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
   },
 
   handleNestedLayoutChange: (nestedLayout, itemKey) => {
-    // Update the nested layouts within the main layouts
     set((state) => {
       const updatedLayouts = { ...state.defaultLayouts }
 
@@ -163,54 +127,4 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
   },
 
 
-  updateStaticProperty: (isEditing) => {
-    console.log(`updateStaticProperty called with isEditing=${isEditing}`)
-  
-    const { defaultLayouts } = get()
-  
-    if (!defaultLayouts) {
-      console.error("defaultLayouts is undefined in updateStaticProperty")
-      return
-    }
-  
-    // Explicitly initialize with all breakpoint keys
-    const updatedDefaultLayouts: CustomLayouts = {
-      lg: [],
-      md: [],
-      sm: [],
-      xs: [],
-      xxs: []
-    };
-    
-    Object.entries(defaultLayouts).forEach(([breakpoint, mainLayouts]) => {
-      console.log(`Updating static property for breakpoint ${breakpoint} with layouts=${mainLayouts[0].layouts}`)
-  
-      if(mainLayouts){
-        updatedDefaultLayouts[breakpoint as keyof CustomLayouts] = mainLayouts.map((item) => {
-          if(item?.layouts){
-            return {
-              ...item,
-              static: !isEditing,
-              layouts: item.layouts.map((nestedItem) => ({
-                ...nestedItem,
-                static: !isEditing,
-              }))
-            }
-          }
-          return {
-            ...item,
-            static: !isEditing,
-          }
-        });
-      }
-    });
-    
-    console.log(updatedDefaultLayouts);
-  
-    set({
-      defaultLayouts: updatedDefaultLayouts,
-    })
-  
-    console.log("Updated defaultLayouts in store")
-  }
 }))

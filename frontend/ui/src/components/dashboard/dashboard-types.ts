@@ -20,9 +20,7 @@ export type ReactGridLayoutType = Layout[]
 // Make sure Layout is compatible with LayoutItem[]
 export type CustomLayout = LayoutItem[]
 // Define CustomLayouts as a record with all required breakpoints
-export type CustomLayouts = {
-  [key in Breakpoint]: LayoutItemWithNested[]
-}
+
 // Define a layout item that can include nested layouts
 export interface LayoutItemWithNested extends Layout {
   layouts?: Layout[] // Use Layout from @incmix/react-grid-layout
@@ -30,6 +28,9 @@ export interface LayoutItemWithNested extends Layout {
   [key: string]: any
 }
 
+export type CustomLayouts = {
+  [key in Breakpoint]: LayoutItemWithNested[]
+}
 
 export interface LayoutPreset {
   id: string

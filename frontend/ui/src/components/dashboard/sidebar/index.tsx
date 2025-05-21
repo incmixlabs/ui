@@ -148,6 +148,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
     getTemplateById,
     templateActive,
   } = useTemplateStore();
+  
   const [availableComponents] = useState(sidebarComponents);
   const [_draggingComponentId, setDraggingComponentId] = useState<
     string | null

@@ -8,15 +8,19 @@ import { Dialog } from "@incmix/ui/base";
 import { Save, X, Tag } from "lucide-react";
 import { database, useTemplateStore } from "@incmix/store";
 import { Badge } from "@incmix/ui/base";
-import { MultipleSelector, MultipleSelectorControlled, toast } from "@incmix/ui";
+import {
+  MultipleSelector,
+  MultipleSelectorControlled,
+  toast,
+} from "@incmix/ui";
 import type { Layout } from "react-grid-layout";
 import type { Breakpoint } from "@incmix/ui/dashboard";
 import { useQueryState } from "nuqs";
+import type { CustomLayouts } from "@incmix/store";
 
 interface SaveTemplateDialogProps {
   projectId: string;
-  layouts: Record<Breakpoint, Layout[]>;
-  // nestedLayouts: Record<string, Layout[]>;
+  layouts: CustomLayouts;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -24,15 +28,14 @@ interface SaveTemplateDialogProps {
 export function SaveTemplateDialog({
   projectId,
   layouts,
-  // nestedLayouts,
   open,
   onOpenChange,
 }: SaveTemplateDialogProps) {
   const [isTemplate, setIsTemplate] = useQueryState("template");
 
   const [templateName, setTemplateName] = useState("");
-  const [tagInput, setTagInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
+  const [allTags, setAllTags] = useState<string[]>([]);
   const { addTemplate, updateTemplate } = useTemplateStore();
 
   useEffect(() => {
@@ -42,6 +45,13 @@ export function SaveTemplateDialog({
         const existingTemplate = await templatesCollection
           .findOne(templateId)
           .exec();
+        const templates = await templatesCollection.find().exec();
+        console.log("templates", templates);
+
+        const allTags = templates.flatMap((template) => template.tags || []);
+        console.log("allTags", allTags);
+        const uniqueTags = [...new Set(allTags)];
+        setAllTags(uniqueTags);
 
         if (!existingTemplate) {
           toast.error("Template not found");
@@ -63,37 +73,22 @@ export function SaveTemplateDialog({
     }
   }, [isTemplate, setTemplateName, setTags]);
 
-  const handleAddTag = () => {
-    if (tagInput.trim() && !tags.includes(tagInput.trim())) {
-      setTags([...tags, tagInput.trim()]);
-      setTagInput("");
-    }
-  };
 
-  const handleRemoveTag = (tag: string) => {
-    setTags(tags.filter((t) => t !== tag));
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      handleAddTag();
-    }
-  };
   const handleSave = async () => {
     if (!templateName.trim()) {
       toast.error("Please enter a template name");
       return;
     }
+    console.log("layouts", layouts);
+    
 
-  //  await addTemplate({
-  //     name: templateName.trim(),
-  //     projectId,
-  //     tags,
-  //     layouts,
-  //     nestedLayouts,
-  //     isActive: false,
-  //   });
+    await addTemplate({
+      name: templateName.trim(),
+      projectId,
+      tags,
+      mainLayouts: layouts,
+      isActive: false,
+    });
     setIsTemplate(null);
     toast.success("Template saved successfully");
     setTemplateName("");
@@ -101,40 +96,42 @@ export function SaveTemplateDialog({
     onOpenChange(false);
   };
 
-const handleUpdateTemplate = async (id: string) => {
-  try {
-     const templatesCollection = database.dashboardTemplates;
-     const existingTemplate = await templatesCollection.findOne(id).exec();
-     if (!existingTemplate) {
-       throw new Error("Template not found");
-     }
-    //  await updateTemplate(id, {
-    //    name: templateName.trim(),
-    //    projectId,
-    //    tags,
-    //    layouts,
-    //    nestedLayouts,
-    //  });
-     toast.success("Template updated successfully");
-     setIsTemplate(null);
-     setTemplateName("");
-     setTags([]);
-     onOpenChange(false);
-  } catch (error) {
-     console.error(error);
-     toast.error(
-       "Failed to update template: " +
-         (error instanceof Error ? error.message : "Unknown error"),
-     );
-  }
- };
+  const handleUpdateTemplate = async (id: string) => {
+    try {
+      const templatesCollection = database.dashboardTemplates;
+      const existingTemplate = await templatesCollection.findOne(id).exec();
+      if (!existingTemplate) {
+        throw new Error("Template not found");
+      }
+      await updateTemplate(id, {
+        name: templateName.trim(),
+        projectId,
+        tags,
+        mainLayouts: layouts,
+      });
+      toast.success("Template updated successfully");
+      setIsTemplate(null);
+      setTemplateName("");
+      setTags([]);
+      onOpenChange(false);
+    } catch (error) {
+      console.error(error);
+      toast.error(
+        "Failed to update template: " +
+          (error instanceof Error ? error.message : "Unknown error"),
+      );
+    }
+  };
 
-const handleCancelUpdate= ()=>{
-  setIsTemplate(null);
-  setTemplateName("");
-  setTags([]);
-  onOpenChange(false);
-}
+  const handleCancelUpdate = () => {
+    setIsTemplate(null);
+    setTemplateName("");
+    setTags([]);
+    onOpenChange(false);
+  };
+
+  console.log(allTags);
+  
   return (
     <Flex justify="center" align={"center"} gap="2">
       <Dialog.Root
@@ -173,19 +170,20 @@ const handleCancelUpdate= ()=>{
             <div className="flex flex-col gap-2">
               <Label htmlFor="template-tags">Tags</Label>
               <MultipleSelector
-              value={tags.map((tag) => ({ value: tag, label: tag }))}
-        defaultOptions={tags.map((tag) => ({ value: tag, label: tag }))}
-        defaultColor="indigo"
-        onChange={(options) => setTags(options.map((option) => option.value))}
-        placeholder="Add Tags"
-        creatable
-        emptyIndicator={
-          <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-            no results found.
-          </p>
-        }
-      />
-           
+                value={tags.map((tag) => ({ value: tag, label: tag }))}
+                defaultOptions={allTags.map((tag) => ({ value: tag, label: tag }))}
+                defaultColor="indigo"
+                onChange={(options) =>
+                  setTags(options.map((option) => option.value))
+                }
+                placeholder="Add Tags"
+                creatable
+                emptyIndicator={
+                  <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                    no results found.
+                  </p>
+                }
+              />
             </div>
           </div>
 
@@ -206,11 +204,11 @@ const handleCancelUpdate= ()=>{
           </Dialog.Footer>
         </Dialog.Content>
       </Dialog.Root>
-      {isTemplate &&
-      <Button variant="solid" color={"red"} onClick={handleCancelUpdate}>
-        <X size={20} /> Cancel
-      </Button>
-      }
+      {isTemplate && (
+        <Button variant="solid" color={"red"} onClick={handleCancelUpdate}>
+          <X size={20} /> Cancel
+        </Button>
+      )}
     </Flex>
   );
 }

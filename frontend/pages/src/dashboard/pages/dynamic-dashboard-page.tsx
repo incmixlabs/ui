@@ -1,5 +1,6 @@
 import { LoadingPage } from "@common"
 import { DndContext, DragOverlay } from "@dnd-kit/core"
+import { Responsive, WidthProvider } from "@incmix/react-grid-layout"
 import {
   useDashboardStore,
   useEditingStore,
@@ -25,7 +26,6 @@ import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useParams } from "@tanstack/react-router"
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
-import { Responsive, WidthProvider } from "@incmix/react-grid-layout"
 import { useAuth } from "../../auth"
 import { EditWidgetsControl } from "./home"
 import "@incmix/react-grid-layout/css/styles.css"
@@ -46,49 +46,45 @@ const DynamicDashboardPage: React.FC = () => {
     defaultLayouts,
     handleLayoutChange,
     handleNestedLayoutChange,
-    // updateStaticProperty,
     applyTemplates,
   } = useLayoutStore()
 
   const [openSaveDialog, setOpenSaveDialog] = useState(false)
 
-  // useEffect(() => {
-  //   const fetchTemplate = async () => {
-  //     if (isTemplate) {
-  //       try {
-  //         const template = await getTemplateById(isTemplate)
-  //         if (!template) {
-  //           setIsTemplate(null)
-  //           return
-  //         }
-  //         applyTemplates(template.layouts, template.id)
-  //         updateStaticProperty(isEditing)
-  //       } catch (error) {
-  //         console.error("Failed to load template:", error)
-  //       }
-  //     } else {
-  //       try {
-  //         const activeTemplate = await getActiveTemplate(projectId)
-  //         if (activeTemplate) {
-  //           applyTemplates(activeTemplate.layouts, activeTemplate.id)
-  //           updateStaticProperty(isEditing)
-  //         }
-  //       } catch (error) {
-  //         console.error("Failed to load active template:", error)
-  //       }
-  //     }
-  //   }
+  useEffect(() => {
+    const fetchTemplate = async () => {
+      if (isTemplate) {
+        try {
+          const template = await getTemplateById(isTemplate)
+          if (!template) {
+            setIsTemplate(null)
+            return
+          }
+          applyTemplates(template.mainLayouts, template.id)
+        } catch (error) {
+          console.error("Failed to load template:", error)
+        }
+      } else {
+        try {
+          const activeTemplate = await getActiveTemplate(projectId)
+          if (activeTemplate) {
+            applyTemplates(activeTemplate.mainLayouts, activeTemplate.id)
+          }
+        } catch (error) {
+          console.error("Failed to load active template:", error)
+        }
+      }
+    }
 
-  //   fetchTemplate()
-  // }, [isTemplate, projectId])
+    fetchTemplate()
+  }, [isTemplate, projectId])
 
   // useEffect(() => {
   //   updateStaticProperty(isEditing)
   // }, [isEditing, updateStaticProperty])
-const handleResposniveLayoutChanges = (_layout: any, allLayouts: any) => {
-  console.log("allLayouts from handleLayoutChanges",allLayouts);
-
-}
+  const _handleResposniveLayoutChanges = (_layout: any, allLayouts: any) => {
+    console.log("allLayouts from handleLayoutChanges", allLayouts)
+  }
   // Device preview hooks
   const { activeDevice, setActiveDevice, deviceTabs, getViewportWidth } =
     useDevicePreview()
@@ -127,12 +123,13 @@ const handleResposniveLayoutChanges = (_layout: any, allLayouts: any) => {
     handleDragStart,
     handleDragEnd,
   } = useDragAndDrop(isEditing, gridComponents, setGridComponents)
+
   if (isLoading) return <LoadingPage />
   if (!authUser) return null
   if (!project) return <div>Project not found</div>
 
   const isEmpty = gridComponents.length === 0
-console.log("defaultLayouts from dynamic-dashboard-page",defaultLayouts);
+  console.log("defaultLayouts from dynamic-dashboard-page", defaultLayouts)
 
   return (
     <DndContext
@@ -163,7 +160,6 @@ console.log("defaultLayouts from dynamic-dashboard-page",defaultLayouts);
                   <SaveTemplateDialog
                     projectId={projectId}
                     layouts={defaultLayouts}
-                    // nestedLayouts={nestedLayouts}
                     open={openSaveDialog}
                     onOpenChange={setOpenSaveDialog}
                   />
