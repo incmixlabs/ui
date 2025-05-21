@@ -1,16 +1,25 @@
-import type { Layout } from "react-grid-layout"
+import type { Layout } from "@incmix/react-grid-layout"
 import { create } from "zustand"
-import { persist } from "zustand/middleware"
 import { database } from "../sql/main"
+
 export type Breakpoint = "lg" | "md" | "sm" | "xs" | "xxs"
+
+export interface LayoutItemWithNested extends Layout {
+  layouts?: Layout[]
+  compactType?: "horizontal" | "vertical" | null
+  [key: string]: any
+}
+
+export type CustomLayouts = {
+  [key in Breakpoint]: LayoutItemWithNested[]
+}
 
 export interface DashboardTemplate {
   id: string
   name: string
   projectId: string
   tags: string[]
-  layouts: Record<Breakpoint, Layout[]>
-  nestedLayouts: Record<string, Layout[]>
+  mainLayouts: CustomLayouts // Keeping mainLayouts to avoid confusion with nested layouts
   createdAt: number
   updatedAt: number
   isActive?: boolean
@@ -35,6 +44,54 @@ interface TemplateState {
   getTemplatesByTag: (tag: string) => DashboardTemplate[]
   getTemplateById: (id: string) => Promise<DashboardTemplate | null>
   getActiveTemplate: (projectId: string) => Promise<DashboardTemplate | null>
+  validateAndNormalizeTemplate: (template: any) => any
+}
+
+/**
+ * Validates and normalizes a template to ensure it has the correct structure
+ * with nested layouts properly included in the layout items
+ */
+const validateAndNormalizeTemplate = (template: any): any => {
+  if (!template) return template
+
+  const normalizedTemplate = JSON.parse(JSON.stringify(template))
+
+  if (normalizedTemplate.layouts && !normalizedTemplate.mainLayouts) {
+    normalizedTemplate.mainLayouts = normalizedTemplate.layouts
+    normalizedTemplate.layouts = undefined
+  }
+
+  if (!normalizedTemplate.mainLayouts) {
+    normalizedTemplate.mainLayouts = {
+      lg: [],
+      md: [],
+      sm: [],
+      xs: [],
+      xxs: [],
+    }
+  }
+
+  // Ensure all breakpoints exist
+  const breakpoints: Breakpoint[] = ["lg", "md", "sm", "xs", "xxs"]
+  breakpoints.forEach((breakpoint) => {
+    if (!normalizedTemplate.mainLayouts[breakpoint]) {
+      normalizedTemplate.mainLayouts[breakpoint] = []
+    }
+  })
+
+  // Ensure all grid items that should have nested layouts have them
+  breakpoints.forEach((breakpoint) => {
+    normalizedTemplate.mainLayouts[breakpoint].forEach(
+      (item: LayoutItemWithNested) => {
+        // If this is a grid item (starts with "grid-") but doesn't have layouts, initialize it
+        if (item.i?.startsWith("grid-") && !item.layouts) {
+          item.layouts = []
+        }
+      }
+    )
+  })
+
+  return normalizedTemplate
 }
 
 export const useTemplateStore = create<TemplateState>()((set, get) => ({
@@ -42,6 +99,7 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
   isLoading: false,
   error: null,
   initialized: false,
+  validateAndNormalizeTemplate,
 
   initialize: async (projectId: string) => {
     if (get().initialized) return
@@ -61,7 +119,13 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
         })
         .exec()
 
-      set({ templates: templates.map((t) => t.toJSON()), initialized: true })
+      // Normalize templates to ensure they have the correct structure
+      const normalizedTemplates = templates.map((t) => {
+        const templateData = t.toJSON()
+        return validateAndNormalizeTemplate(templateData)
+      })
+
+      set({ templates: normalizedTemplates, initialized: true })
       set({ isLoading: false })
     } catch (error) {
       console.error("Failed to initialize RxDB templates:", error)
@@ -80,16 +144,17 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
       const id = `template-${Date.now()}`
       const now = Date.now()
 
-      const newTemplate = {
+      // Normalize the template before saving
+      const normalizedTemplate = validateAndNormalizeTemplate({
         ...template,
         id,
         createdAt: now,
         updatedAt: now,
-      }
+      })
 
-      await templatesCollection.insert(newTemplate)
+      await templatesCollection.insert(normalizedTemplate)
       set((state) => ({
-        templates: [...state.templates, newTemplate],
+        templates: [...state.templates, normalizedTemplate],
         isLoading: false,
       }))
 
@@ -113,13 +178,20 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
       }
 
       const timestamp = Date.now()
+
+      // Normalize the template before updating
+      const normalizedUpdate = validateAndNormalizeTemplate({
+        ...template,
+        updatedAt: timestamp,
+      })
+
       await existingTemplate.update({
-        $set: { ...template, updatedAt: timestamp },
+        $set: normalizedUpdate,
       })
 
       set((state) => ({
         templates: state.templates.map((t) =>
-          t.id === id ? { ...t, ...template, updatedAt: timestamp } : t
+          t.id === id ? { ...t, ...normalizedUpdate } : t
         ),
         isLoading: false,
       }))
@@ -152,6 +224,7 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
       throw error
     }
   },
+
   templateActive: async (id) => {
     set({ isLoading: true, error: null })
 
@@ -196,8 +269,9 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
         isLoading: false,
       }))
 
-      // Return the activated template
-      return templateToActivate.toJSON()
+      // Return the activated template, normalized to ensure correct structure
+      const activatedTemplate = templateToActivate.toJSON()
+      return validateAndNormalizeTemplate(activatedTemplate)
     } catch (error) {
       console.error("Failed to activate template:", error)
       set({
@@ -222,12 +296,17 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
         })
         .exec()
 
-      return activeTemplate ? activeTemplate.toJSON() : null
+      if (!activeTemplate) return null
+
+      // Normalize the template to ensure correct structure
+      const templateData = activeTemplate.toJSON()
+      return validateAndNormalizeTemplate(templateData)
     } catch (error) {
       console.error("Failed to get active template:", error)
       return null
     }
   },
+
   getTemplatesByProjectId: (projectId) => {
     return get().templates.filter((t) => t.projectId === projectId)
   },
@@ -237,8 +316,18 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
   },
 
   getTemplateById: async (id) => {
-    const templatesCollection = database.dashboardTemplates
-    const existingTemplate = await templatesCollection.findOne(id).exec()
-    return existingTemplate?.toJSON() ?? null // convert to plain object
+    try {
+      const templatesCollection = database.dashboardTemplates
+      const existingTemplate = await templatesCollection.findOne(id).exec()
+
+      if (!existingTemplate) return null
+
+      // Normalize the template to ensure correct structure
+      const templateData = existingTemplate.toJSON()
+      return validateAndNormalizeTemplate(templateData)
+    } catch (error) {
+      console.error("Failed to get template by ID:", error)
+      return null
+    }
   },
 }))

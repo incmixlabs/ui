@@ -117,6 +117,89 @@ export const columnSchemaLiteral = {
   ],
 } as const
 
+// export const dashboardTemplateSchemaLiteral = {
+//   title: "dashboard template schema",
+//   version: 0,
+//   description: "Schema for dashboard templates",
+//   primaryKey: "id",
+//   type: "object",
+//   properties: {
+//     id: {
+//       type: "string",
+//       maxLength: 100,
+//     },
+//     isActive: {
+//       type: "boolean",
+//       default: false,
+//     },
+//     name: {
+//       type: "string",
+//     },
+//     projectId: {
+//       type: "string",
+//     },
+//     tags: {
+//       type: "array",
+//       items: {
+//         type: "string",
+//       },
+//     },
+//     mainLayouts: {
+//       type: "object",
+//     },
+//     createdAt: {
+//       type: "number",
+//     },
+//     updatedAt: {
+//       type: "number",
+//     },
+//   },
+//   required: [
+//     "id",
+//     "name",
+//     "projectId",
+//     "mainLayouts",
+//     "createdAt",
+//     "updatedAt",
+//   ],
+// } as const
+
+// Define the schema for a layout item
+const layoutItemSchema = {
+  type: "object",
+  properties: {
+    w: { type: "number" },
+    h: { type: "number" },
+    x: { type: "number" },
+    y: { type: "number" },
+    i: { type: "string" },
+    moved: { type: "boolean", default: false },
+    static: { type: "boolean", default: false },
+    layouts: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          w: { type: "number" },
+          h: { type: "number" },
+          x: { type: "number" },
+          y: { type: "number" },
+          i: { type: "string" },
+          moved: { type: "boolean", default: false },
+          static: { type: "boolean", default: false },
+        },
+        required: ["w", "h", "x", "y", "i"],
+      },
+    },
+    compactType: {
+      type: ["string", "null"],
+      enum: ["horizontal", "vertical", null],
+    },
+  },
+  required: ["w", "h", "x", "y", "i"],
+  additionalProperties: true,
+} as const
+
 export const dashboardTemplateSchemaLiteral = {
   title: "dashboard template schema",
   version: 0,
@@ -144,11 +227,31 @@ export const dashboardTemplateSchemaLiteral = {
         type: "string",
       },
     },
-    layouts: {
+    mainLayouts: {
       type: "object",
-    },
-    nestedLayouts: {
-      type: "object",
+      properties: {
+        lg: {
+          type: "array",
+          items: layoutItemSchema,
+        },
+        md: {
+          type: "array",
+          items: layoutItemSchema,
+        },
+        sm: {
+          type: "array",
+          items: layoutItemSchema,
+        },
+        xs: {
+          type: "array",
+          items: layoutItemSchema,
+        },
+        xxs: {
+          type: "array",
+          items: layoutItemSchema,
+        },
+      },
+      required: ["lg", "md", "sm", "xs", "xxs"],
     },
     createdAt: {
       type: "number",
@@ -161,13 +264,12 @@ export const dashboardTemplateSchemaLiteral = {
     "id",
     "name",
     "projectId",
-    "layouts",
-    "nestedLayouts",
+    "mainLayouts",
     "createdAt",
     "updatedAt",
   ],
 } as const
-// Project Schema with required fields added
+
 export const projectSchemaLiteral = {
   title: "projects schema",
   version: 0,
@@ -186,11 +288,9 @@ export const projectSchemaLiteral = {
     },
     createdAt: {
       type: "string",
-      // format: "date-time",
     },
     updatedAt: {
       type: "string",
-      // format: "date-time",
     },
     createdBy: {
       type: "string",
@@ -199,7 +299,6 @@ export const projectSchemaLiteral = {
       type: "string",
     },
   },
-  // Adding required fields to enforce presence of key properties.
   required: [
     "id",
     "name",
@@ -210,8 +309,6 @@ export const projectSchemaLiteral = {
     "updatedBy",
   ],
 } as const
-
-// Update this in your types.ts file where you defined formProjectSchemaLiteral
 
 export const formProjectSchemaLiteral = {
   title: "form projects schema",

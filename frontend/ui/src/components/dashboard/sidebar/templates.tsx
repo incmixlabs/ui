@@ -38,7 +38,6 @@ export function TemplatesSidebar({
   deleteTemplate,
   templateActive,
   getTemplateById,
-
   isTemplateExpanded,
   setIsTemplateExpanded,
 }: TemplatesSidebarProps) {
@@ -70,7 +69,7 @@ export function TemplatesSidebar({
       const template = await templateActive(id);
       if (template) {
         setIsTemplate(null);
-        applyTemplates(template.layouts, template.nestedLayouts, template.id);
+        applyTemplates(template.mainLayouts, template.id);
         toast.success(`Template "${template?.name}" activated successfully`);
       } else {
         toast.error("Failed to activate template");
@@ -85,7 +84,7 @@ export function TemplatesSidebar({
       return;
     }
     setIsTemplate(templateId);
-    applyTemplates(template.layouts, template.nestedLayouts, template.id);
+    applyTemplates(template.mainLayouts, template.id);
     toast.success(`Template "${template?.name}" loaded successfully`);
   };
 
@@ -158,10 +157,10 @@ export function TemplatesSidebar({
                       className=" mt-2 text-xs text-muted-foreground"
                     >
                       <Box as="span">
-                        {template.layouts.lg
-                          ? Object.values(template.layouts.lg).length
+                        {template.mainLayouts.lg
+                          ? Object.values(template.mainLayouts.lg).length
                           : 0}{" "}
-                        w, {Object.keys(template.nestedLayouts).length} ng
+                        w, {Object.keys(template.mainLayouts).length} ng
                       </Box>
                     </Flex>
                   </Box>

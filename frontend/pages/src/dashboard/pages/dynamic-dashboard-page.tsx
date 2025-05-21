@@ -1,5 +1,6 @@
 import { LoadingPage } from "@common"
 import { DndContext, DragOverlay } from "@dnd-kit/core"
+import { Responsive, WidthProvider } from "@incmix/react-grid-layout"
 import {
   useDashboardStore,
   useEditingStore,
@@ -15,6 +16,7 @@ import {
   ReactiveButton,
   SaveTemplateDialog,
   generateDOM,
+  initialLayouts,
   useDevicePreview,
   useDragAndDrop,
   useGridComponents,
@@ -24,11 +26,10 @@ import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useParams } from "@tanstack/react-router"
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
-import { Responsive, WidthProvider } from "react-grid-layout"
 import { useAuth } from "../../auth"
 import { EditWidgetsControl } from "./home"
-import "react-grid-layout/css/styles.css"
-import "react-resizable/css/styles.css"
+import "@incmix/react-grid-layout/css/styles.css"
+import "@incmix/react-grid-layout/css/styles.css"
 import { useQueryState } from "nuqs"
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
@@ -43,10 +44,8 @@ const DynamicDashboardPage: React.FC = () => {
 
   const {
     defaultLayouts,
-    nestedLayouts,
     handleLayoutChange,
     handleNestedLayoutChange,
-    updateStaticProperty,
     applyTemplates,
   } = useLayoutStore()
 
@@ -61,8 +60,7 @@ const DynamicDashboardPage: React.FC = () => {
             setIsTemplate(null)
             return
           }
-          applyTemplates(template.layouts, template.nestedLayouts, template.id)
-          updateStaticProperty(isEditing)
+          applyTemplates(template.mainLayouts, template.id)
         } catch (error) {
           console.error("Failed to load template:", error)
         }
@@ -70,12 +68,7 @@ const DynamicDashboardPage: React.FC = () => {
         try {
           const activeTemplate = await getActiveTemplate(projectId)
           if (activeTemplate) {
-            applyTemplates(
-              activeTemplate.layouts,
-              activeTemplate.nestedLayouts,
-              activeTemplate.id
-            )
-            updateStaticProperty(isEditing)
+            applyTemplates(activeTemplate.mainLayouts, activeTemplate.id)
           }
         } catch (error) {
           console.error("Failed to load active template:", error)
@@ -86,10 +79,12 @@ const DynamicDashboardPage: React.FC = () => {
     fetchTemplate()
   }, [isTemplate, projectId])
 
-  useEffect(() => {
-    updateStaticProperty(isEditing)
-  }, [isEditing, updateStaticProperty])
-
+  // useEffect(() => {
+  //   updateStaticProperty(isEditing)
+  // }, [isEditing, updateStaticProperty])
+  const _handleResposniveLayoutChanges = (_layout: any, allLayouts: any) => {
+    console.log("allLayouts from handleLayoutChanges", allLayouts)
+  }
   // Device preview hooks
   const { activeDevice, setActiveDevice, deviceTabs, getViewportWidth } =
     useDevicePreview()
@@ -128,11 +123,13 @@ const DynamicDashboardPage: React.FC = () => {
     handleDragStart,
     handleDragEnd,
   } = useDragAndDrop(isEditing, gridComponents, setGridComponents)
+
   if (isLoading) return <LoadingPage />
   if (!authUser) return null
   if (!project) return <div>Project not found</div>
 
   const isEmpty = gridComponents.length === 0
+  console.log("defaultLayouts from dynamic-dashboard-page", defaultLayouts)
 
   return (
     <DndContext
@@ -163,7 +160,6 @@ const DynamicDashboardPage: React.FC = () => {
                   <SaveTemplateDialog
                     projectId={projectId}
                     layouts={defaultLayouts}
-                    nestedLayouts={nestedLayouts}
                     open={openSaveDialog}
                     onOpenChange={setOpenSaveDialog}
                   />
@@ -199,12 +195,12 @@ const DynamicDashboardPage: React.FC = () => {
                 resizeHandles={["n", "s", "e", "w"]}
                 preventCollision={false}
                 compactType="vertical"
-                useCSSTransforms={true}
+                isDraggable={isEditing}
+                isResizable={isEditing}
               >
                 {generateDOM(
                   defaultLayouts,
                   gridComponents,
-                  nestedLayouts,
                   handleNestedLayoutChange,
                   isEditing,
                   handleRemoveComponent,

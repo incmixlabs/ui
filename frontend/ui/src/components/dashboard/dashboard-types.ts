@@ -1,20 +1,6 @@
-import type React from "react"
 import type { Layout } from "react-grid-layout"
-export interface LayoutPreset {
-  id: string
-  name: string
-  image: string
-  description: string
-  mainLayouts: CustomLayouts
-  nestedLayouts: Record<string, Layout[]>
-}
 
-export interface LayoutPresetsProps {
-  presets: LayoutPreset[]
-  onSelectPreset: (preset: LayoutPreset) => void
-  activePresetId?: string
-  isEditing: boolean
-}
+export type Breakpoint = "lg" | "md" | "sm" | "xs" | "xxs"
 
 export interface LayoutItem {
   i: string
@@ -25,20 +11,31 @@ export interface LayoutItem {
   moved?: boolean
   static?: boolean
   resizeHandles?: ReadonlyArray<"s" | "w" | "e" | "n">
+  layouts?: Layout[]
+  compactType?: "horizontal" | "vertical" | null
+  [key: string]: any
+}
+export type ReactGridLayoutType = Layout[]
+
+export type CustomLayout = LayoutItem[]
+
+export interface LayoutItemWithNested extends Layout {
+  layouts?: Layout[] 
+  compactType?: "horizontal" | "vertical" | null
   [key: string]: any
 }
 
-export interface CustomLayout extends Layout {
-  compactType?: "horizontal" | "vertical"
-  nestedLayouts?: Layout[]
+export type CustomLayouts = {
+  [key in Breakpoint]: LayoutItemWithNested[]
 }
 
-export interface CustomLayouts {
-  [breakpoint: string]: CustomLayout[]
+export interface LayoutPreset {
+  id: string
+  name: string
+  image: string
+  description: string
+  mainLayouts: CustomLayouts
 }
-
-export type Breakpoint = "lg" | "md" | "sm" | "xs" | "xxs"
-export type ResponsiveLayout = Record<Breakpoint, LayoutItem[]>
 
 export interface ComponentSlot {
   slotId: string
