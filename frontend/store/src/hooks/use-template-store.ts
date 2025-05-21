@@ -1,4 +1,3 @@
-"use client"
 
 import type { Layout } from "@incmix/react-grid-layout"
 import { create } from "zustand"

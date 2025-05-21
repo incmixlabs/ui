@@ -1,5 +1,4 @@
 import type React from "react";
-
 import { useEffect, useState } from "react";
 import { Button, Flex } from "@incmix/ui/base";
 import { Input } from "@incmix/ui/base";
