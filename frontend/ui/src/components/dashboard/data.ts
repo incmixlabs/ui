@@ -10,9 +10,8 @@ export const initialLayouts = {
       y: 0,
       i: "grid-a",
       moved: false,
-      static: true,
-      compactType: "vertical",
-      nestedLayouts: [
+      static: false,
+      layouts: [
         {
           w: 12,
           h: 12,
@@ -31,7 +30,8 @@ export const initialLayouts = {
           moved: false,
           static: false,
         },
-      ],
+      ]
+
     },
     {
       w: 5,
@@ -40,7 +40,7 @@ export const initialLayouts = {
       y: 0,
       i: "c",
       moved: false,
-      static: true,
+      static: false,
     },
     {
       w: 8,
@@ -49,28 +49,27 @@ export const initialLayouts = {
       y: 24,
       i: "grid-b",
       moved: false,
-      static: true,
-      compactType: "horizontal",
-      nestedLayouts: [
-        {
-          w: 6,
-          h: 24,
-          x: 0,
-          y: 0,
-          i: "grid-b|0",
-          moved: false,
-          static: false,
-        },
-        {
-          w: 6,
-          h: 24,
-          x: 6,
-          y: 0,
-          i: "grid-b|1",
-          moved: false,
-          static: false,
-        },
-      ],
+      static: false,
+      layouts: [
+          {
+            w: 6,
+            h: 27,
+            x: 0,
+            y: 0,
+            i: "grid-b|0",
+            moved: false,
+            static: false,
+          },
+          {
+            w: 6,
+            h: 27,
+            x: 6,
+            y: 0,
+            i: "grid-b|1",
+            moved: false,
+            static: false,
+          },
+        ]
     },
     {
       w: 8,
@@ -79,7 +78,7 @@ export const initialLayouts = {
       y: 49,
       i: "f",
       moved: false,
-      static: true,
+      static: false,
     },
     {
       w: 12,
@@ -88,7 +87,7 @@ export const initialLayouts = {
       y: 68,
       i: "g",
       moved: false,
-      static: true,
+      static: false,
     },
     {
       w: 4,
@@ -97,7 +96,7 @@ export const initialLayouts = {
       y: 0,
       i: "h",
       moved: false,
-      static: true,
+      static: false,
     },
   ],
   md: [
@@ -139,7 +138,7 @@ export const initialLayouts = {
     },
     {
       w: 12,
-      h: 13,
+      h: 25,
       x: 0,
       y: 66,
       i: "g",
@@ -276,28 +275,7 @@ export const initialLayouts = {
       y: 0,
       i: "grid-a",
       moved: false,
-      static: true,
-      compactType: "vertical",
-      nestedLayouts: [
-        {
-          w: 12,
-          h: 12,
-          x: 0,
-          y: 0,
-          i: "grid-a|0",
-          moved: false,
-          static: false,
-        },
-        {
-          w: 12,
-          h: 11,
-          x: 0,
-          y: 12,
-          i: "grid-a|1",
-          moved: false,
-          static: false,
-        },
-      ],
+      static: false,
     },
     {
       w: 8,
@@ -306,7 +284,7 @@ export const initialLayouts = {
       y: 6,
       i: "c",
       moved: false,
-      static: true,
+      static: false,
     },
     {
       w: 8,
@@ -315,7 +293,7 @@ export const initialLayouts = {
       y: 24,
       i: "grid-b",
       moved: false,
-      static: true,
+      static: false,
       compactType: "horizontal",
     },
     {
@@ -325,7 +303,7 @@ export const initialLayouts = {
       y: 42,
       i: "f",
       moved: false,
-      static: true,
+      static: false,
     },
     {
       w: 14,
@@ -334,7 +312,7 @@ export const initialLayouts = {
       y: 51,
       i: "g",
       moved: false,
-      static: true,
+      static: false,
     },
     {
       w: 6,
@@ -343,7 +321,7 @@ export const initialLayouts = {
       y: 0,
       i: "h",
       moved: false,
-      static: true,
+      static: false,
     },
   ],
 };
@@ -365,6 +343,27 @@ export const presetLayouts: LayoutPreset[] = [
           i: "grid-a",
           moved: false,
           static: false,
+          layouts: [
+            {
+              w: 12,
+              h: 12,
+              x: 0,
+              y: 0,
+              i: "grid-a|0",
+              moved: false,
+              static: false,
+            },
+            {
+              w: 12,
+              h: 11,
+              x: 0,
+              y: 12,
+              i: "grid-a|1",
+              moved: false,
+              static: false,
+            },
+          ]
+    
         },
         {
           w: 5,
@@ -383,6 +382,26 @@ export const presetLayouts: LayoutPreset[] = [
           i: "grid-b",
           moved: false,
           static: false,
+          layouts: [
+              {
+                w: 6,
+                h: 27,
+                x: 0,
+                y: 0,
+                i: "grid-b|0",
+                moved: false,
+                static: false,
+              },
+              {
+                w: 6,
+                h: 27,
+                x: 6,
+                y: 0,
+                i: "grid-b|1",
+                moved: false,
+                static: false,
+              },
+            ]
         },
         {
           w: 8,
@@ -638,48 +657,6 @@ export const presetLayouts: LayoutPreset[] = [
         },
       ],
     },
-    nestedLayouts: {
-      "grid-a": [
-        {
-          w: 12,
-          h: 12,
-          x: 0,
-          y: 0,
-          i: "grid-a|0",
-          moved: false,
-          static: false,
-        },
-        {
-          w: 12,
-          h: 11,
-          x: 0,
-          y: 12,
-          i: "grid-a|1",
-          moved: false,
-          static: false,
-        },
-      ],
-      "grid-b": [
-        {
-          w: 6,
-          h: 24,
-          x: 0,
-          y: 0,
-          i: "grid-b|0",
-          moved: false,
-          static: false,
-        },
-        {
-          w: 6,
-          h: 24,
-          x: 6,
-          y: 0,
-          i: "grid-b|1",
-          moved: false,
-          static: false,
-        },
-      ],
-    },
   },
   {
     id: "sidebar",
@@ -696,6 +673,26 @@ export const presetLayouts: LayoutPreset[] = [
           i: "grid-a",
           moved: false,
           static: false,
+          layouts: [
+            {
+              w: 6,
+              h: 12,
+              x: 0,
+              y: 0,
+              i: "grid-a|0",
+              moved: false,
+              static: false,
+            },
+            {
+              w: 6,
+              h: 12,
+              x: 6,
+              y: 0,
+              i: "grid-a|1",
+              moved: false,
+              static: false,
+            },
+          ],
         },
         {
           w: 4,
@@ -714,6 +711,26 @@ export const presetLayouts: LayoutPreset[] = [
           i: "grid-b",
           moved: false,
           static: false,
+          layouts: [
+            {
+              w: 6,
+              h: 27,
+              x: 0,
+              y: 0,
+              i: "grid-b|0",
+              moved: false,
+              static: false,
+            },
+            {
+              w: 6,
+              h: 27,
+              x: 6,
+              y: 0,
+              i: "grid-b|1",
+              moved: false,
+              static: false,
+            },
+          ]
         },
         {
           w: 4,
@@ -919,7 +936,7 @@ export const presetLayouts: LayoutPreset[] = [
           y: 0,
           i: "grid-a",
           moved: false,
-          static: true,
+          static: false,
         },
         {
           w: 8,
@@ -928,7 +945,7 @@ export const presetLayouts: LayoutPreset[] = [
           y: 6,
           i: "c",
           moved: false,
-          static: true,
+          static: false,
         },
         {
           w: 8,
@@ -937,7 +954,7 @@ export const presetLayouts: LayoutPreset[] = [
           y: 24,
           i: "grid-b",
           moved: false,
-          static: true,
+          static: false,
           compactType: "horizontal",
         },
         {
@@ -947,7 +964,7 @@ export const presetLayouts: LayoutPreset[] = [
           y: 42,
           i: "f",
           moved: false,
-          static: true,
+          static: false,
         },
         {
           w: 14,
@@ -956,7 +973,7 @@ export const presetLayouts: LayoutPreset[] = [
           y: 51,
           i: "g",
           moved: false,
-          static: true,
+          static: false,
         },
         {
           w: 6,
@@ -964,48 +981,6 @@ export const presetLayouts: LayoutPreset[] = [
           x: 8,
           y: 0,
           i: "h",
-          moved: false,
-          static: true,
-        },
-      ],
-    },
-    nestedLayouts: {
-      "grid-a": [
-        {
-          w: 6,
-          h: 12,
-          x: 0,
-          y: 0,
-          i: "grid-a|0",
-          moved: false,
-          static: false,
-        },
-        {
-          w: 6,
-          h: 12,
-          x: 6,
-          y: 0,
-          i: "grid-a|1",
-          moved: false,
-          static: false,
-        },
-      ],
-      "grid-b": [
-        {
-          w: 6,
-          h: 27,
-          x: 0,
-          y: 0,
-          i: "grid-b|0",
-          moved: false,
-          static: false,
-        },
-        {
-          w: 6,
-          h: 27,
-          x: 6,
-          y: 0,
-          i: "grid-b|1",
           moved: false,
           static: false,
         },

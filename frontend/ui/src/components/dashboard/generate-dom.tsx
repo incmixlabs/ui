@@ -1,24 +1,29 @@
 "use client"
-import RGL, { WidthProvider } from "react-grid-layout"
+import RGL, { WidthProvider } from "@incmix/react-grid-layout"
 import { Box, cn } from "@incmix/ui"
-import { WidgetDropZone,ComponentSlot, Breakpoint } from "@incmix/ui/dashboard"
-import type { Layout } from "react-grid-layout"
+import { WidgetDropZone,ComponentSlot, CustomLayouts } from "@incmix/ui/dashboard"
+import type { Layout } from "@incmix/react-grid-layout"
+
 const ReactGridLayout = WidthProvider(RGL)
 
 export function generateDOM(
-  defaultLayouts: Record<Breakpoint, Layout[]>,
+  defaultLayouts: CustomLayouts,
   gridComponents: ComponentSlot[],
-  nestedLayouts: Record<string, Layout[]>,
-  handleNestedLayoutChange: (nestedLayout: Layout[], itemKey: string) => void,
+  handleNestedLayoutChange: (nestedLayout: Layout, itemKey: string) => void,
   isEditing: boolean,
   handleRemoveComponent: (slotId: string) => void,
   handleRemoveNestedComponent: (slotId: string, groupId?: string) => void,
 ) {
+  console.log("Default Layouts in generateDOM",defaultLayouts);
   return defaultLayouts?.lg?.map((item: any) => {
+    console.log("Item",item);
     const gridComponent = gridComponents.find((comp) => comp.slotId === item.i)
+    // console.log("Grid Component",gridComponent);
+    
     if (item.i.startsWith("grid-")) {
       // console.log("Nested Item", item)
-      const nested = nestedLayouts[item.i] || []
+      const nested = item.layouts || []
+// console.log("Nested",nested);
 
       return (
         <Box
@@ -44,8 +49,10 @@ export function generateDOM(
             preventCollision={false}
             compactType={item.compactType}
             useCSSTransforms={true}
+            isDraggable={isEditing}
+            isResizable={isEditing}
           >
-            {nested?.map((nestedItem) => {
+            {nested?.map((nestedItem: { i: string }) => {
               const nestedComponent = gridComponents.find((comp) => comp.slotId === nestedItem.i)
 
               return (

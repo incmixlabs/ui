@@ -16,7 +16,7 @@ import { useQueryState } from "nuqs";
 interface SaveTemplateDialogProps {
   projectId: string;
   layouts: Record<Breakpoint, Layout[]>;
-  nestedLayouts: Record<string, Layout[]>;
+  // nestedLayouts: Record<string, Layout[]>;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -24,7 +24,7 @@ interface SaveTemplateDialogProps {
 export function SaveTemplateDialog({
   projectId,
   layouts,
-  nestedLayouts,
+  // nestedLayouts,
   open,
   onOpenChange,
 }: SaveTemplateDialogProps) {
@@ -86,14 +86,14 @@ export function SaveTemplateDialog({
       return;
     }
 
-   await addTemplate({
-      name: templateName.trim(),
-      projectId,
-      tags,
-      layouts,
-      nestedLayouts,
-      isActive: false,
-    });
+  //  await addTemplate({
+  //     name: templateName.trim(),
+  //     projectId,
+  //     tags,
+  //     layouts,
+  //     nestedLayouts,
+  //     isActive: false,
+  //   });
     setIsTemplate(null);
     toast.success("Template saved successfully");
     setTemplateName("");
@@ -108,13 +108,13 @@ const handleUpdateTemplate = async (id: string) => {
      if (!existingTemplate) {
        throw new Error("Template not found");
      }
-     await updateTemplate(id, {
-       name: templateName.trim(),
-       projectId,
-       tags,
-       layouts,
-       nestedLayouts,
-     });
+    //  await updateTemplate(id, {
+    //    name: templateName.trim(),
+    //    projectId,
+    //    tags,
+    //    layouts,
+    //    nestedLayouts,
+    //  });
      toast.success("Template updated successfully");
      setIsTemplate(null);
      setTemplateName("");

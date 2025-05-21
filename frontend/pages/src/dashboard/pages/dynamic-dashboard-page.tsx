@@ -15,6 +15,7 @@ import {
   ReactiveButton,
   SaveTemplateDialog,
   generateDOM,
+  initialLayouts,
   useDevicePreview,
   useDragAndDrop,
   useGridComponents,
@@ -24,11 +25,11 @@ import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useParams } from "@tanstack/react-router"
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
-import { Responsive, WidthProvider } from "react-grid-layout"
+import { Responsive, WidthProvider } from "@incmix/react-grid-layout"
 import { useAuth } from "../../auth"
 import { EditWidgetsControl } from "./home"
-import "react-grid-layout/css/styles.css"
-import "react-resizable/css/styles.css"
+import "@incmix/react-grid-layout/css/styles.css"
+import "@incmix/react-grid-layout/css/styles.css"
 import { useQueryState } from "nuqs"
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
@@ -43,53 +44,51 @@ const DynamicDashboardPage: React.FC = () => {
 
   const {
     defaultLayouts,
-    nestedLayouts,
     handleLayoutChange,
     handleNestedLayoutChange,
-    updateStaticProperty,
+    // updateStaticProperty,
     applyTemplates,
   } = useLayoutStore()
 
   const [openSaveDialog, setOpenSaveDialog] = useState(false)
 
-  useEffect(() => {
-    const fetchTemplate = async () => {
-      if (isTemplate) {
-        try {
-          const template = await getTemplateById(isTemplate)
-          if (!template) {
-            setIsTemplate(null)
-            return
-          }
-          applyTemplates(template.layouts, template.nestedLayouts, template.id)
-          updateStaticProperty(isEditing)
-        } catch (error) {
-          console.error("Failed to load template:", error)
-        }
-      } else {
-        try {
-          const activeTemplate = await getActiveTemplate(projectId)
-          if (activeTemplate) {
-            applyTemplates(
-              activeTemplate.layouts,
-              activeTemplate.nestedLayouts,
-              activeTemplate.id
-            )
-            updateStaticProperty(isEditing)
-          }
-        } catch (error) {
-          console.error("Failed to load active template:", error)
-        }
-      }
-    }
+  // useEffect(() => {
+  //   const fetchTemplate = async () => {
+  //     if (isTemplate) {
+  //       try {
+  //         const template = await getTemplateById(isTemplate)
+  //         if (!template) {
+  //           setIsTemplate(null)
+  //           return
+  //         }
+  //         applyTemplates(template.layouts, template.id)
+  //         updateStaticProperty(isEditing)
+  //       } catch (error) {
+  //         console.error("Failed to load template:", error)
+  //       }
+  //     } else {
+  //       try {
+  //         const activeTemplate = await getActiveTemplate(projectId)
+  //         if (activeTemplate) {
+  //           applyTemplates(activeTemplate.layouts, activeTemplate.id)
+  //           updateStaticProperty(isEditing)
+  //         }
+  //       } catch (error) {
+  //         console.error("Failed to load active template:", error)
+  //       }
+  //     }
+  //   }
 
-    fetchTemplate()
-  }, [isTemplate, projectId])
+  //   fetchTemplate()
+  // }, [isTemplate, projectId])
 
-  useEffect(() => {
-    updateStaticProperty(isEditing)
-  }, [isEditing, updateStaticProperty])
+  // useEffect(() => {
+  //   updateStaticProperty(isEditing)
+  // }, [isEditing, updateStaticProperty])
+const handleResposniveLayoutChanges = (_layout: any, allLayouts: any) => {
+  console.log("allLayouts from handleLayoutChanges",allLayouts);
 
+}
   // Device preview hooks
   const { activeDevice, setActiveDevice, deviceTabs, getViewportWidth } =
     useDevicePreview()
@@ -133,6 +132,7 @@ const DynamicDashboardPage: React.FC = () => {
   if (!project) return <div>Project not found</div>
 
   const isEmpty = gridComponents.length === 0
+console.log("defaultLayouts from dynamic-dashboard-page",defaultLayouts);
 
   return (
     <DndContext
@@ -163,7 +163,7 @@ const DynamicDashboardPage: React.FC = () => {
                   <SaveTemplateDialog
                     projectId={projectId}
                     layouts={defaultLayouts}
-                    nestedLayouts={nestedLayouts}
+                    // nestedLayouts={nestedLayouts}
                     open={openSaveDialog}
                     onOpenChange={setOpenSaveDialog}
                   />
@@ -199,12 +199,12 @@ const DynamicDashboardPage: React.FC = () => {
                 resizeHandles={["n", "s", "e", "w"]}
                 preventCollision={false}
                 compactType="vertical"
-                useCSSTransforms={true}
+                isDraggable={isEditing}
+                isResizable={isEditing}
               >
                 {generateDOM(
                   defaultLayouts,
                   gridComponents,
-                  nestedLayouts,
                   handleNestedLayoutChange,
                   isEditing,
                   handleRemoveComponent,
