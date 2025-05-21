@@ -86,7 +86,14 @@ export function useEditableCellKeyboard({
               e.preventDefault();
             }
             break;
-          // Let Tab work normally for keyboard navigation
+          // Handling Tab in edit mode to save and move to next cell
+          case "Tab":
+            if (saveEdit) {
+              saveEdit();
+              // Let the Tab event bubble up to the parent for cell navigation
+              // The default browser behavior will be prevented in the parent handler
+            }
+            break;
         }
       } else if (isSelected) {
         // When selected but not in edit mode
@@ -97,6 +104,10 @@ export function useEditableCellKeyboard({
               startEditing();
               e.preventDefault();
             }
+            break;
+          case "Tab":
+            // Let Tab event bubble up to the parent for cell navigation
+            // We'll handle it at the table level
             break;
         }
       }

@@ -13,7 +13,8 @@ export type ColumnType =
   | "Rating"
   | "Image"
   | "Link"
-  | "Custom";
+  | "Custom"
+  | "TimelineProgress";
 
 // Column definition interface
 export interface DataTableColumn<TData> {

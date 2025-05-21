@@ -292,9 +292,18 @@ export function useTableInlineEdit<TData>({
     try {
       switch (e.key) {
         case 'Tab':
+          e.preventDefault(); // Always prevent default Tab behavior
           if (!selectedCell) {
-            e.preventDefault();
+            // If no cell is selected, select the first one
             selectFirstCell();
+          } else {
+            // If a cell is already selected, move to the next cell based on tab direction
+            // Shift+Tab moves backwards, regular Tab moves forwards
+            if (e.shiftKey) {
+              navigateToCell('left');
+            } else {
+              navigateToCell('right');
+            }
           }
           break;
         case 'ArrowUp':
