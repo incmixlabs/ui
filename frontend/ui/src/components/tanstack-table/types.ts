@@ -33,6 +33,9 @@ export interface DataTableColumn<TData> {
   minWidth?: string | number;
   maxWidth?: string | number;
 
+  // Cell background color - can be a static color string or a function that returns a color based on cell value
+  cellBackgroundColor?: string | ((value: any, row: TData) => string | null);
+
   // Formatting options
   format?: {
     dateFormat?: string;
