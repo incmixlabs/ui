@@ -1,4 +1,4 @@
-import type { Layout } from "react-grid-layout"
+import type { Layout } from "@incmix/react-grid-layout"
 
 export type Breakpoint = "lg" | "md" | "sm" | "xs" | "xxs"
 
@@ -12,6 +12,7 @@ export interface LayoutItem {
   static?: boolean
   resizeHandles?: ReadonlyArray<"s" | "w" | "e" | "n">
   layouts?: Layout[]
+  compactType?: "horizontal" | "vertical" | null
   [key: string]: any
 }
 // Use the Layout type directly from react-grid-layout for the base ReactGridLayout
@@ -19,11 +20,9 @@ export type ReactGridLayoutType = Layout[]
 
 // Make sure Layout is compatible with LayoutItem[]
 export type CustomLayout = LayoutItem[]
-// Define CustomLayouts as a record with all required breakpoints
 
-// Define a layout item that can include nested layouts
 export interface LayoutItemWithNested extends Layout {
-  layouts?: Layout[] // Use Layout from @incmix/react-grid-layout
+  layouts?: Layout[] 
   compactType?: "horizontal" | "vertical" | null
   [key: string]: any
 }

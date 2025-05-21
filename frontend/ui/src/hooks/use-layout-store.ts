@@ -56,7 +56,7 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
   handleLayoutChange: (_layout, allLayouts) => {
     const { defaultLayouts } = get()
 
-    const updatedLayouts = JSON.parse(JSON.stringify(defaultLayouts))
+    const updatedLayouts = structuredClone(defaultLayouts)
 
     Object.keys(allLayouts).forEach((breakpoint) => {
       const breakpointKey = breakpoint as Breakpoint
@@ -66,10 +66,8 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
           const existingItemIndex = updatedLayouts[breakpointKey].findIndex((item: LayoutItemWithNested) => item.i === newItem.i)
 
           if (existingItemIndex !== -1) {
-            // Get the existing item
             const existingItem = updatedLayouts[breakpointKey][existingItemIndex]
 
-            // Preserve the nested layouts if they exist
             const preservedLayouts = existingItem.layouts
 
             // Update the item with the new position/size data
@@ -88,16 +86,6 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
       }
     })
 
-    // Log to verify nested layouts are preserved
-    // const gridItems = updatedLayouts.lg.filter((item: LayoutItemWithNested) => item.i.startsWith("grid-"))
-    // console.log(
-    //   "After merging layouts - Grid items with nested layouts:",
-    //   gridItems.map((item: LayoutItemWithNested) => ({
-    //     id: item.i,
-    //     hasNestedLayouts: item.layouts && item.layouts.length > 0,
-    //     nestedCount: item.layouts ? item.layouts.length : 0,
-    //   })),
-    // )
 
     set({ defaultLayouts: updatedLayouts })
   },
@@ -114,7 +102,7 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
             if (item.i === itemKey) {
               return {
                 ...item,
-                layouts: nestedLayout,
+                layouts: [...nestedLayout],
               }
             }
             return item

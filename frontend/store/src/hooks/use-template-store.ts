@@ -7,7 +7,7 @@ import { database } from "../sql/main"
 export type Breakpoint = "lg" | "md" | "sm" | "xs" | "xxs"
 
 export interface LayoutItemWithNested extends Layout {
-  layouts?: Layout[] // Nested layouts are stored directly in the layout item
+  layouts?: Layout[]
   compactType?: "horizontal" | "vertical" | null
   [key: string]: any
 }
@@ -56,16 +56,13 @@ interface TemplateState {
 const validateAndNormalizeTemplate = (template: any): any => {
   if (!template) return template
 
-  // Create a deep copy to avoid modifying the original
   const normalizedTemplate = JSON.parse(JSON.stringify(template))
 
-  // Handle the case where the template uses layouts instead of mainLayouts (for backward compatibility)
   if (normalizedTemplate.layouts && !normalizedTemplate.mainLayouts) {
     normalizedTemplate.mainLayouts = normalizedTemplate.layouts
     normalizedTemplate.layouts = undefined
   }
 
-  // Ensure mainLayouts exists
   if (!normalizedTemplate.mainLayouts) {
     normalizedTemplate.mainLayouts = {
       lg: [],

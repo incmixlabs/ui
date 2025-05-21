@@ -197,8 +197,8 @@ const layoutItemSchema = {
     },
   },
   required: ["w", "h", "x", "y", "i"],
-  additionalProperties: true, // Allow additional properties for flexibility
-};
+  additionalProperties: true,
+} as const
 
 export const dashboardTemplateSchemaLiteral = {
   title: "dashboard template schema",
@@ -268,9 +268,8 @@ export const dashboardTemplateSchemaLiteral = {
     "createdAt",
     "updatedAt",
   ],
-} as const;
+} as const
 
-// Project Schema with required fields added
 export const projectSchemaLiteral = {
   title: "projects schema",
   version: 0,
@@ -289,11 +288,9 @@ export const projectSchemaLiteral = {
     },
     createdAt: {
       type: "string",
-      // format: "date-time",
     },
     updatedAt: {
       type: "string",
-      // format: "date-time",
     },
     createdBy: {
       type: "string",
@@ -302,7 +299,6 @@ export const projectSchemaLiteral = {
       type: "string",
     },
   },
-  // Adding required fields to enforce presence of key properties.
   required: [
     "id",
     "name",
@@ -313,8 +309,6 @@ export const projectSchemaLiteral = {
     "updatedBy",
   ],
 } as const
-
-// Update this in your types.ts file where you defined formProjectSchemaLiteral
 
 export const formProjectSchemaLiteral = {
   title: "form projects schema",

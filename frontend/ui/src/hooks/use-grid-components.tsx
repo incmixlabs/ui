@@ -1,9 +1,6 @@
-"use client"
-
 import { useState, useRef } from "react"
 import { toast, useLayoutStore } from "@incmix/ui"
 import type { ComponentSlot, CustomLayouts, LayoutItemWithNested } from "@incmix/ui/dashboard"
-// Import Layout from @incmix/react-grid-layout
 import type { Layout } from "@incmix/react-grid-layout"
 import {
   ActiveTask,
@@ -17,8 +14,8 @@ import {
 } from "@incmix/ui/widgets"
 
 import { dashboardImg } from "@incmix/ui/dashboard"
+import { Breakpoint } from "@/utils"
 
-// Define a type for the removal history
 interface RemovalHistoryItem {
   id: string
   timestamp: number
@@ -83,7 +80,6 @@ export function useGridComponents(isEditing: boolean) {
     },
   ])
 
-  // Use a ref to store removal history instead of state
   // This avoids closure issues with the toast's action callback
   const removalHistoryRef = useRef<RemovalHistoryItem[]>([])
 
@@ -207,23 +203,18 @@ export function useGridComponents(isEditing: boolean) {
       return
     }
 
-    // Get the current layouts from the store
     const currentLayouts = useLayoutStore.getState().defaultLayouts
 
-    // Create a deep copy to avoid reference issues
     const updatedLayouts = JSON.parse(JSON.stringify(currentLayouts)) as CustomLayouts
 
-    // Find the component to remove
     const removedComponent = gridComponents.find((comp) => comp.slotId === slotId)
     if (!removedComponent) {
       console.error(`Component with ID ${slotId} not found`)
       return
     }
 
-    // Find the parent grid item and the nested layout to remove in each breakpoint
-    let removedNestedLayout: Layout | undefined
+    const removedNestedLayouts: Partial<Record<Breakpoint, Layout>> = {}
 
-    // Process each breakpoint
     Object.keys(updatedLayouts).forEach((breakpoint) => {
       const breakpointKey = breakpoint as keyof CustomLayouts
 
@@ -233,22 +224,20 @@ export function useGridComponents(isEditing: boolean) {
       if (parentItemIndex !== -1) {
         const parentItem = updatedLayouts[breakpointKey][parentItemIndex] as LayoutItemWithNested
 
-        // If the parent has nested layouts
         if (parentItem.layouts && parentItem.layouts.length > 0) {
           // Find the nested layout to remove
           const nestedItemIndex = parentItem.layouts.findIndex((item) => item.i === slotId)
 
           if (nestedItemIndex !== -1) {
-            // Store the removed layout for potential undo (only once)
-            if (!removedNestedLayout) {
-              removedNestedLayout = { ...parentItem.layouts[nestedItemIndex] }
+            if (!removedNestedLayouts[breakpointKey]) {
+              removedNestedLayouts[breakpointKey] = {
+                ...parentItem.layouts[nestedItemIndex],
+              }
             }
 
-            // Remove the nested layout from the parent
             const updatedNestedLayouts = [...parentItem.layouts]
             updatedNestedLayouts.splice(nestedItemIndex, 1)
 
-            // Update the parent's nested layouts
             updatedLayouts[breakpointKey][parentItemIndex] = {
               ...parentItem,
               layouts: updatedNestedLayouts,
@@ -258,8 +247,7 @@ export function useGridComponents(isEditing: boolean) {
       }
     })
 
-    // If we didn't find the nested layout to remove, show an error
-    if (!removedNestedLayout) {
+    if (!removedNestedLayouts) {
       console.error(`Nested layout with ID ${slotId} not found in parent ${groupId}`)
       return
     }
@@ -275,16 +263,14 @@ export function useGridComponents(isEditing: boolean) {
       layouts: null,
       isNested: true,
       parentId: groupId,
-      nestedLayout: removedNestedLayout,
+      nestedLayout: removedNestedLayouts,
     })
 
     // Log the current history for debugging
     console.log("After adding nested removal - History:", removalHistoryRef.current)
 
-    // Remove the component from the grid components
     setGridComponents((prev) => prev.filter((comp) => comp.slotId !== slotId))
 
-    // Update the layouts in the store
     setDefaultLayouts(updatedLayouts)
 
     // Show toast with undo option
@@ -307,10 +293,8 @@ export function useGridComponents(isEditing: boolean) {
       return
     }
 
-    // Get the current layouts from the store
     const currentLayouts = useLayoutStore.getState().defaultLayouts
 
-    // Create a deep copy to avoid reference issues
     const updatedLayouts = JSON.parse(JSON.stringify(currentLayouts)) as CustomLayouts
 
     // Find the component to remove
@@ -320,8 +304,14 @@ export function useGridComponents(isEditing: boolean) {
       return
     }
 
-    // Create a copy of the layouts that will be removed (for undo)
-    const removedLayouts: CustomLayouts = {} as CustomLayouts
+    const empty: LayoutItemWithNested[] = []
+    const removedLayouts: CustomLayouts = {
+      lg: [...empty],
+      md: [...empty],
+      sm: [...empty],
+      xs: [...empty],
+      xxs: [...empty],
+    }
 
     // Process each breakpoint
     Object.keys(updatedLayouts).forEach((breakpoint) => {
@@ -354,13 +344,10 @@ export function useGridComponents(isEditing: boolean) {
       isNested: false,
     })
 
-    // Log the current history for debugging
     console.log("After adding main removal - History:", removalHistoryRef.current)
 
-    // Remove the component from the grid components
     setGridComponents((prev) => prev.filter((comp) => comp.slotId !== slotId))
 
-    // Update the layouts in the store
     setDefaultLayouts(updatedLayouts)
 
     // Show toast with undo option

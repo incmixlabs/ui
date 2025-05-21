@@ -45,13 +45,9 @@ export function SaveTemplateDialog({
         const existingTemplate = await templatesCollection
           .findOne(templateId)
           .exec();
-        const templates = await templatesCollection.find().exec();
-        console.log("templates", templates);
-
-        const allTags = templates.flatMap((template) => template.tags || []);
-        console.log("allTags", allTags);
-        const uniqueTags = [...new Set(allTags)];
-        setAllTags(uniqueTags);
+          
+        const templates = await database.dashboardTemplates.find().exec()
+        setAllTags([...new Set(templates.flatMap(t => t.tags || []))])
 
         if (!existingTemplate) {
           toast.error("Template not found");
