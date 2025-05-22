@@ -1,28 +1,32 @@
-import { create } from "zustand"
-import type { CustomLayouts, LayoutItemWithNested } from "@incmix/ui/dashboard"
-import type { Layout } from "@incmix/react-grid-layout"
-import { presetLayouts } from "@incmix/ui/dashboard"
-import { addGroupToLayouts, Breakpoint, debugComponentNames, getNextGroupId } from "@utils"
+import { create } from "zustand";
+import type { CustomLayouts, LayoutItemWithNested } from "@incmix/ui/dashboard";
+import type { Layout } from "@incmix/react-grid-layout";
+import { presetLayouts } from "@incmix/ui/dashboard";
+import {
+  addGroupToLayouts,
+  Breakpoint,
+  debugComponentNames,
+  getNextGroupId,
+} from "@utils";
 
 export interface LayoutPreset {
-  id: string
-  name: string
-  description: string
-  image: string
-  mainLayouts: CustomLayouts
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  mainLayouts: CustomLayouts;
 }
 
 interface LayoutState {
-  defaultLayouts: CustomLayouts
-  activePresetId: string
-  applyPreset: (presetId?: string) => void
-  applyTemplates: (mainLayouts?: CustomLayouts, templateId?: string) => void
-  setDefaultLayouts: (layouts: CustomLayouts) => void
-  handleLayoutChange: (_layout: any, allLayouts: any) => void
-  handleNestedLayoutChange: (nestedLayout: Layout, itemKey: string) => void
-  addNewGroup:() => void
+  defaultLayouts: CustomLayouts;
+  activePresetId: string;
+  applyPreset: (presetId?: string) => void;
+  applyTemplates: (mainLayouts?: CustomLayouts, templateId?: string) => void;
+  setDefaultLayouts: (layouts: CustomLayouts) => void;
+  handleLayoutChange: (_layout: any, allLayouts: any) => void;
+  handleNestedLayoutChange: (nestedLayout: Layout, itemKey: string) => void;
+  addNewGroup: () => void;
 }
-
 
 export const useLayoutStore = create<LayoutState>((set, get) => ({
   // Initialize with validated preset layouts
@@ -54,31 +58,37 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
   },
 
   handleLayoutChange: (_layout, allLayouts) => {
-    const { defaultLayouts } = get()
-console.log("handleLayoutChange defaultLayouts",defaultLayouts);
+    const { defaultLayouts } = get();
+    console.log("handleLayoutChange defaultLayouts", defaultLayouts);
 
     // Debug the current layouts
-    debugComponentNames(defaultLayouts, "current layouts in handleLayoutChange")
+    debugComponentNames(
+      defaultLayouts,
+      "current layouts in handleLayoutChange",
+    );
 
     // Debug the incoming layouts
-    debugComponentNames(allLayouts, "incoming layouts in handleLayoutChange")
+    debugComponentNames(allLayouts, "incoming layouts in handleLayoutChange");
 
     // Create a deep copy of the current layouts to avoid reference issues
-    const updatedLayouts = JSON.parse(JSON.stringify(defaultLayouts))
+    const updatedLayouts = JSON.parse(JSON.stringify(defaultLayouts));
 
     // For each breakpoint, update the positions while preserving nested layouts and componentName
     Object.keys(allLayouts).forEach((breakpoint) => {
-      const breakpointKey = breakpoint as Breakpoint
+      const breakpointKey = breakpoint as Breakpoint;
 
       if (updatedLayouts[breakpointKey] && allLayouts[breakpointKey]) {
         // For each item in the new layouts
         allLayouts[breakpointKey].forEach((newItem: Layout) => {
           // Find the corresponding item in the current layouts
-          const existingItemIndex = updatedLayouts[breakpointKey].findIndex((item) => item.i === newItem.i)
+          const existingItemIndex = updatedLayouts[breakpointKey].findIndex(
+            (item) => item.i === newItem.i,
+          );
 
           if (existingItemIndex !== -1) {
             // Get the existing item
-            const existingItem = updatedLayouts[breakpointKey][existingItemIndex]
+            const existingItem =
+              updatedLayouts[breakpointKey][existingItemIndex];
 
             // Check if this item has nested layouts
             if (existingItem.layouts && existingItem.layouts.length > 0) {
@@ -86,7 +96,9 @@ console.log("handleLayoutChange defaultLayouts",defaultLayouts);
               // We need to preserve the componentName for each nested layout item
 
               // Create a deep copy of the existing nested layouts to preserve all properties
-              const preservedNestedLayouts = JSON.parse(JSON.stringify(existingItem.layouts))
+              const preservedNestedLayouts = JSON.parse(
+                JSON.stringify(existingItem.layouts),
+              );
 
               // Log the existing nested layouts to debug
               console.log(
@@ -95,89 +107,99 @@ console.log("handleLayoutChange defaultLayouts",defaultLayouts);
                   id: item.i,
                   componentName: item.componentName || "undefined",
                 })),
-              )
+              );
 
               // Update the parent item with new position/size but preserve the nested layouts with all properties
               updatedLayouts[breakpointKey][existingItemIndex] = {
                 ...newItem,
                 layouts: preservedNestedLayouts,
                 // Do not include componentName for parent items with layouts
-              }
+              };
 
               // Log the updated item to verify
               console.log(
                 `Updated item ${newItem.i} with preserved nested layouts:`,
-                updatedLayouts[breakpointKey][existingItemIndex].layouts.map((item) => ({
-                  id: item.i,
-                  componentName: item.componentName || "undefined",
-                })),
-              )
+                updatedLayouts[breakpointKey][existingItemIndex].layouts.map(
+                  (item) => ({
+                    id: item.i,
+                    componentName: item.componentName || "undefined",
+                  }),
+                ),
+              );
             } else {
               // This is a regular item without nested layouts - preserve componentName
               updatedLayouts[breakpointKey][existingItemIndex] = {
                 ...newItem,
                 componentName: existingItem.componentName,
-              }
+              };
             }
           } else {
             // This is a new item, add it to the layouts
-            updatedLayouts[breakpointKey].push(newItem)
+            updatedLayouts[breakpointKey].push(newItem);
           }
-        })
+        });
 
         // Remove any items that no longer exist in the new layouts
-        updatedLayouts[breakpointKey] = updatedLayouts[breakpointKey].filter((item) => {
-          return allLayouts[breakpointKey].some((newItem: Layout) => newItem.i === item.i)
-        })
+        updatedLayouts[breakpointKey] = updatedLayouts[breakpointKey].filter(
+          (item) => {
+            return allLayouts[breakpointKey].some(
+              (newItem: Layout) => newItem.i === item.i,
+            );
+          },
+        );
       }
-    })
+    });
 
     // Debug the updated layouts before setting
-    debugComponentNames(updatedLayouts, "updated layouts in handleLayoutChange")
+    debugComponentNames(
+      updatedLayouts,
+      "updated layouts in handleLayoutChange",
+    );
 
     // Update the store with the merged layouts
-    set({ defaultLayouts: updatedLayouts })
+    set({ defaultLayouts: updatedLayouts });
   },
 
   handleNestedLayoutChange: (nestedLayout, itemKey) => {
     set((state) => {
-      const updatedLayouts = { ...state.defaultLayouts }
+      const updatedLayouts = { ...state.defaultLayouts };
 
       // Update the nested layouts for each breakpoint
-      const breakpoints = Object.keys(updatedLayouts) as Breakpoint[]
+      const breakpoints = Object.keys(updatedLayouts) as Breakpoint[];
       breakpoints.forEach((breakpoint) => {
         if (updatedLayouts[breakpoint]) {
-          updatedLayouts[breakpoint] = updatedLayouts[breakpoint].map((item) => {
-            if (item.i === itemKey) {
-              return {
-                ...item,
-                layouts: [...nestedLayout],
+          updatedLayouts[breakpoint] = updatedLayouts[breakpoint].map(
+            (item) => {
+              if (item.i === itemKey) {
+                return {
+                  ...item,
+                  layouts: [...nestedLayout],
+                };
               }
-            }
-            return item
-          })
+              return item;
+            },
+          );
         }
-      })
+      });
 
-      return { defaultLayouts: updatedLayouts }
-    })
+      return { defaultLayouts: updatedLayouts };
+    });
   },
   addNewGroup: () => {
-    let newGroupId = ""
+    let newGroupId = "";
 
     set((state) => {
-      const currentLayouts = { ...state.defaultLayouts }
+      const currentLayouts = { ...state.defaultLayouts };
 
-      newGroupId = getNextGroupId(currentLayouts)
+      newGroupId = getNextGroupId(currentLayouts);
 
-      const updatedLayouts = addGroupToLayouts(currentLayouts, newGroupId)
+      const updatedLayouts = addGroupToLayouts(currentLayouts, newGroupId);
 
-      console.log(`Created new group with ID: ${newGroupId}`)
+      console.log(`Created new group with ID: ${newGroupId}`);
 
-      return { defaultLayouts: updatedLayouts }
-    })
+      return { defaultLayouts: updatedLayouts };
+    });
 
-    return newGroupId 
-  }
-
-}))
+    return newGroupId;
+  },
+}));
