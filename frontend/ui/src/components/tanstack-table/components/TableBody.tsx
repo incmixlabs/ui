@@ -160,15 +160,28 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           // Get the cell value
           const cellValue = cell.getValue();
 
+          // Determine cell background color if specified in column definition
+          let cellBackgroundColor: string | null = null;
+          if (columnDef?.cellBackgroundColor) {
+            if (typeof columnDef.cellBackgroundColor === 'function') {
+              // Call the function with the cell value and row data
+              cellBackgroundColor = columnDef.cellBackgroundColor(cellValue, row.original);
+            } else {
+              // Static color string
+              cellBackgroundColor = columnDef.cellBackgroundColor;
+            }
+          }
+          
           return (
             <Table.Cell
               key={cell.id}
-              className={`px-2 py-1.5 ${columnDef?.className || ""} overflow-hidden`}
+              className={`px-2 py-1.5 ${columnDef?.className || ""} overflow-hidden ${cellBackgroundColor ? 'text-white' : ''}`}
               style={{
                 width: columnDef?.width,
                 minWidth: columnDef?.minWidth,
                 maxWidth: columnDef?.maxWidth,
-                position: 'relative' // For absolute positioning of editable content
+                position: 'relative', // For absolute positioning of editable content
+                backgroundColor: cellBackgroundColor || undefined
               }}
               role={enableInlineCellEdit ? "gridcell" : undefined}
               aria-colindex={columnDef ? flatColumns.indexOf(columnDef) + 1 : undefined} // ARIA indices are 1-based
