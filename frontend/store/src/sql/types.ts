@@ -173,6 +173,7 @@ const layoutItemSchema = {
     x: { type: "number" },
     y: { type: "number" },
     i: { type: "string" },
+    componentName: { type: "string" },
     moved: { type: "boolean", default: false },
     static: { type: "boolean", default: false },
     layouts: {
@@ -185,6 +186,7 @@ const layoutItemSchema = {
           x: { type: "number" },
           y: { type: "number" },
           i: { type: "string" },
+          componentName: { type: "string" },
           moved: { type: "boolean", default: false },
           static: { type: "boolean", default: false },
         },

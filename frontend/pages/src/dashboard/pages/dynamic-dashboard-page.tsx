@@ -8,15 +8,12 @@ import {
 } from "@incmix/store"
 import {
   ActiveBtn,
+  AddGroupButton,
   Box,
-  Button,
-  Dialog,
   Flex,
   Heading,
-  ReactiveButton,
   SaveTemplateDialog,
   generateDOM,
-  initialLayouts,
   useDevicePreview,
   useDragAndDrop,
   useGridComponents,
@@ -30,6 +27,8 @@ import { useAuth } from "../../auth"
 import { EditWidgetsControl } from "./home"
 import "@incmix/react-grid-layout/css/styles.css"
 import "@incmix/react-grid-layout/css/styles.css"
+import { Button } from "@radix-ui/themes"
+import { Plus } from "lucide-react"
 import { useQueryState } from "nuqs"
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
@@ -82,6 +81,7 @@ const DynamicDashboardPage: React.FC = () => {
   // useEffect(() => {
   //   updateStaticProperty(isEditing)
   // }, [isEditing, updateStaticProperty])
+
   const _handleResposniveLayoutChanges = (_layout: any, allLayouts: any) => {
     console.log("allLayouts from handleLayoutChanges", allLayouts)
   }
@@ -114,6 +114,7 @@ const DynamicDashboardPage: React.FC = () => {
     setGridComponents,
     handleRemoveComponent,
     handleRemoveNestedComponent,
+    handleAddNewGroup,
   } = useGridComponents(isEditing)
 
   const {
@@ -152,6 +153,10 @@ const DynamicDashboardPage: React.FC = () => {
               </Heading>
               {isEditing && (
                 <Flex align={"center"} gap="2">
+                  <AddGroupButton
+                    isEditing={isEditing}
+                    onAddGroup={handleAddNewGroup}
+                  />
                   <ActiveBtn
                     items={deviceTabs}
                     defaultActiveId={activeDevice}
@@ -185,7 +190,13 @@ const DynamicDashboardPage: React.FC = () => {
                 </span>
               )}
               <ResponsiveGridLayout
-                onDragStart={(_a, _b, _c, _d, e) => e.stopPropagation()}
+                onDragStart={(
+                  _a: any,
+                  _b: any,
+                  _c: any,
+                  _d: any,
+                  e: { stopPropagation: () => any }
+                ) => e.stopPropagation()}
                 layouts={defaultLayouts}
                 onLayoutChange={handleLayoutChange}
                 className="gridLayout"

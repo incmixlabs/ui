@@ -25,7 +25,7 @@ import {
 } from "@incmix/ui/widgets";
 import { useEffect, useMemo, useState } from "react";
 import { DraggableComponent } from "./draggable-component";
-import { ChevronDown, Filter, Minus, Plus, Search, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Filter, Minus, Plus, Search, X } from "lucide-react";
 import { TemplatesSidebar } from "./templates";
 import { useParams } from "@tanstack/react-router";
 import { useTemplateStore } from "@incmix/store";
@@ -34,6 +34,7 @@ export const sidebarComponents = [
   {
     slotId: "i",
     component: <NewTasks />,
+    componentName: "new-tasks",
     compImage: dashboardImg?.newTaskImg,
     title: "New Tasks",
     tags: ["task", "new", "todo"],
@@ -48,6 +49,7 @@ export const sidebarComponents = [
   {
     slotId: "h",
     component: <TotalTasks />,
+    componentName: "total-tasks",
     compImage: dashboardImg?.totalTaskImg,
     title: "Total Tasks",
     tags: ["task", "total", "summary"],
@@ -62,6 +64,7 @@ export const sidebarComponents = [
   {
     slotId: "j",
     component: <ProjectWidgets2 />,
+    componentName: "project-widget",
     compImage: dashboardImg?.ProjectImg,
     title: "Project Widgets",
     tags: ["project", "widget", "summary"],
@@ -76,6 +79,7 @@ export const sidebarComponents = [
   {
     slotId: "k",
     component: <StatisticWidgets2 />,
+    componentName: "statistic-widget",
     compImage: dashboardImg?.statisticsImg,
     title: "Statistic Widgets",
     tags: ["statistics", "analytics", "data"],
@@ -90,6 +94,7 @@ export const sidebarComponents = [
   {
     slotId: "l",
     component: <ActiveTask />,
+    componentName: "active-task",
     compImage: dashboardImg?.activeTaskImg,
     title: "Active Task",
     tags: ["task", "active", "ongoing"],
@@ -104,6 +109,7 @@ export const sidebarComponents = [
   {
     slotId: "m",
     component: <TotalProject />,
+    componentName: "total-project",
     compImage: dashboardImg?.totalProjectImg,
     title: "Total Project",
     tags: ["project", "total", "summary"],
@@ -118,6 +124,7 @@ export const sidebarComponents = [
   {
     slotId: "n",
     component: <PostingTask />,
+    componentName: "posting-task",
     compImage: dashboardImg?.postingTaskImg,
     title: "Posting Task",
     tags: ["task", "posting", "create"],
@@ -334,7 +341,9 @@ useEffect(() => {
         </Flex>
 
         <Box
-          className={`bg-gray-1 p-2 mt-2 rounded-xl relative border border-gray-6 transition-all duration-300`}
+          className={`bg-gray-1 p-2 mt-2 rounded-xl overflow-hidden ${
+            isWidgetExpanded ? 'max-h-full' : 'max-h-20'
+          } relative border border-gray-6 transition-all duration-300 `}
         >
           <Flex justify="between" align="center">
             <Heading size="2" className=" font-medium">
@@ -346,8 +355,7 @@ useEffect(() => {
               onClick={() => setIsWidgetExpanded(!isWidgetExpanded)}
               className="hover:bg-transparent"
             >
-              {isWidgetExpanded ? <Minus /> : <Plus />}
-
+              {isWidgetExpanded ? <ChevronUp /> : <ChevronDown />}
               <Box as="span" className="sr-only">
                 {isWidgetExpanded ? "Collapse Widgets" : "Expand Widgets"}
               </Box>
@@ -368,6 +376,7 @@ useEffect(() => {
                         title={comp.title}
                         image={comp.compImage}
                         component={comp.component}
+                        componentName={comp.componentName}
                         disabled={!isEditing || selectedWidgets.length > 0}
                         onDragStart={() => handleDragStart(comp.slotId)}
                         onDragEnd={handleDragEnd}

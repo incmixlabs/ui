@@ -1,5 +1,3 @@
-"use client"
-
 import { useDraggable } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
 import { Box, sidebarComponents } from "@incmix/ui"
@@ -11,6 +9,7 @@ interface DraggableComponentProps {
   title: string
   image?: string
   component: React.ReactNode
+  componentName?: string
   disabled?: boolean
   onDragStart?: () => void
   onDragEnd?: () => void
@@ -21,12 +20,15 @@ export const DraggableComponent = forwardRef<
   DraggableComponentProps
 >(
   (
-    { id, title, image, component, disabled = false, onDragStart, onDragEnd },
+    { id, title, image, component, componentName, disabled = false, onDragStart, onDragEnd },
     _ref
   ) => {
     const [isDraggingLocal, setIsDraggingLocal] = useState(false)
     const componentData = sidebarComponents.find((comp) => comp.slotId === id)
     const layouts = componentData?.layouts
+    // If componentName is not provided, try to get it from componentData
+    const effectiveComponentName = componentName || componentData?.componentName
+
     const { attributes, listeners, setNodeRef, transform, isDragging } =
       useDraggable({
         id,
@@ -37,6 +39,7 @@ export const DraggableComponent = forwardRef<
           component,
           image,
           layouts,
+          componentName: effectiveComponentName,
         },
         disabled,
       })

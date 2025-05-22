@@ -8,7 +8,7 @@ import {
   presetLayouts,
   useLayoutStore,
 } from "@incmix/ui";
-import { ChevronDown, Minus, Plus } from "lucide-react";
+import { ChevronDown, ChevronUp, Minus, Plus } from "lucide-react";
 import { useState } from "react";
 
 export function LayoutPresetsSection() {
@@ -17,7 +17,11 @@ export function LayoutPresetsSection() {
 
   return (
     <Box
-      className={`bg-gray-1 p-2 mt-2 rounded-xl relative border border-gray-5 transition-all duration-300`}
+      className={`bg-gray-1 p-2 mt-2 rounded-xl relative border border-gray-5
+        ${
+          isExpanded ? 'max-h-full' : 'max-h-20'
+        }
+        transition-all duration-300`}
     >
         <Flex justify="between" align="center">
         <Heading size="2" className="font-medium">
@@ -29,7 +33,7 @@ export function LayoutPresetsSection() {
           onClick={() => setIsExpanded(!isExpanded)}
           className="hover:bg-transparent"
         >
-          {isExpanded ? <Minus /> : <Plus />}
+          {isExpanded ? <ChevronUp /> : <ChevronDown />}
 
           <span className="sr-only">
             {isExpanded ? "Collapse layout presets" : "Expand layout presets"}
