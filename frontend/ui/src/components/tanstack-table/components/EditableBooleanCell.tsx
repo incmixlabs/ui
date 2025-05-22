@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { cn } from "../../../utils";
+import { useEditableCellKeyboard } from "../hooks/useEditableCellKeyboard";
 
 interface EditableBooleanCellProps {
   value: boolean;
@@ -53,22 +54,38 @@ export const EditableBooleanCell: React.FC<EditableBooleanCellProps> = ({
     };
   }, [isSelected, onCancelEdit]);
 
-  const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    
-    if (isSelected) {
-      // If already selected, enter edit mode
-      onStartEdit();
-    } else {
-      // First click selects the cell
-      onSelect();
-    }
+  // Empty placeholder for the existing handleClick function
+  // We'll use handleCellClick from our hook
+
+  // State to track the current boolean value being edited
+  const [editValue, setEditValue] = useState<string>(value ? "true" : "false");
+  
+  // Update edit value when the value prop changes
+  useEffect(() => {
+    setEditValue(value ? "true" : "false");
+  }, [value]);
+
+  // Handle save function
+  const handleSave = () => {
+    const boolValue = editValue === "true";
+    onSave(rowData, columnId, boolValue);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newValue = e.target.value === "true";
-    onSave(rowData, columnId, newValue);
-  };
+  // Use our enhanced keyboard handler hook
+  const { handleKeyDown, handleCellClick, cellRef: keyboardCellRef, getAriaAttributes } = useEditableCellKeyboard({
+    rowId: rowData.id || 'row', // Use rowData.id as rowId or fallback to 'row'
+    columnId,
+    isEditing,
+    isSelected,
+    selectCell: () => onSelect(),
+    startEditing: () => onStartEdit(),
+    cancelEditing: () => onCancelEdit(),
+    saveEdit: () => handleSave(),
+    autoFocus: true,
+  });
+  
+  // Get accessibility attributes
+  const ariaAttributes = getAriaAttributes();
 
   if (isEditing) {
     return (
@@ -76,10 +93,20 @@ export const EditableBooleanCell: React.FC<EditableBooleanCellProps> = ({
         onClick={(e) => e.stopPropagation()}
       >
         <select
-          value={value.toString()}
-          onChange={handleChange}
+          ref={(el) => {
+            // Connect keyboard hook's ref to the select element
+            if (keyboardCellRef) keyboardCellRef.current = el;
+          }}
+          value={editValue}
+          onChange={(e) => {
+            const newValue = e.target.value === "true";
+            setEditValue(e.target.value);
+            onSave(rowData, columnId, newValue);
+          }}
+          onKeyDown={handleKeyDown}
           className="w-full h-8 px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
           autoFocus
+          aria-label={`Edit ${columnId} value`}
         >
           <option value="true">Yes</option>
           <option value="false">No</option>
@@ -90,13 +117,20 @@ export const EditableBooleanCell: React.FC<EditableBooleanCellProps> = ({
 
   return (
     <div 
-      ref={cellRef}
-      onClick={handleClick}
+      ref={(el) => {
+        // Connect both refs to ensure proper functionality
+        cellRef.current = el;
+        if (keyboardCellRef) keyboardCellRef.current = el;
+      }}
+      onClick={handleCellClick} // Simplified - our hook now handles all the logic
+      onKeyDown={handleKeyDown}
       className={cn(
         className,
         "cursor-pointer w-full h-full p-1 transition-colors duration-150",
         isSelected && "bg-blue-100 dark:bg-blue-900/30 rounded"
       )}
+      {...ariaAttributes}
+      aria-label={`${columnId}: ${formattedValue}`}
     >
       <span className={cn(
         "px-2 py-1 rounded text-xs font-medium",

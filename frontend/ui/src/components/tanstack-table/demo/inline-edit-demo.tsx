@@ -1,10 +1,10 @@
 "use client"
 
 import React, { useState, useEffect, useCallback } from "react"
-import { registerCellRenderer, cellRendererRegistry } from "./cell-renderers"
-import { DataTable } from "./components/DataTable"
+import { registerCellRenderer, cellRendererRegistry } from "../cell-renderers"
+import { DataTable } from "../components/DataTable"
 import { EyeIcon } from "lucide-react"
-import { RowAction } from "./types"
+import { RowAction } from "../types"
 
 // Custom rating cell renderer
 const RatingCell: React.FC<{ value: number }> = ({ value }) => {
@@ -134,7 +134,7 @@ const USER_TABLE_COLUMNS = [
     accessorKey: "email" as const,
     id: "email",
     enableSorting: true,
-    enableInlineEdit: true  
+    enableInlineEdit: true
   },
   {
     headingName: "Joined",
@@ -142,7 +142,7 @@ const USER_TABLE_COLUMNS = [
     accessorKey: "joinDate" as const,
     id: "joinDate",
     enableSorting: true,
-    enableInlineEdit: true, 
+    enableInlineEdit: true,
     // Date formatting
     format: {
       dateFormat: "YYYY-MM-DD HH:mm"
@@ -154,14 +154,14 @@ const USER_TABLE_COLUMNS = [
     accessorKey: "isActive" as const,
     id: "isActive",
     enableSorting: true,
-    enableInlineEdit: true 
+    enableInlineEdit: true
   },
   {
     headingName: "Tags",
     type: "Tag" as const,
     accessorKey: "tags" as const,
     id: "tags",
-    enableInlineEdit: true 
+    enableInlineEdit: true
   },
   {
     headingName: "Plan",
@@ -308,9 +308,8 @@ const InlineEditDemo = () => {
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-2xl font-bold mb-4">Inline Cell Editing Demo</h1>
-      <p className="text-gray-600 mb-6">
-        Click once on a name, email, or date to select it, then click again to edit.
-      </p>
+
+
 
       <DataTable
         columns={USER_TABLE_COLUMNS}
@@ -325,9 +324,9 @@ const InlineEditDemo = () => {
         facets={USER_TABLE_FACETS}
         isPaginationLoading={loading}
 
-        // Inline editing functionality
+        // Inline editing functionality with keyboard navigation
         enableInlineCellEdit={true}
-        inlineEditableColumns={["name", "email", "joinDate", "isActive", "tags"]} // Added boolean and tag editing
+        inlineEditableColumns={["name", "email", "joinDate", "isActive", "tags"]}
         onCellEdit={handleCellEdit}
       />
 

@@ -3,6 +3,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import { cn } from "../../../utils";
 import { X } from "lucide-react";
+import { useEditableCellKeyboard } from "../hooks/useEditableCellKeyboard";
 
 interface EditableTagCellProps {
   value: string[];
@@ -58,27 +59,45 @@ export const EditableTagCell: React.FC<EditableTagCellProps> = ({
     setTags(value || []);
   }, [value]);
 
-  const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    
-    if (isSelected) {
-      // If already selected, enter edit mode
-      onStartEdit();
-    } else {
-      // First click selects the cell
-      onSelect();
-    }
+  // Handle saving the tags
+  const handleSave = () => {
+    // Save the current tags when exiting
+    onSave(rowData, columnId, tags);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && inputValue.trim()) {
+  // Use our enhanced keyboard handler hook for the overall cell
+  const { handleKeyDown: cellKeyHandler, handleCellClick, cellRef: keyboardCellRef, getAriaAttributes } = useEditableCellKeyboard({
+    rowId: rowData.id || 'row', // Use rowData.id or fallback
+    columnId,
+    isEditing,
+    isSelected,
+    selectCell: () => onSelect(),
+    startEditing: () => onStartEdit(),
+    cancelEditing: () => onCancelEdit(),
+    saveEdit: () => handleSave(),
+    autoFocus: true,
+  });
+  
+  // Get accessibility attributes
+  const ariaAttributes = getAriaAttributes();
+  
+  // Special input field handler for adding new tags
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
       e.preventDefault();
-      if (!tags.includes(inputValue.trim())) {
+      if (inputValue.trim() && !tags.includes(inputValue.trim())) {
+        // Add the new tag
         const newTags = [...tags, inputValue.trim()];
         setTags(newTags);
-        onSave(rowData, columnId, newTags);
+        // Clear the input field but don't exit edit mode
+        setInputValue('');
+      } else if (!inputValue.trim()) {
+        // If input is empty and Enter is pressed, exit edit mode
+        cellKeyHandler(e);
       }
-      setInputValue('');
+    } else if (e.key === 'Escape' || e.key === 'Tab') {
+      // Let the shared handler deal with these keys
+      cellKeyHandler(e);
     }
   };
 
@@ -90,27 +109,38 @@ export const EditableTagCell: React.FC<EditableTagCellProps> = ({
 
   if (isEditing) {
     return (
-      <div className="w-full h-full flex flex-col p-1"
+      <div 
+        ref={cellRef} /* Keep outside-click detection working */
+        className="w-full h-full flex flex-col p-1"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex flex-wrap gap-1 mb-1">
           {tags.map(tag => (
             <div key={tag} className="flex items-center gap-1 px-2 py-0.5 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 rounded text-xs">
               <span>{tag}</span>
-              <button onClick={() => removeTag(tag)} className="text-blue-600 hover:text-blue-800">
+              <button 
+                onClick={() => removeTag(tag)} 
+                className="text-blue-600 hover:text-blue-800"
+                aria-label={`Remove ${tag} tag`}
+              >
                 <X className="h-3 w-3" />
               </button>
             </div>
           ))}
         </div>
         <input
+          ref={(el) => {
+            // Connect keyboard hook's ref to the input element
+            if (keyboardCellRef) keyboardCellRef.current = el;
+          }}
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleKeyDown}
+          onKeyDown={handleInputKeyDown}
           placeholder="Type and press Enter"
           className="w-full h-8 px-2 py-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md text-sm"
           autoFocus
+          aria-label="Add new tag"
         />
       </div>
     );
@@ -118,13 +148,20 @@ export const EditableTagCell: React.FC<EditableTagCellProps> = ({
 
   return (
     <div 
-      ref={cellRef}
-      onClick={handleClick}
+      ref={(el) => {
+        // Connect both refs to ensure proper functionality
+        cellRef.current = el;
+        if (keyboardCellRef) keyboardCellRef.current = el;
+      }}
+      onClick={handleCellClick}
+      onKeyDown={cellKeyHandler}
       className={cn(
         className,
         "cursor-pointer w-full h-full p-1 transition-colors duration-150",
         isSelected && "bg-blue-100 dark:bg-blue-900/30 rounded"
       )}
+      {...ariaAttributes}
+      aria-label={`${columnId}: ${tags.length} tags`}
     >
       <div className="flex flex-wrap gap-1">
         {tags.map(tag => (

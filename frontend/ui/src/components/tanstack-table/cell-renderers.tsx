@@ -136,6 +136,87 @@ export const StringCell: React.FC<{ value: any }> = ({ value }) => (
 // Define the type for cell renderer functions
 export type CellRendererFn = (value: any, options?: any) => React.ReactNode;
 
+// Timeline Progress Bar Cell Renderer Component
+export interface TimelineProgressProps {
+  startDate: string | Date;
+  endDate: string | Date;
+  currentDate?: string | Date;
+  color?: string;
+  showDates?: boolean;
+  showPercentage?: boolean;
+}
+
+export const TimelineProgressCell: React.FC<TimelineProgressProps> = ({ 
+  startDate, 
+  endDate, 
+  currentDate = new Date(), 
+  color = "primary",
+  showDates = true,
+  showPercentage = true
+}) => {
+  // Convert all dates to Date objects
+  const start = startDate instanceof Date ? startDate : new Date(startDate);
+  const end = endDate instanceof Date ? endDate : new Date(endDate);
+  const current = currentDate instanceof Date ? currentDate : new Date(currentDate);
+  
+  // Calculate total duration and elapsed time
+  const totalDuration = end.getTime() - start.getTime();
+  const elapsedTime = current.getTime() - start.getTime();
+  
+  // Calculate progress percentage (capped between 0-100)
+  const progress = Math.max(0, Math.min(100, (elapsedTime / totalDuration) * 100));
+  
+  // Status colors
+  const colorClasses = {
+    primary: "bg-primary-500",
+    secondary: "bg-gray-500",
+    success: "bg-green-500",
+    warning: "bg-yellow-500",
+    danger: "bg-red-500",
+  };
+  
+  // Format date function
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString(undefined, { 
+      month: 'short', 
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+  
+  return (
+    <div className="w-full space-y-1">
+      {/* Progress bar */}
+      <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded overflow-hidden">
+        <div 
+          className={`h-full ${colorClasses[color as keyof typeof colorClasses] || colorClasses.primary}`} 
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+      
+      {/* Labels */}
+      <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
+        {showDates && (
+          <>
+            <span>{formatDate(start)}</span>
+            <span>{formatDate(end)}</span>
+          </>
+        )}
+        {showPercentage && !showDates && (
+          <span className="font-medium">{Math.round(progress)}% Complete</span>
+        )}
+      </div>
+      
+      {/* Only show percentage complete text if explicitly enabled */}
+      {showPercentage && (
+        <div className="text-center text-xs font-medium text-gray-700 dark:text-gray-300">
+          {Math.round(progress)}% Complete
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Define the default renderers
 export const defaultCellRenderers: Record<string, CellRendererFn> = {
   "String": (value: any) => <StringCell value={value} />,
@@ -145,6 +226,34 @@ export const defaultCellRenderers: Record<string, CellRendererFn> = {
   "Tag": (value: any) => <TagCell value={value} />,
   "Status": (value: any, statusMap?: Record<string, { color: string }>, defaultColor?: string) => <StatusCell value={value} statusMap={statusMap} defaultColor={defaultColor} />,
   "Boolean": (value: any) => <BooleanCell value={value} />,
+  "TimelineProgress": (value: any, options?: any) => {
+    // Extract format options if they exist
+    const formatOptions = options?.format || {};
+    
+    // If the value is an object with the required properties, use it directly
+    if (value && typeof value === 'object' && 'startDate' in value && 'endDate' in value) {
+      return <TimelineProgressCell 
+        startDate={value.startDate} 
+        endDate={value.endDate} 
+        currentDate={value.currentDate} 
+        color={value.color || options?.color}
+        showDates={formatOptions.showDates !== undefined ? formatOptions.showDates : true}
+        showPercentage={formatOptions.showPercentage !== undefined ? formatOptions.showPercentage : false}
+      />;
+    }
+    
+    // Otherwise, use the options passed to the renderer
+    if (options && options.startDate && options.endDate) {
+      return <TimelineProgressCell 
+        {...options} 
+        showDates={formatOptions.showDates !== undefined ? formatOptions.showDates : true}
+        showPercentage={formatOptions.showPercentage !== undefined ? formatOptions.showPercentage : false}
+      />;
+    }
+    
+    // Fallback with error message
+    return <div className="text-red-500 text-sm">Invalid timeline data format</div>;
+  }
 };
 
 // Define a type for the cell renderer registry that allows string indexing

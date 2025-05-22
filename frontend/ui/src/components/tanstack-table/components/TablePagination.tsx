@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Button } from "@base";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { PaginationInfo } from "../types";
@@ -15,7 +15,8 @@ interface TablePaginationProps {
   serverPagination: boolean;
 }
 
-export const TablePagination: React.FC<TablePaginationProps> = ({
+// Internal component that will be memoized
+const TablePaginationComponent: React.FC<TablePaginationProps> = ({
   paginationInfo,
   handlePageChange,
   handlePageSizeChange,
@@ -25,12 +26,24 @@ export const TablePagination: React.FC<TablePaginationProps> = ({
   isPaginationLoading,
   serverPagination
 }) => {
+  // Hoist the memoized text above the JSX to comply with Rules of Hooks
+  const selectedRowText = useMemo(() => {
+    const totalCount = serverPagination
+      ? paginationInfo.totalItems
+      : filteredRowCount;
+    return `${selectedRowCount} of ${totalCount} row(s) selected.`;
+  }, [
+    selectedRowCount,
+    serverPagination,
+    paginationInfo.totalItems,
+    filteredRowCount,
+  ]);
+  
   return (
     <div className="flex items-center justify-between space-x-2 py-4">
       {showRowCount && (
         <div className="text-sm text-muted-foreground dark:text-gray-400">
-          {selectedRowCount} of{" "}
-          {serverPagination ? paginationInfo.totalItems : filteredRowCount} row(s) selected.
+          {selectedRowText}
         </div>
       )}
 
@@ -52,8 +65,9 @@ export const TablePagination: React.FC<TablePaginationProps> = ({
           </select>
         </div>
         <div className="flex text-sm text-muted-foreground dark:text-gray-400 items-center gap-1">
-          Page {paginationInfo.currentPage + 1} of{' '}
-          {paginationInfo.totalPages || 1}
+          {useMemo(() => {
+            return `Page ${paginationInfo.currentPage + 1} of ${paginationInfo.totalPages || 1}`;
+          }, [paginationInfo.currentPage, paginationInfo.totalPages])}
         </div>
         <div className="flex items-center space-x-2">
           <Button
@@ -97,3 +111,6 @@ export const TablePagination: React.FC<TablePaginationProps> = ({
     </div>
   );
 };
+
+// Export memoized version to prevent unnecessary re-renders
+export const TablePagination = React.memo(TablePaginationComponent);
