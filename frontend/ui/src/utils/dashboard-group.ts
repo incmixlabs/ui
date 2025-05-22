@@ -7,13 +7,13 @@ import type { Layout } from "@incmix/react-grid-layout"
 export function getNextGroupId(layouts: CustomLayouts): string {
   const existingGroups = new Set<string>()
 
-  if (layouts.lg) {
-    layouts.lg.forEach((item) => {
+  Object.values(layouts).forEach((breakpointLayouts = []) => {
+    breakpointLayouts.forEach((item) => {
       if (item.i.startsWith("grid-")) {
         existingGroups.add(item.i)
       }
     })
-  }
+  })
 
   const alphabet = "abcdefghijklmnopqrstuvwxyz"
   for (let i = 0; i < alphabet.length; i++) {
@@ -89,6 +89,7 @@ export function shiftItemsDown(layouts: Layout[], height: number): Layout[] {
   return layouts.map((item) => ({
     ...item,
     y: item.y + height,
+
   }))
 }
 

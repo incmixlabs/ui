@@ -234,7 +234,6 @@ export function useDragAndDrop(
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
-
     setActiveDragId(null)
     setActiveDragData(null)
 

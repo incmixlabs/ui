@@ -1,4 +1,4 @@
-import type { Layout } from "react-grid-layout"
+import type { Layout } from "@incmix/react-grid-layout"
 
 export type Breakpoint = "lg" | "md" | "sm" | "xs" | "xxs"
 

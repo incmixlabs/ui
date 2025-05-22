@@ -18,14 +18,14 @@ export interface LayoutPreset {
 }
 
 interface LayoutState {
-  defaultLayouts: CustomLayouts;
-  activePresetId: string;
-  applyPreset: (presetId?: string) => void;
-  applyTemplates: (mainLayouts?: CustomLayouts, templateId?: string) => void;
-  setDefaultLayouts: (layouts: CustomLayouts) => void;
-  handleLayoutChange: (_layout: any, allLayouts: any) => void;
-  handleNestedLayoutChange: (nestedLayout: Layout, itemKey: string) => void;
-  addNewGroup: () => void;
+  defaultLayouts: CustomLayouts
+  activePresetId: string
+  applyPreset: (presetId?: string) => void
+  applyTemplates: (mainLayouts?: CustomLayouts, templateId?: string) => void
+  setDefaultLayouts: (layouts: CustomLayouts) => void
+  handleLayoutChange: (_layout: any, allLayouts: any) => void
+  handleNestedLayoutChange: (nestedLayout: Layout, itemKey: string) => void
+  addNewGroup: () => string
 }
 
 export const useLayoutStore = create<LayoutState>((set, get) => ({
@@ -135,7 +135,12 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
             }
           } else {
             // This is a new item, add it to the layouts
-            updatedLayouts[breakpointKey].push(newItem);
+            updatedLayouts[breakpointKey].push({
+              ...newItem,
+              componentName:
+                (defaultLayouts[breakpointKey].find(i => i.i === newItem.i)?.componentName) ??
+                undefined,
+            })
           }
         });
 
@@ -186,13 +191,9 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
     });
   },
   addNewGroup: () => {
-    let newGroupId = "";
-
+    const currentLayouts = get().defaultLayouts
+    const newGroupId = getNextGroupId(currentLayouts)
     set((state) => {
-      const currentLayouts = { ...state.defaultLayouts };
-
-      newGroupId = getNextGroupId(currentLayouts);
-
       const updatedLayouts = addGroupToLayouts(currentLayouts, newGroupId);
 
       console.log(`Created new group with ID: ${newGroupId}`);

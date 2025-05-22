@@ -4,6 +4,7 @@ import {
   WidgetDropZone,
   ComponentSlot,
   CustomLayouts,
+  LayoutItemWithNested,
 } from "@incmix/ui/dashboard";
 import type { Layout } from "@incmix/react-grid-layout";
 import { Trash } from "lucide-react";
@@ -18,7 +19,10 @@ export function generateDOM(
   handleRemoveComponent: (slotId: string) => void,
   handleRemoveNestedComponent: (slotId: string, groupId?: string) => void,
 ) {
-  return defaultLayouts?.lg?.map((item: any) => {
+  const activeBreakpoint = "lg";
+  const layoutItems = defaultLayouts?.[activeBreakpoint] ?? [];
+
+  return layoutItems.map((item: LayoutItemWithNested) => {
     const gridComponent = gridComponents.find((comp) => comp.slotId === item.i);
     console.log(gridComponents);
     console.log(item.i, gridComponent);

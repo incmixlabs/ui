@@ -503,12 +503,14 @@ export function useGridComponents(isEditing: boolean) {
         slotId: `${newGroupId}|0`,
         component: <NewTasks />,
         title: "New Tasks",
+        componentName: "new-tasks",  
         compImage: dashboardImg?.newTaskImg,
       },
       {
         slotId: `${newGroupId}|1`,
         component: <TotalTasks />,
         title: "Total Tasks",
+        componentName: "total-tasks",
         compImage: dashboardImg?.newTaskImg,
       },
     ]
