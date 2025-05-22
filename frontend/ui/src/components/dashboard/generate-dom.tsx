@@ -1,4 +1,3 @@
-"use client";
 import RGL, { WidthProvider } from "@incmix/react-grid-layout";
 import { Box, cn, IconButton, Tooltip } from "@incmix/ui";
 import {
@@ -21,8 +20,8 @@ export function generateDOM(
 ) {
   return defaultLayouts?.lg?.map((item: any) => {
     const gridComponent = gridComponents.find((comp) => comp.slotId === item.i);
-console.log(gridComponents);
-console.log(item.i,gridComponent);
+    console.log(gridComponents);
+    console.log(item.i, gridComponent);
 
     if (item.i.startsWith("grid-")) {
       const nested = item.layouts || [];

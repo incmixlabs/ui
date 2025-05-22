@@ -19,7 +19,7 @@ import {
 import { calculatePaginationInfo } from "../utils/pagination-utils";
 import { shouldPaginationBeVisible } from "../utils/filter-utils";
 
-interface TableState {
+interface TableStateProps {
   sorting: SortingState;
   setSorting: OnChangeFn<SortingState>;
   columnFilters: ColumnFiltersState;
@@ -44,7 +44,7 @@ interface TableInstanceProps<TData> {
   onPageSizeChange?: (pageSize: number) => void;
   onSelectionChange?: (selectedRows: TData[]) => void;
   showPagination?: boolean | undefined;
-  tableState: TableState;
+  tableState: TableStateProps;
 }
 
 /**
@@ -86,7 +86,7 @@ export function useTableInstance<TData>({
     [serverPagination, currentPage, pageSize]
   );
 
-  // Create table instance
+  // Check if the file exists - this is a placeholder to help find the filetance
   const table = useReactTable({
     data,
     columns: columnDefs,
@@ -167,28 +167,36 @@ export function useTableInstance<TData>({
     [serverPagination, table, currentPage, pageSize, totalItems]
   );
 
-  // Add memoized value to compute if pagination should be visible
+  // Extract table state once to avoid repeated access in dependency arrays
+  const reactTableState = table.getState();
+
+  // Memoize just the filtered rows length as its own value
+  const filteredRowCount = useMemo(() => {
+    return serverPagination ? totalItems : table.getFilteredRowModel().rows.length;
+  }, [
+    serverPagination, 
+    totalItems, 
+    // Only depend on the specific state that affects filtering
+    reactTableState.columnFilters,
+    // TanStack v8 might not have globalFilter directly in the state
+    // If we need to track global filter changes, we can add this dependency
+    // reactTableState.globalFilter,
+    data.length // More efficient than the entire data array
+  ]);
+
+  // Now compute pagination visibility with fewer dependencies
   const isPaginationVisible = useMemo(() => {
-    const totalItemCount = serverPagination 
-      ? totalItems 
-      : table.getFilteredRowModel().rows.length;
-    
     return shouldPaginationBeVisible(
       showPagination,
       enablePagination,
-      totalItemCount,
+      filteredRowCount,
       paginationInfo.pageSize
     );
   }, [
     showPagination,
     enablePagination,
-    serverPagination,
-    totalItems,
-    paginationInfo.pageSize,
-    table.getState().columnFilters,
-    table.getState().sorting,
-    table.getState().rowSelection,
-    data // fallback for data mutations
+    filteredRowCount,
+    paginationInfo.pageSize
   ]);
 
   return {
@@ -196,6 +204,7 @@ export function useTableInstance<TData>({
     paginationInfo,
     isPaginationVisible,
     handlePageChange,
-    handlePageSizeChange
+    handlePageSizeChange,
+    rowModel: table.getRowModel() // Expose row model for keyboard navigation
   };
 }

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { cn } from "../../../utils";
-import { format } from "date-fns";
+import { useEditableCellKeyboard } from "../hooks/useEditableCellKeyboard";
 
 interface EditableDateCellProps {
   value: string;
@@ -20,7 +20,7 @@ interface EditableDateCellProps {
 
 /**
  * Editable date cell component that supports inline date editing
- * First click selects the cell, second click opens the date picker
+ * with keyboard navigation support
  */
 export const EditableDateCell: React.FC<EditableDateCellProps> = ({
   value,
@@ -36,9 +36,19 @@ export const EditableDateCell: React.FC<EditableDateCellProps> = ({
   dateFormat,
 }) => {
   const cellRef = useRef<HTMLDivElement>(null);
-
+  
+  // State to track the current date value being edited
+  const [editDateValue, setEditDateValue] = useState<string>('');
+  
   // Parse the date value - ensure it's a valid date
   const dateValue = value && !isNaN(new Date(value).getTime()) ? new Date(value) : undefined;
+  
+  // When editing starts, set the current edit value
+  useEffect(() => {
+    if (isEditing && dateValue) {
+      setEditDateValue(dateValue.toISOString().split('T')[0]);
+    }
+  }, [isEditing, dateValue]);
 
   // Format date for display
   const formattedDate = dateValue ?
@@ -52,6 +62,42 @@ export const EditableDateCell: React.FC<EditableDateCellProps> = ({
         hour12: true
       } : {})
     }) : "";
+    
+  // Handle saving the date value
+  const handleDateSave = (newDateStr: string) => {
+    if (newDateStr) {
+      // Preserve the selected calendar day across time-zones
+      const isoDate = `${newDateStr}T00:00:00.000Z`;
+      if (!isNaN(Date.parse(isoDate))) {
+        onSave(rowData, columnId, isoDate);
+      }
+    }
+  };
+  
+  // Handle saving the date
+  const handleSave = () => {
+    if (editDateValue) {
+      handleDateSave(editDateValue);
+    } else {
+      onCancelEdit();
+    }
+  };
+
+  // Use our enhanced keyboard handler hook
+  const { handleKeyDown, handleCellClick, cellRef: keyboardCellRef, getAriaAttributes } = useEditableCellKeyboard({
+    rowId: rowData.id || 'row', // Use rowData.id or fallback
+    columnId,
+    isEditing,
+    isSelected,
+    selectCell: () => onSelect(),
+    startEditing: () => onStartEdit(),
+    cancelEditing: () => onCancelEdit(),
+    saveEdit: () => handleSave(),
+    autoFocus: true,
+  });
+  
+  // Get accessibility attributes
+  const ariaAttributes = getAriaAttributes();
 
   // Handle document-wide click to deselect
   useEffect(() => {
@@ -69,39 +115,25 @@ export const EditableDateCell: React.FC<EditableDateCellProps> = ({
     };
   }, [isSelected, onCancelEdit]);
 
-  const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-
-    if (isSelected) {
-      // If already selected, enter edit mode
-      onStartEdit();
-    } else {
-      // First click selects the cell
-      onSelect();
-    }
-  };
-
-  const handleDateChange = (date?: Date) => {
-    if (date) {
-      onSave(rowData, columnId, date.toISOString());
-    }
-  };
-
   if (isEditing) {
     return (
-      <div className="w-full h-full flex items-center p-1"
+      <div 
+        ref={cellRef} /* Needed for proper outside-click detection */
+        className="w-full h-full flex items-center p-1"
         onClick={(e) => e.stopPropagation()}
       >
         <input
-          type="date"
-          value={dateValue ? dateValue.toISOString().split('T')[0] : ''}
-          onChange={(e) => {
-            if (e.target.value) {
-              const newDate = new Date(e.target.value + 'T00:00:00');
-              handleDateChange(newDate);
-            }
+          ref={(el) => {
+            // Connect keyboard hook's ref to the input element
+            if (keyboardCellRef) keyboardCellRef.current = el;
           }}
+          type="date"
+          value={editDateValue}
+          onChange={(e) => setEditDateValue(e.target.value)}
+          onKeyDown={handleKeyDown}
           className="w-full h-8 px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+          autoFocus
+          aria-label={`Edit ${columnId} date value`}
         />
       </div>
     );
@@ -109,13 +141,20 @@ export const EditableDateCell: React.FC<EditableDateCellProps> = ({
 
   return (
     <div
-      ref={cellRef}
-      onClick={handleClick}
+      ref={(el) => {
+        // Connect both refs to ensure proper functionality
+        cellRef.current = el;
+        if (keyboardCellRef) keyboardCellRef.current = el;
+      }}
+      onClick={handleCellClick}
+      onKeyDown={handleKeyDown}
       className={cn(
         className,
         "cursor-pointer w-full h-full p-1 transition-colors duration-150",
         isSelected && "bg-blue-100 dark:bg-blue-900/30 rounded"
       )}
+      {...ariaAttributes}
+      aria-label={`${columnId} date: ${formattedDate || 'Not set'}`}
     >
       {formattedDate || value || "—"}
     </div>

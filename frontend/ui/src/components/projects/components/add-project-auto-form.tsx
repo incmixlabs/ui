@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { Button, Dialog } from "@radix-ui/themes"
 import AutoForm from "@components/auto-form"
 import { ProjectsImages } from "../images"
@@ -21,16 +21,24 @@ export function AddProjectAutoForm({
   onAddProject,
 }: AddProjectAutoFormProps) {
   const [formData, setFormData] = useState<Record<string, any>>({})
+  // Use a ref to store the File object to prevent serialization
+  const fileRef = useRef<File | null>(null)
 
   // Handle form values change
   const handleValuesChange = (values: any) => {
+    // Check if values.files is a File object and store it in the ref
+    if (values.files instanceof File) {
+      fileRef.current = values.files
+    }
+
+    // Keep the rest of the form data in state
     setFormData(values)
   }
 
   // Handle form submission
   const handleSubmit = (data: any) => {
-    // Pass the raw File object directly, not as a serialized object
-    const fileData = data.files // This should be a File object from AutoFormFile
+    // Use the File object from the ref instead of from serialized state
+    const fileData = fileRef.current
 
     // Transform form data to match the Project type
     const newProject: Omit<Project, "id"> = {
@@ -50,12 +58,14 @@ export function AddProjectAutoForm({
         ? new Date(data.endDate).getTime()
         : Date.now() + 7 * 24 * 60 * 60 * 1000,
       budget: data.budget ? Number.parseFloat(data.budget) : 0,
-      // Just pass the file data as is - our improved saveFormProject will handle it
+      // Use the File object from the ref
       fileData: fileData,
     }
 
     onAddProject(newProject)
-    setFormData({}) // Reset form
+    // Reset both form data and file ref
+    setFormData({})
+    fileRef.current = null
     onClose()
   }
 

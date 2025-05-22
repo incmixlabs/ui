@@ -1,24 +1,25 @@
 "use client";
 
 import React from "react";
-import { flexRender } from "@tanstack/react-table";
+import { flexRender, Table as TanStackTable } from "@tanstack/react-table";
 import { Table } from "@shadcn";
 import { DataTableColumn } from "../types";
 
 interface TableHeaderProps<TData> {
-  table: any;
+  table: TanStackTable<TData>;
   flatColumns: DataTableColumn<TData>[];
 }
 
 /**
  * Table header component rendering column headers
+ * Memoized to prevent unnecessary re-renders
  */
-export function TableHeader<TData>({ table, flatColumns }: TableHeaderProps<TData>) {
+function TableHeaderComponent<TData>({ table, flatColumns }: TableHeaderProps<TData>) {
   return (
-    <Table.Header>
-      {table.getHeaderGroups().map((headerGroup:any) => (
-        <Table.Row key={headerGroup.id} className="hover:bg-muted/50 dark:hover:bg-muted/20 border-gray-200 dark:border-gray-800">
-          {headerGroup.headers.map((header:any) => {
+    <Table.Header className="bg-gray-50 dark:bg-gray-900">
+      {table.getHeaderGroups().map((headerGroup) => (
+        <Table.Row key={headerGroup.id} className="hover:bg-muted/50 dark:hover:bg-muted/20 border-gray-100 dark:border-gray-800">
+          {headerGroup.headers.map((header) => {
             // Get column type from our original columns definition
             const columnDef = flatColumns.find(col =>
               col.accessorKey?.toString() === header.id ||
@@ -28,7 +29,7 @@ export function TableHeader<TData>({ table, flatColumns }: TableHeaderProps<TDat
             return (
               <Table.HeaderCell
                 key={header.id}
-                className="dark:text-gray-400 h-10 px-4 text-left"
+                className="text-sm font-medium text-gray-500 dark:text-gray-400 h-10 px-2 text-left"
                 style={{
                   width: columnDef?.width,
                   minWidth: columnDef?.minWidth,
@@ -49,3 +50,6 @@ export function TableHeader<TData>({ table, flatColumns }: TableHeaderProps<TDat
     </Table.Header>
   );
 }
+
+// Export memoized version to prevent unnecessary re-renders
+export const TableHeader = React.memo(TableHeaderComponent) as typeof TableHeaderComponent;

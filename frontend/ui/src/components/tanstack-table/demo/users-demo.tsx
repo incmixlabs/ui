@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { DataTable } from "./components/DataTable"
+import { DataTable } from "../components/DataTable"
 
 const UsersTableDemo = () => {
   // Define your columns with the updated property name "headingName"

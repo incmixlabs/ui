@@ -14,6 +14,7 @@ import {
   Heading,
   SaveTemplateDialog,
   generateDOM,
+  initialLayouts,
   useDevicePreview,
   useDragAndDrop,
   useGridComponents,
@@ -27,8 +28,6 @@ import { useAuth } from "../../auth"
 import { EditWidgetsControl } from "./home"
 import "@incmix/react-grid-layout/css/styles.css"
 import "@incmix/react-grid-layout/css/styles.css"
-import { Button } from "@radix-ui/themes"
-import { Plus } from "lucide-react"
 import { useQueryState } from "nuqs"
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
@@ -77,10 +76,6 @@ const DynamicDashboardPage: React.FC = () => {
 
     fetchTemplate()
   }, [isTemplate, projectId])
-
-  // useEffect(() => {
-  //   updateStaticProperty(isEditing)
-  // }, [isEditing, updateStaticProperty])
 
   const _handleResposniveLayoutChanges = (_layout: any, allLayouts: any) => {
     console.log("allLayouts from handleLayoutChanges", allLayouts)
