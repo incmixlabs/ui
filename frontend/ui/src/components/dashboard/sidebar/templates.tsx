@@ -15,6 +15,8 @@ import {
   CheckCheck,
   Minus,
   Plus,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import { shortFormatDistanceToNow, toast, useLayoutStore } from "@incmix/ui";
 import { cn } from "@incmix/ui";
@@ -92,7 +94,9 @@ export function TemplatesSidebar({
   return (
     <Flex
       direction="column"
-      className={`bg-gray-1 p-2 mt-2 rounded-xl relative border border-gray-5 transition-all duration-300`}
+      className={`bg-gray-1 p-2 mt-2 rounded-xl overflow-hidden ${
+        isTemplateExpanded ? 'max-h-full' : 'max-h-20'
+      } relative border border-gray-5 transition-all duration-300`}
     >
       <Flex justify="between" align="center">
         <Heading size="2" className="font-medium">
@@ -104,8 +108,7 @@ export function TemplatesSidebar({
           onClick={() => setIsTemplateExpanded(!isTemplateExpanded)}
           className="hover:bg-transparent"
         >
-          {isTemplateExpanded ? <Minus /> : <Plus />}
-
+          {isTemplateExpanded ? <ChevronUp /> : <ChevronDown />}
           <span className="sr-only">
             {isTemplateExpanded ? "Collapse templates" : "Expand templates"}
           </span>

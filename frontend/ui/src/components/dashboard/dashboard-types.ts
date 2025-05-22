@@ -1,7 +1,10 @@
-import type { Layout } from "react-grid-layout"
+import type { Layout } from "@incmix/react-grid-layout"
 
 export type Breakpoint = "lg" | "md" | "sm" | "xs" | "xxs"
 
+export interface ExtendedLayout extends Layout {
+  componentName?: string
+}
 export interface LayoutItem {
   i: string
   x: number
@@ -11,8 +14,7 @@ export interface LayoutItem {
   moved?: boolean
   static?: boolean
   resizeHandles?: ReadonlyArray<"s" | "w" | "e" | "n">
-  layouts?: Layout[]
-  compactType?: "horizontal" | "vertical" | null
+  layouts?: ExtendedLayout[]
   [key: string]: any
 }
 export type ReactGridLayoutType = Layout[]
@@ -20,7 +22,7 @@ export type ReactGridLayoutType = Layout[]
 export type CustomLayout = LayoutItem[]
 
 export interface LayoutItemWithNested extends Layout {
-  layouts?: Layout[] 
+  layouts?: ExtendedLayout[] 
   compactType?: "horizontal" | "vertical" | null
   [key: string]: any
 }
@@ -42,15 +44,16 @@ export interface ComponentSlot {
   component: React.ReactNode
   title: string
   compImage?: string
+  componentName?:string
   layouts?: Record<Breakpoint, { w: number; h: number }>
 }
 
 export interface DragData {
   title?: string
   image?: string
+  componentName?:string
   [key: string]: any
 }
-
 export const DEFAULT_SIZES: Record<Breakpoint, { w: number; h: number }> = {
   lg: { w: 3, h: 6 },
   md: { w: 3, h: 6 },

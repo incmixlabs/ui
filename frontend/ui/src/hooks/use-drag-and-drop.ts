@@ -108,6 +108,8 @@ export function useDragAndDrop(
       console.error(`Component with ID ${draggedSlotId} not found in sidebar components`)
       return false
     }
+    // Get the component name from the drag data
+    const componentName = activeDragData?.componentName || draggedComponent.componentName || "empty"
 
     // Create a unique ID for the nested component
     const nestedItemId = `${targetGroupId}|${Date.now()}`
@@ -116,6 +118,7 @@ export function useDragAndDrop(
     const newComponent = {
       ...draggedComponent,
       slotId: nestedItemId,
+      componentName:componentName,
     }
 
     setGridComponents((prev) => [...prev, newComponent])
@@ -155,9 +158,9 @@ export function useDragAndDrop(
           h: 6, 
           moved: false,
           static: false,
+          componentName: componentName,
         }
 
-        // Add the new nested item to the parent's layouts
         parentItem.layouts.push(newNestedItem)
 
         // Update the parent item in the layouts
@@ -188,17 +191,38 @@ export function useDragAndDrop(
     if (!draggedComponent) {
       return false
     }
+    const componentName = activeDragData?.componentName || draggedComponent.componentName || "empty"
 
-    setGridComponents((prev) => [...prev, draggedComponent])
+    // Create a component slot with the component name
+    const newComponent: ComponentSlot = {
+      slotId: draggedSlotId,
+      component: draggedComponent.component,
+      title: draggedComponent.title,
+      compImage: draggedComponent.compImage,
+      componentName: componentName,
+    }
+    setGridComponents((prev) => [...prev, newComponent])
 
     const componentLayouts = draggedComponent.layouts || DEFAULT_SIZES_CONST
     const newLayouts = { ...defaultLayouts }
     ;(Object.keys(newLayouts) as Breakpoint[]).forEach((breakpoint) => {
       const { w, h } = componentLayouts[breakpoint]
       const currentLayout = [...newLayouts[breakpoint]]
-      newLayouts[breakpoint] = calculateGridPosition(currentLayout, targetWidgetId, w, h, draggedSlotId)
-    })
 
+      // Calculate new layout with the component
+      const updatedLayout = calculateGridPosition(currentLayout, targetWidgetId, w, h, draggedSlotId)
+
+      // Add component name to the new layout item
+      newLayouts[breakpoint] = updatedLayout.map((item) => {
+        if (item.i === draggedSlotId) {
+          return {
+            ...item,
+            componentName: componentName, // Add component name information
+          }
+        }
+        return item
+      })
+    })
     setDefaultLayouts(newLayouts)
 
     toast.success("Component added", {
@@ -210,7 +234,6 @@ export function useDragAndDrop(
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
-
     setActiveDragId(null)
     setActiveDragData(null)
 

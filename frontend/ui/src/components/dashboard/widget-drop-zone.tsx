@@ -50,7 +50,6 @@ export const WidgetDropZone = memo(function WidgetDropZone({
       data-group-id={groupId}
     >
       {isEditing && (
-        <>
           <IconButton
             className={cn("absolute top-4 right-4 z-20",btnClassName)}
             onMouseDown={(e) => e.stopPropagation()}
@@ -60,7 +59,6 @@ export const WidgetDropZone = memo(function WidgetDropZone({
           >
             <Trash size={16} />
           </IconButton>
-        </>
       )}
 
       {children}

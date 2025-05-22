@@ -56,9 +56,13 @@ const validateAndNormalizeTemplate = (template: any): any => {
 
   const normalizedTemplate = JSON.parse(JSON.stringify(template))
 
-  if (normalizedTemplate.layouts && !normalizedTemplate.mainLayouts) {
-    normalizedTemplate.mainLayouts = normalizedTemplate.layouts
+  const legacyLayouts =
+    normalizedTemplate.layouts ?? normalizedTemplate.nestedLayouts
+
+  if (legacyLayouts && !normalizedTemplate.mainLayouts) {
+    normalizedTemplate.mainLayouts = legacyLayouts
     normalizedTemplate.layouts = undefined
+    normalizedTemplate.nestedLayouts = undefined
   }
 
   if (!normalizedTemplate.mainLayouts) {
@@ -181,6 +185,7 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
 
       // Normalize the template before updating
       const normalizedUpdate = validateAndNormalizeTemplate({
+        ...existingTemplate.toJSON(), // keep untouched properties
         ...template,
         updatedAt: timestamp,
       })
