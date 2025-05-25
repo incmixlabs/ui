@@ -5,12 +5,9 @@ import {
   Box,
   CreateProjectModal,
   Grid,
-  RadialTaskStatusChart,
-  StatisticsBarChartView,
   SwapyExclude,
   SwapyLayout,
   SwapySlot,
-  WeeklyActivityChart,
 } from "@incmix/ui"
 import { Flex, Heading, Switch, Text } from "@incmix/ui"
 import {

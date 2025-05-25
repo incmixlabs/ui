@@ -62,13 +62,13 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
     console.log("handleLayoutChange defaultLayouts", defaultLayouts);
 
     // Debug the current layouts
-    debugComponentNames(
-      defaultLayouts,
-      "current layouts in handleLayoutChange",
-    );
+    // debugComponentNames(
+    //   defaultLayouts,
+    //   "current layouts in handleLayoutChange",
+    // );
 
     // Debug the incoming layouts
-    debugComponentNames(allLayouts, "incoming layouts in handleLayoutChange");
+    // debugComponentNames(allLayouts, "incoming layouts in handleLayoutChange");
 
     // Create a deep copy of the current layouts to avoid reference issues
     const updatedLayouts = JSON.parse(JSON.stringify(defaultLayouts));

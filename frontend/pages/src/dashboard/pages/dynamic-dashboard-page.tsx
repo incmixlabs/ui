@@ -77,9 +77,6 @@ const DynamicDashboardPage: React.FC = () => {
     fetchTemplate()
   }, [isTemplate, projectId])
 
-  const _handleResposniveLayoutChanges = (_layout: any, allLayouts: any) => {
-    console.log("allLayouts from handleLayoutChanges", allLayouts)
-  }
   // Device preview hooks
   const { activeDevice, setActiveDevice, deviceTabs, getViewportWidth } =
     useDevicePreview()
@@ -119,6 +116,22 @@ const DynamicDashboardPage: React.FC = () => {
     handleDragStart,
     handleDragEnd,
   } = useDragAndDrop(isEditing, gridComponents, setGridComponents)
+
+  //   const onDragStop = (layout: Layout[], oldItem: Layout, newItem: Layout) => {
+  //     const swapTarget = layout
+  //         .filter(item => item.i != oldItem.i)
+  //         .find((item) => item.y === newItem.y && item.x == newItem.x);
+
+  //     if (!swapTarget) {
+  //         const index = layout.findIndex(item => item.i == oldItem.i);
+  //         layout[index].x = oldItem.x;
+  //         layout[index].y = oldItem.y;
+  //     } else {
+  //         const index = layout.findIndex(item => item.i == swapTarget.i);
+  //         layout[index].x = oldItem.x;
+  //         layout[index].y = oldItem.y;
+  //     }
+  // };
 
   if (isLoading) return <LoadingPage />
   if (!authUser) return null
