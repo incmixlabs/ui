@@ -7,18 +7,12 @@ const meta: Meta = {
 
 export default meta
 
-// Story for ColorPickerDropdown
-export const Dropdown: StoryObj<typeof ColorPickerDropdown> = {
+type Story = StoryObj<typeof ColorPickerDropdown>
+
+export const Dropdown: Story = {
   render: (args) => <ColorPickerDropdown />,
-  args: {
-    // add any args if needed
-  },
 }
 
-// Story for ColorPickerComponent
-export const Component: StoryObj<typeof ColorPickerComponent> = {
-  render: (args) => <ColorPickerComponent  />,
-  args: {
-    // add any args if needed
-  },
+export const Component: Story = {
+  render: (args) => <ColorPickerComponent />,
 }

@@ -1,5 +1,5 @@
-import { ExtendedColorType } from "@/components";
-import { ComboBox } from "@/components/kanban-board/combo-box";
+import { ExtendedColorType } from "@components";
+import { ComboBox } from "@components/kanban-board/combo-box";
 import { useRef, useState } from "react";
 export const labelsData = [
   {

@@ -1,2 +1,2 @@
 export * from "./color-picker-dropdown"
-export * from "./color-picker"
+export * from "./color-picker-components"
