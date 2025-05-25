@@ -2,7 +2,7 @@
 
 import React, { useMemo, memo } from "react";
 import { flexRender, Table as TanStackTable, Row, Cell } from "@tanstack/react-table";
-import { Table } from "@shadcn";
+import { Table } from "@base";
 import { LoadingRow, EmptyRow } from "./TableUtilityRows";
 import { DataTableColumn, RowGroupingOptions } from "../types";
 import { GroupHeaderRow } from "./GroupHeaderRow";

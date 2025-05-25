@@ -2,7 +2,7 @@
 
 import React, { useCallback, useMemo, memo, useEffect } from "react";
 import { Table as TanStackTable } from "@tanstack/react-table";
-import { Table } from "@shadcn";
+import { Table } from "@base";
 
 // Import UI components
 import { TableFilters } from "./TableFilters";
@@ -78,6 +78,9 @@ function DataTableComponent<TData extends object>({
   enableInlineCellEdit = false,
   inlineEditableColumns = [],
   onCellEdit,
+  // Column configuration
+  enableColumnConfiguration = false,
+  onColumnConfigChange,
 }: DataTableProps<TData>) {
   // Use our extracted hooks to organize the component
   const tableState = useTableState(initialSidebarOpen, initialColumnVisibility);
@@ -324,6 +327,8 @@ function DataTableComponent<TData extends object>({
             startEditing={startEditing}
             cancelEditing={cancelEditing}
             saveEdit={handleCellEdit}
+            enableColumnConfiguration={enableColumnConfiguration}
+            onColumnConfigChange={onColumnConfigChange}
           />
 
           {/* Pagination */}

@@ -2,7 +2,7 @@
 
 import React, { memo } from "react";
 import { Table as TanStackTable } from "@tanstack/react-table";
-import { Table } from "@shadcn";
+import { Table } from "@base";
 import { TableHeader } from "./TableHeader";
 import { TableBody } from "./TableBody";
 import { DataTableColumn, RowGroupingOptions } from "../types";
@@ -32,6 +32,9 @@ interface TableContentProps<TData extends object> {
   startEditing?: (rowId: string, columnId: string) => void;
   cancelEditing?: () => void;
   saveEdit?: (rowData: TData, columnId: string, newValue: any) => void;
+  // Column configuration props
+  enableColumnConfiguration?: boolean;
+  onColumnConfigChange?: (columnId: string, config: any) => void;
 }
 
 /**
@@ -59,6 +62,9 @@ function TableContentComponent<TData extends object>({
   startEditing,
   cancelEditing,
   saveEdit,
+  // Column configuration props
+  enableColumnConfiguration,
+  onColumnConfigChange,
 }: TableContentProps<TData>) {
   return (
     <div 
@@ -79,7 +85,9 @@ function TableContentComponent<TData extends object>({
         {!hideMainHeader && (
           <TableHeader 
             table={table} 
-            flatColumns={flatColumns} 
+            flatColumns={flatColumns}
+            enableColumnConfiguration={enableColumnConfiguration}
+            onColumnConfigChange={onColumnConfigChange}
           />
         )}
         <TableBody

@@ -1,5 +1,5 @@
 import React from "react";
-import { Table } from "@shadcn";
+import { Table } from "@base";
 
 interface LoadingRowProps {
   colSpan: number;

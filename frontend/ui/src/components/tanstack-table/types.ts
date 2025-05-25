@@ -14,11 +14,22 @@ export type ColumnType =
   | "Image"
   | "Link"
   | "Custom"
+  | "Dropdown"
   | "TimelineProgress";
+
+// Dropdown option interface
+export interface DropdownOption {
+  value: string;
+  label: string;
+  color?: string;
+  isUserAdded?: boolean;
+}
 
 // Column definition interface
 export interface DataTableColumn<TData> {
-  headingName: string;
+  // Column heading name - can use either headingName or header
+  headingName?: string;
+  header?: string;
   type: ColumnType;
   accessorKey: keyof TData | string;
   id?: string;
@@ -32,6 +43,9 @@ export interface DataTableColumn<TData> {
   width?: string | number;
   minWidth?: string | number;
   maxWidth?: string | number;
+  
+  // Dropdown options for dropdown/status type columns
+  dropdownOptions?: DropdownOption[];
 
   // Formatting options
   format?: {
@@ -162,6 +176,9 @@ export interface DataTableProps<TData extends object> {
   initialColumnVisibility?: Record<string, boolean>;
   enableColumnResizing?: boolean;
   enableColumnReordering?: boolean;
+  // Column configuration feature
+  enableColumnConfiguration?: boolean;
+  onColumnConfigChange?: (columnId: string, config: any) => void;
 
   // Display options
   showRowCount?: boolean;
