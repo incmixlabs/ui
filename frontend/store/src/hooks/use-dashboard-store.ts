@@ -134,6 +134,10 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
 
       if (dashboard) {
         await dashboard.remove()
+        set((state) => ({
+          dashboards: state.dashboards.filter((d) => d.id !== id),
+          isDashLoading: false,
+        }))
       } else {
         set({ isDashLoading: false })
       }
@@ -156,7 +160,13 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
       }
 
       const originalData = originalDashboard.toJSON()
-      const newId = `${newName.toLowerCase().replace(/\s+/g, "-")}`
+      const baseId = newName.toLowerCase().replace(/\s+/g, "-")
+      let newId = baseId
+      let counter = 1
+      while (await dashboardsCollection.findOne(newId).exec()) {
+        newId = `${baseId}-${counter}`
+        counter++
+      }
       const now = new Date().toISOString()
 
       // Create a clone with the same mainLayouts from the original
