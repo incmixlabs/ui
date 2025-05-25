@@ -14,13 +14,13 @@ import {
   UserIcon,
 } from "lucide-react"
 
-import React from "react"
+import React, { useEffect, useState } from "react"
 
 import { useAuth, useCurrentUser } from "@auth"
 import {
-  useDashboardStore,
   useEditingStore,
   useOrganizationStore,
+  useRealDashboardStore,
 } from "@incmix/store"
 import { DashboardSidebar, ScrollArea } from "@incmix/ui"
 import { USERS_API_URL } from "@incmix/ui/constants"
@@ -50,10 +50,20 @@ import { OrgSwitcher } from "./org-switcher"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation(["common", "sidebar"])
-  const dashboards = useDashboardStore((state) => state.projects)
+
   const { pathname } = useLocation()
   const { authUser: user } = useAuth()
   const { isEditing } = useEditingStore()
+
+  const dashboards = useRealDashboardStore((state) => state.dashboards)
+  const initialized = useRealDashboardStore((state) => state.initialized)
+  const initialize = useRealDashboardStore((state) => state.initialize)
+
+  useEffect(() => {
+    if (!initialized) {
+      initialize()
+    }
+  }, [initialize, initialized])
 
   const { selectedOrganisation } = useOrganizationStore()
 

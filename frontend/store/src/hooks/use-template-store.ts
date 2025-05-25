@@ -111,10 +111,8 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
     set({ isLoading: true, error: null })
 
     try {
-      // Get the dashboardsTemplates collection from your existing database
       const templatesCollection = database.dashboardTemplates
 
-      // Initial load of templates
       const templates = await templatesCollection
         .find({
           selector: {
@@ -157,6 +155,7 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
       })
 
       await templatesCollection.insert(normalizedTemplate)
+
       set((state) => ({
         templates: [...state.templates, normalizedTemplate],
         isLoading: false,

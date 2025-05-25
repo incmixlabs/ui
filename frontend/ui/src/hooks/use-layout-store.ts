@@ -92,7 +92,6 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
 
             // Check if this item has nested layouts
             if (existingItem.layouts && existingItem.layouts.length > 0) {
-              // This is a parent with nested layouts
               // We need to preserve the componentName for each nested layout item
 
               // Create a deep copy of the existing nested layouts to preserve all properties
@@ -100,16 +99,14 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
                 JSON.stringify(existingItem.layouts),
               );
 
-              // Log the existing nested layouts to debug
-              console.log(
-                `Preserving nested layouts for ${existingItem.i}:`,
-                preservedNestedLayouts.map((item) => ({
-                  id: item.i,
-                  componentName: item.componentName || "undefined",
-                })),
-              );
+              // console.log(
+              //   `Preserving nested layouts for ${existingItem.i}:`,
+              //   preservedNestedLayouts.map((item) => ({
+              //     id: item.i,
+              //     componentName: item.componentName || "undefined",
+              //   })),
+              // );
 
-              // Update the parent item with new position/size but preserve the nested layouts with all properties
               updatedLayouts[breakpointKey][existingItemIndex] = {
                 ...newItem,
                 layouts: preservedNestedLayouts,

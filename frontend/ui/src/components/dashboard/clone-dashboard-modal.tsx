@@ -9,10 +9,10 @@ import {  useRealDashboardStore } from "@incmix/store";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
-export function CreateProjectModal() {
+export function CloneDashboardModal() {
   const [name, setName] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const { addDashboard, getDashboards } = useRealDashboardStore()
+  const { cloneDashboard,addDashboard, getDashboards } = useRealDashboardStore()
   const navigate = useNavigate();
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -42,11 +42,11 @@ export function CreateProjectModal() {
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>Create Dashboard</Button>
+      <Button onClick={() => setIsOpen(true)} color="orange">Clone Dashboard</Button>
 
       <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
         <Dialog.Content className="w-[26rem]">
-          <Dialog.Title>Create a New Dashboard</Dialog.Title>
+          <Dialog.Title>Clone Dashboard</Dialog.Title>
           <form onSubmit={handleCreate}>
             <Flex direction="column" gap="4" className="mt-4">
               <Label htmlFor="dashboard-name">Dashboard Name</Label>
@@ -65,7 +65,7 @@ export function CreateProjectModal() {
                   </Button>
                 </Dialog.Close>
                 <Button type="submit" className="h-8">
-                  Create
+                  Clone
                 </Button>
               </Flex>
             </Flex>
