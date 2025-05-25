@@ -7,7 +7,7 @@ import type { ComponentSlot, DragData, Breakpoint } from "@incmix/ui/dashboard"
 import { DEFAULT_SIZES as DEFAULT_SIZES_CONST } from "@incmix/ui/dashboard"
 import { sidebarComponents } from "@incmix/ui/dashboard"
 import type { LayoutItemWithNested } from "@incmix/ui/dashboard"
-import { LayoutItem } from "@/utils"
+import { LayoutItem } from "@incmix/ui/dashboard"
 
 export function useDragAndDrop(
   isEditing: boolean,

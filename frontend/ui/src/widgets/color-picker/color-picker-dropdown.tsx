@@ -1,7 +1,6 @@
 import { ExtendedColorType } from "@/components";
 import { ComboBox } from "@/components/kanban-board/combo-box";
 import { useRef, useState } from "react";
-import { ColorPickerComponent } from "./color-picker";
 export const labelsData = [
   {
     value: "design",
@@ -20,7 +19,7 @@ export const labelsData = [
   },
 ];
 export function ColorPickerDropdown() {
-  const [selectedLabels, setSelectedLabes] = useState<string[]>([
+    const [selectedLabels, setSelectedLabels] = useState<string[]>([
     "design",
     "frontend",
     "backend",
@@ -55,7 +54,7 @@ export function ColorPickerDropdown() {
     <>
     <ComboBox
       options={allLabelsData}
-      onValueChange={setSelectedLabes}
+      onValueChange={setSelectedLabels}
       defaultValue={selectedLabels}
       placeholder="Search Label"
       title="Labels"

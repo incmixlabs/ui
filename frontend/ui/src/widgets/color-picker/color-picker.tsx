@@ -6,11 +6,11 @@ import { useState } from "react";
 export function ColorPickerComponent() {
   const [labelColor, setLabelColor] = useState<ExtendedColorType>("blue");
 
-  const handleColorSelect = (newColor: ColorSelectType) => {
-    if (setLabelColor) {
-      setLabelColor(newColor.name as ExtendedColorType);
-    }
-  };
+  const handleColorSelect = (newColor: ColorSelectType) => {  
+    if (newColor.name) {  
+      setLabelColor(newColor.name as ExtendedColorType);  
+    }  
+  };  
   return (
     <Flex direction="column" align="center" justify="center" >
       <Button
