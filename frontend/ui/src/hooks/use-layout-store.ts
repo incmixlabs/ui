@@ -1,21 +1,14 @@
 import { create } from "zustand";
-import type { CustomLayouts, LayoutItemWithNested } from "@incmix/ui/dashboard";
+import type { Breakpoint, CustomLayouts, LayoutItemWithNested } from "@incmix/ui/dashboard";
+
 import type { Layout } from "@incmix/react-grid-layout";
 import { presetLayouts } from "@incmix/ui/dashboard";
 import {
   addGroupToLayouts,
-  Breakpoint,
   debugComponentNames,
   getNextGroupId,
 } from "@utils";
 
-export interface LayoutPreset {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  mainLayouts: CustomLayouts;
-}
 
 interface LayoutState {
   defaultLayouts: CustomLayouts
@@ -60,18 +53,16 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
   handleLayoutChange: (_layout, allLayouts) => {
     const { defaultLayouts } = get();
     console.log("handleLayoutChange defaultLayouts", defaultLayouts);
-
     // Debug the current layouts
     debugComponentNames(
       defaultLayouts,
       "current layouts in handleLayoutChange",
     );
-
     // Debug the incoming layouts
     debugComponentNames(allLayouts, "incoming layouts in handleLayoutChange");
-
     // Create a deep copy of the current layouts to avoid reference issues
     const updatedLayouts = JSON.parse(JSON.stringify(defaultLayouts));
+
 
     // For each breakpoint, update the positions while preserving nested layouts and componentName
     Object.keys(allLayouts).forEach((breakpoint) => {
@@ -156,11 +147,10 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
     });
 
     // Debug the updated layouts before setting
-    debugComponentNames(
-      updatedLayouts,
-      "updated layouts in handleLayoutChange",
-    );
-
+    // debugComponentNames(
+    //   updatedLayouts,
+    //   "updated layouts in handleLayoutChange",
+    // );
     // Update the store with the merged layouts
     set({ defaultLayouts: updatedLayouts });
   },
