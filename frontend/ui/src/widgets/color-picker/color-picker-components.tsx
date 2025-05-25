@@ -1,5 +1,5 @@
 import { ExtendedColorType } from "@components";
-import ColorPicker, { ColorSelectType } from "@/components/color-picker";
+import ColorPicker, { ColorSelectType } from "@components/color-picker";
 import { Button, Flex } from "@base"
 import { useState } from "react";
 
