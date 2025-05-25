@@ -1,95 +1,31 @@
 import { LoadingPage } from "@common"
-
+import { DndContext, DragOverlay } from "@dnd-kit/core"
+import { Responsive, WidthProvider } from "@incmix/react-grid-layout"
 import { useEditingStore } from "@incmix/store"
 import {
+  ActiveBtn,
+  AddGroupButton,
   Box,
   CreateProjectModal,
-  Grid,
-  RadialTaskStatusChart,
-  StatisticsBarChartView,
-  SwapyExclude,
-  SwapyLayout,
-  SwapySlot,
-  WeeklyActivityChart,
+  Flex,
+  Heading,
+  Switch,
+  Text,
+  generateDOM,
+  useDevicePreview,
+  useDragAndDrop,
+  useGridComponents,
+  useLayoutStore,
 } from "@incmix/ui"
-import { Flex, Heading, Switch, Text } from "@incmix/ui"
-import {
-  BatteryWidget,
-  CalendarWidget,
-  ClockWidget,
-  ImageGrid,
-  NewsWidget,
-  WeatherWidget,
-  getBattery,
-} from "@incmix/ui/widgets"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { useEffect, useMemo, useRef, useState } from "react"
-import { useTranslation } from "react-i18next"
+import { useParams } from "@tanstack/react-router"
+import type React from "react"
+import { useEffect, useRef, useState } from "react"
 import { useAuth } from "../../auth"
+import "@incmix/react-grid-layout/css/styles.css"
+import { useTranslation } from "react-i18next"
 
-type Widget = {
-  id: string
-  type: "weather" | "clock" | "news" | "battery" | "image-grid" | "calendar"
-}
-
-const MOCK_WEATHER_DATA = {
-  lat: "40.730610",
-  lon: "-73.935242",
-}
-
-const MOCK_CLOCK_DATA = [
-  { city: "New York", timeZone: "America/New_York" },
-  { city: "London", timeZone: "Europe/London" },
-  { city: "Tokyo", timeZone: "Asia/Tokyo" },
-]
-
-const INITIAL_WIDGETS: Widget[] = [
-  { id: "weather", type: "weather" },
-  { id: "clock", type: "clock" },
-  { id: "calendar", type: "calendar" },
-  { id: "news", type: "news" },
-  { id: "battery", type: "battery" },
-  { id: "image-grid", type: "image-grid" },
-]
-
-const INITIAL_SLOT_ITEMS = [
-  {
-    slotId: "slot1",
-    colSpan: "xl:col-span-2 col-span-2 2xl:col-span-2",
-    itemId: "weather",
-  },
-  {
-    slotId: "slot2",
-    colSpan: "xl:col-span-4 col-span-4 2xl:col-span-4",
-    className: "bg-gray-2",
-    itemId: "clock",
-  },
-  {
-    slotId: "slot3",
-    colSpan: "xl:col-span-1 col-span-1 2xl:col-span-1",
-    className: "bg-gray-2",
-    itemId: "battery",
-  },
-  {
-    slotId: "slot4",
-    colSpan: "xl:col-span-5 col-span-5 2xl:col-span-5",
-    className: "bg-gray-2",
-    itemId: "calendar",
-  },
-  {
-    slotId: "slot5",
-    colSpan: "col-span-6",
-    className: "bg-gray-2",
-    itemId: "news",
-  },
-  {
-    slotId: "slot6",
-    colSpan: "col-span-6",
-    className: "bg-gray-2",
-    itemId: "image-grid",
-  },
-]
-
+const ResponsiveGridLayout = WidthProvider(Responsive)
 export const EditWidgetsControl: React.FC<{
   onEditChange: (checked: boolean) => void
 }> = ({ onEditChange }) => {
@@ -105,113 +41,179 @@ export const EditWidgetsControl: React.FC<{
   )
 }
 
-const renderWidget = (widget: Widget) => {
-  switch (widget.type) {
-    case "weather":
-      return <WeatherWidget location={MOCK_WEATHER_DATA} />
-    case "clock":
-      return <ClockWidget flip clocks={MOCK_CLOCK_DATA} size="1" />
-    case "calendar":
-      return <CalendarWidget storageKey={"calendar_events_dashboard"} />
-    case "news":
-      return <NewsWidget country="us" />
-    case "battery":
-      return <BatteryWidget />
-    case "image-grid":
-      return <ImageGrid />
-
-    default:
-      return null
-  }
-}
-
 const DashboardHomePage: React.FC = () => {
-  const { t } = useTranslation(["dashboard", "common"])
   const { authUser, isLoading } = useAuth()
   const { isEditing, setIsEditing } = useEditingStore()
 
-  const [widgets, setWidgets] = useState<Widget[]>([])
-  const [slotItemsMap, setSlotItemsMap] = useState<typeof INITIAL_SLOT_ITEMS>(
-    []
-  )
+  const { defaultLayouts, handleLayoutChange, handleNestedLayoutChange } =
+    useLayoutStore()
 
-  const slottedWidgets = useMemo(() => {
-    return slotItemsMap.map(({ slotId, itemId, colSpan, className }) => ({
-      slotId,
-      itemId,
-      colSpan,
-      className,
-      widget: widgets.find((w) => w.id === itemId),
-    }))
-  }, [widgets, slotItemsMap])
+  // Device preview hooks
+  const { activeDevice, setActiveDevice, deviceTabs, getViewportWidth } =
+    useDevicePreview()
+
+  // Width measurement
+  const [actualWidth, setActualWidth] = useState<number | null>(null)
+  const boxRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const initializeWidgets = async () => {
-      const battery = await getBattery()
+    if (!boxRef.current) return
 
-      const availableWidgets = INITIAL_WIDGETS.filter(
-        (widget) => widget.type !== "battery" || battery !== null
-      )
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setActualWidth(Math.round(entry.contentRect.width))
+      }
+    })
 
-      const availableSlotItems = INITIAL_SLOT_ITEMS.filter((item) =>
-        availableWidgets.some((widget) => widget.id === item.itemId)
-      )
+    resizeObserver.observe(boxRef.current)
 
-      setWidgets(availableWidgets)
-      setSlotItemsMap(availableSlotItems)
+    return () => {
+      resizeObserver.disconnect()
     }
-
-    initializeWidgets()
   }, [])
+
+  const {
+    gridComponents,
+    setGridComponents,
+    handleRemoveComponent,
+    handleRemoveNestedComponent,
+    handleAddNewGroup,
+  } = useGridComponents(isEditing)
+
+  const {
+    activeDragId,
+    activeDragData,
+    sensors,
+    handleDragStart,
+    handleDragEnd,
+  } = useDragAndDrop(isEditing, gridComponents, setGridComponents)
+
+  //   const onDragStop = (layout: Layout[], oldItem: Layout, newItem: Layout) => {
+  //     const swapTarget = layout
+  //         .filter(item => item.i != oldItem.i)
+  //         .find((item) => item.y === newItem.y && item.x == newItem.x);
+
+  //     if (!swapTarget) {
+  //         const index = layout.findIndex(item => item.i == oldItem.i);
+  //         layout[index].x = oldItem.x;
+  //         layout[index].y = oldItem.y;
+  //     } else {
+  //         const index = layout.findIndex(item => item.i == swapTarget.i);
+  //         layout[index].x = oldItem.x;
+  //         layout[index].y = oldItem.y;
+  //     }
+  // };
 
   if (isLoading) return <LoadingPage />
   if (!authUser) return null
 
+  const isEmpty = gridComponents.length === 0
+  console.log("defaultLayouts from dynamic-dashboard-page", defaultLayouts)
+
   return (
-    <DashboardLayout
-      breadcrumbItems={[]}
-      navExtras={<EditWidgetsControl onEditChange={setIsEditing} />}
+    <DndContext
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      sensors={sensors}
     >
-      <Box className="container mx-auto overflow-x-hidden">
-        <Heading size="6" className="pb-4">
-          {t("dashboard:title")}
-        </Heading>
-        <CreateProjectModal />
-        <Flex direction="column" gap="6">
-          {slottedWidgets.length && (
-            <SwapyLayout
-              id="dashboard-container"
-              enable={isEditing}
-              config={{ swapMode: "hover" }}
+      <DashboardLayout
+        breadcrumbItems={[]}
+        navExtras={<EditWidgetsControl onEditChange={setIsEditing} />}
+      >
+        <Box as="div" className="container mx-auto flex overflow-x-hidden">
+          <Box className="h-full w-full overflow-hidden">
+            <Flex justify={"between"} align={"center"} className="pb-4">
+              <Heading
+                size="6"
+                className={`${isEditing ? "" : "px-4"} capitalize`}
+              >
+                {"Dashboard"}
+              </Heading>
+              {!isEditing && <CreateProjectModal />}
+
+              {isEditing && (
+                <Flex align={"center"} gap="2">
+                  <AddGroupButton
+                    isEditing={isEditing}
+                    onAddGroup={handleAddNewGroup}
+                  />
+                  <ActiveBtn
+                    items={deviceTabs}
+                    defaultActiveId={activeDevice}
+                    onChange={setActiveDevice}
+                  />
+                </Flex>
+              )}
+            </Flex>
+            <Box
+              ref={boxRef}
+              className={`relative mx-auto h-full rounded-lg transition-width duration-200 ${
+                isEditing && !isEmpty
+                  ? "border-2 border-indigo-8 border-dashed bg-indigo-2 "
+                  : ""
+              }`}
+              style={{
+                width: getViewportWidth(),
+                maxWidth: "100%",
+                overflow: "hidden",
+              }}
             >
-              <Grid gap="5" columns="12" className="w-full">
-                {slottedWidgets.map(
-                  ({ slotId, colSpan, className, widget }) => (
-                    <SwapySlot
-                      className={`${colSpan} h-fit rounded-xl bg-gray-4 dark:bg-gray-2`}
-                      key={slotId}
-                      id={slotId}
-                      showHandle={isEditing}
-                    >
-                      {widget && (
-                        <Box
-                          className={`relative h-full w-full rounded-xl ${className}`}
-                        >
-                          <SwapyExclude id={widget.id}>
-                            {renderWidget(widget)}
-                          </SwapyExclude>
-                        </Box>
-                      )}
-                    </SwapySlot>
-                  )
+              {isEditing && (
+                <span className="absolute top-0.5 right-0.5 z-10 rounded-md border border-gray-5 bg-gray-3 px-2 py-1">
+                  width: {actualWidth ? `${actualWidth}px` : "Measuring..."}
+                </span>
+              )}
+              <ResponsiveGridLayout
+                onDragStart={(
+                  _a: any,
+                  _b: any,
+                  _c: any,
+                  _d: any,
+                  e: { stopPropagation: () => any }
+                ) => e.stopPropagation()}
+                layouts={defaultLayouts}
+                onLayoutChange={handleLayoutChange}
+                className="gridLayout"
+                rowHeight={10}
+                breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
+                resizeHandles={["n", "s", "e", "w"]}
+                preventCollision={false}
+                compactType="vertical"
+                isDraggable={isEditing}
+                isResizable={isEditing}
+              >
+                {generateDOM(
+                  defaultLayouts,
+                  gridComponents,
+                  handleNestedLayoutChange,
+                  isEditing,
+                  handleRemoveComponent,
+                  handleRemoveNestedComponent
                 )}
-              </Grid>
-            </SwapyLayout>
-          )}
-        </Flex>
-      </Box>
-    </DashboardLayout>
+              </ResponsiveGridLayout>
+            </Box>
+          </Box>
+        </Box>
+      </DashboardLayout>
+
+      <DragOverlay>
+        {activeDragId && activeDragData && (
+          <Box
+            className="pointer-events-none rounded-lg border border-gray-5 opacity-100 shadow"
+            style={{ width: "150px", height: "100px" }}
+          >
+            <img
+              src={
+                activeDragData.image || "/placeholder.svg?height=150&width=150"
+              }
+              alt={activeDragData.title || "Component"}
+              className="h-full w-full rounded-lg"
+            />
+          </Box>
+        )}
+      </DragOverlay>
+    </DndContext>
   )
 }
-
 export default DashboardHomePage

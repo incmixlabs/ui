@@ -48,7 +48,6 @@ export const taskSchemaLiteral = {
       type: "string",
     },
   },
-  // Adding required fields to enforce presence of key properties.
   // Adjust the list depending on business rules.
   required: [
     "id",
@@ -116,53 +115,6 @@ export const columnSchemaLiteral = {
     "parentId",
   ],
 } as const
-
-// export const dashboardTemplateSchemaLiteral = {
-//   title: "dashboard template schema",
-//   version: 0,
-//   description: "Schema for dashboard templates",
-//   primaryKey: "id",
-//   type: "object",
-//   properties: {
-//     id: {
-//       type: "string",
-//       maxLength: 100,
-//     },
-//     isActive: {
-//       type: "boolean",
-//       default: false,
-//     },
-//     name: {
-//       type: "string",
-//     },
-//     projectId: {
-//       type: "string",
-//     },
-//     tags: {
-//       type: "array",
-//       items: {
-//         type: "string",
-//       },
-//     },
-//     mainLayouts: {
-//       type: "object",
-//     },
-//     createdAt: {
-//       type: "number",
-//     },
-//     updatedAt: {
-//       type: "number",
-//     },
-//   },
-//   required: [
-//     "id",
-//     "name",
-//     "projectId",
-//     "mainLayouts",
-//     "createdAt",
-//     "updatedAt",
-//   ],
-// } as const
 
 // Define the schema for a layout item
 const layoutItemSchema = {
@@ -270,6 +222,37 @@ export const dashboardTemplateSchemaLiteral = {
     "createdAt",
     "updatedAt",
   ],
+} as const
+
+export const dashboardSchemaLiteral = {
+  title: "dashboard schema",
+  version: 0,
+  description: "Schema for dashboards",
+  primaryKey: "id",
+  type: "object",
+  properties: {
+    id: {
+      type: "string",
+      maxLength: 100,
+    },
+    name: {
+      type: "string",
+    },
+    createdAt: {
+      type: "string",
+    },
+    updatedAt: {
+      type: "string",
+    },
+    createdBy: {
+      type: "string",
+    },
+    updatedBy: {
+      type: "string",
+    },
+  },
+  required: ["id", "name"],
+  additionalProperties: false,
 } as const
 
 export const projectSchemaLiteral = {
@@ -424,10 +407,15 @@ export type DashboardTemplateDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof dashboardTemplateTyped
 >
 
+export type DashboardDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
+  typeof dashboardSchemaLiteral
+>
+
 export type TaskCollections = {
   tasks: RxCollection<TaskDocType>
   columns: RxCollection<ColumnDocType>
   projects: RxCollection<ProjectDocType>
   formProjects: RxCollection<FormProjectDocType>
   dashboardTemplates: RxCollection<DashboardTemplateDocType>
+  dashboards: RxCollection<DashboardDocType>
 }

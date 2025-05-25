@@ -2,14 +2,17 @@ import { LoadingPage } from "@common"
 import { DndContext, DragOverlay } from "@dnd-kit/core"
 import { Responsive, WidthProvider } from "@incmix/react-grid-layout"
 import {
-  useDashboardStore,
+  type Dashboard,
   useEditingStore,
+  useRealDashboardStore,
   useTemplateStore,
 } from "@incmix/store"
 import {
   ActiveBtn,
   AddGroupButton,
   Box,
+  CloneDashboardModal,
+  CreateProjectModal,
   Flex,
   Heading,
   SaveTemplateDialog,
@@ -27,7 +30,6 @@ import { useEffect, useRef, useState } from "react"
 import { useAuth } from "../../auth"
 import { EditWidgetsControl } from "./home"
 import "@incmix/react-grid-layout/css/styles.css"
-import "@incmix/react-grid-layout/css/styles.css"
 import { useQueryState } from "nuqs"
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
@@ -35,7 +37,13 @@ const ResponsiveGridLayout = WidthProvider(Responsive)
 const DynamicDashboardPage: React.FC = () => {
   const { projectId } = useParams({ from: "/dashboard/project/$projectId" })
   const [isTemplate, setIsTemplate] = useQueryState("template")
-  const project = useDashboardStore((state) => state.getProjectById(projectId))
+  const [project, setProject] = useState<Dashboard | undefined>()
+
+  const isDashLoading = useRealDashboardStore((state) => state.isDashLoading)
+  const getDashboardById = useRealDashboardStore(
+    (state) => state.getDashboardById
+  )
+
   const { authUser, isLoading } = useAuth()
   const { isEditing, setIsEditing } = useEditingStore()
   const { getTemplateById, getActiveTemplate } = useTemplateStore()
@@ -77,14 +85,24 @@ const DynamicDashboardPage: React.FC = () => {
     fetchTemplate()
   }, [isTemplate, projectId])
 
-  const _handleResposniveLayoutChanges = (_layout: any, allLayouts: any) => {
-    console.log("allLayouts from handleLayoutChanges", allLayouts)
-  }
-  // Device preview hooks
+  useEffect(() => {
+    const getProjectName = async () => {
+      try {
+        const getProject = await getDashboardById(projectId)
+        setProject(getProject)
+      } catch (error) {
+        console.error("Failed to get dashboard:", error)
+      }
+    }
+
+    if (projectId) {
+      getProjectName()
+    }
+  }, [projectId, getDashboardById])
+
   const { activeDevice, setActiveDevice, deviceTabs, getViewportWidth } =
     useDevicePreview()
 
-  // Width measurement
   const [actualWidth, setActualWidth] = useState<number | null>(null)
   const boxRef = useRef<HTMLDivElement>(null)
 
@@ -120,12 +138,33 @@ const DynamicDashboardPage: React.FC = () => {
     handleDragEnd,
   } = useDragAndDrop(isEditing, gridComponents, setGridComponents)
 
-  if (isLoading) return <LoadingPage />
+  //   const onDragStop = (layout: Layout[], oldItem: Layout, newItem: Layout) => {
+  //     const swapTarget = layout
+  //         .filter(item => item.i != oldItem.i)
+  //         .find((item) => item.y === newItem.y && item.x == newItem.x);
+
+  //     if (!swapTarget) {
+  //         const index = layout.findIndex(item => item.i == oldItem.i);
+  //         layout[index].x = oldItem.x;
+  //         layout[index].y = oldItem.y;
+  //     } else {
+  //         const index = layout.findIndex(item => item.i == swapTarget.i);
+  //         layout[index].x = oldItem.x;
+  //         layout[index].y = oldItem.y;
+  //     }
+  // };
+
+  // Show loading while auth is loading, store is loading, or dashboard is loading
+  if (isLoading || isDashLoading) {
+    return <LoadingPage />
+  }
+
   if (!authUser) return null
   if (!project) return <div>Project not found</div>
 
   const isEmpty = gridComponents.length === 0
-  console.log("defaultLayouts from dynamic-dashboard-page", defaultLayouts)
+  // console.log("defaultLayouts from dynamic-dashboard-page", defaultLayouts)
+  console.log("project from dynamic-dashboard-page", project)
 
   return (
     <DndContext
@@ -144,8 +183,15 @@ const DynamicDashboardPage: React.FC = () => {
                 size="6"
                 className={`${isEditing ? "" : "px-4"} capitalize`}
               >
-                {project.name}
+                {project?.name}
               </Heading>
+              {!isEditing && (
+                <Flex gap="2">
+                  <CreateProjectModal />
+                  <CloneDashboardModal />
+                </Flex>
+              )}
+
               {isEditing && (
                 <Flex align={"center"} gap="2">
                   <AddGroupButton
