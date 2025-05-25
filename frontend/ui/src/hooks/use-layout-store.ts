@@ -1,21 +1,13 @@
 import { create } from "zustand";
-import type { CustomLayouts, LayoutItemWithNested } from "@incmix/ui/dashboard";
+import type { Breakpoint, CustomLayouts, LayoutItemWithNested } from "@incmix/ui/dashboard";
 import type { Layout } from "@incmix/react-grid-layout";
 import { presetLayouts } from "@incmix/ui/dashboard";
 import {
   addGroupToLayouts,
-  Breakpoint,
   debugComponentNames,
   getNextGroupId,
 } from "@utils";
 
-export interface LayoutPreset {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  mainLayouts: CustomLayouts;
-}
 
 interface LayoutState {
   defaultLayouts: CustomLayouts
@@ -156,10 +148,10 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
     });
 
     // Debug the updated layouts before setting
-    debugComponentNames(
-      updatedLayouts,
-      "updated layouts in handleLayoutChange",
-    );
+    // debugComponentNames(
+    //   updatedLayouts,
+    //   "updated layouts in handleLayoutChange",
+    // );
 
     // Update the store with the merged layouts
     set({ defaultLayouts: updatedLayouts });
