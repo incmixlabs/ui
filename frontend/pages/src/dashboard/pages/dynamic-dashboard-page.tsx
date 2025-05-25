@@ -2,6 +2,7 @@ import { LoadingPage } from "@common"
 import { DndContext, DragOverlay } from "@dnd-kit/core"
 import { Responsive, WidthProvider } from "@incmix/react-grid-layout"
 import {
+  type Dashboard,
   useEditingStore,
   useRealDashboardStore,
   useTemplateStore,
@@ -29,7 +30,6 @@ import { useEffect, useRef, useState } from "react"
 import { useAuth } from "../../auth"
 import { EditWidgetsControl } from "./home"
 import "@incmix/react-grid-layout/css/styles.css"
-import "@incmix/react-grid-layout/css/styles.css"
 import { useQueryState } from "nuqs"
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
@@ -37,7 +37,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive)
 const DynamicDashboardPage: React.FC = () => {
   const { projectId } = useParams({ from: "/dashboard/project/$projectId" })
   const [isTemplate, setIsTemplate] = useQueryState("template")
-  const [project, setProject] = useState()
+  const [project, setProject] = useState<Dashboard | undefined>()
 
   const isDashLoading = useRealDashboardStore((state) => state.isDashLoading)
   const getDashboardById = useRealDashboardStore(

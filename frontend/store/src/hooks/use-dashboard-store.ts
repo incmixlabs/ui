@@ -1,32 +1,7 @@
-import { nanoid } from "nanoid"
 import { create } from "zustand"
-import { database } from "../sql/main" // Replace with your database import
+import { database } from "../sql/main"
 
-// Define the layout item schema type (you'll need to import this from your actual schema)
-interface LayoutItem {
-  i: string
-  x: number
-  y: number
-  w: number
-  h: number
-  minW?: number
-  minH?: number
-  maxW?: number
-  maxH?: number
-  static?: boolean
-  isDraggable?: boolean
-  isResizable?: boolean
-}
-
-interface MainLayouts {
-  lg: LayoutItem[]
-  md: LayoutItem[]
-  sm: LayoutItem[]
-  xs: LayoutItem[]
-  xxs: LayoutItem[]
-}
-
-interface Dashboard {
+export interface Dashboard {
   id: string
   name: string
   createdAt: string
@@ -50,15 +25,6 @@ interface DashboardState {
   getDashboardById: (id: string) => Promise<Dashboard | null>
   getDashboards: () => Promise<Dashboard[]>
 }
-
-// Default empty layouts for new dashboards
-const _getDefaultLayouts = (): MainLayouts => ({
-  lg: [],
-  md: [],
-  sm: [],
-  xs: [],
-  xxs: [],
-})
 
 // Validation and normalization function
 const validateAndNormalizeDashboard = (dashboard: any): Dashboard => {
@@ -123,7 +89,14 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
 
     try {
       const dashboardsCollection = database.dashboards
-      const newId = `${dashboard.name.toLowerCase().replace(/\s+/g, "-")}`
+
+      const baseId = dashboard.name.toLowerCase().replace(/\s+/g, "-")
+      let newId = baseId
+      let counter = 1
+      while (await dashboardsCollection.findOne(newId).exec()) {
+        newId = `${baseId}-${counter}`
+        counter++
+      }
 
       const now = new Date().toISOString()
 
@@ -141,7 +114,7 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
       // Update store state immediately
       set((state) => ({
         dashboards: [...state.dashboards, newDashboard],
-        isLoading: false,
+        isDashLoading: false,
       }))
 
       return newId
@@ -200,7 +173,7 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
 
       set((state) => ({
         dashboards: [...state.dashboards, clonedDashboard],
-        isLoading: false,
+        isDashLoading: false,
       }))
 
       return newId
@@ -227,6 +200,7 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
   },
   getDashboards: async () => {
     try {
+      set({ isDashLoading: true })
       const dashboardsCollection = database.dashboards
       const dashboards = await dashboardsCollection.find().exec()
 

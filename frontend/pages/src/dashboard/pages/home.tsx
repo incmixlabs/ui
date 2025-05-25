@@ -23,8 +23,6 @@ import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import { useAuth } from "../../auth"
 import "@incmix/react-grid-layout/css/styles.css"
-import "@incmix/react-grid-layout/css/styles.css"
-import { useQueryState } from "nuqs"
 import { useTranslation } from "react-i18next"
 
 const ResponsiveGridLayout = WidthProvider(Responsive)

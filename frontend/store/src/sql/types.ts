@@ -240,11 +240,9 @@ export const dashboardSchemaLiteral = {
     },
     createdAt: {
       type: "string",
-      format: "date-time",
     },
     updatedAt: {
       type: "string",
-      format: "date-time",
     },
     createdBy: {
       type: "string",
