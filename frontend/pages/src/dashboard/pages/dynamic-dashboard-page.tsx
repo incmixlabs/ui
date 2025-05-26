@@ -188,7 +188,7 @@ const DynamicDashboardPage: React.FC = () => {
               {!isEditing && (
                 <Flex gap="2">
                   <CreateProjectModal />
-                  <CloneDashboardModal projectId={projectId} />
+                  <CloneDashboardModal dashboardId={projectId} />
                 </Flex>
               )}
 

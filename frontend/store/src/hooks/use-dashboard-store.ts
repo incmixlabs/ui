@@ -193,15 +193,8 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
         newDashboardId = `${baseId}-${counter}`
         counter++
       }
-
-      while (await dashboardsCollection.findOne(newDashboardId).exec()) {
-        newDashboardId = `${baseId}-${counter}`
-        counter++
-      }
-
       const now = new Date().toISOString()
 
-      // Create the new dashboard
       const clonedDashboard = {
         id: newDashboardId,
         name: newName,
@@ -213,9 +206,6 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
       await dashboardsCollection.insert(clonedDashboard)
 
       console.log("templates", templates)
-
-      // Clone ALL templates - update only the ID and projectId, keep everything else the same
-      const clonedTemplates = []
 
       for (let i = 0; i < templates.length; i++) {
         const template = templates[i]
@@ -232,10 +222,7 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
 
         console.log(clonedTemplate)
 
-        // Insert each template
         await templatesCollection.insert(clonedTemplate)
-        clonedTemplates.push(clonedTemplate)
-
         console.log(
           `Cloned template ${i + 1}/${templates.length}: ${templateData.id} -> ${newTemplateId}`
         )
@@ -250,7 +237,8 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
     } catch (error) {
       console.error("Failed to clone dashboard:", error)
       set({
-        error: error.message || "Failed to clone dashboard",
+        error:
+          error instanceof Error ? error.message : "Failed to clone dashboard",
         isDashLoading: false,
       })
       throw error

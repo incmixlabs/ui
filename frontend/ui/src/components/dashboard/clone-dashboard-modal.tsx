@@ -11,7 +11,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Copy } from "lucide-react";
 
-export function CloneDashboardModal({projectId}:{projectId:string}) {
+export function CloneDashboardModal({dashboardId}:{dashboardId:string}) {
   const [name, setName] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const { cloneDashboard,getDashboards,error } = useRealDashboardStore()
@@ -25,7 +25,7 @@ export function CloneDashboardModal({projectId}:{projectId:string}) {
 
     try {
       const newDashboardId = await cloneDashboard(
-        projectId,
+        dashboardId,
         name.trim()
       )
       setName("");
@@ -38,10 +38,9 @@ export function CloneDashboardModal({projectId}:{projectId:string}) {
       });
       await getDashboards()
     } catch (error) {
-    // Show error toast only when this specific operation fails
-    toast.error("Failed to clone dashboard", {
-      description: error.message || "An unexpected error occurred while cloning the dashboard.",
-    })
+      toast.error("Failed to clone dashboard", {
+        description: error instanceof Error ? error.message : "An unexpected error occurred while cloning the dashboard.",
+      })
     }
   };
 
