@@ -4,16 +4,19 @@ import {
   Flex,
   Input,
   Label,
+  toast,
 } from "@incmix/ui/base";
 import {  useRealDashboardStore } from "@incmix/store";
 import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Copy } from "lucide-react";
 
-export function CloneDashboardModal() {
+export function CloneDashboardModal({dashboardId}:{dashboardId:string}) {
   const [name, setName] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const { cloneDashboard,addDashboard, getDashboards } = useRealDashboardStore()
+  const { cloneDashboard,getDashboards,error } = useRealDashboardStore()
   const navigate = useNavigate();
+
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,28 +24,31 @@ export function CloneDashboardModal() {
     if (!name.trim()) return;
 
     try {
-      const newDashboardId = await addDashboard({
-        name: name.trim(),
-        createdBy: "current-user",  
-        updatedBy: "current-user",
-      })
-
+      const newDashboardId = await cloneDashboard(
+        dashboardId,
+        name.trim()
+      )
       setName("");
       setIsOpen(false);
-
+      // Show success toast
+      toast.success(`Dashboard "${name.trim()}" cloned successfully!`)
       navigate({
         to: "/dashboard/project/$projectId",
         params: { projectId: newDashboardId },
       });
       await getDashboards()
     } catch (error) {
-      console.error("Failed to create project:", error);
+      toast.error("Failed to clone dashboard", {
+        description: error instanceof Error ? error.message : "An unexpected error occurred while cloning the dashboard.",
+      })
     }
   };
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)} color="orange">Clone Dashboard</Button>
+      <Button onClick={() => setIsOpen(true)} color="orange" >
+        Clone <Copy className="w-4 h-4"/>
+      </Button>
 
       <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
         <Dialog.Content className="w-[26rem]">
