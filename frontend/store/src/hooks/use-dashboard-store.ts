@@ -6,8 +6,8 @@ export interface Dashboard {
   name: string
   createdAt: string
   updatedAt: string
-  createdBy: string
-  updatedBy: string
+  createdBy?: string
+  updatedBy?: string
 }
 
 interface DashboardState {
@@ -15,6 +15,7 @@ interface DashboardState {
   isDashLoading: boolean
   error: string | null
   initialized: boolean
+
   // Actions
   initialize: () => Promise<void>
   addDashboard: (
@@ -153,43 +154,105 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
 
     try {
       const dashboardsCollection = database.dashboards
+      const templatesCollection = database.dashboardTemplates
+
+      // First check if the dashboard exists
       const originalDashboard = await dashboardsCollection.findOne(id).exec()
+      console.log(originalDashboard)
 
       if (!originalDashboard) {
+        set({ isDashLoading: false })
         throw new Error("Dashboard not found")
+      }
+
+      const templates = await templatesCollection
+        .find({
+          selector: {
+            projectId: id,
+          },
+        })
+        .exec()
+
+      if (!templates || templates.length === 0) {
+        set({
+          error:
+            "You can't clone this dashboard because it doesn't have any templates",
+          isDashLoading: false,
+        })
+        throw new Error(
+          "You can't clone this dashboard because it doesn't have any templates"
+        )
       }
 
       const originalData = originalDashboard.toJSON()
       const baseId = newName.toLowerCase().replace(/\s+/g, "-")
-      let newId = baseId
+      let newDashboardId = baseId
       let counter = 1
-      while (await dashboardsCollection.findOne(newId).exec()) {
-        newId = `${baseId}-${counter}`
+
+      while (await dashboardsCollection.findOne(newDashboardId).exec()) {
+        newDashboardId = `${baseId}-${counter}`
         counter++
       }
+
+      while (await dashboardsCollection.findOne(newDashboardId).exec()) {
+        newDashboardId = `${baseId}-${counter}`
+        counter++
+      }
+
       const now = new Date().toISOString()
 
-      // Create a clone with the same mainLayouts from the original
+      // Create the new dashboard
       const clonedDashboard = {
-        id: newId,
+        id: newDashboardId,
         name: newName,
         createdAt: now,
         updatedAt: now,
         createdBy: originalData.createdBy,
         updatedBy: originalData.updatedBy,
       }
-
       await dashboardsCollection.insert(clonedDashboard)
+
+      console.log("templates", templates)
+
+      // Clone ALL templates - update only the ID and projectId, keep everything else the same
+      const clonedTemplates = []
+
+      for (let i = 0; i < templates.length; i++) {
+        const template = templates[i]
+        const templateData = template.toJSON()
+
+        // Generate new template ID
+        const newTemplateId = `template-${Date.now()}-${i}`
+
+        const clonedTemplate = {
+          ...templateData,
+          projectId: newDashboardId,
+          id: newTemplateId,
+        }
+
+        console.log(clonedTemplate)
+
+        // Insert each template
+        await templatesCollection.insert(clonedTemplate)
+        clonedTemplates.push(clonedTemplate)
+
+        console.log(
+          `Cloned template ${i + 1}/${templates.length}: ${templateData.id} -> ${newTemplateId}`
+        )
+      }
 
       set((state) => ({
         dashboards: [...state.dashboards, clonedDashboard],
         isDashLoading: false,
       }))
 
-      return newId
+      return newDashboardId
     } catch (error) {
       console.error("Failed to clone dashboard:", error)
-      set({ error: "Failed to clone dashboard", isDashLoading: false })
+      set({
+        error: error.message || "Failed to clone dashboard",
+        isDashLoading: false,
+      })
       throw error
     }
   },

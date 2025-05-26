@@ -387,6 +387,7 @@ const formProjectTyped = toTypedRxJsonSchema(formProjectSchemaLiteral)
 const dashboardTemplateTyped = toTypedRxJsonSchema(
   dashboardTemplateSchemaLiteral
 )
+const dashboardTyped = toTypedRxJsonSchema(dashboardSchemaLiteral)
 
 export type TaskDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof tasksTyped
@@ -408,7 +409,7 @@ export type DashboardTemplateDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
 >
 
 export type DashboardDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
-  typeof dashboardSchemaLiteral
+  typeof dashboardTyped
 >
 
 export type TaskCollections = {
