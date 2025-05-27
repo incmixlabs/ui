@@ -94,13 +94,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         title: t("sidebar:home"),
         url: "/dashboard/home",
-        isSelected: pathname.includes("/dashboard/home"),
+        isSelected: pathname === "/dashboard/home",
       },
       ...(dashboards.length > 0
         ? dashboards.map((dashboard) => ({
             title: dashboard.name || `Project ${dashboard.id}`,
-            url: `/dashboard/project/${dashboard.id}`,
-            isSelected: pathname.includes(`/dashboard/project/${dashboard.id}`),
+            url: `/dashboard/${dashboard.id}`,
+            isSelected: pathname === `/dashboard/${dashboard.id}`,
           }))
         : []),
     ]
@@ -115,7 +115,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           pathname.startsWith("/dashboard") ||
           pathname.includes("/dashboard/home") ||
           dashboards.some((dashboard) =>
-            pathname.includes(`/dashboard/project/${dashboard.id}`)
+            pathname.includes(`/dashboard/${dashboard.id}`)
           ),
         items: ability.can("read", "Member")
           ? dashboardSubItems
