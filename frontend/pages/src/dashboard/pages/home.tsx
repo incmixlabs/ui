@@ -54,8 +54,10 @@ export const EditWidgetsControl: React.FC<{
 
 const DashboardHomePage: React.FC = () => {
   const { pathname } = useLocation()
+  const pathSegments = pathname.split("/").filter(Boolean)
   const projectId =
-    pathname === "/dashboard/home" ? "home" : pathname.split("/")[2]
+    pathname === "/dashboard/home" ? "home" : pathSegments[1] || "home"
+
   const [isTemplate, setIsTemplate] = useQueryState("template")
   const [project, setProject] = useState<Dashboard | undefined>()
 
@@ -79,10 +81,12 @@ const DashboardHomePage: React.FC = () => {
   const [openSaveDialog, setOpenSaveDialog] = useState(false)
 
   useEffect(() => {
+    let cancelled = false
     const fetchTemplate = async () => {
       if (isTemplate) {
         try {
           const template = await getTemplateById(isTemplate)
+          if (cancelled) return
           if (!template) {
             setIsTemplate(null)
             return
@@ -94,6 +98,7 @@ const DashboardHomePage: React.FC = () => {
       } else {
         try {
           const activeTemplate = await getActiveTemplate(projectId)
+          if (cancelled) return
           if (activeTemplate) {
             applyTemplates(activeTemplate.mainLayouts, activeTemplate.id)
           }
@@ -104,20 +109,27 @@ const DashboardHomePage: React.FC = () => {
     }
 
     fetchTemplate()
+    return () => {
+      cancelled = true
+    }
   }, [isTemplate, projectId])
 
   useEffect(() => {
+    let cancelled = false
     const getProjectName = async () => {
       try {
         const getProject = await getDashboardById(projectId)
+        if (cancelled) return
         setProject(getProject)
       } catch (error) {
         console.error("Failed to get dashboard:", error)
       }
     }
-
     if (projectId) {
       getProjectName()
+    }
+    return () => {
+      cancelled = true
     }
   }, [projectId, getDashboardById])
 

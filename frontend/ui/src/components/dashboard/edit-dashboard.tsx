@@ -5,7 +5,8 @@ import {
   Input,
   Label,
   EditIcon,
-  Tooltip
+  Tooltip,
+  toast
 } from "@incmix/ui/base";
 import {  useRealDashboardStore } from "@incmix/store";
 import { useNavigate } from "@tanstack/react-router";
@@ -32,7 +33,7 @@ export function EditDashboard({dashboardId}: {dashboardId: string}) {
   },[isOpen,dashboardId])
 
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const handleEdit  = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
     try {
@@ -40,6 +41,7 @@ export function EditDashboard({dashboardId}: {dashboardId: string}) {
 
       setName("");
       setIsOpen(false);
+      toast.success("Dashboard edited successfully.");
 
       navigate({
         to: "/dashboard/$projectId",
@@ -47,7 +49,7 @@ export function EditDashboard({dashboardId}: {dashboardId: string}) {
       });
       await getDashboards()
     } catch (error) {
-      console.error("Failed to create project:", error);
+      toast.error("Failed to edit dashboard. Please try again.");
     }
   };
 
@@ -61,8 +63,8 @@ export function EditDashboard({dashboardId}: {dashboardId: string}) {
       </Tooltip>
       <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
         <Dialog.Content className="w-[26rem]">
-          <Dialog.Title>Create a New Dashboard</Dialog.Title>
-          <form onSubmit={handleCreate}>
+          <Dialog.Title>Edit Dashboard</Dialog.Title>
+          <form onSubmit={handleEdit }>
             <Flex direction="column" gap="4" className="mt-4">
               <Label htmlFor="dashboard-name">Dashboard Name</Label>
               <Input
@@ -80,7 +82,7 @@ export function EditDashboard({dashboardId}: {dashboardId: string}) {
                   </Button>
                 </Dialog.Close>
                 <Button type="submit" className="h-8">
-                  Create
+                Save
                 </Button>
               </Flex>
             </Flex>

@@ -421,7 +421,7 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
             ? { ...d, id: newDashboardId, name: name.trim(), updatedAt: now }
             : d
         ),
-        error: `Successfully updated dashboard to: ${newDashboardId}`,
+        error: null,
         isDashLoading: false,
       }))
 

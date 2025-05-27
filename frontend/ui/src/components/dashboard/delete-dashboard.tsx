@@ -13,7 +13,7 @@ export function DeleteDashboard({ dashboardId }: { dashboardId: string }) {
   const { deleteDashboard } = useRealDashboardStore();
   const navigate = useNavigate();
 
-  const handleCreate = async () => {
+  const handleDelete = async () => {
     try {
       await deleteDashboard(dashboardId);
       // Show success toast
@@ -34,7 +34,7 @@ export function DeleteDashboard({ dashboardId }: { dashboardId: string }) {
   return (
     <>
       <Tooltip content={"Delete Dashboard"}>
-        <Button onClick={handleCreate} color="red">
+        <Button onClick={handleDelete} color="red">
           <DeleteIcon size={20} />
         </Button>
       </Tooltip>

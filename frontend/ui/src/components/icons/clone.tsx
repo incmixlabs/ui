@@ -38,10 +38,9 @@ const CloneIcon = forwardRef<CloneIconHandle, CloneIconProps>(
 
     const handleMouseEnter = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => {
+        onMouseEnter?.(e);
         if (!isControlledRef.current) {
           controls.start('animate');
-        } else {
-          onMouseEnter?.(e);
         }
       },
       [controls, onMouseEnter]
@@ -49,10 +48,9 @@ const CloneIcon = forwardRef<CloneIconHandle, CloneIconProps>(
 
     const handleMouseLeave = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => {
+        onMouseLeave?.(e);
         if (!isControlledRef.current) {
           controls.start('normal');
-        } else {
-          onMouseLeave?.(e);
         }
       },
       [controls, onMouseLeave]

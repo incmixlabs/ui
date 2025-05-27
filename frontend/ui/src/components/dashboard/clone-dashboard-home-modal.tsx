@@ -6,7 +6,8 @@ import {
   Label,
   EditIcon,
   Tooltip,
-  CloneIcon
+  CloneIcon,
+  toast
 } from "@incmix/ui/base";
 import {  useRealDashboardStore } from "@incmix/store";
 import { useNavigate } from "@tanstack/react-router";
@@ -30,6 +31,7 @@ export function CloneDashboardHomeModal({dashboardId}: {dashboardId: string}) {
 
       setName("");
       setIsOpen(false);
+      toast.success("Dashboard cloned successfully.");
 
       navigate({
         to: "/dashboard/$projectId",
@@ -37,7 +39,7 @@ export function CloneDashboardHomeModal({dashboardId}: {dashboardId: string}) {
       });
       await getDashboards()
     } catch (error) {
-      console.error("Failed to clone dashboard:", error);
+      toast.error("Failed to clone dashboard. Please try again.");  
     }
   };
 

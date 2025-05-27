@@ -16,7 +16,7 @@ export function CloneDashboardModal({ dashboardId }: { dashboardId: string }) {
   const handleCreate = async () => {
     try {
       const newDashboardId = await cloneDashboard(dashboardId);
-      toast.success(`Dashboard "${dashboardId}-copy" cloned successfully!`);
+      toast.success(`Dashboard ${dashboardId} cloned successfully!`);
       navigate({
         to: "/dashboard/$projectId",
         params: { projectId: newDashboardId },
