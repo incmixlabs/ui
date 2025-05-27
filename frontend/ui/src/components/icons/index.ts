@@ -8,6 +8,9 @@ export * from "./clipboard-check"
 export * from "./clipboard-status"
 export * from "./pushpin"
 export * from "./icon"
+export * from "./edit"
+export * from "./clone"
+export * from "./delete"
 export {
   AudioWaveform,
   File,

@@ -27,7 +27,7 @@ import { useEffect, useMemo, useState } from "react";
 import { DraggableComponent } from "./draggable-component";
 import { ChevronDown, ChevronUp, Filter, Minus, Plus, Search, X } from "lucide-react";
 import { TemplatesSidebar } from "./templates";
-import { useParams } from "@tanstack/react-router";
+import { useLocation, useParams } from "@tanstack/react-router";
 import { useTemplateStore } from "@incmix/store";
 
 export const sidebarComponents = [
@@ -143,9 +143,22 @@ interface DashboardSidebarProps {
 }
 
 export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
-  const { projectId } = useParams({ from: "/dashboard/project/$projectId" });
+  const { pathname } = useLocation();
+  let projectId: string | null = null;
+  try {
+    if (pathname !== "/dashboard/home") {
+      const params = useParams({ from: "/dashboard/$projectId" });
+      projectId = params.projectId;
+    }else{
+      projectId = "home";
+    }
+  } catch (error) {
+    projectId = null;
+  }
 
-  const { selectedWidgets, setSelectedWidgets, clearSelection } =
+
+  console.log("projectId", projectId);
+  const { selectedWidgets, clearSelection } =
     useSelectionStore();
   const {
     templates,

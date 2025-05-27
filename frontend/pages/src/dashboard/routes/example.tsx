@@ -1,9 +1,9 @@
 import { RootRoute } from "@common"
 import { createRoute } from "@tanstack/react-router"
-import DynamicDashboardPage from "../pages/dynamic-dashboard-page"
+import ExampleDashboardPage from "../pages/example-dashboard"
 
 export default createRoute({
   getParentRoute: () => RootRoute,
-  path: "/dashboard/$projectId",
-  component: () => <DynamicDashboardPage />,
+  path: "/dashboard/demo/example",
+  component: () => <ExampleDashboardPage />,
 })

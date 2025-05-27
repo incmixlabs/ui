@@ -8,7 +8,7 @@
     "./src/lib/**/*.ts",
     "./src/demos"
   ],
-  "include": ["src/"],
+  "include": ["src/", "../pages/src/"],
   "compilerOptions": {
     "types": ["@types/wicg-file-system-access", "vite/client"],
     "rootDir": "src",

@@ -1,14 +1,24 @@
 import { LoadingPage } from "@common"
 import { DndContext, DragOverlay } from "@dnd-kit/core"
 import { Responsive, WidthProvider } from "@incmix/react-grid-layout"
-import { useEditingStore } from "@incmix/store"
+import {
+  type Dashboard,
+  useEditingStore,
+  useRealDashboardStore,
+  useTemplateStore,
+} from "@incmix/store"
 import {
   ActiveBtn,
   AddGroupButton,
   Box,
+  CloneDashboardHomeModal,
+  CloneDashboardModal,
   CreateProjectModal,
+  DeleteDashboard,
+  EditDashboard,
   Flex,
   Heading,
+  SaveTemplateDialog,
   Switch,
   Text,
   generateDOM,
@@ -18,11 +28,12 @@ import {
   useLayoutStore,
 } from "@incmix/ui"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { useParams } from "@tanstack/react-router"
+import { useLocation, useParams } from "@tanstack/react-router"
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import { useAuth } from "../../auth"
 import "@incmix/react-grid-layout/css/styles.css"
+import { useQueryState } from "nuqs"
 import { useTranslation } from "react-i18next"
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
@@ -42,17 +53,89 @@ export const EditWidgetsControl: React.FC<{
 }
 
 const DashboardHomePage: React.FC = () => {
+  const { pathname } = useLocation()
+  const pathSegments = pathname.split("/").filter(Boolean)
+  const projectId =
+    pathname === "/dashboard/home" ? "home" : pathSegments[1] || "home"
+
+  const [isTemplate, setIsTemplate] = useQueryState("template")
+  const [project, setProject] = useState<Dashboard | undefined>()
+
+  const isDashLoading = useRealDashboardStore((state) => state.isDashLoading)
+
+  const getDashboardById = useRealDashboardStore(
+    (state) => state.getDashboardById
+  )
+
   const { authUser, isLoading } = useAuth()
   const { isEditing, setIsEditing } = useEditingStore()
+  const { getTemplateById, getActiveTemplate } = useTemplateStore()
 
-  const { defaultLayouts, handleLayoutChange, handleNestedLayoutChange } =
-    useLayoutStore()
+  const {
+    defaultLayouts,
+    handleLayoutChange,
+    handleNestedLayoutChange,
+    applyTemplates,
+  } = useLayoutStore()
 
-  // Device preview hooks
+  const [openSaveDialog, setOpenSaveDialog] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    const fetchTemplate = async () => {
+      if (isTemplate) {
+        try {
+          const template = await getTemplateById(isTemplate)
+          if (cancelled) return
+          if (!template) {
+            setIsTemplate(null)
+            return
+          }
+          applyTemplates(template.mainLayouts, template.id)
+        } catch (error) {
+          console.error("Failed to load template:", error)
+        }
+      } else {
+        try {
+          const activeTemplate = await getActiveTemplate(projectId)
+          if (cancelled) return
+          if (activeTemplate) {
+            applyTemplates(activeTemplate.mainLayouts, activeTemplate.id)
+          }
+        } catch (error) {
+          console.error("Failed to load active template:", error)
+        }
+      }
+    }
+
+    fetchTemplate()
+    return () => {
+      cancelled = true
+    }
+  }, [isTemplate, projectId])
+
+  useEffect(() => {
+    let cancelled = false
+    const getProjectName = async () => {
+      try {
+        const getProject = await getDashboardById(projectId)
+        if (cancelled) return
+        setProject(getProject)
+      } catch (error) {
+        console.error("Failed to get dashboard:", error)
+      }
+    }
+    if (projectId) {
+      getProjectName()
+    }
+    return () => {
+      cancelled = true
+    }
+  }, [projectId, getDashboardById])
+
   const { activeDevice, setActiveDevice, deviceTabs, getViewportWidth } =
     useDevicePreview()
 
-  // Width measurement
   const [actualWidth, setActualWidth] = useState<number | null>(null)
   const boxRef = useRef<HTMLDivElement>(null)
 
@@ -104,11 +187,17 @@ const DashboardHomePage: React.FC = () => {
   //     }
   // };
 
-  if (isLoading) return <LoadingPage />
+  // Show loading while auth is loading, store is loading, or dashboard is loading
+  if (isLoading || isDashLoading) {
+    return <LoadingPage />
+  }
+
   if (!authUser) return null
+  if (!projectId) return <div>Home not found</div>
 
   const isEmpty = gridComponents.length === 0
   console.log("defaultLayouts from dynamic-dashboard-page", defaultLayouts)
+  console.log("project from dynamic-dashboard-page", project)
 
   return (
     <DndContext
@@ -129,8 +218,12 @@ const DashboardHomePage: React.FC = () => {
               >
                 {"Dashboard"}
               </Heading>
-              {!isEditing && <CreateProjectModal />}
-
+              {!isEditing && (
+                <Flex gap="2">
+                  <CreateProjectModal />
+                  <CloneDashboardHomeModal dashboardId={"home"} />
+                </Flex>
+              )}
               {isEditing && (
                 <Flex align={"center"} gap="2">
                   <AddGroupButton
@@ -141,6 +234,12 @@ const DashboardHomePage: React.FC = () => {
                     items={deviceTabs}
                     defaultActiveId={activeDevice}
                     onChange={setActiveDevice}
+                  />
+                  <SaveTemplateDialog
+                    projectId={"home"}
+                    layouts={defaultLayouts}
+                    open={openSaveDialog}
+                    onOpenChange={setOpenSaveDialog}
                   />
                 </Flex>
               )}

@@ -13,6 +13,8 @@ import {
   Box,
   CloneDashboardModal,
   CreateProjectModal,
+  DeleteDashboard,
+  EditDashboard,
   Flex,
   Heading,
   SaveTemplateDialog,
@@ -35,11 +37,12 @@ import { useQueryState } from "nuqs"
 const ResponsiveGridLayout = WidthProvider(Responsive)
 
 const DynamicDashboardPage: React.FC = () => {
-  const { projectId } = useParams({ from: "/dashboard/project/$projectId" })
+  const { projectId } = useParams({ from: "/dashboard/$projectId" })
   const [isTemplate, setIsTemplate] = useQueryState("template")
   const [project, setProject] = useState<Dashboard | undefined>()
 
   const isDashLoading = useRealDashboardStore((state) => state.isDashLoading)
+
   const getDashboardById = useRealDashboardStore(
     (state) => state.getDashboardById
   )
@@ -189,6 +192,8 @@ const DynamicDashboardPage: React.FC = () => {
                 <Flex gap="2">
                   <CreateProjectModal />
                   <CloneDashboardModal dashboardId={projectId} />
+                  <EditDashboard dashboardId={projectId} />
+                  <DeleteDashboard dashboardId={projectId} />
                 </Flex>
               )}
 
