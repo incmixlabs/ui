@@ -8,7 +8,7 @@ import {
   Tooltip,
   toast
 } from "@incmix/ui/base";
-import {  useRealDashboardStore } from "@incmix/store";
+import {  useDashboardStore } from "@incmix/store";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
@@ -16,7 +16,7 @@ import { useEffect, useState } from "react";
 export function EditDashboard({dashboardId}: {dashboardId: string}) {
   const [name, setName] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const { editDashboard,getDashboardById, getDashboards } = useRealDashboardStore()
+  const { editDashboard,getDashboardById, getDashboards } = useDashboardStore()
   const navigate = useNavigate();
 
   useEffect(()=>{
@@ -26,7 +26,7 @@ export function EditDashboard({dashboardId}: {dashboardId: string}) {
     const getDashboard = async () => {
       const dashboard = await getDashboardById(dashboardId)
       if(dashboard){
-        setName(dashboard.name);
+        setName(dashboard.dashboardName);
       }
     }
     getDashboard()
@@ -49,7 +49,12 @@ export function EditDashboard({dashboardId}: {dashboardId: string}) {
       });
       await getDashboards()
     } catch (error) {
-      toast.error("Failed to edit dashboard. Please try again.");
+      toast.error("Failed to edit dashboard", {
+        description:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred while editing the dashboard.",
+      });
     }
   };
 

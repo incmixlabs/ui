@@ -4,15 +4,16 @@ import {
   Flex,
   Input,
   Label,
+  toast,
 } from "@incmix/ui/base";
-import {  useRealDashboardStore } from "@incmix/store";
+import {  useDashboardStore } from "@incmix/store";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
 export function CreateProjectModal() {
   const [name, setName] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const { addDashboard, getDashboards } = useRealDashboardStore()
+  const { addDashboard, getDashboards } = useDashboardStore()
   const navigate = useNavigate();
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -22,7 +23,7 @@ export function CreateProjectModal() {
 
     try {
       const newDashboardId = await addDashboard({
-        name: name.trim(),
+        dashboardName: name.trim(),
         createdBy: "current-user",  
         updatedBy: "current-user",
       })
@@ -31,12 +32,18 @@ export function CreateProjectModal() {
       setIsOpen(false);
 
       navigate({
-        to: "/dashboard/project/$projectId",
+        to: "/dashboard/$projectId",
         params: { projectId: newDashboardId },
       });
       await getDashboards()
     } catch (error) {
-      console.error("Failed to create project:", error);
+      // console.error("Failed to create project:", error);
+      toast.error("Failed to create project", {
+        description:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred while creating the project.",
+      });
     }
   };
 

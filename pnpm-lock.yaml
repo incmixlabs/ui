@@ -574,8 +574,8 @@ importers:
         specifier: 3.10.0
         version: 3.10.0(react-hook-form@7.54.2(react@19.1.0))
       '@incmix/react-grid-layout':
-        specifier: 1.6.7
-        version: 1.6.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 1.6.10
+        version: 1.6.10(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@incmix/store':
         specifier: 'workspace: *'
         version: link:../store
@@ -2308,8 +2308,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@incmix/react-grid-layout@1.6.7':
-    resolution: {integrity: sha512-DanVrdPqBirUbFf1zavVmJvtu3kuhgoMyu86FjciRRyGos1bWhq9f6XZa1b9ULZaBAFFpAOyhdJowCetIuqoIw==}
+  '@incmix/react-grid-layout@1.6.10':
+    resolution: {integrity: sha512-UgYNswSptLvXCNUNIElOB+wSL2LTHqSbWKS7foxpK5S09ZtgFlOlCIlQTRRyLbtplYlv7P6SQcvCH6j9ECXi0Q==}
     peerDependencies:
       react: 19.1.0
       react-dom: 19.1.0
@@ -11247,7 +11247,7 @@ snapshots:
   '@img/sharp-win32-x64@0.33.5':
     optional: true
 
-  '@incmix/react-grid-layout@1.6.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@incmix/react-grid-layout@1.6.10(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       clsx: 2.1.1
       fast-equals: 5.2.2

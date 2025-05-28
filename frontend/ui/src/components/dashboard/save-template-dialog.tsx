@@ -52,7 +52,7 @@ export function SaveTemplateDialog({
           toast.error("Template not found");
           return;
         }
-        setTemplateName(existingTemplate?.name);
+        setTemplateName(existingTemplate?.templateName || "");
         setTags(existingTemplate?.tags || []);
       } catch (error) {
         console.error("Failed to update template:", error);
@@ -78,8 +78,8 @@ export function SaveTemplateDialog({
     
 
     await addTemplate({
-      name: templateName.trim(),
-      projectId,
+      templateName: templateName.trim(),
+      dashboardLink: projectId,
       tags,
       mainLayouts: layouts,
       isActive: false,
@@ -99,8 +99,8 @@ export function SaveTemplateDialog({
         throw new Error("Template not found");
       }
       await updateTemplate(id, {
-        name: templateName.trim(),
-        projectId,
+        dashboardLink: projectId,
+        templateName: templateName.trim(),
         tags,
         mainLayouts: layouts,
       });

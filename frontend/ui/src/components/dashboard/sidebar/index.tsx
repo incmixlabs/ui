@@ -156,10 +156,9 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
     projectId = null;
   }
 
-
-  console.log("projectId", projectId);
   const { selectedWidgets, clearSelection } =
     useSelectionStore();
+    
   const {
     templates,
     initialized,
@@ -199,7 +198,7 @@ const filteredTemplates = useMemo(() => {
   return templates.filter((template) => {
     const matchesSearch =
       !query ||
-      template.name.toLowerCase().includes(query) ||
+      template.templateName.toLowerCase().includes(query) ||
       template.tags.some((tag) => tag.toLowerCase().includes(query));
 
     const matchesTag = !selectedTag || template.tags.includes(selectedTag);

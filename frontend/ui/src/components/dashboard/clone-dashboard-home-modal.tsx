@@ -9,7 +9,7 @@ import {
   CloneIcon,
   toast
 } from "@incmix/ui/base";
-import {  useRealDashboardStore } from "@incmix/store";
+import {  useDashboardStore } from "@incmix/store";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 export function CloneDashboardHomeModal({dashboardId}: {dashboardId: string}) {
   const [name, setName] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const { cloneHomeDashboard, getDashboards } = useRealDashboardStore()
+  const { cloneHomeDashboard, getDashboards } = useDashboardStore()
   const navigate = useNavigate();
 
 
@@ -39,7 +39,12 @@ export function CloneDashboardHomeModal({dashboardId}: {dashboardId: string}) {
       });
       await getDashboards()
     } catch (error) {
-      toast.error("Failed to clone dashboard. Please try again.");  
+      toast.error("Failed to clone dashboard", {
+        description:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred while cloning the dashboard.",
+      });
     }
   };
 

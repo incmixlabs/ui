@@ -3,8 +3,8 @@ import { DndContext, DragOverlay } from "@dnd-kit/core"
 import { Responsive, WidthProvider } from "@incmix/react-grid-layout"
 import {
   type Dashboard,
+  useDashboardStore,
   useEditingStore,
-  useRealDashboardStore,
   useTemplateStore,
 } from "@incmix/store"
 import {
@@ -41,11 +41,9 @@ const DynamicDashboardPage: React.FC = () => {
   const [isTemplate, setIsTemplate] = useQueryState("template")
   const [project, setProject] = useState<Dashboard | undefined>()
 
-  const isDashLoading = useRealDashboardStore((state) => state.isDashLoading)
+  const isDashLoading = useDashboardStore((state) => state.isDashLoading)
 
-  const getDashboardById = useRealDashboardStore(
-    (state) => state.getDashboardById
-  )
+  const getDashboardById = useDashboardStore((state) => state.getDashboardById)
 
   const { authUser, isLoading } = useAuth()
   const { isEditing, setIsEditing } = useEditingStore()
@@ -186,7 +184,7 @@ const DynamicDashboardPage: React.FC = () => {
                 size="6"
                 className={`${isEditing ? "" : "px-4"} capitalize`}
               >
-                {project?.name}
+                {project?.dashboardName}
               </Heading>
               {!isEditing && (
                 <Flex gap="2">
