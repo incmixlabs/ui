@@ -3,37 +3,21 @@ import { DndContext, DragOverlay } from "@dnd-kit/core"
 import { Responsive, WidthProvider } from "@incmix/react-grid-layout"
 import {
   type Dashboard,
+  useDashboardStore,
   useEditingStore,
-  useRealDashboardStore,
   useTemplateStore,
 } from "@incmix/store"
 import {
-  ActiveBtn,
-  AddGroupButton,
   Box,
-  CloneDashboardModal,
-  CreateProjectModal,
-  DeleteDashboard,
-  EditDashboard,
   ExampleGenerateDOM,
-  Flex,
-  Heading,
-  SaveTemplateDialog,
-  generateDOM,
   initialLayouts,
-  useDevicePreview,
-  useDragAndDrop,
   useGridComponents,
   useLayoutStore,
 } from "@incmix/ui"
-import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { useParams } from "@tanstack/react-router"
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import { useAuth } from "../../auth"
-import { EditWidgetsControl } from "./home"
 import "@incmix/react-grid-layout/css/styles.css"
-import { useQueryState } from "nuqs"
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
 

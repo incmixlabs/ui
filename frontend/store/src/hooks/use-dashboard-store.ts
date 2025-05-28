@@ -1,9 +1,11 @@
+import { generateNameBasedId, generateUniqueId } from "sql/helper"
 import { create } from "zustand"
 import { database } from "../sql/main"
 
 export interface Dashboard {
   id: string
-  name: string
+  dashboardName: string
+  dashboardId?: string
   createdAt: string
   updatedAt: string
   createdBy?: string
@@ -19,13 +21,19 @@ interface DashboardState {
   // Actions
   initialize: () => Promise<void>
   addDashboard: (
-    dashboard: Pick<Dashboard, "name" | "createdBy" | "updatedBy">
+    dashboard: Pick<Dashboard, "dashboardName" | "createdBy" | "updatedBy">
   ) => Promise<string>
-  deleteDashboard: (id: string) => Promise<void>
-  cloneDashboard: (id: string) => Promise<string>
-  cloneHomeDashboard: (id: string, dashboardName: string) => Promise<string>
-  editDashboard: (id: string, name: string) => Promise<string>
-  getDashboardById: (id: string) => Promise<Dashboard | null>
+  deleteDashboard: (currentDashboardId: string) => Promise<void>
+  cloneDashboard: (currentDashboardId: string) => Promise<string>
+  cloneHomeDashboard: (
+    currentDashboardId: string,
+    dashboardName: string
+  ) => Promise<string>
+  editDashboard: (
+    currentDashboardId: string,
+    dashboardName: string
+  ) => Promise<string>
+  getDashboardById: (currentDashboardId: string) => Promise<Dashboard | null>
   getDashboards: () => Promise<Dashboard[]>
 }
 
@@ -33,7 +41,8 @@ interface DashboardState {
 const validateAndNormalizeDashboard = (dashboard: any): Dashboard => {
   return {
     id: dashboard.id,
-    name: dashboard.name,
+    dashboardName: dashboard.dashboardName,
+    dashboardId: dashboard.dashboardId,
     createdAt: dashboard.createdAt,
     updatedAt: dashboard.updatedAt,
     createdBy: dashboard.createdBy,
@@ -41,7 +50,7 @@ const validateAndNormalizeDashboard = (dashboard: any): Dashboard => {
   }
 }
 
-export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
+export const useDashboardStore = create<DashboardState>()((set, get) => ({
   dashboards: [],
   isDashLoading: false,
   error: null,
@@ -78,35 +87,57 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
         isDashLoading: false,
         error: null,
       })
-    } catch (error) {
-      console.error("Failed to initialize RxDB dashboards:", error)
+    } catch (_error) {
       set({
         error: "Failed to initialize dashboards database",
         isDashLoading: false,
-        initialized: false, // Keep as false if initialization failed
+        initialized: false,
       })
     }
   },
-  addDashboard: async (dashboard) => {
+  addDashboard: async (
+    dashboard: Pick<Dashboard, "dashboardName" | "createdBy" | "updatedBy">
+  ) => {
     set({ isDashLoading: true, error: null })
 
     try {
       const dashboardsCollection = database.dashboards
+      const collectionId = generateUniqueId("dashboard")
 
-      const baseId = dashboard.name.toLowerCase().replace(/\s+/g, "-")
-      let newId = baseId
-      let counter = 1
-      while (await dashboardsCollection.findOne(newId).exec()) {
-        newId = `${baseId}-${counter}`
-        counter++
-      }
+      const newDashboardId = await generateNameBasedId(
+        dashboard.dashboardName,
+        async (id) => {
+          const existing = await dashboardsCollection
+            .findOne({
+              selector: { dashboardId: id },
+            })
+            .exec()
+          return !!existing
+        }
+      )
+
+      // const baseId = dashboard.dashboardName.toLowerCase().replace(/\s+/g, "-")
+      // let newDashboardId = baseId
+      // let counter = 1
+
+      // while (
+      //   await dashboardsCollection
+      //     .findOne({
+      //       selector: { dashboardId: newDashboardId },
+      //     })
+      //     .exec()
+      // ) {
+      //   newDashboardId = `${baseId}-${counter}`
+      //   counter++
+      // }
 
       const now = new Date().toISOString()
 
       // Create dashboard with empty mainLayouts by default
       const newDashboard = {
-        id: newId,
-        name: dashboard.name,
+        id: collectionId,
+        dashboardName: dashboard.dashboardName,
+        dashboardId: newDashboardId,
         createdAt: now,
         updatedAt: now,
         createdBy: dashboard.createdBy,
@@ -120,7 +151,7 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
         isDashLoading: false,
       }))
 
-      return newId
+      return newDashboardId
     } catch (error) {
       console.error("Failed to add dashboard:", error)
       set({ error: "Failed to add dashboard", isDashLoading: false })
@@ -128,46 +159,45 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
     }
   },
 
-  deleteDashboard: async (id) => {
+  deleteDashboard: async (currentDashboardId) => {
     set({ isDashLoading: true, error: null })
 
     try {
       const dashboardsCollection = database.dashboards
       const templatesCollection = database.dashboardTemplates
 
-      const dashboard = await dashboardsCollection.findOne(id).exec()
+      const originalDashboard = await dashboardsCollection
+        .findOne({
+          selector: { dashboardId: currentDashboardId },
+        })
+        .exec()
 
       const templates = await templatesCollection
         .find({
           selector: {
-            projectId: id,
+            dashboardLink: currentDashboardId,
           },
         })
         .exec()
 
-      if (dashboard) {
+      if (originalDashboard) {
         if (templates && templates.length > 0) {
-          console.log(
-            `Deleting ${templates.length} templates for dashboard ${id}`
-          )
-
           for (const template of templates) {
             await template.remove()
-            console.log(`Deleted template: ${template.get("id")}`)
           }
         }
 
-        await dashboard.remove()
-        // console.log(`Deleted dashboard: ${id}`)
+        await originalDashboard.remove()
 
         set((state) => ({
-          dashboards: state.dashboards.filter((d) => d.id !== id),
+          dashboards: state.dashboards.filter(
+            (d) => d.dashboardId !== currentDashboardId
+          ),
           isDashLoading: false,
         }))
 
-        // console.log(`Successfully deleted dashboard ${id} and ${templates.length} templates`)
+        // console.log(`Successfully deleted dashboard ${currentDashboardId} and ${templates.length} templates`)
       } else {
-        console.log(`Dashboard ${id} not found`)
         set({ isDashLoading: false })
         throw new Error("Dashboard not found")
       }
@@ -182,15 +212,18 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
     }
   },
 
-  cloneDashboard: async (id) => {
+  cloneDashboard: async (currentDashboardId) => {
     set({ isDashLoading: true, error: null })
 
     try {
       const dashboardsCollection = database.dashboards
       const templatesCollection = database.dashboardTemplates
 
-      const originalDashboard = await dashboardsCollection.findOne(id).exec()
-      // console.log(originalDashboard)
+      const originalDashboard = await dashboardsCollection
+        .findOne({
+          selector: { dashboardId: currentDashboardId },
+        })
+        .exec()
 
       if (!originalDashboard) {
         set({ isDashLoading: false })
@@ -200,7 +233,7 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
       const templates = await templatesCollection
         .find({
           selector: {
-            projectId: id,
+            dashboardLink: currentDashboardId,
           },
         })
         .exec()
@@ -217,19 +250,36 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
       }
 
       const originalData = originalDashboard.toJSON()
+      const newCollectionId = generateUniqueId("dashboard")
 
-      let newDashboardId = `${id}-copy`
-      let counter = 1
+      // const newDashboardId = `${currentDashboardId}-copy`
+      // let counter = 1
 
-      while (await dashboardsCollection.findOne(newDashboardId).exec()) {
-        newDashboardId = `${id}-copy-${counter}`
-        counter++
-      }
+      // while (await dashboardsCollection.findOne({selector: {dashboardId: newDashboardId}}).exec()) {
+      //   newDashboardId = `${currentDashboardId}-copy-${counter}`
+      //   counter++
+      // }
+
+      // Generate a unique ID based on the dashboard name
+      const newDashboardId = await generateNameBasedId(
+        `${currentDashboardId}-copy`,
+        async (id) => {
+          // Check if ID already exists in the database
+          const existing = await dashboardsCollection
+            .findOne({
+              selector: { dashboardId: id },
+            })
+            .exec()
+          return !!existing
+        }
+      )
+
       const now = new Date().toISOString()
 
       const clonedDashboard = {
-        id: newDashboardId,
-        name: `${originalData.name} Copy`,
+        id: newCollectionId,
+        dashboardName: `${originalData.dashboardName} Copy`,
+        dashboardId: newDashboardId,
         createdAt: now,
         updatedAt: now,
         createdBy: originalData.createdBy,
@@ -237,25 +287,24 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
       }
       await dashboardsCollection.insert(clonedDashboard)
 
-      console.log("templates", templates)
-
       for (let i = 0; i < templates.length; i++) {
         const template = templates[i]
         const templateData = template.toJSON()
-
-        const newTemplateId = `template-${Date.now()}-${i}`
+        const newTemplateCollectionId = generateUniqueId("template")
+        const templateTime = Date.now()
 
         const clonedTemplate = {
           ...templateData,
-          projectId: newDashboardId,
-          id: newTemplateId,
+          dashboardLink: newDashboardId,
+          id: newTemplateCollectionId,
+          updatedAt: templateTime,
         }
 
-        console.log(clonedTemplate)
+        // console.log(clonedTemplate)
 
         await templatesCollection.insert(clonedTemplate)
         console.log(
-          `Cloned template ${i + 1}/${templates.length}: ${templateData.id} -> ${newTemplateId}`
+          `Cloned template ${i + 1}/${templates.length}: ${templateData.id} -> ${newTemplateCollectionId}`
         )
       }
 
@@ -275,7 +324,7 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
       throw error
     }
   },
-  cloneHomeDashboard: async (id, dashName) => {
+  cloneHomeDashboard: async (currentDashboardId, dashName) => {
     set({ isDashLoading: true, error: null })
 
     try {
@@ -284,7 +333,7 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
       const templates = await templatesCollection
         .find({
           selector: {
-            projectId: id,
+            dashboardLink: currentDashboardId,
           },
         })
         .exec()
@@ -300,18 +349,35 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
         )
       }
 
-      const baseId = dashName.toLowerCase().replace(/\s+/g, "-")
-      let newId = baseId
-      let counter = 1
-      while (await dashboardsCollection.findOne(newId).exec()) {
-        newId = `${baseId}-${counter}`
-        counter++
-      }
+      // const baseId = dashName.toLowerCase().replace(/\s+/g, "-")
+      // let newId = baseId
+      // let counter = 1
+      // while (
+      //   await dashboardsCollection
+      //     .findOne({
+      //       selector: { dashboardId: newId },
+      //     })
+      //     .exec()
+      // ) {
+      //   newId = `${baseId}-${counter}`
+      //   counter++
+      // }
+
+      const newDashboardId = await generateNameBasedId(dashName, async (id) => {
+        const existing = await dashboardsCollection
+          .findOne({
+            selector: { dashboardId: id },
+          })
+          .exec()
+        return !!existing
+      })
+
       const now = new Date().toISOString()
 
       const clonedDashboard = {
-        id: newId,
-        name: `${dashName}`,
+        id: generateUniqueId("dashboard"),
+        dashboardId: newDashboardId,
+        dashboardName: `${dashName}`,
         createdAt: now,
         updatedAt: now,
         createdBy: "",
@@ -325,13 +391,14 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
       for (let i = 0; i < templates.length; i++) {
         const template = templates[i]
         const templateData = template.toJSON()
-
-        const newTemplateId = `template-${Date.now()}-${i}`
+        const templateTime = Date.now()
+        const newTemplateId = generateUniqueId("template")
 
         const clonedTemplate = {
           ...templateData,
-          projectId: newId,
+          dashboardLink: newDashboardId,
           id: newTemplateId,
+          updatedAt: templateTime,
         }
 
         await templatesCollection.insert(clonedTemplate)
@@ -345,7 +412,7 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
         isDashLoading: false,
       }))
 
-      return newId
+      return newDashboardId
     } catch (error) {
       console.error("Failed to clone dashboard:", error)
       set({
@@ -357,74 +424,92 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
     }
   },
 
-  editDashboard: async (id, name) => {
+  editDashboard: async (currentDashboardId, newName) => {
     set({ isDashLoading: true, error: null })
 
     try {
       const dashboardsCollection = database.dashboards
       const templatesCollection = database.dashboardTemplates
 
-      const originalDashboard = await dashboardsCollection.findOne(id).exec()
+      // Find dashboard by dashboardId field (not primary key id)
+      const originalDashboard = await dashboardsCollection
+        .findOne({
+          selector: {
+            dashboardId: currentDashboardId,
+          },
+        })
+        .exec()
+
       if (!originalDashboard) {
         set({ isDashLoading: false })
         throw new Error("Dashboard not found")
       }
 
+      // Find templates by projectId
       const templates = await templatesCollection
         .find({
           selector: {
-            projectId: id,
+            dashboardLink: currentDashboardId,
           },
         })
         .exec()
 
-      const baseId = name.toLowerCase().replace(/\s+/g, "-")
-      let newDashboardId = baseId
-      let counter = 1
-
-      while (
-        newDashboardId !== id &&
-        (await dashboardsCollection.findOne(newDashboardId).exec())
-      ) {
-        newDashboardId = `${baseId}-${counter}`
-        counter++
-      }
+      const newDashboardId = await generateNameBasedId(newName, async (id) => {
+        const existing = await dashboardsCollection
+          .findOne({
+            selector: {
+              dashboardId: id,
+              id: { $ne: originalDashboard.get("id") },
+            },
+          })
+          .exec()
+        return !!existing
+      })
 
       const now = new Date().toISOString()
 
       await originalDashboard.update({
         $set: {
-          id: newDashboardId,
-          name: name.trim(),
+          dashboardId: newDashboardId,
+          dashboardName: newName.trim(),
           updatedAt: now,
         },
       })
 
-      console.log(`Updated dashboard: ${id} -> ${newDashboardId}`)
-
       if (templates && templates.length > 0) {
         for (let i = 0; i < templates.length; i++) {
           const template = templates[i]
+          const templateTime = Date.now()
 
           await template.update({
             $set: {
-              projectId: newDashboardId,
-              updatedAt: now,
+              dashboardLink: newDashboardId,
+              updatedAt: templateTime,
             },
           })
+
+          console.log(
+            `Updated template ${i + 1}/${templates.length}: templateId -> ${newDashboardId}`
+          )
         }
       }
 
+      // Update store state
       set((state) => ({
         dashboards: state.dashboards.map((d) =>
-          d.id === id
-            ? { ...d, id: newDashboardId, name: name.trim(), updatedAt: now }
+          d.dashboardId === currentDashboardId
+            ? {
+                ...d,
+                dashboardId: newDashboardId,
+                dashboardName: newName.trim(),
+                updatedAt: now,
+              }
             : d
         ),
-        error: null,
         isDashLoading: false,
       }))
 
+      console.log(`Successfully updated dashboard to: ${newDashboardId}`)
       return newDashboardId
     } catch (error) {
       console.error("Failed to edit dashboard:", error)
@@ -437,10 +522,14 @@ export const useRealDashboardStore = create<DashboardState>()((set, get) => ({
     }
   },
 
-  getDashboardById: async (id) => {
+  getDashboardById: async (currentDashboardId) => {
     try {
       const dashboardsCollection = database.dashboards
-      const existingDashboard = await dashboardsCollection.findOne(id).exec()
+      const existingDashboard = await dashboardsCollection
+        .findOne({
+          selector: { dashboardId: currentDashboardId },
+        })
+        .exec()
 
       if (!existingDashboard) return null
 

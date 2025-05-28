@@ -18,9 +18,9 @@ import React, { useEffect, useState } from "react"
 
 import { useAuth, useCurrentUser } from "@auth"
 import {
+  useDashboardStore,
   useEditingStore,
   useOrganizationStore,
-  useRealDashboardStore,
 } from "@incmix/store"
 import { DashboardSidebar, ScrollArea } from "@incmix/ui"
 import { USERS_API_URL } from "@incmix/ui/constants"
@@ -55,9 +55,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { authUser: user } = useAuth()
   const { isEditing } = useEditingStore()
 
-  const dashboards = useRealDashboardStore((state) => state.dashboards)
-  const initialized = useRealDashboardStore((state) => state.initialized)
-  const initialize = useRealDashboardStore((state) => state.initialize)
+  const dashboards = useDashboardStore((state) => state.dashboards)
+  const initialized = useDashboardStore((state) => state.initialized)
+  const initialize = useDashboardStore((state) => state.initialize)
 
   useEffect(() => {
     if (!initialized) {
@@ -98,9 +98,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
       ...(dashboards.length > 0
         ? dashboards.map((dashboard) => ({
-            title: dashboard.name || `Project ${dashboard.id}`,
-            url: `/dashboard/${dashboard.id}`,
-            isSelected: pathname === `/dashboard/${dashboard.id}`,
+            title:
+              dashboard.dashboardName || `Project ${dashboard.dashboardId}`,
+            url: `/dashboard/${dashboard.dashboardId}`,
+            isSelected: pathname === `/dashboard/${dashboard.dashboardId}`,
           }))
         : []),
     ]

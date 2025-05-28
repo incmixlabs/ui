@@ -169,10 +169,10 @@ export const dashboardTemplateSchemaLiteral = {
       type: "boolean",
       default: false,
     },
-    name: {
+    templateName: {
       type: "string",
     },
-    projectId: {
+    dashboardLink: {
       type: "string",
     },
     tags: {
@@ -214,14 +214,7 @@ export const dashboardTemplateSchemaLiteral = {
       type: "number",
     },
   },
-  required: [
-    "id",
-    "name",
-    "projectId",
-    "mainLayouts",
-    "createdAt",
-    "updatedAt",
-  ],
+  required: ["id", "templateName", "dashboardLink", "tags", "mainLayouts"],
 } as const
 
 export const dashboardSchemaLiteral = {
@@ -235,7 +228,11 @@ export const dashboardSchemaLiteral = {
       type: "string",
       maxLength: 100,
     },
-    name: {
+    dashboardId: {
+      type: "string",
+      maxLength: 100,
+    },
+    dashboardName: {
       type: "string",
     },
     createdAt: {
@@ -251,7 +248,7 @@ export const dashboardSchemaLiteral = {
       type: "string",
     },
   },
-  required: ["id", "name"],
+  required: ["dashboardId", "dashboardName"],
   additionalProperties: false,
 } as const
 

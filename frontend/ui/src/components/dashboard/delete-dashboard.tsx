@@ -4,13 +4,13 @@ import {
   Tooltip,
   DeleteIcon
 } from "@incmix/ui/base";
-import { useRealDashboardStore } from "@incmix/store";
+import { useDashboardStore } from "@incmix/store";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Copy } from "lucide-react";
 
 export function DeleteDashboard({ dashboardId }: { dashboardId: string }) {
-  const { deleteDashboard } = useRealDashboardStore();
+  const { deleteDashboard } = useDashboardStore();
   const navigate = useNavigate();
 
   const handleDelete = async () => {

@@ -1,4 +1,5 @@
 import type { Layout } from "@incmix/react-grid-layout"
+import { generateUniqueId } from "sql/helper"
 import { create } from "zustand"
 import { database } from "../sql/main"
 
@@ -16,8 +17,8 @@ export type CustomLayouts = {
 
 export interface DashboardTemplate {
   id: string
-  name: string
-  projectId: string
+  templateName: string
+  dashboardLink: string
   tags: string[]
   mainLayouts: CustomLayouts // Keeping mainLayouts to avoid confusion with nested layouts
   createdAt: number
@@ -30,19 +31,19 @@ interface TemplateState {
   isLoading: boolean
   error: string | null
   initialized: boolean
-  initialize: (projectId: string) => Promise<void>
+  initialize: (dashboardId: string) => Promise<void>
   addTemplate: (
     template: Omit<DashboardTemplate, "id" | "createdAt" | "updatedAt">
   ) => Promise<string>
   updateTemplate: (
-    id: string,
+    templateId: string,
     template: Partial<DashboardTemplate>
   ) => Promise<void>
-  deleteTemplate: (id: string) => Promise<void>
-  templateActive: (id: string) => Promise<DashboardTemplate | null>
-  getTemplatesByProjectId: (projectId: string) => DashboardTemplate[]
+  deleteTemplate: (templateId: string) => Promise<void>
+  templateActive: (templateId: string) => Promise<DashboardTemplate | null>
+  getTemplatesByTemplateId: (templateId: string) => DashboardTemplate[]
   getTemplatesByTag: (tag: string) => DashboardTemplate[]
-  getTemplateById: (id: string) => Promise<DashboardTemplate | null>
+  getTemplateById: (templateId: string) => Promise<DashboardTemplate | null>
   getActiveTemplate: (projectId: string) => Promise<DashboardTemplate | null>
   validateAndNormalizeTemplate: (template: any) => any
 }
@@ -105,7 +106,7 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
   initialized: false,
   validateAndNormalizeTemplate,
 
-  initialize: async (projectId: string) => {
+  initialize: async (dashboardId: string) => {
     if (get().initialized) return
 
     set({ isLoading: true, error: null })
@@ -116,7 +117,7 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
       const templates = await templatesCollection
         .find({
           selector: {
-            projectId: projectId,
+            dashboardLink: dashboardId,
           },
         })
         .exec()
@@ -143,16 +144,17 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
 
     try {
       const templatesCollection = database.dashboardTemplates
-      const id = `template-${Date.now()}`
+      const id = generateUniqueId("template")
       const now = Date.now()
 
-      // Normalize the template before saving
       const normalizedTemplate = validateAndNormalizeTemplate({
         ...template,
         id,
         createdAt: now,
         updatedAt: now,
       })
+
+      console.log("normalizedTemplate", normalizedTemplate)
 
       await templatesCollection.insert(normalizedTemplate)
 
@@ -169,12 +171,14 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
     }
   },
 
-  updateTemplate: async (id, template) => {
+  updateTemplate: async (templateId, template) => {
     set({ isLoading: true, error: null })
 
     try {
       const templatesCollection = database.dashboardTemplates
-      const existingTemplate = await templatesCollection.findOne(id).exec()
+      const existingTemplate = await templatesCollection
+        .findOne({ selector: { id: templateId } })
+        .exec()
 
       if (!existingTemplate) {
         throw new Error("Template not found")
@@ -195,7 +199,7 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
 
       set((state) => ({
         templates: state.templates.map((t) =>
-          t.id === id ? { ...t, ...normalizedUpdate } : t
+          t.id === templateId ? { ...t, ...normalizedUpdate } : t
         ),
         isLoading: false,
       }))
@@ -206,17 +210,19 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
     }
   },
 
-  deleteTemplate: async (id) => {
+  deleteTemplate: async (templateId) => {
     set({ isLoading: true, error: null })
 
     try {
       const templatesCollection = database.dashboardTemplates
-      const template = await templatesCollection.findOne(id).exec()
+      const template = await templatesCollection
+        .findOne({ selector: { id: templateId } })
+        .exec()
 
       if (template) {
         await template.remove()
         set((state) => ({
-          templates: state.templates.filter((t) => t.id !== id),
+          templates: state.templates.filter((t) => t.id !== templateId),
           isLoading: false,
         }))
       } else {
@@ -229,13 +235,17 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
     }
   },
 
-  templateActive: async (id) => {
+  templateActive: async (templateId) => {
     set({ isLoading: true, error: null })
 
     try {
+      console.log("templateId", templateId)
+
       const templatesCollection = database.dashboardTemplates
 
-      const templateToActivate = await templatesCollection.findOne(id).exec()
+      const templateToActivate = await templatesCollection
+        .findOne({ selector: { id: templateId } })
+        .exec()
 
       if (!templateToActivate) {
         throw new Error("Template not found")
@@ -244,14 +254,14 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
       const activeTemplates = await templatesCollection
         .find({
           selector: {
-            projectId: templateToActivate.get("projectId"),
+            id: templateToActivate.id,
             isActive: true,
           },
         })
         .exec()
 
       for (const activeTemplate of activeTemplates) {
-        if (activeTemplate.id !== id) {
+        if (activeTemplate.id !== templateId) {
           await activeTemplate.update({
             $set: { isActive: false },
           })
@@ -264,9 +274,9 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
 
       set((state) => ({
         templates: state.templates.map((t) =>
-          t.id === id
+          t.id === templateId
             ? { ...t, isActive: true }
-            : t.projectId === templateToActivate.get("projectId")
+            : t.id === templateToActivate.id
               ? { ...t, isActive: false }
               : t
         ),
@@ -286,15 +296,14 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
     }
   },
 
-  getActiveTemplate: async (projectId: string) => {
+  getActiveTemplate: async (templateId: string) => {
     try {
       const templatesCollection = database.dashboardTemplates
 
-      // Find a template that matches both projectId and isActive=true
       const activeTemplate = await templatesCollection
         .findOne({
           selector: {
-            projectId: projectId,
+            id: templateId,
             isActive: true,
           },
         })
@@ -302,7 +311,6 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
 
       if (!activeTemplate) return null
 
-      // Normalize the template to ensure correct structure
       const templateData = activeTemplate.toJSON()
       return validateAndNormalizeTemplate(templateData)
     } catch (error) {
@@ -311,8 +319,8 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
     }
   },
 
-  getTemplatesByProjectId: (projectId) => {
-    return get().templates.filter((t) => t.projectId === projectId)
+  getTemplatesByTemplateId: (templateId) => {
+    return get().templates.filter((t) => t.id === templateId)
   },
 
   getTemplatesByTag: (tag) => {

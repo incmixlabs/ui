@@ -5,12 +5,12 @@ import {
   toast,
   Tooltip,
 } from "@incmix/ui/base";
-import { useRealDashboardStore } from "@incmix/store";
+import { useDashboardStore } from "@incmix/store";
 import { useNavigate } from "@tanstack/react-router";
 
 
 export function CloneDashboardModal({ dashboardId }: { dashboardId: string }) {
-  const { cloneDashboard, getDashboards } = useRealDashboardStore();
+  const { cloneDashboard, getDashboards } = useDashboardStore();
   const navigate = useNavigate();
 
   const handleCreate = async () => {
