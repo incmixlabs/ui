@@ -147,7 +147,6 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
       const id = generateUniqueId("template")
       const now = Date.now()
 
-      // Normalize the template before saving
       const normalizedTemplate = validateAndNormalizeTemplate({
         ...template,
         id,

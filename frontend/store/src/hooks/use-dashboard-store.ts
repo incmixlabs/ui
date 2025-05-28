@@ -104,29 +104,32 @@ export const useDashboardStore = create<DashboardState>()((set, get) => ({
       const dashboardsCollection = database.dashboards
       const collectionId = generateUniqueId("dashboard")
 
-      // const newDashboardId = await generateNameBasedId(dashboard.dashboardName, async (id) => {
-      //   const existing = await dashboardsCollection
+      const newDashboardId = await generateNameBasedId(
+        dashboard.dashboardName,
+        async (id) => {
+          const existing = await dashboardsCollection
+            .findOne({
+              selector: { dashboardId: id },
+            })
+            .exec()
+          return !!existing
+        }
+      )
+
+      // const baseId = dashboard.dashboardName.toLowerCase().replace(/\s+/g, "-")
+      // let newDashboardId = baseId
+      // let counter = 1
+
+      // while (
+      //   await dashboardsCollection
       //     .findOne({
-      //       selector: { dashboardId: id },
+      //       selector: { dashboardId: newDashboardId },
       //     })
       //     .exec()
-      //   return !!existing
-      // })
-
-      const baseId = dashboard.dashboardName.toLowerCase().replace(/\s+/g, "-")
-      let newDashboardId = baseId
-      let counter = 1
-
-      while (
-        await dashboardsCollection
-          .findOne({
-            selector: { dashboardId: newDashboardId },
-          })
-          .exec()
-      ) {
-        newDashboardId = `${baseId}-${counter}`
-        counter++
-      }
+      // ) {
+      //   newDashboardId = `${baseId}-${counter}`
+      //   counter++
+      // }
 
       const now = new Date().toISOString()
 
@@ -456,7 +459,7 @@ export const useDashboardStore = create<DashboardState>()((set, get) => ({
           .findOne({
             selector: {
               dashboardId: id,
-              id: { $ne: originalDashboard.get("id") }, 
+              id: { $ne: originalDashboard.get("id") },
             },
           })
           .exec()
@@ -473,8 +476,6 @@ export const useDashboardStore = create<DashboardState>()((set, get) => ({
         },
       })
 
-
-
       if (templates && templates.length > 0) {
         for (let i = 0; i < templates.length; i++) {
           const template = templates[i]
@@ -482,7 +483,7 @@ export const useDashboardStore = create<DashboardState>()((set, get) => ({
 
           await template.update({
             $set: {
-              dashboardLink: newDashboardId, 
+              dashboardLink: newDashboardId,
               updatedAt: templateTime,
             },
           })

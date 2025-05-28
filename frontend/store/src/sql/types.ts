@@ -214,13 +214,7 @@ export const dashboardTemplateSchemaLiteral = {
       type: "number",
     },
   },
-  required: [
-    "id",
-    "templateName",
-    "dashboardLink",
-    "tags",
-    "mainLayouts",
-  ],
+  required: ["id", "templateName", "dashboardLink", "tags", "mainLayouts"],
 } as const
 
 export const dashboardSchemaLiteral = {
