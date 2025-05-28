@@ -156,6 +156,7 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           const isEditableBooleanCell = isEditableCell && columnDef?.type === "Boolean";
           const isEditableTagCell = isEditableCell && columnDef?.type === "Tag";
           const isEditableStringCell = isEditableCell && columnDef?.type === "String";
+          const isEditableDropdownCell = isEditableCell && columnDef?.type === "Dropdown";
 
           // Get the cell value
           const cellValue = cell.getValue();
@@ -216,6 +217,51 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
                   onCancelEdit={cancelEditing}
                   className=""
                 />
+              ) : isEditableDropdownCell ? (
+                // Custom handling for dropdown cells
+                <div
+                  className={`relative w-full h-full ${isSelected?.(row.id, cell.column.id) ? 'ring-2 ring-blue-500' : ''}`}
+                  onClick={() => selectCell?.(row.id, cell.column.id)}
+                  onDoubleClick={() => startEditing?.(row.id, cell.column.id)}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`Edit ${columnDef?.headingName || ''} value`}
+                  style={{ position: 'static' }} // Make sure position is static to avoid conflicts
+                >
+                  <div className="dropdown-container" style={{ position: 'relative' }}>
+                    {isEditing?.(row.id, cell.column.id) ? (
+                      // If editing, render the custom inline editor from column definition
+                      columnDef?.inlineCellEditor ? (
+                        columnDef.inlineCellEditor({
+                          value: cellValue as string,
+                          onSave: (newValue: string) => saveEdit(row.original, cell.column.id, newValue),
+                          onCancel: cancelEditing,
+                          columnDef: columnDef,
+                        })
+                      ) : (
+                        // Fallback if no custom editor is provided
+                        <EditableCell
+                          value={cellValue as string}
+                          rowData={row.original}
+                          columnId={cell.column.id}
+                          onSave={saveEdit}
+                          isEditing={true}
+                          isSelected={true}
+                          onSelect={() => {}}
+                          onStartEdit={() => {}}
+                          onCancelEdit={cancelEditing}
+                          className=""
+                        />
+                      )
+                    ) : (
+                      // When not editing, render the cell content normally
+                      flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )
+                    )}
+                  </div>
+                </div>
               ) : isEditableStringCell ? (
                 <EditableCell
                   value={cellValue as string}

@@ -1,11 +1,18 @@
 "use client"
 
 import React, { useState, useEffect, useCallback, useMemo } from "react"
-import { registerCellRenderer, cellRendererRegistry } from "../cell-renderers"
+import { 
+  registerCellRenderer, 
+  cellRendererRegistry, 
+  DropdownOption, 
+  getContrastingTextColor, 
+  adjustColor 
+} from "../cell-renderers"
 import { DataTable } from "../components/DataTable"
 import { EyeIcon, EditIcon } from "lucide-react"
 import { RowAction } from "../types"
 import { ColumnConfigDialog, ColumnConfig } from "../components/ColumnConfigDialog"
+import DropdownCellEditor from "../components/DropdownCellEditor"
 
 // Custom rating cell renderer
 const RatingCell: React.FC<{ value: number }> = ({ value }) => {
@@ -108,29 +115,65 @@ const SAMPLE_TASKS: Task[] = [
   }
 ]
 
-// Status Cell Renderer with appropriate colors
-const TaskStatusCell: React.FC<{ value: string }> = ({ value }) => {
-  // Define status colors
-  const statusColors = {
-    todo: "bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-950/50 dark:text-blue-400 dark:ring-blue-500/30",
-    doing: "bg-yellow-50 text-yellow-700 ring-yellow-600/20 dark:bg-yellow-950/50 dark:text-yellow-400 dark:ring-yellow-500/30",
-    done: "bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-950/50 dark:text-green-400 dark:ring-green-500/30"
-  };
+// Define task status dropdown options with colors
+const STATUS_OPTIONS: DropdownOption[] = [
+  { value: "todo", label: "To Do", color: "#93c5fd" },  // Light blue
+  { value: "doing", label: "Doing", color: "#fcd34d" }, // Light yellow
+  { value: "done", label: "Done", color: "#86efac" }    // Light green
+];
 
-  const colorClass = statusColors[value as keyof typeof statusColors] || 
-    "bg-gray-50 text-gray-700 ring-gray-600/20 dark:bg-gray-800 dark:text-gray-400 dark:ring-gray-500/30";
+// Create a map of status colors for the Status cell renderer (format it requires)
+const STATUS_COLOR_MAP = {
+  todo: { color: "bg-blue-100 text-blue-700 ring-blue-600/20" },
+  doing: { color: "bg-yellow-100 text-yellow-700 ring-yellow-600/20" },
+  done: { color: "bg-green-100 text-green-700 ring-green-600/20" }
+};
 
+// Register a custom cell renderer for our dropdown status
+if (!cellRendererRegistry["ColoredStatus"]) {
+  registerCellRenderer("ColoredStatus", (value, options) => {
+    // Find the selected option
+    const option = options?.find((opt: DropdownOption) => opt.value === value) || { 
+      value, 
+      label: value, 
+      color: "#e5e7eb" 
+    };
+    
+    // Return a styled span that looks like our dropdown option
+    return (
+      <span
+        className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset capitalize"
+        style={{
+          backgroundColor: option.color,
+          color: option.color ? getContrastingTextColor(option.color) : "#000000",
+          borderColor: option.color ? adjustColor(option.color, -20) : "#d1d5db"
+        }}
+      >
+        {option.label || value}
+      </span>
+    );
+  });
+}
+
+// Custom cell editor for dropdown status
+const CustomDropdownCellEditor: React.FC<{ 
+  value: string;
+  options: DropdownOption[];
+  onSave: (newValue: string) => void;
+  onCancel: () => void;
+}> = ({ value, options, onSave, onCancel }) => {
   return (
-    <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset capitalize ${colorClass}`}>
-      {value}
-    </span>
+    <DropdownCellEditor
+      value={value}
+      options={options}
+      onSave={onSave}
+      onCancel={onCancel}
+    />
   );
 };
 
-// Register the custom task status cell renderer
-if (!cellRendererRegistry["TaskStatus"]) {
-  registerCellRenderer("TaskStatus", (value) => <TaskStatusCell value={value} />)
-}
+// We'll handle the dropdown cell editing directly in the DataTable component
+// via the custom editor for the status column instead of registering a renderer
 
 // Column definitions
 const TASK_TABLE_COLUMNS = [
@@ -174,12 +217,63 @@ const TASK_TABLE_COLUMNS = [
     }
   },
   {
-    headingName: "Status",
-    type: "Status" as const, // Using the existing Status column type
+    headingName: "Status", // This is just the display name, can be anything
+    type: "Dropdown" as const, // Using the new Dropdown type
     accessorKey: "status" as const,
     id: "status",
     enableSorting: true,
-    enableInlineEdit: true
+    enableInlineEdit: true,
+    // Define dropdown options in the column config so it's reusable
+    meta: {
+      editable: true,
+      dropdownOptions: STATUS_OPTIONS // Passing the options to the cell
+    },
+    // Custom cell renderer for dropdown values with colors
+    cell: (props: { getValue: () => any; row: { original: any }; column: { columnDef: any } }) => {
+      const value = props.getValue() as string;
+      // Use the options from meta data
+      const options = props.column.columnDef.meta?.dropdownOptions || STATUS_OPTIONS;
+      
+      // Find the selected option
+      const option = options.find((opt: DropdownOption) => opt.value === value) || { 
+        value, 
+        label: value, 
+        color: "#e5e7eb" 
+      };
+      
+      return (
+        <span
+          className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset capitalize"
+          style={{
+            backgroundColor: option.color || "#e5e7eb",
+            color: getContrastingTextColor(option.color || "#e5e7eb"),
+            borderColor: adjustColor(option.color || "#e5e7eb", -20)
+          }}
+        >
+          {option.label}
+        </span>
+      );
+    },
+    // Add cursor style and hint for better UX
+    cellAttributes: {
+      className: "cursor-pointer transition-colors duration-150 hover:bg-gray-50",
+      title: "Double-click to select from dropdown"
+    },
+    // Custom inline editor for dropdown that appears on double-click
+    inlineCellEditor: (props: { value: any, onSave: (newValue: any) => void, onCancel: () => void, columnDef?: any }) => {
+      // Get options from column definition and handle both required and optional params
+      const { value, onSave, onCancel, columnDef } = props;
+      const options = columnDef?.meta?.dropdownOptions || STATUS_OPTIONS;
+      
+      return (
+        <CustomDropdownCellEditor 
+          value={value as string} 
+          options={options}
+          onSave={(newValue: string) => onSave(newValue)} 
+          onCancel={onCancel} 
+        />
+      );
+    }
   },
   {
     headingName: "Tags",
@@ -225,9 +319,9 @@ const TASK_TABLE_FACETS = [
     column: "status",
     title: "Task Status",
     options: [
-      { label: "To Do", value: "todo" },
-      { label: "Doing", value: "doing" },
-      { label: "Done", value: "done" }
+      { label: "To Do", value: "todo", color: "#93c5fd" }, // Match our dropdown colors
+      { label: "Doing", value: "doing", color: "#fcd34d" },
+      { label: "Done", value: "done", color: "#86efac" }
     ]
   },
   {

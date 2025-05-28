@@ -13,13 +13,14 @@ const COLUMN_TYPES = [
   { value: "Boolean", label: "Boolean" },
   { value: "Tag", label: "Tags" },
   { value: "Status", label: "Status" },
-  { value: "Rating", label: "Rating" }
+  { value: "Rating", label: "Rating" },
+  { value: "Dropdown", label: "Dropdown" }
 ]
 
 export interface ColumnConfig {
   id: string
   headingName: string
-  type: "String" | "Number" | "Currency" | "Date" | "Boolean" | "Tag" | "Status" | "Rating"
+  type: "String" | "Number" | "Currency" | "Date" | "Boolean" | "Tag" | "Status" | "Rating" | "Dropdown"
   // Additional properties will be added in future
 }
 
