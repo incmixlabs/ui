@@ -229,36 +229,38 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
                   style={{ position: 'static' }} // Make sure position is static to avoid conflicts
                 >
                   <div className="dropdown-container" style={{ position: 'relative' }}>
-                    {isEditing?.(row.id, cell.column.id) ? (
-                      // If editing, render the custom inline editor from column definition
-                      columnDef?.inlineCellEditor ? (
-                        columnDef.inlineCellEditor({
-                          value: cellValue as string,
-                          onSave: (newValue: string) => saveEdit(row.original, cell.column.id, newValue),
-                          onCancel: cancelEditing,
-                          columnDef: columnDef,
-                        })
-                      ) : (
-                        // Fallback if no custom editor is provided
-                        <EditableCell
-                          value={cellValue as string}
-                          rowData={row.original}
-                          columnId={cell.column.id}
-                          onSave={saveEdit}
-                          isEditing={true}
-                          isSelected={true}
-                          onSelect={() => {}}
-                          onStartEdit={() => {}}
-                          onCancelEdit={cancelEditing}
-                          className=""
-                        />
-                      )
-                    ) : (
-                      // When not editing, render the cell content normally
-                      flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )
+                    {/* Always render the original cell value */}
+                    {flexRender(
+                      cell.column.columnDef.cell,
+                      cell.getContext()
+                    )}
+                    
+                    {/* Render the dropdown editor on top if editing */}
+                    {isEditing?.(row.id, cell.column.id) && (
+                      <div className="absolute top-0 left-0" style={{ zIndex: 999 }}>
+                        {columnDef?.inlineCellEditor ? (
+                          columnDef.inlineCellEditor({
+                            value: cellValue as string,
+                            onSave: (newValue: string) => saveEdit(row.original, cell.column.id, newValue),
+                            onCancel: cancelEditing,
+                            columnDef: columnDef,
+                          })
+                        ) : (
+                          // Fallback if no custom editor is provided
+                          <EditableCell
+                            value={cellValue as string}
+                            rowData={row.original}
+                            columnId={cell.column.id}
+                            onSave={saveEdit}
+                            isEditing={true}
+                            isSelected={true}
+                            onSelect={() => {}}
+                            onStartEdit={() => {}}
+                            onCancelEdit={cancelEditing}
+                            className=""
+                          />
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
