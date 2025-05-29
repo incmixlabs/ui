@@ -51,6 +51,46 @@ if (!cellRendererRegistry["Rating"]) {
   registerCellRenderer("Rating", (value) => <RatingCell value={value} />)
 }
 
+/**
+ * Generate a unique color that's not already in use by other dropdown options
+ * @param existingColors Array of colors already in use
+ * @returns A unique hex color code
+ */
+const generateUniqueColor = (existingColors: string[]): string => {
+  // Predefined set of visually distinct colors that work well for status indicators
+  const colorPalette = [
+    '#93c5fd', // Light blue
+    '#fcd34d', // Light yellow
+    '#86efac', // Light green
+    '#f9a8d4', // Light pink
+    '#c4b5fd', // Light purple
+    '#a5b4fc', // Lavender
+    '#fdba74', // Light orange
+    '#67e8f9', // Light teal
+    '#d8b4fe', // Light violet
+    '#f87171', // Light red
+    '#fde68a', // Light gold
+    '#6ee7b7', // Mint
+  ];
+  
+  // Try to find a color from the palette that's not in use
+  const unusedColor = colorPalette.find(color => !existingColors.includes(color));
+  if (unusedColor) return unusedColor;
+  
+  // If all palette colors are used, generate a random color
+  // Keep trying until we get a unique one
+  let randomColor;
+  do {
+    // Generate random RGB values
+    const r = Math.floor(Math.random() * 155) + 100; // Lighter colors (100-255)
+    const g = Math.floor(Math.random() * 155) + 100;
+    const b = Math.floor(Math.random() * 155) + 100;
+    randomColor = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+  } while (existingColors.includes(randomColor));
+  
+  return randomColor;
+}
+
 // Define task interface
 interface Task {
   id: string
@@ -135,6 +175,74 @@ const STATUS_OPTIONS: DropdownOption[] = [
   { value: "doing", label: "Doing", color: "#fcd34d" }, // Light yellow
   { value: "done", label: "Done", color: "#86efac" }    // Light green
 ];
+
+// Default column meta settings (updated by column configuration)
+const STATUS_COLUMN_META = {
+  dropdownOptions: STATUS_OPTIONS,
+  strictDropdown: true // Default to strict mode
+};
+
+// Map to track custom values we've already processed - this is our ultimate duplicate prevention
+const processedCustomValues = new Map<string, string>();
+
+// Centralized function to add a custom dropdown option - this ensures we add options in only one place
+// and can do thorough duplicate checking
+const addCustomDropdownOption = (value: string): string => {
+  if (!value) return value;
+  
+  // First check our processed values map to prevent duplicates
+  const valueLower = value.toLowerCase();
+  if (processedCustomValues.has(valueLower)) {
+    console.log(`Already processed: ${value} → ${processedCustomValues.get(valueLower)}`);
+    return processedCustomValues.get(valueLower) || value;
+  }
+  
+  // Normalize the value for internal use
+  const normalizedValue = value.toLowerCase().replace(/\s+/g, '_');
+  
+  // Check if this value (or something very similar) already exists
+  // using a very thorough set of checks
+  for (const option of STATUS_OPTIONS) {
+    // Check exact value match
+    if (option.value === value || option.value === normalizedValue) {
+      console.log(`Value already exists: ${option.value}`);
+      // Remember this mapping for future calls
+      processedCustomValues.set(valueLower, option.value);
+      return option.value;
+    }
+    
+    // Check case-insensitive label match
+    if (option.label.toLowerCase() === value.toLowerCase()) {
+      console.log(`Label already exists: ${option.label}`);
+      // Remember this mapping for future calls
+      processedCustomValues.set(valueLower, option.value);
+      return option.value;
+    }
+  }
+  
+  // If we get here, it's a truly new value
+  console.log(`Adding new custom option: ${value} (${normalizedValue})`);
+  
+  // Generate a random color that's not already in use
+  const existingColors = STATUS_OPTIONS.map(opt => opt.color || '#e5e7eb').filter(Boolean);
+  const color = generateUniqueColor(existingColors as string[]);
+  
+  // Create the new option
+  const newOption: DropdownOption = {
+    value: normalizedValue,
+    label: value,
+    color
+  };
+  
+  // Add to STATUS_OPTIONS - this is our single source of truth
+  STATUS_OPTIONS.push(newOption);
+  
+  // Remember this mapping for future calls
+  processedCustomValues.set(valueLower, normalizedValue);
+  
+  console.log(`Added new option to dropdown: ${value} (${normalizedValue})`);
+  return normalizedValue;
+};
 
 // Create a map of status colors for the Status cell renderer (format it requires)
 const STATUS_COLOR_MAP = {
@@ -259,11 +367,8 @@ const TASK_TABLE_COLUMNS: ExtendedColumnConfig[] = [
     id: "status",
     enableSorting: true,
     enableInlineEdit: true,
-    // Define dropdown options in the column config so it's reusable
-    meta: {
-      editable: true,
-      dropdownOptions: STATUS_OPTIONS // Passing the options to the cell
-    },
+    // Apply initial metadata
+    meta: STATUS_COLUMN_META,
     // Custom cell renderer for dropdown values with colors
     cell: (props: { getValue: () => any; row: { original: any }; column: { columnDef: any } }) => {
       const value = props.getValue() as string;
@@ -303,16 +408,44 @@ const TASK_TABLE_COLUMNS: ExtendedColumnConfig[] = [
     // Custom inline editor for dropdown that appears on double-click
     inlineCellEditor: (props: { value: any, onSave: (newValue: any) => void, onCancel: () => void, columnDef?: any }) => {
       // Get options from column definition and handle both required and optional params
-      const { value, onSave, onCancel } = props;
+      const { value, onSave, onCancel, columnDef } = props;
       
       // Always use STATUS_OPTIONS directly to ensure we get the latest options
       const options = STATUS_OPTIONS;
       
+      // Check if strict dropdown mode is enabled (default to true if not specified)
+      const strictDropdown = columnDef?.meta?.strictDropdown !== false;
+      
+      // Debug log to see if strictDropdown setting is recognized
+      console.log('Column strictDropdown setting:', columnDef?.meta?.strictDropdown, 'Using strictDropdown:', strictDropdown);
+      
+      // Wrap the onSave callback to support custom value creation
+      const handleSaveWithCustomValue = (newValue: string) => {
+        // If we're in strict mode or it's not a string, just pass through
+        if (strictDropdown || typeof newValue !== 'string') {
+          onSave(newValue);
+          return;
+        }
+        
+        // For custom values in non-strict mode, we need to do special handling
+        // Use our centralized function to ensure we never add duplicates
+        if (!options.some(opt => opt.value === newValue)) {
+          // Only process if it's not already an exact match
+          console.log('Passing custom value to be processed');
+          // We'll let the cell edit handler take care of this using our centralized function
+          // The actual adding of the option will happen in handleCellEdit
+        }
+        
+        // Pass through the original value - handleCellEdit will handle normalization
+        onSave(newValue);
+      };
+      
       return (
-        <CustomDropdownCellEditor 
+        <DropdownCellEditor 
           value={value as string} 
           options={options}
-          onSave={(newValue: string) => onSave(newValue)} 
+          strictDropdown={strictDropdown}
+          onSave={handleSaveWithCustomValue} 
           onCancel={onCancel} 
         />
       );
@@ -447,12 +580,32 @@ const TaskStatusDemo = () => {
   /**
    * Handle cell edit - key functionality for inline editing
    * This implementation prevents full table reloads by immutably updating only the changed data
+   * and handles custom dropdown values when entered
    */
   const handleCellEdit = useCallback((rowData: Task, columnId: string, newValue: any) => {
     console.log(`Editing cell ${columnId} for task ${rowData.id}:`, newValue)
 
     // Track which cell was just edited (for visual feedback)
     setLastEditedCell({id: rowData.id, column: columnId});
+    
+    // Special handling for status field custom values
+    if (columnId === 'status') {
+      const columnDef = columns.find(col => col.id === 'status');
+      const strictMode = columnDef?.meta?.strictDropdown !== false;
+      
+      // If we're not in strict mode, check if this is a custom value
+      if (!strictMode && newValue && typeof newValue === 'string') {
+        // Use our centralized function to handle the custom value
+        // This ensures we never add duplicates
+        const processedValue = addCustomDropdownOption(newValue);
+        
+        // Force a refresh of columns to ensure the change is recognized
+        setTimeout(() => setColumns([...columns]), 0);
+        
+        // Update newValue to use the processed value
+        newValue = processedValue;
+      }
+    }
 
     // Create updated task
     const updatedTask = {
@@ -528,14 +681,18 @@ const TaskStatusDemo = () => {
         const newOptions = [...updates.meta.dropdownOptions];
         console.log('New dropdown options:', newOptions);
         
-        // Update the column with new options
+        // Update the column with new options and maintain strictDropdown setting
         updatedColumn = {
           ...updatedColumn,
           meta: {
             ...updatedColumn.meta,
-            dropdownOptions: newOptions
+            dropdownOptions: newOptions,
+            strictDropdown: updates.meta.strictDropdown
           }
         };
+        
+        // Log the strictDropdown status for debugging
+        console.log(`Setting strictDropdown to: ${updates.meta.strictDropdown}`);
         
         // Update STATUS_OPTIONS global variable to reflect changes
         // This ensures the dropdown works with the latest options
@@ -549,6 +706,12 @@ const TaskStatusDemo = () => {
           // Clear existing array and push new items to maintain the same reference
           STATUS_OPTIONS.length = 0;
           newOptions.forEach(opt => STATUS_OPTIONS.push(opt));
+          
+          // Update STATUS_COLUMN_META to reflect strictDropdown setting
+          if (updates.meta?.strictDropdown !== undefined) {
+            STATUS_COLUMN_META.strictDropdown = updates.meta.strictDropdown;
+            console.log('Updated STATUS_COLUMN_META.strictDropdown to:', STATUS_COLUMN_META.strictDropdown);
+          }
         }
         
         // Update the tasks to use new labels/colors for the same values

@@ -26,6 +26,7 @@ export interface ColumnConfig {
   meta?: {
     dropdownOptions?: DropdownOption[]
     editable?: boolean
+    strictDropdown?: boolean // Controls whether only predefined dropdown values are allowed
     // Other metadata can be added here in the future
   }
   // Additional properties will be added in future
@@ -51,6 +52,7 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
   const [headingName, setHeadingName] = useState("")
   const [columnType, setColumnType] = useState<ColumnConfig["type"]>("String")
   const [dropdownOptions, setDropdownOptions] = useState<DropdownOption[]>([])
+  const [strictDropdown, setStrictDropdown] = useState(true)
 
   // Initialize form when column changes
   useEffect(() => {
@@ -69,6 +71,12 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
           { value: "done", label: "Done", color: "#86efac" }    // Light green
         ])
       }
+      
+      // Initialize strictDropdown value from meta or default to true
+      // Using explicit check against false to ensure default is true
+      const isStrictMode = column.meta?.strictDropdown !== false;
+      console.log('Loading strictDropdown value:', isStrictMode);
+      setStrictDropdown(isStrictMode);
     }
   }, [column])
 
@@ -101,7 +109,8 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
     if (columnType === "Dropdown") {
       updates.meta = {
         ...column.meta,
-        dropdownOptions
+        dropdownOptions,
+        strictDropdown // Include the strictDropdown setting
       }
     }
 
@@ -159,13 +168,32 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
             </Select.Root>
           </Flex>
 
-          {/* Dropdown Options Editor - only show for Dropdown type */}
+          {/* Dropdown options editor (only visible for Dropdown type) */}
           {columnType === "Dropdown" && (
-            <DropdownOptionsEditor
-              options={dropdownOptions}
-              onChange={setDropdownOptions}
-              valuesInUse={getValuesInUse()}
-            />
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <div className="text-sm font-medium">Dropdown Options</div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs text-gray-500">
+                    {strictDropdown ? 'Only predefined values' : 'Allow custom values'}
+                  </span>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      checked={strictDropdown}
+                      onChange={() => setStrictDropdown(!strictDropdown)}
+                      className="sr-only peer" 
+                    />
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
+                  </label>
+                </div>
+              </div>
+              <DropdownOptionsEditor 
+                options={dropdownOptions} 
+                onChange={setDropdownOptions} 
+                valuesInUse={getValuesInUse()}
+              />
+            </div>
           )}
         </Flex>
         

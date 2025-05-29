@@ -8,6 +8,7 @@ interface DropdownCellEditorProps {
   options: DropdownOption[]
   onSave: (newValue: string) => void
   onCancel: () => void
+  strictDropdown?: boolean // Controls whether only predefined values can be selected
 }
 
 /**
@@ -18,10 +19,15 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
   value,
   options,
   onSave,
-  onCancel
+  onCancel,
+  strictDropdown = true // Default to strict mode if not specified
 }) => {
+  // Debug log to check if strictDropdown is passed correctly
+  console.log('DropdownCellEditor strictDropdown:', strictDropdown);
   const [isOpen, setIsOpen] = useState(true)
+  const [customValue, setCustomValue] = useState(value)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   
   // Get position of the cell that was clicked to position dropdown properly
   useEffect(() => {
@@ -64,6 +70,11 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
     
     // Run positioning logic after a brief delay to ensure the DOM is ready
     setTimeout(findEditingCell, 10);
+    
+    // Focus the input field if in custom mode
+    if (!strictDropdown && inputRef.current) {
+      setTimeout(() => inputRef.current?.focus(), 50);
+    }
   }, [])
   
   // Verify options are valid
@@ -80,6 +91,60 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
   const handleSelect = (optionValue: string) => {
     onSave(optionValue)
     setIsOpen(false)
+  }
+  
+  // Handle custom value input change
+  const handleCustomInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCustomValue(e.target.value)
+  }
+  
+  // Handle custom value submission
+  const handleCustomValueSubmit = () => {
+    if (customValue.trim()) {
+      // Make sure we're passing the raw custom value to be processed upstream
+      const trimmedValue = customValue.trim();
+      console.log('Submitting custom value:', trimmedValue);
+      
+      // Check if the trimmed value already exists in options to prevent duplicates
+      // at the component level (additional check happens in handleCellEdit)
+      const normalizedValue = trimmedValue.toLowerCase().replace(/\s+/g, '_');
+      const alreadyExists = options.some(opt => 
+        opt.value === trimmedValue || 
+        opt.value === normalizedValue ||
+        opt.label.toLowerCase() === trimmedValue.toLowerCase()
+      );
+      
+      if (alreadyExists) {
+        // If it already exists, find the exact value to use
+        const existingOption = options.find(opt => 
+          opt.value === trimmedValue || 
+          opt.value === normalizedValue ||
+          opt.label.toLowerCase() === trimmedValue.toLowerCase()
+        );
+        if (existingOption) {
+          onSave(existingOption.value);
+        } else {
+          onSave(trimmedValue);
+        }
+      } else {
+        // If it's a new value, pass it to be processed
+        onSave(trimmedValue);
+      }
+      
+      setIsOpen(false);
+    }
+  }
+  
+  // Handle enter key in custom input
+  const handleCustomInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleCustomValueSubmit()
+    } else if (e.key === 'Escape') {
+      e.preventDefault()
+      onCancel()
+      setIsOpen(false)
+    }
   }
 
   // Handle click outside to cancel
@@ -119,7 +184,7 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
       ref={dropdownRef}
       className="fixed z-[9999] bg-white rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none"
       style={{ 
-        minWidth: '200px',
+        minWidth: '220px',
         maxWidth: '300px',
         maxHeight: '300px',
         overflowY: 'auto',
@@ -131,6 +196,33 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
         left: '0px',
       }}
     >
+      {/* Custom value input when strictDropdown is false */}
+      {!strictDropdown && (
+        <div className="px-4 py-2 border-b border-gray-100">
+          <div className="flex">
+            <input
+              ref={inputRef}
+              type="text"
+              value={customValue}
+              onChange={handleCustomInputChange}
+              onKeyDown={handleCustomInputKeyDown}
+              className="w-full px-2 py-1 text-sm border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder="Enter custom value..."
+            />
+            <button 
+              onClick={handleCustomValueSubmit}
+              className="px-2 py-1 text-sm text-white bg-blue-500 rounded-r-md hover:bg-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              Add
+            </button>
+          </div>
+          {validOptions.length > 0 && (
+            <div className="mt-2 text-xs text-gray-500">Or select from options below:</div>
+          )}
+        </div>
+      )}
+      
+      {/* Dropdown options list */}
       {validOptions.length === 0 ? (
         <div className="px-4 py-2 text-sm text-gray-500">No options available</div>
       ) : (
