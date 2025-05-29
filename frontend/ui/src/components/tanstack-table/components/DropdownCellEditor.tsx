@@ -66,8 +66,11 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
     setTimeout(findEditingCell, 10);
   }, [])
   
+  // Verify options are valid
+  const validOptions = Array.isArray(options) ? options : [];
+  
   // Find the selected option
-  const selectedOption = options.find(option => option.value === value) || {
+  const selectedOption = validOptions.find(option => option.value === value) || {
     value,
     label: value,
     color: '#e5e7eb' // Default gray color
@@ -116,58 +119,47 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
       ref={dropdownRef}
       className="fixed z-[9999] bg-white rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none"
       style={{ 
-        minWidth: '180px',
+        minWidth: '200px',
         maxWidth: '300px',
         maxHeight: '300px',
         overflowY: 'auto',
-        filter: 'drop-shadow(0 8px 16px rgba(0, 0, 0, 0.25))',
+        padding: '4px 0',
         // Fixed positioning relative to viewport
         position: 'fixed',
-        // Start at the same position as the cell, but will be adjusted in useEffect
-        top: typeof window !== 'undefined' ? window.innerHeight / 2 - 150 : 0,
-        left: typeof window !== 'undefined' ? window.innerWidth / 2 - 150 : 0,
-        // Add animation for smoother appearance
-        animation: 'dropdownFadeIn 0.15s ease-out',
+        // Will be positioned by useEffect
+        top: '0px', 
+        left: '0px',
       }}
     >
-      <div className="py-1">
-        {options.map((option) => {
-          const textColor = option.color 
-            ? getContrastingTextColor(option.color)
-            : '#000000'
-          
-          const isSelected = option.value === value
+      {validOptions.length === 0 ? (
+        <div className="px-4 py-2 text-sm text-gray-500">No options available</div>
+      ) : (
+        validOptions.map((option) => {
+          const isSelected = option.value === value;
           
           return (
             <div
               key={option.value}
               onClick={() => handleSelect(option.value)}
               className={`
-                px-4 py-2 text-sm cursor-pointer flex items-center space-x-2
-                ${isSelected ? 'bg-gray-100' : 'hover:bg-gray-50'}
+                px-4 py-2 text-sm cursor-pointer
+                ${isSelected ? 'bg-blue-50' : 'hover:bg-gray-50'}
               `}
             >
-              <span
-                className="inline-block w-3 h-3 rounded-full"
-                style={{ 
-                  backgroundColor: option.color || '#e5e7eb',
-                  border: `1px solid ${option.color ? adjustColor(option.color, -20) : '#d1d5db'}`
-                }}
-              />
-              <span
-                className="rounded-full px-2 py-0.5 text-xs font-medium capitalize"
-                style={{
-                  backgroundColor: option.color || '#e5e7eb',
-                  color: textColor,
-                  border: `1px solid ${option.color ? adjustColor(option.color, -20) : '#d1d5db'}`
-                }}
-              >
-                {option.label}
-              </span>
+              <div className="flex items-center gap-2">
+                <div 
+                  className="w-4 h-4 rounded-full flex-shrink-0" 
+                  style={{ 
+                    backgroundColor: option.color || '#e5e7eb',
+                    border: `1px solid ${option.color ? adjustColor(option.color, -20) : '#d1d5db'}`
+                  }}
+                />
+                <span className="flex-grow">{option.label || option.value}</span>
+              </div>
             </div>
-          )
-        })}
-      </div>
+          );
+        })
+      )}
     </div>
   )
 }

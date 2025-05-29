@@ -268,10 +268,9 @@ const TASK_TABLE_COLUMNS: ExtendedColumnConfig[] = [
     cell: (props: { getValue: () => any; row: { original: any }; column: { columnDef: any } }) => {
       const value = props.getValue() as string;
       
-      // Use the CURRENT options from meta data (important to get the latest)
-      const options = props.column.columnDef.meta?.dropdownOptions || STATUS_OPTIONS;
-      console.log('Cell renderer options:', options);
-      console.log('Current cell value:', value);
+      // Always use STATUS_OPTIONS directly to ensure we get the latest version
+      // This is essential for color/label updates to be reflected
+      const options = STATUS_OPTIONS;
       
       // Find the selected option by value
       const option = options.find((opt: DropdownOption) => opt.value === value);
@@ -282,9 +281,6 @@ const TASK_TABLE_COLUMNS: ExtendedColumnConfig[] = [
         label: value, 
         color: "#e5e7eb" 
       };
-      
-      // Log what we're rendering
-      console.log('Rendering option:', displayOption);
       
       return (
         <span
@@ -307,8 +303,10 @@ const TASK_TABLE_COLUMNS: ExtendedColumnConfig[] = [
     // Custom inline editor for dropdown that appears on double-click
     inlineCellEditor: (props: { value: any, onSave: (newValue: any) => void, onCancel: () => void, columnDef?: any }) => {
       // Get options from column definition and handle both required and optional params
-      const { value, onSave, onCancel, columnDef } = props;
-      const options = columnDef?.meta?.dropdownOptions || STATUS_OPTIONS;
+      const { value, onSave, onCancel } = props;
+      
+      // Always use STATUS_OPTIONS directly to ensure we get the latest options
+      const options = STATUS_OPTIONS;
       
       return (
         <CustomDropdownCellEditor 
@@ -497,24 +495,24 @@ const TaskStatusDemo = () => {
   const handleSaveColumnConfig = useCallback((columnId: string, updates: Partial<ExtendedColumnConfig>) => {
     console.log(`Saving column config for ${columnId}:`, updates);
     
-    // Create a copy of columns to work with
+    // Create a simple copy of columns to work with
     const updatedColumns = [...columns];
     
     // Find the column to update
     const columnIndex = updatedColumns.findIndex(col => col.id === columnId);
     
     if (columnIndex !== -1) {
-      // Update the column's properties
+      // Get the original column
       const originalColumn = columns[columnIndex];
+      
+      // Create a new column object to ensure React sees the change
       let updatedColumn: ExtendedColumnConfig = { ...originalColumn };
       
       // Update heading name if provided
       if (updates.headingName) {
         updatedColumn = {
           ...updatedColumn,
-          // Store the original heading name as text (for future reference)
           _originalHeading: updates.headingName,
-          // For display purposes, use the updated text
           headingName: updates.headingName
         };
       }
@@ -526,47 +524,60 @@ const TaskStatusDemo = () => {
       
       // Handle dropdown options updates
       if (updates.meta?.dropdownOptions && originalColumn.type === 'Dropdown') {
-        // Get the new dropdown options
-        const newOptions = updates.meta.dropdownOptions;
+        // Store the new options
+        const newOptions = [...updates.meta.dropdownOptions];
         console.log('New dropdown options:', newOptions);
         
-        // Get the old options for comparison
-        const oldOptions = originalColumn.meta?.dropdownOptions || [];
-        console.log('Old dropdown options:', oldOptions);
-        
-        // Force a re-render of the entire table to ensure updated options are reflected
-        // This is key - by creating new references, React will re-render components
-        const forcedNewOptions = [...newOptions.map(opt => ({...opt}))];
-        
         // Update the column with new options
-        updatedColumn.meta = {
-          ...updatedColumn.meta,
-          dropdownOptions: forcedNewOptions,
-          editable: originalColumn.meta?.editable ?? true // Ensure editable is always a boolean
+        updatedColumn = {
+          ...updatedColumn,
+          meta: {
+            ...updatedColumn.meta,
+            dropdownOptions: newOptions
+          }
         };
         
-        // The simplest approach: Clone the data array to force a complete re-render
-        // This ensures all cells are re-rendered with the new options
-        console.log('Creating a new reference to all tasks to force a re-render');
-        const updatedTasks = tasks.map(task => ({ ...task }));
-        setTasks(updatedTasks);
+        // Update STATUS_OPTIONS global variable to reflect changes
+        // This ensures the dropdown works with the latest options
+        if (columnId === 'status') {
+          // Create a new reference for the STATUS_OPTIONS
+          const updatedStatusOptions = [...newOptions];
+          
+          // This replaces the reference to STATUS_OPTIONS used by the cell renderer
+          Object.assign(STATUS_OPTIONS, updatedStatusOptions);
+          
+          // Clear existing array and push new items to maintain the same reference
+          STATUS_OPTIONS.length = 0;
+          newOptions.forEach(opt => STATUS_OPTIONS.push(opt));
+        }
         
-        // Separately force a refresh on column state
-        setTimeout(() => {
-          const refreshedColumns = [...columns];
-          setColumns(refreshedColumns);
-        }, 0);
+        // Update the tasks to use new labels/colors for the same values
+        const updatedAllTasks = allTasks.map(task => {
+          // Create a new task object to ensure React picks up the change
+          return { ...task };
+        });
+        
+        // Update both datasets to force re-rendering
+        setAllTasks(updatedAllTasks);
+        setTasks(updatedAllTasks.slice(0, tasks.length));
       }
       
-      // Replace the column in our array
+      // Replace the column in the array
       updatedColumns[columnIndex] = updatedColumn;
       
       // Set the updated columns array
       setColumns(updatedColumns);
+      
+      // Force a complete refresh of the table
+      setTimeout(() => {
+        // This forces React to re-render with completely new objects
+        setColumns([...updatedColumns.map(col => ({ ...col }))]);
+      }, 50);
     }
     
     console.log(`Updated column ${columnId}:`, updates);
-  }, [columns, tasks]);
+  }, [columns, allTasks, tasks]);
+
 
   // Function to enhance column definition with double-click handler
   const enhanceColumnsWithDoubleClick = useMemo(() => {

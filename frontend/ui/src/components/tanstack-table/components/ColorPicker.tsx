@@ -11,6 +11,7 @@ interface ColorPickerProps {
 const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => {
   const [showPicker, setShowPicker] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
   
   // Define colors in a single array
   const colors = [
@@ -26,36 +27,21 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => {
     setShowPicker(false);
   };
 
-  // Calculate popup position based on button
-  const [popupStyle, setPopupStyle] = useState({
-    position: 'fixed' as 'fixed',
-    top: '0px',
-    left: '0px',
-    width: '250px',
-    padding: '8px',
-    backgroundColor: 'white',
-    borderRadius: '8px',
-    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
-    border: '1px solid #ddd',
-    zIndex: 2147483647 // Maximum possible z-index value
-  });
-
   // Update popup position when shown
   useEffect(() => {
-    if (showPicker && buttonRef.current) {
+    if (showPicker && buttonRef.current && popupRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      setPopupStyle(prev => ({
-        ...prev,
-        top: `${rect.bottom + window.scrollY + 5}px`,
-        left: `${rect.left + window.scrollX - 5}px`
-      }));
+      popupRef.current.style.top = `${rect.bottom + window.scrollY + 5}px`;
+      popupRef.current.style.left = `${rect.left + window.scrollX - 5}px`;
     }
   }, [showPicker]);
 
   // Close on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (buttonRef.current && !buttonRef.current.contains(e.target as Node)) {
+      if (buttonRef.current && popupRef.current && 
+          !buttonRef.current.contains(e.target as Node) && 
+          !popupRef.current.contains(e.target as Node)) {
         setShowPicker(false);
       }
     };
@@ -74,33 +60,44 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => {
         ref={buttonRef}
         onClick={() => setShowPicker(!showPicker)}
         style={{
-          width: '32px',
-          height: '32px',
-          backgroundColor: color,
+          width: '28px',
+          height: '28px',
+          backgroundColor: color || '#e5e7eb',
           border: '1px solid #ccc',
           borderRadius: '4px',
           cursor: 'pointer'
         }}
       />
       
-      {/* Popup color selector that should appear on top of everything */}
+      {/* Popup color selector */}
       {showPicker && (
-        <div id="colorPickerPortal" style={popupStyle}>
+        <div 
+          ref={popupRef}
+          style={{
+            position: 'fixed',
+            top: '0px',
+            left: '0px',
+            width: '250px',
+            padding: '8px',
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
+            border: '1px solid #ddd',
+            zIndex: 9999,
+          }}
+        >
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px', marginBottom: '6px' }}>
             {/* Row 1 - Blues */}
             {colors.slice(0, 7).map((c, i) => (
               <div 
                 key={`blue-${i}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleColorSelect(c);
-                }}
+                onClick={() => handleColorSelect(c)}
                 style={{
                   width: '28px', 
                   height: '28px', 
                   backgroundColor: c,
                   borderRadius: '50%',
-                  border: '1px solid #ddd',
+                  border: c === color ? '2px solid #000' : '1px solid #ddd',
                   cursor: 'pointer'
                 }}
               />
@@ -112,16 +109,13 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => {
             {colors.slice(7).map((c, i) => (
               <div 
                 key={`color-${i}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleColorSelect(c);
-                }}
+                onClick={() => handleColorSelect(c)}
                 style={{
                   width: '28px', 
                   height: '28px', 
                   backgroundColor: c,
                   borderRadius: '50%',
-                  border: '1px solid #ddd',
+                  border: c === color ? '2px solid #000' : '1px solid #ddd',
                   cursor: 'pointer'
                 }}
               />

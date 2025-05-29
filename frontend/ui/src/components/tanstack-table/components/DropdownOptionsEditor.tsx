@@ -56,7 +56,8 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
 
   // Update an existing option
   const handleUpdateOption = (index: number, field: keyof DropdownOption, value: string) => {
-    const updatedOptions = [...options];
+    // Create a deep copy to ensure we don't mutate the original array
+    const updatedOptions = options.map(opt => ({ ...opt }));
     
     if (field === 'label') {
       // When label changes, also update the value (internal ID) to match
@@ -87,6 +88,11 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
       };
     }
     
+    // Log the update for debugging
+    console.log(`Updated option at index ${index}, field: ${field}, value: ${value}`);
+    console.log('New options:', updatedOptions);
+    
+    // Notify parent of the change with the completely new array
     onChange(updatedOptions);
   };
 
