@@ -12,6 +12,20 @@ import { DataTable } from "../components/DataTable"
 import { EyeIcon, EditIcon } from "lucide-react"
 import { RowAction } from "../types"
 import { ColumnConfigDialog, ColumnConfig } from "../components/ColumnConfigDialog"
+
+// Extended column type to include custom properties
+interface ExtendedColumnConfig extends ColumnConfig {
+  _originalHeading?: string;
+  accessorKey?: string;
+  enableInlineEdit?: boolean;
+  enableSorting?: boolean;
+  format?: any;
+  renderer?: any;
+  cell?: any;
+  inlineCellEditor?: any;
+  cellAttributes?: any;
+}
+
 import DropdownCellEditor from "../components/DropdownCellEditor"
 
 // Custom rating cell renderer
@@ -162,6 +176,28 @@ const CustomDropdownCellEditor: React.FC<{
   onSave: (newValue: string) => void;
   onCancel: () => void;
 }> = ({ value, options, onSave, onCancel }) => {
+  console.log('Dropdown editor for value:', value); 
+  console.log('Available options:', options);
+  
+  // Make sure we're passing the correct current value
+  // If the value doesn't exist in options, try to find a matching label
+  const optionExists = options.some(opt => opt.value === value);
+  
+  // If we can't find the value in the options, try to match by label
+  if (!optionExists && value) {
+    const matchingOption = options.find(opt => 
+      opt.label.toLowerCase() === value.toLowerCase() ||
+      opt.label.toLowerCase().includes(value.toLowerCase())
+    );
+    
+    if (matchingOption) {
+      console.log('Found matching option by label:', matchingOption);
+      // Update the value to match the current option value
+      setTimeout(() => onSave(matchingOption.value), 0);
+      return null; // Don't render the dropdown yet, wait for the update
+    }
+  }
+  
   return (
     <DropdownCellEditor
       value={value}
@@ -175,8 +211,8 @@ const CustomDropdownCellEditor: React.FC<{
 // We'll handle the dropdown cell editing directly in the DataTable component
 // via the custom editor for the status column instead of registering a renderer
 
-// Column definitions
-const TASK_TABLE_COLUMNS = [
+// Task table column definitions
+const TASK_TABLE_COLUMNS: ExtendedColumnConfig[] = [
   {
     headingName: "Task Name",
     type: "String" as const,
@@ -231,26 +267,35 @@ const TASK_TABLE_COLUMNS = [
     // Custom cell renderer for dropdown values with colors
     cell: (props: { getValue: () => any; row: { original: any }; column: { columnDef: any } }) => {
       const value = props.getValue() as string;
-      // Use the options from meta data
-      const options = props.column.columnDef.meta?.dropdownOptions || STATUS_OPTIONS;
       
-      // Find the selected option
-      const option = options.find((opt: DropdownOption) => opt.value === value) || { 
+      // Use the CURRENT options from meta data (important to get the latest)
+      const options = props.column.columnDef.meta?.dropdownOptions || STATUS_OPTIONS;
+      console.log('Cell renderer options:', options);
+      console.log('Current cell value:', value);
+      
+      // Find the selected option by value
+      const option = options.find((opt: DropdownOption) => opt.value === value);
+      
+      // If no matching option is found, use a fallback
+      const displayOption = option || { 
         value, 
         label: value, 
         color: "#e5e7eb" 
       };
       
+      // Log what we're rendering
+      console.log('Rendering option:', displayOption);
+      
       return (
         <span
           className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset capitalize"
           style={{
-            backgroundColor: option.color || "#e5e7eb",
-            color: getContrastingTextColor(option.color || "#e5e7eb"),
-            borderColor: adjustColor(option.color || "#e5e7eb", -20)
+            backgroundColor: displayOption.color || "#e5e7eb",
+            color: getContrastingTextColor(displayOption.color || "#e5e7eb"),
+            borderColor: adjustColor(displayOption.color || "#e5e7eb", -20)
           }}
         >
-          {option.label}
+          {displayOption.label}
         </span>
       );
     },
@@ -352,8 +397,8 @@ const TaskStatusDemo = () => {
   
   // State for column configuration dialog
   const [isColumnConfigOpen, setIsColumnConfigOpen] = useState(false);
-  const [selectedColumn, setSelectedColumn] = useState<ColumnConfig | null>(null);
-  const [columns, setColumns] = useState<typeof TASK_TABLE_COLUMNS>(TASK_TABLE_COLUMNS);
+  const [selectedColumn, setSelectedColumn] = useState<ExtendedColumnConfig | null>(null);
+  const [columns, setColumns] = useState<ExtendedColumnConfig[]>(TASK_TABLE_COLUMNS);
 
   /**
    * Fetch tasks (simulated API call)
@@ -440,24 +485,18 @@ const TaskStatusDemo = () => {
   /**
    * Handle column header double-click to open configuration dialog
    */
-  const handleHeaderDoubleClick = useCallback((columnId: string) => {
-    // Find the column by ID
-    const column = columns.find(col => col.id === columnId);
-    if (column) {
-      // Set the selected column and open the dialog
-      setSelectedColumn({
-        id: column.id,
-        headingName: column.headingName,
-        type: column.type
-      });
-      setIsColumnConfigOpen(true);
-    }
-  }, [columns]);
+  const handleHeaderDoubleClick = useCallback((column: ExtendedColumnConfig) => {
+    // Open the column configuration dialog with the selected column
+    setSelectedColumn(column);
+    setIsColumnConfigOpen(true);
+  }, []);
   
   /**
    * Handle saving column configuration changes
    */
-  const handleSaveColumnConfig = useCallback((columnId: string, updates: Partial<ColumnConfig>) => {
+  const handleSaveColumnConfig = useCallback((columnId: string, updates: Partial<ExtendedColumnConfig>) => {
+    console.log(`Saving column config for ${columnId}:`, updates);
+    
     // Create a copy of columns to work with
     const updatedColumns = [...columns];
     
@@ -466,54 +505,94 @@ const TaskStatusDemo = () => {
     
     if (columnIndex !== -1) {
       // Update the column's properties
+      const originalColumn = columns[columnIndex];
+      let updatedColumn: ExtendedColumnConfig = { ...originalColumn };
+      
+      // Update heading name if provided
       if (updates.headingName) {
-        // Update just the text part of the heading, preserving the double-clickable wrapper
-        const originalColumn = columns[columnIndex];
-        const updatedColumn = {
-          ...originalColumn,
+        updatedColumn = {
+          ...updatedColumn,
           // Store the original heading name as text (for future reference)
           _originalHeading: updates.headingName,
-          // For display purposes, keep using the original heading name format but with updated text
+          // For display purposes, use the updated text
           headingName: updates.headingName
         };
-        
-        // Replace the column in our array
-        updatedColumns[columnIndex] = updatedColumn;
       }
       
+      // Update column type if provided
+      if (updates.type && updates.type !== originalColumn.type) {
+        updatedColumn.type = updates.type;
+      }
+      
+      // Handle dropdown options updates
+      if (updates.meta?.dropdownOptions && originalColumn.type === 'Dropdown') {
+        // Get the new dropdown options
+        const newOptions = updates.meta.dropdownOptions;
+        console.log('New dropdown options:', newOptions);
+        
+        // Get the old options for comparison
+        const oldOptions = originalColumn.meta?.dropdownOptions || [];
+        console.log('Old dropdown options:', oldOptions);
+        
+        // Force a re-render of the entire table to ensure updated options are reflected
+        // This is key - by creating new references, React will re-render components
+        const forcedNewOptions = [...newOptions.map(opt => ({...opt}))];
+        
+        // Update the column with new options
+        updatedColumn.meta = {
+          ...updatedColumn.meta,
+          dropdownOptions: forcedNewOptions,
+          editable: originalColumn.meta?.editable ?? true // Ensure editable is always a boolean
+        };
+        
+        // The simplest approach: Clone the data array to force a complete re-render
+        // This ensures all cells are re-rendered with the new options
+        console.log('Creating a new reference to all tasks to force a re-render');
+        const updatedTasks = tasks.map(task => ({ ...task }));
+        setTasks(updatedTasks);
+        
+        // Separately force a refresh on column state
+        setTimeout(() => {
+          const refreshedColumns = [...columns];
+          setColumns(refreshedColumns);
+        }, 0);
+      }
+      
+      // Replace the column in our array
+      updatedColumns[columnIndex] = updatedColumn;
+      
       // Set the updated columns array
-      setColumns(updatedColumns as typeof TASK_TABLE_COLUMNS);
+      setColumns(updatedColumns);
     }
     
     console.log(`Updated column ${columnId}:`, updates);
-  }, [columns]);
+  }, [columns, tasks]);
 
   // Function to enhance column definition with double-click handler
   const enhanceColumnsWithDoubleClick = useMemo(() => {
-    // Create a wrapper div for each header with double-click handler
+    // First convert our ExtendedColumnConfig[] to a type that DataTable accepts
     return columns.map(column => {
-      // Get display text (either the current heading or its original string value)
-      const displayText = typeof column.headingName === 'string' 
-        ? column.headingName 
-        : (column as any)._originalHeading || column.headingName;
-      
-      // Create a double-click wrapper for the heading
+      // Create the double-clickable wrapper for the heading name
       const doubleClickableHeading = (
         <div 
-          className="cursor-pointer w-full h-full" 
-          onDoubleClick={() => handleHeaderDoubleClick(column.id)}
-          title="Double-click to configure column"
+          className="cursor-pointer w-full h-full flex items-center" 
+          onDoubleClick={() => handleHeaderDoubleClick(column)}
         >
-          {displayText}
+          {column.headingName}
         </div>
       );
       
-      // Return column with modified heading display
-      return {
+      // Convert the ExtendedColumnConfig to a proper DataTableColumn type
+      // that the DataTable component expects
+      const convertedColumn: any = {
         ...column,
         // Store the original heading name but display our custom one
-        headingName: doubleClickableHeading as any
+        headingName: doubleClickableHeading,
+        // Ensure accessorKey is a proper string (not optional)
+        accessorKey: column.accessorKey || column.id
       };
+      
+      return convertedColumn;
     });
   }, [columns, handleHeaderDoubleClick]);
 
@@ -527,6 +606,7 @@ const TaskStatusDemo = () => {
         onClose={() => setIsColumnConfigOpen(false)}
         column={selectedColumn}
         onSave={handleSaveColumnConfig}
+        tableData={tasks} // Pass table data to track values in use
       />
 
       <DataTable

@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react"
 import { Dialog, Flex, Box, Text, Button, Select } from "@radix-ui/themes"
 import { X } from "lucide-react"
+import { DropdownOption } from "../cell-renderers"
+import DropdownOptionsEditor from "./DropdownOptionsEditor"
 
 // Available column types
 const COLUMN_TYPES = [
@@ -21,6 +23,11 @@ export interface ColumnConfig {
   id: string
   headingName: string
   type: "String" | "Number" | "Currency" | "Date" | "Boolean" | "Tag" | "Status" | "Rating" | "Dropdown"
+  meta?: {
+    dropdownOptions?: DropdownOption[]
+    editable?: boolean
+    // Other metadata can be added here in the future
+  }
   // Additional properties will be added in future
 }
 
@@ -29,34 +36,76 @@ interface ColumnConfigDialogProps {
   onClose: () => void
   column: ColumnConfig | null
   onSave: (columnId: string, updates: Partial<ColumnConfig>) => void
+  // Values currently used in the table (can't be deleted from dropdown options)
+  tableData?: any[]
 }
 
 export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
   isOpen,
   onClose,
   column,
-  onSave
+  onSave,
+  tableData = []
 }) => {
   // Local state for form values
   const [headingName, setHeadingName] = useState("")
   const [columnType, setColumnType] = useState<ColumnConfig["type"]>("String")
+  const [dropdownOptions, setDropdownOptions] = useState<DropdownOption[]>([])
 
   // Initialize form when column changes
   useEffect(() => {
     if (column) {
       setHeadingName(column.headingName || "")
       setColumnType(column.type || "String")
+      
+      // Initialize dropdown options if available
+      if (column.meta?.dropdownOptions) {
+        setDropdownOptions(column.meta.dropdownOptions)
+      } else if (column.type === "Dropdown") {
+        // Default options if none are set - use standard todo/doing/done values
+        setDropdownOptions([
+          { value: "todo", label: "To Do", color: "#93c5fd" },  // Light blue
+          { value: "doing", label: "Doing", color: "#fcd34d" }, // Light yellow
+          { value: "done", label: "Done", color: "#86efac" }    // Light green
+        ])
+      }
     }
   }, [column])
+
+  // Get values currently in use in the table (to prevent deletion)
+  const getValuesInUse = (): string[] => {
+    if (!column || !tableData.length) return []
+    
+    // Extract all unique values used for this column in the table data
+    const valuesSet = new Set<string>()
+    tableData.forEach(row => {
+      const value = row[column.id]
+      if (value !== undefined && value !== null) {
+        valuesSet.add(value.toString())
+      }
+    })
+    
+    return Array.from(valuesSet)
+  }
 
   // Handle save
   const handleSave = () => {
     if (!column) return
-
-    onSave(column.id, {
+    
+    const updates: Partial<ColumnConfig> = {
       headingName,
       type: columnType
-    })
+    }
+
+    // Add dropdown options for dropdown columns
+    if (columnType === "Dropdown") {
+      updates.meta = {
+        ...column.meta,
+        dropdownOptions
+      }
+    }
+
+    onSave(column.id, updates)
     onClose()
   }
 
@@ -109,6 +158,15 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
               </Select.Content>
             </Select.Root>
           </Flex>
+
+          {/* Dropdown Options Editor - only show for Dropdown type */}
+          {columnType === "Dropdown" && (
+            <DropdownOptionsEditor
+              options={dropdownOptions}
+              onChange={setDropdownOptions}
+              valuesInUse={getValuesInUse()}
+            />
+          )}
         </Flex>
         
         <Flex gap="3" mt="4" justify="end">
