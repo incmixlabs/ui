@@ -197,6 +197,12 @@ export const taskDataSchemaLiteral = {
     "createdBy",
     "updatedBy",
   ],
+  indexes: [
+    ["columnId", "taskOrder"], 
+    ["projectId", "createdAt"], 
+    ["completed", "daysLeft"], 
+    ["createdBy"], 
+  ],
 } as const
 
 // Column Schema with required fields added
