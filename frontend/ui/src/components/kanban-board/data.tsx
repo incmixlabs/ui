@@ -108,6 +108,7 @@ export const initialData: TCustomBoard = [
     tasks: [
       {
         id: 32,
+        taskId:"task-idf434",
         name: "Brand Logo Design",
         date: "Jun 17",
         description: "Make a redesign of the logo in corporate colors",
@@ -132,6 +133,7 @@ export const initialData: TCustomBoard = [
       },
       {
         id: 23,
+        taskId:"task-idf435",
         name: "New Header Image",
         completed: false,
         daysLeft: 22,
@@ -148,6 +150,7 @@ export const initialData: TCustomBoard = [
       },
       {
         id: 20,
+        taskId:"task-idf436",
         name: "Updating Modules",
         completed: false,
         daysLeft: 22,
@@ -171,6 +174,7 @@ export const initialData: TCustomBoard = [
       },
       {
         id: 24,
+        taskId:"task-idf437",
         name: "Wireframe for APP",
         description: "Make a wramework for an app for a pre-presentation.",
         completed: false,
@@ -197,6 +201,7 @@ export const initialData: TCustomBoard = [
     tasks: [
       {
         id: 76,
+        taskId:"task-idf438",
         name: "Updating Modules",
         description: "Step-by-step update of modules.",
         date: "Jun 17",
@@ -228,6 +233,7 @@ export const initialData: TCustomBoard = [
     tasks: [
       {
         id: 34,
+        taskId:"task-idf434",
         name: "New Background",
         completed: true,
         daysLeft: 0,

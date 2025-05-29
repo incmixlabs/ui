@@ -64,6 +64,141 @@ export const taskSchemaLiteral = {
   ],
 } as const
 
+export const taskDataSchemaLiteral = {
+  title: "tasks schema",
+  version: 0,
+  primaryKey: "id",
+  type: "object",
+  properties: {
+    id: {
+      maxLength: 100,
+      type: "string",
+    },
+    taskId: {
+      type: "string",
+    },
+    name: {
+      type: "string",
+    },
+    columnId: {
+      type: "string", // Reference to which column this task belongs
+    },
+    projectId: {
+      type: "string", // Reference to which project this task belongs
+    },
+    date: {
+      type: "string",
+    },
+    description: {
+      type: "string",
+    },
+    completed: {
+      type: "boolean",
+      default: false,
+    },
+    daysLeft: {
+      type: "number",
+      default: 0,
+    },
+    attachment: {
+      type: "string", // URL to attachment image
+    },
+    taskOrder: {
+      type: "number", // For ordering tasks within a column
+      default: 0,
+    },
+    // File attachments
+    filesData: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          name: {
+            type: "string",
+          },
+          url: {
+            type: "string",
+          },
+          size: {
+            type: "string",
+          },
+        },
+        required: ["name", "url", "size"],
+      },
+      default: [],
+    },
+    // Team members assigned to task
+    members: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          id: {
+            type: "number",
+          },
+          name: {
+            type: "string",
+          },
+          src: {
+            type: "string", // Avatar image URL
+          },
+        },
+        required: ["id", "name", "src"],
+      },
+      default: [],
+    },
+    // Sub-tasks
+    subTasks: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          name: {
+            type: "string",
+          },
+          progress: {
+            type: "number",
+            minimum: 0,
+            maximum: 100,
+          },
+          completed: {
+            type: "boolean",
+            default: false,
+          },
+        },
+        required: ["name", "progress", "completed"],
+      },
+      default: [],
+    },
+    createdAt: {
+      type: "number", // Using number for timestamp consistency
+    },
+    updatedAt: {
+      type: "number",
+    },
+    createdBy: {
+      type: "string",
+    },
+    updatedBy: {
+      type: "string",
+    },
+  },
+  required: [
+    "id",
+    "taskId",
+    "name",
+    "columnId",
+    "projectId",
+    "date",
+    "completed",
+    "daysLeft",
+    "createdAt",
+    "updatedAt",
+    "createdBy",
+    "updatedBy",
+  ],
+} as const
+
 // Column Schema with required fields added
 export const columnSchemaLiteral = {
   title: "columns schema",
@@ -102,7 +237,6 @@ export const columnSchemaLiteral = {
       type: ["string", "null"],
     },
   },
-  // Adding required fields to enforce presence of key properties.
   required: [
     "id",
     "label",
@@ -378,6 +512,7 @@ export const formProjectSchemaLiteral = {
 } as const
 
 const tasksTyped = toTypedRxJsonSchema(taskSchemaLiteral)
+const tasksDataTyped = toTypedRxJsonSchema(taskDataSchemaLiteral)
 const columnsTyped = toTypedRxJsonSchema(columnSchemaLiteral)
 const projectTyped = toTypedRxJsonSchema(projectSchemaLiteral)
 const formProjectTyped = toTypedRxJsonSchema(formProjectSchemaLiteral)
@@ -408,6 +543,9 @@ export type DashboardTemplateDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
 export type DashboardDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof dashboardTyped
 >
+export type TaskDataDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
+  typeof tasksDataTyped
+>
 
 export type TaskCollections = {
   tasks: RxCollection<TaskDocType>
@@ -416,4 +554,5 @@ export type TaskCollections = {
   formProjects: RxCollection<FormProjectDocType>
   dashboardTemplates: RxCollection<DashboardTemplateDocType>
   dashboards: RxCollection<DashboardDocType>
+  taskData: RxCollection<TaskDataDocType>
 }

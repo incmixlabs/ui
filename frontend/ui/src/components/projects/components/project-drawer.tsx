@@ -16,7 +16,6 @@ import {
 } from "@incmix/ui"
 
 import { MotionSheet } from "@components/custom-sheet"
-import { ComboBox } from "@components/kanban-board/combo-box"
 import { attachments } from "@components/kanban-board/data"
 import { useProjectDrawer } from "@hooks/use-project-drawer"
 
@@ -24,6 +23,7 @@ import { members, projects } from "../data"
 import ProjectChecklist from "./project-checklist"
 import ProjectComments from "./project-comments"
 import ProjectDetails from "./project-detials"
+import { ComboBox } from "@components/combo-box"
 
 export default function ProjectDrawer({
   listFilter,

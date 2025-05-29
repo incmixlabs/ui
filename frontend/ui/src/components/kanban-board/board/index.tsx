@@ -12,21 +12,21 @@ import { Suspense, lazy } from "react"
 import { useEffect, useRef, useState } from "react"
 import invariant from "tiny-invariant"
 import { BoardColumn } from "./board-column"
-import { initialData } from "./data"
-import { blockBoardPanningAttr } from "./data-attributes"
+import { initialData } from "../data"
+import { blockBoardPanningAttr } from "../data-attributes"
 
 import { Box } from "@incmix/ui"
 
 // Dynamically import heavy component
 const TaskCardDrawer = lazy(() => import("./task-card-drawer"))
-import type { TCard, TColumn, TCustomBoard } from "./types"
+import type { TCard, TColumn, TCustomBoard } from "../types"
 import {
   isCardData,
   isCardDropTargetData,
   isColumnData,
   isDraggingACard,
   isDraggingAColumn,
-} from "./types"
+} from "../types"
 
 function convertCustomDataToBoardFormat(customData: TCustomBoard) {
   const columns = customData.map((column) => {
@@ -321,7 +321,6 @@ export function Board() {
               scrollable?.scrollBy({ left: diffX })
             },
           },
-          // stop panning if we see any of these events
           ...(
             [
               "pointercancel",
@@ -380,12 +379,11 @@ export function Board() {
             <BoardColumn
               key={column.id}
               column={column}
-              kanbanFilter={kanbanFilter}
             />
           ))}
         </Box>
         <Suspense fallback={<Box className="p-4">Loading drawer...</Box>}>
-          <TaskCardDrawer kanbanFilter={kanbanFilter} />
+          <TaskCardDrawer/>
         </Suspense>
       </Box>
     </>

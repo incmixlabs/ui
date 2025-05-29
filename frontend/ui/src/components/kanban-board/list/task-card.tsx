@@ -16,15 +16,15 @@ import {
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { isSafari } from "@utils/browser"
 import { isShallowEqual } from "@utils/objects"
-import { CalendarDays, MessageSquareText, Paperclip } from "lucide-react"
-import { IconButton } from "@base"
+import { CalendarDays, Ellipsis, EllipsisVertical, MessageSquareText, Paperclip } from "lucide-react"
+import { Button, DropdownMenu, IconButton } from "@base"
 import {
   type TCard,
   getCardData,
   getCardDropTargetData,
   isCardData,
   isDraggingACard,
-} from "./types"
+} from "../types"
 
 import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
 import { Box, Checkbox, Flex, Heading, Text, iconSize } from "@incmix/ui"
@@ -69,7 +69,7 @@ const outerStyles: { [Key in TCardState["type"]]?: string } = {
   "is-dragging-and-left-self": "hidden",
 }
 
-export function TaskCardShadow({ dragging }: { dragging: DOMRect }) {
+export function ListTaskCardShadow({ dragging }: { dragging: DOMRect }) {
   return (
     <div
       className="flex-shrink-0 rounded bg-gray-5"
@@ -78,18 +78,16 @@ export function TaskCardShadow({ dragging }: { dragging: DOMRect }) {
   )
 }
 
-export function TaskCardDisplay({
+export function ListTaskCardDisplay({
   card,
   state,
   outerRef,
   innerRef,
-  kanbanFilter,
 }: {
   card: TCard
   state: TCardState
   outerRef?: React.MutableRefObject<HTMLDivElement | null>
   innerRef?: MutableRefObject<HTMLDivElement | null>
-  kanbanFilter?: boolean
 }) {
   const { handleDrawerOpen } = useKanbanDrawer()
   return (
@@ -106,12 +104,12 @@ export function TaskCardDisplay({
     >
       {/* Put a shadow before the item if closer to the top edge */}
       {state.type === "is-over" && state.closestEdge === "top" ? (
-        <TaskCardShadow dragging={state.dragging} />
+        <ListTaskCardShadow dragging={state.dragging} />
       ) : null}
       <Card
         className={cn(
           `relative cursor-pointer space-y-1.5 rounded-lg p-3 ${innerStyles[state.type]}`,
-          kanbanFilter ? "flex items-center justify-between " : ""
+          "flex items-center justify-between "
         )}
         ref={innerRef}
         style={
@@ -127,7 +125,6 @@ export function TaskCardDisplay({
             : undefined
         }
       >
-        {kanbanFilter ? (
           <>
             <Flex align={"center"} justify={"center"} gap="2">
               <Checkbox
@@ -167,133 +164,66 @@ export function TaskCardDisplay({
                   })}
                 </Flex>
               )}
-              <Flex align={"center"} gap="2">
+              <Flex align={"center"} gap="2" className="-space-x-6">
                 {card.members.map((member) => (
                   <img
                     key={member.id}
                     src={member.src}
                     alt={member.name}
-                    className="h-8 w-8 rounded-full"
+                    className="h-8 w-8 rounded-full border-4 border-gray-2"
                   />
                 ))}
               </Flex>
+              <DropdownMenu.Root>
+	<DropdownMenu.Trigger>
+		<IconButton variant="soft">
+			<EllipsisVertical />
+		</IconButton>
+	</DropdownMenu.Trigger>
+	<DropdownMenu.Content>
+		<DropdownMenu.Item shortcut="⌘ E">Edit</DropdownMenu.Item>
+		<DropdownMenu.Item shortcut="⌘ D">Duplicate</DropdownMenu.Item>
+		<DropdownMenu.Separator />
+		<DropdownMenu.Item shortcut="⌘ N">Archive</DropdownMenu.Item>
+
+		<DropdownMenu.Sub>
+			<DropdownMenu.SubTrigger>More</DropdownMenu.SubTrigger>
+			<DropdownMenu.SubContent>
+				<DropdownMenu.Item>Move to project…</DropdownMenu.Item>
+				<DropdownMenu.Item>Move to folder…</DropdownMenu.Item>
+
+				<DropdownMenu.Separator />
+				<DropdownMenu.Item>Advanced options…</DropdownMenu.Item>
+			</DropdownMenu.SubContent>
+		</DropdownMenu.Sub>
+
+		<DropdownMenu.Separator />
+		<DropdownMenu.Item>Share</DropdownMenu.Item>
+		<DropdownMenu.Item>Add to favorites</DropdownMenu.Item>
+		<DropdownMenu.Separator />
+		<DropdownMenu.Item shortcut="⌘ ⌫" color="red">
+			Delete
+		</DropdownMenu.Item>
+	</DropdownMenu.Content>
+</DropdownMenu.Root>
+
             </Flex>
           </>
-        ) : (
-          <>
-            <Text
-              as="span"
-              className="absolute top-2 right-3 flex items-center gap-1 font-medium text-sm"
-            >
-              <CalendarDays className="text-zinc-400" size={20} />
-              <Text as="span">{card?.date}</Text>
-            </Text>
-            {card.members && (
-              <Flex align={"center"} gap={"1"}>
-                {card.members.map((file) => {
-                  const colors = [
-                    "bg-green-400",
-                    "bg-yellow-400",
-                    "bg-orange-400",
-                    "bg-cyan-400",
-                    "bg-red-400",
-                  ]
-                  const randomColor =
-                    colors[Math.floor(Math.random() * colors.length)]
-                  return (
-                    <Text
-                      key={file.name}
-                      className={`flex h-1 w-6 items-center gap-1 rounded-full ${randomColor}`}
-                    />
-                  )
-                })}
-              </Flex>
-            )}
-            <Heading as="h6" className="py-2 font-medium">
-              {card.name}
-            </Heading>
-            {card.description && (
-              <Text as="p" className="text-gray-11">
-                {card.description}
-              </Text>
-            )}
-            {card.subTasks?.map((subtask, i) => (
-              <>
-                <Box key={`${subtask?.name}-${i}`} className="space-y-2 py-2">
-                  <Flex
-                    align={"center"}
-                    justify={"between"}
-                    className="w-full gap-1 text-gray-11 uppercase"
-                  >
-                    <Text>{subtask.name}</Text>
-                    <Text>{subtask?.progress}%</Text>
-                  </Flex>
-                  <Flex
-                    align={"center"}
-                    className="i relative h-2 w-full gap-1 rounded-full bg-gray-200 before:absolute before:top-0 before:left-0 before:h-2 before:w-[var(--progress)] before:rounded-full before:bg-green-400"
-                    style={
-                      {
-                        "--progress": `${subtask?.progress}%`,
-                      } as React.CSSProperties
-                    }
-                  />
-                </Box>
-              </>
-            ))}
-            {card.attachment && (
-              <img
-                src={card.attachment}
-                alt="attachment"
-                className="aspect-video rounded-lg object-cover"
-              />
-            )}
-            <Flex
-              align={"center"}
-              justify={"between"}
-              className="gap-2 pt-6 pb-2"
-            >
-              <Flex align={"center"} gap="4">
-                {card.filesData && (
-                  <IconButton className="flex items-center gap-1 bg-transparent text-gray-700 dark:text-gray-200">
-                    <Paperclip size={20} />
-                    <Text>{card.filesData.length}</Text>
-                  </IconButton>
-                )}
-                <IconButton className="flex items-center gap-1 bg-transparent text-gray-700 dark:text-gray-200">
-                  <MessageSquareText size={20} />
-                  <Text>5</Text>
-                </IconButton>
-              </Flex>
-              <Flex align={"center"} className="gap-2">
-                {card.members.map((member) => (
-                  <img
-                    key={member.id}
-                    src={member.src}
-                    alt={member.name}
-                    className="h-8 w-8 rounded-full"
-                  />
-                ))}
-              </Flex>
-            </Flex>
-          </>
-        )}
       </Card>
       {/* Put a shadow after the item if closer to the bottom edge */}
       {state.type === "is-over" && state.closestEdge === "bottom" ? (
-        <TaskCardShadow dragging={state.dragging} />
+        <ListTaskCardShadow dragging={state.dragging} />
       ) : null}
     </Box>
   )
 }
 
-export function TaskCard({
+export function ListTaskCard({
   card,
   columnId,
-  kanbanFilter,
 }: {
   card: TCard
   columnId: string
-  kanbanFilter: boolean
 }) {
   const outerRef = useRef<HTMLDivElement | null>(null)
   const innerRef = useRef<HTMLDivElement | null>(null)
@@ -412,17 +342,16 @@ export function TaskCard({
 
   return (
     <>
-      <TaskCardDisplay
+      <ListTaskCardDisplay
         outerRef={outerRef}
         innerRef={innerRef}
         state={state}
         card={card}
         key={card.id}
-        kanbanFilter={kanbanFilter}
       />
       {state.type === "preview"
         ? createPortal(
-            <TaskCardDisplay state={state} card={card} />,
+            <ListTaskCardDisplay state={state} card={card} />,
             state.container
           )
         : null}

@@ -39,13 +39,13 @@ import {
 } from "motion/react"
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
-import { MotionSheet } from "../custom-sheet"
-import { SmartDatetimeInput } from "../datetime-picker"
-import { TaskIcon } from "../icons/task"
-import X from "../icons/x"
-import { ComboBox } from "./combo-box"
-import { assignData, attachments, commentsData, labelsData } from "./data"
-import { KanbanImages } from "./images"
+import { MotionSheet } from "../../custom-sheet"
+import { SmartDatetimeInput } from "../../datetime-picker"
+import { TaskIcon } from "../../icons/task"
+import X from "../../icons/x"
+import { ComboBox } from "../../combo-box"
+import { assignData, attachments, commentsData, labelsData } from "../data"
+import { KanbanImages } from "../images"
 
 /**
  * Renders a task card drawer for editing detailed task information within a Kanban board.
@@ -59,11 +59,7 @@ import { KanbanImages } from "./images"
  *
  * @returns A JSX element representing the task card drawer interface.
  */
-export default function TaskCardDrawer({
-  kanbanFilter,
-}: {
-  kanbanFilter: boolean
-}) {
+export default function TaskCardDrawer() {
   const { taskId, handleDrawerClose } = useKanbanDrawer()
   const [checkListData, setChecklistData] = useState([
     {
@@ -145,15 +141,9 @@ export default function TaskCardDrawer({
         showCloseButton={false}
         side="right"
         isFilterClassName="relative z-50 h-[80vh] shrink-0 rounded-xl"
-        isFilter={kanbanFilter}
         className="w-[53rem] p-0 "
       >
-        <div
-          className={cn(
-            "cursor-default rounded-lg bg-gray-3 dark:bg-gray-4 ",
-            kanbanFilter ? "h-full w-full" : "w-full "
-          )}
-        >
+        <div className={cn("cursor-default rounded-lg bg-gray-3 dark:bg-gray-4 ")}>
           <ScrollArea className="h-[98vh] rounded-lg">
             <Flex align={"center"} className="h-full">
               <Box className="bg-gray-1 p-4 dark:bg-gray-3">
@@ -235,17 +225,6 @@ export default function TaskCardDrawer({
                         </DropdownMenu.Item>
                       </DropdownMenu.Content>
                     </DropdownMenu.Root>
-                    {kanbanFilter && (
-                      <IconButton
-                        color="gray"
-                        variant="soft"
-                        onClick={handleDrawerClose}
-                        className="ml-2 flex h-8 w-8 items-center justify-center rounded-md"
-                      >
-                        <X aria-hidden="true" />
-                        <Text className="sr-only">Close</Text>
-                      </IconButton>
-                    )}
                   </Flex>
                 </Flex>
 
@@ -253,93 +232,6 @@ export default function TaskCardDrawer({
                 <Heading className="px-0 py-4 font-medium">
                   Template Progress
                 </Heading>
-                {kanbanFilter && (
-                  <Box className="space-y-3 py-2">
-                    <Grid columns="2">
-                      <Box className="space-y-3">
-                        <Heading
-                          size={"4"}
-                          className="font-medium text-gray-11"
-                        >
-                          ASSIGNED TO
-                        </Heading>
-                        <Flex className="gap-1">
-                          <Avatar
-                            src={KanbanImages.user1}
-                            className="h-8 w-8"
-                          />
-                          <Avatar
-                            src={KanbanImages.user2}
-                            className="h-8 w-8"
-                          />
-                          <Avatar
-                            src={KanbanImages.user1}
-                            className="h-8 w-8"
-                          />
-                          <ComboBox
-                            options={assignData}
-                            onValueChange={setSelectedMemebers}
-                            defaultValue={selectedMemebers}
-                            placeholder="Find Person..."
-                            title="Assign To"
-                          />
-                        </Flex>
-                      </Box>
-                      <Box className="space-y-3">
-                        <Heading
-                          size={"4"}
-                          className="font-medium text-gray-11"
-                        >
-                          CREATED BY
-                        </Heading>
-                        <Flex className="gap-2">
-                          <Flex className="gap-1" align={"center"}>
-                            <Avatar
-                              src={KanbanImages.user1}
-                              className="h-8 w-8"
-                            />
-                            <p>Regina Cooper</p>
-                          </Flex>
-                        </Flex>
-                      </Box>
-                    </Grid>
-                    {/* lables */}
-                    <h2 className="font-medium text-gray-500">LABELS</h2>
-                    <Flex className="gap-2">
-                      {allLabelsData?.map((label) => (
-                        <Badge
-                          color={label.color as ExtendedColorType}
-                          variant="solid"
-                          key={label.value}
-                          className="rounded-md p-1.5 px-2.5"
-                        >
-                          {label.label}
-                        </Badge>
-                      ))}
-
-                      <ComboBox
-                        options={allLabelsData}
-                        onValueChange={setSelectedLabes}
-                        defaultValue={selectedLabels}
-                        placeholder="Search Label"
-                        title="Labels"
-                        addNewLabel={true}
-                        isLabelFormOpen={isLabelFormOpen}
-                        formRef={formRef}
-                        setIsLabelFormOpen={setIsLabelFormOpen}
-                        handleAddNewLabel={handleAddNewLabel}
-                      />
-                    </Flex>
-
-                    {/* DUE DATE */}
-                    <h2 className=" font-medium text-gray-500">DUE DATE </h2>
-                    <SmartDatetimeInput
-                      value={selectedDate}
-                      onValueChange={handleDateChange}
-                      placeholder="Enter a date and time"
-                    />
-                  </Box>
-                )}
                 <Box className="space-y-2 py-6 pt-4">
                   <Heading size={"4"} className="font-medium text-gray-11">
                     DESCRIPTION
@@ -604,7 +496,6 @@ export default function TaskCardDrawer({
                   </Tabs.Root>
                 </Box>
               </Box>
-              {!kanbanFilter && (
                 <Box className="relative h-full w-72 shrink-0 pt-24">
                   <IconButton
                     color="gray"
@@ -709,7 +600,6 @@ export default function TaskCardDrawer({
                     </Box>
                   </Box>
                 </Box>
-              )}
             </Flex>
           </ScrollArea>
         </div>

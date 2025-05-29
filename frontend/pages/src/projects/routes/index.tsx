@@ -1,5 +1,3 @@
-"use client"
-
 import { createRoute } from "@tanstack/react-router"
 
 import { RootRoute } from "@common"

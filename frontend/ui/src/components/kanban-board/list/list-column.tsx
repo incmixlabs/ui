@@ -1,5 +1,3 @@
-"use client"
-
 import {
   draggable,
   dropTargetForElements,
@@ -18,8 +16,7 @@ import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/el
 import { Box, Flex, Heading, IconButton  } from "@base"
 import { isSafari } from "@utils/browser"
 import { isShallowEqual } from "@utils/objects"
-import { blockBoardPanningAttr } from "./data-attributes"
-import { TaskCard, TaskCardShadow } from "./task-card"
+import { blockBoardPanningAttr } from "../data-attributes"
 import {
   type TCardData,
   type TColumn,
@@ -29,7 +26,8 @@ import {
   isColumnData,
   isDraggingACard,
   isDraggingAColumn,
-} from "./types"
+} from "../types"
+import { ListTaskCard, ListTaskCardShadow } from "./task-card"
 
 type TColumnState =
   | {
@@ -58,27 +56,22 @@ const idle = { type: "idle" } satisfies TColumnState
 
 const CardList = memo(function CardList({
   column,
-  kanbanFilter,
 }: {
   column: TColumn
-  kanbanFilter: boolean
 }) {
   return column.cards.map((card) => (
-    <TaskCard
+    <ListTaskCard
       key={card.id}
       card={card}
       columnId={column.id}
-      kanbanFilter={kanbanFilter}
     />
   ))
 })
 
-export function BoardColumn({
+export function ListColumn({
   column,
-  kanbanFilter,
 }: {
   column: TColumn
-  kanbanFilter: boolean
 }) {
   const scrollableRef = useRef<HTMLDivElement | null>(null)
   const outerFullHeightRef = useRef<HTMLDivElement | null>(null)
@@ -250,6 +243,7 @@ export function BoardColumn({
             direction="column"
             className={`max-h-full pb-2 ${state.type === "is-column-over" ? "invisible" : ""}`}
           >
+            <Box className="mt-2 px-3.5">
             <Flex
               direction="row"
               justify="between"
@@ -264,19 +258,6 @@ export function BoardColumn({
                 <Ellipsis size={16} />
               </IconButton>
             </Flex>
-            <Flex
-              className="flex flex-col overflow-y-auto [overflow-anchor:none] [scrollbar-color:theme(colors.slate.400)_theme(colors.slate.200)] [scrollbar-width:thin]"
-              ref={scrollableRef}
-            >
-              <CardList column={column} kanbanFilter={kanbanFilter} />
-              {state.type === "is-card-over" && !state.isOverChildCard ? (
-                <Box className="flex-shrink-0 px-3 py-1">
-                  <TaskCardShadow dragging={state.dragging} />
-                </Box>
-              ) : null}
-            </Flex>
-            {kanbanFilter ? (
-              <Box className="mt-2 px-3.5">
                 <Flex
                   justify={"start"}
                   gap="2"
@@ -287,15 +268,20 @@ export function BoardColumn({
                   </IconButton>
                 </Flex>
               </Box>
-            ) : (
-              <>
-                <Flex justify={"center"} gap="2" className=" p-3">
-                  <IconButton className="rounded bg-blue-600/10 p-2 font-bold text-2xl text-blue-500 hover:bg-blue-600 hover:text-white">
-                    <Plus size={24} />
-                  </IconButton>
-                </Flex>
-              </>
-            )}
+           
+            <Flex
+              className="flex flex-col overflow-y-auto [overflow-anchor:none] [scrollbar-color:theme(colors.slate.400)_theme(colors.slate.200)] [scrollbar-width:thin]"
+              ref={scrollableRef}
+            >
+              <CardList column={column} />
+              {state.type === "is-card-over" && !state.isOverChildCard ? (
+                <Box className="flex-shrink-0 px-3 py-1">
+                  <ListTaskCardShadow dragging={state.dragging} />
+                </Box>
+              ) : null}
+            </Flex>
+              
+            
           </Flex>
         </Flex>
       </Flex>

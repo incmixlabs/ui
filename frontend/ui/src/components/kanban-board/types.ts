@@ -29,6 +29,7 @@ export type TMember = {
 
 export type TCard = {
   id: number
+  taskId: string
   name: string
   description?: string
   completed: boolean

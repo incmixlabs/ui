@@ -10,7 +10,7 @@ import { Avatar, Badge, Button, Command,
   CommandItem,
   CommandList,
   CommandSeparator, IconButton, Input } from "@base"
-import ColorPicker, { type ColorSelectType } from "../color-picker"
+import ColorPicker, { type ColorSelectType } from "./color-picker"
 
 
 export type ExtendedColorType = BadgeProps["color"] | "blue"
