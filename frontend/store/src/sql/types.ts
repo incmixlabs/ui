@@ -198,10 +198,10 @@ export const taskDataSchemaLiteral = {
     "updatedBy",
   ],
   indexes: [
-    ["columnId", "taskOrder"], 
-    ["projectId", "createdAt"], 
-    ["completed", "daysLeft"], 
-    ["createdBy"], 
+    ["columnId", "taskOrder"],
+    ["projectId", "createdAt"],
+    ["completed", "daysLeft"],
+    ["createdBy"],
   ],
 } as const
 

@@ -6,7 +6,6 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types"
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder"
-import { useKanbanFilter } from "@hooks/use-kanban-filter"
 import { bindAll } from "bind-event-listener"
 import { Suspense, lazy } from "react"
 import { useEffect, useRef, useState } from "react"
@@ -53,7 +52,6 @@ export function ListBoard() {
 
   const [data, setData] = useState(boardData)
   const scrollableRef = useRef<HTMLDivElement | null>(null)
-  const { kanbanFilter } = useKanbanFilter()
 
   useEffect(() => {
     const element = scrollableRef.current

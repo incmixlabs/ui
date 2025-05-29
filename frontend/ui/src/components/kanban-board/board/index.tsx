@@ -6,7 +6,6 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types"
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder"
-import { useKanbanFilter } from "@hooks/use-kanban-filter"
 import { bindAll } from "bind-event-listener"
 import { Suspense, lazy } from "react"
 import { useEffect, useRef, useState } from "react"
@@ -53,7 +52,6 @@ export function Board() {
 
   const [data, setData] = useState(boardData)
   const scrollableRef = useRef<HTMLDivElement | null>(null)
-  const { kanbanFilter } = useKanbanFilter()
 
   useEffect(() => {
     const element = scrollableRef.current
@@ -369,11 +367,11 @@ export function Board() {
   return (
     <>
       <Box
-        className={`${kanbanFilter && "flex w-full gap-6 "} h-full overflow-hidden`}
+        className={`flex w-full gap-6 h-full overflow-hidden`}
         ref={scrollableRef}
       >
         <Box
-          className={`${kanbanFilter ? "w-full space-y-5 " : "flex flex-row gap-4 2xl:gap-7"}`}
+          className={`flex flex-row gap-4 2xl:gap-7`}
         >
           {data.columns.map((column) => (
             <BoardColumn
