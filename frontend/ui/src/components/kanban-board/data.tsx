@@ -103,11 +103,11 @@ export const commentsData = [
 
 export const initialData: TCustomBoard = [
   {
-    id: 1,
+    id: "1",
     title: "To Do",
     tasks: [
       {
-        id: 32,
+        id: "32",
         taskId:"task-idf434",
         name: "Brand Logo Design",
         date: "Jun 17",
@@ -120,19 +120,19 @@ export const initialData: TCustomBoard = [
         ],
         members: [
           {
-            id: 1,
+            id: "1",
             name: "Bonnie Green",
             src: KanbanImages.user1,
           },
           {
-            id: 2,
+            id: "2",
             name: "Roberta Casas",
             src: KanbanImages.user2,
           },
         ],
       },
       {
-        id: 23,
+        id: "23",
         taskId:"task-idf435",
         name: "New Header Image",
         completed: false,
@@ -142,14 +142,14 @@ export const initialData: TCustomBoard = [
         filesData: [{ name: "preview.png", url: "", size: "1.2MB" }],
         members: [
           {
-            id: 2,
+            id: "2",
             name: "Roberta Casas",
             src: KanbanImages.user2,
           },
         ],
       },
       {
-        id: 20,
+        id: "20",
         taskId:"task-idf436",
         name: "Updating Modules",
         completed: false,
@@ -161,19 +161,19 @@ export const initialData: TCustomBoard = [
         filesData: [{ name: "preview.png", url: "", size: "1.2MB" }],
         members: [
           {
-            id: 1,
+            id: "1",
             name: "Bonnie Green",
             src: KanbanImages.user2,
           },
           {
-            id: 2,
+            id: "2",
             name: "Roberta Casas",
             src: KanbanImages.user2,
           },
         ],
       },
       {
-        id: 24,
+        id: "24",
         taskId:"task-idf437",
         name: "Wireframe for APP",
         description: "Make a wramework for an app for a pre-presentation.",
@@ -182,12 +182,12 @@ export const initialData: TCustomBoard = [
         date: "Jun 17",
         members: [
           {
-            id: 1,
+            id: "1",
             name: "Bonnie Green",
             src: KanbanImages.user2,
           },
           {
-            id: 2,
+            id: "2",
             name: "Roberta Casas",
             src: KanbanImages.user1,
           },
@@ -196,11 +196,11 @@ export const initialData: TCustomBoard = [
     ],
   },
   {
-    id: 2,
+    id: "2",
     title: "In Progress",
     tasks: [
       {
-        id: 76,
+        id: "76",
         taskId:"task-idf438",
         name: "Updating Modules",
         description: "Step-by-step update of modules.",
@@ -214,12 +214,12 @@ export const initialData: TCustomBoard = [
         subTasks: [{ name: "sub-tasks-1", progress: 40, completed: false }],
         members: [
           {
-            id: 1,
+            id: "1",
             name: "Bonnie Green",
             src: KanbanImages.user1,
           },
           {
-            id: 2,
+            id: "2",
             name: "Roberta Casas",
             src: KanbanImages.user2,
           },
@@ -228,11 +228,11 @@ export const initialData: TCustomBoard = [
     ],
   },
   {
-    id: 3,
+    id: "3",
     title: "Done",
     tasks: [
       {
-        id: 34,
+        id: "34",
         taskId:"task-idf434",
         name: "New Background",
         completed: true,
@@ -241,7 +241,7 @@ export const initialData: TCustomBoard = [
         attachment: KanbanImages.bg1,
         members: [
           {
-            id: 1,
+            id: "1",
             name: "Bonnie Green",
             src: KanbanImages.user1,
           },

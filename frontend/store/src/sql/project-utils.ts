@@ -6,27 +6,25 @@ import type { FormProjectDocType } from "./types"
 type ProjectStatus = "all" | "started" | "on-hold" | "completed"
 type TimeType = "day" | "days" | "week" | "month" | "year"
 
-export type TaskSchema = {
+export type TaskDataSchema = {
   id: string
   taskId: string
   name: string
   columnId: string
-  projectId: string
   date: string
   description?: string
   completed: boolean
   daysLeft: number
-  attachment?: string
   taskOrder: number
-  filesData: Array<{
+  attachment: Array<{
     name: string
     url: string
     size: string
   }>
-  members: Array<{
-    id: number
+  assignedTo: Array<{
+    id: string
     name: string
-    src: string
+    image: string
   }>
   subTasks: Array<{
     name: string
@@ -35,8 +33,16 @@ export type TaskSchema = {
   }>
   createdAt: number
   updatedAt: number
-  createdBy: string
-  updatedBy: string
+  createdBy: {
+    id: string
+    name: string
+    image: string
+  }
+  updatedBy: {
+    id: string
+    name: string
+    image: string
+  }
 }
 // Update the type to match the actual form data structure with optional fields
 type ProjectFormData = {

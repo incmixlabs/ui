@@ -1,5 +1,4 @@
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
-import { unsafeOverflowAutoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/unsafe-overflow/element"
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge"
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
@@ -7,108 +6,110 @@ import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/dist/types/int
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder"
 import { bindAll } from "bind-event-listener"
-import { Suspense, lazy } from "react"
-import { useEffect, useRef, useState } from "react"
-import invariant from "tiny-invariant"
+import { Suspense, lazy, useEffect, useRef, useMemo } from "react"
 import { ListColumn } from "./list-column"
-import { initialData } from "../data"
 import { blockBoardPanningAttr } from "../data-attributes"
-
 import { Box } from "@incmix/ui"
+import { useTaskStore } from "@incmix/store"
 
-// Dynamically import heavy component
 const ListTaskCardDrawer = lazy(() => import("./task-card-drawer"))
-import type { TCard, TColumn, TCustomBoard } from "../types"
-import {
-  isCardData,
-  isCardDropTargetData,
-  isColumnData,
-  isDraggingACard,
-  isDraggingAColumn,
-} from "../types"
 
-function convertCustomDataToBoardFormat(customData: TCustomBoard) {
-  const columns = customData.map((column) => {
-    // Convert tasks to cards
-    const cards: TCard[] = column.tasks.map((task) => ({
-      ...task,
-      id: task.id,
-    }))
+import type { TColumn } from "../types"
+import { isCardData, isCardDropTargetData, isColumnData, isDraggingACard, isDraggingAColumn } from "../types"
+
+function convertTasksToColumns(tasks: any[], columns: any[]) {
+  return columns.map((column) => {
+    const columnTasks = tasks
+      .filter((task) => task.columnId === column.id)
+      .sort((a, b) => a.taskOrder - b.taskOrder)
+      .map((task) => ({
+        ...task,
+        id: task.taskId,
+      }))
 
     return {
       id: `column:${column.id}`,
       title: column.title,
-      cards,
+      cards: columnTasks,
     }
   })
-
-  return {
-    columns,
-  }
 }
 
 export function ListBoard() {
-  const boardData = convertCustomDataToBoardFormat(initialData)
+  const { tasks, initialize, initialized, isInitialLoading, moveTaskBetweenColumns, reorderTasksInColumn } =
+    useTaskStore()
 
-  const [data, setData] = useState(boardData)
+  const mockColumns = [
+    { id: "col-todo", title: "To Do" },
+    { id: "col-progress", title: "In Progress" },
+    { id: "col-done", title: "Done" },
+  ]
+
+  const columns = useMemo(() => {
+    if (!initialized) return []
+    return convertTasksToColumns(tasks, mockColumns)
+  }, [tasks, initialized])
+
   const scrollableRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
+    if (!initialized) {
+      initialize()
+    }
+  }, [initialize, initialized])
+
+  useEffect(() => {
     const element = scrollableRef.current
-    invariant(element)
+    if (!element) {
+      return
+    }
+
+    if (!columns || columns.length === 0) {
+      return
+    }
+
     return combine(
       monitorForElements({
         canMonitor: isDraggingACard,
         onDrop({ source, location }) {
-          // setIsChecking(source);
-
           const dragging = source.data
           if (!isCardData(dragging)) {
             return
           }
 
           const innerMost = location.current.dropTargets[0]
-
           if (!innerMost) {
             return
           }
+
           const dropTargetData = innerMost.data
-          const homeColumnIndex = data.columns.findIndex(
-            (column) => column.id === dragging.columnId
-          )
-          const home: TColumn | undefined = data.columns[homeColumnIndex]
+          const homeColumnIndex = columns.findIndex((column) => column.id === dragging.columnId)
+          const home: TColumn | undefined = columns[homeColumnIndex]
 
           if (!home) {
             return
           }
-          const cardIndexInHome = home.cards.findIndex(
-            (card) => card.id === dragging.card.id
-          )
+
+          const cardIndexInHome = home.cards.findIndex((card) => card.id === dragging.card.id)
 
           // dropping on a card
           if (isCardDropTargetData(dropTargetData)) {
-            const destinationColumnIndex = data.columns.findIndex(
-              (column) => column.id === dropTargetData.columnId
-            )
-            const destination = data.columns[destinationColumnIndex]
+            const destinationColumnIndex = columns.findIndex((column) => column.id === dropTargetData.columnId)
+            const destination = columns[destinationColumnIndex]
+
             // reordering in home column
             if (home === destination) {
-              const cardFinishIndex = home.cards.findIndex(
-                (card) => card.id === dropTargetData.card.id
-              )
+              const cardFinishIndex = home.cards.findIndex((card) => card.id === dropTargetData.card.id)
 
-              // could not find cards needed
               if (cardIndexInHome === -1 || cardFinishIndex === -1) {
                 return
               }
 
-              // no change needed
               if (cardIndexInHome === cardFinishIndex) {
                 return
               }
 
               const closestEdge = extractClosestEdge(dropTargetData)
-
               const reordered = reorderWithEdge({
                 axis: "vertical",
                 list: home.cards,
@@ -117,67 +118,36 @@ export function ListBoard() {
                 closestEdgeOfTarget: closestEdge,
               })
 
-              const updated: TColumn = {
-                ...home,
-                cards: reordered,
-              }
-              const columns = Array.from(data.columns)
-              columns[homeColumnIndex] = updated
+              // ✅ No need to update local state - just update the store
+              // The useMemo will automatically recompute columns when tasks change
+              const taskIds = reordered.map((card) => card.id)
+              const columnId = home.id.replace("column:", "")
+              reorderTasksInColumn(columnId, taskIds).catch(console.error)
 
-              setData((prevData) => {
-                const updatedColumns = [...prevData.columns]
-                updatedColumns[homeColumnIndex] = updated
-
-                return {
-                  ...prevData,
-                  columns: updatedColumns,
-                }
-              })
               return
             }
 
             // moving card from one column to another
-
-            // unable to find destination
             if (!destination) {
               return
             }
 
-            const indexOfTarget = destination.cards.findIndex(
-              (card) => card.id === dropTargetData.card.id
-            )
-
+            const indexOfTarget = destination.cards.findIndex((card) => card.id === dropTargetData.card.id)
             const closestEdge = extractClosestEdge(dropTargetData)
-            const finalIndex =
-              closestEdge === "bottom" ? indexOfTarget + 1 : indexOfTarget
+            const finalIndex = closestEdge === "bottom" ? indexOfTarget + 1 : indexOfTarget
 
-            // remove card from home list
-            const homeCards = Array.from(home.cards)
-            homeCards.splice(cardIndexInHome, 1)
+            // ✅ No need to update local state - just update the store
+            const fromColumnId = home.id.replace("column:", "")
+            const toColumnId = destination.id.replace("column:", "")
+            moveTaskBetweenColumns(dragging.card.id, fromColumnId, toColumnId, finalIndex)
 
-            // insert into destination list
-            const destinationCards = Array.from(destination.cards)
-            destinationCards.splice(finalIndex, 0, dragging.card)
-
-            const columns = Array.from(data.columns)
-            columns[homeColumnIndex] = {
-              ...home,
-              cards: homeCards,
-            }
-            columns[destinationColumnIndex] = {
-              ...destination,
-              cards: destinationCards,
-            }
-            setData((prevData) => ({ ...prevData, columns }))
             return
           }
 
           // dropping onto a column, but not onto a card
           if (isColumnData(dropTargetData)) {
-            const destinationColumnIndex = data.columns.findIndex(
-              (column) => column.id === dropTargetData.column.id
-            )
-            const destination = data.columns[destinationColumnIndex]
+            const destinationColumnIndex = columns.findIndex((column) => column.id === dropTargetData.column.id)
+            const destination = columns[destinationColumnIndex]
 
             if (!destination) {
               return
@@ -185,123 +155,46 @@ export function ListBoard() {
 
             // dropping on home
             if (home === destination) {
-              // move to last position
               const reordered = reorder({
                 list: home.cards,
                 startIndex: cardIndexInHome,
                 finishIndex: home.cards.length - 1,
               })
 
-              const updated: TColumn = {
-                ...home,
-                cards: reordered,
-              }
-              const columns = Array.from(data.columns)
-              columns[homeColumnIndex] = updated
-              setData({ ...data, columns })
+              // ✅ No need to update local state - just update the store
+              const taskIds = reordered.map((card) => card.id)
+              const columnId = home.id.replace("column:", "")
+              reorderTasksInColumn(columnId, taskIds)
               return
             }
 
-            console.log("moving card to another column")
+            // moving card to another column
+            // ✅ No need to update local state - just update the store
+            const fromColumnId = home.id.replace("column:", "")
+            const toColumnId = destination.id.replace("column:", "")
+            moveTaskBetweenColumns(dragging.card.id, fromColumnId, toColumnId, destination.cards.length - 1)
 
-            // remove card from home list
-
-            const homeCards = Array.from(home.cards)
-            homeCards.splice(cardIndexInHome, 1)
-
-            // insert into destination list
-            const destinationCards = Array.from(destination.cards)
-            destinationCards.splice(destination.cards.length, 0, dragging.card)
-
-            const columns = Array.from(data.columns)
-            columns[homeColumnIndex] = {
-              ...home,
-              cards: homeCards,
-            }
-            columns[destinationColumnIndex] = {
-              ...destination,
-              cards: destinationCards,
-            }
-            setData({ ...data, columns })
             return
           }
         },
       }),
-      // monitorForElements({
-      //   canMonitor: isDraggingAColumn,
-      //   onDrop({ source, location }) {
-      //     setIsChecking(source);
-      //     const dragging = source.data;
-      //     if (!isColumnData(dragging)) {
-      //       return;
-      //     }
-
-      //     const innerMost = location.current.dropTargets[0];
-
-      //     if (!innerMost) {
-      //       return;
-      //     }
-      //     const dropTargetData = innerMost.data;
-
-      //     if (!isColumnData(dropTargetData)) {
-      //       return;
-      //     }
-
-      //     const homeIndex = data.columns.findIndex((column) => column.id === dragging.column.id);
-      //     const destinationIndex = data.columns.findIndex(
-      //       (column) => column.id === dropTargetData.column.id,
-      //     );
-
-      //     if (homeIndex === -1 || destinationIndex === -1) {
-      //       return;
-      //     }
-
-      //     if (homeIndex === destinationIndex) {
-      //       return;
-      //     }
-
-      //     const reordered = reorder({
-      //       list: data.columns,
-      //       startIndex: homeIndex,
-      //       finishIndex: destinationIndex,
-      //     });
-      //     setData({ ...data, columns: reordered });
-      //   },
-      // }),
+      // Only add auto scroll if element is actually scrollable
       autoScrollForElements({
         canScroll({ source }) {
           return isDraggingACard({ source }) || isDraggingAColumn({ source })
         },
         element,
       }),
-      unsafeOverflowAutoScrollForElements({
-        element,
-        canScroll({ source }) {
-          return isDraggingACard({ source }) || isDraggingAColumn({ source })
-        },
-        getOverflow() {
-          return {
-            forLeftEdge: {
-              top: 1000,
-              left: 1000,
-              bottom: 1000,
-            },
-            forRightEdge: {
-              top: 1000,
-              right: 1000,
-              bottom: 1000,
-            },
-          }
-        },
-      })
     )
-  }, [data, setData])
+  }, [columns, reorderTasksInColumn, moveTaskBetweenColumns]) 
 
-  // Panning the board
   useEffect(() => {
     let cleanupActive: CleanupFn | null = null
     const scrollable = scrollableRef.current
-    invariant(scrollable)
+
+    if (!scrollable) {
+      return
+    }
 
     function begin({ startX }: { startX: number }) {
       let lastX = startX
@@ -320,22 +213,13 @@ export function ListBoard() {
             },
           },
           ...(
-            [
-              "pointercancel",
-              "pointerup",
-              "pointerdown",
-              "keydown",
-              "resize",
-              "click",
-              "visibilitychange",
-            ] as const
+            ["pointercancel", "pointerup", "pointerdown", "keydown", "resize", "click", "visibilitychange"] as const
           ).map((eventName) => ({
             type: eventName,
             listener: () => cleanupEvents(),
           })),
         ],
-
-        { capture: true }
+        { capture: true },
       )
 
       cleanupActive = cleanupEvents
@@ -348,7 +232,6 @@ export function ListBoard() {
           if (!(event.target instanceof HTMLElement)) {
             return
           }
-          // ignore interactive elements
           if (event.target.closest(`[${blockBoardPanningAttr}]`)) {
             return
           }
@@ -364,20 +247,20 @@ export function ListBoard() {
     }
   }, [])
 
+  if (!initialized && isInitialLoading) {
+    return (
+      <Box className="flex items-center justify-center h-64">
+        <div>Loading tasks...</div>
+      </Box>
+    )
+  }
+
   return (
     <>
-      <Box
-        className={`flex w-full gap-6 h-full`}
-        ref={scrollableRef}
-      >
-        <Box
-          className={`w-full space-y-5`}
-        >
-          {data.columns.map((column) => (
-            <ListColumn
-              key={column.id}
-              column={column}
-            />
+      <Box className="flex w-full gap-6 h-full overflow-x-auto" ref={scrollableRef} style={{ minHeight: "400px" }}>
+        <Box className="w-full space-y-5">
+          {columns.map((column) => (
+            <ListColumn key={column.id} column={column} />
           ))}
         </Box>
         <Suspense fallback={<Box className="p-4">Loading drawer...</Box>}>

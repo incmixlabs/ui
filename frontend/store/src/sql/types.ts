@@ -65,7 +65,7 @@ export const taskSchemaLiteral = {
 } as const
 
 export const taskDataSchemaLiteral = {
-  title: "tasksData schema",
+  title: "tasks schema",
   version: 0,
   primaryKey: "id",
   type: "object",
@@ -76,21 +76,23 @@ export const taskDataSchemaLiteral = {
     },
     taskId: {
       type: "string",
+      maxLength: 100,
     },
     name: {
       type: "string",
+      maxLength: 500,
     },
     columnId: {
       type: "string",
-    },
-    projectId: {
-      type: "string",
+      maxLength: 100,
     },
     date: {
       type: "string",
+      maxLength: 50,
     },
     description: {
       type: "string",
+      maxLength: 2000,
     },
     completed: {
       type: "boolean",
@@ -100,52 +102,54 @@ export const taskDataSchemaLiteral = {
       type: "number",
       default: 0,
     },
-    attachment: {
-      type: "string",
-    },
     taskOrder: {
       type: "number",
       default: 0,
     },
-    filesData: {
+    attachment: {
       type: "array",
       items: {
         type: "object",
         properties: {
           name: {
             type: "string",
+            maxLength: 255,
           },
           url: {
             type: "string",
+            maxLength: 1000,
           },
           size: {
             type: "string",
+            maxLength: 50,
           },
         },
         required: ["name", "url", "size"],
       },
       default: [],
     },
-    members: {
+    assignedTo: {
       type: "array",
       items: {
         type: "object",
         properties: {
           id: {
-            type: "number",
+            type: "string",
+            maxLength: 100,
           },
           name: {
             type: "string",
+            maxLength: 200,
           },
-          src: {
+          image: {
             type: "string",
+            maxLength: 500,
           },
         },
-        required: ["id", "name", "src"],
+        required: ["id", "name", "image"],
       },
       default: [],
     },
-    // Sub-tasks
     subTasks: {
       type: "array",
       items: {
@@ -153,6 +157,7 @@ export const taskDataSchemaLiteral = {
         properties: {
           name: {
             type: "string",
+            maxLength: 300,
           },
           progress: {
             type: "number",
@@ -175,10 +180,40 @@ export const taskDataSchemaLiteral = {
       type: "number",
     },
     createdBy: {
-      type: "string",
+      type: "object",
+      properties: {
+        id: {
+          type: "string",
+          maxLength: 100,
+        },
+        name: {
+          type: "string",
+          maxLength: 200,
+        },
+        image: {
+          type: "string",
+          maxLength: 500,
+        },
+      },
+      required: ["id", "name", "image"],
     },
     updatedBy: {
-      type: "string",
+      type: "object",
+      properties: {
+        id: {
+          type: "string",
+          maxLength: 100,
+        },
+        name: {
+          type: "string",
+          maxLength: 200,
+        },
+        image: {
+          type: "string",
+          maxLength: 500,
+        },
+      },
+      required: ["id", "name", "image"],
     },
   },
   required: [
@@ -186,7 +221,6 @@ export const taskDataSchemaLiteral = {
     "taskId",
     "name",
     "columnId",
-    "projectId",
     "date",
     "completed",
     "daysLeft",

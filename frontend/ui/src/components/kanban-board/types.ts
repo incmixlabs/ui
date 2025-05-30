@@ -5,7 +5,7 @@ export interface KanbanBoard {
   tasks: KanbanBoardTask[]
 }
 export type TCustomColumn = {
-  id: number
+  id: string
   title: string
   tasks: TCard[]
 }
@@ -22,22 +22,21 @@ export interface KanbanBoardTask {
 }
 
 export type TMember = {
-  id: number
+  id: string
   name: string
   src: string
 }
 
 export type TCard = {
-  id: number
+  id: string
   taskId: string
   name: string
   description?: string
   completed: boolean
   daysLeft: number
-  members: TMember[]
+  assignedTo: TMember[]
   date?: string
-  attachment?: string
-  filesData?: { name: string; url: string; size: string }[]
+  attachment?: { name: string; url: string; size: string }[]
   subTasks?: {
     progress: number
     name: string
