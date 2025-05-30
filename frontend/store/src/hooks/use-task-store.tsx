@@ -5,14 +5,12 @@ import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
 
 interface TaskStore {
   tasks: TaskDataSchema[]
-  isInitialLoading: boolean // ✅ Only for initial load
+  isInitialLoading: boolean
   error: string | null
   initialized: boolean
 
-  // Initialization
   initialize: () => Promise<void>
 
-  // CRUD operations (using taskId for operations)
   createTask: (
     taskData: Omit<TaskDataSchema, "id" | "taskId" | "createdAt" | "updatedAt">
   ) => Promise<string>
@@ -23,7 +21,6 @@ interface TaskStore {
   ) => Promise<void>
   deleteTaskByTaskId: (taskId: string) => Promise<void>
 
-  // Bulk operations for drag and drop
   moveTask: (
     taskId: string,
     newColumnId: string,
@@ -37,11 +34,9 @@ interface TaskStore {
     newOrder: number
   ) => Promise<void>
 
-  // Query operations
   getTasksByColumn: (columnId: string) => TaskDataSchema[]
   getAllTasks: () => TaskDataSchema[]
 
-  // Local state management for drag and drop
   updateLocalTaskOrder: (
     columnId: string,
     reorderedTasks: TaskDataSchema[]
@@ -61,14 +56,14 @@ const getCurrentUser = () => ({
 
 export const useTaskStore = create<TaskStore>((set, get) => ({
   tasks: [],
-  isInitialLoading: false, // ✅ Renamed from isLoading
+  isInitialLoading: false,
   error: null,
   initialized: false,
 
   initialize: async () => {
     if (get().initialized) return
 
-    set({ isInitialLoading: true, error: null }) // ✅ Only set loading for initial load
+    set({ isInitialLoading: true, error: null })
 
     try {
       const tasksCollection = database.taskData
@@ -94,8 +89,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   },
 
   createTask: async (taskData) => {
-    // ✅ NO loading state - just update tasks immediately
-    let id: string // Declare the id variable
+    let id: string
     try {
       const tasksCollection = database.taskData
       const now = getCurrentTimestamp()
@@ -109,21 +103,19 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         taskId,
         createdAt: now,
         updatedAt: now,
-        createdBy: currentUser, // ✅ Now an object
-        updatedBy: currentUser, // ✅ Now an object
+        createdBy: currentUser,
+        updatedBy: currentUser,
       }
 
-      // ✅ Update store immediately - this triggers UI update
       set((state) => ({
         tasks: [...state.tasks, newTask],
       }))
 
-      // ✅ Sync to database in background
       await tasksCollection.insert(newTask)
-      console.log(`✅ Created task: ${taskId}`)
+      console.log(`Created task: ${taskId}`)
       return taskId
     } catch (error) {
-      console.error("❌ Failed to create task:", error)
+      console.error("Failed to create task:", error)
       // ✅ Revert optimistic update
       set((state) => ({
         tasks: state.tasks.filter((t) => t.id !== id),
@@ -149,26 +141,23 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
       return task ? task.toJSON() : null
     } catch (error) {
-      console.error("❌ Failed to get task:", error)
+      console.error("Failed to get task:", error)
       return null
     }
   },
 
   updateTaskByTaskId: async (taskId, updates) => {
-    // ✅ NO loading state - just update tasks immediately
     try {
       const now = getCurrentTimestamp()
       const currentUser = getCurrentUser()
       const updatedData = { ...updates, updatedAt: now, updatedBy: currentUser }
 
-      // ✅ Update store immediately - this triggers UI update
       set((state) => ({
         tasks: state.tasks.map((t) =>
           t.taskId === taskId ? { ...t, ...updatedData } : t
         ),
       }))
 
-      // ✅ Sync to database in background
       const tasksCollection = database.taskData
       const task = await tasksCollection
         .findOne({ selector: { taskId } })
@@ -177,25 +166,22 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       if (!task) throw new Error("Task not found")
 
       await task.update({ $set: updatedData })
-      console.log(`✅ Updated task: ${taskId}`)
+      console.log(`Updated task: ${taskId}`)
     } catch (error) {
-      console.error("❌ Failed to update task:", error)
+      console.error("Failed to update task:", error)
       set({ error: "Failed to update task" })
       throw error
     }
   },
 
   deleteTaskByTaskId: async (taskId) => {
-    // ✅ NO loading state - just update tasks immediately
     const taskToDelete = get().tasks.find((t) => t.taskId === taskId)
 
     try {
-      // ✅ Update store immediately - this triggers UI update
       set((state) => ({
         tasks: state.tasks.filter((t) => t.taskId !== taskId),
       }))
 
-      // ✅ Sync to database in background
       const tasksCollection = database.taskData
       const task = await tasksCollection
         .findOne({ selector: { taskId } })
@@ -203,11 +189,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
       if (task) {
         await task.remove()
-        console.log(`✅ Deleted task: ${taskId}`)
+        console.log(`Deleted task: ${taskId}`)
       }
     } catch (error) {
-      console.error("❌ Failed to delete task:", error)
-      // ✅ Revert optimistic update
+      console.error("Failed to delete task:", error)
       if (taskToDelete) {
         set((state) => ({
           tasks: [...state.tasks, taskToDelete],
@@ -226,12 +211,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   },
 
   reorderTasksInColumn: async (columnId, taskIds) => {
-    // ✅ NO loading state - just update tasks immediately
     try {
       const now = getCurrentTimestamp()
       const currentUser = getCurrentUser()
 
-      // ✅ Update store immediately - this triggers UI update
       set((state) => ({
         tasks: state.tasks.map((task) => {
           if (task.columnId === columnId) {
@@ -249,7 +232,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         }),
       }))
 
-      // ✅ Sync to database in background
       const tasksCollection = database.taskData
       for (let i = 0; i < taskIds.length; i++) {
         const taskId = taskIds[i]
@@ -263,9 +245,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         }
       }
 
-      console.log(`✅ Reordered ${taskIds.length} tasks in column: ${columnId}`)
+      console.log(`Reordered ${taskIds.length} tasks in column: ${columnId}`)
     } catch (error) {
-      console.error("❌ Failed to reorder tasks:", error)
+      console.error("Failed to reorder tasks:", error)
       set({ error: "Failed to reorder tasks" })
       throw error
     }
@@ -277,12 +259,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     toColumnId,
     newOrder
   ) => {
-    // ✅ NO loading state - just update tasks immediately
     try {
       const now = getCurrentTimestamp()
       const currentUser = getCurrentUser()
 
-      // ✅ Update store immediately - this triggers UI update
       set((state) => ({
         tasks: state.tasks.map((task) =>
           task.taskId === taskId
@@ -297,7 +277,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         ),
       }))
 
-      // ✅ Sync to database in background
       const tasksCollection = database.taskData
       const movedTask = await tasksCollection
         .findOne({ selector: { taskId } })
@@ -314,17 +293,14 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         },
       })
 
-      console.log(
-        `✅ Moved task ${taskId} from ${fromColumnId} to ${toColumnId}`
-      )
+      console.log(`Moved task ${taskId} from ${fromColumnId} to ${toColumnId}`)
     } catch (error) {
-      console.error("❌ Failed to move task between columns:", error)
+      console.error("Failed to move task between columns:", error)
       set({ error: "Failed to move task between columns" })
       throw error
     }
   },
 
-  // Query methods (work with local state for performance)
   getTasksByColumn: (columnId) => {
     return get()
       .tasks.filter((task) => task.columnId === columnId)
@@ -335,7 +311,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     return get().tasks
   },
 
-  // Local state updates for immediate UI feedback during drag and drop
   updateLocalTaskOrder: (columnId, reorderedTasks) => {
     set((state) => ({
       tasks: state.tasks.map((task) => {

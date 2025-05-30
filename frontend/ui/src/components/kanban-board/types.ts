@@ -22,9 +22,10 @@ export interface KanbanBoardTask {
 }
 
 export type TMember = {
+  [x: string]: string
   id: string
   name: string
-  src: string
+  image: string
 }
 
 export type TCard = {
@@ -36,7 +37,7 @@ export type TCard = {
   daysLeft: number
   assignedTo: TMember[]
   date?: string
-  attachment?: { name: string; url: string; size: string }[]
+  attachment?: { name: string; image: string; size: string }[]
   subTasks?: {
     progress: number
     name: string

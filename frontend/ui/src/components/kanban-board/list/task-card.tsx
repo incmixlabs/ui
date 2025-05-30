@@ -92,7 +92,7 @@ export function ListTaskCardDisplay({
   card: TCard;
   state: TCardState;
   outerRef?: React.MutableRefObject<HTMLDivElement | null>;
-  innerRef?: MutableRefObject<HTMLDivElement | null>;
+  innerRef?: React.MutableRefObject<HTMLDivElement | null>;
 }) {
   const { handleDrawerOpen } = useKanbanDrawer();
   const { updateTaskByTaskId, deleteTaskByTaskId } = useTaskStore();
@@ -101,7 +101,7 @@ export function ListTaskCardDisplay({
     e.stopPropagation();
     try {
       await updateTaskByTaskId(card.id, {
-        status: card.completed ? "todo" : "done",
+        completed: !card.completed,
       });
     } catch (error) {
       console.error("Failed to toggle task completion:", error);
@@ -188,7 +188,7 @@ export function ListTaskCardDisplay({
               {card.assignedTo.map((member, index) => (
                 <img
                   key={`${member.id}-${index}`}
-                  src={member.src || "/placeholder.svg?height=32&width=32"}
+                  src={member.image || "/placeholder.svg?height=32&width=32"}
                   alt={member.name}
                   className="h-8 w-8 rounded-full border-4 border-gray-2"
                 />
