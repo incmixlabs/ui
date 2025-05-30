@@ -10,14 +10,13 @@ import {
   dashboardTemplateSchemaLiteral,
   formProjectSchemaLiteral,
   projectSchemaLiteral,
+  taskDataSchemaLiteral,
   taskSchemaLiteral,
 } from "./types"
 
-import { API } from "@incmix/utils/env"
 import { getRxStorageIndexedDB } from "rxdb-premium/plugins/storage-indexeddb"
 import { RxDBAttachmentsPlugin } from "rxdb/plugins/attachments"
 import { RxDBMigrationSchemaPlugin } from "rxdb/plugins/migration-schema"
-import { replicateRxCollection } from "rxdb/plugins/replication"
 import { RxDBUpdatePlugin } from "rxdb/plugins/update"
 import { wrappedValidateZSchemaStorage } from "rxdb/plugins/validate-z-schema"
 
@@ -40,6 +39,7 @@ export const database = await createRxDatabase<TaskCollections>({
 
 await database.addCollections({
   tasks: { schema: taskSchemaLiteral, autoMigrate: true },
+  taskData: { schema: taskDataSchemaLiteral, autoMigrate: true },
   columns: { schema: columnSchemaLiteral, autoMigrate: true },
   projects: { schema: projectSchemaLiteral, autoMigrate: true },
   formProjects: { schema: formProjectSchemaLiteral, autoMigrate: true },

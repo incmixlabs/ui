@@ -64,6 +64,173 @@ export const taskSchemaLiteral = {
   ],
 } as const
 
+export const taskDataSchemaLiteral = {
+  title: "tasks schema",
+  version: 0,
+  primaryKey: "id",
+  type: "object",
+  properties: {
+    id: {
+      maxLength: 100,
+      type: "string",
+    },
+    taskId: {
+      type: "string",
+      maxLength: 100,
+    },
+    name: {
+      type: "string",
+      maxLength: 500,
+    },
+    columnId: {
+      type: "string",
+      maxLength: 100,
+    },
+    date: {
+      type: "string",
+      maxLength: 50,
+    },
+    description: {
+      type: "string",
+      maxLength: 2000,
+    },
+    completed: {
+      type: "boolean",
+      default: false,
+    },
+    daysLeft: {
+      type: "number",
+      default: 0,
+    },
+    taskOrder: {
+      type: "number",
+      default: 0,
+    },
+    attachment: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          name: {
+            type: "string",
+            maxLength: 255,
+          },
+          url: {
+            type: "string",
+            maxLength: 1000,
+          },
+          size: {
+            type: "string",
+            maxLength: 50,
+          },
+        },
+        required: ["name", "url", "size"],
+      },
+      default: [],
+    },
+    assignedTo: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          id: {
+            type: "string",
+            maxLength: 100,
+          },
+          name: {
+            type: "string",
+            maxLength: 200,
+          },
+          image: {
+            type: "string",
+            maxLength: 500,
+          },
+        },
+        required: ["id", "name", "image"],
+      },
+      default: [],
+    },
+    subTasks: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          name: {
+            type: "string",
+            maxLength: 300,
+          },
+          progress: {
+            type: "number",
+            minimum: 0,
+            maximum: 100,
+          },
+          completed: {
+            type: "boolean",
+            default: false,
+          },
+        },
+        required: ["name", "progress", "completed"],
+      },
+      default: [],
+    },
+    createdAt: {
+      type: "number",
+    },
+    updatedAt: {
+      type: "number",
+    },
+    createdBy: {
+      type: "object",
+      properties: {
+        id: {
+          type: "string",
+          maxLength: 100,
+        },
+        name: {
+          type: "string",
+          maxLength: 200,
+        },
+        image: {
+          type: "string",
+          maxLength: 500,
+        },
+      },
+      required: ["id", "name", "image"],
+    },
+    updatedBy: {
+      type: "object",
+      properties: {
+        id: {
+          type: "string",
+          maxLength: 100,
+        },
+        name: {
+          type: "string",
+          maxLength: 200,
+        },
+        image: {
+          type: "string",
+          maxLength: 500,
+        },
+      },
+      required: ["id", "name", "image"],
+    },
+  },
+  required: [
+    "id",
+    "taskId",
+    "name",
+    "columnId",
+    "date",
+    "completed",
+    "daysLeft",
+    "createdAt",
+    "updatedAt",
+    "createdBy",
+    "updatedBy",
+  ],
+} as const
+
 // Column Schema with required fields added
 export const columnSchemaLiteral = {
   title: "columns schema",
@@ -102,7 +269,6 @@ export const columnSchemaLiteral = {
       type: ["string", "null"],
     },
   },
-  // Adding required fields to enforce presence of key properties.
   required: [
     "id",
     "label",
@@ -378,6 +544,7 @@ export const formProjectSchemaLiteral = {
 } as const
 
 const tasksTyped = toTypedRxJsonSchema(taskSchemaLiteral)
+const tasksDataTyped = toTypedRxJsonSchema(taskDataSchemaLiteral)
 const columnsTyped = toTypedRxJsonSchema(columnSchemaLiteral)
 const projectTyped = toTypedRxJsonSchema(projectSchemaLiteral)
 const formProjectTyped = toTypedRxJsonSchema(formProjectSchemaLiteral)
@@ -408,6 +575,9 @@ export type DashboardTemplateDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
 export type DashboardDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof dashboardTyped
 >
+export type TaskDataDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
+  typeof tasksDataTyped
+>
 
 export type TaskCollections = {
   tasks: RxCollection<TaskDocType>
@@ -416,4 +586,5 @@ export type TaskCollections = {
   formProjects: RxCollection<FormProjectDocType>
   dashboardTemplates: RxCollection<DashboardTemplateDocType>
   dashboards: RxCollection<DashboardDocType>
+  taskData: RxCollection<TaskDataDocType>
 }

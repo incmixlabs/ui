@@ -1,9 +1,18 @@
 import type { TaskCollections } from "@incmix/store"
 import { useOrganizationStore } from "@incmix/store"
-import { Box, Card, Flex, IconButton, ScrollArea, Select } from "@incmix/ui"
+import {
+  Board,
+  Box,
+  Card,
+  Flex,
+  IconButton,
+  ListBoard,
+  RoadmapView,
+  ScrollArea,
+  Select,
+  Tabs,
+} from "@incmix/ui"
 import { CardContent } from "@incmix/ui/card"
-import { useKanbanFilter } from "@incmix/ui/hooks"
-import { Board } from "@incmix/ui/kanban"
 import type { Task } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useMutation, useQuery } from "@tanstack/react-query"
@@ -19,7 +28,6 @@ import { CreateTaskForm } from "./create-task-form"
 
 const TasksPage = () => {
   const { selectedOrganisation } = useOrganizationStore()
-  const { toggleKanbanFilter } = useKanbanFilter()
 
   const [selectedProject, setSelectedProject] = useState<string>()
 
@@ -178,28 +186,80 @@ const TasksPage = () => {
               </div>
             )}
           </Flex>
-          <Flex justify={"end"} className="mb-2">
+          {/* <Flex justify={"end"} className="mb-2">
             <IconButton
               className="h-10 w-12 cursor-pointer "
               onClick={toggleKanbanFilter}
             >
               <ListFilter className="size-8 fill-white" />
             </IconButton>
-          </Flex>
+          </Flex> */}
         </Flex>
+        <Tabs.Root className="flex w-full flex-col p-3" defaultValue="board">
+          <Tabs.List
+            className="flex w-fit shrink-0 rounded-md bg-gray-3 shadow-none"
+            aria-label="Manage your account"
+          >
+            <Tabs.Trigger
+              className="flex cursor-pointer select-none text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
+              value="board"
+            >
+              Board (Kanban)
+            </Tabs.Trigger>
+            <Tabs.Trigger
+              className="flex cursor-pointer select-none text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
+              value="timeline"
+            >
+              Timeline
+            </Tabs.Trigger>
+            <Tabs.Trigger
+              className="flex cursor-pointer select-none text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
+              value="list"
+            >
+              List
+            </Tabs.Trigger>
+            <Tabs.Trigger
+              className="flex cursor-pointer select-none text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
+              value="table"
+            >
+              Table
+            </Tabs.Trigger>
+          </Tabs.List>
+          <Tabs.Content
+            className="h-full w-full grow rounded-b-md py-2 "
+            value="board"
+          >
+            <Box className="h-full w-full ">
+              <Board />
+            </Box>
+          </Tabs.Content>
+          <Tabs.Content
+            className="h-full w-full grow rounded-b-md py-2"
+            value="timeline"
+          >
+            <RoadmapView />
+          </Tabs.Content>
+          <Tabs.Content
+            className="h-full w-full grow rounded-b-md py-2 "
+            value="list"
+          >
+            <ListBoard />
+          </Tabs.Content>
+          <Tabs.Content
+            className="h-full w-full grow rounded-b-md py-2 "
+            value="table"
+          />
+        </Tabs.Root>
 
-        <Box className="h-full w-full ">
-          <Board />
-        </Box>
         {/* <KanbanBoard
-        // updateTasks={(tasks) => {
-        //   if (tasks.length) tasksMutation.mutate(tasks)
-        // }}
-        // columns={board.columns}
-        // tasks={board.tasks}
-        // isLoading={
-        //   fetchingColumns || fetchingTasks || boardLoading || fetchingProjects
-        // }
+        updateTasks={(tasks) => {
+          if (tasks.length) tasksMutation.mutate(tasks)
+        }}
+        columns={board.columns}
+        tasks={board.tasks}
+        isLoading={
+          fetchingColumns || fetchingTasks || boardLoading || fetchingProjects
+        }
         /> */}
       </ScrollArea>
     </DashboardLayout>

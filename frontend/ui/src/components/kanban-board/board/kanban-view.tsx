@@ -3,7 +3,7 @@ import type { FC } from "react"
 
 import { Image } from "@components/card/flow-card"
 import { Box, Flex, Text } from "@incmix/ui"
-import type { KanbanBoardTask } from "./types"
+import type { KanbanBoardTask } from "../types"
 
 export type KanbanViewProps = {
   task: KanbanBoardTask

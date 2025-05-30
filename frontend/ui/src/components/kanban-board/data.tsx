@@ -103,51 +103,52 @@ export const commentsData = [
 
 export const initialData: TCustomBoard = [
   {
-    id: 1,
+    id: "1",
     title: "To Do",
     tasks: [
       {
-        id: 32,
+        id: "32",
+        taskId:"task-idf434",
         name: "Brand Logo Design",
         date: "Jun 17",
         description: "Make a redesign of the logo in corporate colors",
         completed: false,
         daysLeft: 5,
-        filesData: [
+        attachment: [
           { name: "logo.png", url: "", size: "1.2MB" },
           { name: "design.png", url: "", size: "1.2MB" },
         ],
-        members: [
+        assignedTo: [
           {
-            id: 1,
+            id: "1",
             name: "Bonnie Green",
             src: KanbanImages.user1,
           },
           {
-            id: 2,
+            id: "2",
             name: "Roberta Casas",
             src: KanbanImages.user2,
           },
         ],
       },
       {
-        id: 23,
+        id: "23",
+        taskId:"task-idf435",
         name: "New Header Image",
         completed: false,
         daysLeft: 22,
         date: "Jun 17",
-        attachment: KanbanImages.bg2,
-        filesData: [{ name: "preview.png", url: "", size: "1.2MB" }],
-        members: [
+        assignedTo: [
           {
-            id: 2,
+            id: "2",
             name: "Roberta Casas",
             src: KanbanImages.user2,
           },
         ],
       },
       {
-        id: 20,
+        id: "20",
+        taskId:"task-idf436",
         name: "Updating Modules",
         completed: false,
         daysLeft: 22,
@@ -155,35 +156,36 @@ export const initialData: TCustomBoard = [
         description: "Step-by-step update of modules.",
 
         subTasks: [{ name: "sub-tasks-1", progress: 40, completed: false }],
-        filesData: [{ name: "preview.png", url: "", size: "1.2MB" }],
-        members: [
+        attachment: [{ name: "preview.png", url: "", size: "1.2MB" }],
+        assignedTo: [
           {
-            id: 1,
+            id: "1",
             name: "Bonnie Green",
             src: KanbanImages.user2,
           },
           {
-            id: 2,
+            id: "2",
             name: "Roberta Casas",
             src: KanbanImages.user2,
           },
         ],
       },
       {
-        id: 24,
+        id: "24",
+        taskId:"task-idf437",
         name: "Wireframe for APP",
         description: "Make a wramework for an app for a pre-presentation.",
         completed: false,
         daysLeft: 22,
         date: "Jun 17",
-        members: [
+        assignedTo: [
           {
-            id: 1,
+            id: "1",
             name: "Bonnie Green",
             src: KanbanImages.user2,
           },
           {
-            id: 2,
+            id: "2",
             name: "Roberta Casas",
             src: KanbanImages.user1,
           },
@@ -192,29 +194,30 @@ export const initialData: TCustomBoard = [
     ],
   },
   {
-    id: 2,
+    id: "2",
     title: "In Progress",
     tasks: [
       {
-        id: 76,
+        id: "76",
+        taskId:"task-idf438",
         name: "Updating Modules",
         description: "Step-by-step update of modules.",
         date: "Jun 17",
-        filesData: [
+        attachment: [
           { name: "logo.png", url: "", size: "1.2MB" },
           { name: "design.png", url: "", size: "1.2MB" },
         ],
         completed: false,
         daysLeft: 9,
         subTasks: [{ name: "sub-tasks-1", progress: 40, completed: false }],
-        members: [
+        assignedTo: [
           {
-            id: 1,
+            id: "1",
             name: "Bonnie Green",
             src: KanbanImages.user1,
           },
           {
-            id: 2,
+            id: "2",
             name: "Roberta Casas",
             src: KanbanImages.user2,
           },
@@ -223,19 +226,20 @@ export const initialData: TCustomBoard = [
     ],
   },
   {
-    id: 3,
+    id: "3",
     title: "Done",
     tasks: [
       {
-        id: 34,
+        id: "34",
+        taskId:"task-idf434",
         name: "New Background",
         completed: true,
         daysLeft: 0,
         date: "Jun 17",
-        attachment: KanbanImages.bg1,
-        members: [
+        attachment: [{ name: "bg1.png", url: KanbanImages.bg1, size: "1.2MB" }],
+        assignedTo: [
           {
-            id: 1,
+            id: "1",
             name: "Bonnie Green",
             src: KanbanImages.user1,
           },

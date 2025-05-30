@@ -164,8 +164,8 @@ const DynamicDashboardPage: React.FC = () => {
   if (!project) return <div>Project not found</div>
 
   const isEmpty = gridComponents.length === 0
-  console.log("defaultLayouts from dynamic-dashboard-page", defaultLayouts)
-  console.log("project from dynamic-dashboard-page", project)
+  // console.log("defaultLayouts from dynamic-dashboard-page", defaultLayouts)
+  // console.log("project from dynamic-dashboard-page", project)
 
   return (
     <DndContext

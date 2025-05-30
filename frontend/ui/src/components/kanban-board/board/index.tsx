@@ -6,27 +6,26 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types"
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder"
-import { useKanbanFilter } from "@hooks/use-kanban-filter"
 import { bindAll } from "bind-event-listener"
 import { Suspense, lazy } from "react"
 import { useEffect, useRef, useState } from "react"
 import invariant from "tiny-invariant"
 import { BoardColumn } from "./board-column"
-import { initialData } from "./data"
-import { blockBoardPanningAttr } from "./data-attributes"
+import { initialData } from "../data"
+import { blockBoardPanningAttr } from "../data-attributes"
 
 import { Box } from "@incmix/ui"
 
 // Dynamically import heavy component
 const TaskCardDrawer = lazy(() => import("./task-card-drawer"))
-import type { TCard, TColumn, TCustomBoard } from "./types"
+import type { TCard, TColumn, TCustomBoard } from "../types"
 import {
   isCardData,
   isCardDropTargetData,
   isColumnData,
   isDraggingACard,
   isDraggingAColumn,
-} from "./types"
+} from "../types"
 
 function convertCustomDataToBoardFormat(customData: TCustomBoard) {
   const columns = customData.map((column) => {
@@ -53,7 +52,6 @@ export function Board() {
 
   const [data, setData] = useState(boardData)
   const scrollableRef = useRef<HTMLDivElement | null>(null)
-  const { kanbanFilter } = useKanbanFilter()
 
   useEffect(() => {
     const element = scrollableRef.current
@@ -321,7 +319,6 @@ export function Board() {
               scrollable?.scrollBy({ left: diffX })
             },
           },
-          // stop panning if we see any of these events
           ...(
             [
               "pointercancel",
@@ -370,22 +367,21 @@ export function Board() {
   return (
     <>
       <Box
-        className={`${kanbanFilter && "flex w-full gap-6 "} h-full overflow-hidden`}
+        className={`flex w-full gap-6 h-full overflow-hidden`}
         ref={scrollableRef}
       >
         <Box
-          className={`${kanbanFilter ? "w-full space-y-5 " : "flex flex-row gap-4 2xl:gap-7"}`}
+          className={`flex flex-row gap-4 2xl:gap-7`}
         >
           {data.columns.map((column) => (
             <BoardColumn
               key={column.id}
               column={column}
-              kanbanFilter={kanbanFilter}
             />
           ))}
         </Box>
         <Suspense fallback={<Box className="p-4">Loading drawer...</Box>}>
-          <TaskCardDrawer kanbanFilter={kanbanFilter} />
+          <TaskCardDrawer/>
         </Suspense>
       </Box>
     </>
