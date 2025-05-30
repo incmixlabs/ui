@@ -92,6 +92,9 @@ export function TaskCardDisplay({
   kanbanFilter?: boolean
 }) {
   const { handleDrawerOpen } = useKanbanDrawer()
+
+  console.log("card",card);
+  
   return (
     <Box
       ref={outerRef}
@@ -146,9 +149,9 @@ export function TaskCardDisplay({
                 <CalendarDays className="text-zinc-400" size={20} />
                 <Text as="span">{card?.date}</Text>
               </Text>
-              {card.members && (
+              {card?.assignedTo && (
                 <Flex align={"center"} gap={"1"}>
-                  {card.members.map((file) => {
+                  {card?.assignedTo.map((member) => {
                     const colors = [
                       "bg-green-400",
                       "bg-yellow-400",
@@ -160,7 +163,7 @@ export function TaskCardDisplay({
                       colors[Math.floor(Math.random() * colors.length)]
                     return (
                       <span
-                        key={file.name}
+                        key={member.id}
                         className={`flex ${iconSize} items-center gap-1 rounded-md ${randomColor}`}
                       />
                     )
@@ -168,7 +171,7 @@ export function TaskCardDisplay({
                 </Flex>
               )}
               <Flex align={"center"} gap="2">
-                {card.members.map((member) => (
+                {card?.assignedTo?.map((member) => (
                   <img
                     key={member.id}
                     src={member.src}
@@ -188,9 +191,9 @@ export function TaskCardDisplay({
               <CalendarDays className="text-zinc-400" size={20} />
               <Text as="span">{card?.date}</Text>
             </Text>
-            {card.members && (
+            {card?.assignedTo && (
               <Flex align={"center"} gap={"1"}>
-                {card.members.map((file) => {
+                {card?.assignedTo.map((member) => {
                   const colors = [
                     "bg-green-400",
                     "bg-yellow-400",
@@ -202,7 +205,7 @@ export function TaskCardDisplay({
                     colors[Math.floor(Math.random() * colors.length)]
                   return (
                     <Text
-                      key={file.name}
+                      key={member.id}
                       className={`flex h-1 w-6 items-center gap-1 rounded-full ${randomColor}`}
                     />
                   )
@@ -242,7 +245,7 @@ export function TaskCardDisplay({
             ))}
             {card.attachment && (
               <img
-                src={card.attachment}
+                src={card.attachment[0].image}
                 alt="attachment"
                 className="aspect-video rounded-lg object-cover"
               />
@@ -253,10 +256,10 @@ export function TaskCardDisplay({
               className="gap-2 pt-6 pb-2"
             >
               <Flex align={"center"} gap="4">
-                {card.filesData && (
+                {card?.attachment && (
                   <IconButton className="flex items-center gap-1 bg-transparent text-gray-700 dark:text-gray-200">
                     <Paperclip size={20} />
-                    <Text>{card.filesData.length}</Text>
+                    <Text>1</Text>
                   </IconButton>
                 )}
                 <IconButton className="flex items-center gap-1 bg-transparent text-gray-700 dark:text-gray-200">
@@ -265,7 +268,7 @@ export function TaskCardDisplay({
                 </IconButton>
               </Flex>
               <Flex align={"center"} className="gap-2">
-                {card.members.map((member) => (
+                {card?.assignedTo?.map((member) => (
                   <img
                     key={member.id}
                     src={member.src}
