@@ -124,13 +124,13 @@ export function ListTaskCardDisplay({
   return (
     <Box
       ref={outerRef}
-      onClick={() => handleDrawerOpen(card.id.toString())}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === "Space") {
-          e.preventDefault();
-          handleDrawerOpen(card.id.toString());
-        }
-      }}
+      // onClick={() => handleDrawerOpen(card.id.toString())}
+      // onKeyDown={(e) => {
+      //   if (e.key === "Enter" || e.key === "Space") {
+      //     e.preventDefault();
+      //     handleDrawerOpen(card.id.toString());
+      //   }
+      // }}
       className={`flex flex-shrink-0 flex-col gap-2 px-3 py-1 ${outerStyles[state.type]}`}
     >
       {state.type === "is-over" && state.closestEdge === "top" ? (
