@@ -65,7 +65,7 @@ export const taskSchemaLiteral = {
 } as const
 
 export const taskDataSchemaLiteral = {
-  title: "tasks schema",
+  title: "tasksData  schema",
   version: 0,
   primaryKey: "id",
   type: "object",
@@ -81,10 +81,10 @@ export const taskDataSchemaLiteral = {
       type: "string",
     },
     columnId: {
-      type: "string", // Reference to which column this task belongs
+      type: "string",   
     },
     projectId: {
-      type: "string", // Reference to which project this task belongs
+      type: "string", 
     },
     date: {
       type: "string",
@@ -101,13 +101,12 @@ export const taskDataSchemaLiteral = {
       default: 0,
     },
     attachment: {
-      type: "string", // URL to attachment image
+      type: "string", 
     },
     taskOrder: {
-      type: "number", // For ordering tasks within a column
+      type: "number", 
       default: 0,
     },
-    // File attachments
     filesData: {
       type: "array",
       items: {
@@ -127,7 +126,6 @@ export const taskDataSchemaLiteral = {
       },
       default: [],
     },
-    // Team members assigned to task
     members: {
       type: "array",
       items: {
@@ -140,7 +138,7 @@ export const taskDataSchemaLiteral = {
             type: "string",
           },
           src: {
-            type: "string", // Avatar image URL
+            type: "string", 
           },
         },
         required: ["id", "name", "src"],
@@ -171,7 +169,7 @@ export const taskDataSchemaLiteral = {
       default: [],
     },
     createdAt: {
-      type: "number", // Using number for timestamp consistency
+      type: "number", 
     },
     updatedAt: {
       type: "number",
@@ -196,12 +194,6 @@ export const taskDataSchemaLiteral = {
     "updatedAt",
     "createdBy",
     "updatedBy",
-  ],
-  indexes: [
-    ["columnId", "taskOrder"],
-    ["projectId", "createdAt"],
-    ["completed", "daysLeft"],
-    ["createdBy"],
   ],
 } as const
 
