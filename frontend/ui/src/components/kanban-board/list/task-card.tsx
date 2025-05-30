@@ -39,6 +39,7 @@ import {
   Text,
   IconButton,
   DropdownMenu,
+  toast,
 } from "@incmix/ui";
 
 type TCardState =
@@ -100,24 +101,26 @@ export function ListTaskCardDisplay({
   const handleToggleComplete = async (e: React.MouseEvent) => {
     e.stopPropagation();
     try {
-      await updateTaskByTaskId(card.id, {
+      await updateTaskByTaskId(card.taskId, {
         completed: !card.completed,
       });
     } catch (error) {
       console.error("Failed to toggle task completion:", error);
+      toast.error("Failed to update task. Please try again.");
     }
   };
 
   const handleDeleteTask = async () => {
     try {
-      await deleteTaskByTaskId(card.id);
+      await deleteTaskByTaskId(card.taskId);
     } catch (error) {
       console.error("Failed to delete task:", error);
+      toast.error("Failed to delete task. Please try again.");
     }
   };
 
   const handleEditTask = () => {
-    handleDrawerOpen(card.id.toString());
+    handleDrawerOpen(card.taskId.toString());
   };
 
   return (
