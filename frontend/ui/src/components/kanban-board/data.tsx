@@ -114,11 +114,11 @@ export const initialData: TCustomBoard = [
         description: "Make a redesign of the logo in corporate colors",
         completed: false,
         daysLeft: 5,
-        filesData: [
+        attachment: [
           { name: "logo.png", url: "", size: "1.2MB" },
           { name: "design.png", url: "", size: "1.2MB" },
         ],
-        members: [
+        assignedTo: [
           {
             id: "1",
             name: "Bonnie Green",
@@ -138,9 +138,7 @@ export const initialData: TCustomBoard = [
         completed: false,
         daysLeft: 22,
         date: "Jun 17",
-        attachment: KanbanImages.bg2,
-        filesData: [{ name: "preview.png", url: "", size: "1.2MB" }],
-        members: [
+        assignedTo: [
           {
             id: "2",
             name: "Roberta Casas",
@@ -158,8 +156,8 @@ export const initialData: TCustomBoard = [
         description: "Step-by-step update of modules.",
 
         subTasks: [{ name: "sub-tasks-1", progress: 40, completed: false }],
-        filesData: [{ name: "preview.png", url: "", size: "1.2MB" }],
-        members: [
+        attachment: [{ name: "preview.png", url: "", size: "1.2MB" }],
+        assignedTo: [
           {
             id: "1",
             name: "Bonnie Green",
@@ -180,7 +178,7 @@ export const initialData: TCustomBoard = [
         completed: false,
         daysLeft: 22,
         date: "Jun 17",
-        members: [
+        assignedTo: [
           {
             id: "1",
             name: "Bonnie Green",
@@ -205,14 +203,14 @@ export const initialData: TCustomBoard = [
         name: "Updating Modules",
         description: "Step-by-step update of modules.",
         date: "Jun 17",
-        filesData: [
+        attachment: [
           { name: "logo.png", url: "", size: "1.2MB" },
           { name: "design.png", url: "", size: "1.2MB" },
         ],
         completed: false,
         daysLeft: 9,
         subTasks: [{ name: "sub-tasks-1", progress: 40, completed: false }],
-        members: [
+        assignedTo: [
           {
             id: "1",
             name: "Bonnie Green",
@@ -238,8 +236,8 @@ export const initialData: TCustomBoard = [
         completed: true,
         daysLeft: 0,
         date: "Jun 17",
-        attachment: KanbanImages.bg1,
-        members: [
+        attachment: [{ name: "bg1.png", url: KanbanImages.bg1, size: "1.2MB" }],
+        assignedTo: [
           {
             id: "1",
             name: "Bonnie Green",

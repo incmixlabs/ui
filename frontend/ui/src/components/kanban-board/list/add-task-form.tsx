@@ -1,58 +1,71 @@
-import type React from "react"
-import { useState, useRef } from "react"
-import { Dialog, Button, Input, TextArea, Label, MultipleSelector, Flex, Checkbox } from "@incmix/ui"
-import { X, Plus, Calendar } from "lucide-react"
-import { SmartDatetimeInput } from "@components/datetime-picker"
-import { TaskDataSchema, useTaskStore } from "@incmix/store"
-import { members } from "@components/projects/data"
+import type React from "react";
+import { useState, useRef, useEffect } from "react";
+import {
+  Dialog,
+  Button,
+  Input,
+  TextArea,
+  Label,
+  MultipleSelector,
+  Flex,
+  Checkbox,
+  toast,
+} from "@incmix/ui";
+import { X, Plus, Calendar } from "lucide-react";
+import { SmartDatetimeInput } from "@components/datetime-picker";
+import { TaskDataSchema, useTaskStore } from "@incmix/store";
+import { members } from "@components/projects/data";
 
 export interface Option {
-  value: string
-  label: string
-  id?: string
-  name?: string
-  disable?: boolean
-  avatar?: string
-  color?: string
-  position?: string
-  fixed?: boolean
-  [key: string]: string | boolean | undefined
+  value: string;
+  label: string;
+  id?: string;
+  name?: string;
+  disable?: boolean;
+  avatar?: string;
+  color?: string;
+  position?: string;
+  fixed?: boolean;
+  [key: string]: string | boolean | undefined;
 }
 
 interface AddTaskFormProps {
-  isOpen: boolean
-  onClose: () => void
-  columnId: string
-  taskOrder?: number
+  isOpen: boolean;
+  onClose: () => void;
+  columnId: string;
+  taskOrder?: number;
 }
 
 interface TaskFormData {
-  name: string
-  columnId: string
-  description: string
-  completed: boolean
-  taskOrder: number
+  name: string;
+  columnId: string;
+  description: string;
+  completed: boolean;
+  taskOrder: number;
   attachment: Array<{
-    name: string
-    url: string
-    size: string
-  }>
+    name: string;
+    url: string;
+    size: string;
+  }>;
   subTasks: Array<{
-    name: string
-    progress: number
-    completed: boolean
-  }>
+    name: string;
+    progress: number;
+    completed: boolean;
+  }>;
 }
-
-
 
 const getCurrentUser = () => ({
   id: "current-user-id",
   name: "Current User",
   image: "/placeholder.svg?height=32&width=32",
-})
+});
 
-export function AddTaskForm({ isOpen, onClose, columnId, taskOrder = 0 }: AddTaskFormProps) {
+export function AddTaskForm({
+  isOpen,
+  onClose,
+  columnId,
+  taskOrder = 0,
+}: AddTaskFormProps) {
   const [formData, setFormData] = useState<TaskFormData>({
     name: "",
     columnId,
@@ -61,49 +74,62 @@ export function AddTaskForm({ isOpen, onClose, columnId, taskOrder = 0 }: AddTas
     taskOrder,
     attachment: [],
     subTasks: [],
-  })
+  });
 
-  const [selectedMembers, setSelectedMembers] = useState<Option[]>([])
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
-  const [newSubTask, setNewSubTask] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const { createTask } = useTaskStore()
+  const [selectedMembers, setSelectedMembers] = useState<Option[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [newSubTask, setNewSubTask] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { createTask } = useTaskStore();
 
   const handleDateChange = (date: Date) => {
-    setSelectedDate(date)
-  }
+    setSelectedDate(date);
+  };
 
   const handleInputChange = (field: keyof TaskFormData, value: any) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
-    }))
-  }
+    }));
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      const fileData = {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const newAttachments = Array.from(files).map((file) => ({
         name: file.name,
         url: URL.createObjectURL(file),
         size: `${(file.size / 1024 / 1024).toFixed(2)} MB`,
-      }
+      }));
 
       setFormData((prev) => ({
         ...prev,
-        attachment: [...prev.attachment, fileData],
-      }))
+        attachment: [...prev.attachment, ...newAttachments],
+      }));
     }
-  }
+  };
+
+  useEffect(() => {
+    return () => {
+      formData.attachment.forEach((file) => {
+        if (file.url.startsWith("blob:")) {
+          URL.revokeObjectURL(file.url);
+        }
+      });
+    };
+  }, [formData.attachment]);
 
   const removeFile = (index: number) => {
+    const fileToRemove = formData.attachment[index]
+    if (fileToRemove?.url.startsWith('blob:')) {
+      URL.revokeObjectURL(fileToRemove.url)
+    }
     setFormData((prev) => ({
       ...prev,
       attachment: prev.attachment.filter((_, i) => i !== index),
-    }))
-  }
+    }));
+  };
 
   const addSubTask = () => {
     if (newSubTask.trim()) {
@@ -111,22 +137,22 @@ export function AddTaskForm({ isOpen, onClose, columnId, taskOrder = 0 }: AddTas
         name: newSubTask.trim(),
         progress: 0,
         completed: false,
-      }
+      };
 
       setFormData((prev) => ({
         ...prev,
         subTasks: [...prev.subTasks, subTask],
-      }))
-      setNewSubTask("")
+      }));
+      setNewSubTask("");
     }
-  }
+  };
 
   const removeSubTask = (index: number) => {
     setFormData((prev) => ({
       ...prev,
       subTasks: prev.subTasks.filter((_, i) => i !== index),
-    }))
-  }
+    }));
+  };
 
   const updateSubTaskProgress = (index: number, progress: number) => {
     setFormData((prev) => ({
@@ -134,38 +160,45 @@ export function AddTaskForm({ isOpen, onClose, columnId, taskOrder = 0 }: AddTas
       subTasks: prev.subTasks.map((task, i) =>
         i === index ? { ...task, progress, completed: progress === 100 } : task,
       ),
-    }))
-  }
+    }));
+  };
 
   const calculateDaysLeft = (date: Date) => {
-    const today = new Date()
-    const diffTime = date.getTime() - today.getTime()
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    return diffDays
-  }
+    const today = new Date();
+    const diffTime = date.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
 
-  const convertMembersToAssignedTo = (members: Option[]): TaskDataSchema["assignedTo"] => {
+  const convertMembersToAssignedTo = (
+    members: Option[],
+  ): TaskDataSchema["assignedTo"] => {
     return members.map((member) => ({
       id: member.value,
       name: member.label,
       image: member.avatar || "/placeholder.svg?height=32&width=32",
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!formData.name.trim()) return
+    e.preventDefault();
+    if (!formData.name.trim()) return;
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
-      const currentUser = getCurrentUser()
+      const currentUser = getCurrentUser();
 
-      const daysLeft = selectedDate ? calculateDaysLeft(selectedDate) : 0
+      const daysLeft = selectedDate ? calculateDaysLeft(selectedDate) : 0;
 
-      const taskData: Omit<TaskDataSchema, "id" | "taskId" | "createdAt" | "updatedAt"> = {
+      const taskData: Omit<
+        TaskDataSchema,
+        "id" | "taskId" | "createdAt" | "updatedAt"
+      > = {
         name: formData.name.trim(),
         columnId: formData.columnId,
-        date: selectedDate ? selectedDate.toISOString().split("T")[0] : new Date().toISOString().split("T")[0],
+        date: selectedDate
+          ? selectedDate.toISOString().split("T")[0]
+          : new Date().toISOString().split("T")[0],
         description: formData.description,
         completed: formData.completed,
         daysLeft,
@@ -179,9 +212,9 @@ export function AddTaskForm({ isOpen, onClose, columnId, taskOrder = 0 }: AddTas
         subTasks: formData.subTasks,
         createdBy: currentUser,
         updatedBy: currentUser,
-      }
+      };
 
-      await createTask(taskData)
+      await createTask(taskData);
 
       setFormData({
         name: "",
@@ -191,23 +224,27 @@ export function AddTaskForm({ isOpen, onClose, columnId, taskOrder = 0 }: AddTas
         taskOrder,
         attachment: [],
         subTasks: [],
-      })
-      setSelectedMembers([])
-      setSelectedDate(undefined)
-      setNewSubTask("")
-      onClose()
+      });
+      setSelectedMembers([]);
+      setSelectedDate(undefined);
+      setNewSubTask("");
+      onClose();
     } catch (error) {
-      console.error("Failed to create task:", error)
+      toast.error("Failed to create task",{
+        description:error?.message
+      })
+      console.error("Failed to create task:", error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
-
+  };
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Content className="max-w-xl max-h-[90vh] overflow-y-auto">
-        <Dialog.Title className="font-medium text-lg mb-4">Add New Task</Dialog.Title>
+        <Dialog.Title className="font-medium text-lg mb-4">
+          Add New Task
+        </Dialog.Title>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Task Name */}
@@ -243,7 +280,10 @@ export function AddTaskForm({ isOpen, onClose, columnId, taskOrder = 0 }: AddTas
           {/* Date and Days Left */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="date" className="text-sm font-medium flex items-center gap-2">
+              <Label
+                htmlFor="date"
+                className="text-sm font-medium flex items-center gap-2"
+              >
                 <Calendar size={16} />
                 Due Date
               </Label>
@@ -266,20 +306,38 @@ export function AddTaskForm({ isOpen, onClose, columnId, taskOrder = 0 }: AddTas
           <div className="space-y-2">
             <Label className="text-sm font-medium">Files</Label>
             <div className="space-y-2">
-              <input ref={fileInputRef} type="file" onChange={handleFileUpload} className="hidden" multiple />
-              <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} className="w-full">
+              <input
+                ref={fileInputRef}
+                type="file"
+                onChange={handleFileUpload}
+                className="hidden"
+                multiple
+              />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-full"
+              >
                 <Plus size={16} className="mr-2" />
                 Add File
               </Button>
               {formData.attachment.length > 0 && (
                 <div className="space-y-2">
                   {formData.attachment.map((file, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-2 bg-gray-50 rounded"
+                    >
                       <div>
                         <div className="font-medium text-sm">{file.name}</div>
                         <div className="text-xs text-gray-500">{file.size}</div>
                       </div>
-                      <Button type="button" variant="ghost" onClick={() => removeFile(index)}>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => removeFile(index)}
+                      >
                         <X size={16} />
                       </Button>
                     </div>
@@ -300,7 +358,11 @@ export function AddTaskForm({ isOpen, onClose, columnId, taskOrder = 0 }: AddTas
                 defaultOptions={members}
                 placeholder="Select members"
                 className="border-1 dark:bg-gray-1"
-                emptyIndicator={<p className="text-center text-gray-6 text-lg dark:text-gray-400">No results found.</p>}
+                emptyIndicator={
+                  <p className="text-center text-gray-6 text-lg dark:text-gray-400">
+                    No results found.
+                  </p>
+                }
               />
             </Flex>
           </div>
@@ -317,22 +379,35 @@ export function AddTaskForm({ isOpen, onClose, columnId, taskOrder = 0 }: AddTas
                   className="flex-1"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
-                      e.preventDefault()
-                      addSubTask()
+                      e.preventDefault();
+                      addSubTask();
                     }
                   }}
                 />
-                <Button type="button" onClick={addSubTask} disabled={!newSubTask.trim()}>
+                <Button
+                  type="button"
+                  onClick={addSubTask}
+                  disabled={!newSubTask.trim()}
+                >
                   <Plus size={16} />
                 </Button>
               </div>
               {formData.subTasks.length > 0 && (
                 <div className="space-y-2">
                   {formData.subTasks.map((subTask, index) => (
-                    <div key={index} className="p-3 bg-gray-50 rounded space-y-2">
+                    <div
+                      key={index}
+                      className="p-3 bg-gray-50 rounded space-y-2"
+                    >
                       <div className="flex items-center justify-between">
-                        <span className="font-medium text-sm">{subTask.name}</span>
-                        <Button type="button" variant="ghost" onClick={() => removeSubTask(index)}>
+                        <span className="font-medium text-sm">
+                          {subTask.name}
+                        </span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          onClick={() => removeSubTask(index)}
+                        >
                           <X size={16} />
                         </Button>
                       </div>
@@ -345,7 +420,12 @@ export function AddTaskForm({ isOpen, onClose, columnId, taskOrder = 0 }: AddTas
 
           {/* Form Actions */}
           <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
             <Button
@@ -359,5 +439,5 @@ export function AddTaskForm({ isOpen, onClose, columnId, taskOrder = 0 }: AddTas
         </form>
       </Dialog.Content>
     </Dialog.Root>
-  )
+  );
 }

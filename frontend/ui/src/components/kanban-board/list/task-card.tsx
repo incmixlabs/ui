@@ -96,7 +96,6 @@ export function ListTaskCardDisplay({
 }) {
   const { handleDrawerOpen } = useKanbanDrawer();
   const { updateTaskByTaskId, deleteTaskByTaskId } = useTaskStore();
-  console.log("card ", card);
 
   const handleToggleComplete = async (e: React.MouseEvent) => {
     e.stopPropagation();

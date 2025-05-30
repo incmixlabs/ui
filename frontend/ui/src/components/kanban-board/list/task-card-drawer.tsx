@@ -53,31 +53,31 @@ export default function ListTaskCardDrawer() {
     {
       id: 1,
       title: "Inbox Template",
-      date: "32.8.2024",
+      date: "28.8.2024",
       checked: false,
     },
     {
       id: 2,
       title: "Chat Template",
-      date: "32.8.2024",
+      date: "31.8.2024",
       checked: false,
     },
     {
       id: 3,
       title: "Tasks Template",
-      date: "32.8.2024",
+      date: "30.8.2024",
       checked: false,
     },
     {
       id: 4,
       title: "Projects Template",
-      date: "32.8.2024",
+      date: "29.8.2024",
       checked: false,
     },
   ])
   const [comment, setComment] = useState("")
 
-  const [selectedMemebers, setSelectedMemebers] = useState<string[]>([
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([
     "regina-cooper",
   ])
   const [selectedLabels, setSelectedLabes] = useState<string[]>([
@@ -89,7 +89,7 @@ export default function ListTaskCardDrawer() {
   const [allLabelsData, setAllLabelsData] = useState(labelsData)
   const [isLabelFormOpen, setIsLabelFormOpen] = useState(false)
   const [labelColor, setLabelColor] = useState<ExtendedColorType>("blue")
-  const formRef = useRef<HTMLFormElement>(null as unknown as HTMLFormElement)
+ const formRef = useRef<HTMLFormElement>(null as unknown as HTMLFormElement)
 
   const handleDateChange = (date: Date) => {
     setSelectedDate(date)
@@ -249,8 +249,8 @@ export default function ListTaskCardDrawer() {
                           />
                           <ComboBox
                             options={assignData}
-                            onValueChange={setSelectedMemebers}
-                            defaultValue={selectedMemebers}
+                            onValueChange={setSelectedMembers}
+                            defaultValue={selectedMembers}
                             placeholder="Find Person..."
                             title="Assign To"
                           />
@@ -601,8 +601,8 @@ export default function ListTaskCardDrawer() {
                       </Heading>
                       <ComboBox
                         options={assignData}
-                        onValueChange={setSelectedMemebers}
-                        defaultValue={selectedMemebers}
+                        onValueChange={setSelectedMembers}
+                        defaultValue={selectedMembers}
                         placeholder="Find Person..."
                         title="Assign To"
                       />

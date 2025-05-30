@@ -17,23 +17,23 @@ const ListTaskCardDrawer = lazy(() => import("./task-card-drawer"))
 import type { TColumn } from "../types"
 import { isCardData, isCardDropTargetData, isColumnData, isDraggingACard, isDraggingAColumn } from "../types"
 
-function convertTasksToColumns(tasks: any[], columns: any[]) {
-  return columns.map((column) => {
-    const columnTasks = tasks
-      .filter((task) => task.columnId === column.id)
-      .sort((a, b) => a.taskOrder - b.taskOrder)
-      .map((task) => ({
-        ...task,
-        id: task.taskId,
-      }))
+function convertTasksToColumns(tasks: any[], columns: any[]) {  
+  return columns.map((column) => {  
+    const columnTasks = tasks  		
+      .filter((task) => task.columnId === column.id)  
+      .sort((a, b) => a.taskOrder - b.taskOrder)  
+      .map((task) => ({  
+        ...task,  
+        id: task.taskId,  
+      }))  
 
-    return {
-      id: `column:${column.id}`,
-      title: column.title,
-      cards: columnTasks,
-    }
-  })
-}
+    return {  
+      id: `column:${column.id}`,  
+      title: column.title,  
+      cards: columnTasks,  
+    }  
+  })  
+}  
 
 export function ListBoard() {
   const { tasks, initialize, initialized, isInitialLoading, moveTaskBetweenColumns, reorderTasksInColumn } =
