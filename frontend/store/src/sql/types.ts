@@ -65,7 +65,7 @@ export const taskSchemaLiteral = {
 } as const
 
 export const taskDataSchemaLiteral = {
-  title: "tasksData  schema",
+  title: "tasksData schema",
   version: 0,
   primaryKey: "id",
   type: "object",
@@ -81,10 +81,10 @@ export const taskDataSchemaLiteral = {
       type: "string",
     },
     columnId: {
-      type: "string",   
+      type: "string",
     },
     projectId: {
-      type: "string", 
+      type: "string",
     },
     date: {
       type: "string",
@@ -101,10 +101,10 @@ export const taskDataSchemaLiteral = {
       default: 0,
     },
     attachment: {
-      type: "string", 
+      type: "string",
     },
     taskOrder: {
-      type: "number", 
+      type: "number",
       default: 0,
     },
     filesData: {
@@ -138,7 +138,7 @@ export const taskDataSchemaLiteral = {
             type: "string",
           },
           src: {
-            type: "string", 
+            type: "string",
           },
         },
         required: ["id", "name", "src"],
@@ -169,7 +169,7 @@ export const taskDataSchemaLiteral = {
       default: [],
     },
     createdAt: {
-      type: "number", 
+      type: "number",
     },
     updatedAt: {
       type: "number",
