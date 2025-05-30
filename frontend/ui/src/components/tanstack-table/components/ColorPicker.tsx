@@ -5,22 +5,36 @@ interface ColorPickerProps {
   onChange: (color: string) => void;
 }
 
+// Add these styles to your global CSS or add them inline as we do here
+const colorOptionStyle: React.CSSProperties = {
+  width: '24px',
+  height: '24px',
+  borderRadius: '50%',
+  cursor: 'pointer',
+  transition: 'transform 0.2s ease'
+};
+
+const colorOptionHoverStyle: React.CSSProperties = {
+  transform: 'scale(1.15)'
+};
+
 /**
- * Color picker component that displays on top of other elements
+ * Simplified color picker component with circular options
  */
 const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => {
   const [showPicker, setShowPicker] = useState(false);
+  const [hoveredColor, setHoveredColor] = useState<string | null>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
-  
-  // Define colors in a single array
-  const colors = [
-    // Row 1 - Blues
-    '#dbeafe', '#bfdbfe', '#93c5fd', '#60a5fa', '#3b82f6', '#2563eb', '#1d4ed8',
-    // Row 2 - Other colors
-    '#fcd34d', '#f97316', '#86efac', '#22c55e', '#ef4444', '#8b5cf6', '#ec4899'
-  ];
 
+  // Define a simpler color palette for the compact design
+  const colorPalette = [
+    // Row 1
+    '#0096FF', '#1CAC78', '#FF5252', '#FFD700', '#9370DB', '#20B2AA',
+    // Row 2
+    '#E75480', '#4169E1', '#BFFF00', '#FF7F50', '#8A2BE2', '#00CED1'
+  ];
+  
   // Handle color selection
   const handleColorSelect = (selectedColor: string) => {
     onChange(selectedColor);
@@ -55,7 +69,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => {
 
   return (
     <div style={{ position: 'relative', display: 'inline-block' }}>
-      {/* Color button */}
+      {/* Color button - square button to select color */}
       <div 
         ref={buttonRef}
         onClick={() => setShowPicker(!showPicker)}
@@ -69,7 +83,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => {
         }}
       />
       
-      {/* Popup color selector */}
+      {/* Compact color picker popup */}
       {showPicker && (
         <div 
           ref={popupRef}
@@ -77,46 +91,55 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => {
             position: 'fixed',
             top: '0px',
             left: '0px',
-            width: '250px',
-            padding: '8px',
+            padding: '12px',
             backgroundColor: 'white',
-            borderRadius: '8px',
-            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
-            border: '1px solid #ddd',
+            borderRadius: '12px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            border: '1px solid #eaeaea',
             zIndex: 9999,
+            width: '200px'
           }}
         >
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px', marginBottom: '6px' }}>
-            {/* Row 1 - Blues */}
-            {colors.slice(0, 7).map((c, i) => (
+          {/* First row of colors */}
+          <div style={{ 
+            display: 'flex', 
+            gap: '10px', 
+            justifyContent: 'space-between',
+            marginBottom: '10px'
+          }}>
+            {colorPalette.slice(0, 6).map((c, i) => (
               <div 
-                key={`blue-${i}`}
+                key={`color-row1-${i}`}
                 onClick={() => handleColorSelect(c)}
+                onMouseEnter={() => setHoveredColor(c)}
+                onMouseLeave={() => setHoveredColor(null)}
                 style={{
-                  width: '28px', 
-                  height: '28px', 
+                  ...colorOptionStyle,
                   backgroundColor: c,
-                  borderRadius: '50%',
                   border: c === color ? '2px solid #000' : '1px solid #ddd',
-                  cursor: 'pointer'
+                  ...(hoveredColor === c ? colorOptionHoverStyle : {})
                 }}
               />
             ))}
           </div>
-          
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' }}>
-            {/* Row 2 - Other colors */}
-            {colors.slice(7).map((c, i) => (
+
+          {/* Second row of colors */}
+          <div style={{ 
+            display: 'flex', 
+            gap: '10px', 
+            justifyContent: 'space-between' 
+          }}>
+            {colorPalette.slice(6).map((c, i) => (
               <div 
-                key={`color-${i}`}
+                key={`color-row2-${i}`}
                 onClick={() => handleColorSelect(c)}
+                onMouseEnter={() => setHoveredColor(c)}
+                onMouseLeave={() => setHoveredColor(null)}
                 style={{
-                  width: '28px', 
-                  height: '28px', 
+                  ...colorOptionStyle,
                   backgroundColor: c,
-                  borderRadius: '50%',
                   border: c === color ? '2px solid #000' : '1px solid #ddd',
-                  cursor: 'pointer'
+                  ...(hoveredColor === c ? colorOptionHoverStyle : {})
                 }}
               />
             ))}
