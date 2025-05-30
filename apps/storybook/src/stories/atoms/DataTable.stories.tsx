@@ -1,5 +1,5 @@
 
-import { SidebarFilterDemo, UsersTableDemo,TasksTableDemo, EditableUsersTableDemo, InlineEditDemo, GroupedDemo, TaskTimelineDemo } from "@incmix/ui/tanstack-table";
+import { SidebarFilterDemo, UsersTableDemo,TasksTableDemo, EditableUsersTableDemo, InlineEditDemo, GroupedDemo, TaskTimelineDemo, TaskStatusDemo } from "@incmix/ui/tanstack-table";
 
 import type { Meta, StoryObj } from "@storybook/react";
 
@@ -50,3 +50,9 @@ export const TaskTimeline: Story = {
   render: () => <TaskTimelineDemo />,
   name: "Task Timeline Table",
 };
+
+export const TaskStatus: Story = {
+  render: () => <TaskStatusDemo />,
+  name: "Task Status Table",
+};
+  

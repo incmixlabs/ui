@@ -133,6 +133,79 @@ export const StringCell: React.FC<{ value: any }> = ({ value }) => (
   </div>
 );
 
+// Helper function to get contrasting text color (black or white) based on background color
+export function getContrastingTextColor(backgroundColor: string): string {
+  // Convert hex to RGB
+  const hex = backgroundColor.replace('#', '');
+  let r = 0, g = 0, b = 0;
+  
+  if (hex.length === 3) {
+    r = parseInt(hex[0] + hex[0], 16);
+    g = parseInt(hex[1] + hex[1], 16);
+    b = parseInt(hex[2] + hex[2], 16);
+  } else if (hex.length === 6) {
+    r = parseInt(hex.substring(0, 2), 16);
+    g = parseInt(hex.substring(2, 4), 16);
+    b = parseInt(hex.substring(4, 6), 16);
+  }
+  
+  // Calculate contrast using YIQ method
+  const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+  return yiq >= 128 ? '#000000' : '#ffffff';
+}
+
+// Helper function to adjust color brightness (for hover effects)
+export function adjustColor(color: string, amount: number): string {
+  const hex = color.replace('#', '');
+  let r = parseInt(hex.substring(0, 2), 16);
+  let g = parseInt(hex.substring(2, 4), 16);
+  let b = parseInt(hex.substring(4, 6), 16);
+
+  r = Math.max(0, Math.min(255, r + amount));
+  g = Math.max(0, Math.min(255, g + amount));
+  b = Math.max(0, Math.min(255, b + amount));
+
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+}
+
+// Interface for dropdown options
+export interface DropdownOption {
+  value: string;
+  label: string;
+  color?: string;
+}
+
+// Dropdown Cell Renderer
+export const DropdownCell: React.FC<{ 
+  value: string;
+  options?: DropdownOption[];
+}> = ({ value, options = [] }) => {
+  // Find the selected option
+  const selectedOption = options.find(option => option.value === value) || {
+    value,
+    label: value,
+    color: '#e5e7eb' // Default gray color
+  };
+  
+  // Determine text color based on background color (if provided)
+  const textColor = selectedOption.color 
+    ? getContrastingTextColor(selectedOption.color)
+    : '#000000';
+  
+  return (
+    <span
+      className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset capitalize"
+      style={{
+        backgroundColor: selectedOption.color || '#e5e7eb',
+        color: textColor,
+        borderColor: selectedOption.color ? adjustColor(selectedOption.color, -20) : '#d1d5db'
+      }}
+    >
+      {selectedOption.label || value}
+    </span>
+  );
+};
+
 // Define the type for cell renderer functions
 export type CellRendererFn = (value: any, options?: any) => React.ReactNode;
 
@@ -226,6 +299,7 @@ export const defaultCellRenderers: Record<string, CellRendererFn> = {
   "Tag": (value: any) => <TagCell value={value} />,
   "Status": (value: any, statusMap?: Record<string, { color: string }>, defaultColor?: string) => <StatusCell value={value} statusMap={statusMap} defaultColor={defaultColor} />,
   "Boolean": (value: any) => <BooleanCell value={value} />,
+  "Dropdown": (value: any, options?: DropdownOption[]) => <DropdownCell value={value} options={options} />,
   "TimelineProgress": (value: any, options?: any) => {
     // Extract format options if they exist
     const formatOptions = options?.format || {};
