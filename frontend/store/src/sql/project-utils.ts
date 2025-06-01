@@ -11,20 +11,29 @@ export type TaskDataSchema = {
   taskId: string
   name: string
   columnId: string
-  date: string
+  startDate: string
+  endDate: string
   description?: string
   completed: boolean
-  daysLeft: number
   taskOrder: number
+  labelsTags: Array<{
+    value: string
+    label: string
+    color: string
+    checked: boolean
+  }>
   attachment: Array<{
     name: string
     url: string
     size: string
   }>
   assignedTo: Array<{
-    id: string
+    value: string
     name: string
-    image: string
+    label: string
+    avatar: string
+    color: string
+    checked: boolean
   }>
   subTasks: Array<{
     name: string

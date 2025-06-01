@@ -67,7 +67,6 @@ export function ListColumn({ column }: { column: TColumn }) {
   const headerRef = useRef<HTMLDivElement | null>(null);
   const innerRef = useRef<HTMLDivElement | null>(null);
   const [state, setState] = useState<TColumnState>(idle);
-  const [showAddTaskForm, setShowAddTaskForm] = useState(false);
 
   useEffect(() => {
     const outer = outerFullHeightRef.current;
@@ -209,6 +208,9 @@ export function ListColumn({ column }: { column: TColumn }) {
     );
   }, [column]);
 
+console.log("column",column.cards.length);
+
+
   return (
     <>
       <Flex
@@ -226,7 +228,7 @@ export function ListColumn({ column }: { column: TColumn }) {
             direction="column"
             className={`max-h-full pb-2 ${state.type === "is-column-over" ? "invisible" : ""}`}
           >
-            <Box className="mt-2 px-3.5">
+            <Box className="mt-2">
               <Flex
                 direction="row"
                 justify="between"
@@ -235,27 +237,17 @@ export function ListColumn({ column }: { column: TColumn }) {
                 ref={headerRef}
               >
                 <Heading
-                  size={"5"}
+                  size={"4"}
                   as="h3"
                   className="pl-2 font-bold leading-4"
                 >
                   {column.title} ({column.cards.length})
                 </Heading>
-                <IconButton className="rounded p-2 hover:bg-slate-200 active:bg-slate-300">
+                {/* <IconButton className="rounded p-2 hover:bg-slate-200 active:bg-slate-300">
                   <Ellipsis size={16} />
-                </IconButton>
+                </IconButton> */}
               </Flex>
 
-              <Flex
-                justify={"start"}
-                gap="2"
-                className="w-full cursor-pointer rounded-xl border-2 border-gray-8 border-dashed p-3 hover:bg-gray-8"
-                onClick={() => setShowAddTaskForm(true)}
-              >
-                <IconButton className="w-fit gap-3 rounded bg-transparent p-2 font-medium text-blue-500 text-xl hover:text-white">
-                  <Plus size={24} /> Add Task
-                </IconButton>
-              </Flex>
             </Box>
 
             <Flex
@@ -273,12 +265,12 @@ export function ListColumn({ column }: { column: TColumn }) {
         </Flex>
       </Flex>
       {/* Add Task Form Modal */}
-      <AddTaskForm
+      {/* <AddTaskForm
         isOpen={showAddTaskForm}
         onClose={() => setShowAddTaskForm(false)}
         columnId={column.id.replace("column:", "")}
         taskOrder={column.cards.length}
-      />
+      /> */}
     </>
   );
 }

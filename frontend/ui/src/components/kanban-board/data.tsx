@@ -33,18 +33,21 @@ export const assignData = [
     label: "Regina Cooper",
     avatar: KanbanImages.user1,
     color: "orange",
+    checked:false,
   },
   {
     value: "jacob-hawkins",
     label: "Jacob Hawkins",
     avatar: KanbanImages.user2,
     color: "blue",
+    checked:false,
   },
   {
     value: "jane-wilson",
     label: "Jane Wilson",
     avatar: KanbanImages.user1,
     color: "green",
+    checked:false,
   },
 ]
 export const labelsData = [
@@ -52,16 +55,19 @@ export const labelsData = [
     value: "design",
     label: "Design",
     color: "purple",
+    checked: true,
   },
   {
     value: "frontend",
     label: "Frontend",
     color: "blue",
+    checked: true,
   },
   {
     value: "backend",
     label: "Backend",
     color: "indigo",
+    checked: true,
   },
 ]
 
@@ -122,12 +128,12 @@ export const initialData: TCustomBoard = [
           {
             id: "1",
             name: "Bonnie Green",
-            src: KanbanImages.user1,
+            image: KanbanImages.user1,
           },
           {
             id: "2",
             name: "Roberta Casas",
-            src: KanbanImages.user2,
+            image: KanbanImages.user2,
           },
         ],
       },
@@ -142,7 +148,7 @@ export const initialData: TCustomBoard = [
           {
             id: "2",
             name: "Roberta Casas",
-            src: KanbanImages.user2,
+            image: KanbanImages.user2,
           },
         ],
       },
@@ -161,12 +167,12 @@ export const initialData: TCustomBoard = [
           {
             id: "1",
             name: "Bonnie Green",
-            src: KanbanImages.user2,
+            image: KanbanImages.user2,
           },
           {
             id: "2",
             name: "Roberta Casas",
-            src: KanbanImages.user2,
+            image: KanbanImages.user2,
           },
         ],
       },
@@ -182,12 +188,12 @@ export const initialData: TCustomBoard = [
           {
             id: "1",
             name: "Bonnie Green",
-            src: KanbanImages.user2,
+            image: KanbanImages.user2,
           },
           {
             id: "2",
             name: "Roberta Casas",
-            src: KanbanImages.user1,
+            image: KanbanImages.user1,
           },
         ],
       },
@@ -214,12 +220,12 @@ export const initialData: TCustomBoard = [
           {
             id: "1",
             name: "Bonnie Green",
-            src: KanbanImages.user1,
+            image: KanbanImages.user1,
           },
           {
             id: "2",
             name: "Roberta Casas",
-            src: KanbanImages.user2,
+            image: KanbanImages.user2,
           },
         ],
       },
@@ -241,7 +247,7 @@ export const initialData: TCustomBoard = [
           {
             id: "1",
             name: "Bonnie Green",
-            src: KanbanImages.user1,
+            image: KanbanImages.user1,
           },
         ],
       },

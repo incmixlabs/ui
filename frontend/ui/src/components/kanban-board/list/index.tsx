@@ -1,156 +1,189 @@
-import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
-import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
-import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge"
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
-import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types"
-import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
-import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder"
-import { bindAll } from "bind-event-listener"
-import { Suspense, lazy, useEffect, useRef, useMemo } from "react"
-import { ListColumn } from "./list-column"
-import { blockBoardPanningAttr } from "../data-attributes"
-import { Box } from "@incmix/ui"
-import { useTaskStore } from "@incmix/store"
+import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
+import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder";
+import { bindAll } from "bind-event-listener";
+import { Suspense, lazy, useEffect, useRef, useMemo, useState } from "react";
+import { ListColumn } from "./list-column";
+import { blockBoardPanningAttr } from "../data-attributes";
+import { Box, Flex, IconButton, Input } from "@incmix/ui";
+import { useTaskStore } from "@incmix/store";
 
-const ListTaskCardDrawer = lazy(() => import("./task-card-drawer"))
+const ListTaskCardDrawer = lazy(() => import("./task-card-drawer"));
 
-import type { TColumn } from "../types"
-import { isCardData, isCardDropTargetData, isColumnData, isDraggingACard, isDraggingAColumn } from "../types"
+import type { TColumn } from "../types";
+import {
+  isCardData,
+  isCardDropTargetData,
+  isColumnData,
+  isDraggingACard,
+  isDraggingAColumn,
+} from "../types";
+import { Plus, Search } from "lucide-react";
+import { AddTaskForm } from "./add-task-form";
 
-function convertTasksToColumns(tasks: any[], columns: any[]) {  
-  return columns.map((column) => {  
-    const columnTasks = tasks  		
-      .filter((task) => task.columnId === column.id)  
-      .sort((a, b) => a.taskOrder - b.taskOrder)  
-      .map((task) => ({  
-        ...task,  
-        id: task.taskId,  
-      }))  
+function convertTasksToColumns(tasks: any[], columns: any[]) {
+  return columns.map((column) => {
+    const columnTasks = tasks
+      .filter((task) => task.columnId === column.id)
+      .sort((a, b) => a.taskOrder - b.taskOrder)
+      .map((task) => ({
+        ...task,
+        id: task.taskId,
+      }));
 
-    return {  
-      id: `column:${column.id}`,  
-      title: column.title,  
-      cards: columnTasks,  
-    }  
-  })  
-}  
+    return {
+      id: `column:${column.id}`,
+      title: column.title,
+      cards: columnTasks,
+    };
+  });
+}
 
 export function ListBoard() {
-  const { tasks, initialize, initialized, isInitialLoading, moveTaskBetweenColumns, reorderTasksInColumn } =
-    useTaskStore()
+  const {
+    tasks,
+    initialize,
+    initialized,
+    isInitialLoading,
+    moveTaskBetweenColumns,
+    reorderTasksInColumn,
+  } = useTaskStore();
 
   const mockColumns = [
     { id: "col-todo", title: "To Do" },
     { id: "col-progress", title: "In Progress" },
     { id: "col-done", title: "Done" },
-  ]
+  ];
+  const [showAddTaskForm, setShowAddTaskForm] = useState(false);
 
   const columns = useMemo(() => {
-    if (!initialized) return []
-    return convertTasksToColumns(tasks, mockColumns)
-  }, [tasks, initialized])
+    if (!initialized) return [];
+    return convertTasksToColumns(tasks, mockColumns);
+  }, [tasks, initialized]);
 
-  const scrollableRef = useRef<HTMLDivElement | null>(null)
+  const scrollableRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!initialized) {
-      initialize()
+      initialize();
     }
-  }, [initialize, initialized])
+  }, [initialize, initialized]);
 
   useEffect(() => {
-    const element = scrollableRef.current
+    const element = scrollableRef.current;
     if (!element) {
-      return
+      return;
     }
 
     if (!columns || columns.length === 0) {
-      return
+      return;
     }
 
     return combine(
       monitorForElements({
         canMonitor: isDraggingACard,
         onDrop({ source, location }) {
-          const dragging = source.data
+          const dragging = source.data;
           if (!isCardData(dragging)) {
-            return
+            return;
           }
 
-          const innerMost = location.current.dropTargets[0]
+          const innerMost = location.current.dropTargets[0];
           if (!innerMost) {
-            return
+            return;
           }
 
-          const dropTargetData = innerMost.data
-          const homeColumnIndex = columns.findIndex((column) => column.id === dragging.columnId)
-          const home: TColumn | undefined = columns[homeColumnIndex]
+          const dropTargetData = innerMost.data;
+          const homeColumnIndex = columns.findIndex(
+            (column) => column.id === dragging.columnId,
+          );
+          const home: TColumn | undefined = columns[homeColumnIndex];
 
           if (!home) {
-            return
+            return;
           }
 
-          const cardIndexInHome = home.cards.findIndex((card) => card.id === dragging.card.id)
+          const cardIndexInHome = home.cards.findIndex(
+            (card) => card.id === dragging.card.id,
+          );
 
           // dropping on a card
           if (isCardDropTargetData(dropTargetData)) {
-            const destinationColumnIndex = columns.findIndex((column) => column.id === dropTargetData.columnId)
-            const destination = columns[destinationColumnIndex]
+            const destinationColumnIndex = columns.findIndex(
+              (column) => column.id === dropTargetData.columnId,
+            );
+            const destination = columns[destinationColumnIndex];
 
             // reordering in home column
             if (home === destination) {
-              const cardFinishIndex = home.cards.findIndex((card) => card.id === dropTargetData.card.id)
+              const cardFinishIndex = home.cards.findIndex(
+                (card) => card.id === dropTargetData.card.id,
+              );
 
               if (cardIndexInHome === -1 || cardFinishIndex === -1) {
-                return
+                return;
               }
 
               if (cardIndexInHome === cardFinishIndex) {
-                return
+                return;
               }
 
-              const closestEdge = extractClosestEdge(dropTargetData)
+              const closestEdge = extractClosestEdge(dropTargetData);
               const reordered = reorderWithEdge({
                 axis: "vertical",
                 list: home.cards,
                 startIndex: cardIndexInHome,
                 indexOfTarget: cardFinishIndex,
                 closestEdgeOfTarget: closestEdge,
-              })
+              });
 
               // ✅ No need to update local state - just update the store
               // The useMemo will automatically recompute columns when tasks change
-              const taskIds = reordered.map((card) => card.id)
-              const columnId = home.id.replace("column:", "")
-              reorderTasksInColumn(columnId, taskIds).catch(console.error)
+              const taskIds = reordered.map((card) => card.id);
+              const columnId = home.id.replace("column:", "");
+              reorderTasksInColumn(columnId, taskIds).catch(console.error);
 
-              return
+              return;
             }
 
             // moving card from one column to another
             if (!destination) {
-              return
+              return;
             }
 
-            const indexOfTarget = destination.cards.findIndex((card) => card.id === dropTargetData.card.id)
-            const closestEdge = extractClosestEdge(dropTargetData)
-            const finalIndex = closestEdge === "bottom" ? indexOfTarget + 1 : indexOfTarget
+            const indexOfTarget = destination.cards.findIndex(
+              (card) => card.id === dropTargetData.card.id,
+            );
+            const closestEdge = extractClosestEdge(dropTargetData);
+            const finalIndex =
+              closestEdge === "bottom" ? indexOfTarget + 1 : indexOfTarget;
 
             // ✅ No need to update local state - just update the store
-            const fromColumnId = home.id.replace("column:", "")
-            const toColumnId = destination.id.replace("column:", "")
-            moveTaskBetweenColumns(dragging.card.id, fromColumnId, toColumnId, finalIndex)
+            const fromColumnId = home.id.replace("column:", "");
+            const toColumnId = destination.id.replace("column:", "");
+            moveTaskBetweenColumns(
+              dragging.card.id,
+              fromColumnId,
+              toColumnId,
+              finalIndex,
+            );
 
-            return
+            return;
           }
 
           // dropping onto a column, but not onto a card
           if (isColumnData(dropTargetData)) {
-            const destinationColumnIndex = columns.findIndex((column) => column.id === dropTargetData.column.id)
-            const destination = columns[destinationColumnIndex]
+            const destinationColumnIndex = columns.findIndex(
+              (column) => column.id === dropTargetData.column.id,
+            );
+            const destination = columns[destinationColumnIndex];
 
             if (!destination) {
-              return
+              return;
             }
 
             // dropping on home
@@ -159,45 +192,50 @@ export function ListBoard() {
                 list: home.cards,
                 startIndex: cardIndexInHome,
                 finishIndex: home.cards.length - 1,
-              })
+              });
 
               // ✅ No need to update local state - just update the store
-              const taskIds = reordered.map((card) => card.id)
-              const columnId = home.id.replace("column:", "")
-              reorderTasksInColumn(columnId, taskIds)
-              return
+              const taskIds = reordered.map((card) => card.id);
+              const columnId = home.id.replace("column:", "");
+              reorderTasksInColumn(columnId, taskIds);
+              return;
             }
 
             // moving card to another column
             // ✅ No need to update local state - just update the store
-            const fromColumnId = home.id.replace("column:", "")
-            const toColumnId = destination.id.replace("column:", "")
-            moveTaskBetweenColumns(dragging.card.id, fromColumnId, toColumnId, destination.cards.length - 1)
+            const fromColumnId = home.id.replace("column:", "");
+            const toColumnId = destination.id.replace("column:", "");
+            moveTaskBetweenColumns(
+              dragging.card.id,
+              fromColumnId,
+              toColumnId,
+              destination.cards.length - 1,
+            );
 
-            return
+            return;
           }
         },
       }),
       // Only add auto scroll if element is actually scrollable
       autoScrollForElements({
         canScroll({ source }) {
-          return isDraggingACard({ source }) || isDraggingAColumn({ source })
+          return isDraggingACard({ source }) || isDraggingAColumn({ source });
         },
         element,
       }),
-    )
-  }, [columns, reorderTasksInColumn, moveTaskBetweenColumns]) 
+    );
+  }, [columns, reorderTasksInColumn, moveTaskBetweenColumns]);
 
   useEffect(() => {
-    let cleanupActive: CleanupFn | null = null
-    const scrollable = scrollableRef.current
+    let cleanupActive: CleanupFn | null = null;
+    const scrollable = scrollableRef.current;
 
     if (!scrollable) {
-      return
+      return;
     }
 
     function begin({ startX }: { startX: number }) {
-      let lastX = startX
+      let lastX = startX;
 
       const cleanupEvents = bindAll(
         window,
@@ -205,24 +243,32 @@ export function ListBoard() {
           {
             type: "pointermove",
             listener(event) {
-              const currentX = event.clientX
-              const diffX = lastX - currentX
+              const currentX = event.clientX;
+              const diffX = lastX - currentX;
 
-              lastX = currentX
-              scrollable?.scrollBy({ left: diffX })
+              lastX = currentX;
+              scrollable?.scrollBy({ left: diffX });
             },
           },
           ...(
-            ["pointercancel", "pointerup", "pointerdown", "keydown", "resize", "click", "visibilitychange"] as const
+            [
+              "pointercancel",
+              "pointerup",
+              "pointerdown",
+              "keydown",
+              "resize",
+              "click",
+              "visibilitychange",
+            ] as const
           ).map((eventName) => ({
             type: eventName,
             listener: () => cleanupEvents(),
           })),
         ],
         { capture: true },
-      )
+      );
 
-      cleanupActive = cleanupEvents
+      cleanupActive = cleanupEvents;
     }
 
     const cleanupStart = bindAll(scrollable, [
@@ -230,34 +276,50 @@ export function ListBoard() {
         type: "pointerdown",
         listener(event) {
           if (!(event.target instanceof HTMLElement)) {
-            return
+            return;
           }
           if (event.target.closest(`[${blockBoardPanningAttr}]`)) {
-            return
+            return;
           }
 
-          begin({ startX: event.clientX })
+          begin({ startX: event.clientX });
         },
       },
-    ])
+    ]);
 
     return function cleanupAll() {
-      cleanupStart()
-      cleanupActive?.()
-    }
-  }, [])
+      cleanupStart();
+      cleanupActive?.();
+    };
+  }, []);
 
   if (!initialized && isInitialLoading) {
     return (
       <Box className="flex items-center justify-center h-64">
         <div>Loading tasks...</div>
       </Box>
-    )
+    );
   }
 
   return (
     <>
-      <Box className="flex w-full gap-6 h-full overflow-x-auto" ref={scrollableRef} style={{ minHeight: "400px" }}>
+      <Flex gap="2" className="py-2 pb-4">
+        <IconButton
+          color="blue"
+          onClick={() => setShowAddTaskForm(true)}
+          className="w-fit gap-3 h-12 rounded-lg p-2 px-4 font-medium text-blue-500 text-xl hover:text-white"
+        >
+          <Plus size={20} /> Add Task
+        </IconButton>
+        <Box className="flex-1 shrink-0 cursor-pointer rounded-xl relative">
+          <Search size={24} className="absolute top-2.5 left-2.5" />
+          <Input
+            placeholder="Search"
+            className="w-full rounded-xl pl-10 border-2 border-gray-5 h-12 grid place-content-center "
+          />
+        </Box>
+      </Flex>
+      <Box className="flex w-full gap-6 h-full relative " ref={scrollableRef}>
         <Box className="w-full space-y-5">
           {columns.map((column) => (
             <ListColumn key={column.id} column={column} />
@@ -267,6 +329,13 @@ export function ListBoard() {
           <ListTaskCardDrawer />
         </Suspense>
       </Box>
+      {/* Add Task Form Modal */}
+      <AddTaskForm
+        isOpen={showAddTaskForm}
+        onClose={() => setShowAddTaskForm(false)}
+        columnId={"col-todo"}
+        taskOrder={0}
+      />
     </>
-  )
+  );
 }

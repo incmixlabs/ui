@@ -24,3 +24,6 @@ export * from "./stepper"
 export * from "./multiple-selector"
 export {MultipleSelector} from "./multiple-selector/multiple-selector"
 export * from "./active-btn"
+export * from "./labels-combo-box"
+export * from "./assign-combo-box"
+

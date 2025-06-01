@@ -94,7 +94,6 @@ export function TaskCardDisplay({
   const { handleDrawerOpen } = useKanbanDrawer()
 
   console.log("card",card);
-  
   return (
     <Box
       ref={outerRef}
@@ -245,7 +244,7 @@ export function TaskCardDisplay({
             ))}
             {card.attachment && (
               <img
-                src={card.attachment[0].image}
+                src={card.attachment[0].url}
                 alt="attachment"
                 className="aspect-video rounded-lg object-cover"
               />

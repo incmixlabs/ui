@@ -250,17 +250,6 @@ const TasksPage = () => {
             value="table"
           />
         </Tabs.Root>
-
-        {/* <KanbanBoard
-        updateTasks={(tasks) => {
-          if (tasks.length) tasksMutation.mutate(tasks)
-        }}
-        columns={board.columns}
-        tasks={board.tasks}
-        isLoading={
-          fetchingColumns || fetchingTasks || boardLoading || fetchingProjects
-        }
-        /> */}
       </ScrollArea>
     </DashboardLayout>
   )

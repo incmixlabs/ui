@@ -10,11 +10,18 @@ import {
   Flex,
   Checkbox,
   toast,
+  Box,
+  Heading,
+  Badge,
+  ExtendedColorType,
+  LabelsComboBox,
 } from "@incmix/ui";
 import { X, Plus, Calendar } from "lucide-react";
 import { SmartDatetimeInput } from "@components/datetime-picker";
 import { TaskDataSchema, useTaskStore } from "@incmix/store";
 import { members } from "@components/projects/data";
+import { ComboBox } from "@components/combo-box";
+import { labelsData } from "../data";
 
 export interface Option {
   value: string;
@@ -77,14 +84,23 @@ export function AddTaskForm({
   });
 
   const [selectedMembers, setSelectedMembers] = useState<Option[]>([]);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [selectedStartDate, setSelectedStartDate] = useState<Date | undefined>(undefined);
+  const [selectedEndDate, setSelectedEndDate] = useState<Date | undefined>(undefined);
   const [newSubTask, setNewSubTask] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [allLabelsData, setAllLabelsData] = useState(labelsData);
+  const [isLabelFormOpen, setIsLabelFormOpen] = useState(false);
+  const [labelColor, setLabelColor] = useState<ExtendedColorType>("blue");
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { createTask } = useTaskStore();
 
-  const handleDateChange = (date: Date) => {
-    setSelectedDate(date);
+  const handleStartDateChange = (date: Date) => {
+    setSelectedStartDate(date);
+  };
+
+  const handleEndDateChange = (date: Date) => {
+    setSelectedEndDate(date);
   };
 
   const handleInputChange = (field: keyof TaskFormData, value: any) => {
@@ -121,9 +137,9 @@ export function AddTaskForm({
   }, [formData.attachment]);
 
   const removeFile = (index: number) => {
-    const fileToRemove = formData.attachment[index]
-    if (fileToRemove?.url.startsWith('blob:')) {
-      URL.revokeObjectURL(fileToRemove.url)
+    const fileToRemove = formData.attachment[index];
+    if (fileToRemove?.url.startsWith("blob:")) {
+      URL.revokeObjectURL(fileToRemove.url);
     }
     setFormData((prev) => ({
       ...prev,
@@ -154,29 +170,18 @@ export function AddTaskForm({
     }));
   };
 
-  const updateSubTaskProgress = (index: number, progress: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      subTasks: prev.subTasks.map((task, i) =>
-        i === index ? { ...task, progress, completed: progress === 100 } : task,
-      ),
-    }));
-  };
 
-  const calculateDaysLeft = (date: Date) => {
-    const today = new Date();
-    const diffTime = date.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
 
   const convertMembersToAssignedTo = (
     members: Option[],
   ): TaskDataSchema["assignedTo"] => {
     return members.map((member) => ({
-      id: member.value,
+      value: member.value,
       name: member.label,
-      image: member.avatar || "/placeholder.svg?height=32&width=32",
+      label: member.label,
+      avatar: member.avatar || "/placeholder.svg?height=32&width=32",
+      color: member.color || "blue",
+      checked: true,
     }));
   };
 
@@ -188,7 +193,6 @@ export function AddTaskForm({
     try {
       const currentUser = getCurrentUser();
 
-      const daysLeft = selectedDate ? calculateDaysLeft(selectedDate) : 0;
 
       const taskData: Omit<
         TaskDataSchema,
@@ -196,18 +200,21 @@ export function AddTaskForm({
       > = {
         name: formData.name.trim(),
         columnId: formData.columnId,
-        date: selectedDate
-          ? selectedDate.toISOString().split("T")[0]
+        startDate: selectedStartDate
+          ? selectedStartDate.toISOString().split("T")[0]
+          : new Date().toISOString().split("T")[0],
+        endDate: selectedEndDate
+          ? selectedEndDate.toISOString().split("T")[0]
           : new Date().toISOString().split("T")[0],
         description: formData.description,
         completed: formData.completed,
-        daysLeft,
         taskOrder: formData.taskOrder,
         attachment: formData.attachment.map((file) => ({
           name: file.name,
           url: file.url,
           size: file.size,
         })),
+        labelsTags:allLabelsData,
         assignedTo: convertMembersToAssignedTo(selectedMembers),
         subTasks: formData.subTasks,
         createdBy: currentUser,
@@ -226,18 +233,20 @@ export function AddTaskForm({
         subTasks: [],
       });
       setSelectedMembers([]);
-      setSelectedDate(undefined);
+      setSelectedStartDate(undefined);
+      setSelectedEndDate(undefined);
       setNewSubTask("");
       onClose();
     } catch (error) {
-      toast.error("Failed to create task",{
-        description:error?.message
-      })
+      toast.error("Failed to create task", {
+        description: error?.message,
+      });
       console.error("Failed to create task:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
+console.log(selectedMembers);
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
@@ -285,20 +294,23 @@ export function AddTaskForm({
                 className="text-sm font-medium flex items-center gap-2"
               >
                 <Calendar size={16} />
-                Due Date
+                Start Date
               </Label>
               <SmartDatetimeInput
-                value={selectedDate}
+                value={selectedStartDate}
                 showTimePicker={false}
-                onValueChange={handleDateChange}
+                onValueChange={handleStartDateChange}
                 placeholder="Enter a date and time"
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Days Left</Label>
-              <div className="p-2.5 bg-gray-100 rounded text-sm">
-                {selectedDate ? calculateDaysLeft(selectedDate) : 0} days
-              </div>
+              <Label className="text-sm font-medium">End Date</Label>
+              <SmartDatetimeInput
+                value={selectedEndDate}
+                showTimePicker={false}
+                onValueChange={handleEndDateChange}
+                placeholder="Enter a date and time"
+              />
             </div>
           </div>
 
@@ -347,7 +359,6 @@ export function AddTaskForm({
             </div>
           </div>
 
-          {/* ✅ Assigned To - Using selectedMembers state */}
           <div className="space-y-2">
             <Label className="text-sm font-medium">Assigned To</Label>
             <Flex gap={"2"} wrap={"wrap"}>
@@ -367,6 +378,42 @@ export function AddTaskForm({
             </Flex>
           </div>
 
+          <Box className="space-y-3 border-gray-6 border-t-2 py-3 ">
+            {/* lables */}
+
+            <Heading size={"4"} className=" font-medium text-gray-10">
+              LABELS
+            </Heading>
+
+            <Flex gap="2" wrap={"wrap"}>
+              {allLabelsData?.map((label) => (
+                <>
+                  {label.checked && (
+                    <Badge
+                      color={label.color as ExtendedColorType}
+                      variant="solid"
+                      key={label.value}
+                      className="rounded-md p-1.5 px-2.5"
+                    >
+                      {label.label}
+                    </Badge>
+                  )}
+                </>
+              ))}
+              <LabelsComboBox
+                options={allLabelsData}
+                defaultValue={allLabelsData}
+                onValueChange={setAllLabelsData}
+                placeholder="Search Label"
+                title="Labels"
+                addNewLabel={true}
+                isLabelFormOpen={isLabelFormOpen}
+                setIsLabelFormOpen={setIsLabelFormOpen}
+                labelColor={labelColor}
+                setLabelColor={setLabelColor}
+              />
+            </Flex>
+          </Box>
           {/* Sub Tasks */}
           <div className="space-y-2">
             <Label className="text-sm font-medium">Sub Tasks</Label>
