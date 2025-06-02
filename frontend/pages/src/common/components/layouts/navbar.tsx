@@ -1,5 +1,5 @@
 import { Link as RouterLink, useNavigate } from "@tanstack/react-router"
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import type React from "react"
 
 import { useLogout } from "@auth"

@@ -15,7 +15,6 @@ import {
   Text,
   type ExtendedColorType,
 } from "@base";
-import { cn } from "@utils";
 import {
   Check,
   Download,

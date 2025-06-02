@@ -7,7 +7,7 @@ import {
   Flex,
   Popover,
 } from "@components/radixui";
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useCallback } from "react";
 import ColorPicker from "@components/color-picker";
 
 type Tag = { label: string; color: string };
@@ -37,7 +37,19 @@ export const TagEditor: React.FC<TagEditorProps> = ({
       setTagColor(newColor);
     }
   };
-
+  const saveEditedTag = useCallback(() => {
+    if (editingIndex === null) return;
+    
+    const updated = localTags.map((tag) => ({ ...tag }));
+    updated[editingIndex].label =
+      editInput.trim() || localTags[editingIndex].label;
+    
+    setLocalTags(updated);
+    onChange(updated);
+    setEditingIndex(null);
+    setEditInput("");
+  }, [editingIndex, editInput, localTags, onChange]);
+ 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
@@ -58,7 +70,8 @@ export const TagEditor: React.FC<TagEditorProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [onExit, editingIndex, editInput, localTags]);
+  }, [onExit, editingIndex, saveEditedTag]);
+
 
   const addTag = () => {
     if (input.trim()) {
@@ -91,19 +104,6 @@ export const TagEditor: React.FC<TagEditorProps> = ({
 
     setEditingIndex(index);
     setEditInput(localTags[index].label);
-  };
-
-  const saveEditedTag = () => {
-    if (editingIndex === null) return;
-
-    const updated = localTags.map((tag) => ({ ...tag }));
-    updated[editingIndex].label =
-      editInput.trim() || localTags[editingIndex].label;
-
-    setLocalTags(updated);
-    onChange(updated);
-    setEditingIndex(null);
-    setEditInput("");
   };
 
   const cancelEdit = () => {

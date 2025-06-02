@@ -134,6 +134,7 @@ export const ListComboBox = React.forwardRef<
 
     const handleClear = () => {
       setSelectedValues([]);
+      onValueChange?.([]);
     };
 
     const handleColorSelect = (newColor: ColorSelectType) => {

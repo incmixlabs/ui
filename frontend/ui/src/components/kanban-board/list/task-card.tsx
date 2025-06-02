@@ -8,7 +8,7 @@ import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/el
 import { type MutableRefObject, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import invariant from "tiny-invariant";
-import { Collapsible } from "radix-ui";
+import * as Collapsible from "@radix-ui/react-collapsible";
 import {
   type Edge,
   attachClosestEdge,
@@ -160,6 +160,10 @@ export function ListTaskCardDisplay({
   const handleEndDateChange = async (date: Date) => {
     console.log("end date", date);
     setEndDate(date);
+    if (startDate && date < startDate) {
+      toast.error("End date cannot be before start date");
+      return;
+    }
     try {
       await updateTaskByTaskId(card.taskId, {
         endDate: date.toISOString(),
@@ -169,40 +173,63 @@ export function ListTaskCardDisplay({
       toast.error("Failed to update end date. Please try again.");
       setEndDate(card.endDate ? new Date(card.endDate) : null);
     }
-   };
+  };
   const handleStartDateChange = async (date: Date) => {
     console.log("start date", date);
     setStartDate(date);
+    if (endDate && date > endDate) {
+      toast.error("Start date cannot be after end date");
+      return;
+    }
     try {
       await updateTaskByTaskId(card.taskId, {
         startDate: date.toISOString(),
-    });
-  } catch (error) {
-    console.error("Failed to update start date:", error);
-    toast.error("Failed to update start date. Please try again.");
-    setStartDate(card.startDate ? new Date(card.startDate) : null);
-  }
+      });
+    } catch (error) {
+      console.error("Failed to update start date:", error);
+      toast.error("Failed to update start date. Please try again.");
+      setStartDate(card.startDate ? new Date(card.startDate) : null);
+    }
   };
-  const handleTagsChange = (tags: any) => {
+  const handleTagsChange = async (tags: any) => {
     setAllTags(tags);
-    updateTaskByTaskId(card.taskId, {
-      labelsTags: tags,
-    });
+    try {
+      await updateTaskByTaskId(card.taskId, {
+        labelsTags: tags,
+      });
+    } catch (error) {
+      console.error("Failed to update tags:", error);
+      toast.error("Failed to update tags. Please try again.");
+      setAllTags(card?.labelsTags || []);
+    }
   };
 
-  const handleAssignedChange = (assigned: any) => {
+  const handleAssignedChange = async (assigned: any) => {
     setAssignedData(assigned);
-    updateTaskByTaskId(card.taskId, {
-      assignedTo: assigned,
-    });
+    try {
+      await updateTaskByTaskId(card.taskId, {
+        assignedTo: assigned,
+      });
+    } catch (error) {
+      console.error("Failed to update assigned users:", error);
+      toast.error("Failed to update assigned users. Please try again.");
+      setAssignedData(
+        card?.assignedTo?.length > 0 ? card?.assignedTo : assignData,
+      );
+    }
   };
-  const handleTaskNameChange = (name: string) => {
+  const handleTaskNameChange = async (name: string) => {
     setTaskName(name);
-    updateTaskByTaskId(card.taskId, {
-      name: name,
-    });
+    try {
+      await updateTaskByTaskId(card.taskId, {
+        name: name,
+      });
+    } catch (error) {
+      console.error("Failed to update task name:", error);
+      toast.error("Failed to update task name. Please try again.");
+      setTaskName(card?.name || "");
+    }
   };
-
   // console.log("assignedData", assignedData, card?.assignedTo);
 
   return (

@@ -1,6 +1,5 @@
-"use client"
 import { clx } from "@utils/clx/clx-merge"
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useState } from "react"
 import { twMerge } from "tailwind-merge"
 
