@@ -157,19 +157,31 @@ export function ListTaskCardDisplay({
   };
   console.log("list card", card);
 
-  const handleEndDateChange = (date: Date) => {
+  const handleEndDateChange = async (date: Date) => {
     console.log("end date", date);
     setEndDate(date);
-    updateTaskByTaskId(card.taskId, {
-      endDate: date.toISOString(),
-    });
-  };
-  const handleStartDateChange = (date: Date) => {
+    try {
+      await updateTaskByTaskId(card.taskId, {
+        endDate: date.toISOString(),
+      });
+    } catch (error) {
+      console.error("Failed to update end date:", error);
+      toast.error("Failed to update end date. Please try again.");
+      setEndDate(card.endDate ? new Date(card.endDate) : null);
+    }
+   };
+  const handleStartDateChange = async (date: Date) => {
     console.log("start date", date);
     setStartDate(date);
-    updateTaskByTaskId(card.taskId, {
-      startDate: date.toISOString(),
+    try {
+      await updateTaskByTaskId(card.taskId, {
+        startDate: date.toISOString(),
     });
+  } catch (error) {
+    console.error("Failed to update start date:", error);
+    toast.error("Failed to update start date. Please try again.");
+    setStartDate(card.startDate ? new Date(card.startDate) : null);
+  }
   };
   const handleTagsChange = (tags: any) => {
     setAllTags(tags);

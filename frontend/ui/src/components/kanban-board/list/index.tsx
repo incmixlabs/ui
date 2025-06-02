@@ -9,7 +9,7 @@ import { bindAll } from "bind-event-listener";
 import { Suspense, lazy, useEffect, useRef, useMemo, useState } from "react";
 import { ListColumn } from "./list-column";
 import { blockBoardPanningAttr } from "../data-attributes";
-import { Box, Flex, IconButton, Input } from "@incmix/ui";
+import { Box, Flex, IconButton, Input, toast } from "@incmix/ui";
 import { useTaskStore } from "@incmix/store";
 
 const ListTaskCardDrawer = lazy(() => import("./task-card-drawer"));
@@ -25,23 +25,23 @@ import {
 import { Plus, Search } from "lucide-react";
 import { AddTaskForm } from "./add-task-form";
 
-function convertTasksToColumns(tasks: any[], columns: any[]) {
-  return columns.map((column) => {
-    const columnTasks = tasks
-      .filter((task) => task.columnId === column.id)
-      .sort((a, b) => a.taskOrder - b.taskOrder)
-      .map((task) => ({
-        ...task,
-        id: task.taskId,
-      }));
+function convertTasksToColumns(tasks:any[], columns: TColumn[]) {  
+  return columns.map((column) => {  
+    const columnTasks = tasks  
+      .filter((task) => task.columnId === column.id)  
+      .sort((a, b) => a.taskOrder - b.taskOrder)  
+      .map((task) => ({  
+        ...task,  
+        id: task.taskId,  
+      }));  
 
-    return {
-      id: `column:${column.id}`,
-      title: column.title,
-      cards: columnTasks,
-    };
-  });
-}
+    return {  
+      id: `column:${column.id}`,  
+      title: column.title,  
+      cards: columnTasks,  
+    };  
+  });  
+} 
 
 export function ListBoard() {
   const {
@@ -145,7 +145,10 @@ export function ListBoard() {
               // The useMemo will automatically recompute columns when tasks change
               const taskIds = reordered.map((card) => card.id);
               const columnId = home.id.replace("column:", "");
-              reorderTasksInColumn(columnId, taskIds).catch(console.error);
+              reorderTasksInColumn(columnId, taskIds).catch((error) => {
+                console.error("Failed to reorder tasks:", error);
+                toast.error("Failed to reorder tasks. Please try again.");
+              });
 
               return;
             }
@@ -315,7 +318,14 @@ export function ListBoard() {
           <Search size={24} className="absolute top-2.5 left-2.5" />
           <Input
             placeholder="Search"
+            type="search"
+            aria-label="Search tasks"
+            role="searchbox"
             className="w-full rounded-xl pl-10 border-2 border-gray-5 h-12 grid place-content-center "
+            onChange={(e) => {
+              // TODO: Implement search functionality
+              console.log("Search:", e.target.value);
+            }}
           />
         </Box>
       </Flex>

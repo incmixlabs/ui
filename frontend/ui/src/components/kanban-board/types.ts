@@ -22,12 +22,13 @@ export interface KanbanBoardTask {
 }
 
 export type TMember = {
-  [x: string]: string
   name: string
   label: string
   color: string
   value: string
   avatar: string
+  checked:boolean
+  [key: string]: unknown
 }
 
 export type TCard = {
@@ -36,7 +37,6 @@ export type TCard = {
   name: string
   description?: string
   completed: boolean
-  daysLeft: number
   assignedTo: TMember[]
   startDate?: string
   endDate?: string

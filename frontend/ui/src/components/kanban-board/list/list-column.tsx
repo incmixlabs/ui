@@ -208,8 +208,6 @@ export function ListColumn({ column }: { column: TColumn }) {
     );
   }, [column]);
 
-console.log("column",column.cards.length);
-
 
   return (
     <>

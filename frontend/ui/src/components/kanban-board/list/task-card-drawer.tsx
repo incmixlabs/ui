@@ -53,11 +53,16 @@ export default function ListTaskCardDrawer() {
 
   const [taskData, setTaskData] = useState<TaskDataSchema | null>(null);
 
-  useEffect(() => {
-    const fetchTaskData = async () => {
+  const fetchTaskData = async () => {
+    try {
       const data = await getTaskByTaskId(taskId);
       setTaskData(data);
-    };
+    } catch (error) {
+      console.error("Failed to fetch task data:", error);
+    }
+  };
+
+  useEffect(() => {
     if (taskId) {
       fetchTaskData();
     }

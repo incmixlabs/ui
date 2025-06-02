@@ -81,7 +81,7 @@ export const TagEditor: React.FC<TagEditorProps> = ({
     event.stopPropagation();
 
     if (editingIndex === index) {
-      console.log("already editing");
+      // console.log("already editing");
       return;
     }
 
