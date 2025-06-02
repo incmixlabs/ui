@@ -264,13 +264,7 @@ console.log("column",column.cards.length);
           </Flex>
         </Flex>
       </Flex>
-      {/* Add Task Form Modal */}
-      {/* <AddTaskForm
-        isOpen={showAddTaskForm}
-        onClose={() => setShowAddTaskForm(false)}
-        columnId={column.id.replace("column:", "")}
-        taskOrder={column.cards.length}
-      /> */}
+
     </>
   );
 }

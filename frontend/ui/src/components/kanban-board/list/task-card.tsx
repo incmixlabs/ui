@@ -52,7 +52,7 @@ import {
   Calendar,
   type CalendarProps,
   Popover,
-  LabelsComboBox,
+  ListComboBox,
   Input,
   Avatar,
 } from "@incmix/ui";
@@ -368,7 +368,7 @@ export function ListTaskCardDisplay({
                         />
                       ),
                   )}
-                  <LabelsComboBox
+                  <ListComboBox
                     options={assignedData}
                     defaultValue={assignedData}
                     onValueChange={handleAssignedChange}
@@ -380,7 +380,7 @@ export function ListTaskCardDisplay({
                   />
                 </Flex>
               ) : (
-                <LabelsComboBox
+                <ListComboBox
                   options={assignedData}
                   defaultValue={assignedData}
                   onValueChange={handleAssignedChange}

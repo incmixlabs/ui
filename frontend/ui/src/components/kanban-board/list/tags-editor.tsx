@@ -142,20 +142,22 @@ export const TagEditor: React.FC<TagEditorProps> = ({
               autoFocus
             />
           ) : (
-            <span
+            <Box
+            as="span"
               onClick={(e) => startEditTag(index, e)}
               className="cursor-pointer text-sm"
             >
               {tag.label}
-            </span>
+            </Box>
           )}
-          <button
+          <Button
+            variant="ghost"
             onClick={(e) => deleteTag(index, e)}
             className="text-white hover:text-gray-300 text-xs ml-1"
             title="Delete"
           >
             ✕
-          </button>
+          </Button>
         </Badge>
       ))}
       <Box className="relative">

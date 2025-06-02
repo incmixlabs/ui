@@ -6,7 +6,8 @@ import {
   Label,
   EditIcon,
   Tooltip,
-  toast
+  toast,
+  Box
 } from "@incmix/ui/base";
 import {  useDashboardStore } from "@incmix/store";
 import { useNavigate } from "@tanstack/react-router";
@@ -63,7 +64,7 @@ export function EditDashboard({dashboardId}: {dashboardId: string}) {
       <Tooltip content={"Edit Dashboard"}>
         <Button onClick={() => setIsOpen(true)}>
         <EditIcon size={20}/>
-        <span className="sr-only">edit</span>
+        <Box as="span" className="sr-only">edit</Box>
         </Button>
       </Tooltip>
       <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>

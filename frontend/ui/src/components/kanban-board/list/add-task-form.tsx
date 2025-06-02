@@ -14,7 +14,7 @@ import {
   Heading,
   Badge,
   ExtendedColorType,
-  LabelsComboBox,
+  ListComboBox,
 } from "@incmix/ui";
 import { X, Plus, Calendar } from "lucide-react";
 import { SmartDatetimeInput } from "@components/datetime-picker";
@@ -400,7 +400,7 @@ console.log(selectedMembers);
                   )}
                 </>
               ))}
-              <LabelsComboBox
+              <ListComboBox
                 options={allLabelsData}
                 defaultValue={allLabelsData}
                 onValueChange={setAllLabelsData}

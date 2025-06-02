@@ -79,9 +79,10 @@ interface MultiSelectProps
   setIsLabelFormOpen?: (isLabelFormOpen: boolean) => void;
   labelColor?: string;
   setLabelColor?: (labelColor: ExtendedColorType) => void;
+  btnClassName?:string
 }
 
-export const AssignComboBox = React.forwardRef<
+export const ListComboBox = React.forwardRef<
   HTMLButtonElement,
   MultiSelectProps
 >(
@@ -97,6 +98,7 @@ export const AssignComboBox = React.forwardRef<
       setLabelColor,
       isLabelFormOpen,
       setIsLabelFormOpen,
+      btnClassName
     },
     ref,
   ) => {
@@ -125,8 +127,6 @@ export const AssignComboBox = React.forwardRef<
       const newOptions = selectedValues.map((opt) =>
         opt.value === value ? { ...opt, checked: !opt.checked } : opt,
       );
-
-      console.log(newOptions);
 
       setSelectedValues(newOptions);
       onValueChange?.(newOptions);
@@ -173,7 +173,7 @@ export const AssignComboBox = React.forwardRef<
           <IconButton
             color="gray"
             aria-label="Open options menu"
-            className="flex h-8 w-8 items-center justify-center rounded-full "
+            className={cn("flex h-8 w-8 items-center justify-center rounded-full",btnClassName)}
           >
             <Plus aria-hidden="true" />
             <Text className="sr-only">Add new item</Text>
@@ -200,7 +200,6 @@ export const AssignComboBox = React.forwardRef<
                     (item) => item.checked === option.checked,
                   )?.checked;
                   const isDisabled = option.disable;
-                  console.log(isSelected);
 
                   return (
                     <CommandItem
@@ -344,4 +343,4 @@ export const AssignComboBox = React.forwardRef<
   },
 );
 
-AssignComboBox.displayName = "AssignComboBox";
+ListComboBox.displayName = "ListComboBox";
