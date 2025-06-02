@@ -20,7 +20,6 @@ import { X, Plus, Calendar } from "lucide-react";
 import { SmartDatetimeInput } from "@components/datetime-picker";
 import { TaskDataSchema, useTaskStore } from "@incmix/store";
 import { members } from "@components/projects/data";
-import { ComboBox } from "@components/combo-box";
 import { labelsData } from "../data";
 
 export interface Option {

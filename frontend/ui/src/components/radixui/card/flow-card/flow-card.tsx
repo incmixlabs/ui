@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge"
 
 import { mergeDeep } from "@utils/objects"
 import { omit } from "@utils/objects/omit"
-import type { DeepPartial } from "@/types"
+import type { DeepPartial } from "@types"
 import { type FlowCardTheme, cardTheme } from "./flow-card-theme"
 interface CommonCardProps extends ComponentProps<"div"> {
   horizontal?: boolean

@@ -1,4 +1,4 @@
-import { LayoutItem } from "@/components";
+import { LayoutItem } from "@components";
 
 
 export const findAvailablePosition = (
