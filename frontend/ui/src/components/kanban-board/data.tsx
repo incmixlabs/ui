@@ -33,18 +33,21 @@ export const assignData = [
     label: "Regina Cooper",
     avatar: KanbanImages.user1,
     color: "orange",
+    checked:false,
   },
   {
     value: "jacob-hawkins",
     label: "Jacob Hawkins",
     avatar: KanbanImages.user2,
     color: "blue",
+    checked:false,
   },
   {
     value: "jane-wilson",
     label: "Jane Wilson",
     avatar: KanbanImages.user1,
     color: "green",
+    checked:false,
   },
 ]
 export const labelsData = [
@@ -52,16 +55,19 @@ export const labelsData = [
     value: "design",
     label: "Design",
     color: "purple",
+    checked: true,
   },
   {
     value: "frontend",
     label: "Frontend",
     color: "blue",
+    checked: true,
   },
   {
     value: "backend",
     label: "Backend",
     color: "indigo",
+    checked: true,
   },
 ]
 
@@ -110,10 +116,9 @@ export const initialData: TCustomBoard = [
         id: "32",
         taskId:"task-idf434",
         name: "Brand Logo Design",
-        date: "Jun 17",
+        startDate: "Jun 17",
         description: "Make a redesign of the logo in corporate colors",
         completed: false,
-        daysLeft: 5,
         attachment: [
           { name: "logo.png", url: "", size: "1.2MB" },
           { name: "design.png", url: "", size: "1.2MB" },
@@ -122,12 +127,20 @@ export const initialData: TCustomBoard = [
           {
             id: "1",
             name: "Bonnie Green",
-            src: KanbanImages.user1,
+            label: "bonnie-green",
+            color: "yellow",
+            value: "Bonnie Green",
+            avatar: KanbanImages.user1,
+            checked: false
           },
           {
             id: "2",
             name: "Roberta Casas",
-            src: KanbanImages.user2,
+            label: "roberta-casas",
+            color: "green",
+            value: "Roberta Casas",
+            avatar: KanbanImages.user2,
+            checked: false
           },
         ],
       },
@@ -136,13 +149,16 @@ export const initialData: TCustomBoard = [
         taskId:"task-idf435",
         name: "New Header Image",
         completed: false,
-        daysLeft: 22,
-        date: "Jun 17",
+        startDate: "Jun 17",
         assignedTo: [
           {
             id: "2",
             name: "Roberta Casas",
-            src: KanbanImages.user2,
+            label: "roberta-casas",
+            color: "green",
+            value: "Roberta Casas",
+            avatar: KanbanImages.user2,
+            checked: false
           },
         ],
       },
@@ -151,8 +167,7 @@ export const initialData: TCustomBoard = [
         taskId:"task-idf436",
         name: "Updating Modules",
         completed: false,
-        daysLeft: 22,
-        date: "Jun 17",
+        startDate: "Jun 17",
         description: "Step-by-step update of modules.",
 
         subTasks: [{ name: "sub-tasks-1", progress: 40, completed: false }],
@@ -161,12 +176,20 @@ export const initialData: TCustomBoard = [
           {
             id: "1",
             name: "Bonnie Green",
-            src: KanbanImages.user2,
+            label: "bonnie-green",
+            color: "yellow",
+            value: "Bonnie Green",
+            avatar: KanbanImages.user2,
+            checked: false
           },
           {
             id: "2",
             name: "Roberta Casas",
-            src: KanbanImages.user2,
+            label: "roberta-casas",
+            color: "green",
+            value: "Roberta Casas",
+            avatar: KanbanImages.user2,
+            checked: false
           },
         ],
       },
@@ -176,18 +199,25 @@ export const initialData: TCustomBoard = [
         name: "Wireframe for APP",
         description: "Make a wramework for an app for a pre-presentation.",
         completed: false,
-        daysLeft: 22,
-        date: "Jun 17",
+        startDate: "Jun 17",
         assignedTo: [
           {
             id: "1",
             name: "Bonnie Green",
-            src: KanbanImages.user2,
+            label: "bonnie-green",
+            color: "yellow",
+            value: "Bonnie Green",
+            avatar: KanbanImages.user2,
+            checked: false
           },
           {
             id: "2",
             name: "Roberta Casas",
-            src: KanbanImages.user1,
+            label: "roberta-casas",
+            color: "green",
+            value: "Roberta Casas",
+            avatar: KanbanImages.user1,
+            checked: false
           },
         ],
       },
@@ -202,24 +232,31 @@ export const initialData: TCustomBoard = [
         taskId:"task-idf438",
         name: "Updating Modules",
         description: "Step-by-step update of modules.",
-        date: "Jun 17",
+        startDate: "Jun 17",
         attachment: [
           { name: "logo.png", url: "", size: "1.2MB" },
           { name: "design.png", url: "", size: "1.2MB" },
         ],
         completed: false,
-        daysLeft: 9,
         subTasks: [{ name: "sub-tasks-1", progress: 40, completed: false }],
         assignedTo: [
           {
             id: "1",
             name: "Bonnie Green",
-            src: KanbanImages.user1,
+            label: "bonnie-green",
+            color: "yellow",
+            value: "Bonnie Green",
+            avatar: KanbanImages.user1,
+            checked: false
           },
           {
             id: "2",
             name: "Roberta Casas",
-            src: KanbanImages.user2,
+            label: "roberta-casas",
+            color: "green",
+            value: "Roberta Casas",
+            avatar: KanbanImages.user2,
+            checked: false
           },
         ],
       },
@@ -234,14 +271,17 @@ export const initialData: TCustomBoard = [
         taskId:"task-idf434",
         name: "New Background",
         completed: true,
-        daysLeft: 0,
-        date: "Jun 17",
+        startDate: "Jun 17",
         attachment: [{ name: "bg1.png", url: KanbanImages.bg1, size: "1.2MB" }],
         assignedTo: [
           {
             id: "1",
             name: "Bonnie Green",
-            src: KanbanImages.user1,
+            label: "bonnie-green",
+            color: "yellow",
+            value: "Bonnie Green",
+            avatar: KanbanImages.user1,
+            checked: false
           },
         ],
       },

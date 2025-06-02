@@ -19,6 +19,7 @@ import {
   Flex,
   Heading,
   SaveTemplateDialog,
+  SidebarTrigger,
   Switch,
   Text,
   generateDOM,
@@ -54,6 +55,7 @@ export const EditWidgetsControl: React.FC<{
 
 const DashboardHomePage: React.FC = () => {
   const { pathname } = useLocation()
+  const { t } = useTranslation("navbar")
   const pathSegments = pathname.split("/").filter(Boolean)
   const projectId =
     pathname === "/dashboard/home" ? "home" : pathSegments[1] || "home"
@@ -169,22 +171,6 @@ const DashboardHomePage: React.FC = () => {
     handleDragEnd,
   } = useDragAndDrop(isEditing, gridComponents, setGridComponents)
 
-  //   const onDragStop = (layout: Layout[], oldItem: Layout, newItem: Layout) => {
-  //     const swapTarget = layout
-  //         .filter(item => item.i != oldItem.i)
-  //         .find((item) => item.y === newItem.y && item.x == newItem.x);
-
-  //     if (!swapTarget) {
-  //         const index = layout.findIndex(item => item.i == oldItem.i);
-  //         layout[index].x = oldItem.x;
-  //         layout[index].y = oldItem.y;
-  //     } else {
-  //         const index = layout.findIndex(item => item.i == swapTarget.i);
-  //         layout[index].x = oldItem.x;
-  //         layout[index].y = oldItem.y;
-  //     }
-  // };
-
   // Show loading while auth is loading, store is loading, or dashboard is loading
   if (isLoading || isDashLoading) {
     return <LoadingPage />
@@ -203,44 +189,55 @@ const DashboardHomePage: React.FC = () => {
       onDragEnd={handleDragEnd}
       sensors={sensors}
     >
-      <DashboardLayout
-        breadcrumbItems={[]}
-        navExtras={<EditWidgetsControl onEditChange={setIsEditing} />}
-      >
+      <DashboardLayout>
         <Box as="div" className="container mx-auto flex overflow-x-hidden">
-          <Box className="h-full w-full overflow-hidden">
+          <Box className="h-full w-full overflow-hidden pt-5">
             <Flex justify={"between"} align={"center"} className="pb-4">
-              <Heading
-                size="6"
-                className={`${isEditing ? "" : "px-4"} capitalize`}
-              >
-                {"Dashboard"}
-              </Heading>
-              {!isEditing && (
-                <Flex gap="2">
-                  <CreateProjectModal />
-                  <CloneDashboardHomeModal dashboardId={"home"} />
-                </Flex>
-              )}
-              {isEditing && (
-                <Flex align={"center"} gap="2">
-                  <AddGroupButton
-                    isEditing={isEditing}
-                    onAddGroup={handleAddNewGroup}
-                  />
-                  <ActiveBtn
-                    items={deviceTabs}
-                    defaultActiveId={activeDevice}
-                    onChange={setActiveDevice}
-                  />
-                  <SaveTemplateDialog
-                    projectId={"home"}
-                    layouts={defaultLayouts}
-                    open={openSaveDialog}
-                    onOpenChange={setOpenSaveDialog}
-                  />
-                </Flex>
-              )}
+              <Flex align={"center"} gap="2">
+                {pathname.includes("/file-manager") ||
+                  (pathname.includes("/dashboard") && isEditing && (
+                    <SidebarTrigger
+                      isSecondary
+                      mobileSidebarTrigger
+                      className="-ml-1"
+                      aria-label={t("toggleSecondarySidebar")}
+                    />
+                  ))}
+                <Heading
+                  size="6"
+                  className={`${isEditing ? "" : "px-4"} capitalize`}
+                >
+                  {project?.dashboardName}
+                </Heading>
+              </Flex>
+              <Flex align={"center"}>
+                {!isEditing && (
+                  <Flex gap="2">
+                    <CreateProjectModal />
+                    <CloneDashboardHomeModal dashboardId={"home"} />
+                  </Flex>
+                )}
+                {isEditing && (
+                  <Flex align={"center"} gap="2">
+                    <AddGroupButton
+                      isEditing={isEditing}
+                      onAddGroup={handleAddNewGroup}
+                    />
+                    <ActiveBtn
+                      items={deviceTabs}
+                      defaultActiveId={activeDevice}
+                      onChange={setActiveDevice}
+                    />
+                    <SaveTemplateDialog
+                      projectId={"home"}
+                      layouts={defaultLayouts}
+                      open={openSaveDialog}
+                      onOpenChange={setOpenSaveDialog}
+                    />
+                  </Flex>
+                )}
+                <EditWidgetsControl onEditChange={setIsEditing} />
+              </Flex>
             </Flex>
             <Box
               ref={boxRef}

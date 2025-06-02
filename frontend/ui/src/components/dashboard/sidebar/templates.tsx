@@ -72,7 +72,7 @@ export function TemplatesSidebar({
       if (template) {
         setIsTemplate(null);
         applyTemplates(template.mainLayouts, template.id);
-        toast.success(`Template "${template?.name}" activated successfully`);
+        toast.success(`Template "${template?.id}" activated successfully`);
       } else {
         toast.error("Failed to activate template");
       }
@@ -87,7 +87,7 @@ export function TemplatesSidebar({
     }
     setIsTemplate(templateId);
     applyTemplates(template.mainLayouts, template.id);
-    toast.success(`Template "${template?.name}" loaded successfully`);
+    toast.success(`Template "${template?.id}" loaded successfully`);
   };
 
 

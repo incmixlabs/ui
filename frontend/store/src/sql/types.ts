@@ -74,6 +74,10 @@ export const taskDataSchemaLiteral = {
       maxLength: 100,
       type: "string",
     },
+    projectId: {
+      type: "string",
+      maxLength: 100,
+    },
     taskId: {
       type: "string",
       maxLength: 100,
@@ -86,7 +90,11 @@ export const taskDataSchemaLiteral = {
       type: "string",
       maxLength: 100,
     },
-    date: {
+    startDate: {
+      type: "string",
+      maxLength: 50,
+    },
+    endDate: {
       type: "string",
       maxLength: 50,
     },
@@ -98,13 +106,34 @@ export const taskDataSchemaLiteral = {
       type: "boolean",
       default: false,
     },
-    daysLeft: {
-      type: "number",
-      default: 0,
-    },
     taskOrder: {
       type: "number",
       default: 0,
+    },
+    labelsTags: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          value: {
+            type: "string",
+            maxLength: 200,
+          },
+          label: {
+            type: "string",
+            maxLength: 200,
+          },
+          color: {
+            type: "string",
+            maxLength: 100,
+          },
+          checked: {
+            type: "boolean",
+          },
+        },
+        required: ["value", "label", "color", "checked"],
+      },
+      default: [],
     },
     attachment: {
       type: "array",
@@ -133,7 +162,7 @@ export const taskDataSchemaLiteral = {
       items: {
         type: "object",
         properties: {
-          id: {
+          value: {
             type: "string",
             maxLength: 100,
           },
@@ -141,12 +170,23 @@ export const taskDataSchemaLiteral = {
             type: "string",
             maxLength: 200,
           },
-          image: {
+          label: {
+            type: "string",
+            maxLength: 200,
+          },
+          avatar: {
             type: "string",
             maxLength: 500,
           },
+          color: {
+            type: "string",
+            maxLength: 100,
+          },
+          checked: {
+            type: "boolean",
+          },
         },
-        required: ["id", "name", "image"],
+        required: ["value", "name", "label", "avatar", "color", "checked"],
       },
       default: [],
     },
@@ -221,9 +261,9 @@ export const taskDataSchemaLiteral = {
     "taskId",
     "name",
     "columnId",
-    "date",
+    "startDate",
+    "endDate",
     "completed",
-    "daysLeft",
     "createdAt",
     "updatedAt",
     "createdBy",

@@ -1,19 +1,24 @@
-import { Flex, Popover, Text, iconSize } from "@incmix/ui"
-import type { BadgeProps } from "@radix-ui/themes"
-import { CheckIcon, Plus } from "lucide-react"
-import * as React from "react"
-import { cn } from "utils"
-import { Avatar, Badge, Button, Command,
+import { Flex, Popover, Text, iconSize } from "@incmix/ui";
+import type { BadgeProps } from "@radix-ui/themes";
+import { CheckIcon, Plus } from "lucide-react";
+import * as React from "react";
+import { cn } from "utils";
+import {
+  Avatar,
+  Badge,
+  Button,
+  Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator, IconButton, Input } from "@base"
-import ColorPicker, { type ColorSelectType } from "./color-picker"
-
-
-export type ExtendedColorType = BadgeProps["color"] | "blue"
+  CommandSeparator,
+  IconButton,
+  Input,
+} from "@base";
+import ColorPicker, { type ColorSelectType } from "./color-picker";
+import { ExtendedColorType } from "./combo-box";
 
 /**
  * Props for MultiSelect component
@@ -26,99 +31,149 @@ interface MultiSelectProps
    */
   options: {
     /** The text to display for the option. */
-    label: string
+    label: string;
     /** The unique value associated with the option. */
-    value: string
+    value: string;
     /** Optional icon component to display alongside the option. */
-    icon?: React.ComponentType<{ className?: string }>
-    avatar?: string
-    color?: ExtendedColorType | string
-    disable?: boolean
-  }[]
+    icon?: React.ComponentType<{ className?: string }>;
+    avatar?: string;
+    color?: ExtendedColorType | string;
+    disable?: boolean;
+    checked?: boolean;
+  }[];
 
   /**
    * Callback function triggered when the selected values change.
    * Receives an array of the new selected values.
    */
-  onValueChange: (value: string[]) => void
+  onValueChange?: (
+    value: {
+      label: string | undefined;
+      value: string;
+      avatar?: string;
+      color?: ExtendedColorType | string;
+      disable?: boolean;
+      checked?: boolean;
+    }[],
+  ) => void;
 
-  /** The default selected values when the component mounts. */
-  defaultValue?: string[]
+  defaultValue?: {
+    /** The text to display for the option. */
+    label: string | undefined;
+    /** The unique value associated with the option. */
+    value: string;
+    avatar?: string;
+    color?: ExtendedColorType | string;
+    disable?: boolean;
+    checked?: boolean;
+  }[];
   /**
    * Placeholder text to be displayed when no values are selected.
    * Optional, defaults to "Select options".
    */
-  placeholder?: string
-  popoverClass?: string
-  addNewLabel?: boolean
-  title?: string
-  formRef?: React.RefObject<HTMLFormElement>
-  isLabelFormOpen?: boolean
-  setIsLabelFormOpen?: (isLabelFormOpen: boolean) => void
-  labelColor?: string
-  setLabelColor?: (labelColor: ExtendedColorType) => void
-  handleAddNewLabel?: (e: React.FormEvent) => void
+  placeholder?: string;
+  popoverClass?: string;
+  addNewLabel?: boolean;
+  title?: string;
+  isLabelFormOpen?: boolean;
+  setIsLabelFormOpen?: (isLabelFormOpen: boolean) => void;
+  labelColor?: string;
+  setLabelColor?: (labelColor: ExtendedColorType) => void;
+  btnClassName?:string
 }
 
-export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
-  ({
-    options,
-    onValueChange,
-    defaultValue = [],
-    placeholder = "Select options",
-    title,
-    popoverClass,
-    addNewLabel = false,
-    formRef,
-    labelColor,
-    setLabelColor,
-    isLabelFormOpen,
-    setIsLabelFormOpen,
-    handleAddNewLabel,
-  }) => {
-    const [selectedValues, setSelectedValues] =
-      React.useState<string[]>(defaultValue)
-    const [isPopoverOpen, setIsPopoverOpen] = React.useState(false)
+export const ListComboBox = React.forwardRef<
+  HTMLButtonElement,
+  MultiSelectProps
+>(
+  (
+    {
+      onValueChange,
+      defaultValue,
+      placeholder = "Select options",
+      title,
+      popoverClass,
+      addNewLabel = false,
+      labelColor,
+      setLabelColor,
+      isLabelFormOpen,
+      setIsLabelFormOpen,
+      btnClassName
+    },
+    ref,
+  ) => {
+    const [selectedValues, setSelectedValues] = React.useState(
+      defaultValue ?? [],
+    );
+    const labelInputRef = React.useRef<HTMLInputElement>(null);
+    const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
+    const [error, setError] = React.useState("");
 
+    // Rest of your component code remains the same...
     const handleInputKeyDown = (
-      event: React.KeyboardEvent<HTMLInputElement>
+      event: React.KeyboardEvent<HTMLInputElement>,
     ) => {
       if (event.key === "Enter") {
-        setIsPopoverOpen(true)
+        setIsPopoverOpen(true);
       } else if (event.key === "Backspace" && !event.currentTarget.value) {
-        const newSelectedValues = [...selectedValues]
-        newSelectedValues.pop()
-        setSelectedValues(newSelectedValues)
-        onValueChange(newSelectedValues)
+        const newSelectedValues = [...selectedValues];
+        newSelectedValues.pop();
+        setSelectedValues(newSelectedValues);
+        onValueChange?.(newSelectedValues);
       }
-    }
+    };
 
-    const toggleOption = (option: string) => {
-      const newSelectedValues = selectedValues.includes(option)
-        ? selectedValues.filter((value) => value !== option)
-        : [...selectedValues, option]
-      setSelectedValues(newSelectedValues)
-      onValueChange(newSelectedValues)
-    }
+    const toggleOption = (value: string) => {
+      const newOptions = selectedValues.map((opt) =>
+        opt.value === value ? { ...opt, checked: !opt.checked } : opt,
+      );
+
+      setSelectedValues(newOptions);
+      onValueChange?.(newOptions);
+    };
 
     const handleClear = () => {
-      setSelectedValues([])
-      onValueChange([])
-    }
+      setSelectedValues([]);
+    };
 
     const handleColorSelect = (newColor: ColorSelectType) => {
       if (setLabelColor) {
-        setLabelColor(newColor.name as ExtendedColorType)
+        setLabelColor(newColor.name as ExtendedColorType);
       }
-    }
+    };
 
+    const handleAddNewLabel = (e: React.FormEvent) => {
+      e.preventDefault();
+
+      const labelName = labelInputRef.current?.value.trim();
+
+      if (!labelName) {
+        setError("Please enter a label name");
+        return;
+      }
+
+      const newLabel = {
+        value: labelName.toLowerCase().replace(/\s+/g, "-"),
+        label: labelName,
+        color: labelColor || "blue",
+        checked: true,
+      };
+      setSelectedValues([...selectedValues, newLabel]);
+      onValueChange?.([...selectedValues, newLabel]);
+      // Reset form and close it
+      if (labelInputRef.current) {
+        labelInputRef.current.value = "";
+      }
+      setError("");
+      setIsLabelFormOpen?.(false);
+    };
     return (
       <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
         <Popover.Trigger>
           <IconButton
             color="gray"
             aria-label="Open options menu"
-            className="flex h-8 w-8 items-center justify-center rounded-full "
+            className={cn("flex h-8 w-8 items-center justify-center rounded-full",btnClassName)}
           >
             <Plus aria-hidden="true" />
             <Text className="sr-only">Add new item</Text>
@@ -140,9 +195,11 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup>
-                {options.map((option) => {
-                  const isSelected = selectedValues.includes(option.value)
-                  const isDisabled = option.disable
+                {selectedValues.map((option) => {
+                  const isSelected = selectedValues.find(
+                    (item) => item.checked === option.checked,
+                  )?.checked;
+                  const isDisabled = option.disable;
 
                   return (
                     <CommandItem
@@ -150,18 +207,10 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                       onSelect={() => !isDisabled && toggleOption(option.value)}
                       className={cn(
                         "cursor-pointer justify-between rounded-md",
-                        isDisabled && "cursor-not-allowed opacity-50 " // Disable styling
+                        isDisabled && "cursor-not-allowed opacity-50 ", // Disable styling
                       )}
                     >
                       <Flex align={"center"} gap={"2"}>
-                        {option.icon && (
-                          <option.icon
-                            className={cn(
-                              `mr-2 ${iconSize}`,
-                              isDisabled ? "text-muted-foreground" : ""
-                            )}
-                          />
-                        )}
                         {option.avatar && (
                           <Avatar src={option.avatar} className="h-8 w-8" />
                         )}
@@ -180,13 +229,15 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                           "ml-2 h-5 w-5 rounded-sm border border-secondary",
                           isSelected
                             ? "bg-secondary text-primary-foreground"
-                            : "opacity-50 [&_svg]:invisible"
+                            : "opacity-50 [&_svg]:invisible",
                         )}
                       >
-                        {!isDisabled && <CheckIcon className={`${iconSize} text-white`} />}
+                        {!isDisabled && (
+                          <CheckIcon className={`${iconSize} text-white`} />
+                        )}
                       </Flex>
                     </CommandItem>
-                  )
+                  );
                 })}
               </CommandGroup>
               {/* <CommandSeparator /> */}
@@ -194,19 +245,18 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                 {addNewLabel ? (
                   <>
                     {isLabelFormOpen ? (
-                      <form
-                        ref={formRef}
-                        onSubmit={handleAddNewLabel}
-                        className="p-2"
-                      >
+                      <div className="p-2">
+                        {" "}
                         <Input
                           name="labelName"
                           type="text"
+                          ref={labelInputRef}
                           placeholder="Enter label name"
-                          className="mb-3 w-full rounded-md border border-gray-5 bg-gray-1 px-3 py-2"
-                          required
+                          className="mb-2 w-full rounded-md border border-gray-5 bg-gray-1 px-3 py-2"
                         />
-
+                        {error && (
+                          <p className="text-sm text-red-600 mb-2">{error}</p>
+                        )}
                         <Flex justify={"between"}>
                           <Popover.Root>
                             <Popover.Trigger>
@@ -231,9 +281,10 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                           </Popover.Root>
                           <Flex gap="2">
                             <Button
-                              type="submit"
+                              type="button"
                               color="blue"
                               variant="solid"
+                              onClick={handleAddNewLabel}
                               className="h-8 rounded-md px-3"
                             >
                               Save
@@ -249,7 +300,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                             </Button>
                           </Flex>
                         </Flex>
-                      </form>
+                      </div>
                     ) : (
                       <Button
                         onClick={() => setIsLabelFormOpen?.(true)}
@@ -288,8 +339,8 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
           </Command>
         </Popover.Content>
       </Popover.Root>
-    )
-  }
-)
+    );
+  },
+);
 
-ComboBox.displayName = "Combobox"
+ListComboBox.displayName = "ListComboBox";
