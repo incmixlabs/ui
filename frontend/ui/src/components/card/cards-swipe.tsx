@@ -1,10 +1,9 @@
-"use client"
 import {
   type PanInfo,
   motion,
   useMotionValue,
   useTransform,
-} from "framer-motion"
+} from "motion/react"
 import type React from "react"
 
 import { clx } from "@utils/clx/clx-merge"

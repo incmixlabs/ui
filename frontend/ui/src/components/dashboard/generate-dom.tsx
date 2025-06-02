@@ -14,7 +14,7 @@ const ReactGridLayout = WidthProvider(RGL);
 export function generateDOM(
   defaultLayouts: CustomLayouts,
   gridComponents: ComponentSlot[],
-  handleNestedLayoutChange: (nestedLayout: Layout, itemKey: string) => void,
+  handleNestedLayoutChange: (nestedLayout: Layout[], itemKey: string) => void,
   isEditing: boolean,
   handleRemoveComponent: (slotId: string) => void,
   handleRemoveNestedComponent: (slotId: string, groupId?: string) => void,
@@ -24,8 +24,8 @@ export function generateDOM(
 
   return layoutItems.map((item: LayoutItemWithNested) => {
     const gridComponent = gridComponents.find((comp) => comp.slotId === item.i);
-    console.log(gridComponents);
-    console.log(item.i, gridComponent);
+    // console.log(gridComponents);
+    // console.log(item.i, gridComponent);
 
     if (item.i.startsWith("grid-")) {
       const nested = item.layouts || [];
@@ -76,9 +76,9 @@ console.log("nested layouts", nested);
             isDraggable={isEditing}
             isResizable={isEditing}
           >
-            {nested?.map((nestedItem: { i: string }) => {
+            {nested?.map((nestedItem: { i: string,componentName:string}) => {
               const nestedComponent = gridComponents.find(
-                (comp) => comp.slotId === nestedItem.i,
+                (comp) => comp.componentName === nestedItem.componentName,
               );
 
               return (

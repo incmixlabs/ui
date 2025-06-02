@@ -18,6 +18,7 @@ import {
   Flex,
   Heading,
   SaveTemplateDialog,
+  SidebarTrigger,
   generateDOM,
   initialLayouts,
   useDevicePreview,
@@ -32,12 +33,15 @@ import { useEffect, useRef, useState } from "react"
 import { useAuth } from "../../auth"
 import { EditWidgetsControl } from "./home"
 import "@incmix/react-grid-layout/css/styles.css"
+import { useLocation } from "@tanstack/react-router"
 import { useQueryState } from "nuqs"
-
+import { useTranslation } from "react-i18next"
 const ResponsiveGridLayout = WidthProvider(Responsive)
 
 const DynamicDashboardPage: React.FC = () => {
   const { projectId } = useParams({ from: "/dashboard/$projectId" })
+  const { t } = useTranslation("navbar")
+  const { pathname } = useLocation()
   const [isTemplate, setIsTemplate] = useQueryState("template")
   const [project, setProject] = useState<Dashboard | undefined>()
 
@@ -73,7 +77,11 @@ const DynamicDashboardPage: React.FC = () => {
         }
       } else {
         try {
+          console.log(projectId, "projectId")
+
           const activeTemplate = await getActiveTemplate(projectId)
+          // console.log("activeTemplate",activeTemplate);
+
           if (activeTemplate) {
             applyTemplates(activeTemplate.mainLayouts, activeTemplate.id)
           }
@@ -112,6 +120,8 @@ const DynamicDashboardPage: React.FC = () => {
 
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
+        console.log("entry", entry)
+
         setActualWidth(Math.round(entry.contentRect.width))
       }
     })
@@ -139,22 +149,6 @@ const DynamicDashboardPage: React.FC = () => {
     handleDragEnd,
   } = useDragAndDrop(isEditing, gridComponents, setGridComponents)
 
-  //   const onDragStop = (layout: Layout[], oldItem: Layout, newItem: Layout) => {
-  //     const swapTarget = layout
-  //         .filter(item => item.i != oldItem.i)
-  //         .find((item) => item.y === newItem.y && item.x == newItem.x);
-
-  //     if (!swapTarget) {
-  //         const index = layout.findIndex(item => item.i == oldItem.i);
-  //         layout[index].x = oldItem.x;
-  //         layout[index].y = oldItem.y;
-  //     } else {
-  //         const index = layout.findIndex(item => item.i == swapTarget.i);
-  //         layout[index].x = oldItem.x;
-  //         layout[index].y = oldItem.y;
-  //     }
-  // };
-
   // Show loading while auth is loading, store is loading, or dashboard is loading
   if (isLoading || isDashLoading) {
     return <LoadingPage />
@@ -164,8 +158,11 @@ const DynamicDashboardPage: React.FC = () => {
   if (!project) return <div>Project not found</div>
 
   const isEmpty = gridComponents.length === 0
-  // console.log("defaultLayouts from dynamic-dashboard-page", defaultLayouts)
-  // console.log("project from dynamic-dashboard-page", project)
+  console.log(
+    "defaultLayouts from dynamic-dashboard-page",
+    defaultLayouts,
+    actualWidth
+  )
 
   return (
     <DndContext
@@ -173,47 +170,58 @@ const DynamicDashboardPage: React.FC = () => {
       onDragEnd={handleDragEnd}
       sensors={sensors}
     >
-      <DashboardLayout
-        breadcrumbItems={[]}
-        navExtras={<EditWidgetsControl onEditChange={setIsEditing} />}
-      >
+      <DashboardLayout>
         <Box as="div" className="container mx-auto flex overflow-x-hidden">
-          <Box className="h-full w-full overflow-hidden">
+          <Box className="h-full w-full overflow-hidden pt-5">
             <Flex justify={"between"} align={"center"} className="pb-4">
-              <Heading
-                size="6"
-                className={`${isEditing ? "" : "px-4"} capitalize`}
-              >
-                {project?.dashboardName}
-              </Heading>
-              {!isEditing && (
-                <Flex gap="2">
-                  <CreateProjectModal />
-                  <CloneDashboardModal dashboardId={projectId} />
-                  <EditDashboard dashboardId={projectId} />
-                  <DeleteDashboard dashboardId={projectId} />
-                </Flex>
-              )}
+              <Flex align={"center"} gap="2">
+                {pathname.includes("/file-manager") ||
+                  (pathname.includes("/dashboard") && isEditing && (
+                    <SidebarTrigger
+                      isSecondary
+                      mobileSidebarTrigger
+                      className="-ml-1"
+                      aria-label={t("toggleSecondarySidebar")}
+                    />
+                  ))}
+                <Heading
+                  size="6"
+                  className={`${isEditing ? "" : "px-4"} capitalize`}
+                >
+                  {project?.dashboardName}
+                </Heading>
+              </Flex>
+              <Flex align={"center"}>
+                {!isEditing && (
+                  <Flex gap="2">
+                    <CreateProjectModal />
+                    <CloneDashboardModal dashboardId={projectId} />
+                    <EditDashboard dashboardId={projectId} />
+                    <DeleteDashboard dashboardId={projectId} />
+                  </Flex>
+                )}
 
-              {isEditing && (
-                <Flex align={"center"} gap="2">
-                  <AddGroupButton
-                    isEditing={isEditing}
-                    onAddGroup={handleAddNewGroup}
-                  />
-                  <ActiveBtn
-                    items={deviceTabs}
-                    defaultActiveId={activeDevice}
-                    onChange={setActiveDevice}
-                  />
-                  <SaveTemplateDialog
-                    projectId={projectId}
-                    layouts={defaultLayouts}
-                    open={openSaveDialog}
-                    onOpenChange={setOpenSaveDialog}
-                  />
-                </Flex>
-              )}
+                {isEditing && (
+                  <Flex align={"center"} gap="2">
+                    <AddGroupButton
+                      isEditing={isEditing}
+                      onAddGroup={handleAddNewGroup}
+                    />
+                    <ActiveBtn
+                      items={deviceTabs}
+                      defaultActiveId={activeDevice}
+                      onChange={setActiveDevice}
+                    />
+                    <SaveTemplateDialog
+                      projectId={projectId}
+                      layouts={defaultLayouts}
+                      open={openSaveDialog}
+                      onOpenChange={setOpenSaveDialog}
+                    />
+                  </Flex>
+                )}
+                <EditWidgetsControl onEditChange={setIsEditing} />
+              </Flex>
             </Flex>
             <Box
               ref={boxRef}
@@ -230,7 +238,7 @@ const DynamicDashboardPage: React.FC = () => {
             >
               {isEditing && (
                 <span className="absolute top-0.5 right-0.5 z-10 rounded-md border border-gray-5 bg-gray-3 px-2 py-1">
-                  width: {actualWidth ? `${actualWidth}px` : "Measuring..."}
+                  width: {actualWidth && `${actualWidth}px`}
                 </span>
               )}
               <ResponsiveGridLayout

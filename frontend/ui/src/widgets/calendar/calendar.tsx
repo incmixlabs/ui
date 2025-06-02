@@ -6,7 +6,7 @@ import {
   Plus as PlusIcon,
 } from "lucide-react"
 import { cn } from "@utils/cn"
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, motion } from "motion/react"
 import { DateTime, Info } from "luxon"
 import { useCallback, useState } from "react"
 import { useTranslation } from "react-i18next"

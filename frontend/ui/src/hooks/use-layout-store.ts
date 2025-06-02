@@ -16,12 +16,11 @@ interface LayoutState {
   applyTemplates: (mainLayouts?: CustomLayouts, templateId?: string) => void
   setDefaultLayouts: (layouts: CustomLayouts) => void
   handleLayoutChange: (_layout: any, allLayouts: any) => void
-  handleNestedLayoutChange: (nestedLayout: Layout, itemKey: string) => void
+  handleNestedLayoutChange: (nestedLayout: Layout[], itemKey: string) => void
   addNewGroup: () => string
 }
 
 export const useLayoutStore = create<LayoutState>((set, get) => ({
-  // Initialize with validated preset layouts
   defaultLayouts: presetLayouts[0].mainLayouts,
   activePresetId: presetLayouts[0].id,
 
@@ -36,7 +35,6 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
   },
 
   applyTemplates: (mainLayouts, templateId) => {
-    // Use existing layouts as fallbacks if new ones aren't provided
     const { defaultLayouts } = get();
 
     set({
@@ -53,18 +51,14 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
     const { defaultLayouts } = get();
     console.log("handleLayoutChange defaultLayouts", defaultLayouts);
 
-    // Create a deep copy of the current layouts to avoid reference issues
     const updatedLayouts = JSON.parse(JSON.stringify(defaultLayouts));
 
 
-    // For each breakpoint, update the positions while preserving nested layouts and componentName
     Object.keys(allLayouts).forEach((breakpoint) => {
       const breakpointKey = breakpoint as Breakpoint;
 
       if (updatedLayouts[breakpointKey] && allLayouts[breakpointKey]) {
-        // For each item in the new layouts
         allLayouts[breakpointKey].forEach((newItem: Layout) => {
-          // Find the corresponding item in the current layouts
           const existingItemIndex = updatedLayouts[breakpointKey].findIndex(
             (item) => item.i === newItem.i,
           );
@@ -74,39 +68,18 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
             const existingItem =
               updatedLayouts[breakpointKey][existingItemIndex];
 
-            // Check if this item has nested layouts
             if (existingItem.layouts && existingItem.layouts.length > 0) {
-              // We need to preserve the componentName for each nested layout item
 
-              // Create a deep copy of the existing nested layouts to preserve all properties
               const preservedNestedLayouts = JSON.parse(
                 JSON.stringify(existingItem.layouts),
               );
 
-              // console.log(
-              //   `Preserving nested layouts for ${existingItem.i}:`,
-              //   preservedNestedLayouts.map((item) => ({
-              //     id: item.i,
-              //     componentName: item.componentName || "undefined",
-              //   })),
-              // );
-
               updatedLayouts[breakpointKey][existingItemIndex] = {
                 ...newItem,
                 layouts: preservedNestedLayouts,
-                // Do not include componentName for parent items with layouts
               };
 
-              // Log the updated item to verify
-              console.log(
-                `Updated item ${newItem.i} with preserved nested layouts:`,
-                updatedLayouts[breakpointKey][existingItemIndex].layouts.map(
-                  (item) => ({
-                    id: item.i,
-                    componentName: item.componentName || "undefined",
-                  }),
-                ),
-              );
+           
             } else {
               // This is a regular item without nested layouts - preserve componentName
               updatedLayouts[breakpointKey][existingItemIndex] = {
@@ -149,7 +122,6 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
     set((state) => {
       const updatedLayouts = { ...state.defaultLayouts };
 
-      // Update the nested layouts for each breakpoint
       const breakpoints = Object.keys(updatedLayouts) as Breakpoint[];
       breakpoints.forEach((breakpoint) => {
         if (updatedLayouts[breakpoint]) {
@@ -176,7 +148,7 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
     set((state) => {
       const updatedLayouts = addGroupToLayouts(currentLayouts, newGroupId);
 
-      console.log(`Created new group with ID: ${newGroupId}`);
+      // console.log(`Created new group with ID: ${newGroupId}`);
 
       return { defaultLayouts: updatedLayouts };
     });

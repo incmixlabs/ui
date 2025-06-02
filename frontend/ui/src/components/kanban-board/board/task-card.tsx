@@ -83,13 +83,11 @@ export function TaskCardDisplay({
   state,
   outerRef,
   innerRef,
-  kanbanFilter,
 }: {
   card: TCard
   state: TCardState
   outerRef?: React.MutableRefObject<HTMLDivElement | null>
   innerRef?: MutableRefObject<HTMLDivElement | null>
-  kanbanFilter?: boolean
 }) {
   const { handleDrawerOpen } = useKanbanDrawer()
 
@@ -114,7 +112,6 @@ export function TaskCardDisplay({
       <Card
         className={cn(
           `relative cursor-pointer space-y-1.5 rounded-lg p-3 ${innerStyles[state.type]}`,
-          kanbanFilter ? "flex items-center justify-between " : ""
         )}
         ref={innerRef}
         style={
@@ -130,66 +127,13 @@ export function TaskCardDisplay({
             : undefined
         }
       >
-        {kanbanFilter ? (
-          <>
-            <Flex align={"center"} justify={"center"} gap="2">
-              <Checkbox
-                size={"3"}
-                className="h-5 w-5 rounded-md border border-black bg-gray-12 text-secondary group-hover:bg-white "
-              />
-              <Heading as="h6" size={"3"} className="py-2 font-medium">
-                {card.name}
-              </Heading>
-            </Flex>
-            <Flex align={"center"} justify={"between"} gap="5" className="w-64">
-              <Text
-                as="span"
-                className=" flex items-center gap-1 font-medium text-sm"
-              >
-                <CalendarDays className="text-zinc-400" size={20} />
-                <Text as="span">{card?.date}</Text>
-              </Text>
-              {card?.assignedTo && (
-                <Flex align={"center"} gap={"1"}>
-                  {card?.assignedTo.map((member) => {
-                    const colors = [
-                      "bg-green-400",
-                      "bg-yellow-400",
-                      "bg-orange-400",
-                      "bg-cyan-400",
-                      "bg-red-400",
-                    ]
-                    const randomColor =
-                      colors[Math.floor(Math.random() * colors.length)]
-                    return (
-                      <span
-                        key={member.id}
-                        className={`flex ${iconSize} items-center gap-1 rounded-md ${randomColor}`}
-                      />
-                    )
-                  })}
-                </Flex>
-              )}
-              <Flex align={"center"} gap="2">
-                {card?.assignedTo?.map((member) => (
-                  <img
-                    key={member.id}
-                    src={member.src}
-                    alt={member.name}
-                    className="h-8 w-8 rounded-full"
-                  />
-                ))}
-              </Flex>
-            </Flex>
-          </>
-        ) : (
           <>
             <Text
               as="span"
               className="absolute top-2 right-3 flex items-center gap-1 font-medium text-sm"
             >
               <CalendarDays className="text-zinc-400" size={20} />
-              <Text as="span">{card?.date}</Text>
+              <Text as="span">{card?.startDate}</Text>
             </Text>
             {card?.assignedTo && (
               <Flex align={"center"} gap={"1"}>
@@ -245,7 +189,7 @@ export function TaskCardDisplay({
             ))}
             {card.attachment && (
               <img
-                src={card.attachment[0].image}
+                src={card.attachment[0].url}
                 alt="attachment"
                 className="aspect-video rounded-lg object-cover"
               />
@@ -279,7 +223,6 @@ export function TaskCardDisplay({
               </Flex>
             </Flex>
           </>
-        )}
       </Card>
       {/* Put a shadow after the item if closer to the bottom edge */}
       {state.type === "is-over" && state.closestEdge === "bottom" ? (

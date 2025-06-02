@@ -36,7 +36,7 @@ export function getNextGroupId(layouts: CustomLayouts): string {
 /**
  * Creates default nested layouts for a new group
  */
-export function createDefaultNestedLayouts(groupId: string): Layout[] {
+export function createDefaultNestedLayouts(groupId: string): LayoutItemWithNested[] {
   return [
     {
       w: 6,
@@ -44,6 +44,7 @@ export function createDefaultNestedLayouts(groupId: string): Layout[] {
       x: 0,
       y: 0,
       i: `${groupId}|0`,
+      componentName:"new-tasks",
       moved: false,
       static: false,
     },
@@ -53,6 +54,7 @@ export function createDefaultNestedLayouts(groupId: string): Layout[] {
       x: 6,
       y: 0,
       i: `${groupId}|1`,
+      componentName:"total-tasks",
       moved: false,
       static: false,
     },

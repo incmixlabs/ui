@@ -44,7 +44,7 @@ interface TemplateState {
   getTemplatesByTemplateId: (templateId: string) => DashboardTemplate[]
   getTemplatesByTag: (tag: string) => DashboardTemplate[]
   getTemplateById: (templateId: string) => Promise<DashboardTemplate | null>
-  getActiveTemplate: (projectId: string) => Promise<DashboardTemplate | null>
+  getActiveTemplate: (dashboardId: string) => Promise<DashboardTemplate | null>
   validateAndNormalizeTemplate: (template: any) => any
 }
 
@@ -296,18 +296,19 @@ export const useTemplateStore = create<TemplateState>()((set, get) => ({
     }
   },
 
-  getActiveTemplate: async (templateId: string) => {
+  getActiveTemplate: async (dashboardId: string) => {
     try {
       const templatesCollection = database.dashboardTemplates
 
       const activeTemplate = await templatesCollection
         .findOne({
           selector: {
-            id: templateId,
+            dashboardLink: dashboardId,
             isActive: true,
           },
         })
         .exec()
+      console.log("activeTeamptle get fromdb", dashboardId)
 
       if (!activeTemplate) return null
 

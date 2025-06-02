@@ -1,4 +1,4 @@
-import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
+import { useKanbanDrawer } from "@hooks/use-kanban-drawer";
 import {
   Avatar,
   Badge,
@@ -13,9 +13,8 @@ import {
   ScrollArea,
   Tabs,
   Text,
-  type ExtendedColorType
-} from "@base"
-import { cn } from "@utils"
+  type ExtendedColorType,
+} from "@base";
 import {
   Check,
   Download,
@@ -29,26 +28,47 @@ import {
   Plus,
   Smile,
   Trash2,
-} from "lucide-react"
+} from "lucide-react";
 import {
   type DragControls,
   Reorder,
   motion,
   useDragControls,
   useMotionValue,
-} from "motion/react"
-import type React from "react"
-import { useEffect, useRef, useState } from "react"
-import { MotionSheet } from "../../custom-sheet"
-import { SmartDatetimeInput } from "../../datetime-picker"
-import { TaskIcon } from "../../icons/task"
-import X from "../../icons/x"
-import { ComboBox } from "../../combo-box"
-import { assignData, attachments, commentsData, labelsData } from "../data"
-import { KanbanImages } from "../images"
+} from "motion/react";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
+import { SmartDatetimeInput } from "../../datetime-picker";
+import { TaskIcon } from "../../icons/task";
+import X from "../../icons/x";
+import { ComboBox } from "../../combo-box";
+import { assignData, attachments, commentsData, labelsData } from "../data";
+import { KanbanImages } from "../images";
+import { TaskDataSchema, useTaskStore } from "@incmix/store";
 
 export default function ListTaskCardDrawer() {
-  const { taskId, handleDrawerClose } = useKanbanDrawer()
+  const { taskId, handleDrawerClose } = useKanbanDrawer();
+  const { getTaskByTaskId } = useTaskStore();
+
+  const [taskData, setTaskData] = useState<TaskDataSchema | null>(null);
+
+  const fetchTaskData = async () => {
+    try {
+      const data = await getTaskByTaskId(taskId);
+      setTaskData(data);
+    } catch (error) {
+      console.error("Failed to fetch task data:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (taskId) {
+      fetchTaskData();
+    }
+  }, [taskId]);
+
+  // console.log("taskData", taskData);
+
   const [checkListData, setChecklistData] = useState([
     {
       id: 1,
@@ -74,72 +94,58 @@ export default function ListTaskCardDrawer() {
       date: "29.8.2024",
       checked: false,
     },
-  ])
-  const [comment, setComment] = useState("")
+  ]);
+  const [comment, setComment] = useState("");
 
-  const [selectedMembers, setSelectedMembers] = useState<string[]>([
-    "regina-cooper",
-  ])
+  const [selectedMembers, setSelectedMembers] = useState(taskData?.assignedTo);
   const [selectedLabels, setSelectedLabes] = useState<string[]>([
     "design",
     "frontend",
     "backend",
-  ])
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
-  const [allLabelsData, setAllLabelsData] = useState(labelsData)
-  const [isLabelFormOpen, setIsLabelFormOpen] = useState(false)
-  const [labelColor, setLabelColor] = useState<ExtendedColorType>("blue")
- const formRef = useRef<HTMLFormElement>(null as unknown as HTMLFormElement)
+  ]);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [allLabelsData, setAllLabelsData] = useState(labelsData);
+  const [isLabelFormOpen, setIsLabelFormOpen] = useState(false);
+  const [labelColor, setLabelColor] = useState<ExtendedColorType>("blue");
+  const formRef = useRef<HTMLFormElement>(null as unknown as HTMLFormElement);
 
   const handleDateChange = (date: Date) => {
-    setSelectedDate(date)
-  }
+    setSelectedDate(date);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setComment("")
-  }
+    e.preventDefault();
+    setComment("");
+  };
 
   const handleAddNewLabel = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (!formRef.current) return
+    if (!formRef.current) return;
 
-    const formData = new FormData(formRef.current)
-    const labelName = formData.get("labelName") as string
+    const formData = new FormData(formRef.current);
+    const labelName = formData.get("labelName") as string;
 
-    if (!labelName.trim()) return
+    if (!labelName.trim()) return;
 
     const newLabel = {
       value: labelName.toLowerCase().replace(/\s+/g, "-"),
       label: labelName,
       color: labelColor || "blue",
-    }
+    };
 
-    setAllLabelsData([...allLabelsData, newLabel])
+    setAllLabelsData([...allLabelsData, newLabel]);
     // Reset form and close it
-    formRef.current.reset()
-    setIsLabelFormOpen(false)
-  }
+    formRef.current.reset();
+    setIsLabelFormOpen(false);
+  };
   return (
     <>
-      <MotionSheet
-        open={Boolean(taskId)}
-        onOpenChange={handleDrawerClose}
-        showCloseButton={false}
-        side="right"
-        isFilterClassName="relative z-50 h-full shrink-0 rounded-xl"
-        isFilter={true}
-        className="w-[53rem] p-0 "
-      >
-        <div
-          className={cn(
-            "cursor-default rounded-lg bg-gray-3 dark:bg-gray-4 h-full w-full" 
-          )}
-        >
-          <ScrollArea className="h-[98vh] rounded-lg">
-            <Flex align={"center"} className="h-full">
-              <Box className="bg-gray-1 p-4 dark:bg-gray-3">
+      {Boolean(taskId) && (
+        <Box className="w-[48rem] shrink-0">
+          <Box className="sticky top-0  cursor-default rounded-lg border bg-gray-3 border-gray-6 dark:bg-gray-4 h-full w-full">
+            <Flex className="h-full">
+              <Box className="bg-gray-1 p-4 dark:bg-gray-3 rounded-lg">
                 <Flex align={"center"} justify={"between"}>
                   <Flex className=" gap-2">
                     <Button className="flex h-10 items-center gap-1 rounded-md font-semibold text-white">
@@ -225,91 +231,83 @@ export default function ListTaskCardDrawer() {
                 <Heading className="px-0 py-4 font-medium">
                   Template Progress
                 </Heading>
-                  <Box className="space-y-3 py-2">
-                    <Grid columns="2">
-                      <Box className="space-y-3">
-                        <Heading
-                          size={"4"}
-                          className="font-medium text-gray-11"
-                        >
-                          ASSIGNED TO
-                        </Heading>
-                        <Flex className="gap-1">
+                <Box className="space-y-3 py-2">
+                  <Grid columns="2">
+                    <Box className="space-y-3">
+                      <Heading size={"4"} className="font-medium text-gray-11">
+                        ASSIGNED TO
+                      </Heading>
+                      <Flex className="gap-1">
+                        {selectedMembers?.map(
+                          (member, index) =>
+                            member?.checked && (
+                              <Avatar
+                                key={`${member.value}-${index}`}
+                                src={member.avatar}
+                                className="h-9 w-9 rounded-full border-4 border-gray-2"
+                              />
+                            ),
+                        )}
+                        <ComboBox
+                          options={assignData}
+                          onValueChange={(value) => setSelectedMembers(value)}
+                          defaultValue={selectedMembers}
+                          placeholder="Find Person..."
+                          title="Assign To"
+                        />
+                      </Flex>
+                    </Box>
+                    <Box className="space-y-3">
+                      <Heading size={"4"} className="font-medium text-gray-11">
+                        CREATED BY
+                      </Heading>
+                      <Flex className="gap-2">
+                        <Flex className="gap-1" align={"center"}>
                           <Avatar
                             src={KanbanImages.user1}
                             className="h-8 w-8"
                           />
-                          <Avatar
-                            src={KanbanImages.user2}
-                            className="h-8 w-8"
-                          />
-                          <Avatar
-                            src={KanbanImages.user1}
-                            className="h-8 w-8"
-                          />
-                          <ComboBox
-                            options={assignData}
-                            onValueChange={setSelectedMembers}
-                            defaultValue={selectedMembers}
-                            placeholder="Find Person..."
-                            title="Assign To"
-                          />
+                          <p>Regina Cooper</p>
                         </Flex>
-                      </Box>
-                      <Box className="space-y-3">
-                        <Heading
-                          size={"4"}
-                          className="font-medium text-gray-11"
-                        >
-                          CREATED BY
-                        </Heading>
-                        <Flex className="gap-2">
-                          <Flex className="gap-1" align={"center"}>
-                            <Avatar
-                              src={KanbanImages.user1}
-                              className="h-8 w-8"
-                            />
-                            <p>Regina Cooper</p>
-                          </Flex>
-                        </Flex>
-                      </Box>
-                    </Grid>
-                    {/* lables */}
-                    <h2 className="font-medium text-gray-500">LABELS</h2>
-                    <Flex className="gap-2">
-                      {allLabelsData?.map((label) => (
-                        <Badge
-                          color={label.color as ExtendedColorType}
-                          variant="solid"
-                          key={label.value}
-                          className="rounded-md p-1.5 px-2.5"
-                        >
-                          {label.label}
-                        </Badge>
-                      ))}
+                      </Flex>
+                    </Box>
+                  </Grid>
+                  {/* lables */}
+                  <h2 className="font-medium text-gray-500">LABELS</h2>
+                  <Flex className="gap-2">
+                    {allLabelsData?.map((label) => (
+                      <Badge
+                        color={label.color as ExtendedColorType}
+                        variant="solid"
+                        key={label.value}
+                        className="rounded-md p-1.5 px-2.5"
+                      >
+                        {label.label}
+                      </Badge>
+                    ))}
 
-                      <ComboBox
-                        options={allLabelsData}
-                        onValueChange={setSelectedLabes}
-                        defaultValue={selectedLabels}
-                        placeholder="Search Label"
-                        title="Labels"
-                        addNewLabel={true}
-                        isLabelFormOpen={isLabelFormOpen}
-                        formRef={formRef}
-                        setIsLabelFormOpen={setIsLabelFormOpen}
-                        handleAddNewLabel={handleAddNewLabel}
-                      />
-                    </Flex>
-
-                    {/* DUE DATE */}
-                    <h2 className=" font-medium text-gray-500">DUE DATE </h2>
-                    <SmartDatetimeInput
-                      value={selectedDate}
-                      onValueChange={handleDateChange}
-                      placeholder="Enter a date and time"
+                    <ComboBox
+                      options={allLabelsData}
+                      onValueChange={setSelectedLabes}
+                      defaultValue={selectedLabels}
+                      placeholder="Search Label"
+                      title="Labels"
+                      addNewLabel={true}
+                      isLabelFormOpen={isLabelFormOpen}
+                      formRef={formRef}
+                      setIsLabelFormOpen={setIsLabelFormOpen}
+                      handleAddNewLabel={handleAddNewLabel}
                     />
-                  </Box>
+                  </Flex>
+
+                  {/* DUE DATE */}
+                  <h2 className=" font-medium text-gray-500">DUE DATE </h2>
+                  <SmartDatetimeInput
+                    value={selectedDate}
+                    onValueChange={handleDateChange}
+                    placeholder="Enter a date and time"
+                  />
+                </Box>
                 <Box className="space-y-2 py-6 pt-4">
                   <Heading size={"4"} className="font-medium text-gray-11">
                     DESCRIPTION
@@ -574,133 +572,133 @@ export default function ListTaskCardDrawer() {
                   </Tabs.Root>
                 </Box>
               </Box>
-                <Box className="relative h-full w-72 shrink-0 pt-24">
-                  <IconButton
-                    color="gray"
-                    variant="soft"
-                    onClick={handleDrawerClose}
-                    className="absolute top-5 right-3 ml-8 flex h-8 w-8 items-center justify-center rounded-md"
-                  >
-                    <X aria-hidden="true" />
-                    <span className="sr-only">Close</span>
-                  </IconButton>
+              <Box className="relative h-full w-72 shrink-0 pt-16">
+                <IconButton
+                  color="gray"
+                  variant="soft"
+                  onClick={handleDrawerClose}
+                  className="absolute top-5 right-3 ml-8 flex h-8 w-8 items-center justify-center rounded-md"
+                >
+                  <X aria-hidden="true" />
+                  <span className="sr-only">Close</span>
+                </IconButton>
 
-                  <Box className="space-y-3 p-4 ">
+                <Box className="space-y-3 p-4 ">
+                  <Heading size={"4"} className=" font-medium text-gray-10">
+                    CREATED BY
+                  </Heading>
+                  <Flex className="gap-2" align={"center"}>
+                    <Avatar src={KanbanImages.user1} className="h-8 w-8" />
+                    <Text as="p">Regina Cooper</Text>
+                  </Flex>
+                </Box>
+                <Box className="space-y-3 border-gray-6 border-t-2 p-4 py-3">
+                  <Flex justify={"between"} align={"center"}>
                     <Heading size={"4"} className=" font-medium text-gray-10">
-                      CREATED BY
+                      ASSIGNED TO
                     </Heading>
-                    <Flex className="gap-2" align={"center"}>
-                      <Avatar src={KanbanImages.user1} className="h-8 w-8" />
-                      <Text as="p">Regina Cooper</Text>
-                    </Flex>
-                  </Box>
-                  <Box className="space-y-3 border-gray-6 border-t-2 p-4 py-3">
-                    <Flex justify={"between"} align={"center"}>
-                      <Heading size={"4"} className=" font-medium text-gray-10">
-                        ASSIGNED TO
-                      </Heading>
-                      <ComboBox
-                        options={assignData}
-                        onValueChange={setSelectedMembers}
-                        defaultValue={selectedMembers}
-                        placeholder="Find Person..."
-                        title="Assign To"
-                      />
-                    </Flex>
-                    <Flex className="gap-1">
-                      <Avatar src={KanbanImages.user1} className="h-8 w-8" />
-                      <Avatar src={KanbanImages.user2} className="h-8 w-8" />
-                      <Avatar src={KanbanImages.user1} className="h-8 w-8" />
-                    </Flex>
-                  </Box>
-                  <Box className="space-y-3 border-gray-6 border-t-2 p-4 py-3 ">
-                    {/* DUE DATE */}
-                    <Heading size={"4"} className=" font-medium text-gray-10">
-                      DUE DATE
-                    </Heading>
-                    <SmartDatetimeInput
-                      value={selectedDate}
-                      onValueChange={handleDateChange}
-                      placeholder="Enter a date and time"
+                    <ComboBox
+                      options={assignData}
+                      onValueChange={setSelectedMembers}
+                      defaultValue={selectedMembers}
+                      placeholder="Find Person..."
+                      title="Assign To"
                     />
-                  </Box>
-                  <Box className="space-y-3 border-gray-6 border-t-2 p-4 py-3 ">
-                    {/* lables */}
+                  </Flex>
+                  <Flex className="gap-1">
+                    <Avatar src={KanbanImages.user1} className="h-8 w-8" />
+                    <Avatar src={KanbanImages.user2} className="h-8 w-8" />
+                    <Avatar src={KanbanImages.user1} className="h-8 w-8" />
+                  </Flex>
+                </Box>
+                <Box className="space-y-3 border-gray-6 border-t-2 p-4 py-3 ">
+                  {/* DUE DATE */}
+                  <Heading size={"4"} className=" font-medium text-gray-10">
+                    DUE DATE
+                  </Heading>
+                  <SmartDatetimeInput
+                    value={selectedDate}
+                    onValueChange={handleDateChange}
+                    placeholder="Enter a date and time"
+                  />
+                </Box>
+                <Box className="space-y-3 border-gray-6 border-t-2 p-4 py-3 ">
+                  {/* lables */}
 
-                    <Flex justify={"between"} align={"center"}>
-                      <Heading size={"4"} className=" font-medium text-gray-10">
-                        LABELS
-                      </Heading>
-                      <ComboBox
-                        options={allLabelsData}
-                        onValueChange={setSelectedLabes}
-                        defaultValue={selectedLabels}
-                        placeholder="Search Label"
-                        title="Labels"
-                        addNewLabel={true}
-                        isLabelFormOpen={isLabelFormOpen}
-                        formRef={formRef}
-                        setIsLabelFormOpen={setIsLabelFormOpen}
-                        handleAddNewLabel={handleAddNewLabel}
-                        labelColor={labelColor}
-                        setLabelColor={setLabelColor}
-                      />
-                    </Flex>
-                    <Flex gap="2" wrap={"wrap"}>
-                      {allLabelsData?.map((label) => (
-                        <Badge
-                          color={label.color as ExtendedColorType}
-                          variant="solid"
-                          key={label.value}
-                          className="rounded-md p-1.5 px-2.5"
-                        >
-                          {label.label}
-                        </Badge>
-                      ))}
-                    </Flex>
+                  <Flex justify={"between"} align={"center"}>
+                    <Heading size={"4"} className=" font-medium text-gray-10">
+                      LABELS
+                    </Heading>
+                    <ComboBox
+                      options={allLabelsData}
+                      onValueChange={setSelectedLabes}
+                      defaultValue={selectedLabels}
+                      placeholder="Search Label"
+                      title="Labels"
+                      addNewLabel={true}
+                      isLabelFormOpen={isLabelFormOpen}
+                      formRef={formRef}
+                      setIsLabelFormOpen={setIsLabelFormOpen}
+                      handleAddNewLabel={handleAddNewLabel}
+                      labelColor={labelColor}
+                      setLabelColor={setLabelColor}
+                    />
+                  </Flex>
+                  <Flex gap="2" wrap={"wrap"}>
+                    {allLabelsData?.map((label) => (
+                      <Badge
+                        color={label.color as ExtendedColorType}
+                        variant="solid"
+                        key={label.value}
+                        className="rounded-md p-1.5 px-2.5"
+                      >
+                        {label.label}
+                      </Badge>
+                    ))}
+                  </Flex>
+                </Box>
+                <Box className="space-y-3 border-gray-6 border-t-2 p-4 py-3 ">
+                  <Box>
+                    <Heading size={"3"} className=" font-medium text-gray-12">
+                      Created
+                    </Heading>
+                    <Text as="span" className="text-gray-9">
+                      January 2, 2020 4:30 PM
+                    </Text>
                   </Box>
-                  <Box className="space-y-3 border-gray-6 border-t-2 p-4 py-3 ">
-                    <Box>
-                      <Heading size={"3"} className=" font-medium text-gray-12">
-                        Created
-                      </Heading>
-                      <Text as="span" className="text-gray-9">
-                        January 2, 2020 4:30 PM
-                      </Text>
-                    </Box>
-                    <Box>
-                      <Heading size={"3"} className=" font-medium text-gray-12">
-                        Updated
-                      </Heading>
-                      <Text as="span" className="text-gray-9">
-                        January 2, 2020 4:55 PM
-                      </Text>
-                    </Box>
+                  <Box>
+                    <Heading size={"3"} className=" font-medium text-gray-12">
+                      Updated
+                    </Heading>
+                    <Text as="span" className="text-gray-9">
+                      January 2, 2020 4:55 PM
+                    </Text>
                   </Box>
                 </Box>
+              </Box>
             </Flex>
-          </ScrollArea>
-        </div>
-      </MotionSheet>
+          </Box>
+        </Box>
+      )}
     </>
-  )
+  );
 }
 interface ChecklistItem {
-  id: number
-  title: string
-  date: string
-  checked: boolean
+  id: number;
+  title: string;
+  date: string;
+  checked: boolean;
 }
 const Item = ({
   children,
   item,
 }: {
-  children: React.ReactNode
-  item: ChecklistItem
+  children: React.ReactNode;
+  item: ChecklistItem;
 }) => {
-  const y = useMotionValue(0)
+  const y = useMotionValue(0);
   //   const boxShadow = useRaisedShadow(y);
-  const dragControls = useDragControls()
+  const dragControls = useDragControls();
 
   return (
     <Reorder.Item
@@ -718,22 +716,22 @@ const Item = ({
         </IconButton>
       </Flex>
     </Reorder.Item>
-  )
-}
+  );
+};
 
 interface Props {
-  dragControls: DragControls
+  dragControls: DragControls;
 }
 export function ReorderIcon({ dragControls }: Props) {
   return (
     <motion.div
       whileTap={{ scale: 0.85 }}
       onPointerDown={(e) => {
-        e.preventDefault()
-        dragControls.start(e)
+        e.preventDefault();
+        dragControls.start(e);
       }}
     >
       <GripVertical className=" h-7 w-7 cursor-grab text-gray-12 opacity-0 active:cursor-grabbing group-hover:opacity-100" />
     </motion.div>
-  )
+  );
 }
