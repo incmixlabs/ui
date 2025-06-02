@@ -14,6 +14,7 @@ export type ColumnType =
   | "Image"
   | "Link"
   | "Custom"
+  | "Dropdown"
   | "TimelineProgress";
 
 // Column definition interface
@@ -49,8 +50,14 @@ export interface DataTableColumn<TData> {
   // Custom renderer - fixed type to be more flexible with value types
   renderer?: (value: any, row: TData) => ReactNode;
 
-  // New property for inline editing
+  // Inline editing properties
   enableInlineEdit?: boolean;
+  inlineCellEditor?: (props: {
+    value: any,
+    onSave: (newValue: any) => void,
+    onCancel: () => void,
+    columnDef?: any
+  }) => React.ReactNode;
 }
 
 // Column group interface
