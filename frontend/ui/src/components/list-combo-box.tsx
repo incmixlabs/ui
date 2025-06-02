@@ -79,7 +79,7 @@ interface MultiSelectProps
   setIsLabelFormOpen?: (isLabelFormOpen: boolean) => void;
   labelColor?: string;
   setLabelColor?: (labelColor: ExtendedColorType) => void;
-  btnClassName?:string
+  btnClassName?: string;
 }
 
 export const ListComboBox = React.forwardRef<
@@ -98,7 +98,7 @@ export const ListComboBox = React.forwardRef<
       setLabelColor,
       isLabelFormOpen,
       setIsLabelFormOpen,
-      btnClassName
+      btnClassName,
     },
     ref,
   ) => {
@@ -152,6 +152,14 @@ export const ListComboBox = React.forwardRef<
         setError("Please enter a label name");
         return;
       }
+      const labelExists = selectedValues.some(
+        (existing) => existing.label?.toLowerCase() === labelName.toLowerCase(),
+      );
+
+      if (labelExists) {
+        setError("A label with this name already exists");
+        return;
+      }
 
       const newLabel = {
         value: labelName.toLowerCase().replace(/\s+/g, "-"),
@@ -174,7 +182,10 @@ export const ListComboBox = React.forwardRef<
           <IconButton
             color="gray"
             aria-label="Open options menu"
-            className={cn("flex h-8 w-8 items-center justify-center rounded-full",btnClassName)}
+            className={cn(
+              "flex h-8 w-8 items-center justify-center rounded-full",
+              btnClassName,
+            )}
           >
             <Plus aria-hidden="true" />
             <Text className="sr-only">Add new item</Text>
