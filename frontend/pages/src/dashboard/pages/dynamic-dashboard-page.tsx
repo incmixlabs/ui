@@ -25,6 +25,7 @@ import {
   useDragAndDrop,
   useGridComponents,
   useLayoutStore,
+  useModalStore,
 } from "@incmix/ui"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useParams } from "@tanstack/react-router"
@@ -44,6 +45,16 @@ const DynamicDashboardPage: React.FC = () => {
   const { pathname } = useLocation()
   const [isTemplate, setIsTemplate] = useQueryState("template")
   const [project, setProject] = useState<Dashboard | undefined>()
+
+  const isCreateDashModalOpen = useModalStore(
+    (s: any) => s.isDashboardCreateOpen
+  )
+  const openCreateDashboardModal = useModalStore(
+    (s: any) => s.openDashboardCreate
+  )
+  const closeCreateDashboardModal = useModalStore(
+    (s: any) => s.closeDashboardCreate
+  )
 
   const isDashLoading = useDashboardStore((state) => state.isDashLoading)
 
@@ -77,7 +88,7 @@ const DynamicDashboardPage: React.FC = () => {
         }
       } else {
         try {
-          console.log(projectId, "projectId")
+          // console.log(projectId, "projectId")
 
           const activeTemplate = await getActiveTemplate(projectId)
           // console.log("activeTemplate",activeTemplate);
@@ -120,8 +131,6 @@ const DynamicDashboardPage: React.FC = () => {
 
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        console.log("entry", entry)
-
         setActualWidth(Math.round(entry.contentRect.width))
       }
     })
@@ -158,11 +167,11 @@ const DynamicDashboardPage: React.FC = () => {
   if (!project) return <div>Project not found</div>
 
   const isEmpty = gridComponents.length === 0
-  console.log(
-    "defaultLayouts from dynamic-dashboard-page",
-    defaultLayouts,
-    actualWidth
-  )
+  // console.log(
+  //   "defaultLayouts from dynamic-dashboard-page",
+  //   defaultLayouts,
+  //   actualWidth
+  // )
 
   return (
     <DndContext
@@ -194,7 +203,11 @@ const DynamicDashboardPage: React.FC = () => {
               <Flex align={"center"}>
                 {!isEditing && (
                   <Flex gap="2">
-                    <CreateProjectModal />
+                    <CreateProjectModal
+                      isCreateDashModalOpen={isCreateDashModalOpen}
+                      openCreateDashboardModal={openCreateDashboardModal}
+                      closeCreateDashboardModal={closeCreateDashboardModal}
+                    />
                     <CloneDashboardModal dashboardId={projectId} />
                     <EditDashboard dashboardId={projectId} />
                     <DeleteDashboard dashboardId={projectId} />
