@@ -10,12 +10,10 @@ import {
   useSidebar,
 } from "@incmix/ui/sidebar"
 import { useOrganizations } from "@orgs/utils"
-import { useTranslation } from "react-i18next"
 import { projects } from "../../../../../../ui/src/components/projects/data"
 
 export function ProjectsSwitcher() {
   const { isMobile } = useSidebar()
-  const { t } = useTranslation(["common", "sidebar"])
   const { organizations, isLoading } = useOrganizations()
   const { selectedOrganisation, setSelectedOrganisation } =
     useOrganizationStore()
@@ -53,10 +51,10 @@ export function ProjectsSwitcher() {
             side={isMobile ? "bottom" : "right"}
             sideOffset={4}
           >
-            <DropdownMenu.Label className="text-muted-foreground text-sm px-2">
+            <DropdownMenu.Label className="px-2 text-muted-foreground text-sm">
               Projects
             </DropdownMenu.Label>
-            {projects.map((project, index) => (
+            {projects.map((project, _index) => (
               <DropdownMenu.Item
                 key={project.id}
                 // onClick={() => setSelectedOrganisation(org)}

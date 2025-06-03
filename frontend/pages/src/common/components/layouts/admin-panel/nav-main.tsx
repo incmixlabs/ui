@@ -46,7 +46,8 @@ export function NavMain({
     (state) => state.openDashboardCreate
   )
 
-  // Match exact "/dashboard"
+  console.log(dashboards)
+
   function isProjectsRoot(item: NavItem): boolean {
     console.log(
       "isProjectsRoot check:",
@@ -380,18 +381,18 @@ export function NavMain({
                 <SidebarMenuButton
                   isSelected={item.isSelected}
                   tooltip={item.title}
-                asChild
-              >
-                <Link to={item.url}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                  {item.notificationCount && (
-                    <div className="ml-auto rounded-md bg-[hsl(var(--sidebar-foreground))] px-1.5 font-normal text-[10px] text-[hsl(var(--sidebar-background))] transition-transform duration-200">
-                      {item.notificationCount}
-                    </div>
-                  )}
-                </Link>
-              </SidebarMenuButton>
+                  asChild
+                >
+                  <Link to={item.url}>
+                    {item.icon && <item.icon />}
+                    <span>{item.title}</span>
+                    {item.notificationCount && (
+                      <div className="ml-auto rounded-md bg-[hsl(var(--sidebar-foreground))] px-1.5 font-normal text-[10px] text-[hsl(var(--sidebar-background))] transition-transform duration-200">
+                        {item.notificationCount}
+                      </div>
+                    )}
+                  </Link>
+                </SidebarMenuButton>
               )}
             </SidebarMenuItem>
           )
