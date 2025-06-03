@@ -10,7 +10,17 @@ import {  useDashboardStore } from "@incmix/store";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
-export function CreateProjectModal({isCreateDashModalOpen, openCreateDashboardModal, closeCreateDashboardModal}: any) {
+interface CreateProjectModalProps {
+  isCreateDashModalOpen: boolean;
+  openCreateDashboardModal: () => void;
+  closeCreateDashboardModal: () => void;
+}
+
+export function CreateProjectModal({
+  isCreateDashModalOpen,
+  openCreateDashboardModal,
+  closeCreateDashboardModal,
+}: CreateProjectModalProps) {
   const [name, setName] = useState("");
  
   

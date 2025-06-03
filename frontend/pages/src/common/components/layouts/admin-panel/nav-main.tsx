@@ -37,9 +37,12 @@ type NavItem = {
 export function NavMain({
   items,
   dashboards,
-}: { items: NavItem[]; dashboards: Dashboard[] }) {
+}: {
+  items: NavItem[]
+  dashboards: Dashboard[]
+}) {
   const openCreateDashboardModal = useModalStore(
-    (s: any) => s.openDashboardCreate
+    (state) => state.openDashboardCreate
   )
 
   // Match exact "/dashboard"
@@ -227,31 +230,24 @@ export function NavMain({
           <ContextMenu.Item
             color="indigo"
             className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("View Project Details", subItem.title)}
+            onSelect={() => console.log("Add User", subItem.title)}
           >
-            View Project
+            Add User
           </ContextMenu.Item>
           <ContextMenu.Item
             color="indigo"
             className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("Edit Project", subItem.title)}
+            onSelect={() => console.log("Edit User", subItem.title)}
           >
-            Edit Project
-          </ContextMenu.Item>
-          <ContextMenu.Item
-            color="indigo"
-            className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("Duplicate Project", subItem.title)}
-          >
-            Duplicate Project
+            Edit User
           </ContextMenu.Item>
           <ContextMenu.Separator className="my-1 border-neutral-200 border-t dark:border-neutral-700" />
           <ContextMenu.Item
             color="red"
             className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("Delete Project", subItem.title)}
+            onSelect={() => console.log("Delete User", subItem.title)}
           >
-            Delete Project
+            Delete User
           </ContextMenu.Item>
         </>
       )

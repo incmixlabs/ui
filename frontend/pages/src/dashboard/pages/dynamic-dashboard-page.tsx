@@ -47,13 +47,13 @@ const DynamicDashboardPage: React.FC = () => {
   const [project, setProject] = useState<Dashboard | undefined>()
 
   const isCreateDashModalOpen = useModalStore(
-    (s: any) => s.isDashboardCreateOpen
+    (state) => state.isDashboardCreateOpen
   )
   const openCreateDashboardModal = useModalStore(
-    (s: any) => s.openDashboardCreate
+    (state) => state.openDashboardCreate
   )
   const closeCreateDashboardModal = useModalStore(
-    (s: any) => s.closeDashboardCreate
+    (state) => state.closeDashboardCreate
   )
 
   const isDashLoading = useDashboardStore((state) => state.isDashLoading)
