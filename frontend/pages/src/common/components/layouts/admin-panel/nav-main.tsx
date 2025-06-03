@@ -19,6 +19,7 @@ import {
   SidebarMenuSubItem,
 } from "@incmix/ui/sidebar"
 import { Link } from "@tanstack/react-router"
+import { ProjectsSwitcher } from "./projects-switcher"
 
 type NavItem = {
   title: string
@@ -115,143 +116,143 @@ export function NavMain({
     url: string
     isSelected?: boolean
   }) {
-    if (subItem.url === "/tasks") {
-      return (
-        <>
-          <ContextMenu.Item
-            color="indigo"
-            className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("View Project Details", subItem.title)}
-          >
-            Create Tasks
-          </ContextMenu.Item>
-          <ContextMenu.Item
-            color="indigo"
-            className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("Edit Tasks", subItem.title)}
-          >
-            Edit Tasks
-          </ContextMenu.Item>
-          <ContextMenu.Item
-            color="indigo"
-            className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("Duplicate Tasks", subItem.title)}
-          >
-            Duplicate Tasks
-          </ContextMenu.Item>
-          <ContextMenu.Separator className="my-1 border-neutral-200 border-t dark:border-neutral-700" />
-          <ContextMenu.Item
-            color="red"
-            className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("Delete Tasks", subItem.title)}
-          >
-            Delete Tasks
-          </ContextMenu.Item>
-        </>
-      )
-    }
-    if (subItem.url === "/file-manager") {
-      console.log("Returning project dynamic context menu for:", subItem.title)
-      return (
-        <>
-          <ContextMenu.Item
-            color="indigo"
-            className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("View Project Details", subItem.title)}
-          >
-            Create File Manager
-          </ContextMenu.Item>
-          <ContextMenu.Item
-            color="indigo"
-            className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("Edit File Manager", subItem.title)}
-          >
-            Edit File Manager
-          </ContextMenu.Item>
-          <ContextMenu.Item
-            color="indigo"
-            className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() =>
-              console.log("Duplicate File Manager", subItem.title)
-            }
-          >
-            Duplicate File Manager
-          </ContextMenu.Item>
-          <ContextMenu.Separator className="my-1 border-neutral-200 border-t dark:border-neutral-700" />
-          <ContextMenu.Item
-            color="red"
-            className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("Delete File Manager", subItem.title)}
-          >
-            Delete File Manager
-          </ContextMenu.Item>
-        </>
-      )
-    }
-    if (subItem.url === "/notes") {
-      return (
-        <>
-          <ContextMenu.Item
-            color="indigo"
-            className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("View Notes", subItem.title)}
-          >
-            Create Notes
-          </ContextMenu.Item>
-          <ContextMenu.Item
-            color="indigo"
-            className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("Edit Notes", subItem.title)}
-          >
-            Edit Notes
-          </ContextMenu.Item>
-          <ContextMenu.Item
-            color="indigo"
-            className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("Duplicate Notes", subItem.title)}
-          >
-            Duplicate Notes
-          </ContextMenu.Item>
-          <ContextMenu.Separator className="my-1 border-neutral-200 border-t dark:border-neutral-700" />
-          <ContextMenu.Item
-            color="red"
-            className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("Delete Notes", subItem.title)}
-          >
-            Delete Notes
-          </ContextMenu.Item>
-        </>
-      )
-    }
-    if (subItem.url === "/users") {
-      console.log("Returning project dynamic context menu for:", subItem.title)
-      return (
-        <>
-          <ContextMenu.Item
-            color="indigo"
-            className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("Add User", subItem.title)}
-          >
-            Add User
-          </ContextMenu.Item>
-          <ContextMenu.Item
-            color="indigo"
-            className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("Edit User", subItem.title)}
-          >
-            Edit User
-          </ContextMenu.Item>
-          <ContextMenu.Separator className="my-1 border-neutral-200 border-t dark:border-neutral-700" />
-          <ContextMenu.Item
-            color="red"
-            className="cursor-pointer px-2 py-1 text-sm"
-            onSelect={() => console.log("Delete User", subItem.title)}
-          >
-            Delete User
-          </ContextMenu.Item>
-        </>
-      )
-    }
+    // if (subItem.url === "/tasks") {
+    //   return (
+    //     <>
+    //       <ContextMenu.Item
+    //         color="indigo"
+    //         className="cursor-pointer px-2 py-1 text-sm"
+    //         onSelect={() => console.log("View Project Details", subItem.title)}
+    //       >
+    //         Create Tasks
+    //       </ContextMenu.Item>
+    //       <ContextMenu.Item
+    //         color="indigo"
+    //         className="cursor-pointer px-2 py-1 text-sm"
+    //         onSelect={() => console.log("Edit Tasks", subItem.title)}
+    //       >
+    //         Edit Tasks
+    //       </ContextMenu.Item>
+    //       <ContextMenu.Item
+    //         color="indigo"
+    //         className="cursor-pointer px-2 py-1 text-sm"
+    //         onSelect={() => console.log("Duplicate Tasks", subItem.title)}
+    //       >
+    //         Duplicate Tasks
+    //       </ContextMenu.Item>
+    //       <ContextMenu.Separator className="my-1 border-neutral-200 border-t dark:border-neutral-700" />
+    //       <ContextMenu.Item
+    //         color="red"
+    //         className="cursor-pointer px-2 py-1 text-sm"
+    //         onSelect={() => console.log("Delete Tasks", subItem.title)}
+    //       >
+    //         Delete Tasks
+    //       </ContextMenu.Item>
+    //     </>
+    //   )
+    // }
+    // if (subItem.url === "/file-manager") {
+    //   console.log("Returning project dynamic context menu for:", subItem.title)
+    //   return (
+    //     <>
+    //       <ContextMenu.Item
+    //         color="indigo"
+    //         className="cursor-pointer px-2 py-1 text-sm"
+    //         onSelect={() => console.log("View Project Details", subItem.title)}
+    //       >
+    //         Create File Manager
+    //       </ContextMenu.Item>
+    //       <ContextMenu.Item
+    //         color="indigo"
+    //         className="cursor-pointer px-2 py-1 text-sm"
+    //         onSelect={() => console.log("Edit File Manager", subItem.title)}
+    //       >
+    //         Edit File Manager
+    //       </ContextMenu.Item>
+    //       <ContextMenu.Item
+    //         color="indigo"
+    //         className="cursor-pointer px-2 py-1 text-sm"
+    //         onSelect={() =>
+    //           console.log("Duplicate File Manager", subItem.title)
+    //         }
+    //       >
+    //         Duplicate File Manager
+    //       </ContextMenu.Item>
+    //       <ContextMenu.Separator className="my-1 border-neutral-200 border-t dark:border-neutral-700" />
+    //       <ContextMenu.Item
+    //         color="red"
+    //         className="cursor-pointer px-2 py-1 text-sm"
+    //         onSelect={() => console.log("Delete File Manager", subItem.title)}
+    //       >
+    //         Delete File Manager
+    //       </ContextMenu.Item>
+    //     </>
+    //   )
+    // }
+    // if (subItem.url === "/notes") {
+    //   return (
+    //     <>
+    //       <ContextMenu.Item
+    //         color="indigo"
+    //         className="cursor-pointer px-2 py-1 text-sm"
+    //         onSelect={() => console.log("View Notes", subItem.title)}
+    //       >
+    //         Create Notes
+    //       </ContextMenu.Item>
+    //       <ContextMenu.Item
+    //         color="indigo"
+    //         className="cursor-pointer px-2 py-1 text-sm"
+    //         onSelect={() => console.log("Edit Notes", subItem.title)}
+    //       >
+    //         Edit Notes
+    //       </ContextMenu.Item>
+    //       <ContextMenu.Item
+    //         color="indigo"
+    //         className="cursor-pointer px-2 py-1 text-sm"
+    //         onSelect={() => console.log("Duplicate Notes", subItem.title)}
+    //       >
+    //         Duplicate Notes
+    //       </ContextMenu.Item>
+    //       <ContextMenu.Separator className="my-1 border-neutral-200 border-t dark:border-neutral-700" />
+    //       <ContextMenu.Item
+    //         color="red"
+    //         className="cursor-pointer px-2 py-1 text-sm"
+    //         onSelect={() => console.log("Delete Notes", subItem.title)}
+    //       >
+    //         Delete Notes
+    //       </ContextMenu.Item>
+    //     </>
+    //   )
+    // }
+    // if (subItem.url === "/users") {
+    //   console.log("Returning project dynamic context menu for:", subItem.title)
+    //   return (
+    //     <>
+    //       <ContextMenu.Item
+    //         color="indigo"
+    //         className="cursor-pointer px-2 py-1 text-sm"
+    //         onSelect={() => console.log("Add User", subItem.title)}
+    //       >
+    //         Add User
+    //       </ContextMenu.Item>
+    //       <ContextMenu.Item
+    //         color="indigo"
+    //         className="cursor-pointer px-2 py-1 text-sm"
+    //         onSelect={() => console.log("Edit User", subItem.title)}
+    //       >
+    //         Edit User
+    //       </ContextMenu.Item>
+    //       <ContextMenu.Separator className="my-1 border-neutral-200 border-t dark:border-neutral-700" />
+    //       <ContextMenu.Item
+    //         color="red"
+    //         className="cursor-pointer px-2 py-1 text-sm"
+    //         onSelect={() => console.log("Delete User", subItem.title)}
+    //       >
+    //         Delete User
+    //       </ContextMenu.Item>
+    //     </>
+    //   )
+    // }
     if (subItem.url === "/dashboard/home") {
       return (
         <>
@@ -373,9 +374,12 @@ export function NavMain({
             </Collapsible>
           ) : (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton
-                isSelected={item.isSelected}
-                tooltip={item.title}
+              {item.url === "/projects" ? (
+                <ProjectsSwitcher />
+              ) : (
+                <SidebarMenuButton
+                  isSelected={item.isSelected}
+                  tooltip={item.title}
                 asChild
               >
                 <Link to={item.url}>
@@ -388,6 +392,7 @@ export function NavMain({
                   )}
                 </Link>
               </SidebarMenuButton>
+              )}
             </SidebarMenuItem>
           )
 

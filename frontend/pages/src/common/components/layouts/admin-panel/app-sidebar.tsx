@@ -10,6 +10,7 @@ import {
   Layers,
   LayoutDashboardIcon,
   LockIcon,
+  Notebook,
   TextIcon,
   UserIcon,
 } from "lucide-react"
@@ -145,53 +146,43 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: "Projects",
         url: "/projects",
         icon: Layers,
-        isActive:
-          pathname.startsWith("/projects") ||
-          pathname.includes("/tasks") ||
-          pathname.includes("/file-manager") ||
-          pathname.includes("/notes") ||
-          pathname.includes("/users"),
-        items: [
-          {
-            title: "Projects",
-            url: "/projects",
-            isSelected: pathname.includes("/projects"),
-          },
-          {
-            title: "Tasks",
-            url: "/tasks",
-            isSelected: pathname.includes("/tasks"),
-          },
-
-          {
-            title: "File Manager",
-            url: "/file-manager",
-            isSelected: pathname.includes("/file-manager"),
-          },
-          {
-            title: "Notes",
-            url: "/notes",
-            isSelected: pathname.includes("/notes"),
-          },
-          {
-            title: "Users",
-            url: "/users",
-            isSelected: pathname.includes("/users"),
-          },
-        ],
+        // isActive:
+        //   pathname.startsWith("/projects") ||
+        //   pathname.includes("/tasks") ||
+        //   pathname.includes("/file-manager") ||
+        //   pathname.includes("/notes") ||
+        //   pathname.includes("/users"),
+        // items: [
+        //   {
+        //     title: "Projects",
+        //     url: "/projects",
+        //     isSelected: pathname.includes("/projects"),
+        //   },
+        //   {
+        //     title: "Tasks",
+        //     url: "/tasks",
+        //     isSelected: pathname.includes("/tasks"),
+        //   },
+   
+        //   {
+        //     title: "Users",
+        //     url: "/users",
+        //     isSelected: pathname.includes("/users"),
+        //   },
+        // ],
       },
-      // {
-      //   title: "File Manager",
-      //   url: "/file-manager",
-      //   icon: FolderClosed,
-      //   isSelected: pathname.includes("/file-manager"),
-      // },
-      // {
-      //   title: "Notes",
-      //   url: "/notes",
-      //   icon: FolderClosed,
-      //   isSelected: pathname.includes("/notes"),
-      // },
+      {
+        title: "File Manager",
+        url: "/file-manager",
+        icon: FolderClosed,
+        isSelected: pathname.includes("/file-manager"),
+      },
+      {
+        title: "Notes",
+        url: "/notes",
+        icon: Notebook,
+        isSelected: pathname.includes("/notes"),
+      },
       // {
       //   title: t("common:users"),
       //   url: "/users/list",
