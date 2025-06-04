@@ -5,25 +5,19 @@ import {
   Box,
   Card,
   Flex,
-  IconButton,
   ListBoard,
   RoadmapView,
   ScrollArea,
-  Select,
   Tabs,
 } from "@incmix/ui"
 import { CardContent } from "@incmix/ui/card"
-import type { Task } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { Filter, FilterIcon, ListFilter } from "lucide-react"
-import { useEffect, useMemo, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { useEffect, useState } from "react"
 import type { RxDatabase } from "rxdb"
 import { useRxDB } from "rxdb-hooks"
 
-import { generateBoard } from "./actions"
 import { CreateColumnForm } from "./create-column-form"
-import { CreateProjectForm } from "./create-project-form"
 import { CreateTaskForm } from "./create-task-form"
 
 const TasksPage = () => {
@@ -36,11 +30,7 @@ const TasksPage = () => {
   const columnCollection = db.columns
   const taskCollection = db.tasks
 
-  const {
-    data: projects,
-    isLoading: fetchingProjects,
-    refetch: refetchProjects,
-  } = useQuery({
+  const { data: projects } = useQuery({
     queryKey: ["projects", selectedOrganisation?.id],
     enabled: !!selectedOrganisation?.id && !!projectCollection,
     queryFn: () => {
@@ -56,7 +46,6 @@ const TasksPage = () => {
   })
 
   const {
-    data: columns,
     // isLoading: fetchingColumns,
     refetch: refetchColumns,
   } = useQuery({
@@ -72,7 +61,6 @@ const TasksPage = () => {
     },
   })
   const {
-    data: tasks,
     // isLoading: fetchingTasks,
     refetch: refetchTasks,
   } = useQuery({
@@ -88,38 +76,7 @@ const TasksPage = () => {
     },
   })
 
-  const [_boardLoading, setBoardLoading] = useState(true)
-
-  const _board = useMemo(() => {
-    const board = generateBoard(columns ?? [], tasks ?? [])
-
-    setBoardLoading(false)
-    return board
-  }, [columns, tasks])
-
-  const _tasksMutation = useMutation({
-    mutationFn: (tasks: Task[]) => {
-      return Promise.all(
-        tasks.map((t) =>
-          taskCollection
-            .find({
-              selector: {
-                id: t.id,
-              },
-            })
-            .patch({
-              columnId: t.columnId,
-              taskOrder: t.taskOrder,
-              updatedAt: new Date().toISOString(),
-            })
-        )
-      )
-    },
-
-    onSuccess: () => {
-      refetchTasks()
-    },
-  })
+  const [_boardLoading, _setBoardLoading] = useState(true)
 
   // useAutoSync(pushChangesToBackend)
 
@@ -148,31 +105,6 @@ const TasksPage = () => {
       >
         <Flex justify={"between"}>
           <Flex className="mb-4 gap-4">
-            <Select.Root
-              value={selectedProject}
-              onValueChange={setSelectedProject}
-            >
-              <Select.Trigger
-                className="w-full max-w-96"
-                placeholder={fetchingProjects ? "Loading" : "Select Projects"}
-              />
-              <Select.Content>
-                {fetchingProjects && <div>Loading...</div>}
-                {/* {projectsQuery.isError && <div>Error fetching projects</div>} */}
-
-                {projects?.map((p) => (
-                  <Select.Item key={p.id} value={p.id}>
-                    {p.name}
-                  </Select.Item>
-                ))}
-              </Select.Content>
-            </Select.Root>
-            <CreateProjectForm
-              onSuccess={(p) => {
-                refetchProjects()
-                setSelectedProject(p.id)
-              }}
-            />
             {selectedProject && (
               <div className="ml-auto flex gap-4">
                 <CreateColumnForm

@@ -287,14 +287,7 @@ export function ProjectPageComponents() {
                 <SlidersHorizontal size={16} />
               </IconButton>
 
-              <Button
-                onClick={() => setIsAddModalOpen(true)}
-                variant="solid"
-                size="1"
-              >
-                <Plus size={16} />
-                Add Project
-              </Button>
+             
             </Flex>
           </Box>
           <Box

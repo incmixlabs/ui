@@ -32,6 +32,8 @@
     "./kanban": "./src/components/kanban-board/index.tsx",
     "./object": "./src/utils/object.ts",
     "./omit": "./src/utils/omit.ts",
+    "./projects": "./src/components/projects/index.tsx",
+    "./projects-data": "./src/components/projects/data.ts",
     "./preset": "./src/preset.ts",
     "./secondary-sidebars": "./src/components/secondary-sidebars/index.tsx",
     "./secondary-sidebars/file-folder": "./src/components/secondary-sidebars/file-folder/index.tsx",
