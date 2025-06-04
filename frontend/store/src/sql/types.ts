@@ -4,7 +4,6 @@ import {
   toTypedRxJsonSchema,
 } from "rxdb"
 
-
 export const taskStatusSchemaLiteral = {
   title: "task status schema", // Renamed for clarity, was "columns schema"
   version: 0, // Consider incrementing version if this is a migration
@@ -32,8 +31,8 @@ export const taskStatusSchemaLiteral = {
       type: "number",
       default: 0,
       multipleOf: 1,
-      minimum: 0,       // <--- ADD THIS LINE
-      maximum: 100000,  // <--- ADD THIS LINE (adjust as needed, e.g., fewer statuses than tasks)
+      minimum: 0, // <--- ADD THIS LINE
+      maximum: 100000, // <--- ADD THIS LINE (adjust as needed, e.g., fewer statuses than tasks)
     },
     description: {
       type: "string",
@@ -82,8 +81,7 @@ export const taskStatusSchemaLiteral = {
     "updatedBy",
   ],
   indexes: ["projectId", "order"],
-} as const;
-
+} as const
 
 export const taskSchemaLiteral = {
   title: "tasks schema",
@@ -115,8 +113,8 @@ export const taskSchemaLiteral = {
       type: "number",
       default: 0,
       multipleOf: 1,
-      minimum: 0,       
-      maximum: 1000000, 
+      minimum: 0,
+      maximum: 1000000,
     },
     startDate: {
       type: "string",
@@ -238,15 +236,12 @@ export const taskSchemaLiteral = {
     comments: {
       type: "number",
       default: 0,
-      
     },
     createdAt: {
       type: "number",
-      
     },
     updatedAt: {
       type: "number",
-      
     },
     createdBy: {
       type: "object",
@@ -298,7 +293,7 @@ export const taskSchemaLiteral = {
     "updatedBy",
   ],
   indexes: ["projectId", "columnId", ["columnId", "order"]],
-} as const;
+} as const
 
 export const taskDataSchemaLiteral = {
   title: "tasks schema",

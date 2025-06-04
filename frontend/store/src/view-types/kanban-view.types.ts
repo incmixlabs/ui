@@ -1,4 +1,4 @@
-import type { TaskStatusDocType, TaskDocType } from "../sql";
+import type { TaskDocType, TaskStatusDocType } from "../sql"
 
 // Kanban specific types that extend the database types
 export interface KanbanColumn extends TaskStatusDocType {
@@ -52,7 +52,9 @@ export function isColumnData(data: unknown): data is ColumnData {
   )
 }
 
-export function isCardDropTargetData(data: unknown): data is CardDropTargetData {
+export function isCardDropTargetData(
+  data: unknown
+): data is CardDropTargetData {
   return (
     typeof data === "object" &&
     data !== null &&
@@ -61,7 +63,9 @@ export function isCardDropTargetData(data: unknown): data is CardDropTargetData 
   )
 }
 
-export function isColumnDropTargetData(data: unknown): data is ColumnDropTargetData {
+export function isColumnDropTargetData(
+  data: unknown
+): data is ColumnDropTargetData {
   return (
     typeof data === "object" &&
     data !== null &&
@@ -70,11 +74,15 @@ export function isColumnDropTargetData(data: unknown): data is ColumnDropTargetD
   )
 }
 
-export function isDraggingACard({ source }: { source: { data: unknown } }): boolean {
+export function isDraggingACard({
+  source,
+}: { source: { data: unknown } }): boolean {
   return isCardData(source.data)
 }
 
-export function isDraggingAColumn({ source }: { source: { data: unknown } }): boolean {
+export function isDraggingAColumn({
+  source,
+}: { source: { data: unknown } }): boolean {
   return isColumnData(source.data)
 }
 
@@ -96,7 +104,9 @@ export function getCardData({
   }
 }
 
-export function getColumnData({ column }: { column: KanbanColumn }): ColumnData {
+export function getColumnData({
+  column,
+}: { column: KanbanColumn }): ColumnData {
   return {
     type: "column",
     column,

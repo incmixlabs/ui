@@ -1,6 +1,10 @@
-import { database } from "../sql";
-import { generateUniqueId, getCurrentTimestamp } from "../sql/helper";
-import type { TaskStatusDocType, TaskDocType, TaskCollections } from "../sql/types";
+import { database } from "../sql"
+import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
+import type {
+  TaskCollections,
+  TaskDocType,
+  TaskStatusDocType,
+} from "../sql/types"
 
 /**
  * Creates a default user for audit fields when no real user data is available
@@ -9,13 +13,13 @@ import type { TaskStatusDocType, TaskDocType, TaskCollections } from "../sql/typ
 const getDefaultUser = () => ({
   id: "system-default",
   name: "System",
-  image: "/placeholder-avatar.png"
-});
+  image: "/placeholder-avatar.png",
+})
 
 export interface DefaultDataOptions {
-  projectId?: string;
-  statusesOnly?: boolean;
-  forceStatusCreation?: boolean;
+  projectId?: string
+  statusesOnly?: boolean
+  forceStatusCreation?: boolean
 }
 
 /**
@@ -24,22 +28,32 @@ export interface DefaultDataOptions {
  * @param options Configuration options
  * @returns Promise that resolves when initialization is complete
  */
-export async function initializeDefaultData(options: DefaultDataOptions = {}): Promise<void> {
-  const projectId = options.projectId || "default-project";
-  const now = getCurrentTimestamp();
-  const defaultUser = getDefaultUser();
-  
+export async function initializeDefaultData(
+  options: DefaultDataOptions = {}
+): Promise<void> {
+  const projectId = options.projectId || "default-project"
+  const now = getCurrentTimestamp()
+  const defaultUser = getDefaultUser()
+
   try {
     // Initialize task statuses if needed
-    const statuses = await initializeTaskStatuses(database, projectId, now, defaultUser, options.forceStatusCreation);
-    
+    const statuses = await initializeTaskStatuses(
+      database,
+      projectId,
+      now,
+      defaultUser,
+      options.forceStatusCreation
+    )
+
     // Only initialize tasks if not in statusesOnly mode and we have statuses
     if (!options.statusesOnly && statuses.length > 0) {
-      await initializeTasks(database, projectId, statuses, now, defaultUser);
+      await initializeTasks(database, projectId, statuses, now, defaultUser)
     }
   } catch (error) {
-    console.error("Error initializing default data:", error);
-    throw new Error(`Failed to initialize default data: ${error instanceof Error ? error.message : String(error)}`);
+    console.error("Error initializing default data:", error)
+    throw new Error(
+      `Failed to initialize default data: ${error instanceof Error ? error.message : String(error)}`
+    )
   }
 }
 
@@ -48,23 +62,23 @@ export async function initializeDefaultData(options: DefaultDataOptions = {}): P
  */
 async function initializeTaskStatuses(
   db: TaskCollections,
-  projectId: string, 
+  projectId: string,
   timestamp: number,
   user: { id: string; name: string; image: string },
   forceCreation = false
 ): Promise<TaskStatusDocType[]> {
-  const taskStatusCollection = db.taskStatus;
-  
+  const taskStatusCollection = db.taskStatus
+
   // Check if task statuses already exist for this project
   const existingStatuses = await taskStatusCollection
     .find({
-      selector: { projectId }
+      selector: { projectId },
     })
-    .exec();
-    
+    .exec()
+
   if (existingStatuses.length === 0 || forceCreation) {
-    console.log("Creating default task statuses...");
-    
+    console.log("Creating default task statuses...")
+
     const defaultTaskStatuses = [
       {
         id: generateUniqueId("ts"),
@@ -77,7 +91,7 @@ async function initializeTaskStatuses(
         createdAt: timestamp,
         updatedAt: timestamp,
         createdBy: user,
-        updatedBy: user
+        updatedBy: user,
       },
       {
         id: generateUniqueId("ts"),
@@ -90,12 +104,12 @@ async function initializeTaskStatuses(
         createdAt: timestamp,
         updatedAt: timestamp,
         createdBy: user,
-        updatedBy: user
+        updatedBy: user,
       },
       {
         id: generateUniqueId("ts"),
         projectId,
-        name: "Done", 
+        name: "Done",
         color: "#10b981", // Emerald
         order: 2,
         description: "Completed tasks",
@@ -103,20 +117,24 @@ async function initializeTaskStatuses(
         createdAt: timestamp,
         updatedAt: timestamp,
         createdBy: user,
-        updatedBy: user
-      }
-    ];
-    
+        updatedBy: user,
+      },
+    ]
+
     const insertedStatuses = await Promise.all(
-      defaultTaskStatuses.map(status => taskStatusCollection.insert(status))
-    );
-    
-    console.log(`Created ${insertedStatuses.length} default task statuses successfully.`);
-    return insertedStatuses;
+      defaultTaskStatuses.map((status) => taskStatusCollection.insert(status))
+    )
+
+    console.log(
+      `Created ${insertedStatuses.length} default task statuses successfully.`
+    )
+    return insertedStatuses
   }
-  
-  console.log(`${existingStatuses.length} task statuses already exist for project. Skipping creation.`);
-  return existingStatuses;
+
+  console.log(
+    `${existingStatuses.length} task statuses already exist for project. Skipping creation.`
+  )
+  return existingStatuses
 }
 
 /**
@@ -129,21 +147,21 @@ async function initializeTasks(
   timestamp: number,
   user: { id: string; name: string; image: string }
 ): Promise<void> {
-  const tasksCollection = db.tasks;
-  
+  const tasksCollection = db.tasks
+
   // Check if tasks already exist for this project
   const existingTasks = await tasksCollection
     .find({
-      selector: { projectId }
+      selector: { projectId },
     })
-    .exec();
-  
+    .exec()
+
   if (existingTasks.length === 0) {
-    console.log("Creating sample tasks...");
-    
+    console.log("Creating sample tasks...")
+
     // Find the "To Do" status, or use the first status if not found
-    const todoStatus = statuses.find(s => s.name === "To Do") || statuses[0];
-    
+    const todoStatus = statuses.find((s) => s.name === "To Do") || statuses[0]
+
     // Create properly typed sample tasks
     const sampleTasks = [
       {
@@ -162,14 +180,22 @@ async function initializeTasks(
         attachments: [],
         assignedTo: [],
         subTasks: [
-          { id: generateUniqueId("sub"), name: "Create README", completed: false },
-          { id: generateUniqueId("sub"), name: "Set up folder structure", completed: false }
+          {
+            id: generateUniqueId("sub"),
+            name: "Create README",
+            completed: false,
+          },
+          {
+            id: generateUniqueId("sub"),
+            name: "Set up folder structure",
+            completed: false,
+          },
         ],
         comments: 0,
         createdAt: timestamp,
         updatedAt: timestamp,
         createdBy: user,
-        updatedBy: user
+        updatedBy: user,
       },
       {
         id: generateUniqueId("task"),
@@ -180,7 +206,8 @@ async function initializeTasks(
         order: 1,
         startDate: new Date().toISOString(),
         endDate: "",
-        description: "Create wireframes and mockups for the main application screens",
+        description:
+          "Create wireframes and mockups for the main application screens",
         completed: false,
         priority: "medium",
         labelsTags: [{ value: "design", label: "Design", color: "#f472b6" }],
@@ -191,7 +218,7 @@ async function initializeTasks(
         createdAt: timestamp,
         updatedAt: timestamp,
         createdBy: user,
-        updatedBy: user
+        updatedBy: user,
       },
       {
         id: generateUniqueId("task"),
@@ -202,7 +229,8 @@ async function initializeTasks(
         order: 2,
         startDate: new Date().toISOString(),
         endDate: "",
-        description: "Schedule and conduct project kickoff meeting with stakeholders",
+        description:
+          "Schedule and conduct project kickoff meeting with stakeholders",
         completed: false,
         priority: "urgent",
         labelsTags: [{ value: "meeting", label: "Meeting", color: "#fbbf24" }],
@@ -213,18 +241,20 @@ async function initializeTasks(
         createdAt: timestamp,
         updatedAt: timestamp,
         createdBy: user,
-        updatedBy: user
-      }
-    ];
-    
+        updatedBy: user,
+      },
+    ]
+
     // Specific type assertion for each task to ensure TypeScript is happy
     for (const task of sampleTasks) {
-      await tasksCollection.insert(task as unknown as TaskDocType);
+      await tasksCollection.insert(task as unknown as TaskDocType)
     }
-    
-    console.log(`Created ${sampleTasks.length} sample tasks successfully.`);
-    return;
+
+    console.log(`Created ${sampleTasks.length} sample tasks successfully.`)
+    return
   }
-  
-  console.log(`${existingTasks.length} tasks already exist for project. Skipping creation.`);
+
+  console.log(
+    `${existingTasks.length} tasks already exist for project. Skipping creation.`
+  )
 }

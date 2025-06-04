@@ -20,8 +20,8 @@ import { RxDBAttachmentsPlugin } from "rxdb/plugins/attachments"
 import { RxDBMigrationSchemaPlugin } from "rxdb/plugins/migration-schema"
 import { RxDBUpdatePlugin } from "rxdb/plugins/update"
 import { wrappedValidateZSchemaStorage } from "rxdb/plugins/validate-z-schema"
-import { resetDatabase } from "./db-reset"
 import { initializeDefaultData } from "../hooks/use-initialize-default-data"
+import { resetDatabase } from "./db-reset"
 
 addRxPlugin(RxDBUpdatePlugin)
 addRxPlugin(RxDBMigrationSchemaPlugin)
@@ -46,7 +46,9 @@ if (FORCE_DB_RESET) {
     // After resetting in development, we can turn off the force reset
     // to avoid repeatedly clearing data during development
     if (import.meta.env.MODE === "development") {
-      console.info("Set FORCE_DB_RESET to false after validating schema changes")
+      console.info(
+        "Set FORCE_DB_RESET to false after validating schema changes"
+      )
     }
   } catch (error) {
     console.error("Failed to reset database:", error)
@@ -79,30 +81,30 @@ await database.addCollections({
           // Renamed: taskOrder -> order
           order: oldDoc.taskOrder !== undefined ? oldDoc.taskOrder : 0,
           // Ensure labelsTags has correct structure
-          labelsTags: Array.isArray(oldDoc.labelsTags) 
+          labelsTags: Array.isArray(oldDoc.labelsTags)
             ? oldDoc.labelsTags.map((tag: any) => ({
                 value: tag.value || "",
                 label: tag.label || "",
-                color: tag.color || "#6366f1"
+                color: tag.color || "#6366f1",
               }))
             : [],
           // Ensure attachments has correct structure
-          attachments: Array.isArray(oldDoc.attachments || oldDoc.attachment) 
+          attachments: Array.isArray(oldDoc.attachments || oldDoc.attachment)
             ? (oldDoc.attachments || oldDoc.attachment).map((att: any) => ({
                 id: att.id || crypto.randomUUID(),
                 name: att.name || "",
                 url: att.url || "",
                 size: att.size || "0",
-                type: att.type || ""
+                type: att.type || "",
               }))
             : [],
           // Add/ensure other fields with defaults
           priority: oldDoc.priority || "medium",
           completed: oldDoc.completed === undefined ? false : oldDoc.completed,
-          comments: oldDoc.comments || 0
+          comments: oldDoc.comments || 0,
         }
-      }
-    }
+      },
+    },
   },
   taskStatus: { schema: taskStatusSchemaLiteral, autoMigrate: true },
   taskData: { schema: taskDataSchemaLiteral, autoMigrate: true },
@@ -124,7 +126,7 @@ await database.addCollections({
 try {
   await initializeDefaultData({
     projectId: "default-project", // Change to your desired default project ID
-    statusesOnly: false // Set to true if you only want task statuses without sample tasks
+    statusesOnly: false, // Set to true if you only want task statuses without sample tasks
   })
   console.log("Default data initialized successfully")
 } catch (error) {

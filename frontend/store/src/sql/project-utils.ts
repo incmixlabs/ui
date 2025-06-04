@@ -1,7 +1,7 @@
 // sql/project-utils.ts
 import { database } from "./main"
-import type { FormProjectDocType } from "./types"
 import type { TaskDataSchema } from "./task-schemas" // Added import for TaskDataSchema
+import type { FormProjectDocType } from "./types"
 
 // Use the correct status type that matches the schema
 type ProjectStatus = "all" | "started" | "on-hold" | "completed"
