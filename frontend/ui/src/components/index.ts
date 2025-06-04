@@ -32,3 +32,4 @@ export * from "./list-combo-box"
 
 // Export only TanstackDataTable from tanstack-table
 export { TanstackDataTable } from "./tanstack-table"
+export * from "./theme-playground"

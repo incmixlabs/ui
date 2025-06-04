@@ -9,7 +9,7 @@ import { useIsMobile } from "@hooks/use-mobile"
 import { cn } from "@utils/cn"
 import { Button, IconButton, Input, Separator, Sheet, SheetContent, SheetDescription, SheetTitle,  Skeleton } from "@base"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip"
-
+import { useBaseThemeStore } from "@hooks/useBaseThemeStore"
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
@@ -214,6 +214,7 @@ const Sidebar = React.forwardRef<
     ref
   ) => {
     const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+    const { sidebarBg } = useBaseThemeStore()
     const SideBarTrigger = (
       <SidebarTrigger
         icon={
@@ -227,10 +228,10 @@ const Sidebar = React.forwardRef<
       return (
         <div
           className={cn(
-            "flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground",
-            className
+            "flex h-full w-[--sidebar-width] flex-col  text-sidebar-foreground",
           )}
           ref={ref}
+          style={{ backgroundColor: sidebarBg }}
           {...props}
         >
           {SideBarTrigger}
@@ -246,12 +247,13 @@ const Sidebar = React.forwardRef<
             data-sidebar="sidebar"
             data-mobile="true"
             className={cn(
-              "w-[--sidebar-width] bg-sidebar px-1 text-sidebar-foreground [&>button]:hidden",
-              className
+              "w-[--sidebar-width] px-1 text-sidebar-foreground [&>button]:hidden",
+              className,
             )}
             style={
               {
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
+                backgroundColor: sidebarBg 
               } as React.CSSProperties
             }
             side={side}
@@ -324,8 +326,9 @@ const Sidebar = React.forwardRef<
           >
             <div
               data-sidebar="sidebar"
+          style={{ backgroundColor: sidebarBg }}
               className={cn(
-                "flex h-full w-full flex-col bg-sidebar px-1 group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow",
+                "flex h-full w-full flex-col  px-1 group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow",
                 className
               )}
             >

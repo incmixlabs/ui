@@ -1,4 +1,14 @@
-import { Box, Flex, Grid, Heading, Select, Switch, Text } from "@incmix/ui"
+import {
+  Box,
+  Flex,
+  Grid,
+  Heading,
+  Select,
+  Switch,
+  Text,
+  ThemePlayground,
+  useBaseThemeStore,
+} from "@incmix/ui"
 import AutoForm from "@incmix/ui/auto-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
@@ -65,7 +75,10 @@ const usePasswordChangeForm = () => {
     mutationFn: async ({
       currentPassword,
       newPassword,
-    }: { currentPassword: string; newPassword: string }) => {
+    }: {
+      currentPassword: string
+      newPassword: string
+    }) => {
       const response = await fetch(`${AUTH_API_URL}/reset-password`, {
         method: "POST",
         headers: {
@@ -253,7 +266,8 @@ const LanguageSelector: React.FC = () => {
 
 const ThemeSettings: React.FC = () => {
   const { t } = useTranslation(["settings", "common"])
-  const { theme, toggleTheme } = useThemeStore()
+  const appearance = useBaseThemeStore((state) => state.appearance);
+  const toggleTheme = useBaseThemeStore((state) => state.toggleTheme);
 
   return (
     <CardContainer>
@@ -262,10 +276,7 @@ const ThemeSettings: React.FC = () => {
       </Heading>
       <Flex align="center" justify="between">
         <Text>{t("darkMode")}</Text>
-        <Switch
-          checked={theme === "dark"}
-          onCheckedChange={() => toggleTheme()}
-        />
+        <Switch checked={appearance === 'dark'} onCheckedChange={toggleTheme} />
       </Flex>
     </CardContainer>
   )
@@ -281,14 +292,11 @@ const SettingsPage: React.FC = () => {
   if (isError || !user) return null
 
   return (
-    <DashboardLayout
-      breadcrumbItems={[{ label: t("settings"), url: "/settings" }]}
-    >
+    <DashboardLayout>
       <Flex direction="column" className="min-h-full">
         <Heading size="6" mb="6">
           {t("settings")}
         </Heading>
-
         <Grid
           columns={{ initial: "1", md: "2" }}
           gap="6"
@@ -297,7 +305,8 @@ const SettingsPage: React.FC = () => {
           <Flex direction="column" gap="6">
             <ProfileSection user={user} />
             <LanguageSelector />
-            <ThemeSettings />
+            {/* <ThemeSettings /> */}
+            <ThemePlayground />
           </Flex>
 
           <Flex direction="column" gap="6">
