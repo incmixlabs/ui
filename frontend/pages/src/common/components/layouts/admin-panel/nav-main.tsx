@@ -19,7 +19,7 @@ import {
   SidebarMenuSubItem,
 } from "@incmix/ui/sidebar"
 import { Link } from "@tanstack/react-router"
-import { ProjectsSwitcher } from "./projects-switcher"
+import { ProjectSwitcher } from "./project-switcher"
 
 type NavItem = {
   title: string
@@ -376,7 +376,7 @@ export function NavMain({
           ) : (
             <SidebarMenuItem key={item.title}>
               {item.url === "/projects" ? (
-                <ProjectsSwitcher />
+                <ProjectSwitcher />
               ) : (
                 <SidebarMenuButton
                   isSelected={item.isSelected}

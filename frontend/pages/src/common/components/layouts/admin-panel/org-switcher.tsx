@@ -1,20 +1,10 @@
-import { ChevronsUpDown } from "lucide-react"
 import * as React from "react"
 
 import { useOrganizationStore } from "@incmix/store"
-import { DropdownMenu } from "@incmix/ui"
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "@incmix/ui/sidebar"
 import { useOrganizations } from "@orgs/utils"
-import { useTranslation } from "react-i18next"
+import { Switcher, type SwitcherItem } from "./switcher"
 
 export function OrgSwitcher() {
-  const { isMobile } = useSidebar()
-  const { t } = useTranslation(["common", "sidebar"])
   const { organizations, isLoading } = useOrganizations()
   const { selectedOrganisation, setSelectedOrganisation } =
     useOrganizationStore()
@@ -31,51 +21,17 @@ export function OrgSwitcher() {
   if (!selectedOrganisation) return null
 
   return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            >
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  {selectedOrganisation.name}
-                </span>
-              </div>
-              <ChevronsUpDown className="ml-auto" />
-            </SidebarMenuButton>
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
-            align="start"
-            side={isMobile ? "bottom" : "right"}
-            sideOffset={4}
-          >
-            <DropdownMenu.Label className="text-muted-foreground text-xs">
-              {t("organizations")}
-            </DropdownMenu.Label>
-            {organizations.map((org, index) => (
-              <DropdownMenu.Item
-                key={org.name}
-                onClick={() => setSelectedOrganisation(org)}
-                className="gap-2 p-2"
-                shortcut={`⌘${index + 1}`}
-              >
-                {org.name}
-              </DropdownMenu.Item>
-            ))}
-            {/* <DropdownMenu.Separator /> */}
-            {/* <DropdownMenu.Item className="gap-2 p-2">
-              <div className="flex size-6 items-center justify-center rounded-md border bg-background">
-                <Plus className="size-4" />
-              </div>
-              <div className="font-medium text-muted-foreground">Add team</div>
-            </DropdownMenu.Item> */}
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
-      </SidebarMenuItem>
-    </SidebarMenu>
+    <Switcher
+      switchedItem={
+        selectedOrganisation as SwitcherItem | null }
+      items={organizations as SwitcherItem[]}  
+      setSwitchedItem={(id: string | null) => {
+        const org = organizations.find((o) => o.id === id) || null;
+        if (org) {
+          setSelectedOrganisation(org);
+        }
+      }}
+      title="Organizations"
+    />
   )
 }

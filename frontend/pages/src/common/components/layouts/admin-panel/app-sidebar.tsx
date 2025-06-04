@@ -1,23 +1,16 @@
 import {
-  BackpackIcon,
   BoxIcon,
-  ComponentIcon,
-  FileTextIcon,
   FolderClosed,
   HelpCircle,
-  InboxIcon,
-  LanguagesIcon,
   Layers,
   LayoutDashboardIcon,
   LockIcon,
   Notebook,
-  TextIcon,
-  UserIcon,
 } from "lucide-react"
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 
-import { useAuth, useCurrentUser } from "@auth"
+import { useAuth } from "@auth"
 import {
   useDashboardStore,
   useEditingStore,
@@ -41,7 +34,7 @@ import {
 import { createAbilityFromPermissions } from "@incmix/utils/casl"
 import type { Permission } from "@incmix/utils/types"
 import { useQuery } from "@tanstack/react-query"
-import { useLocation, useRouter } from "@tanstack/react-router"
+import { useLocation } from "@tanstack/react-router"
 import { I18n } from "i18n"
 import { ErrorBoundary } from "react-error-boundary"
 import { useTranslation } from "react-i18next"
@@ -152,24 +145,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         //   pathname.includes("/file-manager") ||
         //   pathname.includes("/notes") ||
         //   pathname.includes("/users"),
-        // items: [
-        //   {
-        //     title: "Projects",
-        //     url: "/projects",
-        //     isSelected: pathname.includes("/projects"),
-        //   },
-        //   {
-        //     title: "Tasks",
-        //     url: "/tasks",
-        //     isSelected: pathname.includes("/tasks"),
-        //   },
+          items: [
+          {
+             title: "Projects",
+            url: "/projects",
+            isSelected: pathname.includes("/projects"),
+        },
+         {
+           title: "Tasks",
+            url: "/tasks",
+           isSelected: pathname.includes("/tasks"),
+         },
 
-        //   {
-        //     title: "Users",
-        //     url: "/users",
-        //     isSelected: pathname.includes("/users"),
-        //   },
-        // ],
+           {
+          title: "Users",
+           url: "/users",
+          isSelected: pathname.includes("/users"),
+           },
+        ],
       },
       {
         title: "File Manager",
