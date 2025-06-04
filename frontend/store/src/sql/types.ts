@@ -31,8 +31,8 @@ export const taskStatusSchemaLiteral = {
       type: "number",
       default: 0,
       multipleOf: 1,
-      minimum: 0, // <--- ADD THIS LINE
-      maximum: 100000, // <--- ADD THIS LINE (adjust as needed, e.g., fewer statuses than tasks)
+      minimum: 0,
+      maximum: 100000,
     },
     description: {
       type: "string",
@@ -44,11 +44,11 @@ export const taskStatusSchemaLiteral = {
     },
     createdAt: {
       type: "number",
-      // If indexed: multipleOf: 1, minimum: 0, maximum: Number.MAX_SAFE_INTEGER
+      
     },
     updatedAt: {
       type: "number",
-      // If indexed: multipleOf: 1, minimum: 0, maximum: Number.MAX_SAFE_INTEGER
+     
     },
     createdBy: {
       type: "object",
@@ -85,7 +85,7 @@ export const taskStatusSchemaLiteral = {
 
 export const taskSchemaLiteral = {
   title: "tasks schema",
-  version: 1, // Consider incrementing version if this is a migration on existing data
+  version: 1,
   primaryKey: "id",
   type: "object",
   properties: {

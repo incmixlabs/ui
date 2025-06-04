@@ -112,55 +112,38 @@ export function useKanbanData({
     })
   }
 
+  // Constants for field filtering
+  const AUDIT_FIELDS = ['createdBy', 'updatedBy', 'createdAt', 'updatedAt'] as const
+  const IMMUTABLE_FIELDS = ['id', 'projectId'] as const
+  const EXCLUDED_FIELDS = [...AUDIT_FIELDS, ...IMMUTABLE_FIELDS] as const
+  const DEFAULT_AVATAR = "/placeholder-avatar.png"
+
+  // Utility to omit fields from an object
+  function omitFields<T extends Record<string, any>, K extends readonly string[]>(
+    obj: T, 
+    fields: K
+  ): Pick<T, Exclude<keyof T, K[number]>> {
+    const result = { ...obj } as any
+    fields.forEach(field => delete result[field])
+    return result
+  }
+
   const updateTask = async (taskId: string, updates: Partial<KanbanTask>) => {
-    const {
-      // Audit fields from KanbanTask (which extends TaskDocType)
-      createdBy: _createdBy,
-      updatedBy: _updatedBy,
-      createdAt: _createdAt,
-      updatedAt: _updatedAt,
-      // Other fields that are not part of the direct update payload for TaskDataSchema
-      // or are handled by the store itself.
-      id: _id, // ID is the identifier, not part of the update payload object
-      projectId: _projectId, // projectId is usually not changed via this type of update
-      // Note: 'tasks' property was incorrectly destructured here; KanbanTask does not have it.
-      ...relevantUpdates // These are the fields potentially relevant for the store update
-    } = updates
-
-    // Prepare the payload for the store, starting with relevant updates.
-    // The type assertion helps TypeScript understand our intent, but the structure must match.
-    const payloadForStore: Partial<any> = { ...relevantUpdates }
-
-    // If 'assignedTo' is part of the updates, transform it to meet store requirements.
+    // Filter out audit and immutable fields
+    const relevantUpdates = omitFields(updates, EXCLUDED_FIELDS) as any
+    
+    // Transform assignedTo if present
     if (relevantUpdates.assignedTo) {
-      payloadForStore.assignedTo = relevantUpdates.assignedTo.map((user) => ({
-        ...user, // Spread existing user properties from KanbanTask's user type
-        id: user.id, // Ensure id is present
-        name: user.name, // Ensure name is present
-        avatar: user.avatar || "/placeholder-avatar.png", // Provide a default if undefined
+      relevantUpdates.assignedTo = relevantUpdates.assignedTo.map((user: { id: string; name: string; avatar?: string }) => ({
+        ...user,
+        id: user.id,
+        name: user.name,
+        avatar: user.avatar || DEFAULT_AVATAR,
       }))
     }
-
-    // Other fields in relevantUpdates are assumed to be compatible or will be caught by TS if not.
-    // The type assertion uses an intersection. It primarily uses TaskDocType (omitting audit fields)
-    // but overrides 'assignedTo' to specify that 'avatar' is now a string, matching the store's likely expectation.
-    // This acknowledges our runtime transformation of 'payloadForStore.assignedTo'.
-    // The 'readonly' aspect of the array in TaskDataSchema is harder to assert here, but the object structure is key.
-    await updateTaskInStore(
-      taskId,
-      payloadForStore as Partial<
-        Omit<
-          TaskDocType,
-          | "id"
-          | "projectId"
-          | "createdAt"
-          | "createdBy"
-          | "updatedAt"
-          | "updatedBy"
-          | "assignedTo"
-        >
-      > & { assignedTo?: { id: string; name: string; avatar: string }[] } // Explicitly type assignedTo with avatar: string
-    )
+    
+    // Pass the filtered and transformed updates to the store
+    await updateTaskInStore(taskId, relevantUpdates)
   }
 
   const deleteTask = async (taskId: string) => {

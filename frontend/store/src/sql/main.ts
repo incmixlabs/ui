@@ -36,7 +36,7 @@ const DB_NAME = "incmix-db"
 
 // This flag can be set to true when you need to reset the database
 // due to incompatible schema changes
-const FORCE_DB_RESET = true
+const FORCE_DB_RESET = false
 
 // Reset the database if needed
 if (FORCE_DB_RESET) {

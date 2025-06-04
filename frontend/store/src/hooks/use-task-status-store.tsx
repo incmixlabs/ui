@@ -284,22 +284,16 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
       }))
 
       const taskStatusCollection = database.taskStatus
-      for (let i = 0; i < taskStatusIds.length; i++) {
-        const taskStatusId = taskStatusIds[i]
-        const taskStatusDoc = await taskStatusCollection
-          .findOne({ selector: { id: taskStatusId } })
-          .exec()
-
-        if (taskStatusDoc && taskStatusDoc.order !== i) {
-          await taskStatusDoc.update({
-            $set: {
-              order: i,
-              updatedAt: now,
-              updatedBy: currentUser,
-            },
-          })
-        }
-      }
+      // Create an array of updates with new order values
+      const updates = taskStatusIds.map((id, order) => ({
+        id,
+        order,
+        updatedAt: now,
+        updatedBy: currentUser,
+      }))
+      
+      // Batch-insert or update all statuses at once
+      await taskStatusCollection.bulkUpsert(updates)
     } catch (error) {
       console.error("Failed to reorder task statuses:", error)
       set({

@@ -407,14 +407,13 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
       // Update in database
       const tasksCollection = database.tasks
-      for (let i = 0; i < taskIds.length; i++) {
-        const taskId = taskIds[i]
+      const updatePromises = taskIds.map(async (taskId, i) => {
         const task = await tasksCollection
           .findOne({ selector: { taskId } })
           .exec()
 
         if (task) {
-          await task.update({
+          return task.update({
             $set: {
               order: i,
               updatedAt: now,
@@ -422,7 +421,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
             },
           })
         }
-      }
+      })
+      
+      // Execute all updates in parallel
+      await Promise.all(updatePromises)
     } catch (error) {
       console.error("Failed to reorder tasks:", error)
 
@@ -472,14 +474,13 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
       // Update in database
       const tasksCollection = database.tasks
-      for (let i = 0; i < taskIds.length; i++) {
-        const taskId = taskIds[i]
+      const updatePromises = taskIds.map(async (taskId, i) => {
         const task = await tasksCollection
           .findOne({ selector: { taskId } })
           .exec()
 
         if (task) {
-          await task.update({
+          return task.update({
             $set: {
               columnId: toColumnId,
               order: startOrder + i,
@@ -488,7 +489,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
             },
           })
         }
-      }
+      })
+      
+      // Execute all updates in parallel
+      await Promise.all(updatePromises)
     } catch (error) {
       console.error("Failed to move tasks between columns:", error)
 

@@ -162,8 +162,53 @@ async function initializeTasks(
     // Find the "To Do" status, or use the first status if not found
     const todoStatus = statuses.find((s) => s.name === "To Do") || statuses[0]
 
-    // Create properly typed sample tasks
-    const sampleTasks = [
+    /**
+     * Helper function to create a fully typed TaskDocType from partial data
+     * This ensures all required fields are present and properly typed
+     * @throws Error if required fields are missing
+     */
+    function createTaskDoc(input: Partial<TaskDocType>): TaskDocType {
+      // Validate required fields are present
+      if (!input.id || !input.taskId || !input.projectId || !input.name || !input.columnId) {
+        throw new Error(`Missing required fields for task: ${JSON.stringify(input)}`)
+      }
+
+      if (!input.createdAt || !input.updatedAt || !input.createdBy || !input.updatedBy) {
+        throw new Error(`Missing required audit fields for task: ${JSON.stringify(input)}`)
+      }
+
+      // Create the fully typed task document with all required fields and defaults
+      return {
+        // Required fields (now validated above)
+        id: input.id,
+        taskId: input.taskId,
+        projectId: input.projectId,
+        name: input.name,
+        columnId: input.columnId,
+        
+        // Fields with defaults
+        order: input.order ?? 0,
+        startDate: input.startDate ?? new Date().toISOString(),
+        endDate: input.endDate ?? "",
+        description: input.description ?? "",
+        completed: input.completed ?? false,
+        priority: input.priority ?? "medium" as const,
+        labelsTags: input.labelsTags ?? [],
+        attachments: input.attachments ?? [],
+        assignedTo: input.assignedTo ?? [],
+        subTasks: input.subTasks ?? [],
+        comments: input.comments ?? 0,
+        
+        // Audit fields (now validated above)
+        createdAt: input.createdAt,
+        updatedAt: input.updatedAt,
+        createdBy: input.createdBy,
+        updatedBy: input.updatedBy,
+      }
+    }
+
+    // Define sample tasks with proper typing
+    const sampleTasks: Partial<TaskDocType>[] = [
       {
         id: generateUniqueId("task"),
         taskId: generateUniqueId("tsk"),
@@ -245,9 +290,9 @@ async function initializeTasks(
       },
     ]
 
-    // Specific type assertion for each task to ensure TypeScript is happy
-    for (const task of sampleTasks) {
-      await tasksCollection.insert(task as unknown as TaskDocType)
+    // Insert tasks using the helper function to ensure type safety
+    for (const taskData of sampleTasks) {
+      await tasksCollection.insert(createTaskDoc(taskData))
     }
 
     console.log(`Created ${sampleTasks.length} sample tasks successfully.`)
