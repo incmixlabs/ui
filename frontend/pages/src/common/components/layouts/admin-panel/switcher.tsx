@@ -34,13 +34,17 @@ export function Switcher({
     switchedItem
   )
   React.useEffect(() => {
-    if (!switchedItem) {
+    if (!switchedItem || !items?.length) {
       setSelectedItem(items?.[0] || null)
     } else {
-      const found = items?.find((o) => o.id === selectedItem?.id)
-      if (!found) setSelectedItem(items?.[0])
+      const found = items?.find((o) => o.id === switchedItem.id)
+      if (found) {
+        setSelectedItem(found)
+      } else {
+        setSelectedItem(items?.[0] || null)
+      }
     }
-  }, [selectedItem, items, setSelectedItem])
+  }, [switchedItem, items])
 
   if (!selectedItem) return null
 
