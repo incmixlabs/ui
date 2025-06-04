@@ -3,6 +3,32 @@ import { database } from "../sql"
 import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
 import type { TaskDataSchema } from "../sql/task-schemas"
 
+/**
+ * Helper function to convert ReadonlyArrays to mutable arrays for RxDB
+ * This is necessary because RxDB expects mutable arrays, but our state uses ReadonlyArrays
+ * @template T Type of the input data (full schema or partial schema)
+ * @param data The input data containing possible ReadonlyArrays
+ * @returns A new object with the same properties but with ReadonlyArrays converted to mutable arrays
+ */
+const convertReadonlyArraysForDb = <T extends Partial<TaskDataSchema>>(data: T): T => {
+  const converted = { ...data } as T
+  
+  if (data.labelsTags && Array.isArray(data.labelsTags)) {
+    (converted as any).labelsTags = [...data.labelsTags]
+  }
+  if (data.attachments && Array.isArray(data.attachments)) {
+    (converted as any).attachments = [...data.attachments]
+  }
+  if (data.assignedTo && Array.isArray(data.assignedTo)) {
+    (converted as any).assignedTo = [...data.assignedTo]
+  }
+  if (data.subTasks && Array.isArray(data.subTasks)) {
+    (converted as any).subTasks = [...data.subTasks]
+  }
+  
+  return converted
+}
+
 interface TaskStore {
   tasks: TaskDataSchema[]
   isLoading: boolean
@@ -173,20 +199,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       }))
 
       // Prepare data for RxDB insertion by converting ReadonlyArrays to mutable Arrays
-      const taskDataForDb = {
-        ...newTask,
-        labelsTags: Array.isArray(newTask.labelsTags)
-          ? [...newTask.labelsTags]
-          : [],
-        attachments: Array.isArray(newTask.attachments)
-          ? [...newTask.attachments]
-          : [],
-        assignedTo: Array.isArray(newTask.assignedTo)
-          ? [...newTask.assignedTo]
-          : [],
-        subTasks: Array.isArray(newTask.subTasks) ? [...newTask.subTasks] : [],
-      }
-      await tasksCollection.insert(taskDataForDb)
+      const taskDataForDb = convertReadonlyArraysForDb(newTask)
+      // Need to assert the type for RxDB compatibility
+      await tasksCollection.insert(taskDataForDb as any)
 
       return taskId
     } catch (error) {
@@ -230,19 +245,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       if (!task) throw new Error("Task not found in database")
 
       // Prepare data for RxDB update by converting ReadonlyArrays if they exist in updates
-      const updatesForDb: Partial<TaskDataSchema> = { ...updates }
-      if (updates.labelsTags && Array.isArray(updates.labelsTags)) {
-        updatesForDb.labelsTags = [...updates.labelsTags]
-      }
-      if (updates.attachments && Array.isArray(updates.attachments)) {
-        updatesForDb.attachments = [...updates.attachments]
-      }
-      if (updates.assignedTo && Array.isArray(updates.assignedTo)) {
-        updatesForDb.assignedTo = [...updates.assignedTo]
-      }
-      if (updates.subTasks && Array.isArray(updates.subTasks)) {
-        updatesForDb.subTasks = [...updates.subTasks]
-      }
+      const updatesForDb = convertReadonlyArraysForDb(updates)
 
       const finalUpdatesForDb = {
         ...updatesForDb,
