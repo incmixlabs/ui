@@ -1,4 +1,4 @@
-import React, { CSSProperties, Suspense, useEffect, useMemo } from "react"
+import React, { type CSSProperties, Suspense, useEffect, useMemo } from "react"
 
 import { useQuery } from "@tanstack/react-query"
 import { RouterProvider, createRouter } from "@tanstack/react-router"
@@ -6,12 +6,7 @@ import { setDefaultOptions } from "date-fns"
 
 import { LoadingPage } from "@incmix/pages/common"
 import { I18n, usei18n } from "@incmix/pages/i18n"
-import {
-  type Language,
-  database as db,
-  useLanguageStore,
-  useThemeStore,
-} from "@incmix/store"
+import { type Language, database as db, useLanguageStore } from "@incmix/store"
 import { Theme, Toaster, useBaseThemeStore } from "@incmix/ui"
 import { Provider as RxdbProvider } from "rxdb-hooks"
 import { translations } from "./translations"
@@ -91,7 +86,6 @@ const routeTree = RootRoute.addChildren([
 const router = createRouter({ routeTree })
 
 function App() {
-  const { theme } = useThemeStore()
   const baseTheme = useBaseThemeStore()
   const { language } = useLanguageStore()
   useQuery({
@@ -118,19 +112,21 @@ function App() {
 
   return (
     <Theme
-    appearance={baseTheme.appearance}
-  accentColor={baseTheme.accentColor}
-  grayColor={baseTheme.grayColor}
-  radius={baseTheme.radius}
-  scaling={baseTheme.scaling}
-  style={{
-    '--sidebar-bg'         : baseTheme.sidebarBg,
-    '--secondary-sidebar-bg': baseTheme.secondarySidebarBg,
-    '--main-bg'            : baseTheme.mainBackground,
-    '--dashboard-multi'    : baseTheme.dashboardMulti,
-    '--dashboard-mono-1'   : baseTheme.dashboardMono1,
-    '--dashboard-mono-2'   : baseTheme.dashboardMono2,
-  } as CSSProperties}
+      appearance={baseTheme.appearance}
+      accentColor={baseTheme.accentColor}
+      grayColor={baseTheme.grayColor}
+      radius={baseTheme.radius}
+      scaling={baseTheme.scaling}
+      style={
+        {
+          "--sidebar-bg": baseTheme.sidebarBg,
+          "--secondary-sidebar-bg": baseTheme.secondarySidebarBg,
+          "--main-bg": baseTheme.mainBackground,
+          "--dashboard-multi": baseTheme.dashboardMulti,
+          "--dashboard-mono-1": baseTheme.dashboardMono1,
+          "--dashboard-mono-2": baseTheme.dashboardMono2,
+        } as CSSProperties
+      }
     >
       <RxdbProvider db={db}>
         <Suspense fallback={<LoadingPage />}>

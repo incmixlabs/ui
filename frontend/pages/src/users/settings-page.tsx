@@ -264,10 +264,10 @@ const LanguageSelector: React.FC = () => {
   )
 }
 
-const ThemeSettings: React.FC = () => {
+const _ThemeSettings: React.FC = () => {
   const { t } = useTranslation(["settings", "common"])
-  const appearance = useBaseThemeStore((state) => state.appearance);
-  const toggleTheme = useBaseThemeStore((state) => state.toggleTheme);
+  const appearance = useBaseThemeStore((state) => state.appearance)
+  const toggleTheme = useBaseThemeStore((state) => state.toggleTheme)
 
   return (
     <CardContainer>
@@ -276,7 +276,7 @@ const ThemeSettings: React.FC = () => {
       </Heading>
       <Flex align="center" justify="between">
         <Text>{t("darkMode")}</Text>
-        <Switch checked={appearance === 'dark'} onCheckedChange={toggleTheme} />
+        <Switch checked={appearance === "dark"} onCheckedChange={toggleTheme} />
       </Flex>
     </CardContainer>
   )
