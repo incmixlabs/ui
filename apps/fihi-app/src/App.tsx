@@ -12,7 +12,7 @@ import {
   useLanguageStore,
   useThemeStore,
 } from "@incmix/store"
-import { Theme, Toaster } from "@incmix/ui"
+import { Theme, ThemeProvider, Toaster, useBaseThemeStore } from "@incmix/ui"
 import { Provider as RxdbProvider } from "rxdb-hooks"
 import { translations } from "./translations"
 
@@ -91,6 +91,7 @@ const routeTree = RootRoute.addChildren([
 const router = createRouter({ routeTree })
 
 function App() {
+  const { accentColor, grayColor, borderRadius, scaling } = useBaseThemeStore()
   const { theme } = useThemeStore()
   const { language } = useLanguageStore()
   useQuery({
@@ -116,21 +117,31 @@ function App() {
   }, [])
 
   return (
-    <Theme
-      accentColor="indigo"
-      grayColor="slate"
-      panelBackground="solid"
-      scaling="100%"
-      radius="large"
-      appearance={theme}
+    <ThemeProvider
+      initialTheme={{
+        accentColor,
+        grayColor,
+        borderRadius,
+        scaling,
+        appearance: theme,
+      }}
     >
-      <RxdbProvider db={db}>
-        <Suspense fallback={<LoadingPage />}>
-          <Toaster />
-          <RouterProvider router={router} />
-        </Suspense>
-      </RxdbProvider>
-    </Theme>
+      <Theme
+        accentColor={accentColor}
+        grayColor={grayColor}
+        panelBackground="solid"
+        scaling={scaling}
+        radius={borderRadius}
+        appearance={theme}
+      >
+        <RxdbProvider db={db}>
+          <Suspense fallback={<LoadingPage />}>
+            <Toaster />
+            <RouterProvider router={router} />
+          </Suspense>
+        </RxdbProvider>
+      </Theme>
+    </ThemeProvider>
   )
 }
 

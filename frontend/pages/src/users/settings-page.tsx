@@ -281,9 +281,7 @@ const SettingsPage: React.FC = () => {
   if (isError || !user) return null
 
   return (
-    <DashboardLayout
-      breadcrumbItems={[{ label: t("settings"), url: "/settings" }]}
-    >
+    <DashboardLayout>
       <Flex direction="column" className="min-h-full">
         <Heading size="6" mb="6">
           {t("settings")}
