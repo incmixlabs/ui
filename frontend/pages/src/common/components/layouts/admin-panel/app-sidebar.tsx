@@ -1,22 +1,16 @@
 import {
-  BackpackIcon,
   BoxIcon,
-  ComponentIcon,
-  FileTextIcon,
   FolderClosed,
   HelpCircle,
-  InboxIcon,
-  LanguagesIcon,
   Layers,
   LayoutDashboardIcon,
   LockIcon,
-  TextIcon,
-  UserIcon,
+  Notebook,
 } from "lucide-react"
 
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 
-import { useAuth, useCurrentUser } from "@auth"
+import { useAuth } from "@auth"
 import {
   useDashboardStore,
   useEditingStore,
@@ -40,7 +34,7 @@ import {
 import { createAbilityFromPermissions } from "@incmix/utils/casl"
 import type { Permission } from "@incmix/utils/types"
 import { useQuery } from "@tanstack/react-query"
-import { useLocation, useRouter } from "@tanstack/react-router"
+import { useLocation } from "@tanstack/react-router"
 import { I18n } from "i18n"
 import { ErrorBoundary } from "react-error-boundary"
 import { useTranslation } from "react-i18next"
@@ -123,29 +117,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           : dashboardSubItems,
       },
       {
-        title: t("sidebar:inbox"),
-        url: "/inbox",
-        icon: InboxIcon,
-        isSelected: pathname.includes("/inbox"),
-      },
-      {
-        title: t("sidebar:ecommerce"),
-        url: "/e-commerce",
-        icon: BackpackIcon,
-        isSelected: pathname.includes("/e-commerce"),
-      },
-      {
-        title: "Tasks",
-        url: "/tasks",
-        icon: FileTextIcon,
-        isSelected: pathname.includes("/tasks"),
-        notificationCount: 8,
-      },
-      {
         title: "Projects",
         url: "/projects",
         icon: Layers,
-        isSelected: pathname.includes("/projects"),
+        items: [
+          {
+            title: "Tasks",
+            url: "/tasks",
+            isSelected: pathname.includes("/tasks"),
+          },
+
+          {
+            title: "Users",
+            url: "/users",
+            isSelected: pathname.includes("/users"),
+          },
+        ],
       },
       {
         title: "File Manager",
@@ -156,70 +143,70 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         title: "Notes",
         url: "/notes",
-        icon: FolderClosed,
+        icon: Notebook,
         isSelected: pathname.includes("/notes"),
       },
-      {
-        title: t("common:users"),
-        url: "/users/list",
-        icon: UserIcon,
-        isActive:
-          pathname.startsWith("/users") ||
-          pathname.includes("/profile") ||
-          pathname.includes("/settings"),
-        items: ability.can("read", "Member")
-          ? [
-              {
-                title: t("sidebar:usersList"),
-                url: "/users/list",
-                isSelected: pathname.includes("/users/list"),
-              },
-              {
-                title: t("sidebar:profile"),
-                url: "/profile",
-                isSelected: pathname.includes("/profile"),
-              },
-              {
-                title: t("sidebar:feed"),
-                url: "/users/feed",
-                isSelected: pathname.includes("/users/feed"),
-              },
-              {
-                title: t("sidebar:settings"),
-                url: "/settings",
-                isSelected: pathname.includes("/settings"),
-              },
-            ]
-          : [
-              {
-                title: t("sidebar:profile"),
-                url: "/profile",
-                isSelected: pathname.includes("/profile"),
-              },
-              {
-                title: t("sidebar:feed"),
-                url: "/users/feed",
-                isSelected: pathname.includes("/users/feed"),
-              },
-              {
-                title: t("sidebar:settings"),
-                url: "/settings",
-                isSelected: pathname.includes("/settings"),
-              },
-            ],
-      },
-      {
-        title: t("sidebar:pages"),
-        url: "/pages",
-        icon: FileTextIcon,
-        isSelected: pathname.includes("/pages"),
-      },
-      {
-        title: t("sidebar:authentication"),
-        url: "/auth",
-        icon: LockIcon,
-        isSelected: pathname.includes("/auth"),
-      },
+      // {
+      //   title: t("common:users"),
+      //   url: "/users/list",
+      //   icon: UserIcon,
+      //   isActive:
+      //     pathname.startsWith("/users") ||
+      //     pathname.includes("/profile") ||
+      //     pathname.includes("/settings"),
+      //   items: ability.can("read", "Member")
+      //     ? [
+      //         {
+      //           title: t("sidebar:usersList"),
+      //           url: "/users/list",
+      //           isSelected: pathname.includes("/users/list"),
+      //         },
+      //         {
+      //           title: t("sidebar:profile"),
+      //           url: "/profile",
+      //           isSelected: pathname.includes("/profile"),
+      //         },
+      //         {
+      //           title: t("sidebar:feed"),
+      //           url: "/users/feed",
+      //           isSelected: pathname.includes("/users/feed"),
+      //         },
+      //         {
+      //           title: t("sidebar:settings"),
+      //           url: "/settings",
+      //           isSelected: pathname.includes("/settings"),
+      //         },
+      //       ]
+      //     : [
+      //         {
+      //           title: t("sidebar:profile"),
+      //           url: "/profile",
+      //           isSelected: pathname.includes("/profile"),
+      //         },
+      //         {
+      //           title: t("sidebar:feed"),
+      //           url: "/users/feed",
+      //           isSelected: pathname.includes("/users/feed"),
+      //         },
+      //         {
+      //           title: t("sidebar:settings"),
+      //           url: "/settings",
+      //           isSelected: pathname.includes("/settings"),
+      //         },
+      //       ],
+      // },
+      // {
+      //   title: t("sidebar:pages"),
+      //   url: "/pages",
+      //   icon: FileTextIcon,
+      //   isSelected: pathname.includes("/pages"),
+      // },
+      // {
+      //   title: t("sidebar:authentication"),
+      //   url: "/auth",
+      //   icon: LockIcon,
+      //   isSelected: pathname.includes("/auth"),
+      // },
       {
         title: t("sidebar:organizations"),
         url: "/organizations",
@@ -232,23 +219,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: LockIcon,
         isSelected: pathname.includes("/roles"),
       },
-      {
-        title: t("sidebar:docs"),
-        url: "/docs",
-        icon: TextIcon,
-        isSelected: pathname.includes("/docs"),
-      },
-      {
-        title: t("sidebar:components"),
-        url: "/components",
-        icon: ComponentIcon,
-        isSelected: pathname.includes("/components"),
-      },
-      {
-        title: "Translations",
-        url: "/translations",
-        icon: LanguagesIcon,
-      },
+      // {
+      //   title: t("sidebar:docs"),
+      //   url: "/docs",
+      //   icon: TextIcon,
+      //   isSelected: pathname.includes("/docs"),
+      // },
+      // {
+      //   title: t("sidebar:components"),
+      //   url: "/components",
+      //   icon: ComponentIcon,
+      //   isSelected: pathname.includes("/components"),
+      // },
+      // {
+      //   title: "Translations",
+      //   url: "/translations",
+      //   icon: LanguagesIcon,
+      // },
       {
         title: t("sidebar:help"),
         url: "/help",
@@ -278,7 +265,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarHeader>
         <SidebarContent className="overflow-hidden">
           <ScrollArea className="h-full">
-            <NavMain items={navItems} />
+            <NavMain items={navItems} dashboards={dashboards} />
           </ScrollArea>
         </SidebarContent>
         {user && (
