@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useMemo } from "react"
+import React, { CSSProperties, Suspense, useEffect, useMemo } from "react"
 
 import { useQuery } from "@tanstack/react-query"
 import { RouterProvider, createRouter } from "@tanstack/react-router"
@@ -12,7 +12,7 @@ import {
   useLanguageStore,
   useThemeStore,
 } from "@incmix/store"
-import { Theme, Toaster } from "@incmix/ui"
+import { Theme, Toaster, useBaseThemeStore } from "@incmix/ui"
 import { Provider as RxdbProvider } from "rxdb-hooks"
 import { translations } from "./translations"
 
@@ -92,6 +92,7 @@ const router = createRouter({ routeTree })
 
 function App() {
   const { theme } = useThemeStore()
+  const baseTheme = useBaseThemeStore()
   const { language } = useLanguageStore()
   useQuery({
     queryKey: ["translations"],
@@ -117,12 +118,19 @@ function App() {
 
   return (
     <Theme
-      accentColor="indigo"
-      grayColor="slate"
-      panelBackground="solid"
-      scaling="100%"
-      radius="large"
-      appearance={theme}
+    appearance={baseTheme.appearance}
+  accentColor={baseTheme.accentColor}
+  grayColor={baseTheme.grayColor}
+  radius={baseTheme.radius}
+  scaling={baseTheme.scaling}
+  style={{
+    '--sidebar-bg'         : baseTheme.sidebarBg,
+    '--secondary-sidebar-bg': baseTheme.secondarySidebarBg,
+    '--main-bg'            : baseTheme.mainBackground,
+    '--dashboard-multi'    : baseTheme.dashboardMulti,
+    '--dashboard-mono-1'   : baseTheme.dashboardMono1,
+    '--dashboard-mono-2'   : baseTheme.dashboardMono2,
+  } as CSSProperties}
     >
       <RxdbProvider db={db}>
         <Suspense fallback={<LoadingPage />}>
