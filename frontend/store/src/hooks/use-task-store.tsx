@@ -10,22 +10,24 @@ import type { TaskDataSchema } from "../sql/task-schemas"
  * @param data The input data containing possible ReadonlyArrays
  * @returns A new object with the same properties but with ReadonlyArrays converted to mutable arrays
  */
-const convertReadonlyArraysForDb = <T extends Partial<TaskDataSchema>>(data: T): T => {
+const convertReadonlyArraysForDb = <T extends Partial<TaskDataSchema>>(
+  data: T
+): T => {
   const converted = { ...data } as T
-  
+
   if (data.labelsTags && Array.isArray(data.labelsTags)) {
-    (converted as any).labelsTags = [...data.labelsTags]
+    ;(converted as any).labelsTags = [...data.labelsTags]
   }
   if (data.attachments && Array.isArray(data.attachments)) {
-    (converted as any).attachments = [...data.attachments]
+    ;(converted as any).attachments = [...data.attachments]
   }
   if (data.assignedTo && Array.isArray(data.assignedTo)) {
-    (converted as any).assignedTo = [...data.assignedTo]
+    ;(converted as any).assignedTo = [...data.assignedTo]
   }
   if (data.subTasks && Array.isArray(data.subTasks)) {
-    (converted as any).subTasks = [...data.subTasks]
+    ;(converted as any).subTasks = [...data.subTasks]
   }
-  
+
   return converted
 }
 
