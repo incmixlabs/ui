@@ -101,7 +101,7 @@ export function ProjectPageComponents() {
         setFilteredProjects([...filteredProjects, projectWithId])
       }
       toast.success("Project created successfully", {
-        description: `"${newProject.title}" has been added to your projects.`,
+        description: `"${newProject.name}" has been added to your projects.`,
       })
     } catch (error) {
       console.error("Failed to save project to RxDB:", error)
