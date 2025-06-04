@@ -1,220 +1,366 @@
-import { database } from "sql"
-import type { TaskDataSchema } from "sql"
 import { create } from "zustand"
+import type { TaskDataSchema } from "../sql/task-schemas"
+import { database } from "../sql"
 import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
 
 interface TaskStore {
   tasks: TaskDataSchema[]
-  isInitialLoading: boolean
+  isLoading: boolean
   error: string | null
   initialized: boolean
 
-  initialize: () => Promise<void>
+  // Initialize store
+  initialize: (projectId: string) => Promise<void>
 
+  // CRUD operations
   createTask: (
-    taskData: Omit<TaskDataSchema, "id" | "taskId" | "createdAt" | "updatedAt">
+    projectId: string,
+    taskData: Omit<TaskDataSchema, "id" | "taskId" | "projectId" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy" | "order">
   ) => Promise<string>
-  getTaskByTaskId: (taskId: string) => Promise<TaskDataSchema | null>
-  updateTaskByTaskId: (
+  
+  updateTask: (
     taskId: string,
-    updates: Partial<TaskDataSchema>
+    updates: Partial<Omit<TaskDataSchema, "id" | "projectId" | "createdAt" | "createdBy">>
   ) => Promise<void>
-  deleteTaskByTaskId: (taskId: string) => Promise<void>
-
+  
+  deleteTask: (taskId: string) => Promise<void>
+  
+  // Task movement
   moveTask: (
     taskId: string,
-    newColumnId: string,
-    newOrder: number
+    targetColumnId: string,
+    targetIndex?: number
   ) => Promise<void>
-  reorderTasksInColumn: (columnId: string, taskIds: string[]) => Promise<void>
-  moveTaskBetweenColumns: (
-    taskId: string,
-    fromColumnId: string,
-    toColumnId: string,
-    newOrder: number
-  ) => Promise<void>
-
-  getTasksByColumn: (columnId: string) => TaskDataSchema[]
-  getAllTasks: () => TaskDataSchema[]
-
-  updateLocalTaskOrder: (
+  
+  reorderTasksInColumn: (
     columnId: string,
-    reorderedTasks: TaskDataSchema[]
-  ) => void
-  updateLocalTaskMove: (
-    taskId: string,
-    newColumnId: string,
-    allTasks: TaskDataSchema[]
-  ) => void
+    taskIds: string[]
+  ) => Promise<void>
+  
+  // Getters
+  getTasksByProject: (projectId: string) => TaskDataSchema[];
+  getTasksByColumn: (columnId: string) => TaskDataSchema[];
+  getTaskById: (taskId: string) => TaskDataSchema | undefined;
+  
+  // Bulk operations
+  moveTasksBetweenColumns: (
+    taskIds: string[],
+    fromColumnId: string,
+    toColumnId: string
+  ) => Promise<void>
+  
+  // Local state updates for optimistic UI
+  updateLocalTaskOrder: (columnId: string, reorderedTasks: TaskDataSchema[]) => void
 }
 
 const getCurrentUser = () => ({
-  id: "dsaf0erlkdsfa",
-  name: "Regina Cooper",
-  image: "/placeholder.svg?height=32&width=32",
+  id: "user-id",
+  name: "Current User",
+  image: "/placeholder.svg",
 })
 
 export const useTaskStore = create<TaskStore>((set, get) => ({
   tasks: [],
-  isInitialLoading: false,
+  isLoading: false,
   error: null,
   initialized: false,
 
-  initialize: async () => {
-    if (get().initialized) return
+  getTasksByProject: (projectId: string): TaskDataSchema[] => {
+    return get().tasks.filter((task: TaskDataSchema) => task.projectId === projectId);
+  },
+  getTasksByColumn: (columnId: string): TaskDataSchema[] => {
+    return get().tasks.filter((task: TaskDataSchema) => task.columnId === columnId).sort((a, b) => a.order - b.order);
+  },
+  getTaskById: (taskId: string): TaskDataSchema | undefined => {
+    return get().tasks.find((task: TaskDataSchema) => task.taskId === taskId);
+  },
 
-    set({ isInitialLoading: true, error: null })
+  initialize: async (projectId: string) => {
+    set({ isLoading: true, error: null })
 
     try {
-      const tasksCollection = database.taskData
-      const allTasks = await tasksCollection.find().exec()
-      const normalizedTasks = allTasks.map((task) => task.toJSON())
+      const tasksCollection = database.tasks
+      const projectTasks = await tasksCollection
+        .find({
+          selector: { projectId },
+          sort: [{ columnId: "asc" }, { order: "asc" }],
+        })
+        .exec()
+
+      const normalizedTasks = projectTasks.map((taskDoc) => {
+        const task = taskDoc.toJSON();
+        return {
+          ...task,
+          completed: task.completed ?? false, // Ensure completed is always boolean
+          // Ensure other non-optional fields in TaskDataSchema that might be undefined from toJSON() have defaults
+          // Example: priority: task.priority ?? "medium", (already handled in createTask, but good to be mindful)
+          // labelsTags, attachments, assignedTo, subTasks are ReadonlyArray and should be handled if they can be undefined from toJSON()
+          // and are non-optional in TaskDataSchema. Currently, they are non-optional in TaskDataSchema
+          // and defaulted to [] in createTask, so toJSON() should provide at least [].
+        } as TaskDataSchema; // Assert type after ensuring compatibility
+      })
 
       set({
         tasks: normalizedTasks,
         initialized: true,
-        isInitialLoading: false,
+        isLoading: false,
         error: null,
       })
-
-      console.log(`Loaded ${normalizedTasks.length} tasks`)
     } catch (error) {
       console.error("Failed to initialize tasks:", error)
       set({
-        error: "Failed to initialize tasks",
-        isInitialLoading: false,
+        error: "Failed to load tasks",
+        isLoading: false,
         initialized: false,
       })
     }
   },
 
-  createTask: async (taskData) => {
-    let id: string
+  createTask: async (projectId, taskData) => {
+    const id = generateUniqueId("task")
+    const taskId = generateUniqueId("tsk")
+    const now = getCurrentTimestamp()
+    const currentUser = getCurrentUser()
+
     try {
-      const tasksCollection = database.taskData
-      const now = getCurrentTimestamp()
-      id = generateUniqueId("task")
-      const taskId = generateUniqueId("tsk")
-      const currentUser = getCurrentUser()
+      const tasksCollection = database.tasks
+      
+      // Get the highest order in the target column
+      const tasksInColumn = get().tasks.filter(
+        task => task.columnId === taskData.columnId
+      )
+      const maxOrder = Math.max(...tasksInColumn.map(task => task.order), -1)
 
       const newTask: TaskDataSchema = {
         ...taskData,
         id,
         taskId,
+        projectId,
+        order: maxOrder + 1,
         createdAt: now,
         updatedAt: now,
         createdBy: currentUser,
         updatedBy: currentUser,
+        // Set defaults for optional fields
+        completed: taskData.completed ?? false,
+        priority: taskData.priority ?? "medium",
+        labelsTags: taskData.labelsTags ?? [],
+        attachments: taskData.attachments ?? [],
+        assignedTo: taskData.assignedTo ?? [],
+        subTasks: taskData.subTasks ?? [],
+        comments: taskData.comments ?? 0,
       }
 
+      // Optimistic update
       set((state) => ({
         tasks: [...state.tasks, newTask],
       }))
 
-      await tasksCollection.insert(newTask)
-      console.log(`Created task: ${taskId}`)
+      // Prepare data for RxDB insertion by converting ReadonlyArrays to mutable Arrays
+      const taskDataForDb = {
+        ...newTask,
+        labelsTags: Array.isArray(newTask.labelsTags) ? [...newTask.labelsTags] : [],
+        attachments: Array.isArray(newTask.attachments) ? [...newTask.attachments] : [],
+        assignedTo: Array.isArray(newTask.assignedTo) ? [...newTask.assignedTo] : [],
+        subTasks: Array.isArray(newTask.subTasks) ? [...newTask.subTasks] : [],
+      };
+      await tasksCollection.insert(taskDataForDb)
+      
       return taskId
     } catch (error) {
       console.error("Failed to create task:", error)
-      // ✅ Revert optimistic update
+      
+      // Revert optimistic update
       set((state) => ({
         tasks: state.tasks.filter((t) => t.id !== id),
         error: "Failed to create task",
       }))
+      
       throw error
     }
   },
 
-  getTaskByTaskId: async (taskId) => {
-    try {
-      // First check if we have it in the local state
-      const localTask = get().tasks.find((t) => t.taskId === taskId)
-      if (localTask) return localTask
+  updateTask: async (taskId, updates) => {
+    const originalTask = get().tasks.find(t => t.taskId === taskId)
+    if (!originalTask) throw new Error("Task not found")
 
-      // If not found locally, try to fetch from database
-      const tasksCollection = database.taskData
-      const task = await tasksCollection
-        .findOne({
-          selector: { taskId },
-        })
-        .exec()
-
-      return task ? task.toJSON() : null
-    } catch (error) {
-      console.error("Failed to get task:", error)
-      return null
-    }
-  },
-
-  updateTaskByTaskId: async (taskId, updates) => {
     try {
       const now = getCurrentTimestamp()
       const currentUser = getCurrentUser()
-      const updatedData = { ...updates, updatedAt: now, updatedBy: currentUser }
+      const updatedDataForState = { 
+        ...updates, 
+        updatedAt: now, 
+        updatedBy: currentUser 
+      }
 
+      // Optimistic update
       set((state) => ({
-        tasks: state.tasks.map((t) =>
-          t.taskId === taskId ? { ...t, ...updatedData } : t
+        tasks: state.tasks.map((task) =>
+          task.taskId === taskId ? { ...task, ...updatedDataForState } : task
         ),
       }))
 
-      const tasksCollection = database.taskData
+      const tasksCollection = database.tasks
       const task = await tasksCollection
         .findOne({ selector: { taskId } })
         .exec()
 
-      if (!task) throw new Error("Task not found")
+      if (!task) throw new Error("Task not found in database")
 
-      await task.update({ $set: updatedData })
-      console.log(`Updated task: ${taskId}`)
+      // Prepare data for RxDB update by converting ReadonlyArrays if they exist in updates
+      const updatesForDb: Partial<TaskDataSchema> = { ...updates };
+      if (updates.labelsTags && Array.isArray(updates.labelsTags)) {
+        updatesForDb.labelsTags = [...updates.labelsTags];
+      }
+      if (updates.attachments && Array.isArray(updates.attachments)) {
+        updatesForDb.attachments = [...updates.attachments];
+      }
+      if (updates.assignedTo && Array.isArray(updates.assignedTo)) {
+        updatesForDb.assignedTo = [...updates.assignedTo];
+      }
+      if (updates.subTasks && Array.isArray(updates.subTasks)) {
+        updatesForDb.subTasks = [...updates.subTasks];
+      }
+      
+      const finalUpdatesForDb = {
+        ...updatesForDb,
+        updatedAt: now,
+        updatedBy: currentUser,
+      }
+
+      await task.update({ $set: finalUpdatesForDb })
     } catch (error) {
       console.error("Failed to update task:", error)
-      set({ error: "Failed to update task" })
+      
+      // Revert optimistic update
+      set((state) => ({
+        tasks: state.tasks.map((task) =>
+          task.taskId === taskId ? originalTask : task
+        ),
+        error: "Failed to update task",
+      }))
+      
       throw error
     }
   },
 
-  deleteTaskByTaskId: async (taskId) => {
-    const taskToDelete = get().tasks.find((t) => t.taskId === taskId)
+  deleteTask: async (taskId) => {
+    const taskToDelete = get().tasks.find(t => t.taskId === taskId)
+    if (!taskToDelete) throw new Error("Task not found")
 
     try {
+      // Optimistic update
       set((state) => ({
         tasks: state.tasks.filter((t) => t.taskId !== taskId),
       }))
 
-      const tasksCollection = database.taskData
+      const tasksCollection = database.tasks
       const task = await tasksCollection
         .findOne({ selector: { taskId } })
         .exec()
 
       if (task) {
         await task.remove()
-        console.log(`Deleted task: ${taskId}`)
       }
     } catch (error) {
       console.error("Failed to delete task:", error)
-      if (taskToDelete) {
-        set((state) => ({
-          tasks: [...state.tasks, taskToDelete],
-          error: "Failed to delete task",
-        }))
-      }
+      
+      // Revert optimistic update
+      set((state) => ({
+        tasks: [...state.tasks, taskToDelete],
+        error: "Failed to delete task",
+      }))
+      
       throw error
     }
   },
 
-  moveTask: async (taskId, newColumnId, newOrder) => {
-    await get().updateTaskByTaskId(taskId, {
-      columnId: newColumnId,
-      taskOrder: newOrder,
-    })
+  moveTask: async (taskId, targetColumnId, targetIndex) => {
+    const task = get().tasks.find(t => t.taskId === taskId)
+    if (!task) throw new Error("Task not found")
+
+    const originalTasks = [...get().tasks]
+
+    try {
+      const now = getCurrentTimestamp()
+      const currentUser = getCurrentUser()
+      
+      // Get tasks in the target column
+      const tasksInTargetColumn = get()
+        .tasks.filter(t => t.columnId === targetColumnId && t.taskId !== taskId)
+        .sort((a, b) => a.order - b.order)
+
+      // Calculate new order
+      let newOrder: number
+      if (targetIndex === undefined || targetIndex >= tasksInTargetColumn.length) {
+        // Add to end
+        newOrder = tasksInTargetColumn.length > 0 
+          ? tasksInTargetColumn[tasksInTargetColumn.length - 1].order + 1 
+          : 0
+      } else if (targetIndex === 0) {
+        // Add to beginning
+        newOrder = tasksInTargetColumn.length > 0 
+          ? tasksInTargetColumn[0].order / 2 
+          : 0
+      } else {
+        // Add between two tasks
+        const prevOrder = tasksInTargetColumn[targetIndex - 1].order
+        const nextOrder = tasksInTargetColumn[targetIndex].order
+        newOrder = (prevOrder + nextOrder) / 2
+      }
+
+      // Optimistic update
+      set((state) => ({
+        tasks: state.tasks.map((t) =>
+          t.taskId === taskId
+            ? {
+                ...t,
+                columnId: targetColumnId,
+                order: newOrder,
+                updatedAt: now,
+                updatedBy: currentUser,
+              }
+            : t
+        ),
+      }))
+
+      // Update in database
+      const tasksCollection = database.tasks
+      const dbTask = await tasksCollection
+        .findOne({ selector: { taskId } })
+        .exec()
+
+      if (!dbTask) throw new Error("Task not found in database")
+
+      await dbTask.update({
+        $set: {
+          columnId: targetColumnId,
+          order: newOrder,
+          updatedAt: now,
+          updatedBy: currentUser,
+        },
+      })
+    } catch (error) {
+      console.error("Failed to move task:", error)
+      
+      // Revert optimistic update
+      set({
+        tasks: originalTasks,
+        error: "Failed to move task",
+      })
+      
+      throw error
+    }
   },
 
   reorderTasksInColumn: async (columnId, taskIds) => {
+    const originalTasks = [...get().tasks]
+
     try {
       const now = getCurrentTimestamp()
       const currentUser = getCurrentUser()
 
+      // Optimistic update
       set((state) => ({
         tasks: state.tasks.map((task) => {
           if (task.columnId === columnId) {
@@ -222,7 +368,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
             if (newOrder !== -1) {
               return {
                 ...task,
-                taskOrder: newOrder,
+                order: newOrder,
                 updatedAt: now,
                 updatedBy: currentUser,
               }
@@ -232,84 +378,103 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         }),
       }))
 
-      const tasksCollection = database.taskData
+      // Update in database
+      const tasksCollection = database.tasks
       for (let i = 0; i < taskIds.length; i++) {
         const taskId = taskIds[i]
         const task = await tasksCollection
           .findOne({ selector: { taskId } })
           .exec()
+          
         if (task) {
           await task.update({
-            $set: { taskOrder: i, updatedAt: now, updatedBy: currentUser },
+            $set: { 
+              order: i, 
+              updatedAt: now, 
+              updatedBy: currentUser 
+            },
           })
         }
       }
-
-      console.log(`Reordered ${taskIds.length} tasks in column: ${columnId}`)
     } catch (error) {
       console.error("Failed to reorder tasks:", error)
-      set({ error: "Failed to reorder tasks" })
+      
+      // Revert optimistic update
+      set({
+        tasks: originalTasks,
+        error: "Failed to reorder tasks",
+      })
+      
       throw error
     }
   },
 
-  moveTaskBetweenColumns: async (
-    taskId,
-    fromColumnId,
-    toColumnId,
-    newOrder
-  ) => {
+  moveTasksBetweenColumns: async (taskIds,  toColumnId) => {
+    const originalTasks = [...get().tasks]
+
     try {
       const now = getCurrentTimestamp()
       const currentUser = getCurrentUser()
 
+      // Get existing tasks in target column
+      const tasksInTargetColumn = get()
+        .tasks.filter(t => t.columnId === toColumnId)
+        .sort((a, b) => a.order - b.order)
+      
+      const startOrder = tasksInTargetColumn.length > 0
+        ? tasksInTargetColumn[tasksInTargetColumn.length - 1].order + 1
+        : 0
+
+      // Optimistic update
       set((state) => ({
-        tasks: state.tasks.map((task) =>
-          task.taskId === taskId
-            ? {
-                ...task,
-                columnId: toColumnId,
-                taskOrder: newOrder,
-                updatedAt: now,
-                updatedBy: currentUser,
-              }
-            : task
-        ),
+        tasks: state.tasks.map((task) => {
+          const taskIndex = taskIds.indexOf(task.taskId)
+          if (taskIndex !== -1) {
+            return {
+              ...task,
+              columnId: toColumnId,
+              order: startOrder + taskIndex,
+              updatedAt: now,
+              updatedBy: currentUser,
+            }
+          }
+          return task
+        }),
       }))
 
-      const tasksCollection = database.taskData
-      const movedTask = await tasksCollection
-        .findOne({ selector: { taskId } })
-        .exec()
-
-      if (!movedTask) throw new Error("Task not found")
-
-      await movedTask.update({
-        $set: {
-          columnId: toColumnId,
-          taskOrder: newOrder,
-          updatedAt: now,
-          updatedBy: currentUser,
-        },
-      })
-
-      console.log(`Moved task ${taskId} from ${fromColumnId} to ${toColumnId}`)
+      // Update in database
+      const tasksCollection = database.tasks
+      for (let i = 0; i < taskIds.length; i++) {
+        const taskId = taskIds[i]
+        const task = await tasksCollection
+          .findOne({ selector: { taskId } })
+          .exec()
+          
+        if (task) {
+          await task.update({
+            $set: {
+              columnId: toColumnId,
+              order: startOrder + i,
+              updatedAt: now,
+              updatedBy: currentUser,
+            },
+          })
+        }
+      }
     } catch (error) {
-      console.error("Failed to move task between columns:", error)
-      set({ error: "Failed to move task between columns" })
+      console.error("Failed to move tasks between columns:", error)
+      
+      // Revert optimistic update
+      set({
+        tasks: originalTasks,
+        error: "Failed to move tasks",
+      })
+      
       throw error
     }
   },
 
-  getTasksByColumn: (columnId) => {
-    return get()
-      .tasks.filter((task) => task.columnId === columnId)
-      .sort((a, b) => a.taskOrder - b.taskOrder)
-  },
 
-  getAllTasks: () => {
-    return get().tasks
-  },
 
   updateLocalTaskOrder: (columnId, reorderedTasks) => {
     set((state) => ({
@@ -323,9 +488,5 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         return task
       }),
     }))
-  },
-
-  updateLocalTaskMove: (_taskId, _newColumnId, allTasks) => {
-    set({ tasks: allTasks })
   },
 }))

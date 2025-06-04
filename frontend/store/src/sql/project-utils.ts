@@ -1,59 +1,12 @@
 // sql/project-utils.ts
 import { database } from "./main"
 import type { FormProjectDocType } from "./types"
+import type { TaskDataSchema } from "./task-schemas" // Added import for TaskDataSchema
 
 // Use the correct status type that matches the schema
 type ProjectStatus = "all" | "started" | "on-hold" | "completed"
 type TimeType = "day" | "days" | "week" | "month" | "year"
 
-export type TaskDataSchema = {
-  id: string
-  taskId: string
-  projectId: string
-  name: string
-  columnId: string
-  startDate: string
-  endDate: string
-  description?: string
-  completed: boolean
-  taskOrder: number
-  labelsTags: Array<{
-    value: string
-    label: string
-    color: string
-    checked: boolean
-  }>
-  attachment: Array<{
-    name: string
-    url: string
-    size: string
-  }>
-  assignedTo: Array<{
-    value: string
-    name: string
-    label: string
-    avatar: string
-    color: string
-    checked: boolean
-  }>
-  subTasks: Array<{
-    name: string
-    progress: number
-    completed: boolean
-  }>
-  createdAt: number
-  updatedAt: number
-  createdBy: {
-    id: string
-    name: string
-    image: string
-  }
-  updatedBy: {
-    id: string
-    name: string
-    image: string
-  }
-}
 // Update the type to match the actual form data structure with optional fields
 type ProjectFormData = {
   id: string
