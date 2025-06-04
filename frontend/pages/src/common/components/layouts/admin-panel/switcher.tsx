@@ -9,30 +9,36 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@incmix/ui/sidebar"
-import { useTranslation } from "react-i18next"
 import { Item } from "@radix-ui/themes/components/dropdown-menu"
+import { useTranslation } from "react-i18next"
 export type SwitcherItem = {
-  id: string,
-  name: string,
-  [key:string]: any
+  id: string
+  name: string
+  [key: string]: any
 }
 export type SwitcherProps = {
-  items: SwitcherItem[],
-  switchedItem: SwitcherItem | null,
-  setSwitchedItem: (id:string | null) => void,
+  items: SwitcherItem[]
+  switchedItem: SwitcherItem | null
+  setSwitchedItem: (id: string | null) => void
   title: string
 }
-export function Switcher({switchedItem, items,  setSwitchedItem, title} : SwitcherProps) {
+export function Switcher({
+  switchedItem,
+  items,
+  setSwitchedItem,
+  title,
+}: SwitcherProps) {
   const { isMobile } = useSidebar()
   const { t } = useTranslation(["common", "sidebar"])
-  const [selectedItem, setSelectedItem ] = React.useState<SwitcherItem| null>(switchedItem)
+  const [selectedItem, setSelectedItem] = React.useState<SwitcherItem | null>(
+    switchedItem
+  )
   React.useEffect(() => {
     if (!switchedItem) {
       setSelectedItem(items?.[0] || null)
-    }
-    else {
+    } else {
       const found = items?.find((o) => o.id === selectedItem?.id)
-      if (!found)  setSelectedItem(items?.[0])
+      if (!found) setSelectedItem(items?.[0])
     }
   }, [selectedItem, items, setSelectedItem])
 

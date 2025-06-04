@@ -22,13 +22,12 @@ export function OrgSwitcher() {
 
   return (
     <Switcher
-      switchedItem={
-        selectedOrganisation as SwitcherItem | null }
-      items={organizations as SwitcherItem[]}  
+      switchedItem={selectedOrganisation as SwitcherItem | null}
+      items={organizations as SwitcherItem[]}
       setSwitchedItem={(id: string | null) => {
-        const org = organizations.find((o) => o.id === id) || null;
+        const org = organizations.find((o) => o.id === id) || null
         if (org) {
-          setSelectedOrganisation(org);
+          setSelectedOrganisation(org)
         }
       }}
       title="Organizations"

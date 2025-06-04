@@ -69,9 +69,6 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
         reset()
       }}
     >
-      <Dialog.Trigger>
-        <Button>Create Project</Button>
-      </Dialog.Trigger>
       <Dialog.Content className="border border-gray-4">
         <Dialog.Header>
           <Dialog.Title>Create New Project</Dialog.Title>

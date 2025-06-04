@@ -1,11 +1,11 @@
 import { I18n } from "@incmix/pages/i18n"
 import { ORG_API_URL } from "@incmix/ui/constants"
+import { projects } from "@incmix/ui/projects-data"
 import { useQuery } from "@tanstack/react-query"
-import { projects } from "@incmix/ui/projects-data";
 
 export function useProjects() {
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["organizations", I18n.language],
+    queryKey: ["projects", I18n.language],
     queryFn: async () => {
       const res = await fetch(`${ORG_API_URL}/user`, {
         credentials: "include",
@@ -14,7 +14,7 @@ export function useProjects() {
         },
       })
       if (!res.ok) throw new Error(I18n.t("error.fetchOrganizations"))
-    // return res.json()
+      // return res.json()
       return projects
     },
     retry: false,

@@ -116,52 +116,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           ? dashboardSubItems
           : dashboardSubItems,
       },
-      // {
-      //   title: t("sidebar:inbox"),
-      //   url: "/inbox",
-      //   icon: InboxIcon,
-      //   isSelected: pathname.includes("/inbox"),
-      // },
-      // {
-      //   title: t("sidebar:ecommerce"),
-      //   url: "/e-commerce",
-      //   icon: BackpackIcon,
-      //   isSelected: pathname.includes("/e-commerce"),
-      // },
-      // {
-      //   title: "Tasks",
-      //   url: "/tasks",
-      //   icon: FileTextIcon,
-      //   isSelected: pathname.includes("/tasks"),
-      //   notificationCount: 8,
-      // },
       {
         title: "Projects",
         url: "/projects",
         icon: Layers,
-        // isActive:
-        //   pathname.startsWith("/projects") ||
-        //   pathname.includes("/tasks") ||
-        //   pathname.includes("/file-manager") ||
-        //   pathname.includes("/notes") ||
-        //   pathname.includes("/users"),
-          items: [
+        items: [
           {
-             title: "Projects",
-            url: "/projects",
-            isSelected: pathname.includes("/projects"),
-        },
-         {
-           title: "Tasks",
+            title: "Tasks",
             url: "/tasks",
-           isSelected: pathname.includes("/tasks"),
-         },
+            isSelected: pathname.includes("/tasks"),
+          },
 
-           {
-          title: "Users",
-           url: "/users",
-          isSelected: pathname.includes("/users"),
-           },
+          {
+            title: "Users",
+            url: "/users",
+            isSelected: pathname.includes("/users"),
+          },
         ],
       },
       {
