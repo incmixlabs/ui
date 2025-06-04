@@ -44,11 +44,9 @@ export const taskStatusSchemaLiteral = {
     },
     createdAt: {
       type: "number",
-      
     },
     updatedAt: {
       type: "number",
-     
     },
     createdBy: {
       type: "object",

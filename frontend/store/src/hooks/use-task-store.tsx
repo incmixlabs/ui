@@ -422,7 +422,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
           })
         }
       })
-      
+
       // Execute all updates in parallel
       await Promise.all(updatePromises)
     } catch (error) {
@@ -490,7 +490,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
           })
         }
       })
-      
+
       // Execute all updates in parallel
       await Promise.all(updatePromises)
     } catch (error) {

@@ -113,35 +113,42 @@ export function useKanbanData({
   }
 
   // Constants for field filtering
-  const AUDIT_FIELDS = ['createdBy', 'updatedBy', 'createdAt', 'updatedAt'] as const
-  const IMMUTABLE_FIELDS = ['id', 'projectId'] as const
+  const AUDIT_FIELDS = [
+    "createdBy",
+    "updatedBy",
+    "createdAt",
+    "updatedAt",
+  ] as const
+  const IMMUTABLE_FIELDS = ["id", "projectId"] as const
   const EXCLUDED_FIELDS = [...AUDIT_FIELDS, ...IMMUTABLE_FIELDS] as const
   const DEFAULT_AVATAR = "/placeholder-avatar.png"
 
   // Utility to omit fields from an object
-  function omitFields<T extends Record<string, any>, K extends readonly string[]>(
-    obj: T, 
-    fields: K
-  ): Pick<T, Exclude<keyof T, K[number]>> {
+  function omitFields<
+    T extends Record<string, any>,
+    K extends readonly string[],
+  >(obj: T, fields: K): Pick<T, Exclude<keyof T, K[number]>> {
     const result = { ...obj } as any
-    fields.forEach(field => delete result[field])
+    fields.forEach((field) => delete result[field])
     return result
   }
 
   const updateTask = async (taskId: string, updates: Partial<KanbanTask>) => {
     // Filter out audit and immutable fields
     const relevantUpdates = omitFields(updates, EXCLUDED_FIELDS) as any
-    
+
     // Transform assignedTo if present
     if (relevantUpdates.assignedTo) {
-      relevantUpdates.assignedTo = relevantUpdates.assignedTo.map((user: { id: string; name: string; avatar?: string }) => ({
-        ...user,
-        id: user.id,
-        name: user.name,
-        avatar: user.avatar || DEFAULT_AVATAR,
-      }))
+      relevantUpdates.assignedTo = relevantUpdates.assignedTo.map(
+        (user: { id: string; name: string; avatar?: string }) => ({
+          ...user,
+          id: user.id,
+          name: user.name,
+          avatar: user.avatar || DEFAULT_AVATAR,
+        })
+      )
     }
-    
+
     // Pass the filtered and transformed updates to the store
     await updateTaskInStore(taskId, relevantUpdates)
   }

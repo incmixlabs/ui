@@ -291,7 +291,7 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
         updatedAt: now,
         updatedBy: currentUser,
       }))
-      
+
       // Batch-insert or update all statuses at once
       await taskStatusCollection.bulkUpsert(updates)
     } catch (error) {

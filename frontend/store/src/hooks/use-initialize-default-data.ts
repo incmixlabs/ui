@@ -169,12 +169,27 @@ async function initializeTasks(
      */
     function createTaskDoc(input: Partial<TaskDocType>): TaskDocType {
       // Validate required fields are present
-      if (!input.id || !input.taskId || !input.projectId || !input.name || !input.columnId) {
-        throw new Error(`Missing required fields for task: ${JSON.stringify(input)}`)
+      if (
+        !input.id ||
+        !input.taskId ||
+        !input.projectId ||
+        !input.name ||
+        !input.columnId
+      ) {
+        throw new Error(
+          `Missing required fields for task: ${JSON.stringify(input)}`
+        )
       }
 
-      if (!input.createdAt || !input.updatedAt || !input.createdBy || !input.updatedBy) {
-        throw new Error(`Missing required audit fields for task: ${JSON.stringify(input)}`)
+      if (
+        !input.createdAt ||
+        !input.updatedAt ||
+        !input.createdBy ||
+        !input.updatedBy
+      ) {
+        throw new Error(
+          `Missing required audit fields for task: ${JSON.stringify(input)}`
+        )
       }
 
       // Create the fully typed task document with all required fields and defaults
@@ -185,20 +200,20 @@ async function initializeTasks(
         projectId: input.projectId,
         name: input.name,
         columnId: input.columnId,
-        
+
         // Fields with defaults
         order: input.order ?? 0,
         startDate: input.startDate ?? new Date().toISOString(),
         endDate: input.endDate ?? "",
         description: input.description ?? "",
         completed: input.completed ?? false,
-        priority: input.priority ?? "medium" as const,
+        priority: input.priority ?? ("medium" as const),
         labelsTags: input.labelsTags ?? [],
         attachments: input.attachments ?? [],
         assignedTo: input.assignedTo ?? [],
         subTasks: input.subTasks ?? [],
         comments: input.comments ?? 0,
-        
+
         // Audit fields (now validated above)
         createdAt: input.createdAt,
         updatedAt: input.updatedAt,
