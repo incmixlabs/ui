@@ -260,7 +260,7 @@ export function NavMain({
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
                     {item.notificationCount && (
-                      <div className="ml-auto rounded-md bg-[hsl(var(--sidebar-foreground))] px-1.5 font-normal text-[10px] text-[hsl(var(--sidebar-background))] transition-transform duration-200">
+                      <div className="ml-auto rounded-md bg-[var(--sidebar-bg)] text-[10px] text-[var(--sidebar-bg-foreground)] transition-transform duration-200">
                         {item.notificationCount}
                       </div>
                     )}
