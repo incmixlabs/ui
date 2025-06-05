@@ -119,12 +119,16 @@ function App() {
       scaling={baseTheme.scaling}
       style={
         {
-          "--sidebar-bg": baseTheme.sidebarBg,
-          "--secondary-sidebar-bg": baseTheme.secondarySidebarBg,
-          "--main-bg": baseTheme.mainBackground,
-          "--dashboard-multi": baseTheme.dashboardMulti,
-          "--dashboard-mono-1": baseTheme.dashboardMono1,
-          "--dashboard-mono-2": baseTheme.dashboardMono2,
+          "--sidebar-bg": baseTheme.sidebarBg ?? "var(--gray-3)",
+          "--sidebar-bg-foreground":
+            baseTheme.sidebarForground ?? "var(--gray-11)",
+          "--sidebar-hover": baseTheme.sidebarHover ?? "var(--gray-5)",
+          // "--secondary-sidebar-bg": baseTheme.secondarySidebarBg,
+          // "--main-bg": baseTheme.mainBackground ?? "var(--gray-1)",
+          // "--dashboard-multi": baseTheme.dashboardMulti,
+          "--dashboard-mono-1": baseTheme.dashboardMono1 ?? "var(--blue-9)",
+          "--dashboard-mono-2": baseTheme.dashboardMono2 ?? "var(--gray-9)",
+          "--dashboard-mono-3": baseTheme.dashboardMono3 ?? "var(--gray-2)",
         } as CSSProperties
       }
     >

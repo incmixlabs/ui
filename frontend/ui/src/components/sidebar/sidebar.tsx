@@ -214,7 +214,7 @@ const Sidebar = React.forwardRef<
     ref
   ) => {
     const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
-    const { sidebarBg } = useBaseThemeStore()
+
     const SideBarTrigger = (
       <SidebarTrigger
         icon={
@@ -231,7 +231,7 @@ const Sidebar = React.forwardRef<
             "flex h-full w-[--sidebar-width] flex-col  text-sidebar-foreground",
           )}
           ref={ref}
-          style={{ backgroundColor: sidebarBg }}
+          // style={{ backgroundColor: sidebarBg }}
           {...props}
         >
           {SideBarTrigger}
@@ -253,7 +253,6 @@ const Sidebar = React.forwardRef<
             style={
               {
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
-                backgroundColor: sidebarBg 
               } as React.CSSProperties
             }
             side={side}
@@ -326,9 +325,9 @@ const Sidebar = React.forwardRef<
           >
             <div
               data-sidebar="sidebar"
-          style={{ backgroundColor: sidebarBg }}
               className={cn(
-                "flex h-full w-full flex-col  px-1 group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow",
+                `flex h-full w-full flex-col px-1 bg-[var(--sidebar-bg)] text-[var(--sidebar-base-foreground)] group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow`,
+                // sidebarBgClass,
                 className
               )}
             >
@@ -576,7 +575,7 @@ const SidebarHeaderLabel = React.forwardRef<
       ref={ref}
       data-sidebar="group-label"
       className={cn(
-        "mt-2 flex h-8 shrink-0 items-center gap-3 rounded-md px-2 font-medium text-lg text-sidebar-foreground/70 outline-none ring-sidebar-ring transition-[margin,opa] duration-200 ease-linear focus-visible:ring-2 [&>span:last-child]:text-2xl [&>svg]:size-4 [&>svg]:shrink-0",
+        "mt-2 flex h-8 shrink-0 items-center gap-3 rounded-md px-2 font-medium text-lg text-[var(--sidebar-bg-foreground)] outline-none ring-sidebar-ring transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>span:last-child]:text-2xl [&>svg]:size-4 [&>svg]:shrink-0",
         "group-data-[collapsible=icon]:p-0",
         className
       )}
@@ -704,9 +703,9 @@ const SidebarMenuButton = React.forwardRef<
         data-active={isActive}
         className={cn(
           sidebarMenuButtonVariants({ variant, size }),
-          "hover:bg-[hsl(var(--sidebar-accent))] dark:hover:bg-[hsl(var(--sidebar-accent))]",
-          `${isSelected && open && "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[hsl(var(--sidebar-accent))] font-[600] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[4px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-[hsl(var(--sidebar-foreground))] before:content-['']"}`,
-          `${(isSelected || isSubMenuSelected) && !open && " bg-[hsl(var(--sidebar-accent))] text-[hsl(var(--sidebar-foreground))]"}`,
+          "hover:bg-[var(--sidebar-hover)] dark:hover:bg-[var(--sidebar-hover)]",
+          `${isSelected && open && "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[var(--sidebar-hover)] font-[600] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[4px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-[var(--sidebar-bg-foreground)] before:content-['']"}`,
+          `${(isSelected || isSubMenuSelected) && !open && " bg-[var(--sidebar-hover)]  text-[var(--sidebar-bg-foreground)]"}`,
           className
         )}
         {...props}
@@ -874,14 +873,14 @@ const SidebarMenuSubButton = React.forwardRef<
         data-size={size}
         data-active={isActive}
         className={cn(
-          "-translate-x-px flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-md px-2 text-sidebar-foreground outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-accent-foreground",
-          "data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground",
-          "hover:bg-[hsl(var(--sidebar-item-primary))] dark:hover:bg-[hsl(var(--sidebar-item-primary))]",
+          "-translate-x-px flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-md px-2 text-[var(--sidebar-bg-foreground)] outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-[var(--sidebar-bg-foreground)] focus-visible:ring-2 active:bg-sidebar-accent active:text-[var(--sidebar-bg-foreground)] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-[var(--sidebar-bg-foreground)]",
+          "data-[active=true]:bg-sidebar-accent data-[active=true]:text-[var(--sidebar-bg-foreground)]",
+          "hover:bg-[var(--sidebar-hover)] dark:hover:bg-[var(--sidebar-hover)]",
           size === "sm" && "text-xs",
           size === "md" && "text-sm",
           isSelected &&
             open &&
-            "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[hsl(var(--sidebar-item-primary))] font-[600] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[3px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-[hsl(var(--sidebar-primary-foreground))] before:content-['']",
+            "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[var(--sidebar-hover)] font-[600] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[3px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-[var(--sidebar-primary-foreground)] before:content-['']",
           "group-data-[collapsible=icon]:hidden",
           className
         )}
