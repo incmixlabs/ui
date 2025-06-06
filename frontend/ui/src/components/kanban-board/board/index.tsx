@@ -1,389 +1,336 @@
+// components/board/index.tsx
+import { useRef, useEffect, useState, useCallback } from "react"
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
-import { unsafeOverflowAutoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/unsafe-overflow/element"
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge"
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
-import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types"
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
-import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder"
-import { bindAll } from "bind-event-listener"
-import { Suspense, lazy } from "react"
-import { useEffect, useRef, useState } from "react"
-import invariant from "tiny-invariant"
-import { BoardColumn } from "./board-column"
-import { initialData } from "../data"
-import { blockBoardPanningAttr } from "../data-attributes"
+import { 
+  Box, 
+  Button, 
+  Flex, 
+  Text, 
+  IconButton, 
+  Heading,
+  DropdownMenu 
+} from "@incmix/ui"
+import { 
+  Plus, 
+  Loader2, 
+  Settings, 
+  LayoutGrid,
+  MoreVertical,
+  RefreshCw
+} from "lucide-react"
+import { useKanban } from "@incmix/store"
 
-import { Box } from "@incmix/ui"
-
-// Dynamically import heavy component
-const TaskCardDrawer = lazy(() => import("./task-card-drawer"))
-import type { TCard, TColumn, TCustomBoard } from "../types"
 import {
   isCardData,
   isCardDropTargetData,
   isColumnData,
   isDraggingACard,
-  isDraggingAColumn,
 } from "../types"
+import type { KanbanColumn, KanbanTask } from "../types"
+import { BoardColumn } from "./board-column"
+import { GlobalAddTaskForm } from "./add-task-form"
+import { TaskCardDrawer } from "./task-card-drawer"
+import { CreateColumnForm } from "./create-coloumn-form"
 
-function convertCustomDataToBoardFormat(customData: TCustomBoard) {
-  const columns = customData.map((column) => {
-    // Convert tasks to cards
-    const cards: TCard[] = column.tasks.map((task) => ({
-      ...task,
-      id: task.id,
-    }))
+// Simple type adapters
+const adaptTaskToUIFormat = (task: any): KanbanTask => ({
+  ...task,
+  attachments: task.attachments || [],
+  labelsTags: task.labelsTags || [],
+  assignedTo: task.assignedTo || [],
+  subTasks: task.subTasks || [],
+  priority: task.priority || "medium",
+  completed: task.completed || false,
+})
 
-    return {
-      id: `column:${column.id}`,
-      title: column.title,
-      cards,
-    }
-  })
+const adaptColumnToUIFormat = (column: any): KanbanColumn => ({
+  ...column,
+  tasks: (column.tasks || []).map(adaptTaskToUIFormat)
+})
 
-  return {
-    columns,
-  }
+interface BoardProps {
+  projectId?: string
+  onTaskOpen?: (taskId: string) => void
 }
 
-export function Board() {
-  const boardData = convertCustomDataToBoardFormat(initialData)
-
-  const [data, setData] = useState(boardData)
+export function Board({ 
+  projectId = "default-project",
+  onTaskOpen
+}: BoardProps) {
   const scrollableRef = useRef<HTMLDivElement | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  
+  // Data management
+  const kanban = useKanban(projectId)
+  const [columns, setColumns] = useState<KanbanColumn[]>([])
 
+  // Update columns when data changes
+  useEffect(() => {
+    if (!kanban.isLoading && kanban.columns) {
+      const adaptedColumns = kanban.columns.map(adaptColumnToUIFormat)
+      setColumns(adaptedColumns)
+    }
+  }, [kanban.columns, kanban.isLoading])
+
+  // Simplified drag and drop implementation
   useEffect(() => {
     const element = scrollableRef.current
-    invariant(element)
+    if (!element || kanban.isLoading || columns.length === 0) {
+      return
+    }
+
     return combine(
       monitorForElements({
         canMonitor: isDraggingACard,
+        onDragStart() {
+          setIsDragging(true)
+        },
         onDrop({ source, location }) {
-          // setIsChecking(source);
-
+          setIsDragging(false)
+          
           const dragging = source.data
-          if (!isCardData(dragging)) {
-            return
-          }
+          if (!isCardData(dragging)) return
 
-          const innerMost = location.current.dropTargets[0]
+          const destination = location.current.dropTargets[0]
+          if (!destination) return
 
-          if (!innerMost) {
-            return
-          }
-          const dropTargetData = innerMost.data
-          const homeColumnIndex = data.columns.findIndex(
-            (column) => column.id === dragging.columnId
-          )
-          const home: TColumn | undefined = data.columns[homeColumnIndex]
+          const dropTargetData = destination.data
 
-          if (!home) {
-            return
-          }
-          const cardIndexInHome = home.cards.findIndex(
-            (card) => card.id === dragging.card.id
-          )
+          // Find the task being dragged
+          const sourceColumn = columns.find(col => col.id === dragging.columnId)
+          if (!sourceColumn) return
 
-          // dropping on a card
+          const taskIndex = sourceColumn.tasks.findIndex(task => task.taskId === dragging.card.taskId)
+          if (taskIndex === -1) return
+
+          let targetColumnId: string
+          let targetIndex: number
+
           if (isCardDropTargetData(dropTargetData)) {
-            const destinationColumnIndex = data.columns.findIndex(
-              (column) => column.id === dropTargetData.columnId
-            )
-            const destination = data.columns[destinationColumnIndex]
-            // reordering in home column
-            if (home === destination) {
-              const cardFinishIndex = home.cards.findIndex(
-                (card) => card.id === dropTargetData.card.id
-              )
+            // Dropping on another card
+            const destColumn = columns.find(col => col.id === dropTargetData.columnId)
+            if (!destColumn) return
 
-              // could not find cards needed
-              if (cardIndexInHome === -1 || cardFinishIndex === -1) {
-                return
-              }
-
-              // no change needed
-              if (cardIndexInHome === cardFinishIndex) {
-                return
-              }
+            targetColumnId = destColumn.id
+            
+            if (sourceColumn.id === destColumn.id) {
+              // Same column reorder
+              const targetTaskIndex = destColumn.tasks.findIndex(task => task.taskId === dropTargetData.card.taskId)
+              if (targetTaskIndex === -1 || targetTaskIndex === taskIndex) return
 
               const closestEdge = extractClosestEdge(dropTargetData)
+              if (!closestEdge) return
 
               const reordered = reorderWithEdge({
                 axis: "vertical",
-                list: home.cards,
-                startIndex: cardIndexInHome,
-                indexOfTarget: cardFinishIndex,
+                list: sourceColumn.tasks,
+                startIndex: taskIndex,
+                indexOfTarget: targetTaskIndex,
                 closestEdgeOfTarget: closestEdge,
               })
 
-              const updated: TColumn = {
-                ...home,
-                cards: reordered,
-              }
-              const columns = Array.from(data.columns)
-              columns[homeColumnIndex] = updated
+              // Update local state immediately for smooth UI
+              setColumns(prevColumns => 
+                prevColumns.map(col => 
+                  col.id === sourceColumn.id ? { ...col, tasks: reordered } : col
+                )
+              )
 
-              setData((prevData) => {
-                const updatedColumns = [...prevData.columns]
-                updatedColumns[homeColumnIndex] = updated
+              // Update backend
+              const newIndex = reordered.findIndex(t => t.taskId === dragging.card.taskId)
+              kanban.moveTask(dragging.card.taskId, destColumn.id, newIndex)
+              return
+            } else {
+              // Different column
+              const targetTaskIndex = destColumn.tasks.findIndex(task => task.taskId === dropTargetData.card.taskId)
+              const closestEdge = extractClosestEdge(dropTargetData)
+              targetIndex = closestEdge === "bottom" ? targetTaskIndex + 1 : targetTaskIndex
+            }
+          } else if (isColumnData(dropTargetData)) {
+            // Dropping on column
+            const destColumn = columns.find(col => col.id === dropTargetData.column.id)
+            if (!destColumn) return
+            targetColumnId = destColumn.id
+            targetIndex = destColumn.tasks.length
+          } else {
+            return
+          }
 
-                return {
-                  ...prevData,
-                  columns: updatedColumns,
+          // Cross-column move
+          if (targetColumnId !== sourceColumn.id) {
+            const taskToMove = sourceColumn.tasks[taskIndex]
+            
+            // Update UI immediately
+            setColumns(prevColumns => {
+              return prevColumns.map(col => {
+                if (col.id === sourceColumn.id) {
+                  return {
+                    ...col,
+                    tasks: col.tasks.filter((_, i) => i !== taskIndex)
+                  }
+                } else if (col.id === targetColumnId) {
+                  const newTasks = [...col.tasks]
+                  newTasks.splice(targetIndex, 0, { ...taskToMove, columnId: targetColumnId })
+                  return {
+                    ...col,
+                    tasks: newTasks
+                  }
                 }
+                return col
               })
-              return
-            }
+            })
 
-            // moving card from one column to another
-
-            // unable to find destination
-            if (!destination) {
-              return
-            }
-
-            const indexOfTarget = destination.cards.findIndex(
-              (card) => card.id === dropTargetData.card.id
-            )
-
-            const closestEdge = extractClosestEdge(dropTargetData)
-            const finalIndex =
-              closestEdge === "bottom" ? indexOfTarget + 1 : indexOfTarget
-
-            // remove card from home list
-            const homeCards = Array.from(home.cards)
-            homeCards.splice(cardIndexInHome, 1)
-
-            // insert into destination list
-            const destinationCards = Array.from(destination.cards)
-            destinationCards.splice(finalIndex, 0, dragging.card)
-
-            const columns = Array.from(data.columns)
-            columns[homeColumnIndex] = {
-              ...home,
-              cards: homeCards,
-            }
-            columns[destinationColumnIndex] = {
-              ...destination,
-              cards: destinationCards,
-            }
-            setData((prevData) => ({ ...prevData, columns }))
-            return
-          }
-
-          // dropping onto a column, but not onto a card
-          if (isColumnData(dropTargetData)) {
-            const destinationColumnIndex = data.columns.findIndex(
-              (column) => column.id === dropTargetData.column.id
-            )
-            const destination = data.columns[destinationColumnIndex]
-
-            if (!destination) {
-              return
-            }
-
-            // dropping on home
-            if (home === destination) {
-              // move to last position
-              const reordered = reorder({
-                list: home.cards,
-                startIndex: cardIndexInHome,
-                finishIndex: home.cards.length - 1,
-              })
-
-              const updated: TColumn = {
-                ...home,
-                cards: reordered,
-              }
-              const columns = Array.from(data.columns)
-              columns[homeColumnIndex] = updated
-              setData({ ...data, columns })
-              return
-            }
-
-            console.log("moving card to another column")
-
-            // remove card from home list
-
-            const homeCards = Array.from(home.cards)
-            homeCards.splice(cardIndexInHome, 1)
-
-            // insert into destination list
-            const destinationCards = Array.from(destination.cards)
-            destinationCards.splice(destination.cards.length, 0, dragging.card)
-
-            const columns = Array.from(data.columns)
-            columns[homeColumnIndex] = {
-              ...home,
-              cards: homeCards,
-            }
-            columns[destinationColumnIndex] = {
-              ...destination,
-              cards: destinationCards,
-            }
-            setData({ ...data, columns })
-            return
+            // Update backend
+            kanban.moveTask(dragging.card.taskId, targetColumnId, targetIndex)
           }
         },
       }),
-      // monitorForElements({
-      //   canMonitor: isDraggingAColumn,
-      //   onDrop({ source, location }) {
-      //     setIsChecking(source);
-      //     const dragging = source.data;
-      //     if (!isColumnData(dragging)) {
-      //       return;
-      //     }
-
-      //     const innerMost = location.current.dropTargets[0];
-
-      //     if (!innerMost) {
-      //       return;
-      //     }
-      //     const dropTargetData = innerMost.data;
-
-      //     if (!isColumnData(dropTargetData)) {
-      //       return;
-      //     }
-
-      //     const homeIndex = data.columns.findIndex((column) => column.id === dragging.column.id);
-      //     const destinationIndex = data.columns.findIndex(
-      //       (column) => column.id === dropTargetData.column.id,
-      //     );
-
-      //     if (homeIndex === -1 || destinationIndex === -1) {
-      //       return;
-      //     }
-
-      //     if (homeIndex === destinationIndex) {
-      //       return;
-      //     }
-
-      //     const reordered = reorder({
-      //       list: data.columns,
-      //       startIndex: homeIndex,
-      //       finishIndex: destinationIndex,
-      //     });
-      //     setData({ ...data, columns: reordered });
-      //   },
-      // }),
       autoScrollForElements({
-        canScroll({ source }) {
-          return isDraggingACard({ source }) || isDraggingAColumn({ source })
-        },
+        canScroll: ({ source }) => isDraggingACard({ source }),
         element,
-      }),
-      unsafeOverflowAutoScrollForElements({
-        element,
-        canScroll({ source }) {
-          return isDraggingACard({ source }) || isDraggingAColumn({ source })
-        },
-        getOverflow() {
-          return {
-            forLeftEdge: {
-              top: 1000,
-              left: 1000,
-              bottom: 1000,
-            },
-            forRightEdge: {
-              top: 1000,
-              right: 1000,
-              bottom: 1000,
-            },
-          }
-        },
       })
     )
-  }, [data, setData])
+  }, [columns, kanban])
 
-  // Panning the board
-  useEffect(() => {
-    let cleanupActive: CleanupFn | null = null
-    const scrollable = scrollableRef.current
-    invariant(scrollable)
+  // Refresh data
+  const handleRefresh = useCallback(() => {
+    kanban.refetch()
+  }, [kanban])
 
-    function begin({ startX }: { startX: number }) {
-      let lastX = startX
+  if (kanban.isLoading) {
+    return (
+      <Box className="flex items-center justify-center h-96">
+        <Flex align="center" gap="2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <Text>Loading board...</Text>
+        </Flex>
+      </Box>
+    )
+  }
 
-      const cleanupEvents = bindAll(
-        window,
-        [
-          {
-            type: "pointermove",
-            listener(event) {
-              const currentX = event.clientX
-              const diffX = lastX - currentX
-
-              lastX = currentX
-              scrollable?.scrollBy({ left: diffX })
-            },
-          },
-          ...(
-            [
-              "pointercancel",
-              "pointerup",
-              "pointerdown",
-              "keydown",
-              "resize",
-              "click",
-              "visibilitychange",
-            ] as const
-          ).map((eventName) => ({
-            type: eventName,
-            listener: () => cleanupEvents(),
-          })),
-        ],
-
-        { capture: true }
-      )
-
-      cleanupActive = cleanupEvents
-    }
-
-    const cleanupStart = bindAll(scrollable, [
-      {
-        type: "pointerdown",
-        listener(event) {
-          if (!(event.target instanceof HTMLElement)) {
-            return
-          }
-          // ignore interactive elements
-          if (event.target.closest(`[${blockBoardPanningAttr}]`)) {
-            return
-          }
-
-          begin({ startX: event.clientX })
-        },
-      },
-    ])
-
-    return function cleanupAll() {
-      cleanupStart()
-      cleanupActive?.()
-    }
-  }, [])
+  if (kanban.error) {
+    return (
+      <Box className="flex items-center justify-center h-96">
+        <Flex direction="column" align="center" gap="4">
+          <Text className="text-red-500">Error: {kanban.error}</Text>
+          <Button onClick={kanban.clearError} variant="outline">
+            <RefreshCw size={16} />
+            Retry
+          </Button>
+        </Flex>
+      </Box>
+    )
+  }
 
   return (
-    <>
-      <Box
-        className={`flex w-full gap-6 h-full overflow-hidden`}
-        ref={scrollableRef}
-      >
-        <Box
-          className={`flex flex-row gap-4 2xl:gap-7`}
-        >
-          {data.columns.map((column) => (
-            <BoardColumn
-              key={column.id}
-              column={column}
+    <Box className="h-full w-full overflow-hidden">
+      {/* Board Header */}
+      <Flex direction="column" gap="4" className="p-4 border-b border-gray-200 dark:border-gray-700">
+        <Flex justify="between" align="center">
+          <Heading size="6">Project Board</Heading>
+          
+          <Flex align="center" gap="2">
+            {/* Global Add Task Button */}
+            <GlobalAddTaskForm
+              projectId={projectId}
+              columns={columns}
+              onSuccess={handleRefresh}
             />
+
+            {/* Board Actions */}
+            <IconButton variant="ghost" onClick={handleRefresh}>
+              <RefreshCw size={16} />
+            </IconButton>
+
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <IconButton variant="ghost">
+                  <MoreVertical size={16} />
+                </IconButton>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                <DropdownMenu.Item onClick={handleRefresh}>
+                  <RefreshCw size={14} />
+                  Refresh Board
+                </DropdownMenu.Item>
+                <DropdownMenu.Item>
+                  <Settings size={14} />
+                  Board Settings
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          </Flex>
+        </Flex>
+
+        {/* Board Stats */}
+        <Flex gap="6" className="text-sm text-gray-600 dark:text-gray-400">
+          <Text>
+            {columns.length} column{columns.length !== 1 ? "s" : ""}
+          </Text>
+          <Text>
+            {columns.reduce((acc, col) => acc + col.tasks.length, 0)} task{columns.reduce((acc, col) => acc + col.tasks.length, 0) !== 1 ? "s" : ""}
+          </Text>
+          <Text>
+            {columns.reduce((acc, col) => acc + col.tasks.filter(t => t.completed).length, 0)} completed
+          </Text>
+        </Flex>
+      </Flex>
+
+      {/* Board Content */}
+      <Box className="flex-1 overflow-hidden">
+        <Flex 
+          className="h-full gap-6 overflow-x-auto overflow-y-hidden p-4"
+          ref={scrollableRef}
+          style={{ minHeight: "calc(100vh - 200px)" }}
+        >
+          {/* Kanban Columns */}
+          {columns.map((column) => (
+            <Box 
+              key={column.id} 
+              className="flex-shrink-0 w-80"
+            >
+              <BoardColumn 
+                column={column}
+                onCreateTask={kanban.createTask}
+                onUpdateTask={kanban.updateTask}
+                onDeleteTask={kanban.deleteTask}
+                onUpdateColumn={kanban.updateColumn}
+                onDeleteColumn={kanban.deleteColumn}
+                isDragging={isDragging}
+                onTaskOpen={onTaskOpen}
+              />
+            </Box>
           ))}
-        </Box>
-        <Suspense fallback={<Box className="p-4">Loading drawer...</Box>}>
-          <TaskCardDrawer/>
-        </Suspense>
+          
+          {/* Add Column */}
+          <Box className="flex-shrink-0 w-80">
+            <Box className="h-full min-h-[200px] rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
+              <Flex 
+                align="center" 
+                justify="center" 
+                className="h-full p-4"
+                direction="column"
+                gap="4"
+              >
+                <CreateColumnForm 
+                  projectId={projectId}
+                  onSuccess={handleRefresh}
+                />
+                <Text size="2" className="text-gray-500 text-center max-w-48">
+                  Create a new status column to organize your workflow
+                </Text>
+              </Flex>
+            </Box>
+          </Box>
+        </Flex>
       </Box>
-    </>
+
+      {/* Task Drawer */}
+      <TaskCardDrawer />
+    </Box>
   )
 }

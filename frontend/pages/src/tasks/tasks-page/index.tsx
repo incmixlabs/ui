@@ -1,135 +1,92 @@
-import type { TaskCollections } from "@incmix/store"
-import { useOrganizationStore } from "@incmix/store"
+import { useKanban, useOrganizationStore } from "@incmix/store"
+import type { TaskCollections, KanbanColumn as StoreKanbanColumn, KanbanTask as StoreKanbanTask } from "@incmix/store"
 import {
   Board,
   Box,
+  Button,
   Card,
   Flex,
-  IconButton,
-  ListBoard,
-  RoadmapView,
   ScrollArea,
   Select,
   Tabs,
 } from "@incmix/ui"
 import { CardContent } from "@incmix/ui/card"
-import type { Task } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { Filter, FilterIcon, ListFilter } from "lucide-react"
-import { useEffect, useMemo, useState } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { Plus } from "lucide-react"
+import { useEffect, useState } from "react"
 import type { RxDatabase } from "rxdb"
 import { useRxDB } from "rxdb-hooks"
 
-import { generateBoard } from "./actions"
 import { CreateColumnForm } from "./create-column-form"
 import { CreateProjectForm } from "./create-project-form"
 import { CreateTaskForm } from "./create-task-form"
 
+// Type adapter function to adapt columns to UI component expectations
+const adaptColumnsToUIFormat = (columns: any[] | StoreKanbanColumn[]): any[] => {
+  return columns.map(column => ({
+    ...column,
+    tasks: (column.tasks || []).map((task: any) => ({
+      ...task,
+      // Handle mutable collections
+      attachments: task.attachments ? [...task.attachments] : [],
+      labelsTags: task.labelsTags ? [...task.labelsTags] : [],
+      assignedTo: task.assignedTo ? [...task.assignedTo] : [],
+      subTasks: task.subTasks ? [...task.subTasks] : [],
+    }))
+  }))
+}
+
 const TasksPage = () => {
   const { selectedOrganisation } = useOrganizationStore()
-
   const [selectedProject, setSelectedProject] = useState<string>()
-
   const db: RxDatabase<TaskCollections> = useRxDB()
-  const projectCollection = db.projects
-  const columnCollection = db.columns
-  const taskCollection = db.tasks
 
+  // Get projects for the selected organization
   const {
     data: projects,
     isLoading: fetchingProjects,
     refetch: refetchProjects,
   } = useQuery({
     queryKey: ["projects", selectedOrganisation?.id],
-    enabled: !!selectedOrganisation?.id && !!projectCollection,
+    enabled: !!selectedOrganisation?.id && !!db.projects,
     queryFn: () => {
       if (!selectedOrganisation) return []
-
-      return projectCollection
+      return db.projects
         .find({
-          selector: { orgId: selectedOrganisation?.id },
+          selector: { orgId: selectedOrganisation.id },
           sort: [{ createdAt: "asc" }],
         })
         .exec()
     },
   })
 
+  // Get board data for the selected project (to show create buttons and check state)
+  const kanban = selectedProject
+    ? useKanban(selectedProject)
+    : {
+        columns: [],
+        isLoading: false,
+        error: null,
+      }
+  
+  // Extract what we need from the kanban object
   const {
-    data: columns,
-    // isLoading: fetchingColumns,
-    refetch: refetchColumns,
-  } = useQuery({
-    queryKey: ["columns", selectedProject],
-    enabled: !!selectedProject,
-    queryFn: () => {
-      return columnCollection
-        .find({
-          selector: { projectId: selectedProject },
-          sort: [{ columnOrder: "asc" }],
-        })
-        .exec()
-    },
-  })
-  const {
-    data: tasks,
-    // isLoading: fetchingTasks,
-    refetch: refetchTasks,
-  } = useQuery({
-    queryKey: ["tasks", selectedProject],
-    enabled: !!selectedProject,
-    queryFn: () => {
-      return taskCollection
-        .find({
-          selector: { projectId: selectedProject },
-          sort: [{ taskOrder: "asc" }],
-        })
-        .exec()
-    },
-  })
+    columns = [],
+    isLoading: boardLoading = false,
+    error: boardError = null,
+  } = kanban
 
-  const [_boardLoading, setBoardLoading] = useState(true)
-
-  const _board = useMemo(() => {
-    const board = generateBoard(columns ?? [], tasks ?? [])
-
-    setBoardLoading(false)
-    return board
-  }, [columns, tasks])
-
-  const _tasksMutation = useMutation({
-    mutationFn: (tasks: Task[]) => {
-      return Promise.all(
-        tasks.map((t) =>
-          taskCollection
-            .find({
-              selector: {
-                id: t.id,
-              },
-            })
-            .patch({
-              columnId: t.columnId,
-              taskOrder: t.taskOrder,
-              updatedAt: new Date().toISOString(),
-            })
-        )
-      )
-    },
-
-    onSuccess: () => {
-      refetchTasks()
-    },
-  })
-
-  // useAutoSync(pushChangesToBackend)
-
+  // Set first project as selected when projects load
   useEffect(() => {
-    if (!selectedProject && projects?.length) setSelectedProject(projects[0].id)
+    if (!selectedProject && projects?.length) {
+      setSelectedProject(projects[0].id)
+    }
   }, [projects, selectedProject])
 
-  if (!selectedOrganisation)
+  if (!selectedOrganisation) {
     return (
-      <DashboardLayout breadcrumbItems={[{ label: "Tasks", url: "/tasks" }]}>
+      <DashboardLayout>
         <Card.Root>
           <CardContent>
             <p className="text-center">
@@ -139,27 +96,27 @@ const TasksPage = () => {
         </Card.Root>
       </DashboardLayout>
     )
+  }
 
   return (
-    <DashboardLayout breadcrumbItems={[{ label: "Tasks", url: "/tasks" }]}>
+    <DashboardLayout>
       <ScrollArea
         scrollbars="horizontal"
         className="w-full px-2 pt-4 pb-4 2xl:p-2"
       >
-        <Flex justify={"between"}>
-          <Flex className="mb-4 gap-4">
+        {/* Project Selection and Creation */}
+        <Flex justify="between" className="mb-4">
+          <Flex className="gap-4">
             <Select.Root
               value={selectedProject}
               onValueChange={setSelectedProject}
             >
               <Select.Trigger
                 className="w-full max-w-96"
-                placeholder={fetchingProjects ? "Loading" : "Select Projects"}
+                placeholder={fetchingProjects ? "Loading" : "Select Project"}
               />
               <Select.Content>
                 {fetchingProjects && <div>Loading...</div>}
-                {/* {projectsQuery.isError && <div>Error fetching projects</div>} */}
-
                 {projects?.map((p) => (
                   <Select.Item key={p.id} value={p.id}>
                     {p.name}
@@ -167,50 +124,35 @@ const TasksPage = () => {
                 ))}
               </Select.Content>
             </Select.Root>
+
             <CreateProjectForm
               onSuccess={(p) => {
                 refetchProjects()
                 setSelectedProject(p.id)
               }}
             />
-            {selectedProject && (
-              <div className="ml-auto flex gap-4">
-                <CreateColumnForm
-                  projectId={selectedProject}
-                  onSuccess={() => refetchColumns()}
-                />
-                <CreateTaskForm
-                  projectId={selectedProject}
-                  onSuccess={() => refetchTasks()}
-                />
-              </div>
-            )}
           </Flex>
-          {/* <Flex justify={"end"} className="mb-2">
-            <IconButton
-              className="h-10 w-12 cursor-pointer "
-              onClick={toggleKanbanFilter}
-            >
-              <ListFilter className="size-8 fill-white" />
-            </IconButton>
-          </Flex> */}
+
+          {/* Action buttons for the selected project */}
+          {selectedProject && (
+            <Flex className="gap-2">
+              <CreateColumnForm projectId={selectedProject} />
+              <CreateTaskForm projectId={selectedProject} columns={adaptColumnsToUIFormat(columns)} />
+            </Flex>
+          )}
         </Flex>
+
+        {/* Tabs for Different Views */}
         <Tabs.Root className="flex w-full flex-col p-3" defaultValue="board">
           <Tabs.List
             className="flex w-fit shrink-0 rounded-md bg-gray-3 shadow-none"
-            aria-label="Manage your account"
+            aria-label="View options"
           >
             <Tabs.Trigger
               className="flex cursor-pointer select-none text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
               value="board"
             >
               Board (Kanban)
-            </Tabs.Trigger>
-            <Tabs.Trigger
-              className="flex cursor-pointer select-none text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
-              value="timeline"
-            >
-              Timeline
             </Tabs.Trigger>
             <Tabs.Trigger
               className="flex cursor-pointer select-none text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
@@ -225,42 +167,46 @@ const TasksPage = () => {
               Table
             </Tabs.Trigger>
           </Tabs.List>
-          <Tabs.Content
-            className="h-full w-full grow rounded-b-md py-2 "
-            value="board"
-          >
-            <Box className="h-full w-full ">
-              <Board />
-            </Box>
-          </Tabs.Content>
+
+          {/* Kanban Board View */}
           <Tabs.Content
             className="h-full w-full grow rounded-b-md py-2"
-            value="timeline"
+            value="board"
           >
-            <RoadmapView />
+            {/* Using the Board component with optional projectId */}
+            <Board projectId={selectedProject} />
           </Tabs.Content>
+
+          {/* List View - Placeholder for now */}
           <Tabs.Content
-            className="h-full w-full grow rounded-b-md py-2 "
+            className="h-full w-full grow rounded-b-md py-2"
             value="list"
           >
-            <ListBoard />
+            <Box className="p-4">
+              <div className="text-center">
+                <p className="mb-4 text-gray-500">List view coming soon...</p>
+                <p className="text-gray-400 text-sm">
+                  This view will use the same data structure as the Kanban board
+                </p>
+              </div>
+            </Box>
           </Tabs.Content>
-          <Tabs.Content
-            className="h-full w-full grow rounded-b-md py-2 "
-            value="table"
-          />
-        </Tabs.Root>
 
-        {/* <KanbanBoard
-        updateTasks={(tasks) => {
-          if (tasks.length) tasksMutation.mutate(tasks)
-        }}
-        columns={board.columns}
-        tasks={board.tasks}
-        isLoading={
-          fetchingColumns || fetchingTasks || boardLoading || fetchingProjects
-        }
-        /> */}
+          {/* Table View - Placeholder for now */}
+          <Tabs.Content
+            className="h-full w-full grow rounded-b-md py-2"
+            value="table"
+          >
+            <Box className="p-4">
+              <div className="text-center">
+                <p className="mb-4 text-gray-500">Table view coming soon...</p>
+                <p className="text-gray-400 text-sm">
+                  This view will use the same data structure as the Kanban board
+                </p>
+              </div>
+            </Box>
+          </Tabs.Content>
+        </Tabs.Root>
       </ScrollArea>
     </DashboardLayout>
   )

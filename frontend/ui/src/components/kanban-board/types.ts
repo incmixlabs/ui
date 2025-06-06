@@ -1,16 +1,79 @@
-// import type { AvatarProps } from "@incmix-ui/avatar"
+import { TaskDocType, TaskStatusDocType, TaskDataSchema } from "@incmix/store"
+
+
+// Import your existing RxDB-based types
+export interface KanbanColumn extends TaskStatusDocType {
+  tasks: KanbanTask[]
+}
+
+export interface KanbanTask extends Omit<TaskDataSchema, 'attachments' | 'labelsTags' | 'createdBy' | 'assignedTo' | 'subTasks' | 'updatedBy' | 'completed' | 'priority'> {
+  // Make completed optional
+  completed?: boolean
+
+  // Make priority optional
+  priority?: 'low' | 'medium' | 'high' | 'urgent'
+  // Make attachments mutable to match the UI component expectations
+  attachments?: {
+    id: string
+    name: string
+    url: string
+    size: string
+    type?: string
+  }[]
+  
+  // Make labelsTags mutable
+  labelsTags?: {
+    value: string
+    label: string
+    color: string
+  }[]
+  
+  // Make assignedTo mutable with optional avatar
+  assignedTo?: {
+    id: string
+    name: string
+    avatar?: string
+  }[]
+  
+  // Make subTasks mutable
+  subTasks?: {
+    id: string
+    name: string
+    completed: boolean
+  }[]
+  
+  // Make createdBy properties compatible with the data source
+  createdBy: {
+    id: string
+    name: string
+    image?: string  // Optional to match the data source
+  }
+
+  // Make updatedBy properties compatible with the data source
+  updatedBy: {
+    id: string
+    name: string
+    image?: string  // Optional to match the data source
+  }
+  
+  // Any additional UI-specific properties can be added here
+}
+
+// Legacy types for compatibility (keeping your existing UI types)
 export interface KanbanBoard {
   id: number
   title: string
   tasks: KanbanBoardTask[]
 }
+
 export type TCustomColumn = {
   id: string
   title: string
-  tasks: TCard[]
+  tasks: KanbanTask[]  // Updated to use KanbanTask
 }
 
 export type TCustomBoard = TCustomColumn[]
+
 export interface KanbanBoardTask {
   id: number
   name: string
@@ -18,7 +81,6 @@ export interface KanbanBoardTask {
   completed: boolean
   daysLeft: number
   attachment?: string
-  // members: AvatarProps[]
 }
 
 export type TMember = {
@@ -27,47 +89,23 @@ export type TMember = {
   color: string
   value: string
   avatar: string
-  checked:boolean
+  checked: boolean
   [key: string]: unknown
 }
 
-export type TCard = {
-  id: string
-  taskId: string
-  name: string
-  description?: string
-  completed: boolean
-  assignedTo: TMember[]
-  startDate?: string
-  endDate?: string
-  labelsTags?: {
-    value: string
-    label: string
-    color: string
-    checked: boolean
-  }[]
-  attachment?: { name: string; url: string; size: string }[]
-  subTasks?: {
-    progress: number
-    name: string
-    completed: boolean
-  }[]
-}
-
-export type TColumn = {
-  id: string
-  title: string
-  cards: TCard[]
-}
+// UPDATED: Make these type aliases point to your RxDB types
+export type TCard = KanbanTask
+export type TColumn = KanbanColumn
 
 export type TBoard = {
   columns: TColumn[]
 }
 
+// UPDATED: Symbol-based drag and drop data types using RxDB types
 const cardKey = Symbol("card")
 export type TCardData = {
   [cardKey]: true
-  card: TCard
+  card: KanbanTask  // Now uses KanbanTask instead of TCard
   columnId: string
   rect: DOMRect
 }
@@ -76,7 +114,11 @@ export function getCardData({
   card,
   rect,
   columnId,
-}: Omit<TCardData, typeof cardKey> & { columnId: string }): TCardData {
+}: {
+  card: KanbanTask  // Now uses KanbanTask
+  columnId: string
+  rect: DOMRect
+}): TCardData {
   return {
     [cardKey]: true,
     rect,
@@ -102,7 +144,7 @@ export function isDraggingACard({
 const cardDropTargetKey = Symbol("card-drop-target")
 export type TCardDropTargetData = {
   [cardDropTargetKey]: true
-  card: TCard
+  card: KanbanTask  // Now uses KanbanTask
   columnId: string
 }
 
@@ -115,7 +157,8 @@ export function isCardDropTargetData(
 export function getCardDropTargetData({
   card,
   columnId,
-}: Omit<TCardDropTargetData, typeof cardDropTargetKey> & {
+}: {
+  card: KanbanTask  // Now uses KanbanTask
   columnId: string
 }): TCardDropTargetData {
   return {
@@ -128,12 +171,14 @@ export function getCardDropTargetData({
 const columnKey = Symbol("column")
 export type TColumnData = {
   [columnKey]: true
-  column: TColumn
+  column: KanbanColumn  // Now uses KanbanColumn
 }
 
 export function getColumnData({
   column,
-}: Omit<TColumnData, typeof columnKey>): TColumnData {
+}: {
+  column: KanbanColumn  // Now uses KanbanColumn
+}): TColumnData {
   return {
     [columnKey]: true,
     column,
@@ -153,3 +198,9 @@ export function isDraggingAColumn({
 }): boolean {
   return isColumnData(source.data)
 }
+
+// Legacy drag and drop data types (for backwards compatibility)
+export type CardData = TCardData
+export type ColumnData = TColumnData
+export type CardDropTargetData = TCardDropTargetData
+export type ColumnDropTargetData = TColumnData

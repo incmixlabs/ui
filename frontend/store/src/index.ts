@@ -7,7 +7,11 @@ export * from "./hooks/editing-store"
 export * from "./hooks/use-template-store"
 export * from "./hooks/use-dashboard-store"
 export * from "./hooks/use-task-store"
-export * from "./hooks/use-kanban-data"
+// Explicitly re-export from use-kanban-data except for KanbanColumn
+export { useKanban } from "./hooks/use-kanban-data"
+export type { UseKanbanReturn } from "./hooks/use-kanban-data"
 export * from "./hooks/use-task-status-store"
 export * from "./hooks/use-task-store"
+export * from "./sql/task-schemas"
+// Re-export everything from kanban-view.types (including its KanbanColumn)
 export * from "./view-types/kanban-view.types"
