@@ -1,8 +1,8 @@
+import type { Subscription } from "rxjs"
 import { create } from "zustand"
 import { database } from "../sql"
 import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
 import type { TaskDataSchema } from "../sql/task-schemas"
-import type { Subscription } from "rxjs"
 
 /**
  * Helper function to convert ReadonlyArrays to mutable arrays for RxDB
@@ -30,15 +30,18 @@ const convertReadonlyArraysForDb = <T extends Partial<TaskDataSchema>>(
 
 // Global move operation tracker to prevent race conditions
 const moveOperationTracker = {
-  activeOperations: new Map<string, {
-    promise: Promise<void>
-    timestamp: number
-    targetColumnId: string
-    targetIndex?: number
-  }>(),
-  
+  activeOperations: new Map<
+    string,
+    {
+      promise: Promise<void>
+      timestamp: number
+      targetColumnId: string
+      targetIndex?: number
+    }
+  >(),
+
   async queueMove(
-    taskId: string, 
+    taskId: string,
     operation: () => Promise<void>,
     targetColumnId: string,
     targetIndex?: number
@@ -53,7 +56,7 @@ const moveOperationTracker = {
       promise: operation(),
       timestamp: Date.now(),
       targetColumnId,
-      targetIndex
+      targetIndex,
     }
 
     this.activeOperations.set(taskId, operationData)
@@ -79,7 +82,7 @@ const moveOperationTracker = {
 
   getActiveMove(taskId: string) {
     return this.activeOperations.get(taskId)
-  }
+  },
 }
 
 interface TaskStore {
@@ -149,20 +152,20 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       (task: TaskDataSchema) => task.projectId === projectId
     )
   },
-  
+
   getTasksByColumn: (columnId: string): TaskDataSchema[] => {
     return get()
       .tasks.filter((task: TaskDataSchema) => task.columnId === columnId)
       .sort((a, b) => a.order - b.order)
   },
-  
+
   getTaskById: (taskId: string): TaskDataSchema | undefined => {
     return get().tasks.find((task: TaskDataSchema) => task.taskId === taskId)
   },
 
   initialize: async (projectId: string) => {
     const currentState = get()
-    
+
     // Don't re-initialize if already initialized for any project
     if (currentState.initialized) {
       console.log("📋 Tasks already initialized")
@@ -173,9 +176,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
     try {
       console.log("🔄 Initializing tasks for project:", projectId)
-      
+
       const tasksCollection = database.tasks
-      
+
       // Set up reactive subscription to ALL tasks for this project
       const subscription = tasksCollection
         .find({
@@ -184,8 +187,12 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         })
         .$.subscribe({
           next: (taskDocs) => {
-            console.log("📄 Tasks subscription update:", taskDocs.length, "tasks")
-            
+            console.log(
+              "📄 Tasks subscription update:",
+              taskDocs.length,
+              "tasks"
+            )
+
             const normalizedTasks = taskDocs.map((taskDoc) => {
               const task = taskDoc.toJSON()
               return {
@@ -208,12 +215,11 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
               isLoading: false,
               initialized: false,
             })
-          }
+          },
         })
 
       set({ subscription })
       console.log("✅ Tasks subscription established")
-
     } catch (error) {
       console.error("❌ Failed to initialize tasks:", error)
       set({
@@ -229,8 +235,8 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     if (subscription) {
       console.log("🧹 Cleaning up tasks subscription")
       subscription.unsubscribe()
-      set({ 
-        subscription: null, 
+      set({
+        subscription: null,
         initialized: false,
         tasks: [],
         isLoading: false,
@@ -247,7 +253,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
     try {
       console.log("➕ Creating task:", taskData.name)
-      
+
       const tasksCollection = database.tasks
 
       // Get the highest order in the target column from current state
@@ -277,10 +283,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
       // Prepare data for RxDB insertion
       const taskDataForDb = convertReadonlyArraysForDb(newTask)
-      
+
       // Insert into database - reactive subscription will update the store automatically
       await tasksCollection.insert(taskDataForDb as any)
-      
+
       console.log("✅ Task created successfully")
       return taskId
     } catch (error) {
@@ -293,7 +299,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   updateTask: async (taskId, updates) => {
     try {
       console.log("✏️ Updating task:", taskId)
-      
+
       const now = getCurrentTimestamp()
       const currentUser = getCurrentUser()
 
@@ -315,7 +321,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
       // Update database - reactive subscription will update the store automatically
       await task.update({ $set: finalUpdatesForDb })
-      
+
       console.log("✅ Task updated successfully")
     } catch (error) {
       console.error("❌ Failed to update task:", error)
@@ -327,7 +333,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   deleteTask: async (taskId) => {
     try {
       console.log("🗑️ Deleting task:", taskId)
-      
+
       const tasksCollection = database.tasks
       const task = await tasksCollection
         .findOne({ selector: { taskId } })
@@ -350,7 +356,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     const activeMove = moveOperationTracker.getActiveMove(taskId)
     if (activeMove) {
       // If the target is the same, skip this operation
-      if (activeMove.targetColumnId === targetColumnId && activeMove.targetIndex === targetIndex) {
+      if (
+        activeMove.targetColumnId === targetColumnId &&
+        activeMove.targetIndex === targetIndex
+      ) {
         console.log("⚠️ Skipping duplicate move operation for:", taskId)
         return
       }
@@ -361,13 +370,20 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       taskId,
       async () => {
         try {
-          console.log("🔄 Moving task:", taskId, "to column:", targetColumnId, "index:", targetIndex)
-          
+          console.log(
+            "🔄 Moving task:",
+            taskId,
+            "to column:",
+            targetColumnId,
+            "index:",
+            targetIndex
+          )
+
           const now = getCurrentTimestamp()
           const currentUser = getCurrentUser()
 
           // Get current task position
-          const currentTask = get().tasks.find(t => t.taskId === taskId)
+          const currentTask = get().tasks.find((t) => t.taskId === taskId)
           if (!currentTask) {
             throw new Error("Task not found in current state")
           }
@@ -386,7 +402,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
           // Normalize targetIndex to handle edge cases
           let normalizedIndex = targetIndex
-          
+
           // Handle invalid indices
           if (normalizedIndex === undefined || normalizedIndex === null) {
             normalizedIndex = tasksInTargetColumn.length // Add to end
@@ -396,7 +412,12 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
             normalizedIndex = tasksInTargetColumn.length // Add to end if too large
           }
 
-          console.log("📍 Normalized index:", normalizedIndex, "of", tasksInTargetColumn.length)
+          console.log(
+            "📍 Normalized index:",
+            normalizedIndex,
+            "of",
+            tasksInTargetColumn.length
+          )
 
           if (tasksInTargetColumn.length === 0) {
             // Empty column - start at order 0
@@ -406,18 +427,21 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
             newOrder = Math.max(0, tasksInTargetColumn[0].order / 2)
           } else if (normalizedIndex >= tasksInTargetColumn.length) {
             // Add to end
-            newOrder = tasksInTargetColumn[tasksInTargetColumn.length - 1].order + 1
+            newOrder =
+              tasksInTargetColumn[tasksInTargetColumn.length - 1].order + 1
           } else {
             // Add between two tasks
             const prevTask = tasksInTargetColumn[normalizedIndex - 1]
             const nextTask = tasksInTargetColumn[normalizedIndex]
-            
+
             if (!prevTask || !nextTask) {
               // Fallback if tasks are undefined
               console.warn("⚠️ Task ordering fallback triggered")
-              newOrder = tasksInTargetColumn.length > 0 
-                ? tasksInTargetColumn[tasksInTargetColumn.length - 1].order + 1 
-                : 0
+              newOrder =
+                tasksInTargetColumn.length > 0
+                  ? tasksInTargetColumn[tasksInTargetColumn.length - 1].order +
+                    1
+                  : 0
             } else {
               newOrder = (prevTask.order + nextTask.order) / 2
             }
@@ -432,8 +456,13 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
           }
 
           // Check if the move is actually needed
-          if (currentTask.columnId === targetColumnId && Math.abs(currentTask.order - newOrder) < 0.001) {
-            console.log("ℹ️ Task is already in the correct position, skipping database update")
+          if (
+            currentTask.columnId === targetColumnId &&
+            Math.abs(currentTask.order - newOrder) < 0.001
+          ) {
+            console.log(
+              "ℹ️ Task is already in the correct position, skipping database update"
+            )
             return
           }
 
@@ -453,7 +482,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
               updatedBy: currentUser,
             },
           })
-          
+
           console.log("✅ Task moved successfully")
         } catch (error) {
           console.error("❌ Failed to move task:", error)

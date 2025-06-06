@@ -1,7 +1,7 @@
-import { create } from "zustand"
-import { type TaskStatusDocType, database } from "sql"
-import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
 import type { Subscription } from "rxjs"
+import { type TaskStatusDocType, database } from "sql"
+import { create } from "zustand"
+import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
 
 interface TaskStatusStore {
   taskStatuses: TaskStatusDocType[]
@@ -75,7 +75,7 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
 
   initialize: async (projectId: string) => {
     const currentState = get()
-    
+
     // Don't re-initialize if already initialized
     if (currentState.initialized) {
       console.log("📋 Task statuses already initialized")
@@ -86,9 +86,9 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
 
     try {
       console.log("🔄 Initializing task statuses for project:", projectId)
-      
+
       const taskStatusCollection = database.taskStatus
-      
+
       // First check if we need to create default statuses
       const existingStatuses = await taskStatusCollection
         .find({
@@ -101,7 +101,7 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
         await get().createDefaultTaskStatuses(projectId)
         return // createDefaultTaskStatuses will set up the subscription
       }
-      
+
       // Set up reactive subscription to ALL task statuses for this project
       const subscription = taskStatusCollection
         .find({
@@ -110,12 +110,18 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
         })
         .$.subscribe({
           next: (statusDocs) => {
-            console.log("📋 Task statuses subscription update:", statusDocs.length, "statuses")
-            
+            console.log(
+              "📋 Task statuses subscription update:",
+              statusDocs.length,
+              "statuses"
+            )
+
             const normalizedTaskStatuses = statusDocs.map((ts) => ts.toJSON())
 
             set({
-              taskStatuses: normalizedTaskStatuses.sort((a, b) => a.order - b.order),
+              taskStatuses: normalizedTaskStatuses.sort(
+                (a, b) => a.order - b.order
+              ),
               isLoading: false,
               error: null,
               initialized: true,
@@ -128,12 +134,11 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
               isLoading: false,
               initialized: false,
             })
-          }
+          },
         })
 
       set({ subscription })
       console.log("✅ Task statuses subscription established")
-
     } catch (error) {
       console.error("❌ Failed to initialize task statuses:", error)
       set({
@@ -149,8 +154,8 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
     if (subscription) {
       console.log("🧹 Cleaning up task statuses subscription")
       subscription.unsubscribe()
-      set({ 
-        subscription: null, 
+      set({
+        subscription: null,
         initialized: false,
         taskStatuses: [],
         isLoading: false,
@@ -166,9 +171,9 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
 
     try {
       console.log("➕ Creating task status:", taskStatusData.name)
-      
+
       const taskStatusCollection = database.taskStatus
-      
+
       // Get existing statuses to calculate order
       const existingTaskStatuses = get().taskStatuses.filter(
         (ts) => ts.projectId === projectId
@@ -198,7 +203,7 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
 
       // Insert into database - reactive subscription will update the store automatically
       await taskStatusCollection.insert(newTaskStatus)
-      
+
       console.log("✅ Task status created successfully")
       return id
     } catch (error) {
@@ -211,7 +216,7 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
   updateTaskStatus: async (taskStatusId, updates) => {
     try {
       console.log("✏️ Updating task status:", taskStatusId)
-      
+
       const now = getCurrentTimestamp()
       const currentUser = getCurrentUser()
       const updatedData = {
@@ -229,7 +234,7 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
 
       // Update database - reactive subscription will update the store automatically
       await taskStatusDoc.update({ $set: updatedData })
-      
+
       console.log("✅ Task status updated successfully")
     } catch (error) {
       console.error("❌ Failed to update task status:", error)
@@ -241,7 +246,7 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
   deleteTaskStatus: async (taskStatusId) => {
     try {
       console.log("🗑️ Deleting task status:", taskStatusId)
-      
+
       // Check if there are tasks in this status
       const tasksCollection = database.tasks
       const tasksInStatus = await tasksCollection
@@ -266,7 +271,8 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
       }
     } catch (error) {
       console.error("❌ Failed to delete task status:", error)
-      const errorMessage = error instanceof Error ? error.message : "Failed to delete task status"
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to delete task status"
       set({ error: errorMessage })
       throw error
     }
@@ -275,32 +281,32 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
   reorderTaskStatuses: async (taskStatusIds) => {
     try {
       console.log("🔄 Reordering task statuses:", taskStatusIds)
-      
+
       const now = getCurrentTimestamp()
       const currentUser = getCurrentUser()
 
       const taskStatusCollection = database.taskStatus
-      
+
       // Update each status with new order
       const updatePromises = taskStatusIds.map(async (id, order) => {
         const taskStatus = await taskStatusCollection
           .findOne({ selector: { id } })
           .exec()
-        
+
         if (taskStatus) {
           return taskStatus.update({
             $set: {
               order,
               updatedAt: now,
               updatedBy: currentUser,
-            }
+            },
           })
         }
       })
 
       // Execute all updates
       await Promise.all(updatePromises)
-      
+
       console.log("✅ Task statuses reordered successfully")
     } catch (error) {
       console.error("❌ Failed to reorder task statuses:", error)
@@ -321,10 +327,10 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
 
   createDefaultTaskStatuses: async (projectId) => {
     set({ isLoading: true, error: null })
-    
+
     try {
       console.log("📝 Creating default task statuses for project:", projectId)
-      
+
       const taskStatusCollection = database.taskStatus
       const now = getCurrentTimestamp()
       const currentUser = getCurrentUser()
@@ -358,12 +364,18 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
         })
         .$.subscribe({
           next: (statusDocs) => {
-            console.log("📋 Default statuses subscription update:", statusDocs.length, "statuses")
-            
+            console.log(
+              "📋 Default statuses subscription update:",
+              statusDocs.length,
+              "statuses"
+            )
+
             const normalizedTaskStatuses = statusDocs.map((ts) => ts.toJSON())
 
             set({
-              taskStatuses: normalizedTaskStatuses.sort((a, b) => a.order - b.order),
+              taskStatuses: normalizedTaskStatuses.sort(
+                (a, b) => a.order - b.order
+              ),
               isLoading: false,
               error: null,
               initialized: true,
@@ -376,12 +388,13 @@ export const useTaskStatusStore = create<TaskStatusStore>((set, get) => ({
               isLoading: false,
               initialized: false,
             })
-          }
+          },
         })
 
       set({ subscription })
-      console.log("✅ Default task statuses created and subscription established")
-      
+      console.log(
+        "✅ Default task statuses created and subscription established"
+      )
     } catch (error) {
       console.error("❌ Failed to create default task statuses:", error)
       set({

@@ -1,5 +1,9 @@
 import { useKanban, useOrganizationStore } from "@incmix/store"
-import type { TaskCollections, KanbanColumn as StoreKanbanColumn, KanbanTask as StoreKanbanTask } from "@incmix/store"
+import type {
+  KanbanColumn as StoreKanbanColumn,
+  KanbanTask as StoreKanbanTask,
+  TaskCollections,
+} from "@incmix/store"
 import {
   Board,
   Box,
@@ -23,8 +27,10 @@ import { CreateProjectForm } from "./create-project-form"
 import { CreateTaskForm } from "./create-task-form"
 
 // Type adapter function to adapt columns to UI component expectations
-const adaptColumnsToUIFormat = (columns: any[] | StoreKanbanColumn[]): any[] => {
-  return columns.map(column => ({
+const adaptColumnsToUIFormat = (
+  columns: any[] | StoreKanbanColumn[]
+): any[] => {
+  return columns.map((column) => ({
     ...column,
     tasks: (column.tasks || []).map((task: any) => ({
       ...task,
@@ -33,7 +39,7 @@ const adaptColumnsToUIFormat = (columns: any[] | StoreKanbanColumn[]): any[] => 
       labelsTags: task.labelsTags ? [...task.labelsTags] : [],
       assignedTo: task.assignedTo ? [...task.assignedTo] : [],
       subTasks: task.subTasks ? [...task.subTasks] : [],
-    }))
+    })),
   }))
 }
 
@@ -69,7 +75,7 @@ const TasksPage = () => {
         isLoading: false,
         error: null,
       }
-  
+
   // Extract what we need from the kanban object
   const {
     columns = [],
@@ -137,7 +143,10 @@ const TasksPage = () => {
           {selectedProject && (
             <Flex className="gap-2">
               <CreateColumnForm projectId={selectedProject} />
-              <CreateTaskForm projectId={selectedProject} columns={adaptColumnsToUIFormat(columns)} />
+              <CreateTaskForm
+                projectId={selectedProject}
+                columns={adaptColumnsToUIFormat(columns)}
+              />
             </Flex>
           )}
         </Flex>
