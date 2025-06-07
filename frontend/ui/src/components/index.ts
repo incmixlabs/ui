@@ -3,8 +3,10 @@ export * from "./avatar-editable"
 export * from "./avatar-group"
 export * from "./carousel"
 export * from "./charts"
-export * from "@utils/colors"
+<<<<<<< HEAD
 // Export DataTable from original data-table with renamed export
+=======
+>>>>>>> 5817e89 (feat: wip)
 export * from "./data-table"
 
 export * from "./drag-handle"
@@ -32,4 +34,4 @@ export * from "./list-combo-box"
 
 // Export only TanstackDataTable from tanstack-table
 export { TanstackDataTable } from "./tanstack-table"
-export * from "./theme-playground"
+export * from "./theme/theme-playground"

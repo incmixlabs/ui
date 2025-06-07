@@ -46,7 +46,7 @@ import {
   FacetedFilterList,
   FacetedFilterTrigger,
 } from "./faceted-filter"
-import { formatDate } from "@utils/date"
+import { formatDate } from "@incmix/utils/date"
 
 interface DataTableFilterListProps<TData> {
   table: Table<TData>

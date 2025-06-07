@@ -1,11 +1,8 @@
-import React from "react";
 import {
-  Box,
   Flex,
   Heading,
   Text,
   Select,
-  RadioGroup,
   Grid,
   Switch,
   CardContainer,
@@ -18,6 +15,7 @@ import {
   RADIX_RADIUS,
   // PANEL_BACKGROUND_OPTIONS,
   SCALING_OPTIONS,
+<<<<<<< HEAD:frontend/ui/src/components/theme-playground.tsx
   SIDEBAR_COLOR_OPTIONS,
 } from "@hooks/useBaseThemeStore";
 import { useTranslation } from "react-i18next";
@@ -28,6 +26,11 @@ const getColorBoxStyle = (color: string) => ({
   borderRadius: "0.25rem",
   marginRight: "0.5rem",
 });
+=======
+} from "@/hooks/use-theme-store";
+import { useTranslation } from "react-i18next";
+
+>>>>>>> 16052be (feat: wip):frontend/ui/src/components/theme/theme-playground.tsx
 export function ThemePlayground() {
   const { t } = useTranslation(["settings", "common"]);
   const appearance = useBaseThemeStore((state) => state.appearance);
