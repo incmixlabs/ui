@@ -1,7 +1,7 @@
 // File: use-project-task-data.ts
 // REPLACE your current file with this fixed version
 
-import { useCallback, useEffect, useState, useRef } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { database } from "../sql"
 import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
 import type { TaskDataSchema } from "../sql/task-schemas"
@@ -66,10 +66,10 @@ const DEFAULT_TASK_STATUSES = [
     color: "#f59e0b",
     description: "Tasks currently being worked on",
   },
-  { 
-    name: "Done", 
-    color: "#10b981", 
-    description: "Completed tasks" 
+  {
+    name: "Done",
+    color: "#10b981",
+    description: "Completed tasks",
   },
 ]
 
@@ -90,13 +90,13 @@ export function useProjectData(
   useEffect(() => {
     const setupReactiveData = async () => {
       try {
-        setData(prev => ({ ...prev, isLoading: true, error: null }))
+        setData((prev) => ({ ...prev, isLoading: true, error: null }))
 
         // Check and create default statuses if needed - FIXED: use count() instead of countAllDocuments
         const statuses = await database.taskStatus
           .find({ selector: { projectId } })
-          .exec();
-        const existingStatusCount = statuses.length;
+          .exec()
+        const existingStatusCount = statuses.length
 
         if (existingStatusCount === 0) {
           await createDefaultStatuses(projectId)
@@ -106,65 +106,67 @@ export function useProjectData(
         subscriptionsRef.current.taskStatuses = database.taskStatus
           .find({
             selector: { projectId },
-            sort: [{ order: 'asc' }]
+            sort: [{ order: "asc" }],
           })
           .$.subscribe({
             next: (statusDocs) => {
-              const taskStatuses = statusDocs.map(doc => doc.toJSON())
-              setData(prev => ({ 
-                ...prev, 
+              const taskStatuses = statusDocs.map((doc) => doc.toJSON())
+              setData((prev) => ({
+                ...prev,
                 taskStatuses,
                 // FIXED: Simplified boolean expression
-                isLoading: prev.tasks.length === 0
+                isLoading: prev.tasks.length === 0,
               }))
             },
             error: (error) => {
-              console.error('Task statuses subscription error:', error)
-              setData(prev => ({ 
-                ...prev, 
-                error: 'Failed to load task statuses',
-                isLoading: false 
+              console.error("Task statuses subscription error:", error)
+              setData((prev) => ({
+                ...prev,
+                error: "Failed to load task statuses",
+                isLoading: false,
               }))
-            }
+            },
           })
 
         // Set up reactive subscription for tasks
         subscriptionsRef.current.tasks = database.tasks
           .find({
             selector: { projectId },
-            sort: [{ columnId: 'asc' }, { order: 'asc' }]
+            sort: [{ columnId: "asc" }, { order: "asc" }],
           })
           .$.subscribe({
             next: (taskDocs) => {
-              const tasks = taskDocs.map(doc => {
+              const tasks = taskDocs.map((doc) => {
                 const task = doc.toJSON()
                 return {
                   ...task,
                   completed: task.completed ?? false,
                 } as TaskDataSchema
               })
-              setData(prev => ({ 
-                ...prev, 
+              setData((prev) => ({
+                ...prev,
                 tasks,
-                isLoading: false 
+                isLoading: false,
               }))
             },
             error: (error) => {
-              console.error('Tasks subscription error:', error)
-              setData(prev => ({ 
-                ...prev, 
-                error: 'Failed to load tasks',
-                isLoading: false 
+              console.error("Tasks subscription error:", error)
+              setData((prev) => ({
+                ...prev,
+                error: "Failed to load tasks",
+                isLoading: false,
               }))
-            }
+            },
           })
-
       } catch (error) {
-        console.error('Failed to setup reactive data:', error)
-        setData(prev => ({
+        console.error("Failed to setup reactive data:", error)
+        setData((prev) => ({
           ...prev,
           isLoading: false,
-          error: error instanceof Error ? error.message : 'Failed to initialize data'
+          error:
+            error instanceof Error
+              ? error.message
+              : "Failed to initialize data",
         }))
       }
     }
@@ -304,14 +306,16 @@ export function useProjectData(
         let newOrder: number
         if (targetIndex === undefined || targetIndex >= targetTasks.length) {
           // Add to end
-          newOrder = targetTasks.length > 0 
-            ? targetTasks[targetTasks.length - 1].order + 1000 
-            : 1000
+          newOrder =
+            targetTasks.length > 0
+              ? targetTasks[targetTasks.length - 1].order + 1000
+              : 1000
         } else if (targetIndex <= 0) {
           // Add to beginning
-          newOrder = targetTasks.length > 0 
-            ? Math.max(targetTasks[0].order - 1000, 100)
-            : 1000
+          newOrder =
+            targetTasks.length > 0
+              ? Math.max(targetTasks[0].order - 1000, 100)
+              : 1000
         } else {
           // Insert between tasks
           const prevOrder = targetTasks[targetIndex - 1].order
@@ -331,7 +335,7 @@ export function useProjectData(
             order: newOrder,
             updatedAt: now,
             updatedBy: user,
-          }
+          },
         })
 
         // Optional: Clean up order values if they get too close to 0
@@ -501,11 +505,13 @@ export function useProjectData(
   const refetch = useCallback(() => {
     // With reactive subscriptions, manual refetch is rarely needed
     // The subscriptions automatically keep data fresh
-    console.log("Refetch called - RxDB subscriptions handle updates automatically")
+    console.log(
+      "Refetch called - RxDB subscriptions handle updates automatically"
+    )
   }, [])
 
   const clearError = useCallback(() => {
-    setData(prev => ({ ...prev, error: null }))
+    setData((prev) => ({ ...prev, error: null }))
   }, [])
 
   return {

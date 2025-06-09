@@ -199,7 +199,8 @@ export const taskSchemaLiteral = {
             type: "string",
             maxLength: 200,
           },
-          image: { // Changed from 'avatar' to 'image' for consistency
+          image: {
+            // Changed from 'avatar' to 'image' for consistency
             type: "string",
             maxLength: 500,
           },
@@ -239,22 +240,22 @@ export const taskSchemaLiteral = {
           content: { type: "string", maxLength: 2000 },
           createdAt: { type: "number" },
           createdBy: {
-            type: "object", 
+            type: "object",
             properties: {
               id: { type: "string", maxLength: 100 },
               name: { type: "string", maxLength: 200 },
               image: { type: "string", maxLength: 500 },
             },
-            required: ["id", "name"]
-          }
+            required: ["id", "name"],
+          },
         },
-        required: ["id", "content", "createdAt", "createdBy"]
+        required: ["id", "content", "createdAt", "createdBy"],
       },
-      default: []
+      default: [],
     },
-    commentsCount: { 
-      type: "number", 
-      default: 0 
+    commentsCount: {
+      type: "number",
+      default: 0,
     },
     createdAt: {
       type: "number",
@@ -311,9 +312,7 @@ export const taskSchemaLiteral = {
     "createdBy",
     "updatedBy",
   ],
- 
 } as const
-
 
 // Column Schema with required fields added
 export const columnSchemaLiteral = {
@@ -664,7 +663,6 @@ export type DashboardTemplateDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
 export type DashboardDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof dashboardTyped
 >
-
 
 export type TaskCollections = {
   tasks: RxCollection<TaskDocType>

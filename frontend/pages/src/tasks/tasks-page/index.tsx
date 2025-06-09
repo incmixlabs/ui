@@ -1,8 +1,6 @@
 // pages/tasks/index.tsx - Fixed horizontal scrolling
 import { useOrganizationStore } from "@incmix/store"
-import type {
-  TaskCollections,
-} from "@incmix/store"
+import type { TaskCollections } from "@incmix/store"
 import {
   Board,
   Box,
@@ -84,7 +82,9 @@ const TasksPage = () => {
                 >
                   <Select.Trigger
                     className="w-full max-w-96"
-                    placeholder={fetchingProjects ? "Loading" : "Select Project"}
+                    placeholder={
+                      fetchingProjects ? "Loading" : "Select Project"
+                    }
                   />
                   <Select.Content>
                     {fetchingProjects && <div>Loading...</div>}
@@ -149,7 +149,8 @@ const TasksPage = () => {
                 <Box className="text-center">
                   <p className="mb-4 text-gray-500">List view coming soon...</p>
                   <p className="text-gray-400 text-sm">
-                    This view will use the same data structure as the Kanban board
+                    This view will use the same data structure as the Kanban
+                    board
                   </p>
                 </Box>
               </Box>
@@ -159,9 +160,12 @@ const TasksPage = () => {
             <Tabs.Content className="h-full" value="table">
               <Box className="flex h-full items-center justify-center">
                 <Box className="text-center">
-                  <p className="mb-4 text-gray-500">Table view coming soon...</p>
+                  <p className="mb-4 text-gray-500">
+                    Table view coming soon...
+                  </p>
                   <p className="text-gray-400 text-sm">
-                    This view will use the same data structure as the Kanban board
+                    This view will use the same data structure as the Kanban
+                    board
                   </p>
                 </Box>
               </Box>

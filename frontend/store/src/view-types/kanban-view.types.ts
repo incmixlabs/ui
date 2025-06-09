@@ -25,10 +25,10 @@ export interface KanbanColumn {
     name: string
     image?: string
   }
-  
+
   // Tasks array
   tasks: KanbanTask[]
-  
+
   // Computed properties from useKanban hook
   completedTasksCount: number
   totalTasksCount: number
@@ -155,7 +155,10 @@ export type CardDropTargetData = TCardDropTargetData
 export type TaskCardProps = {
   card: KanbanTask
   columnId: string
-  onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
+  onUpdateTask: (
+    taskId: string,
+    updates: Partial<TaskDataSchema>
+  ) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
   onTaskOpen?: (taskId: string) => void
   isSelected?: boolean
@@ -163,26 +166,38 @@ export type TaskCardProps = {
 
 export type BoardColumnProps = {
   column: KanbanColumn
-  onCreateTask: (columnId: string, taskData: Partial<TaskDataSchema>) => Promise<void>
-  onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
+  onCreateTask: (
+    columnId: string,
+    taskData: Partial<TaskDataSchema>
+  ) => Promise<void>
+  onUpdateTask: (
+    taskId: string,
+    updates: Partial<TaskDataSchema>
+  ) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
-  onUpdateColumn: (columnId: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
+  onUpdateColumn: (
+    columnId: string,
+    updates: { name?: string; color?: string; description?: string }
+  ) => Promise<void>
   onDeleteColumn: (columnId: string) => Promise<void>
   isDragging?: boolean
   onTaskOpen?: (taskId: string) => void
 }
 
 // Form data types
-export type TaskFormData = Partial<Pick<TaskDataSchema, 
-  | 'name' 
-  | 'description' 
-  | 'priority' 
-  | 'startDate' 
-  | 'endDate'
-  | 'labelsTags'
-  | 'assignedTo'
-  | 'subTasks'
->>
+export type TaskFormData = Partial<
+  Pick<
+    TaskDataSchema,
+    | "name"
+    | "description"
+    | "priority"
+    | "startDate"
+    | "endDate"
+    | "labelsTags"
+    | "assignedTo"
+    | "subTasks"
+  >
+>
 
 // Board types
 export type TBoard = {

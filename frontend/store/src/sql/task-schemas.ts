@@ -13,14 +13,14 @@ export type TaskDataSchema = {
   description?: string
   completed: boolean
   priority: "low" | "medium" | "high" | "urgent"
-  
+
   // Arrays - MUTABLE for UI editing
   labelsTags: {
     value: string
     label: string
     color: string
   }[]
-  
+
   attachments: {
     id: string
     name: string
@@ -28,19 +28,19 @@ export type TaskDataSchema = {
     size: string
     type?: string
   }[]
-  
+
   assignedTo: {
     id: string
     name: string
     image?: string
   }[]
-  
+
   subTasks: {
     id: string
     name: string
     completed: boolean
   }[]
-  
+
   // Comments with proper structure
   comments: {
     id: string
@@ -52,9 +52,9 @@ export type TaskDataSchema = {
       image?: string
     }
   }[]
-  
+
   commentsCount: number
-  
+
   // Audit fields
   createdAt: number
   updatedAt: number
@@ -93,18 +93,38 @@ export type TaskStatusSchema = {
 }
 
 // Helper types for form data
-export type CreateTaskData = Pick<TaskDataSchema, 'name'> & Partial<Omit<TaskDataSchema, 'id' | 'taskId' | 'projectId' | 'createdAt' | 'updatedAt' | 'createdBy' | 'updatedBy'>>
+export type CreateTaskData = Pick<TaskDataSchema, "name"> &
+  Partial<
+    Omit<
+      TaskDataSchema,
+      | "id"
+      | "taskId"
+      | "projectId"
+      | "createdAt"
+      | "updatedAt"
+      | "createdBy"
+      | "updatedBy"
+    >
+  >
 
-export type UpdateTaskData = Partial<Omit<TaskDataSchema, 'id' | 'taskId' | 'projectId' | 'createdAt' | 'createdBy'>>
+export type UpdateTaskData = Partial<
+  Omit<
+    TaskDataSchema,
+    "id" | "taskId" | "projectId" | "createdAt" | "createdBy"
+  >
+>
 
-export type CreateTaskStatusData = Pick<TaskStatusSchema, 'name'> & Partial<Pick<TaskStatusSchema, 'color' | 'description'>>
+export type CreateTaskStatusData = Pick<TaskStatusSchema, "name"> &
+  Partial<Pick<TaskStatusSchema, "color" | "description">>
 
-export type UpdateTaskStatusData = Partial<Pick<TaskStatusSchema, 'name' | 'color' | 'description'>>
+export type UpdateTaskStatusData = Partial<
+  Pick<TaskStatusSchema, "name" | "color" | "description">
+>
 
 // UI-specific types
-export type TaskPriority = TaskDataSchema['priority']
-export type TaskLabel = TaskDataSchema['labelsTags'][0]
-export type TaskAttachment = TaskDataSchema['attachments'][0]
-export type TaskAssignee = TaskDataSchema['assignedTo'][0]
-export type TaskSubTask = TaskDataSchema['subTasks'][0]
-export type TaskComment = TaskDataSchema['comments'][0]
+export type TaskPriority = TaskDataSchema["priority"]
+export type TaskLabel = TaskDataSchema["labelsTags"][0]
+export type TaskAttachment = TaskDataSchema["attachments"][0]
+export type TaskAssignee = TaskDataSchema["assignedTo"][0]
+export type TaskSubTask = TaskDataSchema["subTasks"][0]
+export type TaskComment = TaskDataSchema["comments"][0]
