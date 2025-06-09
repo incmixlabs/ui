@@ -101,7 +101,7 @@ export function ProjectPageComponents() {
         setFilteredProjects([...filteredProjects, projectWithId])
       }
       toast.success("Project created successfully", {
-        description: `"${newProject.title}" has been added to your projects.`,
+        description: `"${newProject.name}" has been added to your projects.`,
       })
     } catch (error) {
       console.error("Failed to save project to RxDB:", error)
@@ -287,14 +287,7 @@ export function ProjectPageComponents() {
                 <SlidersHorizontal size={16} />
               </IconButton>
 
-              <Button
-                onClick={() => setIsAddModalOpen(true)}
-                variant="solid"
-                size="1"
-              >
-                <Plus size={16} />
-                Add Project
-              </Button>
+             
             </Flex>
           </Box>
           <Box

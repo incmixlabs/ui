@@ -8,6 +8,8 @@
       "@i18n/*": ["./src/i18n/*"],
       "@pages": ["./src/index.ts"],
       "@pages/*": ["./src/*"],
+      "@projects": ["./src/projects"],
+      "@projects/*": ["./src/projects/*"],
       "@layouts": ["./common/components/layouts"],
       "@layouts/*": ["./common/components/layouts/*"],
       "@auth": ["./auth"],

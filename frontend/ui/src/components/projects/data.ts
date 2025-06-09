@@ -53,7 +53,7 @@ export const members: Option[] = [
 export const projects: Project[] = [
   {
     id: "1",
-    title: "App Development",
+    name: "App Development",
     company: "Dropbox, Inc.",
     logo: ProjectsImages?.dropbox,
     description: "Create a mobile application on iOS and Android devices.",
@@ -65,7 +65,7 @@ export const projects: Project[] = [
   },
   {
     id: "2",
-    title: "Website Redesign",
+    name: "Website Redesign",
     company: "GitLab Inc.",
     logo: ProjectsImages?.gitlab,
     description:
@@ -78,7 +78,7 @@ export const projects: Project[] = [
   },
   {
     id: "3",
-    title: "Landing Page",
+    name: "Landing Page",
     company: "Bitbucket, Inc.",
     logo: ProjectsImages?.bitbucket,
     description:
@@ -91,7 +91,7 @@ export const projects: Project[] = [
   },
   {
     id: "4",
-    title: "Parser Development",
+    name: "Parser Development",
     company: "Driveway, Inc.",
     logo: ProjectsImages?.python,
     description: "It is necessary to develop a ticket site parser in python.",
@@ -103,7 +103,7 @@ export const projects: Project[] = [
   },
   {
     id: "5",
-    title: "App Development",
+    name: "App Development",
     company: "Slack Technologies, Inc.",
     logo: ProjectsImages?.slack,
     description: "Create a mobile application on iOS and Android devices.",
@@ -115,7 +115,7 @@ export const projects: Project[] = [
   },
   {
     id: "6",
-    title: "App Development",
+    name: "App Development",
     company: "Google, Inc.",
     logo: ProjectsImages?.firebase,
     description: "Create a mobile application on iOS and Android devices.",
@@ -127,7 +127,7 @@ export const projects: Project[] = [
   },
   {
     id: "7",
-    title: "Admin Dashboard",
+    name: "Admin Dashboard",
     company: "ArtTemplate, Inc.",
     logo: ProjectsImages?.angular,
     description: "Necessary to create Admin Dashboard on Angular 8.",
@@ -139,7 +139,7 @@ export const projects: Project[] = [
   },
   {
     id: "8",
-    title: "Web App on Vue.js",
+    name: "Web App on Vue.js",
     company: "ArtTemplate, Inc.",
     logo: ProjectsImages?.vue,
     description: "It is necessary to develop a web app on the framework Vue.js",
@@ -151,7 +151,7 @@ export const projects: Project[] = [
   },
   {
     id: "9",
-    title: "App Development",
+    name: "App Development",
     company: "Facebook, Inc.",
     logo: ProjectsImages?.facebook,
     description: "Create a mobile application on iOS and Android devices.",

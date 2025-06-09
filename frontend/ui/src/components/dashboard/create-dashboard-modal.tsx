@@ -10,9 +10,20 @@ import {  useDashboardStore } from "@incmix/store";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
-export function CreateProjectModal() {
+interface CreateProjectModalProps {
+  isCreateDashModalOpen: boolean;
+  openCreateDashboardModal: () => void;
+  closeCreateDashboardModal: () => void;
+}
+
+export function CreateProjectModal({
+  isCreateDashModalOpen,
+  openCreateDashboardModal,
+  closeCreateDashboardModal,
+}: CreateProjectModalProps) {
   const [name, setName] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
+ 
+  
   const { addDashboard, getDashboards } = useDashboardStore()
   const navigate = useNavigate();
 
@@ -29,7 +40,7 @@ export function CreateProjectModal() {
       })
 
       setName("");
-      setIsOpen(false);
+      closeCreateDashboardModal()
 
       navigate({
         to: "/dashboard/$projectId",
@@ -49,9 +60,9 @@ export function CreateProjectModal() {
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>Create Dashboard</Button>
+      <Button onClick={openCreateDashboardModal}>Create Dashboard</Button>
 
-      <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
+      <Dialog.Root open={isCreateDashModalOpen} onOpenChange={closeCreateDashboardModal}>
         <Dialog.Content className="w-[26rem]">
           <Dialog.Title>Create a New Dashboard</Dialog.Title>
           <form onSubmit={handleCreate}>

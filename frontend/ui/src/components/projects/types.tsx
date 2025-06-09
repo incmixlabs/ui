@@ -11,7 +11,7 @@ export interface Member {
 
 export interface Project {
   id: string
-  title: string
+  name: string
   company: string
   logo: string
   description: string
@@ -24,4 +24,8 @@ export interface Project {
   endDate?: number
   budget?: number
   fileData?: File | null
+  createdAt?: Date
+  updatedAt?: Date
+  createdBy?: number
+  updatedBy?: number
 }
