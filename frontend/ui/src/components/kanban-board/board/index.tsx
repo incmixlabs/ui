@@ -1,4 +1,4 @@
-// components/board/index.tsx - Updated to use new useKanban hook
+// components/board/index.tsx - Fixed drag and drop smoothness and horizontal scrolling
 import { useRef, useEffect, useState, useCallback } from "react"
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
@@ -21,7 +21,7 @@ import {
   MoreVertical,
   RefreshCw
 } from "lucide-react"
-import { isCardData, isCardDropTargetData, isColumnData, isDraggingACard, useKanban } from "@incmix/store"
+import { isCardData, isCardDropTargetData, isColumnData, isDraggingACard, KanbanColumn, useKanban } from "@incmix/store"
 
 import { BoardColumn } from "./board-column"
 import { GlobalAddTaskForm } from "./add-task-form"
@@ -40,6 +40,9 @@ export function Board({
   const scrollableRef = useRef<HTMLDivElement | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   
+  // Local state for optimistic updates
+  const [optimisticColumns, setOptimisticColumns] = useState<KanbanColumn[]>([])
+  
   // Use the new useKanban hook
   const {
     columns,
@@ -57,7 +60,17 @@ export function Board({
     projectStats
   } = useKanban(projectId)
 
-  // Simplified drag and drop implementation
+  // Update optimistic state when real data changes
+  useEffect(() => {
+    if (!isDragging) {
+      setOptimisticColumns(columns)
+    }
+  }, [columns, isDragging])
+
+  // Use optimistic columns during drag, real columns otherwise
+  const displayColumns = isDragging ? optimisticColumns : columns
+
+  // Optimistic drag and drop implementation
   useEffect(() => {
     const element = scrollableRef.current
     if (!element || isLoading || columns.length === 0) {
@@ -69,42 +82,63 @@ export function Board({
         canMonitor: isDraggingACard,
         onDragStart() {
           setIsDragging(true)
+          setOptimisticColumns([...columns]) // Initialize optimistic state
         },
         onDrop({ source, location }) {
-          setIsDragging(false)
-          
           const dragging = source.data
-          if (!isCardData(dragging)) return
+          if (!isCardData(dragging)) {
+            setIsDragging(false)
+            return
+          }
 
           const destination = location.current.dropTargets[0]
-          if (!destination) return
+          if (!destination) {
+            setIsDragging(false)
+            return
+          }
 
           const dropTargetData = destination.data
 
           // Find the task being dragged
-          const sourceColumn = columns.find(col => col.id === dragging.columnId)
-          if (!sourceColumn) return
+          const sourceColumn = optimisticColumns.find(col => col.id === dragging.columnId)
+          if (!sourceColumn) {
+            setIsDragging(false)
+            return
+          }
 
           const taskIndex = sourceColumn.tasks.findIndex(task => task.taskId === dragging.card.taskId)
-          if (taskIndex === -1) return
+          if (taskIndex === -1) {
+            setIsDragging(false)
+            return
+          }
 
           let targetColumnId: string
           let targetIndex: number
+          let newOptimisticColumns = [...optimisticColumns]
 
           if (isCardDropTargetData(dropTargetData)) {
             // Dropping on another card
-            const destColumn = columns.find(col => col.id === dropTargetData.columnId)
-            if (!destColumn) return
+            const destColumn = optimisticColumns.find(col => col.id === dropTargetData.columnId)
+            if (!destColumn) {
+              setIsDragging(false)
+              return
+            }
 
             targetColumnId = destColumn.id
             
             if (sourceColumn.id === destColumn.id) {
-              // Same column reorder
+              // Same column reorder - update optimistically
               const targetTaskIndex = destColumn.tasks.findIndex(task => task.taskId === dropTargetData.card.taskId)
-              if (targetTaskIndex === -1 || targetTaskIndex === taskIndex) return
+              if (targetTaskIndex === -1 || targetTaskIndex === taskIndex) {
+                setIsDragging(false)
+                return
+              }
 
               const closestEdge = extractClosestEdge(dropTargetData)
-              if (!closestEdge) return
+              if (!closestEdge) {
+                setIsDragging(false)
+                return
+              }
 
               const reordered = reorderWithEdge({
                 axis: "vertical",
@@ -114,9 +148,19 @@ export function Board({
                 closestEdgeOfTarget: closestEdge,
               })
 
-              // Update backend - the reactive subscription will update the UI
+              // Update optimistic state immediately
+              newOptimisticColumns = newOptimisticColumns.map(col => 
+                col.id === sourceColumn.id 
+                  ? { ...col, tasks: reordered }
+                  : col
+              )
+              setOptimisticColumns(newOptimisticColumns)
+
+              // Update backend (this will eventually update the real state)
               const newIndex = reordered.findIndex(t => t.taskId === dragging.card.taskId)
-              moveTask(dragging.card.taskId, destColumn.id, newIndex)
+              moveTask(dragging.card.taskId, destColumn.id, newIndex).finally(() => {
+                setIsDragging(false)
+              })
               return
             } else {
               // Different column
@@ -126,18 +170,47 @@ export function Board({
             }
           } else if (isColumnData(dropTargetData)) {
             // Dropping on column
-            const destColumn = columns.find(col => col.id === dropTargetData.column.id)
-            if (!destColumn) return
+            const destColumn = optimisticColumns.find(col => col.id === dropTargetData.column.id)
+            if (!destColumn) {
+              setIsDragging(false)
+              return
+            }
             targetColumnId = destColumn.id
             targetIndex = destColumn.tasks.length
           } else {
+            setIsDragging(false)
             return
           }
 
-          // Cross-column move
+          // Cross-column move - update optimistically
           if (targetColumnId !== sourceColumn.id) {
-            // Update backend - the reactive subscription will update the UI
-            moveTask(dragging.card.taskId, targetColumnId, targetIndex)
+            const taskToMove = sourceColumn.tasks[taskIndex]
+            
+            // Update optimistic state immediately
+            newOptimisticColumns = newOptimisticColumns.map(col => {
+              if (col.id === sourceColumn.id) {
+                return {
+                  ...col,
+                  tasks: col.tasks.filter((_, i) => i !== taskIndex)
+                }
+              } else if (col.id === targetColumnId) {
+                const newTasks = [...col.tasks]
+                newTasks.splice(targetIndex, 0, { ...taskToMove, columnId: targetColumnId })
+                return {
+                  ...col,
+                  tasks: newTasks
+                }
+              }
+              return col
+            })
+            setOptimisticColumns(newOptimisticColumns)
+
+            // Update backend
+            moveTask(dragging.card.taskId, targetColumnId, targetIndex).finally(() => {
+              setIsDragging(false)
+            })
+          } else {
+            setIsDragging(false)
           }
         },
       }),
@@ -146,7 +219,7 @@ export function Board({
         element,
       })
     )
-  }, [columns, moveTask])
+  }, [optimisticColumns, moveTask, isDragging])
 
   // Handle refresh
   const handleRefresh = useCallback(() => {
@@ -155,7 +228,7 @@ export function Board({
 
   if (isLoading) {
     return (
-      <Box className="flex items-center justify-center h-96">
+      <Box className="flex items-center justify-center h-full">
         <Flex align="center" gap="2">
           <Loader2 className="h-6 w-6 animate-spin" />
           <Text>Loading board...</Text>
@@ -166,7 +239,7 @@ export function Board({
 
   if (error) {
     return (
-      <Box className="flex items-center justify-center h-96">
+      <Box className="flex items-center justify-center h-full">
         <Flex direction="column" align="center" gap="4">
           <Text className="text-red-500">Error: {error}</Text>
           <Button onClick={clearError} variant="outline">
@@ -179,116 +252,119 @@ export function Board({
   }
 
   return (
-    <Box className="h-full w-full overflow-hidden">
-      {/* Board Header */}
-      <Flex direction="column" gap="4" className="p-4 border-b border-gray-200 dark:border-gray-700">
-        <Flex justify="between" align="center">
-          <Heading size="6">Project Board</Heading>
-          
-          <Flex align="center" gap="2">
-            {/* Global Add Task Button */}
-            <GlobalAddTaskForm
-              projectId={projectId}
-              columns={columns}
-              onSuccess={handleRefresh}
-            />
+    <Box className="h-full w-full flex flex-col">
+      {/* Fixed Board Header - Never scrolls */}
+      <Box className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 z-10">
+        <Flex direction="column" gap="4" className="p-4">
+          <Flex justify="between" align="center">
+            <Heading size="6">Project Board</Heading>
+            
+            <Flex align="center" gap="2">
+              {/* Global Add Task Button - Always visible */}
+              <GlobalAddTaskForm
+                projectId={projectId}
+                columns={displayColumns}
+                onSuccess={handleRefresh}
+              />
 
-            {/* Board Actions */}
-            <IconButton variant="ghost" onClick={handleRefresh}>
-              <RefreshCw size={16} />
-            </IconButton>
+              {/* Board Actions */}
+              <IconButton variant="ghost" onClick={handleRefresh}>
+                <RefreshCw size={16} />
+              </IconButton>
 
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger>
-                <IconButton variant="ghost">
-                  <MoreVertical size={16} />
-                </IconButton>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content>
-                <DropdownMenu.Item onClick={handleRefresh}>
-                  <RefreshCw size={14} />
-                  Refresh Board
-                </DropdownMenu.Item>
-                <DropdownMenu.Item>
-                  <Settings size={14} />
-                  Board Settings
-                </DropdownMenu.Item>
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger>
+                  <IconButton variant="ghost">
+                    <MoreVertical size={16} />
+                  </IconButton>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content>
+                  <DropdownMenu.Item onClick={handleRefresh}>
+                    <RefreshCw size={14} />
+                    Refresh Board
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item>
+                    <Settings size={14} />
+                    Board Settings
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
+            </Flex>
+          </Flex>
+
+          {/* Board Stats */}
+          <Flex gap="6" className="text-sm text-gray-600 dark:text-gray-400">
+            <Text>
+              {projectStats.totalColumns} column{projectStats.totalColumns !== 1 ? "s" : ""}
+            </Text>
+            <Text>
+              {projectStats.totalTasks} task{projectStats.totalTasks !== 1 ? "s" : ""}
+            </Text>
+            <Text>
+              {projectStats.completedTasks} completed
+            </Text>
+            {projectStats.overdueTasks > 0 && (
+              <Text className="text-red-600">
+                {projectStats.overdueTasks} overdue
+              </Text>
+            )}
+            {projectStats.urgentTasks > 0 && (
+              <Text className="text-orange-600">
+                {projectStats.urgentTasks} urgent
+              </Text>
+            )}
           </Flex>
         </Flex>
+      </Box>
 
-        {/* Board Stats */}
-        <Flex gap="6" className="text-sm text-gray-600 dark:text-gray-400">
-          <Text>
-            {projectStats.totalColumns} column{projectStats.totalColumns !== 1 ? "s" : ""}
-          </Text>
-          <Text>
-            {projectStats.totalTasks} task{projectStats.totalTasks !== 1 ? "s" : ""}
-          </Text>
-          <Text>
-            {projectStats.completedTasks} completed
-          </Text>
-          {projectStats.overdueTasks > 0 && (
-            <Text className="text-red-600">
-              {projectStats.overdueTasks} overdue
-            </Text>
-          )}
-          {projectStats.urgentTasks > 0 && (
-            <Text className="text-orange-600">
-              {projectStats.urgentTasks} urgent
-            </Text>
-          )}
-        </Flex>
-      </Flex>
-
-      {/* Board Content */}
-      <Box className="flex-1 overflow-hidden">
-        <Flex 
-          className="h-full gap-6 overflow-x-auto overflow-y-hidden p-4"
+      {/* Columns-only scrollable container */}
+      <Box className="flex-1 w-full relative">
+        <div 
+          className="absolute inset-0 overflow-x-auto overflow-y-hidden"
           ref={scrollableRef}
-          style={{ minHeight: "calc(100vh - 200px)" }}
         >
-          {/* Kanban Columns */}
-          {columns.map((column) => (
-            <Box 
-              key={column.id} 
-              className="flex-shrink-0 w-80"
-            >
-              <BoardColumn 
-                column={column}
-                onCreateTask={createTask}
-                onUpdateTask={updateTask}
-                onDeleteTask={deleteTask}
-                onUpdateColumn={updateColumn}
-                onDeleteColumn={deleteColumn}
-                isDragging={isDragging}
-                onTaskOpen={onTaskOpen}
-              />
-            </Box>
-          ))}
-          
-          {/* Add Column */}
-          <Box className="flex-shrink-0 w-80">
-            <Box className="h-full min-h-[200px] rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
-              <Flex 
-                align="center" 
-                justify="center" 
-                className="h-full p-4"
-                direction="column"
-                gap="4"
+          <div className="h-full p-4 flex gap-6" style={{ width: 'max-content' }}>
+            {/* Kanban Columns */}
+            {displayColumns.map((column) => (
+              <div 
+                key={column.id} 
+                className="w-80 flex-shrink-0"
               >
-                <CreateColumnForm 
-                  projectId={projectId}
-                  onSuccess={handleRefresh}
+                <BoardColumn 
+                  column={column}
+                  onCreateTask={createTask}
+                  onUpdateTask={updateTask}
+                  onDeleteTask={deleteTask}
+                  onUpdateColumn={updateColumn}
+                  onDeleteColumn={deleteColumn}
+                  isDragging={isDragging}
+                  onTaskOpen={onTaskOpen}
                 />
-                <Text size="2" className="text-gray-500 text-center max-w-48">
-                  Create a new status column to organize your workflow
-                </Text>
-              </Flex>
-            </Box>
-          </Box>
-        </Flex>
+              </div>
+            ))}
+            
+            {/* Add Column */}
+            <div className="w-80 flex-shrink-0">
+              <Box className="h-full min-h-[500px] rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
+                <Flex 
+                  align="center" 
+                  justify="center" 
+                  className="h-full p-4"
+                  direction="column"
+                  gap="4"
+                >
+                  <CreateColumnForm 
+                    projectId={projectId}
+                    onSuccess={handleRefresh}
+                  />
+                  <Text size="2" className="text-gray-500 text-center max-w-48">
+                    Create a new status column to organize your workflow
+                  </Text>
+                </Flex>
+              </Box>
+            </div>
+          </div>
+        </div>
       </Box>
 
       {/* Task Drawer */}

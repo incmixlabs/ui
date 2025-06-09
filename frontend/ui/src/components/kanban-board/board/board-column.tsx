@@ -1,4 +1,4 @@
-// components/board/board-column.tsx - Updated for new schema
+// components/board/board-column.tsx - Fixed layout and spacing
 "use client"
 
 import {
@@ -28,8 +28,16 @@ import {
 import { isSafari } from "@utils/browser"
 import { isShallowEqual } from "@utils/objects"
 
-
-import { getColumnData, isCardData, isCardDropTargetData, isColumnData, isDraggingACard, isDraggingAColumn, KanbanColumn, TaskDataSchema } from "@incmix/store"
+import {
+  getColumnData,
+  isCardData,
+  isCardDropTargetData,
+  isColumnData,
+  isDraggingACard,
+  isDraggingAColumn,
+  type KanbanColumn,
+} from "@incmix/store"
+import { TaskDataSchema } from "@incmix/store"
 import { TaskCard, TaskCardShadow } from "./task-card"
 
 type TColumnState =
@@ -97,8 +105,8 @@ const QuickTaskForm = memo(function QuickTaskForm({
         attachments: [],
         assignedTo: [],
         subTasks: [],
-        comments: [], // Now an array
-        commentsCount: 0, // Separate count field
+        comments: [],
+        commentsCount: 0,
       })
       
       setTaskName("")
@@ -190,7 +198,7 @@ export const BoardColumn = memo(function BoardColumn({
   onTaskOpen,
 }: BoardColumnProps) {
   const scrollableRef = useRef<HTMLDivElement | null>(null)
-  const outerFullHeightRef = useRef<HTMLDivElement | null>(null)
+  const outerRef = useRef<HTMLDivElement | null>(null)
   const headerRef = useRef<HTMLDivElement | null>(null)
   const innerRef = useRef<HTMLDivElement | null>(null)
   const [state, setState] = useState<TColumnState>(idle)
@@ -240,7 +248,7 @@ export const BoardColumn = memo(function BoardColumn({
   const columnData = getColumnData({ column })
 
   useEffect(() => {
-    const outer = outerFullHeightRef.current
+    const outer = outerRef.current
     const scrollable = scrollableRef.current
     const header = headerRef.current
     const inner = innerRef.current
@@ -376,27 +384,21 @@ export const BoardColumn = memo(function BoardColumn({
     setEditColumnDescription(column.description || "")
   }, [column.name, column.color, column.description])
 
+  // Calculate column statistics
+  const completedTasks = column.tasks.filter(task => task.completed).length
+  const totalTasks = column.tasks.length
+  const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
+
   return (
-    <Flex
-      direction="column"
-      className="h-full w-full flex-shrink-0 select-none"
-      ref={outerFullHeightRef}
-    >
-      <Flex
-        direction="column"
-        className={`h-full rounded-lg bg-gray-50 dark:bg-gray-900 transition-all duration-200 ${stateStyles[state.type]}`}
+    <div className="h-full w-full select-none" ref={outerRef}>
+      <div
+        className={`rounded-lg bg-gray-50 dark:bg-gray-900 transition-all duration-200 ${stateStyles[state.type]} flex flex-col max-h-full`}
         ref={innerRef}
       >
-        <Flex
-          direction="column"
-          className={`h-full ${state.type === "is-column-over" ? "invisible" : ""}`}
-        >
+        <div className={`flex flex-col ${state.type === "is-column-over" ? "invisible" : ""}`}>
           {/* Column Header */}
-          <Flex
-            direction="row"
-            justify="between"
-            align="center"
-            className="p-4 pb-2 cursor-grab active:cursor-grabbing"
+          <div
+            className="flex-shrink-0 p-4 pb-2 cursor-grab active:cursor-grabbing rounded-t-lg"
             ref={headerRef}
             style={{ 
               backgroundColor: `${column.color}15`,
@@ -404,7 +406,7 @@ export const BoardColumn = memo(function BoardColumn({
             }}
           >
             {isEditingColumn ? (
-              <Flex direction="column" gap="3" className="flex-1 mr-2">
+              <Flex direction="column" gap="3" className="flex-1">
                 <TextField.Root
                   value={editColumnName}
                   onChange={(e) => setEditColumnName(e.target.value)}
@@ -438,9 +440,9 @@ export const BoardColumn = memo(function BoardColumn({
                 </Flex>
               </Flex>
             ) : (
-              <>
-                <Flex align="center" gap="2" className="flex-1">
-                  <GripVertical size={16} className="text-gray-400" />
+              <Flex justify="between" align="center">
+                <Flex align="center" gap="2" className="flex-1 min-w-0">
+                  <GripVertical size={16} className="text-gray-400 flex-shrink-0" />
                   <div
                     className="w-3 h-3 rounded-full flex-shrink-0"
                     style={{ backgroundColor: column.color }}
@@ -448,13 +450,13 @@ export const BoardColumn = memo(function BoardColumn({
                   <Heading size="4" as="h3" className="font-semibold leading-4 truncate">
                     {column.name}
                   </Heading>
-                  <Flex gap="1">
+                  <Flex gap="1" className="flex-shrink-0">
                     <Text size="1" className="text-gray-500 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-full">
-                      {column.totalTasksCount}
+                      {totalTasks}
                     </Text>
-                    {column.completedTasksCount > 0 && (
+                    {completedTasks > 0 && (
                       <Text size="1" className="text-green-600 bg-green-100 dark:bg-green-900 px-2 py-1 rounded-full">
-                        {column.progressPercentage}%
+                        {completionPercentage}%
                       </Text>
                     )}
                   </Flex>
@@ -465,7 +467,7 @@ export const BoardColumn = memo(function BoardColumn({
                     <IconButton 
                       size="1" 
                       variant="ghost"
-                      className="rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                      className="rounded hover:bg-gray-200 dark:hover:bg-gray-700 flex-shrink-0"
                     >
                       <Ellipsis size={16} />
                     </IconButton>
@@ -485,37 +487,38 @@ export const BoardColumn = memo(function BoardColumn({
                     </DropdownMenu.Item>
                   </DropdownMenu.Content>
                 </DropdownMenu.Root>
-              </>
+              </Flex>
             )}
-          </Flex>
+          </div>
 
           {/* Column Description */}
           {!isEditingColumn && column.description && (
-            <Box className="px-4 pb-2">
+            <div className="flex-shrink-0 px-4 pb-2">
               <Text size="1" className="text-gray-600 dark:text-gray-400">
                 {column.description}
               </Text>
-            </Box>
+            </div>
           )}
 
           {/* Progress Bar for Completed Tasks */}
-          {column.totalTasksCount > 0 && column.completedTasksCount > 0 && (
-            <Box className="px-4 pb-2">
-              <Box className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
-                <Box
+          {totalTasks > 0 && completedTasks > 0 && (
+            <div className="flex-shrink-0 px-4 pb-2">
+              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
+                <div
                   className="bg-green-500 h-1 rounded-full transition-all duration-300"
-                  style={{ width: `${column.progressPercentage}%` }}
+                  style={{ width: `${completionPercentage}%` }}
                 />
-              </Box>
-            </Box>
+              </div>
+            </div>
           )}
 
-          {/* Tasks Container */}
-          <Flex
-            className="flex-1 flex-col overflow-y-auto [overflow-anchor:none] scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800"
+          {/* Tasks Container - Scrollable when needed */}
+          <div
+            className="overflow-y-auto px-2"
             ref={scrollableRef}
+            style={{ maxHeight: 'calc(100vh - 350px)' }}
           >
-            <Box className="space-y-1 p-2 min-h-[100px]">
+            <div className="space-y-1 py-2">
               <CardList
                 column={column}
                 onUpdateTask={onUpdateTask}
@@ -523,15 +526,15 @@ export const BoardColumn = memo(function BoardColumn({
                 onTaskOpen={onTaskOpen}
               />
               {state.type === "is-card-over" && !state.isOverChildCard ? (
-                <Box className="px-1">
+                <div className="px-1">
                   <TaskCardShadow dragging={state.dragging} />
-                </Box>
+                </div>
               ) : null}
-            </Box>
-          </Flex>
+            </div>
+          </div>
 
-          {/* Add Task Section */}
-          <Box className="p-3 pt-1">
+          {/* Add Task Section - Always at bottom of content */}
+          <div className="px-3 pb-3 rounded-b-lg">
             {isCreatingTask ? (
               <QuickTaskForm
                 columnId={column.id}
@@ -548,9 +551,9 @@ export const BoardColumn = memo(function BoardColumn({
                 Add a task
               </Button>
             )}
-          </Box>
-        </Flex>
-      </Flex>
-    </Flex>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 })

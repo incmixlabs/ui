@@ -1,4 +1,4 @@
-// pages/tasks/index.tsx - Updated to use new useKanban hook
+// pages/tasks/index.tsx - Fixed horizontal scrolling
 import { useOrganizationStore } from "@incmix/store"
 import type {
   TaskCollections,
@@ -21,9 +21,7 @@ import { useEffect, useState } from "react"
 import type { RxDatabase } from "rxdb"
 import { useRxDB } from "rxdb-hooks"
 
-
 import { CreateProjectForm } from "./create-project-form"
-import { CreateTaskForm } from "./create-task-form"
 
 const TasksPage = () => {
   const { selectedOrganisation } = useOrganizationStore()
@@ -72,108 +70,105 @@ const TasksPage = () => {
 
   return (
     <DashboardLayout>
-      <ScrollArea
-        scrollbars="horizontal"
-        className="w-full px-2 pt-4 pb-4 2xl:p-2"
-      >
-        {/* Project Selection and Creation */}
-        <Flex justify="between" className="mb-4">
-          <Flex className="gap-4">
-            <Select.Root
-              value={selectedProject}
-              onValueChange={setSelectedProject}
-            >
-              <Select.Trigger
-                className="w-full max-w-96"
-                placeholder={fetchingProjects ? "Loading" : "Select Project"}
-              />
-              <Select.Content>
-                {fetchingProjects && <div>Loading...</div>}
-                {projects?.map((p) => (
-                  <Select.Item key={p.id} value={p.id}>
-                    {p.name}
-                  </Select.Item>
-                ))}
-              </Select.Content>
-            </Select.Root>
+      {/* Use a container that properly constrains the content */}
+      <Box className="flex h-full min-h-0 flex-col">
+        {/* Fixed Header Section - Project Selection and Tabs */}
+        <Box className="z-10 flex-shrink-0 border-gray-200 border-b bg-white dark:border-gray-700 dark:bg-gray-900">
+          <Box className="p-4">
+            {/* Project Selection and Creation */}
+            <Flex justify="between" align="center" className="mb-4">
+              <Flex className="gap-4">
+                <Select.Root
+                  value={selectedProject}
+                  onValueChange={setSelectedProject}
+                >
+                  <Select.Trigger
+                    className="w-full max-w-96"
+                    placeholder={fetchingProjects ? "Loading" : "Select Project"}
+                  />
+                  <Select.Content>
+                    {fetchingProjects && <div>Loading...</div>}
+                    {projects?.map((p) => (
+                      <Select.Item key={p.id} value={p.id}>
+                        {p.name}
+                      </Select.Item>
+                    ))}
+                  </Select.Content>
+                </Select.Root>
 
-            <CreateProjectForm
-              onSuccess={(p) => {
-                refetchProjects()
-                setSelectedProject(p.id)
-              }}
-            />
-          </Flex>
+                <CreateProjectForm
+                  onSuccess={(p) => {
+                    refetchProjects()
+                    setSelectedProject(p.id)
+                  }}
+                />
+              </Flex>
+            </Flex>
+          </Box>
+        </Box>
 
-          {/* Note: Action buttons are now handled inside the Board component */}
-        </Flex>
-
-        {/* Tabs for Different Views */}
-        <Tabs.Root className="flex w-full flex-col p-3" defaultValue="board">
-          <Tabs.List
-            className="flex w-fit shrink-0 rounded-md bg-gray-3 shadow-none"
-            aria-label="View options"
-          >
-            <Tabs.Trigger
-              className="flex cursor-pointer select-none text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
-              value="board"
-            >
-              Board (Kanban)
-            </Tabs.Trigger>
-            <Tabs.Trigger
-              className="flex cursor-pointer select-none text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
-              value="list"
-            >
-              List
-            </Tabs.Trigger>
-            <Tabs.Trigger
-              className="flex cursor-pointer select-none text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
-              value="table"
-            >
-              Table
-            </Tabs.Trigger>
-          </Tabs.List>
-
-          {/* Kanban Board View */}
-          <Tabs.Content
-            className="h-full w-full grow rounded-b-md py-2"
-            value="board"
-          >
-            {/* Using the Board component with optional projectId */}
-            <Board projectId={selectedProject} />
-          </Tabs.Content>
-
-          {/* List View - Placeholder for now */}
-          <Tabs.Content
-            className="h-full w-full grow rounded-b-md py-2"
-            value="list"
-          >
-            <Box className="p-4">
-              <div className="text-center">
-                <p className="mb-4 text-gray-500">List view coming soon...</p>
-                <p className="text-gray-400 text-sm">
-                  This view will use the same data structure as the Kanban board
-                </p>
-              </div>
+        {/* Main Content Area - Properly constrained */}
+        <Box className="min-h-0 flex-1">
+          <Tabs.Root className="h-full" defaultValue="board">
+            {/* Tabs List - Moved here from above */}
+            <Box className="z-10 flex-shrink-0 border-gray-200 border-b bg-white px-4 pb-2 dark:border-gray-700 dark:bg-gray-900">
+              <Tabs.List
+                className="flex w-fit shrink-0 rounded-md bg-gray-3 shadow-none"
+                aria-label="View options"
+              >
+                <Tabs.Trigger
+                  className="flex cursor-pointer select-none px-4 py-2 text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
+                  value="board"
+                >
+                  Board (Kanban)
+                </Tabs.Trigger>
+                <Tabs.Trigger
+                  className="flex cursor-pointer select-none px-4 py-2 text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
+                  value="list"
+                >
+                  List
+                </Tabs.Trigger>
+                <Tabs.Trigger
+                  className="flex cursor-pointer select-none px-4 py-2 text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
+                  value="table"
+                >
+                  Table
+                </Tabs.Trigger>
+              </Tabs.List>
             </Box>
-          </Tabs.Content>
 
-          {/* Table View - Placeholder for now */}
-          <Tabs.Content
-            className="h-full w-full grow rounded-b-md py-2"
-            value="table"
-          >
-            <Box className="p-4">
-              <div className="text-center">
-                <p className="mb-4 text-gray-500">Table view coming soon...</p>
-                <p className="text-gray-400 text-sm">
-                  This view will use the same data structure as the Kanban board
-                </p>
-              </div>
-            </Box>
-          </Tabs.Content>
-        </Tabs.Root>
-      </ScrollArea>
+            {/* Kanban Board View */}
+            <Tabs.Content className="h-full" value="board">
+              {/* Board component handles its own contained scrolling */}
+              <Board projectId={selectedProject} />
+            </Tabs.Content>
+
+            {/* List View - Placeholder for now */}
+            <Tabs.Content className="h-full" value="list">
+              <Box className="flex h-full items-center justify-center">
+                <Box className="text-center">
+                  <p className="mb-4 text-gray-500">List view coming soon...</p>
+                  <p className="text-gray-400 text-sm">
+                    This view will use the same data structure as the Kanban board
+                  </p>
+                </Box>
+              </Box>
+            </Tabs.Content>
+
+            {/* Table View - Placeholder for now */}
+            <Tabs.Content className="h-full" value="table">
+              <Box className="flex h-full items-center justify-center">
+                <Box className="text-center">
+                  <p className="mb-4 text-gray-500">Table view coming soon...</p>
+                  <p className="text-gray-400 text-sm">
+                    This view will use the same data structure as the Kanban board
+                  </p>
+                </Box>
+              </Box>
+            </Tabs.Content>
+          </Tabs.Root>
+        </Box>
+      </Box>
     </DashboardLayout>
   )
 }
