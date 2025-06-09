@@ -26,7 +26,7 @@ import {
   CheckSquare,
   RotateCcw,
 } from "lucide-react"
-import { KanbanTask, KanbanColumn } from "../types"
+import { KanbanColumn } from "@incmix/store"
 
 interface FilterOptions {
   search: string

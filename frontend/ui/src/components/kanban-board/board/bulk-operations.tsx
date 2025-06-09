@@ -24,8 +24,7 @@ import {
   MoreHorizontal,
   ChevronDown,
 } from "lucide-react"
-import { KanbanTask, KanbanColumn } from "../types"
-import { TaskDataSchema } from "@incmix/store"
+import { KanbanColumn, KanbanTask, TaskDataSchema } from "@incmix/store"
 
 interface BulkOperationsProps {
   columns: KanbanColumn[]

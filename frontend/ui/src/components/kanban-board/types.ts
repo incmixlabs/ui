@@ -1,9 +1,32 @@
-import { TaskDocType, TaskStatusDocType, TaskDataSchema } from "@incmix/store"
+import { TaskDataSchema } from "@incmix/store"
 
 
 // Import your existing RxDB-based types
-export interface KanbanColumn extends TaskStatusDocType {
+export interface KanbanColumn {
+  id: string
+  projectId: string
+  name: string
+  color: string
+  order: number
+  description?: string
+  isDefault?: boolean
+  createdAt: number
+  updatedAt: number
+  createdBy: {
+    id: string
+    name: string
+    image?: string
+  }
+  updatedBy: {
+    id: string
+    name: string
+    image?: string
+  }
   tasks: KanbanTask[]
+  // Computed properties from useKanban hook
+  completedTasksCount: number
+  totalTasksCount: number
+  progressPercentage: number
 }
 
 export interface KanbanTask extends Omit<TaskDataSchema, 'attachments' | 'labelsTags' | 'createdBy' | 'assignedTo' | 'subTasks' | 'updatedBy' | 'completed' | 'priority'> {
@@ -105,7 +128,7 @@ export type TBoard = {
 const cardKey = Symbol("card")
 export type TCardData = {
   [cardKey]: true
-  card: KanbanTask  // Now uses KanbanTask instead of TCard
+  card: KanbanTask
   columnId: string
   rect: DOMRect
 }
@@ -115,7 +138,7 @@ export function getCardData({
   rect,
   columnId,
 }: {
-  card: KanbanTask  // Now uses KanbanTask
+  card: KanbanTask
   columnId: string
   rect: DOMRect
 }): TCardData {
@@ -126,7 +149,6 @@ export function getCardData({
     columnId,
   }
 }
-
 export function isCardData(
   value: Record<string | symbol, unknown>
 ): value is TCardData {
@@ -144,7 +166,7 @@ export function isDraggingACard({
 const cardDropTargetKey = Symbol("card-drop-target")
 export type TCardDropTargetData = {
   [cardDropTargetKey]: true
-  card: KanbanTask  // Now uses KanbanTask
+  card: KanbanTask
   columnId: string
 }
 
@@ -158,7 +180,7 @@ export function getCardDropTargetData({
   card,
   columnId,
 }: {
-  card: KanbanTask  // Now uses KanbanTask
+  card: KanbanTask
   columnId: string
 }): TCardDropTargetData {
   return {
@@ -171,13 +193,13 @@ export function getCardDropTargetData({
 const columnKey = Symbol("column")
 export type TColumnData = {
   [columnKey]: true
-  column: KanbanColumn  // Now uses KanbanColumn
+  column: KanbanColumn
 }
 
 export function getColumnData({
   column,
 }: {
-  column: KanbanColumn  // Now uses KanbanColumn
+  column: KanbanColumn
 }): TColumnData {
   return {
     [columnKey]: true,
@@ -198,9 +220,3 @@ export function isDraggingAColumn({
 }): boolean {
   return isColumnData(source.data)
 }
-
-// Legacy drag and drop data types (for backwards compatibility)
-export type CardData = TCardData
-export type ColumnData = TColumnData
-export type CardDropTargetData = TCardDropTargetData
-export type ColumnDropTargetData = TColumnData

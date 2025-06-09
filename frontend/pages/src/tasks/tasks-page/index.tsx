@@ -1,7 +1,6 @@
-import { useKanban, useOrganizationStore } from "@incmix/store"
+// pages/tasks/index.tsx - Updated to use new useKanban hook
+import { useOrganizationStore } from "@incmix/store"
 import type {
-  KanbanColumn as StoreKanbanColumn,
-  KanbanTask as StoreKanbanTask,
   TaskCollections,
 } from "@incmix/store"
 import {
@@ -22,26 +21,9 @@ import { useEffect, useState } from "react"
 import type { RxDatabase } from "rxdb"
 import { useRxDB } from "rxdb-hooks"
 
-import { CreateColumnForm } from "./create-column-form"
+
 import { CreateProjectForm } from "./create-project-form"
 import { CreateTaskForm } from "./create-task-form"
-
-// Type adapter function to adapt columns to UI component expectations
-const adaptColumnsToUIFormat = (
-  columns: any[] | StoreKanbanColumn[]
-): any[] => {
-  return columns.map((column) => ({
-    ...column,
-    tasks: (column.tasks || []).map((task: any) => ({
-      ...task,
-      // Handle mutable collections
-      attachments: task.attachments ? [...task.attachments] : [],
-      labelsTags: task.labelsTags ? [...task.labelsTags] : [],
-      assignedTo: task.assignedTo ? [...task.assignedTo] : [],
-      subTasks: task.subTasks ? [...task.subTasks] : [],
-    })),
-  }))
-}
 
 const TasksPage = () => {
   const { selectedOrganisation } = useOrganizationStore()
@@ -66,22 +48,6 @@ const TasksPage = () => {
         .exec()
     },
   })
-
-  // Get board data for the selected project (to show create buttons and check state)
-  const kanban = selectedProject
-    ? useKanban(selectedProject)
-    : {
-        columns: [],
-        isLoading: false,
-        error: null,
-      }
-
-  // Extract what we need from the kanban object
-  const {
-    columns = [],
-    isLoading: boardLoading = false,
-    error: boardError = null,
-  } = kanban
 
   // Set first project as selected when projects load
   useEffect(() => {
@@ -139,16 +105,7 @@ const TasksPage = () => {
             />
           </Flex>
 
-          {/* Action buttons for the selected project */}
-          {selectedProject && (
-            <Flex className="gap-2">
-              <CreateColumnForm projectId={selectedProject} />
-              <CreateTaskForm
-                projectId={selectedProject}
-                columns={adaptColumnsToUIFormat(columns)}
-              />
-            </Flex>
-          )}
+          {/* Note: Action buttons are now handled inside the Board component */}
         </Flex>
 
         {/* Tabs for Different Views */}

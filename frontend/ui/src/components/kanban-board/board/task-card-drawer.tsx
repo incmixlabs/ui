@@ -1,4 +1,4 @@
-// components/board/task-card-drawer.tsx
+// components/board/task-card-drawer.tsx - Updated for new schema
 
 import {
   Badge,
@@ -10,7 +10,6 @@ import {
   Heading,
   IconButton,
   ScrollArea,
-  Tabs,
   Text,
   TextField,
   TextArea,
@@ -79,16 +78,23 @@ function TaskDrawerSheet({
 
 export function TaskCardDrawer() {
   const { taskId, isOpen, handleDrawerClose } = useKanbanDrawer()
-  const kanban = useKanban("default-project")
+  
+  // Use the new useKanban hook
+  const {
+    columns,
+    updateTask,
+    deleteTask,
+    createTask,
+  } = useKanban("default-project")
   
   // Find the current task
   const currentTask = taskId 
-    ? kanban.columns.flatMap(col => col.tasks).find(task => task.taskId === taskId)
+    ? columns.flatMap(col => col.tasks).find(task => task.taskId === taskId)
     : null
 
   // Find the current column
   const currentColumn = currentTask 
-    ? kanban.columns.find(col => col.tasks.some(task => task.taskId === currentTask.taskId))
+    ? columns.find(col => col.tasks.some(task => task.taskId === currentTask.taskId))
     : null
 
   // Local state for editing
@@ -111,11 +117,11 @@ export function TaskCardDrawer() {
   const handleUpdateTask = useCallback(async (updates: Partial<TaskDataSchema>) => {
     if (!currentTask) return
     try {
-      await kanban.updateTask(currentTask.taskId, updates)
+      await updateTask(currentTask.taskId, updates)
     } catch (error) {
       console.error("Failed to update task:", error)
     }
-  }, [currentTask, kanban])
+  }, [currentTask, updateTask])
 
   const handleTitleSave = useCallback(async () => {
     if (editTitle.trim() && editTitle !== currentTask?.name) {
@@ -183,19 +189,19 @@ export function TaskCardDrawer() {
     
     if (confirm(`Are you sure you want to delete "${currentTask.name}"?`)) {
       try {
-        await kanban.deleteTask(currentTask.taskId)
+        await deleteTask(currentTask.taskId)
         handleDrawerClose()
       } catch (error) {
         console.error("Failed to delete task:", error)
       }
     }
-  }, [currentTask, kanban, handleDrawerClose])
+  }, [currentTask, deleteTask, handleDrawerClose])
 
   const handleDuplicateTask = useCallback(async () => {
     if (!currentTask || !currentColumn) return
     
     try {
-      await kanban.createTask(currentColumn.id, {
+      await createTask(currentColumn.id, {
         name: `${currentTask.name} (Copy)`,
         description: currentTask.description,
         priority: currentTask.priority,
@@ -203,12 +209,13 @@ export function TaskCardDrawer() {
         assignedTo: currentTask.assignedTo,
         subTasks: currentTask.subTasks?.map(st => ({ ...st, id: crypto.randomUUID(), completed: false })),
         completed: false,
-        comments: 0,
+        comments: [], // New schema: empty array
+        commentsCount: 0, // New schema: separate count
       })
     } catch (error) {
       console.error("Failed to duplicate task:", error)
     }
-  }, [currentTask, currentColumn, kanban])
+  }, [currentTask, currentColumn, createTask])
 
   if (!currentTask || !currentColumn) {
     return null
@@ -548,6 +555,96 @@ export function TaskCardDrawer() {
                     </Text>
                   )}
                 </Flex>
+              </Box>
+
+              {/* Comments Section - Updated for new schema */}
+              <Box className="space-y-4">
+                <Flex justify="between" align="center">
+                  <Text size="2" className="font-semibold text-gray-600 dark:text-gray-400 uppercase">
+                    Comments ({currentTask.commentsCount || 0})
+                  </Text>
+                  <IconButton size="1" variant="ghost">
+                    <MessageSquareText size={14} />
+                  </IconButton>
+                </Flex>
+                
+                {/* Comments List */}
+                <Box className="space-y-3">
+                  {currentTask.comments && currentTask.comments.length > 0 ? (
+                    currentTask.comments.map((comment) => (
+                      <Box 
+                        key={comment.id} 
+                        className="p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600"
+                      >
+                        <Flex className="space-y-1">
+                          <Flex align="center" gap="2" className="mb-2">
+                            <div className="w-7 h-7 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-sm font-medium text-gray-600 dark:text-gray-300">
+                              {comment.createdBy.name.charAt(0).toUpperCase()}
+                            </div>
+                            <Box>
+                              <Text size="2" className="font-medium">{comment.createdBy.name}</Text>
+                              <Text size="1" className="text-gray-500">
+                                {new Date(comment.createdAt).toLocaleString()}
+                              </Text>
+                            </Box>
+                          </Flex>
+                          <Text className="pl-9">{comment.content}</Text>
+                        </Flex>
+                      </Box>
+                    ))
+                  ) : (
+                    <Text className="text-gray-500 italic text-center p-3">
+                      No comments yet
+                    </Text>
+                  )}
+                </Box>
+                
+                {/* Add Comment Form */}
+                <Box className="pt-2">
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const formData = new FormData(e.currentTarget);
+                      const content = formData.get('comment') as string;
+                      
+                      if (content && content.trim()) {
+                        // Add new comment
+                        const newComment = {
+                          id: crypto.randomUUID(),
+                          content: content.trim(),
+                          createdBy: currentTask.createdBy, // Use current user in production
+                          createdAt: Date.now(),
+                        };
+                        
+                        const updatedComments = [...(currentTask.comments || []), newComment];
+                        const newCount = (currentTask.commentsCount || 0) + 1;
+                        
+                        handleUpdateTask({ 
+                          comments: updatedComments,
+                          commentsCount: newCount
+                        });
+                        
+                        // Reset form
+                        e.currentTarget.reset();
+                      }
+                    }}
+                  >
+                    <Box className="relative">
+                      <TextField.Root 
+                        name="comment"
+                        placeholder="Add a comment..."
+                        className="pr-24"
+                      />
+                      <Button 
+                        type="submit" 
+                        size="1"
+                        className="absolute right-1 top-1"
+                      >
+                        Comment
+                      </Button>
+                    </Box>
+                  </form>
+                </Box>
               </Box>
 
               {/* Task Metadata */}

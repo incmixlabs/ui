@@ -1,53 +1,72 @@
+// File: task-schemas.ts
+// FIXED - Removed ReadonlyArray for UI compatibility
+
 export type TaskDataSchema = {
   id: string
   taskId: string
-  projectId: string // Made required
+  projectId: string
   name: string
   columnId: string
-  order: number // Renamed from taskOrder and made required
+  order: number
   startDate?: string
   endDate?: string
   description?: string
   completed: boolean
-  priority: "low" | "medium" | "high" | "urgent" // New field
-  labelsTags: ReadonlyArray<{
-    // Made non-optional, removed 'checked'
+  priority: "low" | "medium" | "high" | "urgent"
+  
+  // Arrays - MUTABLE for UI editing
+  labelsTags: {
     value: string
     label: string
     color: string
-  }>
-  attachments: ReadonlyArray<{
-    // Renamed from attachment, made non-optional, added id and type
+  }[]
+  
+  attachments: {
     id: string
     name: string
     url: string
     size: string
     type?: string
-  }>
-  assignedTo: ReadonlyArray<{
-    // Made non-optional, value -> id, removed label, color, checked
+  }[]
+  
+  assignedTo: {
     id: string
     name: string
-    avatar: string
-  }>
-  subTasks: ReadonlyArray<{
-    // Made non-optional, added id, removed progress
+    image?: string
+  }[]
+  
+  subTasks: {
     id: string
     name: string
     completed: boolean
-  }>
-  comments?: number // New field
+  }[]
+  
+  // Comments with proper structure
+  comments: {
+    id: string
+    content: string
+    createdAt: number
+    createdBy: {
+      id: string
+      name: string
+      image?: string
+    }
+  }[]
+  
+  commentsCount: number
+  
+  // Audit fields
   createdAt: number
   updatedAt: number
   createdBy: {
     id: string
     name: string
-    image: string
+    image?: string
   }
   updatedBy: {
     id: string
     name: string
-    image: string
+    image?: string
   }
 }
 
@@ -72,3 +91,20 @@ export type TaskStatusSchema = {
     image?: string
   }
 }
+
+// Helper types for form data
+export type CreateTaskData = Pick<TaskDataSchema, 'name'> & Partial<Omit<TaskDataSchema, 'id' | 'taskId' | 'projectId' | 'createdAt' | 'updatedAt' | 'createdBy' | 'updatedBy'>>
+
+export type UpdateTaskData = Partial<Omit<TaskDataSchema, 'id' | 'taskId' | 'projectId' | 'createdAt' | 'createdBy'>>
+
+export type CreateTaskStatusData = Pick<TaskStatusSchema, 'name'> & Partial<Pick<TaskStatusSchema, 'color' | 'description'>>
+
+export type UpdateTaskStatusData = Partial<Pick<TaskStatusSchema, 'name' | 'color' | 'description'>>
+
+// UI-specific types
+export type TaskPriority = TaskDataSchema['priority']
+export type TaskLabel = TaskDataSchema['labelsTags'][0]
+export type TaskAttachment = TaskDataSchema['attachments'][0]
+export type TaskAssignee = TaskDataSchema['assignedTo'][0]
+export type TaskSubTask = TaskDataSchema['subTasks'][0]
+export type TaskComment = TaskDataSchema['comments'][0]

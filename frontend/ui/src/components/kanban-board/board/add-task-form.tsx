@@ -1,4 +1,4 @@
-// components/board/add-task-form.tsx
+// components/board/add-task-form.tsx - Updated for new schema
 "use client"
 
 import { useState, useCallback } from "react"
@@ -26,8 +26,8 @@ import {
   CalendarDays,
   Trash2,
 } from "lucide-react"
-import { useKanban, TaskDataSchema } from "@incmix/store"
-import { KanbanColumn } from "../types"
+import { useKanban, TaskDataSchema, KanbanColumn } from "@incmix/store"
+
 
 interface GlobalAddTaskFormProps {
   projectId: string
@@ -87,6 +87,7 @@ export function GlobalAddTaskForm({
   // New subtask input
   const [newSubtaskName, setNewSubtaskName] = useState("")
 
+  // Use the new useKanban hook
   const { createTask } = useKanban(projectId)
 
   const handleInputChange = useCallback((field: keyof TaskFormData, value: any) => {
@@ -107,6 +108,7 @@ export function GlobalAddTaskForm({
     setIsLoading(true)
 
     try {
+      // Create task with new schema structure
       const taskData: Partial<TaskDataSchema> = {
         name: formData.name.trim(),
         description: formData.description.trim(),
@@ -118,7 +120,8 @@ export function GlobalAddTaskForm({
         attachments: [],
         assignedTo: [],
         subTasks: formData.subTasks,
-        comments: 0,
+        comments: [], // New schema: empty array
+        commentsCount: 0, // New schema: separate count field
       }
 
       await createTask(formData.columnId, taskData)
@@ -260,7 +263,7 @@ export function GlobalAddTaskForm({
                         />
                         <Text>{column.name}</Text>
                         <Text size="1" className="text-gray-500">
-                          ({column.tasks.length} tasks)
+                          ({column.totalTasksCount} tasks)
                         </Text>
                       </Flex>
                     </Select.Item>

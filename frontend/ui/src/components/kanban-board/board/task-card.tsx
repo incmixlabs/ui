@@ -1,4 +1,4 @@
-// components/board/task-card.tsx
+// components/board/task-card.tsx - Updated for new schema
 import {
   draggable,
   dropTargetForElements,
@@ -37,20 +37,19 @@ import {
   Heading, 
   Text, 
   Badge,
-  Progress,
   Checkbox
 } from "@incmix/ui"
 import { Card } from "@incmix/ui/card"
 import { cn } from "@utils"
-import {
-  getCardData,
-  getCardDropTargetData,
-  isCardData,
-  isDraggingACard,
-} from "../types"
-
 import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
-import { KanbanTask, TaskDataSchema } from "@incmix/store"
+import { 
+  KanbanTask, 
+  TaskDataSchema, 
+  getCardData, 
+  isCardData, 
+  isDraggingACard,
+  getCardDropTargetData
+} from "@incmix/store"
 
 type TCardState =
   | { type: "idle" }
@@ -395,16 +394,16 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
               </Flex>
             )}
             
-            {/* Comments */}
-            {card.comments !== undefined && card.comments > 0 && (
+            {/* Comments - Updated to use commentsCount */}
+            {card.commentsCount !== undefined && card.commentsCount > 0 && (
               <Flex align="center" gap="1" className="text-gray-500">
                 <MessageSquareText size={12} />
-                <Text size="1" className="font-medium">{card.comments}</Text>
+                <Text size="1" className="font-medium">{card.commentsCount}</Text>
               </Flex>
             )}
           </Flex>
           
-          {/* Assigned users */}
+          {/* Assigned users - Updated to use 'image' instead of 'avatar' */}
           {card.assignedTo && card.assignedTo.length > 0 && (
             <Flex align="center" className="-space-x-1">
               {card.assignedTo.slice(0, 3).map((member, index) => (

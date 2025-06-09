@@ -1,4 +1,4 @@
-// components/board/index.tsx
+// components/board/index.tsx - Updated to use new useKanban hook
 import { useRef, useEffect, useState, useCallback } from "react"
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
@@ -18,39 +18,15 @@ import {
   Plus, 
   Loader2, 
   Settings, 
-  LayoutGrid,
   MoreVertical,
   RefreshCw
 } from "lucide-react"
-import { useKanban } from "@incmix/store"
+import { isCardData, isCardDropTargetData, isColumnData, isDraggingACard, useKanban } from "@incmix/store"
 
-import {
-  isCardData,
-  isCardDropTargetData,
-  isColumnData,
-  isDraggingACard,
-} from "../types"
-import type { KanbanColumn, KanbanTask } from "../types"
 import { BoardColumn } from "./board-column"
 import { GlobalAddTaskForm } from "./add-task-form"
 import { TaskCardDrawer } from "./task-card-drawer"
 import { CreateColumnForm } from "./create-coloumn-form"
-
-// Simple type adapters
-const adaptTaskToUIFormat = (task: any): KanbanTask => ({
-  ...task,
-  attachments: task.attachments || [],
-  labelsTags: task.labelsTags || [],
-  assignedTo: task.assignedTo || [],
-  subTasks: task.subTasks || [],
-  priority: task.priority || "medium",
-  completed: task.completed || false,
-})
-
-const adaptColumnToUIFormat = (column: any): KanbanColumn => ({
-  ...column,
-  tasks: (column.tasks || []).map(adaptTaskToUIFormat)
-})
 
 interface BoardProps {
   projectId?: string
@@ -64,22 +40,27 @@ export function Board({
   const scrollableRef = useRef<HTMLDivElement | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   
-  // Data management
-  const kanban = useKanban(projectId)
-  const [columns, setColumns] = useState<KanbanColumn[]>([])
-
-  // Update columns when data changes
-  useEffect(() => {
-    if (!kanban.isLoading && kanban.columns) {
-      const adaptedColumns = kanban.columns.map(adaptColumnToUIFormat)
-      setColumns(adaptedColumns)
-    }
-  }, [kanban.columns, kanban.isLoading])
+  // Use the new useKanban hook
+  const {
+    columns,
+    isLoading,
+    error,
+    createTask,
+    updateTask,
+    deleteTask,
+    moveTask,
+    createColumn,
+    updateColumn,
+    deleteColumn,
+    refetch,
+    clearError,
+    projectStats
+  } = useKanban(projectId)
 
   // Simplified drag and drop implementation
   useEffect(() => {
     const element = scrollableRef.current
-    if (!element || kanban.isLoading || columns.length === 0) {
+    if (!element || isLoading || columns.length === 0) {
       return
     }
 
@@ -133,16 +114,9 @@ export function Board({
                 closestEdgeOfTarget: closestEdge,
               })
 
-              // Update local state immediately for smooth UI
-              setColumns(prevColumns => 
-                prevColumns.map(col => 
-                  col.id === sourceColumn.id ? { ...col, tasks: reordered } : col
-                )
-              )
-
-              // Update backend
+              // Update backend - the reactive subscription will update the UI
               const newIndex = reordered.findIndex(t => t.taskId === dragging.card.taskId)
-              kanban.moveTask(dragging.card.taskId, destColumn.id, newIndex)
+              moveTask(dragging.card.taskId, destColumn.id, newIndex)
               return
             } else {
               // Different column
@@ -162,30 +136,8 @@ export function Board({
 
           // Cross-column move
           if (targetColumnId !== sourceColumn.id) {
-            const taskToMove = sourceColumn.tasks[taskIndex]
-            
-            // Update UI immediately
-            setColumns(prevColumns => {
-              return prevColumns.map(col => {
-                if (col.id === sourceColumn.id) {
-                  return {
-                    ...col,
-                    tasks: col.tasks.filter((_, i) => i !== taskIndex)
-                  }
-                } else if (col.id === targetColumnId) {
-                  const newTasks = [...col.tasks]
-                  newTasks.splice(targetIndex, 0, { ...taskToMove, columnId: targetColumnId })
-                  return {
-                    ...col,
-                    tasks: newTasks
-                  }
-                }
-                return col
-              })
-            })
-
-            // Update backend
-            kanban.moveTask(dragging.card.taskId, targetColumnId, targetIndex)
+            // Update backend - the reactive subscription will update the UI
+            moveTask(dragging.card.taskId, targetColumnId, targetIndex)
           }
         },
       }),
@@ -194,14 +146,14 @@ export function Board({
         element,
       })
     )
-  }, [columns, kanban])
+  }, [columns, moveTask])
 
-  // Refresh data
+  // Handle refresh
   const handleRefresh = useCallback(() => {
-    kanban.refetch()
-  }, [kanban])
+    refetch()
+  }, [refetch])
 
-  if (kanban.isLoading) {
+  if (isLoading) {
     return (
       <Box className="flex items-center justify-center h-96">
         <Flex align="center" gap="2">
@@ -212,12 +164,12 @@ export function Board({
     )
   }
 
-  if (kanban.error) {
+  if (error) {
     return (
       <Box className="flex items-center justify-center h-96">
         <Flex direction="column" align="center" gap="4">
-          <Text className="text-red-500">Error: {kanban.error}</Text>
-          <Button onClick={kanban.clearError} variant="outline">
+          <Text className="text-red-500">Error: {error}</Text>
+          <Button onClick={clearError} variant="outline">
             <RefreshCw size={16} />
             Retry
           </Button>
@@ -269,14 +221,24 @@ export function Board({
         {/* Board Stats */}
         <Flex gap="6" className="text-sm text-gray-600 dark:text-gray-400">
           <Text>
-            {columns.length} column{columns.length !== 1 ? "s" : ""}
+            {projectStats.totalColumns} column{projectStats.totalColumns !== 1 ? "s" : ""}
           </Text>
           <Text>
-            {columns.reduce((acc, col) => acc + col.tasks.length, 0)} task{columns.reduce((acc, col) => acc + col.tasks.length, 0) !== 1 ? "s" : ""}
+            {projectStats.totalTasks} task{projectStats.totalTasks !== 1 ? "s" : ""}
           </Text>
           <Text>
-            {columns.reduce((acc, col) => acc + col.tasks.filter(t => t.completed).length, 0)} completed
+            {projectStats.completedTasks} completed
           </Text>
+          {projectStats.overdueTasks > 0 && (
+            <Text className="text-red-600">
+              {projectStats.overdueTasks} overdue
+            </Text>
+          )}
+          {projectStats.urgentTasks > 0 && (
+            <Text className="text-orange-600">
+              {projectStats.urgentTasks} urgent
+            </Text>
+          )}
         </Flex>
       </Flex>
 
@@ -295,11 +257,11 @@ export function Board({
             >
               <BoardColumn 
                 column={column}
-                onCreateTask={kanban.createTask}
-                onUpdateTask={kanban.updateTask}
-                onDeleteTask={kanban.deleteTask}
-                onUpdateColumn={kanban.updateColumn}
-                onDeleteColumn={kanban.deleteColumn}
+                onCreateTask={createTask}
+                onUpdateTask={updateTask}
+                onDeleteTask={deleteTask}
+                onUpdateColumn={updateColumn}
+                onDeleteColumn={deleteColumn}
                 isDragging={isDragging}
                 onTaskOpen={onTaskOpen}
               />

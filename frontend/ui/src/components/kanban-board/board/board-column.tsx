@@ -1,4 +1,4 @@
-// components/board/board-column.tsx
+// components/board/board-column.tsx - Updated for new schema
 "use client"
 
 import {
@@ -28,16 +28,8 @@ import {
 import { isSafari } from "@utils/browser"
 import { isShallowEqual } from "@utils/objects"
 
-import {
-  getColumnData,
-  isCardData,
-  isCardDropTargetData,
-  isColumnData,
-  isDraggingACard,
-  isDraggingAColumn,
-  KanbanColumn,
-} from "../types"
-import { TaskDataSchema } from "@incmix/store"
+
+import { getColumnData, isCardData, isCardDropTargetData, isColumnData, isDraggingACard, isDraggingAColumn, KanbanColumn, TaskDataSchema } from "@incmix/store"
 import { TaskCard, TaskCardShadow } from "./task-card"
 
 type TColumnState =
@@ -105,7 +97,8 @@ const QuickTaskForm = memo(function QuickTaskForm({
         attachments: [],
         assignedTo: [],
         subTasks: [],
-        comments: 0,
+        comments: [], // Now an array
+        commentsCount: 0, // Separate count field
       })
       
       setTaskName("")
@@ -383,11 +376,6 @@ export const BoardColumn = memo(function BoardColumn({
     setEditColumnDescription(column.description || "")
   }, [column.name, column.color, column.description])
 
-  // Calculate column statistics
-  const completedTasks = column.tasks.filter(task => task.completed).length
-  const totalTasks = column.tasks.length
-  const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
-
   return (
     <Flex
       direction="column"
@@ -462,11 +450,11 @@ export const BoardColumn = memo(function BoardColumn({
                   </Heading>
                   <Flex gap="1">
                     <Text size="1" className="text-gray-500 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-full">
-                      {totalTasks}
+                      {column.totalTasksCount}
                     </Text>
-                    {completedTasks > 0 && (
+                    {column.completedTasksCount > 0 && (
                       <Text size="1" className="text-green-600 bg-green-100 dark:bg-green-900 px-2 py-1 rounded-full">
-                        {completionPercentage}%
+                        {column.progressPercentage}%
                       </Text>
                     )}
                   </Flex>
@@ -511,12 +499,12 @@ export const BoardColumn = memo(function BoardColumn({
           )}
 
           {/* Progress Bar for Completed Tasks */}
-          {totalTasks > 0 && completedTasks > 0 && (
+          {column.totalTasksCount > 0 && column.completedTasksCount > 0 && (
             <Box className="px-4 pb-2">
               <Box className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
                 <Box
                   className="bg-green-500 h-1 rounded-full transition-all duration-300"
-                  style={{ width: `${completionPercentage}%` }}
+                  style={{ width: `${column.progressPercentage}%` }}
                 />
               </Box>
             </Box>

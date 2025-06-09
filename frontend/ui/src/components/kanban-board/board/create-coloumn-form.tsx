@@ -1,4 +1,4 @@
-// components/board/create-column-form.tsx
+// components/board/create-column-form.tsx - Updated for new useKanban hook
 "use client"
 
 import { useKanban } from "@incmix/store"
@@ -44,6 +44,7 @@ export function CreateColumnForm({
     color: DEFAULT_COLORS[0].value,
   })
 
+  // Use the new useKanban hook
   const { createColumn } = useKanban(projectId)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -56,10 +57,11 @@ export function CreateColumnForm({
     setIsLoading(true)
 
     try {
+      // Use createColumn method from the new hook
       const columnId = await createColumn(
         formData.name.trim(),
         formData.color,
-        //formData.description.trim()
+        formData.description.trim()
       )
 
       // Reset form
