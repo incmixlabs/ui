@@ -29,7 +29,8 @@ export interface KanbanColumn {
   progressPercentage: number
 }
 
-export interface KanbanTask extends Omit<TaskDataSchema, 'attachments' | 'labelsTags' | 'createdBy' | 'assignedTo' | 'subTasks' | 'updatedBy' | 'completed' | 'priority'> {
+// Making most properties optional for mock data compatibility
+export interface KanbanTask extends Partial<Omit<TaskDataSchema, 'attachments' | 'labelsTags' | 'createdBy' | 'assignedTo' | 'subTasks' | 'updatedBy' | 'completed' | 'priority'>> {
   // Make completed optional
   completed?: boolean
 
@@ -40,6 +41,14 @@ export interface KanbanTask extends Omit<TaskDataSchema, 'attachments' | 'labels
     id: string
     name: string
     url: string
+    size: string
+    type?: string
+  }[]
+  
+  // For backward compatibility with existing code using 'attachment' instead of 'attachments'
+  attachment?: {
+    name: string
+    url?: string
     size: string
     type?: string
   }[]
@@ -56,24 +65,29 @@ export interface KanbanTask extends Omit<TaskDataSchema, 'attachments' | 'labels
     id: string
     name: string
     avatar?: string
+    label?: string
+    color?: string
+    value?: string
+    checked?: boolean
   }[]
   
   // Make subTasks mutable
   subTasks?: {
-    id: string
+    id?: string
     name: string
     completed: boolean
+    progress?: number
   }[]
   
   // Make createdBy properties compatible with the data source
-  createdBy: {
+  createdBy?: {
     id: string
     name: string
     image?: string  // Optional to match the data source
   }
 
   // Make updatedBy properties compatible with the data source
-  updatedBy: {
+  updatedBy?: {
     id: string
     name: string
     image?: string  // Optional to match the data source
@@ -82,21 +96,32 @@ export interface KanbanTask extends Omit<TaskDataSchema, 'attachments' | 'labels
   // Any additional UI-specific properties can be added here
 }
 
-// Legacy types for compatibility (keeping your existing UI types)
+/**
+ * @deprecated This is a legacy interface. Consider migrating to KanbanColumn[] for the modern board structure.
+ */
 export interface KanbanBoard {
   id: number
   title: string
   tasks: KanbanBoardTask[]
 }
 
+/**
+ * @deprecated Consider migrating to KanbanColumn which provides more functionality.
+ */
 export type TCustomColumn = {
   id: string
   title: string
   tasks: KanbanTask[]  // Updated to use KanbanTask
 }
 
+/**
+ * @deprecated Consider migrating to KanbanColumn[] which provides more functionality.
+ */
 export type TCustomBoard = TCustomColumn[]
 
+/**
+ * @deprecated This is a legacy interface. Use KanbanTask which extends TaskDataSchema for more features.
+ */
 export interface KanbanBoardTask {
   id: number
   name: string
@@ -106,6 +131,9 @@ export interface KanbanBoardTask {
   attachment?: string
 }
 
+/**
+ * @deprecated Consider using a more specific type aligned with your user/member model.
+ */
 export type TMember = {
   name: string
   label: string
@@ -113,13 +141,22 @@ export type TMember = {
   value: string
   avatar: string
   checked: boolean
-  [key: string]: unknown
 }
 
 // UPDATED: Make these type aliases point to your RxDB types
+/**
+ * @deprecated Use KanbanTask instead. This alias exists only for backward compatibility.
+ */
 export type TCard = KanbanTask
+
+/**
+ * @deprecated Use KanbanColumn instead. This alias exists only for backward compatibility.
+ */
 export type TColumn = KanbanColumn
 
+/**
+ * @deprecated Consider using KanbanColumn[] directly instead of this wrapper type.
+ */
 export type TBoard = {
   columns: TColumn[]
 }

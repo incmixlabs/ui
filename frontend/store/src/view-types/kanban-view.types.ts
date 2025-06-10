@@ -3,28 +3,18 @@
 
 import type { TaskDataSchema, TaskStatusSchema } from "../sql/task-schemas"
 
-// Main Kanban Column type with computed properties
-export interface KanbanColumn {
-  // Base properties from TaskStatusSchema
+// Shared user info type
+export interface UserInfo {
   id: string
-  projectId: string
   name: string
-  color: string
-  order: number
-  description?: string
-  isDefault?: boolean
-  createdAt: number
-  updatedAt: number
-  createdBy: {
-    id: string
-    name: string
-    image?: string
-  }
-  updatedBy: {
-    id: string
-    name: string
-    image?: string
-  }
+  image?: string
+}
+
+// Main Kanban Column type with computed properties
+export interface KanbanColumn extends TaskStatusSchema {
+  // Override with specific user type
+  createdBy: UserInfo
+  updatedBy: UserInfo
 
   // Tasks array
   tasks: KanbanTask[]
@@ -145,10 +135,29 @@ export function getColumnData({
 }
 
 // Legacy compatibility aliases for existing components
+/**
+ * @deprecated Use KanbanTask instead. This alias exists only for backward compatibility.
+ */
 export type TCard = KanbanTask
+
+/**
+ * @deprecated Use KanbanColumn instead. This alias exists only for backward compatibility.
+ */
 export type TColumn = KanbanColumn
+
+/**
+ * @deprecated Use TCardData instead. This alias exists only for backward compatibility.
+ */
 export type CardData = TCardData
+
+/**
+ * @deprecated Use TColumnData instead. This alias exists only for backward compatibility.
+ */
 export type ColumnData = TColumnData
+
+/**
+ * @deprecated Use TCardDropTargetData instead. This alias exists only for backward compatibility.
+ */
 export type CardDropTargetData = TCardDropTargetData
 
 // Component prop types
@@ -200,25 +209,40 @@ export type TaskFormData = Partial<
 >
 
 // Board types
+/**
+ * @deprecated Consider using KanbanColumn[] directly instead of this wrapper type.
+ */
 export type TBoard = {
   columns: KanbanColumn[]
 }
 
+/**
+ * @deprecated Consider migrating to KanbanColumn which provides more functionality.
+ */
 export type TCustomColumn = {
   id: string
   title: string
   tasks: KanbanTask[]
 }
 
+/**
+ * @deprecated Consider migrating to KanbanColumn[] which provides more functionality.
+ */
 export type TCustomBoard = TCustomColumn[]
 
 // Legacy types for compatibility
+/**
+ * @deprecated This is a legacy interface. Use KanbanColumn[] for the modern board structure.
+ */
 export interface KanbanBoard {
   id: number
   title: string
   tasks: KanbanBoardTask[]
 }
 
+/**
+ * @deprecated This is a legacy interface. Use KanbanTask which extends TaskDataSchema for more features.
+ */
 export interface KanbanBoardTask {
   id: number
   name: string
@@ -228,6 +252,9 @@ export interface KanbanBoardTask {
   attachment?: string
 }
 
+/**
+ * @deprecated Consider using a more specific type aligned with your user/member model.
+ */
 export type TMember = {
   name: string
   label: string
@@ -235,5 +262,4 @@ export type TMember = {
   value: string
   avatar: string
   checked: boolean
-  [key: string]: unknown
 }

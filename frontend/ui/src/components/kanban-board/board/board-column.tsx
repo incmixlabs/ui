@@ -37,8 +37,25 @@ import {
   isDraggingAColumn,
   type KanbanColumn,
 } from "@incmix/store"
+
+// Define types for drag and drop operations
+type DragData = {
+  rect: DOMRect
+  [key: string]: unknown
+}
+
+type DropTarget = {
+  data: Record<string | symbol, unknown>
+}
+
+type DragLocation = {
+  current: {
+    dropTargets: DropTarget[]
+  }
+}
 import { TaskDataSchema } from "@incmix/store"
 import { TaskCard, TaskCardShadow } from "./task-card"
+import { DeleteConfirmationModal, ErrorModal, ValidationModal } from "./confirmation-modal"
 
 type TColumnState =
   | {
@@ -208,6 +225,14 @@ export const BoardColumn = memo(function BoardColumn({
   const [editColumnName, setEditColumnName] = useState(column.name)
   const [editColumnColor, setEditColumnColor] = useState(column.color)
   const [editColumnDescription, setEditColumnDescription] = useState(column.description || "")
+  
+  // Modal states
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showErrorModal, setShowErrorModal] = useState(false)
+  const [showValidationModal, setShowValidationModal] = useState(false)
+  const [validationMessage, setValidationMessage] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [isUpdating, setIsUpdating] = useState(false)
 
   // Task creation state
   const [isCreatingTask, setIsCreatingTask] = useState(false)
@@ -223,8 +248,8 @@ export const BoardColumn = memo(function BoardColumn({
     data,
     location,
   }: {
-    data: any
-    location: any
+    data: DragData
+    location: DragLocation
   }) => {
     const innerMost = location.current.dropTargets[0]
     const isOverChildCard = Boolean(
@@ -346,9 +371,12 @@ export const BoardColumn = memo(function BoardColumn({
 
   const handleUpdateColumn = useCallback(async () => {
     if (!editColumnName.trim()) {
+      setValidationMessage('Column name cannot be empty')
+      setShowValidationModal(true)
       return
     }
     
+    setIsUpdating(true)
     try {
       await onUpdateColumn(column.id, {
         name: editColumnName.trim(),
@@ -358,24 +386,32 @@ export const BoardColumn = memo(function BoardColumn({
       setIsEditingColumn(false)
     } catch (error) {
       console.error("Failed to update column:", error)
+      setValidationMessage('Failed to update column. Please try again.')
+      setShowValidationModal(true)
+    } finally {
+      setIsUpdating(false)
     }
   }, [editColumnName, editColumnColor, editColumnDescription, onUpdateColumn, column.id])
 
-  const handleDeleteColumn = useCallback(async () => {
+  const handleDeleteColumn = useCallback(() => {
     if (column.tasks.length > 0) {
-      alert("Cannot delete column with tasks. Please move or delete tasks first.")
+      setShowErrorModal(true)
       return
     }
     
-    if (confirm(`Are you sure you want to delete the "${column.name}" column?`)) {
-      try {
-        await onDeleteColumn(column.id)
-      } catch (error) {
-        console.error("Failed to delete column:", error)
-        alert("Failed to delete column. Please try again.")
-      }
+    setShowDeleteModal(true)
+  }, [column.tasks.length])
+  
+  const confirmDeleteColumn = async () => {
+    setIsDeleting(true)
+    try {
+      await onDeleteColumn(column.id)
+      setShowDeleteModal(false)
+    } catch (error) {
+      console.error("Failed to delete column:", error)
+      setIsDeleting(false)
     }
-  }, [column.tasks.length, column.name, column.id, onDeleteColumn])
+  }
 
   const handleCancelEdit = useCallback(() => {
     setIsEditingColumn(false)
@@ -391,6 +427,31 @@ export const BoardColumn = memo(function BoardColumn({
 
   return (
     <div className="h-full w-full select-none" ref={outerRef}>
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        title="Delete Column"
+        description={`Are you sure you want to delete the "${column.name}" column? This action cannot be undone.`}
+        isLoading={isDeleting}
+        onConfirm={confirmDeleteColumn}
+      />
+      
+      {/* Error Modal */}
+      <ErrorModal
+        isOpen={showErrorModal}
+        onClose={() => setShowErrorModal(false)}
+        title="Cannot Delete Column"
+        description="This column contains tasks. Please move or delete all tasks from this column before deleting it."
+      />
+      
+      {/* Validation Error Modal */}
+      <ValidationModal
+        isOpen={showValidationModal}
+        onClose={() => setShowValidationModal(false)}
+        message={validationMessage}
+      />
+      
       <div
         className={`rounded-lg bg-gray-50 dark:bg-gray-900 transition-all duration-200 ${stateStyles[state.type]} flex flex-col max-h-full`}
         ref={innerRef}
@@ -429,11 +490,20 @@ export const BoardColumn = memo(function BoardColumn({
                   <Text size="1" className="text-gray-500">Column color</Text>
                 </Flex>
                 <Flex gap="2">
-                  <Button size="1" onClick={handleUpdateColumn}>
+                  <Button 
+                    size="1" 
+                    onClick={handleUpdateColumn} 
+                    disabled={isUpdating}
+                  >
                     <Check size={14} />
-                    Save
+                    {isUpdating ? 'Saving...' : 'Save'}
                   </Button>
-                  <Button size="1" variant="soft" onClick={handleCancelEdit}>
+                  <Button 
+                    size="1" 
+                    variant="soft" 
+                    onClick={handleCancelEdit} 
+                    disabled={isUpdating}
+                  >
                     <X size={14} />
                     Cancel
                   </Button>
@@ -514,9 +584,8 @@ export const BoardColumn = memo(function BoardColumn({
 
           {/* Tasks Container - Scrollable when needed */}
           <div
-            className="overflow-y-auto px-2"
+            className="overflow-y-auto px-2 flex-1 min-h-0"
             ref={scrollableRef}
-            style={{ maxHeight: 'calc(100vh - 350px)' }}
           >
             <div className="space-y-1 py-2">
               <CardList

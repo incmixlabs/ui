@@ -27,6 +27,7 @@ import {
   Trash2,
 } from "lucide-react"
 import { useKanban, TaskDataSchema, KanbanColumn } from "@incmix/store"
+import { nanoid } from "nanoid"
 
 
 interface GlobalAddTaskFormProps {
@@ -76,7 +77,12 @@ export function GlobalAddTaskForm({
   const [formData, setFormData] = useState<TaskFormData>({
     name: "",
     description: "",
-    columnId: columns.find(col => col.name.toLowerCase().includes("todo") || col.name.toLowerCase().includes("to do"))?.id || columns[0]?.id || "",
+    columnId: columns.length > 0
+      ? (columns.find(col =>
+           col.name.toLowerCase().includes("todo") ||
+           col.name.toLowerCase().includes("to do")
+         )?.id || columns[0].id)
+      : "",
     priority: "medium",
     startDate: "",
     endDate: "",
@@ -89,6 +95,12 @@ export function GlobalAddTaskForm({
 
   // Use the new useKanban hook
   const { createTask } = useKanban(projectId)
+  
+  // Local helper function to generate unique IDs with prefixes (matches the behavior in the store)
+  const generateUniqueId = (prefix?: string, length = 10): string => {
+    const randomId = nanoid(length)
+    return prefix ? `${prefix}-${randomId}` : randomId
+  }
 
   const handleInputChange = useCallback((field: keyof TaskFormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -113,7 +125,7 @@ export function GlobalAddTaskForm({
         name: formData.name.trim(),
         description: formData.description.trim(),
         priority: formData.priority,
-        startDate: formData.startDate || new Date().toISOString(),
+        startDate: formData.startDate,
         endDate: formData.endDate,
         completed: false,
         labelsTags: formData.labelsTags,
@@ -164,7 +176,7 @@ export function GlobalAddTaskForm({
     if (!newSubtaskName.trim()) return
     
     const newSubtask = {
-      id: crypto.randomUUID(),
+      id: generateUniqueId("subtask"),
       name: newSubtaskName.trim(),
       completed: false,
     }

@@ -26,7 +26,7 @@ import { isCardData, isCardDropTargetData, isColumnData, isDraggingACard, Kanban
 import { BoardColumn } from "./board-column"
 import { GlobalAddTaskForm } from "./add-task-form"
 import { TaskCardDrawer } from "./task-card-drawer"
-import { CreateColumnForm } from "./create-coloumn-form"
+import { CreateColumnForm } from "./create-column-form"
 
 interface BoardProps {
   projectId?: string

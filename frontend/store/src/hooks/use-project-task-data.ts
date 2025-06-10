@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { database } from "../sql"
 import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
 import type { TaskDataSchema } from "../sql/task-schemas"
-import type { TaskStatusDocType } from "../sql/types"
+import type { TaskDocType, TaskStatusDocType } from "../sql/types"
 
 interface ProjectData {
   tasks: TaskDataSchema[]
@@ -92,11 +92,10 @@ export function useProjectData(
       try {
         setData((prev) => ({ ...prev, isLoading: true, error: null }))
 
-        // Check and create default statuses if needed - FIXED: use count() instead of countAllDocuments
-        const statuses = await database.taskStatus
-          .find({ selector: { projectId } })
+        // Check and create default statuses if needed - Using count() for efficiency
+        const existingStatusCount = await database.taskStatus
+          .count({ selector: { projectId } })
           .exec()
-        const existingStatusCount = statuses.length
 
         if (existingStatusCount === 0) {
           await createDefaultStatuses(projectId)
@@ -114,8 +113,8 @@ export function useProjectData(
               setData((prev) => ({
                 ...prev,
                 taskStatuses,
-                // FIXED: Simplified boolean expression
-                isLoading: prev.tasks.length === 0,
+                // Set loading to false once data is received
+                isLoading: false,
               }))
             },
             error: (error) => {
@@ -242,8 +241,8 @@ export function useProjectData(
           updatedBy: user,
         }
 
-        // Just insert - RxDB subscription will update UI automatically
-        await database.tasks.insert(newTask as any)
+        // Insert with proper typing - RxDB subscription will update UI automatically
+        await database.tasks.insert(newTask as TaskDocType)
       } catch (error) {
         console.error("Failed to create task:", error)
         throw error

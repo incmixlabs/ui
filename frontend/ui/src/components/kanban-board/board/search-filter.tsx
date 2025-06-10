@@ -140,25 +140,30 @@ export function KanbanSearchFilter({
         }
 
         // Due date filter
-        if (filters.dueDateRange !== "all" && task.startDate) {
-          const dueDate = new Date(task.startDate)
-          const now = new Date()
-          const diffTime = dueDate.getTime() - now.getTime()
-          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+        if (filters.dueDateRange !== "all") {
+          // Use endDate as the due date if available, otherwise fall back to startDate
+          const dueDateStr = task.endDate || task.startDate
+          
+          if (dueDateStr) {
+            const dueDate = new Date(dueDateStr)
+            const now = new Date()
+            const diffTime = dueDate.getTime() - now.getTime()
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
-          switch (filters.dueDateRange) {
-            case "overdue":
-              if (diffDays >= 0) return false
-              break
-            case "today":
-              if (diffDays !== 0) return false
-              break
-            case "week":
-              if (diffDays < 0 || diffDays > 7) return false
-              break
-            case "month":
-              if (diffDays < 0 || diffDays > 30) return false
-              break
+            switch (filters.dueDateRange) {
+              case "overdue":
+                if (diffDays >= 0) return false
+                break
+              case "today":
+                if (diffDays !== 0) return false
+                break
+              case "week":
+                if (diffDays < 0 || diffDays > 7) return false
+                break
+              case "month":
+                if (diffDays < 0 || diffDays > 30) return false
+                break
+            }
           }
         }
 

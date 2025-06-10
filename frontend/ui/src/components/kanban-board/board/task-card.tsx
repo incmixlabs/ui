@@ -50,6 +50,7 @@ import {
   isDraggingACard,
   getCardDropTargetData
 } from "@incmix/store"
+import { getPriorityInfo } from "../priority-config"
 
 type TCardState =
   | { type: "idle" }
@@ -150,15 +151,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
     }
   }, [onTaskOpen, handleDrawerOpen, card.taskId])
 
-  const getPriorityInfo = useCallback((priority?: string) => {
-    switch (priority) {
-      case "urgent": return { color: "red" as const, icon: AlertCircle, label: "Urgent" }
-      case "high": return { color: "orange" as const, icon: Flag, label: "High" }
-      case "medium": return { color: "blue" as const, icon: Clock, label: "Medium" }
-      case "low": return { color: "gray" as const, icon: Clock, label: "Low" }
-      default: return { color: "blue" as const, icon: Clock, label: "Medium" }
-    }
-  }, [])
+  // Using the shared priority configuration from priority-config.ts
 
   const formatDate = useCallback((dateString?: string) => {
     if (!dateString) return { text: "", className: "" }
@@ -413,7 +406,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
                   style={{ zIndex: 3 - index }}
                   title={member.name}
                 >
-                  {member.name.charAt(0).toUpperCase()}
+                  {member.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
                 </div>
               ))}
               {card.assignedTo.length > 3 && (

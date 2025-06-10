@@ -10,6 +10,7 @@ import {
   TextField,
   Text,
   Box,
+  toast,
 } from "@incmix/ui"
 import { Plus, Palette } from "lucide-react"
 import { useState } from "react"
@@ -78,6 +79,9 @@ export function CreateColumnForm({
       }
     } catch (error) {
       console.error("Failed to create column:", error)
+      toast.error("Failed to create column. Please try again.", {
+        description: error instanceof Error ? error.message : "An unexpected error occurred",
+      })
     } finally {
       setIsLoading(false)
     }
