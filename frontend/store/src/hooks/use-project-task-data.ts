@@ -49,11 +49,31 @@ interface UseProjectDataReturn extends ProjectData {
   clearError: () => void
 }
 
-const getCurrentUser = () => ({
-  id: "user-id",
-  name: "Current User",
-  image: "/placeholder.svg",
-})
+// Define a type for user information
+export interface CurrentUser {
+  id: string
+  name: string
+  image?: string
+}
+
+// Get the current user - accepts user context to make it injectable
+const getCurrentUser = (user?: CurrentUser) => {
+  if (!user) {
+    // For backward compatibility in dev, return a mock user with a console warning
+    console.warn("Warning: No user context provided. Using mock user data.")
+    return {
+      id: "mock-user-id",
+      name: "Mock User",
+      image: "/placeholder.svg",
+    }
+  }
+
+  return {
+    id: user.id,
+    name: user.name,
+    image: user.image || "/placeholder.svg",
+  }
+}
 
 const DEFAULT_TASK_STATUSES = [
   {
@@ -74,7 +94,8 @@ const DEFAULT_TASK_STATUSES = [
 ]
 
 export function useProjectData(
-  projectId = "default-project"
+  projectId = "default-project",
+  currentUser?: CurrentUser
 ): UseProjectDataReturn {
   const [data, setData] = useState<ProjectData>({
     tasks: [],
@@ -186,7 +207,7 @@ export function useProjectData(
   // Helper to create default task statuses
   const createDefaultStatuses = async (projectId: string) => {
     const now = getCurrentTimestamp()
-    const user = getCurrentUser()
+    const user = getCurrentUser(currentUser)
 
     for (let i = 0; i < DEFAULT_TASK_STATUSES.length; i++) {
       const status = DEFAULT_TASK_STATUSES[i]
@@ -211,7 +232,7 @@ export function useProjectData(
     async (columnId: string, taskData: Partial<TaskDataSchema>) => {
       try {
         const now = getCurrentTimestamp()
-        const user = getCurrentUser()
+        const user = getCurrentUser(currentUser)
 
         // Get highest order in target column
         const tasksInColumn = data.tasks.filter((t) => t.columnId === columnId)
@@ -255,7 +276,7 @@ export function useProjectData(
     async (taskId: string, updates: Partial<TaskDataSchema>) => {
       try {
         const now = getCurrentTimestamp()
-        const user = getCurrentUser()
+        const user = getCurrentUser(currentUser)
 
         const finalUpdates = {
           ...updates,
@@ -295,7 +316,7 @@ export function useProjectData(
     async (taskId: string, targetColumnId: string, targetIndex?: number) => {
       try {
         const now = getCurrentTimestamp()
-        const user = getCurrentUser()
+        const user = getCurrentUser(currentUser)
 
         // Simplified order calculation for RxDB/local storage
         const targetTasks = data.tasks
@@ -353,7 +374,7 @@ export function useProjectData(
   const reorderColumnTasks = async (columnId: string) => {
     try {
       const now = getCurrentTimestamp()
-      const user = getCurrentUser()
+      const user = getCurrentUser(currentUser)
 
       const columnTasks = data.tasks
         .filter((t) => t.columnId === columnId)
@@ -390,7 +411,7 @@ export function useProjectData(
     ): Promise<string> => {
       try {
         const now = getCurrentTimestamp()
-        const user = getCurrentUser()
+        const user = getCurrentUser(currentUser)
         const id = generateUniqueId("ts")
 
         const maxOrder = Math.max(
@@ -430,7 +451,7 @@ export function useProjectData(
     ) => {
       try {
         const now = getCurrentTimestamp()
-        const user = getCurrentUser()
+        const user = getCurrentUser(currentUser)
 
         const finalUpdates = {
           ...updates,
@@ -480,7 +501,7 @@ export function useProjectData(
   const reorderTaskStatuses = useCallback(async (statusIds: string[]) => {
     try {
       const now = getCurrentTimestamp()
-      const user = getCurrentUser()
+      const user = getCurrentUser(currentUser)
 
       // Update each status with new order
       for (let i = 0; i < statusIds.length; i++) {

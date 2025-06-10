@@ -12,8 +12,61 @@ import {
   Box,
   toast,
 } from "@incmix/ui"
-import { Plus, Palette } from "lucide-react"
-import { useState } from "react"
+import { Plus, Palette, AlertCircle } from "lucide-react"
+import { useState, useEffect } from "react"
+
+// Accessibility utility functions
+
+/**
+ * Converts hex color to RGB
+ */
+function hexToRgb(hex: string): { r: number; g: number; b: number } {
+  // Remove # if present
+  hex = hex.replace(/^#/, '');
+  
+  // Parse hex values
+  const bigint = parseInt(hex, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  
+  return { r, g, b };
+}
+
+/**
+ * Calculate relative luminance of a color (WCAG formula)
+ */
+function calculateLuminance(color: { r: number; g: number; b: number }): number {
+  // Convert RGB to relative values
+  const rgb = [color.r, color.g, color.b].map(v => {
+    v /= 255;
+    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+  });
+  
+  // Calculate luminance
+  return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
+}
+
+/**
+ * Calculate contrast ratio between two colors (WCAG formula)
+ */
+function contrastRatio(color1: string, color2: string): number {
+  const l1 = calculateLuminance(hexToRgb(color1));
+  const l2 = calculateLuminance(hexToRgb(color2));
+  
+  // Calculate contrast ratio (lighter color / darker color)
+  const lighter = Math.max(l1, l2);
+  const darker = Math.min(l1, l2);
+  
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
+/**
+ * Check if a color meets WCAG AA standards for UI components (3:1 minimum)
+ */
+function meetsWcagComponentContrast(color: string, background = "#FFFFFF"): boolean {
+  return contrastRatio(color, background) >= 3;
+}
 
 interface CreateColumnFormProps {
   projectId: string
@@ -39,11 +92,17 @@ export function CreateColumnForm({
 }: CreateColumnFormProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [colorError, setColorError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     color: DEFAULT_COLORS[0].value,
   })
+  
+  // Get the background color based on current theme
+  // Default to white, but in a real app you'd get this from your theme context
+  const backgroundColor = "#FFFFFF" // Light mode
+  const darkBackgroundColor = "#111111" // Dark mode
 
   // Use the new useKanban hook
   const { createColumn } = useKanban(projectId)
@@ -92,8 +151,26 @@ export function CreateColumnForm({
   }
 
   const handleColorSelect = (color: string) => {
+    // Check color contrast against both light and dark backgrounds
+    const lightModeContrast = contrastRatio(color, backgroundColor);
+    const darkModeContrast = contrastRatio(color, darkBackgroundColor);
+    
+    // Validate contrast (minimum 3:1 for UI components per WCAG 2.1 AA)
+    if (lightModeContrast < 3 || darkModeContrast < 3) {
+      setColorError(
+        `Low contrast: ${color.toUpperCase()} may be hard to see (light: ${lightModeContrast.toFixed(1)}:1, dark: ${darkModeContrast.toFixed(1)}:1). Consider a different color.`
+      )
+    } else {
+      setColorError(null)
+    }
+    
     setFormData((prev) => ({ ...prev, color }))
   }
+  
+  // Check initial color's contrast
+  useEffect(() => {
+    handleColorSelect(formData.color)
+  }, [])
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
@@ -161,28 +238,51 @@ export function CreateColumnForm({
               
               {/* Predefined Colors */}
               <Flex gap="2" wrap="wrap" className="mb-3">
-                {DEFAULT_COLORS.map((color) => (
-                  <button
-                    key={color.value}
-                    type="button"
-                    onClick={() => handleColorSelect(color.value)}
-                    disabled={isLoading}
-                    className={`relative h-8 w-8 rounded-full border-2 transition-all hover:scale-110 ${
-                      formData.color === color.value
-                        ? "border-gray-800 dark:border-gray-200 ring-2 ring-gray-400"
-                        : "border-gray-300 dark:border-gray-600"
-                    }`}
-                    style={{ backgroundColor: color.value }}
-                    title={color.name}
-                  >
-                    {formData.color === color.value && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="h-2 w-2 rounded-full bg-white"></div>
-                      </div>
-                    )}
-                  </button>
-                ))}
+                {DEFAULT_COLORS.map((color) => {
+                  // Calculate contrast for the tooltip
+                  const lightContrast = contrastRatio(color.value, backgroundColor).toFixed(1);
+                  const darkContrast = contrastRatio(color.value, darkBackgroundColor).toFixed(1);
+                  const hasGoodContrast = meetsWcagComponentContrast(color.value, backgroundColor) && 
+                                         meetsWcagComponentContrast(color.value, darkBackgroundColor);
+                  
+                  return (
+                    <button
+                      key={color.value}
+                      type="button"
+                      onClick={() => handleColorSelect(color.value)}
+                      disabled={isLoading}
+                      className={`relative h-8 w-8 rounded-full border-2 transition-all hover:scale-110 ${
+                        formData.color === color.value
+                          ? "border-gray-800 dark:border-gray-200 ring-2 ring-gray-400"
+                          : "border-gray-300 dark:border-gray-600"
+                      } ${
+                        !hasGoodContrast ? "opacity-70" : ""
+                      }`}
+                      style={{ backgroundColor: color.value }}
+                      title={`${color.name} - Contrast ratio: ${lightContrast}:1 (light), ${darkContrast}:1 (dark)`}
+                    >
+                      {formData.color === color.value && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="h-2 w-2 rounded-full bg-white"></div>
+                        </div>
+                      )}
+                      {!hasGoodContrast && (
+                        <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-amber-400 border border-white" 
+                             title="Low contrast with background">
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
               </Flex>
+              
+              {/* Contrast warning */}
+              {colorError && (
+                <div className="text-amber-600 dark:text-amber-400 text-sm mt-1 flex items-center gap-1 mb-2">
+                  <AlertCircle size={14} />
+                  {colorError}
+                </div>
+              )}
 
               {/* Custom color input */}
               <Box>
