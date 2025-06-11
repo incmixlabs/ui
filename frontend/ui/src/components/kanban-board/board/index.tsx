@@ -24,7 +24,7 @@ import {
 import { isCardData, isCardDropTargetData, isColumnData, isDraggingACard, KanbanColumn, useKanban } from "@incmix/store"
 
 import { BoardColumn } from "./board-column"
-import { GlobalAddTaskForm } from "./add-task-form"
+import { GlobalAddTaskForm } from "../shared/add-task-form"
 import { TaskCardDrawer } from "./task-card-drawer"
 import { CreateColumnForm } from "./create-column-form"
 

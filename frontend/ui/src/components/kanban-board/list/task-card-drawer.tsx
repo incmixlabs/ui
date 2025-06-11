@@ -1,737 +1,680 @@
-import { useKanbanDrawer } from "@hooks/use-kanban-drawer";
+// components/list/task-card-drawer.tsx
+import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
+
 import {
-  Avatar,
   Badge,
   Box,
   Button,
   Checkbox,
   DropdownMenu,
   Flex,
-  Grid,
   Heading,
   IconButton,
   ScrollArea,
-  Tabs,
   Text,
-  type ExtendedColorType,
-} from "@base";
+  TextField,
+  TextArea,
+  Select,
+} from "@incmix/ui"
+import { cn } from "@utils"
 import {
   Check,
-  Download,
   Ellipsis,
-  Eye,
-  FileArchive,
   GripVertical,
-  Image,
-  Link,
-  Paperclip,
   Plus,
-  Smile,
   Trash2,
-} from "lucide-react";
+  Calendar,
+  User,
+  Tag,
+  CheckSquare,
+  Save,
+  X,
+  Edit3,
+  Flag,
+  Clock,
+  AlertCircle,
+  Copy,
+  Archive,
+  MessageSquareText,
+} from "lucide-react"
 import {
   type DragControls,
   Reorder,
   motion,
   useDragControls,
   useMotionValue,
-} from "motion/react";
-import type React from "react";
-import { useEffect, useRef, useState } from "react";
-import { SmartDatetimeInput } from "../../datetime-picker";
-import { TaskIcon } from "../../icons/task";
-import X from "../../icons/x";
-import { ComboBox } from "../../combo-box";
-import { assignData, attachments, commentsData, labelsData } from "../data";
-import { KanbanImages } from "../images";
-import { TaskDataSchema, useTaskStore } from "@incmix/store";
+} from "motion/react"
+import { useEffect, useState, useCallback, memo } from "react"
+import { TaskDataSchema, useListView } from "@incmix/store"
+
+// Simple sheet component for the drawer
+function TaskDrawerSheet({ 
+  open, 
+  onOpenChange, 
+  children 
+}: { 
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  children: React.ReactNode 
+}) {
+  if (!open) return null
+
+  return (
+    <div className="fixed inset-0 z-50 flex">
+      {/* Backdrop */}
+      <div 
+        className="fixed inset-0 bg-black/20 backdrop-blur-sm"
+        onClick={() => onOpenChange(false)}
+      />
+      
+      {/* Sheet */}
+      <div className="ml-auto w-[900px] bg-white dark:bg-gray-900 shadow-xl">
+        {children}
+      </div>
+    </div>
+  )
+}
 
 export default function ListTaskCardDrawer() {
-  const { taskId, handleDrawerClose } = useKanbanDrawer();
-  const { getTaskByTaskId } = useTaskStore();
+  const { taskId, isOpen, handleDrawerClose } = useKanbanDrawer()
+  
+  // Use the list view hook to get data and operations
+  const {
+    columns,
+    updateTask,
+    deleteTask,
+  } = useListView("default-project")
+  
+  // Find the current task and column
+  const currentTask = taskId 
+    ? columns.flatMap(col => col.tasks).find(task => task.taskId === taskId)
+    : null
 
-  const [taskData, setTaskData] = useState<TaskDataSchema | null>(null);
+  const currentColumn = currentTask 
+    ? columns.find(col => col.tasks.some(task => task.taskId === currentTask.taskId))
+    : null
 
-  const fetchTaskData = async () => {
-    try {
-      const data = await getTaskByTaskId(taskId);
-      setTaskData(data);
-    } catch (error) {
-      console.error("Failed to fetch task data:", error);
-    }
-  };
+  // Local state for editing
+  const [isEditingTitle, setIsEditingTitle] = useState(false)
+  const [isEditingDescription, setIsEditingDescription] = useState(false)
+  const [editTitle, setEditTitle] = useState("")
+  const [editDescription, setEditDescription] = useState("")
+  const [isAddingSubtask, setIsAddingSubtask] = useState(false)
+  const [newSubtaskName, setNewSubtaskName] = useState("")
+  const [newComment, setNewComment] = useState("")
 
+  // Update local state when task changes
   useEffect(() => {
-    if (taskId) {
-      fetchTaskData();
+    if (currentTask) {
+      setEditTitle(currentTask.name)
+      setEditDescription(currentTask.description || "")
     }
-  }, [taskId]);
+  }, [currentTask])
 
-  // console.log("taskData", taskData);
+  // Task update handlers
+  const handleUpdateTask = useCallback(async (updates: Partial<TaskDataSchema>) => {
+    if (!currentTask) return
+    try {
+      await updateTask(currentTask.taskId, updates)
+    } catch (error) {
+      console.error("Failed to update task:", error)
+    }
+  }, [currentTask, updateTask])
 
-  const [checkListData, setChecklistData] = useState([
-    {
-      id: 1,
-      title: "Inbox Template",
-      date: "28.8.2024",
-      checked: false,
-    },
-    {
-      id: 2,
-      title: "Chat Template",
-      date: "31.8.2024",
-      checked: false,
-    },
-    {
-      id: 3,
-      title: "Tasks Template",
-      date: "30.8.2024",
-      checked: false,
-    },
-    {
-      id: 4,
-      title: "Projects Template",
-      date: "29.8.2024",
-      checked: false,
-    },
-  ]);
-  const [comment, setComment] = useState("");
+  const handleTitleSave = useCallback(async () => {
+    if (editTitle.trim() && editTitle !== currentTask?.name) {
+      await handleUpdateTask({ name: editTitle.trim() })
+    }
+    setIsEditingTitle(false)
+  }, [editTitle, currentTask?.name, handleUpdateTask])
 
-  const [selectedMembers, setSelectedMembers] = useState(taskData?.assignedTo);
-  const [selectedLabels, setSelectedLabes] = useState<string[]>([
-    "design",
-    "frontend",
-    "backend",
-  ]);
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-  const [allLabelsData, setAllLabelsData] = useState(labelsData);
-  const [isLabelFormOpen, setIsLabelFormOpen] = useState(false);
-  const [labelColor, setLabelColor] = useState<ExtendedColorType>("blue");
-  const formRef = useRef<HTMLFormElement>(null as unknown as HTMLFormElement);
+  const handleDescriptionSave = useCallback(async () => {
+    if (editDescription !== currentTask?.description) {
+      await handleUpdateTask({ description: editDescription })
+    }
+    setIsEditingDescription(false)
+  }, [editDescription, currentTask?.description, handleUpdateTask])
 
-  const handleDateChange = (date: Date) => {
-    setSelectedDate(date);
-  };
+  const handleCompleteTask = useCallback(async () => {
+    if (!currentTask) return
+    await handleUpdateTask({ completed: !currentTask.completed })
+  }, [currentTask, handleUpdateTask])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setComment("");
-  };
+  const handlePriorityChange = useCallback(async (priority: string) => {
+    await handleUpdateTask({ priority: priority as any })
+  }, [handleUpdateTask])
 
-  const handleAddNewLabel = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Subtask management
+  const handleAddSubtask = useCallback(async () => {
+    if (!newSubtaskName.trim() || !currentTask) return
+    
+    const newSubtask = {
+      id: crypto.randomUUID(),
+      name: newSubtaskName.trim(),
+      completed: false,
+    }
+    
+    const updatedSubTasks = [...(currentTask.subTasks || []), newSubtask]
+    await handleUpdateTask({ subTasks: updatedSubTasks })
+    setNewSubtaskName("")
+    setIsAddingSubtask(false)
+  }, [newSubtaskName, currentTask, handleUpdateTask])
 
-    if (!formRef.current) return;
+  const handleUpdateSubtask = useCallback(async (subtaskId: string, completed: boolean) => {
+    if (!currentTask?.subTasks) return
+    
+    const updatedSubTasks = currentTask.subTasks.map(st => 
+      st.id === subtaskId ? { ...st, completed } : st
+    )
+    await handleUpdateTask({ subTasks: updatedSubTasks })
+  }, [currentTask?.subTasks, handleUpdateTask])
 
-    const formData = new FormData(formRef.current);
-    const labelName = formData.get("labelName") as string;
+  const handleDeleteSubtask = useCallback(async (subtaskId: string) => {
+    if (!currentTask?.subTasks) return
+    
+    const updatedSubTasks = currentTask.subTasks.filter(st => st.id !== subtaskId)
+    await handleUpdateTask({ subTasks: updatedSubTasks })
+  }, [currentTask?.subTasks, handleUpdateTask])
 
-    if (!labelName.trim()) return;
+  const handleReorderSubtasks = useCallback(async (newOrder: { id: string; name: string; completed: boolean; }[]) => {
+    if (!currentTask) return
+    await handleUpdateTask({ subTasks: newOrder })
+  }, [currentTask, handleUpdateTask])
 
-    const newLabel = {
-      value: labelName.toLowerCase().replace(/\s+/g, "-"),
-      label: labelName,
-      color: labelColor || "blue",
-    };
+  // Comment management
+  const handleAddComment = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newComment.trim() || !currentTask) return
+    
+    const comment = {
+      id: crypto.randomUUID(),
+      content: newComment.trim(),
+      createdBy: currentTask.createdBy, // Use current user in production
+      createdAt: Date.now(),
+    }
+    
+    const updatedComments = [...(currentTask.comments || []), comment]
+    const newCount = (currentTask.commentsCount || 0) + 1
+    
+    await handleUpdateTask({ 
+      comments: updatedComments,
+      commentsCount: newCount
+    })
+    
+    setNewComment("")
+  }, [newComment, currentTask, handleUpdateTask])
 
-    setAllLabelsData([...allLabelsData, newLabel]);
-    // Reset form and close it
-    formRef.current.reset();
-    setIsLabelFormOpen(false);
-  };
+  // Task actions
+  const handleDeleteTask = useCallback(async () => {
+    if (!currentTask) return
+    
+    if (confirm(`Are you sure you want to delete "${currentTask.name}"?`)) {
+      try {
+        await deleteTask(currentTask.taskId)
+        handleDrawerClose()
+      } catch (error) {
+        console.error("Failed to delete task:", error)
+      }
+    }
+  }, [currentTask, deleteTask, handleDrawerClose])
+
+  if (!currentTask || !currentColumn) {
+    return null
+  }
+
+  const completedSubTasks = currentTask.subTasks?.filter(st => st.completed).length || 0
+  const totalSubTasks = currentTask.subTasks?.length || 0
+  const progressPercentage = totalSubTasks > 0 ? (completedSubTasks / totalSubTasks) * 100 : 0
+
+  const getPriorityInfo = (priority?: string) => {
+    switch (priority) {
+      case "urgent": return { color: "red" as const, icon: AlertCircle, label: "Urgent" }
+      case "high": return { color: "orange" as const, icon: Flag, label: "High" }
+      case "medium": return { color: "blue" as const, icon: Clock, label: "Medium" }
+      case "low": return { color: "gray" as const, icon: Clock, label: "Low" }
+      default: return { color: "blue" as const, icon: Clock, label: "Medium" }
+    }
+  }
+
+  const priorityInfo = getPriorityInfo(currentTask.priority)
+  const PriorityIcon = priorityInfo.icon
+
   return (
-    <>
-      {Boolean(taskId) && (
-        <Box className="w-[48rem] shrink-0">
-          <Box className="sticky top-0  cursor-default rounded-lg border bg-gray-3 border-gray-6 dark:bg-gray-4 h-full w-full">
-            <Flex className="h-full">
-              <Box className="bg-gray-1 p-4 dark:bg-gray-3 rounded-lg">
-                <Flex align={"center"} justify={"between"}>
-                  <Flex className=" gap-2">
-                    <Button className="flex h-10 items-center gap-1 rounded-md font-semibold text-white">
-                      <Check size={16} />
-                      Complete
-                    </Button>
-                    <DropdownMenu.Root>
-                      <DropdownMenu.Trigger>
-                        <Button
-                          color="gray"
-                          variant="soft"
-                          className="h-10 cursor-pointer gap-2 rounded-md border p-2 px-2"
-                        >
-                          <Eye size={16} />
-                          <Text>2</Text>
-                          <DropdownMenu.TriggerIcon />
-                        </Button>
-                      </DropdownMenu.Trigger>
-                      <DropdownMenu.Content
-                        className=" z-88 "
-                        color="gray"
-                        variant="soft"
-                      >
-                        <DropdownMenu.Item shortcut="⌘ E">
-                          Edit
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item shortcut="⌘ D">
-                          Duplicate
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Separator />
-                        <DropdownMenu.Item shortcut="⌘ N">
-                          Archive
-                        </DropdownMenu.Item>
-                      </DropdownMenu.Content>
-                    </DropdownMenu.Root>
-                  </Flex>
-                  <Flex className=" gap-2">
-                    <IconButton
-                      color="gray"
-                      variant="soft"
-                      className="flex items-center gap-1 rounded-md bg-transparent font-semibold"
-                    >
-                      <Link size={20} />
-                    </IconButton>
+    <TaskDrawerSheet
+      open={isOpen}
+      onOpenChange={(open) => !open && handleDrawerClose()}
+    >
+      <div className="cursor-default bg-white dark:bg-gray-900 h-screen">
+        <ScrollArea className="h-full">
+          <Flex className="h-full">
+            {/* Main Content */}
+            <Box className="flex-1 p-6 space-y-6">
+              {/* Header Actions */}
+              <Flex align="center" justify="between">
+                <Flex gap="2">
+                  <Button 
+                    onClick={handleCompleteTask}
+                    variant={currentTask.completed ? "soft" : "solid"}
+                    color={currentTask.completed ? "gray" : "green"}
+                  >
+                    <Check size={16} />
+                    {currentTask.completed ? "Mark Incomplete" : "Mark Complete"}
+                  </Button>
+                  
+                  <Select.Root
+                    value={currentTask.priority || "medium"}
+                    onValueChange={handlePriorityChange}
+                  >
+                    <Select.Trigger className="w-auto min-w-[120px]">
+                      <Flex align="center" gap="1">
+                        <PriorityIcon size={14} />
+                        {priorityInfo.label}
+                      </Flex>
+                    </Select.Trigger>
+                    <Select.Content>
+                      <Select.Item value="low">
+                        <Flex align="center" gap="2">
+                          <Clock size={14} className="text-gray-500" />
+                          <Text>Low Priority</Text>
+                        </Flex>
+                      </Select.Item>
+                      <Select.Item value="medium">
+                        <Flex align="center" gap="2">
+                          <Clock size={14} className="text-blue-500" />
+                          <Text>Medium Priority</Text>
+                        </Flex>
+                      </Select.Item>
+                      <Select.Item value="high">
+                        <Flex align="center" gap="2">
+                          <Flag size={14} className="text-orange-500" />
+                          <Text>High Priority</Text>
+                        </Flex>
+                      </Select.Item>
+                      <Select.Item value="urgent">
+                        <Flex align="center" gap="2">
+                          <AlertCircle size={14} className="text-red-500" />
+                          <Text>Urgent</Text>
+                        </Flex>
+                      </Select.Item>
+                    </Select.Content>
+                  </Select.Root>
 
-                    <DropdownMenu.Root>
-                      <DropdownMenu.Trigger className="">
-                        <IconButton
-                          color="gray"
-                          variant="soft"
-                          className="flex items-center rounded-md bg-transparent font-semibold"
-                        >
-                          <Ellipsis size={24} />
-                        </IconButton>
-                      </DropdownMenu.Trigger>
-                      <DropdownMenu.Content
-                        color="gray"
-                        variant="soft"
-                        highContrast
-                        alignOffset={-40}
-                        className=" z-88 w-36 "
-                      >
-                        <DropdownMenu.Item className="justify-start px-1">
-                          <TaskIcon /> Task
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item className="justify-start px-1">
-                          <TaskIcon /> Board
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item className="justify-start px-1">
-                          <TaskIcon />
-                          Project
-                        </DropdownMenu.Item>
-                        <DropdownMenu.Item className="justify-start px-1">
-                          <TaskIcon />
-                          Invite
-                        </DropdownMenu.Item>
-                      </DropdownMenu.Content>
-                    </DropdownMenu.Root>
-                  </Flex>
+                  {/* Column Status */}
+                  <Badge 
+                    style={{ backgroundColor: currentColumn.color + "20", color: currentColumn.color }}
+                    className="flex items-center gap-1"
+                  >
+                    <div 
+                      className="w-2 h-2 rounded-full" 
+                      style={{ backgroundColor: currentColumn.color }}
+                    />
+                    {currentColumn.name}
+                  </Badge>
                 </Flex>
 
-                {/* template progress */}
-                <Heading className="px-0 py-4 font-medium">
-                  Template Progress
-                </Heading>
-                <Box className="space-y-3 py-2">
-                  <Grid columns="2">
-                    <Box className="space-y-3">
-                      <Heading size={"4"} className="font-medium text-gray-11">
-                        ASSIGNED TO
-                      </Heading>
-                      <Flex className="gap-1">
-                        {selectedMembers?.map(
-                          (member, index) =>
-                            member?.checked && (
-                              <Avatar
-                                key={`${member.value}-${index}`}
-                                src={member.avatar}
-                                className="h-9 w-9 rounded-full border-4 border-gray-2"
-                              />
-                            ),
-                        )}
-                        <ComboBox
-                          options={assignData}
-                          onValueChange={(value) => setSelectedMembers(value)}
-                          defaultValue={selectedMembers}
-                          placeholder="Find Person..."
-                          title="Assign To"
-                        />
-                      </Flex>
-                    </Box>
-                    <Box className="space-y-3">
-                      <Heading size={"4"} className="font-medium text-gray-11">
-                        CREATED BY
-                      </Heading>
-                      <Flex className="gap-2">
-                        <Flex className="gap-1" align={"center"}>
-                          <Avatar
-                            src={KanbanImages.user1}
-                            className="h-8 w-8"
-                          />
-                          <p>Regina Cooper</p>
-                        </Flex>
-                      </Flex>
-                    </Box>
-                  </Grid>
-                  {/* lables */}
-                  <h2 className="font-medium text-gray-500">LABELS</h2>
-                  <Flex className="gap-2">
-                    {allLabelsData?.map((label) => (
-                      <Badge
-                        color={label.color as ExtendedColorType}
-                        variant="solid"
-                        key={label.value}
-                        className="rounded-md p-1.5 px-2.5"
-                      >
-                        {label.label}
-                      </Badge>
-                    ))}
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger>
+                    <IconButton variant="ghost">
+                      <Ellipsis size={20} />
+                    </IconButton>
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Content>
+                    <DropdownMenu.Item>
+                      <Copy size={14} />
+                      Duplicate Task
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Separator />
+                    <DropdownMenu.Item>
+                      <Archive size={14} />
+                      Archive Task
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item onClick={handleDeleteTask} className="text-red-600">
+                      <Trash2 size={14} />
+                      Delete Task
+                    </DropdownMenu.Item>
+                  </DropdownMenu.Content>
+                </DropdownMenu.Root>
+              </Flex>
 
-                    <ComboBox
-                      options={allLabelsData}
-                      onValueChange={setSelectedLabes}
-                      defaultValue={selectedLabels}
-                      placeholder="Search Label"
-                      title="Labels"
-                      addNewLabel={true}
-                      isLabelFormOpen={isLabelFormOpen}
-                      formRef={formRef}
-                      setIsLabelFormOpen={setIsLabelFormOpen}
-                      handleAddNewLabel={handleAddNewLabel}
+              {/* Task Title */}
+              <Box>
+                {isEditingTitle ? (
+                  <Flex gap="2" align="center">
+                    <TextField.Root
+                      value={editTitle}
+                      onChange={(e) => setEditTitle(e.target.value)}
+                      className="flex-1 text-lg font-semibold"
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleTitleSave()
+                        if (e.key === "Escape") setIsEditingTitle(false)
+                      }}
                     />
+                    <IconButton onClick={handleTitleSave} size="1">
+                      <Save size={14} />
+                    </IconButton>
+                    <IconButton onClick={() => setIsEditingTitle(false)} size="1" variant="soft">
+                      <X size={14} />
+                    </IconButton>
                   </Flex>
-
-                  {/* DUE DATE */}
-                  <h2 className=" font-medium text-gray-500">DUE DATE </h2>
-                  <SmartDatetimeInput
-                    value={selectedDate}
-                    onValueChange={handleDateChange}
-                    placeholder="Enter a date and time"
-                  />
-                </Box>
-                <Box className="space-y-2 py-6 pt-4">
-                  <Heading size={"4"} className="font-medium text-gray-11">
-                    DESCRIPTION
-                  </Heading>
-                  <Text as="p" className="text-gray-10 leading-[120%]">
-                    We need to develop several options (Inbox template, Chat
-                    template, tasks template, Projects template) of cool user
-                    interface design templates - to carefully work out the
-                    smallest details.
-                  </Text>
-                </Box>
-
-                <Box>
-                  <Box className="gap-2 space-y-2 py-2">
-                    <Heading
-                      size={"3"}
-                      className="flex w-full items-center gap-1 font-medium text-gray-11 uppercase"
+                ) : (
+                  <Flex align="center" gap="2" className="group">
+                    <Heading 
+                      size="7" 
+                      className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 p-2 rounded -m-2 flex-1"
+                      onClick={() => setIsEditingTitle(true)}
                     >
-                      <Text>CheckList</Text>
-                      <Text>(50%)</Text>
+                      {currentTask.name}
                     </Heading>
+                    <IconButton 
+                      size="1" 
+                      variant="ghost" 
+                      onClick={() => setIsEditingTitle(true)}
+                      className="opacity-0 group-hover:opacity-100"
+                    >
+                      <Edit3 size={14} />
+                    </IconButton>
+                  </Flex>
+                )}
+              </Box>
+              
+              {/* Task Description */}
+              <Box className="space-y-3">
+                <Heading size="4" className="text-gray-600 dark:text-gray-400 uppercase text-sm font-semibold">
+                  Description
+                </Heading>
+                {isEditingDescription ? (
+                  <Box className="space-y-2">
+                    <TextArea
+                      value={editDescription}
+                      onChange={(e) => setEditDescription(e.target.value)}
+                      placeholder="Add a description..."
+                      rows={6}
+                      autoFocus
+                      className="min-h-[120px]"
+                    />
+                    <Flex gap="2">
+                      <Button onClick={handleDescriptionSave} size="1">
+                        <Save size={14} />
+                        Save
+                      </Button>
+                      <Button onClick={() => setIsEditingDescription(false)} size="1" variant="soft">
+                        <X size={14} />
+                        Cancel
+                      </Button>
+                    </Flex>
+                  </Box>
+                ) : (
+                  <Box 
+                    className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 p-3 rounded border-2 border-dashed border-gray-200 dark:border-gray-700 min-h-[80px] group relative"
+                    onClick={() => setIsEditingDescription(true)}
+                  >
+                    {currentTask.description ? (
+                      <Text className="whitespace-pre-wrap leading-relaxed">
+                        {currentTask.description}
+                      </Text>
+                    ) : (
+                      <Text className="text-gray-500 italic">
+                        Click to add a description...
+                      </Text>
+                    )}
+                    <IconButton 
+                      size="1" 
+                      variant="ghost" 
+                      className="opacity-0 group-hover:opacity-100 absolute top-2 right-2"
+                    >
+                      <Edit3 size={12} />
+                    </IconButton>
+                  </Box>
+                )}
+              </Box>
+
+              {/* Subtasks */}
+              <Box className="space-y-4">
+                <Flex align="center" justify="between">
+                  <Heading size="4" className="text-gray-600 dark:text-gray-400 uppercase text-sm font-semibold flex items-center gap-2">
+                    <CheckSquare size={16} />
+                    Subtasks ({completedSubTasks}/{totalSubTasks})
+                  </Heading>
+                  {totalSubTasks > 0 && (
+                    <Badge variant="soft" color={progressPercentage === 100 ? "green" : "blue"}>
+                      {Math.round(progressPercentage)}% Complete
+                    </Badge>
+                  )}
+                </Flex>
+
+                {totalSubTasks > 0 && (
+                  <Box className="relative h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                     <Box
-                      className="relative flex h-2 w-full items-center gap-1 rounded-full bg-gray-200 before:absolute before:top-0 before:left-0 before:h-2 before:w-[var(--progress)] before:rounded-full before:bg-secondary"
-                      style={
-                        {
-                          "--progress": "50%",
-                        } as React.CSSProperties
-                      }
+                      className={cn(
+                        "h-full transition-all duration-300",
+                        progressPercentage === 100 ? "bg-green-500" : "bg-blue-500"
+                      )}
+                      style={{ width: `${progressPercentage}%` }}
                     />
                   </Box>
+                )}
+
+                {currentTask.subTasks && currentTask.subTasks.length > 0 && (
                   <Reorder.Group
                     axis="y"
-                    values={checkListData}
-                    onReorder={setChecklistData}
-                    className="w-full space-y-1 "
+                    values={[...currentTask.subTasks]}
+                    onReorder={handleReorderSubtasks}
+                    className="space-y-2"
                   >
-                    {checkListData.map((item) => (
-                      <Item key={item.id} item={item}>
-                        <Flex className="gap-2">
-                          <Checkbox
-                            size={"3"}
-                            className="h-5 w-5 rounded-md border border-black bg-gray-12 text-secondary group-hover:bg-white "
-                          />
-                          <h1 className="text-gray-12 text-sm ">
-                            {item.title}
-                          </h1>
-                        </Flex>
-                      </Item>
+                    {currentTask.subTasks.map((subtask) => (
+                      <SubtaskItem
+                        key={subtask.id}
+                        subtask={subtask}
+                        onToggle={(completed) => handleUpdateSubtask(subtask.id, completed)}
+                        onDelete={() => handleDeleteSubtask(subtask.id)}
+                      />
                     ))}
                   </Reorder.Group>
-                  <IconButton className="mt-4 w-fit gap-2 bg-transparent p-1 font-semibold text-secondary ">
-                    <Plus />
-                    <Text>Add Checklist Item</Text>
-                  </IconButton>
-                </Box>
-                <Box className="py-5">
-                  <Heading
-                    size={"4"}
-                    className=" py-3 font-medium text-gray-11"
+                )}
+
+                {isAddingSubtask ? (
+                  <Box className="space-y-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border">
+                    <TextField.Root
+                      value={newSubtaskName}
+                      onChange={(e) => setNewSubtaskName(e.target.value)}
+                      placeholder="Enter subtask name..."
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleAddSubtask()
+                        if (e.key === "Escape") setIsAddingSubtask(false)
+                      }}
+                    />
+                    <Flex gap="2">
+                      <Button onClick={handleAddSubtask} size="1" disabled={!newSubtaskName.trim()}>
+                        <Plus size={14} />
+                        Add Subtask
+                      </Button>
+                      <Button onClick={() => setIsAddingSubtask(false)} size="1" variant="soft">
+                        Cancel
+                      </Button>
+                    </Flex>
+                  </Box>
+                ) : (
+                  <Button 
+                    variant="ghost" 
+                    onClick={() => setIsAddingSubtask(true)}
+                    className="w-full justify-start border-2 border-dashed border-gray-300 dark:border-gray-600 py-6"
                   >
-                    Attachments
+                    <Plus size={16} />
+                    Add Subtask
+                  </Button>
+                )}
+              </Box>
+
+              {/* Comments */}
+              <Box className="space-y-4">
+                <Flex justify="between" align="center">
+                  <Heading size="4" className="text-gray-600 dark:text-gray-400 uppercase text-sm font-semibold">
+                    Comments ({currentTask.commentsCount || 0})
                   </Heading>
-
-                  <Box className="space-y-4">
-                    {attachments.map((attachment) => (
-                      <Flex
-                        align={"center"}
-                        key={attachment.id}
-                        className=" rounded-lg bg-gray-3 p-3 transition-colors dark:bg-gray-4"
+                </Flex>
+                
+                {/* Comments List */}
+                <Box className="space-y-3">
+                  {currentTask.comments && currentTask.comments.length > 0 ? (
+                    currentTask.comments.map((comment) => (
+                      <Box 
+                        key={comment.id} 
+                        className="p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600"
                       >
-                        {attachment.type === "image" ? (
-                          <Box className="h-16 w-16 shrink-0 overflow-hidden rounded-lg">
-                            <img
-                              src={attachment.thumbnailUrl}
-                              alt={attachment.name}
-                              className="h-full w-full object-cover"
-                            />
-                          </Box>
-                        ) : (
-                          <Box className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-gray-8">
-                            <FileArchive className="h-8 w-8 text-gray-8" />
-                          </Box>
-                        )}
-
-                        <Box className="ml-4 grow">
-                          <Heading
-                            as="h3"
-                            className="font-medium text-gray-12 text-sm"
-                          >
-                            {attachment.name}
-                          </Heading>
-                          <Box className="mt-1 text-gray-11 text-xs">
-                            <Text>Uploaded on {attachment.uploadDate}</Text>
-                            <Text className="mx-2">•</Text>
-                          </Box>
-                          <Text as="p" className="pt-1 text-gray-11 text-sm">
-                            {attachment.size}
-                          </Text>
-                        </Box>
-
-                        <Flex className="space-x-2">
-                          <Button
-                            variant="soft"
-                            className="h-9 cursor-pointer rounded-full bg-transparent p-2 transition-colors hover:bg-gray-4 dark:hover:bg-gray-7"
-                          >
-                            <Download className="h-5 w-5 text-gray-12" />
-                          </Button>
-                          <Button
-                            variant="soft"
-                            className="h-9 cursor-pointer rounded-full bg-transparent p-2 transition-colors hover:bg-gray-4 dark:hover:bg-gray-7"
-                          >
-                            <Trash2 className="h-5 w-5 text-gray-12" />
-                          </Button>
-                        </Flex>
-                      </Flex>
-                    ))}
-                  </Box>
-
-                  <IconButton className="mt-4 w-fit gap-2 bg-transparent p-1 font-semibold text-secondary ">
-                    <Plus />
-                    <Text>Add Attachment</Text>
-                  </IconButton>
-                </Box>
-
-                {/* comments & activity tabs */}
-                <Box>
-                  <Tabs.Root defaultValue="comments">
-                    <Tabs.List className="gap-4" color="cyan">
-                      <Tabs.Trigger
-                        value="comments"
-                        className="inline-block cursor-pointer py-3 font-medium hover:bg-transparent data-[state=active]:border-secondary data-[state=active]:text-secondary "
-                      >
-                        COMMENTS
-                      </Tabs.Trigger>
-                      <Tabs.Trigger
-                        value="activity"
-                        className="inline-block cursor-pointer py-3 font-medium hover:bg-transparent data-[state=active]:border-secondary data-[state=active]:text-secondary "
-                      >
-                        ACTIVITY
-                      </Tabs.Trigger>
-                    </Tabs.List>
-
-                    <Box pt="3">
-                      <Tabs.Content value="comments" className="py-4">
-                        <form
-                          onSubmit={handleSubmit}
-                          className="rounded-lg border border-gray-5 bg-gray-2 shadow-xs dark:bg-gray-4"
-                        >
-                          <Box className="p-2">
-                            <textarea
-                              value={comment}
-                              onChange={(e) => setComment(e.target.value)}
-                              placeholder="Add Comment..."
-                              className="min-h-[70px] w-full resize-none border-0 bg-gray-2 text-gray-12 text-sm placeholder-gray-400 focus:ring-0 dark:bg-gray-4"
-                            />
-                          </Box>
-
-                          <Flex
-                            className=" px-4 py-2 "
-                            justify={"between"}
-                            align={"center"}
-                          >
-                            <Button
-                              type="submit"
-                              variant="solid"
-                              className="rounded-md px-4 py-2 font-medium text-sm text-white transition-colors"
-                              disabled={!comment.trim()}
-                            >
-                              Comment
-                            </Button>
-                            <div className="flex items-center gap-2">
-                              <Button
-                                type="button"
-                                variant="soft"
-                                className="h-9 cursor-pointer rounded-full bg-transparent p-2 transition-colors hover:bg-gray-3 dark:hover:bg-gray-7"
-                                aria-label="Attach file"
-                              >
-                                <Paperclip className="h-5 w-5 text-gray-12" />
-                              </Button>
-                              <Button
-                                type="button"
-                                variant="soft"
-                                className="h-9 cursor-pointer rounded-full bg-transparent p-2 transition-colors hover:bg-gray-3 dark:hover:bg-gray-7"
-                                aria-label="Add emoji"
-                              >
-                                <Smile className="h-5 w-5 text-gray-12" />
-                              </Button>
-                              <Button
-                                type="button"
-                                variant="soft"
-                                className="h-9 cursor-pointer rounded-full bg-transparent p-2 transition-colors hover:bg-gray-3 dark:hover:bg-gray-7"
-                                aria-label="Upload image"
-                              >
-                                <Image className="h-5 w-5 text-gray-12" />
-                              </Button>
+                        <Flex className="space-y-1">
+                          <Flex align="center" gap="2" className="mb-2">
+                            <div className="w-7 h-7 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-sm font-medium text-gray-600 dark:text-gray-300">
+                              {comment.createdBy.name.charAt(0).toUpperCase()}
                             </div>
+                            <Box>
+                              <Text size="2" className="font-medium">{comment.createdBy.name}</Text>
+                              <Text size="1" className="text-gray-500">
+                                {new Date(comment.createdAt).toLocaleString()}
+                              </Text>
+                            </Box>
                           </Flex>
-                        </form>
-                        <Box className="space-y-4 py-4">
-                          {commentsData.map((comment) => (
-                            <Flex key={comment.id} gap={"2"}>
-                              <img
-                                src={comment.user.avatar}
-                                alt={comment.user.name}
-                                className="h-10 w-10 shrink-0 rounded-full object-cover"
-                              />
-                              <Box className="flex-1">
-                                <Flex align={"center"} className="mb-1 gap-2">
-                                  <Heading
-                                    size={"3"}
-                                    className="font-medium text-gray-12"
-                                  >
-                                    {comment.user.name}
-                                  </Heading>
-                                  <Text
-                                    as="span"
-                                    className="text-gray-500 text-sm"
-                                  >
-                                    {comment.timestamp}
-                                  </Text>
-                                </Flex>
-                                <Text
-                                  as="p"
-                                  className="whitespace-pre-line text-gray-11"
-                                >
-                                  {comment.text}
-                                </Text>
-
-                                {comment.images && (
-                                  <Flex className="mt-3" gap={"2"}>
-                                    {comment.images.map((image, index) => (
-                                      <div
-                                        key={`${image}-${index}`}
-                                        className="group relative"
-                                      >
-                                        <img
-                                          src={image}
-                                          alt={`Attachment ${index + 1}`}
-                                          className="h-16 w-16 rounded-lg object-cover"
-                                        />
-                                        {index === 3 &&
-                                          (comment.images?.length ?? 0) > 3 && (
-                                            <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/40">
-                                              <span className="font-medium text-white">
-                                                +3
-                                              </span>
-                                            </div>
-                                          )}
-                                      </div>
-                                    ))}
-                                  </Flex>
-                                )}
-                              </Box>
-                            </Flex>
-                          ))}
-                        </Box>
-                      </Tabs.Content>
-                      <Tabs.Content value="activity">
-                        <Text as="p">Access and update your documents.</Text>
-                      </Tabs.Content>
-                    </Box>
-                  </Tabs.Root>
+                          <Text className="pl-9">{comment.content}</Text>
+                        </Flex>
+                      </Box>
+                    ))
+                  ) : (
+                    <Text className="text-gray-500 italic text-center p-3">
+                      No comments yet
+                    </Text>
+                  )}
                 </Box>
-              </Box>
-              <Box className="relative h-full w-72 shrink-0 pt-16">
-                <IconButton
-                  color="gray"
-                  variant="soft"
-                  onClick={handleDrawerClose}
-                  className="absolute top-5 right-3 ml-8 flex h-8 w-8 items-center justify-center rounded-md"
-                >
-                  <X aria-hidden="true" />
-                  <span className="sr-only">Close</span>
-                </IconButton>
-
-                <Box className="space-y-3 p-4 ">
-                  <Heading size={"4"} className=" font-medium text-gray-10">
-                    CREATED BY
-                  </Heading>
-                  <Flex className="gap-2" align={"center"}>
-                    <Avatar src={KanbanImages.user1} className="h-8 w-8" />
-                    <Text as="p">Regina Cooper</Text>
-                  </Flex>
-                </Box>
-                <Box className="space-y-3 border-gray-6 border-t-2 p-4 py-3">
-                  <Flex justify={"between"} align={"center"}>
-                    <Heading size={"4"} className=" font-medium text-gray-10">
-                      ASSIGNED TO
-                    </Heading>
-                    <ComboBox
-                      options={assignData}
-                      onValueChange={setSelectedMembers}
-                      defaultValue={selectedMembers}
-                      placeholder="Find Person..."
-                      title="Assign To"
-                    />
-                  </Flex>
-                  <Flex className="gap-1">
-                    <Avatar src={KanbanImages.user1} className="h-8 w-8" />
-                    <Avatar src={KanbanImages.user2} className="h-8 w-8" />
-                    <Avatar src={KanbanImages.user1} className="h-8 w-8" />
-                  </Flex>
-                </Box>
-                <Box className="space-y-3 border-gray-6 border-t-2 p-4 py-3 ">
-                  {/* DUE DATE */}
-                  <Heading size={"4"} className=" font-medium text-gray-10">
-                    DUE DATE
-                  </Heading>
-                  <SmartDatetimeInput
-                    value={selectedDate}
-                    onValueChange={handleDateChange}
-                    placeholder="Enter a date and time"
-                  />
-                </Box>
-                <Box className="space-y-3 border-gray-6 border-t-2 p-4 py-3 ">
-                  {/* lables */}
-
-                  <Flex justify={"between"} align={"center"}>
-                    <Heading size={"4"} className=" font-medium text-gray-10">
-                      LABELS
-                    </Heading>
-                    <ComboBox
-                      options={allLabelsData}
-                      onValueChange={setSelectedLabes}
-                      defaultValue={selectedLabels}
-                      placeholder="Search Label"
-                      title="Labels"
-                      addNewLabel={true}
-                      isLabelFormOpen={isLabelFormOpen}
-                      formRef={formRef}
-                      setIsLabelFormOpen={setIsLabelFormOpen}
-                      handleAddNewLabel={handleAddNewLabel}
-                      labelColor={labelColor}
-                      setLabelColor={setLabelColor}
-                    />
-                  </Flex>
-                  <Flex gap="2" wrap={"wrap"}>
-                    {allLabelsData?.map((label) => (
-                      <Badge
-                        color={label.color as ExtendedColorType}
-                        variant="solid"
-                        key={label.value}
-                        className="rounded-md p-1.5 px-2.5"
+                
+                {/* Add Comment Form */}
+                <Box className="pt-2">
+                  <form onSubmit={handleAddComment}>
+                    <Box className="relative">
+                      <TextField.Root 
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        placeholder="Add a comment..."
+                        className="pr-24"
+                      />
+                      <Button 
+                        type="submit" 
+                        size="1"
+                        className="absolute right-1 top-1"
+                        disabled={!newComment.trim()}
                       >
-                        {label.label}
-                      </Badge>
-                    ))}
-                  </Flex>
-                </Box>
-                <Box className="space-y-3 border-gray-6 border-t-2 p-4 py-3 ">
-                  <Box>
-                    <Heading size={"3"} className=" font-medium text-gray-12">
-                      Created
-                    </Heading>
-                    <Text as="span" className="text-gray-9">
-                      January 2, 2020 4:30 PM
-                    </Text>
-                  </Box>
-                  <Box>
-                    <Heading size={"3"} className=" font-medium text-gray-12">
-                      Updated
-                    </Heading>
-                    <Text as="span" className="text-gray-9">
-                      January 2, 2020 4:55 PM
-                    </Text>
-                  </Box>
+                        Comment
+                      </Button>
+                    </Box>
+                  </form>
                 </Box>
               </Box>
-            </Flex>
-          </Box>
-        </Box>
-      )}
-    </>
-  );
+            </Box>
+            
+            {/* Right Sidebar */}
+            <Box className="w-80 border-l border-gray-200 dark:border-gray-700 p-6 space-y-6 bg-gray-50 dark:bg-gray-800">
+              <Flex align="center" justify="between">
+                <Heading size="4">Task Details</Heading>
+                <IconButton onClick={handleDrawerClose} variant="ghost">
+                  <X size={16} />
+                </IconButton>
+              </Flex>
+
+              {/* Task Metadata */}
+              <Box className="space-y-4">
+                <Box>
+                  <Text size="2" className="font-semibold text-gray-600 dark:text-gray-400">
+                    Task ID
+                  </Text>
+                  <Text size="1" className="text-gray-500 font-mono">
+                    {currentTask.taskId}
+                  </Text>
+                </Box>
+                <Box>
+                  <Text size="2" className="font-semibold text-gray-600 dark:text-gray-400">
+                    Created
+                  </Text>
+                  <Text size="1" className="text-gray-500">
+                    {new Date(currentTask.createdAt).toLocaleString()}
+                  </Text>
+                </Box>
+                <Box>
+                  <Text size="2" className="font-semibold text-gray-600 dark:text-gray-400">
+                    Last Updated
+                  </Text>
+                  <Text size="1" className="text-gray-500">
+                    {new Date(currentTask.updatedAt).toLocaleString()}
+                  </Text>
+                </Box>
+                <Box>
+                  <Text size="2" className="font-semibold text-gray-600 dark:text-gray-400">
+                    Status Column
+                  </Text>
+                  <Badge 
+                    style={{ backgroundColor: currentColumn.color + "20", color: currentColumn.color }}
+                    size="1"
+                  >
+                    {currentColumn.name}
+                  </Badge>
+                </Box>
+              </Box>
+            </Box>
+          </Flex>
+        </ScrollArea>
+      </div>
+    </TaskDrawerSheet>
+  )
 }
-interface ChecklistItem {
-  id: number;
-  title: string;
-  date: string;
-  checked: boolean;
-}
-const Item = ({
-  children,
-  item,
+
+// Subtask component with drag and drop
+const SubtaskItem = memo(function SubtaskItem({
+  subtask,
+  onToggle,
+  onDelete,
 }: {
-  children: React.ReactNode;
-  item: ChecklistItem;
-}) => {
-  const y = useMotionValue(0);
-  //   const boxShadow = useRaisedShadow(y);
-  const dragControls = useDragControls();
+  subtask: { id: string; name: string; completed: boolean }
+  onToggle: (completed: boolean) => void
+  onDelete: () => void
+}) {
+  const dragControls = useDragControls()
+  const y = useMotionValue(0)
 
   return (
     <Reorder.Item
-      value={item}
+      value={subtask}
       style={{ y }}
       dragListener={false}
       dragControls={dragControls}
-      className="group flex w-full items-center justify-between rounded-md bg-gray-3 p-3 dark:bg-gray-4"
+      className="group flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg border shadow-sm hover:shadow-md transition-shadow"
     >
-      {children}
-      <Flex className="gap-3" align={"center"}>
-        <ReorderIcon dragControls={dragControls} />
-        <IconButton className="bg-transparent opacity-0 group-hover:opacity-100">
-          <Trash2 className="h-5 w-5 text-gray-12" />
+      <Flex align="center" gap="3" className="flex-1">
+        <Checkbox
+          checked={subtask.completed}
+          onCheckedChange={(checked) => onToggle(!!checked)}
+        />
+        <Text className={cn(
+          "flex-1",
+          subtask.completed && "line-through text-gray-500"
+        )}>
+          {subtask.name}
+        </Text>
+      </Flex>
+      
+      <Flex align="center" gap="2" className="opacity-0 group-hover:opacity-100 transition-opacity">
+        <motion.div
+          whileTap={{ scale: 0.95 }}
+          onPointerDown={(e) => {
+            e.preventDefault()
+            dragControls.start(e)
+          }}
+          className="cursor-grab active:cursor-grabbing"
+        >
+          <GripVertical size={16} className="text-gray-400" />
+        </motion.div>
+        
+        <IconButton onClick={onDelete} size="1" variant="ghost" className="text-red-500 hover:bg-red-50">
+          <Trash2 size={14} />
         </IconButton>
       </Flex>
     </Reorder.Item>
-  );
-};
-
-interface Props {
-  dragControls: DragControls;
-}
-export function ReorderIcon({ dragControls }: Props) {
-  return (
-    <motion.div
-      whileTap={{ scale: 0.85 }}
-      onPointerDown={(e) => {
-        e.preventDefault();
-        dragControls.start(e);
-      }}
-    >
-      <GripVertical className=" h-7 w-7 cursor-grab text-gray-12 opacity-0 active:cursor-grabbing group-hover:opacity-100" />
-    </motion.div>
-  );
-}
+  )
+})

@@ -1,244 +1,225 @@
-import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
-import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
-import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge";
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types";
-import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder";
-import { bindAll } from "bind-event-listener";
-import { Suspense, lazy, useEffect, useRef, useMemo, useState } from "react";
-import { ListColumn } from "./list-column";
-import { blockBoardPanningAttr } from "../data-attributes";
-import { Box, Flex, IconButton, Input, toast } from "@incmix/ui";
-import { useTaskStore } from "@incmix/store";
+// components/list/list-board.tsx
+import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
+import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
+import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge"
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
+import { bindAll } from "bind-event-listener"
+import { Suspense, lazy, useEffect, useRef, useState, useCallback } from "react"
+import { ListColumn } from "./list-column"
+import { Box, Flex, IconButton, TextField, Button, Heading } from "@incmix/ui"
 
-const ListTaskCardDrawer = lazy(() => import("./task-card-drawer"));
+import { Plus, Search, RefreshCw, Settings, MoreVertical } from "lucide-react"
 
-import type { TColumn } from "../types";
 import {
   isCardData,
   isCardDropTargetData,
   isColumnData,
   isDraggingACard,
   isDraggingAColumn,
-} from "../types";
-import { Plus, Search } from "lucide-react";
-import { AddTaskForm } from "./add-task-form";
+  blockBoardPanningAttr,
+  useListView,
+} from "@incmix/store"
+import { GlobalAddTaskForm } from "../shared/add-task-form"
 
-function convertTasksToColumns(tasks:any[], columns: TColumn[]) {  
-  return columns.map((column) => {  
-    const columnTasks = tasks  
-      .filter((task) => task.columnId === column.id)  
-      .sort((a, b) => a.taskOrder - b.taskOrder)  
-      .map((task) => ({  
-        ...task,  
-        id: task.taskId,  
-      }));  
+const ListTaskCardDrawer = lazy(() => import("./task-card-drawer"))
 
-    return {  
-      id: `column:${column.id}`,  
-      title: column.title,  
-      cards: columnTasks,  
-    };  
-  });  
-} 
+interface ListBoardProps {
+  projectId?: string
+}
 
-export function ListBoard() {
+export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
+  const scrollableRef = useRef<HTMLDivElement | null>(null)
+  const [showAddTaskForm, setShowAddTaskForm] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [isDragging, setIsDragging] = useState(false)
+  
+  // Use the new list view hook
   const {
-    tasks,
-    initialize,
-    initialized,
-    isInitialLoading,
-    moveTaskBetweenColumns,
-    reorderTasksInColumn,
-  } = useTaskStore();
+    columns,
+    isLoading,
+    error,
+    createTask,
+    updateTask,
+    deleteTask,
+    moveTask,
+    createColumn,
+    updateColumn,
+    deleteColumn,
+    refetch,
+    clearError,
+    projectStats
+  } = useListView(projectId)
 
-  const mockColumns = [
-    { id: "col-todo", title: "To Do" },
-    { id: "col-progress", title: "In Progress" },
-    { id: "col-done", title: "Done" },
-  ];
-  const [showAddTaskForm, setShowAddTaskForm] = useState(false);
+  // Filter columns based on search query
+  const filteredColumns = columns.filter(column => 
+    column.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    column.tasks.some(task => 
+      task.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      task.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  )
 
-  const columns = useMemo(() => {
-    if (!initialized) return [];
-    return convertTasksToColumns(tasks, mockColumns);
-  }, [tasks, initialized]);
+  // Handle refresh
+  const handleRefresh = useCallback(() => {
+    refetch()
+  }, [refetch])
 
-  const scrollableRef = useRef<HTMLDivElement | null>(null);
-
+  // Drag and drop setup
   useEffect(() => {
-    if (!initialized) {
-      initialize();
-    }
-  }, [initialize, initialized]);
-
-  useEffect(() => {
-    const element = scrollableRef.current;
-    if (!element) {
-      return;
-    }
-
-    if (!columns || columns.length === 0) {
-      return;
+    const element = scrollableRef.current
+    if (!element || isLoading || columns.length === 0) {
+      return
     }
 
     return combine(
       monitorForElements({
         canMonitor: isDraggingACard,
+        onDragStart() {
+          setIsDragging(true)
+        },
         onDrop({ source, location }) {
-          const dragging = source.data;
+          setIsDragging(false)
+          
+          const dragging = source.data
           if (!isCardData(dragging)) {
-            return;
+            return
           }
 
-          const innerMost = location.current.dropTargets[0];
+          const innerMost = location.current.dropTargets[0]
           if (!innerMost) {
-            return;
+            return
           }
 
-          const dropTargetData = innerMost.data;
-          const homeColumnIndex = columns.findIndex(
-            (column) => column.id === dragging.columnId,
-          );
-          const home: TColumn | undefined = columns[homeColumnIndex];
+          const dropTargetData = innerMost.data
+          const homeColumn = columns.find(
+            (column) => column.id === dragging.columnId
+          )
 
-          if (!home) {
-            return;
+          if (!homeColumn) {
+            return
           }
 
-          const cardIndexInHome = home.cards.findIndex(
-            (card) => card.id === dragging.card.id,
-          );
+          // Ensure taskId exists before proceeding
+          const draggedTaskId = dragging.card.taskId
+          if (!draggedTaskId) {
+            console.error("Task ID is missing for dragged card")
+            return
+          }
 
-          // dropping on a card
+          const cardIndexInHome = homeColumn.tasks.findIndex(
+            (task) => task.taskId === draggedTaskId
+          )
+
+          // Dropping on a card
           if (isCardDropTargetData(dropTargetData)) {
-            const destinationColumnIndex = columns.findIndex(
-              (column) => column.id === dropTargetData.columnId,
-            );
-            const destination = columns[destinationColumnIndex];
+            const destinationColumn = columns.find(
+              (column) => column.id === dropTargetData.columnId
+            )
 
-            // reordering in home column
-            if (home === destination) {
-              const cardFinishIndex = home.cards.findIndex(
-                (card) => card.id === dropTargetData.card.id,
-              );
+            if (!destinationColumn) {
+              return
+            }
+
+            // Reordering in same column
+            if (homeColumn.id === destinationColumn.id) {
+              const targetTaskId = dropTargetData.card.taskId
+              if (!targetTaskId) {
+                console.error("Target task ID is missing")
+                return
+              }
+
+              const cardFinishIndex = homeColumn.tasks.findIndex(
+                (task) => task.taskId === targetTaskId
+              )
 
               if (cardIndexInHome === -1 || cardFinishIndex === -1) {
-                return;
+                return
               }
 
               if (cardIndexInHome === cardFinishIndex) {
-                return;
+                return
               }
 
-              const closestEdge = extractClosestEdge(dropTargetData);
+              const closestEdge = extractClosestEdge(dropTargetData)
               const reordered = reorderWithEdge({
                 axis: "vertical",
-                list: home.cards,
+                list: homeColumn.tasks,
                 startIndex: cardIndexInHome,
                 indexOfTarget: cardFinishIndex,
                 closestEdgeOfTarget: closestEdge,
-              });
+              })
 
-              // ✅ No need to update local state - just update the store
-              // The useMemo will automatically recompute columns when tasks change
-              const taskIds = reordered.map((card) => card.id);
-              const columnId = home.id.replace("column:", "");
-              reorderTasksInColumn(columnId, taskIds).catch((error) => {
-                console.error("Failed to reorder tasks:", error);
-                toast.error("Failed to reorder tasks. Please try again.");
-              });
+              // Use moveTask with same column but new index
+              const newIndex = reordered.findIndex(t => t.taskId === draggedTaskId)
+              moveTask(draggedTaskId, homeColumn.id, newIndex).catch((error) => {
+                console.error("Failed to reorder tasks:", error)
+              })
 
-              return;
+              return
             }
 
-            // moving card from one column to another
-            if (!destination) {
-              return;
+            // Moving to different column
+            const targetTaskId = dropTargetData.card.taskId
+            if (!targetTaskId) {
+              console.error("Target task ID is missing")
+              return
             }
 
-            const indexOfTarget = destination.cards.findIndex(
-              (card) => card.id === dropTargetData.card.id,
-            );
-            const closestEdge = extractClosestEdge(dropTargetData);
-            const finalIndex =
-              closestEdge === "bottom" ? indexOfTarget + 1 : indexOfTarget;
+            const indexOfTarget = destinationColumn.tasks.findIndex(
+              (task) => task.taskId === targetTaskId
+            )
+            const closestEdge = extractClosestEdge(dropTargetData)
+            const finalIndex = closestEdge === "bottom" ? indexOfTarget + 1 : indexOfTarget
 
-            // ✅ No need to update local state - just update the store
-            const fromColumnId = home.id.replace("column:", "");
-            const toColumnId = destination.id.replace("column:", "");
-            moveTaskBetweenColumns(
-              dragging.card.id,
-              fromColumnId,
-              toColumnId,
-              finalIndex,
-            );
+            moveTask(draggedTaskId, destinationColumn.id, finalIndex).catch((error) => {
+              console.error("Failed to move task:", error)
+            })
 
-            return;
+            return
           }
 
-          // dropping onto a column, but not onto a card
+          // Dropping onto a column
           if (isColumnData(dropTargetData)) {
-            const destinationColumnIndex = columns.findIndex(
-              (column) => column.id === dropTargetData.column.id,
-            );
-            const destination = columns[destinationColumnIndex];
+            const destinationColumn = columns.find(
+              (column) => column.id === dropTargetData.column.id
+            )
 
-            if (!destination) {
-              return;
+            if (!destinationColumn || homeColumn.id === destinationColumn.id) {
+              return
             }
 
-            // dropping on home
-            if (home === destination) {
-              const reordered = reorder({
-                list: home.cards,
-                startIndex: cardIndexInHome,
-                finishIndex: home.cards.length - 1,
-              });
-
-              // ✅ No need to update local state - just update the store
-              const taskIds = reordered.map((card) => card.id);
-              const columnId = home.id.replace("column:", "");
-              reorderTasksInColumn(columnId, taskIds);
-              return;
-            }
-
-            // moving card to another column
-            // ✅ No need to update local state - just update the store
-            const fromColumnId = home.id.replace("column:", "");
-            const toColumnId = destination.id.replace("column:", "");
-            moveTaskBetweenColumns(
-              dragging.card.id,
-              fromColumnId,
-              toColumnId,
-              destination.cards.length - 1,
-            );
-
-            return;
+            // Move to end of destination column
+            moveTask(
+              draggedTaskId,
+              destinationColumn.id,
+              destinationColumn.tasks.length
+            ).catch((error) => {
+              console.error("Failed to move task:", error)
+            })
           }
         },
       }),
-      // Only add auto scroll if element is actually scrollable
       autoScrollForElements({
         canScroll({ source }) {
-          return isDraggingACard({ source }) || isDraggingAColumn({ source });
+          return isDraggingACard({ source }) || isDraggingAColumn({ source })
         },
         element,
-      }),
-    );
-  }, [columns, reorderTasksInColumn, moveTaskBetweenColumns]);
+      })
+    )
+  }, [columns, moveTask, isLoading])
 
+  // Handle board panning
   useEffect(() => {
-    let cleanupActive: CleanupFn | null = null;
-    const scrollable = scrollableRef.current;
+    let cleanupActive: any = null
+    const scrollable = scrollableRef.current
 
     if (!scrollable) {
-      return;
+      return
     }
 
     function begin({ startX }: { startX: number }) {
-      let lastX = startX;
+      let lastX = startX
 
       const cleanupEvents = bindAll(
         window,
@@ -246,17 +227,16 @@ export function ListBoard() {
           {
             type: "pointermove",
             listener(event) {
-              const currentX = event.clientX;
-              const diffX = lastX - currentX;
-
-              lastX = currentX;
-              scrollable?.scrollBy({ left: diffX });
+              const currentX = event.clientX
+              const diffX = lastX - currentX
+              lastX = currentX
+              scrollable?.scrollBy({ left: diffX })
             },
           },
           ...(
             [
               "pointercancel",
-              "pointerup",
+              "pointerup", 
               "pointerdown",
               "keydown",
               "resize",
@@ -268,10 +248,10 @@ export function ListBoard() {
             listener: () => cleanupEvents(),
           })),
         ],
-        { capture: true },
-      );
+        { capture: true }
+      )
 
-      cleanupActive = cleanupEvents;
+      cleanupActive = cleanupEvents
     }
 
     const cleanupStart = bindAll(scrollable, [
@@ -279,73 +259,136 @@ export function ListBoard() {
         type: "pointerdown",
         listener(event) {
           if (!(event.target instanceof HTMLElement)) {
-            return;
+            return
           }
           if (event.target.closest(`[${blockBoardPanningAttr}]`)) {
-            return;
+            return
           }
-
-          begin({ startX: event.clientX });
+          begin({ startX: event.clientX })
         },
       },
-    ]);
+    ])
 
     return function cleanupAll() {
-      cleanupStart();
-      cleanupActive?.();
-    };
-  }, []);
+      cleanupStart()
+      cleanupActive?.()
+    }
+  }, [])
 
-  if (!initialized && isInitialLoading) {
+  if (isLoading) {
     return (
       <Box className="flex items-center justify-center h-64">
         <div>Loading tasks...</div>
       </Box>
-    );
+    )
+  }
+
+  if (error) {
+    return (
+      <Box className="flex items-center justify-center h-64">
+        <Flex direction="column" align="center" gap="4">
+          <div className="text-red-500">Error: {error}</div>
+          <Button onClick={clearError} variant="outline">
+            <RefreshCw size={16} />
+            Retry
+          </Button>
+        </Flex>
+      </Box>
+    )
   }
 
   return (
     <>
-      <Flex gap="2" className="py-2 pb-4">
-        <IconButton
-          color="blue"
-          onClick={() => setShowAddTaskForm(true)}
-          className="w-fit gap-3 h-12 rounded-lg p-2 px-4 font-medium text-blue-500 text-xl hover:text-white"
-        >
-          <Plus size={20} /> Add Task
-        </IconButton>
-        <Box className="flex-1 shrink-0 cursor-pointer rounded-xl relative">
-          <Search size={24} className="absolute top-2.5 left-2.5" />
-          <Input
-            placeholder="Search"
-            type="search"
-            aria-label="Search tasks"
-            role="searchbox"
-            className="w-full rounded-xl pl-10 border-2 border-gray-5 h-12 grid place-content-center "
-            onChange={(e) => {
-              // TODO: Implement search functionality
-              console.log("Search:", e.target.value);
-            }}
-          />
-        </Box>
-      </Flex>
-      <Box className="flex w-full gap-6 h-full relative " ref={scrollableRef}>
-        <Box className="w-full space-y-5">
-          {columns.map((column) => (
-            <ListColumn key={column.id} column={column} />
+      {/* Header */}
+      <Box className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+        <Flex direction="column" gap="4" className="p-4">
+          <Flex justify="between" align="center">
+            <Heading size="6">Project Tasks</Heading>
+            
+            <Flex align="center" gap="2">
+              <Button
+                onClick={() => setShowAddTaskForm(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                <Plus size={16} />
+                Add Task
+              </Button>
+
+              <IconButton variant="ghost" onClick={handleRefresh}>
+                <RefreshCw size={16} />
+              </IconButton>
+
+              <IconButton variant="ghost">
+                <Settings size={16} />
+              </IconButton>
+
+              <IconButton variant="ghost">
+                <MoreVertical size={16} />
+              </IconButton>
+            </Flex>
+          </Flex>
+
+          {/* Search and Stats */}
+          <Flex justify="between" align="center" gap="4">
+            <Box className="flex-1 relative max-w-md">
+              <Search size={20} className="absolute top-3 left-3 text-gray-400" />
+              <TextField.Root
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search tasks..."
+                className="pl-10 h-12"
+              />
+            </Box>
+
+            <Flex gap="6" className="text-sm text-gray-600 dark:text-gray-400">
+              <span>{projectStats.totalColumns} columns</span>
+              <span>{projectStats.totalTasks} tasks</span>
+              <span>{projectStats.completedTasks} completed</span>
+              {projectStats.overdueTasks > 0 && (
+                <span className="text-red-600">{projectStats.overdueTasks} overdue</span>
+              )}
+              {projectStats.urgentTasks > 0 && (
+                <span className="text-orange-600">{projectStats.urgentTasks} urgent</span>
+              )}
+            </Flex>
+          </Flex>
+        </Flex>
+      </Box>
+
+      {/* Main Content */}
+      <Box className="flex w-full gap-6 h-full relative p-4" ref={scrollableRef}>
+        <Box className="w-full space-y-6">
+          {filteredColumns.map((column) => (
+            <ListColumn 
+              key={column.id} 
+              column={column}
+              onCreateTask={createTask}
+              onUpdateTask={updateTask}
+              onDeleteTask={deleteTask}
+              onUpdateColumn={updateColumn}
+              onDeleteColumn={deleteColumn}
+              isDragging={isDragging}
+            />
           ))}
+          
+          {filteredColumns.length === 0 && searchQuery && (
+            <Box className="text-center py-12">
+              <div className="text-gray-500">No tasks found matching "{searchQuery}"</div>
+            </Box>
+          )}
         </Box>
+
         <Suspense fallback={<Box className="p-4">Loading drawer...</Box>}>
           <ListTaskCardDrawer />
         </Suspense>
       </Box>
+
       {/* Add Task Form Modal */}
-      <AddTaskForm
-        isOpen={showAddTaskForm}
-        onClose={() => setShowAddTaskForm(false)}
-        columnId={"col-todo"}
-        taskOrder={0}
+      <GlobalAddTaskForm
+        projectId={projectId}
+        columns={columns}
+        onSuccess={handleRefresh}
       />
     </>
-  );
+  )
 }

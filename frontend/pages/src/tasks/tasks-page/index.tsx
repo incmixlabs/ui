@@ -7,6 +7,7 @@ import {
   Button,
   Card,
   Flex,
+  ListBoard,
   ScrollArea,
   Select,
   Tabs,
@@ -140,15 +141,7 @@ const TasksPage = () => {
             </Tabs.Content>
 
             <Tabs.Content value="list">
-              <Box className="flex h-96 items-center justify-center">
-                <Box className="text-center">
-                  <p className="mb-4 text-gray-500">List view coming soon...</p>
-                  <p className="text-gray-400 text-sm">
-                    This view will use the same data structure as the Kanban
-                    board
-                  </p>
-                </Box>
-              </Box>
+              <ListBoard projectId={selectedProject} />
             </Tabs.Content>
 
             <Tabs.Content value="table">
