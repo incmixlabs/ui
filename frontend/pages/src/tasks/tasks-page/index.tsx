@@ -68,13 +68,13 @@ const TasksPage = () => {
 
   return (
     <DashboardLayout>
-      {/* Use a container that properly constrains the content */}
-      <Box className="flex h-full min-h-0 flex-col">
-        {/* Fixed Header Section - Project Selection and Tabs */}
-        <Box className="z-10 flex-shrink-0 border-gray-200 border-b bg-white dark:border-gray-700 dark:bg-gray-900">
-          <Box className="p-0">
+      {/* Main container - Natural height for vertical scrolling */}
+      <Box className="flex min-h-screen flex-col">
+        {/* Fixed Header Section - Project Selection */}
+        <Box className="flex-shrink-0 border-gray-200 border-b bg-white dark:border-gray-700 dark:bg-gray-900">
+          <Box className="p-4">
             {/* Project Selection and Creation */}
-            <Flex justify="between" align="center" className="mb-4">
+            <Flex justify="between" align="center">
               <Flex className="gap-4">
                 <Select.Root
                   value={selectedProject}
@@ -107,45 +107,40 @@ const TasksPage = () => {
           </Box>
         </Box>
 
-        {/* Main Content Area - Properly constrained */}
-        <Box className="min-h-0 flex-1">
-          <Tabs.Root className="h-full" defaultValue="board">
-            {/* Tabs List - Moved here from above */}
-            <Box className="z-10 flex-shrink-0 border-gray-200 border-b bg-white px-4 pb-2 dark:border-gray-700 dark:bg-gray-900">
-              <Tabs.List
-                className="flex w-fit shrink-0 rounded-md bg-gray-3 shadow-none"
-                aria-label="View options"
+        {/* Tabs Header - Fixed */}
+        <Box className="flex-shrink-0 border-gray-200 border-b bg-white px-4 pb-2 dark:border-gray-700 dark:bg-gray-900">
+          <Tabs.Root defaultValue="board">
+            <Tabs.List
+              className="flex w-fit shrink-0 rounded-md bg-gray-3 shadow-none"
+              aria-label="View options"
+            >
+              <Tabs.Trigger
+                className="flex cursor-pointer select-none px-4 py-2 text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
+                value="board"
               >
-                <Tabs.Trigger
-                  className="flex cursor-pointer select-none px-4 py-2 text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
-                  value="board"
-                >
-                  Board (Kanban)
-                </Tabs.Trigger>
-                <Tabs.Trigger
-                  className="flex cursor-pointer select-none px-4 py-2 text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
-                  value="list"
-                >
-                  List
-                </Tabs.Trigger>
-                <Tabs.Trigger
-                  className="flex cursor-pointer select-none px-4 py-2 text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
-                  value="table"
-                >
-                  Table
-                </Tabs.Trigger>
-              </Tabs.List>
-            </Box>
+                Board (Kanban)
+              </Tabs.Trigger>
+              <Tabs.Trigger
+                className="flex cursor-pointer select-none px-4 py-2 text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
+                value="list"
+              >
+                List
+              </Tabs.Trigger>
+              <Tabs.Trigger
+                className="flex cursor-pointer select-none px-4 py-2 text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
+                value="table"
+              >
+                Table
+              </Tabs.Trigger>
+            </Tabs.List>
 
-            {/* Kanban Board View */}
-            <Tabs.Content className="h-full" value="board">
-              {/* Board component handles its own contained scrolling */}
+            {/* Content Area - Natural height, allows page to scroll vertically */}
+            <Tabs.Content value="board">
               <Board projectId={selectedProject} />
             </Tabs.Content>
 
-            {/* List View - Placeholder for now */}
-            <Tabs.Content className="h-full" value="list">
-              <Box className="flex h-full items-center justify-center">
+            <Tabs.Content value="list">
+              <Box className="flex h-96 items-center justify-center">
                 <Box className="text-center">
                   <p className="mb-4 text-gray-500">List view coming soon...</p>
                   <p className="text-gray-400 text-sm">
@@ -156,9 +151,8 @@ const TasksPage = () => {
               </Box>
             </Tabs.Content>
 
-            {/* Table View - Placeholder for now */}
-            <Tabs.Content className="h-full" value="table">
-              <Box className="flex h-full items-center justify-center">
+            <Tabs.Content value="table">
+              <Box className="flex h-96 items-center justify-center">
                 <Box className="text-center">
                   <p className="mb-4 text-gray-500">
                     Table view coming soon...
@@ -172,6 +166,7 @@ const TasksPage = () => {
             </Tabs.Content>
           </Tabs.Root>
         </Box>
+            
       </Box>
     </DashboardLayout>
   )

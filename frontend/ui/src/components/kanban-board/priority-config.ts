@@ -1,17 +1,44 @@
-import { AlertCircle, Clock, Flag } from "lucide-react";
+// components/board/priority-config.ts - Shared priority configuration
 
-export const PRIORITY_CONFIG = {
-  urgent: { color: "red" as const, icon: AlertCircle, label: "Urgent" },
-  high: { color: "orange" as const, icon: Flag, label: "High" },
-  medium: { color: "blue" as const, icon: Clock, label: "Medium" },
-  low: { color: "gray" as const, icon: Clock, label: "Low" }
-} as const;
+import { AlertCircle, Clock, Flag } from "lucide-react"
 
-export type PriorityKey = keyof typeof PRIORITY_CONFIG;
+export interface PriorityInfo {
+  color: "red" | "orange" | "blue" | "gray"
+  icon: React.ComponentType<{ size?: number; className?: string }>
+  label: string
+}
 
-export const getPriorityInfo = (priority?: string) => {
-  if (!priority || !(priority in PRIORITY_CONFIG)) {
-    return PRIORITY_CONFIG.medium;
+export function getPriorityInfo(priority?: string): PriorityInfo {
+  switch (priority) {
+    case "urgent":
+      return { 
+        color: "red", 
+        icon: AlertCircle, 
+        label: "Urgent" 
+      }
+    case "high":
+      return { 
+        color: "orange", 
+        icon: Flag, 
+        label: "High" 
+      }
+    case "medium":
+      return { 
+        color: "blue", 
+        icon: Clock, 
+        label: "Medium" 
+      }
+    case "low":
+      return { 
+        color: "gray", 
+        icon: Clock, 
+        label: "Low" 
+      }
+    default:
+      return { 
+        color: "blue", 
+        icon: Clock, 
+        label: "Medium" 
+      }
   }
-  return PRIORITY_CONFIG[priority as PriorityKey];
-};
+}

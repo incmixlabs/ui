@@ -426,7 +426,7 @@ export const BoardColumn = memo(function BoardColumn({
   const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
 
   return (
-    <div className="h-full w-full select-none" ref={outerRef}>
+    <div className="w-full select-none" ref={outerRef}>
       {/* Delete Confirmation Modal */}
       <DeleteConfirmationModal
         isOpen={showDeleteModal}
@@ -453,7 +453,7 @@ export const BoardColumn = memo(function BoardColumn({
       />
       
       <div
-        className={`rounded-lg bg-gray-50 dark:bg-gray-900 transition-all duration-200 ${stateStyles[state.type]} flex flex-col max-h-full`}
+        className={`rounded-lg bg-gray-50 dark:bg-gray-900 transition-all duration-200 ${stateStyles[state.type]} flex flex-col`}
         ref={innerRef}
       >
         <div className={`flex flex-col ${state.type === "is-column-over" ? "invisible" : ""}`}>
@@ -582,9 +582,9 @@ export const BoardColumn = memo(function BoardColumn({
             </div>
           )}
 
-          {/* Tasks Container - Scrollable when needed */}
+          {/* Tasks Container - No internal scrolling, grows naturally */}
           <div
-            className="overflow-y-auto px-2 flex-1 min-h-0"
+            className="px-2"
             ref={scrollableRef}
           >
             <div className="space-y-1 py-2">
@@ -602,7 +602,7 @@ export const BoardColumn = memo(function BoardColumn({
             </div>
           </div>
 
-          {/* Add Task Section - Always at bottom of content */}
+          {/* Add Task Section - At bottom of content */}
           <div className="px-3 pb-3 rounded-b-lg">
             {isCreatingTask ? (
               <QuickTaskForm
