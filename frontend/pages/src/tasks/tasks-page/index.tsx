@@ -72,7 +72,7 @@ const TasksPage = () => {
       <Box className="flex h-full min-h-0 flex-col">
         {/* Fixed Header Section - Project Selection and Tabs */}
         <Box className="z-10 flex-shrink-0 border-gray-200 border-b bg-white dark:border-gray-700 dark:bg-gray-900">
-          <Box className="p-4">
+          <Box className="p-0">
             {/* Project Selection and Creation */}
             <Flex justify="between" align="center" className="mb-4">
               <Flex className="gap-4">

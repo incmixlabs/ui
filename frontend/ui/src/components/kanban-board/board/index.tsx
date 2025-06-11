@@ -252,9 +252,9 @@ export function Board({
   }
 
   return (
-    <Box className="h-full w-full flex flex-col">
+    <Box className="w-full flex flex-col" style={{ height: 'calc(100vh - 250px)' }}>
       {/* Fixed Board Header - Never scrolls */}
-      <Box className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 z-10">
+      <Box className=" border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 ">
         <Flex direction="column" gap="4" className="p-4">
           <Flex justify="between" align="center">
             <Heading size="6">Project Board</Heading>
@@ -318,12 +318,15 @@ export function Board({
       </Box>
 
       {/* Columns-only scrollable container */}
-      <Box className="flex-1 w-full relative">
+      <Box className="w-full  relative flex-1 overflow-hidden">
         <div 
-          className="absolute inset-0 overflow-x-auto overflow-y-hidden"
+          className="absolute top-0 left-0 right-0 bottom-0 overflow-x-auto"
           ref={scrollableRef}
+          style={{ 
+            overflowY: 'hidden'
+          }}
         >
-          <div className="h-full p-4 flex gap-6" style={{ width: 'max-content' }}>
+          <div className="p-4 flex gap-2" style={{ width: 'max-content' }}>
             {/* Kanban Columns */}
             {displayColumns.map((column) => (
               <div 
@@ -345,7 +348,7 @@ export function Board({
             
             {/* Add Column */}
             <div className="w-80 flex-shrink-0">
-              <Box className="h-full min-h-[500px] rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
+              <Box className="rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600" style={{ minHeight: '500px' }}>
                 <Flex 
                   align="center" 
                   justify="center" 
