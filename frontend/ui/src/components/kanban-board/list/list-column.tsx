@@ -1,4 +1,4 @@
-// components/list/list-column.tsx
+// components/list/list-column.tsx - Updated with MentionTaskInput
 import {
   draggable,
   dropTargetForElements,
@@ -29,6 +29,7 @@ import {
   type TaskDataSchema,
 } from "@incmix/store"
 import { ListTaskCard, ListTaskCardShadow } from "./task-card"
+import { MentionTaskInput } from "./mention-task-input"
 
 type TColumnState =
   | {
@@ -63,6 +64,16 @@ interface ListColumnProps {
   onUpdateColumn: (columnId: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
   onDeleteColumn: (columnId: string) => Promise<void>
   isDragging?: boolean
+}
+
+interface Member {
+  id: string
+  value: string
+  name: string
+  label: string
+  avatar: string
+  position: string
+  color: string
 }
 
 const CardList = memo(function CardList({ 
@@ -105,7 +116,6 @@ export function ListColumn({
   const [state, setState] = useState<TColumnState>(idle)
   const [isExpanded, setIsExpanded] = useState(true)
   const [isCreatingTask, setIsCreatingTask] = useState(false)
-  const [newTaskName, setNewTaskName] = useState("")
 
   // Calculate column statistics with proper typing
   const completedTasks = column.tasks.filter((task: KanbanTask) => task.completed).length
@@ -249,28 +259,36 @@ export function ListColumn({
     )
   }, [column, columnData, setIsCardOver])
 
-  const handleCreateTask = useCallback(async () => {
-    if (!newTaskName.trim()) return
+  // Enhanced task creation with member assignment
+  const handleCreateTaskWithMembers = useCallback(async (taskName: string, assignedMembers: Member[]) => {
+    if (!taskName.trim()) return
     
     try {
+      // Convert members to the expected assignedTo format
+      const assignedTo = assignedMembers.map(member => ({
+        id: member.id,
+        name: member.name,
+        image: member.avatar, // Note: using 'image' as per schema
+      }))
+
       await onCreateTask(column.id, {
-        name: newTaskName.trim(),
+        name: taskName.trim(),
         description: "",
         priority: "medium",
         completed: false,
         labelsTags: [],
         attachments: [],
-        assignedTo: [],
+        assignedTo: assignedTo,
         subTasks: [],
         comments: [],
         commentsCount: 0,
       })
-      setNewTaskName("")
+      
       setIsCreatingTask(false)
     } catch (error) {
       console.error("Failed to create task:", error)
     }
-  }, [newTaskName, onCreateTask, column.id])
+  }, [onCreateTask, column.id])
 
   return (
     <Flex
@@ -376,42 +394,14 @@ export function ListColumn({
                 </Box>
               ) : null}
 
-              {/* Add Task Section */}
+              {/* Enhanced Add Task Section */}
               <Box className="p-3">
                 {isCreatingTask ? (
-                  <Flex direction="column" gap="2">
-                    <input
-                      type="text"
-                      value={newTaskName}
-                      onChange={(e) => setNewTaskName(e.target.value)}
-                      placeholder="Task name..."
-                      className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      autoFocus
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handleCreateTask()
-                        } else if (e.key === "Escape") {
-                          setIsCreatingTask(false)
-                          setNewTaskName("")
-                        }
-                      }}
-                    />
-                    <Flex gap="2">
-                      <Button size="1" onClick={handleCreateTask} disabled={!newTaskName.trim()}>
-                        Add Task
-                      </Button>
-                      <Button 
-                        size="1" 
-                        variant="soft" 
-                        onClick={() => {
-                          setIsCreatingTask(false)
-                          setNewTaskName("")
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                    </Flex>
-                  </Flex>
+                  <MentionTaskInput
+                    onCreateTask={handleCreateTaskWithMembers}
+                    onCancel={() => setIsCreatingTask(false)}
+                    placeholder="Enter task title... (use @ to assign members)"
+                  />
                 ) : (
                   <Button 
                     variant="ghost"
