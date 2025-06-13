@@ -1,256 +1,212 @@
-import React from "react";
+// components/list/task-card.tsx - Updated with TaskActionsMenu
+import React, { useCallback, useEffect, useRef, useState, memo } from "react"
 import {
   draggable,
   dropTargetForElements,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source";
-import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
-import { type MutableRefObject, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
-import invariant from "tiny-invariant";
-import * as Collapsible from "@radix-ui/react-collapsible";
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
+import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
+import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
+import { createPortal } from "react-dom"
+import invariant from "tiny-invariant"
+import * as Collapsible from "@radix-ui/react-collapsible"
 import {
   type Edge,
   attachClosestEdge,
   extractClosestEdge,
-} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { isSafari } from "@utils/browser";
-import { isShallowEqual } from "@utils/objects";
+} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
+import { isSafari } from "@utils/browser"
+import { isShallowEqual } from "@utils/objects"
 import {
-  ArrowDown,
-  ArrowUp,
   CalendarDays,
   ChevronDown,
   ChevronRight,
-  EllipsisVertical,
-} from "lucide-react";
+} from "lucide-react"
 import {
-  type TCard,
   getCardData,
   getCardDropTargetData,
   isCardData,
   isDraggingACard,
-} from "../types";
-import { Card } from "@card/card";
-import { useKanbanDrawer } from "@hooks/use-kanban-drawer";
-import { cn } from "@utils";
-import { useTaskStore } from "@incmix/store";
-
-// Import UI components properly
+  type KanbanTask,
+  type TaskDataSchema,
+  type ListColumn,
+} from "@incmix/store"
+import { Card } from "@incmix/ui/card"
+import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
+import { cn } from "@utils"
 import {
   Box,
   Checkbox,
   Flex,
   Heading,
   Text,
-  IconButton,
-  DropdownMenu,
-  toast,
-  ExtendedColorType,
   Badge,
-  Calendar,
-  type CalendarProps,
-  Popover,
-  ListComboBox,
-  Input,
   Avatar,
-} from "@incmix/ui";
-import { TagEditor } from "./tags-editor";
-import { assignData } from "../data";
+} from "@incmix/ui"
+import { TaskActionsMenu } from "./task-actions-menu"
+
 
 type TCardState =
-  | {
-      type: "idle";
-    }
-  | {
-      type: "is-dragging";
-    }
-  | {
-      type: "is-dragging-and-left-self";
-    }
-  | {
-      type: "is-over";
-      dragging: DOMRect;
-      closestEdge: Edge;
-    }
-  | {
-      type: "preview";
-      container: HTMLElement;
-      dragging: DOMRect;
-    };
+  | { type: "idle" }
+  | { type: "is-dragging" }
+  | { type: "is-dragging-and-left-self" }
+  | { type: "is-over"; dragging: DOMRect; closestEdge: Edge }
+  | { type: "preview"; container: HTMLElement; dragging: DOMRect }
 
-const idle: TCardState = { type: "idle" };
+const idle: TCardState = { type: "idle" }
 
 const innerStyles: { [Key in TCardState["type"]]?: string } = {
-  idle: "hover:outline outline-2 outline-gray-2 ",
-  "is-dragging": "opacity-20 cursor-grabbing",
-};
-
-const outerStyles: { [Key in TCardState["type"]]?: string } = {
-  "is-dragging": "opacity-50",
-  "is-dragging-and-left-self": "hidden",
-};
-
-export function ListTaskCardShadow({ dragging }: { dragging: DOMRect }) {
-  return (
-    <div
-      className="flex-shrink-0 rounded bg-gray-5"
-      style={{ height: dragging.height }}
-    />
-  );
+  idle: "hover:outline outline-2 outline-gray-200 hover:shadow-sm transition-all duration-200",
+  "is-dragging": "opacity-40 cursor-grabbing scale-[0.98]",
 }
 
-export function ListTaskCardDisplay({
+const outerStyles: { [Key in TCardState["type"]]?: string } = {
+  "is-dragging": "opacity-70",
+  "is-dragging-and-left-self": "hidden",
+}
+
+interface ListTaskCardProps {
+  card: KanbanTask
+  columnId: string
+  columns: ListColumn[]
+  onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
+  onDeleteTask: (taskId: string) => Promise<void>
+}
+
+export const ListTaskCardShadow = memo(function ListTaskCardShadow({ 
+  dragging 
+}: { 
+  dragging: DOMRect 
+}) {
+  return (
+    <div
+      className="flex-shrink-0 rounded-lg bg-blue-100 dark:bg-blue-900 border-2 border-dashed border-blue-300 dark:border-blue-700 transition-all duration-200"
+      style={{ height: Math.max(dragging.height, 80) }}
+    />
+  )
+})
+
+const TaskCardDisplay = memo(function TaskCardDisplay({
   card,
+  columns,
   state,
   outerRef,
   innerRef,
+  onUpdateTask,
+  onDeleteTask,
 }: {
-  card: TCard;
-  state: TCardState;
-  outerRef?: React.MutableRefObject<HTMLDivElement | null>;
-  innerRef?: React.MutableRefObject<HTMLDivElement | null>;
+  card: KanbanTask
+  columns: ListColumn[]
+  state: TCardState
+  outerRef?: React.MutableRefObject<HTMLDivElement | null>
+  innerRef?: React.MutableRefObject<HTMLDivElement | null>
+  onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
+  onDeleteTask: (taskId: string) => Promise<void>
 }) {
-  const { taskId, handleDrawerOpen } = useKanbanDrawer();
-  const { updateTaskByTaskId, deleteTaskByTaskId } = useTaskStore();
-  const [open, setOpen] = React.useState(false);
-  const [assignedEditMode, setAssignedEditMode] = React.useState(false);
-  const [tagsEditMode, setTagsEditMode] = React.useState(false);
-  const [taskNameEditMode, setTaskNameEditMode] = React.useState(false);
-  const [endDate, setEndDate] = React.useState<Date | null>(
-    card.endDate ? new Date(card.endDate) : null,
-  );
-  const [startDate, setStartDate] = React.useState<Date | null>(
-    card.startDate ? new Date(card.startDate) : null,
-  );
+  const { handleDrawerOpen } = useKanbanDrawer()
+  const [isExpanded, setIsExpanded] = useState(false)
 
-  const [taskName, setTaskName] = React.useState(card?.name || "");
-  const [allTags, setAllTags] = React.useState(card?.labelsTags || []);
-  const [assignedData, setAssignedData] = React.useState(
-    card?.assignedTo?.length > 0 ? card?.assignedTo : assignData,
-  );
+  const handleToggleComplete = useCallback(async (checked: boolean | string) => {
+    // Ensure taskId exists
+    if (!card.taskId) {
+      console.error("Task ID is missing")
+      return
+    }
 
-  const handleToggleComplete = async (e: React.MouseEvent) => {
-    e.stopPropagation();
     try {
-      await updateTaskByTaskId(card.taskId, {
-        completed: !card.completed,
-      });
+      await onUpdateTask(card.taskId, { completed: typeof checked === 'boolean' ? checked : checked === 'indeterminate' ? false : true })
     } catch (error) {
-      console.error("Failed to toggle task completion:", error);
-      toast.error("Failed to update task. Please try again.");
+      console.error("Failed to toggle task completion:", error)
     }
-  };
+  }, [card.taskId, onUpdateTask])
 
-  const handleDeleteTask = async () => {
-    try {
-      await deleteTaskByTaskId(card.taskId);
-    } catch (error) {
-      console.error("Failed to delete task:", error);
-      toast.error("Failed to delete task. Please try again.");
+  const handleUpdateTask = useCallback(async (updates: Partial<TaskDataSchema>) => {
+    if (!card.taskId) {
+      console.error("Task ID is missing")
+      return
     }
-  };
 
-  const handleEditTask = () => {
-    handleDrawerOpen(card.taskId.toString());
-  };
-  console.log("list card", card);
+    try {
+      await onUpdateTask(card.taskId, updates)
+    } catch (error) {
+      console.error("Failed to update task:", error)
+    }
+  }, [card.taskId, onUpdateTask])
 
-  const handleEndDateChange = async (date: Date) => {
-    console.log("end date", date);
-    setEndDate(date);
-    if (startDate && date < startDate) {
-      toast.error("End date cannot be before start date");
-      return;
+  const handleDeleteTask = useCallback(async () => {
+    if (!card.taskId) {
+      console.error("Task ID is missing")
+      return
     }
-    try {
-      await updateTaskByTaskId(card.taskId, {
-        endDate: date.toISOString(),
-      });
-    } catch (error) {
-      console.error("Failed to update end date:", error);
-      toast.error("Failed to update end date. Please try again.");
-      setEndDate(card.endDate ? new Date(card.endDate) : null);
-    }
-  };
-  const handleStartDateChange = async (date: Date) => {
-    console.log("start date", date);
-    setStartDate(date);
-    if (endDate && date > endDate) {
-      toast.error("Start date cannot be after end date");
-      return;
-    }
-    try {
-      await updateTaskByTaskId(card.taskId, {
-        startDate: date.toISOString(),
-      });
-    } catch (error) {
-      console.error("Failed to update start date:", error);
-      toast.error("Failed to update start date. Please try again.");
-      setStartDate(card.startDate ? new Date(card.startDate) : null);
-    }
-  };
-  const handleTagsChange = async (tags: any) => {
-    setAllTags(tags);
-    try {
-      await updateTaskByTaskId(card.taskId, {
-        labelsTags: tags,
-      });
-    } catch (error) {
-      console.error("Failed to update tags:", error);
-      toast.error("Failed to update tags. Please try again.");
-      setAllTags(card?.labelsTags || []);
-    }
-  };
 
-  const handleAssignedChange = async (assigned: any) => {
-    setAssignedData(assigned);
-    try {
-      await updateTaskByTaskId(card.taskId, {
-        assignedTo: assigned,
-      });
-    } catch (error) {
-      console.error("Failed to update assigned users:", error);
-      toast.error("Failed to update assigned users. Please try again.");
-      setAssignedData(
-        card?.assignedTo?.length > 0 ? card?.assignedTo : assignData,
-      );
+    if (confirm(`Are you sure you want to delete "${card.name}"?`)) {
+      try {
+        await onDeleteTask(card.taskId)
+      } catch (error) {
+        console.error("Failed to delete task:", error)
+      }
     }
-  };
-  const handleTaskNameChange = async (name: string) => {
-    setTaskName(name);
-    try {
-      await updateTaskByTaskId(card.taskId, {
-        name: name,
-      });
-    } catch (error) {
-      console.error("Failed to update task name:", error);
-      toast.error("Failed to update task name. Please try again.");
-      setTaskName(card?.name || "");
+  }, [card.taskId, card.name, onDeleteTask])
+
+  const handleDuplicateTask = useCallback(async () => {
+    // Implementation for task duplication could be added here
+    console.log("Duplicate task functionality not implemented yet")
+  }, [])
+
+  const handleOpenDrawer = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    
+    if (!card.taskId) {
+      console.error("Task ID is missing")
+      return
     }
-  };
-  // console.log("assignedData", assignedData, card?.assignedTo);
+
+    handleDrawerOpen(card.taskId)
+  }, [card.taskId, handleDrawerOpen])
+
+  const completedSubTasks = card.subTasks?.filter(st => st.completed).length || 0
+  const totalSubTasks = card.subTasks?.length || 0
+  const hasSubTasks = totalSubTasks > 0
+
+  const formatDate = useCallback((date: Date) => {
+    return date.toLocaleDateString("en-US", { 
+      month: "short", 
+      day: "numeric",
+      year: date.getFullYear() !== new Date().getFullYear() ? "numeric" : undefined
+    })
+  }, [])
+
+  const getDateStatus = useCallback((date: Date) => {
+    const now = new Date()
+    const diffTime = date.getTime() - now.getTime()
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    
+    if (diffDays < 0) return { status: "overdue", className: "text-red-600 bg-red-50" }
+    if (diffDays === 0) return { status: "today", className: "text-orange-600 bg-orange-50" }
+    if (diffDays <= 3) return { status: "soon", className: "text-yellow-600 bg-yellow-50" }
+    return { status: "future", className: "text-blue-600 bg-blue-50" }
+  }, [])
+
+  // Don't render if taskId is missing
+  if (!card.taskId) {
+    console.error("Task card missing taskId:", card)
+    return null
+  }
 
   return (
     <Box
       ref={outerRef}
-      // onClick={() => handleDrawerOpen(card.id.toString())}
-      // onKeyDown={(e) => {
-      //   if (e.key === "Enter" || e.key === "Space") {
-      //     e.preventDefault();
-      //     handleDrawerOpen(card.id.toString());
-      //   }
-      // }}
-      className={`flex flex-shrink-0 flex-col gap-2 px-3 py-1 ${outerStyles[state.type]}`}
+      className={`flex flex-shrink-0 flex-col gap-1 px-3 py-1 ${outerStyles[state.type] || ""}`}
     >
-      {state.type === "is-over" && state.closestEdge === "top" ? (
+      {state.type === "is-over" && state.closestEdge === "top" && (
         <ListTaskCardShadow dragging={state.dragging} />
-      ) : null}
+      )}
+      
       <Card
         className={cn(
-          `relative space-y-1.5 rounded-lg p-3 ${innerStyles[state.type]}`,
-          card.completed && "opacity-60",
+          "relative p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700",
+          innerStyles[state.type] || "",
+          card.completed && "opacity-75"
         )}
         ref={innerRef}
         style={
@@ -259,245 +215,207 @@ export function ListTaskCardDisplay({
                 width: state.dragging.width,
                 height: state.dragging.height,
                 backgroundColor: "white",
-                opacity: 1,
-                border: "2px solid #696969",
-                transform: !isSafari() ? "rotate(4deg)" : undefined,
+                opacity: 0.95,
+                border: "2px solid #3b82f6",
+                transform: !isSafari() ? "rotate(2deg)" : undefined,
+                boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
               }
             : undefined
         }
       >
-        <Collapsible.Root className="w-full" open={open} onOpenChange={setOpen}>
-          <Flex
-            align="center"
-            justify="between"
-            className={open ? "border-b border-gray-4 pb-1.5" : ""}
-          >
-            <Flex align="center" justify="center" gap="2">
-              {card?.subTasks && (
+        <Collapsible.Root open={isExpanded} onOpenChange={setIsExpanded}>
+          <Flex justify="between" align="center" className="mb-3">
+            <Flex align="center" gap="3" className="flex-1 min-w-0">
+              {hasSubTasks && (
                 <Collapsible.Trigger asChild>
-                  {card?.subTasks?.length > 0 ? (
-                    <button className="inline-flex size-[25px] items-center justify-center rounded-full text-gray-10">
-                      {open ? <ChevronDown /> : <ChevronRight />}
-                    </button>
-                  ) : null}
+                  <button className="p-0 bg-transparent border-none cursor-pointer">
+                    {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                  </button>
                 </Collapsible.Trigger>
               )}
 
               <Checkbox
-                size="3"
                 checked={card.completed}
-                onClick={handleToggleComplete}
-                className="h-5 w-5 rounded-md border border-black bg-gray-12 text-secondary group-hover:bg-white"
+                onCheckedChange={handleToggleComplete}
+                className="flex-shrink-0"
               />
-              {taskNameEditMode ? (
-                <Input
-                  autoFocus
-                  value={taskName}
-                  onChange={(e) => setTaskName(e.target.value)}
-                  onBlur={() => {
-                    setTaskNameEditMode(false);
-                    handleTaskNameChange(taskName);
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      setTaskNameEditMode(false);
-                      handleTaskNameChange(taskName);
-                    }
-                  }}
-                  className="py-2 font-medium h-auto px-2"
-                />
-              ) : (
-                <Heading
-                  as="h6"
-                  size="3"
-                  className={cn(
-                    "py-2  mr-auto font-medium cursor-pointer ",
-                    card.completed && "line-through text-gray-500",
-                  )}
-                  onDoubleClick={() => setTaskNameEditMode(true)}
-                >
-                  {taskName}
-                </Heading>
-              )}
+
+              <Heading
+                size="3"
+                className={cn(
+                  "flex-1 font-medium cursor-pointer hover:text-blue-600 transition-colors",
+                  card.completed && "line-through text-gray-500"
+                )}
+                onClick={handleOpenDrawer}
+              >
+                {card.name || "Untitled Task"}
+              </Heading>
             </Flex>
-            <Flex align="center" justify="between" gap="5" className="w-fit">
-              {!Boolean(taskId) && (
-                <Box
-                  className="-space-x-6 cursor-pointer"
-                  onDoubleClick={() => setTagsEditMode(true)}
+
+            <Flex align="center" gap="3" className="flex-shrink-0">
+              {/* Priority Badge */}
+              {card.priority && card.priority !== "medium" && (
+                <Badge
+                  color={
+                    card.priority === "urgent" ? "red" :
+                    card.priority === "high" ? "orange" : "gray"
+                  }
+                  variant="soft"
+                  size="1"
                 >
-                  {tagsEditMode ? (
-                    <TagEditor
-                      tags={allTags}
-                      onChange={handleTagsChange}
-                      onExit={() => setTagsEditMode(false)}
+                  {card.priority}
+                </Badge>
+              )}
+
+              {/* Date displays */}
+              <Flex align="center" gap="2" className="text-xs">
+                {card.startDate && (
+                  <Flex align="center" gap="1">
+                    <CalendarDays size={12} className="text-green-600" />
+                    <Text size="1" className="text-green-600">
+                      {formatDate(new Date(card.startDate))}
+                    </Text>
+                  </Flex>
+                )}
+
+                {card.endDate && (
+                  <Flex align="center" gap="1">
+                    <CalendarDays size={12} />
+                    <Text 
+                      size="1" 
+                      className={getDateStatus(new Date(card.endDate)).className}
+                    >
+                      {formatDate(new Date(card.endDate))}
+                    </Text>
+                  </Flex>
+                )}
+              </Flex>
+
+              {/* Labels */}
+              {card.labelsTags && card.labelsTags.length > 0 && (
+                <Flex gap="1">
+                  {card.labelsTags.slice(0, 2).map((label, index) => (
+                    <Badge
+                      key={`${label.value}-${index}`}
+                      size="1"
+                      style={{ backgroundColor: label.color + "20", color: label.color }}
+                    >
+                      {label.label}
+                    </Badge>
+                  ))}
+                  {card.labelsTags.length > 2 && (
+                    <Badge size="1" variant="soft" color="gray">
+                      +{card.labelsTags.length - 2}
+                    </Badge>
+                  )}
+                </Flex>
+              )}
+
+              {/* Assigned users */}
+              {card.assignedTo && card.assignedTo.length > 0 && (
+                <Flex className="-space-x-2">
+                  {card.assignedTo.slice(0, 3).map((user, index) => (
+                    <Avatar
+                      key={user.id}
+                      src={user.image}
+                      name={user.name || "?"}
+                      className="w-6 h-6 border-2 border-white"
+                      style={{ zIndex: 3 - index }}
                     />
-                  ) : (
-                    allTags?.map((tag, index) => (
-                      <Badge
-                        key={index}
-                        color={tag.color as ExtendedColorType}
-                        variant="solid"
-                        className="px-3 py-1.5 border-2 border-gray-2"
-                      >
-                        {tag.label}
-                      </Badge>
-                    ))
+                  ))}
+                  {card.assignedTo.length > 3 && (
+                    <div className="w-6 h-6 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs">
+                      +{card.assignedTo.length - 3}
+                    </div>
                   )}
-                </Box>
-              )}
-              <Box className="flex flex-col gap-1 font-medium text-sm">
-                <Text as="span" size="1">
-                  Start Date:
-                </Text>
-                <Flex align="center" gap="1">
-                  <CalendarDays size={16} />
-                  <Popover.Root>
-                    <Popover.Trigger>
-                      <Text as="span" size="1" color="green">
-                        {startDate?.toLocaleDateString()}
-                      </Text>
-                    </Popover.Trigger>
-                    <Popover.Content>
-                      <Calendar
-                        mode="single"
-                        selected={startDate}
-                        onSelect={handleStartDateChange}
-                        className={cn("p-0 flex justify-end")}
-                        initialFocus
-                      />
-                    </Popover.Content>
-                  </Popover.Root>
                 </Flex>
-              </Box>
-              <Box className="flex flex-col gap-1 font-medium text-sm">
-                <Text as="span" size="1">
-                  End Date:
-                </Text>
-                <Flex align="center" gap="1">
-                  <CalendarDays size={16} />
-                  <Popover.Root>
-                    <Popover.Trigger>
-                      <Text as="span" size="1" color="red">
-                        {endDate?.toLocaleDateString()}
-                      </Text>
-                    </Popover.Trigger>
-                    <Popover.Content>
-                      <Calendar
-                        mode="single"
-                        selected={endDate}
-                        onSelect={handleEndDateChange}
-                        className={cn("p-0 flex justify-end")}
-                        initialFocus
-                      />
-                    </Popover.Content>
-                  </Popover.Root>
-                </Flex>
-              </Box>
-
-              {card?.assignedTo?.length > 0 ? (
-                <Flex align="center" gap="2" className="-space-x-6 shrink-0">
-                  {card?.assignedTo?.map(
-                    (member, index) =>
-                      member?.checked && (
-                        <Avatar
-                          key={`${member.value}-${index}`}
-                          src={member.avatar}
-                          className="h-9 w-9 rounded-full border-4 border-gray-2"
-                        />
-                      ),
-                  )}
-                  <ListComboBox
-                    options={assignedData}
-                    defaultValue={assignedData}
-                    onValueChange={handleAssignedChange}
-                    placeholder="Search Member"
-                    title="Member"
-                    btnClassName="z-2 relative bg-gray-4"
-                    isLabelFormOpen={assignedEditMode}
-                    setIsLabelFormOpen={setAssignedEditMode}
-                  />
-                </Flex>
-              ) : (
-                <ListComboBox
-                  options={assignedData}
-                  defaultValue={assignedData}
-                  onValueChange={handleAssignedChange}
-                  placeholder="Search Member"
-                  title="Member"
-                  btnClassName="z-2 relative bg-gray-4"
-                  isLabelFormOpen={assignedEditMode}
-                  setIsLabelFormOpen={setAssignedEditMode}
-                />
               )}
 
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger>
-                  <IconButton
-                    variant="soft"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <EllipsisVertical />
-                  </IconButton>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content>
-                  <DropdownMenu.Item onClick={handleEditTask}>
-                    Edit
-                  </DropdownMenu.Item>
-                  {/* <DropdownMenu.Item onClick={handleToggleComplete}>
-                    {card.completed ? "Mark Incomplete" : "Mark Complete"}
-                  </DropdownMenu.Item> */}
-                  <DropdownMenu.Separator />
-                  <DropdownMenu.Item
-                    onClick={handleDeleteTask}
-                    className="text-red-600"
-                  >
-                    Delete
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
+              {/* Task Actions Menu - replaces the old dropdown */}
+              <TaskActionsMenu
+                task={card}
+                columns={columns.map(col => ({
+                  id: col.id,
+                  name: col.name,
+                  color: col.color,
+                  projectId: col.projectId,
+                  order: col.order,
+                  description: col.description,
+                  isDefault: col.isDefault,
+                  createdAt: col.createdAt,
+                  updatedAt: col.updatedAt,
+                  createdBy: col.createdBy,
+                  updatedBy: col.updatedBy,
+                }))}
+                onUpdateTask={handleUpdateTask}
+                onDeleteTask={handleDeleteTask}
+                onDuplicateTask={handleDuplicateTask}
+                mode="existing-task"
+              />
             </Flex>
           </Flex>
-          <Collapsible.Content>
-            <Box className="space-y-2 pl-16 py-2">
-              {card?.subTasks?.map((subTask) => (
-                <Flex align="center" gap="2" key={subTask.name}>
-                  <Checkbox
-                    size="3"
-                    checked={subTask.completed}
-                    // onClick={() => handleToggleSubTaskComplete(subTask.id)}
-                    className="h-5 w-5 rounded-md border border-black bg-gray-12 text-secondary group-hover:bg-white"
-                  />
-                  {subTask.name}
-                </Flex>
-              ))}
-            </Box>
-          </Collapsible.Content>
+
+          {/* Subtasks */}
+          {hasSubTasks && (
+            <Collapsible.Content>
+              <Box className="pl-8 space-y-2 border-l-2 border-gray-200 dark:border-gray-700 ml-2">
+                {card.subTasks?.map((subtask) => (
+                  <Flex key={subtask.id} align="center" gap="2">
+                    <Checkbox
+                      checked={subtask.completed}
+                      size="1"
+                      // TODO: Add subtask toggle functionality
+                    />
+                    <Text 
+                      size="2" 
+                      className={cn(
+                        subtask.completed && "line-through text-gray-500"
+                      )}
+                    >
+                      {subtask.name}
+                    </Text>
+                  </Flex>
+                ))}
+                
+                {totalSubTasks > 0 && (
+                  <Text size="1" className="text-gray-500">
+                    {completedSubTasks}/{totalSubTasks} completed
+                  </Text>
+                )}
+              </Box>
+            </Collapsible.Content>
+          )}
         </Collapsible.Root>
       </Card>
 
-      {state.type === "is-over" && state.closestEdge === "bottom" ? (
+      {state.type === "is-over" && state.closestEdge === "bottom" && (
         <ListTaskCardShadow dragging={state.dragging} />
-      ) : null}
+      )}
     </Box>
-  );
-}
+  )
+})
 
-export function ListTaskCard({
-  card,
-  columnId,
-}: {
-  card: TCard;
-  columnId: string;
-}) {
-  const outerRef = useRef<HTMLDivElement | null>(null);
-  const innerRef = useRef<HTMLDivElement | null>(null);
-  const [state, setState] = useState<TCardState>(idle);
+export function ListTaskCard({ 
+  card, 
+  columnId, 
+  columns,
+  onUpdateTask, 
+  onDeleteTask 
+}: ListTaskCardProps) {
+  const outerRef = useRef<HTMLDivElement | null>(null)
+  const innerRef = useRef<HTMLDivElement | null>(null)
+  const [state, setState] = useState<TCardState>(idle)
+
+  // Don't render if taskId is missing
+  if (!card.taskId) {
+    console.error("Task card missing taskId:", card)
+    return null
+  }
 
   useEffect(() => {
-    const outer = outerRef.current;
-    const inner = innerRef.current;
-    invariant(outer && inner);
+    const outer = outerRef.current
+    const inner = innerRef.current
+    if (!outer || !inner) return
 
     return combine(
       draggable({
@@ -509,8 +427,8 @@ export function ListTaskCard({
             rect: element.getBoundingClientRect(),
           }),
         onGenerateDragPreview({ nativeSetDragImage, location, source }) {
-          const data = source.data;
-          invariant(isCardData(data));
+          const data = source.data
+          invariant(isCardData(data))
           setCustomNativeDragPreview({
             nativeSetDragImage,
             getOffset: preserveOffsetOnSource({
@@ -522,15 +440,15 @@ export function ListTaskCard({
                 type: "preview",
                 container,
                 dragging: inner.getBoundingClientRect(),
-              });
+              })
             },
-          });
+          })
         },
         onDragStart() {
-          setState({ type: "is-dragging" });
+          setState({ type: "is-dragging" })
         },
         onDrop() {
-          setState(idle);
+          setState(idle)
         },
       }),
       dropTargetForElements({
@@ -538,86 +456,86 @@ export function ListTaskCard({
         getIsSticky: () => true,
         canDrop: isDraggingACard,
         getData: ({ element, input }) => {
-          const data = getCardDropTargetData({ card, columnId });
+          const data = getCardDropTargetData({ card, columnId })
           return attachClosestEdge(data, {
             element,
             input,
             allowedEdges: ["top", "bottom"],
-          });
+          })
         },
         onDragEnter({ source, self }) {
-          if (!isCardData(source.data)) {
-            return;
+          if (!isCardData(source.data) || source.data.card.taskId === card.taskId) {
+            return
           }
-          if (source.data.card.id === card.id) {
-            return;
-          }
-          const closestEdge = extractClosestEdge(self.data);
-          if (!closestEdge) {
-            return;
-          }
+          
+          const closestEdge = extractClosestEdge(self.data)
+          if (!closestEdge) return
 
           setState({
             type: "is-over",
             dragging: source.data.rect,
             closestEdge,
-          });
+          })
         },
         onDrag({ source, self }) {
-          if (!isCardData(source.data)) {
-            return;
+          if (!isCardData(source.data) || source.data.card.taskId === card.taskId) {
+            return
           }
-          if (source.data.card.id === card.id) {
-            return;
-          }
-          const closestEdge = extractClosestEdge(self.data);
-          if (!closestEdge) {
-            return;
-          }
+          
+          const closestEdge = extractClosestEdge(self.data)
+          if (!closestEdge) return
+
           const proposed: TCardState = {
             type: "is-over",
             dragging: source.data.rect,
             closestEdge,
-          };
+          }
+          
           setState((current) => {
             if (isShallowEqual(proposed, current)) {
-              return current;
+              return current
             }
-            return proposed;
-          });
+            return proposed
+          })
         },
         onDragLeave({ source }) {
-          if (!isCardData(source.data)) {
-            return;
+          if (!isCardData(source.data)) return
+          
+          if (source.data.card.taskId === card.taskId) {
+            setState({ type: "is-dragging-and-left-self" })
+            return
           }
-          if (source.data.card.id === card.id) {
-            setState({ type: "is-dragging-and-left-self" });
-            return;
-          }
-          setState(idle);
+          setState(idle)
         },
         onDrop() {
-          setState(idle);
+          setState(idle)
         },
-      }),
-    );
-  }, [card, columnId]);
+      })
+    )
+  }, [card, columnId])
 
   return (
     <>
-      <ListTaskCardDisplay
+      <TaskCardDisplay
+        card={card}
+        columns={columns}
+        state={state}
         outerRef={outerRef}
         innerRef={innerRef}
-        state={state}
-        card={card}
-        key={card.id}
+        onUpdateTask={onUpdateTask}
+        onDeleteTask={onDeleteTask}
       />
-      {state.type === "preview"
-        ? createPortal(
-            <ListTaskCardDisplay state={state} card={card} />,
-            state.container,
-          )
-        : null}
+      {state.type === "preview" &&
+        createPortal(
+          <TaskCardDisplay 
+            card={card} 
+            columns={columns}
+            state={state} 
+            onUpdateTask={onUpdateTask}
+            onDeleteTask={onDeleteTask}
+          />,
+          state.container
+        )}
     </>
-  );
+  )
 }

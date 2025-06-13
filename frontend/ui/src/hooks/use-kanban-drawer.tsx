@@ -10,9 +10,13 @@ export const useKanbanDrawer = () => {
     await setTaskId("")
   }
 
+  // Add isOpen property that determines if drawer is open based on taskId value
+  const isOpen = taskId !== ""
+
   return {
     taskId,
     handleDrawerOpen,
     handleDrawerClose,
+    isOpen,
   }
 }

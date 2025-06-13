@@ -10,7 +10,6 @@ import {
   dashboardTemplateSchemaLiteral,
   formProjectSchemaLiteral,
   projectSchemaLiteral,
-  taskDataSchemaLiteral,
   taskSchemaLiteral,
   taskStatusSchemaLiteral,
 } from "./types"
@@ -107,7 +106,6 @@ await database.addCollections({
     },
   },
   taskStatus: { schema: taskStatusSchemaLiteral, autoMigrate: true },
-  taskData: { schema: taskDataSchemaLiteral, autoMigrate: true },
   columns: { schema: columnSchemaLiteral, autoMigrate: true },
   projects: { schema: projectSchemaLiteral, autoMigrate: true },
   formProjects: { schema: formProjectSchemaLiteral, autoMigrate: true },

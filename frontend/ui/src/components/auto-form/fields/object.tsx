@@ -98,13 +98,14 @@ function renderField({
   if (
     zodBaseType === "ZodArray" &&
     (fieldConfigItem.fieldType === "multiCheckbox" ||
-      fieldConfigItem.fieldType === "multipleSelector")
+      fieldConfigItem.fieldType === "multipleSelector" ||
+      fieldConfigItem.fieldType === "subtask") // ✅ ADD THIS LINE
   ) {
     // Handle it as a regular field instead of using AutoFormArray
     const zodInputProps = zodToHtmlInputProps(item)
     const isRequired =
       zodInputProps.required || fieldConfigItem.inputProps?.required || false
-
+  
     return (
       <FormField
         control={form.control}
@@ -115,13 +116,17 @@ function renderField({
           const InputComponent =
             fieldConfigItem.fieldType === "multiCheckbox"
               ? INPUT_COMPONENTS.multiCheckbox
+              : fieldConfigItem.fieldType === "multipleSelector"
+              ? INPUT_COMPONENTS.multipleSelector
+              : fieldConfigItem.fieldType === "subtask"
+              ? INPUT_COMPONENTS.subtask // ✅ ADD THIS LINE
               : INPUT_COMPONENTS.multipleSelector
-
+  
           const ParentElement = fieldConfigItem.renderParent ?? DefaultParent
-
+  
           const defaultValue = fieldConfigItem.inputProps?.defaultValue
           const value = field.value ?? defaultValue ?? []
-
+  
           const fieldProps = {
             ...zodToHtmlInputProps(item),
             ...field,
@@ -130,7 +135,7 @@ function renderField({
             ref: undefined,
             value: value,
           }
-
+  
           return (
             <ParentElement key={`${key}.parent`}>
               <InputComponent

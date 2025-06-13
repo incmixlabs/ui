@@ -1,21 +1,35 @@
-import { useEffect, useMemo } from "react"
-import type { TaskDocType, TaskStatusDocType } from "../sql" // For explicit typing
-import type { KanbanColumn, KanbanTask } from "../view-types/kanban-view.types" // Corrected path
-import { useTaskStatusStore } from "./use-task-status-store" // Added import
-import { useTaskStore } from "./use-task-store"
+// File: use-kanban-data.ts
+// REPLACE your current file with this fixed version
 
-interface UseKanbanDataProps {
-  projectId: string
+import { useMemo } from "react"
+import type { KanbanTask } from "view-types/kanban-view.types"
+import type { TaskDataSchema } from "../sql/task-schemas"
+import type { TaskStatusDocType } from "../sql/types"
+import { useProjectData } from "./use-project-task-data"
+
+// Kanban-specific types
+export interface KanbanColumn extends TaskStatusDocType {
+  tasks: TaskDataSchema[]
+  // Additional computed properties for UI
+  completedTasksCount: number
+  totalTasksCount: number
+  progressPercentage: number
 }
 
-interface UseKanbanDataReturn {
+export interface UseKanbanReturn {
   columns: KanbanColumn[]
   isLoading: boolean
   error: string | null
 
   // Task operations
-  createTask: (columnId: string, taskData: Partial<KanbanTask>) => Promise<void>
-  updateTask: (taskId: string, updates: Partial<KanbanTask>) => Promise<void>
+  createTask: (
+    columnId: string,
+    taskData: Partial<TaskDataSchema>
+  ) => Promise<void>
+  updateTask: (
+    taskId: string,
+    updates: Partial<TaskDataSchema>
+  ) => Promise<void>
   deleteTask: (taskId: string) => Promise<void>
   moveTask: (
     taskId: string,
@@ -23,188 +37,192 @@ interface UseKanbanDataReturn {
     targetIndex?: number
   ) => Promise<void>
 
-  // Column (Task Status) operations
-  createColumn: (name: string, color?: string) => Promise<string> // Return type changed to string (ID)
+  // Column operations
+  createColumn: (
+    name: string,
+    color?: string,
+    description?: string
+  ) => Promise<string>
   updateColumn: (
     columnId: string,
     updates: { name?: string; color?: string; description?: string }
   ) => Promise<void>
   deleteColumn: (columnId: string) => Promise<void>
   reorderColumns: (columnIds: string[]) => Promise<void>
+
+  // Bulk operations for future use
+  bulkUpdateTasks: (
+    taskIds: string[],
+    updates: Partial<TaskDataSchema>
+  ) => Promise<void>
+  bulkMoveTasks: (taskIds: string[], targetColumnId: string) => Promise<void>
+  bulkDeleteTasks: (taskIds: string[]) => Promise<void>
+
+  // Utility - FIXED: refetch is no longer async
+  refetch: () => void
+  clearError: () => void
+
+  // Statistics
+  projectStats: {
+    totalTasks: number
+    completedTasks: number
+    totalColumns: number
+    overdueTasks: number
+    urgentTasks: number
+  }
 }
 
-export function useKanbanData({
-  projectId,
-}: UseKanbanDataProps): UseKanbanDataReturn {
-  const {
-    tasks,
-    isLoading: tasksLoading,
-    error: tasksError,
-    initialize: initializeTasks,
-    createTask: createTaskInStore, // Renamed to avoid conflict
-    updateTask: updateTaskInStore, // Renamed
-    deleteTask: deleteTaskInStore, // Renamed
-    moveTask: moveTaskInStore, // Renamed
-    getTasksByColumn,
-  } = useTaskStore()
+export function useKanban(projectId = "default-project"): UseKanbanReturn {
+  // Get reactive project data
+  const projectData = useProjectData(projectId)
 
-  const {
-    taskStatuses, // This is the array of task statuses (columns)
-    isLoading: taskStatusesLoading,
-    error: taskStatusesError,
-    initialize: initializeTaskStatuses,
-    createTaskStatus, // Method to create a new task status
-    updateTaskStatus, // Method to update a task status
-    deleteTaskStatus, // Method to delete a task status
-    reorderTaskStatuses, // Method to reorder task statuses
-    getTaskStatusesByProject, // Getter for task statuses by project
-  } = useTaskStatusStore()
+  // Transform data into kanban columns with computed properties
+  // In your use-kanban-data.ts file, update the columns transformation:
 
-  // Initialize stores when component mounts or projectId changes
-  useEffect(() => {
-    if (projectId) {
-      initializeTaskStatuses(projectId)
-      initializeTasks(projectId)
-    }
-  }, [projectId, initializeTaskStatuses, initializeTasks])
-
-  // Transform data into kanban format
-  const kanbanColumns = useMemo<KanbanColumn[]>(() => {
-    if (!projectId) return [] // Guard against undefined projectId
-    const projectTaskStatuses = getTaskStatusesByProject(projectId)
-
-    return projectTaskStatuses.map((status: TaskStatusDocType) => ({
-      // Explicitly type 'status'
-      ...status, // Spread the TaskStatusDocType properties
-      tasks: getTasksByColumn(status.id) as KanbanTask[], // Cast to KanbanTask[]
-    }))
-  }, [
-    projectId,
-    taskStatuses,
-    tasks,
-    getTaskStatusesByProject,
-    getTasksByColumn,
-  ])
-
-  // Task operations
-  const createTask = async (
-    columnId: string,
-    taskData: Partial<KanbanTask>
-  ) => {
-    await createTaskInStore(projectId, {
-      name: taskData.name || "New Task",
-      columnId, // This is the taskStatusId (columnId in the task schema)
-      description: taskData.description || "",
-      startDate: taskData.startDate || new Date().toISOString(),
-      endDate: taskData.endDate || "",
-      priority: taskData.priority || "medium",
-      labelsTags: taskData.labelsTags || [],
-      attachments: taskData.attachments || [],
-      assignedTo: (taskData.assignedTo || []).map((user) => ({
-        ...user,
-        id: user.id, // ensure id is present
-        name: user.name, // ensure name is present
-        avatar: user.avatar || "/placeholder-avatar.png", // Provide a default avatar if undefined
-      })),
-      subTasks: taskData.subTasks || [],
-      completed: taskData.completed === undefined ? false : taskData.completed,
-      comments: taskData.comments === undefined ? 0 : taskData.comments,
-    })
-  }
-
-  // Constants for field filtering
-  const AUDIT_FIELDS = [
-    "createdBy",
-    "updatedBy",
-    "createdAt",
-    "updatedAt",
-  ] as const
-  const IMMUTABLE_FIELDS = ["id", "projectId"] as const
-  const EXCLUDED_FIELDS = [...AUDIT_FIELDS, ...IMMUTABLE_FIELDS] as const
-  const DEFAULT_AVATAR = "/placeholder-avatar.png"
-
-  // Utility to omit fields from an object
-  function omitFields<
-    T extends Record<string, any>,
-    K extends readonly string[],
-  >(obj: T, fields: K): Pick<T, Exclude<keyof T, K[number]>> {
-    const result = { ...obj } as any
-    fields.forEach((field) => delete result[field])
-    return result
-  }
-
-  const updateTask = async (taskId: string, updates: Partial<KanbanTask>) => {
-    // Filter out audit and immutable fields
-    const relevantUpdates = omitFields(updates, EXCLUDED_FIELDS) as any
-
-    // Transform assignedTo if present
-    if (relevantUpdates.assignedTo) {
-      relevantUpdates.assignedTo = relevantUpdates.assignedTo.map(
-        (user: { id: string; name: string; avatar?: string }) => ({
-          ...user,
-          id: user.id,
-          name: user.name,
-          avatar: user.avatar || DEFAULT_AVATAR,
-        })
-      )
+  const columns = useMemo<KanbanColumn[]>(() => {
+    if (projectData.isLoading || !projectData.taskStatuses.length) {
+      return []
     }
 
-    // Pass the filtered and transformed updates to the store
-    await updateTaskInStore(taskId, relevantUpdates)
-  }
+    return projectData.taskStatuses.map((status) => {
+      const tasks = projectData.tasks
+        .filter((task) => task.columnId === status.id)
+        .sort((a, b) => a.order - b.order)
+        // Transform TaskDataSchema to KanbanTask
+        .map(
+          (task): KanbanTask => ({
+            ...task,
+            // Ensure these properties are properly typed
+            completed: task.completed ?? false,
+            priority: task.priority ?? "medium",
+          })
+        )
 
-  const deleteTask = async (taskId: string) => {
-    await deleteTaskInStore(taskId)
-  }
+      const completedTasksCount = tasks.filter((task) => task.completed).length
+      const totalTasksCount = tasks.length
+      const progressPercentage =
+        totalTasksCount > 0
+          ? Math.round((completedTasksCount / totalTasksCount) * 100)
+          : 0
 
-  const moveTask = async (
-    taskId: string,
-    targetColumnId: string,
-    targetIndex?: number
-  ) => {
-    await moveTaskInStore(taskId, targetColumnId, targetIndex)
-  }
-
-  // Column (Task Status) operations
-  const createColumn = async (
-    name: string,
-    color?: string
-  ): Promise<string> => {
-    return await createTaskStatus(projectId, {
-      name,
-      color: color || "#6366f1",
-      description: "",
+      return {
+        ...status,
+        tasks,
+        completedTasksCount,
+        totalTasksCount,
+        progressPercentage,
+      }
     })
-  }
+  }, [projectData.taskStatuses, projectData.tasks, projectData.isLoading])
 
-  const updateColumn = async (
-    columnId: string, // This is taskStatusId
-    updates: { name?: string; color?: string; description?: string }
-  ) => {
-    await updateTaskStatus(columnId, updates)
-  }
+  // Calculate project statistics
+  const projectStats = useMemo(() => {
+    const totalTasks = projectData.tasks.length
+    const completedTasks = projectData.tasks.filter(
+      (task) => task.completed
+    ).length
+    const totalColumns = projectData.taskStatuses.length
 
-  const deleteColumn = async (columnId: string) => {
-    // This is taskStatusId
-    await deleteTaskStatus(columnId)
-  }
+    // Calculate overdue tasks (tasks with end date in the past)
+    const now = new Date()
+    const overdueTasks = projectData.tasks.filter((task) => {
+      if (!task.endDate) return false
+      const endDate = new Date(task.endDate)
+      return endDate < now && !task.completed
+    }).length
 
-  const reorderColumns = async (columnIds: string[]) => {
-    // These are taskStatusIds
-    await reorderTaskStatuses(columnIds)
-  }
+    // Calculate urgent tasks
+    const urgentTasks = projectData.tasks.filter(
+      (task) => task.priority === "urgent" && !task.completed
+    ).length
+
+    return {
+      totalTasks,
+      completedTasks,
+      totalColumns,
+      overdueTasks,
+      urgentTasks,
+    }
+  }, [projectData.tasks, projectData.taskStatuses])
+
+  // Memoize operation functions to prevent unnecessary re-renders
+  const operations = useMemo(
+    () => ({
+      // Task operations
+      createTask: projectData.createTask,
+      updateTask: projectData.updateTask,
+      deleteTask: projectData.deleteTask,
+      moveTask: projectData.moveTask,
+
+      // Column operations (mapped from task status operations)
+      createColumn: projectData.createTaskStatus,
+      updateColumn: projectData.updateTaskStatus,
+      deleteColumn: projectData.deleteTaskStatus,
+      reorderColumns: projectData.reorderTaskStatuses,
+
+      // Utility
+      refetch: projectData.refetch,
+      clearError: projectData.clearError,
+    }),
+    [projectData]
+  )
+
+  // Bulk operations for better UX
+  const bulkUpdateTasks = useMemo(
+    () => async (taskIds: string[], updates: Partial<TaskDataSchema>) => {
+      try {
+        // Update tasks in parallel for better performance
+        await Promise.all(
+          taskIds.map((taskId) => operations.updateTask(taskId, updates))
+        )
+      } catch (error) {
+        console.error("Failed to bulk update tasks:", error)
+        throw error
+      }
+    },
+    [operations.updateTask]
+  )
+
+  const bulkMoveTasks = useMemo(
+    () => async (taskIds: string[], targetColumnId: string) => {
+      try {
+        // Move tasks in sequence to maintain order
+        for (let i = 0; i < taskIds.length; i++) {
+          await operations.moveTask(taskIds[i], targetColumnId, i)
+        }
+      } catch (error) {
+        console.error("Failed to bulk move tasks:", error)
+        throw error
+      }
+    },
+    [operations.moveTask]
+  )
+
+  const bulkDeleteTasks = useMemo(
+    () => async (taskIds: string[]) => {
+      try {
+        // Delete tasks in parallel
+        await Promise.all(
+          taskIds.map((taskId) => operations.deleteTask(taskId))
+        )
+      } catch (error) {
+        console.error("Failed to bulk delete tasks:", error)
+        throw error
+      }
+    },
+    [operations.deleteTask]
+  )
 
   return {
-    columns: kanbanColumns,
-    isLoading: tasksLoading || taskStatusesLoading,
-    error: tasksError || taskStatusesError,
-    createTask,
-    updateTask,
-    deleteTask,
-    moveTask,
-    createColumn,
-    updateColumn,
-    deleteColumn,
-    reorderColumns,
+    columns,
+    isLoading: projectData.isLoading,
+    error: projectData.error,
+    projectStats,
+
+    // Operations
+    ...operations,
+    bulkUpdateTasks,
+    bulkMoveTasks,
+    bulkDeleteTasks,
   }
 }

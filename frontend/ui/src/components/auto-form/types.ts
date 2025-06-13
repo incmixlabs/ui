@@ -4,18 +4,26 @@ import type * as z from "zod"
 import type { INPUT_COMPONENTS } from "./config"
 import type { FieldGroupLayout } from "./fields/field-group"
 
-// Add these new type definitions
+// Enhanced MCQOption with color support
 export type MCQOption = {
   label: string
   value: string
+  color?: string // Added optional color property
 }
 
 export type MCQLayoutType = "grid" | "row" | "column"
 export type MCQSizeType = "sm" | "md" | "lg"
 
+// Enhanced MultipleSelectorOption with color support
 export type MultipleSelectorOption = {
   label: string
   value: string
+  color?: string // Added optional color property
+  // Support for rich member data
+  id?: string
+  name?: string
+  avatar?: string
+  position?: string
 }
 
 // Field group configuration

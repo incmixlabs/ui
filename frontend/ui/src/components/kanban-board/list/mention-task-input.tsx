@@ -1,0 +1,150 @@
+// components/shared/simple-task-input.tsx
+import React, { useState, useCallback } from "react"
+import { Box, Flex, Button, TextField } from "@incmix/ui"
+import { Plus, X } from "lucide-react"
+import { TaskActionsMenu } from "./task-actions-menu"
+import type { TaskStatusDocType } from "@incmix/store"
+
+interface SimpleTaskInputProps {
+  onCreateTask: (taskName: string, taskData: any) => Promise<void>
+  onCancel: () => void
+  columns?: TaskStatusDocType[]
+  placeholder?: string
+  disabled?: boolean
+}
+
+export function SimpleTaskInput({
+  onCreateTask,
+  onCancel,
+  columns = [],
+  placeholder = "Enter task title...",
+  disabled = false
+}: SimpleTaskInputProps) {
+  const [taskName, setTaskName] = useState("")
+  const [taskData, setTaskData] = useState({
+    priority: "medium",
+    startDate: "",
+    endDate: "",
+    assignedTo: [],
+    columnId: ""
+  })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleTaskDataChange = useCallback((newData: any) => {
+    setTaskData(prev => ({ ...prev, ...newData }))
+  }, [])
+
+  const handleSubmit = useCallback(async () => {
+    if (!taskName.trim() || isSubmitting) return
+
+    setIsSubmitting(true)
+    try {
+      await onCreateTask(taskName.trim(), taskData)
+      
+      // Reset form
+      setTaskName("")
+      setTaskData({
+        priority: "medium",
+        startDate: "",
+        endDate: "",
+        assignedTo: [],
+        columnId: ""
+      })
+    } catch (error) {
+      console.error("Failed to create task:", error)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }, [taskName, taskData, onCreateTask, isSubmitting])
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault()
+      handleSubmit()
+    } else if (e.key === "Escape") {
+      e.preventDefault()
+      onCancel()
+    }
+  }, [handleSubmit, onCancel])
+
+  return (
+    <Box className="space-y-3 p-3 bg-white dark:bg-gray-800 rounded-lg border shadow-sm">
+      {/* Task Input with Actions Menu */}
+      <Flex gap="2" align="center">
+        <TextField.Root
+          value={taskName}
+          onChange={(e) => setTaskName(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+          disabled={disabled || isSubmitting}
+          className="flex-1"
+          autoFocus
+        />
+        
+        {/* Task Actions Menu for setting properties */}
+        <TaskActionsMenu
+          mode="new-task"
+          newTaskData={taskData}
+          columns={columns}
+          onNewTaskDataChange={handleTaskDataChange}
+          disabled={disabled || isSubmitting}
+          size="2"
+          variant="soft"
+        />
+      </Flex>
+
+      {/* Action Buttons */}
+      <Flex gap="2">
+        <Button 
+          onClick={handleSubmit}
+          disabled={!taskName.trim() || isSubmitting}
+          className="flex-1"
+          size="2"
+        >
+          <Plus size={16} />
+          {isSubmitting ? "Adding..." : "Add Task"}
+        </Button>
+        <Button 
+          onClick={onCancel}
+          variant="soft" 
+          disabled={isSubmitting}
+          size="2"
+        >
+          <X size={16} />
+          Cancel
+        </Button>
+      </Flex>
+
+      {/* Preview of selected options */}
+      {(taskData.priority !== "medium" || 
+        taskData.assignedTo.length > 0 || 
+        taskData.startDate || 
+        taskData.endDate) && (
+        <Box className="pt-2 border-t border-gray-200">
+          <Flex gap="2" wrap="wrap" className="text-xs">
+            {taskData.priority !== "medium" && (
+              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
+                Priority: {taskData.priority}
+              </span>
+            )}
+            {taskData.assignedTo.length > 0 && (
+              <span className="px-2 py-1 bg-green-100 text-green-700 rounded">
+                Assigned: {taskData.assignedTo.length} member{taskData.assignedTo.length > 1 ? 's' : ''}
+              </span>
+            )}
+            {taskData.startDate && (
+              <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded">
+                Start: {new Date(taskData.startDate).toLocaleDateString()}
+              </span>
+            )}
+            {taskData.endDate && (
+              <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded">
+                Due: {new Date(taskData.endDate).toLocaleDateString()}
+              </span>
+            )}
+          </Flex>
+        </Box>
+      )}
+    </Box>
+  )
+}
