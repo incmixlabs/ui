@@ -24,7 +24,7 @@ import {
 import { isCardData, isCardDropTargetData, isColumnData, isDraggingACard, KanbanColumn, useKanban } from "@incmix/store"
 
 import { BoardColumn } from "./board-column"
-import { GlobalAddTaskForm } from "../shared/add-task-form"
+import { AddTaskForm } from "../shared/add-task-form"
 import { TaskCardDrawer } from "./task-card-drawer"
 import { CreateColumnForm } from "./create-column-form"
 
@@ -261,11 +261,7 @@ export function Board({
             
             <Flex align="center" gap="2">
               {/* Global Add Task Button - Always visible */}
-              <GlobalAddTaskForm
-                projectId={projectId}
-                columns={displayColumns}
-                onSuccess={handleRefresh}
-              />
+
 
               {/* Board Actions */}
               <IconButton variant="ghost" onClick={handleRefresh}>

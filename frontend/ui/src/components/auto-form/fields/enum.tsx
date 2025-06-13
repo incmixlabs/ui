@@ -1,3 +1,4 @@
+// components/auto-form/fields/enum.tsx - Enhanced with color support
 import {
   FormControl,
   FormItem,
@@ -10,6 +11,12 @@ import AutoFormTooltip from "../common/tooltip"
 import type { AutoFormInputComponentProps } from "../types"
 import { getBaseSchema } from "../utils"
 
+interface OptionWithColor {
+  label: string
+  value: string
+  color?: string
+}
+
 export default function AutoFormEnum({
   label,
   isRequired,
@@ -19,21 +26,23 @@ export default function AutoFormEnum({
   fieldProps,
 }: AutoFormInputComponentProps) {
   // Default to empty array for values
-  let values: [string, string][] = []
+  let values: OptionWithColor[] = []
 
   // First check for options directly on the field config (like in translationFormSchema)
   if (fieldConfigItem?.options) {
-    values = fieldConfigItem.options.map((opt: any) => [
-      String(opt.value),
-      String(opt.label)
-    ])
+    values = fieldConfigItem.options.map((opt: any) => ({
+      label: String(opt.label),
+      value: String(opt.value),
+      color: opt.color, // Include color if available
+    }))
   }
   // Then try to get options from fieldConfigItem.inputProps
   else if (fieldConfigItem?.inputProps?.options) {
-    values = fieldConfigItem.inputProps.options.map(opt => [
-      String(opt.value),
-      String(opt.label)
-    ])
+    values = fieldConfigItem.inputProps.options.map((opt: any) => ({
+      label: String(opt.label),
+      value: String(opt.value),
+      color: opt.color, // Include color if available
+    }))
   }
   // Finally try to get values from Zod schema
   else {
@@ -43,9 +52,15 @@ export default function AutoFormEnum({
 
       if (baseValues) {
         if (!Array.isArray(baseValues)) {
-          values = Object.entries(baseValues)
+          values = Object.entries(baseValues).map(([value, label]) => ({
+            label: String(label),
+            value: String(value),
+          }))
         } else {
-          values = baseValues.map((value) => [String(value), String(value)])
+          values = baseValues.map((value) => ({
+            label: String(value),
+            value: String(value),
+          }))
         }
       }
     } catch (e) {
@@ -55,8 +70,24 @@ export default function AutoFormEnum({
   }
 
   function findItem(value: any) {
-    return values.find((item) => item[0] === value)
+    return values.find((item) => item.value === value)
   }
+
+  // Component to render option with color indicator
+  const OptionDisplay = ({ option, isSelected = false }: { option: OptionWithColor, isSelected?: boolean }) => (
+    <div className="flex items-center gap-2">
+      {option.color && (
+        <div
+          className="w-3 h-3 rounded-full border border-gray-300"
+          style={{ backgroundColor: option.color }}
+        />
+      )}
+      <span className={isSelected ? "font-medium" : ""}>{option.label}</span>
+    </div>
+  )
+
+  // Get current selected option
+  const selectedOption = field.value ? findItem(field.value) : null
 
   return (
     <div className="flex flex-row items-center gap-2">
@@ -65,16 +96,25 @@ export default function AutoFormEnum({
         <FormControl >
           <Select.Root
             onValueChange={field.onChange}
-            value={field.value ?? ''}
-            defaultValue={field.value ?? ''}
+            value={field.value || ''} // Ensure controlled value
             {...fieldProps}
           >
-            <Select.Trigger className={fieldProps.className}/>
+            <Select.Trigger className={`${fieldProps.className} min-w-[140px]`}>
+              {selectedOption ? (
+                <OptionDisplay option={selectedOption} isSelected />
+              ) : (
+                <span className="text-gray-500">{fieldProps.placeholder || `Select ${label.toLowerCase()}...`}</span>
+              )}
+            </Select.Trigger>
 
             <Select.Content>
-              {values.map(([value, label]) => (
-                <Select.Item value={value} aria-label={label} key={label} >
-                  {label}
+              {values.map((option) => (
+                <Select.Item 
+                  value={option.value} 
+                  key={option.value}
+                  className="cursor-pointer"
+                >
+                  <OptionDisplay option={option} />
                 </Select.Item>
               ))}
             </Select.Content>

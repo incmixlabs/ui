@@ -65,7 +65,8 @@ export function CreateTaskForm({
         attachments: [],
         assignedTo: [],
         subTasks: [],
-        comments: 0,
+        comments: [],
+        commentsCount: 0,
       })
 
       // Reset form

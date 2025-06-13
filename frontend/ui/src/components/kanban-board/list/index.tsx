@@ -20,7 +20,7 @@ import {
   blockBoardPanningAttr,
   useListView,
 } from "@incmix/store"
-import { GlobalAddTaskForm } from "../shared/add-task-form"
+import { AddTaskForm } from "../shared/add-task-form"
 
 const ListTaskCardDrawer = lazy(() => import("./task-card-drawer"))
 
@@ -385,9 +385,8 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
       </Box>
 
       {/* Add Task Form Modal */}
-      <GlobalAddTaskForm
+      <AddTaskForm
         projectId={projectId}
-        columns={columns}
         onSuccess={handleRefresh}
       />
     </>

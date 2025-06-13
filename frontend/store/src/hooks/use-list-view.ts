@@ -1,6 +1,10 @@
+import {
+  type KanbanColumn,
+  type TaskDataSchema,
+  useKanban,
+} from "@incmix/store"
 // components/list/hooks/use-list-view.ts
 import { useMemo } from "react"
-import { useKanban, type KanbanColumn, type TaskDataSchema } from "@incmix/store"
 
 // List-specific types that extend kanban types
 export interface ListColumn extends KanbanColumn {
@@ -76,7 +80,7 @@ export function useListView(projectId = "default-project"): UseListViewReturn {
 
   // Transform kanban columns to list columns if needed
   const listColumns = useMemo<ListColumn[]>(() => {
-    return kanbanData.columns.map(column => ({
+    return kanbanData.columns.map((column) => ({
       ...column,
       // Add list-specific properties if needed
       isExpanded: true, // Default to expanded in list view

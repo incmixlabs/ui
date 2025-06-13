@@ -198,8 +198,8 @@ export function TaskActionsMenu({
 
   return (
     <DropdownMenu.Root>
-      <DropdownMenu.Trigger>
-        <IconButton 
+      <DropdownMenu.Trigger   >
+        <IconButton
           size={size}
           variant={variant}
           disabled={disabled}
@@ -230,11 +230,12 @@ export function TaskActionsMenu({
             {["low", "medium", "high", "urgent"].map((priority) => {
               const info = getPriorityInfo(priority)
               const Icon = info.icon
+              const isSelected = currentPriority === priority
               return (
                 <DropdownMenu.Item
                   key={priority}
                   onClick={() => handlePriorityChange(priority)}
-                  className={currentPriority === priority ? "bg-gray-100" : ""}
+                  className={isSelected ? "bg-accent" : ""}
                 >
                   <Flex align="center" gap="2">
                     <Icon size={14} className={`text-${info.color}-500`} />
@@ -267,7 +268,7 @@ export function TaskActionsMenu({
                       <CalendarIcon size={12} className="text-green-600" />
                       <Text size="2">Start Date</Text>
                       {currentStartDate && (
-                        <Text size="1" className="ml-auto text-gray-500">
+                        <Text size="1" className="ml-auto text-muted-foreground">
                           {formatDate(currentStartDate)}
                         </Text>
                       )}
@@ -292,10 +293,10 @@ export function TaskActionsMenu({
                 <Popover.Trigger>
                   <Button variant="ghost" className="w-full justify-start">
                     <Flex align="center" gap="2" className="w-full">
-                      <CalendarIcon size={12} />
+                      <CalendarIcon size={12} className="text-muted-foreground" />
                       <Text size="2">End Date</Text>
                       {currentEndDate && (
-                        <Text size="1" className="ml-auto text-gray-500">
+                        <Text size="1" className="ml-auto text-muted-foreground">
                           {formatDate(currentEndDate)}
                         </Text>
                       )}
@@ -333,29 +334,32 @@ export function TaskActionsMenu({
               {members.map((member) => {
                 const isAssigned = currentAssignedTo.find(u => u.id === member.id)
                 return (
-                  <Button
+                  <div
                     key={member.id}
-                    variant="ghost"
-                    className={`w-full justify-start ${isAssigned ? "bg-blue-50" : ""}`}
+                    className={`
+                      flex items-start gap-3 w-full p-3 rounded-md cursor-pointer transition-colors
+                      hover:bg-accent
+                      ${isAssigned ? 'bg-accent/50' : ''}
+                    `}
                     onClick={() => handleMemberToggle(member)}
                   >
-                    <Flex align="center" gap="2" className="w-full">
-                      <Avatar 
-                        src={member.avatar} 
-                        name={member.name}
-                        className="w-6 h-6"
-                      />
-                      <Box className="flex-1 text-left">
-                        <Text size="2">{member.name}</Text>
-                        <Text size="1" className="text-gray-500">
-                          {member.position}
-                        </Text>
-                      </Box>
-                      {isAssigned && (
-                        <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                      )}
-                    </Flex>
-                  </Button>
+                    <Avatar 
+                      src={member.avatar} 
+                      name={member.name}
+                      className="w-6 h-6"
+                    />
+                    <div className="flex-1 flex flex-col gap-3">
+                      <div>
+                        <p className="text-sm font-medium leading-none">{member.name}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">{member.position}</p>
+                      </div>
+                    </div>
+                    {isAssigned && (
+                      <div className="w-2 h-2 bg-primary rounded-full" />
+                    )}
+                  </div>
                 )
               })}
             </Box>
@@ -372,21 +376,24 @@ export function TaskActionsMenu({
               </Flex>
             </DropdownMenu.SubTrigger>
             <DropdownMenu.SubContent>
-              {columns.map((column) => (
-                <DropdownMenu.Item
-                  key={column.id}
-                  onClick={() => handleMoveToColumn(column.id)}
-                  className={currentColumnId === column.id ? "bg-gray-100" : ""}
-                >
-                  <Flex align="center" gap="2">
-                    <div 
-                      className="w-3 h-3 rounded-full" 
-                      style={{ backgroundColor: column.color }}
-                    />
-                    <Text>{column.name}</Text>
-                  </Flex>
-                </DropdownMenu.Item>
-              ))}
+              {columns.map((column) => {
+                const isCurrentColumn = currentColumnId === column.id
+                return (
+                  <DropdownMenu.Item
+                    key={column.id}
+                    onClick={() => handleMoveToColumn(column.id)}
+                    className={isCurrentColumn ? "bg-accent" : ""}
+                  >
+                    <Flex align="center" gap="2">
+                      <div 
+                        className="w-3 h-3 rounded-full" 
+                        style={{ backgroundColor: column.color }}
+                      />
+                      <Text>{column.name}</Text>
+                    </Flex>
+                  </DropdownMenu.Item>
+                )
+              })}
             </DropdownMenu.SubContent>
           </DropdownMenu.Sub>
         )}
@@ -416,7 +423,7 @@ export function TaskActionsMenu({
             {onDeleteTask && (
               <DropdownMenu.Item 
                 onClick={onDeleteTask}
-                className="text-red-600"
+                className="text-destructive focus:text-destructive"
               >
                 <Trash2 size={14} />
                 <Text>Delete Task</Text>

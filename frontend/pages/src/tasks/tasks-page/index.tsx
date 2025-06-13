@@ -2,6 +2,7 @@
 import { useOrganizationStore } from "@incmix/store"
 import type { TaskCollections } from "@incmix/store"
 import {
+  AddTaskForm,
   Board,
   Box,
   Button,
@@ -24,15 +25,13 @@ import { CreateProjectForm } from "./create-project-form"
 
 const TasksPage = () => {
   const { selectedOrganisation } = useOrganizationStore()
-  const [selectedProject, setSelectedProject] = useState<string>()
+  // Define default project ID
+  const [selectedProject, setSelectedProject] =
+    useState<string>("default-project")
   const db: RxDatabase<TaskCollections> = useRxDB()
 
   // Get projects for the selected organization
-  const {
-    data: projects,
-    isLoading: fetchingProjects,
-    refetch: refetchProjects,
-  } = useQuery({
+  const { data: projects, refetch: refetchProjects } = useQuery({
     queryKey: ["projects", selectedOrganisation?.id],
     enabled: !!selectedOrganisation?.id && !!db.projects,
     queryFn: () => {
@@ -77,26 +76,6 @@ const TasksPage = () => {
             {/* Project Selection and Creation */}
             <Flex justify="between" align="center">
               <Flex className="gap-4">
-                <Select.Root
-                  value={selectedProject}
-                  onValueChange={setSelectedProject}
-                >
-                  <Select.Trigger
-                    className="w-full max-w-96"
-                    placeholder={
-                      fetchingProjects ? "Loading" : "Select Project"
-                    }
-                  />
-                  <Select.Content>
-                    {fetchingProjects && <div>Loading...</div>}
-                    {projects?.map((p) => (
-                      <Select.Item key={p.id} value={p.id}>
-                        {p.name}
-                      </Select.Item>
-                    ))}
-                  </Select.Content>
-                </Select.Root>
-
                 <CreateProjectForm
                   onSuccess={(p) => {
                     refetchProjects()
@@ -104,6 +83,15 @@ const TasksPage = () => {
                   }}
                 />
               </Flex>
+
+              {/* Add Task Form - Always visible */}
+              <AddTaskForm
+                projectId="default-project"
+                onSuccess={() => {
+                  // You might want to implement a refetch function here
+                  // if needed to update task lists after creation
+                }}
+              />
             </Flex>
           </Box>
         </Box>
@@ -137,11 +125,11 @@ const TasksPage = () => {
 
             {/* Content Area - Natural height, allows page to scroll vertically */}
             <Tabs.Content value="board">
-              <Board projectId={selectedProject} />
+              <Board projectId={selectedProject || "default-project"} />
             </Tabs.Content>
 
             <Tabs.Content value="list">
-              <ListBoard projectId={selectedProject} />
+              <ListBoard projectId={selectedProject || "default-project"} />
             </Tabs.Content>
 
             <Tabs.Content value="table">
@@ -159,7 +147,6 @@ const TasksPage = () => {
             </Tabs.Content>
           </Tabs.Root>
         </Box>
-            
       </Box>
     </DashboardLayout>
   )
