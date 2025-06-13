@@ -238,7 +238,12 @@ export function TaskActionsMenu({
                   className={isSelected ? "bg-accent" : ""}
                 >
                   <Flex align="center" gap="2">
-                    <Icon size={14} className={`text-${info.color}-500`} />
+                    <Icon size={14} className={{
+                      red: "text-red-500",
+                      orange: "text-orange-500",
+                      blue: "text-blue-500",
+                      gray: "text-gray-500"
+                    }[info.color]} />
                     <Text>{info.label}</Text>
                   </Flex>
                 </DropdownMenu.Item>

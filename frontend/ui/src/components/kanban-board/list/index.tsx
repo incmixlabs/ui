@@ -152,6 +152,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
 
               // Use moveTask with same column but new index
               const newIndex = reordered.findIndex(t => t.taskId === draggedTaskId)
+              if (newIndex === -1) return
               moveTask(draggedTaskId, homeColumn.id, newIndex).catch((error) => {
                 console.error("Failed to reorder tasks:", error)
               })
@@ -288,7 +289,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
       <Box className="flex items-center justify-center h-64">
         <Flex direction="column" align="center" gap="4">
           <div className="text-red-500">Error: {error}</div>
-          <Button onClick={clearError} variant="outline">
+          <Button onClick={() => { clearError(); refetch(); }} variant="outline">
             <RefreshCw size={16} />
             Retry
           </Button>
