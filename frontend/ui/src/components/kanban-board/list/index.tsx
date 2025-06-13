@@ -1,4 +1,4 @@
-// components/list/list-board.tsx
+// components/list/list-board.tsx - Updated to use new task input system
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge"
@@ -34,7 +34,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [isDragging, setIsDragging] = useState(false)
   
-  // Use the new list view hook
+  // Use the list view hook
   const {
     columns,
     isLoading,
@@ -362,6 +362,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
             <ListColumn 
               key={column.id} 
               column={column}
+              columns={columns} // Pass all columns for the menu
               onCreateTask={createTask}
               onUpdateTask={updateTask}
               onDeleteTask={deleteTask}

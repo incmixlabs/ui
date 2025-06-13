@@ -1,4 +1,4 @@
-// components/list/list-column.tsx - Updated with MentionTaskInput
+// components/list/list-column.tsx - Updated with SimpleTaskInput and TaskActionsMenu
 import {
   draggable,
   dropTargetForElements,
@@ -29,7 +29,8 @@ import {
   type TaskDataSchema,
 } from "@incmix/store"
 import { ListTaskCard, ListTaskCardShadow } from "./task-card"
-import { MentionTaskInput } from "./mention-task-input"
+import { SimpleTaskInput } from "./mention-task-input"
+
 
 type TColumnState =
   | {
@@ -58,6 +59,7 @@ const idle = { type: "idle" } satisfies TColumnState
 
 interface ListColumnProps {
   column: ListColumn
+  columns: ListColumn[] // All available columns for the menu
   onCreateTask: (columnId: string, taskData: Partial<TaskDataSchema>) => Promise<void>
   onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
@@ -66,22 +68,14 @@ interface ListColumnProps {
   isDragging?: boolean
 }
 
-interface Member {
-  id: string
-  value: string
-  name: string
-  label: string
-  avatar: string
-  position: string
-  color: string
-}
-
 const CardList = memo(function CardList({ 
   column, 
+  columns,
   onUpdateTask, 
   onDeleteTask 
 }: { 
   column: ListColumn
+  columns: ListColumn[]
   onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
 }) {
@@ -92,6 +86,7 @@ const CardList = memo(function CardList({
           key={task.taskId} 
           card={task} 
           columnId={column.id}
+          columns={columns}
           onUpdateTask={onUpdateTask}
           onDeleteTask={onDeleteTask}
         />
@@ -102,6 +97,7 @@ const CardList = memo(function CardList({
 
 export function ListColumn({ 
   column, 
+  columns,
   onCreateTask, 
   onUpdateTask, 
   onDeleteTask, 
@@ -259,36 +255,47 @@ export function ListColumn({
     )
   }, [column, columnData, setIsCardOver])
 
-  // Enhanced task creation with member assignment
-  const handleCreateTaskWithMembers = useCallback(async (taskName: string, assignedMembers: Member[]) => {
+  // Enhanced task creation with task data from the menu
+  const handleCreateTaskWithData = useCallback(async (taskName: string, taskData: any) => {
     if (!taskName.trim()) return
     
     try {
-      // Convert members to the expected assignedTo format
-      const assignedTo = assignedMembers.map(member => ({
-        id: member.id,
-        name: member.name,
-        image: member.avatar, // Note: using 'image' as per schema
-      }))
-
-      await onCreateTask(column.id, {
+      // Merge the task name with the additional data from the menu
+      const fullTaskData = {
         name: taskName.trim(),
         description: "",
-        priority: "medium",
         completed: false,
         labelsTags: [],
         attachments: [],
-        assignedTo: assignedTo,
         subTasks: [],
         comments: [],
         commentsCount: 0,
-      })
-      
+        ...taskData, // This includes priority, dates, assignedTo, etc.
+      }
+
+      await onCreateTask(column.id, fullTaskData)
       setIsCreatingTask(false)
     } catch (error) {
       console.error("Failed to create task:", error)
     }
   }, [onCreateTask, column.id])
+
+  // Column update handler
+  const handleUpdateColumn = useCallback(async (updates: Partial<TaskDataSchema>) => {
+    // This is for column-level updates, not implemented in the menu yet
+    // but could be extended for column settings
+  }, [])
+
+  // Column delete handler
+  const handleDeleteColumn = useCallback(async () => {
+    if (confirm(`Are you sure you want to delete the "${column.name}" column?`)) {
+      try {
+        await onDeleteColumn(column.id)
+      } catch (error) {
+        console.error("Failed to delete column:", error)
+      }
+    }
+  }, [column.id, column.name, onDeleteColumn])
 
   return (
     <Flex
@@ -349,6 +356,7 @@ export function ListColumn({
                 </Flex>
               </Flex>
 
+              {/* Column Actions Menu - can be extended later for column-specific options */}
               <IconButton size="1" variant="ghost">
                 <Ellipsis size={16} />
               </IconButton>
@@ -384,6 +392,7 @@ export function ListColumn({
             >
               <CardList 
                 column={column} 
+                columns={columns}
                 onUpdateTask={onUpdateTask}
                 onDeleteTask={onDeleteTask}
               />
@@ -394,13 +403,26 @@ export function ListColumn({
                 </Box>
               ) : null}
 
-              {/* Enhanced Add Task Section */}
+              {/* Simple Add Task Section */}
               <Box className="p-3">
                 {isCreatingTask ? (
-                  <MentionTaskInput
-                    onCreateTask={handleCreateTaskWithMembers}
+                  <SimpleTaskInput
+                    onCreateTask={handleCreateTaskWithData}
                     onCancel={() => setIsCreatingTask(false)}
-                    placeholder="Enter task title... (use @ to assign members)"
+                    columns={columns.map(col => ({
+                      id: col.id,
+                      name: col.name,
+                      color: col.color,
+                      projectId: col.projectId,
+                      order: col.order,
+                      description: col.description,
+                      isDefault: col.isDefault,
+                      createdAt: col.createdAt,
+                      updatedAt: col.updatedAt,
+                      createdBy: col.createdBy,
+                      updatedBy: col.updatedBy,
+                    }))}
+                    placeholder="Enter task title..."
                   />
                 ) : (
                   <Button 

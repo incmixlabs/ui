@@ -1,4 +1,4 @@
-// components/list/task-card.tsx
+// components/list/task-card.tsx - Updated with TaskActionsMenu
 import React, { useCallback, useEffect, useRef, useState, memo } from "react"
 import {
   draggable,
@@ -21,7 +21,6 @@ import {
   CalendarDays,
   ChevronDown,
   ChevronRight,
-  EllipsisVertical,
 } from "lucide-react"
 import {
   getCardData,
@@ -30,6 +29,7 @@ import {
   isDraggingACard,
   type KanbanTask,
   type TaskDataSchema,
+  type ListColumn,
 } from "@incmix/store"
 import { Card } from "@incmix/ui/card"
 import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
@@ -40,15 +40,11 @@ import {
   Flex,
   Heading,
   Text,
-  IconButton,
-  DropdownMenu,
   Badge,
-  Button,
-  TextField,
-  Popover,
-  Calendar,
   Avatar,
 } from "@incmix/ui"
+import { TaskActionsMenu } from "./task-actions-menu"
+
 
 type TCardState =
   | { type: "idle" }
@@ -72,6 +68,7 @@ const outerStyles: { [Key in TCardState["type"]]?: string } = {
 interface ListTaskCardProps {
   card: KanbanTask
   columnId: string
+  columns: ListColumn[]
   onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
 }
@@ -91,6 +88,7 @@ export const ListTaskCardShadow = memo(function ListTaskCardShadow({
 
 const TaskCardDisplay = memo(function TaskCardDisplay({
   card,
+  columns,
   state,
   outerRef,
   innerRef,
@@ -98,6 +96,7 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
   onDeleteTask,
 }: {
   card: KanbanTask
+  columns: ListColumn[]
   state: TCardState
   outerRef?: React.MutableRefObject<HTMLDivElement | null>
   innerRef?: React.MutableRefObject<HTMLDivElement | null>
@@ -106,21 +105,6 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
 }) {
   const { handleDrawerOpen } = useKanbanDrawer()
   const [isExpanded, setIsExpanded] = useState(false)
-  const [isEditingName, setIsEditingName] = useState(false)
-  const [taskName, setTaskName] = useState(card.name || "")
-  const [startDate, setStartDate] = useState<Date | null>(
-    card.startDate ? new Date(card.startDate) : null
-  )
-  const [endDate, setEndDate] = useState<Date | null>(
-    card.endDate ? new Date(card.endDate) : null
-  )
-
-  // Update local state when card changes
-  useEffect(() => {
-    setTaskName(card.name || "")
-    setStartDate(card.startDate ? new Date(card.startDate) : null)
-    setEndDate(card.endDate ? new Date(card.endDate) : null)
-  }, [card.name, card.startDate, card.endDate])
 
   const handleToggleComplete = useCallback(async (checked: boolean | string) => {
     // Ensure taskId exists
@@ -135,123 +119,43 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
       console.error("Failed to toggle task completion:", error)
     }
   }, [card.taskId, onUpdateTask])
-  
-  // Separate handler for dropdown menu click
-  const handleToggleCompleteClick = useCallback(async (e: React.MouseEvent) => {
-    e.stopPropagation()
-    
-    // Ensure taskId exists
+
+  const handleUpdateTask = useCallback(async (updates: Partial<TaskDataSchema>) => {
     if (!card.taskId) {
       console.error("Task ID is missing")
       return
     }
 
     try {
-      await onUpdateTask(card.taskId, { completed: !card.completed })
+      await onUpdateTask(card.taskId, updates)
     } catch (error) {
-      console.error("Failed to toggle task completion:", error)
+      console.error("Failed to update task:", error)
     }
-  }, [card.taskId, card.completed, onUpdateTask])
+  }, [card.taskId, onUpdateTask])
 
   const handleDeleteTask = useCallback(async () => {
-    // Ensure taskId exists
     if (!card.taskId) {
       console.error("Task ID is missing")
       return
     }
 
-    try {
-      await onDeleteTask(card.taskId)
-    } catch (error) {
-      console.error("Failed to delete task:", error)
-    }
-  }, [card.taskId, onDeleteTask])
-
-  const handleTaskNameSave = useCallback(async () => {
-    const trimmedName = taskName.trim()
-    
-    // Ensure taskId exists and name is valid
-    if (!card.taskId) {
-      console.error("Task ID is missing")
-      return
-    }
-
-    if (!trimmedName) {
-      // Reset to original name if empty
-      setTaskName(card.name || "")
-      setIsEditingName(false)
-      return
-    }
-
-    if (trimmedName !== card.name) {
+    if (confirm(`Are you sure you want to delete "${card.name}"?`)) {
       try {
-        await onUpdateTask(card.taskId, { name: trimmedName })
+        await onDeleteTask(card.taskId)
       } catch (error) {
-        console.error("Failed to update task name:", error)
-        setTaskName(card.name || "") // Revert on error
+        console.error("Failed to delete task:", error)
       }
     }
-    setIsEditingName(false)
-  }, [taskName, card.name, card.taskId, onUpdateTask])
+  }, [card.taskId, card.name, onDeleteTask])
 
-  const handleStartDateChange = useCallback(async (date: Date | undefined) => {
-    if (!date || !card.taskId) return
-    
-    setStartDate(date)
-    if (endDate && date > endDate) {
-      // If start date is after end date, also update end date
-      setEndDate(date)
-      try {
-        await onUpdateTask(card.taskId, {
-          startDate: date.toISOString(),
-          endDate: date.toISOString(),
-        })
-      } catch (error) {
-        console.error("Failed to update dates:", error)
-        setStartDate(card.startDate ? new Date(card.startDate) : null)
-        setEndDate(card.endDate ? new Date(card.endDate) : null)
-      }
-    } else {
-      try {
-        await onUpdateTask(card.taskId, { startDate: date.toISOString() })
-      } catch (error) {
-        console.error("Failed to update start date:", error)
-        setStartDate(card.startDate ? new Date(card.startDate) : null)
-      }
-    }
-  }, [card.taskId, endDate, onUpdateTask, card.startDate, card.endDate])
-
-  const handleEndDateChange = useCallback(async (date: Date | undefined) => {
-    if (!date || !card.taskId) return
-    
-    setEndDate(date)
-    if (startDate && date < startDate) {
-      // If end date is before start date, also update start date
-      setStartDate(date)
-      try {
-        await onUpdateTask(card.taskId, {
-          startDate: date.toISOString(),
-          endDate: date.toISOString(),
-        })
-      } catch (error) {
-        console.error("Failed to update dates:", error)
-        setStartDate(card.startDate ? new Date(card.startDate) : null)
-        setEndDate(card.endDate ? new Date(card.endDate) : null)
-      }
-    } else {
-      try {
-        await onUpdateTask(card.taskId, { endDate: date.toISOString() })
-      } catch (error) {
-        console.error("Failed to update end date:", error)
-        setEndDate(card.endDate ? new Date(card.endDate) : null)
-      }
-    }
-  }, [card.taskId, startDate, onUpdateTask, card.startDate, card.endDate])
+  const handleDuplicateTask = useCallback(async () => {
+    // Implementation for task duplication could be added here
+    console.log("Duplicate task functionality not implemented yet")
+  }, [])
 
   const handleOpenDrawer = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
     
-    // Ensure taskId exists
     if (!card.taskId) {
       console.error("Task ID is missing")
       return
@@ -324,9 +228,9 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
             <Flex align="center" gap="3" className="flex-1 min-w-0">
               {hasSubTasks && (
                 <Collapsible.Trigger asChild>
-                  <IconButton size="1" variant="ghost" className="p-0">
+                  <button className="p-0 bg-transparent border-none cursor-pointer">
                     {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                  </IconButton>
+                  </button>
                 </Collapsible.Trigger>
               )}
 
@@ -336,34 +240,16 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
                 className="flex-shrink-0"
               />
 
-              {isEditingName ? (
-                <TextField.Root
-                  value={taskName}
-                  onChange={(e) => setTaskName(e.target.value)}
-                  onBlur={handleTaskNameSave}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleTaskNameSave()
-                    if (e.key === "Escape") {
-                      setTaskName(card.name || "")
-                      setIsEditingName(false)
-                    }
-                  }}
-                  autoFocus
-                  className="flex-1 font-medium"
-                />
-              ) : (
-                <Heading
-                  size="3"
-                  className={cn(
-                    "flex-1 font-medium cursor-pointer hover:text-blue-600 transition-colors",
-                    card.completed && "line-through text-gray-500"
-                  )}
-                  onDoubleClick={() => setIsEditingName(true)}
-                  onClick={handleOpenDrawer}
-                >
-                  {card.name || "Untitled Task"}
-                </Heading>
-              )}
+              <Heading
+                size="3"
+                className={cn(
+                  "flex-1 font-medium cursor-pointer hover:text-blue-600 transition-colors",
+                  card.completed && "line-through text-gray-500"
+                )}
+                onClick={handleOpenDrawer}
+              >
+                {card.name || "Untitled Task"}
+              </Heading>
             </Flex>
 
             <Flex align="center" gap="3" className="flex-shrink-0">
@@ -383,53 +269,25 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
 
               {/* Date displays */}
               <Flex align="center" gap="2" className="text-xs">
-                {startDate && (
-                  <Popover.Root>
-                    <Popover.Trigger>
-                      <Button variant="ghost" size="1" className="h-auto p-1">
-                        <Flex align="center" gap="1">
-                          <CalendarDays size={12} className="text-green-600" />
-                          <Text size="1" className="text-green-600">
-                            {formatDate(startDate)}
-                          </Text>
-                        </Flex>
-                      </Button>
-                    </Popover.Trigger>
-                    <Popover.Content>
-                      <Calendar
-                        mode="single"
-                        selected={startDate}
-                        onSelect={handleStartDateChange}
-                        initialFocus
-                      />
-                    </Popover.Content>
-                  </Popover.Root>
+                {card.startDate && (
+                  <Flex align="center" gap="1">
+                    <CalendarDays size={12} className="text-green-600" />
+                    <Text size="1" className="text-green-600">
+                      {formatDate(new Date(card.startDate))}
+                    </Text>
+                  </Flex>
                 )}
 
-                {endDate && (
-                  <Popover.Root>
-                    <Popover.Trigger>
-                      <Button variant="ghost" size="1" className="h-auto p-1">
-                        <Flex align="center" gap="1">
-                          <CalendarDays size={12} />
-                          <Text 
-                            size="1" 
-                            className={getDateStatus(endDate).className}
-                          >
-                            {formatDate(endDate)}
-                          </Text>
-                        </Flex>
-                      </Button>
-                    </Popover.Trigger>
-                    <Popover.Content>
-                      <Calendar
-                        mode="single"
-                        selected={endDate}
-                        onSelect={handleEndDateChange}
-                        initialFocus
-                      />
-                    </Popover.Content>
-                  </Popover.Root>
+                {card.endDate && (
+                  <Flex align="center" gap="1">
+                    <CalendarDays size={12} />
+                    <Text 
+                      size="1" 
+                      className={getDateStatus(new Date(card.endDate)).className}
+                    >
+                      {formatDate(new Date(card.endDate))}
+                    </Text>
+                  </Flex>
                 )}
               </Flex>
 
@@ -473,33 +331,27 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
                 </Flex>
               )}
 
-              {/* Actions menu */}
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger >
-                  <IconButton
-                    size="1"
-                    variant="ghost"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <EllipsisVertical size={14} />
-                  </IconButton>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content>
-                  <DropdownMenu.Item onClick={handleOpenDrawer}>
-                    Edit Task
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item onClick={handleToggleCompleteClick}>
-                    {card.completed ? "Mark Incomplete" : "Mark Complete"}
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Separator />
-                  <DropdownMenu.Item 
-                    onClick={handleDeleteTask}
-                    className="text-red-600"
-                  >
-                    Delete Task
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
+              {/* Task Actions Menu - replaces the old dropdown */}
+              <TaskActionsMenu
+                task={card}
+                columns={columns.map(col => ({
+                  id: col.id,
+                  name: col.name,
+                  color: col.color,
+                  projectId: col.projectId,
+                  order: col.order,
+                  description: col.description,
+                  isDefault: col.isDefault,
+                  createdAt: col.createdAt,
+                  updatedAt: col.updatedAt,
+                  createdBy: col.createdBy,
+                  updatedBy: col.updatedBy,
+                }))}
+                onUpdateTask={handleUpdateTask}
+                onDeleteTask={handleDeleteTask}
+                onDuplicateTask={handleDuplicateTask}
+                mode="existing-task"
+              />
             </Flex>
           </Flex>
 
@@ -546,6 +398,7 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
 export function ListTaskCard({ 
   card, 
   columnId, 
+  columns,
   onUpdateTask, 
   onDeleteTask 
 }: ListTaskCardProps) {
@@ -665,6 +518,7 @@ export function ListTaskCard({
     <>
       <TaskCardDisplay
         card={card}
+        columns={columns}
         state={state}
         outerRef={outerRef}
         innerRef={innerRef}
@@ -675,6 +529,7 @@ export function ListTaskCard({
         createPortal(
           <TaskCardDisplay 
             card={card} 
+            columns={columns}
             state={state} 
             onUpdateTask={onUpdateTask}
             onDeleteTask={onDeleteTask}
