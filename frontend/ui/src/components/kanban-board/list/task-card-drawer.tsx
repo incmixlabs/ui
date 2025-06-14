@@ -43,8 +43,9 @@ import {
   motion,
   useDragControls,
   useMotionValue,
-} from "motion/react"
-import { useEffect, useState, useCallback, memo } from "react"
+} from "framer-motion"
+import React, { useCallback, useEffect, useMemo, useState, memo } from "react"
+import { ModalPresets } from "../shared/confirmation-modal"
 import { TaskDataSchema, useListView } from "@incmix/store"
 
 // Simple sheet component for the drawer
@@ -204,22 +205,38 @@ export default function ListTaskCardDrawer() {
     setNewComment("")
   }, [newComment, currentTask, handleUpdateTask])
 
-  // Task actions
+  // Modal state for task deletion
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+
+  // Task delete handler - shows the confirmation modal
   const handleDeleteTask = useCallback(async () => {
     if (!currentTask) return
-    
-    if (confirm(`Are you sure you want to delete "${currentTask.name}"?`)) {
-      try {
-        await deleteTask(currentTask.taskId)
-        handleDrawerClose()
-      } catch (error) {
-        console.error("Failed to delete task:", error)
-      }
+    setShowDeleteConfirmation(true)
+  }, [currentTask])
+
+  // Confirm task deletion handler
+  const confirmDeleteTask = useCallback(async () => {
+    if (!currentTask) return
+    try {
+      await deleteTask(currentTask.taskId)
+      handleDrawerClose()
+    } catch (error) {
+      console.error("Failed to delete task:", error)
     }
   }, [currentTask, deleteTask, handleDrawerClose])
 
   if (!currentTask || !currentColumn) {
     return null
+  }
+
+  // Render the delete confirmation modal
+  const renderDeleteModal = () => {
+    return ModalPresets.deleteTask({
+      isOpen: showDeleteConfirmation,
+      onOpenChange: setShowDeleteConfirmation,
+      taskName: currentTask.name,
+      onConfirm: confirmDeleteTask
+    })
   }
 
   const completedSubTasks = currentTask.subTasks?.filter(st => st.completed).length || 0
@@ -240,10 +257,14 @@ export default function ListTaskCardDrawer() {
   const PriorityIcon = priorityInfo.icon
 
   return (
-    <TaskDrawerSheet
-      open={isOpen}
-      onOpenChange={(open) => !open && handleDrawerClose()}
-    >
+    <>
+      {/* Delete Task Confirmation Modal */}
+      {renderDeleteModal()}
+      
+      <TaskDrawerSheet
+        open={isOpen}
+        onOpenChange={(open) => !open && handleDrawerClose()}
+      >
       <div className="cursor-default bg-white dark:bg-gray-900 h-screen">
         <ScrollArea className="h-full">
           <Flex className="h-full">
@@ -622,6 +643,7 @@ export default function ListTaskCardDrawer() {
         </ScrollArea>
       </div>
     </TaskDrawerSheet>
+    </>
   )
 }
 

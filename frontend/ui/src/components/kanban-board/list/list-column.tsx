@@ -3,6 +3,7 @@ import {
   draggable,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
+import { ConfirmationModal, ModalPresets } from "../shared/confirmation-modal"
 import { Ellipsis, Plus, ChevronDown, ChevronRight } from "lucide-react"
 import { memo, useEffect, useRef, useState, useCallback } from "react"
 import invariant from "tiny-invariant"
@@ -286,16 +287,22 @@ export function ListColumn({
     // but could be extended for column settings
   }, [])
 
-  // Column delete handler
-  const handleDeleteColumn = useCallback(async () => {
-    if (confirm(`Are you sure you want to delete the "${column.name}" column?`)) {
-      try {
-        await onDeleteColumn(column.id)
-      } catch (error) {
-        console.error("Failed to delete column:", error)
-      }
+  // Modal state for column deletion
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+
+  // Column delete handler - opens the confirmation modal
+  const handleDeleteColumn = useCallback(() => {
+    setShowDeleteConfirmation(true)
+  }, [])
+
+  // Confirm column deletion handler
+  const confirmDeleteColumn = useCallback(async () => {
+    try {
+      await onDeleteColumn(column.id)
+    } catch (error) {
+      console.error("Failed to delete column:", error)
     }
-  }, [column.id, column.name, onDeleteColumn])
+  }, [column.id, onDeleteColumn])
 
   return (
     <Flex
