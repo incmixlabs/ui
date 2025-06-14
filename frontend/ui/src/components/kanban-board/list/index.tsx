@@ -307,13 +307,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
             <Heading size="6">Project Tasks</Heading>
             
             <Flex align="center" gap="2">
-              <Button
-                onClick={() => setShowAddTaskForm(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                <Plus size={16} />
-                Add Task
-              </Button>
+              
 
               <IconButton variant="ghost" onClick={handleRefresh}>
                 <RefreshCw size={16} />
@@ -385,11 +379,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         </Suspense>
       </Box>
 
-      {/* Add Task Form Modal */}
-      <AddTaskForm
-        projectId={projectId}
-        onSuccess={handleRefresh}
-      />
+      
     </>
   )
 }
