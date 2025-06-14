@@ -7,9 +7,9 @@ import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/ad
 import { bindAll } from "bind-event-listener"
 import { Suspense, lazy, useEffect, useRef, useState, useCallback } from "react"
 import { ListColumn } from "./list-column"
-import { Box, Flex, IconButton, TextField, Button, Heading } from "@incmix/ui"
+import { Box, Flex, IconButton, TextField, Button, Heading, TextArea, Text } from "@incmix/ui"
 
-import { Plus, Search, RefreshCw, Settings, MoreVertical } from "lucide-react"
+import { Plus, Search, RefreshCw, Settings, MoreVertical, ChevronRight, X } from "lucide-react"
 
 import {
   isCardData,
@@ -33,6 +33,13 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   const [showAddTaskForm, setShowAddTaskForm] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [isDragging, setIsDragging] = useState(false)
+  
+  // New column creation state
+  const [isAddingColumn, setIsAddingColumn] = useState(false)
+  const [newColumnName, setNewColumnName] = useState('')
+  const [newColumnColor, setNewColumnColor] = useState('#3B82F6') // Default blue color
+  const [newColumnDescription, setNewColumnDescription] = useState('')  
+  const [isCreatingColumn, setIsCreatingColumn] = useState(false)
   
   // Use the list view hook
   const {
@@ -307,7 +314,14 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
             <Heading size="6">Project Tasks</Heading>
             
             <Flex align="center" gap="2">
-              
+              <Button 
+                variant="soft" 
+                onClick={() => setIsAddingColumn(true)} 
+                disabled={isAddingColumn}
+              >
+                <Plus size={14} />
+                Add Status Column
+              </Button>
 
               <IconButton variant="ghost" onClick={handleRefresh}>
                 <RefreshCw size={16} />
@@ -353,6 +367,82 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
       {/* Main Content */}
       <Box className="flex w-full gap-6 h-full relative p-4" ref={scrollableRef}>
         <Box className="w-full space-y-6">
+          {/* Add New Column Form */}
+          {isAddingColumn && (
+            <Box className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 shadow-sm">
+              <Flex direction="column" gap="3">
+                <Heading size="3">Add New Status Column</Heading>
+                
+                <TextField.Root
+                  placeholder="Column name" 
+                  value={newColumnName}
+                  onChange={(e) => setNewColumnName(e.target.value)}
+                />
+                
+                <TextArea 
+                  placeholder="Column description (optional)" 
+                  value={newColumnDescription}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewColumnDescription(e.target.value)}
+                  rows={2}
+                />
+                
+                <Flex align="center" gap="2">
+                  <input 
+                    type="color" 
+                    value={newColumnColor}
+                    onChange={(e) => setNewColumnColor(e.target.value)}
+                    className="w-8 h-8 rounded cursor-pointer"
+                  />
+                  <Text size="1" className="text-gray-500">Column color</Text>
+                </Flex>
+                
+                <Flex gap="2" justify="end">
+                  <Button 
+                    variant="soft" 
+                    onClick={() => {
+                      setIsAddingColumn(false)
+                      setNewColumnName('')
+                      setNewColumnDescription('')
+                      setNewColumnColor('#3B82F6')
+                    }}
+                    disabled={isCreatingColumn}
+                  >
+                    <X size={14} />
+                    Cancel
+                  </Button>
+                  
+                  <Button 
+                    onClick={async () => {
+                      if (!newColumnName.trim()) return
+                      
+                      setIsCreatingColumn(true)
+                      try {
+                        await createColumn(
+                          newColumnName.trim(),
+                          newColumnColor,
+                          newColumnDescription.trim()
+                        )
+                        
+                        // Reset form
+                        setNewColumnName('')
+                        setNewColumnDescription('')
+                        setNewColumnColor('#3B82F6')
+                        setIsAddingColumn(false)
+                      } catch (error) {
+                        console.error('Failed to create column:', error)
+                      } finally {
+                        setIsCreatingColumn(false)
+                      }
+                    }}
+                    disabled={!newColumnName.trim() || isCreatingColumn}
+                  >
+                    {isCreatingColumn ? 'Creating...' : 'Create Column'}
+                  </Button>
+                </Flex>
+              </Flex>
+            </Box>
+          )}
+          
           {filteredColumns.map((column) => (
             <ListColumn 
               key={column.id} 
@@ -371,6 +461,19 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
             <Box className="text-center py-12">
               <div className="text-gray-500">No tasks found matching "{searchQuery}"</div>
             </Box>
+          )}
+          
+          {filteredColumns.length === 0 && !searchQuery && !isAddingColumn && (
+            <Flex direction="column" align="center" className="py-12 space-y-4">
+              <Text className="text-gray-500">No status columns found. Create your first column to get started.</Text>
+              <Button 
+                onClick={() => setIsAddingColumn(true)}
+                variant="soft"
+              >
+                <Plus size={14} />
+                Add Status Column
+              </Button>
+            </Flex>
           )}
         </Box>
 
