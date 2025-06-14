@@ -15,6 +15,7 @@ import {
   TextArea,
   Select,
 } from "@incmix/ui"
+import { ModalPresets } from "../shared/confirmation-modal"
 import { cn } from "@utils"
 import {
   Check,
@@ -102,6 +103,8 @@ export function TaskCardDrawer() {
   const [isEditingDescription, setIsEditingDescription] = useState(false)
   const [editTitle, setEditTitle] = useState("")
   const [editDescription, setEditDescription] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
   const [isAddingSubtask, setIsAddingSubtask] = useState(false)
   const [newSubtaskName, setNewSubtaskName] = useState("")
 
@@ -186,14 +189,20 @@ export function TaskCardDrawer() {
   // Task actions
   const handleDeleteTask = useCallback(async () => {
     if (!currentTask) return
+    setShowDeleteConfirmation(true)
+  }, [currentTask])
+  
+  const confirmDeleteTask = useCallback(async () => {
+    if (!currentTask) return
+    setIsLoading(true)
     
-    if (confirm(`Are you sure you want to delete "${currentTask.name}"?`)) {
-      try {
-        await deleteTask(currentTask.taskId)
-        handleDrawerClose()
-      } catch (error) {
-        console.error("Failed to delete task:", error)
-      }
+    try {
+      await deleteTask(currentTask.taskId)
+      handleDrawerClose()
+    } catch (error) {
+      console.error("Failed to delete task:", error)
+    } finally {
+      setIsLoading(false)
     }
   }, [currentTask, deleteTask, handleDrawerClose])
 
@@ -244,6 +253,15 @@ export function TaskCardDrawer() {
       onOpenChange={(open) => !open && handleDrawerClose()}
     >
       <div className="cursor-default bg-white dark:bg-gray-900 h-screen">
+        {/* Delete Task Confirmation Modal */}
+        {ModalPresets.deleteTask({
+          isOpen: showDeleteConfirmation,
+          onOpenChange: setShowDeleteConfirmation,
+          taskName: currentTask?.name,
+          onConfirm: confirmDeleteTask,
+          isLoading: isLoading
+        })}
+      
         <ScrollArea className="h-full">
           <Flex className="h-full">
             {/* Main Content */}
