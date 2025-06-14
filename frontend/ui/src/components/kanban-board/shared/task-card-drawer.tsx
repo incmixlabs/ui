@@ -1,5 +1,4 @@
-// components/list/task-card-drawer.tsx
-import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
+// components/shared/task-card-drawer.tsx - Shared between board and list views
 
 import {
   Badge,
@@ -15,7 +14,10 @@ import {
   TextField,
   TextArea,
   Select,
+  Sheet,
+  Progress,
 } from "@incmix/ui"
+import { ModalPresets } from "./confirmation-modal"
 import { cn } from "@utils"
 import {
   Check,
@@ -44,11 +46,12 @@ import {
   useDragControls,
   useMotionValue,
 } from "framer-motion"
-import React, { useCallback, useEffect, useMemo, useState, memo } from "react"
-import { ModalPresets } from "../shared/confirmation-modal"
-import { TaskDataSchema, useListView } from "@incmix/store"
+import type React from "react"
+import { useEffect, useRef, useState, useCallback, memo } from "react"
+import { TaskDataSchema, useKanban, useListView } from "@incmix/store"
+import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
 
-// Simple sheet component for the drawer
+// TaskDrawerSheet component - Displays the slide-out drawer UI
 function TaskDrawerSheet({ 
   open, 
   onOpenChange, 
@@ -69,40 +72,64 @@ function TaskDrawerSheet({
       />
       
       {/* Sheet */}
-      <div className="ml-auto w-[900px] bg-white dark:bg-gray-900 shadow-xl">
+      <div className="ml-auto w-[1000px] bg-white dark:bg-gray-900 shadow-xl">
         {children}
       </div>
     </div>
   )
 }
 
-export default function ListTaskCardDrawer() {
+// Types for the shared TaskCardDrawer component
+type ViewType = 'board' | 'list';
+
+interface TaskCardDrawerProps {
+  // Optional view type to handle any view-specific behavior
+  viewType?: ViewType;
+  // Optional project ID if not using the default from the drawer context
+  projectId?: string;
+  // Optional callback when a task is modified
+  onTaskModified?: () => void;
+}
+
+// Main shared TaskCardDrawer component
+export function TaskCardDrawer({
+  viewType = 'board',
+  projectId = "default-project",
+  onTaskModified,
+}: TaskCardDrawerProps) {
+  // Get drawer state from the shared context
   const { taskId, isOpen, handleDrawerClose } = useKanbanDrawer()
   
-  // Use the list view hook to get data and operations
+  // Use the appropriate hook based on the view type
+  // This allows the component to work with both board and list views
   const {
     columns,
     updateTask,
     deleteTask,
-  } = useListView("default-project")
+    createTask,
+  } = viewType === 'board' ? useKanban(projectId) : useListView(projectId);
   
-  // Find the current task and column
+  // Define proper types for columns and tasks
+  type Column = { id: string; name: string; color: string; description?: string; tasks: TaskDataSchema[] }
+
+  // Find the current task and its column
   const currentTask = taskId 
-    ? columns.flatMap(col => col.tasks).find(task => task.taskId === taskId)
+    ? columns.flatMap((col: Column) => col.tasks).find((task: TaskDataSchema) => task.taskId === taskId)
     : null
 
   const currentColumn = currentTask 
-    ? columns.find(col => col.tasks.some(task => task.taskId === currentTask.taskId))
+    ? columns.find((col: Column) => col.tasks.some((task: TaskDataSchema) => task.taskId === currentTask.taskId))
     : null
-
-  // Local state for editing
+    
+  // Local state for editing task properties
   const [isEditingTitle, setIsEditingTitle] = useState(false)
   const [isEditingDescription, setIsEditingDescription] = useState(false)
   const [editTitle, setEditTitle] = useState("")
   const [editDescription, setEditDescription] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
   const [isAddingSubtask, setIsAddingSubtask] = useState(false)
   const [newSubtaskName, setNewSubtaskName] = useState("")
-  const [newComment, setNewComment] = useState("")
 
   // Update local state when task changes
   useEffect(() => {
@@ -117,10 +144,11 @@ export default function ListTaskCardDrawer() {
     if (!currentTask) return
     try {
       await updateTask(currentTask.taskId, updates)
+      if (onTaskModified) onTaskModified()
     } catch (error) {
       console.error("Failed to update task:", error)
     }
-  }, [currentTask, updateTask])
+  }, [currentTask, updateTask, onTaskModified])
 
   const handleTitleSave = useCallback(async () => {
     if (editTitle.trim() && editTitle !== currentTask?.name) {
@@ -161,10 +189,13 @@ export default function ListTaskCardDrawer() {
     setIsAddingSubtask(false)
   }, [newSubtaskName, currentTask, handleUpdateTask])
 
+  // Define subtask type
+  type Subtask = { id: string; name: string; completed: boolean };
+
   const handleUpdateSubtask = useCallback(async (subtaskId: string, completed: boolean) => {
     if (!currentTask?.subTasks) return
     
-    const updatedSubTasks = currentTask.subTasks.map(st => 
+    const updatedSubTasks = currentTask.subTasks.map((st: Subtask) => 
       st.id === subtaskId ? { ...st, completed } : st
     )
     await handleUpdateTask({ subTasks: updatedSubTasks })
@@ -173,7 +204,7 @@ export default function ListTaskCardDrawer() {
   const handleDeleteSubtask = useCallback(async (subtaskId: string) => {
     if (!currentTask?.subTasks) return
     
-    const updatedSubTasks = currentTask.subTasks.filter(st => st.id !== subtaskId)
+    const updatedSubTasks = currentTask.subTasks.filter((st: Subtask) => st.id !== subtaskId)
     await handleUpdateTask({ subTasks: updatedSubTasks })
   }, [currentTask?.subTasks, handleUpdateTask])
 
@@ -182,67 +213,58 @@ export default function ListTaskCardDrawer() {
     await handleUpdateTask({ subTasks: newOrder })
   }, [currentTask, handleUpdateTask])
 
-  // Comment management
-  const handleAddComment = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!newComment.trim() || !currentTask) return
-    
-    const comment = {
-      id: crypto.randomUUID(),
-      content: newComment.trim(),
-      createdBy: currentTask.createdBy, // Use current user in production
-      createdAt: Date.now(),
-    }
-    
-    const updatedComments = [...(currentTask.comments || []), comment]
-    const newCount = (currentTask.commentsCount || 0) + 1
-    
-    await handleUpdateTask({ 
-      comments: updatedComments,
-      commentsCount: newCount
-    })
-    
-    setNewComment("")
-  }, [newComment, currentTask, handleUpdateTask])
-
-  // Modal state for task deletion
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
-
-  // Task delete handler - shows the confirmation modal
+  // Task actions
   const handleDeleteTask = useCallback(async () => {
     if (!currentTask) return
     setShowDeleteConfirmation(true)
   }, [currentTask])
-
-  // Confirm task deletion handler
+  
   const confirmDeleteTask = useCallback(async () => {
     if (!currentTask) return
+    setIsLoading(true)
+    
     try {
       await deleteTask(currentTask.taskId)
       handleDrawerClose()
+      if (onTaskModified) onTaskModified()
     } catch (error) {
       console.error("Failed to delete task:", error)
+    } finally {
+      setIsLoading(false)
     }
-  }, [currentTask, deleteTask, handleDrawerClose])
+  }, [currentTask, deleteTask, handleDrawerClose, onTaskModified])
+
+  const handleDuplicateTask = useCallback(async () => {
+    if (!currentTask || !currentColumn) return
+    
+    try {
+      await createTask(currentColumn.id, {
+        name: `${currentTask.name} (Copy)`,
+        description: currentTask.description,
+        priority: currentTask.priority,
+        labelsTags: currentTask.labelsTags,
+        assignedTo: currentTask.assignedTo,
+        subTasks: currentTask.subTasks?.map((st: Subtask) => ({ ...st, id: crypto.randomUUID(), completed: false })),
+        completed: false,
+        comments: [], // New schema: empty array
+        commentsCount: 0, // New schema: separate count
+      })
+      if (onTaskModified) onTaskModified()
+    } catch (error) {
+      console.error("Failed to duplicate task:", error)
+    }
+  }, [currentTask, currentColumn, createTask, onTaskModified])
 
   if (!currentTask || !currentColumn) {
     return null
   }
 
-  // Render the delete confirmation modal
-  const renderDeleteModal = () => {
-    return ModalPresets.deleteTask({
-      isOpen: showDeleteConfirmation,
-      onOpenChange: setShowDeleteConfirmation,
-      taskName: currentTask.name,
-      onConfirm: confirmDeleteTask
-    })
-  }
-
-  const completedSubTasks = currentTask.subTasks?.filter(st => st.completed).length || 0
+  // Calculate subtask progress
+  const completedSubTasks = currentTask.subTasks?.filter((st: Subtask) => st.completed).length || 0
   const totalSubTasks = currentTask.subTasks?.length || 0
   const progressPercentage = totalSubTasks > 0 ? (completedSubTasks / totalSubTasks) * 100 : 0
 
+  // Helper function for priority display
   const getPriorityInfo = (priority?: string) => {
     switch (priority) {
       case "urgent": return { color: "red" as const, icon: AlertCircle, label: "Urgent" }
@@ -257,15 +279,20 @@ export default function ListTaskCardDrawer() {
   const PriorityIcon = priorityInfo.icon
 
   return (
-    <>
-      {/* Delete Task Confirmation Modal */}
-      {renderDeleteModal()}
-      
-      <TaskDrawerSheet
-        open={isOpen}
-        onOpenChange={(open) => !open && handleDrawerClose()}
-      >
+    <TaskDrawerSheet
+      open={isOpen}
+      onOpenChange={(open) => !open && handleDrawerClose()}
+    >
       <div className="cursor-default bg-white dark:bg-gray-900 h-screen">
+        {/* Delete Task Confirmation Modal */}
+        {ModalPresets.deleteTask({
+          isOpen: showDeleteConfirmation,
+          onOpenChange: setShowDeleteConfirmation,
+          taskName: currentTask?.name,
+          onConfirm: confirmDeleteTask,
+          isLoading: isLoading
+        })}
+      
         <ScrollArea className="h-full">
           <Flex className="h-full">
             {/* Main Content */}
@@ -340,7 +367,7 @@ export default function ListTaskCardDrawer() {
                     </IconButton>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content>
-                    <DropdownMenu.Item>
+                    <DropdownMenu.Item onClick={handleDuplicateTask}>
                       <Copy size={14} />
                       Duplicate Task
                     </DropdownMenu.Item>
@@ -451,252 +478,139 @@ export default function ListTaskCardDrawer() {
               </Box>
 
               {/* Subtasks */}
-              <Box className="space-y-4">
-                <Flex align="center" justify="between">
-                  <Heading size="4" className="text-gray-600 dark:text-gray-400 uppercase text-sm font-semibold flex items-center gap-2">
-                    <CheckSquare size={16} />
+              <Box className="space-y-3">
+                <Flex justify="between">
+                  <Heading size="4" className="text-gray-600 dark:text-gray-400 uppercase text-sm font-semibold">
                     Subtasks ({completedSubTasks}/{totalSubTasks})
                   </Heading>
-                  {totalSubTasks > 0 && (
-                    <Badge variant="soft" color={progressPercentage === 100 ? "green" : "blue"}>
-                      {Math.round(progressPercentage)}% Complete
-                    </Badge>
-                  )}
-                </Flex>
-
-                {totalSubTasks > 0 && (
-                  <Box className="relative h-2 w-full bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <Box
-                      className={cn(
-                        "h-full transition-all duration-300",
-                        progressPercentage === 100 ? "bg-green-500" : "bg-blue-500"
-                      )}
-                      style={{ width: `${progressPercentage}%` }}
-                    />
-                  </Box>
-                )}
-
-                {currentTask.subTasks && currentTask.subTasks.length > 0 && (
-                  <Reorder.Group
-                    axis="y"
-                    values={[...currentTask.subTasks]}
-                    onReorder={handleReorderSubtasks}
-                    className="space-y-2"
+                  <Button 
+                    size="1" 
+                    variant="ghost" 
+                    onClick={() => setIsAddingSubtask(true)}
                   >
-                    {currentTask.subTasks.map((subtask) => (
-                      <SubtaskItem
-                        key={subtask.id}
-                        subtask={subtask}
-                        onToggle={(completed) => handleUpdateSubtask(subtask.id, completed)}
-                        onDelete={() => handleDeleteSubtask(subtask.id)}
-                      />
-                    ))}
-                  </Reorder.Group>
+                    <Plus size={14} />
+                    Add Subtask
+                  </Button>
+                </Flex>
+                
+                {/* Subtasks Progress */}
+                {totalSubTasks > 0 && (
+                  <Progress 
+                    value={progressPercentage} 
+                    className="h-1.5" 
+                    getValueLabel={() => `${completedSubTasks} of ${totalSubTasks} subtasks complete`}
+                  />
                 )}
-
-                {isAddingSubtask ? (
-                  <Box className="space-y-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border">
-                    <TextField.Root
+                
+                {/* New Subtask Form */}
+                {isAddingSubtask && (
+                  <Flex gap="2" className="mb-2">
+                    <TextField.Root 
                       value={newSubtaskName}
                       onChange={(e) => setNewSubtaskName(e.target.value)}
-                      placeholder="Enter subtask name..."
+                      placeholder="New subtask"
+                      className="flex-1"
                       autoFocus
                       onKeyDown={(e) => {
                         if (e.key === "Enter") handleAddSubtask()
                         if (e.key === "Escape") setIsAddingSubtask(false)
                       }}
                     />
-                    <Flex gap="2">
-                      <Button onClick={handleAddSubtask} size="1" disabled={!newSubtaskName.trim()}>
-                        <Plus size={14} />
-                        Add Subtask
-                      </Button>
-                      <Button onClick={() => setIsAddingSubtask(false)} size="1" variant="soft">
-                        Cancel
-                      </Button>
-                    </Flex>
-                  </Box>
-                ) : (
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => setIsAddingSubtask(true)}
-                    className="w-full justify-start border-2 border-dashed border-gray-300 dark:border-gray-600 py-6"
-                  >
-                    <Plus size={16} />
-                    Add Subtask
-                  </Button>
+                    <Button onClick={handleAddSubtask} disabled={!newSubtaskName.trim()}>
+                      Add
+                    </Button>
+                    <IconButton onClick={() => setIsAddingSubtask(false)}>
+                      <X size={14} />
+                    </IconButton>
+                  </Flex>
                 )}
-              </Box>
-
-              {/* Comments */}
-              <Box className="space-y-4">
-                <Flex justify="between" align="center">
-                  <Heading size="4" className="text-gray-600 dark:text-gray-400 uppercase text-sm font-semibold">
-                    Comments ({currentTask.commentsCount || 0})
-                  </Heading>
-                </Flex>
                 
-                {/* Comments List */}
-                <Box className="space-y-3">
-                  {currentTask.comments && currentTask.comments.length > 0 ? (
-                    currentTask.comments.map((comment) => (
-                      <Box 
-                        key={comment.id} 
-                        className="p-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600"
-                      >
-                        <Flex className="space-y-1">
-                          <Flex align="center" gap="2" className="mb-2">
-                            <div className="w-7 h-7 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-sm font-medium text-gray-600 dark:text-gray-300">
-                              {comment.createdBy.name.charAt(0).toUpperCase()}
-                            </div>
-                            <Box>
-                              <Text size="2" className="font-medium">{comment.createdBy.name}</Text>
-                              <Text size="1" className="text-gray-500">
-                                {new Date(comment.createdAt).toLocaleString()}
-                              </Text>
-                            </Box>
-                          </Flex>
-                          <Text className="pl-9">{comment.content}</Text>
-                        </Flex>
-                      </Box>
-                    ))
-                  ) : (
-                    <Text className="text-gray-500 italic text-center p-3">
-                      No comments yet
-                    </Text>
-                  )}
-                </Box>
-                
-                {/* Add Comment Form */}
-                <Box className="pt-2">
-                  <form onSubmit={handleAddComment}>
-                    <Box className="relative">
-                      <TextField.Root 
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        placeholder="Add a comment..."
-                        className="pr-24"
-                      />
-                      <Button 
-                        type="submit" 
-                        size="1"
-                        className="absolute right-1 top-1"
-                        disabled={!newComment.trim()}
-                      >
-                        Comment
-                      </Button>
-                    </Box>
-                  </form>
-                </Box>
-              </Box>
-            </Box>
-            
-            {/* Right Sidebar */}
-            <Box className="w-80 border-l border-gray-200 dark:border-gray-700 p-6 space-y-6 bg-gray-50 dark:bg-gray-800">
-              <Flex align="center" justify="between">
-                <Heading size="4">Task Details</Heading>
-                <IconButton onClick={handleDrawerClose} variant="ghost">
-                  <X size={16} />
-                </IconButton>
-              </Flex>
-
-              {/* Task Metadata */}
-              <Box className="space-y-4">
-                <Box>
-                  <Text size="2" className="font-semibold text-gray-600 dark:text-gray-400">
-                    Task ID
-                  </Text>
-                  <Text size="1" className="text-gray-500 font-mono">
-                    {currentTask.taskId}
-                  </Text>
-                </Box>
-                <Box>
-                  <Text size="2" className="font-semibold text-gray-600 dark:text-gray-400">
-                    Created
-                  </Text>
-                  <Text size="1" className="text-gray-500">
-                    {new Date(currentTask.createdAt).toLocaleString()}
-                  </Text>
-                </Box>
-                <Box>
-                  <Text size="2" className="font-semibold text-gray-600 dark:text-gray-400">
-                    Last Updated
-                  </Text>
-                  <Text size="1" className="text-gray-500">
-                    {new Date(currentTask.updatedAt).toLocaleString()}
-                  </Text>
-                </Box>
-                <Box>
-                  <Text size="2" className="font-semibold text-gray-600 dark:text-gray-400">
-                    Status Column
-                  </Text>
-                  <Badge 
-                    style={{ backgroundColor: currentColumn.color + "20", color: currentColumn.color }}
-                    size="1"
+                {/* Subtasks List */}
+                {currentTask.subTasks && currentTask.subTasks.length > 0 ? (
+                  <Reorder.Group 
+                    as="div" 
+                    className="space-y-1" 
+                    values={currentTask.subTasks} 
+                    onReorder={handleReorderSubtasks}
                   >
-                    {currentColumn.name}
-                  </Badge>
-                </Box>
+                    {currentTask.subTasks.map((subtask: Subtask) => (
+                      <SubtaskItem 
+                        key={subtask.id}
+                        subtask={subtask}
+                        onUpdate={handleUpdateSubtask}
+                        onDelete={handleDeleteSubtask}
+                      />
+                    ))}
+                  </Reorder.Group>
+                ) : (
+                  <Box className="text-center py-4 text-gray-500">
+                    <Text>No subtasks yet. Add one to track progress.</Text>
+                  </Box>
+                )}
               </Box>
             </Box>
           </Flex>
         </ScrollArea>
       </div>
     </TaskDrawerSheet>
-    </>
-  )
+  );
 }
 
-// Subtask component with drag and drop
-const SubtaskItem = memo(function SubtaskItem({
-  subtask,
-  onToggle,
-  onDelete,
-}: {
-  subtask: { id: string; name: string; completed: boolean }
-  onToggle: (completed: boolean) => void
-  onDelete: () => void
-}) {
-  const dragControls = useDragControls()
-  const y = useMotionValue(0)
+// Subtask Item component
+interface SubtaskItemProps {
+  subtask: { id: string; name: string; completed: boolean };
+  onUpdate: (id: string, completed: boolean) => void;
+  onDelete: (id: string) => void;
+}
 
+const SubtaskItem = ({ subtask, onUpdate, onDelete }: SubtaskItemProps) => {
+  const controls = useDragControls();
+  
   return (
     <Reorder.Item
       value={subtask}
-      style={{ y }}
+      dragControls={controls}
       dragListener={false}
-      dragControls={dragControls}
-      className="group flex items-center justify-between p-3 bg-white dark:bg-gray-700 rounded-lg border shadow-sm hover:shadow-md transition-shadow"
+      className="list-none"
     >
-      <Flex align="center" gap="3" className="flex-1">
-        <Checkbox
-          checked={subtask.completed}
-          onCheckedChange={(checked) => onToggle(!!checked)}
-        />
-        <Text className={cn(
-          "flex-1",
-          subtask.completed && "line-through text-gray-500"
-        )}>
-          {subtask.name}
-        </Text>
-      </Flex>
-      
-      <Flex align="center" gap="2" className="opacity-0 group-hover:opacity-100 transition-opacity">
-        <motion.div
-          whileTap={{ scale: 0.95 }}
-          onPointerDown={(e) => {
-            e.preventDefault()
-            dragControls.start(e)
-          }}
-          className="cursor-grab active:cursor-grabbing"
+      <Flex 
+        align="center" 
+        gap="2" 
+        className={cn(
+          "border border-gray-200 dark:border-gray-700 rounded p-2 bg-white dark:bg-gray-800",
+          subtask.completed && "opacity-70"
+        )}
+      >
+        <div 
+          className="cursor-grab touch-none" 
+          onPointerDown={(e) => controls.start(e)}
         >
           <GripVertical size={16} className="text-gray-400" />
-        </motion.div>
+        </div>
         
-        <IconButton onClick={onDelete} size="1" variant="ghost" className="text-red-500 hover:bg-red-50">
+        <Checkbox 
+          checked={subtask.completed} 
+          onCheckedChange={() => onUpdate(subtask.id, !subtask.completed)}
+        />
+        
+        <Text 
+          className={cn(
+            "flex-1", 
+            subtask.completed && "line-through text-gray-500"
+          )}
+        >
+          {subtask.name}
+        </Text>
+        
+        <IconButton 
+          size="1" 
+          variant="ghost" 
+          onClick={() => onDelete(subtask.id)}
+          className="opacity-0 group-hover:opacity-100"
+        >
           <Trash2 size={14} />
         </IconButton>
       </Flex>
     </Reorder.Item>
-  )
-})
+  );
+}

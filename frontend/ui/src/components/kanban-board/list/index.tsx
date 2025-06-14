@@ -21,8 +21,7 @@ import {
   useListView,
 } from "@incmix/store"
 import { AddTaskForm } from "../shared/add-task-form"
-
-const ListTaskCardDrawer = lazy(() => import("./task-card-drawer"))
+import { TaskCardDrawer } from "../shared/task-card-drawer"
 
 interface ListBoardProps {
   projectId?: string
@@ -477,9 +476,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
           )}
         </Box>
 
-        <Suspense fallback={<Box className="p-4">Loading drawer...</Box>}>
-          <ListTaskCardDrawer />
-        </Suspense>
+        <TaskCardDrawer viewType="list" projectId={projectId} />
       </Box>
 
       
