@@ -1,9 +1,9 @@
+import type { TaskDocType, TaskStatusDocType } from "utils/task-schema"
 import { database } from "../sql"
 import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
 import type {
   TaskCollections,
-  TaskDocType,
-  TaskStatusDocType,
+
 } from "../sql/types"
 
 /**

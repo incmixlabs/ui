@@ -5,7 +5,8 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { database } from "../sql"
 import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
 import type { TaskDataSchema } from "../sql/task-schemas"
-import type { TaskDocType, TaskStatusDocType } from "../sql/types"
+import type { TaskStatusDocType, TaskDocType } from "utils/task-schema"
+
 
 interface ProjectData {
   tasks: TaskDataSchema[]

@@ -28,6 +28,8 @@ import {
   ScrollArea,
   Separator,
   Tooltip,
+  Avatar,
+  Popover,
 } from "@incmix/ui"
 import {
   AlertCircle,
@@ -130,6 +132,55 @@ export function TaskCardDrawer({
   type Comment = { id: string; content: string; createdAt: number; createdBy: { id: string; name: string; image?: string } }
   type User = { id: string; name: string; image?: string }
   type Tag = { value: string; label: string; color: string }
+  
+  // Hard-coded members data (same as in task-actions-menu)
+  const members = [
+    {
+      id: "1",
+      value: "shane-black",
+      name: "Shane Black",
+      label: "Shane Black",
+      avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
+      position: "UI/UX Designer",
+      color: "blue",
+    },
+    {
+      id: "2",
+      value: "john-doe",
+      name: "John Doe", 
+      label: "John Doe",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
+      position: "Project Manager",
+      color: "amber",
+    },
+    {
+      id: "3",
+      value: "jane-smith",
+      name: "Jane Smith",
+      label: "Jane Smith", 
+      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b589?w=32&h=32&fit=crop&crop=face",
+      position: "Business Analyst",
+      color: "indigo",
+    },
+    {
+      id: "4",
+      value: "emily-johnson",
+      name: "Emily Johnson",
+      label: "Emily Johnson",
+      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face",
+      color: "cyan",
+      position: "Web Developer",
+    },
+    {
+      id: "5",
+      value: "micheal-brown",
+      label: "Michael Brown",
+      name: "Michael Brown",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=32&h=32&fit=crop&crop=face",
+      position: "Product Designer", 
+      color: "orange",
+    },
+  ]
 
   // Find the current task and its column
   const currentTask = taskId 
@@ -155,6 +206,7 @@ export function TaskCardDrawer({
   const [newTagColor, setNewTagColor] = useState("#3b82f6")
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
+  const [isMemberPickerOpen, setIsMemberPickerOpen] = useState(false)
 
   // Update local state when task changes
   useEffect(() => {
@@ -797,12 +849,72 @@ export function TaskCardDrawer({
 
             {/* Improved Assigned Users Section */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide">
-                Assigned To
-              </h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide">
+                  Assigned To
+                </h3>
+                <Popover.Root open={isMemberPickerOpen} onOpenChange={setIsMemberPickerOpen}>
+                  <Popover.Trigger>
+                    <button
+                      className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      <User className="h-4 w-4" />
+                      Assign User
+                    </button>
+                  </Popover.Trigger>
+                  <Popover.Content className="w-64 p-0" align="end">
+                    <div className="p-2 space-y-1 max-h-64 overflow-y-auto">
+                      {members.map((member) => {
+                        const isAssigned = currentTask.assignedTo?.find(u => u.id === member.id);
+                        return (
+                          <div
+                            key={member.id}
+                            className={`
+                              flex items-center gap-3 w-full p-3 rounded-md cursor-pointer transition-colors
+                              hover:bg-accent/50
+                              ${isAssigned ? 'bg-accent/50' : ''}
+                            `}
+                            onClick={() => {
+                              // Handle member toggle
+                              const isAssigned = currentTask.assignedTo?.find(u => u.id === member.id);
+                              let newAssignedTo;
+                              
+                              if (isAssigned) {
+                                newAssignedTo = currentTask.assignedTo.filter(u => u.id !== member.id);
+                              } else {
+                                newAssignedTo = [...(currentTask.assignedTo || []), {
+                                  id: member.id,
+                                  name: member.name,
+                                  image: member.avatar
+                                }];
+                              }
+                              
+                              handleUpdateTask({ assignedTo: newAssignedTo });
+                            }}
+                          >
+                            <Avatar 
+                              src={member.avatar} 
+                              name={member.name}
+                              className="w-6 h-6"
+                            />
+                            <div className="flex-1 flex flex-col">
+                              <p className="text-sm font-medium leading-none">{member.name}</p>
+                              <p className="text-xs text-muted-foreground">{member.position}</p>
+                            </div>
+                            {isAssigned && (
+                              <div className="w-2 h-2 bg-primary rounded-full" />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </Popover.Content>
+                </Popover.Root>
+              </div>
+
               <div className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900">
                 {currentTask.assignedTo && currentTask.assignedTo.length > 0 ? (
-                  <div className="flex flex-wrap gap-2 mb-3">
+                  <div className="flex flex-wrap gap-2">
                     {currentTask.assignedTo.map((user: User) => (
                       <div
                         key={user.id}
@@ -827,27 +939,11 @@ export function TaskCardDrawer({
                     ))}
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 text-gray-500 mb-3">
+                  <div className="flex items-center gap-2 text-gray-500">
                     <Users className="h-4 w-4" />
                     <span className="text-sm">No users assigned</span>
                   </div>
                 )}
-
-                <button
-                  onClick={() => {
-                    const mockUser = {
-                      id: crypto.randomUUID(),
-                      name: "Demo User",
-                      image: "/placeholder-user.svg"
-                    }
-                    const updatedUsers = [...(currentTask.assignedTo || []), mockUser]
-                    handleUpdateTask({ assignedTo: updatedUsers })
-                  }}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <User className="h-4 w-4" />
-                  Assign User
-                </button>
               </div>
             </div>
 
