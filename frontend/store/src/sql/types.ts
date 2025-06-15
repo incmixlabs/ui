@@ -1,9 +1,8 @@
 import type {
   ExtractDocumentTypeFromTypedRxJsonSchema,
-  RxCollection
+  RxCollection,
 } from "rxdb"
 import { toTypedRxJsonSchema } from "rxdb"
-import type { TaskDocType, TaskStatusDocType, TaskCollections } from "../utils/task-schema"
 
 // Task schemas have been moved to ../utils/task-schema.ts
 
@@ -351,7 +350,7 @@ export type DashboardDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
 >
 
 // TaskCollections type has been moved to ../utils/task-schema.ts
-export type { TaskCollections } from '../utils/task-schema'
+export type { TaskCollections } from "../utils/task-schema"
 
 export interface Collections {
   columns: RxCollection<ColumnDocType>
