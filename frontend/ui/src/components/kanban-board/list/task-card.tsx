@@ -33,6 +33,7 @@ import {
 } from "@incmix/store"
 import { Card } from "@incmix/ui/card"
 import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
+import { ModalPresets } from "../shared/confirmation-modal"
 import { cn } from "@utils"
 import {
   Box,
@@ -133,20 +134,26 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
     }
   }, [card.taskId, onUpdateTask])
 
+  // Modal state for task deletion
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+
+  // Opens the delete confirmation modal
   const handleDeleteTask = useCallback(async () => {
     if (!card.taskId) {
       console.error("Task ID is missing")
       return
     }
+    setShowDeleteConfirmation(true)
+  }, [card.taskId])
 
-    if (confirm(`Are you sure you want to delete "${card.name}"?`)) {
-      try {
-        await onDeleteTask(card.taskId)
-      } catch (error) {
-        console.error("Failed to delete task:", error)
-      }
+  // Confirm task deletion handler
+  const confirmDeleteTask = useCallback(async () => {
+    try {
+      await onDeleteTask(card.taskId)
+    } catch (error) {
+      console.error("Failed to delete task:", error)
     }
-  }, [card.taskId, card.name, onDeleteTask])
+  }, [card.taskId, onDeleteTask])
 
   const handleDuplicateTask = useCallback(async () => {
     // Implementation for task duplication could be added here
@@ -194,13 +201,22 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
   }
 
   return (
-    <Box
-      ref={outerRef}
-      className={`flex flex-shrink-0 flex-col gap-1 px-3 py-1 ${outerStyles[state.type] || ""}`}
-    >
-      {state.type === "is-over" && state.closestEdge === "top" && (
-        <ListTaskCardShadow dragging={state.dragging} />
-      )}
+    <>
+      {/* Delete Task Confirmation Modal */}
+      {ModalPresets.deleteTask({
+        isOpen: showDeleteConfirmation,
+        onOpenChange: setShowDeleteConfirmation,
+        taskName: card.name,
+        onConfirm: confirmDeleteTask
+      })}
+      
+      <Box
+        ref={outerRef}
+        className={`flex flex-shrink-0 flex-col gap-1 px-3 py-1 ${outerStyles[state.type] || ""}`}
+      >
+        {state.type === "is-over" && state.closestEdge === "top" && (
+          <ListTaskCardShadow dragging={state.dragging} />
+        )}
       
       <Card
         className={cn(
@@ -392,6 +408,7 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
         <ListTaskCardShadow dragging={state.dragging} />
       )}
     </Box>
+    </>
   )
 })
 

@@ -5,13 +5,16 @@ import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode"
 import {
   type TaskCollections,
   type TaskDocType,
+  taskSchemaLiteral,
+  taskStatusSchemaLiteral,
+} from "../utils/task-schema"
+
+import {
   columnSchemaLiteral,
   dashboardSchemaLiteral,
   dashboardTemplateSchemaLiteral,
   formProjectSchemaLiteral,
   projectSchemaLiteral,
-  taskSchemaLiteral,
-  taskStatusSchemaLiteral,
 } from "./types"
 
 import { getRxStorageIndexedDB } from "rxdb-premium/plugins/storage-indexeddb"

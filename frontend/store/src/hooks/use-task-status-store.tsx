@@ -1,5 +1,6 @@
 import type { Subscription } from "rxjs"
-import { type TaskStatusDocType, database } from "sql"
+import { database } from "sql"
+import type { TaskStatusDocType } from "utils/task-schema"
 import { create } from "zustand"
 import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
 

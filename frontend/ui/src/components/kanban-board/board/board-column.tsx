@@ -8,6 +8,7 @@ import {
 import { Ellipsis, Plus, Trash2, Edit3, GripVertical, Check, X } from "lucide-react"
 import { memo, useEffect, useRef, useState, useCallback } from "react"
 import invariant from "tiny-invariant"
+import { ConfirmationModal, ModalPresets } from "../shared/confirmation-modal"
 
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
@@ -55,8 +56,6 @@ type DragLocation = {
 }
 import { TaskDataSchema } from "@incmix/store"
 import { TaskCard, TaskCardShadow } from "./task-card"
-import { DeleteConfirmationModal, ErrorModal, ValidationModal } from "./confirmation-modal"
-
 type TColumnState =
   | {
       type: "is-card-over"
@@ -406,7 +405,7 @@ export const BoardColumn = memo(function BoardColumn({
     setIsDeleting(true)
     try {
       await onDeleteColumn(column.id)
-      setShowDeleteModal(false)
+      // Modal will close automatically via the preset
     } catch (error) {
       console.error("Failed to delete column:", error)
       setIsDeleting(false)
@@ -428,29 +427,28 @@ export const BoardColumn = memo(function BoardColumn({
   return (
     <div className="w-full select-none" ref={outerRef}>
       {/* Delete Confirmation Modal */}
-      <DeleteConfirmationModal
-        isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        title="Delete Column"
-        description={`Are you sure you want to delete the "${column.name}" column? This action cannot be undone.`}
-        isLoading={isDeleting}
-        onConfirm={confirmDeleteColumn}
-      />
+      {ModalPresets.deleteColumn({
+        isOpen: showDeleteModal,
+        onOpenChange: setShowDeleteModal,
+        columnName: column.name,
+        onConfirm: confirmDeleteColumn,
+        isLoading: isDeleting,
+      })}
       
       {/* Error Modal */}
-      <ErrorModal
-        isOpen={showErrorModal}
-        onClose={() => setShowErrorModal(false)}
-        title="Cannot Delete Column"
-        description="This column contains tasks. Please move or delete all tasks from this column before deleting it."
-      />
+      {ModalPresets.error({
+        isOpen: showErrorModal,
+        onOpenChange: setShowErrorModal,
+        title: "Cannot Delete Column",
+        description: "This column contains tasks. Please move or delete all tasks from this column before deleting it."
+      })}
       
       {/* Validation Error Modal */}
-      <ValidationModal
-        isOpen={showValidationModal}
-        onClose={() => setShowValidationModal(false)}
-        message={validationMessage}
-      />
+      {ModalPresets.validation({
+        isOpen: showValidationModal,
+        onOpenChange: setShowValidationModal,
+        message: validationMessage
+      })}
       
       <div
         className={`rounded-lg bg-gray-50 dark:bg-gray-900 transition-all duration-200 ${stateStyles[state.type]} flex flex-col`}

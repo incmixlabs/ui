@@ -4,7 +4,8 @@
 import { useMemo } from "react"
 import type { KanbanTask } from "view-types/kanban-view.types"
 import type { TaskDataSchema } from "../sql/task-schemas"
-import type { TaskStatusDocType } from "../sql/types"
+
+import type { TaskStatusDocType } from "utils/task-schema"
 import { useProjectData } from "./use-project-task-data"
 
 // Kanban-specific types

@@ -13,59 +13,27 @@ import {
   toast,
 } from "@incmix/ui"
 import { Plus, Palette, AlertCircle } from "lucide-react"
-import { useState, useEffect } from "react"
-
-// Accessibility utility functions
+import { useState } from "react"
 
 /**
- * Converts hex color to RGB
+ * Simple accessibility check for color contrast with background
+ * Returns true if the color is likely to have good contrast
  */
-function hexToRgb(hex: string): { r: number; g: number; b: number } {
-  // Remove # if present
-  hex = hex.replace(/^#/, '');
+function hasGoodContrast(hexColor: string): boolean {
+  // Simple check based on color brightness
+  // Formula: (R*299 + G*587 + B*114) / 1000
+  const hex = hexColor.replace(/^#/, '');
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
   
-  // Parse hex values
-  const bigint = parseInt(hex, 16);
-  const r = (bigint >> 16) & 255;
-  const g = (bigint >> 8) & 255;
-  const b = bigint & 255;
+  // Calculate brightness (higher means lighter)
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
   
-  return { r, g, b };
-}
-
-/**
- * Calculate relative luminance of a color (WCAG formula)
- */
-function calculateLuminance(color: { r: number; g: number; b: number }): number {
-  // Convert RGB to relative values
-  const rgb = [color.r, color.g, color.b].map(v => {
-    v /= 255;
-    return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
-  });
-  
-  // Calculate luminance
-  return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
-}
-
-/**
- * Calculate contrast ratio between two colors (WCAG formula)
- */
-function contrastRatio(color1: string, color2: string): number {
-  const l1 = calculateLuminance(hexToRgb(color1));
-  const l2 = calculateLuminance(hexToRgb(color2));
-  
-  // Calculate contrast ratio (lighter color / darker color)
-  const lighter = Math.max(l1, l2);
-  const darker = Math.min(l1, l2);
-  
-  return (lighter + 0.05) / (darker + 0.05);
-}
-
-/**
- * Check if a color meets WCAG AA standards for UI components (3:1 minimum)
- */
-function meetsWcagComponentContrast(color: string, background = "#FFFFFF"): boolean {
-  return contrastRatio(color, background) >= 3;
+  // Dark colors have better contrast on light backgrounds
+  // Light colors have better contrast on dark backgrounds
+  // A more nuanced implementation would compare with actual background
+  return brightness < 125;
 }
 
 interface CreateColumnFormProps {
@@ -98,12 +66,6 @@ export function CreateColumnForm({
     description: "",
     color: DEFAULT_COLORS[0].value,
   })
-  
-  // Get the background color based on current theme
-  // Default to white, but in a real app you'd get this from your theme context
-  const backgroundColor = "#FFFFFF" // Light mode
-  const darkBackgroundColor = "#111111" // Dark mode
-
   // Use the new useKanban hook
   const { createColumn } = useKanban(projectId)
 
@@ -151,14 +113,13 @@ export function CreateColumnForm({
   }
 
   const handleColorSelect = (color: string) => {
-    // Check color contrast against both light and dark backgrounds
-    const lightModeContrast = contrastRatio(color, backgroundColor);
-    const darkModeContrast = contrastRatio(color, darkBackgroundColor);
+    // Check color contrast using simplified function
+    const hasProperContrast = hasGoodContrast(color);
     
-    // Validate contrast (minimum 3:1 for UI components per WCAG 2.1 AA)
-    if (lightModeContrast < 3 || darkModeContrast < 3) {
+    // Validate contrast and set error if needed
+    if (!hasProperContrast) {
       setColorError(
-        `Low contrast: ${color.toUpperCase()} may be hard to see (light: ${lightModeContrast.toFixed(1)}:1, dark: ${darkModeContrast.toFixed(1)}:1). Consider a different color.`
+        `Low contrast: ${color.toUpperCase()} may be hard to see. Consider a darker color.`
       )
     } else {
       setColorError(null)
@@ -166,11 +127,6 @@ export function CreateColumnForm({
     
     setFormData((prev) => ({ ...prev, color }))
   }
-  
-  // Check initial color's contrast
-  useEffect(() => {
-    handleColorSelect(formData.color)
-  }, [])
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
@@ -239,11 +195,8 @@ export function CreateColumnForm({
               {/* Predefined Colors */}
               <Flex gap="2" wrap="wrap" className="mb-3">
                 {DEFAULT_COLORS.map((color) => {
-                  // Calculate contrast for the tooltip
-                  const lightContrast = contrastRatio(color.value, backgroundColor).toFixed(1);
-                  const darkContrast = contrastRatio(color.value, darkBackgroundColor).toFixed(1);
-                  const hasGoodContrast = meetsWcagComponentContrast(color.value, backgroundColor) && 
-                                         meetsWcagComponentContrast(color.value, darkBackgroundColor);
+                  // Check if the color has good contrast
+                  const properContrast = hasGoodContrast(color.value);
                   
                   return (
                     <button
@@ -256,19 +209,19 @@ export function CreateColumnForm({
                           ? "border-gray-800 dark:border-gray-200 ring-2 ring-gray-400"
                           : "border-gray-300 dark:border-gray-600"
                       } ${
-                        !hasGoodContrast ? "opacity-70" : ""
+                        !properContrast ? "opacity-70" : ""
                       }`}
                       style={{ backgroundColor: color.value }}
-                      title={`${color.name} - Contrast ratio: ${lightContrast}:1 (light), ${darkContrast}:1 (dark)`}
+                      title={`${color.name} - ${properContrast ? "Good contrast" : "May have contrast issues"}`}
                     >
                       {formData.color === color.value && (
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className="h-2 w-2 rounded-full bg-white"></div>
                         </div>
                       )}
-                      {!hasGoodContrast && (
+                      {!properContrast && (
                         <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-amber-400 border border-white" 
-                             title="Low contrast with background">
+                             title="May have contrast issues">
                         </div>
                       )}
                     </button>
