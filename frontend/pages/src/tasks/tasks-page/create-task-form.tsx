@@ -1,162 +1,269 @@
 "use client"
 
-import { useAuth } from "@auth"
-import type { TaskCollections } from "@incmix/store"
+import { type KanbanColumn, useKanban } from "@incmix/store"
 import {
   Button,
   Dialog,
   Flex,
-  ReactiveButton,
   Select,
+  TextArea,
   TextField,
   toast,
 } from "@incmix/ui/base"
-import type { Task, TaskStatus } from "@incmix/utils/types"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { nanoid } from "nanoid"
-import type React from "react"
+import { Plus } from "lucide-react"
 import { useState } from "react"
-import type { RxDatabase } from "rxdb"
-import { useRxDB } from "rxdb-hooks"
 
-interface CreateTaskProps
-  extends React.ComponentPropsWithoutRef<typeof Dialog.Root> {
+interface CreateTaskFormProps {
   projectId: string
-  onSuccess?: (data: Task) => void
+  columns: KanbanColumn[]
+  onSuccess?: () => void
 }
 
 export function CreateTaskForm({
-  onSuccess,
   projectId,
-  ...props
-}: CreateTaskProps) {
-  const { authUser } = useAuth()
+  columns,
+  onSuccess,
+}: CreateTaskFormProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const db: RxDatabase<TaskCollections> = useRxDB()
-  const columnsQuery = useQuery({
-    queryKey: ["columns", projectId],
-    queryFn: () => {
-      return db.columns
-        .find({
-          selector: {
-            projectId,
-          },
-        })
-        .exec()
-    },
-    refetchOnMount: true,
+  const [isLoading, setIsLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    columnId: "",
+    priority: "medium" as const,
+    startDate: "",
+    endDate: "",
   })
 
-  const { mutate, isPending, isSuccess, reset } = useMutation({
-    mutationFn: (data: {
-      content: string
-      projectId: string
-      columnId: string
-      taskOrder: number
-      assignedTo: string
-      status: TaskStatus
-    }) => {
-      return db.tasks.insert({
-        id: nanoid(7),
-        content: data.content,
-        projectId: data.projectId,
-        columnId: data.columnId,
-        taskOrder: data.taskOrder,
-        assignedTo: data.assignedTo,
-        status: data.status,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        createdBy: authUser?.id ?? "",
-        updatedBy: authUser?.id ?? "",
-      })
-    },
-    onSuccess: (data) => {
-      setIsOpen(false)
-      if (onSuccess)
-        onSuccess({
-          ...data,
-          createdAt: new Date(data.createdAt),
-          updatedAt: new Date(data.updatedAt),
-        })
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    },
-  })
+  // Get the createTask function from the hook
+  const { createTask } = useKanban(projectId)
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const formdata = new FormData(e.currentTarget)
-    if (authUser)
-      mutate({
-        assignedTo: authUser.id,
-        columnId: formdata.get("columnId") as string,
-        content: formdata.get("content") as string,
-        projectId,
-        status: "todo",
-        taskOrder: 0,
+
+    if (!formData.name.trim()) {
+      toast.error("Task name is required")
+      return
+    }
+
+    if (!formData.columnId) {
+      toast.error("Please select a column")
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      await createTask(formData.columnId, {
+        name: formData.name,
+        description: formData.description,
+        priority: formData.priority,
+        startDate: formData.startDate || new Date().toISOString(),
+        endDate: formData.endDate,
+        completed: false,
+        labelsTags: [],
+        attachments: [],
+        assignedTo: [],
+        subTasks: [],
+        comments: [],
+        commentsCount: 0,
       })
+
+      // Reset form
+      setFormData({
+        name: "",
+        description: "",
+        columnId: "",
+        priority: "medium",
+        startDate: "",
+        endDate: "",
+      })
+
+      setIsOpen(false)
+      toast.success("Task created successfully!")
+      onSuccess?.()
+    } catch (error) {
+      console.error("Failed to create task:", error)
+      toast.error("Failed to create task")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
   }
 
   return (
-    <Dialog.Root
-      {...props}
-      open={isOpen}
-      onOpenChange={(open) => {
-        setIsOpen(open)
-        reset()
-      }}
-    >
+    <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
       <Dialog.Trigger>
-        <Button>Add Task</Button>
+        <Button variant="outline" size="2">
+          <Plus size={16} />
+          Add Task
+        </Button>
       </Dialog.Trigger>
-      <Dialog.Content>
+
+      <Dialog.Content className="max-w-md">
         <Dialog.Header>
-          <Dialog.Title>Add New Task</Dialog.Title>
-          <Dialog.Description>Add New Task to Board</Dialog.Description>
+          <Dialog.Title>Create New Task</Dialog.Title>
+          <Dialog.Description>
+            Add a new task to your project board
+          </Dialog.Description>
         </Dialog.Header>
 
         <form onSubmit={handleSubmit}>
           <Flex direction="column" gap="4">
-            <TextField.Root name="content" placeholder="Task Title" />
-            <Select.Root name="columnId">
-              <Select.Trigger
-                className="w-full max-w-96"
-                placeholder={
-                  columnsQuery.isLoading ? "Loading" : "Select Column"
-                }
+            {/* Task Name */}
+            <div>
+              <label
+                htmlFor="task-name"
+                className="mb-1 block font-medium text-sm"
+              >
+                Task Name *
+              </label>
+              <TextField.Root
+                id="task-name"
+                value={formData.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+                placeholder="Enter task name"
+                required
               />
-              <Select.Content>
-                {columnsQuery.isLoading && <div>Loading...</div>}
-                {columnsQuery.isError && <div>Error fetching columns</div>}
-                <Select.Item value={"none"}>None</Select.Item>
-                {columnsQuery.data?.map((c) => (
-                  <Select.Item key={`column_${c.id}`} value={c.id}>
-                    {c.label}
-                  </Select.Item>
-                ))}
-              </Select.Content>
-            </Select.Root>
+            </div>
 
-            <ReactiveButton
-              type="submit"
-              color="blue"
-              loading={isPending}
-              success={isSuccess}
-              className="w-full"
-            >
-              Create
-            </ReactiveButton>
+            {/* Description */}
+            <div>
+              <label
+                htmlFor="task-description"
+                className="mb-1 block font-medium text-sm"
+              >
+                Description
+              </label>
+              <TextArea
+                id="task-description"
+                value={formData.description}
+                onChange={(e) =>
+                  handleInputChange("description", e.target.value)
+                }
+                placeholder="Enter task description (optional)"
+                rows={3}
+              />
+            </div>
+
+            {/* Column Selection */}
+            <div>
+              <label
+                htmlFor="column-trigger"
+                className="mb-1 block font-medium text-sm"
+              >
+                Column *
+              </label>
+              <Select.Root
+                value={formData.columnId}
+                onValueChange={(value) => handleInputChange("columnId", value)}
+                required
+              >
+                <Select.Trigger
+                  id="column-trigger"
+                  placeholder="Select a column"
+                >
+                  {formData.columnId &&
+                    columns.find((col) => col.id === formData.columnId)?.name}
+                </Select.Trigger>
+                <Select.Content>
+                  {columns.map((column) => (
+                    <Select.Item key={column.id} value={column.id}>
+                      <Flex align="center" gap="2">
+                        <div
+                          className="h-3 w-3 rounded-full"
+                          style={{ backgroundColor: column.color }}
+                        />
+                        {column.name}
+                      </Flex>
+                    </Select.Item>
+                  ))}
+                </Select.Content>
+              </Select.Root>
+            </div>
+
+            {/* Priority */}
+            <div>
+              <label
+                htmlFor="priority-trigger"
+                className="mb-1 block font-medium text-sm"
+              >
+                Priority
+              </label>
+              <Select.Root
+                value={formData.priority}
+                onValueChange={(value) => handleInputChange("priority", value)}
+              >
+                <Select.Trigger id="priority-trigger" />
+                <Select.Content>
+                  <Select.Item value="low">Low</Select.Item>
+                  <Select.Item value="medium">Medium</Select.Item>
+                  <Select.Item value="high">High</Select.Item>
+                  <Select.Item value="urgent">Urgent</Select.Item>
+                </Select.Content>
+              </Select.Root>
+            </div>
+
+            {/* Dates */}
+            <Flex gap="2">
+              <div className="flex-1">
+                <label
+                  htmlFor="task-start-date"
+                  className="mb-1 block font-medium text-sm"
+                >
+                  Start Date
+                </label>
+                <TextField.Root
+                  id="task-start-date"
+                  type="date"
+                  value={
+                    formData.startDate ? formData.startDate.split("T")[0] : ""
+                  }
+                  onChange={(e) => {
+                    const date = e.target.value
+                      ? new Date(e.target.value).toISOString()
+                      : ""
+                    handleInputChange("startDate", date)
+                  }}
+                />
+              </div>
+
+              <div className="flex-1">
+                <label
+                  htmlFor="task-end-date"
+                  className="mb-1 block font-medium text-sm"
+                >
+                  End Date
+                </label>
+                <TextField.Root
+                  id="task-end-date"
+                  type="date"
+                  value={formData.endDate ? formData.endDate.split("T")[0] : ""}
+                  onChange={(e) => {
+                    const date = e.target.value
+                      ? new Date(e.target.value).toISOString()
+                      : ""
+                    handleInputChange("endDate", date)
+                  }}
+                />
+              </div>
+            </Flex>
           </Flex>
-        </form>
 
-        <Dialog.Footer>
-          <Dialog.Close>
-            <Button variant="soft" color="gray">
-              Cancel
+          <Dialog.Footer>
+            <Dialog.Close>
+              <Button variant="soft" color="gray">
+                Cancel
+              </Button>
+            </Dialog.Close>
+            <Button type="submit" loading={isLoading}>
+              Create Task
             </Button>
-          </Dialog.Close>
-        </Dialog.Footer>
+          </Dialog.Footer>
+        </form>
       </Dialog.Content>
     </Dialog.Root>
   )

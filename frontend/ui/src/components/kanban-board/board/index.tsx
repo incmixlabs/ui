@@ -1,389 +1,371 @@
+// components/board/index.tsx - Fixed drag and drop smoothness and horizontal scrolling
+import { useRef, useEffect, useState, useCallback } from "react"
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
-import { unsafeOverflowAutoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/unsafe-overflow/element"
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge"
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
-import type { CleanupFn } from "@atlaskit/pragmatic-drag-and-drop/dist/types/internal-types"
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
-import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder"
-import { bindAll } from "bind-event-listener"
-import { Suspense, lazy } from "react"
-import { useEffect, useRef, useState } from "react"
-import invariant from "tiny-invariant"
+import { 
+  Box, 
+  Button, 
+  Flex, 
+  Text, 
+  IconButton, 
+  Heading,
+  DropdownMenu 
+} from "@incmix/ui"
+import { 
+  Plus, 
+  Loader2, 
+  Settings, 
+  MoreVertical,
+  RefreshCw
+} from "lucide-react"
+import { isCardData, isCardDropTargetData, isColumnData, isDraggingACard, KanbanColumn, useKanban } from "@incmix/store"
+
 import { BoardColumn } from "./board-column"
-import { initialData } from "../data"
-import { blockBoardPanningAttr } from "../data-attributes"
+import { AddTaskForm } from "../shared/add-task-form"
+import { TaskCardDrawer } from "./task-card-drawer"
+import { CreateColumnForm } from "./create-column-form"
 
-import { Box } from "@incmix/ui"
-
-// Dynamically import heavy component
-const TaskCardDrawer = lazy(() => import("./task-card-drawer"))
-import type { TCard, TColumn, TCustomBoard } from "../types"
-import {
-  isCardData,
-  isCardDropTargetData,
-  isColumnData,
-  isDraggingACard,
-  isDraggingAColumn,
-} from "../types"
-
-function convertCustomDataToBoardFormat(customData: TCustomBoard) {
-  const columns = customData.map((column) => {
-    // Convert tasks to cards
-    const cards: TCard[] = column.tasks.map((task) => ({
-      ...task,
-      id: task.id,
-    }))
-
-    return {
-      id: `column:${column.id}`,
-      title: column.title,
-      cards,
-    }
-  })
-
-  return {
-    columns,
-  }
+interface BoardProps {
+  projectId?: string
+  onTaskOpen?: (taskId: string) => void
 }
 
-export function Board() {
-  const boardData = convertCustomDataToBoardFormat(initialData)
-
-  const [data, setData] = useState(boardData)
+export function Board({ 
+  projectId = "default-project",
+  onTaskOpen
+}: BoardProps) {
   const scrollableRef = useRef<HTMLDivElement | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  
+  // Local state for optimistic updates
+  const [optimisticColumns, setOptimisticColumns] = useState<KanbanColumn[]>([])
+  
+  // Use the new useKanban hook
+  const {
+    columns,
+    isLoading,
+    error,
+    createTask,
+    updateTask,
+    deleteTask,
+    moveTask,
+    createColumn,
+    updateColumn,
+    deleteColumn,
+    refetch,
+    clearError,
+    projectStats
+  } = useKanban(projectId)
 
+  // Update optimistic state when real data changes
+  useEffect(() => {
+    if (!isDragging) {
+      setOptimisticColumns(columns)
+    }
+  }, [columns, isDragging])
+
+  // Use optimistic columns during drag, real columns otherwise
+  const displayColumns = isDragging ? optimisticColumns : columns
+
+  // Optimistic drag and drop implementation
   useEffect(() => {
     const element = scrollableRef.current
-    invariant(element)
+    if (!element || isLoading || columns.length === 0) {
+      return
+    }
+
     return combine(
       monitorForElements({
         canMonitor: isDraggingACard,
+        onDragStart() {
+          setIsDragging(true)
+          setOptimisticColumns([...columns]) // Initialize optimistic state
+        },
         onDrop({ source, location }) {
-          // setIsChecking(source);
-
           const dragging = source.data
           if (!isCardData(dragging)) {
+            setIsDragging(false)
             return
           }
 
-          const innerMost = location.current.dropTargets[0]
-
-          if (!innerMost) {
+          const destination = location.current.dropTargets[0]
+          if (!destination) {
+            setIsDragging(false)
             return
           }
-          const dropTargetData = innerMost.data
-          const homeColumnIndex = data.columns.findIndex(
-            (column) => column.id === dragging.columnId
-          )
-          const home: TColumn | undefined = data.columns[homeColumnIndex]
 
-          if (!home) {
+          const dropTargetData = destination.data
+
+          // Find the task being dragged
+          const sourceColumn = optimisticColumns.find(col => col.id === dragging.columnId)
+          if (!sourceColumn) {
+            setIsDragging(false)
             return
           }
-          const cardIndexInHome = home.cards.findIndex(
-            (card) => card.id === dragging.card.id
-          )
 
-          // dropping on a card
+          const taskIndex = sourceColumn.tasks.findIndex(task => task.taskId === dragging.card.taskId)
+          if (taskIndex === -1) {
+            setIsDragging(false)
+            return
+          }
+
+          let targetColumnId: string
+          let targetIndex: number
+          let newOptimisticColumns = [...optimisticColumns]
+
           if (isCardDropTargetData(dropTargetData)) {
-            const destinationColumnIndex = data.columns.findIndex(
-              (column) => column.id === dropTargetData.columnId
-            )
-            const destination = data.columns[destinationColumnIndex]
-            // reordering in home column
-            if (home === destination) {
-              const cardFinishIndex = home.cards.findIndex(
-                (card) => card.id === dropTargetData.card.id
-              )
+            // Dropping on another card
+            const destColumn = optimisticColumns.find(col => col.id === dropTargetData.columnId)
+            if (!destColumn) {
+              setIsDragging(false)
+              return
+            }
 
-              // could not find cards needed
-              if (cardIndexInHome === -1 || cardFinishIndex === -1) {
-                return
-              }
-
-              // no change needed
-              if (cardIndexInHome === cardFinishIndex) {
+            targetColumnId = destColumn.id
+            
+            if (sourceColumn.id === destColumn.id) {
+              // Same column reorder - update optimistically
+              const targetTaskIndex = destColumn.tasks.findIndex(task => task.taskId === dropTargetData.card.taskId)
+              if (targetTaskIndex === -1 || targetTaskIndex === taskIndex) {
+                setIsDragging(false)
                 return
               }
 
               const closestEdge = extractClosestEdge(dropTargetData)
+              if (!closestEdge) {
+                setIsDragging(false)
+                return
+              }
 
               const reordered = reorderWithEdge({
                 axis: "vertical",
-                list: home.cards,
-                startIndex: cardIndexInHome,
-                indexOfTarget: cardFinishIndex,
+                list: sourceColumn.tasks,
+                startIndex: taskIndex,
+                indexOfTarget: targetTaskIndex,
                 closestEdgeOfTarget: closestEdge,
               })
 
-              const updated: TColumn = {
-                ...home,
-                cards: reordered,
-              }
-              const columns = Array.from(data.columns)
-              columns[homeColumnIndex] = updated
+              // Update optimistic state immediately
+              newOptimisticColumns = newOptimisticColumns.map(col => 
+                col.id === sourceColumn.id 
+                  ? { ...col, tasks: reordered }
+                  : col
+              )
+              setOptimisticColumns(newOptimisticColumns)
 
-              setData((prevData) => {
-                const updatedColumns = [...prevData.columns]
-                updatedColumns[homeColumnIndex] = updated
+              // Update backend (this will eventually update the real state)
+              const newIndex = reordered.findIndex(t => t.taskId === dragging.card.taskId)
+              moveTask(dragging.card.taskId, destColumn.id, newIndex).finally(() => {
+                setIsDragging(false)
+              })
+              return
+            } else {
+              // Different column
+              const targetTaskIndex = destColumn.tasks.findIndex(task => task.taskId === dropTargetData.card.taskId)
+              const closestEdge = extractClosestEdge(dropTargetData)
+              targetIndex = closestEdge === "bottom" ? targetTaskIndex + 1 : targetTaskIndex
+            }
+          } else if (isColumnData(dropTargetData)) {
+            // Dropping on column
+            const destColumn = optimisticColumns.find(col => col.id === dropTargetData.column.id)
+            if (!destColumn) {
+              setIsDragging(false)
+              return
+            }
+            targetColumnId = destColumn.id
+            targetIndex = destColumn.tasks.length
+          } else {
+            setIsDragging(false)
+            return
+          }
 
+          // Cross-column move - update optimistically
+          if (targetColumnId !== sourceColumn.id) {
+            const taskToMove = sourceColumn.tasks[taskIndex]
+            
+            // Update optimistic state immediately
+            newOptimisticColumns = newOptimisticColumns.map(col => {
+              if (col.id === sourceColumn.id) {
                 return {
-                  ...prevData,
-                  columns: updatedColumns,
+                  ...col,
+                  tasks: col.tasks.filter((_, i) => i !== taskIndex)
                 }
-              })
-              return
-            }
-
-            // moving card from one column to another
-
-            // unable to find destination
-            if (!destination) {
-              return
-            }
-
-            const indexOfTarget = destination.cards.findIndex(
-              (card) => card.id === dropTargetData.card.id
-            )
-
-            const closestEdge = extractClosestEdge(dropTargetData)
-            const finalIndex =
-              closestEdge === "bottom" ? indexOfTarget + 1 : indexOfTarget
-
-            // remove card from home list
-            const homeCards = Array.from(home.cards)
-            homeCards.splice(cardIndexInHome, 1)
-
-            // insert into destination list
-            const destinationCards = Array.from(destination.cards)
-            destinationCards.splice(finalIndex, 0, dragging.card)
-
-            const columns = Array.from(data.columns)
-            columns[homeColumnIndex] = {
-              ...home,
-              cards: homeCards,
-            }
-            columns[destinationColumnIndex] = {
-              ...destination,
-              cards: destinationCards,
-            }
-            setData((prevData) => ({ ...prevData, columns }))
-            return
-          }
-
-          // dropping onto a column, but not onto a card
-          if (isColumnData(dropTargetData)) {
-            const destinationColumnIndex = data.columns.findIndex(
-              (column) => column.id === dropTargetData.column.id
-            )
-            const destination = data.columns[destinationColumnIndex]
-
-            if (!destination) {
-              return
-            }
-
-            // dropping on home
-            if (home === destination) {
-              // move to last position
-              const reordered = reorder({
-                list: home.cards,
-                startIndex: cardIndexInHome,
-                finishIndex: home.cards.length - 1,
-              })
-
-              const updated: TColumn = {
-                ...home,
-                cards: reordered,
+              } else if (col.id === targetColumnId) {
+                const newTasks = [...col.tasks]
+                newTasks.splice(targetIndex, 0, { ...taskToMove, columnId: targetColumnId })
+                return {
+                  ...col,
+                  tasks: newTasks
+                }
               }
-              const columns = Array.from(data.columns)
-              columns[homeColumnIndex] = updated
-              setData({ ...data, columns })
-              return
-            }
+              return col
+            })
+            setOptimisticColumns(newOptimisticColumns)
 
-            console.log("moving card to another column")
-
-            // remove card from home list
-
-            const homeCards = Array.from(home.cards)
-            homeCards.splice(cardIndexInHome, 1)
-
-            // insert into destination list
-            const destinationCards = Array.from(destination.cards)
-            destinationCards.splice(destination.cards.length, 0, dragging.card)
-
-            const columns = Array.from(data.columns)
-            columns[homeColumnIndex] = {
-              ...home,
-              cards: homeCards,
-            }
-            columns[destinationColumnIndex] = {
-              ...destination,
-              cards: destinationCards,
-            }
-            setData({ ...data, columns })
-            return
+            // Update backend
+            moveTask(dragging.card.taskId, targetColumnId, targetIndex).finally(() => {
+              setIsDragging(false)
+            })
+          } else {
+            setIsDragging(false)
           }
         },
       }),
-      // monitorForElements({
-      //   canMonitor: isDraggingAColumn,
-      //   onDrop({ source, location }) {
-      //     setIsChecking(source);
-      //     const dragging = source.data;
-      //     if (!isColumnData(dragging)) {
-      //       return;
-      //     }
-
-      //     const innerMost = location.current.dropTargets[0];
-
-      //     if (!innerMost) {
-      //       return;
-      //     }
-      //     const dropTargetData = innerMost.data;
-
-      //     if (!isColumnData(dropTargetData)) {
-      //       return;
-      //     }
-
-      //     const homeIndex = data.columns.findIndex((column) => column.id === dragging.column.id);
-      //     const destinationIndex = data.columns.findIndex(
-      //       (column) => column.id === dropTargetData.column.id,
-      //     );
-
-      //     if (homeIndex === -1 || destinationIndex === -1) {
-      //       return;
-      //     }
-
-      //     if (homeIndex === destinationIndex) {
-      //       return;
-      //     }
-
-      //     const reordered = reorder({
-      //       list: data.columns,
-      //       startIndex: homeIndex,
-      //       finishIndex: destinationIndex,
-      //     });
-      //     setData({ ...data, columns: reordered });
-      //   },
-      // }),
       autoScrollForElements({
-        canScroll({ source }) {
-          return isDraggingACard({ source }) || isDraggingAColumn({ source })
-        },
+        canScroll: ({ source }) => isDraggingACard({ source }),
         element,
-      }),
-      unsafeOverflowAutoScrollForElements({
-        element,
-        canScroll({ source }) {
-          return isDraggingACard({ source }) || isDraggingAColumn({ source })
-        },
-        getOverflow() {
-          return {
-            forLeftEdge: {
-              top: 1000,
-              left: 1000,
-              bottom: 1000,
-            },
-            forRightEdge: {
-              top: 1000,
-              right: 1000,
-              bottom: 1000,
-            },
-          }
-        },
       })
     )
-  }, [data, setData])
+  }, [optimisticColumns, moveTask, isDragging])
 
-  // Panning the board
-  useEffect(() => {
-    let cleanupActive: CleanupFn | null = null
-    const scrollable = scrollableRef.current
-    invariant(scrollable)
+  // Handle refresh
+  const handleRefresh = useCallback(() => {
+    refetch()
+  }, [refetch])
 
-    function begin({ startX }: { startX: number }) {
-      let lastX = startX
+  if (isLoading) {
+    return (
+      <Box className="flex items-center justify-center h-full">
+        <Flex align="center" gap="2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <Text>Loading board...</Text>
+        </Flex>
+      </Box>
+    )
+  }
 
-      const cleanupEvents = bindAll(
-        window,
-        [
-          {
-            type: "pointermove",
-            listener(event) {
-              const currentX = event.clientX
-              const diffX = lastX - currentX
-
-              lastX = currentX
-              scrollable?.scrollBy({ left: diffX })
-            },
-          },
-          ...(
-            [
-              "pointercancel",
-              "pointerup",
-              "pointerdown",
-              "keydown",
-              "resize",
-              "click",
-              "visibilitychange",
-            ] as const
-          ).map((eventName) => ({
-            type: eventName,
-            listener: () => cleanupEvents(),
-          })),
-        ],
-
-        { capture: true }
-      )
-
-      cleanupActive = cleanupEvents
-    }
-
-    const cleanupStart = bindAll(scrollable, [
-      {
-        type: "pointerdown",
-        listener(event) {
-          if (!(event.target instanceof HTMLElement)) {
-            return
-          }
-          // ignore interactive elements
-          if (event.target.closest(`[${blockBoardPanningAttr}]`)) {
-            return
-          }
-
-          begin({ startX: event.clientX })
-        },
-      },
-    ])
-
-    return function cleanupAll() {
-      cleanupStart()
-      cleanupActive?.()
-    }
-  }, [])
+  if (error) {
+    return (
+      <Box className="flex items-center justify-center h-full">
+        <Flex direction="column" align="center" gap="4">
+          <Text className="text-red-500">Error: {error}</Text>
+          <Button onClick={clearError} variant="outline">
+            <RefreshCw size={16} />
+            Retry
+          </Button>
+        </Flex>
+      </Box>
+    )
+  }
 
   return (
-    <>
-      <Box
-        className={`flex w-full gap-6 h-full overflow-hidden`}
-        ref={scrollableRef}
-      >
-        <Box
-          className={`flex flex-row gap-4 2xl:gap-7`}
-        >
-          {data.columns.map((column) => (
-            <BoardColumn
-              key={column.id}
-              column={column}
-            />
-          ))}
-        </Box>
-        <Suspense fallback={<Box className="p-4">Loading drawer...</Box>}>
-          <TaskCardDrawer/>
-        </Suspense>
+    <Box className="w-full">
+      {/* Fixed Board Header - Always visible, doesn't scroll horizontally */}
+      <Box className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+        <Flex direction="column" gap="4" className="p-4">
+          <Flex justify="between" align="center">
+            <Heading size="6">Project Board</Heading>
+            
+            <Flex align="center" gap="2">
+              {/* Global Add Task Button - Always visible */}
+
+
+              {/* Board Actions */}
+              <IconButton variant="ghost" onClick={handleRefresh}>
+                <RefreshCw size={16} />
+              </IconButton>
+
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger>
+                  <IconButton variant="ghost">
+                    <MoreVertical size={16} />
+                  </IconButton>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content>
+                  <DropdownMenu.Item onClick={handleRefresh}>
+                    <RefreshCw size={14} />
+                    Refresh Board
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item>
+                    <Settings size={14} />
+                    Board Settings
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
+            </Flex>
+          </Flex>
+
+          {/* Board Stats */}
+          <Flex gap="6" className="text-sm text-gray-600 dark:text-gray-400">
+            <Text>
+              {projectStats.totalColumns} column{projectStats.totalColumns !== 1 ? "s" : ""}
+            </Text>
+            <Text>
+              {projectStats.totalTasks} task{projectStats.totalTasks !== 1 ? "s" : ""}
+            </Text>
+            <Text>
+              {projectStats.completedTasks} completed
+            </Text>
+            {projectStats.overdueTasks > 0 && (
+              <Text className="text-red-600">
+                {projectStats.overdueTasks} overdue
+              </Text>
+            )}
+            {projectStats.urgentTasks > 0 && (
+              <Text className="text-orange-600">
+                {projectStats.urgentTasks} urgent
+              </Text>
+            )}
+          </Flex>
+        </Flex>
       </Box>
-    </>
+
+      {/* Columns area - Horizontal scroll only, natural height growth */}
+      <Box className="w-full">
+        <div 
+          className="w-full overflow-x-auto"
+          ref={scrollableRef}
+        >
+          {/* Columns container - Natural height, horizontal scroll */}
+          <div className="p-4 flex gap-6" style={{ width: 'max-content' }}>
+            {/* Kanban Columns */}
+            {displayColumns.map((column) => (
+              <div 
+                key={column.id} 
+                className="w-80 flex-shrink-0"
+              >
+                <BoardColumn 
+                  column={column}
+                  onCreateTask={createTask}
+                  onUpdateTask={updateTask}
+                  onDeleteTask={deleteTask}
+                  onUpdateColumn={updateColumn}
+                  onDeleteColumn={deleteColumn}
+                  isDragging={isDragging}
+                  onTaskOpen={onTaskOpen}
+                />
+              </div>
+            ))}
+            
+            {/* Add Column */}
+            <div className="w-80 flex-shrink-0">
+              <Box className="min-h-[500px] rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
+                <Flex 
+                  align="center" 
+                  justify="center" 
+                  className="h-full p-4"
+                  direction="column"
+                  gap="4"
+                >
+                  <CreateColumnForm 
+                    projectId={projectId}
+                    onSuccess={handleRefresh}
+                  />
+                  <Text size="2" className="text-gray-500 text-center max-w-48">
+                    Create a new status column to organize your workflow
+                  </Text>
+                </Flex>
+              </Box>
+            </div>
+          </div>
+        </div>
+      </Box>
+
+      {/* Task Drawer */}
+      <TaskCardDrawer />
+    </Box>
   )
 }

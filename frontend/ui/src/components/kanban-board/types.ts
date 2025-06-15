@@ -1,16 +1,127 @@
-// import type { AvatarProps } from "@incmix-ui/avatar"
+import { TaskDataSchema } from "@incmix/store"
+
+
+// Import your existing RxDB-based types
+export interface KanbanColumn {
+  id: string
+  projectId: string
+  name: string
+  color: string
+  order: number
+  description?: string
+  isDefault?: boolean
+  createdAt: number
+  updatedAt: number
+  createdBy: {
+    id: string
+    name: string
+    image?: string
+  }
+  updatedBy: {
+    id: string
+    name: string
+    image?: string
+  }
+  tasks: KanbanTask[]
+  // Computed properties from useKanban hook
+  completedTasksCount: number
+  totalTasksCount: number
+  progressPercentage: number
+}
+
+// Making most properties optional for mock data compatibility
+export interface KanbanTask extends Partial<Omit<TaskDataSchema, 'attachments' | 'labelsTags' | 'createdBy' | 'assignedTo' | 'subTasks' | 'updatedBy' | 'completed' | 'priority'>> {
+  // Make completed optional
+  completed?: boolean
+
+  // Make priority optional
+  priority?: 'low' | 'medium' | 'high' | 'urgent'
+  // Make attachments mutable to match the UI component expectations
+  attachments?: {
+    id: string
+    name: string
+    url: string
+    size: string
+    type?: string
+  }[]
+  
+  // For backward compatibility with existing code using 'attachment' instead of 'attachments'
+  attachment?: {
+    name: string
+    url?: string
+    size: string
+    type?: string
+  }[]
+  
+  // Make labelsTags mutable
+  labelsTags?: {
+    value: string
+    label: string
+    color: string
+  }[]
+  
+  // Make assignedTo mutable with optional avatar
+  assignedTo?: {
+    id: string
+    name: string
+    avatar?: string
+    label?: string
+    color?: string
+    value?: string
+    checked?: boolean
+  }[]
+  
+  // Make subTasks mutable
+  subTasks?: {
+    id?: string
+    name: string
+    completed: boolean
+    progress?: number
+  }[]
+  
+  // Make createdBy properties compatible with the data source
+  createdBy?: {
+    id: string
+    name: string
+    image?: string  // Optional to match the data source
+  }
+
+  // Make updatedBy properties compatible with the data source
+  updatedBy?: {
+    id: string
+    name: string
+    image?: string  // Optional to match the data source
+  }
+  
+  // Any additional UI-specific properties can be added here
+}
+
+/**
+ * @deprecated This is a legacy interface. Consider migrating to KanbanColumn[] for the modern board structure.
+ */
 export interface KanbanBoard {
   id: number
   title: string
   tasks: KanbanBoardTask[]
 }
+
+/**
+ * @deprecated Consider migrating to KanbanColumn which provides more functionality.
+ */
 export type TCustomColumn = {
   id: string
   title: string
-  tasks: TCard[]
+  tasks: KanbanTask[]  // Updated to use KanbanTask
 }
 
+/**
+ * @deprecated Consider migrating to KanbanColumn[] which provides more functionality.
+ */
 export type TCustomBoard = TCustomColumn[]
+
+/**
+ * @deprecated This is a legacy interface. Use KanbanTask which extends TaskDataSchema for more features.
+ */
 export interface KanbanBoardTask {
   id: number
   name: string
@@ -18,56 +129,43 @@ export interface KanbanBoardTask {
   completed: boolean
   daysLeft: number
   attachment?: string
-  // members: AvatarProps[]
 }
 
+/**
+ * @deprecated Consider using a more specific type aligned with your user/member model.
+ */
 export type TMember = {
   name: string
   label: string
   color: string
   value: string
   avatar: string
-  checked:boolean
-  [key: string]: unknown
+  checked: boolean
 }
 
-export type TCard = {
-  id: string
-  taskId: string
-  name: string
-  description?: string
-  completed: boolean
-  assignedTo: TMember[]
-  startDate?: string
-  endDate?: string
-  labelsTags?: {
-    value: string
-    label: string
-    color: string
-    checked: boolean
-  }[]
-  attachment?: { name: string; url: string; size: string }[]
-  subTasks?: {
-    progress: number
-    name: string
-    completed: boolean
-  }[]
-}
+// UPDATED: Make these type aliases point to your RxDB types
+/**
+ * @deprecated Use KanbanTask instead. This alias exists only for backward compatibility.
+ */
+export type TCard = KanbanTask
 
-export type TColumn = {
-  id: string
-  title: string
-  cards: TCard[]
-}
+/**
+ * @deprecated Use KanbanColumn instead. This alias exists only for backward compatibility.
+ */
+export type TColumn = KanbanColumn
 
+/**
+ * @deprecated Consider using KanbanColumn[] directly instead of this wrapper type.
+ */
 export type TBoard = {
   columns: TColumn[]
 }
 
+// UPDATED: Symbol-based drag and drop data types using RxDB types
 const cardKey = Symbol("card")
 export type TCardData = {
   [cardKey]: true
-  card: TCard
+  card: KanbanTask
   columnId: string
   rect: DOMRect
 }
@@ -76,7 +174,11 @@ export function getCardData({
   card,
   rect,
   columnId,
-}: Omit<TCardData, typeof cardKey> & { columnId: string }): TCardData {
+}: {
+  card: KanbanTask
+  columnId: string
+  rect: DOMRect
+}): TCardData {
   return {
     [cardKey]: true,
     rect,
@@ -84,7 +186,6 @@ export function getCardData({
     columnId,
   }
 }
-
 export function isCardData(
   value: Record<string | symbol, unknown>
 ): value is TCardData {
@@ -102,7 +203,7 @@ export function isDraggingACard({
 const cardDropTargetKey = Symbol("card-drop-target")
 export type TCardDropTargetData = {
   [cardDropTargetKey]: true
-  card: TCard
+  card: KanbanTask
   columnId: string
 }
 
@@ -115,7 +216,8 @@ export function isCardDropTargetData(
 export function getCardDropTargetData({
   card,
   columnId,
-}: Omit<TCardDropTargetData, typeof cardDropTargetKey> & {
+}: {
+  card: KanbanTask
   columnId: string
 }): TCardDropTargetData {
   return {
@@ -128,12 +230,14 @@ export function getCardDropTargetData({
 const columnKey = Symbol("column")
 export type TColumnData = {
   [columnKey]: true
-  column: TColumn
+  column: KanbanColumn
 }
 
 export function getColumnData({
   column,
-}: Omit<TColumnData, typeof columnKey>): TColumnData {
+}: {
+  column: KanbanColumn
+}): TColumnData {
   return {
     [columnKey]: true,
     column,
