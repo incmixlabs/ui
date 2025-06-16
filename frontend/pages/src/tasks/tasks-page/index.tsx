@@ -8,6 +8,7 @@ import {
   Card,
   Flex,
   ListBoard,
+  TableView,
   Tabs,
 } from "@incmix/ui"
 import { CardContent } from "@incmix/ui/card"
@@ -129,17 +130,7 @@ const TasksPage = () => {
             </Tabs.Content>
 
             <Tabs.Content value="table">
-              <Box className="flex h-96 items-center justify-center">
-                <Box className="text-center">
-                  <p className="mb-4 text-gray-500">
-                    Table view coming soon...
-                  </p>
-                  <p className="text-gray-400 text-sm">
-                    This view will use the same data structure as the Kanban
-                    board
-                  </p>
-                </Box>
-              </Box>
+              <TableView projectId={selectedProject || "default-project"} />
             </Tabs.Content>
           </Tabs.Root>
         </Box>
