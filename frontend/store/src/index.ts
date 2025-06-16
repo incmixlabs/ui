@@ -18,3 +18,4 @@ export * from "./sql/task-schemas"
 // Re-export everything from kanban-view.types (including its KanbanColumn)
 export * from "./view-types/kanban-view.types"
 export * from "./view-types/list-view.types"
+export * from "./utils/task-schema"
