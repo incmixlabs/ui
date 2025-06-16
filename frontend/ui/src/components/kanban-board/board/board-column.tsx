@@ -8,7 +8,7 @@ import {
 import { Ellipsis, Plus, Trash2, Edit3, GripVertical, Check, X } from "lucide-react"
 import { memo, useEffect, useRef, useState, useCallback } from "react"
 import invariant from "tiny-invariant"
-import { ConfirmationModal, ModalPresets } from "../shared/confirmation-modal"
+import { ModalPresets } from "../shared/confirmation-modal"
 
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"

@@ -1,22 +1,18 @@
 // pages/tasks/index.tsx - Fixed horizontal scrolling
-import { useOrganizationStore } from "@incmix/store"
-import type { TaskCollections } from "@incmix/store"
+import { type TaskCollections, useOrganizationStore } from "@incmix/store"
+
 import {
   AddTaskForm,
   Board,
   Box,
-  Button,
   Card,
   Flex,
   ListBoard,
-  ScrollArea,
-  Select,
   Tabs,
 } from "@incmix/ui"
 import { CardContent } from "@incmix/ui/card"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useQuery } from "@tanstack/react-query"
-import { Plus } from "lucide-react"
 import { useEffect, useState } from "react"
 import type { RxDatabase } from "rxdb"
 import { useRxDB } from "rxdb-hooks"

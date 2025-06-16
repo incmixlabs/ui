@@ -5,7 +5,7 @@ import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/r
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { bindAll } from "bind-event-listener"
-import { Suspense, lazy, useEffect, useRef, useState, useCallback } from "react"
+import {  useEffect, useRef, useState, useCallback } from "react"
 import { ListColumn } from "./list-column"
 import { Box, Flex, IconButton, TextField, Button, Heading, TextArea, Text } from "@incmix/ui"
 
@@ -20,7 +20,6 @@ import {
   blockBoardPanningAttr,
   useListView,
 } from "@incmix/store"
-import { AddTaskForm } from "../shared/add-task-form"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
 
 interface ListBoardProps {
@@ -29,7 +28,6 @@ interface ListBoardProps {
 
 export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   const scrollableRef = useRef<HTMLDivElement | null>(null)
-  const [showAddTaskForm, setShowAddTaskForm] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [isDragging, setIsDragging] = useState(false)
   

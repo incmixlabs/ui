@@ -25,9 +25,7 @@ import {
   Edit3,
   Trash2,
   CheckSquare,
-  AlertCircle,
-  Clock,
-  Flag
+
 } from "lucide-react"
 import { 
   IconButton, 
@@ -37,7 +35,6 @@ import {
   Heading, 
   Text, 
   Badge,
-  Checkbox
 } from "@incmix/ui"
 import { Card } from "@incmix/ui/card"
 import { cn } from "@utils"

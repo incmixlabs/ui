@@ -3,7 +3,7 @@ import {
   draggable,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
-import { ConfirmationModal, ModalPresets } from "../shared/confirmation-modal"
+import {     ModalPresets } from "../shared/confirmation-modal"
 import { Ellipsis, Plus, ChevronDown, ChevronRight, Trash2, Edit3, Check, X } from "lucide-react"
 import { memo, useEffect, useRef, useState, useCallback } from "react"
 import invariant from "tiny-invariant"

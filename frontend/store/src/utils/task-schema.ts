@@ -325,7 +325,4 @@ export type TaskStatusDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof taskStatusTyped
 >
 
-export type TaskCollections = {
-  tasks: RxCollection<TaskDocType>
-  taskStatus: RxCollection<TaskStatusDocType>
-}
+

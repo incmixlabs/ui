@@ -11,14 +11,12 @@ import {
   Calendar,
   Popover,
   Button,
-  Separator,
 } from "@incmix/ui"
 import {
   MoreVertical,
   User,
   Calendar as CalendarIcon,
   Flag,
-  Tag,
   ArrowRight,
   Trash2,
   Copy,
