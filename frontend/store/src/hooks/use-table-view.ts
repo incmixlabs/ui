@@ -1,6 +1,10 @@
+import {
+  type KanbanTask,
+  type TaskDataSchema,
+  useListView,
+} from "@incmix/store"
 // hooks/use-table-view.ts
 import { useMemo } from "react"
-import { useListView, type TaskDataSchema, type KanbanTask } from "@incmix/store"
 
 export interface TableTask extends KanbanTask {
   // Additional computed properties for table display
@@ -32,13 +36,23 @@ export interface UseTableViewReturn {
 
   // Task operations
   createTask: (taskData: Partial<TaskDataSchema>) => Promise<void>
-  updateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
+  updateTask: (
+    taskId: string,
+    updates: Partial<TaskDataSchema>
+  ) => Promise<void>
   deleteTask: (taskId: string) => Promise<void>
   moveTaskToStatus: (taskId: string, statusId: string) => Promise<void>
 
   // Status operations
-  createTaskStatus: (name: string, color?: string, description?: string) => Promise<string>
-  updateTaskStatus: (statusId: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
+  createTaskStatus: (
+    name: string,
+    color?: string,
+    description?: string
+  ) => Promise<string>
+  updateTaskStatus: (
+    statusId: string,
+    updates: { name?: string; color?: string; description?: string }
+  ) => Promise<void>
   deleteTaskStatus: (statusId: string) => Promise<void>
 
   // Utility
@@ -58,31 +72,35 @@ export interface UseTableViewReturn {
 /**
  * Hook for table view that enhances list view data with table-specific properties
  */
-export function useTableView(projectId = "default-project"): UseTableViewReturn {
+export function useTableView(
+  projectId = "default-project"
+): UseTableViewReturn {
   // Reuse list view hook for data consistency
   const listViewData = useListView(projectId)
 
   // Transform tasks for table display with computed properties
   const tableTasks = useMemo<TableTask[]>(() => {
     // Flatten all tasks from all columns
-    const allTasks = listViewData.columns.flatMap(column => 
-      column.tasks.map(task => {
+    const allTasks = listViewData.columns.flatMap((column) =>
+      column.tasks.map((task) => {
         const now = new Date()
         const endDate = task.endDate ? new Date(task.endDate) : null
-        
+
         return {
           ...task,
           // Add status information
           statusLabel: column.name,
           statusColor: column.color,
-          
+
           // Format assigned users
-          assignedToNames: task.assignedTo?.map(user => user.name).join(", ") || "",
-          
+          assignedToNames:
+            task.assignedTo?.map((user) => user.name).join(", ") || "",
+
           // Subtask information
           totalSubTasks: task.subTasks?.length || 0,
-          completedSubTasks: task.subTasks?.filter(st => st.completed).length || 0,
-          
+          completedSubTasks:
+            task.subTasks?.filter((st) => st.completed).length || 0,
+
           // Overdue calculation
           isOverdue: endDate ? endDate < now && !task.completed : false,
         } as TableTask
@@ -90,8 +108,9 @@ export function useTableView(projectId = "default-project"): UseTableViewReturn 
     )
 
     // Sort by creation date (newest first) for table display
-    return allTasks.sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    return allTasks.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     )
   }, [listViewData.columns])
 

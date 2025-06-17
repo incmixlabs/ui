@@ -324,5 +324,3 @@ export type TaskDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
 export type TaskStatusDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof taskStatusTyped
 >
-
-

@@ -350,7 +350,6 @@ export type DashboardDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof dashboardTyped
 >
 
-
 export interface TaskCollections {
   tasks: RxCollection<TaskDocType>
   taskStatus: RxCollection<TaskStatusDocType>

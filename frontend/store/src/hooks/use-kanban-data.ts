@@ -2,8 +2,8 @@
 // REPLACE your current file with this fixed version
 
 import { useMemo } from "react"
-import type { KanbanColumn, KanbanTask } from "../view-types/kanban-view.types"
 import type { TaskDataSchema } from "../sql/task-schemas"
+import type { KanbanColumn, KanbanTask } from "../view-types/kanban-view.types"
 
 import type { TaskStatusDocType } from "utils/task-schema"
 import { useProjectData } from "./use-project-task-data"
