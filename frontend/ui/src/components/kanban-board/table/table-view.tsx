@@ -28,6 +28,7 @@ import { TableRowActions } from "./table-row-actions"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
 import { CreateTaskDialog } from "./create-task-dialog"
 import { DataTableColumn } from "@/components/tanstack-table/types"
+import { StatusDropdownCell, PriorityDropdownCell, createEnhancedTaskTableColumns } from "./custom-dropdown-columns"
 
 
 interface TableViewProps {
@@ -103,33 +104,40 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       
       // For columns that need dropdown options (like status), we'll handle this with cell properties
       if (column.id === "status") {
-        // For status column, we'll provide a custom renderer that includes dropdown options
-        // Here we're using the built-in cell renderer for dropdown type columns
+        // For status column, we use our custom StatusDropdownCell component
         baseColumn.cell = (info) => {
           const task = info.row.original as TableTask;
-          return baseColumn.renderer ? baseColumn.renderer(task.columnId, task) : null;
-        };
-        // Custom cell editor for status changes
-        baseColumn.inlineCellEditor = (props) => {
-          const { value, onSave, onCancel } = props;
-          
-          // Return a select dropdown with status options
           return (
-            <select 
-              defaultValue={value} 
-              className="p-1 border rounded w-full"
-              onChange={(e) => onSave(e.target.value)}
-              onBlur={() => onCancel()}
-              autoFocus
-            >
-              {statusOptions.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+            <StatusDropdownCell
+              value={task.columnId}
+              row={task}
+              taskStatuses={taskStatuses}
+              onStatusChange={(taskId, newStatusId) => moveTaskToStatus(taskId, newStatusId)}
+            />
           );
         };
+        
+        // Disable inline editing since we're handling it via the dropdown component
+        baseColumn.enableInlineEdit = false;
+      }
+      
+      // For priority column, use our custom PriorityDropdownCell component
+      if (column.id === "priority") {
+        baseColumn.cell = (info) => {
+          const task = info.row.original as TableTask;
+          return (
+            <PriorityDropdownCell
+              value={task.priority}
+              row={task}
+              onPriorityChange={(taskId, newPriority) => {
+                return updateTask(taskId, { priority: newPriority });
+              }}
+            />
+          );
+        };
+        
+        // Disable inline editing since we're handling it via the dropdown component
+        baseColumn.enableInlineEdit = false;
       }
       
       return baseColumn
@@ -338,7 +346,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
 
           // Inline editing functionality
           enableInlineCellEdit={true}
-          inlineEditableColumns={["name", "description", "status", "priority", "startDate", "endDate"]}
+          inlineEditableColumns={["name", "description", "startDate", "endDate"]} // Status and priority handled by custom components
           onCellEdit={handleCellEdit}
 
           // Additional table settings
