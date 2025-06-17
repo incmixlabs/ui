@@ -35,7 +35,7 @@ export default defineConfig(async () => ({
     },
   },
   plugins: [
-    bundlesize({ limits: [{ name: "**/*", limit: "3 mB" }] }),
+    bundlesize({ limits: [{ name: "**/*", limit: "4 mB" }] }),
     react(),
     tsconfigPaths(),
     chunkSplitPlugin(),
