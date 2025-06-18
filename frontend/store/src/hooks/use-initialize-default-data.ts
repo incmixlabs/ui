@@ -1,10 +1,7 @@
+import type { TaskDocType, TaskStatusDocType } from "utils/task-schema"
 import { database } from "../sql"
 import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
-import type {
-  TaskCollections,
-  TaskDocType,
-  TaskStatusDocType,
-} from "../sql/types"
+import type { TaskCollections } from "../sql/types"
 
 /**
  * Creates a default user for audit fields when no real user data is available

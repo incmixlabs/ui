@@ -15,7 +15,6 @@ import {
   DropdownMenu 
 } from "@incmix/ui"
 import { 
-  Plus, 
   Loader2, 
   Settings, 
   MoreVertical,
@@ -24,8 +23,7 @@ import {
 import { isCardData, isCardDropTargetData, isColumnData, isDraggingACard, KanbanColumn, useKanban } from "@incmix/store"
 
 import { BoardColumn } from "./board-column"
-import { AddTaskForm } from "../shared/add-task-form"
-import { TaskCardDrawer } from "./task-card-drawer"
+import { TaskCardDrawer } from "../shared/task-card-drawer"
 import { CreateColumnForm } from "./create-column-form"
 
 interface BoardProps {

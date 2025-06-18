@@ -5,7 +5,7 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
-import { type MutableRefObject, useEffect, useRef, useState, useCallback, memo } from "react"
+import React, { useCallback, useEffect, useRef, useState, memo, type MutableRefObject } from "react"
 import { createPortal } from "react-dom"
 import invariant from "tiny-invariant"
 
@@ -25,9 +25,7 @@ import {
   Edit3,
   Trash2,
   CheckSquare,
-  AlertCircle,
-  Clock,
-  Flag
+
 } from "lucide-react"
 import { 
   IconButton, 
@@ -37,11 +35,11 @@ import {
   Heading, 
   Text, 
   Badge,
-  Checkbox
 } from "@incmix/ui"
 import { Card } from "@incmix/ui/card"
 import { cn } from "@utils"
 import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
+import { ModalPresets } from "../shared/confirmation-modal"
 import { 
   KanbanTask, 
   TaskDataSchema, 
@@ -118,18 +116,24 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
     }
   }, [handleDrawerOpen, card.taskId, state.type, onTaskOpen])
 
+  // Modal state for task deletion
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+
   const handleDelete = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation()
     if (!onDeleteTask) return
-    
-    if (confirm(`Are you sure you want to delete "${card.name}"?`)) {
-      try {
-        await onDeleteTask(card.taskId)
-      } catch (error) {
-        console.error("Failed to delete task:", error)
-      }
+    setShowDeleteConfirmation(true)
+  }, [onDeleteTask])
+
+  // Confirm task deletion handler
+  const confirmDeleteTask = useCallback(async () => {
+    if (!onDeleteTask) return
+    try {
+      await onDeleteTask(card.taskId)
+    } catch (error) {
+      console.error("Failed to delete task:", error)
     }
-  }, [onDeleteTask, card.taskId, card.name])
+  }, [onDeleteTask, card.taskId])
 
   const handleToggleComplete = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -202,9 +206,18 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
   const dueDateInfo = formatDate(card.startDate)
 
   return (
-    <Box
-      ref={outerRef}
-      onClick={handleTaskClick}
+    <>
+      {/* Delete Task Confirmation Modal */}
+      {ModalPresets.deleteTask({
+        isOpen: showDeleteConfirmation,
+        onOpenChange: setShowDeleteConfirmation,
+        taskName: card.name,
+        onConfirm: confirmDeleteTask
+      })}
+      
+      <Box
+        ref={outerRef}
+        onClick={handleTaskClick}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === "Space") {
           e.preventDefault()
@@ -424,6 +437,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
         <TaskCardShadow dragging={state.dragging} />
       ) : null}
     </Box>
+    </>
   )
 })
 

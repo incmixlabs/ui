@@ -398,4 +398,6 @@ function DataTableComponent<TData extends object>({
 }
 
 // Export memoized version for better performance
-export const DataTable = memo(DataTableComponent) as typeof DataTableComponent;
+export const TanstackDataTable = memo(DataTableComponent) as typeof DataTableComponent;
+// For backwards compatibility
+export const DataTable = TanstackDataTable;

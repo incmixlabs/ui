@@ -2,10 +2,10 @@
 // REPLACE your current file with this fixed version
 
 import { useCallback, useEffect, useRef, useState } from "react"
+import type { TaskDocType, TaskStatusDocType } from "utils/task-schema"
 import { database } from "../sql"
 import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
 import type { TaskDataSchema } from "../sql/task-schemas"
-import type { TaskDocType, TaskStatusDocType } from "../sql/types"
 
 interface ProjectData {
   tasks: TaskDataSchema[]

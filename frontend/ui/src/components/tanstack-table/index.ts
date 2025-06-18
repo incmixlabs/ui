@@ -8,8 +8,8 @@ export { default as GroupedDemo } from "./demo/grouped-demo";
 export { default as TaskTimelineDemo } from "./demo/tasks-timeline-demo";
 export { default as TaskStatusDemo } from "./demo/task-status-demo";
 
-// Export the main DataTable component
-export { DataTable } from "./components/DataTable";
+// Export the main DataTable component with renamed version
+export { TanstackDataTable, DataTable } from "./components/DataTable";
 
 // Re-export utility functions
 export {

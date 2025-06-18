@@ -1,22 +1,19 @@
 // pages/tasks/index.tsx - Fixed horizontal scrolling
-import { useOrganizationStore } from "@incmix/store"
-import type { TaskCollections } from "@incmix/store"
+import { type TaskCollections, useOrganizationStore } from "@incmix/store"
+
 import {
   AddTaskForm,
   Board,
   Box,
-  Button,
   Card,
   Flex,
   ListBoard,
-  ScrollArea,
-  Select,
+  TableView,
   Tabs,
 } from "@incmix/ui"
 import { CardContent } from "@incmix/ui/card"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useQuery } from "@tanstack/react-query"
-import { Plus } from "lucide-react"
 import { useEffect, useState } from "react"
 import type { RxDatabase } from "rxdb"
 import { useRxDB } from "rxdb-hooks"
@@ -133,17 +130,7 @@ const TasksPage = () => {
             </Tabs.Content>
 
             <Tabs.Content value="table">
-              <Box className="flex h-96 items-center justify-center">
-                <Box className="text-center">
-                  <p className="mb-4 text-gray-500">
-                    Table view coming soon...
-                  </p>
-                  <p className="text-gray-400 text-sm">
-                    This view will use the same data structure as the Kanban
-                    board
-                  </p>
-                </Box>
-              </Box>
+              <TableView projectId={selectedProject || "default-project"} />
             </Tabs.Content>
           </Tabs.Root>
         </Box>

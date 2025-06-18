@@ -3,7 +3,8 @@ import {
   draggable,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
-import { Ellipsis, Plus, ChevronDown, ChevronRight } from "lucide-react"
+import {     ModalPresets } from "../shared/confirmation-modal"
+import { Ellipsis, Plus, ChevronDown, ChevronRight, Trash2, Edit3, Check, X } from "lucide-react"
 import { memo, useEffect, useRef, useState, useCallback } from "react"
 import invariant from "tiny-invariant"
 
@@ -13,7 +14,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
 
-import { Box, Flex, Heading, IconButton, Button, Text, Badge } from "@incmix/ui"
+import { Box, Flex, Heading, IconButton, Button, Text, Badge, TextField, TextArea, DropdownMenu } from "@incmix/ui"
 import { isSafari } from "@utils/browser"
 import { isShallowEqual } from "@utils/objects"
 import {
@@ -280,22 +281,83 @@ export function ListColumn({
     }
   }, [onCreateTask, column.id])
 
-  // Column update handler
-  const handleUpdateColumn = useCallback(async (updates: Partial<TaskDataSchema>) => {
-    // This is for column-level updates, not implemented in the menu yet
-    // but could be extended for column settings
-  }, [])
+  // Column editing state
+  const [isEditingColumn, setIsEditingColumn] = useState(false)
+  const [editColumnName, setEditColumnName] = useState(column.name)
+  const [editColumnColor, setEditColumnColor] = useState(column.color)
+  const [editColumnDescription, setEditColumnDescription] = useState(column.description || "")
+  
+  // Modal states
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showErrorModal, setShowErrorModal] = useState(false)
+  const [showValidationModal, setShowValidationModal] = useState(false)
+  const [validationMessage, setValidationMessage] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [isUpdating, setIsUpdating] = useState(false)
+  
+  // Update edit state when column changes
+  useEffect(() => {
+    setEditColumnName(column.name)
+    setEditColumnColor(column.color)
+    setEditColumnDescription(column.description || "")
+  }, [column.name, column.color, column.description])
 
-  // Column delete handler
-  const handleDeleteColumn = useCallback(async () => {
-    if (confirm(`Are you sure you want to delete the "${column.name}" column?`)) {
-      try {
-        await onDeleteColumn(column.id)
-      } catch (error) {
-        console.error("Failed to delete column:", error)
-      }
+  // Column update handler
+  const handleUpdateColumn = useCallback(async () => {
+    if (!editColumnName.trim()) {
+      setValidationMessage('Column name cannot be empty')
+      setShowValidationModal(true)
+      return
     }
-  }, [column.id, column.name, onDeleteColumn])
+    
+    setIsUpdating(true)
+    try {
+      await onUpdateColumn(column.id, {
+        name: editColumnName.trim(),
+        color: editColumnColor,
+        description: editColumnDescription.trim(),
+      })
+      setIsEditingColumn(false)
+    } catch (error) {
+      console.error("Failed to update column:", error)
+      setValidationMessage('Failed to update column. Please try again.')
+      setShowValidationModal(true)
+    } finally {
+      setIsUpdating(false)
+    }
+  }, [editColumnName, editColumnColor, editColumnDescription, onUpdateColumn, column.id])
+
+  const handleCancelEdit = useCallback(() => {
+    setIsEditingColumn(false)
+    setEditColumnName(column.name)
+    setEditColumnColor(column.color)
+    setEditColumnDescription(column.description || "")
+  }, [column.name, column.color, column.description])
+
+  // Modal state for column deletion
+  // This line is replaced - modal states are now defined above with other column editing states
+
+  // Column delete handler - opens the confirmation modal
+  const handleDeleteColumn = useCallback(() => {
+    if (column.tasks.length > 0) {
+      setShowErrorModal(true)
+      return
+    }
+    
+    setShowDeleteModal(true)
+  }, [column.tasks.length])
+
+  // Confirm column deletion handler
+  const confirmDeleteColumn = useCallback(async () => {
+    setIsDeleting(true)
+    try {
+      await onDeleteColumn(column.id)
+      // Modal will close automatically via the preset
+    } catch (error) {
+      console.error("Failed to delete column:", error)
+      setIsDeleting(false)
+    }
+  }, [column.id, onDeleteColumn])
 
   return (
     <Flex
@@ -303,6 +365,29 @@ export function ListColumn({
       className="w-full flex-shrink-0 select-none"
       ref={outerFullHeightRef}
     >
+      {/* Delete Confirmation Modal */}
+      {ModalPresets.deleteColumn({
+        isOpen: showDeleteModal,
+        onOpenChange: setShowDeleteModal,
+        columnName: column.name,
+        onConfirm: confirmDeleteColumn,
+        isLoading: isDeleting,
+      })}
+      
+      {/* Error Modal */}
+      {ModalPresets.error({
+        isOpen: showErrorModal,
+        onOpenChange: setShowErrorModal,
+        title: "Cannot Delete Column",
+        description: "This column contains tasks. Please move or delete all tasks from this column before deleting it."
+      })}
+      
+      {/* Validation Error Modal */}
+      {ModalPresets.validation({
+        isOpen: showValidationModal,
+        onOpenChange: setShowValidationModal,
+        message: validationMessage
+      })}
       <Flex
         direction="column"
         className={`rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 ${stateStyles[state.type]}`}
@@ -315,52 +400,120 @@ export function ListColumn({
         >
           {/* Column Header */}
           <Box className="border-b border-gray-200 dark:border-gray-700">
-            <Flex
-              justify="between"
-              align="center"
-              className="p-4 cursor-grab active:cursor-grabbing"
-              ref={headerRef}
-              style={{ 
+            {isEditingColumn ? (
+              <Box className="p-4" style={{ 
                 backgroundColor: `${column.color}15`,
                 borderTop: `3px solid ${column.color}`
-              }}
-            >
-              <Flex align="center" gap="3" className="flex-1 min-w-0">
-                <Button
-                  variant="ghost"
-                  size="1"
-                  onClick={() => setIsExpanded(!isExpanded)}
-                  className="p-1"
-                >
-                  {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                </Button>
-                
-                <div
-                  className="w-3 h-3 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: column.color }}
-                />
-                
-                <Heading size="4" as="h3" className="font-semibold leading-4 truncate">
-                  {column.name}
-                </Heading>
-                
-                <Flex gap="2" className="flex-shrink-0">
-                  <Badge variant="soft" color="gray" size="1">
-                    {totalTasks} tasks
-                  </Badge>
-                  {completedTasks > 0 && (
-                    <Badge variant="soft" color="green" size="1">
-                      {completionPercentage}% done
-                    </Badge>
-                  )}
+              }}>
+                <Flex direction="column" gap="3" className="flex-1">
+                  <TextField.Root
+                    value={editColumnName}
+                    onChange={(e) => setEditColumnName(e.target.value)}
+                    placeholder="Column name"
+                    size="2"
+                  />
+                  <TextArea
+                    value={editColumnDescription}
+                    onChange={(e) => setEditColumnDescription(e.target.value)}
+                    placeholder="Column description (optional)"
+                    rows={2}
+                  />
+                  <Flex align="center" gap="2">
+                    <input
+                      type="color"
+                      value={editColumnColor}
+                      onChange={(e) => setEditColumnColor(e.target.value)}
+                      className="w-8 h-8 rounded border cursor-pointer"
+                    />
+                    <Text size="1" className="text-gray-500">Column color</Text>
+                  </Flex>
+                  <Flex gap="2">
+                    <Button 
+                      size="1" 
+                      onClick={handleUpdateColumn} 
+                      disabled={isUpdating}
+                    >
+                      <Check size={14} />
+                      {isUpdating ? 'Saving...' : 'Save'}
+                    </Button>
+                    <Button 
+                      size="1" 
+                      variant="soft" 
+                      onClick={handleCancelEdit} 
+                      disabled={isUpdating}
+                    >
+                      <X size={14} />
+                      Cancel
+                    </Button>
+                  </Flex>
                 </Flex>
-              </Flex>
+              </Box>
+            ) : (
+              <Flex
+                justify="between"
+                align="center"
+                className="p-4 cursor-grab active:cursor-grabbing"
+                ref={headerRef}
+                style={{ 
+                  backgroundColor: `${column.color}15`,
+                  borderTop: `3px solid ${column.color}`
+                }}
+              >
+                <Flex align="center" gap="3" className="flex-1 min-w-0">
+                  <Button
+                    variant="ghost"
+                    size="1"
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="p-1"
+                  >
+                    {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                  </Button>
+                  
+                  <div
+                    className="w-3 h-3 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: column.color }}
+                  />
+                  
+                  <Heading size="4" as="h3" className="font-semibold leading-4 truncate">
+                    {column.name}
+                  </Heading>
+                  
+                  <Flex gap="2" className="flex-shrink-0">
+                    <Badge variant="soft" color="gray" size="1">
+                      {totalTasks} tasks
+                    </Badge>
+                    {completedTasks > 0 && (
+                      <Badge variant="soft" color="green" size="1">
+                        {completionPercentage}% done
+                      </Badge>
+                    )}
+                  </Flex>
+                </Flex>
 
-              {/* Column Actions Menu - can be extended later for column-specific options */}
-              <IconButton size="1" variant="ghost">
-                <Ellipsis size={16} />
-              </IconButton>
-            </Flex>
+                {/* Column Actions Menu with edit and delete options */}
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger>
+                    <IconButton size="1" variant="ghost">
+                      <Ellipsis size={16} />
+                    </IconButton>
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Content>
+                    <DropdownMenu.Item onClick={() => setIsEditingColumn(true)}>
+                      <Edit3 size={14} />
+                      Edit Column
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Separator />
+                    <DropdownMenu.Item 
+                      onClick={handleDeleteColumn}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 size={14} />
+                      Delete Column
+                    </DropdownMenu.Item>
+                  </DropdownMenu.Content>
+                </DropdownMenu.Root>
+              </Flex>
+            )}
 
             {/* Column Description */}
             {column.description && (
