@@ -44,7 +44,7 @@ export interface KanbanTask extends Partial<Omit<TaskDataSchema, 'attachments' |
     size: string
     type?: string
   }[]
-  
+
   // For backward compatibility with existing code using 'attachment' instead of 'attachments'
   attachment?: {
     name: string
@@ -52,14 +52,14 @@ export interface KanbanTask extends Partial<Omit<TaskDataSchema, 'attachments' |
     size: string
     type?: string
   }[]
-  
+
   // Make labelsTags mutable
   labelsTags?: {
     value: string
     label: string
     color: string
   }[]
-  
+
   // Make assignedTo mutable with optional avatar
   assignedTo?: {
     id: string
@@ -70,7 +70,7 @@ export interface KanbanTask extends Partial<Omit<TaskDataSchema, 'attachments' |
     value?: string
     checked?: boolean
   }[]
-  
+
   // Make subTasks mutable
   subTasks?: {
     id?: string
@@ -78,7 +78,7 @@ export interface KanbanTask extends Partial<Omit<TaskDataSchema, 'attachments' |
     completed: boolean
     progress?: number
   }[]
-  
+
   // Make createdBy properties compatible with the data source
   createdBy?: {
     id: string
@@ -92,7 +92,7 @@ export interface KanbanTask extends Partial<Omit<TaskDataSchema, 'attachments' |
     name: string
     image?: string  // Optional to match the data source
   }
-  
+
   // Any additional UI-specific properties can be added here
 }
 
@@ -110,7 +110,7 @@ export interface KanbanBoard {
  */
 export type TCustomColumn = {
   id: string
-  title: string
+  name: string
   tasks: KanbanTask[]  // Updated to use KanbanTask
 }
 

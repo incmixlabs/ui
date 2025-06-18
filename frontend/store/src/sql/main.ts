@@ -2,20 +2,19 @@
 
 import { addRxPlugin, createRxDatabase } from "rxdb"
 import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode"
-import {
-  type TaskCollections,
-  type TaskDocType,
-  taskSchemaLiteral,
-  taskStatusSchemaLiteral,
-} from "../utils/task-schema"
-
+import type {
+  TaskCollections,
+} from "./types"
 import {
   columnSchemaLiteral,
   dashboardSchemaLiteral,
   dashboardTemplateSchemaLiteral,
   formProjectSchemaLiteral,
   projectSchemaLiteral,
-} from "./types"
+  taskDataSchemaLiteral,
+  taskSchemaLiteral,
+  taskStatusSchemaLiteral,
+} from "@incmix/utils/schema"
 
 import { getRxStorageIndexedDB } from "rxdb-premium/plugins/storage-indexeddb"
 import { RxDBAttachmentsPlugin } from "rxdb/plugins/attachments"

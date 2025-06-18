@@ -16,20 +16,21 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
 
-import { 
-  Box, 
-  Flex, 
-  Heading, 
-  IconButton, 
+import {
+  Box,
+  Flex,
+  Heading,
+  IconButton,
   Button,
   TextField,
   Text,
   DropdownMenu,
   TextArea
-} from "@incmix/ui"
+} from "@radixui"
 import { isSafari } from "@utils/browser"
-import { isShallowEqual } from "@utils/objects"
-
+import { isShallowEqual } from "@incmix/utils/objects"
+import { blockBoardPanningAttr } from "../data-attributes"
+import { TaskCard, TaskCardShadow } from "./task-card"
 import {
   getColumnData,
   isCardData,
@@ -58,7 +59,6 @@ type DragLocation = {
   }
 }
 import { TaskDataSchema } from "@incmix/store"
-import { TaskCard, TaskCardShadow } from "./task-card"
 type TColumnState =
   | {
       type: "is-card-over"
@@ -107,20 +107,20 @@ const QuickTaskForm = memo(function QuickTaskForm({
 }) {
   // Get AI features state
   const { useAI } = useAIFeaturesStore()
-  
+
   // Task form state
   const [taskName, setTaskName] = useState("")
   const [description, setDescription] = useState("")
-  const [checklist, setChecklist] = useState<Array<{ id: string; text: string; checked: boolean }>>([])  
+  const [checklist, setChecklist] = useState<Array<{ id: string; text: string; checked: boolean }>>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [hadGenerationError, setHadGenerationError] = useState(false)
-  
+
   // AI description generation hook
-  const { 
-    generateUserStory, 
-    isGenerating, 
-    error: generationError, 
-    clearError: resetError 
+  const {
+    generateUserStory,
+    isGenerating,
+    error: generationError,
+    clearError: resetError
   } = useAIUserStory()
 
   // Generate description when task name changes (if AI enabled)
@@ -155,9 +155,9 @@ const QuickTaskForm = memo(function QuickTaskForm({
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!taskName.trim()) return
-    
+
     setIsSubmitting(true)
     try {
       await onCreateTask(columnId, {
@@ -173,7 +173,7 @@ const QuickTaskForm = memo(function QuickTaskForm({
         commentsCount: 0,
         checklist: checklist,
       })
-      
+
       setTaskName("")
       setDescription("")
       onCancel()
@@ -201,7 +201,7 @@ const QuickTaskForm = memo(function QuickTaskForm({
           onKeyDown={handleKeyDown}
           disabled={isSubmitting}
         />
-        
+
         <TextArea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -209,7 +209,7 @@ const QuickTaskForm = memo(function QuickTaskForm({
           rows={3}
           disabled={isSubmitting || isGenerating}
         />
-        
+
         {/* AI Status Indicator */}
         {useAI && taskName.trim() && (
           <Box className="text-xs">
@@ -230,20 +230,20 @@ const QuickTaskForm = memo(function QuickTaskForm({
             )}
           </Box>
         )}
-        
+
         <Flex gap="2">
-          <Button 
-            type="submit" 
-            size="2" 
+          <Button
+            type="submit"
+            size="2"
             disabled={!taskName.trim() || isSubmitting}
             className="flex-1"
           >
             {isSubmitting ? "Adding..." : "Add Task"}
           </Button>
-          <Button 
-            type="button" 
-            size="2" 
-            variant="soft" 
+          <Button
+            type="button"
+            size="2"
+            variant="soft"
             onClick={onCancel}
             disabled={isSubmitting}
           >
@@ -304,7 +304,7 @@ export const BoardColumn = memo(function BoardColumn({
   const [editColumnColor, setEditColumnColor] = useState(column.color)
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
   const colorPickerRef = useRef<HTMLDivElement>(null)
-  
+
   // Close color picker when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -312,14 +312,14 @@ export const BoardColumn = memo(function BoardColumn({
         setIsColorPickerOpen(false);
       }
     }
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [colorPickerRef]);
   const [editColumnDescription, setEditColumnDescription] = useState(column.description || "")
-  
+
   // Modal states
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showErrorModal, setShowErrorModal] = useState(false)
@@ -355,7 +355,7 @@ export const BoardColumn = memo(function BoardColumn({
       dragging: data.rect,
       isOverChildCard,
     }
-    
+
     setState((current) => {
       if (isShallowEqual(proposed, current)) {
         return current
@@ -469,7 +469,7 @@ export const BoardColumn = memo(function BoardColumn({
       setShowValidationModal(true)
       return
     }
-    
+
     setIsUpdating(true)
     try {
       await onUpdateColumn(column.id, {
@@ -492,10 +492,10 @@ export const BoardColumn = memo(function BoardColumn({
       setShowErrorModal(true)
       return
     }
-    
+
     setShowDeleteModal(true)
   }, [column.tasks.length])
-  
+
   const confirmDeleteColumn = async () => {
     setIsDeleting(true)
     try {
@@ -529,7 +529,7 @@ export const BoardColumn = memo(function BoardColumn({
         onConfirm: confirmDeleteColumn,
         isLoading: isDeleting,
       })}
-      
+
       {/* Error Modal */}
       {ModalPresets.error({
         isOpen: showErrorModal,
@@ -537,14 +537,14 @@ export const BoardColumn = memo(function BoardColumn({
         title: "Cannot Delete Column",
         description: "This column contains tasks. Please move or delete all tasks from this column before deleting it."
       })}
-      
+
       {/* Validation Error Modal */}
       {ModalPresets.validation({
         isOpen: showValidationModal,
         onOpenChange: setShowValidationModal,
         message: validationMessage
       })}
-      
+
       <div
         className={`rounded-lg bg-gray-50 dark:bg-gray-900 transition-all duration-200 ${stateStyles[state.type]} flex flex-col`}
         ref={innerRef}
@@ -554,7 +554,7 @@ export const BoardColumn = memo(function BoardColumn({
           <div
             className="flex-shrink-0 p-4 pb-2 cursor-grab active:cursor-grabbing rounded-t-lg"
             ref={headerRef}
-            style={{ 
+            style={{
               backgroundColor: `${column.color}15`,
               borderTop: `3px solid ${column.color}`
             }}
@@ -583,8 +583,8 @@ export const BoardColumn = memo(function BoardColumn({
                     />
                     {isColorPickerOpen && (
                       <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
-                        <ColorPicker 
-                          colorType="base" 
+                        <ColorPicker
+                          colorType="base"
                           onColorSelect={(color: ColorSelectType) => {
                             setEditColumnColor(color.hex);
                             setIsColorPickerOpen(false);
@@ -597,18 +597,18 @@ export const BoardColumn = memo(function BoardColumn({
                   <Text size="1" className="text-gray-500">Column color</Text>
                 </Flex>
                 <Flex gap="2">
-                  <Button 
-                    size="1" 
-                    onClick={handleUpdateColumn} 
+                  <Button
+                    size="1"
+                    onClick={handleUpdateColumn}
                     disabled={isUpdating}
                   >
                     <Check size={14} />
                     {isUpdating ? 'Saving...' : 'Save'}
                   </Button>
-                  <Button 
-                    size="1" 
-                    variant="soft" 
-                    onClick={handleCancelEdit} 
+                  <Button
+                    size="1"
+                    variant="soft"
+                    onClick={handleCancelEdit}
                     disabled={isUpdating}
                   >
                     <X size={14} />
@@ -638,11 +638,11 @@ export const BoardColumn = memo(function BoardColumn({
                     )}
                   </Flex>
                 </Flex>
-                
+
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger>
-                    <IconButton 
-                      size="1" 
+                    <IconButton
+                      size="1"
                       variant="ghost"
                       className="rounded hover:bg-gray-200 dark:hover:bg-gray-700 flex-shrink-0"
                     >
@@ -655,7 +655,7 @@ export const BoardColumn = memo(function BoardColumn({
                       Edit Column
                     </DropdownMenu.Item>
                     <DropdownMenu.Separator />
-                    <DropdownMenu.Item 
+                    <DropdownMenu.Item
                       onClick={handleDeleteColumn}
                       className="text-red-600 hover:text-red-700"
                     >
@@ -718,7 +718,7 @@ export const BoardColumn = memo(function BoardColumn({
                 onCancel={() => setIsCreatingTask(false)}
               />
             ) : (
-              <Button 
+              <Button
                 variant="ghost"
                 className="w-full justify-start text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600"
                 onClick={() => setIsCreatingTask(true)}

@@ -14,9 +14,9 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
 
-import { Box, Flex, Heading, IconButton, Button, Text, Badge, TextField, TextArea, DropdownMenu } from "@incmix/ui"
-import { isSafari } from "@utils/browser"
-import { isShallowEqual } from "@utils/objects"
+import { Box, Flex, Heading, IconButton } from "@incmix/ui";
+import { isSafari } from "@utils/browser";
+import { isShallowEqual } from "@incmix/utils/objects";
 import {
   getColumnData,
   isCardData,
@@ -71,12 +71,12 @@ interface ListColumnProps {
   isDragging?: boolean
 }
 
-const CardList = memo(function CardList({ 
-  column, 
+const CardList = memo(function CardList({
+  column,
   columns,
-  onUpdateTask, 
-  onDeleteTask 
-}: { 
+  onUpdateTask,
+  onDeleteTask
+}: {
   column: ListColumn
   columns: ListColumn[]
   onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
@@ -85,9 +85,9 @@ const CardList = memo(function CardList({
   return (
     <>
       {column.tasks.map((task: KanbanTask) => (
-        <ListTaskCard 
-          key={task.taskId} 
-          card={task} 
+        <ListTaskCard
+          key={task.taskId}
+          card={task}
           columnId={column.id}
           columns={columns}
           onUpdateTask={onUpdateTask}
@@ -98,15 +98,15 @@ const CardList = memo(function CardList({
   )
 })
 
-export function ListColumn({ 
-  column, 
+export function ListColumn({
+  column,
   columns,
-  onCreateTask, 
-  onUpdateTask, 
-  onDeleteTask, 
-  onUpdateColumn, 
+  onCreateTask,
+  onUpdateTask,
+  onDeleteTask,
+  onUpdateColumn,
   onDeleteColumn,
-  isDragging = false 
+  isDragging = false
 }: ListColumnProps) {
   const scrollableRef = useRef<HTMLDivElement | null>(null)
   const outerFullHeightRef = useRef<HTMLDivElement | null>(null)
@@ -138,7 +138,7 @@ export function ListColumn({
       dragging: data.rect,
       isOverChildCard,
     }
-    
+
     setState((current) => {
       if (isShallowEqual(proposed, current)) {
         return current
@@ -154,7 +154,7 @@ export function ListColumn({
     const scrollable = scrollableRef.current
     const header = headerRef.current
     const inner = innerRef.current
-    
+
     if (!outer || !scrollable || !header || !inner) {
       return
     }
@@ -261,7 +261,7 @@ export function ListColumn({
   // Enhanced task creation with task data from the menu
   const handleCreateTaskWithData = useCallback(async (taskName: string, taskData: any) => {
     if (!taskName.trim()) return
-    
+
     try {
       // Merge the task name with the additional data from the menu
       const fullTaskData = {
@@ -288,6 +288,7 @@ export function ListColumn({
   const [editColumnName, setEditColumnName] = useState(column.name)
   const [editColumnColor, setEditColumnColor] = useState(column.color)
   const [editColumnDescription, setEditColumnDescription] = useState(column.description || "")
+<<<<<<< HEAD
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
   const colorPickerRef = useRef<HTMLDivElement>(null)
   
@@ -305,6 +306,9 @@ export function ListColumn({
     };
   }, [colorPickerRef]);
   
+=======
+
+>>>>>>> 13aa497 (chore: theme-panel-update-v2)
   // Modal states
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showErrorModal, setShowErrorModal] = useState(false)
@@ -312,7 +316,7 @@ export function ListColumn({
   const [validationMessage, setValidationMessage] = useState('')
   const [isDeleting, setIsDeleting] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
-  
+
   // Update edit state when column changes
   useEffect(() => {
     setEditColumnName(column.name)
@@ -327,7 +331,7 @@ export function ListColumn({
       setShowValidationModal(true)
       return
     }
-    
+
     setIsUpdating(true)
     try {
       await onUpdateColumn(column.id, {
@@ -361,7 +365,7 @@ export function ListColumn({
       setShowErrorModal(true)
       return
     }
-    
+
     setShowDeleteModal(true)
   }, [column.tasks.length])
 
@@ -391,7 +395,7 @@ export function ListColumn({
         onConfirm: confirmDeleteColumn,
         isLoading: isDeleting,
       })}
-      
+
       {/* Error Modal */}
       {ModalPresets.error({
         isOpen: showErrorModal,
@@ -399,7 +403,7 @@ export function ListColumn({
         title: "Cannot Delete Column",
         description: "This column contains tasks. Please move or delete all tasks from this column before deleting it."
       })}
-      
+
       {/* Validation Error Modal */}
       {ModalPresets.validation({
         isOpen: showValidationModal,
@@ -419,7 +423,7 @@ export function ListColumn({
           {/* Column Header */}
           <Box className="border-b border-gray-200 dark:border-gray-700">
             {isEditingColumn ? (
-              <Box className="p-4" style={{ 
+              <Box className="p-4" style={{
                 backgroundColor: `${column.color}15`,
                 borderTop: `3px solid ${column.color}`
               }}>
@@ -460,18 +464,18 @@ export function ListColumn({
                     <Text size="1" className="text-gray-500">Column color</Text>
                   </Flex>
                   <Flex gap="2">
-                    <Button 
-                      size="1" 
-                      onClick={handleUpdateColumn} 
+                    <Button
+                      size="1"
+                      onClick={handleUpdateColumn}
                       disabled={isUpdating}
                     >
                       <Check size={14} />
                       {isUpdating ? 'Saving...' : 'Save'}
                     </Button>
-                    <Button 
-                      size="1" 
-                      variant="soft" 
-                      onClick={handleCancelEdit} 
+                    <Button
+                      size="1"
+                      variant="soft"
+                      onClick={handleCancelEdit}
                       disabled={isUpdating}
                     >
                       <X size={14} />
@@ -486,7 +490,7 @@ export function ListColumn({
                 align="center"
                 className="p-4 cursor-grab active:cursor-grabbing"
                 ref={headerRef}
-                style={{ 
+                style={{
                   backgroundColor: `${column.color}15`,
                   borderTop: `3px solid ${column.color}`
                 }}
@@ -500,16 +504,16 @@ export function ListColumn({
                   >
                     {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                   </Button>
-                  
+
                   <div
                     className="w-3 h-3 rounded-full flex-shrink-0"
                     style={{ backgroundColor: column.color }}
                   />
-                  
+
                   <Heading size="4" as="h3" className="font-semibold leading-4 truncate">
                     {column.name}
                   </Heading>
-                  
+
                   <Flex gap="2" className="flex-shrink-0">
                     <Badge variant="soft" color="gray" size="1">
                       {totalTasks} tasks
@@ -535,7 +539,7 @@ export function ListColumn({
                       Edit Column
                     </DropdownMenu.Item>
                     <DropdownMenu.Separator />
-                    <DropdownMenu.Item 
+                    <DropdownMenu.Item
                       onClick={handleDeleteColumn}
                       className="text-red-600 hover:text-red-700"
                     >
@@ -575,13 +579,13 @@ export function ListColumn({
               className="flex flex-col overflow-y-auto [overflow-anchor:none] max-h-96"
               ref={scrollableRef}
             >
-              <CardList 
-                column={column} 
+              <CardList
+                column={column}
                 columns={columns}
                 onUpdateTask={onUpdateTask}
                 onDeleteTask={onDeleteTask}
               />
-              
+
               {state.type === "is-card-over" && !state.isOverChildCard ? (
                 <Box className="flex-shrink-0 px-3 py-1">
                   <ListTaskCardShadow dragging={state.dragging} />
@@ -610,7 +614,7 @@ export function ListColumn({
                     placeholder="Enter task title..."
                   />
                 ) : (
-                  <Button 
+                  <Button
                     variant="ghost"
                     className="w-full justify-start text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600"
                     onClick={() => setIsCreatingTask(true)}

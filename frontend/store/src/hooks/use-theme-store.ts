@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { ThemeConfig } from "@incmix/utils/types";
+import  { breakFontColor, type ThemeConfig } from "@incmix/utils/types";
 
 export const SIDEBAR_COLOR_OPTIONS = [
   { bg: "var(--gray-3)", fg: "var(--gray-12)", hover: "var(--gray-1)" },
@@ -13,7 +13,6 @@ export const SIDEBAR_COLOR_OPTIONS = [
   { bg: "var(--orange-10)", fg: "var(--orange-12)", hover: "var(--orange-11)" },
 ];
 
-
 export const defaultTheme: ThemeConfig = {
   appearance: "light",
   accentColor: "blue",
@@ -24,8 +23,6 @@ export const defaultTheme: ThemeConfig = {
   pastel: true,
   pastelShade: 6,
   brightShade: 9,
-  lightFontColor: "var(--gray-12)", // for light mode
-  darkFontColor: "var(--gray-1)",
   avatarRadius: "full",
   workspaceRadius: "medium",
   orgRadius: "none",
@@ -40,7 +37,9 @@ export const defaultTheme: ThemeConfig = {
   // for dark mode
   // customColor
   sidebarBg: "var(--gray-3)",
-  default: 0, // Added to satisfy ThemeConfig type
+  breakFontColor,
+  direction: "ltr",
+  isSystemTheme: true
 };
 
 export const useBaseThemeStore = create<
@@ -58,6 +57,6 @@ export const useBaseThemeStore = create<
           appearance: get().appearance === "dark" ? "light" : "dark",
         }),
     }),
-    { name: "radix-theme-store" },
+    { name: "theme" },
   ),
 );

@@ -1,4 +1,4 @@
-import { generateNameBasedId, generateUniqueId } from "sql/helper"
+import { generateNameBasedId, generateUniqueId } from "@incmix/utils/helper"
 import { create } from "zustand"
 import { database } from "../sql/main"
 

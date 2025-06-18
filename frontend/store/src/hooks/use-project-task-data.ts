@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { Subscription } from "rxjs"
 import type { TaskDocType, TaskStatusDocType } from "utils/task-schema"
-import { database } from "../sql"
-import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
+import { database } from "sql"
+import { generateUniqueId, getCurrentTimestamp } from "@incmix/utils/helper"
 import type { TaskDataSchema } from "../sql/task-schemas"
 
 interface ProjectData {

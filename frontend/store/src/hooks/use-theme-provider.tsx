@@ -1,16 +1,45 @@
+import { type ReactNode, createContext, useContext, useState, useEffect } from "react"
 import { Theme, type ThemeProps, useThemeContext } from "@radix-ui/themes"
+import  { breakFontColor, type ThemeConfig } from "@incmix/utils/types";
+import { createStore, useStore } from 'zustand'
 // TBD
 // 1. On context change, update localstorage
-import { type ReactNode, createContext, useContext, useEffect } from "react"
 import { useLocalStorage } from "./use-local-storage"
 export const isDarkScheme = () =>
   window.matchMedia("(prefers-color-scheme: dark)").matches
 export const defaultScheme = () => (isDarkScheme() ? "dark" : "light")
 
+export const defaultTheme: ThemeConfig = {
+  appearance: "light",
+  accentColor: "blue",
+  secondaryColor: "cyan",
+  grayColor: "gray",
+  radius: "medium",
+  scaling: "100%",
+  pastel: true,
+  pastelShade: 6,
+  brightShade: 9,
+  avatarRadius: "full",
+  workspaceRadius: "medium",
+  orgRadius: "none",
+  info: "blue",
+  danger: "red",
+  success: "green",
+  warning: "orange",
+  info1: "pink",
+  info2: "yellow",
+  info3: "lime",
+  info4: "cyan",
+  // for dark mode
+  // customColor
+  sidebarBg: "var(--gray-3)",
+  breakFontColor,
+  direction: "ltr",
+  isSystemTheme: true
+};
 export type ThemeContextValue = {
   accentColor: string
   grayColor: string
-  panelBackground: string
   scaling: string
   radius: string
   direction: "ltr" | "rtl"
@@ -20,7 +49,6 @@ export type ThemeContextValue = {
 const defaultContextValue: ThemeContextValue = {
   accentColor: "indigo",
   grayColor: "slate",
-  panelBackground: "solid",
   scaling: "100%",
   radius: "large",
   direction: "ltr",
@@ -30,20 +58,7 @@ const defaultContextValue: ThemeContextValue = {
 export type ThemeProviderProps = ThemeContextValue & {
   children: ReactNode
 }
-type ExtendThemeContextValue = {
-  isSystemTheme: boolean
-  setSystemTheme: (system: boolean) => void
-  direction: "ltr" | "rtl"
-  setDirection: (dir: "ltr" | "rtl") => void
-  onChange: (change: boolean) => void
-}
-const ExtendThemeContext = createContext<ExtendThemeContextValue>({
-  isSystemTheme: true,
-  setSystemTheme: () => {},
-  direction: "ltr",
-  setDirection: () => {},
-  onChange: () => {},
-})
+const ExtendThemeContext = createContext<any>(null)
 
 const ThemeProvider = ({
   children,
@@ -51,6 +66,16 @@ const ThemeProvider = ({
   ...props
 }: ThemeProviderProps) => {
   const extendThemeContext = useContext(ExtendThemeContext)
+  const [store] = useState(() =>
+    createStore((set) => ({
+      theme: defaultTheme,
+      actions: {
+        update: (theme: ThemeConfig) =>
+          set((state: ThemeConfig) => ({ theme: {...state.theme, ...theme} }))
+        
+      },
+    }))
+  )
   const { appearance, onAppearanceChange } = useThemeContext()
   const [newProps] = useLocalStorage("theme", {
     ...props,

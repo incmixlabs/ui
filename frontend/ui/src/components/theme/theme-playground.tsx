@@ -1,4 +1,5 @@
 import {
+  Box,
   Flex,
   Heading,
   Text,
@@ -6,18 +7,24 @@ import {
   Grid,
   Switch,
   CardContainer,
-} from "@incmix/ui";
+} from "../radixui";
 // import {ThemePanel} from "@radix-ui/themes"
 import {
-  useBaseThemeStore,
+
   RADIX_ACCENT_COLORS,
   RADIX_GRAY_COLORS,
   RADIX_RADIUS,
   // PANEL_BACKGROUND_OPTIONS,
   SCALING_OPTIONS,
-<<<<<<< HEAD:frontend/ui/src/components/theme-playground.tsx
+  type RadixGrayColor,
+  type RadixColor,
+  type RadixAnyColor,
+  type RadixRadius
+} from "@incmix/utils/types"; 
+import {
+  useBaseThemeStore,
   SIDEBAR_COLOR_OPTIONS,
-} from "@hooks/useBaseThemeStore";
+} from "@incmix/store/hooks/use-theme-store";
 import { useTranslation } from "react-i18next";
 const getColorBoxStyle = (color: string) => ({
   backgroundColor: `var(--${color}-9)`,
@@ -26,11 +33,6 @@ const getColorBoxStyle = (color: string) => ({
   borderRadius: "0.25rem",
   marginRight: "0.5rem",
 });
-=======
-} from "@/hooks/use-theme-store";
-import { useTranslation } from "react-i18next";
-
->>>>>>> 16052be (feat: wip):frontend/ui/src/components/theme/theme-playground.tsx
 export function ThemePlayground() {
   const { t } = useTranslation(["settings", "common"]);
   const appearance = useBaseThemeStore((state) => state.appearance);
@@ -81,7 +83,7 @@ export function ThemePlayground() {
           <Text>{t("Accent Color")}</Text>
           <Select.Root
             value={theme.accentColor}
-            onValueChange={(v) => setTheme({ accentColor: v })}
+            onValueChange={(v) => setTheme({ accentColor: v as RadixColor })}
           >
             <Select.Trigger />
             <Select.Content>
@@ -104,17 +106,11 @@ export function ThemePlayground() {
           </Select.Root>
         </Flex>
 
-        {/* <SelectRow
-          label="Gray Color"
-          value={theme.grayColor}
-          options={[...RADIX_GRAY_COLORS]}
-          onChange={(v) => setTheme({ grayColor: v })}
-        /> */}
         <Flex gap="4" align="center" justify="between">
           <Text>{t("Gray Color")}</Text>
           <Select.Root
             value={theme.grayColor}
-            onValueChange={(v) => setTheme({ grayColor: v })}
+            onValueChange={(v) => setTheme({ grayColor: v as typeof theme.grayColor })}
           >
             <Select.Trigger />
             <Select.Content>
@@ -143,14 +139,14 @@ export function ThemePlayground() {
           label="Border Radius"
           value={theme.radius}
           options={[...RADIX_RADIUS]}
-          onChange={(v) => setTheme({ radius: v })}
+          onChange={(v) => setTheme({ radius: v as RadixRadius })}
         />
 
         <SelectRow
           label="Scaling"
           value={theme.scaling}
           options={[...SCALING_OPTIONS]}
-          onChange={(v) => setTheme({ scaling: v })}
+          onChange={(v) => setTheme({ scaling: v as typeof theme.scaling })}  
         />
 
         {/* <SelectRow

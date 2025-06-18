@@ -3,7 +3,7 @@
 
 import { useMemo } from "react"
 import type { TaskDataSchema } from "../sql/task-schemas"
-import type { KanbanColumn, KanbanTask } from "../view-types/kanban-view.types"
+import type { KanbanColumn, KanbanTask } from "../types/kanban-view.types"
 
 import { useProjectData } from "./use-project-task-data"
 
