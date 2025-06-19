@@ -1,5 +1,9 @@
 // pages/tasks/index.tsx - Fixed horizontal scrolling
-import { type TaskCollections, useAIFeaturesStore, useOrganizationStore } from "@incmix/store"
+import {
+  type TaskCollections,
+  useAIFeaturesStore,
+  useOrganizationStore,
+} from "@incmix/store"
 
 import {
   AddTaskForm,
@@ -87,10 +91,7 @@ const TasksPage = () => {
                 {/* Use AI Toggle */}
                 <Flex align="center" gap="2">
                   <div className="text-sm">Use AI</div>
-                  <Switch
-                    checked={useAI}
-                    onCheckedChange={setUseAI}
-                  />
+                  <Switch checked={useAI} onCheckedChange={setUseAI} />
                 </Flex>
 
                 {/* Add Task Form - Always visible */}
