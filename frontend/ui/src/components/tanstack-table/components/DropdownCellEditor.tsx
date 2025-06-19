@@ -182,7 +182,7 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
   return (
     <div 
       ref={dropdownRef}
-      className="fixed z-[9999] bg-white rounded-md shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none"
+      className="fixed z-[9999] bg-white dark:bg-gray-800 rounded-md shadow-xl ring-1 ring-black dark:ring-gray-700 ring-opacity-5 focus:outline-none"
       style={{ 
         minWidth: '220px',
         maxWidth: '300px',
@@ -198,7 +198,7 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
     >
       {/* Custom value input when strictDropdown is false */}
       {!strictDropdown && (
-        <div className="px-4 py-2 border-b border-gray-100">
+        <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
           <div className="flex">
             <input
               ref={inputRef}
@@ -206,7 +206,7 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
               value={customValue}
               onChange={handleCustomInputChange}
               onKeyDown={handleCustomInputKeyDown}
-              className="w-full px-2 py-1 text-sm border border-gray-300 rounded-l-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full px-2 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-l-md focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
               placeholder="Enter custom value..."
             />
             <button 
@@ -217,14 +217,14 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
             </button>
           </div>
           {validOptions.length > 0 && (
-            <div className="mt-2 text-xs text-gray-500">Or select from options below:</div>
+            <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">Or select from options below:</div>
           )}
         </div>
       )}
       
       {/* Dropdown options list */}
       {validOptions.length === 0 ? (
-        <div className="px-4 py-2 text-sm text-gray-500">No options available</div>
+        <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">No options available</div>
       ) : (
         validOptions.map((option) => {
           const isSelected = option.value === value;
@@ -235,7 +235,7 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
               onClick={() => handleSelect(option.value)}
               className={`
                 px-4 py-2 text-sm cursor-pointer
-                ${isSelected ? 'bg-blue-50' : 'hover:bg-gray-50'}
+                ${isSelected ? 'bg-blue-50 dark:bg-blue-900/30' : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'}
               `}
             >
               <div className="flex items-center gap-2">
