@@ -6,7 +6,8 @@ import {
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { Ellipsis, Plus, Trash2, Edit3, GripVertical, Check, X, Loader2 } from "lucide-react"
-import { memo, useEffect, useRef, useState, useCallback } from "react"
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import ColorPicker, { ColorSelectType } from "@components/color-picker"
 import invariant from "tiny-invariant"
 import { ModalPresets } from "../shared/confirmation-modal"
 
@@ -294,10 +295,26 @@ export const BoardColumn = memo(function BoardColumn({
   const innerRef = useRef<HTMLDivElement | null>(null)
   const [state, setState] = useState<TColumnState>(idle)
 
-  // Column editing state
+  const [isAddingTask, setIsAddingTask] = useState(false)
   const [isEditingColumn, setIsEditingColumn] = useState(false)
   const [editColumnName, setEditColumnName] = useState(column.name)
   const [editColumnColor, setEditColumnColor] = useState(column.color)
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
+  const colorPickerRef = useRef<HTMLDivElement>(null)
+  
+  // Close color picker when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+        setIsColorPickerOpen(false);
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [colorPickerRef]);
   const [editColumnDescription, setEditColumnDescription] = useState(column.description || "")
   
   // Modal states
@@ -553,13 +570,27 @@ export const BoardColumn = memo(function BoardColumn({
                   placeholder="Column description (optional)"
                   rows={2}
                 />
-                <Flex align="center" gap="2">
-                  <input
-                    type="color"
-                    value={editColumnColor}
-                    onChange={(e) => setEditColumnColor(e.target.value)}
-                    className="w-8 h-8 rounded border cursor-pointer"
-                  />
+                <Flex align="center" gap="2" className="items-start">
+                  <div className="relative" ref={colorPickerRef}>
+                    <Button
+                      variant="solid"
+                      className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
+                      style={{ backgroundColor: editColumnColor }}
+                      onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
+                    />
+                    {isColorPickerOpen && (
+                      <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
+                        <ColorPicker 
+                          colorType="base" 
+                          onColorSelect={(color: ColorSelectType) => {
+                            setEditColumnColor(color.hex);
+                            setIsColorPickerOpen(false);
+                          }}
+                          activeColor={editColumnColor}
+                        />
+                      </div>
+                    )}
+                  </div>
                   <Text size="1" className="text-gray-500">Column color</Text>
                 </Flex>
                 <Flex gap="2">

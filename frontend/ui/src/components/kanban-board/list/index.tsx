@@ -21,6 +21,8 @@ import {
   useListView,
   useAIFeaturesStore
 } from "@incmix/store"
+import { useKanban } from "@incmix/store"
+import ColorPicker, { ColorSelectType } from "@components/color-picker"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
 
 interface ListBoardProps {
@@ -36,9 +38,26 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   
   // New column creation state
   const [isAddingColumn, setIsAddingColumn] = useState(false)
-  const [newColumnName, setNewColumnName] = useState('')
-  const [newColumnColor, setNewColumnColor] = useState('#3B82F6') // Default blue color
-  const [newColumnDescription, setNewColumnDescription] = useState('')  
+  const [newColumnName, setNewColumnName] = useState("")
+  const [newColumnDescription, setNewColumnDescription] = useState("")
+  const [newColumnColor, setNewColumnColor] = useState("#5c6ac4")
+  const [addColumnFormOpen, setAddColumnFormOpen] = useState(false)
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
+  const colorPickerRef = useRef<HTMLDivElement>(null)
+  
+  // Close color picker when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+        setIsColorPickerOpen(false);
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [colorPickerRef]);  
   const [isCreatingColumn, setIsCreatingColumn] = useState(false)
   
   // Use the list view hook
@@ -386,13 +405,27 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                   rows={2}
                 />
                 
-                <Flex align="center" gap="2">
-                  <input 
-                    type="color" 
-                    value={newColumnColor}
-                    onChange={(e) => setNewColumnColor(e.target.value)}
-                    className="w-8 h-8 rounded cursor-pointer"
-                  />
+                <Flex align="center" gap="2" className="items-start">
+                  <div className="relative" ref={colorPickerRef}>
+                    <Button
+                      variant="solid"
+                      className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
+                      style={{ backgroundColor: newColumnColor }}
+                      onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
+                    />
+                    {isColorPickerOpen && (
+                      <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
+                        <ColorPicker 
+                          colorType="base" 
+                          onColorSelect={(color: ColorSelectType) => {
+                            setNewColumnColor(color.hex);
+                            setIsColorPickerOpen(false);
+                          }} 
+                          activeColor={newColumnColor}
+                        />
+                      </div>
+                    )}
+                  </div>
                   <Text size="1" className="text-gray-500">Column color</Text>
                 </Flex>
                 

@@ -1,5 +1,8 @@
 // task-card-components/task-tags-section.tsx
+import React, { useRef, useState, useEffect } from "react"
 import { Tag, X } from "lucide-react"
+import ColorPicker, { ColorSelectType } from "@components/color-picker"
+import { Button } from "@incmix/ui"
 import type { TaskTagsSectionProps, Tag as TagType } from "./utils/types"
 
 export function TaskTagsSection({
@@ -13,6 +16,24 @@ export function TaskTagsSection({
   onAddTag,
   onRemoveTag,
 }: TaskTagsSectionProps) {
+  const [isCreatingNewTag, setIsCreatingNewTag] = useState(false)
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
+  const colorPickerRef = useRef<HTMLDivElement>(null)
+
+  // Close color picker when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+        setIsColorPickerOpen(false);
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [colorPickerRef]);
+
   const handleAddTag = () => {
     onAddTag()
   }
@@ -76,12 +97,28 @@ export function TaskTagsSection({
           />
           <div className="flex items-center gap-3">
             <label className="text-sm font-medium">Color:</label>
-            <input
-              type="color"
-              value={newTagColor}
-              onChange={(e) => onNewTagColorChange(e.target.value)}
-              className="w-8 h-8 rounded border border-gray-300 cursor-pointer"
-            />
+            <div>
+              <div className="relative" ref={colorPickerRef}>
+                <Button
+                  variant="solid"
+                  className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
+                  style={{ backgroundColor: newTagColor }}
+                  onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
+                />
+                {isColorPickerOpen && (
+                  <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
+                    <ColorPicker 
+                      colorType="base" 
+                      onColorSelect={(color: ColorSelectType) => {
+                        onNewTagColorChange(color.hex);
+                        setIsColorPickerOpen(false);
+                      }}
+                      activeColor={newTagColor}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
             <div className="flex-1" />
             <button 
               onClick={handleAddTag} 
