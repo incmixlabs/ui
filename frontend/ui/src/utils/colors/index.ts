@@ -46,3 +46,26 @@ export type AccentColor = (typeof accentColors)[number]
 export type DashboardColor = (typeof dashboardColors)[number]
 export type GrayColor = (typeof grayColors)[number]
 export type Color = AccentColor | GrayColor
+
+
+
+/**
+ * Simple accessibility check for color contrast with background
+ * Returns true if the color is likely to have good contrast
+ */
+export function hasGoodContrast(hexColor: string): boolean {
+  // Simple check based on color brightness
+  // Formula: (R*299 + G*587 + B*114) / 1000
+  const hex = hexColor.replace(/^#/, '');
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  
+  // Calculate brightness (higher means lighter)
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  
+  // Dark colors have better contrast on light backgrounds
+  // Light colors have better contrast on dark backgrounds
+  // A more nuanced implementation would compare with actual background
+  return brightness < 125;
+}
