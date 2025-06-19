@@ -8,6 +8,7 @@ import AutoForm from "@components/auto-form"
 import { useKanban, type TaskDataSchema, useAIFeaturesStore, useAIUserStory } from "@incmix/store"
 import { nanoid } from "nanoid"
 import { createTaskFormSchema } from "./add-task-schema"
+import { useAIDescriptionGeneration } from "../../../hooks/use-ai-description-generation"
 
 interface AddTaskFormProps {
   projectId: string
@@ -161,40 +162,23 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
       }
     } catch (error) {
       console.error('Error generating description:', error);
-      // Error handling is already done in the hook
+      setHadGenerationError(true);
     }
   }, [useAI, generateUserStory]);
   
-  // Monitor changes in formData.name to trigger AI description generation
   // Track if we've had a generation error for the current title
   const [hadGenerationError, setHadGenerationError] = useState(false);
   
-  useEffect(() => {
-    // Reset error state when title changes
-    if (formData.name && formData.name !== lastProcessedTitle) {
-      setHadGenerationError(false);
-    }
-    
-    // Only attempt to generate if AI is enabled, name exists and has changed, and description is empty
-    // Also prevent retries after a failure by checking hadGenerationError
-    if (useAI && 
-        !hadGenerationError &&
-        formData.name && 
-        formData.name.trim() && 
-        formData.name.trim() !== lastProcessedTitle &&
-        formData.name.length > 3 &&
-        (!formData.description || formData.description.trim() === '')) {
-      // Slight delay to avoid generating for every keystroke
-      const timer = setTimeout(() => {
-        // Make sure name is defined before passing to generateDescription
-        if (formData.name) {
-          generateDescription(formData.name);
-        }
-      }, 1000); // 1 second delay
-      
-      return () => clearTimeout(timer);
-    }
-  }, [formData.name, formData.description, lastProcessedTitle, useAI, generateDescription, hadGenerationError]);
+  // Use the custom hook to handle AI description generation
+  useAIDescriptionGeneration(
+    formData.name,
+    useAI,
+    Boolean(formData.description?.trim()),
+    hadGenerationError,
+    lastProcessedTitle,
+    generateDescription,
+    () => setHadGenerationError(false)
+  );
 
   // Handle form values change
   const handleValuesChange = useCallback((values: any) => {
