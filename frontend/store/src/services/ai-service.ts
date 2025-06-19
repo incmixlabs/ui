@@ -28,16 +28,15 @@ export const aiService = {
     templateId = 1
   ): Promise<string> => {
     // Validate input
-    if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {
-      throw new Error('Prompt is required and must be a non-empty string');
+    if (!prompt || typeof prompt !== "string" || prompt.trim().length === 0) {
+      throw new Error("Prompt is required and must be a non-empty string")
     }
-    
+
     if (prompt.length > 1000) {
-      throw new Error('Prompt must be less than 1000 characters');
+      throw new Error("Prompt must be less than 1000 characters")
     }
 
     try {
-
       const response = await fetch(
         `${BASE_API_URL}/api/genai/generate-user-story`,
         {
@@ -55,16 +54,14 @@ export const aiService = {
         }
       )
 
-
-
       if (!response.ok) {
         // Attempt to parse error but don't expose details
         await response.json().catch(() => {
           // Silently handle parsing errors
         })
         throw new Error(
-          response.status >= 500 
-            ? 'AI service temporarily unavailable. Please try again later.'
+          response.status >= 500
+            ? "AI service temporarily unavailable. Please try again later."
             : `Request failed: ${response.status}`
         )
       }
