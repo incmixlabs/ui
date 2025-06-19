@@ -147,6 +147,9 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
   }, [getColorForLabel])
 
 
+  // Track if we've had a generation error for the current title
+  const [hadGenerationError, setHadGenerationError] = useState(false);
+  
   // Function to generate description using AI
   const generateDescription = useCallback(async (title: string) => {
     if (!title || !useAI) return;
@@ -164,10 +167,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
       console.error('Error generating description:', error);
       setHadGenerationError(true);
     }
-  }, [useAI, generateUserStory]);
-  
-  // Track if we've had a generation error for the current title
-  const [hadGenerationError, setHadGenerationError] = useState(false);
+  }, [useAI, generateUserStory, setHadGenerationError]);
   
   // Use the custom hook to handle AI description generation
   useAIDescriptionGeneration(
