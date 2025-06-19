@@ -19,6 +19,7 @@ import {
   isDraggingAColumn,
   blockBoardPanningAttr,
   useListView,
+  useAIFeaturesStore
 } from "@incmix/store"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
 
@@ -27,6 +28,8 @@ interface ListBoardProps {
 }
 
 export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
+  // Get AI features state
+  const { useAI } = useAIFeaturesStore()
   const scrollableRef = useRef<HTMLDivElement | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [isDragging, setIsDragging] = useState(false)

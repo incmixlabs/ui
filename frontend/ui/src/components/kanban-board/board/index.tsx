@@ -20,7 +20,7 @@ import {
   MoreVertical,
   RefreshCw
 } from "lucide-react"
-import { isCardData, isCardDropTargetData, isColumnData, isDraggingACard, KanbanColumn, useKanban } from "@incmix/store"
+import { isCardData, isCardDropTargetData, isColumnData, isDraggingACard, KanbanColumn, useKanban, useAIFeaturesStore } from "@incmix/store"
 
 import { BoardColumn } from "./board-column"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
@@ -40,6 +40,9 @@ export function Board({
   
   // Local state for optimistic updates
   const [optimisticColumns, setOptimisticColumns] = useState<KanbanColumn[]>([])
+  
+  // Get AI features state
+  const { useAI } = useAIFeaturesStore()
   
   // Use the new useKanban hook
   const {

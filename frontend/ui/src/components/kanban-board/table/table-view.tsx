@@ -22,7 +22,7 @@ import {
   Download
 } from "lucide-react"
 
-import { useTableView, type TableTask } from "@incmix/store"
+import { useTableView, useAIFeaturesStore, type TableTask } from "@incmix/store"
 import { TASK_TABLE_COLUMNS, PRIORITY_OPTIONS } from "./table-columns-config"
 import { TableRowActions } from "./table-row-actions"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
@@ -35,7 +35,10 @@ interface TableViewProps {
   projectId?: string
 }
 
-export function TableView({ projectId = "default-project" }: TableViewProps) {
+export function TableView({ projectId = "default-project" }) {
+  // Get AI features state
+  const { useAI } = useAIFeaturesStore()
+
   const [searchQuery, setSearchQuery] = useState("")
   const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false)
   
@@ -83,9 +86,6 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           break;
         case "status":
           baseColumn.enableSorting = true;
-          baseColumn.enableInlineEdit = true;
-          break;
-        case "description":
           baseColumn.enableInlineEdit = true;
           break;
         case "priority":
@@ -346,7 +346,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
 
           // Inline editing functionality
           enableInlineCellEdit={true}
-          inlineEditableColumns={["name", "description", "startDate", "endDate"]} // Status and priority handled by custom components
+          inlineEditableColumns={["name", "startDate", "endDate"]} // Status and priority handled by custom components
           onCellEdit={handleCellEdit}
 
           // Additional table settings
