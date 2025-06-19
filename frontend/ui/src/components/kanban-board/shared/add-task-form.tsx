@@ -78,36 +78,15 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
     return defaults
   }, [taskFormSchema, columns])
 
-  // Initialize form data with defaults when component mounts or schema changes
-  // Always initialize with defaults when dialog opens
+  // Initialize form data with defaults when component mounts or dialog opens
   useEffect(() => {
     if (defaultFormValues && Object.keys(defaultFormValues).length > 0) {
-      // Get first column ID for default status
-      const firstColumnId = columns.length > 0 ? columns[0].id : '';
-      
-      // Create properly typed form data with defaults
-      const updatedFormData = {
-        // Start with default values
-        ...defaultFormValues,
-        // Override with any existing values in formData
-        ...formData,
-        // Explicitly ensure columnId and priority are set with fallbacks
-        // Use explicit string casting for columnId
-        columnId: String(
-          (typeof formData === 'object' && 'columnId' in formData && formData.columnId) || 
-          (typeof defaultFormValues === 'object' && 'columnId' in defaultFormValues && defaultFormValues.columnId) || 
-          firstColumnId
-        ), 
-        priority: String(
-          (typeof formData === 'object' && 'priority' in formData && formData.priority) || 
-          'medium'
-        )
-      };
-      
-      console.log('Setting/updating default form values:', updatedFormData) // Debug log
-      setFormData(updatedFormData);
+      // Only update if we're opening the dialog (isOpen is true)
+      if (isOpen) {
+        setFormData(defaultFormValues);
+      }
     }
-  }, [defaultFormValues, isOpen, columns]) // Trigger when dialog opens or columns change
+  }, [defaultFormValues, isOpen])
 
   // Generate unique ID helper (for any future use)
   const generateUniqueId = useCallback((prefix?: string, length = 10): string => {
@@ -272,35 +251,11 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
       onOpenChange={(open) => {
         setIsOpen(open)
         
-        // When dialog opens, reset to defaults - when it closes, clear form
-        if (open) {
-          // Force a small delay to make sure the form is initialized properly
-          setTimeout(() => {
-            // Get first column ID for default status - prefer "To Do" or first column
-            const defaultColumnId = columns.find(col => 
-              col.name.toLowerCase().includes("todo") || 
-              col.name.toLowerCase().includes("to do")
-            )?.id || columns[0]?.id || '';
-            
-            // Create initial form data with explicit values for the dropdowns
-            const initialFormData = {
-              // Start with clean base values
-              name: '',
-              description: '',
-              labelsTags: [],
-              assignedTo: [],
-              subTasks: [],
-              // Force explicit values for dropdowns
-              columnId: defaultColumnId,
-              priority: 'medium'
-            };
-            
-            console.log('Dialog opened, setting explicit form defaults:', initialFormData);
-            setFormData(initialFormData);
-          }, 50); // Small delay to ensure React has mounted the dialog
-        } else if (!open) {
-          console.log('Dialog closed, clearing form');
-          setFormData({});
+        if (!open) {
+          // Reset form-related state when closing
+          setFormData({ priority: 'medium' });
+          setLastProcessedTitle('');
+          setHadGenerationError(false);
         }
       }}
     >

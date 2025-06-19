@@ -27,14 +27,16 @@ export const aiService = {
     userTier = "free",
     templateId = 1
   ): Promise<string> => {
+    // Validate input
+    if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {
+      throw new Error('Prompt is required and must be a non-empty string');
+    }
+    
+    if (prompt.length > 1000) {
+      throw new Error('Prompt must be less than 1000 characters');
+    }
+
     try {
-      // Debug session cookie
-      console.log("Cookies available:", document.cookie)
-      console.log(
-        "Session cookie:",
-        document.cookie.split("; ").find((row) => row.startsWith("session="))
-      )
-      console.log("API URL:", `${BASE_API_URL}/api/genai/generate-user-story`)
 
       const response = await fetch(
         `${BASE_API_URL}/api/genai/generate-user-story`,
@@ -53,23 +55,17 @@ export const aiService = {
         }
       )
 
-      // Debug response information
-      console.log("Response status:", response.status)
-      // Convert headers to object for logging (handling browser compatibility)
-      const headers: Record<string, string> = {}
-      response.headers.forEach((value, key) => {
-        headers[key] = value
-      })
-      console.log("Response headers:", headers)
+
 
       if (!response.ok) {
-        const errorData = await response.json().catch((err) => {
-          console.error("Error parsing error response:", err)
-          return {}
+        // Attempt to parse error but don't expose details
+        await response.json().catch(() => {
+          // Silently handle parsing errors
         })
-        console.error("API error details:", errorData)
         throw new Error(
-          `API error: ${response.status} - ${errorData.message || response.statusText}`
+          response.status >= 500 
+            ? 'AI service temporarily unavailable. Please try again later.'
+            : `Request failed: ${response.status}`
         )
       }
 
