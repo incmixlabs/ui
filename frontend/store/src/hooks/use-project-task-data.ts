@@ -1,5 +1,4 @@
 // File: use-project-task-data.ts
-// REPLACE your current file with this fixed version
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { TaskDocType, TaskStatusDocType } from "utils/task-schema"
@@ -250,6 +249,7 @@ export function useProjectData(
           description: taskData.description || "",
           completed: taskData.completed ?? false,
           priority: taskData.priority || "medium",
+          refUrls: taskData.refUrls || [],
           labelsTags: taskData.labelsTags || [],
           attachments: taskData.attachments || [],
           assignedTo: taskData.assignedTo || [],

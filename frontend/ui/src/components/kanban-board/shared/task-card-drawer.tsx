@@ -11,6 +11,7 @@ import {
   TaskDescriptionSection,
   TaskDatesSection,
   TaskTagsSection,
+  TaskRefUrlsSection,
   TaskAssigneesSection,
   TaskSubtasksSection,
   TaskCommentsSection,
@@ -152,6 +153,15 @@ export function TaskCardDrawer({
                 drawerState.setIsAddingTag(false)
               }}
               onRemoveTag={taskActions.handleRemoveTag}
+            />
+
+            {/* Reference URLs */}
+            <TaskRefUrlsSection
+              refUrls={currentTask.refUrls || []}
+              onUpdate={(updatedRefUrls) => {
+                taskActions.handleUpdateTask({ refUrls: updatedRefUrls })
+              }}
+              readonly={false}
             />
 
             {/* Assignees */}

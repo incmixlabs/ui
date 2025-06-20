@@ -15,6 +15,14 @@ export type TaskDataSchema = {
   priority: "low" | "medium" | "high" | "urgent"
 
   // Arrays - MUTABLE for UI editing
+  refUrls: {
+    id: string
+    url: string
+    title?: string
+    type: "figma" | "task" | "external"
+    taskId?: string
+  }[]
+  
   labelsTags: {
     value: string
     label: string

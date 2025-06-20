@@ -134,6 +134,37 @@ export const taskSchemaLiteral = {
       enum: ["low", "medium", "high", "urgent"],
       default: "medium",
     },
+    refUrls: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          id: {
+            type: "string",
+            maxLength: 100,
+          },
+          url: {
+            type: "string",
+            maxLength: 1000,
+          },
+          title: {
+            type: "string",
+            maxLength: 255,
+          },
+          type: {
+            type: "string",
+            enum: ["figma", "task", "external"],
+            // default removed to comply with RxDB requirements
+          },
+          taskId: {
+            type: "string",
+            maxLength: 100,
+          },
+        },
+        required: ["id", "url", "type"],
+      },
+      default: [],
+    },
     labelsTags: {
       type: "array",
       items: {

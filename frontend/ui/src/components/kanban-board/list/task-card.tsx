@@ -21,6 +21,9 @@ import {
   CalendarDays,
   ChevronDown,
   ChevronRight,
+  Link,
+  ExternalLink,
+  Figma,
 } from "lucide-react"
 import {
   getCardData,
@@ -283,6 +286,40 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
                 </Badge>
               )}
 
+              {/* Reference URLs */}
+              {card.refUrls && card.refUrls.length > 0 && (
+                <Flex align="center" gap="2" className="text-xs">
+                  {(() => {
+                    const figmaUrls = card.refUrls.filter(url => url.type === 'figma').length
+                    const taskUrls = card.refUrls.filter(url => url.type === 'task').length
+                    const externalUrls = card.refUrls.filter(url => url.type === 'external').length
+                    
+                    return (
+                      <Flex align="center" gap="2">
+                        {figmaUrls > 0 && (
+                          <Flex align="center" gap="1" title={`${figmaUrls} Figma link${figmaUrls > 1 ? 's' : ''}`}>
+                            <Figma size={12} className="text-purple-500" />
+                            {figmaUrls > 1 && <Text size="1" className="font-medium">{figmaUrls}</Text>}
+                          </Flex>
+                        )}
+                        {taskUrls > 0 && (
+                          <Flex align="center" gap="1" title={`${taskUrls} Task link${taskUrls > 1 ? 's' : ''}`}>
+                            <Link size={12} className="text-blue-500" />
+                            {taskUrls > 1 && <Text size="1" className="font-medium">{taskUrls}</Text>}
+                          </Flex>
+                        )}
+                        {externalUrls > 0 && (
+                          <Flex align="center" gap="1" title={`${externalUrls} External link${externalUrls > 1 ? 's' : ''}`}>
+                            <ExternalLink size={12} className="text-green-500" />
+                            {externalUrls > 1 && <Text size="1" className="font-medium">{externalUrls}</Text>}
+                          </Flex>
+                        )}
+                      </Flex>
+                    )
+                  })()}
+                </Flex>
+              )}
+              
               {/* Date displays */}
               <Flex align="center" gap="2" className="text-xs">
                 {card.startDate && (
