@@ -1,9 +1,9 @@
 // components/shared/simple-task-input.tsx
-import React, { useState, useCallback } from "react"
-import { Box, Flex, Button, TextField } from "@incmix/ui"
-import { Plus, X } from "lucide-react"
+import React, { useState, useCallback, useEffect } from "react"
+import { Box, Flex, Button, TextField, TextArea, Text } from "@incmix/ui"
+import { Plus, X, Loader2, Check } from "lucide-react"
 import { TaskActionsMenu } from "./task-actions-menu"
-import type { TaskStatusDocType } from "@incmix/store"
+import { useAIUserStory, useAIFeaturesStore, type TaskStatusDocType } from "@incmix/store"
 
 interface SimpleTaskInputProps {
   onCreateTask: (taskName: string, taskData: any) => Promise<void>
@@ -20,7 +20,12 @@ export function SimpleTaskInput({
   placeholder = "Enter task title...",
   disabled = false
 }: SimpleTaskInputProps) {
+  // Get AI features state
+  const { useAI } = useAIFeaturesStore()
+  
+  // Form state
   const [taskName, setTaskName] = useState("")
+  const [description, setDescription] = useState("")
   const [taskData, setTaskData] = useState({
     priority: "medium",
     startDate: "",
@@ -29,20 +34,65 @@ export function SimpleTaskInput({
     columnId: ""
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [hadGenerationError, setHadGenerationError] = useState(false)
+  
+  // AI description generation hook
+  const { 
+    generateUserStory, 
+    isGenerating, 
+    error: generationError, 
+    clearError: resetError 
+  } = useAIUserStory()
 
   const handleTaskDataChange = useCallback((newData: any) => {
     setTaskData(prev => ({ ...prev, ...newData }))
   }, [])
+  
+  // Generate description when task name changes (if AI enabled)
+  useEffect(() => {
+    // Only generate if AI is enabled, task name has content, and description is empty
+    if (useAI && taskName.trim() && !description && !hadGenerationError) {
+      // Add a delay to avoid generating on every keystroke
+      const timer = setTimeout(async () => {
+        try {
+          const generatedDescription = await generateUserStory(taskName)
+          if (generatedDescription) {
+            setDescription(generatedDescription)
+          }
+        } catch (error) {
+          console.error("AI description generation failed:", error)
+          setHadGenerationError(true)
+        }
+      }, 1000) // 1 second delay
+
+      return () => clearTimeout(timer)
+    }
+  }, [taskName, useAI, description, generateUserStory, hadGenerationError])
+
+  // Reset error state when task name changes
+  useEffect(() => {
+    if (hadGenerationError) {
+      setHadGenerationError(false)
+      resetError()
+    }
+  }, [taskName, resetError, hadGenerationError])
 
   const handleSubmit = useCallback(async () => {
     if (!taskName.trim() || isSubmitting) return
 
     setIsSubmitting(true)
     try {
-      await onCreateTask(taskName.trim(), taskData)
+      // Include the description in the task data
+      const fullTaskData = {
+        ...taskData,
+        description: description.trim()
+      }
+      
+      await onCreateTask(taskName.trim(), fullTaskData)
       
       // Reset form
       setTaskName("")
+      setDescription("")
       setTaskData({
         priority: "medium",
         startDate: "",
@@ -55,7 +105,7 @@ export function SimpleTaskInput({
     } finally {
       setIsSubmitting(false)
     }
-  }, [taskName, taskData, onCreateTask, isSubmitting])
+  }, [taskName, description, taskData, onCreateTask, isSubmitting])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -92,6 +142,36 @@ export function SimpleTaskInput({
           variant="soft"
         />
       </Flex>
+      
+      {/* Description field */}
+      <TextArea
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        placeholder={useAI ? "AI will generate description based on title..." : "Enter task description..."}
+        rows={3}
+        disabled={disabled || isSubmitting || isGenerating}
+      />
+      
+      {/* AI Status Indicator */}
+      {useAI && taskName.trim() && (
+        <Box className="text-xs">
+          {isGenerating && (
+            <Flex align="center" gap="1" className="text-blue-500">
+              <Loader2 size={12} className="animate-spin" />
+              <Text>Generating description...</Text>
+            </Flex>
+          )}
+          {generationError && (
+            <Text className="text-red-500">Failed to generate description</Text>
+          )}
+          {!isGenerating && !generationError && description && (
+            <Flex align="center" gap="1" className="text-green-600">
+              <Check size={12} />
+              <Text>AI description generated</Text>
+            </Flex>
+          )}
+        </Box>
+      )}
 
       {/* Action Buttons */}
       <Flex gap="2">

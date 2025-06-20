@@ -11,30 +11,11 @@ import {
   Text,
   Box,
   toast,
+  hasGoodContrast,
 } from "@incmix/ui"
 import { Plus, Palette, AlertCircle } from "lucide-react"
-import { useState } from "react"
-
-/**
- * Simple accessibility check for color contrast with background
- * Returns true if the color is likely to have good contrast
- */
-function hasGoodContrast(hexColor: string): boolean {
-  // Simple check based on color brightness
-  // Formula: (R*299 + G*587 + B*114) / 1000
-  const hex = hexColor.replace(/^#/, '');
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-  
-  // Calculate brightness (higher means lighter)
-  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-  
-  // Dark colors have better contrast on light backgrounds
-  // Light colors have better contrast on dark backgrounds
-  // A more nuanced implementation would compare with actual background
-  return brightness < 125;
-}
+import { useState, useRef, useEffect } from "react"
+import ColorPicker, { ColorSelectType } from "@components/color-picker"
 
 interface CreateColumnFormProps {
   projectId: string
@@ -66,6 +47,23 @@ export function CreateColumnForm({
     description: "",
     color: DEFAULT_COLORS[0].value,
   })
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
+  const colorPickerRef = useRef<HTMLDivElement>(null)
+
+  // Close color picker when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+        setIsColorPickerOpen(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [colorPickerRef])
+
   // Use the new useKanban hook
   const { createColumn } = useKanban(projectId)
 
@@ -245,15 +243,28 @@ export function CreateColumnForm({
                 >
                   Or choose a custom color:
                 </label>
-                <Flex align="center" gap="2">
-                  <input
-                    id="custom-color"
-                    type="color"
-                    value={formData.color}
-                    onChange={(e) => handleColorSelect(e.target.value)}
-                    disabled={isLoading}
-                    className="h-8 w-16 rounded border border-gray-300 cursor-pointer disabled:cursor-not-allowed"
-                  />
+                <Flex align="center" gap="2" className="items-start">
+                  <div className="relative" ref={colorPickerRef}>
+                    <Button
+                      variant="solid"
+                      className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
+                      style={{ backgroundColor: formData.color }}
+                      disabled={isLoading}
+                      onClick={() => !isLoading && setIsColorPickerOpen(!isColorPickerOpen)}
+                    />
+                    {isColorPickerOpen && (
+                      <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
+                        <ColorPicker 
+                          colorType="base"
+                          onColorSelect={(color: ColorSelectType) => {
+                            handleColorSelect(color.hex);
+                            setIsColorPickerOpen(false);
+                          }}
+                          activeColor={formData.color}
+                        />
+                      </div>
+                    )}
+                  </div>
                   <Text size="2" className="text-gray-500">
                     {formData.color.toUpperCase()}
                   </Text>

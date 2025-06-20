@@ -1,5 +1,9 @@
 // pages/tasks/index.tsx - Fixed horizontal scrolling
-import { type TaskCollections, useOrganizationStore } from "@incmix/store"
+import {
+  type TaskCollections,
+  useAIFeaturesStore,
+  useOrganizationStore,
+} from "@incmix/store"
 
 import {
   AddTaskForm,
@@ -8,6 +12,7 @@ import {
   Card,
   Flex,
   ListBoard,
+  Switch,
   TableView,
   Tabs,
 } from "@incmix/ui"
@@ -26,6 +31,8 @@ const TasksPage = () => {
   const [selectedProject, setSelectedProject] =
     useState<string>("default-project")
   const db: RxDatabase<TaskCollections> = useRxDB()
+
+  const { useAI, setUseAI } = useAIFeaturesStore()
 
   // Get projects for the selected organization
   const { data: projects, refetch: refetchProjects } = useQuery({
@@ -80,15 +87,22 @@ const TasksPage = () => {
                   }}
                 />
               </Flex>
+              <Flex align="center" gap="4">
+                {/* Use AI Toggle */}
+                <Flex align="center" gap="2">
+                  <div className="text-sm">Use AI</div>
+                  <Switch checked={useAI} onCheckedChange={setUseAI} />
+                </Flex>
 
-              {/* Add Task Form - Always visible */}
-              <AddTaskForm
-                projectId="default-project"
-                onSuccess={() => {
-                  // You might want to implement a refetch function here
-                  // if needed to update task lists after creation
-                }}
-              />
+                {/* Add Task Form - Always visible */}
+                <AddTaskForm
+                  projectId="default-project"
+                  onSuccess={() => {
+                    // You might want to implement a refetch function here
+                    // if needed to update task lists after creation
+                  }}
+                />
+              </Flex>
             </Flex>
           </Box>
         </Box>

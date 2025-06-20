@@ -1,13 +1,14 @@
 // components/board/add-task-form-autoform.tsx
 "use client"
 
-import { useState, useCallback, useMemo, useEffect } from "react"
+import { useState, useCallback, useMemo, useEffect, useRef } from "react"
 import { Button, Dialog, Text, Box } from "@incmix/ui"
-import { Plus } from "lucide-react"
+import { Plus, Sparkles } from "lucide-react"
 import AutoForm from "@components/auto-form"
-import { useKanban, type TaskDataSchema } from "@incmix/store"
+import { useKanban, type TaskDataSchema, useAIFeaturesStore, useAIUserStory } from "@incmix/store"
 import { nanoid } from "nanoid"
 import { createTaskFormSchema } from "./add-task-schema"
+import { useAIDescriptionGeneration } from "../../../hooks/use-ai-description-generation"
 
 interface AddTaskFormProps {
   projectId: string
@@ -20,7 +21,28 @@ interface AddTaskFormProps {
 export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [formData, setFormData] = useState<Record<string, any>>({})
+  const [formData, setFormData] = useState<{
+    name?: string;
+    description?: string;
+    columnId?: string;
+    priority?: string;
+    startDate?: string;
+    endDate?: string;
+    assignedTo?: any[];
+    labelsTags?: any[];
+    subTasks?: any[];
+    [key: string]: any;
+  }>({ priority: 'medium' })
+  const [lastProcessedTitle, setLastProcessedTitle] = useState('')
+  
+  // Track if we're currently focusing the description field
+  const isDescriptionFocused = useRef(false)
+  
+  // Get AI features state
+  const { useAI } = useAIFeaturesStore()
+  
+  // Get AI user story generation functionality
+  const { generateUserStory, isGenerating, error: aiError } = useAIUserStory()
 
   // Get kanban data and operations
   const { columns, createTask, isLoading: kanbanLoading } = useKanban(projectId)
@@ -57,14 +79,15 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
     return defaults
   }, [taskFormSchema, columns])
 
-  // Initialize form data with defaults when component mounts or schema changes
-  // Only set if formData is completely empty to avoid conflicts
+  // Initialize form data with defaults when component mounts or dialog opens
   useEffect(() => {
-    if (defaultFormValues && Object.keys(defaultFormValues).length > 0 && Object.keys(formData).length === 0) {
-      console.log('Setting initial default form values:', defaultFormValues) // Debug log
-      setFormData(defaultFormValues)
+    if (defaultFormValues && Object.keys(defaultFormValues).length > 0) {
+      // Only update if we're opening the dialog (isOpen is true)
+      if (isOpen) {
+        setFormData(defaultFormValues);
+      }
     }
-  }, [defaultFormValues]) // Remove formData dependency to avoid loops
+  }, [defaultFormValues, isOpen])
 
   // Generate unique ID helper (for any future use)
   const generateUniqueId = useCallback((prefix?: string, length = 10): string => {
@@ -124,9 +147,46 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
   }, [getColorForLabel])
 
 
+  // Track if we've had a generation error for the current title
+  const [hadGenerationError, setHadGenerationError] = useState(false);
+  
+  // Function to generate description using AI
+  const generateDescription = useCallback(async (title: string) => {
+    if (!title || !useAI) return;
+    
+    try {
+      const generatedStory = await generateUserStory(title);
+      if (generatedStory) {
+        setFormData(prev => ({
+          ...prev,
+          description: generatedStory
+        }));
+        setLastProcessedTitle(title);
+      }
+    } catch (error) {
+      console.error('Error generating description:', error);
+      setHadGenerationError(true);
+    }
+  }, [useAI, generateUserStory, setHadGenerationError]);
+  
+  // Use the custom hook to handle AI description generation
+  useAIDescriptionGeneration(
+    formData.name,
+    useAI,
+    Boolean(formData.description?.trim()),
+    hadGenerationError,
+    lastProcessedTitle,
+    generateDescription,
+    () => setHadGenerationError(false)
+  );
+
   // Handle form values change
   const handleValuesChange = useCallback((values: any) => {
-    setFormData(values)
+    setFormData(values);
+    
+    // If title changes significantly and useAI is enabled, we should regenerate the description
+    // on the next render cycle via useEffect
+    // (the logic moved to useEffect above for simplicity)
   }, [])
 
   // Handle form submission
@@ -174,28 +234,31 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
       open={isOpen} 
       onOpenChange={(open) => {
         setIsOpen(open)
-        // When dialog opens, reset to defaults - when it closes, clear form
-        if (open && defaultFormValues) {
-          console.log('Dialog opened, setting defaults:', defaultFormValues)
-          setFormData(defaultFormValues)
-        } else if (!open) {
-          console.log('Dialog closed, clearing form')
-          setFormData({})
+        
+        if (!open) {
+          // Reset form-related state when closing
+          setFormData({ priority: 'medium' });
+          setLastProcessedTitle('');
+          setHadGenerationError(false);
         }
       }}
     >
       <Dialog.Trigger>
         <Button size="2" className="bg-blue-600 hover:bg-blue-700 text-white">
           <Plus size={16} />
-          Add Task
+          Add Task {useAI && <span className="ml-1 text-xs">(AI)</span>}
         </Button>
       </Dialog.Trigger>
 
       <Dialog.Content className="max-w-4xl max-h-[90vh] overflow-hidden">
         <Dialog.Header>
-          <Dialog.Title>Create New Task</Dialog.Title>
+          <Dialog.Title>
+            Create New Task {useAI && <span className="text-sm text-blue-500 ml-1">(AI Assisted)</span>}
+          </Dialog.Title>
           <Dialog.Description>
-            Add a comprehensive task with all necessary details
+            {useAI 
+              ? "AI will help generate task details based on your inputs" 
+              : "Add a comprehensive task with all necessary details"}
           </Dialog.Description>
         </Dialog.Header>
 
@@ -208,18 +271,43 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
               </Text>
               {formData.columnId && (
                 <Text size="1" className="text-blue-600 dark:text-blue-400 mt-1">
-                  Status: {columns.find(col => col.id === formData.columnId)?.name}
+                  Status: {columns.find(col => col.id === (formData.columnId as string))?.name}
                 </Text>
               )}
             </Box>
           )}
 
+          {/* AI Status Message */}
+          {useAI && (
+            <div className="mb-4">
+              {isGenerating && (
+                <div className="flex items-center p-2 bg-blue-50 dark:bg-blue-900/20 rounded text-blue-600 dark:text-blue-300">
+                  <Sparkles size={16} className="mr-2 animate-pulse" />
+                  <span>AI is generating a task description...</span>
+                </div>
+              )}
+              {aiError && (
+                <div className="flex items-center p-2 bg-red-50 dark:bg-red-900/20 rounded text-red-600 dark:text-red-300">
+                  <span className="mr-2">⚠️</span>
+                  <span>{aiError}</span>
+                </div>
+              )}
+              {lastProcessedTitle && !isGenerating && !aiError && formData.description && (
+                <div className="flex items-center p-2 bg-green-50 dark:bg-green-900/20 rounded text-green-600 dark:text-green-300">
+                  <Sparkles size={16} className="mr-2" />
+                  <span>AI-generated description based on your title</span>
+                </div>
+              )}
+            </div>
+          )}
+          
           <AutoForm
             formSchema={taskFormSchema.formSchema}
             fieldConfig={taskFormSchema.fieldConfig}
             onSubmit={handleSubmit}
             onValuesChange={handleValuesChange}
-            values={Object.keys(formData).length > 0 ? formData : defaultFormValues}
+
+            values={formData}
             className="space-y-6"
           >
             <div className="mt-4 flex justify-end">
@@ -238,6 +326,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
           <div className="flex justify-between items-center w-full">
             <Text size="1" className="text-gray-500">
               {formData.name ? `Creating: ${formData.name}` : "Fill in the task details"}
+              {useAI && <span className="ml-1 text-blue-500">(AI will enhance your input)</span>}
             </Text>
             
             <div className="flex gap-2">

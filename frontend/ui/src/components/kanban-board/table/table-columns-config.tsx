@@ -50,7 +50,8 @@ export const TaskNameCell: React.FC<{ value: string; row: TableTask }> = ({ valu
       <Text 
         size="2" 
         weight="medium" 
-        className={row.completed ? "line-through text-gray-500" : ""}
+        className={`truncate max-w-[200px] ${row.completed ? "line-through text-gray-500" : ""}`}
+        title={value} // Show full title on hover
       >
         {value}
       </Text>
@@ -163,14 +164,6 @@ export const TASK_TABLE_COLUMNS = [
     enableSorting: true,
     enableInlineEdit: true,
     renderer: (value: string, row: TableTask) => <TaskNameCell value={value} row={row} />
-  },
-  {
-    headingName: "Description", 
-    type: "String" as const,
-    accessorKey: "description" as const,
-    id: "description",
-    enableInlineEdit: true,
-    renderer: (value: string | undefined) => <DescriptionCell value={value} />
   },
   {
     headingName: "Status",

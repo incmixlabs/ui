@@ -117,7 +117,7 @@ export const EditableCell: React.FC<EditableCellProps> = ({
           onChange={(e) => setEditValue(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
-          className="w-full border border-blue-300 dark:border-blue-600 rounded-sm px-2 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="w-full border border-blue-300 dark:border-blue-600 rounded-sm px-2 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
           onClick={(e) => e.stopPropagation()}
           style={{
             minWidth: 0,

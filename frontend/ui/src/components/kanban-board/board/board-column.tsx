@@ -5,8 +5,9 @@ import {
   draggable,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
-import { Ellipsis, Plus, Trash2, Edit3, GripVertical, Check, X } from "lucide-react"
-import { memo, useEffect, useRef, useState, useCallback } from "react"
+import { Ellipsis, Plus, Trash2, Edit3, GripVertical, Check, X, Loader2 } from "lucide-react"
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import ColorPicker, { ColorSelectType } from "@components/color-picker"
 import invariant from "tiny-invariant"
 import { ModalPresets } from "../shared/confirmation-modal"
 
@@ -37,6 +38,8 @@ import {
   isDraggingACard,
   isDraggingAColumn,
   type KanbanColumn,
+  useAIUserStory,
+  useAIFeaturesStore
 } from "@incmix/store"
 
 // Define types for drag and drop operations
@@ -102,8 +105,51 @@ const QuickTaskForm = memo(function QuickTaskForm({
   onCreateTask: (columnId: string, taskData: Partial<TaskDataSchema>) => Promise<void>
   onCancel: () => void
 }) {
+  // Get AI features state
+  const { useAI } = useAIFeaturesStore()
+  
+  // Task form state
   const [taskName, setTaskName] = useState("")
+  const [description, setDescription] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [hadGenerationError, setHadGenerationError] = useState(false)
+  
+  // AI description generation hook
+  const { 
+    generateUserStory, 
+    isGenerating, 
+    error: generationError, 
+    clearError: resetError 
+  } = useAIUserStory()
+
+  // Generate description when task name changes (if AI enabled)
+  useEffect(() => {
+    // Only generate if AI is enabled, task name has content, and description is empty
+    if (useAI && taskName.trim() && !description && !hadGenerationError) {
+      // Add a delay to avoid generating on every keystroke
+      const timer = setTimeout(async () => {
+        try {
+          const generatedDescription = await generateUserStory(taskName)
+          if (generatedDescription) {
+            setDescription(generatedDescription)
+          }
+        } catch (error) {
+          console.error("AI description generation failed:", error)
+          setHadGenerationError(true)
+        }
+      }, 1000) // 1 second delay
+
+      return () => clearTimeout(timer)
+    }
+  }, [taskName, useAI, description, generateUserStory, hadGenerationError])
+
+  // Reset error state when task name changes
+  useEffect(() => {
+    if (hadGenerationError) {
+      setHadGenerationError(false)
+      resetError()
+    }
+  }, [taskName, resetError, hadGenerationError])
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
@@ -114,7 +160,7 @@ const QuickTaskForm = memo(function QuickTaskForm({
     try {
       await onCreateTask(columnId, {
         name: taskName.trim(),
-        description: "",
+        description: description.trim(),
         priority: "medium",
         completed: false,
         labelsTags: [],
@@ -126,13 +172,14 @@ const QuickTaskForm = memo(function QuickTaskForm({
       })
       
       setTaskName("")
+      setDescription("")
       onCancel()
     } catch (error) {
       console.error("Failed to create task:", error)
     } finally {
       setIsSubmitting(false)
     }
-  }, [taskName, onCreateTask, columnId, onCancel])
+  }, [taskName, description, onCreateTask, columnId, onCancel])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Escape") {
@@ -151,6 +198,35 @@ const QuickTaskForm = memo(function QuickTaskForm({
           onKeyDown={handleKeyDown}
           disabled={isSubmitting}
         />
+        
+        <TextArea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder={useAI ? "AI will generate description based on title..." : "Enter task description..."}
+          rows={3}
+          disabled={isSubmitting || isGenerating}
+        />
+        
+        {/* AI Status Indicator */}
+        {useAI && taskName.trim() && (
+          <Box className="text-xs">
+            {isGenerating && (
+              <Flex align="center" gap="1" className="text-blue-500">
+                <Loader2 size={12} className="animate-spin" />
+                <Text>Generating description...</Text>
+              </Flex>
+            )}
+            {generationError && (
+              <Text className="text-red-500">Failed to generate description</Text>
+            )}
+            {!isGenerating && !generationError && description && (
+              <Flex align="center" gap="1" className="text-green-600">
+                <Check size={12} />
+                <Text>AI description generated</Text>
+              </Flex>
+            )}
+          </Box>
+        )}
         
         <Flex gap="2">
           <Button 
@@ -219,10 +295,26 @@ export const BoardColumn = memo(function BoardColumn({
   const innerRef = useRef<HTMLDivElement | null>(null)
   const [state, setState] = useState<TColumnState>(idle)
 
-  // Column editing state
+  const [isAddingTask, setIsAddingTask] = useState(false)
   const [isEditingColumn, setIsEditingColumn] = useState(false)
   const [editColumnName, setEditColumnName] = useState(column.name)
   const [editColumnColor, setEditColumnColor] = useState(column.color)
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
+  const colorPickerRef = useRef<HTMLDivElement>(null)
+  
+  // Close color picker when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+        setIsColorPickerOpen(false);
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [colorPickerRef]);
   const [editColumnDescription, setEditColumnDescription] = useState(column.description || "")
   
   // Modal states
@@ -478,13 +570,27 @@ export const BoardColumn = memo(function BoardColumn({
                   placeholder="Column description (optional)"
                   rows={2}
                 />
-                <Flex align="center" gap="2">
-                  <input
-                    type="color"
-                    value={editColumnColor}
-                    onChange={(e) => setEditColumnColor(e.target.value)}
-                    className="w-8 h-8 rounded border cursor-pointer"
-                  />
+                <Flex align="center" gap="2" className="items-start">
+                  <div className="relative" ref={colorPickerRef}>
+                    <Button
+                      variant="solid"
+                      className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
+                      style={{ backgroundColor: editColumnColor }}
+                      onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
+                    />
+                    {isColorPickerOpen && (
+                      <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
+                        <ColorPicker 
+                          colorType="base" 
+                          onColorSelect={(color: ColorSelectType) => {
+                            setEditColumnColor(color.hex);
+                            setIsColorPickerOpen(false);
+                          }}
+                          activeColor={editColumnColor}
+                        />
+                      </div>
+                    )}
+                  </div>
                   <Text size="1" className="text-gray-500">Column color</Text>
                 </Flex>
                 <Flex gap="2">

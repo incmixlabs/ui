@@ -29,6 +29,8 @@ import {
   type KanbanTask,
   type TaskDataSchema,
 } from "@incmix/store"
+import { useKanban } from "@incmix/store"
+import ColorPicker, { ColorSelectType } from "@components/color-picker"
 import { ListTaskCard, ListTaskCardShadow } from "./task-card"
 import { SimpleTaskInput } from "./mention-task-input"
 
@@ -286,6 +288,22 @@ export function ListColumn({
   const [editColumnName, setEditColumnName] = useState(column.name)
   const [editColumnColor, setEditColumnColor] = useState(column.color)
   const [editColumnDescription, setEditColumnDescription] = useState(column.description || "")
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
+  const colorPickerRef = useRef<HTMLDivElement>(null)
+  
+  // Close color picker when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+        setIsColorPickerOpen(false);
+      }
+    }
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [colorPickerRef]);
   
   // Modal states
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -418,13 +436,27 @@ export function ListColumn({
                     placeholder="Column description (optional)"
                     rows={2}
                   />
-                  <Flex align="center" gap="2">
-                    <input
-                      type="color"
-                      value={editColumnColor}
-                      onChange={(e) => setEditColumnColor(e.target.value)}
-                      className="w-8 h-8 rounded border cursor-pointer"
-                    />
+                  <Flex align="center" gap="2" className="items-start">
+                    <div className="relative" ref={colorPickerRef}>
+                      <Button
+                        variant="solid"
+                        className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
+                        style={{ backgroundColor: editColumnColor }}
+                        onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
+                      />
+                      {isColorPickerOpen && (
+                        <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
+                          <ColorPicker 
+                            colorType="base" 
+                            onColorSelect={(color: ColorSelectType) => {
+                              setEditColumnColor(color.hex);
+                              setIsColorPickerOpen(false);
+                            }} 
+                            activeColor={editColumnColor}
+                          />
+                        </div>
+                      )}
+                    </div>
                     <Text size="1" className="text-gray-500">Column color</Text>
                   </Flex>
                   <Flex gap="2">
