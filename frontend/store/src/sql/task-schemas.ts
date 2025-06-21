@@ -22,7 +22,7 @@ export type TaskDataSchema = {
     type: "figma" | "task" | "external"
     taskId?: string
   }[]
-  
+
   labelsTags: {
     value: string
     label: string
