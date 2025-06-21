@@ -69,6 +69,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
       assignedTo: [],
       labelsTags: [],
       subTasks: [],
+      refUrlsJson: JSON.stringify([]),
       name: "",
       description: "",
       startDate: "",
@@ -133,6 +134,17 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
         name: member.label || member.name,
         image: member.avatar || "/placeholder.svg",
       })),
+      
+      // Parse reference URLs from JSON string and add to task data
+      refUrls: (() => {
+        try {
+          // Parse the JSON string to get the URLs array
+          return data.refUrlsJson ? JSON.parse(data.refUrlsJson) : [];
+        } catch (error) {
+          console.error("Failed to parse refUrlsJson:", error);
+          return [];
+        }
+      })(),
       
       // Transform subtasks - they're already in the correct format from the custom component
       subTasks: (data.subTasks || []).filter((subtask: any) => 

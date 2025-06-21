@@ -1,50 +1,65 @@
-import { useState } from "react"
-import { PlusIcon, Trash2Icon, ExternalLinkIcon, CheckCircleIcon } from "lucide-react"
+import { useState, useCallback } from "react"
+import { PlusIcon, Trash2Icon } from "lucide-react"
 import { Button, Input, Label } from "@incmix/ui"
 import { nanoid } from "nanoid"
 
 // Helper to detect URL types
 const detectUrlType = (url: string): "figma" | "task" | "external" => {
-  if (url.includes("figma.com")) return "figma"
-  // Task URLs would typically include taskId or task in path
-  if (url.includes("/task/") || url.includes("taskId=")) return "task"
-  return "external"
+  try {
+    if (url.includes("figma.com")) return "figma"
+    // Task URLs would typically include taskId or task in path - internal links
+    if (url.includes("/tasks") || url.includes("taskId=") || url.includes("/task/")) return "task"
+    return "external"
+  } catch {
+    return "external"
+  }
 }
 
-// Helper to extract and format URL info
-const formatUrl = (url: string, type: string, title?: string) => {
-  // For Figma URLs, extract the file name if no title is provided
-  if (type === "figma" && !title) {
-    try {
-      const urlObject = new URL(url)
-      // Extract file name from Figma URL path segments
-      const pathSegments = urlObject.pathname.split('/')
-      const fileSegment = pathSegments.find(segment => segment.includes('file'))
-      if (fileSegment) {
-        return `Figma: ${fileSegment.replace('file/', '')}`
-      }
-      return "Figma Link"
-    } catch (e) {
-      return "Figma Link"
+// Generate default title based on URL type and existing URLs
+const generateDefaultTitle = (url: string, type: string, existingUrls: TaskRefUrl[]): string => {
+  try {
+    const urlObject = new URL(url)
+    
+    if (type === "figma") {
+      // Count existing figma URLs to generate a numbered title if needed
+      const figmaCount = existingUrls.filter(ru => ru.type === "figma").length
+      return figmaCount > 0 ? `Figma ${figmaCount + 1}` : "Figma"
     }
-  }
-  
-  // For task URLs, extract the task ID
-  if (type === "task" && !title) {
-    try {
-      const urlObject = new URL(url)
+    
+    if (type === "task") {
+      // Extract task ID if possible
       const taskId = urlObject.searchParams.get("taskId") || 
-                     urlObject.pathname.split('/').find(segment => segment.startsWith("tsk"))
+                    urlObject.pathname.split('/').find(segment => segment.startsWith("tsk"))
       if (taskId) {
-        return `Task: ${taskId}`
+        return `Task ${taskId}`
       }
-      return "Task Link"
-    } catch (e) {
-      return "Task Link"
+      
+      // Count existing task URLs for numbering
+      const taskCount = existingUrls.filter(ru => ru.type === "task").length
+      return taskCount > 0 ? `Task ${taskCount + 1}` : "Task"
     }
+    
+    // For external links, use the hostname
+    const hostname = urlObject.hostname.replace(/^www\./i, "")
+    const domainCount = existingUrls.filter(ru => {
+      try {
+        const ruUrl = new URL(ru.url)
+        return ruUrl.hostname.replace(/^www\./i, "") === hostname
+      } catch {
+        return false
+      }
+    }).length
+    
+    return domainCount > 0 ? `${hostname} ${domainCount + 1}` : hostname
+  } catch (e) {
+    // If URL parsing fails, provide a generic title
+    const externalCount = existingUrls.filter(ru => ru.type === "external").length
+    return externalCount > 0 ? `Link ${externalCount + 1}` : "Link"
   }
-  
-  // Return the title or a shortened URL for external links
+}
+
+// Helper to format displayed URL info
+const formatUrl = (url: string, type: string, title?: string) => {
   if (title) return title
   
   try {
@@ -77,21 +92,21 @@ export function TaskRefUrlsSection({
 }: TaskRefUrlsSectionProps) {
   const [newUrl, setNewUrl] = useState("")
   const [newTitle, setNewTitle] = useState("")
-  const [newType, setNewType] = useState<"figma" | "task" | "external">("external")
   const [isAdding, setIsAdding] = useState(false)
   
   // Handle adding a new reference URL
-  const handleAddRefUrl = () => {
+  const handleAddRefUrl = useCallback(() => {
     if (!newUrl) return
 
-    // Auto-detect URL type if not explicitly set
-    const urlType = newType === "external" ? detectUrlType(newUrl) : newType
+    // Auto-detect URL type
+    const urlType = detectUrlType(newUrl)
     
-    // Create new URL entry with explicitly set type and optional title
+    // Create new URL entry with auto-detected type
+    // If no title is provided, generate a default one based on the URL type
     const newRefUrl: TaskRefUrl = {
       id: nanoid(),
       url: newUrl,
-      title: newTitle || undefined,
+      title: newTitle ? newTitle : generateDefaultTitle(newUrl, urlType, refUrls),
       type: urlType
     }
     
@@ -101,9 +116,8 @@ export function TaskRefUrlsSection({
     // Reset form fields
     setNewUrl("")
     setNewTitle("")
-    setNewType("external")
     setIsAdding(false)
-  }
+  }, [newUrl, newTitle, refUrls, onUpdate])
   
   // Handle removing a reference URL
   const handleRemoveRefUrl = (id: string) => {
@@ -136,7 +150,7 @@ export function TaskRefUrlsSection({
             >
               <a 
                 href={refUrl.url} 
-                target="_blank" 
+                target={refUrl.type === "task" ? "_self" : "_blank"}
                 rel="noopener noreferrer" 
                 className="flex-1 text-sm hover:underline truncate"
               >
@@ -188,13 +202,7 @@ export function TaskRefUrlsSection({
             <Input
               id="new-ref-url"
               value={newUrl}
-              onChange={(e) => {
-                setNewUrl(e.target.value)
-                // Auto-detect URL type as user types
-                if (e.target.value) {
-                  setNewType(detectUrlType(e.target.value))
-                }
-              }}
+              onChange={(e) => setNewUrl(e.target.value)}
               placeholder="Enter URL"
               className="h-9"
             />
@@ -211,19 +219,7 @@ export function TaskRefUrlsSection({
             />
           </div>
           
-          <div className="space-y-2">
-            <Label htmlFor="new-ref-type">Type</Label>
-            <select
-              id="new-ref-type"
-              value={newType}
-              onChange={(e) => setNewType(e.target.value as "figma" | "task" | "external")}
-              className="w-full h-9 px-3 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
-            >
-              <option value="external">External Link</option>
-              <option value="figma">Figma Link</option>
-              <option value="task">Task Link</option>
-            </select>
-          </div>
+          {/* Type selection removed as requested - now auto-detected */}
           
           <div className="flex justify-end gap-2 mt-3">
             <Button 
