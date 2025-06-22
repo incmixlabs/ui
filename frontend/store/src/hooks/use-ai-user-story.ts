@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { aiService, type ProcessedUserStory } from "../services/ai-service"
+import { type ProcessedUserStory, aiService } from "../services/ai-service"
 import { useAIFeaturesStore } from "./use-ai-features-store"
 
 /**
@@ -32,7 +32,11 @@ export function useAIUserStory() {
 
     try {
       // Call the AI service to generate the user story
-      const result = await aiService.generateUserStory(taskTitle, userTier, templateId)
+      const result = await aiService.generateUserStory(
+        taskTitle,
+        userTier,
+        templateId
+      )
       return result
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Unknown error"

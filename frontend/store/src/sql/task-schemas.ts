@@ -48,7 +48,7 @@ export type TaskDataSchema = {
     name: string
     completed: boolean
   }[]
-  
+
   checklist?: {
     id: string
     text: string

@@ -105,7 +105,10 @@ export function useProjectData(
   })
 
   // Track subscriptions for cleanup
-  const subscriptionsRef = useRef<{ tasks?: Subscription; taskStatuses?: Subscription }>({})
+  const subscriptionsRef = useRef<{
+    tasks?: Subscription
+    taskStatuses?: Subscription
+  }>({})
 
   // Initialize reactive subscriptions
   useEffect(() => {
@@ -129,8 +132,10 @@ export function useProjectData(
             sort: [{ order: "asc" }],
           })
           .$.subscribe({
-            next: (statusDocs: Array<{toJSON(): TaskStatusDocType}>) => {
-              const taskStatuses = statusDocs.map((doc: {toJSON(): TaskStatusDocType}) => doc.toJSON())
+            next: (statusDocs: Array<{ toJSON(): TaskStatusDocType }>) => {
+              const taskStatuses = statusDocs.map(
+                (doc: { toJSON(): TaskStatusDocType }) => doc.toJSON()
+              )
               setData((prev) => ({
                 ...prev,
                 taskStatuses,
@@ -155,8 +160,8 @@ export function useProjectData(
             sort: [{ columnId: "asc" }, { order: "asc" }],
           })
           .$.subscribe({
-            next: (taskDocs: Array<{toJSON(): TaskDocType}>) => {
-              const tasks = taskDocs.map((doc: {toJSON(): TaskDocType}) => {
+            next: (taskDocs: Array<{ toJSON(): TaskDocType }>) => {
+              const tasks = taskDocs.map((doc: { toJSON(): TaskDocType }) => {
                 const task = doc.toJSON()
                 return {
                   ...task,

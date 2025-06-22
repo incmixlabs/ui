@@ -47,34 +47,39 @@ export const aiService = {
 
     try {
       // Mock response for development
-      if (typeof window !== 'undefined' && window.localStorage.getItem('MOCK_AI_API') === 'true') {
+      if (
+        typeof window !== "undefined" &&
+        window.localStorage.getItem("MOCK_AI_API") === "true"
+      ) {
         await new Promise((resolve) => setTimeout(resolve, 500)) // delay
-        
+
         const description = `As a user, I want to ${prompt.toLowerCase()} so that I can improve my productivity.\n\nThis feature should allow users to easily ${prompt.toLowerCase()} with minimal clicks.`
 
         const acceptanceCriteria = [
           "Include proper validation",
           "Ensure responsive design",
           "Add helpful tooltips",
-          "Implement error handling"
+          "Implement error handling",
         ]
 
         const checklistItems = [
           "Design the user interface",
-          "Implement backend API", 
+          "Implement backend API",
           "Write unit tests",
-          "Update documentation"
+          "Update documentation",
         ]
-        
-        const formattedAcceptanceCriteria = acceptanceCriteria.map(ac => `- ${ac}`).join('\n')
-        
+
+        const formattedAcceptanceCriteria = acceptanceCriteria
+          .map((ac) => `- ${ac}`)
+          .join("\n")
+
         return {
           description: `${description}\n\n${formattedAcceptanceCriteria}`,
           checklist: checklistItems.map((text, index) => ({
             id: `cl-${Date.now()}-${index}`,
             text,
-            checked: false
-          }))
+            checked: false,
+          })),
         }
       }
 
@@ -107,27 +112,28 @@ export const aiService = {
         )
       }
 
-      const data = await response.json() as UserStoryResponse
-      
+      const data = (await response.json()) as UserStoryResponse
+
       // Process the new response format
       const { userStory } = data
-      
+
       // Combine description and acceptance criteria for the description field
-      const descriptionText = userStory.description || ''
-      const acceptanceCriteriaText = userStory.acceptanceCriteria?.length 
-        ? `\n\nAcceptance Criteria:\n${userStory.acceptanceCriteria.map(ac => `- ${ac}`).join('\n')}`
-        : ''
-      
+      const descriptionText = userStory.description || ""
+      const acceptanceCriteriaText = userStory.acceptanceCriteria?.length
+        ? `\n\nAcceptance Criteria:\n${userStory.acceptanceCriteria.map((ac) => `- ${ac}`).join("\n")}`
+        : ""
+
       // Format checklist items
-      const checklistItems = userStory.checklist?.map((text, index) => ({
-        id: `cl-${Date.now()}-${index}`,
-        text,
-        checked: false
-      })) || []
-      
+      const checklistItems =
+        userStory.checklist?.map((text, index) => ({
+          id: `cl-${Date.now()}-${index}`,
+          text,
+          checked: false,
+        })) || []
+
       return {
         description: descriptionText + acceptanceCriteriaText,
-        checklist: checklistItems
+        checklist: checklistItems,
       }
     } catch (error) {
       console.error("Failed to generate user story:", error)
