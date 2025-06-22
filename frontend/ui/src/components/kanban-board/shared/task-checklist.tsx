@@ -26,7 +26,13 @@ export function TaskChecklist({
   const [activeItem, setActiveItem] = useState<ChecklistItem | null>(null);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
+  const [optimisticChecklist, setOptimisticChecklist] = useState<ChecklistItem[]>([]);
   const editInputRef = useRef<HTMLInputElement>(null);
+  
+  // Keep optimistic checklist in sync with actual checklist
+  useEffect(() => {
+    setOptimisticChecklist(checklist);
+  }, [checklist]);
   
   // Focus input when editing begins
   useEffect(() => {
@@ -42,13 +48,27 @@ export function TaskChecklist({
   
   const handleSaveEdit = () => {
     if (editingItemId && editText.trim()) {
+      // Optimistically update local state first
+      setOptimisticChecklist(prev => 
+        prev.map(item => 
+          item.id === editingItemId 
+            ? { ...item, text: editText.trim() } 
+            : item
+        )
+      );
+      
+      // Then call the parent update function
       onChecklistItemEdit(editingItemId, editText.trim());
+      
+      // Clear editing state
       setEditingItemId(null);
       setEditText("");
     }
   };
   
   const handleCancelEdit = () => {
+    // Reset to original state
+    setOptimisticChecklist(checklist);
     setEditingItemId(null);
     setEditText("");
   };
@@ -73,7 +93,7 @@ export function TaskChecklist({
           Checklist
         </h3>
         <div className="space-y-2">
-          {checklist.map((item) => (
+          {optimisticChecklist.map((item) => (
           <div key={item.id} className="flex items-start gap-2 group">
             <Checkbox
               id={`checklist-${item.id}`}
