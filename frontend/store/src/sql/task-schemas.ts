@@ -48,6 +48,12 @@ export type TaskDataSchema = {
     name: string
     completed: boolean
   }[]
+  
+  checklist?: {
+    id: string
+    text: string
+    checked: boolean
+  }[]
 
   // Comments with proper structure
   comments: {

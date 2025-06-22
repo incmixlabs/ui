@@ -125,6 +125,28 @@ export const taskSchemaLiteral = {
       type: "string",
       maxLength: 2000,
     },
+    checklist: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          id: {
+            type: "string",
+            maxLength: 100,
+          },
+          text: {
+            type: "string",
+            maxLength: 500,
+          },
+          checked: {
+            type: "boolean",
+            default: false,
+          },
+        },
+        required: ["id", "text", "checked"],
+      },
+      default: [],
+    },
     completed: {
       type: "boolean",
       default: false,

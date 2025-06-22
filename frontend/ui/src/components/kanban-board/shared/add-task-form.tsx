@@ -158,7 +158,6 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
     }
   }, [getColorForLabel])
 
-
   // Track if we've had a generation error for the current title
   const [hadGenerationError, setHadGenerationError] = useState(false);
   
@@ -167,11 +166,12 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
     if (!title || !useAI) return;
     
     try {
-      const generatedStory = await generateUserStory(title);
-      if (generatedStory) {
+      const aiResult = await generateUserStory(title)
+      if (aiResult) {
         setFormData(prev => ({
           ...prev,
-          description: generatedStory
+          description: aiResult.description,
+          checklist: aiResult.checklist,
         }));
         setLastProcessedTitle(title);
       }
