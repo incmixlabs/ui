@@ -5,10 +5,6 @@ import { useAIFeaturesStore } from "./use-ai-features-store"
 /**
  * Hook for using AI to generate user stories for task descriptions
  */
-export interface UserStoryResult {
-  description: string
-  checklist: { id: string; text: string; checked: boolean }[]
-}
 
 export function useAIUserStory() {
   const [isGenerating, setIsGenerating] = useState(false)

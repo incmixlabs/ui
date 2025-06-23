@@ -2,61 +2,9 @@ import { useState, useCallback } from "react"
 import { PlusIcon, Trash2Icon } from "lucide-react"
 import { Button, Input, Label } from "@incmix/ui"
 import { nanoid } from "nanoid"
+import { detectUrlType, generateDefaultTitle } from "@utils/url-helpers"
 
-// Helper to detect URL types
-const detectUrlType = (url: string): "figma" | "task" | "external" => {
-  try {
-    if (url.includes("figma.com")) return "figma"
-    // Task URLs would typically include taskId or task in path - internal links
-    if (url.includes("/tasks") || url.includes("taskId=") || url.includes("/task/")) return "task"
-    return "external"
-  } catch {
-    return "external"
-  }
-}
-
-// Generate default title based on URL type and existing URLs
-const generateDefaultTitle = (url: string, type: string, existingUrls: TaskRefUrl[]): string => {
-  try {
-    const urlObject = new URL(url)
-    
-    if (type === "figma") {
-      // Count existing figma URLs to generate a numbered title if needed
-      const figmaCount = existingUrls.filter(ru => ru.type === "figma").length
-      return figmaCount > 0 ? `Figma ${figmaCount + 1}` : "Figma"
-    }
-    
-    if (type === "task") {
-      // Extract task ID if possible
-      const taskId = urlObject.searchParams.get("taskId") || 
-                    urlObject.pathname.split('/').find(segment => segment.startsWith("tsk"))
-      if (taskId) {
-        return `Task ${taskId}`
-      }
-      
-      // Count existing task URLs for numbering
-      const taskCount = existingUrls.filter(ru => ru.type === "task").length
-      return taskCount > 0 ? `Task ${taskCount + 1}` : "Task"
-    }
-    
-    // For external links, use the hostname
-    const hostname = urlObject.hostname.replace(/^www\./i, "")
-    const domainCount = existingUrls.filter(ru => {
-      try {
-        const ruUrl = new URL(ru.url)
-        return ruUrl.hostname.replace(/^www\./i, "") === hostname
-      } catch {
-        return false
-      }
-    }).length
-    
-    return domainCount > 0 ? `${hostname} ${domainCount + 1}` : hostname
-  } catch (e) {
-    // If URL parsing fails, provide a generic title
-    const externalCount = existingUrls.filter(ru => ru.type === "external").length
-    return externalCount > 0 ? `Link ${externalCount + 1}` : "Link"
-  }
-}
+// Now using shared utility functions from url-helpers.ts
 
 // Helper to format displayed URL info
 const formatUrl = (url: string, type: string, title?: string) => {

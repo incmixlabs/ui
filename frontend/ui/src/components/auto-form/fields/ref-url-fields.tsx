@@ -3,6 +3,8 @@ import { useState, useCallback } from "react"
 import { Button, Input, FormControl, FormItem, FormMessage, Dialog } from "@base"
 import { Plus, Trash2, Edit2, Link, X } from "lucide-react"
 import { cn } from "@utils/cn"
+import { nanoid } from "nanoid"
+import { detectUrlType, generateDefaultTitle } from "@utils/url-helpers"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 
@@ -13,64 +15,7 @@ interface RefUrl {
   type: "figma" | "task" | "external"
 }
 
-/**
- * Helper to detect URL types
- */
-const detectUrlType = (url: string): "figma" | "task" | "external" => {
-  try {
-    if (url.includes("figma.com")) return "figma"
-    // Task URLs would typically include taskId or task in path - internal links
-    if (url.includes("/tasks") || url.includes("taskId=") || url.includes("/task/")) return "task"
-    return "external"
-  } catch {
-    return "external"
-  }
-}
-
-/**
- * Generate default title based on URL type and existing URLs
- */
-const generateDefaultTitle = (url: string, type: string, existingUrls: RefUrl[]): string => {
-  try {
-    const urlObject = new URL(url)
-    
-    if (type === "figma") {
-      // Count existing figma URLs to generate a numbered title if needed
-      const figmaCount = existingUrls.filter(ru => ru.type === "figma").length
-      return figmaCount > 0 ? `Figma ${figmaCount + 1}` : "Figma"
-    }
-    
-    if (type === "task") {
-      // Extract task ID if possible
-      const taskId = urlObject.searchParams.get("taskId") || 
-                    urlObject.pathname.split('/').find(segment => segment.startsWith("tsk"))
-      if (taskId) {
-        return `Task ${taskId}`
-      }
-      
-      // Count existing task URLs for numbering
-      const taskCount = existingUrls.filter(ru => ru.type === "task").length
-      return taskCount > 0 ? `Task ${taskCount + 1}` : "Task"
-    }
-    
-    // For external links, use the hostname
-    const hostname = urlObject.hostname.replace(/^www\./i, "")
-    const domainCount = existingUrls.filter(ru => {
-      try {
-        const ruUrl = new URL(ru.url)
-        return ruUrl.hostname.replace(/^www\./i, "") === hostname
-      } catch {
-        return false
-      }
-    }).length
-    
-    return domainCount > 0 ? `${hostname} ${domainCount + 1}` : hostname
-  } catch (e) {
-    // If URL parsing fails, provide a generic title
-    const externalCount = existingUrls.filter(ru => ru.type === "external").length
-    return externalCount > 0 ? `Link ${externalCount + 1}` : "Link"
-  }
-}
+// Using shared utility functions for URL type detection and default title generation from url-helpers.ts
 
 /**
  * Custom reference URL field component for AutoForm
@@ -90,9 +35,6 @@ export default function RefUrlField({
   // Get current URLs from field value or initialize empty array
   const refUrls: RefUrl[] = field.value || []
   
-  // Generate unique ID
-  const generateId = () => `url-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-  
   // Handle adding a new URL
   const handleAddUrl = useCallback(() => {
     if (!currentUrl.trim()) return
@@ -101,7 +43,7 @@ export default function RefUrlField({
     const urlType = detectUrlType(currentUrl)
     
     const newRefUrl: RefUrl = {
-      id: generateId(),
+      id: nanoid(),
       url: currentUrl.trim(),
       title: currentTitle.trim() ? currentTitle.trim() : generateDefaultTitle(currentUrl, urlType, refUrls),
       type: urlType

@@ -48,6 +48,8 @@ export function TaskChecklist({
   
   const handleSaveEdit = () => {
     if (editingItemId && editText.trim()) {
+      // Capture the original item so we can revert on failure
+      const originalItem = optimisticChecklist.find(item => item.id === editingItemId);
       // Optimistically update local state first
       setOptimisticChecklist(prev => 
         prev.map(item => 
@@ -57,8 +59,18 @@ export function TaskChecklist({
         )
       );
       
-      // Then call the parent update function
-      onChecklistItemEdit(editingItemId, editText.trim());
+      // Then call the parent update function with error handling
+      Promise.resolve(onChecklistItemEdit(editingItemId, editText.trim()))
+        .catch(() => {
+          // Revert optimistic update on failure
+          if (originalItem) {
+            setOptimisticChecklist(prev => 
+              prev.map(item => 
+                item.id === editingItemId ? originalItem : item
+              )
+            );
+          }
+        });
       
       // Clear editing state
       setEditingItemId(null);

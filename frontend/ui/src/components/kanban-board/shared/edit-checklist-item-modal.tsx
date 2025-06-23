@@ -38,7 +38,12 @@ export function EditChecklistItemModal({
     }
   }, [isOpen, initialText])
   
-  const handleClose = () => onOpenChange(false)
+  // Prevent closing while loading
+  const handleClose = () => {
+    if (!isLoading) {
+      onOpenChange(false)
+    }
+  }
   
   const handleSave = () => {
     if (text.trim()) {
@@ -50,7 +55,7 @@ export function EditChecklistItemModal({
   }
   
   return (
-    <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog.Root open={isOpen} onOpenChange={isLoading ? undefined : onOpenChange}>
       <Dialog.Content className="max-w-md">
         <Button
           variant="ghost"
