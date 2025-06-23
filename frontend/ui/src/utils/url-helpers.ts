@@ -27,7 +27,7 @@ export const detectUrlType = (url: string): "figma" | "task" | "external" => {
  */
 export const generateDefaultTitle = (
   url: string, 
-  type: string, 
+  type: "figma" | "task" | "external", 
   existingUrls: Array<{type: string, url: string}>
 ): string => {
   try {
