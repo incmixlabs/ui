@@ -1,7 +1,7 @@
 import { Box } from "@incmix/ui"
-import { cn, dashboardColorValues } from "@utils"
+import { cn } from "@utils"
 import { lazy, useEffect, useState } from "react"
-
+import { useThemeStore } from "@incmix/store"
 // Dynamically import ApexCharts to avoid SSR issues
 const ReactApexChart = lazy(() => import("react-apexcharts"))
 
@@ -16,10 +16,7 @@ export interface TaskItem {
    */
   value: number
 
-  /**
-   * Color for this task status
-   */
-  color: string
+
 }
 
 interface RadialTaskStatusChartProps {
@@ -74,7 +71,7 @@ export function RadialTaskStatusChart({
   trackBackground = dashboardColorValues.color4,
 }: RadialTaskStatusChartProps) {
   const [mounted, setMounted] = useState(false)
-
+  const dashboardColorValues = useThemeStore().
   useEffect(() => {
     setMounted(true)
   }, [])

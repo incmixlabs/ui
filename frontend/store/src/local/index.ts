@@ -11,10 +11,10 @@ interface PreferencesState {
   // Theme state
   variables: Variables
   setVariables: (variables: Variables) => void
-  theme: "light" | "dark"
+  appearance: "light" | "dark"
   system: boolean
-  toggleTheme: () => void
-  setTheme: (theme: "light" | "dark") => void
+  toggleAppearance: () => void
+  setAppearance: (appearance: "light" | "dark") => void
   isSystem: (system: boolean) => void
   // Language state
   language: Language
@@ -63,16 +63,16 @@ export const useLocalStore = create<PreferencesState>()(
 
       return {
         // Theme implementation
-        theme: "light",
+        appearance: "light",
         system: true,
         variables: {},
         setVariables: (variables: Variables) => set({ variables }),
-        toggleTheme: () =>
+        toggleAppearance: () =>
           set((state) => ({
-            theme: state.theme === "light" ? "dark" : "light",
+            appearance: state.appearance === "light" ? "dark" : "light",
           })),
         isSystem: (system: boolean) => set({ system }),
-        setTheme: (theme: "light" | "dark") => set({ theme }),
+        setAppearance: (appearance) => set({ appearance }),
         // Language implementation
         language: i18n.language as Language,
         setLanguage: (lang: Language) => {
@@ -125,11 +125,11 @@ export const useLocalStore = create<PreferencesState>()(
 ;("use client")
 
 // Enhanced selector helpers
-export const useThemeStore = () =>
+export const useAppearanceStore = () =>
   useLocalStore((state) => ({
-    theme: state.theme,
-    toggleTheme: state.toggleTheme,
-    setTheme: state.setTheme,
+    appearance: state.appearance,
+    toggleAppearance: ()=>state.setAppearance(state.appearance === "light" ? "dark" : "light"),
+    setAppearance: state.setAppearance,
     isSystem: state.isSystem,
     system: state.system,
   }))

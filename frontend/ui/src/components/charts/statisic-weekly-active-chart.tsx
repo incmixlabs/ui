@@ -1,9 +1,9 @@
 "use client"
 
 import { Box } from "@incmix/ui"
-import { cn, dashboardColorValues } from "@utils"
+import { cn } from "@utils"
 import { lazy, useEffect, useState } from "react"
-
+import { useThemeStore } from "@incmix/store"
 const ReactApexChart = lazy(() => import("react-apexcharts"))
 
 interface WeeklyActivityChartProps {

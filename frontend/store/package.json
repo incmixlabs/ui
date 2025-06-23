@@ -12,8 +12,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./local": "./src/local/index.ts",
-    "./hooks/theme-provider": "./src/hooks/use-theme-provider.tsx",
-    "./hooks/use-theme-store": "./src/hooks/use-theme-store.ts",
+    "./use-theme-provider": "./src/hooks/use-theme-provider.tsx",
+    "./use-theme-store": "./src/hooks/use-theme-store.ts",
     "./sql/tasks": "./src/sql/tasks/index.ts",
     "./sql/helper": "./src/sql/helper.ts"
   },

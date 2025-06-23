@@ -20,11 +20,12 @@ import {
   type RadixColor,
   type RadixAnyColor,
   type RadixRadius
-} from "@incmix/utils/types"; 
+} from "@incmix/utils/types";
 import {
-  useBaseThemeStore,
+  useOrgThemeStore,
   SIDEBAR_COLOR_OPTIONS,
-} from "@incmix/store/hooks/use-theme-store";
+} from "@incmix/store/use-theme-store";
+import { useAppearanceStore } from "@incmix/store";
 import { useTranslation } from "react-i18next";
 const getColorBoxStyle = (color: string) => ({
   backgroundColor: `var(--${color}-9)`,
@@ -35,10 +36,8 @@ const getColorBoxStyle = (color: string) => ({
 });
 export function ThemePlayground() {
   const { t } = useTranslation(["settings", "common"]);
-  const appearance = useBaseThemeStore((state) => state.appearance);
-  const toggleTheme = useBaseThemeStore((state) => state.toggleTheme);
-  const theme = useBaseThemeStore();
-  const setTheme = useBaseThemeStore((s) => s.setTheme);
+  const {appearance, toggleAppearance} = useAppearanceStore();
+  const { theme, setTheme } = useOrgThemeStore();
 
   const SelectRow = (props: {
     label: string;
@@ -74,7 +73,7 @@ export function ThemePlayground() {
           <Text>{t("darkMode")}</Text>
           <Switch
             checked={appearance === "dark"}
-            onCheckedChange={toggleTheme}
+            onCheckedChange={toggleAppearance}
           />
         </Flex>
 
@@ -82,7 +81,7 @@ export function ThemePlayground() {
         <Flex gap="4" align="center" justify="between">
           <Text>{t("Accent Color")}</Text>
           <Select.Root
-            value={theme.accentColor}
+            value={theme("accentColor")}
             onValueChange={(v) => setTheme({ accentColor: v as RadixColor })}
           >
             <Select.Trigger />
@@ -146,7 +145,7 @@ export function ThemePlayground() {
           label="Scaling"
           value={theme.scaling}
           options={[...SCALING_OPTIONS]}
-          onChange={(v) => setTheme({ scaling: v as typeof theme.scaling })}  
+          onChange={(v) => setTheme({ scaling: v as typeof theme.scaling })}
         />
 
         {/* <SelectRow
@@ -245,7 +244,7 @@ export function ThemePlayground() {
 
         {/* <Flex align={"center"} justify={"between"}>
           <Text mt="4" mb="1" size="2">
-            Dashboard Multi 
+            Dashboard Multi
           </Text>
           <Select.Root
             value={theme.dashboardMulti}
