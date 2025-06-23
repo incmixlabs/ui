@@ -46,42 +46,6 @@ export const aiService = {
     }
 
     try {
-      // Mock response for development
-      if (
-        typeof window !== "undefined" &&
-        window.localStorage.getItem("MOCK_AI_API") === "true"
-      ) {
-        await new Promise((resolve) => setTimeout(resolve, 500)) // delay
-
-        const description = `As a user, I want to ${prompt.toLowerCase()} so that I can improve my productivity.\n\nThis feature should allow users to easily ${prompt.toLowerCase()} with minimal clicks.`
-
-        const acceptanceCriteria = [
-          "Include proper validation",
-          "Ensure responsive design",
-          "Add helpful tooltips",
-          "Implement error handling",
-        ]
-
-        const checklistItems = [
-          "Design the user interface",
-          "Implement backend API",
-          "Write unit tests",
-          "Update documentation",
-        ]
-
-        const formattedAcceptanceCriteria = acceptanceCriteria
-          .map((ac) => `- ${ac}`)
-          .join("\n")
-
-        return {
-          description: `${description}\n\n${formattedAcceptanceCriteria}`,
-          checklist: checklistItems.map((text, index) => ({
-            id: `cl-${Date.now()}-${index}`,
-            text,
-            checked: false,
-          })),
-        }
-      }
 
       const response = await fetch(
         `${BASE_API_URL}/api/genai/generate-user-story`,
