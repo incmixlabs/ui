@@ -46,7 +46,6 @@ export const aiService = {
     }
 
     try {
-
       const response = await fetch(
         `${BASE_API_URL}/api/genai/generate-user-story`,
         {
