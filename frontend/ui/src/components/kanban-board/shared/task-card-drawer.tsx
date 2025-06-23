@@ -3,6 +3,7 @@ import { useKanban, useListView } from "@incmix/store"
 import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
 import { ScrollArea } from "@incmix/ui"
 import { ModalPresets } from "./confirmation-modal"
+import { TaskChecklist } from "./task-checklist"
 import {
   TaskDrawerSheet,
   TaskHeader,
@@ -11,14 +12,15 @@ import {
   TaskDescriptionSection,
   TaskDatesSection,
   TaskTagsSection,
+  TaskRefUrlsSection,
   TaskAssigneesSection,
   TaskSubtasksSection,
   TaskCommentsSection,
   useTaskActions,
   useTaskDrawerState,
-  
   type TaskCardDrawerProps
 } from "./task-card-components"
+
 
 export function TaskCardDrawer({
   viewType = 'board',
@@ -87,7 +89,7 @@ export function TaskCardDrawer({
       
         {/* Content */}
         <ScrollArea className="flex-1">
-          <div className="p-6 space-y-8">
+          <div className="p-4 space-y-6">
             {/* Action Buttons */}
             <TaskActionButtons
               currentTask={currentTask}
@@ -122,6 +124,29 @@ export function TaskCardDrawer({
               onSave={() => taskActions.handleDescriptionSave(drawerState.editDescription)}
             />
 
+            {/* Task Checklist */}
+            {currentTask?.checklist && currentTask.checklist.length > 0 && (
+              <TaskChecklist
+                checklist={currentTask.checklist}
+                onChecklistItemToggle={(id, checked) => {
+                  const updatedChecklist = currentTask.checklist?.map((item: { id: string; text: string; checked: boolean }) => 
+                    item.id === id ? { ...item, checked } : item
+                  )
+                  updateTask(currentTask.taskId, { checklist: updatedChecklist })
+                }}
+                onChecklistItemEdit={(id, text) => {
+                  const updatedChecklist = currentTask.checklist?.map((item: { id: string; text: string; checked: boolean }) => 
+                    item.id === id ? { ...item, text } : item
+                  )
+                  updateTask(currentTask.taskId, { checklist: updatedChecklist })
+                }}
+                onChecklistItemDelete={(id) => {
+                  const updatedChecklist = currentTask.checklist?.filter((item: { id: string }) => item.id !== id)
+                  updateTask(currentTask.taskId, { checklist: updatedChecklist })
+                }}
+              />
+            )}
+
             {/* Dates */}
             <TaskDatesSection
               currentTask={currentTask}
@@ -152,6 +177,15 @@ export function TaskCardDrawer({
                 drawerState.setIsAddingTag(false)
               }}
               onRemoveTag={taskActions.handleRemoveTag}
+            />
+
+            {/* Reference URLs */}
+            <TaskRefUrlsSection
+              refUrls={currentTask.refUrls || []}
+              onUpdate={(updatedRefUrls) => {
+                taskActions.handleUpdateTask({ refUrls: updatedRefUrls })
+              }}
+              readonly={false}
             />
 
             {/* Assignees */}

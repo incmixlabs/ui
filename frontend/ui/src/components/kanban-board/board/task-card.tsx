@@ -24,8 +24,7 @@ import {
   MoreVertical,
   Edit3,
   Trash2,
-  CheckSquare,
-
+  CheckSquare
 } from "lucide-react"
 import { 
   IconButton, 
@@ -40,6 +39,7 @@ import { Card } from "@incmix/ui/card"
 import { cn } from "@utils"
 import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
 import { ModalPresets } from "../shared/confirmation-modal"
+import { RefUrlSummary } from "../shared/ref-url-summary"
 import { 
   KanbanTask, 
   TaskDataSchema, 
@@ -392,6 +392,9 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
         {/* Footer with meta information */}
         <Flex align="center" justify="between" className="pt-2 border-t border-gray-100 dark:border-gray-700">
           <Flex align="center" gap="3">
+            {/* Reference URLs */}
+            <RefUrlSummary refUrls={card.refUrls} className="text-gray-500" />
+            
             {/* Attachments */}
             {card.attachments && card.attachments.length > 0 && (
               <Flex align="center" gap="1" className="text-gray-500">

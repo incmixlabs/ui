@@ -1,10 +1,11 @@
 import { useState } from "react"
-import { aiService } from "../services/ai-service"
+import { type ProcessedUserStory, aiService } from "../services/ai-service"
 import { useAIFeaturesStore } from "./use-ai-features-store"
 
 /**
  * Hook for using AI to generate user stories for task descriptions
  */
+
 export function useAIUserStory() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -18,25 +19,25 @@ export function useAIUserStory() {
     taskTitle: string,
     userTier = "free",
     templateId = 1
-  ): Promise<string> => {
+  ): Promise<ProcessedUserStory | null> => {
     // Don't generate anything if AI is disabled
-    if (!useAI || !taskTitle.trim()) return ""
+    if (!useAI || !taskTitle.trim()) return null
 
     setIsGenerating(true)
     setError(null)
 
     try {
       // Call the AI service to generate the user story
-      const userStory = await aiService.generateUserStory(
+      const result = await aiService.generateUserStory(
         taskTitle,
         userTier,
         templateId
       )
-      return userStory || ""
+      return result
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Unknown error"
       setError(`Failed to generate description: ${errorMessage}`)
-      return ""
+      return null
     } finally {
       setIsGenerating(false)
     }

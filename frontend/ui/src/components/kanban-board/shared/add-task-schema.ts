@@ -128,6 +128,11 @@ const baseTaskFormSchema = {
       },
       title: "Labels",
     },
+    // Reference URLs for the task (stored as JSON string)
+    refUrlsJson: {
+      type: "string",
+      title: "Reference URLs",
+    },
     // Subtasks with rich editing interface
     subTasks: {
       type: "array",
@@ -251,6 +256,13 @@ export const createTaskFormSchema = (columns: KanbanColumn[]): TaskFormSchema =>
           className: "border-1 dark:bg-gray-1",
         },
       },
+      refUrlsJson: {
+        description: "Add reference URLs to link to external resources like Figma designs or related tasks",
+        fieldType: "refurl",
+        inputProps: {
+          className: "w-full",
+        },
+      },
       subTasks: {
         description: "Add subtasks to break down this task into smaller components",
         fieldType: "subtask",
@@ -282,6 +294,12 @@ export const createTaskFormSchema = (columns: KanbanColumn[]): TaskFormSchema =>
         {
           fields: ["assignedTo", "labelsTags"],
           layout: "row",
+          gap: 4,
+          className: "mb-4",
+        },
+        {
+          fields: ["refUrlsJson"],
+          layout: "column",
           gap: 4,
           className: "mb-4",
         },

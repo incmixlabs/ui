@@ -1,7 +1,7 @@
 // File: use-project-task-data.ts
-// REPLACE your current file with this fixed version
 
 import { useCallback, useEffect, useRef, useState } from "react"
+import type { Subscription } from "rxjs"
 import type { TaskDocType, TaskStatusDocType } from "utils/task-schema"
 import { database } from "../sql"
 import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
@@ -105,7 +105,10 @@ export function useProjectData(
   })
 
   // Track subscriptions for cleanup
-  const subscriptionsRef = useRef<{ tasks?: any; taskStatuses?: any }>({})
+  const subscriptionsRef = useRef<{
+    tasks?: Subscription
+    taskStatuses?: Subscription
+  }>({})
 
   // Initialize reactive subscriptions
   useEffect(() => {
@@ -129,8 +132,10 @@ export function useProjectData(
             sort: [{ order: "asc" }],
           })
           .$.subscribe({
-            next: (statusDocs) => {
-              const taskStatuses = statusDocs.map((doc) => doc.toJSON())
+            next: (statusDocs: Array<{ toJSON(): TaskStatusDocType }>) => {
+              const taskStatuses = statusDocs.map(
+                (doc: { toJSON(): TaskStatusDocType }) => doc.toJSON()
+              )
               setData((prev) => ({
                 ...prev,
                 taskStatuses,
@@ -138,7 +143,7 @@ export function useProjectData(
                 isLoading: false,
               }))
             },
-            error: (error) => {
+            error: (error: Error) => {
               console.error("Task statuses subscription error:", error)
               setData((prev) => ({
                 ...prev,
@@ -155,8 +160,8 @@ export function useProjectData(
             sort: [{ columnId: "asc" }, { order: "asc" }],
           })
           .$.subscribe({
-            next: (taskDocs) => {
-              const tasks = taskDocs.map((doc) => {
+            next: (taskDocs: Array<{ toJSON(): TaskDocType }>) => {
+              const tasks = taskDocs.map((doc: { toJSON(): TaskDocType }) => {
                 const task = doc.toJSON()
                 return {
                   ...task,
@@ -169,7 +174,7 @@ export function useProjectData(
                 isLoading: false,
               }))
             },
-            error: (error) => {
+            error: (error: Error) => {
               console.error("Tasks subscription error:", error)
               setData((prev) => ({
                 ...prev,
@@ -250,12 +255,15 @@ export function useProjectData(
           description: taskData.description || "",
           completed: taskData.completed ?? false,
           priority: taskData.priority || "medium",
+          refUrls: taskData.refUrls || [],
           labelsTags: taskData.labelsTags || [],
           attachments: taskData.attachments || [],
           assignedTo: taskData.assignedTo || [],
           subTasks: taskData.subTasks || [],
           comments: taskData.comments || [],
           commentsCount: 0,
+          // Include checklist from taskData if available
+          checklist: taskData.checklist || [],
           createdAt: now,
           updatedAt: now,
           createdBy: user,
@@ -490,7 +498,7 @@ export function useProjectData(
           // Just remove - RxDB subscription handles UI
           await status.remove()
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error("Failed to delete task status:", error)
         throw error
       }

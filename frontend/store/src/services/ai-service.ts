@@ -11,8 +11,17 @@ interface GenerateUserStoryRequest {
   templateId?: number
 }
 
-interface GenerateUserStoryResponse {
-  userStory: string
+export interface UserStoryResponse {
+  userStory: {
+    description: string
+    acceptanceCriteria: string[]
+    checklist: string[]
+  }
+}
+
+export interface ProcessedUserStory {
+  description: string
+  checklist: { id: string; text: string; checked: boolean }[]
 }
 
 /**
@@ -26,7 +35,7 @@ export const aiService = {
     prompt: string,
     userTier = "free",
     templateId = 1
-  ): Promise<string> => {
+  ): Promise<ProcessedUserStory> => {
     // Validate input
     if (!prompt || typeof prompt !== "string" || prompt.trim().length === 0) {
       throw new Error("Prompt is required and must be a non-empty string")
@@ -66,8 +75,29 @@ export const aiService = {
         )
       }
 
-      const data = (await response.json()) as GenerateUserStoryResponse
-      return data.userStory
+      const data = (await response.json()) as UserStoryResponse
+
+      // Process the new response format
+      const { userStory } = data
+
+      // Combine description and acceptance criteria for the description field
+      const descriptionText = userStory.description || ""
+      const acceptanceCriteriaText = userStory.acceptanceCriteria?.length
+        ? `\n\nAcceptance Criteria:\n${userStory.acceptanceCriteria.map((ac) => `- ${ac}`).join("\n")}`
+        : ""
+
+      // Format checklist items
+      const checklistItems =
+        userStory.checklist?.map((text, index) => ({
+          id: `cl-${Date.now()}-${index}`,
+          text,
+          checked: false,
+        })) || []
+
+      return {
+        description: descriptionText + acceptanceCriteriaText,
+        checklist: checklistItems,
+      }
     } catch (error) {
       console.error("Failed to generate user story:", error)
       throw error

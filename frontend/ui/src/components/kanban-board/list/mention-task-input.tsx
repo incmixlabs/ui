@@ -26,6 +26,7 @@ export function SimpleTaskInput({
   // Form state
   const [taskName, setTaskName] = useState("")
   const [description, setDescription] = useState("")
+  const [checklist, setChecklist] = useState<Array<{ id: string; text: string; checked: boolean }>>([])  
   const [taskData, setTaskData] = useState({
     priority: "medium",
     startDate: "",
@@ -55,9 +56,10 @@ export function SimpleTaskInput({
       // Add a delay to avoid generating on every keystroke
       const timer = setTimeout(async () => {
         try {
-          const generatedDescription = await generateUserStory(taskName)
-          if (generatedDescription) {
-            setDescription(generatedDescription)
+          const userStoryResult = await generateUserStory(taskName)
+          if (userStoryResult) {
+            setDescription(userStoryResult.description)
+            setChecklist(userStoryResult.checklist || [])
           }
         } catch (error) {
           console.error("AI description generation failed:", error)
@@ -82,10 +84,11 @@ export function SimpleTaskInput({
 
     setIsSubmitting(true)
     try {
-      // Include the description in the task data
+      // Include the description and checklist in the task data
       const fullTaskData = {
         ...taskData,
-        description: description.trim()
+        description: description.trim(),
+        checklist: checklist
       }
       
       await onCreateTask(taskName.trim(), fullTaskData)
@@ -93,6 +96,7 @@ export function SimpleTaskInput({
       // Reset form
       setTaskName("")
       setDescription("")
+      setChecklist([])
       setTaskData({
         priority: "medium",
         startDate: "",

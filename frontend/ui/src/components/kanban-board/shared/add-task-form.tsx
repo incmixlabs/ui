@@ -3,7 +3,7 @@
 
 import { useState, useCallback, useMemo, useEffect, useRef } from "react"
 import { Button, Dialog, Text, Box } from "@incmix/ui"
-import { Plus, Sparkles } from "lucide-react"
+import { Plus, Sparkles, Loader2 } from "lucide-react"
 import AutoForm from "@components/auto-form"
 import { useKanban, type TaskDataSchema, useAIFeaturesStore, useAIUserStory } from "@incmix/store"
 import { nanoid } from "nanoid"
@@ -69,6 +69,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
       assignedTo: [],
       labelsTags: [],
       subTasks: [],
+      refUrlsJson: JSON.stringify([]),
       name: "",
       description: "",
       startDate: "",
@@ -134,10 +135,24 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
         image: member.avatar || "/placeholder.svg",
       })),
       
+      // Parse reference URLs from JSON string and add to task data
+      refUrls: (() => {
+        try {
+          // Parse the JSON string to get the URLs array
+          return data.refUrlsJson ? JSON.parse(data.refUrlsJson) : [];
+        } catch (error) {
+          console.error("Failed to parse refUrlsJson:", error);
+          return [];
+        }
+      })(),
+      
       // Transform subtasks - they're already in the correct format from the custom component
       subTasks: (data.subTasks || []).filter((subtask: any) => 
         subtask && subtask.name && subtask.name.trim()
       ),
+      
+      // Include the checklist (from AI generation or manually added)
+      checklist: data.checklist || [],
       
       // Initialize empty arrays for other fields
       attachments: [],
@@ -146,29 +161,29 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
     }
   }, [getColorForLabel])
 
-
   // Track if we've had a generation error for the current title
   const [hadGenerationError, setHadGenerationError] = useState(false);
   
   // Function to generate description using AI
-  const generateDescription = useCallback(async (title: string) => {
+  const generateDescription = useCallback(async (title: string): Promise<void> => {
     if (!title || !useAI) return;
     
     try {
-      const generatedStory = await generateUserStory(title);
-      if (generatedStory) {
-        setFormData(prev => ({
+      const aiResult = await generateUserStory(title)
+      if (aiResult) {
+        setFormData((prev) => ({
           ...prev,
-          description: generatedStory
-        }));
-        setLastProcessedTitle(title);
+          description: aiResult.description,
+          checklist: aiResult.checklist || [], // Add the AI-generated checklist to form data
+        }))
+        setLastProcessedTitle(title)
       }
     } catch (error) {
-      console.error('Error generating description:', error);
+      console.error("Error generating AI description:", error)
       setHadGenerationError(true);
     }
-  }, [useAI, generateUserStory, setHadGenerationError]);
-  
+  }, [generateUserStory, useAI])
+
   // Use the custom hook to handle AI description generation
   useAIDescriptionGeneration(
     formData.name,
@@ -199,8 +214,23 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
     setIsLoading(true)
 
     try {
+      // IMPORTANT: Merge the current formData.checklist with the data being submitted
+      // This ensures our manually rendered checklist is included in the submission
+      const mergedData = {
+        ...data,
+        checklist: formData.checklist || [],
+      }
+      
+      // Debug logging to verify checklist data
+      console.log("Form data before transform:", mergedData)
+      console.log("Checklist in form data:", mergedData.checklist || [])
+      
       // Transform form data to TaskDataSchema format
-      const taskData = transformFormDataToTask(data)
+      const taskData = transformFormDataToTask(mergedData)
+      
+      // Debug logging after transform
+      console.log("Task data after transform:", taskData)
+      console.log("Checklist in task data:", taskData.checklist || [])
       
       // Create the task using the useKanban hook
       await createTask(data.columnId, taskData)
@@ -310,13 +340,53 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
             values={formData}
             className="space-y-6"
           >
+            {/* AI Generated Checklist Display - Below description field */}
+            {useAI && formData.checklist && formData.checklist.length > 0 && (
+              <div className="border rounded-md p-4 bg-white dark:bg-gray-800 mt-4 mb-5">
+                <h4 className="text-sm font-medium mb-3 flex items-center">
+                  <Sparkles size={16} className="mr-2 text-blue-500" />
+                  AI Generated Checklist
+                </h4>
+                <div className="space-y-2">
+                  {formData.checklist.map((item: { id: string; text: string; checked: boolean }) => (
+                    <div key={item.id} className="flex items-start gap-2">
+                      <input 
+                        type="checkbox"
+                        checked={item.checked || false}
+                        onChange={() => {
+                          // Toggle the checked state for this item
+                          const updatedChecklist = (formData.checklist || []).map(
+                            (checkItem: any) => checkItem.id === item.id 
+                              ? { ...checkItem, checked: !checkItem.checked } 
+                              : checkItem
+                          )
+                          setFormData(prev => ({ ...prev, checklist: updatedChecklist }))
+                        }}
+                        className="mt-1"
+                      />
+                      <span className={item.checked ? "line-through text-gray-500" : ""}>
+                        {item.text}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             <div className="mt-4 flex justify-end">
               <Button
                 type="submit"
                 disabled={!formData.name?.trim() || !formData.columnId || isLoading}
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
-                {isLoading ? "Creating..." : "Create Task"}
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  "Create Task"
+                )}
               </Button>
             </div>
           </AutoForm>
