@@ -40,7 +40,7 @@ import  {
   getCardData,
   KanbanTask,
   getCardDropTargetData
-} from "@incmix/store/types"
+} from "../types"
 
 import { Card } from "@incmix/ui/card"
 import { cn } from "@utils"

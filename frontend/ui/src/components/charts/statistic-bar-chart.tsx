@@ -1,5 +1,4 @@
-import { useThemeContext } from "@radix-ui/themes"
-import { dashboardColorValues } from "@utils"
+import { useThemeStore, useAppearanceStore } from "@incmix/store/use-settings-store"
 import { Suspense, lazy } from "react"
 
 const ReactApexChart = lazy(() => import("react-apexcharts"))
@@ -24,7 +23,9 @@ export const StatisticsBarChartView: React.FC<StatisticsBarChartViewProps> = ({
   newTasksData = [160, 240, 80, 200, 160, 140, 100],
   inProgressData = [50, 70, 40, 100, 40, 0, 110],
 }) => {
-  const { appearance } = useThemeContext()
+  const { appearance } = useAppearanceStore()
+  const { getDashboardColors } = useThemeStore()
+  const dashboard = getDashboardColors()
   const isDarkMode = appearance === "dark"
   const textColor = "hsl(var(--foreground))"
 
@@ -90,7 +91,7 @@ export const StatisticsBarChartView: React.FC<StatisticsBarChartViewProps> = ({
           left: 12,
         },
       },
-      colors: [dashboardColorValues.color2, dashboardColorValues.color3],
+      colors: [dashboard.color2, dashboard.color3],
       states: {
         hover: {
           filter: {

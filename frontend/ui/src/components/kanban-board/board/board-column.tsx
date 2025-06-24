@@ -724,7 +724,7 @@ export const BoardColumn = memo(function BoardColumn({
                 onClick={() => setIsCreatingTask(true)}
               >
                 <Plus size={16} />
-                Add a task
+                {"Add a task"}
               </Button>
             )}
           </div>

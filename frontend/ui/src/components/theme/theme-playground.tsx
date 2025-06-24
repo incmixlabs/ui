@@ -7,10 +7,9 @@ import {
   Grid,
   Switch,
   CardContainer,
-} from "../radixui";
+} from "@radixui";
 // import {ThemePanel} from "@radix-ui/themes"
 import {
-
   RADIX_ACCENT_COLORS,
   RADIX_GRAY_COLORS,
   RADIX_RADIUS,
@@ -18,14 +17,15 @@ import {
   SCALING_OPTIONS,
   type RadixGrayColor,
   type RadixColor,
-  type RadixAnyColor,
-  type RadixRadius
+  type RadixRadius,
+  type RadixScaling
 } from "@incmix/utils/types";
+
 import {
-  useOrgThemeStore,
+  useThemeStore,
+  useAppearanceStore,
   SIDEBAR_COLOR_OPTIONS,
-} from "@incmix/store/use-theme-store";
-import { useAppearanceStore } from "@incmix/store";
+} from "@incmix/store/use-settings-store";
 import { useTranslation } from "react-i18next";
 const getColorBoxStyle = (color: string) => ({
   backgroundColor: `var(--${color}-9)`,
@@ -37,8 +37,7 @@ const getColorBoxStyle = (color: string) => ({
 export function ThemePlayground() {
   const { t } = useTranslation(["settings", "common"]);
   const {appearance, toggleAppearance} = useAppearanceStore();
-  const { theme, setTheme } = useOrgThemeStore();
-
+  const {accentColor, onAccentColorChange, grayColor, onGrayColorChange, radius, onRadiusChange, scaling, onScalingChange, sidebarBg, setTheme, dashboard}  = useThemeStore();
   const SelectRow = (props: {
     label: string;
     value: string;
@@ -76,13 +75,11 @@ export function ThemePlayground() {
             onCheckedChange={toggleAppearance}
           />
         </Flex>
-
-
         <Flex gap="4" align="center" justify="between">
           <Text>{t("Accent Color")}</Text>
           <Select.Root
-            value={theme("accentColor")}
-            onValueChange={(v) => setTheme({ accentColor: v as RadixColor })}
+            value={accentColor}
+            onValueChange={(v) => onAccentColorChange(v as RadixColor)}
           >
             <Select.Trigger />
             <Select.Content>
@@ -104,12 +101,11 @@ export function ThemePlayground() {
             </Select.Content>
           </Select.Root>
         </Flex>
-
         <Flex gap="4" align="center" justify="between">
           <Text>{t("Gray Color")}</Text>
           <Select.Root
-            value={theme.grayColor}
-            onValueChange={(v) => setTheme({ grayColor: v as typeof theme.grayColor })}
+            value={grayColor}
+            onValueChange={(v) => onGrayColorChange(v as RadixGrayColor)}
           >
             <Select.Trigger />
             <Select.Content>
@@ -131,23 +127,18 @@ export function ThemePlayground() {
             </Select.Content>
           </Select.Root>
         </Flex>
-
-
-
         <SelectRow
           label="Border Radius"
-          value={theme.radius}
+          value={radius}
           options={[...RADIX_RADIUS]}
-          onChange={(v) => setTheme({ radius: v as RadixRadius })}
+          onChange={(v) => onRadiusChange(v as RadixRadius )}
         />
-
         <SelectRow
           label="Scaling"
-          value={theme.scaling}
+          value={scaling}
           options={[...SCALING_OPTIONS]}
-          onChange={(v) => setTheme({ scaling: v as typeof theme.scaling })}
+          onChange={(v) => onScalingChange(v as RadixScaling )}
         />
-
         {/* <SelectRow
         label="Panel Background"
         value={theme.panelBackground}
@@ -165,16 +156,14 @@ export function ThemePlayground() {
         <Flex gap="4" align={"center"} justify={"between"}>
           <Text>{t("Sidebar")}</Text>
           <Select.Root
-            value={theme.sidebarBg}
+            value={sidebarBg}
             onValueChange={(selectedBg) => {
               const matched = SIDEBAR_COLOR_OPTIONS.find(
                 (opt) => opt.bg === selectedBg,
               );
               if (matched) {
                 setTheme({
-                  sidebarBg: matched.bg,
-                  sidebarForground: matched.fg,
-                  sidebarHover: matched.hover,
+                  sidebarBg: matched.bg
                 });
               }
             }}
@@ -202,10 +191,10 @@ export function ThemePlayground() {
         </Flex>
 
         <Flex gap="4" align="center" justify="between">
-          <Text>{t("Dashboard Mono #1")}</Text>
+          <Text>{t("Dashboard Color2 #1")}</Text>
           <Select.Root
-            value={theme.dashboardMono1}
-            onValueChange={(v) => setTheme({ dashboardMono1: v })}
+            value={dashboard.color1}
+            onValueChange={(v) => setTheme({ dashboard: { ...dashboard, color1: v as RadixColor } })}
           >
             <Select.Trigger />
             <Select.Content>
@@ -229,17 +218,23 @@ export function ThemePlayground() {
         </Flex>
 
         <SelectRow
-          label="Dashboard Mono #2"
-          value={theme.dashboardMono2}
+          label={t("Dashboard Color #2")}
+          value={dashboard.color2}
           options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
-          onChange={(v) => setTheme({ dashboardMono2: v })}
+          onChange={(v) => setTheme({ dashboard: { ...dashboard, color2: v as RadixColor } })}
         />
 
         <SelectRow
-          label="Dashboard Mono #3"
-          value={theme.dashboardMono3}
-          options={RADIX_GRAY_COLORS.map((g) => `var(--${g}-2)`)}
-          onChange={(v) => setTheme({ dashboardMono3: v })}
+          label={t("Dashboard Color #3")}
+          value={dashboard.color3}
+          options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
+          onChange={(v) => setTheme({ dashboard: { ...dashboard, color3: v as RadixColor } })}
+        />
+        <SelectRow
+          label={t("Dashboard Color #4")}
+          value={dashboard.color4}
+          options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
+          onChange={(v) => setTheme({ dashboard: { ...dashboard, color4: v as RadixColor } })}
         />
 
         {/* <Flex align={"center"} justify={"between"}>

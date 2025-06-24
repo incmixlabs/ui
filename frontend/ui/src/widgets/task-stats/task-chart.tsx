@@ -1,9 +1,9 @@
+import { useThemeStore } from "@incmix/store/use-settings-store"
 import {
   CardContainer,
   Heading,
   SparkChart,
   Text,
-  dashboardColorValues,
 } from "@incmix/ui"
 import { Task } from "@incmix/utils/types";
 interface TaskChartProps {
@@ -23,9 +23,11 @@ export function TaskChart({
   title = "On Hold",
   data = [25, 30, 35, 25, 45, 75, 55, 25, 30, 25],
   total = 820,
-  color = dashboardColorValues.color2,
   label = "Total Task",
 }: TaskChartProps) {
+  const { getDashboardColors } = useThemeStore()
+  const dashboardColors = getDashboardColors()
+  const color = dashboardColors.color1
   return (
     <CardContainer className="h-full space-y-2 text-center">
       <SparkChart title={title} className="h-24" data={data} color={color} />

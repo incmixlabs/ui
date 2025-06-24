@@ -6,10 +6,9 @@ import { setDefaultOptions } from "date-fns"
 
 import { LoadingPage } from "@incmix/pages/common"
 import { I18n, usei18n } from "@incmix/pages/i18n"
-import { type Language, database as db, useLanguageStore } from "@incmix/store"
+import { type Language, database as db } from "@incmix/store"
 import {  Toaster, Theme } from "@incmix/ui"
-import { useAppearanceStore } from "@incmix/store"
-import { useSettingsStore } from "@incmix/store/use-settings-store"
+import { useAppearanceStore, useThemeStore } from "@incmix/store/use-settings-store"
 import { Provider as RxdbProvider } from "rxdb-hooks"
 import { translations } from "./translations"
 
@@ -89,9 +88,8 @@ const router = createRouter({ routeTree })
 
 function App() {
   const appearance = useAppearanceStore()
-  const settings = useSettingsStore()
-  const { theme, userPreference } = settings.
-  const { language } = useLanguageStore()
+  const theme = useThemeStore()
+  const { language} = appearance
   useQuery({
     queryKey: ["translations"],
     queryFn: () => {
@@ -117,10 +115,10 @@ function App() {
   return (
     <Theme
       appearance={appearance.appearance}
-      accentColor={settings.theme.accentColor}
-      grayColor={orgTheme.grayColor}
-      radius={orgTheme.radius}
-      scaling={orgTheme.scaling}
+      accentColor={theme.accentColor}
+      grayColor={theme.grayColor}
+      radius={theme.radius}
+      scaling={theme.scaling}
     >
       <RxdbProvider db={db}>
         <Suspense fallback={<LoadingPage />}>

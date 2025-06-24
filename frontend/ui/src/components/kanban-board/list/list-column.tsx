@@ -27,16 +27,16 @@ import {
   blockBoardPanningAttr,
   type ListColumn,
   type KanbanTask,
-  type TaskDataSchema,
 } from "@incmix/store"
+import { TaskDataSchema } from "@incmix/utils/schema"
 import { useKanban } from "@incmix/store"
 import ColorPicker, { ColorSelectType } from "@components/color-picker"
 import { ListTaskCard, ListTaskCardShadow } from "./task-card"
 import { SimpleTaskInput } from "./mention-task-input"
 
-
 type TColumnState =
   | {
+
       type: "is-card-over"
       isOverChildCard: boolean
       dragging: DOMRect
@@ -86,7 +86,7 @@ const CardList = memo(function CardList({
     <>
       {column.tasks.map((task: KanbanTask) => (
         <ListTaskCard
-          key={task.taskId}
+          key={task.id}
           card={task}
           columnId={column.id}
           columns={columns}
@@ -288,10 +288,9 @@ export function ListColumn({
   const [editColumnName, setEditColumnName] = useState(column.name)
   const [editColumnColor, setEditColumnColor] = useState(column.color)
   const [editColumnDescription, setEditColumnDescription] = useState(column.description || "")
-<<<<<<< HEAD
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
   const colorPickerRef = useRef<HTMLDivElement>(null)
-  
+
   // Close color picker when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -299,16 +298,13 @@ export function ListColumn({
         setIsColorPickerOpen(false);
       }
     }
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [colorPickerRef]);
-  
-=======
 
->>>>>>> 13aa497 (chore: theme-panel-update-v2)
   // Modal states
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [showErrorModal, setShowErrorModal] = useState(false)
@@ -450,12 +446,12 @@ export function ListColumn({
                       />
                       {isColorPickerOpen && (
                         <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
-                          <ColorPicker 
-                            colorType="base" 
+                          <ColorPicker
+                            colorType="base"
                             onColorSelect={(color: ColorSelectType) => {
                               setEditColumnColor(color.hex);
                               setIsColorPickerOpen(false);
-                            }} 
+                            }}
                             activeColor={editColumnColor}
                           />
                         </div>

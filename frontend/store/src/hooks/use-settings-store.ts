@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import  { type ThemeConfig, type UserPreference, type SettingsConfig,  type BreakFontColor, breakFontColor as defaultFontColor, type RadixAnyColor, type RadixGrayColor, type RadixColor, type RadixRadius, type RadixScaling, fontColor, type IntegrationConfig, User } from "@incmix/utils/types";
+import  { type ThemeConfig, type UserPreference, type SettingsConfig,  type BreakFontColor, breakFontColor as defaultFontColor, type RadixAnyColor, type RadixGrayColor, type RadixColor, type RadixRadius, type RadixScaling, fontColor, type IntegrationConfig, type KeyOption, User } from "@incmix/utils/types";
 import { ThemeContext } from "@radix-ui/themes";
 
 export const SIDEBAR_COLOR_OPTIONS = [
@@ -17,6 +17,22 @@ export const SIDEBAR_COLOR_OPTIONS = [
 export type ThemeStoreConfig = ThemeConfig & {
   setTheme: (partial: Partial<ThemeConfig>) => void;
   theme: (prop: keyof ThemeConfig) => any;
+  onAccentColorChange: (color: RadixColor) => void;
+  onGrayColorChange: (color: RadixGrayColor) => void;
+  onRadiusChange: (radius: RadixRadius) => void;
+  onScalingChange: (scaling: RadixScaling) => void;
+  getTheme: () => ThemeConfig;
+  getAccentColor: () => RadixColor;
+  getGrayColor: () => RadixGrayColor;
+  getRadius: () => RadixRadius;
+  getScaling: () => RadixScaling;
+  getAvatarRadius: () => RadixRadius;
+  getWorkspaceRadius: () => RadixRadius;
+  getOrgRadius: () => RadixRadius;
+  getBreakFontColor: () => BreakFontColor;
+  getPastel: () => boolean;
+  getPastelShade: () => number;
+  getBrightShade: () => number;
   getDashboardColors: () => {
     color1: string;
     text1: string;
@@ -46,7 +62,6 @@ export type ThemeStoreConfig = ThemeConfig & {
   };
 }
 export type UsePreferencesStoreConfig = UserPreference  & {
-
   setUserPreference: (partial: Partial<UserPreference>) => void;
   setAppearance: (appearance: "light" | "dark") => void;
   setLanguage: (lang: string) => void;
@@ -61,11 +76,10 @@ export type IntegrationStoreConfig = IntegrationConfig &  {
   setAPIKeys: (keys: IntegrationConfig["keys"]) => void;
   setVariables: (variables: IntegrationConfig["variables"]) => void;
   getAPIKeys: () => IntegrationConfig["keys"];
-  getAPIKey: (key: keyof IntegrationConfig["keys"]) => IntegrationConfig["keys"][keyof IntegrationConfig["keys"]];
+  getAPIKey: (key: keyof IntegrationConfig["keys"]) => IntegrationConfig["keys"][keyof IntegrationConfig["keys"]] | undefined;
   getVariable: (key: string) => string | undefined;
   getVariables: () => IntegrationConfig["variables"];
 }
-
 export const theme: ThemeConfig = {
   accentColor: "blue",
   secondaryColor: "cyan",
@@ -119,8 +133,6 @@ export function useisSystemDark() {
 
   return isDark;
 }
-
-
 export const userPreference: UserPreference = {
   appearance: systemAppearance(),
   isSystemAppearance: true,
@@ -134,6 +146,7 @@ export type TextColor = {
   brightShade?: number;
   pastelShade?: number;
 }
+
 export function getTextColor({color, pastel = true, brightShade = 9, breakFontColor = defaultFontColor}: TextColor): string {
   if (pastel) {
     return fontColor.light;
@@ -146,8 +159,9 @@ export function getTextColor({color, pastel = true, brightShade = 9, breakFontCo
   const shade = breakFontColor[color] ?? breakFontColor.default;
   return (shade < brightShade) ? fontColor.light : fontColor.dark;
 }
-export type  UserAppearanceStoreConfig =  UserPreference & {
-  setAppearance: (partial: Partial<UserPreference>) => void;
+
+export type  UserPreferenceStoreConfig =  UserPreference & {
+  setUserPreference: (partial: Partial<UserPreference>) => void;
   onAppearanceChange: (appearance: "light" | "dark") => void;
   toggleAppearance: () => void;
   setSystemAppearance: (isSystem: boolean) => void;
@@ -157,53 +171,113 @@ export type  UserAppearanceStoreConfig =  UserPreference & {
   getIsSystemAppearance: () => boolean;
 }
 
-export const useAppearanceStore = create<UserAppearanceStoreConfig>()(
+export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
   persist(
     (
       set: (
         partial:
-          | Partial<UserAppearanceStoreConfig>
-          | ((state: UserAppearanceStoreConfig) => Partial<UserAppearanceStoreConfig & AppearanceStoreSet>)
+          | Partial<UserPreferenceStoreConfig>
+          | ((state: UserPreferenceStoreConfig) => Partial<UserPreferenceStoreConfig>)
       ) => void,
-      get: () => UserAppearanceStoreConfig
+      get: () => UserPreferenceStoreConfig
     ) => ({
       ...userPreference,
-
-      setAppearance: (partial: Partial<UserPreference>): void =>
-        set((s) => {
-          // Removed themeContext.setAccentColor as it does not exist on ThemeContextValue
-          return { ...s, ...partial };
-        }),
-      onAppearanceChange: (appearance: "light" | "dark"): void => {
+      setUserPreference: (partial: Partial<UserPreference>) =>
+        set((s) => ({
+          ...s,
+          ...partial,
+        })),
+      setAppearance: (appearance: "light" | "dark") =>
+        set((s) => ({
+          ...s,
+          appearance,
+        })),
+      onAppearanceChange: (appearance: "light" | "dark") => {
         const themeContext = useContext(ThemeContext);
         if (themeContext) {
           themeContext.onAppearanceChange(appearance);
         }
-        set({ appearance });
+        set((s) => ({
+          ...s,
+          appearance,
+        }));
       },
-      toggleAppearance: (): void =>
-        set((state) => ({
-          appearance: state.appearance === "light" ? "dark" : "light",
+      toggleAppearance: () =>
+        set((s) => ({
+          ...s,
+          appearance: s.appearance === "light" ? "dark" : "light",
         })),
-      setSystemAppearance: (isSystem: boolean): void => {
-        set({
-          isSystemAppearance: isSystem,
-          appearance: isSystem ? systemAppearance() ?? "light"
-        });
-      },
-      setLanguage: (lang: string): void => set({ language: lang }),
-      setDirection: (direction: "ltr" | "rtl"): void => set({ direction }),
-      getDirection: (): "ltr" | "rtl" => get().direction ?? "ltr",
-      getIsSystemAppearance: (): boolean => get().isSystemAppearance ?? false,
+      setSystemAppearance: (isSystem: boolean) => set((s) => ({
+        ...s,
+        isSystemAppearance: isSystem,
+        appearance: isSystem ? systemAppearance() ?? "light" : s.appearance
+      })),
+      setLanguage: (lang: string) => set((s) => ({
+        ...s,
+        language: lang
+      })),
+      setDirection: (direction: "ltr" | "rtl") =>
+        set((s) => ({
+          ...s,
+          direction: direction,
+        })),
+      getDirection: () => get().direction ?? "ltr",
+      getIsSystemAppearance: () => get().isSystemAppearance ?? false,
     }),
     {
-      name: "radix-appearance-store",
+      name: "incmix-appearance-store",
       storage: createJSONStorage(() => localStorage),
-      partialize: (state: UserAppearanceStoreConfig) => ({
+      partialize: (state: UserPreferenceStoreConfig) => ({
         appearance: state.appearance,
         isSystemAppearance: state.isSystemAppearance,
         direction: state.direction,
         language: state.language,
+      }),
+    }
+  )
+);
+
+export const integrationConfigs: IntegrationConfig = {
+  keys: {
+    google_maps: { key: "" },
+    google_drive: { key: "" },
+    google_calendar: { key: "" },
+    gemini: { key: "" },
+    claude: { key: "" }
+  },
+  variables: {}
+}
+
+export type IntegrationStore = IntegrationConfig & {
+  setAPIKeys: (keys: IntegrationConfig["keys"]) => void;
+  setVariables: (variables: IntegrationConfig["variables"]) => void;
+  getAPIKeys: () => IntegrationConfig["keys"];
+  getAPIKey: (key: KeyOption) => IntegrationConfig["keys"][keyof IntegrationConfig["keys"]] | undefined;
+  getVariable: (key: string) => string | undefined;
+  getVariables: () => IntegrationConfig["variables"];
+}
+export const useIntegrationStore = create<IntegrationStore>()(
+  persist(
+    (set, get) => ({
+      ...integrationConfigs,
+      setAPIKeys: (keys: IntegrationConfig["keys"]) => set((s) => {
+        return { ...s, keys: keys };
+      }),
+      setVariables: (variables: IntegrationConfig["variables"]) => set((s) => {
+        return { ...s, variables: variables };
+      }),
+      getAPIKeys: () => get().keys,
+      // @ts-ignore
+      getAPIKey: (key: KeyOption) => get().keys?.[key] ?? undefined,
+      getVariable: (key: string) => get().variables?.[key],
+      getVariables: () => get().variables,
+    }),
+    {
+      name: "incmix-integration-store",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        keys: state.keys,
+        variables: state.variables,
       }),
     }
   )
@@ -215,7 +289,6 @@ export const useThemeStore = create<
     (set, get) => ({
       ...theme,
       setTheme: (partial) => set((s) => {
-        // Removed themeContext.setAccentColor as it does not exist on ThemeContextValue
         return { ...s, ...partial }
       }),
       onAccentColorChange: (color: RadixColor) =>  set((s) => {
@@ -225,13 +298,6 @@ export const useThemeStore = create<
         }
         return { ...s, accentColor: color };
       }),
-      onAppearanceChange: (appearance: "light" | "dark") => set((s) => {
-        const themeContext = useContext(ThemeContext);
-        if (themeContext) {
-          themeContext.onAppearanceChange(appearance);
-        }
-        return { ...s, appearance };
-      }),
       onGrayColorChange: (color: RadixGrayColor) => set((s) => {
         const themeContext = useContext(ThemeContext);
         if (themeContext) {
@@ -239,7 +305,7 @@ export const useThemeStore = create<
         }
         return { ...s, grayColor: color };
       }),
-       onRadiusChange: (radius: RadixRadius) => set((s) => {
+      onRadiusChange: (radius: RadixRadius) => set((s) => {
         const themeContext = useContext(ThemeContext);
         if (themeContext) {
           themeContext.onRadiusChange(radius);
@@ -259,6 +325,53 @@ export const useThemeStore = create<
           : prop === "sidebarBg" ? get().getSidebarColor()
           : get()[prop]
       },
+      getTheme: () => {
+        const {
+          accentColor,
+          secondaryColor,
+          grayColor,
+          radius,
+          scaling,
+          pastel,
+          pastelShade,
+          brightShade,
+          avatarRadius,
+          workspaceRadius,
+          orgRadius,
+          indicators,
+          dashboard,
+          sidebarBg,
+          breakFontColor,
+        } = get();
+        return {
+          accentColor,
+          secondaryColor,
+          grayColor,
+          radius,
+          scaling,
+          pastel,
+          pastelShade,
+          brightShade,
+          avatarRadius,
+          workspaceRadius,
+          orgRadius,
+          indicators,
+          dashboard,
+          sidebarBg,
+          breakFontColor,
+        };
+      },
+      getAccentColor: () => get().accentColor,
+      getGrayColor: () => get().grayColor,
+      getRadius: () => get().radius,
+      getScaling: () => get().scaling,
+      getAvatarRadius: () => get().avatarRadius ?? "full",
+      getWorkspaceRadius: () => get().workspaceRadius ?? "medium",
+      getOrgRadius: () => get().orgRadius ?? "none",
+      getBreakFontColor: () => get().breakFontColor,
+      getPastel: () => get().pastel ?? true,
+      getPastelShade: () => get().pastelShade ?? 6,
+      getBrightShade: () => get().brightShade ?? 9,
       getDashboardColors: () => {
         const { pastel = true, pastelShade, brightShade, dashboard,  breakFontColor } = get();
         const { color1, color2, color3, color4 } = dashboard;
@@ -324,7 +437,7 @@ export const useThemeStore = create<
         };
       },
     }),
-    { name: "radix-theme-store",
+    { name: "incmix-theme-store",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         accentColor: state.accentColor,

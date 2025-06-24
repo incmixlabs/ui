@@ -1,24 +1,22 @@
 // components/table/table-view.tsx
 import React, { useState, useCallback, useMemo } from "react"
-import { 
-  Box, 
-  Flex, 
-  Heading, 
-  Button, 
-  IconButton, 
-  TextField, 
+import {
+  Box,
+  Flex,
+  Heading,
+  Button,
+  IconButton,
+  TextField,
   Text,
   Badge,
-  TanstackDataTable
-} from "@incmix/ui"
-
-import { 
-  Plus, 
-  Search, 
-  RefreshCw, 
-  Settings, 
+} from "@base"
+import { TanstackDataTable } from "../../tanstack-table"
+import {
+  Plus,
+  Search,
+  RefreshCw,
+  Settings,
   MoreVertical,
-
   Download
 } from "lucide-react"
 
@@ -30,7 +28,6 @@ import { CreateTaskDialog } from "./create-task-dialog"
 import { DataTableColumn } from "@/components/tanstack-table/types"
 import { StatusDropdownCell, PriorityDropdownCell, createEnhancedTaskTableColumns } from "./custom-dropdown-columns"
 
-
 interface TableViewProps {
   projectId?: string
 }
@@ -41,7 +38,7 @@ export function TableView({ projectId = "default-project" }) {
 
   const [searchQuery, setSearchQuery] = useState("")
   const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false)
-  
+
   // Use the table view hook
   const {
     tasks,
@@ -76,7 +73,7 @@ export function TableView({ projectId = "default-project" }) {
         id: column.id,
         renderer: column.renderer
       }
-      
+
       // Apply optional properties based on the column type
       // We need to use type assertion to handle each column type properly
       switch(column.id) {
@@ -101,7 +98,7 @@ export function TableView({ projectId = "default-project" }) {
           }
           break;
       }
-      
+
       // For columns that need dropdown options (like status), we'll handle this with cell properties
       if (column.id === "status") {
         // For status column, we use our custom StatusDropdownCell component
@@ -116,11 +113,11 @@ export function TableView({ projectId = "default-project" }) {
             />
           );
         };
-        
+
         // Disable inline editing since we're handling it via the dropdown component
         baseColumn.enableInlineEdit = false;
       }
-      
+
       // For priority column, use our custom PriorityDropdownCell component
       if (column.id === "priority") {
         baseColumn.cell = (info) => {
@@ -135,11 +132,11 @@ export function TableView({ projectId = "default-project" }) {
             />
           );
         };
-        
+
         // Disable inline editing since we're handling it via the dropdown component
         baseColumn.enableInlineEdit = false;
       }
-      
+
       return baseColumn
     })
 
@@ -170,7 +167,7 @@ export function TableView({ projectId = "default-project" }) {
     if (!searchQuery.trim()) return tasks
 
     const query = searchQuery.toLowerCase()
-    return tasks.filter(task => 
+    return tasks.filter(task =>
       task.name.toLowerCase().includes(query) ||
       task.description?.toLowerCase().includes(query) ||
       task.statusLabel?.toLowerCase().includes(query) ||
@@ -198,7 +195,7 @@ export function TableView({ projectId = "default-project" }) {
         // Map column IDs to task properties
         const fieldMap: Record<string, string> = {
           name: "name",
-          description: "description", 
+          description: "description",
           priority: "priority",
           startDate: "startDate",
           endDate: "endDate"
@@ -216,7 +213,7 @@ export function TableView({ projectId = "default-project" }) {
   const tableFacets = useMemo(() => [
     {
       column: "status",
-      title: "Status", 
+      title: "Status",
       options: taskStatuses.map(status => ({
         label: status.name,
         value: status.id,
@@ -271,10 +268,10 @@ export function TableView({ projectId = "default-project" }) {
         <Flex direction="column" gap="4" className="p-4">
           <Flex justify="between" align="center">
             <Heading size="6">Task Table</Heading>
-            
+
             <Flex align="center" gap="2">
-              <Button 
-                variant="soft" 
+              <Button
+                variant="soft"
                 onClick={() => setIsCreateTaskOpen(true)}
               >
                 <Plus size={14} />
@@ -363,7 +360,7 @@ export function TableView({ projectId = "default-project" }) {
         {tasks.length === 0 && !searchQuery && (
           <Flex direction="column" align="center" className="py-12 space-y-4">
             <Text className="text-gray-500">No tasks found. Create your first task to get started.</Text>
-            <Button 
+            <Button
               onClick={() => setIsCreateTaskOpen(true)}
               variant="soft"
             >

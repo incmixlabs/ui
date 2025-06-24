@@ -6,8 +6,7 @@ import {
   Select,
   Switch,
   Text,
-  ThemePlayground,
-  useBaseThemeStore,
+  ThemePlayground
 } from "@incmix/ui"
 import AutoForm from "@incmix/ui/auto-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -16,7 +15,7 @@ import { toast } from "sonner"
 
 import { useCurrentUser, useProfileUpdate } from "@auth"
 import { LoadingPage } from "@common"
-import { useLanguageStore, useThemeStore } from "@incmix/store"
+import { useAppearanceStore, useThemeStore } from "@incmix/store/use-settings-store"
 import { Button, CardContainer, ReactiveButton } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import type { UserProfile } from "@incmix/utils/types"
@@ -240,7 +239,7 @@ const PasswordChangeForm: React.FC<
 }
 
 const LanguageSelector: React.FC = () => {
-  const { language, setLanguage } = useLanguageStore()
+  const { language, setLanguage } = useAppearanceStore()
   const { t } = useTranslation(["settings", "common"])
 
   return (
@@ -266,8 +265,8 @@ const LanguageSelector: React.FC = () => {
 
 const _ThemeSettings: React.FC = () => {
   const { t } = useTranslation(["settings", "common"])
-  const appearance = useBaseThemeStore((state) => state.appearance)
-  const toggleTheme = useBaseThemeStore((state) => state.toggleTheme)
+  const appearance = useAppearanceStore((state) => state.appearance)
+  const toggleTheme = useAppearanceStore((state) => state.toggleAppearance)
 
   return (
     <CardContainer>

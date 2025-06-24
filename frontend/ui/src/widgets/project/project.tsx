@@ -1,3 +1,6 @@
+import React from "react"
+import { Ellipsis } from "lucide-react"
+import { useThemeStore } from "@incmix/store/use-settings-store"
 import {
   Box,
   CardContainer,
@@ -7,22 +10,28 @@ import {
   IconButton,
   RadialBarChart,
   Text,
-  dashboardColorValues,
 } from "@incmix/ui"
-import { Ellipsis } from "lucide-react"
-import React from "react"
 // Colors for the chart segments
-const ongoingColor = dashboardColorValues.color3
-const onHoldColor = dashboardColorValues.color2
-const completedColor = dashboardColorValues.color1
+const ongoingColor = "blue"
+const onHoldColor = "orange"
+const completedColor = "green"
 
-const stats = [
-  { label: "Ongoing", value: 420, color: dashboardColorValues.color3 },
-  { label: "Hold", value: 210, color: dashboardColorValues.color2 },
-  { label: "Done", value: 200, color: dashboardColorValues.color1 },
+let stats = [
+  { label: "Ongoing", value: 420, color: ongoingColor },
+  { label: "Hold", value: 210, color: onHoldColor },
+  { label: "Done", value: 200, color: completedColor},
 ]
 
 export function ProjectWidgets() {
+  const { getDashboardColors}= useThemeStore()
+  const dashboardColors = getDashboardColors()
+  stats = stats.map((stat) => ({
+    ...stat,
+    color: stat.label === "Ongoing" ? dashboardColors.info
+      : stat.label === "Hold" ? dashboardColors.warning
+      : stat.label === "Done" ? dashboardColors.success
+      : dashboardColors.default, // Fallback color
+  }))
   return (
     <CardContainer>
       <Flex justify={"between"} align={"center"}>
@@ -35,7 +44,7 @@ export function ProjectWidgets() {
         </IconButton>
       </Flex>
       <RadialBarChart
-        colors={[ongoingColor, onHoldColor, completedColor]}
+        colors={[dashboardColors.info, dashboardColors.warning, dashboardColors.success]}
         labels={["Ongoing", "Hold", "Done"]}
         series={[420, 210, 200]}
       />

@@ -1,6 +1,7 @@
 // components/board/create-column-form.tsx - Updated for new useKanban hook
 "use client"
-
+import { useState, useRef, useEffect } from "react"
+import { Plus, Palette, AlertCircle } from "lucide-react"
 import { useKanban } from "@incmix/store"
 import {
   Button,
@@ -11,10 +12,8 @@ import {
   Text,
   Box,
   toast,
-  hasGoodContrast,
-} from "@incmix/ui"
-import { Plus, Palette, AlertCircle } from "lucide-react"
-import { useState, useRef, useEffect } from "react"
+} from "@base"
+import { hasGoodContrast } from "@utils/colors"
 import ColorPicker, { ColorSelectType } from "@components/color-picker"
 
 interface CreateColumnFormProps {
@@ -92,7 +91,7 @@ export function CreateColumnForm({
       })
 
       setIsOpen(false)
-      
+
       if (onSuccess) {
         onSuccess(columnId)
       }
@@ -113,7 +112,7 @@ export function CreateColumnForm({
   const handleColorSelect = (color: string) => {
     // Check color contrast using simplified function
     const hasProperContrast = hasGoodContrast(color);
-    
+
     // Validate contrast and set error if needed
     if (!hasProperContrast) {
       setColorError(
@@ -122,7 +121,7 @@ export function CreateColumnForm({
     } else {
       setColorError(null)
     }
-    
+
     setFormData((prev) => ({ ...prev, color }))
   }
 
@@ -189,13 +188,13 @@ export function CreateColumnForm({
                 <Palette size={16} className="inline mr-1" />
                 Column Color
               </label>
-              
+
               {/* Predefined Colors */}
               <Flex gap="2" wrap="wrap" className="mb-3">
                 {DEFAULT_COLORS.map((color) => {
                   // Check if the color has good contrast
                   const properContrast = hasGoodContrast(color.value);
-                  
+
                   return (
                     <button
                       key={color.value}
@@ -218,7 +217,7 @@ export function CreateColumnForm({
                         </div>
                       )}
                       {!properContrast && (
-                        <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-amber-400 border border-white" 
+                        <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-amber-400 border border-white"
                              title="May have contrast issues">
                         </div>
                       )}
@@ -226,7 +225,7 @@ export function CreateColumnForm({
                   );
                 })}
               </Flex>
-              
+
               {/* Contrast warning */}
               {colorError && (
                 <div className="text-amber-600 dark:text-amber-400 text-sm mt-1 flex items-center gap-1 mb-2">
@@ -254,7 +253,7 @@ export function CreateColumnForm({
                     />
                     {isColorPickerOpen && (
                       <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
-                        <ColorPicker 
+                        <ColorPicker
                           colorType="base"
                           onColorSelect={(color: ColorSelectType) => {
                             handleColorSelect(color.hex);
@@ -313,8 +312,8 @@ export function CreateColumnForm({
                 Cancel
               </Button>
             </Dialog.Close>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={!formData.name.trim() || isLoading}
             >
               {isLoading ? "Creating..." : "Create Column"}

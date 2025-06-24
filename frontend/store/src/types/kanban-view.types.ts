@@ -1,7 +1,7 @@
 // File: kanban-view.types.ts
 // CONSOLIDATED - Single source of truth for all kanban types
 
-import type { TaskDataSchema, TaskStatusSchema } from "../sql/task-schemas"
+import type { TaskDataSchema, TaskStatusSchema } from "@incmix/utils/schema"
 
 // Shared user info type
 export interface UserInfo {
