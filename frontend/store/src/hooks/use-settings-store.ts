@@ -1,84 +1,141 @@
-import { useContext, useEffect, useState } from "react";
-import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
-import  { type ThemeConfig, type UserPreference, type SettingsConfig,  type BreakFontColor, breakFontColor as defaultFontColor, type RadixAnyColor, type RadixGrayColor, type RadixColor, type RadixRadius, type RadixScaling, fontColor, type IntegrationConfig, type KeyOption, User } from "@incmix/utils/types";
-import { ThemeContext } from "@radix-ui/themes";
+import {
+  type BreakFontColor,
+  type IntegrationConfig,
+  type KeyOption,
+  type RadixAnyColor,
+  type RadixColor,
+  type RadixGrayColor,
+  type RadixRadius,
+  type RadixScaling,
+  type SettingsConfig,
+  type ThemeConfig,
+  User,
+  type UserPreference,
+  breakFontColor as defaultFontColor,
+  fontColor,
+} from "@incmix/utils/types"
+import { ThemeContext } from "@radix-ui/themes"
+import { useContext, useEffect, useState } from "react"
+import { create } from "zustand"
+import { createJSONStorage, persist } from "zustand/middleware"
 
 export const SIDEBAR_COLOR_OPTIONS = [
-  { bg: "var(--gray-3)", fg: "var(--gray-12)", hover: "var(--gray-1)", text: fontColor.light },
-  { bg: "var(--red-9)", fg: "var(--red-12)", hover: "var(--red-11)" , text: fontColor.dark },
-  { bg: "var(--mauve-10)", fg: "var(--mauve-12)", hover: "var(--mauve-11)" , text: fontColor.dark },
-  { bg: "var(--blue-10)", fg: "var(--blue-12)", hover: "var(--blue-11)" , text: fontColor.dark },
-  { bg: "var(--violet-10)", fg: "var(--violet-12)", hover: "var(--violet-11)", text: fontColor.dark },
-  { bg: "var(--purple-10)", fg: "var(--purple-12)", hover: "var(--purple-11)", text: fontColor.dark },
-  { bg: "var(--indigo-10)", fg: "var(--indigo-12)", hover: "var(--indigo-11)", text: fontColor.dark },
-  { bg: "var(--orange-10)", fg: "var(--orange-12)", hover: "var(--orange-11)", text: fontColor.dark },
-];
+  {
+    bg: "var(--gray-3)",
+    fg: "var(--gray-12)",
+    hover: "var(--gray-1)",
+    text: fontColor.light,
+  },
+  {
+    bg: "var(--red-9)",
+    fg: "var(--red-12)",
+    hover: "var(--red-11)",
+    text: fontColor.dark,
+  },
+  {
+    bg: "var(--mauve-10)",
+    fg: "var(--mauve-12)",
+    hover: "var(--mauve-11)",
+    text: fontColor.dark,
+  },
+  {
+    bg: "var(--blue-10)",
+    fg: "var(--blue-12)",
+    hover: "var(--blue-11)",
+    text: fontColor.dark,
+  },
+  {
+    bg: "var(--violet-10)",
+    fg: "var(--violet-12)",
+    hover: "var(--violet-11)",
+    text: fontColor.dark,
+  },
+  {
+    bg: "var(--purple-10)",
+    fg: "var(--purple-12)",
+    hover: "var(--purple-11)",
+    text: fontColor.dark,
+  },
+  {
+    bg: "var(--indigo-10)",
+    fg: "var(--indigo-12)",
+    hover: "var(--indigo-11)",
+    text: fontColor.dark,
+  },
+  {
+    bg: "var(--orange-10)",
+    fg: "var(--orange-12)",
+    hover: "var(--orange-11)",
+    text: fontColor.dark,
+  },
+]
 export type ThemeStoreConfig = ThemeConfig & {
-  setTheme: (partial: Partial<ThemeConfig>) => void;
-  theme: (prop: keyof ThemeConfig) => any;
-  onAccentColorChange: (color: RadixColor) => void;
-  onGrayColorChange: (color: RadixGrayColor) => void;
-  onRadiusChange: (radius: RadixRadius) => void;
-  onScalingChange: (scaling: RadixScaling) => void;
-  getTheme: () => ThemeConfig;
-  getAccentColor: () => RadixColor;
-  getGrayColor: () => RadixGrayColor;
-  getRadius: () => RadixRadius;
-  getScaling: () => RadixScaling;
-  getAvatarRadius: () => RadixRadius;
-  getWorkspaceRadius: () => RadixRadius;
-  getOrgRadius: () => RadixRadius;
-  getBreakFontColor: () => BreakFontColor;
-  getPastel: () => boolean;
-  getPastelShade: () => number;
-  getBrightShade: () => number;
+  setTheme: (partial: Partial<ThemeConfig>) => void
+  theme: (prop: keyof ThemeConfig) => any
+  onAccentColorChange: (color: RadixColor) => void
+  onGrayColorChange: (color: RadixGrayColor) => void
+  onRadiusChange: (radius: RadixRadius) => void
+  onScalingChange: (scaling: RadixScaling) => void
+  getTheme: () => ThemeConfig
+  getAccentColor: () => RadixColor
+  getGrayColor: () => RadixGrayColor
+  getRadius: () => RadixRadius
+  getScaling: () => RadixScaling
+  getAvatarRadius: () => RadixRadius
+  getWorkspaceRadius: () => RadixRadius
+  getOrgRadius: () => RadixRadius
+  getBreakFontColor: () => BreakFontColor
+  getPastel: () => boolean
+  getPastelShade: () => number
+  getBrightShade: () => number
   getDashboardColors: () => {
-    color1: string;
-    text1: string;
-    color2: string;
-    text2: string;
-    text3: string;
-    text4: string;
-    color3: string;
-    color4: string;
-  };
+    color1: string
+    text1: string
+    color2: string
+    text2: string
+    text3: string
+    text4: string
+    color3: string
+    color4: string
+  }
   getIndicatorColors: (pastel?: boolean) => {
-    danger: string;
-    dangerText: string;
-    warning: string;
-    warningText: string;
-    success: string;
-    successText: string;
-    info: string;
-    infoText: string;
-    default: string;
-    defaultText: string;
-  };
+    danger: string
+    dangerText: string
+    warning: string
+    warningText: string
+    success: string
+    successText: string
+    info: string
+    infoText: string
+    default: string
+    defaultText: string
+  }
   getSidebarColor: () => {
-    bg: string;
-    fg: string;
-    hover: string;
-  };
+    bg: string
+    fg: string
+    hover: string
+  }
 }
-export type UsePreferencesStoreConfig = UserPreference  & {
-  setUserPreference: (partial: Partial<UserPreference>) => void;
-  setAppearance: (appearance: "light" | "dark") => void;
-  setLanguage: (lang: string) => void;
-  setDirection: (direction: "ltr" | "rtl") => void;
-  setVariables: (variables: Record<string, string>) => void;
-  toggleAppearance: () => void;
-  toggleDirection: () => void;
-  toggleSystemAppearance: () => void;
-  isSystemAppearance: () => boolean;
+export type UsePreferencesStoreConfig = UserPreference & {
+  setUserPreference: (partial: Partial<UserPreference>) => void
+  setAppearance: (appearance: "light" | "dark") => void
+  setLanguage: (lang: string) => void
+  setDirection: (direction: "ltr" | "rtl") => void
+  setVariables: (variables: Record<string, string>) => void
+  toggleAppearance: () => void
+  toggleDirection: () => void
+  toggleSystemAppearance: () => void
+  isSystemAppearance: () => boolean
 }
-export type IntegrationStoreConfig = IntegrationConfig &  {
-  setAPIKeys: (keys: IntegrationConfig["keys"]) => void;
-  setVariables: (variables: IntegrationConfig["variables"]) => void;
-  getAPIKeys: () => IntegrationConfig["keys"];
-  getAPIKey: (key: keyof IntegrationConfig["keys"]) => IntegrationConfig["keys"][keyof IntegrationConfig["keys"]] | undefined;
-  getVariable: (key: string) => string | undefined;
-  getVariables: () => IntegrationConfig["variables"];
+export type IntegrationStoreConfig = IntegrationConfig & {
+  setAPIKeys: (keys: IntegrationConfig["keys"]) => void
+  setVariables: (variables: IntegrationConfig["variables"]) => void
+  getAPIKeys: () => IntegrationConfig["keys"]
+  getAPIKey: (
+    key: keyof IntegrationConfig["keys"]
+  ) => IntegrationConfig["keys"][keyof IntegrationConfig["keys"]] | undefined
+  getVariable: (key: string) => string | undefined
+  getVariables: () => IntegrationConfig["variables"]
 }
 export const theme: ThemeConfig = {
   accentColor: "blue",
@@ -97,7 +154,7 @@ export const theme: ThemeConfig = {
     danger: "red",
     success: "green",
     warning: "orange",
-    default: "gray"
+    default: "gray",
   },
   dashboard: {
     color1: "pink",
@@ -108,67 +165,76 @@ export const theme: ThemeConfig = {
   // for dark mode
   // customColor
   sidebarBg: "var(--gray-3)",
-  breakFontColor: defaultFontColor
-};
+  breakFontColor: defaultFontColor,
+}
 export function systemAppearance() {
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light"
 }
 export function useisSystemDark() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(false)
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
 
-    const handleChange: (e: MediaQueryListEvent) => void = (e: MediaQueryListEvent) => {
-      setIsDark(e.matches);
-    };
+    const handleChange: (e: MediaQueryListEvent) => void = (
+      e: MediaQueryListEvent
+    ) => {
+      setIsDark(e.matches)
+    }
     // Set initial state
-    setIsDark(mediaQuery.matches);
+    setIsDark(mediaQuery.matches)
     // Listen for changes
-    mediaQuery.addEventListener('change', handleChange);
+    mediaQuery.addEventListener("change", handleChange)
     // Clean up event listener
     return () => {
-      mediaQuery.removeEventListener('change', handleChange);
-    };
-  }, []);
+      mediaQuery.removeEventListener("change", handleChange)
+    }
+  }, [])
 
-  return isDark;
+  return isDark
 }
 export const userPreference: UserPreference = {
   appearance: systemAppearance(),
   isSystemAppearance: true,
   direction: "ltr",
   language: "en",
-};
+}
 export type TextColor = {
-  color: RadixAnyColor;
-  pastel?: boolean;
-  breakFontColor?: BreakFontColor;
-  brightShade?: number;
-  pastelShade?: number;
+  color: RadixAnyColor
+  pastel?: boolean
+  breakFontColor?: BreakFontColor
+  brightShade?: number
+  pastelShade?: number
 }
 
-export function getTextColor({color, pastel = true, brightShade = 9, breakFontColor = defaultFontColor}: TextColor): string {
+export function getTextColor({
+  color,
+  pastel = true,
+  brightShade = 9,
+  breakFontColor = defaultFontColor,
+}: TextColor): string {
   if (pastel) {
-    return fontColor.light;
+    return fontColor.light
   }
   // @ts-ignore
-  if (breakFontColor?.[color]  === undefined) {
-    return fontColor.dark;
+  if (breakFontColor?.[color] === undefined) {
+    return fontColor.dark
   }
   // @ts-ignore
-  const shade = breakFontColor[color] ?? breakFontColor.default;
-  return (shade < brightShade) ? fontColor.light : fontColor.dark;
+  const shade = breakFontColor[color] ?? breakFontColor.default
+  return shade < brightShade ? fontColor.light : fontColor.dark
 }
 
-export type  UserPreferenceStoreConfig =  UserPreference & {
-  setUserPreference: (partial: Partial<UserPreference>) => void;
-  onAppearanceChange: (appearance: "light" | "dark") => void;
-  toggleAppearance: () => void;
-  setSystemAppearance: (isSystem: boolean) => void;
-  setLanguage: (lang: string) => void;
-  setDirection: (direction: "ltr" | "rtl") => void;
-  getDirection: () => "ltr" | "rtl";
-  getIsSystemAppearance: () => boolean;
+export type UserPreferenceStoreConfig = UserPreference & {
+  setUserPreference: (partial: Partial<UserPreference>) => void
+  onAppearanceChange: (appearance: "light" | "dark") => void
+  toggleAppearance: () => void
+  setSystemAppearance: (isSystem: boolean) => void
+  setLanguage: (lang: string) => void
+  setDirection: (direction: "ltr" | "rtl") => void
+  getDirection: () => "ltr" | "rtl"
+  getIsSystemAppearance: () => boolean
 }
 
 export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
@@ -177,7 +243,9 @@ export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
       set: (
         partial:
           | Partial<UserPreferenceStoreConfig>
-          | ((state: UserPreferenceStoreConfig) => Partial<UserPreferenceStoreConfig>)
+          | ((
+              state: UserPreferenceStoreConfig
+            ) => Partial<UserPreferenceStoreConfig>)
       ) => void,
       get: () => UserPreferenceStoreConfig
     ) => ({
@@ -193,29 +261,31 @@ export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
           appearance,
         })),
       onAppearanceChange: (appearance: "light" | "dark") => {
-        const themeContext = useContext(ThemeContext);
+        const themeContext = useContext(ThemeContext)
         if (themeContext) {
-          themeContext.onAppearanceChange(appearance);
+          themeContext.onAppearanceChange(appearance)
         }
         set((s) => ({
           ...s,
           appearance,
-        }));
+        }))
       },
       toggleAppearance: () =>
         set((s) => ({
           ...s,
           appearance: s.appearance === "light" ? "dark" : "light",
         })),
-      setSystemAppearance: (isSystem: boolean) => set((s) => ({
-        ...s,
-        isSystemAppearance: isSystem,
-        appearance: isSystem ? systemAppearance() ?? "light" : s.appearance
-      })),
-      setLanguage: (lang: string) => set((s) => ({
-        ...s,
-        language: lang
-      })),
+      setSystemAppearance: (isSystem: boolean) =>
+        set((s) => ({
+          ...s,
+          isSystemAppearance: isSystem,
+          appearance: isSystem ? (systemAppearance() ?? "light") : s.appearance,
+        })),
+      setLanguage: (lang: string) =>
+        set((s) => ({
+          ...s,
+          language: lang,
+        })),
       setDirection: (direction: "ltr" | "rtl") =>
         set((s) => ({
           ...s,
@@ -235,7 +305,7 @@ export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
       }),
     }
   )
-);
+)
 
 export const integrationConfigs: IntegrationConfig = {
   keys: {
@@ -243,29 +313,33 @@ export const integrationConfigs: IntegrationConfig = {
     google_drive: { key: "" },
     google_calendar: { key: "" },
     gemini: { key: "" },
-    claude: { key: "" }
+    claude: { key: "" },
   },
-  variables: {}
+  variables: {},
 }
 
 export type IntegrationStore = IntegrationConfig & {
-  setAPIKeys: (keys: IntegrationConfig["keys"]) => void;
-  setVariables: (variables: IntegrationConfig["variables"]) => void;
-  getAPIKeys: () => IntegrationConfig["keys"];
-  getAPIKey: (key: KeyOption) => IntegrationConfig["keys"][keyof IntegrationConfig["keys"]] | undefined;
-  getVariable: (key: string) => string | undefined;
-  getVariables: () => IntegrationConfig["variables"];
+  setAPIKeys: (keys: IntegrationConfig["keys"]) => void
+  setVariables: (variables: IntegrationConfig["variables"]) => void
+  getAPIKeys: () => IntegrationConfig["keys"]
+  getAPIKey: (
+    key: KeyOption
+  ) => IntegrationConfig["keys"][keyof IntegrationConfig["keys"]] | undefined
+  getVariable: (key: string) => string | undefined
+  getVariables: () => IntegrationConfig["variables"]
 }
 export const useIntegrationStore = create<IntegrationStore>()(
   persist(
     (set, get) => ({
       ...integrationConfigs,
-      setAPIKeys: (keys: IntegrationConfig["keys"]) => set((s) => {
-        return { ...s, keys: keys };
-      }),
-      setVariables: (variables: IntegrationConfig["variables"]) => set((s) => {
-        return { ...s, variables: variables };
-      }),
+      setAPIKeys: (keys: IntegrationConfig["keys"]) =>
+        set((s) => {
+          return { ...s, keys: keys }
+        }),
+      setVariables: (variables: IntegrationConfig["variables"]) =>
+        set((s) => {
+          return { ...s, variables: variables }
+        }),
       getAPIKeys: () => get().keys,
       // @ts-ignore
       getAPIKey: (key: KeyOption) => get().keys?.[key] ?? undefined,
@@ -281,49 +355,55 @@ export const useIntegrationStore = create<IntegrationStore>()(
       }),
     }
   )
-);
-export const useThemeStore = create<
-  ThemeStoreConfig
->()(
+)
+export const useThemeStore = create<ThemeStoreConfig>()(
   persist(
     (set, get) => ({
       ...theme,
-      setTheme: (partial) => set((s) => {
-        return { ...s, ...partial }
-      }),
-      onAccentColorChange: (color: RadixColor) =>  set((s) => {
-        const themeContext = useContext(ThemeContext);
-        if (themeContext) {
-          themeContext.onAccentColorChange(color);
-        }
-        return { ...s, accentColor: color };
-      }),
-      onGrayColorChange: (color: RadixGrayColor) => set((s) => {
-        const themeContext = useContext(ThemeContext);
-        if (themeContext) {
-          themeContext.onGrayColorChange(color);
-        }
-        return { ...s, grayColor: color };
-      }),
-      onRadiusChange: (radius: RadixRadius) => set((s) => {
-        const themeContext = useContext(ThemeContext);
-        if (themeContext) {
-          themeContext.onRadiusChange(radius);
-        }
-        return { ...s, radius };
-      }),
-      onScalingChange: (scaling: RadixScaling) => set((s) => {
-        const themeContext = useContext(ThemeContext);
-        if (themeContext) {
-          themeContext.onScalingChange(scaling);
-        }
-        return { ...s, scaling };
-      }),
+      setTheme: (partial) =>
+        set((s) => {
+          return { ...s, ...partial }
+        }),
+      onAccentColorChange: (color: RadixColor) =>
+        set((s) => {
+          const themeContext = useContext(ThemeContext)
+          if (themeContext) {
+            themeContext.onAccentColorChange(color)
+          }
+          return { ...s, accentColor: color }
+        }),
+      onGrayColorChange: (color: RadixGrayColor) =>
+        set((s) => {
+          const themeContext = useContext(ThemeContext)
+          if (themeContext) {
+            themeContext.onGrayColorChange(color)
+          }
+          return { ...s, grayColor: color }
+        }),
+      onRadiusChange: (radius: RadixRadius) =>
+        set((s) => {
+          const themeContext = useContext(ThemeContext)
+          if (themeContext) {
+            themeContext.onRadiusChange(radius)
+          }
+          return { ...s, radius }
+        }),
+      onScalingChange: (scaling: RadixScaling) =>
+        set((s) => {
+          const themeContext = useContext(ThemeContext)
+          if (themeContext) {
+            themeContext.onScalingChange(scaling)
+          }
+          return { ...s, scaling }
+        }),
       theme: (prop) => {
-        return prop === "dashboard" ? get().getDashboardColors()
-          : prop === "indicators" ? get().getIndicatorColors()
-          : prop === "sidebarBg" ? get().getSidebarColor()
-          : get()[prop]
+        return prop === "dashboard"
+          ? get().getDashboardColors()
+          : prop === "indicators"
+            ? get().getIndicatorColors()
+            : prop === "sidebarBg"
+              ? get().getSidebarColor()
+              : get()[prop]
       },
       getTheme: () => {
         const {
@@ -342,7 +422,7 @@ export const useThemeStore = create<
           dashboard,
           sidebarBg,
           breakFontColor,
-        } = get();
+        } = get()
         return {
           accentColor,
           secondaryColor,
@@ -359,7 +439,7 @@ export const useThemeStore = create<
           dashboard,
           sidebarBg,
           breakFontColor,
-        };
+        }
       },
       getAccentColor: () => get().accentColor,
       getGrayColor: () => get().grayColor,
@@ -373,71 +453,201 @@ export const useThemeStore = create<
       getPastelShade: () => get().pastelShade ?? 6,
       getBrightShade: () => get().brightShade ?? 9,
       getDashboardColors: () => {
-        const { pastel = true, pastelShade, brightShade, dashboard,  breakFontColor } = get();
-        const { color1, color2, color3, color4 } = dashboard;
-        const dash = pastel ? {
-          color1: `var(--${color1}-${pastelShade})`,
-          text1:  getTextColor({color: color1, pastel, breakFontColor, brightShade, pastelShade}),
-          color2: `var(--${color2}-${pastelShade})`,
-          text2:  getTextColor({color: color2, pastel, breakFontColor, brightShade, pastelShade}),
-          text3:  getTextColor({color: color3, pastel, breakFontColor, brightShade, pastelShade}),
-          text4:  getTextColor({color: color2, pastel, breakFontColor, brightShade, pastelShade}),
-          color3: `var(--${color3}-${pastelShade})`,
-          color4: `var(--${color4}-${pastelShade})`
-        }: {
-          color1: `var(--${color1}-${brightShade})`,
-          text1:  getTextColor({color: color1, pastel, breakFontColor, brightShade, pastelShade}),
-          color2: `var(--${color2}-${brightShade})`,
-          text2:  getTextColor({color: color2, pastel, breakFontColor, brightShade, pastelShade}),
-          text3:  getTextColor({color: color3, pastel, breakFontColor, brightShade, pastelShade}),
-          text4:  getTextColor({color: color4, pastel, breakFontColor, brightShade, pastelShade}),
-          color3: `var(--${color3}-${brightShade})`,
-          color4: `var(--${color4}-${brightShade})`
-        }
-        return dash;
+        const {
+          pastel = true,
+          pastelShade,
+          brightShade,
+          dashboard,
+          breakFontColor,
+        } = get()
+        const { color1, color2, color3, color4 } = dashboard
+        const dash = pastel
+          ? {
+              color1: `var(--${color1}-${pastelShade})`,
+              text1: getTextColor({
+                color: color1,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+              color2: `var(--${color2}-${pastelShade})`,
+              text2: getTextColor({
+                color: color2,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+              text3: getTextColor({
+                color: color3,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+              text4: getTextColor({
+                color: color2,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+              color3: `var(--${color3}-${pastelShade})`,
+              color4: `var(--${color4}-${pastelShade})`,
+            }
+          : {
+              color1: `var(--${color1}-${brightShade})`,
+              text1: getTextColor({
+                color: color1,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+              color2: `var(--${color2}-${brightShade})`,
+              text2: getTextColor({
+                color: color2,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+              text3: getTextColor({
+                color: color3,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+              text4: getTextColor({
+                color: color4,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+              color3: `var(--${color3}-${brightShade})`,
+              color4: `var(--${color4}-${brightShade})`,
+            }
+        return dash
       },
       getIndicatorColors: (pastel = false) => {
-        const { pastelShade, brightShade, indicators,  breakFontColor, grayColor } = get();
-        const { danger = 'red', warning ="orange", success = "green", info = "blue"} = indicators;
-        const defaultIndicator = indicators.default || grayColor || "gray";
+        const {
+          pastelShade,
+          brightShade,
+          indicators,
+          breakFontColor,
+          grayColor,
+        } = get()
+        const {
+          danger = "red",
+          warning = "orange",
+          success = "green",
+          info = "blue",
+        } = indicators
+        const defaultIndicator = indicators.default || grayColor || "gray"
         // pastel shade is 6, bright shade is 9
-        return pastel ? {
-          danger: `var(--${danger}-${pastelShade})`,
-          dangerText:  getTextColor({color: danger, pastel, breakFontColor, brightShade, pastelShade}),
-          warning: `var(--${warning}-${pastelShade})`,
-          warningText:  getTextColor({color: warning, pastel, breakFontColor, brightShade, pastelShade}),
-          success:  `var(--${success}-${pastelShade})`,
-          successText:  getTextColor({color: success, pastel, breakFontColor, brightShade, pastelShade}),
-          info: `var(--${info}-${pastelShade})`,
-          infoText:  getTextColor({color: info, pastel, breakFontColor, brightShade, pastelShade}),
-          default: `var(--${defaultIndicator}-${pastelShade})`,
-          defaultText:  getTextColor({color: defaultIndicator, pastel, breakFontColor, brightShade, pastelShade}),
-        } : {
-          danger: `var(--${danger}-${brightShade})`,
-          dangerText:  getTextColor({color: danger, pastel, breakFontColor, brightShade, pastelShade}),
-          warning: `var(--${warning}-${brightShade})`,
-          warningText:  getTextColor({color: warning, pastel, breakFontColor, brightShade, pastelShade}),
-          success:  `var(--${success}-${brightShade})`,
-          successText:  getTextColor({color: success, pastel, breakFontColor, brightShade, pastelShade}),
-          info: `var(--${info}-${brightShade})`,
-          infoText:  getTextColor({color: info, pastel, breakFontColor, brightShade, pastelShade}),
-          default: `var(--${defaultIndicator}-${brightShade})`,
-          defaultText:  getTextColor({color: defaultIndicator, pastel, breakFontColor, brightShade, pastelShade}),
-        };
+        return pastel
+          ? {
+              danger: `var(--${danger}-${pastelShade})`,
+              dangerText: getTextColor({
+                color: danger,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+              warning: `var(--${warning}-${pastelShade})`,
+              warningText: getTextColor({
+                color: warning,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+              success: `var(--${success}-${pastelShade})`,
+              successText: getTextColor({
+                color: success,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+              info: `var(--${info}-${pastelShade})`,
+              infoText: getTextColor({
+                color: info,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+              default: `var(--${defaultIndicator}-${pastelShade})`,
+              defaultText: getTextColor({
+                color: defaultIndicator,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+            }
+          : {
+              danger: `var(--${danger}-${brightShade})`,
+              dangerText: getTextColor({
+                color: danger,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+              warning: `var(--${warning}-${brightShade})`,
+              warningText: getTextColor({
+                color: warning,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+              success: `var(--${success}-${brightShade})`,
+              successText: getTextColor({
+                color: success,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+              info: `var(--${info}-${brightShade})`,
+              infoText: getTextColor({
+                color: info,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+              default: `var(--${defaultIndicator}-${brightShade})`,
+              defaultText: getTextColor({
+                color: defaultIndicator,
+                pastel,
+                breakFontColor,
+                brightShade,
+                pastelShade,
+              }),
+            }
       },
       getSidebarColor: () => {
-        const { sidebarBg } = get();
-        const color = SIDEBAR_COLOR_OPTIONS.find(
-          (option) => option.bg === sidebarBg,
-        )?? SIDEBAR_COLOR_OPTIONS[0];
+        const { sidebarBg } = get()
+        const color =
+          SIDEBAR_COLOR_OPTIONS.find((option) => option.bg === sidebarBg) ??
+          SIDEBAR_COLOR_OPTIONS[0]
         return {
           bg: color.bg,
           fg: color.fg,
           hover: color.hover,
-        };
+        }
       },
     }),
-    { name: "incmix-theme-store",
+    {
+      name: "incmix-theme-store",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         accentColor: state.accentColor,
@@ -457,4 +667,4 @@ export const useThemeStore = create<
       }),
     }
   )
-);
+)

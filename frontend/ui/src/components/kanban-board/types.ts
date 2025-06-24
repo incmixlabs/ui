@@ -259,3 +259,12 @@ export function isDraggingAColumn({
 }): boolean {
   return isColumnData(source.data)
 }
+export interface TableTask extends KanbanTask {
+  // Additional computed properties for table display
+  statusLabel?: string
+  statusColor?: string
+  assignedToNames?: string
+  totalSubTasks?: number
+  completedSubTasks?: number
+  isOverdue?: boolean
+}

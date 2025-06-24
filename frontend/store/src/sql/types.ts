@@ -1,9 +1,17 @@
 import {
-  toTypedRxJsonSchema,
+  columnSchemaLiteral,
+  dashboardSchemaLiteral,
+  dashboardTemplateSchemaLiteral,
+  formProjectSchemaLiteral,
+  projectSchemaLiteral,
+  taskDataSchemaLiteral,
+  taskSchemaLiteral,
+} from "@incmix/utils/schema"
+import {
   type ExtractDocumentTypeFromTypedRxJsonSchema,
   type RxCollection,
+  toTypedRxJsonSchema,
 } from "rxdb"
-import { taskSchemaLiteral, taskDataSchemaLiteral, columnSchemaLiteral, projectSchemaLiteral, formProjectSchemaLiteral, dashboardSchemaLiteral, dashboardTemplateSchemaLiteral } from "@incmix/utils/schema"
 
 // Task schema conversions have been moved to ../utils/task-schema.ts
 const columnsTyped = toTypedRxJsonSchema(columnSchemaLiteral)

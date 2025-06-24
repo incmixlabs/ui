@@ -1,60 +1,17 @@
 // File: use-project-task-data.ts
 
+import { generateUniqueId, getCurrentTimestamp } from "@incmix/utils/helper"
+import type {
+  CurrentUser,
+  ProjectData,
+  TaskDataSchema,
+  TaskStatusDocType,
+  UseProjectDataReturn,
+} from "@incmix/utils/schema"
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { Subscription } from "rxjs"
-import type { TaskDocType, TaskStatusDocType } from "utils/task-schema"
 import { database } from "sql"
-import { generateUniqueId, getCurrentTimestamp } from "@incmix/utils/helper"
-import type { TaskDataSchema } from "@incmix/utils/schema"
-
-interface ProjectData {
-  tasks: TaskDataSchema[]
-  taskStatuses: TaskStatusDocType[]
-  isLoading: boolean
-  error: string | null
-}
-
-interface UseProjectDataReturn extends ProjectData {
-  // Task operations
-  createTask: (
-    columnId: string,
-    taskData: Partial<TaskDataSchema>
-  ) => Promise<void>
-  updateTask: (
-    taskId: string,
-    updates: Partial<TaskDataSchema>
-  ) => Promise<void>
-  deleteTask: (taskId: string) => Promise<void>
-  moveTask: (
-    taskId: string,
-    targetColumnId: string,
-    targetIndex?: number
-  ) => Promise<void>
-
-  // Task status operations
-  createTaskStatus: (
-    name: string,
-    color?: string,
-    description?: string
-  ) => Promise<string>
-  updateTaskStatus: (
-    statusId: string,
-    updates: { name?: string; color?: string; description?: string }
-  ) => Promise<void>
-  deleteTaskStatus: (statusId: string) => Promise<void>
-  reorderTaskStatuses: (statusIds: string[]) => Promise<void>
-
-  // Utility
-  refetch: () => void
-  clearError: () => void
-}
-
-// Define a type for user information
-export interface CurrentUser {
-  id: string
-  name: string
-  image?: string
-}
+import type { TaskDocType } from "utils/task-schema"
 
 // Get the current user - accepts user context to make it injectable
 const getCurrentUser = (user?: CurrentUser) => {

@@ -1,7 +1,13 @@
-import { type ReactNode, createContext, useContext, useState, useEffect } from "react"
+import { type ThemeConfig, breakFontColor } from "@incmix/utils/types"
 import { Theme, type ThemeProps, useThemeContext } from "@radix-ui/themes"
-import  { breakFontColor, type ThemeConfig } from "@incmix/utils/types";
-import { createStore, useStore } from 'zustand'
+import {
+  type ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react"
+import { createStore, useStore } from "zustand"
 // TBD
 // 1. On context change, update localstorage
 import { useLocalStorage } from "./use-local-storage"
@@ -35,8 +41,8 @@ export const defaultTheme: ThemeConfig = {
   sidebarBg: "var(--gray-3)",
   breakFontColor,
   direction: "ltr",
-  isSystemTheme: true
-};
+  isSystemTheme: true,
+}
 export type ThemeContextValue = {
   accentColor: string
   grayColor: string
@@ -66,13 +72,14 @@ const ThemeProvider = ({
   ...props
 }: ThemeProviderProps) => {
   const extendThemeContext = useContext(ExtendThemeContext)
-  const [store] = useState(() =>
+  const [_store] = useState(() =>
     createStore((set) => ({
       theme: defaultTheme,
       actions: {
         update: (theme: ThemeConfig) =>
-          set((state: ThemeConfig) => ({ theme: {...state.theme, ...theme} }))
-        
+          set((state: ThemeConfig) => ({
+            theme: { ...state.theme, ...theme },
+          })),
       },
     }))
   )

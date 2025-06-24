@@ -1,14 +1,12 @@
 import type {
   KanbanTask,
+  TableTask,
   TaskDataSchema,
 } from "@incmix/utils/schema"
 
-import {
-  useListView,
-} from "@incmix/store"
+import { useListView } from "@incmix/store"
 // hooks/use-table-view.ts
 import { useMemo } from "react"
-
 
 export interface UseTableViewReturn {
   tasks: TableTask[]

@@ -7,8 +7,11 @@ import { setDefaultOptions } from "date-fns"
 import { LoadingPage } from "@incmix/pages/common"
 import { I18n, usei18n } from "@incmix/pages/i18n"
 import { type Language, database as db } from "@incmix/store"
-import {  Toaster, Theme } from "@incmix/ui"
-import { useAppearanceStore, useThemeStore } from "@incmix/store/use-settings-store"
+import {
+  useAppearanceStore,
+  useThemeStore,
+} from "@incmix/store/use-settings-store"
+import { Theme, Toaster } from "@incmix/ui"
 import { Provider as RxdbProvider } from "rxdb-hooks"
 import { translations } from "./translations"
 
@@ -89,7 +92,7 @@ const router = createRouter({ routeTree })
 function App() {
   const appearance = useAppearanceStore()
   const theme = useThemeStore()
-  const { language} = appearance
+  const { language } = appearance
   useQuery({
     queryKey: ["translations"],
     queryFn: () => {

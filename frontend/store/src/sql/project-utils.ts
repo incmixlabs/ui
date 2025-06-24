@@ -1,8 +1,8 @@
+import type { ProjectFormData } from "@incmix/utils/schema"
+import { ensureFileObject, validateProjectData } from "@incmix/utils/validate"
 // sql/project-utils.ts
-import { database } from "./main"// Added import for TaskDataSchema
+import { database } from "./main" // Added import for TaskDataSchema
 import type { FormProjectDocType } from "./types"
-import type {ProjectFormData } from "@incmix/utils/schema"
-import { validateProjectData, ensureFileObject } from "@incmix/utils/validate"
 
 /**
  * Saves a project form submission to the RxDB formProjects collection
