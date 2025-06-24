@@ -32,7 +32,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
     labelsTags?: any[];
     subTasks?: any[];
     [key: string]: any;
-  }>({ priority: 'medium' })
+  }>({})
   const [lastProcessedTitle, setLastProcessedTitle] = useState('')
   
   // Track if we're currently focusing the description field
@@ -85,7 +85,8 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
     if (defaultFormValues && Object.keys(defaultFormValues).length > 0) {
       // Only update if we're opening the dialog (isOpen is true)
       if (isOpen) {
-        setFormData(defaultFormValues);
+        // Force a clean reset of form data when dialog opens
+        setFormData({...defaultFormValues});
       }
     }
   }, [defaultFormValues, isOpen])
@@ -275,7 +276,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
         
         if (!open) {
           // Reset form-related state when closing
-          setFormData({ priority: 'medium' });
+          setFormData({});
           setLastProcessedTitle('');
           setHadGenerationError(false);
         }
@@ -419,4 +420,4 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
       </Dialog.Content>
     </Dialog.Root>
   )
-}
+} 
