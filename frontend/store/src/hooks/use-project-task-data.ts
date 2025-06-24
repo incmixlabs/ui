@@ -5,7 +5,7 @@ import type { Subscription } from "rxjs"
 import type { TaskDocType, TaskStatusDocType } from "utils/task-schema"
 import { database } from "sql"
 import { generateUniqueId, getCurrentTimestamp } from "@incmix/utils/helper"
-import type { TaskDataSchema } from "../sql/task-schemas"
+import type { TaskDataSchema } from "@incmix/utils/schema"
 
 interface ProjectData {
   tasks: TaskDataSchema[]

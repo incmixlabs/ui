@@ -15,7 +15,14 @@ import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-sc
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
-
+import {
+  getColumnData,
+  isCardData,
+  isCardDropTargetData,
+  isColumnData,
+  isDraggingACard,
+  isDraggingAColumn,
+  type KanbanColumn } from "../types"
 import {
   Box,
   Flex,
@@ -32,13 +39,6 @@ import { isShallowEqual } from "@incmix/utils/objects"
 import { blockBoardPanningAttr } from "../data-attributes"
 import { TaskCard, TaskCardShadow } from "./task-card"
 import {
-  getColumnData,
-  isCardData,
-  isCardDropTargetData,
-  isColumnData,
-  isDraggingACard,
-  isDraggingAColumn,
-  type KanbanColumn,
   useAIUserStory,
   useAIFeaturesStore
 } from "@incmix/store"

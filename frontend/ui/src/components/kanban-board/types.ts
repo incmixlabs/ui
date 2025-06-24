@@ -28,7 +28,9 @@ export interface KanbanColumn {
   totalTasksCount: number
   progressPercentage: number
 }
-
+export interface ListColumn extends KanbanColumn {
+  isExpanded?: boolean
+}
 // Making most properties optional for mock data compatibility
 export interface KanbanTask extends Partial<Omit<TaskDataSchema, 'attachments' | 'labelsTags' | 'createdBy' | 'assignedTo' | 'subTasks' | 'updatedBy' | 'completed' | 'priority'>> {
   // Make completed optional

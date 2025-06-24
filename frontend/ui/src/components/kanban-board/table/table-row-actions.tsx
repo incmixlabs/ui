@@ -21,7 +21,7 @@ import {
 } from "lucide-react"
 
 import { ModalPresets } from "../shared/confirmation-modal"
-import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
+import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
 import { TableTask } from "@incmix/store"
 
 interface TableRowActionsProps {
@@ -46,7 +46,7 @@ export function TableRowActions({
   disabled = false
 }: TableRowActionsProps) {
   const { handleDrawerOpen } = useKanbanDrawer()
-  
+
   // Modal states
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -54,7 +54,7 @@ export function TableRowActions({
   // Handle task completion toggle
   const handleToggleComplete = useCallback(async () => {
     if (!task.taskId || isLoading) return
-    
+
     setIsLoading(true)
     try {
       await onUpdateTask(task.taskId, { completed: !task.completed })
@@ -79,7 +79,7 @@ export function TableRowActions({
   // Confirm task deletion
   const confirmDeleteTask = useCallback(async () => {
     if (!task.taskId) return
-    
+
     setIsLoading(true)
     try {
       await onDeleteTask(task.taskId)
@@ -101,7 +101,7 @@ export function TableRowActions({
   // Handle moving task to different status
   const handleMoveToStatus = useCallback(async (statusId: string) => {
     if (!task.taskId || isLoading) return
-    
+
     setIsLoading(true)
     try {
       await onMoveTaskToStatus(task.taskId, statusId)
@@ -115,7 +115,7 @@ export function TableRowActions({
   // Handle quick priority change
   const handleSetPriority = useCallback(async (priority: string) => {
     if (!task.taskId || isLoading) return
-    
+
     setIsLoading(true)
     try {
       await onUpdateTask(task.taskId, { priority })
@@ -148,7 +148,7 @@ export function TableRowActions({
             <MoreVertical size={16} />
           </IconButton>
         </DropdownMenu.Trigger>
-        
+
         <DropdownMenu.Content align="end" className="w-56">
           {/* View Task */}
           <DropdownMenu.Item onClick={handleViewTask}>
@@ -188,8 +188,8 @@ export function TableRowActions({
                     className={isCurrentStatus ? "bg-accent" : ""}
                   >
                     <Flex align="center" gap="2">
-                      <div 
-                        className="w-3 h-3 rounded-full" 
+                      <div
+                        className="w-3 h-3 rounded-full"
                         style={{ backgroundColor: status.color }}
                       />
                       <Text>{status.name}</Text>
@@ -235,7 +235,7 @@ export function TableRowActions({
           <DropdownMenu.Separator />
 
           {/* Delete Task */}
-          <DropdownMenu.Item 
+          <DropdownMenu.Item
             onClick={handleDeleteTask}
             className="text-destructive focus:text-destructive"
           >

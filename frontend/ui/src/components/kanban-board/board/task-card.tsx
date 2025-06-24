@@ -44,7 +44,7 @@ import  {
 
 import { Card } from "@incmix/ui/card"
 import { cn } from "@utils"
-import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
+import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
 import { ModalPresets } from "../shared/confirmation-modal"
 import {
   TaskDataSchema } from "@incmix/utils/schema"

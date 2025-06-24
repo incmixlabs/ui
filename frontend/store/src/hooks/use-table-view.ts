@@ -1,20 +1,14 @@
+import type {
+  KanbanTask,
+  TaskDataSchema,
+} from "@incmix/utils/schema"
+
 import {
-  type KanbanTask,
-  type TaskDataSchema,
   useListView,
 } from "@incmix/store"
 // hooks/use-table-view.ts
 import { useMemo } from "react"
 
-export interface TableTask extends KanbanTask {
-  // Additional computed properties for table display
-  statusLabel?: string
-  statusColor?: string
-  assignedToNames?: string
-  totalSubTasks?: number
-  completedSubTasks?: number
-  isOverdue?: boolean
-}
 
 export interface UseTableViewReturn {
   tasks: TableTask[]

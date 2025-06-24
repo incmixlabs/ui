@@ -12,8 +12,10 @@
   "exports": {
     ".": "./src/index.ts",
     "./local": "./src/local/index.ts",
+    "./use-project-task-data": "./src/hooks/use-project-task-data.ts",
     "./use-theme-provider": "./src/hooks/use-theme-provider.tsx",
     "./use-settings-store": "./src/hooks/use-settings-store.ts",
+    "./use-kanban-data": "./src/hooks/use-kanban-data.ts",
     "./sql/tasks": "./src/sql/tasks/index.ts",
     "./sql/helper": "./src/sql/helper.ts"
   },

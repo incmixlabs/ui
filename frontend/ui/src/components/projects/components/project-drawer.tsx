@@ -17,7 +17,7 @@ import {
 
 import { MotionSheet } from "@components/custom-sheet"
 import { attachments } from "@components/kanban-board/data"
-import { useProjectDrawer } from "@hooks/use-project-drawer"
+import { useProjectDrawer } from "../hooks/use-project-drawer"
 
 import { members, projects } from "../data"
 import ProjectChecklist from "./project-checklist"

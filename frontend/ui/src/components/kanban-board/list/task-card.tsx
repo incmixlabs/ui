@@ -26,16 +26,17 @@ import {
   Figma,
 } from "lucide-react"
 import {
+  type TaskDataSchema,
+  } from "@incmix/utils/schema"
+import {
   getCardData,
   getCardDropTargetData,
   isCardData,
   isDraggingACard,
   type KanbanTask,
-  type TaskDataSchema,
-  type ListColumn,
-} from "@incmix/store"
+} from "../types"
 import { Card } from "@incmix/ui/card"
-import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
+import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
 import { ModalPresets } from "../shared/confirmation-modal"
 import { cn } from "@utils"
 import {
@@ -48,7 +49,6 @@ import {
   Avatar,
 } from "@incmix/ui"
 import { TaskActionsMenu } from "./task-actions-menu"
-
 
 type TCardState =
   | { type: "idle" }
@@ -293,7 +293,7 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
                     const figmaUrls = card.refUrls.filter(url => url.type === 'figma').length
                     const taskUrls = card.refUrls.filter(url => url.type === 'task').length
                     const externalUrls = card.refUrls.filter(url => url.type === 'external').length
-                    
+
                     return (
                       <Flex align="center" gap="2">
                         {figmaUrls > 0 && (
@@ -319,7 +319,7 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
                   })()}
                 </Flex>
               )}
-              
+
               {/* Date displays */}
               <Flex align="center" gap="2" className="text-xs">
                 {card.startDate && (

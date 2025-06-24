@@ -24,12 +24,11 @@ import {
   isColumnData,
   isDraggingACard,
   isDraggingAColumn,
-  blockBoardPanningAttr,
-  type ListColumn,
   type KanbanTask,
-} from "@incmix/store"
+} from "../types"
+import {
+  blockBoardPanningAttr } from "../data-attributes"
 import { TaskDataSchema } from "@incmix/utils/schema"
-import { useKanban } from "@incmix/store"
 import ColorPicker, { ColorSelectType } from "@components/color-picker"
 import { ListTaskCard, ListTaskCardShadow } from "./task-card"
 import { SimpleTaskInput } from "./mention-task-input"

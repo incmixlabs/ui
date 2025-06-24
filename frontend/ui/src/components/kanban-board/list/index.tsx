@@ -5,19 +5,24 @@ import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/r
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { bindAll } from "bind-event-listener"
-import {  useEffect, useRef, useState, useCallback } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import { ListColumn } from "./list-column"
 import { Box, Flex, IconButton, TextField, Button, Heading, TextArea, Text } from "@incmix/ui"
 
 import { Plus, Search, RefreshCw, Settings, MoreVertical, ChevronRight, X } from "lucide-react"
-
 import {
+
   isCardData,
   isCardDropTargetData,
   isColumnData,
   isDraggingACard,
   isDraggingAColumn,
+} from "../types"
+import {
+
   blockBoardPanningAttr,
+} from "../data-attributes"
+import {
   useListView,
   useAIFeaturesStore
 } from "@incmix/store"
@@ -35,7 +40,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   const scrollableRef = useRef<HTMLDivElement | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [isDragging, setIsDragging] = useState(false)
-  
+
   // New column creation state
   const [isAddingColumn, setIsAddingColumn] = useState(false)
   const [newColumnName, setNewColumnName] = useState("")
@@ -44,7 +49,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   const [addColumnFormOpen, setAddColumnFormOpen] = useState(false)
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
   const colorPickerRef = useRef<HTMLDivElement>(null)
-  
+
   // Close color picker when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -52,14 +57,14 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         setIsColorPickerOpen(false);
       }
     }
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [colorPickerRef]);  
+  }, [colorPickerRef]);
   const [isCreatingColumn, setIsCreatingColumn] = useState(false)
-  
+
   // Use the list view hook
   const {
     columns,
@@ -78,9 +83,9 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   } = useListView(projectId)
 
   // Filter columns based on search query
-  const filteredColumns = columns.filter(column => 
+  const filteredColumns = columns.filter(column =>
     column.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    column.tasks.some(task => 
+    column.tasks.some(task =>
       task.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       task.description?.toLowerCase().includes(searchQuery.toLowerCase())
     )
@@ -106,7 +111,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         },
         onDrop({ source, location }) {
           setIsDragging(false)
-          
+
           const dragging = source.data
           if (!isCardData(dragging)) {
             return
@@ -263,7 +268,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
           ...(
             [
               "pointercancel",
-              "pointerup", 
+              "pointerup",
               "pointerdown",
               "keydown",
               "resize",
@@ -331,11 +336,11 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         <Flex direction="column" gap="4" className="p-4">
           <Flex justify="between" align="center">
             <Heading size="6">Project Tasks</Heading>
-            
+
             <Flex align="center" gap="2">
-              <Button 
-                variant="soft" 
-                onClick={() => setIsAddingColumn(true)} 
+              <Button
+                variant="soft"
+                onClick={() => setIsAddingColumn(true)}
                 disabled={isAddingColumn}
               >
                 <Plus size={14} />
@@ -391,20 +396,20 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
             <Box className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 shadow-sm">
               <Flex direction="column" gap="3">
                 <Heading size="3">Add New Status Column</Heading>
-                
+
                 <TextField.Root
-                  placeholder="Column name" 
+                  placeholder="Column name"
                   value={newColumnName}
                   onChange={(e) => setNewColumnName(e.target.value)}
                 />
-                
-                <TextArea 
-                  placeholder="Column description (optional)" 
+
+                <TextArea
+                  placeholder="Column description (optional)"
                   value={newColumnDescription}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewColumnDescription(e.target.value)}
                   rows={2}
                 />
-                
+
                 <Flex align="center" gap="2" className="items-start">
                   <div className="relative" ref={colorPickerRef}>
                     <Button
@@ -415,12 +420,12 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                     />
                     {isColorPickerOpen && (
                       <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
-                        <ColorPicker 
-                          colorType="base" 
+                        <ColorPicker
+                          colorType="base"
                           onColorSelect={(color: ColorSelectType) => {
                             setNewColumnColor(color.hex);
                             setIsColorPickerOpen(false);
-                          }} 
+                          }}
                           activeColor={newColumnColor}
                         />
                       </div>
@@ -428,10 +433,10 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                   </div>
                   <Text size="1" className="text-gray-500">Column color</Text>
                 </Flex>
-                
+
                 <Flex gap="2" justify="end">
-                  <Button 
-                    variant="soft" 
+                  <Button
+                    variant="soft"
                     onClick={() => {
                       setIsAddingColumn(false)
                       setNewColumnName('')
@@ -443,11 +448,11 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                     <X size={14} />
                     Cancel
                   </Button>
-                  
-                  <Button 
+
+                  <Button
                     onClick={async () => {
                       if (!newColumnName.trim()) return
-                      
+
                       setIsCreatingColumn(true)
                       try {
                         await createColumn(
@@ -455,7 +460,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                           newColumnColor,
                           newColumnDescription.trim()
                         )
-                        
+
                         // Reset form
                         setNewColumnName('')
                         setNewColumnDescription('')
@@ -475,10 +480,10 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
               </Flex>
             </Box>
           )}
-          
+
           {filteredColumns.map((column) => (
-            <ListColumn 
-              key={column.id} 
+            <ListColumn
+              key={column.id}
               column={column}
               columns={columns} // Pass all columns for the menu
               onCreateTask={createTask}
@@ -489,17 +494,17 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
               isDragging={isDragging}
             />
           ))}
-          
+
           {filteredColumns.length === 0 && searchQuery && (
             <Box className="text-center py-12">
               <div className="text-gray-500">No tasks found matching "{searchQuery}"</div>
             </Box>
           )}
-          
+
           {filteredColumns.length === 0 && !searchQuery && !isAddingColumn && (
             <Flex direction="column" align="center" className="py-12 space-y-4">
               <Text className="text-gray-500">No status columns found. Create your first column to get started.</Text>
-              <Button 
+              <Button
                 onClick={() => setIsAddingColumn(true)}
                 variant="soft"
               >
@@ -513,7 +518,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         <TaskCardDrawer viewType="list" projectId={projectId} />
       </Box>
 
-      
+
     </>
   )
 }

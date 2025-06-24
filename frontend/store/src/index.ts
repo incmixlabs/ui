@@ -1,4 +1,4 @@
-export * from "./local"
+
 export * from "./tabs"
 export * from "./sql"
 export * from "./services/rate-limits"
@@ -19,7 +19,5 @@ export * from "./hooks/use-table-view"
 export * from "./hooks/use-task-status-store"
 export * from "./hooks/use-task-store"
 // Re-export everything from kanban-view.types (including its KanbanColumn)
-export * from "./types/kanban-view.types"
-export * from "./types/list-view.types"
 export * from "./utils/task-schema"
 export * from "./hooks/use-settings-store"
