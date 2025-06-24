@@ -265,8 +265,9 @@ export function useProjectData(
           subTasks: taskData.subTasks || [],
           comments: taskData.comments || [],
           commentsCount: 0,
-          // Include checklist from taskData if available
+          // Include checklist and acceptanceCriteria from taskData if available
           checklist: taskData.checklist || [],
+          acceptanceCriteria: taskData.acceptanceCriteria || [],
           createdAt: now,
           updatedAt: now,
           createdBy: user,

@@ -112,6 +112,7 @@ const QuickTaskForm = memo(function QuickTaskForm({
   const [taskName, setTaskName] = useState("")
   const [description, setDescription] = useState("")
   const [checklist, setChecklist] = useState<Array<{ id: string; text: string; checked: boolean }>>([])  
+  const [acceptanceCriteria, setAcceptanceCriteria] = useState<Array<{ id: string; text: string }>>([])  
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [hadGenerationError, setHadGenerationError] = useState(false)
   
@@ -134,6 +135,7 @@ const QuickTaskForm = memo(function QuickTaskForm({
           if (userStoryResult) {
             setDescription(userStoryResult.description)
             setChecklist(userStoryResult.checklist || [])
+            setAcceptanceCriteria(userStoryResult.acceptanceCriteria || [])
           }
         } catch (error) {
           console.error("AI description generation failed:", error)
@@ -172,11 +174,14 @@ const QuickTaskForm = memo(function QuickTaskForm({
         comments: [],
         commentsCount: 0,
         checklist: checklist,
+        acceptanceCriteria: acceptanceCriteria,
       })
       
       setTaskName("")
       setDescription("")
-      onCancel()
+      setChecklist([])
+      setAcceptanceCriteria([])
+      setIsSubmitting(false)
     } catch (error) {
       console.error("Failed to create task:", error)
     } finally {

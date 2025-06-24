@@ -151,6 +151,9 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
         subtask && subtask.name && subtask.name.trim()
       ),
       
+      // Include the acceptance criteria (from AI generation)
+      acceptanceCriteria: data.acceptanceCriteria || [],
+      
       // Include the checklist (from AI generation or manually added)
       checklist: data.checklist || [],
       
@@ -178,9 +181,16 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
           checked: item.checked || false
         }))
         
+        // Format acceptance criteria items
+        const formattedAcceptanceCriteria = (aiResult.acceptanceCriteria || []).map((item: any) => ({
+          id: item.id || generateUniqueId('ac'),
+          text: item.text || item.name || item
+        }))
+        
         setFormData((prev) => ({
           ...prev,
           description: aiResult.description,
+          acceptanceCriteria: formattedAcceptanceCriteria, // Add properly formatted acceptance criteria
           checklist: formattedChecklist, // Add the properly formatted AI-generated checklist to form data
         }))
         setLastProcessedTitle(title)
@@ -221,11 +231,12 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
     setIsLoading(true)
 
     try {
-      // IMPORTANT: Merge the current formData.checklist with the data being submitted
-      // This ensures our manually rendered checklist is included in the submission
+      // IMPORTANT: Merge the current formData.checklist and acceptanceCriteria with the data being submitted
+      // This ensures our manually rendered or AI-generated items are included in the submission
       const mergedData = {
         ...data,
         checklist: formData.checklist || [],
+        acceptanceCriteria: formData.acceptanceCriteria || [],
       }
       
       // Transform form data to TaskDataSchema format

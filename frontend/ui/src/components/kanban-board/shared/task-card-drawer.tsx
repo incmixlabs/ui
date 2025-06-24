@@ -10,6 +10,7 @@ import {
   TaskActionButtons,
   TaskTitleSection,
   TaskDescriptionSection,
+  TaskAcceptanceCriteriaSection,
   TaskDatesSection,
   TaskTagsSection,
   TaskRefUrlsSection,
@@ -122,6 +123,11 @@ export function TaskCardDrawer({
               onStartEdit={() => drawerState.setIsEditingDescription(true)}
               onStopEdit={() => drawerState.setIsEditingDescription(false)}
               onSave={() => taskActions.handleDescriptionSave(drawerState.editDescription)}
+            />
+
+            {/* Task Acceptance Criteria */}
+            <TaskAcceptanceCriteriaSection
+              acceptanceCriteria={currentTask.acceptanceCriteria}
             />
 
             {/* Task Checklist */}

@@ -49,6 +49,11 @@ export type TaskDataSchema = {
     completed: boolean
   }[]
 
+  acceptanceCriteria?: {
+    id: string
+    text: string
+  }[]
+
   checklist?: {
     id: string
     text: string

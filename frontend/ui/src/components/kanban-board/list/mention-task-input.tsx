@@ -27,6 +27,7 @@ export function SimpleTaskInput({
   const [taskName, setTaskName] = useState("")
   const [description, setDescription] = useState("")
   const [checklist, setChecklist] = useState<Array<{ id: string; text: string; checked: boolean }>>([])  
+  const [acceptanceCriteria, setAcceptanceCriteria] = useState<Array<{ id: string; text: string }>>([])  
   const [taskData, setTaskData] = useState({
     priority: "medium",
     startDate: "",
@@ -60,6 +61,7 @@ export function SimpleTaskInput({
           if (userStoryResult) {
             setDescription(userStoryResult.description)
             setChecklist(userStoryResult.checklist || [])
+            setAcceptanceCriteria(userStoryResult.acceptanceCriteria || [])
           }
         } catch (error) {
           console.error("AI description generation failed:", error)
@@ -84,11 +86,12 @@ export function SimpleTaskInput({
 
     setIsSubmitting(true)
     try {
-      // Include the description and checklist in the task data
+      // Include the description, checklist, and acceptanceCriteria in the task data
       const fullTaskData = {
         ...taskData,
         description: description.trim(),
-        checklist: checklist
+        checklist: checklist,
+        acceptanceCriteria: acceptanceCriteria
       }
       
       await onCreateTask(taskName.trim(), fullTaskData)
@@ -97,6 +100,7 @@ export function SimpleTaskInput({
       setTaskName("")
       setDescription("")
       setChecklist([])
+      setAcceptanceCriteria([])
       setTaskData({
         priority: "medium",
         startDate: "",
