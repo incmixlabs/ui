@@ -212,6 +212,7 @@ export function TaskChecklist({
                   value={editText}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditText(e.target.value)}
                   onKeyDown={handleKeyDown}
+                  onBlur={handleSaveEdit}
                   className="flex-1 text-sm text-gray-700 dark:text-gray-300 bg-transparent border-none focus:outline-none focus:ring-0 p-0 m-0 w-full"
                   autoFocus
                   style={{ textAlign: 'left' }}
