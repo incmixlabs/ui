@@ -13,7 +13,7 @@
     ".": "./src/index.ts",
     "./local": "./src/local/index.ts",
     "./use-theme-provider": "./src/hooks/use-theme-provider.tsx",
-    "./use-theme-store": "./src/hooks/use-theme-store.ts",
+    "./use-settings-store": "./src/hooks/use-settings-store.ts",
     "./sql/tasks": "./src/sql/tasks/index.ts",
     "./sql/helper": "./src/sql/helper.ts"
   },

@@ -1,7 +1,7 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import  { type ThemeConfig, type BreakFontColor, breakFontColor as defaultFontColor, type RadixAnyColor, type RadixGrayColor, type RadixColor, type RadixRadius, type RadixScaling, fontColor } from "@incmix/utils/types";
+import { persist, createJSONStorage } from "zustand/middleware";
+import  { type ThemeConfig, type UserPreference, type SettingsConfig,  type BreakFontColor, breakFontColor as defaultFontColor, type RadixAnyColor, type RadixGrayColor, type RadixColor, type RadixRadius, type RadixScaling, fontColor, type IntegrationConfig, User } from "@incmix/utils/types";
 import { ThemeContext } from "@radix-ui/themes";
 
 export const SIDEBAR_COLOR_OPTIONS = [
@@ -14,8 +14,59 @@ export const SIDEBAR_COLOR_OPTIONS = [
   { bg: "var(--indigo-10)", fg: "var(--indigo-12)", hover: "var(--indigo-11)", text: fontColor.dark },
   { bg: "var(--orange-10)", fg: "var(--orange-12)", hover: "var(--orange-11)", text: fontColor.dark },
 ];
+export type ThemeStoreConfig = ThemeConfig & {
+  setTheme: (partial: Partial<ThemeConfig>) => void;
+  theme: (prop: keyof ThemeConfig) => any;
+  getDashboardColors: () => {
+    color1: string;
+    text1: string;
+    color2: string;
+    text2: string;
+    text3: string;
+    text4: string;
+    color3: string;
+    color4: string;
+  };
+  getIndicatorColors: (pastel?: boolean) => {
+    danger: string;
+    dangerText: string;
+    warning: string;
+    warningText: string;
+    success: string;
+    successText: string;
+    info: string;
+    infoText: string;
+    default: string;
+    defaultText: string;
+  };
+  getSidebarColor: () => {
+    bg: string;
+    fg: string;
+    hover: string;
+  };
+}
+export type UsePreferencesStoreConfig = UserPreference  & {
 
-export const settings: ThemeConfig = {
+  setUserPreference: (partial: Partial<UserPreference>) => void;
+  setAppearance: (appearance: "light" | "dark") => void;
+  setLanguage: (lang: string) => void;
+  setDirection: (direction: "ltr" | "rtl") => void;
+  setVariables: (variables: Record<string, string>) => void;
+  toggleAppearance: () => void;
+  toggleDirection: () => void;
+  toggleSystemAppearance: () => void;
+  isSystemAppearance: () => boolean;
+}
+export type IntegrationStoreConfig = IntegrationConfig &  {
+  setAPIKeys: (keys: IntegrationConfig["keys"]) => void;
+  setVariables: (variables: IntegrationConfig["variables"]) => void;
+  getAPIKeys: () => IntegrationConfig["keys"];
+  getAPIKey: (key: keyof IntegrationConfig["keys"]) => IntegrationConfig["keys"][keyof IntegrationConfig["keys"]];
+  getVariable: (key: string) => string | undefined;
+  getVariables: () => IntegrationConfig["variables"];
+}
+
+export const theme: ThemeConfig = {
   accentColor: "blue",
   secondaryColor: "cyan",
   grayColor: "gray",
@@ -45,7 +96,37 @@ export const settings: ThemeConfig = {
   sidebarBg: "var(--gray-3)",
   breakFontColor: defaultFontColor
 };
+export function systemAppearance() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "light";
+}
+export function useisSystemDark() {
+  const [isDark, setIsDark] = useState(false);
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
+    const handleChange: (e: MediaQueryListEvent) => void = (e: MediaQueryListEvent) => {
+      setIsDark(e.matches);
+    };
+    // Set initial state
+    setIsDark(mediaQuery.matches);
+    // Listen for changes
+    mediaQuery.addEventListener('change', handleChange);
+    // Clean up event listener
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, []);
+
+  return isDark;
+}
+
+
+export const userPreference: UserPreference = {
+  appearance: systemAppearance(),
+  isSystemAppearance: true,
+  direction: "ltr",
+  language: "en",
+};
 export type TextColor = {
   color: RadixAnyColor;
   pastel?: boolean;
@@ -65,42 +146,74 @@ export function getTextColor({color, pastel = true, brightShade = 9, breakFontCo
   const shade = breakFontColor[color] ?? breakFontColor.default;
   return (shade < brightShade) ? fontColor.light : fontColor.dark;
 }
-export const useSettingsStore = create<
-  ThemeConfig & {
-    setTheme: (partial: Partial<ThemeConfig>) => void;
-    theme: (prop: keyof ThemeConfig) => any;
-    getDashboardColors: () => {
-      color1: string;
-      text1: string;
-      color2: string;
-      text2: string;
-      text3: string;
-      text4: string;
-      color3: string;
-      color4: string;
-    };
-    getIndicatorColors: (pastel?: boolean) => {
-      danger: string;
-      dangerText: string;
-      warning: string;
-      warningText: string;
-      success: string;
-      successText: string;
-      info: string;
-      infoText: string;
-      default: string;
-      defaultText: string;
-    };
-    getSidebarColor: () => {
-      bg: string;
-      fg: string;
-      hover: string;
-    };
-  }
+export type  UserAppearanceStoreConfig =  UserPreference & {
+  setAppearance: (partial: Partial<UserPreference>) => void;
+  onAppearanceChange: (appearance: "light" | "dark") => void;
+  toggleAppearance: () => void;
+  setSystemAppearance: (isSystem: boolean) => void;
+  setLanguage: (lang: string) => void;
+  setDirection: (direction: "ltr" | "rtl") => void;
+  getDirection: () => "ltr" | "rtl";
+  getIsSystemAppearance: () => boolean;
+}
+
+export const useAppearanceStore = create<UserAppearanceStoreConfig>()(
+  persist(
+    (
+      set: (
+        partial:
+          | Partial<UserAppearanceStoreConfig>
+          | ((state: UserAppearanceStoreConfig) => Partial<UserAppearanceStoreConfig & AppearanceStoreSet>)
+      ) => void,
+      get: () => UserAppearanceStoreConfig
+    ) => ({
+      ...userPreference,
+
+      setAppearance: (partial: Partial<UserPreference>): void =>
+        set((s) => {
+          // Removed themeContext.setAccentColor as it does not exist on ThemeContextValue
+          return { ...s, ...partial };
+        }),
+      onAppearanceChange: (appearance: "light" | "dark"): void => {
+        const themeContext = useContext(ThemeContext);
+        if (themeContext) {
+          themeContext.onAppearanceChange(appearance);
+        }
+        set({ appearance });
+      },
+      toggleAppearance: (): void =>
+        set((state) => ({
+          appearance: state.appearance === "light" ? "dark" : "light",
+        })),
+      setSystemAppearance: (isSystem: boolean): void => {
+        set({
+          isSystemAppearance: isSystem,
+          appearance: isSystem ? systemAppearance() ?? "light"
+        });
+      },
+      setLanguage: (lang: string): void => set({ language: lang }),
+      setDirection: (direction: "ltr" | "rtl"): void => set({ direction }),
+      getDirection: (): "ltr" | "rtl" => get().direction ?? "ltr",
+      getIsSystemAppearance: (): boolean => get().isSystemAppearance ?? false,
+    }),
+    {
+      name: "radix-appearance-store",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state: UserAppearanceStoreConfig) => ({
+        appearance: state.appearance,
+        isSystemAppearance: state.isSystemAppearance,
+        direction: state.direction,
+        language: state.language,
+      }),
+    }
+  )
+);
+export const useThemeStore = create<
+  ThemeStoreConfig
 >()(
   persist(
     (set, get) => ({
-      ...orgTheme,
+      ...theme,
       setTheme: (partial) => set((s) => {
         // Removed themeContext.setAccentColor as it does not exist on ThemeContextValue
         return { ...s, ...partial }
@@ -211,6 +324,24 @@ export const useSettingsStore = create<
         };
       },
     }),
-    { name: "radix-theme-store" },
-  ),
+    { name: "radix-theme-store",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        accentColor: state.accentColor,
+        grayColor: state.grayColor,
+        radius: state.radius,
+        scaling: state.scaling,
+        pastel: state.pastel,
+        pastelShade: state.pastelShade,
+        brightShade: state.brightShade,
+        avatarRadius: state.avatarRadius,
+        workspaceRadius: state.workspaceRadius,
+        orgRadius: state.orgRadius,
+        indicators: state.indicators,
+        dashboard: state.dashboard,
+        sidebarBg: state.sidebarBg,
+        breakFontColor: state.breakFontColor,
+      }),
+    }
+  )
 );

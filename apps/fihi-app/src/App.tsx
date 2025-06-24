@@ -9,7 +9,7 @@ import { I18n, usei18n } from "@incmix/pages/i18n"
 import { type Language, database as db, useLanguageStore } from "@incmix/store"
 import {  Toaster, Theme } from "@incmix/ui"
 import { useAppearanceStore } from "@incmix/store"
-import { useOrgThemeStore } from "@incmix/store/use-theme-store"
+import { useSettingsStore } from "@incmix/store/use-settings-store"
 import { Provider as RxdbProvider } from "rxdb-hooks"
 import { translations } from "./translations"
 
@@ -89,7 +89,8 @@ const router = createRouter({ routeTree })
 
 function App() {
   const appearance = useAppearanceStore()
-  const orgTheme = useOrgThemeStore()
+  const settings = useSettingsStore()
+  const { theme, userPreference } = settings.
   const { language } = useLanguageStore()
   useQuery({
     queryKey: ["translations"],
@@ -116,7 +117,7 @@ function App() {
   return (
     <Theme
       appearance={appearance.appearance}
-      accentColor={orgTheme.accentColor}
+      accentColor={settings.theme.accentColor}
       grayColor={orgTheme.grayColor}
       radius={orgTheme.radius}
       scaling={orgTheme.scaling}
