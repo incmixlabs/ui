@@ -14,6 +14,7 @@ interface TaskChecklistProps {
   onChecklistItemToggle: (id: string, checked: boolean) => void;
   onChecklistItemEdit: (id: string, text: string) => void;
   onChecklistItemDelete: (id: string) => void;
+  onChecklistItemAdd?: (text: string) => void;
 }
 
 export function TaskChecklist({
@@ -21,6 +22,7 @@ export function TaskChecklist({
   onChecklistItemToggle,
   onChecklistItemEdit,
   onChecklistItemDelete,
+  onChecklistItemAdd,
 }: TaskChecklistProps) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<ChecklistItem | null>(null);
@@ -28,6 +30,9 @@ export function TaskChecklist({
   const [editText, setEditText] = useState("");
   const [optimisticChecklist, setOptimisticChecklist] = useState<ChecklistItem[]>([]);
   const editInputRef = useRef<HTMLInputElement>(null);
+  const [isAddingNew, setIsAddingNew] = useState(false);
+  const [newItemText, setNewItemText] = useState("");
+  const newItemInputRef = useRef<HTMLInputElement>(null);
   
   // Keep optimistic checklist in sync with actual checklist
   useEffect(() => {
@@ -40,6 +45,13 @@ export function TaskChecklist({
       editInputRef.current.focus();
     }
   }, [editingItemId]);
+  
+  // Focus input when adding a new item
+  useEffect(() => {
+    if (isAddingNew && newItemInputRef.current) {
+      newItemInputRef.current.focus();
+    }
+  }, [isAddingNew]);
   
   const handleStartEdit = (item: ChecklistItem) => {
     setEditingItemId(item.id);
@@ -93,6 +105,38 @@ export function TaskChecklist({
       handleCancelEdit();
     }
   };
+  
+  const handleAddNew = () => {
+    setIsAddingNew(true);
+    setNewItemText("");
+  };
+  
+  const handleSaveNew = () => {
+    if (newItemText.trim() && onChecklistItemAdd) {
+      onChecklistItemAdd(newItemText.trim());
+      setIsAddingNew(false);
+      setNewItemText("");
+    } else if (!newItemText.trim()) {
+      setIsAddingNew(false);
+      setNewItemText("");
+    }
+  };
+  
+  const handleCancelNew = () => {
+    setIsAddingNew(false);
+    setNewItemText("");
+  };
+  
+  const handleNewItemKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSaveNew();
+    } else if (e.key === "Escape") {
+      handleCancelNew();
+    }
+  };
+  
+
 
   if (!checklist || checklist.length === 0) {
     return null;
@@ -101,10 +145,56 @@ export function TaskChecklist({
   return (
     <>
       <div className="space-y-3">
-        <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-          Checklist
-        </h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+            Checklist
+          </h3>
+          {!isAddingNew && onChecklistItemAdd && (
+            <button
+              onClick={handleAddNew}
+              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+              aria-label="Add checklist item"
+            >
+              <span className="text-sm">+</span>
+            </button>
+          )}
+        </div>
         <div className="space-y-2">
+          {isAddingNew && (
+            <div className="flex items-start gap-2">
+              <Checkbox
+                id="new-checklist-item"
+                checked={false}
+                disabled
+                className="mt-0.5"
+              />
+              <div className="flex-1 flex items-center gap-2">
+                <input
+                  ref={newItemInputRef}
+                  value={newItemText}
+                  onChange={(e) => setNewItemText(e.target.value)}
+                  onKeyDown={handleNewItemKeyDown}
+                  onBlur={handleSaveNew}
+                  placeholder="New checklist item"
+                  className="flex-1 text-sm text-gray-700 dark:text-gray-300 bg-transparent border-none focus:outline-none focus:ring-0 p-0 m-0 w-full"
+                  autoFocus
+                  style={{ textAlign: 'left' }}
+                />
+                <button
+                  onClick={handleSaveNew}
+                  className="text-green-500 hover:text-green-600"
+                >
+                  <Check size={14} />
+                </button>
+                <button
+                  onClick={handleCancelNew}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            </div>
+          )}
           {optimisticChecklist.map((item) => (
           <div key={item.id} className="flex items-start gap-2 group">
             <Checkbox
