@@ -76,7 +76,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
       endDate: "",
     }
     
-    console.log('Generated default form values:', defaults) // Debug log
+  
     return defaults
   }, [taskFormSchema, columns])
 
@@ -171,10 +171,17 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
     try {
       const aiResult = await generateUserStory(title)
       if (aiResult) {
+        // Make sure checklist items have proper structure with id, text, checked fields
+        const formattedChecklist = (aiResult.checklist || []).map((item: any) => ({
+          id: item.id || generateUniqueId('cl'),
+          text: item.text || item.name || item,
+          checked: item.checked || false
+        }))
+        
         setFormData((prev) => ({
           ...prev,
           description: aiResult.description,
-          checklist: aiResult.checklist || [], // Add the AI-generated checklist to form data
+          checklist: formattedChecklist, // Add the properly formatted AI-generated checklist to form data
         }))
         setLastProcessedTitle(title)
       }
@@ -182,7 +189,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
       console.error("Error generating AI description:", error)
       setHadGenerationError(true);
     }
-  }, [generateUserStory, useAI])
+  }, [generateUserStory, useAI, generateUniqueId])
 
   // Use the custom hook to handle AI description generation
   useAIDescriptionGeneration(
@@ -221,33 +228,23 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
         checklist: formData.checklist || [],
       }
       
-      // Debug logging to verify checklist data
-      console.log("Form data before transform:", mergedData)
-      console.log("Checklist in form data:", mergedData.checklist || [])
-      
       // Transform form data to TaskDataSchema format
       const taskData = transformFormDataToTask(mergedData)
       
-      // Debug logging after transform
-      console.log("Task data after transform:", taskData)
-      console.log("Checklist in task data:", taskData.checklist || [])
-      
-      // Create the task using the useKanban hook
+      // Create the task using the properly transformed data
       await createTask(data.columnId, taskData)
 
       // Reset form and close dialog
       setFormData(defaultFormValues)
       setIsOpen(false)
       onSuccess?.()
-      
-      console.log("Task created successfully")
     } catch (error) {
       console.error("Failed to create task:", error)
       // You could add toast notification here
     } finally {
       setIsLoading(false)
     }
-  }, [createTask, transformFormDataToTask, onSuccess, defaultFormValues])
+  }, [createTask, transformFormDataToTask, onSuccess, defaultFormValues, formData.checklist])
 
   // Don't render if columns are still loading or no schema available
   if (kanbanLoading || !taskFormSchema) {
