@@ -2,13 +2,15 @@
 // REPLACE your current file with this fixed version
 
 import { useMemo } from "react"
-import type { TaskDataSchema, UseKanbanReturn } from "@incmix/utils/schema"
-import type { KanbanColumn, KanbanTask } from "../types"
+import type { TaskDataSchema } from "../sql/task-schemas"
+import type { KanbanColumn, KanbanTask } from "../view-types/kanban-view.types"
 
-import { useProjectData } from "@incmix/store"
+import { useProjectData } from "./use-project-task-data"
 
 // Export the types for compatibility, but use the ones from kanban-view.types.ts
 export type { KanbanColumn, KanbanTask }
+
+
 
 export function useKanban(projectId = "default-project"): UseKanbanReturn {
   // Get reactive project data
@@ -22,17 +24,12 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
       return []
     }
 
-    // @ts-ignore
     return projectData.taskStatuses.map((status) => {
       const tasks = projectData.tasks
-        // @ts-ignore
         .filter((task) => task.columnId === status.id)
-        // @ts-ignore
         .sort((a, b) => a.order - b.order)
         // Transform TaskDataSchema to KanbanTask
         .map(
-
-        // @ts-ignore
           (task): KanbanTask => ({
             ...task,
             // Ensure these properties are properly typed
@@ -40,7 +37,7 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
             priority: task.priority ?? "medium",
           })
         )
-    // @ts-ignore
+
       const completedTasksCount = tasks.filter((task) => task.completed).length
       const totalTasksCount = tasks.length
       const progressPercentage =
@@ -62,7 +59,6 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
   const projectStats = useMemo(() => {
     const totalTasks = projectData.tasks.length
     const completedTasks = projectData.tasks.filter(
-    // @ts-ignore
       (task) => task.completed
     ).length
     const totalColumns = projectData.taskStatuses.length
@@ -77,7 +73,6 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
 
     // Calculate urgent tasks
     const urgentTasks = projectData.tasks.filter(
-    // @ts-ignore
       (task) => task.priority === "urgent" && !task.completed
     ).length
 

@@ -21,8 +21,8 @@ import {
   RefreshCw
 } from "lucide-react"
 import { isCardData, isCardDropTargetData, isColumnData, isDraggingACard, KanbanColumn } from "../types"
-import {  useKanban, useAIFeaturesStore } from "@incmix/store"
-
+import {  useAIFeaturesStore } from "@incmix/store"
+import { useKanban } from "../hooks/use-kanban-data"
 import { BoardColumn } from "./board-column"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
 import { CreateColumnForm } from "./create-column-form"

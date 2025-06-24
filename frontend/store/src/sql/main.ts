@@ -12,7 +12,6 @@ import {
 } from "@incmix/utils/schema"
 import { addRxPlugin, createRxDatabase } from "rxdb"
 import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode"
-import type { TaskCollections } from "./types"
 
 import { getRxStorageIndexedDB } from "rxdb-premium/plugins/storage-indexeddb"
 import { RxDBAttachmentsPlugin } from "rxdb/plugins/attachments"
@@ -21,6 +20,8 @@ import { RxDBUpdatePlugin } from "rxdb/plugins/update"
 import { wrappedValidateZSchemaStorage } from "rxdb/plugins/validate-z-schema"
 import { initializeDefaultData } from "../hooks/use-initialize-default-data"
 import { resetDatabase } from "./db-reset"
+
+import type { TaskCollections } from "./types"
 
 addRxPlugin(RxDBUpdatePlugin)
 addRxPlugin(RxDBMigrationSchemaPlugin)

@@ -301,7 +301,7 @@ export const useDashboardStore = create<DashboardState>()((set, get) => ({
         }
 
         // console.log(clonedTemplate)
-
+        // @ts-ignore
         await templatesCollection.insert(clonedTemplate)
         console.log(
           `Cloned template ${i + 1}/${templates.length}: ${templateData.id} -> ${newTemplateCollectionId}`

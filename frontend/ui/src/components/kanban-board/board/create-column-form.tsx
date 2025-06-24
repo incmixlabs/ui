@@ -2,7 +2,7 @@
 "use client"
 import { useState, useRef, useEffect } from "react"
 import { Plus, Palette, AlertCircle } from "lucide-react"
-import { useKanban } from "@incmix/store"
+import { useKanban } from "../hooks/use-kanban-data"
 import {
   Button,
   Dialog,

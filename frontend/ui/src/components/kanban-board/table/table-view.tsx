@@ -20,7 +20,9 @@ import {
   Download
 } from "lucide-react"
 
-import { useTableView, useAIFeaturesStore, type TableTask } from "@incmix/store"
+import type { TableTask } from "@incmix/utils/schema"
+import { useAIFeaturesStore } from "@incmix/store"
+import { useTableView } from "../hooks/use-table-view"
 import { TASK_TABLE_COLUMNS, PRIORITY_OPTIONS } from "./table-columns-config"
 import { TableRowActions } from "./table-row-actions"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
@@ -32,7 +34,7 @@ interface TableViewProps {
   projectId?: string
 }
 
-export function TableView({ projectId = "default-project" }) {
+export function TableView({ projectId = "default-project" }: TableViewProps) {
   // Get AI features state
   const { useAI } = useAIFeaturesStore()
 

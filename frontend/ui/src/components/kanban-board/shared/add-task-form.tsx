@@ -2,10 +2,12 @@
 "use client"
 
 import { useState, useCallback, useMemo, useEffect, useRef } from "react"
-import { Button, Dialog, Text, Box } from "@incmix/ui"
+import { Button, Dialog, Text, Box } from "@base"
 import { Plus, Sparkles, Loader2 } from "lucide-react"
+import { type TaskDataSchema } from "@incmix/utils/schema"
 import AutoForm from "@components/auto-form"
-import { useKanban, type TaskDataSchema, useAIFeaturesStore, useAIUserStory } from "@incmix/store"
+import { useKanban } from "../hooks/use-kanban-data"
+import { useAIFeaturesStore, useAIUserStory } from "@incmix/store"
 import { nanoid } from "nanoid"
 import { createTaskFormSchema } from "./add-task-schema"
 import { useAIDescriptionGeneration } from "../../../hooks/use-ai-description-generation"
@@ -34,13 +36,13 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
     [key: string]: any;
   }>({ priority: 'medium' })
   const [lastProcessedTitle, setLastProcessedTitle] = useState('')
-  
+
   // Track if we're currently focusing the description field
   const isDescriptionFocused = useRef(false)
-  
+
   // Get AI features state
   const { useAI } = useAIFeaturesStore()
-  
+
   // Get AI user story generation functionality
   const { generateUserStory, isGenerating, error: aiError } = useAIUserStory()
 
@@ -56,10 +58,10 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
   // Set up default form values when schema is ready
   const defaultFormValues = useMemo(() => {
     if (!taskFormSchema || columns.length === 0) return {}
-    
+
     // Get default column (prefer "To Do" or first column)
-    const defaultColumnId = columns.find(col => 
-      col.name.toLowerCase().includes("todo") || 
+    const defaultColumnId = columns.find(col =>
+      col.name.toLowerCase().includes("todo") ||
       col.name.toLowerCase().includes("to do")
     )?.id || columns[0]?.id || ""
 
@@ -75,7 +77,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
       startDate: "",
       endDate: "",
     }
-    
+
     console.log('Generated default form values:', defaults) // Debug log
     return defaults
   }, [taskFormSchema, columns])
@@ -100,7 +102,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
   const getColorForLabel = useCallback((labelValue: string): string => {
     const colorMap: Record<string, string> = {
       bug: "#ef4444",
-      feature: "#3b82f6", 
+      feature: "#3b82f6",
       enhancement: "#10b981",
       documentation: "#8b5cf6",
       design: "#f59e0b",
@@ -119,14 +121,14 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
       startDate: data.startDate || "",
       endDate: data.endDate || "",
       completed: false,
-      
+
       // Transform labelsTags from multipleSelector format to TaskDataSchema format
       labelsTags: (data.labelsTags || []).map((label: any) => ({
         value: label.value,
         label: label.label,
         color: getColorForLabel(label.value), // Assign colors based on label type
       })),
-      
+
       // Transform assignedTo from multipleSelector format to TaskDataSchema format
       // Handle the rich member data structure
       assignedTo: (data.assignedTo || []).map((member: any) => ({
@@ -134,7 +136,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
         name: member.label || member.name,
         image: member.avatar || "/placeholder.svg",
       })),
-      
+
       // Parse reference URLs from JSON string and add to task data
       refUrls: (() => {
         try {
@@ -145,15 +147,15 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
           return [];
         }
       })(),
-      
+
       // Transform subtasks - they're already in the correct format from the custom component
-      subTasks: (data.subTasks || []).filter((subtask: any) => 
+      subTasks: (data.subTasks || []).filter((subtask: any) =>
         subtask && subtask.name && subtask.name.trim()
       ),
-      
+
       // Include the checklist (from AI generation or manually added)
       checklist: data.checklist || [],
-      
+
       // Initialize empty arrays for other fields
       attachments: [],
       comments: [],
@@ -163,11 +165,11 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
 
   // Track if we've had a generation error for the current title
   const [hadGenerationError, setHadGenerationError] = useState(false);
-  
+
   // Function to generate description using AI
   const generateDescription = useCallback(async (title: string): Promise<void> => {
     if (!title || !useAI) return;
-    
+
     try {
       const aiResult = await generateUserStory(title)
       if (aiResult) {
@@ -198,7 +200,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
   // Handle form values change
   const handleValuesChange = useCallback((values: any) => {
     setFormData(values);
-    
+
     // If title changes significantly and useAI is enabled, we should regenerate the description
     // on the next render cycle via useEffect
     // (the logic moved to useEffect above for simplicity)
@@ -220,18 +222,18 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
         ...data,
         checklist: formData.checklist || [],
       }
-      
+
       // Debug logging to verify checklist data
       console.log("Form data before transform:", mergedData)
       console.log("Checklist in form data:", mergedData.checklist || [])
-      
+
       // Transform form data to TaskDataSchema format
       const taskData = transformFormDataToTask(mergedData)
-      
+
       // Debug logging after transform
       console.log("Task data after transform:", taskData)
       console.log("Checklist in task data:", taskData.checklist || [])
-      
+
       // Create the task using the useKanban hook
       await createTask(data.columnId, taskData)
 
@@ -239,7 +241,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
       setFormData(defaultFormValues)
       setIsOpen(false)
       onSuccess?.()
-      
+
       console.log("Task created successfully")
     } catch (error) {
       console.error("Failed to create task:", error)
@@ -260,11 +262,11 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
   }
 
   return (
-    <Dialog.Root 
-      open={isOpen} 
+    <Dialog.Root
+      open={isOpen}
       onOpenChange={(open) => {
         setIsOpen(open)
-        
+
         if (!open) {
           // Reset form-related state when closing
           setFormData({ priority: 'medium' });
@@ -286,8 +288,8 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
             Create New Task {useAI && <span className="text-sm text-blue-500 ml-1">(AI Assisted)</span>}
           </Dialog.Title>
           <Dialog.Description>
-            {useAI 
-              ? "AI will help generate task details based on your inputs" 
+            {useAI
+              ? "AI will help generate task details based on your inputs"
               : "Add a comprehensive task with all necessary details"}
           </Dialog.Description>
         </Dialog.Header>
@@ -330,7 +332,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
               )}
             </div>
           )}
-          
+
           <AutoForm
             formSchema={taskFormSchema.formSchema}
             fieldConfig={taskFormSchema.fieldConfig}
@@ -350,14 +352,14 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
                 <div className="space-y-2">
                   {formData.checklist.map((item: { id: string; text: string; checked: boolean }) => (
                     <div key={item.id} className="flex items-start gap-2">
-                      <input 
+                      <input
                         type="checkbox"
                         checked={item.checked || false}
                         onChange={() => {
                           // Toggle the checked state for this item
                           const updatedChecklist = (formData.checklist || []).map(
-                            (checkItem: any) => checkItem.id === item.id 
-                              ? { ...checkItem, checked: !checkItem.checked } 
+                            (checkItem: any) => checkItem.id === item.id
+                              ? { ...checkItem, checked: !checkItem.checked }
                               : checkItem
                           )
                           setFormData(prev => ({ ...prev, checklist: updatedChecklist }))
@@ -372,7 +374,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
                 </div>
               </div>
             )}
-            
+
             <div className="mt-4 flex justify-end">
               <Button
                 type="submit"
@@ -398,7 +400,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
               {formData.name ? `Creating: ${formData.name}` : "Fill in the task details"}
               {useAI && <span className="ml-1 text-blue-500">(AI will enhance your input)</span>}
             </Text>
-            
+
             <div className="flex gap-2">
               <Dialog.Close>
                 <Button variant="soft" color="gray" disabled={isLoading}>

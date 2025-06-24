@@ -9,24 +9,19 @@ import type { FormProjectDocType } from "./types"
  * @param projectData The project data from the form
  * @returns The saved RxDB document
  */
-
 export const saveFormProject = async (projectData: ProjectFormData) => {
   try {
     const now = Date.now()
-
     // Validate and sanitize the project data
     const validatedData = validateProjectData(projectData)
-
     // Prepare the document with required tracking fields
     const projectDoc = {
       ...validatedData,
       createdAt: now,
       updatedAt: now,
     } as FormProjectDocType
-
     // Insert the document first (without the file)
     const insertedDoc = await database.formProjects.insert(projectDoc)
-
     // Handle file attachment if present
     if (projectData.fileData) {
       try {
@@ -78,7 +73,6 @@ export const saveFormProject = async (projectData: ProjectFormData) => {
         // Continue with the document saved, just without the attachment
       }
     }
-
     return insertedDoc
   } catch (error) {
     console.error("Failed to save project to RxDB:", error)

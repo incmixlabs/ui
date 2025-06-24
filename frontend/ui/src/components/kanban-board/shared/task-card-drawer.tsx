@@ -1,5 +1,6 @@
 // components/shared/task-card-drawer.tsx
-import { useKanban, useListView } from "@incmix/store"
+import { useKanban } from "../hooks/use-kanban-data"
+import { useListView } from "../hooks/use-list-view"
 import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
 import { ScrollArea } from "@incmix/ui"
 import { ModalPresets } from "./confirmation-modal"

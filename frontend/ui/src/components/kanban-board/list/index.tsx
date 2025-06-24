@@ -1,11 +1,11 @@
 // components/list/list-board.tsx - Updated to use new task input system
+import { useEffect, useRef, useState, useCallback } from "react"
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge"
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { bindAll } from "bind-event-listener"
-import { useEffect, useRef, useState, useCallback } from "react"
 import { ListColumn } from "./list-column"
 import { Box, Flex, IconButton, TextField, Button, Heading, TextArea, Text } from "@incmix/ui"
 
@@ -23,10 +23,10 @@ import {
   blockBoardPanningAttr,
 } from "../data-attributes"
 import {
-  useListView,
   useAIFeaturesStore
 } from "@incmix/store"
-import { useKanban } from "@incmix/store"
+import { useKanban } from "../hooks/use-kanban-data"
+import { useListView } from "../hooks/use-list-view"
 import ColorPicker, { ColorSelectType } from "@components/color-picker"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
 
