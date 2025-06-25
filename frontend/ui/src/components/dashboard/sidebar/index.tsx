@@ -32,12 +32,13 @@ import { useLocation, useParams } from "@tanstack/react-router";
 import { useTemplateStore } from "@incmix/store";
 
 export const sidebarComponents = [
-
   {
     slotId: "i",
     component: <NewTasks />,
     componentName: "new-tasks",
-    compImage: dashboardImg?.newTaskImg,
+    compImage: dashboardImg?.darkNewTaskImg,
+    darkCompImage:dashboardImg.darkNewTaskImg,
+    lightCompImage:dashboardImg.lightNewTaskImg,
     title: "New Tasks",
     tags: ["task", "new", "todo"],
     layouts: {
@@ -402,6 +403,8 @@ useEffect(() => {
                         id={comp.slotId}
                         title={comp.title}
                         image={comp.compImage}
+                        darkImage={comp.darkCompImage}
+                        lightImage={comp.lightCompImage}
                         component={comp.component}
                         componentName={comp.componentName}
                         disabled={!isEditing || selectedWidgets.length > 0}
