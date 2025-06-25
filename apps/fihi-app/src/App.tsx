@@ -6,13 +6,13 @@ import { setDefaultOptions } from "date-fns"
 
 import { LoadingPage } from "@incmix/pages/common"
 import { I18n, usei18n } from "@incmix/pages/i18n"
-import {  database as db } from "@incmix/store"
-import type { LanguageOption as Language } from "@incmix/utils//types"
+import { database as db } from "@incmix/store"
 import {
   useAppearanceStore,
   useThemeStore,
 } from "@incmix/store/use-settings-store"
 import { Theme, Toaster } from "@incmix/ui"
+import type { LanguageOption as Language } from "@incmix/utils//types"
 import { Provider as RxdbProvider } from "rxdb-hooks"
 import { translations } from "./translations"
 

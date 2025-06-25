@@ -59,8 +59,8 @@ export async function resetDatabase(
   }
 }
 type LocalDatabaseOptions = {
-  forceReset?: boolean;
-  dbName?: string;
+  forceReset?: boolean
+  dbName?: string
   options?: any
 }
 const defaultDatabaseOptions: LocalDatabaseOptions = {
@@ -72,44 +72,45 @@ const defaultDatabaseOptions: LocalDatabaseOptions = {
 }
 // https://adamcoster.com/blog/async-constructors
 export class LocalDatabase {
-	/** @protected */
-  private force_reset: boolean;
-  private db_name: string;
-  public database: any;
-  private options: any;
-  public reset: () => Promise<void>;
-	constructor(options: LocalDatabaseOptions = {}) {
-    const newOptions = {...defaultDatabaseOptions, ...options }
-    this.force_reset = !!newOptions.forceReset;
-    this.db_name = newOptions.dbName ?? defaultDatabaseOptions.dbName?? "incmix-db";
-    this.options = newOptions.options ?? defaultDatabaseOptions.options;
+  /** @protected */
+  private force_reset: boolean
+  private db_name: string
+  public database: any
+  private options: any
+  public reset: () => Promise<void>
+  constructor(options: LocalDatabaseOptions = {}) {
+    const newOptions = { ...defaultDatabaseOptions, ...options }
+    this.force_reset = !!newOptions.forceReset
+    this.db_name =
+      newOptions.dbName ?? defaultDatabaseOptions.dbName ?? "incmix-db"
+    this.options = newOptions.options ?? defaultDatabaseOptions.options
     this.reset = async () => {
       try {
-        await resetDatabase(this.db_name);
-        console.log("Database reset successfully");
+        await resetDatabase(this.db_name)
+        console.log("Database reset successfully")
         if (import.meta.env.MODE === "development") {
           console.info(
             "Set FORCE_DB_RESET to false after validating schema changes"
           )
         }
       } catch (error) {
-        console.error("Error resetting database:", error);
+        console.error("Error resetting database:", error)
       }
-    };
+    }
   }
   public get forceReset() {
-    return this.force_reset;
+    return this.force_reset
   }
-	/** @protected */
-	async init() {
-		// You could do this with a private property name, since that *does*
-		// work in JavaScript. (e.g. `async #init(){}`). However that makes
-		// class extension trickier, so personally I just use JSDoc to flag it
-		// as protected and rely on the Typescript language server to keep me
-		// out of trouble.
+  /** @protected */
+  async init() {
+    // You could do this with a private property name, since that *does*
+    // work in JavaScript. (e.g. `async #init(){}`). However that makes
+    // class extension trickier, so personally I just use JSDoc to flag it
+    // as protected and rely on the Typescript language server to keep me
+    // out of trouble.
     if (this.force_reset) {
       // Reset the database if forceReset is true
-      await this.reset();
+      await this.reset()
     }
     const storage = wrappedValidateZSchemaStorage({
       storage: getRxStorageIndexedDB(),
@@ -140,7 +141,9 @@ export class LocalDatabase {
                   }))
                 : [],
               // Ensure attachments has correct structure
-              attachments: Array.isArray(oldDoc.attachments || oldDoc.attachment)
+              attachments: Array.isArray(
+                oldDoc.attachments || oldDoc.attachment
+              )
                 ? (oldDoc.attachments || oldDoc.attachment).map((att: any) => ({
                     id: att.id || crypto.randomUUID(),
                     name: att.name || "",
@@ -151,7 +154,8 @@ export class LocalDatabase {
                 : [],
               // Add/ensure other fields with defaults
               priority: oldDoc.priority || "medium",
-              completed: oldDoc.completed === undefined ? false : oldDoc.completed,
+              completed:
+                oldDoc.completed === undefined ? false : oldDoc.completed,
               comments: oldDoc.comments || 0,
             }
           },
@@ -183,14 +187,13 @@ export class LocalDatabase {
       console.error("Error initializing default data:", error)
       // Don't throw - we should continue even if data initialization fails
     }
-	}
-	static async create() {
-		const db = new LocalDatabase();
-		await db.init();
-		return db;
-	}
+  }
+  static async create() {
+    const db = new LocalDatabase()
+    await db.init()
+    return db
+  }
 }
 
-export const db = await LocalDatabase.create();
+export const db = await LocalDatabase.create()
 export const database = db.database as TaskCollections
-
