@@ -10,8 +10,8 @@ catalogs:
       specifier: 5.0.0
       version: 5.0.0
     '@incmix/utils':
-      specifier: 0.25.0
-      version: 0.25.0
+      specifier: 0.26.0
+      version: 0.26.0
     '@julr/vite-plugin-validate-env':
       specifier: 1.3.0
       version: 1.3.0
@@ -187,7 +187,7 @@ importers:
         version: link:../../frontend/ui
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.25.0(@types/luxon@3.4.2)(luxon@3.5.0)
+        version: 0.26.0(@types/luxon@3.4.2)(luxon@3.5.0)
       '@sentry/react':
         specifier: 8.51.0
         version: 8.51.0(react@19.1.0)
@@ -278,7 +278,7 @@ importers:
         version: link:../../frontend/ui
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.25.0(@types/luxon@3.4.2)(luxon@3.5.0)
+        version: 0.26.0(@types/luxon@3.4.2)(luxon@3.5.0)
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.71.1(react@19.1.0)
@@ -372,7 +372,7 @@ importers:
         version: link:../ui
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.25.0(@types/luxon@3.4.2)(luxon@3.5.0)
+        version: 0.26.0(@types/luxon@3.4.2)(luxon@3.5.0)
       '@radix-ui/themes':
         specifier: 'catalog:'
         version: 3.2.1(@types/react-dom@19.1.2(@types/react@19.1.1))(@types/react@19.1.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -469,7 +469,7 @@ importers:
     dependencies:
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.25.0(@types/luxon@3.4.2)(luxon@3.5.0)
+        version: 0.26.0(@types/luxon@3.4.2)(luxon@3.5.0)
       '@koale/useworker':
         specifier: 4.1.0
         version: 4.1.0(react@19.1.0)
@@ -581,7 +581,7 @@ importers:
         version: link:../store
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.25.0(@types/luxon@3.4.2)(luxon@3.5.0)
+        version: 0.26.0(@types/luxon@3.4.2)(luxon@3.5.0)
       '@mantine/hooks':
         specifier: 7.14.1
         version: 7.14.1(react@19.1.0)
@@ -816,13 +816,13 @@ importers:
     dependencies:
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.25.0(@types/luxon@3.4.2)(luxon@3.5.0)
+        version: 0.26.0(@types/luxon@3.4.2)(luxon@3.5.0)
 
   shared/config:
     dependencies:
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.25.0(@types/luxon@3.4.2)(luxon@3.5.0)
+        version: 0.26.0(@types/luxon@3.4.2)(luxon@3.5.0)
     devDependencies:
       next:
         specifier: 15.1.4
@@ -2323,8 +2323,8 @@ packages:
       react: 19.1.0
       react-dom: 19.1.0
 
-  '@incmix/utils@0.25.0':
-    resolution: {integrity: sha512-fDBqOLNo4iEtvUp+F6zB9TRiImP8QzRkK6duFqUHugdKz8lHmg14NhkYW+u/+nfY3onK1Uk+yeWRasUfDi+bPA==}
+  '@incmix/utils@0.26.0':
+    resolution: {integrity: sha512-lvlaNDNDP9/I7K3jzBZiwrPlVXsmuKzu0Unb+4FJ+1jlHrNrMAYX4WOBtCFq4IQ5KLceXCNLL6Px/MASaHDRYw==}
     engines: {node: '>=22.13.0'}
     peerDependencies:
       '@types/luxon': '>=3.0'
@@ -11300,7 +11300,7 @@ snapshots:
       react-resizable: 3.0.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       resize-observer-polyfill: 1.5.1
 
-  '@incmix/utils@0.25.0(@types/luxon@3.4.2)(luxon@3.5.0)':
+  '@incmix/utils@0.26.0(@types/luxon@3.4.2)(luxon@3.5.0)':
     dependencies:
       '@casl/ability': 6.7.3
       '@date-fns/tz': 1.2.0

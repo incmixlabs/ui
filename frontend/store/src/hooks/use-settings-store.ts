@@ -172,7 +172,7 @@ export function systemAppearance() {
     ? "dark"
     : "light"
 }
-export function useisSystemDark() {
+export function useIsSystemDark() {
   const [isDark, setIsDark] = useState(false)
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")

@@ -7,10 +7,10 @@ import { setDefaultOptions } from "date-fns"
 import { LoadingPage } from "@incmix/pages/common"
 import { I18n, usei18n } from "@incmix/pages/i18n"
 import {  database as db } from "@incmix/store"
+import type { LanguageOption as Language } from "@incmix/utils//types"
 import {
   useAppearanceStore,
   useThemeStore,
-  type Language,
 } from "@incmix/store/use-settings-store"
 import { Theme, Toaster } from "@incmix/ui"
 import { Provider as RxdbProvider } from "rxdb-hooks"
