@@ -14,7 +14,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
 
-import { Box, Flex, Heading, IconButton, Button, Text, Badge, TextField, TextArea, DropdownMenu } from "@incmix/ui"
+import { Box, Flex, Heading, IconButton, Button, Text, Badge, TextField, TextArea, DropdownMenu, Checkbox } from "@incmix/ui"
 import { isSafari } from "@utils/browser"
 import { isShallowEqual } from "@utils/objects"
 import {
@@ -69,18 +69,25 @@ interface ListColumnProps {
   onUpdateColumn: (columnId: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
   onDeleteColumn: (columnId: string) => Promise<void>
   isDragging?: boolean
+  selectedTaskIds?: {[key: string]: {taskId: string, name: string}}
+  onTaskSelect?: (taskId: string, selected: boolean, taskName: string) => void
+  onSelectAll?: (columnId: string, selected: boolean) => void
 }
 
 const CardList = memo(function CardList({ 
   column, 
   columns,
   onUpdateTask, 
-  onDeleteTask 
+  onDeleteTask,
+  selectedTaskIds,
+  onTaskSelect
 }: { 
   column: ListColumn
   columns: ListColumn[]
   onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
+  selectedTaskIds?: {[key: string]: {taskId: string, name: string}}
+  onTaskSelect?: (taskId: string, selected: boolean, taskName: string) => void
 }) {
   return (
     <>
@@ -92,6 +99,8 @@ const CardList = memo(function CardList({
           columns={columns}
           onUpdateTask={onUpdateTask}
           onDeleteTask={onDeleteTask}
+          onTaskSelect={onTaskSelect ? (taskId, selected) => onTaskSelect(taskId, selected, task.name) : undefined}
+          isSelected={!!selectedTaskIds?.[task.taskId]}
         />
       ))}
     </>
@@ -106,7 +115,10 @@ export function ListColumn({
   onDeleteTask, 
   onUpdateColumn, 
   onDeleteColumn,
-  isDragging = false 
+  isDragging = false,
+  selectedTaskIds = {},
+  onTaskSelect,
+  onSelectAll
 }: ListColumnProps) {
   const scrollableRef = useRef<HTMLDivElement | null>(null)
   const outerFullHeightRef = useRef<HTMLDivElement | null>(null)
@@ -120,6 +132,18 @@ export function ListColumn({
   const completedTasks = column.tasks.filter((task: KanbanTask) => task.completed).length
   const totalTasks = column.tasks.length
   const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
+  
+  // Calculate selection state
+  const selectedTasksInColumn = column.tasks.filter(task => !!selectedTaskIds[task.taskId]).length
+  const allTasksSelected = selectedTasksInColumn === totalTasks && totalTasks > 0
+  const someTasksSelected = selectedTasksInColumn > 0 && selectedTasksInColumn < totalTasks
+  
+  // Handle select all for this column
+  const handleSelectAllChange = useCallback((checked: boolean | string) => {
+    if (onSelectAll) {
+      onSelectAll(column.id, typeof checked === 'boolean' ? checked : checked === 'indeterminate' ? false : true)
+    }
+  }, [column.id, onSelectAll])
 
   const setIsCardOver = useCallback(({
     data,
@@ -424,61 +448,61 @@ export function ListColumn({
                 borderTop: `3px solid ${column.color}`
               }}>
                 <Flex direction="column" gap="3" className="flex-1">
-                  <TextField.Root
-                    value={editColumnName}
-                    onChange={(e) => setEditColumnName(e.target.value)}
-                    placeholder="Column name"
-                    size="2"
-                  />
-                  <TextArea
-                    value={editColumnDescription}
-                    onChange={(e) => setEditColumnDescription(e.target.value)}
-                    placeholder="Column description (optional)"
-                    rows={2}
-                  />
-                  <Flex align="center" gap="2" className="items-start">
-                    <div className="relative" ref={colorPickerRef}>
-                      <Button
-                        variant="solid"
-                        className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
-                        style={{ backgroundColor: editColumnColor }}
-                        onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
-                      />
-                      {isColorPickerOpen && (
-                        <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
-                          <ColorPicker 
-                            colorType="base" 
-                            onColorSelect={(color: ColorSelectType) => {
-                              setEditColumnColor(color.hex);
-                              setIsColorPickerOpen(false);
-                            }} 
-                            activeColor={editColumnColor}
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <Text size="1" className="text-gray-500">Column color</Text>
-                  </Flex>
-                  <Flex gap="2">
-                    <Button 
-                      size="1" 
-                      onClick={handleUpdateColumn} 
-                      disabled={isUpdating}
-                    >
-                      <Check size={14} />
-                      {isUpdating ? 'Saving...' : 'Save'}
-                    </Button>
-                    <Button 
-                      size="1" 
-                      variant="soft" 
-                      onClick={handleCancelEdit} 
-                      disabled={isUpdating}
-                    >
-                      <X size={14} />
-                      Cancel
-                    </Button>
-                  </Flex>
+                <TextField.Root
+                  value={editColumnName}
+                  onChange={(e) => setEditColumnName(e.target.value)}
+                  placeholder="Column name"
+                  size="2"
+                />
+                <TextArea
+                  value={editColumnDescription}
+                  onChange={(e) => setEditColumnDescription(e.target.value)}
+                  placeholder="Column description (optional)"
+                  rows={2}
+                />
+                <Flex align="center" gap="2" className="items-start">
+                  <div className="relative" ref={colorPickerRef}>
+                    <Button
+                      variant="solid"
+                      className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
+                      style={{ backgroundColor: editColumnColor }}
+                      onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
+                    />
+                    {isColorPickerOpen && (
+                      <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
+                        <ColorPicker 
+                          colorType="base" 
+                          onColorSelect={(color: ColorSelectType) => {
+                            setEditColumnColor(color.hex);
+                            setIsColorPickerOpen(false);
+                          }} 
+                          activeColor={editColumnColor}
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <Text size="1" className="text-gray-500">Column color</Text>
                 </Flex>
+                <Flex gap="2">
+                  <Button 
+                    size="1" 
+                    onClick={handleUpdateColumn} 
+                    disabled={isUpdating}
+                  >
+                    <Check size={14} />
+                    {isUpdating ? 'Saving...' : 'Save'}
+                  </Button>
+                  <Button 
+                    size="1" 
+                    variant="soft" 
+                    onClick={handleCancelEdit} 
+                    disabled={isUpdating}
+                  >
+                    <X size={14} />
+                    Cancel
+                  </Button>
+                </Flex>
+              </Flex>
               </Box>
             ) : (
               <Flex
@@ -500,6 +524,13 @@ export function ListColumn({
                   >
                     {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
                   </Button>
+
+                  <Checkbox
+                    checked={allTasksSelected ? true : someTasksSelected ? 'indeterminate' : false}
+                    onCheckedChange={handleSelectAllChange}
+                    className="flex-shrink-0"
+                    disabled={totalTasks === 0}
+                  />
                   
                   <div
                     className="w-3 h-3 rounded-full flex-shrink-0"
@@ -580,6 +611,8 @@ export function ListColumn({
                 columns={columns}
                 onUpdateTask={onUpdateTask}
                 onDeleteTask={onDeleteTask}
+                selectedTaskIds={selectedTaskIds}
+                onTaskSelect={onTaskSelect}
               />
               
               {state.type === "is-card-over" && !state.isOverChildCard ? (

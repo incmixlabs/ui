@@ -5,11 +5,11 @@ import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/r
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import { bindAll } from "bind-event-listener"
-import {  useEffect, useRef, useState, useCallback } from "react"
+import {  useEffect, useRef, useState, useCallback, useMemo } from "react"
 import { ListColumn } from "./list-column"
-import { Box, Flex, IconButton, TextField, Button, Heading, TextArea, Text } from "@incmix/ui"
+import { Box, Flex, Heading, IconButton, Button, Text, TextField, TextArea, Badge } from "@incmix/ui"
 
-import { Plus, Search, RefreshCw, Settings, MoreVertical, ChevronRight, X } from "lucide-react"
+import { Plus, Search, RefreshCw, Settings, MoreVertical, ChevronRight, X, ClipboardList, XCircle, CheckCircle2 } from "lucide-react"
 
 import {
   isCardData,
@@ -35,6 +35,9 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   const scrollableRef = useRef<HTMLDivElement | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [isDragging, setIsDragging] = useState(false)
+  
+  // Task selection state
+  const [selectedTasks, setSelectedTasks] = useState<{[key: string]: {taskId: string, name: string}}>({})
   
   // New column creation state
   const [isAddingColumn, setIsAddingColumn] = useState(false)
@@ -90,6 +93,47 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   const handleRefresh = useCallback(() => {
     refetch()
   }, [refetch])
+  
+  // Handle task selection
+  const handleTaskSelect = useCallback((taskId: string, selected: boolean, taskName: string) => {
+    setSelectedTasks(prev => {
+      if (selected) {
+        return { ...prev, [taskId]: { taskId, name: taskName } }
+      } else {
+        const newSelected = { ...prev }
+        delete newSelected[taskId]
+        return newSelected
+      }
+    })
+  }, [])
+  
+  // Handle bulk selection for a column
+  const handleColumnSelectAll = useCallback((columnId: string, selected: boolean) => {
+    const column = columns.find(col => col.id === columnId)
+    if (!column) return
+    
+    setSelectedTasks(prev => {
+      const newSelected = { ...prev }
+      
+      column.tasks.forEach(task => {
+        if (selected) {
+          newSelected[task.taskId] = { taskId: task.taskId, name: task.name }
+        } else {
+          delete newSelected[task.taskId]
+        }
+      })
+      
+      return newSelected
+    })
+  }, [columns])
+  
+  // Log selected tasks
+  const handleLogSelectedTasks = useCallback(() => {
+    console.log('Selected Tasks:', Object.values(selectedTasks))
+  }, [selectedTasks])
+  
+  // Count selected tasks
+  const selectedTasksCount = useMemo(() => Object.keys(selectedTasks).length, [selectedTasks])
 
   // Drag and drop setup
   useEffect(() => {
@@ -329,6 +373,44 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
       {/* Header */}
       <Box className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
         <Flex direction="column" gap="4" className="p-4">
+          
+          {/* Selected Tasks Actions */}
+          {selectedTasksCount > 0 && (
+            <Box className="p-3 border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 dark:border-blue-800 rounded-lg shadow-sm">
+              <Flex justify="between" align="center">
+                <Flex align="center" gap="2">
+                  <Badge variant="solid" color="blue" size="2" className="px-3 py-0.5">
+                    {selectedTasksCount}
+                  </Badge>
+                  <Text className="font-medium text-blue-800 dark:text-blue-300">
+                    {selectedTasksCount === 1 ? 'task' : 'tasks'} selected
+                  </Text>
+                </Flex>
+                <Flex gap="3" align="center">
+                  <Button 
+                    variant="soft" 
+                    color="blue"
+                    size="2"
+                    className="shadow-sm hover:shadow transition-all"
+                    onClick={handleLogSelectedTasks}
+                  >
+                    <ClipboardList size={16} />
+                    Log Selected
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    color="gray"
+                    size="2"
+                    className="shadow-sm hover:shadow hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                    onClick={() => setSelectedTasks({})}
+                  >
+                    <XCircle size={16} />
+                    Clear
+                  </Button>
+                </Flex>
+              </Flex>
+            </Box>
+          )}
           <Flex justify="between" align="center">
             <Heading size="6">Project Tasks</Heading>
             
@@ -477,16 +559,19 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
           )}
           
           {filteredColumns.map((column) => (
-            <ListColumn 
-              key={column.id} 
+            <ListColumn
+              key={column.id}
               column={column}
-              columns={columns} // Pass all columns for the menu
+              columns={columns}
               onCreateTask={createTask}
               onUpdateTask={updateTask}
               onDeleteTask={deleteTask}
               onUpdateColumn={updateColumn}
               onDeleteColumn={deleteColumn}
               isDragging={isDragging}
+              selectedTaskIds={selectedTasks}
+              onTaskSelect={handleTaskSelect}
+              onSelectAll={handleColumnSelectAll}
             />
           ))}
           

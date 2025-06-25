@@ -75,6 +75,8 @@ interface ListTaskCardProps {
   columns: ListColumn[]
   onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
+  onTaskSelect?: (taskId: string, selected: boolean) => void
+  isSelected?: boolean
 }
 
 export const ListTaskCardShadow = memo(function ListTaskCardShadow({ 
@@ -98,6 +100,8 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
   innerRef,
   onUpdateTask,
   onDeleteTask,
+  onTaskSelect,
+  isSelected,
 }: {
   card: KanbanTask
   columns: ListColumn[]
@@ -106,23 +110,25 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
   innerRef?: React.MutableRefObject<HTMLDivElement | null>
   onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
+  onTaskSelect?: (taskId: string, selected: boolean) => void
+  isSelected?: boolean
 }) {
   const { handleDrawerOpen } = useKanbanDrawer()
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const handleToggleComplete = useCallback(async (checked: boolean | string) => {
+  // Handle task selection instead of completion toggle
+  const handleTaskSelect = useCallback((checked: boolean | string) => {
     // Ensure taskId exists
     if (!card.taskId) {
       console.error("Task ID is missing")
       return
     }
 
-    try {
-      await onUpdateTask(card.taskId, { completed: typeof checked === 'boolean' ? checked : checked === 'indeterminate' ? false : true })
-    } catch (error) {
-      console.error("Failed to toggle task completion:", error)
+    // Call the selection handler from props
+    if (onTaskSelect) {
+      onTaskSelect(card.taskId, typeof checked === 'boolean' ? checked : checked === 'indeterminate' ? false : true)
     }
-  }, [card.taskId, onUpdateTask])
+  }, [card.taskId, onTaskSelect])
 
   const handleUpdateTask = useCallback(async (updates: Partial<TaskDataSchema>) => {
     if (!card.taskId) {
@@ -254,8 +260,8 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
               )}
 
               <Checkbox
-                checked={card.completed}
-                onCheckedChange={handleToggleComplete}
+                checked={isSelected || false}
+                onCheckedChange={handleTaskSelect}
                 className="flex-shrink-0"
               />
 
@@ -449,12 +455,14 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
   )
 })
 
-export function ListTaskCard({ 
+export const ListTaskCard = memo(function ListTaskCard({ 
   card, 
   columnId, 
   columns,
   onUpdateTask, 
-  onDeleteTask 
+  onDeleteTask,
+  onTaskSelect,
+  isSelected
 }: ListTaskCardProps) {
   const outerRef = useRef<HTMLDivElement | null>(null)
   const innerRef = useRef<HTMLDivElement | null>(null)
@@ -571,14 +579,16 @@ export function ListTaskCard({
   return (
     <>
       <TaskCardDisplay
-        card={card}
-        columns={columns}
-        state={state}
-        outerRef={outerRef}
-        innerRef={innerRef}
-        onUpdateTask={onUpdateTask}
-        onDeleteTask={onDeleteTask}
-      />
+          card={card}
+          columns={columns}
+          state={state}
+          outerRef={outerRef}
+          innerRef={innerRef}
+          onUpdateTask={onUpdateTask}
+          onDeleteTask={onDeleteTask}
+          onTaskSelect={onTaskSelect}
+          isSelected={isSelected}
+        />
       {state.type === "preview" &&
         createPortal(
           <TaskCardDisplay 
@@ -587,9 +597,11 @@ export function ListTaskCard({
             state={state} 
             onUpdateTask={onUpdateTask}
             onDeleteTask={onDeleteTask}
+            onTaskSelect={onTaskSelect}
+            isSelected={isSelected}
           />,
           state.container
         )}
     </>
   )
-}
+})
