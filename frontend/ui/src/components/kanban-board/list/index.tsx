@@ -7,9 +7,10 @@ import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/ad
 import { bindAll } from "bind-event-listener"
 import {  useEffect, useRef, useState, useCallback, useMemo } from "react"
 import { ListColumn } from "./list-column"
-import { Box, Flex, Heading, IconButton, Button, Text, TextField, TextArea, Badge } from "@incmix/ui"
+import { ConfirmationDialog } from "./confirmation-dialog"
+import { Box, Flex, Heading, IconButton, Button, Text, TextField, TextArea, Badge, Tooltip, toast } from "@incmix/ui"
 
-import { Plus, Search, RefreshCw, Settings, MoreVertical, ChevronRight, X, ClipboardList, XCircle, CheckCircle2 } from "lucide-react"
+import { Plus, Search, RefreshCw, Settings, MoreVertical, ChevronRight, X, ClipboardList, XCircle, CheckCircle2, Sparkles, Loader2 } from "lucide-react"
 
 import {
   isCardData,
@@ -19,7 +20,8 @@ import {
   isDraggingAColumn,
   blockBoardPanningAttr,
   useListView,
-  useAIFeaturesStore
+  useAIFeaturesStore,
+  useBulkAIGeneration
 } from "@incmix/store"
 import { useKanban } from "@incmix/store"
 import ColorPicker, { ColorSelectType } from "@components/color-picker"
@@ -37,7 +39,10 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   const [isDragging, setIsDragging] = useState(false)
   
   // Task selection state
-  const [selectedTasks, setSelectedTasks] = useState<{[key: string]: {taskId: string, name: string}}>({})
+  const [selectedTasks, setSelectedTasks] = useState<Record<string, { taskId: string; name: string }>>({});
+  
+  // Confirmation dialog state
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   
   // New column creation state
   const [isAddingColumn, setIsAddingColumn] = useState(false)
@@ -75,10 +80,17 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     createColumn,
     updateColumn,
     deleteColumn,
-    refetch,
-    clearError,
     projectStats
   } = useListView(projectId)
+
+  // Get bulk AI generation hook
+  const { 
+    generateForTasks, 
+    isGenerating, 
+    stats: generationStats, 
+    error: generationError,
+    clearError: clearGenerationError 
+  } = useBulkAIGeneration(updateTask)
 
   // Filter columns based on search query
   const filteredColumns = columns.filter(column => 
@@ -89,10 +101,6 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     )
   )
 
-  // Handle refresh
-  const handleRefresh = useCallback(() => {
-    refetch()
-  }, [refetch])
   
   // Handle task selection
   const handleTaskSelect = useCallback((taskId: string, selected: boolean, taskName: string) => {
@@ -132,6 +140,55 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     console.log('Selected Tasks:', Object.values(selectedTasks))
   }, [selectedTasks])
   
+  // Prompt for AI content generation
+  const promptGenerateAIContent = useCallback(() => {
+    if (Object.keys(selectedTasks).length === 0 || !useAI) return
+    setShowConfirmDialog(true)
+  }, [selectedTasks, useAI])
+  
+  // Generate AI content for selected tasks (actual implementation)
+  const handleGenerateAIContent = useCallback(async () => {
+    if (Object.keys(selectedTasks).length === 0 || !useAI) return
+    
+    try {
+      clearGenerationError()
+      const selectedTasksArray = Object.values(selectedTasks)
+      
+      // Close the confirmation dialog
+      setShowConfirmDialog(false)
+      
+      // Display the number of tasks to be processed
+      const taskCount = selectedTasksArray.length
+      toast.info(
+        `Starting AI content generation for ${taskCount} task${taskCount !== 1 ? 's' : ''}`,
+        { duration: 3000 }
+      )
+      
+      // Call the bulk generation function
+      const result = await generateForTasks(selectedTasksArray)
+      
+      if (result.success) {
+        toast.success(result.message, {
+          description: `Generated content for ${result.message.split(' ')[2]} tasks`,
+          duration: 5000
+        })
+      } else {
+        toast.error('Failed to generate content', {
+          description: result.message,
+          duration: 5000
+        })
+        console.error('Failed to generate content:', result.message)
+      }
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error'
+      toast.error('Error generating AI content', {
+        description: errorMsg,
+        duration: 5000
+      })
+      console.error('Error generating AI content:', error)
+    }
+  }, [selectedTasks, useAI, generateForTasks, clearGenerationError])
+
   // Count selected tasks
   const selectedTasksCount = useMemo(() => Object.keys(selectedTasks).length, [selectedTasks])
 
@@ -359,7 +416,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
       <Box className="flex items-center justify-center h-64">
         <Flex direction="column" align="center" gap="4">
           <div className="text-red-500">Error: {error}</div>
-          <Button onClick={() => { clearError(); refetch(); }} variant="outline">
+          <Button onClick={() => window.location.reload()} variant="outline">
             <RefreshCw size={16} />
             Retry
           </Button>
@@ -387,6 +444,27 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                   </Text>
                 </Flex>
                 <Flex gap="3" align="center">
+                  {useAI && (
+                    <Tooltip content={!isGenerating ? "Generate AI content for selected tasks" : "Generating content..."}>  
+                      <Button 
+                        variant="soft" 
+                        color="purple"
+                        size="2"
+                        className="shadow-sm hover:shadow transition-all"
+                        onClick={promptGenerateAIContent}
+                        disabled={isGenerating}
+                      >
+                        {isGenerating ? (
+                          <Loader2 size={16} className="animate-spin mr-1" />
+                        ) : (
+                          <Sparkles size={16} />
+                        )}
+                        {isGenerating ? 
+                          `Generating ${generationStats.completed}/${generationStats.total}` : 
+                          "Generate AI Content"}
+                      </Button>
+                    </Tooltip>
+                  )}
                   <Button 
                     variant="soft" 
                     color="blue"
@@ -424,7 +502,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                 Add Status Column
               </Button>
 
-              <IconButton variant="ghost" onClick={handleRefresh}>
+              <IconButton variant="ghost" onClick={() => window.location.reload()}>
                 <RefreshCw size={16} />
               </IconButton>
 
@@ -599,6 +677,20 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
       </Box>
 
       
+      {/* AI Generation Confirmation Dialog */}
+      <ConfirmationDialog
+        isOpen={showConfirmDialog}
+        onClose={() => setShowConfirmDialog(false)}
+        onConfirm={handleGenerateAIContent}
+        title="Generate AI Content"
+        description={
+          `This will generate AI content for ${Object.keys(selectedTasks).length} selected task${Object.keys(selectedTasks).length !== 1 ? 's' : ''}. ` +
+          `Any existing description, checklists, and acceptance criteria will be replaced with AI-generated content. Are you sure?`
+        }
+        confirmText="Generate"
+        cancelText="Cancel"
+        isLoading={isGenerating}
+      />
     </>
   )
 }

@@ -11,6 +11,7 @@ export * from "./hooks/use-dashboard-store"
 export * from "./hooks/use-task-store"
 export * from "./hooks/use-ai-features-store"
 export * from "./hooks/use-ai-user-story"
+export * from "./hooks/use-bulk-ai-generation"
 // Explicitly re-export from use-kanban-data except for KanbanColumn
 export { useKanban } from "./hooks/use-kanban-data"
 export { useListView } from "./hooks/use-list-view"
