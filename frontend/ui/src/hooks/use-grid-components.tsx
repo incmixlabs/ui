@@ -7,6 +7,7 @@ import {
   ActiveTask,
   NewTasks,
   PostingTask,
+  ProjectTimelineWidgets,
   ProjectWidgets2,
   StatisticWidgets2,
   TotalProject,
@@ -89,6 +90,13 @@ export function useGridComponents(isEditing: boolean) {
       title: "Nested New Tasks 2",
       componentName: "total-tasks",
       compImage: dashboardImg?.newTaskImg,
+    },
+    {
+      slotId: "o",
+      component: <ProjectTimelineWidgets />,
+      title: "Project Timeline",
+      componentName: "project-timeline",
+      compImage: dashboardImg?.ProjectImg,
     },
   ])
 

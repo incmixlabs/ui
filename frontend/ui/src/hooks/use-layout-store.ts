@@ -60,7 +60,7 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
       if (updatedLayouts[breakpointKey] && allLayouts[breakpointKey]) {
         allLayouts[breakpointKey].forEach((newItem: Layout) => {
           const existingItemIndex = updatedLayouts[breakpointKey].findIndex(
-            (item) => item.i === newItem.i,
+            (item: { i: string; }) => item.i === newItem.i,
           );
 
           if (existingItemIndex !== -1) {
@@ -100,7 +100,7 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
 
         // Remove any items that no longer exist in the new layouts
         updatedLayouts[breakpointKey] = updatedLayouts[breakpointKey].filter(
-          (item) => {
+          (item: Layout) => {
             return allLayouts[breakpointKey].some(
               (newItem: Layout) => newItem.i === item.i,
             );

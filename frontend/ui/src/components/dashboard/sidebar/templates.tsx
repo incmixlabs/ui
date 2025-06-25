@@ -89,6 +89,7 @@ export function TemplatesSidebar({
     applyTemplates(template.mainLayouts, template.id);
     toast.success(`Template "${template?.id}" loaded successfully`);
   };
+console.log(filteredTemplates);
 
 
   return (
@@ -133,17 +134,17 @@ export function TemplatesSidebar({
                 >
                   <Box className="px-2 ">
                     <Heading size="1" className="font-medium">
-                      {template.name}
+                      {template?.templateName}
                     </Heading>
-                    <Flex
+                    {/* <Flex
                       align={"center"}
                       className="text-xs text-muted-foreground mt-1"
                     >
                       <Box as="span">
-                        {shortFormatDistanceToNow(new Date(template.updatedAt))}{" "}
+                        {shortFormatDistanceToNow(new Date(template.updatedAt))}
                         ago
                       </Box>
-                    </Flex>
+                    </Flex> */}
 
                     {template.tags.length > 0 && (
                       <Flex  align={"center"} className="mt-2 flex-wrap gap-1">

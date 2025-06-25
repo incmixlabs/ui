@@ -11,6 +11,19 @@ import {
 import { ChevronDown, ChevronUp, Minus, Plus } from "lucide-react";
 import { useState } from "react";
 
+  /**
+   * Renders a section that displays a list of layout presets.
+   *
+   * The section can be expanded or collapsed by clicking on the button
+   * that appears next to the section title. When the section is expanded,
+   * it displays a grid of cards, each representing a layout preset. The
+   * cards display the name of the preset and a preview image. When a card
+   * is clicked, the corresponding preset is applied to the layout.
+   *
+   * The section also displays a button with a down arrow when it is
+   * collapsed, and a button with an up arrow when it is expanded. The
+   * button is used to toggle the expansion state of the section.
+   */
 export function LayoutPresetsSection() {
   const { activePresetId, applyPreset } = useLayoutStore();
   const [isExpanded, setIsExpanded] = useState(false);
