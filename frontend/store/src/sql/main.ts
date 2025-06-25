@@ -191,3 +191,6 @@ export class LocalDatabase {
 	}
 }
 
+export const db = await LocalDatabase.create();
+export const database = db.database as TaskCollections
+

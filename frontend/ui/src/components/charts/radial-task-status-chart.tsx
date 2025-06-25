@@ -60,9 +60,9 @@ interface RadialTaskStatusChartProps {
 
 export function RadialTaskStatusChart({
   tasks = [
-    { name: "Ongoing", value: 420, color: 'blue' },
-    { name: "Hold", value: 210, color },
-    { name: "Done", value: 200, },
+    { name: "Ongoing", value: 420, color: 'pink' },
+    { name: "Hold", value: 210, color: 'yellow' },
+    { name: "Done", value: 200, color: 'purple' },
   ],
   startAngle = -135,
   endAngle = 135,
