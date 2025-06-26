@@ -1,3 +1,4 @@
+import { getTextColor } from "@incmix/store/color"
 import {
   type BreakFontColor,
   type IntegrationConfig,
@@ -18,7 +19,6 @@ import { ThemeContext } from "@radix-ui/themes"
 import { useContext, useEffect, useState } from "react"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
-import { getTextColor } from "@incmix/store/color"
 
 export const SIDEBAR_COLOR_OPTIONS = [
   {
@@ -201,7 +201,6 @@ export const userPreference: UserPreference = {
   direction: "ltr",
   language: "en",
 }
-
 
 export type UserPreferenceStoreConfig = UserPreference & {
   setUserPreference: (partial: Partial<UserPreference>) => void
@@ -732,12 +731,15 @@ export const useSidebarStore = create<SidebarStore>()(
 )
 
 export function IncmixThemeApplier() {
-  const { sidebarBg } = useThemeStore();
+  const { sidebarBg } = useThemeStore()
 
   useEffect(() => {
-    document.documentElement.style.setProperty('--primary-color', primaryColor);
-    document.documentElement.style.setProperty('--secondary-color', secondaryColor);
-  }, [sidebarBg]); // Re-run effect when colors change
+    document.documentElement.style.setProperty("--primary-color", primaryColor)
+    document.documentElement.style.setProperty(
+      "--secondary-color",
+      secondaryColor
+    )
+  }, [sidebarBg]) // Re-run effect when colors change
 
-  return null; // This component doesn't render anything visible
+  return null // This component doesn't render anything visible
 }
