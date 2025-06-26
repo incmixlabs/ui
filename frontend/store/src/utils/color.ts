@@ -5,7 +5,6 @@ import {
   fontColor,
 } from "@incmix/utils/types"
 
-
 export type TextColor = {
   color: RadixAnyColor
   pastel?: boolean
@@ -61,8 +60,8 @@ export function getTextColor({
     return fontColor.light
   }
   if (!(color in breakFontColor)) {
-     return fontColor.dark
-   }
+    return fontColor.dark
+  }
   const shade = (breakFontColor as any)[color] ?? breakFontColor.default
   return shade < brightShade ? fontColor.light : fontColor.dark
 }
