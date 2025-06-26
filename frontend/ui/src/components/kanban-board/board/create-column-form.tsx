@@ -13,7 +13,7 @@ import {
   Box,
   toast,
 } from "@base"
-import { hasGoodContrast } from "@utils/colors"
+import { hasGoodContrast } from "@incmix/store/color"
 import ColorPicker, { ColorSelectType } from "@components/color-picker"
 
 interface CreateColumnFormProps {

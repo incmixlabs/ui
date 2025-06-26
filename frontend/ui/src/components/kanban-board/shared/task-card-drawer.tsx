@@ -22,7 +22,6 @@ import {
   type TaskCardDrawerProps
 } from "./task-card-components"
 
-
 export function TaskCardDrawer({
   viewType = 'board',
   projectId = "default-project",
@@ -42,11 +41,11 @@ export function TaskCardDrawer({
 
   // Find the current task and its column
   const currentTask = taskId
-    ? columns.flatMap((col: any) => col.tasks).find((task: any) => task.taskId === taskId)
+    ? columns.flatMap((col) => col.tasks).find((task) => task.taskId === taskId)
     : null
 
   const currentColumn = currentTask
-    ? columns.find((col: any) => col.tasks.some((task: any) => task.taskId === currentTask.taskId))
+    ? columns.find((col) => col.tasks.some((task) => task.taskId === currentTask.taskId))
     : null
 
   // Use custom hooks for state and actions

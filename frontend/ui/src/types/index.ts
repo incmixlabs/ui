@@ -1,11 +1,6 @@
 import type { DateTime } from "luxon"
 import type { SVGProps } from "react"
 
-export { accentColorPropDef  } from "@radix-ui/themes/src/props/color.prop.js"
-export { colorPropDef } from "@radix-ui/themes/src/props/color.prop.js"
-export { accentColors  } from "@radix-ui/themes/src/props/color.prop.js"
-export { grayColors  } from "@radix-ui/themes/src/props/color.prop.js"
-
 export type Side = "left" | "right"
 export const side = {
   left: "left",
