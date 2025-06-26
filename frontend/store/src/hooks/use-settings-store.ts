@@ -169,28 +169,8 @@ export function systemAppearance() {
     ? "dark"
     : "light"
 }
-export function useIsSystemDark() {
-  const [isDark, setIsDark] = useState(false)
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
-
-    const handleChange: (e: MediaQueryListEvent) => void = (
-      e: MediaQueryListEvent
-    ) => {
-      setIsDark(e.matches)
-    }
-    // Set initial state
-    setIsDark(mediaQuery.matches)
-    // Listen for changes
-    mediaQuery.addEventListener("change", handleChange)
-    // Clean up event listener
-    return () => {
-      mediaQuery.removeEventListener("change", handleChange)
-    }
-  }, [])
-
-  return isDark
-}
+import { useState, useEffect } from "react"
+import { getTextColor } from "@incmix/store/color"
 export const userPreference: UserPreference = {
   appearance: systemAppearance(),
   isSystemAppearance: true,
