@@ -74,9 +74,9 @@ export const DraggableComponent = forwardRef<
     }
 
     return (
-      <Box className="relative">
+      <>
         {isDragging && (
-          <Box className="absolute z-50 rounded-lg border border-gray-400 border-dashed bg-gray-1 opacity-50">
+          <Box className="absolute z-50  rounded-lg border border-gray-400 border-dashed bg-gray-1 opacity-50 h-full">
             <img
               src={lightImage || "/placeholder.svg?height=150&width=150"}
               alt={title}
@@ -96,7 +96,7 @@ export const DraggableComponent = forwardRef<
           {...listeners}
           {...attributes}
           onMouseDown={handleMouseDown}
-          className={`rounded-lg border border-gray-5 shadow ${
+          className={`rounded-lg border border-gray-5 h-full dark:bg-gray-2 bg-white  ${
             disabled
               ? "cursor-not-allowed opacity-60"
               : "cursor-grab active:cursor-grabbing"
@@ -113,12 +113,12 @@ export const DraggableComponent = forwardRef<
             className="h-full w-full rounded-lg dark:block hidden"
           />
           <Box className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/30 opacity-0 transition-opacity hover:opacity-100">
-            <span className="text-center font-medium text-sm text-white">
+            <span className="text-center text-xs font-medium text-white">
               {title}
             </span>
           </Box>
         </Box>
-      </Box>
+      </>
     )
   }
 )

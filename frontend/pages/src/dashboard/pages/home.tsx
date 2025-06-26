@@ -22,6 +22,7 @@ import {
   SidebarTrigger,
   Switch,
   Text,
+  cn,
   generateDOM,
   useDevicePreview,
   useDragAndDrop,
@@ -192,8 +193,8 @@ const DashboardHomePage: React.FC = () => {
 
   const isEmpty = gridComponents.length === 0
 
-  console.log("active drag data",activeDragData);
-  
+  console.log("active drag data", activeDragData)
+
   return (
     <DndContext
       onDragStart={handleDragStart}
@@ -309,19 +310,20 @@ const DashboardHomePage: React.FC = () => {
       <DragOverlay>
         {activeDragId && activeDragData && (
           <Box
-            className="pointer-events-none rounded-lg border border-gray-5 bg-gray-1 opacity-100 shadow"
-            style={{ width: "100px", height: "100px" }}
+            className={cn("pointer-events-none rounded-lg border border-gray-5 bg-gray-1 opacity-100 shadow")}
           >
             <img
               src={
-                activeDragData.darkImage || "/placeholder.svg?height=150&width=150"
+                activeDragData.darkImage ||
+                "/placeholder.svg?height=150&width=150"
               }
               alt={activeDragData.title || "Component"}
               className="hidden h-full w-full rounded-lg dark:block"
             />
             <img
               src={
-                activeDragData.lightImage || "/placeholder.svg?height=150&width=150"
+                activeDragData.lightImage ||
+                "/placeholder.svg?height=150&width=150"
               }
               alt={activeDragData.title || "Component"}
               className="block h-full w-full rounded-lg dark:hidden"

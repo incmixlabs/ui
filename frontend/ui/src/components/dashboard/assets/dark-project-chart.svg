@@ -2,7 +2,7 @@
 <g clip-path="url(#clip0_5339_1503)">
 <g filter="url(#filter0_d_5339_1503)">
 <mask id="mask0_5339_1503" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="437" height="402">
-<rect width="437" height="402" rx="20" fill="white"/>
+<rect width="437" height="402" fill="white"/>
 </mask>
 <g mask="url(#mask0_5339_1503)">
 <rect width="437" height="402" fill="#18191B"/>

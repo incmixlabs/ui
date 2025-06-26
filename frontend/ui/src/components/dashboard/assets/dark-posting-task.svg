@@ -2,7 +2,7 @@
 <g clip-path="url(#clip0_5340_3428)">
 <g filter="url(#filter0_d_5340_3428)">
 <mask id="mask0_5340_3428" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1149" height="502">
-<rect width="1149" height="502" rx="20" fill="white"/>
+<rect width="1149" height="502" fill="white"/>
 </mask>
 <g mask="url(#mask0_5340_3428)">
 <rect width="1149" height="502" fill="#18191B"/>
@@ -1151,7 +1151,7 @@
 <g mask="url(#mask178_5340_3428)">
 <rect x="416" y="91" width="17.4848" height="17.4826" fill="#FFDB6E"/>
 </g>
-<g filter="url(#filter1_d_5340_3428)">
+<g clip-path="url(#clip3_5340_3428)" filter="url(#filter1_d_5340_3428)">
 <mask id="mask179_5340_3428" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="397" y="253" width="273" height="57">
 <path d="M532.472 309.422C532.856 309.781 533.453 309.781 533.837 309.422L538.905 304.692H657.154C663.782 304.692 669.154 299.319 669.154 292.692V265.692C669.154 259.065 663.782 253.692 657.154 253.692H409.154C402.527 253.692 397.154 259.065 397.154 265.692V292.692C397.154 299.319 402.527 304.692 409.154 304.692H527.403L532.472 309.422Z" fill="white"/>
 </mask>
@@ -1190,6 +1190,9 @@
 </clipPath>
 <clipPath id="clip2_5340_3428">
 <rect width="24.9783" height="283.468" fill="white" transform="translate(33.7207 148.602)"/>
+</clipPath>
+<clipPath id="clip3_5340_3428">
+<rect width="272.263" height="56.194" fill="white" transform="matrix(1 0 0 -1 397.154 309.691)"/>
 </clipPath>
 </defs>
 </svg>
