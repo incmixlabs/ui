@@ -60,18 +60,18 @@ interface WeeklyActivityChartProps {
 export function WeeklyActivityChart({
   values = [30, 65, 45, 80, 55, 40, 65],
   days = ["M", "T", "W", "T", "F", "S", "S"],
-  primaryColor = "blue",
-  highlightColor ="pink",
   highlightDay = 3,
   barWidth = "40%",
+  highlightColor,
+  primaryColor,
   borderRadius = 10,
   className,
 }: WeeklyActivityChartProps) {
   const [mounted, setMounted] = useState(false)
   const { getDashboardColors } = useThemeStore()
   const dashboardColorValues = getDashboardColors()
-  highlightColor = dashboardColorValues.color3
-  primaryColor = dashboardColorValues.color1
+  highlightColor = highlightColor?? dashboardColorValues.color3
+  primaryColor = primaryColor?? dashboardColorValues.color1
 
   useEffect(() => {
     setMounted(true)
