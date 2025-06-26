@@ -169,8 +169,6 @@ export function systemAppearance() {
     ? "dark"
     : "light"
 }
-import { useState, useEffect } from "react"
-import { getTextColor } from "@incmix/store/color"
 export const userPreference: UserPreference = {
   appearance: systemAppearance(),
   isSystemAppearance: true,
@@ -285,8 +283,8 @@ export const useIntegrationStore = create<IntegrationStore>()(
         }),
       getAPIKeys: () => get().keys,
       getAPIKey: (key: KeyOption) => {
-        const keys = get().keys;
-        return keys && key in keys ? keys[key] : undefined;
+        const keys = get().keys
+        return keys && key in keys ? keys[key] : undefined
       },
       getVariable: (key: string) => get().variables?.[key],
       getVariables: () => get().variables,
