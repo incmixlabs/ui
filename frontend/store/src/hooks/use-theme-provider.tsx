@@ -16,7 +16,6 @@ export const isDarkScheme = () =>
 export const defaultScheme = () => (isDarkScheme() ? "dark" : "light")
 
 export const defaultTheme: ThemeConfig = {
-  appearance: "light",
   accentColor: "blue",
   secondaryColor: "cyan",
   grayColor: "gray",
@@ -28,20 +27,23 @@ export const defaultTheme: ThemeConfig = {
   avatarRadius: "full",
   workspaceRadius: "medium",
   orgRadius: "none",
-  info: "blue",
-  danger: "red",
-  success: "green",
-  warning: "orange",
-  info1: "pink",
-  info2: "yellow",
-  info3: "lime",
-  info4: "cyan",
+  indicators: {
+    info: "blue",
+    danger: "red",
+    success: "green",
+    warning: "orange",
+    default: "gray",
+  },
+  dashboard: {
+    color1: "pink",
+    color2: "yellow",
+    color3: "lime",
+    color4: "cyan",
+  },
   // for dark mode
   // customColor
   sidebarBg: "var(--gray-3)",
   breakFontColor,
-  direction: "ltr",
-  isSystemTheme: true,
 }
 export type ThemeContextValue = {
   accentColor: string
