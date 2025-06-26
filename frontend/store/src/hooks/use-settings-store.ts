@@ -3,20 +3,16 @@ import {
   type BreakFontColor,
   type IntegrationConfig,
   type KeyOption,
-  type RadixAnyColor,
   type RadixColor,
   type RadixGrayColor,
   type RadixRadius,
   type RadixScaling,
-  type SettingsConfig,
   type ThemeConfig,
   User,
   type UserPreference,
   breakFontColor as defaultFontColor,
   fontColor,
 } from "@incmix/utils/types"
-import { ThemeContext } from "@radix-ui/themes"
-import { useContext, useEffect, useState } from "react"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 
@@ -231,16 +227,7 @@ export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
           ...s,
           ...partial,
         })),
-      setAppearance: (appearance: "light" | "dark") =>
-        set((s) => ({
-          ...s,
-          appearance,
-        })),
       onAppearanceChange: (appearance: "light" | "dark") => {
-        const themeContext = useContext(ThemeContext)
-        if (themeContext) {
-          themeContext.onAppearanceChange(appearance)
-        }
         set((s) => ({
           ...s,
           appearance,
@@ -342,34 +329,18 @@ export const useThemeStore = create<ThemeStoreConfig>()(
         }),
       onAccentColorChange: (color: RadixColor) =>
         set((s) => {
-          const themeContext = useContext(ThemeContext)
-          if (themeContext) {
-            themeContext.onAccentColorChange(color)
-          }
           return { ...s, accentColor: color }
         }),
       onGrayColorChange: (color: RadixGrayColor) =>
         set((s) => {
-          const themeContext = useContext(ThemeContext)
-          if (themeContext) {
-            themeContext.onGrayColorChange(color)
-          }
           return { ...s, grayColor: color }
         }),
       onRadiusChange: (radius: RadixRadius) =>
         set((s) => {
-          const themeContext = useContext(ThemeContext)
-          if (themeContext) {
-            themeContext.onRadiusChange(radius)
-          }
           return { ...s, radius }
         }),
       onScalingChange: (scaling: RadixScaling) =>
         set((s) => {
-          const themeContext = useContext(ThemeContext)
-          if (themeContext) {
-            themeContext.onScalingChange(scaling)
-          }
           return { ...s, scaling }
         }),
       theme: (prop) => {
