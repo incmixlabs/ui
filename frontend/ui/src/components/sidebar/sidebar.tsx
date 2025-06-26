@@ -172,7 +172,6 @@ const SidebarProvider = forwardRef<
     useEffect(() => {
       if (sidebar !== sidebarBg) {
         const sideBarColor = SIDEBAR_COLOR_OPTIONS.find(color => color.bg === sidebarBg)?? SIDEBAR_COLOR_OPTIONS[0]
-        debugger;
         setsideBar(sidebarBg)
         document.documentElement.style.setProperty('--sidebar-foreground', sideBarColor.text);
         document.documentElement.style.setProperty('--sidebar-background', sideBarColor.bg);

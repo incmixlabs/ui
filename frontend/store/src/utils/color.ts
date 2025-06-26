@@ -5,13 +5,6 @@ import {
   fontColor,
 } from "@incmix/utils/types"
 
-/**
-  breakFontColor as defaultFontColor,
-  fontColor,
-} from "@incmix/utils/types"
- * Simple accessibility check for color contrast with background
- * Returns true if the color is likely to have good contrast
- */
 
 export type TextColor = {
   color: RadixAnyColor
@@ -67,11 +60,9 @@ export function getTextColor({
   if (pastel) {
     return fontColor.light
   }
-  // @ts-ignore
-  if (breakFontColor?.[color] === undefined) {
-    return fontColor.dark
-  }
-  // @ts-ignore
-  const shade = breakFontColor[color] ?? breakFontColor.default
+  if (!(color in breakFontColor)) {
+     return fontColor.dark
+   }
+  const shade = (breakFontColor as any)[color] ?? breakFontColor.default
   return shade < brightShade ? fontColor.light : fontColor.dark
 }
