@@ -1,8 +1,9 @@
 import { useDraggable } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
-import { Box, sidebarComponents } from "@incmix/ui"
+import { Box } from "@incmix/ui"
 import type React from "react"
 import { forwardRef, useEffect, useState } from "react"
+import { sidebarComponents } from "./widgets-data"
 
 interface DraggableComponentProps {
   id: string
