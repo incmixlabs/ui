@@ -463,7 +463,7 @@ export const useThemeStore = create<ThemeStoreConfig>()(
                 pastelShade,
               }),
               text4: getTextColor({
-                color: color2,
+                color: color4,
                 pastel,
                 breakFontColor,
                 brightShade,
