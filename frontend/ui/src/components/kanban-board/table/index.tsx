@@ -1,6 +1,6 @@
 // components/table/index.tsx
 export { TableView } from "./table-view"
-export { useTableView } from "@incmix/store"
+export { useTableView } from "../hooks/use-table-view"
 export { TableRowActions } from "./table-row-actions"
 export { CreateTaskDialog } from "./create-task-dialog"
 export {
@@ -17,4 +17,4 @@ export {
 } from "./table-columns-config"
 
 // Re-export types
-export type { TableTask, UseTableViewReturn } from "@incmix/store"
+export type { TableTask } from "../types"

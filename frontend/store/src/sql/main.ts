@@ -178,7 +178,7 @@ export class LocalDatabase {
     // Initialize default data (only if collections are empty)
     // This creates default task statuses and sample tasks
     try {
-      await initializeDefaultData({
+      await initializeDefaultData(this.database, {
         projectId: "default-project", // Change to your desired default project ID
         statusesOnly: false, // Set to true if you only want task statuses without sample tasks
       })

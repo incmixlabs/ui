@@ -22,7 +22,7 @@ import {
 
 import { ModalPresets } from "../shared/confirmation-modal"
 import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
-import { TableTask } from "@incmix/store"
+import { TableTask } from "../types"
 
 interface TableRowActionsProps {
   task: TableTask

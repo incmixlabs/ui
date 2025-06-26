@@ -49,8 +49,12 @@ export function useTableView(
 
     // Sort by creation date (newest first) for table display
     return allTasks.sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      (a, b) => {
+        // Handle potentially undefined createdAt values
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0
+        return dateB - dateA // Sort newest first
+      }
     )
   }, [listViewData.columns])
 

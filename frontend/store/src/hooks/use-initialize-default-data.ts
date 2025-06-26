@@ -1,7 +1,6 @@
-import { generateUniqueId, getCurrentTimestamp } from "@incmix/utils/helper"
-import type { TaskDocType, TaskStatusDocType } from "utils/task-schema"
-import { database } from "../sql"
-import type { TaskCollections } from "../sql/types"
+// Import browser-compatible helpers instead of Node.js Buffer-using ones
+import { generateBrowserUniqueId, getCurrentTimestamp } from "../utils/browser-helpers"
+import type { TaskCollections, TaskDocType, TaskStatusDocType } from "../sql/types"
 
 /**
  * Creates a default user for audit fields when no real user data is available
@@ -26,6 +25,7 @@ export interface DefaultDataOptions {
  * @returns Promise that resolves when initialization is complete
  */
 export async function initializeDefaultData(
+  db: TaskCollections,
   options: DefaultDataOptions = {}
 ): Promise<void> {
   const projectId = options.projectId || "default-project"
@@ -35,7 +35,7 @@ export async function initializeDefaultData(
   try {
     // Initialize task statuses if needed
     const statuses = await initializeTaskStatuses(
-      database,
+      db,
       projectId,
       now,
       defaultUser,
@@ -44,7 +44,7 @@ export async function initializeDefaultData(
 
     // Only initialize tasks if not in statusesOnly mode and we have statuses
     if (!options.statusesOnly && statuses.length > 0) {
-      await initializeTasks(database, projectId, statuses, now, defaultUser)
+      await initializeTasks(db, projectId, statuses, now, defaultUser)
     }
   } catch (error) {
     console.error("Error initializing default data:", error)
@@ -63,7 +63,7 @@ async function initializeTaskStatuses(
   timestamp: number,
   user: { id: string; name: string; image: string },
   forceCreation = false
-): Promise<TaskStatusDocType[]> {
+): Promise<any[]> { // Change return type to any[] to accommodate RxDocument objects
   const taskStatusCollection = db.taskStatus
 
   // Check if task statuses already exist for this project
@@ -78,7 +78,7 @@ async function initializeTaskStatuses(
 
     const defaultTaskStatuses = [
       {
-        id: generateUniqueId("ts"),
+        id: generateBrowserUniqueId("ts"),
         projectId,
         name: "To Do",
         color: "#6366f1", // Indigo
@@ -91,7 +91,7 @@ async function initializeTaskStatuses(
         updatedBy: user,
       },
       {
-        id: generateUniqueId("ts"),
+        id: generateBrowserUniqueId("ts"),
         projectId,
         name: "In Progress",
         color: "#f97316", // Orange
@@ -104,7 +104,7 @@ async function initializeTaskStatuses(
         updatedBy: user,
       },
       {
-        id: generateUniqueId("ts"),
+        id: generateBrowserUniqueId("ts"),
         projectId,
         name: "Done",
         color: "#10b981", // Emerald
@@ -157,7 +157,11 @@ async function initializeTasks(
     console.log("Creating sample tasks...")
 
     // Find the "To Do" status, or use the first status if not found
-    const todoStatus = statuses.find((s) => s.name === "To Do") || statuses[0]
+    // Find status by name, handling both RxDocument and plain objects safely
+    const todoStatus = statuses.find((s) => {
+      // Check if it's a string property directly or via an rx method
+      return (s.name as string) === "To Do"
+    }) || statuses[0]
 
     /**
      * Helper function to create a fully typed TaskDocType from partial data
@@ -223,8 +227,8 @@ async function initializeTasks(
     // Define sample tasks with proper typing
     const sampleTasks: Partial<TaskDocType>[] = [
       {
-        id: generateUniqueId("task"),
-        taskId: generateUniqueId("tsk"),
+        id: generateBrowserUniqueId("task"),
+        taskId: generateBrowserUniqueId("tsk"),
         projectId,
         name: "Project setup",
         columnId: todoStatus.id,
@@ -239,12 +243,12 @@ async function initializeTasks(
         assignedTo: [],
         subTasks: [
           {
-            id: generateUniqueId("sub"),
+            id: generateBrowserUniqueId("sub"),
             name: "Create README",
             completed: false,
           },
           {
-            id: generateUniqueId("sub"),
+            id: generateBrowserUniqueId("sub"),
             name: "Set up folder structure",
             completed: false,
           },
@@ -257,8 +261,8 @@ async function initializeTasks(
         updatedBy: user,
       },
       {
-        id: generateUniqueId("task"),
-        taskId: generateUniqueId("tsk"),
+        id: generateBrowserUniqueId("task"),
+        taskId: generateBrowserUniqueId("tsk"),
         projectId,
         name: "Design user interface",
         columnId: todoStatus.id,
@@ -281,8 +285,8 @@ async function initializeTasks(
         updatedBy: user,
       },
       {
-        id: generateUniqueId("task"),
-        taskId: generateUniqueId("tsk"),
+        id: generateBrowserUniqueId("task"),
+        taskId: generateBrowserUniqueId("tsk"),
         projectId,
         name: "Kickoff meeting",
         columnId: todoStatus.id,

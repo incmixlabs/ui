@@ -5,6 +5,8 @@ import {
   dashboardTemplateSchemaLiteral,
   formProjectSchemaLiteral,
   projectSchemaLiteral,
+  taskSchemaLiteral,
+  taskDataSchemaLiteral,
 } from "@incmix/utils/schema"
 import type { TaskStatusDocType } from "@incmix/utils/schema"
 import {
@@ -21,6 +23,8 @@ const dashboardTemplateTyped = toTypedRxJsonSchema(
   dashboardTemplateSchemaLiteral
 )
 const dashboardTyped = toTypedRxJsonSchema(dashboardSchemaLiteral)
+const taskTyped = toTypedRxJsonSchema(taskSchemaLiteral)
+const taskStatusTyped = toTypedRxJsonSchema(taskDataSchemaLiteral)
 
 // Task types have been moved to ../utils/task-schema.ts
 
@@ -42,6 +46,14 @@ export type DashboardTemplateDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
 
 export type DashboardDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof dashboardTyped
+>
+
+export type TaskDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
+  typeof taskTyped
+>
+
+export type TaskStatusDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
+  typeof taskStatusTyped
 >
 
 export interface TaskCollections {

@@ -14,7 +14,7 @@ import {
 } from "@incmix/ui"
 import { X, Calendar, User, Flag } from "lucide-react"
 import { PRIORITY_OPTIONS, getPriorityInfo } from "./table-columns-config"
-import type { TaskDataSchema } from "@incmix/store"
+import type { TaskDataSchema } from "@incmix/utils/schema"
 
 // Mock members data (same as in mention input)
 const AVAILABLE_MEMBERS = [

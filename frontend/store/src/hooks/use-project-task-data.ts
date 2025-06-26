@@ -1,6 +1,7 @@
 // File: use-project-task-data.ts
 
-import { generateUniqueId, getCurrentTimestamp } from "@incmix/utils/helper"
+// Import browser-compatible helpers instead of Node.js Buffer-using ones
+import { generateBrowserUniqueId, getCurrentTimestamp } from "../utils/browser-helpers"
 import type {
   CurrentUser,
   ProjectData,
@@ -11,7 +12,7 @@ import type {
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { Subscription } from "rxjs"
 import { database } from "sql"
-import type { TaskDocType } from "utils/task-schema"
+import type { TaskDocType } from "sql/types"
 
 // Get the current user - accepts user context to make it injectable
 const getCurrentUser = (user?: CurrentUser) => {
@@ -174,7 +175,7 @@ export function useProjectData(
     for (let i = 0; i < DEFAULT_TASK_STATUSES.length; i++) {
       const status = DEFAULT_TASK_STATUSES[i]
       await database.taskStatus.insert({
-        id: generateUniqueId("ts"),
+        id: generateBrowserUniqueId("ts"),
         projectId,
         name: status.name,
         color: status.color,
@@ -201,8 +202,8 @@ export function useProjectData(
         const maxOrder = Math.max(...tasksInColumn.map((t) => t.order), -1)
 
         const newTask: TaskDataSchema = {
-          id: generateUniqueId("task"),
-          taskId: generateUniqueId("tsk"),
+          id: generateBrowserUniqueId("task"),
+          taskId: generateBrowserUniqueId("tsk"),
           projectId,
           name: taskData.name || "New Task",
           columnId,
@@ -377,7 +378,7 @@ export function useProjectData(
       try {
         const now = getCurrentTimestamp()
         const user = getCurrentUser(currentUser)
-        const id = generateUniqueId("ts")
+        const id = generateBrowserUniqueId("ts")
 
         const maxOrder = Math.max(
           ...data.taskStatuses.map((ts) => ts.order),

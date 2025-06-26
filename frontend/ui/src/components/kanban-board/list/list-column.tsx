@@ -14,7 +14,7 @@ import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
 import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
 
-import { Box, Flex, Heading, IconButton } from "@incmix/ui";
+import { Badge, Box, Button, DropdownMenu, Flex, Heading, IconButton, TextArea, TextField } from "@incmix/ui";
 import { isSafari } from "@utils/browser";
 import { isShallowEqual } from "@incmix/utils/objects";
 import {
@@ -456,7 +456,7 @@ export function ListColumn({
                         </div>
                       )}
                     </div>
-                    <Text size="1" className="text-gray-500">Column color</Text>
+                    <div className="text-gray-500">Column color</div>
                   </Flex>
                   <Flex gap="2">
                     <Button
@@ -549,9 +549,9 @@ export function ListColumn({
             {/* Column Description */}
             {column.description && (
               <Box className="px-4 pb-3">
-                <Text size="2" className="text-gray-600 dark:text-gray-400">
+                <div className="text-gray-600 dark:text-gray-400">
                   {column.description}
-                </Text>
+                </div>
               </Box>
             )}
 

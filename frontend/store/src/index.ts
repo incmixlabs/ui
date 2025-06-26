@@ -15,5 +15,4 @@ export * from "./hooks/use-ai-user-story"
 export * from "./hooks/use-task-status-store"
 export * from "./hooks/use-task-store"
 // Re-export everything from kanban-view.types (including its KanbanColumn)
-export * from "./utils/task-schema"
 export * from "./hooks/use-settings-store"

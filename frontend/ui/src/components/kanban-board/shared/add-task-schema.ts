@@ -2,7 +2,7 @@
 import type { FieldConfig } from "@components/auto-form/types"
 import type { ZodObjectOrWrapped } from "@components/auto-form/utils"
 import type { z } from "zod"
-import type { KanbanColumn } from "@incmix/store"
+import { KanbanColumn } from "../types"
 
 // Hardcoded members (matching projects structure exactly with rich data)
 const members = [

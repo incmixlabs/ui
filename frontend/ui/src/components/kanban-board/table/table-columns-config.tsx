@@ -2,7 +2,7 @@
 import React from "react"
 import { Badge, Avatar, Flex, Checkbox, Text } from "@incmix/ui"
 import { CalendarDays, Clock, AlertCircle, Flag } from "lucide-react"
-import { TableTask } from "@incmix/store"
+import { TableTask } from "../types"
 
 // Priority configuration
 export const PRIORITY_OPTIONS = [
@@ -123,7 +123,7 @@ export const AssignedToCell: React.FC<{ value: TableTask['assignedTo'] }> = ({ v
         {value.slice(0, 3).map((user, index) => (
           <Avatar
             key={user.id}
-            src={user.image}
+            src={user.avatar}
             name={user.name}
             className="w-6 h-6 border border-white"
             style={{ zIndex: 3 - index }}

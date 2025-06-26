@@ -2,7 +2,8 @@
 import React, { useState, useRef, useEffect } from "react"
 import { Badge, Flex, Text, DropdownMenu, IconButton } from "@incmix/ui"
 import { ChevronDown, Flag, Circle } from "lucide-react"
-import { TableTask } from "@incmix/store"
+import { TableTask } from "../types"
+
 
 interface StatusDropdownCellProps {
   value: string

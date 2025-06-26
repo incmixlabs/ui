@@ -49,6 +49,7 @@ import {
   Avatar,
 } from "@incmix/ui"
 import { TaskActionsMenu } from "./task-actions-menu"
+import { ListColumn } from "../hooks/use-list-view"
 
 type TCardState =
   | { type: "idle" }
@@ -290,9 +291,9 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
               {card.refUrls && card.refUrls.length > 0 && (
                 <Flex align="center" gap="2" className="text-xs">
                   {(() => {
-                    const figmaUrls = card.refUrls.filter(url => url.type === 'figma').length
-                    const taskUrls = card.refUrls.filter(url => url.type === 'task').length
-                    const externalUrls = card.refUrls.filter(url => url.type === 'external').length
+                    const figmaUrls = card.refUrls.filter((url: { type: string }) => url.type === 'figma').length
+                    const taskUrls = card.refUrls.filter((url: { type: string }) => url.type === 'task').length
+                    const externalUrls = card.refUrls.filter((url: { type: string }) => url.type === 'external').length
 
                     return (
                       <Flex align="center" gap="2">
@@ -370,7 +371,7 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
                   {card.assignedTo.slice(0, 3).map((user, index) => (
                     <Avatar
                       key={user.id}
-                      src={user.image}
+                      src={user.avatar}
                       name={user.name || "?"}
                       className="w-6 h-6 border-2 border-white"
                       style={{ zIndex: 3 - index }}

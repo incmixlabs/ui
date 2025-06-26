@@ -42,6 +42,7 @@ import {
   useAIUserStory,
   useAIFeaturesStore
 } from "@incmix/store"
+import { TaskDataSchema } from "@incmix/utils/schema"
 
 // Define types for drag and drop operations
 type DragData = {
@@ -58,7 +59,7 @@ type DragLocation = {
     dropTargets: DropTarget[]
   }
 }
-import { TaskDataSchema } from "@incmix/store"
+
 type TColumnState =
   | {
       type: "is-card-over"
