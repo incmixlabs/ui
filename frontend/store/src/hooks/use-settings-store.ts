@@ -65,6 +65,12 @@ export const SIDEBAR_COLOR_OPTIONS = [
     hover: "var(--orange-11)",
     text: fontColor.dark,
   },
+  {
+    bg: "var(--yellow-10)",
+    fg: fontColor.light,
+    hover: "var(--yellow-11)",
+    text: fontColor.light,
+  }
 ]
 export type ThemeStoreConfig = ThemeConfig & {
   setTheme: (partial: Partial<ThemeConfig>) => void
