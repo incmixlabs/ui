@@ -18,6 +18,7 @@ import { ThemeContext } from "@radix-ui/themes"
 import { useContext, useEffect, useState } from "react"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
+import { getTextColor } from "@incmix/store/color"
 
 export const SIDEBAR_COLOR_OPTIONS = [
   {
@@ -164,7 +165,7 @@ export const theme: ThemeConfig = {
   },
   // for dark mode
   // customColor
-  sidebarBg: "var(--gray-3)",
+  sidebarBg: "var(--blue-10)",
   breakFontColor: defaultFontColor,
 }
 export function systemAppearance() {
@@ -200,31 +201,7 @@ export const userPreference: UserPreference = {
   direction: "ltr",
   language: "en",
 }
-export type TextColor = {
-  color: RadixAnyColor
-  pastel?: boolean
-  breakFontColor?: BreakFontColor
-  brightShade?: number
-  pastelShade?: number
-}
 
-export function getTextColor({
-  color,
-  pastel = true,
-  brightShade = 9,
-  breakFontColor = defaultFontColor,
-}: TextColor): string {
-  if (pastel) {
-    return fontColor.light
-  }
-  // @ts-ignore
-  if (breakFontColor?.[color] === undefined) {
-    return fontColor.dark
-  }
-  // @ts-ignore
-  const shade = breakFontColor[color] ?? breakFontColor.default
-  return shade < brightShade ? fontColor.light : fontColor.dark
-}
 
 export type UserPreferenceStoreConfig = UserPreference & {
   setUserPreference: (partial: Partial<UserPreference>) => void
@@ -668,3 +645,99 @@ export const useThemeStore = create<ThemeStoreConfig>()(
     }
   )
 )
+
+export type SidebarStore = {
+  state: "expanded" | "collapsed"
+  open: boolean
+  isOpen: () => boolean
+  toggleOpen: () => void
+  setOpen: (open: boolean) => void
+
+  // Secondary sidebar
+  secondaryOpen: boolean
+  setSecondaryOpen: (open: boolean) => void
+
+  // Common
+  mobile: boolean
+  isMobile: () => boolean
+  setIsMobile: (mobile: boolean) => void
+  openMobile: boolean
+  isOpenMobile: () => boolean
+  setOpenMobile: (open: boolean) => void
+  toggleSidebar: () => void
+  toggleSecondarySidebar: () => void
+}
+
+export const useSidebarStore = create<SidebarStore>()(
+  persist(
+    (set, get) => ({
+      state: "expanded",
+      open: true,
+      secondaryOpen: false,
+      mobile: false,
+      openMobile: false,
+      isOpen: () => get().open,
+      isOpenMobile: () => get().openMobile,
+      isMobile: () => get().mobile,
+      setIsMobile: (mobile: boolean) =>
+        set((s) => ({
+          ...s,
+          mobile,
+          open: mobile ? false : s.open,
+          state: mobile ? "collapsed" : s.state,
+        })),
+      setOpen: (open: boolean) =>
+        set((s) => {
+          return { ...s, open, state: open ? "expanded" : "collapsed" }
+        }),
+      toggleOpen: () =>
+        set((s) => ({
+          ...s,
+          open: !s.open,
+          state: !s.open ? "expanded" : "collapsed",
+        })),
+      setSecondaryOpen: (open: boolean) =>
+        set((s) => ({
+          ...s,
+          secondaryOpen: open,
+        })),
+      setOpenMobile: (open: boolean) =>
+        set((s) => ({
+          ...s,
+          openMobile: open,
+        })),
+      toggleSidebar: () =>
+        set((s) => ({
+          ...s,
+          open: !s.open,
+          state: !s.open ? "expanded" : "collapsed",
+        })),
+      toggleSecondarySidebar: () =>
+        set((s) => ({
+          ...s,
+          secondaryOpen: !s.secondaryOpen,
+        })),
+    }),
+    {
+      name: "incmix-sidebar-store",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        open: state.open,
+        secondaryOpen: state.secondaryOpen,
+        isMobile: state.isMobile,
+        openMobile: state.openMobile,
+      }),
+    }
+  )
+)
+
+export function IncmixThemeApplier() {
+  const { sidebarBg } = useThemeStore();
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--primary-color', primaryColor);
+    document.documentElement.style.setProperty('--secondary-color', secondaryColor);
+  }, [sidebarBg]); // Re-run effect when colors change
+
+  return null; // This component doesn't render anything visible
+}

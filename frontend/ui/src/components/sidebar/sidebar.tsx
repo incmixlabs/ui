@@ -1,6 +1,5 @@
 "use client"
-import * as React from "react"
-
+import React, { ComponentProps, forwardRef, useEffect, useState, createContext, useContext, useCallback, useMemo } from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { type VariantProps, cva } from "@utils/cva"
 import { ChevronsLeft, PanelLeft } from "lucide-react"
@@ -9,7 +8,9 @@ import { useIsMobile } from "@hooks/use-mobile"
 import { cn } from "@utils/cn"
 import { Button, IconButton, Input, Separator, Sheet, SheetContent, SheetDescription, SheetTitle,  Skeleton } from "@base"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip"
-import { useThemeStore } from "@incmix/store/use-settings-store"
+import { useThemeStore, useAppearanceStore, useSidebarStore, SIDEBAR_COLOR_OPTIONS  } from "@incmix/store/use-settings-store"
+import { set } from "date-fns"
+
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
@@ -35,10 +36,10 @@ type SidebarContext = {
   toggleSecondarySidebar: () => void
 }
 
-const SidebarContext = React.createContext<SidebarContext | null>(null)
+const SidebarContext = createContext<SidebarContext | null>(null)
 
 function useSidebar() {
-  const context = React.useContext(SidebarContext)
+  const context = useContext(SidebarContext)
   if (!context) {
     throw new Error("useSidebar must be used within a SidebarProvider.")
   }
@@ -46,9 +47,9 @@ function useSidebar() {
   return context
 }
 
-const SidebarProvider = React.forwardRef<
+const SidebarProvider = forwardRef<
   HTMLDivElement,
-  React.ComponentProps<"div"> & {
+  ComponentProps<"div"> & {
     // Primary sidebar
     defaultOpen?: boolean
     open?: boolean
@@ -78,16 +79,16 @@ const SidebarProvider = React.forwardRef<
       onSecondaryOpenChange: setSecondaryOpenProp,
     } = props
     const isMobile = useIsMobile()
-    const [openMobile, setOpenMobile] = React.useState(false)
+    const [openMobile, setOpenMobile] = useState(false)
     const [_secondaryOpen, _setSecondaryOpen] =
-      React.useState(defaultSecondaryOpen)
+      useState(defaultSecondaryOpen)
     const secondaryOpen = secondaryOpenProp ?? _secondaryOpen
 
     // This is the internal state of the sidebar.
     // We use openProp and setOpenProp for control from outside the component.
-    const [_open, _setOpen] = React.useState(defaultOpen)
+    const [_open, _setOpen] = useState(defaultOpen)
     const open = openProp ?? _open
-    const setOpen = React.useCallback(
+    const setOpen = useCallback(
       (value: boolean | ((value: boolean) => boolean)) => {
         const openState = typeof value === "function" ? value(open) : value
         if (setOpenProp) {
@@ -102,11 +103,11 @@ const SidebarProvider = React.forwardRef<
       [setOpenProp, open]
     )
     // Helper to toggle the sidebar.
-    const toggleSidebar = React.useCallback(() => {
+    const toggleSidebar = useCallback(() => {
       setOpen((open) => !open)
     }, [setOpen])
 
-    const setSecondaryOpen = React.useCallback(
+    const setSecondaryOpen = useCallback(
       (value: boolean | ((prev: boolean) => boolean)) => {
         const newValue =
           typeof value === "function" ? value(secondaryOpen) : value
@@ -115,12 +116,12 @@ const SidebarProvider = React.forwardRef<
       [setSecondaryOpenProp, secondaryOpen]
     )
 
-    const toggleSecondarySidebar = React.useCallback(() => {
+    const toggleSecondarySidebar = useCallback(() => {
       setSecondaryOpen((prev) => !prev)
     }, [setSecondaryOpen])
 
     // Adds a keyboard shortcut to toggle the sidebar.
-    React.useEffect(() => {
+    useEffect(() => {
       const handleKeyDown = (event: KeyboardEvent) => {
         if (
           event.key === SIDEBAR_KEYBOARD_SHORTCUT &&
@@ -138,8 +139,12 @@ const SidebarProvider = React.forwardRef<
     // We add a state so that we can do data-state="expanded" or "collapsed".
     // This makes it easier to style the sidebar with Tailwind classes.
     const state = open ? "expanded" : "collapsed"
-
-    const contextValue = React.useMemo<SidebarContext>(
+    const appearance = useAppearanceStore((state) => state.appearance)
+    const { getTheme } = useThemeStore()
+    const sidebarBg = useMemo(() => getTheme().sidebarBg, [getTheme])
+    const sidebarStore = useSidebarStore()
+    const [sidebar, setsideBar] = useState<undefined | string>("")
+    const contextValue = useMemo<SidebarContext>(
       () => ({
         state,
         open,
@@ -164,6 +169,18 @@ const SidebarProvider = React.forwardRef<
         toggleSecondarySidebar,
       ]
     )
+    useEffect(() => {
+      if (sidebar !== sidebarBg) {
+        const sideBarColor = SIDEBAR_COLOR_OPTIONS.find(color => color.bg === sidebarBg)?? SIDEBAR_COLOR_OPTIONS[0]
+        debugger;
+        setsideBar(sidebarBg)
+        document.documentElement.style.setProperty('--sidebar-foreground', sideBarColor.text);
+        document.documentElement.style.setProperty('--sidebar-background', sideBarColor.bg);
+        document.documentElement.style.setProperty('--sidebar-fg', sideBarColor.text);
+        document.documentElement.style.setProperty('--bg-sidebar', sideBarColor.bg);
+        document.documentElement.style.setProperty('--sidebar-hover', sideBarColor.hover);
+      }
+    }, [sidebarBg]);
 
     return (
       <SidebarContext.Provider value={contextValue}>

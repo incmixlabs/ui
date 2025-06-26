@@ -17,7 +17,8 @@
     "./use-settings-store": "./src/hooks/use-settings-store.ts",
     "./use-kanban-data": "./src/hooks/use-kanban-data.ts",
     "./sql/tasks": "./src/sql/tasks/index.ts",
-    "./sql/helper": "./src/sql/helper.ts"
+    "./sql/helper": "./src/sql/helper.ts",
+    "./color": "./src/utils/color.ts"
   },
   "scripts": {
     "typecheck": "tsc",

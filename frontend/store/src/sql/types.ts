@@ -1,12 +1,12 @@
+import type { TaskDocType } from "@/utils/task-schema"
 import {
   columnSchemaLiteral,
   dashboardSchemaLiteral,
   dashboardTemplateSchemaLiteral,
   formProjectSchemaLiteral,
   projectSchemaLiteral,
-  taskDataSchemaLiteral,
-  taskSchemaLiteral,
 } from "@incmix/utils/schema"
+import type { TaskStatusDocType } from "@incmix/utils/schema"
 import {
   type ExtractDocumentTypeFromTypedRxJsonSchema,
   type RxCollection,
