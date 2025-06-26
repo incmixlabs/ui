@@ -310,7 +310,9 @@ const DashboardHomePage: React.FC = () => {
       <DragOverlay>
         {activeDragId && activeDragData && (
           <Box
-            className={cn("pointer-events-none rounded-lg border border-gray-5 bg-gray-1 opacity-100 shadow")}
+            className={cn(
+              "pointer-events-none rounded-lg border border-gray-5 bg-gray-1 opacity-100 shadow"
+            )}
           >
             <img
               src={
