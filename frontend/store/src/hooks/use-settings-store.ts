@@ -304,8 +304,10 @@ export const useIntegrationStore = create<IntegrationStore>()(
           return { ...s, variables: variables }
         }),
       getAPIKeys: () => get().keys,
-      // @ts-ignore
-      getAPIKey: (key: KeyOption) => get().keys?.[key] ?? undefined,
+      getAPIKey: (key: KeyOption) => {
+        const keys = get().keys;
+        return keys && key in keys ? keys[key] : undefined;
+      },
       getVariable: (key: string) => get().variables?.[key],
       getVariables: () => get().variables,
     }),
