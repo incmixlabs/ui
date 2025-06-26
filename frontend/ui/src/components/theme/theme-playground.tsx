@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import {
   Box,
   Flex,
@@ -20,7 +21,7 @@ import {
   type RadixRadius,
   type RadixScaling
 } from "@incmix/utils/types";
-
+import { ThemeContext } from "@radix-ui/themes";
 import {
   useThemeStore,
   useAppearanceStore,
@@ -34,10 +35,13 @@ const getColorBoxStyle = (color: string) => ({
   borderRadius: "0.25rem",
   marginRight: "0.5rem",
 });
+
 export function ThemePlayground() {
   const { t } = useTranslation(["settings", "common"]);
   const {appearance, toggleAppearance} = useAppearanceStore();
   const {accentColor, onAccentColorChange, grayColor, onGrayColorChange, radius, onRadiusChange, scaling, onScalingChange, sidebarBg, setTheme, dashboard}  = useThemeStore();
+  const  themeContext = useContext(ThemeContext)
+
   const SelectRow = (props: {
     label: string;
     value: string;
@@ -79,7 +83,10 @@ export function ThemePlayground() {
           <Text>{t("Accent Color")}</Text>
           <Select.Root
             value={accentColor}
-            onValueChange={(v) => onAccentColorChange(v as RadixColor)}
+            onValueChange={(v) => {
+              onAccentColorChange(v as RadixColor)
+              themeContext?.onAccentColorChange(v as RadixColor)
+            }}
           >
             <Select.Trigger />
             <Select.Content>
@@ -105,7 +112,10 @@ export function ThemePlayground() {
           <Text>{t("Gray Color")}</Text>
           <Select.Root
             value={grayColor}
-            onValueChange={(v) => onGrayColorChange(v as RadixGrayColor)}
+            onValueChange={(v) => {
+              onGrayColorChange(v as RadixGrayColor)
+              themeContext?.onGrayColorChange(v as RadixGrayColor)
+            }}
           >
             <Select.Trigger />
             <Select.Content>
@@ -131,13 +141,19 @@ export function ThemePlayground() {
           label="Border Radius"
           value={radius}
           options={[...RADIX_RADIUS]}
-          onChange={(v) => onRadiusChange(v as RadixRadius )}
+          onChange={(v) => {
+            onRadiusChange(v as RadixRadius )
+            themeContext?.onRadiusChange(v as RadixRadius)
+          }}
         />
         <SelectRow
           label="Scaling"
           value={scaling}
           options={[...SCALING_OPTIONS]}
-          onChange={(v) => onScalingChange(v as RadixScaling )}
+          onChange={(v) => {
+            onScalingChange(v as RadixScaling )
+            themeContext?.onScalingChange(v as RadixScaling)
+          }}
         />
         {/* <SelectRow
         label="Panel Background"
