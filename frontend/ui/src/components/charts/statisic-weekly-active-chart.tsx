@@ -1,9 +1,9 @@
 "use client"
 
 import { Box } from "@incmix/ui"
-import { cn, dashboardColorValues } from "@utils"
+import { cn } from "@utils"
 import { lazy, useEffect, useState } from "react"
-
+import { useThemeStore } from "@incmix/store"
 const ReactApexChart = lazy(() => import("react-apexcharts"))
 
 interface WeeklyActivityChartProps {
@@ -60,14 +60,18 @@ interface WeeklyActivityChartProps {
 export function WeeklyActivityChart({
   values = [30, 65, 45, 80, 55, 40, 65],
   days = ["M", "T", "W", "T", "F", "S", "S"],
-  primaryColor = dashboardColorValues.color2,
-  highlightColor = dashboardColorValues.color3,
   highlightDay = 3,
   barWidth = "40%",
+  highlightColor,
+  primaryColor,
   borderRadius = 10,
   className,
 }: WeeklyActivityChartProps) {
   const [mounted, setMounted] = useState(false)
+  const { getDashboardColors } = useThemeStore()
+  const dashboardColorValues = getDashboardColors()
+  highlightColor = highlightColor?? dashboardColorValues.color3
+  primaryColor = primaryColor?? dashboardColorValues.color1
 
   useEffect(() => {
     setMounted(true)

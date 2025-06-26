@@ -3,6 +3,19 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "types": ["vite/client"],
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+      "@hooks": ["./hooks/"],
+      "@hooks/*": ["./hooks/*"],
+      "@local": ["./local"],
+      "@local/*": ["./local/*"],
+      "@services": ["./services"],
+      "@services/*": ["./services/*"],
+      "@sql": ["./sql"],
+      "@sql/*": ["./sql/*"],
+      "@tabs": ["./tabs"],
+      "@tabs/*": ["./tabs/*"]
+    }
   }
 }

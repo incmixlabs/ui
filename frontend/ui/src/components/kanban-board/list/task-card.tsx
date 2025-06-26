@@ -16,7 +16,7 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { isSafari } from "@utils/browser"
-import { isShallowEqual } from "@utils/objects"
+import { isShallowEqual } from "@incmix/utils/objects"
 import {
   CalendarDays,
   ChevronDown,
@@ -26,16 +26,17 @@ import {
   Figma,
 } from "lucide-react"
 import {
+  type TaskDataSchema,
+  } from "@incmix/utils/schema"
+import {
   getCardData,
   getCardDropTargetData,
   isCardData,
   isDraggingACard,
   type KanbanTask,
-  type TaskDataSchema,
-  type ListColumn,
-} from "@incmix/store"
+} from "../types"
 import { Card } from "@incmix/ui/card"
-import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
+import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
 import { ModalPresets } from "../shared/confirmation-modal"
 import { cn } from "@utils"
 import {
@@ -48,7 +49,7 @@ import {
   Avatar,
 } from "@incmix/ui"
 import { TaskActionsMenu } from "./task-actions-menu"
-
+import { ListColumn } from "../hooks/use-list-view"
 
 type TCardState =
   | { type: "idle" }
@@ -77,10 +78,10 @@ interface ListTaskCardProps {
   onDeleteTask: (taskId: string) => Promise<void>
 }
 
-export const ListTaskCardShadow = memo(function ListTaskCardShadow({ 
-  dragging 
-}: { 
-  dragging: DOMRect 
+export const ListTaskCardShadow = memo(function ListTaskCardShadow({
+  dragging
+}: {
+  dragging: DOMRect
 }) {
   return (
     <div
@@ -165,7 +166,7 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
 
   const handleOpenDrawer = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
-    
+
     if (!card.taskId) {
       console.error("Task ID is missing")
       return
@@ -179,8 +180,8 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
   const hasSubTasks = totalSubTasks > 0
 
   const formatDate = useCallback((date: Date) => {
-    return date.toLocaleDateString("en-US", { 
-      month: "short", 
+    return date.toLocaleDateString("en-US", {
+      month: "short",
       day: "numeric",
       year: date.getFullYear() !== new Date().getFullYear() ? "numeric" : undefined
     })
@@ -190,7 +191,7 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
     const now = new Date()
     const diffTime = date.getTime() - now.getTime()
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    
+
     if (diffDays < 0) return { status: "overdue", className: "text-red-600 bg-red-50" }
     if (diffDays === 0) return { status: "today", className: "text-orange-600 bg-orange-50" }
     if (diffDays <= 3) return { status: "soon", className: "text-yellow-600 bg-yellow-50" }
@@ -212,7 +213,7 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
         taskName: card.name,
         onConfirm: confirmDeleteTask
       })}
-      
+
       <Box
         ref={outerRef}
         className={`flex flex-shrink-0 flex-col gap-1 px-3 py-1 ${outerStyles[state.type] || ""}`}
@@ -220,7 +221,7 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
         {state.type === "is-over" && state.closestEdge === "top" && (
           <ListTaskCardShadow dragging={state.dragging} />
         )}
-      
+
       <Card
         className={cn(
           "relative p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700",
@@ -290,10 +291,10 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
               {card.refUrls && card.refUrls.length > 0 && (
                 <Flex align="center" gap="2" className="text-xs">
                   {(() => {
-                    const figmaUrls = card.refUrls.filter(url => url.type === 'figma').length
-                    const taskUrls = card.refUrls.filter(url => url.type === 'task').length
-                    const externalUrls = card.refUrls.filter(url => url.type === 'external').length
-                    
+                    const figmaUrls = card.refUrls.filter((url: { type: string }) => url.type === 'figma').length
+                    const taskUrls = card.refUrls.filter((url: { type: string }) => url.type === 'task').length
+                    const externalUrls = card.refUrls.filter((url: { type: string }) => url.type === 'external').length
+
                     return (
                       <Flex align="center" gap="2">
                         {figmaUrls > 0 && (
@@ -319,7 +320,7 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
                   })()}
                 </Flex>
               )}
-              
+
               {/* Date displays */}
               <Flex align="center" gap="2" className="text-xs">
                 {card.startDate && (
@@ -334,8 +335,8 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
                 {card.endDate && (
                   <Flex align="center" gap="1">
                     <CalendarDays size={12} />
-                    <Text 
-                      size="1" 
+                    <Text
+                      size="1"
                       className={getDateStatus(new Date(card.endDate)).className}
                     >
                       {formatDate(new Date(card.endDate))}
@@ -370,7 +371,7 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
                   {card.assignedTo.slice(0, 3).map((user, index) => (
                     <Avatar
                       key={user.id}
-                      src={user.image}
+                      src={user.avatar}
                       name={user.name || "?"}
                       className="w-6 h-6 border-2 border-white"
                       style={{ zIndex: 3 - index }}
@@ -419,8 +420,8 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
                       size="1"
                       // TODO: Add subtask toggle functionality
                     />
-                    <Text 
-                      size="2" 
+                    <Text
+                      size="2"
                       className={cn(
                         subtask.completed && "line-through text-gray-500"
                       )}
@@ -429,7 +430,7 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
                     </Text>
                   </Flex>
                 ))}
-                
+
                 {totalSubTasks > 0 && (
                   <Text size="1" className="text-gray-500">
                     {completedSubTasks}/{totalSubTasks} completed
@@ -449,12 +450,12 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
   )
 })
 
-export function ListTaskCard({ 
-  card, 
-  columnId, 
+export function ListTaskCard({
+  card,
+  columnId,
   columns,
-  onUpdateTask, 
-  onDeleteTask 
+  onUpdateTask,
+  onDeleteTask
 }: ListTaskCardProps) {
   const outerRef = useRef<HTMLDivElement | null>(null)
   const innerRef = useRef<HTMLDivElement | null>(null)
@@ -521,7 +522,7 @@ export function ListTaskCard({
           if (!isCardData(source.data) || source.data.card.taskId === card.taskId) {
             return
           }
-          
+
           const closestEdge = extractClosestEdge(self.data)
           if (!closestEdge) return
 
@@ -535,7 +536,7 @@ export function ListTaskCard({
           if (!isCardData(source.data) || source.data.card.taskId === card.taskId) {
             return
           }
-          
+
           const closestEdge = extractClosestEdge(self.data)
           if (!closestEdge) return
 
@@ -544,7 +545,7 @@ export function ListTaskCard({
             dragging: source.data.rect,
             closestEdge,
           }
-          
+
           setState((current) => {
             if (isShallowEqual(proposed, current)) {
               return current
@@ -554,7 +555,7 @@ export function ListTaskCard({
         },
         onDragLeave({ source }) {
           if (!isCardData(source.data)) return
-          
+
           if (source.data.card.taskId === card.taskId) {
             setState({ type: "is-dragging-and-left-self" })
             return
@@ -581,10 +582,10 @@ export function ListTaskCard({
       />
       {state.type === "preview" &&
         createPortal(
-          <TaskCardDisplay 
-            card={card} 
+          <TaskCardDisplay
+            card={card}
             columns={columns}
-            state={state} 
+            state={state}
             onUpdateTask={onUpdateTask}
             onDeleteTask={onDeleteTask}
           />,

@@ -1,5 +1,5 @@
-import type { colorPropDef } from "@utils/colors"
-import { mergeDeep } from "@utils/objects"
+import type { colorPropDef } from "@incmix/utils/types"
+import { mergeDeep } from "@incmix/utils/objects"
 /* eslint-disable react-refresh/only-export-components */
 import { DropdownMenu as RadixDropdownMenu } from "@radix-ui/themes"
 type ColorProp = (typeof colorPropDef)["color"]["values"][number]

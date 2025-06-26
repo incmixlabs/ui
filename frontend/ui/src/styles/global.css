@@ -23,19 +23,19 @@
   }
 
   :root {
-    --color-done: #FFCC33;
-    --color-yellow: #FFD240;
-    --color-hold: #3366FF;
-    --color-ongoing: #FF9D66;
-    --color-track: #F2F4F7;
-    --color-ordinary: #4F46E5;
+    --color-done: #ffcc33;
+    --color-yellow: #ffd240;
+    --color-hold: #3366ff;
+    --color-ongoing: #ff9d66;
+    --color-track: #f2f4f7;
+    --color-ordinary: #4f46e5;
     --color-blue: #1b54ff;
-    --color-secondary: #4294FF;
-    --color-primary:#111111;
-    --color-foreground:#FCFCFC;
-    --color-muted:#7B7B7B;
-    --color-light-green:#49C96D;
-    --color-light-blue:#5AC8F5;
+    --color-secondary: #4294ff;
+    --color-primary: #111111;
+    --color-foreground: #fcfcfc;
+    --color-muted: #7b7b7b;
+    --color-light-green: #49c96d;
+    --color-light-blue: #5ac8f5;
 
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
@@ -79,7 +79,6 @@
     --sidebar-item-primary: 222 91% 63%;
     --sidebar-trigger-border: 0 0% 85%;
     --sidebar-trigger-background: 0 0% 100%;
-
     --sidebar-secondary-background: 0 0% 100%;
     --sidebar-secondary-header: 226 70% 55%;
     --sidebar-secondary-muted: 216 7% 57%;
@@ -89,13 +88,17 @@
     --file-card-background: 227 10% 21%;
 
     --dashboard-orange: 22 100% 68%;
+
+    --sidebar-bg: var(--gray-3);
+    --sidebar-bg-foreground: var(--gray-12);
+    --sidebar-hover: var(--gray-5);
   }
 
   .dark {
-    --color-primary:#FCFCFC;
-    --color-foreground:#111111;
-    --color-muted:#838383;
-    
+    --color-primary: #fcfcfc;
+    --color-foreground: #111111;
+    --color-muted: #838383;
+
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
 

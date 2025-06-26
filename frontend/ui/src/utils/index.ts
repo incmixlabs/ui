@@ -1,7 +1,6 @@
 export * from "./cn"
 export * from "./cva"
 export * from "./clx/clx-merge"
-export * from "./colors"
 export * from "./browser"
 export * from "./drag-drop-utils"
 export * from "./time"

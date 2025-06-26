@@ -1,73 +1,13 @@
-import {
-  type KanbanTask,
-  type TaskDataSchema,
-  useListView,
-} from "@incmix/store"
+import type {
+  TableTask,
+  TaskDataSchema,
+  UseTableViewReturn
+} from "@incmix/utils/schema"
+
+import { useListView } from "./use-list-view"
 // hooks/use-table-view.ts
 import { useMemo } from "react"
 
-export interface TableTask extends KanbanTask {
-  // Additional computed properties for table display
-  statusLabel?: string
-  statusColor?: string
-  assignedToNames?: string
-  totalSubTasks?: number
-  completedSubTasks?: number
-  isOverdue?: boolean
-}
-
-export interface UseTableViewReturn {
-  tasks: TableTask[]
-  taskStatuses: Array<{
-    id: string
-    name: string
-    color: string
-    projectId: string
-    order: number
-    description?: string
-    isDefault?: boolean
-    createdAt: number
-    updatedAt: number
-    createdBy: { id: string; name: string; image?: string }
-    updatedBy: { id: string; name: string; image?: string }
-  }>
-  isLoading: boolean
-  error: string | null
-
-  // Task operations
-  createTask: (taskData: Partial<TaskDataSchema>) => Promise<void>
-  updateTask: (
-    taskId: string,
-    updates: Partial<TaskDataSchema>
-  ) => Promise<void>
-  deleteTask: (taskId: string) => Promise<void>
-  moveTaskToStatus: (taskId: string, statusId: string) => Promise<void>
-
-  // Status operations
-  createTaskStatus: (
-    name: string,
-    color?: string,
-    description?: string
-  ) => Promise<string>
-  updateTaskStatus: (
-    statusId: string,
-    updates: { name?: string; color?: string; description?: string }
-  ) => Promise<void>
-  deleteTaskStatus: (statusId: string) => Promise<void>
-
-  // Utility
-  refetch: () => void
-  clearError: () => void
-
-  // Statistics
-  projectStats: {
-    totalTasks: number
-    completedTasks: number
-    totalStatuses: number
-    overdueTasks: number
-    urgentTasks: number
-  }
-}
 
 /**
  * Hook for table view that enhances list view data with table-specific properties
@@ -109,8 +49,12 @@ export function useTableView(
 
     // Sort by creation date (newest first) for table display
     return allTasks.sort(
-      (a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      (a, b) => {
+        // Handle potentially undefined createdAt values
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0
+        return dateB - dateA // Sort newest first
+      }
     )
   }, [listViewData.columns])
 

@@ -15,39 +15,40 @@ import {
   extractClosestEdge,
 } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
-import { isSafari } from "@utils/browser"
-import { isShallowEqual } from "@utils/objects"
-import { 
-  CalendarDays, 
-  MessageSquareText, 
+
+import {
+  CalendarDays,
+  MessageSquareText,
   Paperclip,
   MoreVertical,
   Edit3,
   Trash2,
   CheckSquare
 } from "lucide-react"
-import { 
-  IconButton, 
-  DropdownMenu,
-  Box, 
-  Flex, 
-  Heading, 
-  Text, 
-  Badge,
-} from "@incmix/ui"
+
+import { isShallowEqual } from "@incmix/utils/objects"
+import { isSafari } from "@utils/browser"
+import { IconButton,  DropdownMenu,
+  Box,
+  Flex,
+  Heading,
+  Text,
+  Badge, } from "@base"
+import  {
+  isCardData,
+  isDraggingACard,
+  getCardData,
+  KanbanTask,
+  getCardDropTargetData
+} from "../types"
+
 import { Card } from "@incmix/ui/card"
 import { cn } from "@utils"
-import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
+import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
 import { ModalPresets } from "../shared/confirmation-modal"
+import {
+  TaskDataSchema } from "@incmix/utils/schema"
 import { RefUrlSummary } from "../shared/ref-url-summary"
-import { 
-  KanbanTask, 
-  TaskDataSchema, 
-  getCardData, 
-  isCardData, 
-  isDraggingACard,
-  getCardDropTargetData
-} from "@incmix/store"
 import { getPriorityInfo } from "../priority-config"
 
 type TCardState =
@@ -69,10 +70,10 @@ const outerStyles: { [Key in TCardState["type"]]?: string } = {
   "is-dragging-and-left-self": "hidden",
 }
 
-export const TaskCardShadow = memo(function TaskCardShadow({ 
-  dragging 
-}: { 
-  dragging: DOMRect 
+export const TaskCardShadow = memo(function TaskCardShadow({
+  dragging
+}: {
+  dragging: DOMRect
 }) {
   return (
     <div
@@ -106,7 +107,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
     if ((e.target as HTMLElement).closest('button, [role="menuitem"]')) {
       return
     }
-    
+
     if (state.type !== "is-dragging") {
       if (onTaskOpen) {
         onTaskOpen(card.taskId)
@@ -138,7 +139,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
   const handleToggleComplete = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation()
     if (!onUpdateTask) return
-    
+
     try {
       await onUpdateTask(card.taskId, { completed: !card.completed })
     } catch (error) {
@@ -159,38 +160,38 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
 
   const formatDate = useCallback((dateString?: string) => {
     if (!dateString) return { text: "", className: "" }
-    
+
     try {
       const date = new Date(dateString)
       const now = new Date()
       const diffTime = date.getTime() - now.getTime()
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-      
+
       if (diffDays < 0) {
-        return { 
-          text: `${Math.abs(diffDays)} day${Math.abs(diffDays) > 1 ? 's' : ''} overdue`, 
-          className: "text-red-600 bg-red-50 border-red-200" 
+        return {
+          text: `${Math.abs(diffDays)} day${Math.abs(diffDays) > 1 ? 's' : ''} overdue`,
+          className: "text-red-600 bg-red-50 border-red-200"
         }
       } else if (diffDays === 0) {
-        return { 
-          text: "Due today", 
-          className: "text-orange-600 bg-orange-50 border-orange-200" 
+        return {
+          text: "Due today",
+          className: "text-orange-600 bg-orange-50 border-orange-200"
         }
       } else if (diffDays === 1) {
-        return { 
-          text: "Due tomorrow", 
-          className: "text-yellow-600 bg-yellow-50 border-yellow-200" 
+        return {
+          text: "Due tomorrow",
+          className: "text-yellow-600 bg-yellow-50 border-yellow-200"
         }
       } else if (diffDays <= 7) {
-        return { 
-          text: `Due in ${diffDays} days`, 
-          className: "text-blue-600 bg-blue-50 border-blue-200" 
+        return {
+          text: `Due in ${diffDays} days`,
+          className: "text-blue-600 bg-blue-50 border-blue-200"
         }
       }
-      
-      return { 
-        text: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }), 
-        className: "text-gray-600 bg-gray-50 border-gray-200" 
+
+      return {
+        text: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+        className: "text-gray-600 bg-gray-50 border-gray-200"
       }
     } catch {
       return { text: "", className: "" }
@@ -214,7 +215,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
         taskName: card.name,
         onConfirm: confirmDeleteTask
       })}
-      
+
       <Box
         ref={outerRef}
         onClick={handleTaskClick}
@@ -231,7 +232,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
       {state.type === "is-over" && state.closestEdge === "top" ? (
         <TaskCardShadow dragging={state.dragging} />
       ) : null}
-      
+
       <Card
         className={cn(
           "relative cursor-pointer p-3 space-y-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 group",
@@ -258,8 +259,8 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
           <Flex align="center" gap="2" className="flex-1 min-w-0">
             {/* Priority indicator */}
             {card.priority && card.priority !== "medium" && (
-              <Badge 
-                color={priorityInfo.color} 
+              <Badge
+                color={priorityInfo.color}
                 size="1"
                 variant="soft"
                 className="flex items-center gap-1 flex-shrink-0"
@@ -268,7 +269,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
                 {priorityInfo.label}
               </Badge>
             )}
-            
+
             {/* Completion status */}
             {card.completed && (
               <Badge color="green" size="1" variant="solid" className="flex-shrink-0">
@@ -276,13 +277,13 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
               </Badge>
             )}
           </Flex>
-          
+
           {/* Actions Menu */}
           {state.type !== "preview" && (
             <DropdownMenu.Root>
               <DropdownMenu.Trigger>
-                <IconButton 
-                  size="1" 
+                <IconButton
+                  size="1"
                   variant="ghost"
                   onClick={(e) => e.stopPropagation()}
                   className="opacity-0 group-hover:opacity-100 transition-opacity"
@@ -310,8 +311,8 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
         </Flex>
 
         {/* Task Title */}
-        <Heading 
-          as="h4" 
+        <Heading
+          as="h4"
           size="3"
           className={cn(
             "font-medium line-clamp-2 group-hover:text-blue-600 transition-colors leading-tight",
@@ -332,8 +333,8 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
         {dueDateInfo.text && (
           <Flex align="center" gap="1">
             <CalendarDays size={12} />
-            <Text 
-              size="1" 
+            <Text
+              size="1"
               className={cn("px-2 py-1 rounded-md text-xs border", dueDateInfo.className)}
             >
               {dueDateInfo.text}
@@ -345,7 +346,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
         {card.labelsTags && card.labelsTags.length > 0 && (
           <Flex gap="1" wrap="wrap">
             {card.labelsTags.slice(0, 3).map((label, index) => (
-              <Badge 
+              <Badge
                 key={`${label.value}-${index}`}
                 size="1"
                 variant="soft"
@@ -394,7 +395,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
           <Flex align="center" gap="3">
             {/* Reference URLs */}
             <RefUrlSummary refUrls={card.refUrls} className="text-gray-500" />
-            
+
             {/* Attachments */}
             {card.attachments && card.attachments.length > 0 && (
               <Flex align="center" gap="1" className="text-gray-500">
@@ -402,7 +403,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
                 <Text size="1" className="font-medium">{card.attachments.length}</Text>
               </Flex>
             )}
-            
+
             {/* Comments - Updated to use commentsCount */}
             {card.commentsCount !== undefined && card.commentsCount > 0 && (
               <Flex align="center" gap="1" className="text-gray-500">
@@ -411,7 +412,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
               </Flex>
             )}
           </Flex>
-          
+
           {/* Assigned users - Updated to use 'image' instead of 'avatar' */}
           {card.assignedTo && card.assignedTo.length > 0 && (
             <Flex align="center" className="-space-x-1">
@@ -434,7 +435,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
           )}
         </Flex>
       </Card>
-      
+
       {/* Drop indicator below */}
       {state.type === "is-over" && state.closestEdge === "bottom" ? (
         <TaskCardShadow dragging={state.dragging} />
@@ -537,7 +538,7 @@ export const TaskCard = memo(function TaskCard({
             dragging: source.data.rect,
             closestEdge,
           }
-          
+
           setState((current) => {
             if (isShallowEqual(proposed, current)) {
               return current
@@ -547,7 +548,7 @@ export const TaskCard = memo(function TaskCard({
         },
         onDragLeave({ source }) {
           if (!isCardData(source.data)) return
-          
+
           if (source.data.card.taskId === card.taskId) {
             setState({ type: "is-dragging-and-left-self" })
             return
@@ -574,11 +575,11 @@ export const TaskCard = memo(function TaskCard({
       />
       {state.type === "preview"
         ? createPortal(
-            <TaskCardDisplay 
-              state={state} 
-              card={card} 
-              onUpdateTask={onUpdateTask} 
-              onDeleteTask={onDeleteTask} 
+            <TaskCardDisplay
+              state={state}
+              card={card}
+              onUpdateTask={onUpdateTask}
+              onDeleteTask={onDeleteTask}
               onTaskOpen={onTaskOpen}
             />,
             state.container

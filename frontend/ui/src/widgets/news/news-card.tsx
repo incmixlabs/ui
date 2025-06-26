@@ -3,7 +3,7 @@ import { CarouselItem } from "@components/carousel"
 import { Box, Flex, Text } from "@incmix/ui"
 import { cn } from "@utils/cn"
 
-import { getRelativeTime } from "@utils/date"
+import { getRelativeTime } from "@incmix/utils/date"
 
 export type NewsStory = {
   thumbnail?: string

@@ -1,6 +1,7 @@
 // components/shared/task-card-drawer.tsx
-import { useKanban, useListView } from "@incmix/store"
-import { useKanbanDrawer } from "@hooks/use-kanban-drawer"
+import { useKanban } from "../hooks/use-kanban-data"
+import { useListView } from "../hooks/use-list-view"
+import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
 import { ScrollArea } from "@incmix/ui"
 import { ModalPresets } from "./confirmation-modal"
 import { TaskChecklist } from "./task-checklist"
@@ -21,7 +22,6 @@ import {
   type TaskCardDrawerProps
 } from "./task-card-components"
 
-
 export function TaskCardDrawer({
   viewType = 'board',
   projectId = "default-project",
@@ -29,7 +29,7 @@ export function TaskCardDrawer({
 }: TaskCardDrawerProps) {
   // Get drawer state from the shared context
   const { taskId, isOpen, handleDrawerClose } = useKanbanDrawer()
-  
+
   // Use the appropriate hook based on the view type
   const {
     columns,
@@ -38,16 +38,16 @@ export function TaskCardDrawer({
     createTask,
     moveTask,
   } = viewType === 'board' ? useKanban(projectId) : useListView(projectId);
-  
+
   // Find the current task and its column
-  const currentTask = taskId 
-    ? columns.flatMap((col: any) => col.tasks).find((task: any) => task.taskId === taskId)
+  const currentTask = taskId
+    ? columns.flatMap((col) => col.tasks).find((task) => task.taskId === taskId)
     : null
 
-  const currentColumn = currentTask 
-    ? columns.find((col: any) => col.tasks.some((task: any) => task.taskId === currentTask.taskId))
+  const currentColumn = currentTask
+    ? columns.find((col) => col.tasks.some((task) => task.taskId === currentTask.taskId))
     : null
-    
+
   // Use custom hooks for state and actions
   const drawerState = useTaskDrawerState(currentTask)
   const taskActions = useTaskActions({
@@ -82,11 +82,11 @@ export function TaskCardDrawer({
         })}
 
         {/* Header */}
-        <TaskHeader 
+        <TaskHeader
           currentColumn={currentColumn}
           onClose={handleDrawerClose}
         />
-      
+
         {/* Content */}
         <ScrollArea className="flex-1">
           <div className="p-4 space-y-6">
@@ -129,13 +129,13 @@ export function TaskCardDrawer({
               <TaskChecklist
                 checklist={currentTask.checklist}
                 onChecklistItemToggle={(id, checked) => {
-                  const updatedChecklist = currentTask.checklist?.map((item: { id: string; text: string; checked: boolean }) => 
+                  const updatedChecklist = currentTask.checklist?.map((item: { id: string; text: string; checked: boolean }) =>
                     item.id === id ? { ...item, checked } : item
                   )
                   updateTask(currentTask.taskId, { checklist: updatedChecklist })
                 }}
                 onChecklistItemEdit={(id, text) => {
-                  const updatedChecklist = currentTask.checklist?.map((item: { id: string; text: string; checked: boolean }) => 
+                  const updatedChecklist = currentTask.checklist?.map((item: { id: string; text: string; checked: boolean }) =>
                     item.id === id ? { ...item, text } : item
                   )
                   updateTask(currentTask.taskId, { checklist: updatedChecklist })
