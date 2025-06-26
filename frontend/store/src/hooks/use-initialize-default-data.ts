@@ -1,6 +1,13 @@
+import type {
+  TaskCollections,
+  TaskDocType,
+  TaskStatusDocType,
+} from "../sql/types"
 // Import browser-compatible helpers instead of Node.js Buffer-using ones
-import { generateBrowserUniqueId, getCurrentTimestamp } from "../utils/browser-helpers"
-import type { TaskCollections, TaskDocType, TaskStatusDocType } from "../sql/types"
+import {
+  generateBrowserUniqueId,
+  getCurrentTimestamp,
+} from "../utils/browser-helpers"
 
 /**
  * Creates a default user for audit fields when no real user data is available
@@ -63,7 +70,8 @@ async function initializeTaskStatuses(
   timestamp: number,
   user: { id: string; name: string; image: string },
   forceCreation = false
-): Promise<any[]> { // Change return type to any[] to accommodate RxDocument objects
+): Promise<any[]> {
+  // Change return type to any[] to accommodate RxDocument objects
   const taskStatusCollection = db.taskStatus
 
   // Check if task statuses already exist for this project
@@ -158,10 +166,11 @@ async function initializeTasks(
 
     // Find the "To Do" status, or use the first status if not found
     // Find status by name, handling both RxDocument and plain objects safely
-    const todoStatus = statuses.find((s) => {
-      // Check if it's a string property directly or via an rx method
-      return (s.name as string) === "To Do"
-    }) || statuses[0]
+    const todoStatus =
+      statuses.find((s) => {
+        // Check if it's a string property directly or via an rx method
+        return (s.name as string) === "To Do"
+      }) || statuses[0]
 
     /**
      * Helper function to create a fully typed TaskDocType from partial data

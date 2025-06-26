@@ -1,7 +1,5 @@
 // File: use-project-task-data.ts
 
-// Import browser-compatible helpers instead of Node.js Buffer-using ones
-import { generateBrowserUniqueId, getCurrentTimestamp } from "../utils/browser-helpers"
 import type {
   CurrentUser,
   ProjectData,
@@ -13,6 +11,11 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import type { Subscription } from "rxjs"
 import { database } from "sql"
 import type { TaskDocType } from "sql/types"
+// Import browser-compatible helpers instead of Node.js Buffer-using ones
+import {
+  generateBrowserUniqueId,
+  getCurrentTimestamp,
+} from "../utils/browser-helpers"
 
 // Get the current user - accepts user context to make it injectable
 const getCurrentUser = (user?: CurrentUser) => {
