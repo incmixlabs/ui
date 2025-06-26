@@ -140,8 +140,8 @@ const SidebarProvider = forwardRef<
     // This makes it easier to style the sidebar with Tailwind classes.
     const state = open ? "expanded" : "collapsed"
     const appearance = useAppearanceStore((state) => state.appearance)
-    const { getTheme } = useThemeStore()
-    const sidebarBg = useMemo(() => getTheme().sidebarBg, [getTheme])
+    // const { getTheme } = useThemeStore()
+    // const sidebarBg = useMemo(() => getTheme().sidebarBg, [getTheme])
     const sidebarStore = useSidebarStore()
     const [sidebar, setsideBar] = useState<undefined | string>("")
     const contextValue = useMemo<SidebarContext>(
@@ -169,17 +169,19 @@ const SidebarProvider = forwardRef<
         toggleSecondarySidebar,
       ]
     )
-    useEffect(() => {
-      if (sidebar !== sidebarBg) {
-        const sideBarColor = SIDEBAR_COLOR_OPTIONS.find(color => color.bg === sidebarBg)?? SIDEBAR_COLOR_OPTIONS[0]
-        setsideBar(sidebarBg)
-        document.documentElement.style.setProperty('--sidebar-foreground', sideBarColor.text);
-        document.documentElement.style.setProperty('--sidebar-background', sideBarColor.bg);
-        document.documentElement.style.setProperty('--sidebar-fg', sideBarColor.text);
-        document.documentElement.style.setProperty('--bg-sidebar', sideBarColor.bg);
-        document.documentElement.style.setProperty('--sidebar-hover', sideBarColor.hover);
-      }
-    }, [sidebarBg]);
+    // useEffect(() => {
+    //   if (sidebar !== sidebarBg) {
+    //     const sideBarColor = SIDEBAR_COLOR_OPTIONS.find(color => color.bg === sidebarBg)?? SIDEBAR_COLOR_OPTIONS[0]
+    //     setsideBar(sidebarBg)
+    //     console.log(sideBarColor);
+        
+    //     document.documentElement.style.setProperty('--sidebar-foreground', sideBarColor.text);
+    //     document.documentElement.style.setProperty('--sidebar-background', sideBarColor.bg);
+    //     document.documentElement.style.setProperty('--sidebar-fg', sideBarColor.text);
+    //     document.documentElement.style.setProperty('--bg-sidebar', sideBarColor.bg);
+    //     document.documentElement.style.setProperty('--sidebar-hover', sideBarColor.hover);
+    //   }
+    // }, [sidebarBg]);
 
     return (
       <SidebarContext.Provider value={contextValue}>

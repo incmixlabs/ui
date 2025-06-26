@@ -730,16 +730,16 @@ export const useSidebarStore = create<SidebarStore>()(
   )
 )
 
-export function IncmixThemeApplier() {
-  const { sidebarBg } = useThemeStore()
+// export function IncmixThemeApplier() {
+//   const { sidebarBg } = useThemeStore()
 
-  useEffect(() => {
-    document.documentElement.style.setProperty("--primary-color", primaryColor)
-    document.documentElement.style.setProperty(
-      "--secondary-color",
-      secondaryColor
-    )
-  }, [sidebarBg]) // Re-run effect when colors change
+//   useEffect(() => {
+//     document.documentElement.style.setProperty("--primary-color", primaryColor)
+//     document.documentElement.style.setProperty(
+//       "--secondary-color",
+//       secondaryColor
+//     )
+//   }, [sidebarBg]) // Re-run effect when colors change
 
-  return null // This component doesn't render anything visible
-}
+//   return null // This component doesn't render anything visible
+// }

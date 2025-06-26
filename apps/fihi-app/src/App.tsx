@@ -92,7 +92,24 @@ const router = createRouter({ routeTree })
 
 function App() {
   const appearance = useAppearanceStore()
-  const theme = useThemeStore()
+  const {
+    accentColor,
+    grayColor,
+    radius,
+    scaling,
+    getSidebarColor,
+    getDashboardColors,
+    getIndicatorColors,
+    getPastel,
+  } = useThemeStore()
+
+  // Get computed colors from your theme store
+  const sidebarColors = getSidebarColor()
+  const dashboardColors = getDashboardColors()
+  const indicatorColors = getIndicatorColors(getPastel())
+
+  const _theme = useThemeStore()
+
   const { language } = appearance
   useQuery({
     queryKey: ["translations"],
@@ -119,10 +136,37 @@ function App() {
   return (
     <Theme
       appearance={appearance.appearance}
-      accentColor={theme.accentColor}
-      grayColor={theme.grayColor}
-      radius={theme.radius}
-      scaling={theme.scaling}
+      accentColor={accentColor}
+      grayColor={grayColor}
+      radius={radius}
+      scaling={scaling}
+      style={
+        {
+          "--sidebar-bg": sidebarColors.bg,
+          "--sidebar-bg-foreground": sidebarColors.fg,
+          "--sidebar-hover": sidebarColors.hover,
+
+          "--dashboard-color-1": dashboardColors.color1,
+          "--dashboard-text-1": dashboardColors.text1,
+          "--dashboard-color-2": dashboardColors.color2,
+          "--dashboard-text-2": dashboardColors.text2,
+          "--dashboard-color-3": dashboardColors.color3,
+          "--dashboard-text-3": dashboardColors.text3,
+          "--dashboard-color-4": dashboardColors.color4,
+          "--dashboard-text-4": dashboardColors.text4,
+
+          "--indicator-danger": indicatorColors.danger,
+          "--indicator-danger-text": indicatorColors.dangerText,
+          "--indicator-warning": indicatorColors.warning,
+          "--indicator-warning-text": indicatorColors.warningText,
+          "--indicator-success": indicatorColors.success,
+          "--indicator-success-text": indicatorColors.successText,
+          "--indicator-info": indicatorColors.info,
+          "--indicator-info-text": indicatorColors.infoText,
+          "--indicator-default": indicatorColors.default,
+          "--indicator-default-text": indicatorColors.defaultText,
+        } as CSSProperties
+      }
     >
       <RxdbProvider db={db}>
         <Suspense fallback={<LoadingPage />}>
