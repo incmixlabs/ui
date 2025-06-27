@@ -166,8 +166,24 @@ export const createTaskFormSchema = (columns: KanbanColumn[]): TaskFormSchema =>
     col.name.toLowerCase().includes("to do")
   )?.id || columns[0]?.id || ""
 
+  // Create a modified schema with defaults
+  const schemaWithDefaults = {
+    ...baseTaskFormSchema,
+    properties: {
+      ...baseTaskFormSchema.properties,
+      columnId: {
+        ...baseTaskFormSchema.properties.columnId,
+        default: defaultColumnId
+      },
+      priority: {
+        ...baseTaskFormSchema.properties.priority,
+        default: "medium"
+      }
+    }
+  }
+
   return {
-    formSchema: baseTaskFormSchema,
+    formSchema: schemaWithDefaults,
     fieldConfig: {
       name: {
         description: "Enter a descriptive task name",

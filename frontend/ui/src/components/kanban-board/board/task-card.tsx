@@ -108,7 +108,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
       return
     }
 
-    if (state.type !== "is-dragging") {
+    if (state.type !== "is-dragging" && card.taskId) {
       if (onTaskOpen) {
         onTaskOpen(card.taskId)
       } else {
@@ -128,7 +128,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
 
   // Confirm task deletion handler
   const confirmDeleteTask = useCallback(async () => {
-    if (!onDeleteTask) return
+    if (!onDeleteTask || !card.taskId) return
     try {
       await onDeleteTask(card.taskId)
     } catch (error) {
@@ -138,7 +138,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
 
   const handleToggleComplete = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (!onUpdateTask) return
+    if (!onUpdateTask || !card.taskId) return
 
     try {
       await onUpdateTask(card.taskId, { completed: !card.completed })
@@ -149,6 +149,8 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
 
   const handleOpenTaskDetails = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
+    if (!card.taskId) return
+    
     if (onTaskOpen) {
       onTaskOpen(card.taskId)
     } else {

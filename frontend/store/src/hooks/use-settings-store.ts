@@ -1,5 +1,6 @@
 import { getTextColor } from "@incmix/store/color"
 import {
+  type APIKeyAttributes,
   type BreakFontColor,
   type IntegrationConfig,
   type KeyOption,
@@ -12,7 +13,6 @@ import {
   type UserPreference,
   breakFontColor as defaultFontColor,
   fontColor,
-  type APIKeyAttributes,
 } from "@incmix/utils/types"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
@@ -71,7 +71,7 @@ export const SIDEBAR_COLOR_OPTIONS = [
     fg: fontColor.light,
     hover: "var(--yellow-11)",
     text: fontColor.light,
-  }
+  },
 ]
 export type ThemeStoreConfig = ThemeConfig & {
   setTheme: (partial: Partial<ThemeConfig>) => void
@@ -270,9 +270,7 @@ export type IntegrationStore = IntegrationConfig & {
   setAPIKeys: (keys: IntegrationConfig["keys"]) => void
   setVariables: (variables: IntegrationConfig["variables"]) => void
   getAPIKeys: () => IntegrationConfig["keys"]
-  getAPIKey: (
-    key: KeyOption
-  ) =>  APIKeyAttributes | undefined
+  getAPIKey: (key: KeyOption) => APIKeyAttributes | undefined
   getVariable: (key: string) => string | undefined
   getVariables: () => IntegrationConfig["variables"]
 }
@@ -478,7 +476,7 @@ export const useThemeStore = create<ThemeStoreConfig>()(
           danger = "red",
           warning = "orange",
           success = "green",
-          info = "blue"
+          info = "blue",
         } = indicators
         const defaultIndicator = indicators.default || grayColor || "gray"
         // pastel shade is 6, bright shade is 9

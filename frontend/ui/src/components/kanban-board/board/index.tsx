@@ -160,9 +160,15 @@ export function Board({
 
               // Update backend (this will eventually update the real state)
               const newIndex = reordered.findIndex(t => t.taskId === dragging.card.taskId)
-              moveTask(dragging.card.taskId, destColumn.id, newIndex).finally(() => {
+              
+              if (dragging.card.taskId) {
+                moveTask(dragging.card.taskId, destColumn.id, newIndex).finally(() => {
+                  setIsDragging(false)
+                })
+              } else {
+                console.error("Cannot move task: taskId is undefined")
                 setIsDragging(false)
-              })
+              }
               return
             } else {
               // Different column
@@ -208,9 +214,14 @@ export function Board({
             setOptimisticColumns(newOptimisticColumns)
 
             // Update backend
-            moveTask(dragging.card.taskId, targetColumnId, targetIndex).finally(() => {
+            if (dragging.card.taskId) {
+              moveTask(dragging.card.taskId, targetColumnId, targetIndex).finally(() => {
+                setIsDragging(false)
+              })
+            } else {
+              console.error("Cannot move task: taskId is undefined")
               setIsDragging(false)
-            })
+            }
           } else {
             setIsDragging(false)
           }

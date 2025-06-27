@@ -1,4 +1,4 @@
-import { TaskDataSchema } from "@incmix/store"
+import { TaskDataSchema } from "@incmix/utils/schema"
 
 
 // Import your existing RxDB-based types

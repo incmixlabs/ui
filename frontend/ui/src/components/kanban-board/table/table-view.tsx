@@ -108,7 +108,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           const task = info.row.original as TableTask;
           return (
             <StatusDropdownCell
-              value={task.columnId}
+              value={task.columnId || ''}
               row={task}
               taskStatuses={taskStatuses}
               onStatusChange={(taskId, newStatusId) => moveTaskToStatus(taskId, newStatusId)}
@@ -126,7 +126,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           const task = info.row.original as TableTask;
           return (
             <PriorityDropdownCell
-              value={task.priority}
+              value={task.priority || ''}
               row={task}
               onPriorityChange={(taskId, newPriority) => {
                 return updateTask(taskId, { priority: newPriority });
@@ -170,10 +170,10 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
 
     const query = searchQuery.toLowerCase()
     return tasks.filter(task =>
-      task.name.toLowerCase().includes(query) ||
+      task.name?.toLowerCase().includes(query) || 
       task.description?.toLowerCase().includes(query) ||
       task.statusLabel?.toLowerCase().includes(query) ||
-      task.assignedToNames?.toLowerCase().includes(query)
+      task.assignedToNames?.toLowerCase().includes(query) || false
     )
   }, [tasks, searchQuery])
 

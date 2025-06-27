@@ -21,6 +21,7 @@ export interface UserStoryResponse {
 
 export interface ProcessedUserStory {
   description: string
+  acceptanceCriteria: { id: string; text: string }[]
   checklist: { id: string; text: string; checked: boolean }[]
 }
 
@@ -80,11 +81,15 @@ export const aiService = {
       // Process the new response format
       const { userStory } = data
 
-      // Combine description and acceptance criteria for the description field
+      // Keep description separate
       const descriptionText = userStory.description || ""
-      const acceptanceCriteriaText = userStory.acceptanceCriteria?.length
-        ? `\n\nAcceptance Criteria:\n${userStory.acceptanceCriteria.map((ac) => `- ${ac}`).join("\n")}`
-        : ""
+
+      // Format acceptance criteria items
+      const acceptanceCriteriaItems =
+        userStory.acceptanceCriteria?.map((text, index) => ({
+          id: `ac-${Date.now()}-${index}`,
+          text,
+        })) || []
 
       // Format checklist items
       const checklistItems =
@@ -95,7 +100,8 @@ export const aiService = {
         })) || []
 
       return {
-        description: descriptionText + acceptanceCriteriaText,
+        description: descriptionText,
+        acceptanceCriteria: acceptanceCriteriaItems,
         checklist: checklistItems,
       }
     } catch (error) {

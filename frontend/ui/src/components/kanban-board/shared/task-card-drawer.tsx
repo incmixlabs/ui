@@ -11,6 +11,7 @@ import {
   TaskActionButtons,
   TaskTitleSection,
   TaskDescriptionSection,
+  TaskAcceptanceCriteriaSection,
   TaskDatesSection,
   TaskTagsSection,
   TaskRefUrlsSection,
@@ -124,28 +125,38 @@ export function TaskCardDrawer({
               onSave={() => taskActions.handleDescriptionSave(drawerState.editDescription)}
             />
 
+            {/* Task Acceptance Criteria */}
+            <TaskAcceptanceCriteriaSection
+              acceptanceCriteria={currentTask.acceptanceCriteria}
+            />
+
             {/* Task Checklist */}
-            {currentTask?.checklist && currentTask.checklist.length > 0 && (
-              <TaskChecklist
-                checklist={currentTask.checklist}
-                onChecklistItemToggle={(id, checked) => {
-                  const updatedChecklist = currentTask.checklist?.map((item: { id: string; text: string; checked: boolean }) =>
-                    item.id === id ? { ...item, checked } : item
-                  )
-                  updateTask(currentTask.taskId, { checklist: updatedChecklist })
-                }}
-                onChecklistItemEdit={(id, text) => {
-                  const updatedChecklist = currentTask.checklist?.map((item: { id: string; text: string; checked: boolean }) =>
-                    item.id === id ? { ...item, text } : item
-                  )
-                  updateTask(currentTask.taskId, { checklist: updatedChecklist })
-                }}
-                onChecklistItemDelete={(id) => {
-                  const updatedChecklist = currentTask.checklist?.filter((item: { id: string }) => item.id !== id)
-                  updateTask(currentTask.taskId, { checklist: updatedChecklist })
-                }}
-              />
-            )}
+            <TaskChecklist
+              checklist={currentTask.checklist || []}
+              onChecklistItemToggle={(id, checked) => {
+                const updatedChecklist = currentTask.checklist?.map((item: { id: string; text: string; checked: boolean }) =>
+                  item.id === id ? { ...item, checked } : item
+                )
+                updateTask(currentTask.taskId, { checklist: updatedChecklist })
+              }}
+              onChecklistItemEdit={(id, text) => {
+                const updatedChecklist = currentTask.checklist?.map((item: { id: string; text: string; checked: boolean }) =>
+                  item.id === id ? { ...item, text } : item
+                )
+                updateTask(currentTask.taskId, { checklist: updatedChecklist })
+              }}
+              onChecklistItemDelete={(id) => {
+                const updatedChecklist = currentTask.checklist?.filter((item: { id: string }) => item.id !== id)
+                updateTask(currentTask.taskId, { checklist: updatedChecklist })
+              }}
+              onChecklistItemAdd={(text) => {
+                const newChecklist = [
+                  ...(currentTask.checklist || []),
+                  { id: crypto.randomUUID(), text, checked: false }
+                ]
+                updateTask(currentTask.taskId, { checklist: newChecklist })
+              }}
+            />
 
             {/* Dates */}
             <TaskDatesSection

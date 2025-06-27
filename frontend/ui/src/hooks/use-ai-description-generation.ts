@@ -3,7 +3,7 @@ import { useDebounce } from './use-debounce';
 
 /**
  * Custom hook to handle AI description generation with debouncing
- * 
+ *
  * @param title The task title to generate a description for
  * @param useAI Whether AI features are enabled
  * @param hasDescription Whether the task already has a description
@@ -13,7 +13,7 @@ import { useDebounce } from './use-debounce';
  * @param onResetError Function to reset error state when title changes
  */
 export function useAIDescriptionGeneration(
-  title: string | undefined, 
+  title: string | undefined,
   useAI: boolean,
   hasDescription: boolean,
   hadGenerationError: boolean,
@@ -22,15 +22,15 @@ export function useAIDescriptionGeneration(
   onResetError: () => void
 ): void {
   // Debounce the title input to avoid unnecessary API calls
-  const debouncedTitle = useDebounce(title, 1000);
-  
+  const debouncedTitle = useDebounce(title, 2000);
+
   // Reset error state when title changes
   useEffect(() => {
     if (title && title !== lastProcessedTitle) {
       onResetError();
     }
   }, [title, lastProcessedTitle, onResetError]);
-  
+
   // Generate description when debounced title changes
   useEffect(() => {
     if (
