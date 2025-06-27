@@ -14,6 +14,5 @@ export * from "./hooks/use-ai-user-story"
 export * from "./hooks/use-bulk-ai-generation"
 // Explicitly re-export from use-kanban-data except for KanbanColumn
 export * from "./hooks/use-task-status-store"
-export * from "./hooks/use-task-store"
 // Re-export everything from kanban-view.types (including its KanbanColumn)
 export * from "./hooks/use-settings-store"

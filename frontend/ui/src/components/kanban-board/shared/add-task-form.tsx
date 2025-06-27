@@ -260,7 +260,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
     } finally {
       setIsLoading(false)
     }
-  }, [createTask, transformFormDataToTask, onSuccess, defaultFormValues, formData.checklist])
+  }, [createTask, transformFormDataToTask, onSuccess, defaultFormValues, formData.checklist, formData.acceptanceCriteria])
 
   // Don't render if columns are still loading or no schema available
   if (kanbanLoading || !taskFormSchema) {
