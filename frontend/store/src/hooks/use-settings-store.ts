@@ -12,6 +12,7 @@ import {
   type UserPreference,
   breakFontColor as defaultFontColor,
   fontColor,
+  type APIKeyAttributes,
 } from "@incmix/utils/types"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
@@ -271,7 +272,7 @@ export type IntegrationStore = IntegrationConfig & {
   getAPIKeys: () => IntegrationConfig["keys"]
   getAPIKey: (
     key: KeyOption
-  ) => IntegrationConfig["keys"][keyof IntegrationConfig["keys"]] | undefined
+  ) =>  APIKeyAttributes | undefined
   getVariable: (key: string) => string | undefined
   getVariables: () => IntegrationConfig["variables"]
 }
@@ -477,7 +478,7 @@ export const useThemeStore = create<ThemeStoreConfig>()(
           danger = "red",
           warning = "orange",
           success = "green",
-          info = "blue",
+          info = "blue"
         } = indicators
         const defaultIndicator = indicators.default || grayColor || "gray"
         // pastel shade is 6, bright shade is 9
