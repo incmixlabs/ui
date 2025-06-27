@@ -159,6 +159,12 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
   // Confirm task deletion handler
   const confirmDeleteTask = useCallback(async () => {
     try {
+      // Ensure taskId exists
+      if (!card.taskId) {
+        console.error("Task ID is missing")
+        return
+      }
+      
       await onDeleteTask(card.taskId)
     } catch (error) {
       console.error("Failed to delete task:", error)

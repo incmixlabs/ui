@@ -11,7 +11,7 @@ import { ListColumn } from "./list-column"
 import { ConfirmationDialog } from "./confirmation-dialog"
 import { Box, Flex, Heading, IconButton, Button, Text, TextField, TextArea, Badge, Tooltip, toast } from "@incmix/ui"
 
-import { Plus, Search, RefreshCw, Settings, MoreVertical, ChevronRight, X, ClipboardList, XCircle, CheckCircle2, Sparkles, Loader2 } from "lucide-react"
+import { Plus, Search, RefreshCw, Settings, MoreVertical, X, ClipboardList, XCircle, Sparkles, Loader2 } from "lucide-react"
 
 import {
 
@@ -99,7 +99,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   const filteredColumns = columns.filter(column =>
     column.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     column.tasks.some(task =>
-      task.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      task.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       task.description?.toLowerCase().includes(searchQuery.toLowerCase())
     )
   )
@@ -127,8 +127,10 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
       const newSelected = { ...prev }
 
       column.tasks.forEach(task => {
+        if (!task.taskId) return; // Skip tasks without a taskId
+        
         if (selected) {
-          newSelected[task.taskId] = { taskId: task.taskId, name: task.name }
+          newSelected[task.taskId] = { taskId: task.taskId, name: task.name || '' }
         } else {
           delete newSelected[task.taskId]
         }

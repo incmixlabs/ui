@@ -25,6 +25,7 @@ import {
   isDraggingACard,
   isDraggingAColumn,
   type KanbanTask,
+  type ListColumn,
 } from "../types"
 import {
   blockBoardPanningAttr } from "../data-attributes"
@@ -58,6 +59,8 @@ const stateStyles: { [Key in TColumnState["type"]]: string } = {
 }
 
 const idle = { type: "idle" } satisfies TColumnState
+
+
 
 interface ListColumnProps {
   column: ListColumn
@@ -98,8 +101,8 @@ const CardList = memo(function CardList({
           columns={columns}
           onUpdateTask={onUpdateTask}
           onDeleteTask={onDeleteTask}
-          onTaskSelect={onTaskSelect ? (taskId, selected) => onTaskSelect(taskId, selected, task.name) : undefined}
-          isSelected={!!selectedTaskIds?.[task.taskId]}
+          onTaskSelect={onTaskSelect ? (taskId, selected) => onTaskSelect(taskId, selected, task.name || '') : undefined}
+          isSelected={task.taskId ? !!selectedTaskIds?.[task.taskId] : false}
         />
       ))}
     </>
@@ -133,7 +136,7 @@ export function ListColumn({
   const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
 
   // Calculate selection state
-  const selectedTasksInColumn = column.tasks.filter(task => !!selectedTaskIds[task.taskId]).length
+  const selectedTasksInColumn = column.tasks.filter(task => task.taskId ? !!selectedTaskIds[task.taskId] : false).length
   const allTasksSelected = selectedTasksInColumn === totalTasks && totalTasks > 0
   const someTasksSelected = selectedTasksInColumn > 0 && selectedTasksInColumn < totalTasks
 
