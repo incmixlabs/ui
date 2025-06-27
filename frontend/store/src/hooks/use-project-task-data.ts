@@ -193,15 +193,12 @@ export function useProjectData(
     }
   }
 
-  
-
   // Task operations - simplified without manual state management
   const createTask = useCallback(
     async (columnId: string, taskData: Partial<TaskDataSchema>) => {
       try {
         const now = getCurrentTimestamp()
         const user = getCurrentUser(currentUser)
-        
 
         // Get highest order in target column
         const tasksInColumn = data.tasks.filter((t) => t.columnId === columnId)

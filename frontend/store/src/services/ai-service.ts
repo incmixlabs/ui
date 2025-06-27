@@ -83,7 +83,7 @@ export const aiService = {
 
       // Keep description separate
       const descriptionText = userStory.description || ""
-      
+
       // Format acceptance criteria items
       const acceptanceCriteriaItems =
         userStory.acceptanceCriteria?.map((text, index) => ({
