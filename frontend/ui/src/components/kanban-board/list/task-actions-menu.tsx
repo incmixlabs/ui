@@ -24,7 +24,9 @@ import {
   AlertCircle,
   Clock,
 } from "lucide-react"
-import type { TaskDataSchema, TaskStatusDocType } from "@incmix/store"
+import { TaskDataSchema, TaskStatusDocType } from "@incmix/utils/schema"
+import { KanbanTask } from "../types" // Import KanbanTask type
+
 
 // Hard-coded members data (same as in mention input)
 const members = [
@@ -77,7 +79,7 @@ const members = [
 
 interface TaskActionsMenuProps {
   // For existing tasks
-  task?: TaskDataSchema
+  task?: TaskDataSchema | KanbanTask
   
   // For new task creation context
   newTaskData?: {
@@ -89,7 +91,7 @@ interface TaskActionsMenuProps {
   }
   
   // Available columns for moving tasks
-  columns?: TaskStatusDocType[]
+  columns?: TaskStatusDocType[] 
   
   // Callbacks
   onUpdateTask?: (updates: Partial<TaskDataSchema>) => Promise<void>

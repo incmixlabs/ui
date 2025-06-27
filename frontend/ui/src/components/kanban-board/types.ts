@@ -28,7 +28,9 @@ export interface KanbanColumn {
   totalTasksCount: number
   progressPercentage: number
 }
-
+export interface ListColumn extends KanbanColumn {
+  isExpanded?: boolean
+}
 // Making most properties optional for mock data compatibility
 export interface KanbanTask extends Partial<Omit<TaskDataSchema, 'attachments' | 'labelsTags' | 'createdBy' | 'assignedTo' | 'subTasks' | 'updatedBy' | 'completed' | 'priority'>> {
   // Make completed optional
@@ -44,7 +46,7 @@ export interface KanbanTask extends Partial<Omit<TaskDataSchema, 'attachments' |
     size: string
     type?: string
   }[]
-  
+
   // For backward compatibility with existing code using 'attachment' instead of 'attachments'
   attachment?: {
     name: string
@@ -52,14 +54,14 @@ export interface KanbanTask extends Partial<Omit<TaskDataSchema, 'attachments' |
     size: string
     type?: string
   }[]
-  
+
   // Make labelsTags mutable
   labelsTags?: {
     value: string
     label: string
     color: string
   }[]
-  
+
   // Make assignedTo mutable with optional avatar
   assignedTo?: {
     id: string
@@ -70,7 +72,7 @@ export interface KanbanTask extends Partial<Omit<TaskDataSchema, 'attachments' |
     value?: string
     checked?: boolean
   }[]
-  
+
   // Make subTasks mutable
   subTasks?: {
     id?: string
@@ -78,7 +80,7 @@ export interface KanbanTask extends Partial<Omit<TaskDataSchema, 'attachments' |
     completed: boolean
     progress?: number
   }[]
-  
+
   // Make createdBy properties compatible with the data source
   createdBy?: {
     id: string
@@ -92,7 +94,7 @@ export interface KanbanTask extends Partial<Omit<TaskDataSchema, 'attachments' |
     name: string
     image?: string  // Optional to match the data source
   }
-  
+
   // Any additional UI-specific properties can be added here
 }
 
@@ -110,7 +112,7 @@ export interface KanbanBoard {
  */
 export type TCustomColumn = {
   id: string
-  title: string
+  name: string
   tasks: KanbanTask[]  // Updated to use KanbanTask
 }
 
@@ -256,4 +258,13 @@ export function isDraggingAColumn({
   source: { data: Record<string | symbol, unknown> }
 }): boolean {
   return isColumnData(source.data)
+}
+export interface TableTask extends KanbanTask {
+  // Additional computed properties for table display
+  statusLabel?: string
+  statusColor?: string
+  assignedToNames?: string
+  totalSubTasks?: number
+  completedSubTasks?: number
+  isOverdue?: boolean
 }

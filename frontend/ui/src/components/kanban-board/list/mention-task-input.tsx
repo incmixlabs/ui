@@ -3,7 +3,8 @@ import React, { useState, useCallback, useEffect } from "react"
 import { Box, Flex, Button, TextField, TextArea, Text } from "@incmix/ui"
 import { Plus, X, Loader2, Check } from "lucide-react"
 import { TaskActionsMenu } from "./task-actions-menu"
-import { useAIUserStory, useAIFeaturesStore, type TaskStatusDocType } from "@incmix/store"
+import { useAIUserStory, useAIFeaturesStore } from "@incmix/store"
+import { TaskStatusDocType } from "@incmix/utils/schema"
 
 interface SimpleTaskInputProps {
   onCreateTask: (taskName: string, taskData: any) => Promise<void>
@@ -22,12 +23,12 @@ export function SimpleTaskInput({
 }: SimpleTaskInputProps) {
   // Get AI features state
   const { useAI } = useAIFeaturesStore()
-  
+
   // Form state
   const [taskName, setTaskName] = useState("")
   const [description, setDescription] = useState("")
-  const [checklist, setChecklist] = useState<Array<{ id: string; text: string; checked: boolean }>>([])  
-  const [acceptanceCriteria, setAcceptanceCriteria] = useState<Array<{ id: string; text: string }>>([])  
+  const [checklist, setChecklist] = useState<Array<{ id: string; text: string; checked: boolean }>>([])
+  const [acceptanceCriteria, setAcceptanceCriteria] = useState<Array<{ id: string; text: string }>>([])
   const [taskData, setTaskData] = useState({
     priority: "medium",
     startDate: "",
@@ -37,19 +38,19 @@ export function SimpleTaskInput({
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [hadGenerationError, setHadGenerationError] = useState(false)
-  
+
   // AI description generation hook
-  const { 
-    generateUserStory, 
-    isGenerating, 
-    error: generationError, 
-    clearError: resetError 
+  const {
+    generateUserStory,
+    isGenerating,
+    error: generationError,
+    clearError: resetError
   } = useAIUserStory()
 
   const handleTaskDataChange = useCallback((newData: any) => {
     setTaskData(prev => ({ ...prev, ...newData }))
   }, [])
-  
+
   // Generate description when task name changes (if AI enabled)
   useEffect(() => {
     // Only generate if AI is enabled, task name has content, and description is empty
@@ -93,9 +94,9 @@ export function SimpleTaskInput({
         checklist: checklist,
         acceptanceCriteria: acceptanceCriteria
       }
-      
+
       await onCreateTask(taskName.trim(), fullTaskData)
-      
+
       // Reset form
       setTaskName("")
       setDescription("")
@@ -138,7 +139,7 @@ export function SimpleTaskInput({
           className="flex-1"
           autoFocus
         />
-        
+
         {/* Task Actions Menu for setting properties */}
         <TaskActionsMenu
           mode="new-task"
@@ -150,7 +151,7 @@ export function SimpleTaskInput({
           variant="soft"
         />
       </Flex>
-      
+
       {/* Description field */}
       <TextArea
         value={description}
@@ -159,7 +160,7 @@ export function SimpleTaskInput({
         rows={3}
         disabled={disabled || isSubmitting || isGenerating}
       />
-      
+
       {/* AI Status Indicator */}
       {useAI && taskName.trim() && (
         <Box className="text-xs">
@@ -183,7 +184,7 @@ export function SimpleTaskInput({
 
       {/* Action Buttons */}
       <Flex gap="2">
-        <Button 
+        <Button
           onClick={handleSubmit}
           disabled={!taskName.trim() || isSubmitting}
           className="flex-1"
@@ -192,9 +193,9 @@ export function SimpleTaskInput({
           <Plus size={16} />
           {isSubmitting ? "Adding..." : "Add Task"}
         </Button>
-        <Button 
+        <Button
           onClick={onCancel}
-          variant="soft" 
+          variant="soft"
           disabled={isSubmitting}
           size="2"
         >
@@ -204,9 +205,9 @@ export function SimpleTaskInput({
       </Flex>
 
       {/* Preview of selected options */}
-      {(taskData.priority !== "medium" || 
-        taskData.assignedTo.length > 0 || 
-        taskData.startDate || 
+      {(taskData.priority !== "medium" ||
+        taskData.assignedTo.length > 0 ||
+        taskData.startDate ||
         taskData.endDate) && (
         <Box className="pt-2 border-t border-gray-200">
           <Flex gap="2" wrap="wrap" className="text-xs">

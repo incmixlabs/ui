@@ -1,60 +1,21 @@
 // File: use-project-task-data.ts
 
+import type {
+  CurrentUser,
+  ProjectData,
+  TaskDataSchema,
+  TaskStatusDocType,
+  UseProjectDataReturn,
+} from "@incmix/utils/schema"
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { Subscription } from "rxjs"
-import type { TaskDocType, TaskStatusDocType } from "utils/task-schema"
-import { database } from "../sql"
-import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
-import type { TaskDataSchema } from "../sql/task-schemas"
-
-interface ProjectData {
-  tasks: TaskDataSchema[]
-  taskStatuses: TaskStatusDocType[]
-  isLoading: boolean
-  error: string | null
-}
-
-interface UseProjectDataReturn extends ProjectData {
-  // Task operations
-  createTask: (
-    columnId: string,
-    taskData: Partial<TaskDataSchema>
-  ) => Promise<void>
-  updateTask: (
-    taskId: string,
-    updates: Partial<TaskDataSchema>
-  ) => Promise<void>
-  deleteTask: (taskId: string) => Promise<void>
-  moveTask: (
-    taskId: string,
-    targetColumnId: string,
-    targetIndex?: number
-  ) => Promise<void>
-
-  // Task status operations
-  createTaskStatus: (
-    name: string,
-    color?: string,
-    description?: string
-  ) => Promise<string>
-  updateTaskStatus: (
-    statusId: string,
-    updates: { name?: string; color?: string; description?: string }
-  ) => Promise<void>
-  deleteTaskStatus: (statusId: string) => Promise<void>
-  reorderTaskStatuses: (statusIds: string[]) => Promise<void>
-
-  // Utility
-  refetch: () => void
-  clearError: () => void
-}
-
-// Define a type for user information
-export interface CurrentUser {
-  id: string
-  name: string
-  image?: string
-}
+import { database } from "sql"
+import type { TaskDocType } from "sql/types"
+// Import browser-compatible helpers instead of Node.js Buffer-using ones
+import {
+  generateBrowserUniqueId,
+  getCurrentTimestamp,
+} from "../utils/browser-helpers"
 
 // Get the current user - accepts user context to make it injectable
 const getCurrentUser = (user?: CurrentUser) => {
@@ -217,7 +178,7 @@ export function useProjectData(
     for (let i = 0; i < DEFAULT_TASK_STATUSES.length; i++) {
       const status = DEFAULT_TASK_STATUSES[i]
       await database.taskStatus.insert({
-        id: generateUniqueId("ts"),
+        id: generateBrowserUniqueId("ts"),
         projectId,
         name: status.name,
         color: status.color,
@@ -247,8 +208,8 @@ export function useProjectData(
         const maxOrder = Math.max(...tasksInColumn.map((t) => t.order), -1)
 
         const newTask: TaskDataSchema = {
-          id: generateUniqueId("task"),
-          taskId: generateUniqueId("tsk"),
+          id: generateBrowserUniqueId("task"),
+          taskId: generateBrowserUniqueId("tsk"),
           projectId,
           name: taskData.name || "New Task",
           columnId,
@@ -424,7 +385,7 @@ export function useProjectData(
       try {
         const now = getCurrentTimestamp()
         const user = getCurrentUser(currentUser)
-        const id = generateUniqueId("ts")
+        const id = generateBrowserUniqueId("ts")
 
         const maxOrder = Math.max(
           ...data.taskStatuses.map((ts) => ts.order),

@@ -1,8 +1,8 @@
+import { generateUniqueId, getCurrentTimestamp } from "@incmix/utils/helper"
+import type { TaskStatusDocType } from "@incmix/utils/schema"
 import type { Subscription } from "rxjs"
 import { database } from "sql"
-import type { TaskStatusDocType } from "utils/task-schema"
 import { create } from "zustand"
-import { generateUniqueId, getCurrentTimestamp } from "../sql/helper"
 
 interface TaskStatusStore {
   taskStatuses: TaskStatusDocType[]

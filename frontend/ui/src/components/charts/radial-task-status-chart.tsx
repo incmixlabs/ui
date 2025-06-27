@@ -1,7 +1,7 @@
 import { Box } from "@incmix/ui"
-import { cn, dashboardColorValues } from "@utils"
+import { cn } from "@utils"
 import { lazy, useEffect, useState } from "react"
-
+import { useThemeStore,useAppearanceStore } from "@incmix/store/use-settings-store"
 // Dynamically import ApexCharts to avoid SSR issues
 const ReactApexChart = lazy(() => import("react-apexcharts"))
 
@@ -16,10 +16,7 @@ export interface TaskItem {
    */
   value: number
 
-  /**
-   * Color for this task status
-   */
-  color: string
+
 }
 
 interface RadialTaskStatusChartProps {
@@ -63,18 +60,29 @@ interface RadialTaskStatusChartProps {
 
 export function RadialTaskStatusChart({
   tasks = [
-    { name: "Ongoing", value: 420, color: dashboardColorValues.color3 },
-    { name: "Hold", value: 210, color: dashboardColorValues.color2 },
-    { name: "Done", value: 200, color: dashboardColorValues.color1 },
+    { name: "Ongoing", value: 420, color: 'pink' },
+    { name: "Hold", value: 210, color: 'yellow' },
+    { name: "Done", value: 200, color: 'purple' },
   ],
   startAngle = -135,
   endAngle = 135,
   hollowSize = "40%",
   className,
-  trackBackground = dashboardColorValues.color4,
+  trackBackground ,
 }: RadialTaskStatusChartProps) {
   const [mounted, setMounted] = useState(false)
-
+  const { getIndicatorColors} = useThemeStore()
+  const indicatorColors = getIndicatorColors()
+  trackBackground = trackBackground || indicatorColors.success
+  tasks = tasks.map((item) => {
+    return {
+      ...item,
+      color: item.name === "Ongoing" ? indicatorColors.info
+        : item.name === "Hold" ? indicatorColors.warning
+        : item.name === "Done" ? indicatorColors.success
+        : indicatorColors.default, // Fallback color
+    }
+  })
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -110,7 +118,7 @@ export function RadialTaskStatusChart({
         },
       },
     },
-    colors: tasks.map((item) => item.color),
+    colors: tasks.map((item) => item.color?? indicatorColors.default),
     stroke: {
       lineCap: "round",
     },

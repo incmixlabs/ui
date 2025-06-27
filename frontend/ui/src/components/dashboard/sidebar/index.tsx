@@ -18,6 +18,7 @@ import {
   ActiveTask,
   NewTasks,
   PostingTask,
+  ProjectTimelineWidgets,
   ProjectWidgets2,
   StatisticWidgets2,
   TotalProject,
@@ -31,6 +32,7 @@ import { useLocation, useParams } from "@tanstack/react-router";
 import { useTemplateStore } from "@incmix/store";
 
 export const sidebarComponents = [
+
   {
     slotId: "i",
     component: <NewTasks />,
@@ -134,6 +136,21 @@ export const sidebarComponents = [
       sm: { w: 12, h: 25 },
       xs: { w: 12, h: 25 },
       xxs: { w: 12, h: 25 },
+    },
+  },
+  {
+    slotId: "o",
+    component: <ProjectTimelineWidgets />,
+    componentName: "project-timeline",
+    compImage: dashboardImg?.newTaskImg,
+    title: "Project Timeline",
+    tags: ["project", "timeline", "summary", "project-timeline"],
+    layouts: {
+      lg: { w: 8, h: 20 },
+      md: { w: 8, h: 20 },
+      sm: { w: 8, h: 20 },
+      xs: { w: 8, h: 20 },
+      xxs: { w: 8, h: 20 },
     },
   },
 ];
@@ -334,8 +351,6 @@ useEffect(() => {
               </Flex>
             </ScrollArea>
           )}
-
-      
               <IconButton
                 variant="soft"
                 color="red"

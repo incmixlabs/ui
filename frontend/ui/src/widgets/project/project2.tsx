@@ -1,3 +1,4 @@
+import { useThemeStore } from "@incmix/store/use-settings-store"
 import {
   Box,
   CardContainer,
@@ -7,17 +8,29 @@ import {
   IconButton,
   RadialTaskStatusChart,
   Text,
-  dashboardColorValues,
 } from "@incmix/ui"
 import { Ellipsis } from "lucide-react"
 
-const stats = [
-  { label: "Ongoing", value: 420, color: dashboardColorValues.color1 },
-  { label: "Hold", value: 210, color: dashboardColorValues.color2 },
-  { label: "Done", value: 200, color: dashboardColorValues.color3 },
+let stats = [
+  { label: "Ongoing", value: 420, color: "blue" },
+  { label: "Hold", value: 210, color: "orange" },
+  { label: "Done", value: 200, color: "green" },
 ]
 
 export function ProjectWidgets2() {
+  const { getIndicatorColors } = useThemeStore()
+  const colors = getIndicatorColors()
+  stats = stats.map((stat) => ({
+    ...stat,
+    color:
+      stat.label === "Ongoing"
+        ? colors.info
+        : stat.label === "Hold"
+          ? colors.warning
+          : stat.label === "Done"
+            ? colors.success
+            : colors.default, // Fallback color
+  }))
   return (
     <>
       <CardContainer className="h-full">
@@ -49,3 +62,4 @@ export function ProjectWidgets2() {
     </>
   )
 }
+

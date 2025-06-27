@@ -1,8 +1,9 @@
 import {
   type KanbanColumn,
-  type TaskDataSchema,
   useKanban,
-} from "@incmix/store"
+} from "./use-kanban-data"
+import type {
+  TaskDataSchema } from "@incmix/utils/schema"
 // components/list/hooks/use-list-view.ts
 import { useMemo } from "react"
 
@@ -96,4 +97,3 @@ export function useListView(projectId = "default-project"): UseListViewReturn {
 }
 
 // Re-export types for convenience
-export type { KanbanColumn, KanbanTask, TaskDataSchema } from "@incmix/store"

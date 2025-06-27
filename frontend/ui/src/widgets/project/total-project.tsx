@@ -64,7 +64,7 @@ export function TotalProject() {
                 {item.category}
               </Text>
               <Text className="font-medium text-gray-900 text-sm">
-                {item.value}
+                {item.value}%
               </Text>
             </Flex>
             <Progress

@@ -181,11 +181,11 @@ export function useDragAndDrop(
   }
 
   const addComponentToGrid = (draggedSlotId: string, targetWidgetId?: string) => {
-    const isAlreadyInGrid = gridComponents.some((comp) => comp.slotId === draggedSlotId)
-    if (isAlreadyInGrid) {
-      toast.error("This component is already added to the grid. Please remove it first if you want to add it again.")
-      return false
-    }
+    // const isAlreadyInGrid = gridComponents.some((comp) => comp.slotId === draggedSlotId)
+    // if (isAlreadyInGrid) {
+    //   toast.error("This component is already added to the grid. Please remove it first if you want to add it again.")
+    //   return false
+    // }
 
     const draggedComponent = sidebarComponents.find((comp) => comp.slotId === draggedSlotId)
     if (!draggedComponent) {

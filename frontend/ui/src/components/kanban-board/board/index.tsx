@@ -5,23 +5,24 @@ import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/clo
 import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge"
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
-import { 
-  Box, 
-  Button, 
-  Flex, 
-  Text, 
-  IconButton, 
+import {
+  Box,
+  Button,
+  Flex,
+  Text,
+  IconButton,
   Heading,
-  DropdownMenu 
-} from "@incmix/ui"
-import { 
-  Loader2, 
-  Settings, 
+  DropdownMenu
+} from "@base"
+import {
+  Loader2,
+  Settings,
   MoreVertical,
   RefreshCw
 } from "lucide-react"
-import { isCardData, isCardDropTargetData, isColumnData, isDraggingACard, KanbanColumn, useKanban, useAIFeaturesStore } from "@incmix/store"
-
+import { isCardData, isCardDropTargetData, isColumnData, isDraggingACard, KanbanColumn } from "../types"
+import {  useAIFeaturesStore } from "@incmix/store"
+import { useKanban } from "../hooks/use-kanban-data"
 import { BoardColumn } from "./board-column"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
 import { CreateColumnForm } from "./create-column-form"
@@ -31,19 +32,19 @@ interface BoardProps {
   onTaskOpen?: (taskId: string) => void
 }
 
-export function Board({ 
+export function Board({
   projectId = "default-project",
   onTaskOpen
 }: BoardProps) {
   const scrollableRef = useRef<HTMLDivElement | null>(null)
   const [isDragging, setIsDragging] = useState(false)
-  
+
   // Local state for optimistic updates
   const [optimisticColumns, setOptimisticColumns] = useState<KanbanColumn[]>([])
-  
+
   // Get AI features state
   const { useAI } = useAIFeaturesStore()
-  
+
   // Use the new useKanban hook
   const {
     columns,
@@ -126,7 +127,7 @@ export function Board({
             }
 
             targetColumnId = destColumn.id
-            
+
             if (sourceColumn.id === destColumn.id) {
               // Same column reorder - update optimistically
               const targetTaskIndex = destColumn.tasks.findIndex(task => task.taskId === dropTargetData.card.taskId)
@@ -150,8 +151,8 @@ export function Board({
               })
 
               // Update optimistic state immediately
-              newOptimisticColumns = newOptimisticColumns.map(col => 
-                col.id === sourceColumn.id 
+              newOptimisticColumns = newOptimisticColumns.map(col =>
+                col.id === sourceColumn.id
                   ? { ...col, tasks: reordered }
                   : col
               )
@@ -186,7 +187,7 @@ export function Board({
           // Cross-column move - update optimistically
           if (targetColumnId !== sourceColumn.id) {
             const taskToMove = sourceColumn.tasks[taskIndex]
-            
+
             // Update optimistic state immediately
             newOptimisticColumns = newOptimisticColumns.map(col => {
               if (col.id === sourceColumn.id) {
@@ -259,7 +260,7 @@ export function Board({
         <Flex direction="column" gap="4" className="p-4">
           <Flex justify="between" align="center">
             <Heading size="6">Project Board</Heading>
-            
+
             <Flex align="center" gap="2">
               {/* Global Add Task Button - Always visible */}
 
@@ -316,7 +317,7 @@ export function Board({
 
       {/* Columns area - Horizontal scroll only, natural height growth */}
       <Box className="w-full">
-        <div 
+        <div
           className="w-full overflow-x-auto"
           ref={scrollableRef}
         >
@@ -324,11 +325,11 @@ export function Board({
           <div className="p-4 flex gap-6" style={{ width: 'max-content' }}>
             {/* Kanban Columns */}
             {displayColumns.map((column) => (
-              <div 
-                key={column.id} 
+              <div
+                key={column.id}
                 className="w-80 flex-shrink-0"
               >
-                <BoardColumn 
+                <BoardColumn
                   column={column}
                   onCreateTask={createTask}
                   onUpdateTask={updateTask}
@@ -340,18 +341,18 @@ export function Board({
                 />
               </div>
             ))}
-            
+
             {/* Add Column */}
             <div className="w-80 flex-shrink-0">
               <Box className="min-h-[500px] rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
-                <Flex 
-                  align="center" 
-                  justify="center" 
+                <Flex
+                  align="center"
+                  justify="center"
                   className="h-full p-4"
                   direction="column"
                   gap="4"
                 >
-                  <CreateColumnForm 
+                  <CreateColumnForm
                     projectId={projectId}
                     onSuccess={handleRefresh}
                   />

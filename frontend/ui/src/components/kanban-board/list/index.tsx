@@ -1,4 +1,5 @@
 // components/list/list-board.tsx - Updated to use new task input system
+
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge"
@@ -13,19 +14,21 @@ import { Box, Flex, Heading, IconButton, Button, Text, TextField, TextArea, Badg
 import { Plus, Search, RefreshCw, Settings, MoreVertical, ChevronRight, X, ClipboardList, XCircle, CheckCircle2, Sparkles, Loader2 } from "lucide-react"
 
 import {
+
   isCardData,
   isCardDropTargetData,
   isColumnData,
   isDraggingACard,
   isDraggingAColumn,
-  blockBoardPanningAttr,
-  useListView,
+} from "../types"
+import {
   useAIFeaturesStore,
   useBulkAIGeneration
 } from "@incmix/store"
-import { useKanban } from "@incmix/store"
+import { useListView } from "../hooks/use-list-view"
 import ColorPicker, { ColorSelectType } from "@components/color-picker"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
+import { blockBoardPanningAttr } from "../data-attributes"
 
 interface ListBoardProps {
   projectId?: string
@@ -37,13 +40,13 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   const scrollableRef = useRef<HTMLDivElement | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [isDragging, setIsDragging] = useState(false)
-  
+
   // Task selection state
   const [selectedTasks, setSelectedTasks] = useState<Record<string, { taskId: string; name: string }>>({});
-  
+
   // Confirmation dialog state
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  
+
   // New column creation state
   const [isAddingColumn, setIsAddingColumn] = useState(false)
   const [newColumnName, setNewColumnName] = useState("")
@@ -52,7 +55,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   const [addColumnFormOpen, setAddColumnFormOpen] = useState(false)
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
   const colorPickerRef = useRef<HTMLDivElement>(null)
-  
+
   // Close color picker when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -60,14 +63,14 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         setIsColorPickerOpen(false);
       }
     }
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [colorPickerRef]);  
+  }, [colorPickerRef]);
   const [isCreatingColumn, setIsCreatingColumn] = useState(false)
-  
+
   // Use the list view hook
   const {
     columns,
@@ -84,24 +87,24 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   } = useListView(projectId)
 
   // Get bulk AI generation hook
-  const { 
-    generateForTasks, 
-    isGenerating, 
-    stats: generationStats, 
+  const {
+    generateForTasks,
+    isGenerating,
+    stats: generationStats,
     error: generationError,
-    clearError: clearGenerationError 
+    clearError: clearGenerationError
   } = useBulkAIGeneration(updateTask)
 
   // Filter columns based on search query
-  const filteredColumns = columns.filter(column => 
+  const filteredColumns = columns.filter(column =>
     column.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    column.tasks.some(task => 
+    column.tasks.some(task =>
       task.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       task.description?.toLowerCase().includes(searchQuery.toLowerCase())
     )
   )
 
-  
+
   // Handle task selection
   const handleTaskSelect = useCallback((taskId: string, selected: boolean, taskName: string) => {
     setSelectedTasks(prev => {
@@ -114,15 +117,15 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
       }
     })
   }, [])
-  
+
   // Handle bulk selection for a column
   const handleColumnSelectAll = useCallback((columnId: string, selected: boolean) => {
     const column = columns.find(col => col.id === columnId)
     if (!column) return
-    
+
     setSelectedTasks(prev => {
       const newSelected = { ...prev }
-      
+
       column.tasks.forEach(task => {
         if (selected) {
           newSelected[task.taskId] = { taskId: task.taskId, name: task.name }
@@ -130,43 +133,43 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
           delete newSelected[task.taskId]
         }
       })
-      
+
       return newSelected
     })
   }, [columns])
-  
+
   // Log selected tasks
   const handleLogSelectedTasks = useCallback(() => {
     console.log('Selected Tasks:', Object.values(selectedTasks))
   }, [selectedTasks])
-  
+
   // Prompt for AI content generation
   const promptGenerateAIContent = useCallback(() => {
     if (Object.keys(selectedTasks).length === 0 || !useAI) return
     setShowConfirmDialog(true)
   }, [selectedTasks, useAI])
-  
+
   // Generate AI content for selected tasks (actual implementation)
   const handleGenerateAIContent = useCallback(async () => {
     if (Object.keys(selectedTasks).length === 0 || !useAI) return
-    
+
     try {
       clearGenerationError()
       const selectedTasksArray = Object.values(selectedTasks)
-      
+
       // Close the confirmation dialog
       setShowConfirmDialog(false)
-      
+
       // Display the number of tasks to be processed
       const taskCount = selectedTasksArray.length
       toast.info(
         `Starting AI content generation for ${taskCount} task${taskCount !== 1 ? 's' : ''}`,
         { duration: 3000 }
       )
-      
+
       // Call the bulk generation function
       const result = await generateForTasks(selectedTasksArray)
-      
+
       if (result.success) {
         toast.success(result.message, {
           description: `Generated content for ${result.message.split(' ')[2]} tasks`,
@@ -207,7 +210,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         },
         onDrop({ source, location }) {
           setIsDragging(false)
-          
+
           const dragging = source.data
           if (!isCardData(dragging)) {
             return
@@ -364,7 +367,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
           ...(
             [
               "pointercancel",
-              "pointerup", 
+              "pointerup",
               "pointerdown",
               "keydown",
               "resize",
@@ -430,7 +433,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
       {/* Header */}
       <Box className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
         <Flex direction="column" gap="4" className="p-4">
-          
+
           {/* Selected Tasks Actions */}
           {selectedTasksCount > 0 && (
             <Box className="p-3 border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 dark:border-blue-800 rounded-lg shadow-sm">
@@ -445,9 +448,9 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                 </Flex>
                 <Flex gap="3" align="center">
                   {useAI && (
-                    <Tooltip content={!isGenerating ? "Generate AI content for selected tasks" : "Generating content..."}>  
-                      <Button 
-                        variant="soft" 
+                    <Tooltip content={!isGenerating ? "Generate AI content for selected tasks" : "Generating content..."}>
+                      <Button
+                        variant="soft"
                         color="purple"
                         size="2"
                         className="shadow-sm hover:shadow transition-all"
@@ -459,14 +462,14 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                         ) : (
                           <Sparkles size={16} />
                         )}
-                        {isGenerating ? 
-                          `Generating ${generationStats.completed}/${generationStats.total}` : 
+                        {isGenerating ?
+                          `Generating ${generationStats.completed}/${generationStats.total}` :
                           "Generate AI Content"}
                       </Button>
                     </Tooltip>
                   )}
-                  <Button 
-                    variant="soft" 
+                  <Button
+                    variant="soft"
                     color="blue"
                     size="2"
                     className="shadow-sm hover:shadow transition-all"
@@ -475,8 +478,8 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                     <ClipboardList size={16} />
                     Log Selected
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     color="gray"
                     size="2"
                     className="shadow-sm hover:shadow hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
@@ -491,11 +494,11 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
           )}
           <Flex justify="between" align="center">
             <Heading size="6">Project Tasks</Heading>
-            
+
             <Flex align="center" gap="2">
-              <Button 
-                variant="soft" 
-                onClick={() => setIsAddingColumn(true)} 
+              <Button
+                variant="soft"
+                onClick={() => setIsAddingColumn(true)}
                 disabled={isAddingColumn}
               >
                 <Plus size={14} />
@@ -551,20 +554,20 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
             <Box className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 shadow-sm">
               <Flex direction="column" gap="3">
                 <Heading size="3">Add New Status Column</Heading>
-                
+
                 <TextField.Root
-                  placeholder="Column name" 
+                  placeholder="Column name"
                   value={newColumnName}
                   onChange={(e) => setNewColumnName(e.target.value)}
                 />
-                
-                <TextArea 
-                  placeholder="Column description (optional)" 
+
+                <TextArea
+                  placeholder="Column description (optional)"
                   value={newColumnDescription}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewColumnDescription(e.target.value)}
                   rows={2}
                 />
-                
+
                 <Flex align="center" gap="2" className="items-start">
                   <div className="relative" ref={colorPickerRef}>
                     <Button
@@ -575,12 +578,12 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                     />
                     {isColorPickerOpen && (
                       <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
-                        <ColorPicker 
-                          colorType="base" 
+                        <ColorPicker
+                          colorType="base"
                           onColorSelect={(color: ColorSelectType) => {
                             setNewColumnColor(color.hex);
                             setIsColorPickerOpen(false);
-                          }} 
+                          }}
                           activeColor={newColumnColor}
                         />
                       </div>
@@ -588,10 +591,10 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                   </div>
                   <Text size="1" className="text-gray-500">Column color</Text>
                 </Flex>
-                
+
                 <Flex gap="2" justify="end">
-                  <Button 
-                    variant="soft" 
+                  <Button
+                    variant="soft"
                     onClick={() => {
                       setIsAddingColumn(false)
                       setNewColumnName('')
@@ -603,11 +606,11 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                     <X size={14} />
                     Cancel
                   </Button>
-                  
-                  <Button 
+
+                  <Button
                     onClick={async () => {
                       if (!newColumnName.trim()) return
-                      
+
                       setIsCreatingColumn(true)
                       try {
                         await createColumn(
@@ -615,7 +618,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                           newColumnColor,
                           newColumnDescription.trim()
                         )
-                        
+
                         // Reset form
                         setNewColumnName('')
                         setNewColumnDescription('')
@@ -635,7 +638,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
               </Flex>
             </Box>
           )}
-          
+
           {filteredColumns.map((column) => (
             <ListColumn
               key={column.id}
@@ -652,17 +655,17 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
               onSelectAll={handleColumnSelectAll}
             />
           ))}
-          
+
           {filteredColumns.length === 0 && searchQuery && (
             <Box className="text-center py-12">
               <div className="text-gray-500">No tasks found matching "{searchQuery}"</div>
             </Box>
           )}
-          
+
           {filteredColumns.length === 0 && !searchQuery && !isAddingColumn && (
             <Flex direction="column" align="center" className="py-12 space-y-4">
               <Text className="text-gray-500">No status columns found. Create your first column to get started.</Text>
-              <Button 
+              <Button
                 onClick={() => setIsAddingColumn(true)}
                 variant="soft"
               >
@@ -676,7 +679,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         <TaskCardDrawer viewType="list" projectId={projectId} />
       </Box>
 
-      
+
       {/* AI Generation Confirmation Dialog */}
       <ConfirmationDialog
         isOpen={showConfirmDialog}
