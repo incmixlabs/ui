@@ -80,7 +80,10 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
 
 
 
-    console.log('Generated default form values:', defaults) // Debug log
+    // Only log in development mode when debugging
+    if (import.meta.env.DEV && import.meta.env.VITE_DEBUG_FORMS === 'true') {
+      console.log('Generated default form values:', defaults)
+    }
     return defaults
   }, [taskFormSchema, columns])
 

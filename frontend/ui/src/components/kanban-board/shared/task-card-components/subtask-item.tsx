@@ -1,26 +1,21 @@
 // task-card-components/subtask-item.tsx
-import { Reorder, useDragControls } from "framer-motion"
 import { GripVertical, Trash2 } from "lucide-react"
 import { cn } from "@utils"
 import type { SubtaskItemProps } from "./utils/types"
 
 export function SubtaskItem({ subtask, onUpdate, onDelete }: SubtaskItemProps) {
-  const controls = useDragControls();
-  
   return (
-    <Reorder.Item
-      value={subtask}
-      dragControls={controls}
-      dragListener={false}
-      className="list-none"
-    >
-      <div className={cn(
-        "group flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 transition-all hover:shadow-sm",
-        subtask.completed && "opacity-70"
-      )}>
+      <div 
+        className={cn(
+          "group flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 transition-all hover:shadow-sm",
+          subtask.completed && "opacity-70"
+        )}
+        data-subtask-item
+        data-item-id={subtask.id}
+      >
         <div 
-          className="cursor-grab touch-none" 
-          onPointerDown={(e) => controls.start(e)}
+          className="cursor-grab touch-none"
+          data-drag-handle
         >
           <GripVertical className="h-4 w-4 text-gray-400" />
         </div>
@@ -46,6 +41,6 @@ export function SubtaskItem({ subtask, onUpdate, onDelete }: SubtaskItemProps) {
           <Trash2 className="h-4 w-4" />
         </button>
       </div>
-    </Reorder.Item>
+    
   );
 }

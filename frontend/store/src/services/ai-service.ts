@@ -89,6 +89,8 @@ export const aiService = {
         userStory.acceptanceCriteria?.map((text, index) => ({
           id: `ac-${Date.now()}-${index}`,
           text,
+          checked: false, // Add required checked property
+          order: index, // Add required order property
         })) || []
 
       // Format checklist items
@@ -97,6 +99,7 @@ export const aiService = {
           id: `cl-${Date.now()}-${index}`,
           text,
           checked: false,
+          order: index, // Add required order property
         })) || []
 
       return {

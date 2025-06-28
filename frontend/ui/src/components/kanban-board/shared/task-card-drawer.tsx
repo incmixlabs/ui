@@ -38,6 +38,21 @@ export function TaskCardDrawer({
     deleteTask,
     createTask,
     moveTask,
+    // Checklist operations
+    addChecklistItem,
+    updateChecklistItem,
+    removeChecklistItem,
+    reorderChecklistItems,
+    // Acceptance criteria operations
+    addAcceptanceCriteriaItem,
+    updateAcceptanceCriteriaItem,
+    removeAcceptanceCriteriaItem,
+    reorderAcceptanceCriteriaItems,
+    // Subtask operations
+    addSubtask,
+    updateSubtask,
+    removeSubtask,
+    reorderSubtasks,
   } = viewType === 'board' ? useKanban(projectId) : useListView(projectId);
 
   // Find the current task and its column
@@ -127,34 +142,62 @@ export function TaskCardDrawer({
 
             {/* Task Acceptance Criteria */}
             <TaskAcceptanceCriteriaSection
-              acceptanceCriteria={currentTask.acceptanceCriteria}
+              acceptanceCriteria={currentTask.acceptanceCriteria || []}
+              onAcceptanceCriteriaItemToggle={(id, checked) => {
+                if (currentTask.taskId) {
+                  updateAcceptanceCriteriaItem(currentTask.taskId, id, { checked })
+                }
+              }}
+              onAcceptanceCriteriaItemEdit={(id, text) => {
+                if (currentTask.taskId) {
+                  updateAcceptanceCriteriaItem(currentTask.taskId, id, { text })
+                }
+              }}
+              onAcceptanceCriteriaItemDelete={(id) => {
+                if (currentTask.taskId) {
+                  removeAcceptanceCriteriaItem(currentTask.taskId, id)
+                }
+              }}
+              onAcceptanceCriteriaItemAdd={(text) => {
+                if (currentTask.taskId) {
+                  addAcceptanceCriteriaItem(currentTask.taskId, text)
+                }
+              }}
+              onAcceptanceCriteriaItemsReorder={(reorderedItems) => {
+                if (currentTask.taskId) {
+                  reorderAcceptanceCriteriaItems(currentTask.taskId, reorderedItems)
+                }
+              }}
             />
 
             {/* Task Checklist */}
             <TaskChecklist
               checklist={currentTask.checklist || []}
               onChecklistItemToggle={(id, checked) => {
-                const updatedChecklist = currentTask.checklist?.map((item: { id: string; text: string; checked: boolean }) =>
-                  item.id === id ? { ...item, checked } : item
-                )
-                updateTask(currentTask.taskId, { checklist: updatedChecklist })
+                if (currentTask.taskId) {
+                  updateChecklistItem(currentTask.taskId, id, { checked })
+                }
               }}
               onChecklistItemEdit={(id, text) => {
-                const updatedChecklist = currentTask.checklist?.map((item: { id: string; text: string; checked: boolean }) =>
-                  item.id === id ? { ...item, text } : item
-                )
-                updateTask(currentTask.taskId, { checklist: updatedChecklist })
+                if (currentTask.taskId) {
+                  updateChecklistItem(currentTask.taskId, id, { text })
+                }
               }}
               onChecklistItemDelete={(id) => {
-                const updatedChecklist = currentTask.checklist?.filter((item: { id: string }) => item.id !== id)
-                updateTask(currentTask.taskId, { checklist: updatedChecklist })
+                if (currentTask.taskId) {
+                  removeChecklistItem(currentTask.taskId, id)
+                }
               }}
               onChecklistItemAdd={(text) => {
-                const newChecklist = [
-                  ...(currentTask.checklist || []),
-                  { id: crypto.randomUUID(), text, checked: false }
-                ]
-                updateTask(currentTask.taskId, { checklist: newChecklist })
+                if (currentTask.taskId) {
+                  // Add checklist item with text
+                  addChecklistItem(currentTask.taskId, text)
+                }
+              }}
+              onChecklistItemsReorder={(reorderedChecklist) => {
+                if (currentTask.taskId) {
+                  reorderChecklistItems(currentTask.taskId, reorderedChecklist)
+                }
               }}
             />
 

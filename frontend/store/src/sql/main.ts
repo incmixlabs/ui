@@ -64,7 +64,7 @@ type LocalDatabaseOptions = {
   options?: any
 }
 const defaultDatabaseOptions: LocalDatabaseOptions = {
-  forceReset: true,
+  forceReset: false, // Changed from true to false to prevent resetting DB on every refresh
   dbName: "incmix-db",
   options: {
     allowSlowCount: true, // Helps with development

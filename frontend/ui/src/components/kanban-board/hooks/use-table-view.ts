@@ -1,8 +1,8 @@
 import type {
   TableTask,
-  TaskDataSchema,
-  UseTableViewReturn
+  TaskDataSchema
 } from "@incmix/utils/schema"
+import type { UseTableViewReturn } from "./task-operations-types"
 
 import { useListView } from "./use-list-view"
 // hooks/use-table-view.ts
@@ -90,6 +90,24 @@ export function useTableView(
     createTaskStatus: listViewData.createColumn,
     updateTaskStatus: listViewData.updateColumn,
     deleteTaskStatus: listViewData.deleteColumn,
+    
+    // Checklist operations
+    addChecklistItem: listViewData.addChecklistItem,
+    updateChecklistItem: listViewData.updateChecklistItem,
+    removeChecklistItem: listViewData.removeChecklistItem,
+    reorderChecklistItems: listViewData.reorderChecklistItems,
+    
+    // Acceptance criteria operations
+    addAcceptanceCriteriaItem: listViewData.addAcceptanceCriteriaItem,
+    updateAcceptanceCriteriaItem: listViewData.updateAcceptanceCriteriaItem,
+    removeAcceptanceCriteriaItem: listViewData.removeAcceptanceCriteriaItem,
+    reorderAcceptanceCriteriaItems: listViewData.reorderAcceptanceCriteriaItems,
+    
+    // Subtask operations
+    addSubtask: listViewData.addSubtask,
+    updateSubtask: listViewData.updateSubtask,
+    removeSubtask: listViewData.removeSubtask,
+    reorderSubtasks: listViewData.reorderSubtasks,
 
     // Utility
     refetch: listViewData.refetch,

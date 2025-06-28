@@ -2,8 +2,8 @@ import {
   type KanbanColumn,
   useKanban,
 } from "./use-kanban-data"
-import type {
-  TaskDataSchema } from "@incmix/utils/schema"
+import type { TaskDataSchema } from "@incmix/utils/schema"
+import type { TaskOperations } from "./task-operations-types"
 // components/list/hooks/use-list-view.ts
 import { useMemo } from "react"
 
@@ -12,7 +12,7 @@ export interface ListColumn extends KanbanColumn {
   isExpanded?: boolean
 }
 
-export interface UseListViewReturn {
+export interface UseListViewReturn extends TaskOperations {
   columns: ListColumn[]
   isLoading: boolean
   error: string | null
@@ -93,7 +93,7 @@ export function useListView(projectId = "default-project"): UseListViewReturn {
     ...kanbanData,
     columns: listColumns,
     // Add list-specific operations if needed in the future
-  }
+  } as UseListViewReturn
 }
 
 // Re-export types for convenience

@@ -5,8 +5,29 @@ import type {
   ProjectData,
   TaskDataSchema,
   TaskStatusDocType,
-  UseProjectDataReturn,
+  UseProjectDataReturn as BaseProjectDataReturn,
 } from "@incmix/utils/schema"
+
+// Extended interface with new checklist, acceptance criteria, and subtask operations
+interface UseProjectDataReturn extends BaseProjectDataReturn {
+  // Checklist operations
+  addChecklistItem: (taskId: string, text: string) => Promise<void>
+  updateChecklistItem: (taskId: string, itemId: string, updates: { text?: string; checked?: boolean }) => Promise<void>
+  removeChecklistItem: (taskId: string, itemId: string) => Promise<void>
+  reorderChecklistItems: (taskId: string, itemIds: string[]) => Promise<void>
+  
+  // Acceptance criteria operations
+  addAcceptanceCriteriaItem: (taskId: string, text: string) => Promise<void>
+  updateAcceptanceCriteriaItem: (taskId: string, itemId: string, updates: { text?: string; checked?: boolean }) => Promise<void>
+  removeAcceptanceCriteriaItem: (taskId: string, itemId: string) => Promise<void>
+  reorderAcceptanceCriteriaItems: (taskId: string, itemIds: string[]) => Promise<void>
+  
+  // Subtask operations
+  addSubtask: (taskId: string, name: string) => Promise<void>
+  updateSubtask: (taskId: string, subtaskId: string, updates: { name?: string; completed?: boolean }) => Promise<void>
+  removeSubtask: (taskId: string, subtaskId: string) => Promise<void>
+  reorderSubtasks: (taskId: string, subtaskIds: string[]) => Promise<void>
+}
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { Subscription } from "rxjs"
 import { database } from "sql"
@@ -17,11 +38,22 @@ import {
   getCurrentTimestamp,
 } from "../utils/browser-helpers"
 
+// Extend Window interface to include our custom property
+declare global {
+  interface Window {
+    __mockUserWarningShown?: boolean;
+  }
+}
+
 // Get the current user - accepts user context to make it injectable
 const getCurrentUser = (user?: CurrentUser) => {
   if (!user) {
-    // For backward compatibility in dev, return a mock user with a console warning
-    console.warn("Warning: No user context provided. Using mock user data.")
+    // For backward compatibility in dev, return a mock user
+    // Only show warning in development mode and only once per session
+    if (import.meta.env.DEV && !window.__mockUserWarningShown) {
+      console.warn("Warning: No user context provided. Using mock user data.")
+      window.__mockUserWarningShown = true
+    }
     return {
       id: "mock-user-id",
       name: "Mock User",
@@ -121,8 +153,9 @@ export function useProjectData(
             sort: [{ columnId: "asc" }, { order: "asc" }],
           })
           .$.subscribe({
-            next: (taskDocs: Array<{ toJSON(): TaskDocType }>) => {
-              const tasks = taskDocs.map((doc: { toJSON(): TaskDocType }) => {
+            next: (taskDocs) => {
+              // Use the RxDB document type directly and just call toJSON() on it
+              const tasks = taskDocs.map(doc => {
                 const task = doc.toJSON()
                 return {
                   ...task,
@@ -491,6 +524,375 @@ export function useProjectData(
     }
   }, [])
 
+  // Checklist operations
+  const addChecklistItem = useCallback(
+    async (taskId: string, text: string) => {
+      try {
+        // Find the task
+        const task = await database.tasks
+          .findOne({ selector: { taskId } })
+          .exec()
+        if (!task) throw new Error("Task not found")
+        
+        // Get the task data
+        const taskData = task.toJSON()
+        
+        // Find the highest order
+        const maxOrder = Math.max(...(taskData.checklist?.map(item => item.order) || [-1]), -1)
+        
+        // Add the new checklist item
+        const updatedChecklist = [
+          ...(taskData.checklist || []),
+          {
+            id: generateBrowserUniqueId("chk"),
+            text,
+            checked: false,
+            order: maxOrder + 1
+          }
+        ]
+        
+        // Update the task
+        await updateTask(taskId, { checklist: updatedChecklist })
+      } catch (error) {
+        console.error("Failed to add checklist item:", error)
+        throw error
+      }
+    },
+    []
+  )
+
+  const updateChecklistItem = useCallback(
+    async (taskId: string, itemId: string, updates: { text?: string; checked?: boolean }) => {
+      try {
+        // Find the task
+        const task = await database.tasks
+          .findOne({ selector: { taskId } })
+          .exec()
+        if (!task) throw new Error("Task not found")
+        
+        // Get the task data
+        const taskData = task.toJSON()
+        
+        // Update the checklist item
+        const updatedChecklist = taskData.checklist?.map(item =>
+          item.id === itemId ? { ...item, ...updates } : item
+        )
+        
+        // Update the task
+        await updateTask(taskId, { checklist: updatedChecklist })
+      } catch (error) {
+        console.error("Failed to update checklist item:", error)
+        throw error
+      }
+    },
+    []
+  )
+
+  const removeChecklistItem = useCallback(
+    async (taskId: string, itemId: string) => {
+      try {
+        // Find the task
+        const task = await database.tasks
+          .findOne({ selector: { taskId } })
+          .exec()
+        if (!task) throw new Error("Task not found")
+        
+        // Get the task data
+        const taskData = task.toJSON()
+        
+        // Remove the checklist item
+        const updatedChecklist = taskData.checklist?.filter(item => item.id !== itemId)
+        
+        // Update the task
+        await updateTask(taskId, { checklist: updatedChecklist })
+      } catch (error) {
+        console.error("Failed to remove checklist item:", error)
+        throw error
+      }
+    },
+    []
+  )
+
+  const reorderChecklistItems = useCallback(
+    async (taskId: string, itemIds: string[]) => {
+      try {
+        // Find the task
+        const task = await database.tasks
+          .findOne({ selector: { taskId } })
+          .exec()
+        if (!task) throw new Error("Task not found")
+        
+        // Get the task data
+        const taskData = task.toJSON()
+        
+        // Create a map of item IDs to their properties
+        const itemMap = new Map(
+          taskData.checklist?.map(item => [item.id, item]) || []
+        )
+        
+        // Create reordered checklist
+        const updatedChecklist = itemIds.map((id, index) => {
+          const item = itemMap.get(id)
+          if (!item) throw new Error(`Checklist item with ID ${id} not found`)
+          return { ...item, order: index }
+        })
+        
+        // Update the task
+        await updateTask(taskId, { checklist: updatedChecklist })
+      } catch (error) {
+        console.error("Failed to reorder checklist items:", error)
+        throw error
+      }
+    },
+    []
+  )
+
+  // Acceptance criteria operations
+  const addAcceptanceCriteriaItem = useCallback(
+    async (taskId: string, text: string) => {
+      try {
+        // Find the task
+        const task = await database.tasks
+          .findOne({ selector: { taskId } })
+          .exec()
+        if (!task) throw new Error("Task not found")
+        
+        // Get the task data
+        const taskData = task.toJSON()
+        
+        // Find the highest order
+        const maxOrder = Math.max(...(taskData.acceptanceCriteria?.map(item => item.order) || [-1]), -1)
+        
+        // Add the new acceptance criteria item
+        const updatedAcceptanceCriteria = [
+          ...(taskData.acceptanceCriteria || []),
+          {
+            id: generateBrowserUniqueId("ac"),
+            text,
+            checked: false,
+            order: maxOrder + 1
+          }
+        ]
+        
+        // Update the task
+        await updateTask(taskId, { acceptanceCriteria: updatedAcceptanceCriteria })
+      } catch (error) {
+        console.error("Failed to add acceptance criteria item:", error)
+        throw error
+      }
+    },
+    []
+  )
+
+  const updateAcceptanceCriteriaItem = useCallback(
+    async (taskId: string, itemId: string, updates: { text?: string; checked?: boolean }) => {
+      try {
+        // Find the task
+        const task = await database.tasks
+          .findOne({ selector: { taskId } })
+          .exec()
+        if (!task) throw new Error("Task not found")
+        
+        // Get the task data
+        const taskData = task.toJSON()
+        
+        // Update the acceptance criteria item
+        const updatedAcceptanceCriteria = taskData.acceptanceCriteria?.map(item =>
+          item.id === itemId ? { ...item, ...updates } : item
+        )
+        
+        // Update the task
+        await updateTask(taskId, { acceptanceCriteria: updatedAcceptanceCriteria })
+      } catch (error) {
+        console.error("Failed to update acceptance criteria item:", error)
+        throw error
+      }
+    },
+    []
+  )
+
+  const removeAcceptanceCriteriaItem = useCallback(
+    async (taskId: string, itemId: string) => {
+      try {
+        // Find the task
+        const task = await database.tasks
+          .findOne({ selector: { taskId } })
+          .exec()
+        if (!task) throw new Error("Task not found")
+        
+        // Get the task data
+        const taskData = task.toJSON()
+        
+        // Remove the acceptance criteria item
+        const updatedAcceptanceCriteria = taskData.acceptanceCriteria?.filter(item => item.id !== itemId)
+        
+        // Update the task
+        await updateTask(taskId, { acceptanceCriteria: updatedAcceptanceCriteria })
+      } catch (error) {
+        console.error("Failed to remove acceptance criteria item:", error)
+        throw error
+      }
+    },
+    []
+  )
+
+  const reorderAcceptanceCriteriaItems = useCallback(
+    async (taskId: string, itemIds: string[]) => {
+      try {
+        // Find the task
+        const task = await database.tasks
+          .findOne({ selector: { taskId } })
+          .exec()
+        if (!task) throw new Error("Task not found")
+        
+        // Get the task data
+        const taskData = task.toJSON()
+        
+        // Create a map of item IDs to their properties
+        const itemMap = new Map(
+          taskData.acceptanceCriteria?.map(item => [item.id, item]) || []
+        )
+        
+        // Create reordered acceptance criteria
+        const updatedAcceptanceCriteria = itemIds.map((id, index) => {
+          const item = itemMap.get(id)
+          if (!item) throw new Error(`Acceptance criteria item with ID ${id} not found`)
+          return { ...item, order: index }
+        })
+        
+        // Update the task
+        await updateTask(taskId, { acceptanceCriteria: updatedAcceptanceCriteria })
+      } catch (error) {
+        console.error("Failed to reorder acceptance criteria items:", error)
+        throw error
+      }
+    },
+    []
+  )
+
+  // Subtask operations
+  const addSubtask = useCallback(
+    async (taskId: string, name: string) => {
+      try {
+        // Find the task
+        const task = await database.tasks
+          .findOne({ selector: { taskId } })
+          .exec()
+        if (!task) throw new Error("Task not found")
+        
+        // Get the task data
+        const taskData = task.toJSON()
+        
+        // Find the highest order
+        const maxOrder = Math.max(...(taskData.subTasks?.map(item => item.order) || [-1]), -1)
+        
+        // Add the new subtask
+        const updatedSubtasks = [
+          ...(taskData.subTasks || []),
+          {
+            id: generateBrowserUniqueId("sub"),
+            name,
+            completed: false,
+            order: maxOrder + 1
+          }
+        ]
+        
+        // Update the task
+        await updateTask(taskId, { subTasks: updatedSubtasks })
+      } catch (error) {
+        console.error("Failed to add subtask:", error)
+        throw error
+      }
+    },
+    []
+  )
+
+  const updateSubtask = useCallback(
+    async (taskId: string, subtaskId: string, updates: { name?: string; completed?: boolean }) => {
+      try {
+        // Find the task
+        const task = await database.tasks
+          .findOne({ selector: { taskId } })
+          .exec()
+        if (!task) throw new Error("Task not found")
+        
+        // Get the task data
+        const taskData = task.toJSON()
+        
+        // Update the subtask
+        const updatedSubtasks = taskData.subTasks?.map(subtask =>
+          subtask.id === subtaskId ? { ...subtask, ...updates } : subtask
+        )
+        
+        // Update the task
+        await updateTask(taskId, { subTasks: updatedSubtasks })
+      } catch (error) {
+        console.error("Failed to update subtask:", error)
+        throw error
+      }
+    },
+    []
+  )
+
+  const removeSubtask = useCallback(
+    async (taskId: string, subtaskId: string) => {
+      try {
+        // Find the task
+        const task = await database.tasks
+          .findOne({ selector: { taskId } })
+          .exec()
+        if (!task) throw new Error("Task not found")
+        
+        // Get the task data
+        const taskData = task.toJSON()
+        
+        // Remove the subtask
+        const updatedSubtasks = taskData.subTasks?.filter(subtask => subtask.id !== subtaskId)
+        
+        // Update the task
+        await updateTask(taskId, { subTasks: updatedSubtasks })
+      } catch (error) {
+        console.error("Failed to remove subtask:", error)
+        throw error
+      }
+    },
+    []
+  )
+
+  const reorderSubtasks = useCallback(
+    async (taskId: string, subtaskIds: string[]) => {
+      try {
+        // Find the task
+        const task = await database.tasks
+          .findOne({ selector: { taskId } })
+          .exec()
+        if (!task) throw new Error("Task not found")
+        
+        // Get the task data
+        const taskData = task.toJSON()
+        
+        // Create a map of subtask IDs to their properties
+        const subtaskMap = new Map(
+          taskData.subTasks?.map(subtask => [subtask.id, subtask]) || []
+        )
+        
+        // Create reordered subtasks
+        const updatedSubtasks = subtaskIds.map((id, index) => {
+          const subtask = subtaskMap.get(id)
+          if (!subtask) throw new Error(`Subtask with ID ${id} not found`)
+          return { ...subtask, order: index }
+        })
+        
+        // Update the task
+        await updateTask(taskId, { subTasks: updatedSubtasks })
+      } catch (error) {
+        console.error("Failed to reorder subtasks:", error)
+        throw error
+      }
+    },
+    []
+  )
+
   // Utility functions - FIXED: removed async from refetch since it doesn't await anything
   const refetch = useCallback(() => {
     // With reactive subscriptions, manual refetch is rarely needed
@@ -516,5 +918,20 @@ export function useProjectData(
     reorderTaskStatuses,
     refetch,
     clearError,
+    // New checklist operations
+    addChecklistItem,
+    updateChecklistItem,
+    removeChecklistItem,
+    reorderChecklistItems,
+    // New acceptance criteria operations
+    addAcceptanceCriteriaItem,
+    updateAcceptanceCriteriaItem,
+    removeAcceptanceCriteriaItem,
+    reorderAcceptanceCriteriaItems,
+    // New subtask operations
+    addSubtask,
+    updateSubtask,
+    removeSubtask,
+    reorderSubtasks,
   }
 }

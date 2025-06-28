@@ -2,7 +2,8 @@
 // REPLACE your current file with this fixed version
 
 import { useMemo } from "react"
-import type { TaskDataSchema, UseKanbanReturn } from "@incmix/utils/schema"
+import type { TaskDataSchema } from "@incmix/utils/schema"
+import type { UseKanbanReturn } from "./task-operations-types"
 import type { KanbanColumn, KanbanTask } from "../types"
 
 import { useProjectData } from "@incmix/store"
@@ -104,6 +105,24 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
       updateColumn: projectData.updateTaskStatus,
       deleteColumn: projectData.deleteTaskStatus,
       reorderColumns: projectData.reorderTaskStatuses,
+      
+      // Checklist operations
+      addChecklistItem: projectData.addChecklistItem,
+      updateChecklistItem: projectData.updateChecklistItem,
+      removeChecklistItem: projectData.removeChecklistItem,
+      reorderChecklistItems: projectData.reorderChecklistItems,
+      
+      // Acceptance criteria operations
+      addAcceptanceCriteriaItem: projectData.addAcceptanceCriteriaItem,
+      updateAcceptanceCriteriaItem: projectData.updateAcceptanceCriteriaItem,
+      removeAcceptanceCriteriaItem: projectData.removeAcceptanceCriteriaItem,
+      reorderAcceptanceCriteriaItems: projectData.reorderAcceptanceCriteriaItems,
+      
+      // Subtask operations
+      addSubtask: projectData.addSubtask,
+      updateSubtask: projectData.updateSubtask,
+      removeSubtask: projectData.removeSubtask,
+      reorderSubtasks: projectData.reorderSubtasks,
 
       // Utility
       refetch: projectData.refetch,

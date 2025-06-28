@@ -112,8 +112,8 @@ const QuickTaskForm = memo(function QuickTaskForm({
   // Task form state
   const [taskName, setTaskName] = useState("")
   const [description, setDescription] = useState("")
-  const [checklist, setChecklist] = useState<Array<{ id: string; text: string; checked: boolean }>>([])
-  const [acceptanceCriteria, setAcceptanceCriteria] = useState<Array<{ id: string; text: string }>>([])
+  const [checklist, setChecklist] = useState<Array<{ id: string; text: string; checked: boolean; order?: number }>>([])
+  const [acceptanceCriteria, setAcceptanceCriteria] = useState<Array<{ id: string; text: string; checked?: boolean; order?: number }>>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [hadGenerationError, setHadGenerationError] = useState(false)
 
@@ -174,8 +174,15 @@ const QuickTaskForm = memo(function QuickTaskForm({
         subTasks: [],
         comments: [],
         commentsCount: 0,
-        checklist: checklist,
-        acceptanceCriteria: acceptanceCriteria,
+        checklist: checklist.map((item, index) => ({
+          ...item,
+          order: item.order ?? index
+        })),
+        acceptanceCriteria: acceptanceCriteria.map((item, index) => ({
+          ...item,
+          checked: item.checked ?? false,
+          order: item.order ?? index
+        })),
       })
 
       setTaskName("")
@@ -460,12 +467,12 @@ export const BoardColumn = memo(function BoardColumn({
           setState(idle)
         },
       }),
-      autoScrollForElements({
-        canScroll({ source }) {
-          return isDraggingACard({ source })
-        },
-        element: scrollable,
-      })
+      // autoScrollForElements({
+      //   canScroll({ source }) {
+      //     return isDraggingACard({ source })
+      //   },
+      //   element: scrollable,
+      // })
     )
   }, [column.id, columnData, setIsCardOver])
 

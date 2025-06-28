@@ -1,12 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Checkbox, TextField } from "@incmix/ui";
-import { Pencil, Trash, Check, X } from "lucide-react";
+import { Pencil, Trash, Check, X, GripVertical } from "lucide-react";
 import { ConfirmationModal } from "./confirmation-modal";
+import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge";
 
 interface ChecklistItem {
   id: string;
   text: string;
   checked: boolean;
+  order?: number;
 }
 
 interface TaskChecklistProps {
@@ -15,6 +19,7 @@ interface TaskChecklistProps {
   onChecklistItemEdit: (id: string, text: string) => void;
   onChecklistItemDelete: (id: string) => void;
   onChecklistItemAdd?: (text: string) => void;
+  onChecklistItemsReorder?: (itemIds: string[]) => void;
 }
 
 export function TaskChecklist({
@@ -23,6 +28,7 @@ export function TaskChecklist({
   onChecklistItemEdit,
   onChecklistItemDelete,
   onChecklistItemAdd,
+  onChecklistItemsReorder,
 }: TaskChecklistProps) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [activeItem, setActiveItem] = useState<ChecklistItem | null>(null);
@@ -142,6 +148,107 @@ export function TaskChecklist({
     return null;
   }
 
+  // Setup drag and drop for checklist items
+  useEffect(() => {
+    const cleanups: Array<() => void> = [];
+    
+    // Process each checklist item for drag and drop
+    const itemElements = document.querySelectorAll('[data-checklist-item]');
+    itemElements.forEach((element, index) => {
+      const itemId = element.getAttribute('data-item-id');
+      if (!itemId) return;
+      
+      // Handle draggable
+      const handleRef = element.querySelector('[data-drag-handle]');
+      if (handleRef) {
+        const draggableCleanup = draggable({
+          element: handleRef as HTMLElement,
+          dragHandle: handleRef as HTMLElement,
+          getInitialData: () => ({
+            type: 'checklist-item',
+            itemId,
+            index
+          }),
+          onDragStart: () => {
+            element.classList.add('opacity-50');
+          },
+          onDrop: () => {
+            element.classList.remove('opacity-50');
+          },
+          onDropTargetChange: () => {}
+        });
+        cleanups.push(draggableCleanup);
+      }
+      
+      // Handle drop target
+      const dropTargetCleanup = dropTargetForElements({
+        element: element as HTMLElement,
+        getData: ({ input }) => {
+          const closestEdge = extractClosestEdge({
+            input,
+            target: element as HTMLElement,
+            allowedEdges: ['top', 'bottom']
+          });
+          
+          return {
+            type: 'checklist-item-drop-target',
+            itemId,
+            index,
+            closestEdge
+          };
+        },
+        onDragEnter: () => {
+          element.classList.add('bg-gray-50', 'dark:bg-gray-800');
+        },
+        onDragLeave: () => {
+          element.classList.remove('bg-gray-50', 'dark:bg-gray-800');
+        },
+        onDrop: ({ source, location }) => {
+          element.classList.remove('bg-gray-50', 'dark:bg-gray-800');
+          
+          // Make sure we have what we need
+          if (!onChecklistItemsReorder || !source.data) return;
+          
+          const sourceData = source.data as { type: string; itemId: string; index: number } | undefined;
+          if (!sourceData) return;
+          const dropTargetData = location.current.dropTargets[0]?.data as { 
+            type: string; 
+            itemId: string; 
+            index: number; 
+            closestEdge: 'top' | 'bottom' 
+          };
+          
+          if (sourceData.type !== 'checklist-item' || 
+              !dropTargetData || 
+              dropTargetData.type !== 'checklist-item-drop-target') {
+            return;
+          }
+          
+          // Get the reordered indices
+          const reordered = reorderWithEdge({
+            axis: 'vertical',
+            list: optimisticChecklist,
+            startIndex: sourceData.index,
+            indexOfTarget: dropTargetData.index,
+            closestEdgeOfTarget: dropTargetData.closestEdge,
+          });
+          
+          // Update local state optimistically
+          setOptimisticChecklist(reordered);
+          
+          // Call the reorder handler with the new item IDs array
+          onChecklistItemsReorder(reordered.map(item => item.id));
+        }
+      });
+      
+      cleanups.push(dropTargetCleanup);
+    });
+    
+    return () => {
+      cleanups.forEach(cleanup => cleanup());
+    };
+  }, [optimisticChecklist, onChecklistItemsReorder]);
+  
   return (
     <>
       <div className="space-y-3">
@@ -196,7 +303,18 @@ export function TaskChecklist({
             </div>
           )}
           {optimisticChecklist.map((item) => (
-          <div key={item.id} className="flex items-start gap-2 group">
+          <div 
+            key={item.id} 
+            className="flex items-start gap-2 group pr-2" 
+            data-checklist-item 
+            data-item-id={item.id}
+          >
+            <div 
+              className="cursor-grab text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 mt-0.5 opacity-0 group-hover:opacity-100"
+              data-drag-handle
+            >
+              <GripVertical size={16} />
+            </div>
             <Checkbox
               id={`checklist-${item.id}`}
               checked={item.checked}
