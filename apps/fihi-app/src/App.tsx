@@ -1,7 +1,11 @@
 import React, { type CSSProperties, Suspense, useEffect, useMemo } from "react"
 
 import { useQuery } from "@tanstack/react-query"
-import { RouterProvider, createRouter } from "@tanstack/react-router"
+import {
+  Router,
+  RouterProvider,
+  notFoundComponent,
+} from "@tanstack/react-router"
 import { setDefaultOptions } from "date-fns"
 
 import { LoadingPage } from "@incmix/pages/common"
@@ -88,7 +92,7 @@ const routeTree = RootRoute.addChildren([
   OnboardingRoute,
 ])
 
-const router = createRouter({ routeTree })
+const router = new Router({ routeTree })
 
 function App() {
   const appearance = useAppearanceStore()
