@@ -1,9 +1,5 @@
 import type { TaskStatusDocType } from "@incmix/utils/schema"
-import type {
-  TaskCollections,
-  TaskDocType,
-  
-} from "../sql/types"
+import type { TaskCollections, TaskDocType } from "../sql/types"
 // Import browser-compatible helpers instead of Node.js Buffer-using ones
 import {
   generateBrowserUniqueId,
