@@ -61,6 +61,7 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
   }
 
   return (
+    <>
     <Dialog.Root
       {...props}
       open={isOpen}
@@ -69,6 +70,11 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
         reset()
       }}
     >
+      	<Dialog.Trigger >
+			<Button className="inline-flex h-[35px] select-none items-center justify-center rounded bg-violet4 px-[15px] font-medium text-violet11 leading-none outline-none outline-offset-1 hover:bg-mauve3 focus-visible:outline-2 focus-visible:outline-violet6">
+				Create Project
+			</Button>
+		</Dialog.Trigger>
       <Dialog.Content className="border border-gray-4">
         <Dialog.Header>
           <Dialog.Title>Create New Project</Dialog.Title>
@@ -101,5 +107,6 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
         </Dialog.Footer>
       </Dialog.Content>
     </Dialog.Root>
+    </>
   )
 }

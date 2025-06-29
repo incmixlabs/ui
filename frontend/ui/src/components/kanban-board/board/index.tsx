@@ -267,7 +267,7 @@ export function Board({
   return (
     <Box className="w-full">
       {/* Fixed Board Header - Always visible, doesn't scroll horizontally */}
-      <Box className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+      <Box className="border-b border-gray-200 dark:border-gray-700">
         <Flex direction="column" gap="4" className="p-4">
           <Flex justify="between" align="center">
             <Heading size="6">Project Board</Heading>

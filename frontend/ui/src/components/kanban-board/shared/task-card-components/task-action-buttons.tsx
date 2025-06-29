@@ -14,7 +14,7 @@ import {
   import { cn } from "@utils"
   import { getPriorityConfig, isTaskOverdue } from "./utils/task-utils"
   import type { TaskActionButtonsProps } from "./utils/types"
-  import type { KanbanColumn } from "@incmix/store"
+import { KanbanColumn } from "@incmix/utils/schema"
   
   export function TaskActionButtons({
     currentTask,

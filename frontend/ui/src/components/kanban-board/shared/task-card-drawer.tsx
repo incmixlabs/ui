@@ -72,7 +72,7 @@ export function TaskCardDrawer({
       open={isOpen}
       onOpenChange={(open) => !open && handleDrawerClose()}
     >
-      <div className="h-full flex flex-col bg-white dark:bg-gray-950">
+      <div className="h-full flex flex-col ">
         {/* Delete Task Confirmation Modal */}
         {ModalPresets.deleteTask({
           isOpen: drawerState.showDeleteConfirmation,
@@ -83,10 +83,10 @@ export function TaskCardDrawer({
         })}
 
         {/* Header */}
-        <TaskHeader
+        {/* <TaskHeader
           currentColumn={currentColumn}
           onClose={handleDrawerClose}
-        />
+        /> */}
 
         {/* Content */}
         <ScrollArea className="flex-1">
