@@ -194,7 +194,12 @@ export function TaskAcceptanceCriteriaSection({
                   value={newItemText}
                   onChange={(e) => setNewItemText(e.target.value)}
                   onKeyDown={handleNewItemKeyDown}
-                  onBlur={handleSaveNew}
+                  onBlur={(e) => {
+                    // Don't save if blur is caused by clicking the cancel button
+                    if (!e.relatedTarget?.getAttribute('aria-label')?.includes('Cancel')) {
+                      handleSaveNew();
+                    }
+                  }}
                   placeholder="New acceptance criteria"
                   className="flex-1 text-sm text-gray-700 dark:text-gray-300 bg-transparent border-none focus:outline-none focus:ring-0 p-0 m-0 w-full"
                   autoFocus

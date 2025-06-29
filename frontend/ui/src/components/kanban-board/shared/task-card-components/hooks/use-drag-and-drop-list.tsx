@@ -46,6 +46,9 @@ export function useDragAndDropList<T extends DraggableItem>({
     const cleanups: Array<() => void> = [];
     
     // Process each list item for drag and drop
+    if (!itemSelector.startsWith('data-')) {
+      console.warn('itemSelector should start with "data-" for proper HTML5 data attributes');
+    }
     const itemElements = document.querySelectorAll(`[${itemSelector}]`);
     itemElements.forEach((element, index) => {
       const itemId = element.getAttribute('data-item-id');
