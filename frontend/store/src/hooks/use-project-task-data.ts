@@ -204,6 +204,28 @@ export function useProjectData(
         const tasksInColumn = data.tasks.filter((t) => t.columnId === columnId)
         const maxOrder = Math.max(...tasksInColumn.map((t) => t.order), -1)
 
+        // Transform any array items to ensure they have required fields like 'order' and 'checked'
+        const processedAcceptanceCriteria = (taskData.acceptanceCriteria || []).map((item, index) => ({
+          id: item.id || generateBrowserUniqueId('ac'),
+          text: item.text || '',
+          checked: item.checked ?? false,
+          order: item.order ?? index,
+        }))
+
+        const processedChecklist = (taskData.checklist || []).map((item, index) => ({
+          id: item.id || generateBrowserUniqueId('cl'),
+          text: item.text || '',
+          checked: item.checked ?? false,
+          order: item.order ?? index,
+        }))
+
+        const processedSubTasks = (taskData.subTasks || []).map((item, index) => ({
+          id: item.id || generateBrowserUniqueId('st'),
+          name: item.name || '',
+          completed: item.completed ?? false,
+          order: item.order ?? index,
+        }))
+
         const newTask: TaskDataSchema = {
           id: generateBrowserUniqueId("task"),
           taskId: generateBrowserUniqueId("tsk"),
@@ -220,12 +242,12 @@ export function useProjectData(
           labelsTags: taskData.labelsTags || [],
           attachments: taskData.attachments || [],
           assignedTo: taskData.assignedTo || [],
-          subTasks: taskData.subTasks || [],
+          subTasks: processedSubTasks,
           comments: taskData.comments || [],
           commentsCount: 0,
-          // Include checklist and acceptanceCriteria from taskData if available
-          checklist: taskData.checklist || [],
-          acceptanceCriteria: taskData.acceptanceCriteria || [],
+          // Use processed arrays that ensure schema compliance
+          checklist: processedChecklist,
+          acceptanceCriteria: processedAcceptanceCriteria,
           createdAt: now,
           updatedAt: now,
           createdBy: user,
@@ -248,8 +270,41 @@ export function useProjectData(
         const now = getCurrentTimestamp()
         const user = getCurrentUser(currentUser)
 
+        // Process array updates if present to ensure schema compliance
+        let processedUpdates = { ...updates }
+        
+        // Handle acceptanceCriteria updates
+        if (updates.acceptanceCriteria) {
+          processedUpdates.acceptanceCriteria = updates.acceptanceCriteria.map((item, index) => ({
+            id: item.id || generateBrowserUniqueId('ac'),
+            text: item.text || '',
+            checked: item.checked ?? false,
+            order: item.order ?? index,
+          }))
+        }
+        
+        // Handle checklist updates
+        if (updates.checklist) {
+          processedUpdates.checklist = updates.checklist.map((item, index) => ({
+            id: item.id || generateBrowserUniqueId('cl'),
+            text: item.text || '',
+            checked: item.checked ?? false,
+            order: item.order ?? index,
+          }))
+        }
+        
+        // Handle subTasks updates
+        if (updates.subTasks) {
+          processedUpdates.subTasks = updates.subTasks.map((item, index) => ({
+            id: item.id || generateBrowserUniqueId('st'),
+            name: item.name || '',
+            completed: item.completed ?? false,
+            order: item.order ?? index,
+          }))
+        }
+
         const finalUpdates = {
-          ...updates,
+          ...processedUpdates,
           updatedAt: now,
           updatedBy: user,
         }

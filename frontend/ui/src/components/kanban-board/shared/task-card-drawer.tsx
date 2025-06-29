@@ -160,36 +160,61 @@ export function TaskCardDrawer({
                 checklist={currentTask.checklist || []}
                 onChecklistItemToggle={(id, checked) => {
                   const updatedChecklist = currentTask.checklist?.map(
-                    (item: { id: string; text: string; checked: boolean }) =>
+                    (item: { id: string; text: string; checked: boolean; order: number }) =>
                       item.id === id ? { ...item, checked } : item,
                   );
-                  updateTask(currentTask.taskId, {
-                    checklist: updatedChecklist,
-                  });
+                  if (currentTask.taskId) {
+                    updateTask(currentTask.taskId, {
+                      checklist: updatedChecklist,
+                    });
+                  }
                 }}
                 onChecklistItemEdit={(id, text) => {
                   const updatedChecklist = currentTask.checklist?.map(
-                    (item: { id: string; text: string; checked: boolean }) =>
+                    (item: { id: string; text: string; checked: boolean; order: number }) =>
                       item.id === id ? { ...item, text } : item,
                   );
-                  updateTask(currentTask.taskId, {
-                    checklist: updatedChecklist,
-                  });
+                  if (currentTask.taskId) {
+                    updateTask(currentTask.taskId, {
+                      checklist: updatedChecklist,
+                    });
+                  }
                 }}
                 onChecklistItemDelete={(id) => {
                   const updatedChecklist = currentTask.checklist?.filter(
                     (item: { id: string }) => item.id !== id,
                   );
-                  updateTask(currentTask.taskId, {
-                    checklist: updatedChecklist,
-                  });
+                  if (currentTask.taskId) {
+                    updateTask(currentTask.taskId, {
+                      checklist: updatedChecklist,
+                    });
+                  }
                 }}
                 onChecklistItemAdd={(text) => {
+                  // Find the highest order to place new item at the end
+                  const maxOrder = Math.max(
+                    0,
+                    ...(currentTask.checklist || []).map(item => item.order || 0)
+                  );
+                  
                   const newChecklist = [
                     ...(currentTask.checklist || []),
-                    { id: crypto.randomUUID(), text, checked: false },
+                    { 
+                      id: crypto.randomUUID(), 
+                      text, 
+                      checked: false,
+                      order: maxOrder + 1 // Set order to place at end
+                    },
                   ];
-                  updateTask(currentTask.taskId, { checklist: newChecklist });
+                  
+                  if (currentTask.taskId) {
+                    updateTask(currentTask.taskId, { checklist: newChecklist });
+                  }
+                }}
+                onReorderChecklist={(reorderedChecklist) => {
+                  if (currentTask.taskId) {
+                    updateTask(currentTask.taskId, { checklist: reorderedChecklist });
+                  }
                 }}
               />
 
