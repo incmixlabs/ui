@@ -936,7 +936,7 @@ export function useProjectData(
     },
     []
   )
-  
+
   // Utility functions - FIXED: removed async from refetch since it doesn't await anything
   const refetch = useCallback(() => {
     // With reactive subscriptions, manual refetch is rarely needed
