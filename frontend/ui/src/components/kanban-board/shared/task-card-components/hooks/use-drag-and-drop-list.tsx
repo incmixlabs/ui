@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge";
@@ -39,6 +39,14 @@ export function useDragAndDropList<T extends DraggableItem>({
     setOptimisticItems(items);
   }, [items]);
 
+  // Use a ref to keep track of the latest optimisticItems without triggering effect re-runs
+  const optimisticItemsRef = useRef<T[]>(optimisticItems);
+  
+  // Update ref whenever optimisticItems changes
+  useEffect(() => {
+    optimisticItemsRef.current = optimisticItems;
+  }, [optimisticItems]);
+
   // Setup drag and drop for list items
   useEffect(() => {
     if (!onItemsReorder) return;
@@ -54,8 +62,8 @@ export function useDragAndDropList<T extends DraggableItem>({
       const itemId = element.getAttribute('data-item-id');
       if (!itemId) return;
       
-      // Find the item in our state
-      const item = optimisticItems.find(item => item.id === itemId);
+      // Find the item in our state (using ref to access latest items)
+      const item = optimisticItemsRef.current.find(item => item.id === itemId);
       if (!item) return;
       
       // Handle draggable
@@ -232,7 +240,7 @@ export function useDragAndDropList<T extends DraggableItem>({
           // Get the reordered indices
           const reordered = reorderWithEdge({
             axis: 'vertical',
-            list: optimisticItems,
+            list: optimisticItemsRef.current,
             startIndex: sourceData.index,
             indexOfTarget: dropTargetData.index,
             closestEdgeOfTarget: dropTargetData.closestEdge,
@@ -252,7 +260,7 @@ export function useDragAndDropList<T extends DraggableItem>({
     return () => {
       cleanups.forEach(cleanup => cleanup());
     };
-  }, [optimisticItems, onItemsReorder, dragType, dropTargetType, itemSelector]);
+  }, [onItemsReorder, dragType, dropTargetType, itemSelector]);
 
   return {
     draggedItemId,
