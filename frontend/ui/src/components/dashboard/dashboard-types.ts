@@ -52,6 +52,9 @@ export interface DragData {
   title?: string
   image?: string
   componentName?:string
+  darkImage?:string
+  lightImage?:string
+  dragPreviewSize?:string
   [key: string]: any
 }
 export const DEFAULT_SIZES: Record<Breakpoint, { w: number; h: number }> = {

@@ -29,7 +29,6 @@ export function generateDOM(
 
     if (item.i.startsWith("grid-")) {
       const nested = item.layouts || [];
-console.log("nested layouts", nested);
 
       return (
         <Box

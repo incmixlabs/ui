@@ -22,6 +22,7 @@ import {
   SidebarTrigger,
   Switch,
   Text,
+  cn,
   generateDOM,
   useDevicePreview,
   useDragAndDrop,
@@ -191,8 +192,8 @@ const DashboardHomePage: React.FC = () => {
   if (!projectId) return <div>Home not found</div>
 
   const isEmpty = gridComponents.length === 0
-  console.log("defaultLayouts from dynamic-dashboard-page", defaultLayouts)
-  console.log("project from dynamic-dashboard-page", project)
+
+  console.log("active drag data", activeDragData)
 
   return (
     <DndContext
@@ -309,15 +310,25 @@ const DashboardHomePage: React.FC = () => {
       <DragOverlay>
         {activeDragId && activeDragData && (
           <Box
-            className="pointer-events-none rounded-lg border border-gray-5 opacity-100 shadow"
-            style={{ width: "150px", height: "100px" }}
+            className={cn(
+              "pointer-events-none rounded-lg border border-gray-5 bg-gray-1 opacity-100 shadow"
+            )}
           >
             <img
               src={
-                activeDragData.image || "/placeholder.svg?height=150&width=150"
+                activeDragData.darkImage ||
+                "/placeholder.svg?height=150&width=150"
               }
               alt={activeDragData.title || "Component"}
-              className="h-full w-full rounded-lg"
+              className="hidden h-full w-full rounded-lg dark:block"
+            />
+            <img
+              src={
+                activeDragData.lightImage ||
+                "/placeholder.svg?height=150&width=150"
+              }
+              alt={activeDragData.title || "Component"}
+              className="block h-full w-full rounded-lg dark:hidden"
             />
           </Box>
         )}
