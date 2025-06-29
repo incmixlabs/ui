@@ -2,7 +2,7 @@
 import React, { useRef, useState, useEffect } from "react"
 import { Tag, X } from "lucide-react"
 import ColorPicker, { ColorSelectType } from "@components/color-picker"
-import { Button } from "@incmix/ui"
+import { Box, Button, Flex, Heading, IconButton } from "@incmix/ui"
 import type { TaskTagsSectionProps, Tag as TagType } from "./utils/types"
 
 export function TaskTagsSection({
@@ -44,17 +44,18 @@ export function TaskTagsSection({
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Tags</h3>
-        <button 
+    <Box className="space-y-4">
+      <Flex align={"center"} justify={"between"}>
+        <Heading size={"3"} className="text-gray-12 ">LEBELS</Heading>
+        <IconButton 
           onClick={() => onAddingTagChange(true)}
-          className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          color="blue"
+          className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-colors"
         >
           <Tag className="h-4 w-4" />
-          Add Tag
-        </button>
-      </div>
+         
+        </IconButton>
+      </Flex>
 
       <div className="flex flex-wrap gap-2">
         {currentTask.labelsTags && currentTask.labelsTags.length > 0 ? (
@@ -136,6 +137,6 @@ export function TaskTagsSection({
           </div>
         </div>
       )}
-    </div>
+    </Box>
   )
 }

@@ -2,7 +2,16 @@
 import { Calendar } from "lucide-react"
 import { SmartDatetimeInput } from "@components/datetime-picker"
 import type { TaskDatesSectionProps } from "./utils/types"
-
+import {
+  Avatar,
+  Box,
+  Flex,
+  Heading,
+  IconButton,
+  ScrollArea,
+  Text,
+  X,
+} from "@incmix/ui";
 export function TaskDatesSection({
   currentTask,
   startDate,
@@ -11,39 +20,45 @@ export function TaskDatesSection({
   onEndDateChange,
 }: TaskDatesSectionProps) {
   return (
-    <div className="space-y-4">
-      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wide">Dates</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <Box className="space-y-2 py-4  px-3 border-gray-1 dark:border-gray-3 border-t-2">
+      {/* <Heading size={"4"} className=" font-medium text-gray-12">
+        Dates
+      </Heading> */}
+      <Flex className="gap-4 flex-col">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
+          <Heading size={"4"} className="text-gray-12 uppercase">
+            Start Date
+          </Heading>
           <div className="relative">
             <SmartDatetimeInput
               value={startDate || undefined}
               onValueChange={onStartDateChange}
               showCalendar={true}
               showTimePicker={false}
+              className="bg-gray-6"
               placeholder="Set start date"
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Due Date</label>
+          <Heading size={"4"} className="text-gray-12 uppercase">
+            Due Date
+          </Heading>
           <div className="relative">
             <SmartDatetimeInput
               value={endDate || undefined}
               onValueChange={onEndDateChange}
               showCalendar={true}
               showTimePicker={false}
+              className="bg-gray-6"
               placeholder="Set due date"
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           </div>
         </div>
-      </div>
-    </div>
+      </Flex>
+    </Box>
   )
 }

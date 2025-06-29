@@ -62,51 +62,51 @@ export function CreateProjectForm({ onSuccess, ...props }: CreateProjectProps) {
 
   return (
     <>
-    <Dialog.Root
-      {...props}
-      open={isOpen}
-      onOpenChange={(open) => {
-        setIsOpen(open)
-        reset()
-      }}
-    >
-      	<Dialog.Trigger >
-			<Button className="inline-flex h-[35px] select-none items-center justify-center rounded bg-violet4 px-[15px] font-medium text-violet11 leading-none outline-none outline-offset-1 hover:bg-mauve3 focus-visible:outline-2 focus-visible:outline-violet6">
-				Create Project
-			</Button>
-		</Dialog.Trigger>
-      <Dialog.Content className="border border-gray-4">
-        <Dialog.Header>
-          <Dialog.Title>Create New Project</Dialog.Title>
-          <Dialog.Description>
-            Fill out the form to create a new project.
-          </Dialog.Description>
-        </Dialog.Header>
-        <AutoForm
-          formSchema={createProjectFormSchema.formSchema}
-          fieldConfig={createProjectFormSchema.fieldConfig}
-          onSubmit={handleSubmit}
-          className="space-y-4"
-        >
-          <ReactiveButton
-            type="submit"
-            color="blue"
-            loading={isPending}
-            success={isSuccess}
-            className="w-full"
+      <Dialog.Root
+        {...props}
+        open={isOpen}
+        onOpenChange={(open) => {
+          setIsOpen(open)
+          reset()
+        }}
+      >
+        <Dialog.Trigger>
+          <Button className="inline-flex h-[35px] select-none items-center justify-center rounded bg-violet4 px-[15px] font-medium text-violet11 leading-none outline-none outline-offset-1 hover:bg-mauve3 focus-visible:outline-2 focus-visible:outline-violet6">
+            Create Project
+          </Button>
+        </Dialog.Trigger>
+        <Dialog.Content className="border border-gray-4">
+          <Dialog.Header>
+            <Dialog.Title>Create New Project</Dialog.Title>
+            <Dialog.Description>
+              Fill out the form to create a new project.
+            </Dialog.Description>
+          </Dialog.Header>
+          <AutoForm
+            formSchema={createProjectFormSchema.formSchema}
+            fieldConfig={createProjectFormSchema.fieldConfig}
+            onSubmit={handleSubmit}
+            className="space-y-4"
           >
-            Create
-          </ReactiveButton>
-        </AutoForm>
-        <Dialog.Footer>
-          <Dialog.Close>
-            <Button variant="soft" color="gray">
-              Cancel
-            </Button>
-          </Dialog.Close>
-        </Dialog.Footer>
-      </Dialog.Content>
-    </Dialog.Root>
+            <ReactiveButton
+              type="submit"
+              color="blue"
+              loading={isPending}
+              success={isSuccess}
+              className="w-full"
+            >
+              Create
+            </ReactiveButton>
+          </AutoForm>
+          <Dialog.Footer>
+            <Dialog.Close>
+              <Button variant="soft" color="gray">
+                Cancel
+              </Button>
+            </Dialog.Close>
+          </Dialog.Footer>
+        </Dialog.Content>
+      </Dialog.Root>
     </>
   )
 }

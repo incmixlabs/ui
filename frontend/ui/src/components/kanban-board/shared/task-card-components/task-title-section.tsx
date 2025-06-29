@@ -1,6 +1,17 @@
 // task-card-components/task-title-section.tsx
-import { Save, X, Edit3 } from "lucide-react"
+import { Save, X, Edit3, Check } from "lucide-react"
 import type { TaskTitleSectionProps } from "./utils/types"
+import {
+  Avatar,
+  Box,
+  Button,
+  Flex,
+  Heading,
+  IconButton,
+  Input,
+  ScrollArea,
+  Text,
+} from "@incmix/ui";
 
 export function TaskTitleSection({
   currentTask,
@@ -22,45 +33,48 @@ export function TaskTitleSection({
   }
 
   return (
-    <div className="space-y-2">
+    <Box className="space-y-2 py-5">
       {isEditing ? (
         <div className="flex items-center gap-2">
-          <input
+          <Input
             value={editValue}
             onChange={(e) => onEditChange(e.target.value)}
-            className="text-2xl font-bold border-0 px-0 bg-transparent focus:outline-none focus:ring-0 flex-1 text-gray-900 dark:text-white"
+            className="text-2xl  font-semibold border-0 bg-gray-5 flex-1 "
             autoFocus
             onKeyDown={handleKeyDown}
           />
-          <button 
+          <IconButton 
             onClick={handleSave} 
-            className="h-8 w-8 p-0 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition-colors"
+            color="blue"
+            className="h-8 w-8 p-0 rounded-md  flex items-center justify-center transition-colors"
           >
-            <Save className="h-4 w-4" />
-          </button>
-          <button 
+            <Check className="h-4 w-4" />
+          </IconButton>
+          <IconButton 
             onClick={onStopEdit} 
-            className="h-8 w-8 p-0 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center transition-colors"
+            color="red"
+            className="h-8 w-8 p-0 rounded-md  flex items-center justify-center transition-colors"
           >
             <X className="h-4 w-4" />
-          </button>
+          </IconButton>
         </div>
       ) : (
-        <div className="group flex items-start gap-2">
-          <h1
-            className="text-2xl font-bold cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-900 p-2 rounded-md -m-2 flex-1 transition-colors"
+        <Flex gap={"4"} align={"center"} className="group">
+          <Heading size={"4"}
+            className=" cursor-pointer hover:bg-gray-3 dark:hover:bg-gray-2 p-2 rounded-md -m-2 flex-1 transition-colors"
             onClick={onStartEdit}
           >
             {currentTask.name}
-          </h1>
-          <button
+          </Heading>
+          <IconButton
             onClick={onStartEdit}
-            className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 flex items-center justify-center"
+            color="blue"
+            className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0 rounded-md flex items-center justify-center"
           >
             <Edit3 className="h-4 w-4" />
-          </button>
-        </div>
+          </IconButton>
+        </Flex>
       )}
-    </div>
+    </Box>
   )
 }

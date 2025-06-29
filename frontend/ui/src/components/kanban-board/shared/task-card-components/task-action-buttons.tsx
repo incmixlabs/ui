@@ -10,7 +10,7 @@ import {
     AlertCircle,
     Flag,
   } from "lucide-react"
-  import { Select, DropdownMenu } from "@incmix/ui"
+  import { Select, DropdownMenu, Button } from "@incmix/ui"
   import { cn } from "@utils"
   import { getPriorityConfig, isTaskOverdue } from "./utils/task-utils"
   import type { TaskActionButtonsProps } from "./utils/types"
@@ -36,18 +36,17 @@ import { KanbanColumn } from "@incmix/utils/schema"
   
     return (
       <div className="flex flex-wrap items-center gap-4">
-        <button
+        <Button
           onClick={onCompleteTask}
+          color={currentTask.completed && "green"}
           className={cn(
-            "inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
-            currentTask.completed 
-              ? "bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 dark:bg-green-950/20 dark:border-green-800 dark:text-green-400"
-              : "bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100"
+            "inline-flex items-center gap-2 h-10 rounded-md text-sm font-medium transition-all duration-200",
+           
           )}
         >
           <Check className="h-4 w-4" />
           {currentTask.completed ? "Completed" : "Mark Complete"}
-        </button>
+        </Button>
   
         {/* Status/Column Dropdown */}
         <Select.Root
