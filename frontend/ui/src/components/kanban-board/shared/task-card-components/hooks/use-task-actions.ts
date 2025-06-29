@@ -1,6 +1,6 @@
 // task-card-components/hooks/use-task-actions.ts
 import { useCallback } from "react"
-import { TaskDataSchema, KanbanColumn } from "@incmix/store"
+import type { TaskDataSchema, KanbanColumn } from "@incmix/utils/schema"
 import type { Subtask, Tag } from "../utils/types"
 
 interface UseTaskActionsProps {
