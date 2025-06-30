@@ -38,7 +38,7 @@ export function TaskDatesSection({
               className="bg-gray-6"
               placeholder="Set start date"
             />
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            {/* <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" /> */}
           </div>
         </div>
 
@@ -55,7 +55,7 @@ export function TaskDatesSection({
               className="bg-gray-6"
               placeholder="Set due date"
             />
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            {/* <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" /> */}
           </div>
         </div>
       </Flex>
