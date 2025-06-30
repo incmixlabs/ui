@@ -534,41 +534,42 @@ export const useThemeStore = create<ThemeStoreConfig>()(
             }
       },
       getSidebarColor: () => {
-        const { sidebarBg, breakFontColor } = get();
-      
-        console.log("sidebarBg", sidebarBg);
-        console.log("breakFontColor", breakFontColor);
-        const regex = /var\(--(\w+)-(\d+)\)/;
-        const match = sidebarBg.match(regex);
-      
-        let color = "gray";
-        let shade = 5;
-      
+        const { sidebarBg, breakFontColor } = get()
+
+        console.log("sidebarBg", sidebarBg)
+        console.log("breakFontColor", breakFontColor)
+        const regex = /var\(--(\w+)-(\d+)\)/
+        const match = sidebarBg.match(regex)
+
+        let color = "gray"
+        let shade = 5
+
         if (match) {
-          color = match[1];         
-          shade = Number(match[2]); 
+          color = match[1]
+          shade = Number(match[2])
         }
-      
+
         if (match?.[1] === "yellow") {
           return {
             bg: sidebarBg,
             text: "var(--gray-1)",
-          };
+          }
         }
-      
+
         const threshold =
           (typeof breakFontColor === "object"
-            ? breakFontColor[color as keyof BreakFontColor] ?? breakFontColor.default
-            : 5) ?? 5;
-      console.log("threshold", threshold);
-        const text = shade <= threshold ? `var(--${color}-12)` : `var(--${color}-1)`;
-      
+            ? (breakFontColor[color as keyof BreakFontColor] ??
+              breakFontColor.default)
+            : 5) ?? 5
+        console.log("threshold", threshold)
+        const text =
+          shade <= threshold ? `var(--${color}-12)` : `var(--${color}-1)`
+
         return {
           bg: sidebarBg,
           text,
-        };
+        }
       },
-      
     }),
     {
       name: "incmix-theme-store",

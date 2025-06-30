@@ -1,14 +1,14 @@
-"use client";
+"use client"
 
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import { ChevronRight, type LucideIcon } from "lucide-react"
 
-import type { Dashboard } from "@incmix/store";
-import { ContextMenu, useModalStore } from "@incmix/ui";
+import type { Dashboard } from "@incmix/store"
+import { ContextMenu, useModalStore } from "@incmix/ui"
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@incmix/ui/collapsible";
+} from "@incmix/ui/collapsible"
 import {
   SidebarGroup,
   SidebarMenu,
@@ -17,58 +17,58 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@incmix/ui/sidebar";
-import { Link } from "@tanstack/react-router";
-import { OrgSwitcher } from "./org-switcher";
-import { ProjectSwitcher } from "./project-switcher";
+} from "@incmix/ui/sidebar"
+import { Link } from "@tanstack/react-router"
+import { OrgSwitcher } from "./org-switcher"
+import { ProjectSwitcher } from "./project-switcher"
 
 type NavItem = {
-  title: string;
-  url: string;
-  icon?: LucideIcon;
-  isActive?: boolean;
-  isSelected?: boolean;
-  notificationCount?: number;
+  title: string
+  url: string
+  icon?: LucideIcon
+  isActive?: boolean
+  isSelected?: boolean
+  notificationCount?: number
   items?: {
-    title: string;
-    url: string;
-    isSelected?: boolean;
-  }[];
-};
+    title: string
+    url: string
+    isSelected?: boolean
+  }[]
+}
 
 export function NavMain({
   items,
   dashboards,
 }: {
-  items: NavItem[];
-  dashboards: Dashboard[];
+  items: NavItem[]
+  dashboards: Dashboard[]
 }) {
   const openCreateDashboardModal = useModalStore(
-    (state) => state.openDashboardCreate,
-  );
+    (state) => state.openDashboardCreate
+  )
 
-  console.log(dashboards);
+  console.log(dashboards)
 
   function isProjectsRoot(item: NavItem): boolean {
     console.log(
       "isProjectsRoot check:",
       item.url,
       "result:",
-      item.url === "/projects",
-    );
-    return item.url === "/projects";
+      item.url === "/projects"
+    )
+    return item.url === "/projects"
   }
 
   function isDashboardRoot(item: NavItem): boolean {
-    return item.url === "/dashboard";
+    return item.url === "/dashboard"
   }
 
   function isDynamicDashboard(item: {
-    isSelected: boolean;
-    title: string;
-    url: string;
+    isSelected: boolean
+    title: string
+    url: string
   }): boolean {
-    return item?.url?.startsWith("/dashboard/") && item?.url !== "/dashboard";
+    return item?.url?.startsWith("/dashboard/") && item?.url !== "/dashboard"
   }
 
   // function isDynamicProject(item: {
@@ -94,11 +94,11 @@ export function NavMain({
         >
           Create Dashboard
         </ContextMenu.Item>
-      );
+      )
     }
     // For exact "/projects" root
     if (isProjectsRoot(item)) {
-      console.log("Returning projects root context menu");
+      console.log("Returning projects root context menu")
       return (
         <ContextMenu.Item
           color="indigo"
@@ -107,16 +107,16 @@ export function NavMain({
         >
           Create Project
         </ContextMenu.Item>
-      );
+      )
     }
-    return null;
+    return null
   }
 
   // Get context menu for sub items
   function getSubItemContextMenu(subItem: {
-    title: string;
-    url: string;
-    isSelected?: boolean;
+    title: string
+    url: string
+    isSelected?: boolean
   }) {
     if (subItem.url === "/dashboard/home") {
       return (
@@ -136,7 +136,7 @@ export function NavMain({
             Copy Dashboard
           </ContextMenu.Item>
         </>
-      );
+      )
     }
     // For dashboard sub-items
     if (isDynamicDashboard(subItem)) {
@@ -172,10 +172,10 @@ export function NavMain({
             Delete Dashboard
           </ContextMenu.Item>
         </>
-      );
+      )
     }
 
-    return null;
+    return null
   }
 
   return (
@@ -209,7 +209,7 @@ export function NavMain({
                           <ProjectSwitcher
                             key={`project-switcher-${subItem.title}`}
                           />
-                        ) : null;
+                        ) : null
                       const subItemContent = (
                         <>
                           {switcher}
@@ -224,10 +224,10 @@ export function NavMain({
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         </>
-                      );
+                      )
 
                       // Check if this sub-item needs a context menu
-                      const subItemContextMenu = getSubItemContextMenu(subItem);
+                      const subItemContextMenu = getSubItemContextMenu(subItem)
 
                       return subItemContextMenu ? (
                         <ContextMenu.Root key={subItem.title}>
@@ -240,7 +240,7 @@ export function NavMain({
                         </ContextMenu.Root>
                       ) : (
                         subItemContent
-                      );
+                      )
                     })}
                   </SidebarMenuSub>
                 </CollapsibleContent>
@@ -269,10 +269,10 @@ export function NavMain({
                 </SidebarMenuButton>
               )}
             </SidebarMenuItem>
-          );
+          )
 
           // Get context menu for main item
-          const mainItemContextMenu = getMainItemContextMenu(item);
+          const mainItemContextMenu = getMainItemContextMenu(item)
 
           return mainItemContextMenu ? (
             <ContextMenu.Root key={item.title}>
@@ -283,9 +283,9 @@ export function NavMain({
             </ContextMenu.Root>
           ) : (
             content
-          );
+          )
         })}
       </SidebarMenu>
     </SidebarGroup>
-  );
+  )
 }

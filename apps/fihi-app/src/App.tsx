@@ -129,8 +129,6 @@ function App() {
     }
   }, [language])
 
-
-
   return (
     <Theme
       appearance={appearance.appearance}
