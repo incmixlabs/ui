@@ -11,9 +11,9 @@ import {
   IconButton,
   ScrollArea,
   Text,
+  Accordion
 } from "@incmix/ui";
 import { ModalPresets } from "./confirmation-modal";
-import { TaskChecklist } from "./task-checklist";
 import { assignData, attachments, commentsData, labelsData } from "../data";
 
 import {
@@ -21,7 +21,6 @@ import {
   TaskActionButtons,
   TaskTitleSection,
   TaskDescriptionSection,
-  TaskAcceptanceCriteriaSection,
   TaskDatesSection,
   TaskTagsSection,
   TaskRefUrlsSection,
@@ -32,11 +31,14 @@ import {
   useTaskDrawerState,
   type TaskCardDrawerProps,
 } from "./task-card-components";
+import { TaskAcceptanceCriteriaSection, AcceptanceCriteriaItem } from "./task-card-components/task-acceptance-criteria-section";
+import { TaskChecklist } from "./task-checklist";
 import { MotionSheet } from "@components/custom-sheet";
 import { KanbanImages } from "../images";
 import { ComboBox } from "@components/combo-box";
 import { useState } from "react";
 import { Download, FileArchive, Plus, Trash2, X } from "lucide-react";
+import { v4 as uuidv4 } from "uuid";
 
 export function TaskCardDrawer({
   viewType = "board",
@@ -82,6 +84,72 @@ export function TaskCardDrawer({
   if (!currentTask || !currentColumn) {
     return null;
   }
+
+  // Checklist handlers
+  const handleChecklistReorder = (reorderedChecklist: any[]) => {
+    if (currentTask.taskId) {
+      updateTask(currentTask.taskId, { checklist: reorderedChecklist });
+    }
+  };
+  
+  // Acceptance Criteria handlers
+  const handleAddAcceptanceCriteria = (text: string) => {
+    if (!currentTask.taskId) return;
+    
+    const newItem: AcceptanceCriteriaItem = {
+      id: uuidv4(),
+      text,
+      order: currentTask.acceptanceCriteria 
+        ? Math.max(0, ...currentTask.acceptanceCriteria.map(item => item.order + 1))
+        : 0
+    };
+    
+    const updatedCriteria = [
+      ...(currentTask.acceptanceCriteria || []),
+      newItem
+    ];
+    
+    // Use type assertion to resolve TypeScript compatibility issue
+    updateTask(currentTask.taskId, { acceptanceCriteria: updatedCriteria as any });
+  };
+  
+  const handleEditAcceptanceCriteria = (id: string, text: string) => {
+    if (!currentTask.taskId || !currentTask.acceptanceCriteria) return;
+    
+    const updatedCriteria = currentTask.acceptanceCriteria.map(item => 
+      item.id === id ? { ...item, text } : item
+    );
+    
+    // Use type assertion to resolve TypeScript compatibility issue
+    updateTask(currentTask.taskId, { acceptanceCriteria: updatedCriteria as any });
+  };
+  
+  const handleDeleteAcceptanceCriteria = (id: string) => {
+    if (!currentTask.taskId || !currentTask.acceptanceCriteria) return;
+    
+    const updatedCriteria = currentTask.acceptanceCriteria.filter(item => item.id !== id);
+    
+    // Use type assertion to resolve TypeScript compatibility issue
+    updateTask(currentTask.taskId, { acceptanceCriteria: updatedCriteria as any });
+  };
+  
+  const handleAcceptanceCriteriaReorder = (reorderedCriteria: AcceptanceCriteriaItem[]) => {
+    if (currentTask.taskId) {
+      // Use type assertion to resolve TypeScript compatibility issue
+      updateTask(currentTask.taskId, { acceptanceCriteria: reorderedCriteria as any });
+    }
+  };
+  
+  const handleAcceptanceCriteriaToggle = (id: string, checked: boolean) => {
+    if (!currentTask.taskId || !currentTask.acceptanceCriteria) return;
+    
+    const updatedCriteria = currentTask.acceptanceCriteria.map(item => 
+      item.id === id ? { ...item, checked } : item
+    );
+    
+    // Use type assertion to resolve TypeScript compatibility issue
+    updateTask(currentTask.taskId, { acceptanceCriteria: updatedCriteria as any });
+  };
 
   return (
     <MotionSheet
@@ -152,7 +220,12 @@ export function TaskCardDrawer({
 
               {/* Task Acceptance Criteria */}
               <TaskAcceptanceCriteriaSection
-                acceptanceCriteria={currentTask.acceptanceCriteria}
+                acceptanceCriteria={currentTask.acceptanceCriteria || []}
+                onAcceptanceCriteriaAdd={handleAddAcceptanceCriteria}
+                onAcceptanceCriteriaEdit={handleEditAcceptanceCriteria}
+                onAcceptanceCriteriaDelete={handleDeleteAcceptanceCriteria}
+                onReorderAcceptanceCriteria={handleAcceptanceCriteriaReorder}
+                onAcceptanceCriteriaToggle={handleAcceptanceCriteriaToggle}
               />
 
               {/* Task Checklist */}
@@ -212,9 +285,7 @@ export function TaskCardDrawer({
                   }
                 }}
                 onReorderChecklist={(reorderedChecklist) => {
-                  if (currentTask.taskId) {
-                    updateTask(currentTask.taskId, { checklist: reorderedChecklist });
-                  }
+                  handleChecklistReorder(reorderedChecklist);
                 }}
               />
 
