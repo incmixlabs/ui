@@ -18,10 +18,12 @@ import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 
 export const extractColorName = (cssVar: string): string => {
-  return cssVar.match(/--([a-z]+(?:-[a-z]+)*)-\d+/)?.[1] ?? 
-         cssVar.replace(/^var\(--(.+)-\d+\)$/, '$1') ?? 
-         "Unknown";
-};
+  return (
+    cssVar.match(/--([a-z]+(?:-[a-z]+)*)-\d+/)?.[1] ??
+    cssVar.replace(/^var\(--(.+)-\d+\)$/, "$1") ??
+    "Unknown"
+  )
+}
 
 export const SIDEBAR_COLOR_OPTIONS = [
   {
