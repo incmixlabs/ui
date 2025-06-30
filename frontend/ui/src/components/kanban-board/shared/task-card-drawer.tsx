@@ -179,7 +179,7 @@ export function TaskCardDrawer({
         {/* Content */}
         <ScrollArea className="h-[98vh] rounded-lg">
           <Flex className="space-y-6">
-            <Box className="bg-gray-1 p-4 dark:bg-gray-3">
+            <Box className="bg-gray-1 p-4 dark:bg-gray-3 space-y-6">
               {/* Action Buttons */}
               <TaskActionButtons
                 currentTask={currentTask}
