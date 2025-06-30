@@ -1,14 +1,10 @@
 import React, { type CSSProperties, Suspense, useEffect, useMemo } from "react"
 
 import { useQuery } from "@tanstack/react-query"
-import {
-  Router,
-  RouterProvider,
-  notFoundComponent,
-} from "@tanstack/react-router"
+import { RouterProvider, createRouter } from "@tanstack/react-router"
 import { setDefaultOptions } from "date-fns"
 
-import { LoadingPage } from "@incmix/pages/common"
+import { LoadingPage, NotFoundPage } from "@incmix/pages/common"
 import { I18n, usei18n } from "@incmix/pages/i18n"
 import { database as db } from "@incmix/store"
 import {
@@ -92,7 +88,10 @@ const routeTree = RootRoute.addChildren([
   OnboardingRoute,
 ])
 
-const router = new Router({ routeTree })
+const router = createRouter({
+  routeTree,
+  defaultNotFoundComponent: NotFoundPage,
+})
 
 function App() {
   const appearance = useAppearanceStore()
@@ -111,8 +110,6 @@ function App() {
   const sidebarColors = getSidebarColor()
   const dashboardColors = getDashboardColors()
   const indicatorColors = getIndicatorColors(getPastel())
-
-  const _theme = useThemeStore()
 
   const { language } = appearance
   useQuery({
