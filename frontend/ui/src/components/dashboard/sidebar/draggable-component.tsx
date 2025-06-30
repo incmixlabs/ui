@@ -1,8 +1,9 @@
 import { useDraggable } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
-import { Box, sidebarComponents } from "@incmix/ui"
+import { Box } from "@incmix/ui"
 import type React from "react"
 import { forwardRef, useEffect, useState } from "react"
+import { sidebarComponents } from "./widgets-data"
 
 interface DraggableComponentProps {
   id: string
@@ -11,6 +12,8 @@ interface DraggableComponentProps {
   component: React.ReactNode
   componentName?: string
   disabled?: boolean
+  darkImage?: string
+  lightImage?: string
   onDragStart?: () => void
   onDragEnd?: () => void
 }
@@ -20,7 +23,7 @@ export const DraggableComponent = forwardRef<
   DraggableComponentProps
 >(
   (
-    { id, title, image, component, componentName, disabled = false, onDragStart, onDragEnd },
+    { id, title, image, darkImage, lightImage, component, componentName, disabled = false, onDragStart, onDragEnd },
     _ref
   ) => {
     const [isDraggingLocal, setIsDraggingLocal] = useState(false)
@@ -38,6 +41,8 @@ export const DraggableComponent = forwardRef<
           title,
           component,
           image,
+          darkImage,
+          lightImage,
           layouts,
           componentName: effectiveComponentName,
         },
@@ -70,13 +75,18 @@ export const DraggableComponent = forwardRef<
     }
 
     return (
-      <Box className="relative">
+      <>
         {isDragging && (
-          <Box className="absolute z-50 rounded-lg border border-gray-400 border-dashed bg-gray-100 opacity-50">
+          <Box className="absolute z-50  rounded-lg border border-gray-400 border-dashed bg-gray-1 opacity-50 h-full">
             <img
-              src={image || "/placeholder.svg?height=150&width=150"}
+              src={lightImage || "/placeholder.svg?height=150&width=150"}
               alt={title}
-              className="h-full w-full rounded-lg"
+              className="h-full w-full rounded-lg dark:hidden block"
+            />
+            <img
+              src={darkImage || "/placeholder.svg?height=150&width=150"}
+              alt={title}
+              className="h-full w-full rounded-lg dark:block hidden"
             />
           </Box>
         )}
@@ -87,24 +97,29 @@ export const DraggableComponent = forwardRef<
           {...listeners}
           {...attributes}
           onMouseDown={handleMouseDown}
-          className={`rounded-lg border border-gray-5 shadow ${
+          className={`rounded-lg border border-gray-5 h-full dark:bg-gray-2 bg-white  ${
             disabled
               ? "cursor-not-allowed opacity-60"
               : "cursor-grab active:cursor-grabbing"
           } relative ${isDragging ? "opacity-0" : ""}`}
         >
           <img
-            src={image || "/placeholder.svg?height=150&width=150"}
+            src={lightImage || "/placeholder.svg?height=150&width=150"}
             alt={title}
-            className="h-full w-full rounded-lg"
+            className="h-full w-full rounded-lg dark:hidden block"
+          />
+          <img
+            src={darkImage || "/placeholder.svg?height=150&width=150"}
+            alt={title}
+            className="h-full w-full rounded-lg dark:block hidden"
           />
           <Box className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/30 opacity-0 transition-opacity hover:opacity-100">
-            <span className="text-center font-medium text-sm text-white">
+            <span className="text-center text-xs font-medium text-white">
               {title}
             </span>
           </Box>
         </Box>
-      </Box>
+      </>
     )
   }
 )

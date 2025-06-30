@@ -19,32 +19,41 @@ import {
   type RadixGrayColor,
   type RadixColor,
   type RadixRadius,
-  type RadixScaling
+  type RadixScaling,
 } from "@incmix/utils/types";
 import { ThemeContext } from "@radix-ui/themes";
 import {
   useThemeStore,
   useAppearanceStore,
   SIDEBAR_COLOR_OPTIONS,
+  extractColorName,
 } from "@incmix/store/use-settings-store";
+
 import { useTranslation } from "react-i18next";
-const getColorBoxStyle = (color: string) => ({
-  backgroundColor: `var(--${color}-9)`,
-  width: "2rem",
-  height: "2rem",
-  borderRadius: "0.25rem",
-  marginRight: "0.5rem",
-});
 
 export function ThemePlayground() {
   const { t } = useTranslation(["settings", "common"]);
-  const {appearance, toggleAppearance} = useAppearanceStore();
-  const {accentColor, onAccentColorChange, grayColor, onGrayColorChange, radius, onRadiusChange, scaling, onScalingChange, sidebarBg, setTheme, dashboard}  = useThemeStore();
-  const  themeContext = useContext(ThemeContext)
+  const { appearance, toggleAppearance } = useAppearanceStore();
+  const {
+    accentColor,
+    onAccentColorChange,
+    grayColor,
+    onGrayColorChange,
+    radius,
+    onRadiusChange,
+    scaling,
+    onScalingChange,
+    sidebarBg,
+    setTheme,
+    dashboard,
+  } = useThemeStore();
+  const themeContext = useContext(ThemeContext);
 
   const SelectRow = (props: {
     label: string;
     value: string;
+    isNotColor?: boolean;
+    isSolidColor?: boolean;
     options: string[];
     onChange: (v: string) => void;
   }) => (
@@ -55,9 +64,40 @@ export function ThemePlayground() {
           <Select.Trigger />
           <Select.Content>
             {props.options.map((opt) => (
-              <Select.Item key={opt} value={opt} className="flex items-center ">
-                {/* <Box style={getColorBoxStyle(opt)} size="2" /> */}
-                <Text>{t(opt)}</Text>
+              <Select.Item key={opt} value={opt}>
+                <Flex align="center" gap="2">
+                  {props.isNotColor ? (
+                    <Text>{opt}</Text>
+                  ) : props.isSolidColor ? (
+                    <>
+                      <Box
+                        style={{
+                          backgroundColor: `var(--${opt}-9)`,
+                          width: "1rem",
+                          height: "1rem",
+                          borderRadius: "0.25rem",
+                        }}
+                      />
+
+                      <Text>{opt}</Text>
+                    </>
+                  ) : (
+                    <>
+                      <Box
+                        style={{
+                          backgroundColor: `${opt}`,
+                          width: "1rem",
+                          height: "1rem",
+                          borderRadius: "0.25rem",
+                        }}
+                      />
+                      <Text>
+                        {/* {opt.match(/--([a-z]+)-\d+/)?.[1] ?? "Unknown"} */}
+                        {extractColorName(opt)}
+                      </Text>
+                    </>
+                  )}
+                </Flex>
               </Select.Item>
             ))}
           </Select.Content>
@@ -79,96 +119,46 @@ export function ThemePlayground() {
             onCheckedChange={toggleAppearance}
           />
         </Flex>
-        <Flex gap="4" align="center" justify="between">
-          <Text>{t("Accent Color")}</Text>
-          <Select.Root
-            value={accentColor}
-            onValueChange={(v) => {
-              onAccentColorChange(v as RadixColor)
-              themeContext?.onAccentColorChange(v as RadixColor)
-            }}
-          >
-            <Select.Trigger />
-            <Select.Content>
-              {RADIX_ACCENT_COLORS.map((color) => (
-                <Select.Item key={color} value={color}>
-                  <Flex align="center" gap="2">
-                    <Box
-                      style={{
-                        backgroundColor: `var(--${color}-9)`,
-                        width: "1rem",
-                        height: "1rem",
-                        borderRadius: "0.25rem",
-                      }}
-                    />
-                    <Text>{color}</Text>
-                  </Flex>
-                </Select.Item>
-              ))}
-            </Select.Content>
-          </Select.Root>
-        </Flex>
-        <Flex gap="4" align="center" justify="between">
-          <Text>{t("Gray Color")}</Text>
-          <Select.Root
-            value={grayColor}
-            onValueChange={(v) => {
-              onGrayColorChange(v as RadixGrayColor)
-              themeContext?.onGrayColorChange(v as RadixGrayColor)
-            }}
-          >
-            <Select.Trigger />
-            <Select.Content>
-              {RADIX_GRAY_COLORS.map((color) => (
-                <Select.Item key={color} value={color}>
-                  <Flex align="center" gap="2">
-                    <Box
-                      style={{
-                        backgroundColor: `var(--${color}-9)`,
-                        width: "1rem",
-                        height: "1rem",
-                        borderRadius: "0.25rem",
-                      }}
-                    />
-                    <Text>{color}</Text>
-                  </Flex>
-                </Select.Item>
-              ))}
-            </Select.Content>
-          </Select.Root>
-        </Flex>
+        <SelectRow
+          label="Accent Color"
+          value={accentColor}
+          isSolidColor={true}
+          options={[...RADIX_ACCENT_COLORS]}
+          onChange={(v) => {
+            onAccentColorChange(v as RadixColor);
+            themeContext?.onAccentColorChange(v as RadixColor);
+          }}
+        />
+        <SelectRow
+          label="Gray Color"
+          value={grayColor}
+          isSolidColor={true}
+          options={[...RADIX_GRAY_COLORS]}
+          onChange={(v) => {
+            onGrayColorChange(v as RadixGrayColor);
+            themeContext?.onGrayColorChange(v as RadixGrayColor);
+          }}
+        />
         <SelectRow
           label="Border Radius"
           value={radius}
+          isNotColor={true}
           options={[...RADIX_RADIUS]}
           onChange={(v) => {
-            onRadiusChange(v as RadixRadius )
-            themeContext?.onRadiusChange(v as RadixRadius)
+            onRadiusChange(v as RadixRadius);
+            themeContext?.onRadiusChange(v as RadixRadius);
           }}
         />
         <SelectRow
           label="Scaling"
           value={scaling}
+          isNotColor={true}
           options={[...SCALING_OPTIONS]}
           onChange={(v) => {
-            onScalingChange(v as RadixScaling )
-            themeContext?.onScalingChange(v as RadixScaling)
+            onScalingChange(v as RadixScaling);
+            themeContext?.onScalingChange(v as RadixScaling);
           }}
         />
-        {/* <SelectRow
-        label="Panel Background"
-        value={theme.panelBackground}
-        options={[...PANEL_BACKGROUND_OPTIONS]}
-        onChange={(v) => setTheme({ panelBackground: v })}
-      /> */}
-
-        {/* Brand extensions */}
-        {/* <SelectRow
-          label="Sidebar Background"
-          value={theme.sidebarBg}
-          options={RADIX_ACCENT_COLORS.map((g) => `var(--${g}-9)`)}
-          onChange={(v) => setTheme({ sidebarBg: v })}
-        /> */}
         <Flex gap="4" align={"center"} justify={"between"}>
           <Text>{t("Sidebar")}</Text>
           <Select.Root
@@ -179,7 +169,7 @@ export function ThemePlayground() {
               );
               if (matched) {
                 setTheme({
-                  sidebarBg: matched.bg
+                  sidebarBg: matched.bg,
                 });
               }
             }}
@@ -197,8 +187,9 @@ export function ThemePlayground() {
                         borderRadius: "0.25rem",
                       }}
                     />
-                    {/* <Text>{opt.bg.match(/--([a-z]+)-\d+/)?.[1] ?? "Unknown"}</Text> */}
-                    <Text>{opt.bg.replace("var(--", "").replace(",", "")}</Text>
+                    <Text>
+                      {opt.bg.match(/--([a-z]+)-\d+/)?.[1] ?? "Unknown"}
+                    </Text>
                   </div>
                 </Select.Item>
               ))}
@@ -210,7 +201,9 @@ export function ThemePlayground() {
           <Text>{t("Dashboard Color2 #1")}</Text>
           <Select.Root
             value={dashboard.color1}
-            onValueChange={(v) => setTheme({ dashboard: { ...dashboard, color1: v as RadixColor } })}
+            onValueChange={(v) =>
+              setTheme({ dashboard: { ...dashboard, color1: v as RadixColor } })
+            }
           >
             <Select.Trigger />
             <Select.Content>
@@ -237,20 +230,26 @@ export function ThemePlayground() {
           label={t("Dashboard Color #2")}
           value={dashboard.color2}
           options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
-          onChange={(v) => setTheme({ dashboard: { ...dashboard, color2: v as RadixColor } })}
+          onChange={(v) =>
+            setTheme({ dashboard: { ...dashboard, color2: v as RadixColor } })
+          }
         />
 
         <SelectRow
           label={t("Dashboard Color #3")}
           value={dashboard.color3}
           options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
-          onChange={(v) => setTheme({ dashboard: { ...dashboard, color3: v as RadixColor } })}
+          onChange={(v) =>
+            setTheme({ dashboard: { ...dashboard, color3: v as RadixColor } })
+          }
         />
         <SelectRow
           label={t("Dashboard Color #4")}
           value={dashboard.color4}
           options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
-          onChange={(v) => setTheme({ dashboard: { ...dashboard, color4: v as RadixColor } })}
+          onChange={(v) =>
+            setTheme({ dashboard: { ...dashboard, color4: v as RadixColor } })
+          }
         />
 
         {/* <Flex align={"center"} justify={"between"}>
