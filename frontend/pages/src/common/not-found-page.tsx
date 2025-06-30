@@ -6,7 +6,7 @@ import { useEffect } from "react"
 import { useTranslation } from "react-i18next"
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return <DashboardLayout breadcrumbItems={[]}>{children}</DashboardLayout>
+  return <DashboardLayout>{children}</DashboardLayout>
 }
 
 const NotFoundPage: React.FC = () => {
