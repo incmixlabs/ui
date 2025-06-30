@@ -24,63 +24,22 @@ export const extractColorName = (cssVar: string): string => {
     "Unknown"
   )
 }
-
+export type SidebarColorConfig = {
+  color: string
+  break: number
+}
 export const SIDEBAR_COLOR_OPTIONS = [
-  {
-    bg: "var(--gray-3)",
-    fg: "var(--gray-12)",
-    hover: "var(--gray-1)",
-    text: fontColor.light,
-  },
-  {
-    bg: "var(--red-9)",
-    fg: "var(--red-12)",
-    hover: "var(--red-11)",
-    text: fontColor.dark,
-  },
-  {
-    bg: "var(--mauve-10)",
-    fg: "var(--mauve-12)",
-    hover: "var(--mauve-11)",
-    text: fontColor.dark,
-  },
-  {
-    bg: "var(--blue-10)",
-    fg: "var(--blue-12)",
-    hover: "var(--blue-11)",
-    text: fontColor.dark,
-  },
-  {
-    bg: "var(--violet-10)",
-    fg: "var(--violet-12)",
-    hover: "var(--violet-11)",
-    text: fontColor.dark,
-  },
-  {
-    bg: "var(--purple-10)",
-    fg: "var(--purple-12)",
-    hover: "var(--purple-11)",
-    text: fontColor.dark,
-  },
-  {
-    bg: "var(--indigo-10)",
-    fg: "var(--indigo-12)",
-    hover: "var(--indigo-11)",
-    text: fontColor.dark,
-  },
-  {
-    bg: "var(--orange-10)",
-    fg: "var(--orange-12)",
-    hover: "var(--orange-11)",
-    text: fontColor.dark,
-  },
-  {
-    bg: "var(--yellow-10)",
-    fg: fontColor.light,
-    hover: "var(--yellow-11)",
-    text: fontColor.light,
-  },
-]
+  { bg: { color: "gray", break: 10 } },
+  { bg: { color: "red", break: 10 } },
+  { bg: { color: "mauve", break: 10 } },
+  { bg: { color: "blue", break: 10 } },
+  { bg: { color: "violet", break: 10 } },
+  { bg: { color: "purple", break: 10 } },
+  { bg: { color: "indigo", break: 10 } },
+  { bg: { color: "orange", break: 10 } },
+  { bg: { color: "yellow", break: 10 } },
+] satisfies { bg: SidebarColorConfig }[]
+
 export type ThemeStoreConfig = ThemeConfig & {
   setTheme: (partial: Partial<ThemeConfig>) => void
   theme: (prop: keyof ThemeConfig) => any
@@ -124,8 +83,7 @@ export type ThemeStoreConfig = ThemeConfig & {
   }
   getSidebarColor: () => {
     bg: string
-    fg: string
-    hover: string
+    text: string
   }
 }
 export type UsePreferencesStoreConfig = UserPreference & {
@@ -316,6 +274,7 @@ export const useThemeStore = create<ThemeStoreConfig>()(
   persist(
     (set, get) => ({
       ...theme,
+
       setTheme: (partial) =>
         set((s) => {
           return { ...s, ...partial }
@@ -575,14 +534,32 @@ export const useThemeStore = create<ThemeStoreConfig>()(
             }
       },
       getSidebarColor: () => {
-        const { sidebarBg } = get()
-        const color =
-          SIDEBAR_COLOR_OPTIONS.find((option) => option.bg === sidebarBg) ??
-          SIDEBAR_COLOR_OPTIONS[0]
+        const { sidebarBg, breakFontColor } = get()
+
+        console.log("sidebarBg", sidebarBg)
+        console.log("breakFontColor", breakFontColor)
+
+        const regex = /var\(--(\w+)-(\d+)\)/
+        const match = sidebarBg.match(regex)
+
+        let color = "gray"
+        let shade = 5
+
+        if (match) {
+          color = match[1]
+          shade = Number(match[2])
+        }
+
+        const threshold =
+          (typeof breakFontColor === "object"
+            ? (breakFontColor[color as keyof BreakFontColor] ??
+              breakFontColor.default)
+            : 5) ?? 5
+        const text = shade <= threshold ? "var(--gray-12)" : "var(--gray-1)"
+
         return {
-          bg: color.bg,
-          fg: color.fg,
-          hover: color.hover,
+          bg: sidebarBg,
+          text,
         }
       },
     }),
