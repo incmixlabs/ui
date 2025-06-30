@@ -1,7 +1,6 @@
 // task-card-components/index.ts
 
 // Main components
-export { TaskDrawerSheet } from './task-drawer-sheet'
 export { TaskHeader } from './task-header'
 export { TaskActionButtons } from './task-action-buttons'
 export { TaskTitleSection } from './task-title-section'

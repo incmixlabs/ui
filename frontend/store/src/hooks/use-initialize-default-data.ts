@@ -1,8 +1,5 @@
-import type {
-  TaskCollections,
-  TaskDocType,
-  TaskStatusDocType,
-} from "../sql/types"
+import type { TaskStatusDocType } from "@incmix/utils/schema"
+import type { TaskCollections, TaskDocType } from "../sql/types"
 // Import browser-compatible helpers instead of Node.js Buffer-using ones
 import {
   generateBrowserUniqueId,
@@ -255,11 +252,13 @@ async function initializeTasks(
             id: generateBrowserUniqueId("sub"),
             name: "Create README",
             completed: false,
+            order: 0,
           },
           {
             id: generateBrowserUniqueId("sub"),
             name: "Set up folder structure",
             completed: false,
+            order: 1,
           },
         ],
         comments: [],

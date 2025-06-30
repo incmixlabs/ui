@@ -1,12 +1,13 @@
+// File: use-table-view.ts
+
+import { useMemo } from "react"
+import { nanoid } from "nanoid"
 import type {
   TableTask,
   TaskDataSchema,
   UseTableViewReturn
 } from "@incmix/utils/schema"
-
 import { useListView } from "./use-list-view"
-// hooks/use-table-view.ts
-import { useMemo } from "react"
 
 
 /**
@@ -25,6 +26,17 @@ export function useTableView(
       column.tasks.map((task) => {
         const now = new Date()
         const endDate = task.endDate ? new Date(task.endDate) : null
+        
+        // Ensure subtasks have proper structure with required fields
+        const enhancedSubTasks = (task.subTasks || []).map((item, index) => {
+          // Create a new object with all required properties
+          return {
+            id: item.id || `st-${nanoid(10)}`,
+            name: item.name || '',
+            completed: item.completed ?? false,
+            order: index // Default to index position for order
+          };
+        })
 
         return {
           ...task,
@@ -36,10 +48,12 @@ export function useTableView(
           assignedToNames:
             task.assignedTo?.map((user) => user.name).join(", ") || "",
 
-          // Subtask information
-          totalSubTasks: task.subTasks?.length || 0,
-          completedSubTasks:
-            task.subTasks?.filter((st) => st.completed).length || 0,
+          // Subtask information with enhanced data
+          totalSubTasks: enhancedSubTasks.length,
+          completedSubTasks: enhancedSubTasks.filter((st) => st.completed).length,
+          
+          // Use enhancedSubTasks to ensure schema compliance
+          subTasks: enhancedSubTasks,
 
           // Overdue calculation
           isOverdue: endDate ? endDate < now && !task.completed : false,

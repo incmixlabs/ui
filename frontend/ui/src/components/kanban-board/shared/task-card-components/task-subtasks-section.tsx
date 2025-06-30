@@ -35,7 +35,7 @@ export function TaskSubtasksSection({
         </h3>
         <button 
           onClick={() => onAddingSubtaskChange(true)}
-          className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
         >
           <Plus className="h-4 w-4" />
           Add Subtask
@@ -62,20 +62,20 @@ export function TaskSubtasksSection({
             value={newSubtaskName}
             onChange={(e) => onNewSubtaskNameChange(e.target.value)}
             placeholder="New subtask"
-            className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="flex-1 px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-6 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             autoFocus
             onKeyDown={handleKeyDown}
           />
           <button 
             onClick={handleAddSubtask} 
             disabled={!newSubtaskName.trim()}
-            className="px-3 py-2 text-sm font-medium rounded-md bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 transition-colors"
+            className="px-3 py-2 text-sm font-medium rounded-md bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-6 dark:text-white dark:hover:bg-gray-700 transition-colors"
           >
             Add
           </button>
           <button 
             onClick={() => onAddingSubtaskChange(false)}
-            className="p-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            className="p-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             <X className="h-4 w-4" />
           </button>

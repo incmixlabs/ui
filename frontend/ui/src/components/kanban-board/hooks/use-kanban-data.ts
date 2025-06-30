@@ -1,8 +1,7 @@
 // File: use-kanban-data.ts
-// REPLACE your current file with this fixed version
 
 import { useMemo } from "react"
-import type { TaskDataSchema, UseKanbanReturn } from "@incmix/utils/schema"
+import type { TaskDataSchema, TaskStatusDocType, UseKanbanReturn } from "@incmix/utils/schema"
 import type { KanbanColumn, KanbanTask } from "../types"
 
 import { useProjectData } from "@incmix/store"
@@ -22,25 +21,34 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
       return []
     }
 
-    // @ts-ignore
-    return projectData.taskStatuses.map((status) => {
+    return projectData.taskStatuses.map((status: TaskStatusDocType) => {
       const tasks = projectData.tasks
-        // @ts-ignore
         .filter((task) => task.columnId === status.id)
-        // @ts-ignore
         .sort((a, b) => a.order - b.order)
         // Transform TaskDataSchema to KanbanTask
-        .map(
-
-        // @ts-ignore
-          (task): KanbanTask => ({
-            ...task,
-            // Ensure these properties are properly typed
-            completed: task.completed ?? false,
-            priority: task.priority ?? "medium",
-          })
-        )
-    // @ts-ignore
+        .map((task): KanbanTask => ({
+          ...task,
+          // Ensure these properties are properly typed
+          completed: task.completed ?? false,
+          priority: task.priority ?? "medium",
+          // Ensure array properties have proper structure
+          acceptanceCriteria: task.acceptanceCriteria?.map(item => ({
+            ...item,
+            checked: item.checked ?? false,
+            order: item.order ?? 0
+          })) ?? [],
+          checklist: task.checklist?.map(item => ({
+            ...item,
+            checked: item.checked ?? false,
+            order: item.order ?? 0
+          })) ?? [],
+          subTasks: task.subTasks?.map(item => ({
+            ...item,
+            completed: item.completed ?? false,
+            order: item.order ?? 0
+          })) ?? [],
+        }))
+        
       const completedTasksCount = tasks.filter((task) => task.completed).length
       const totalTasksCount = tasks.length
       const progressPercentage =
@@ -54,7 +62,7 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
         completedTasksCount,
         totalTasksCount,
         progressPercentage,
-      } as KanbanColumn // Use type assertion to satisfy the type checker
+      } as KanbanColumn
     })
   }, [projectData.taskStatuses, projectData.tasks, projectData.isLoading])
 
@@ -62,8 +70,7 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
   const projectStats = useMemo(() => {
     const totalTasks = projectData.tasks.length
     const completedTasks = projectData.tasks.filter(
-    // @ts-ignore
-      (task) => task.completed
+      (task) => task.completed === true
     ).length
     const totalColumns = projectData.taskStatuses.length
 
@@ -77,7 +84,6 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
 
     // Calculate urgent tasks
     const urgentTasks = projectData.tasks.filter(
-    // @ts-ignore
       (task) => task.priority === "urgent" && !task.completed
     ).length
 

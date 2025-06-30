@@ -75,7 +75,7 @@ const TasksPage = () => {
       {/* Main container - Natural height for vertical scrolling */}
       <Box className="flex min-h-screen flex-col">
         {/* Fixed Header Section - Project Selection */}
-        <Box className="flex-shrink-0 border-gray-200 border-b bg-white dark:border-gray-700 dark:bg-gray-900">
+        <Box className="flex-shrink-0 border-gray-200 border-b dark:border-gray-700">
           <Box className="p-4">
             {/* Project Selection and Creation */}
             <Flex justify="between" align="center">
@@ -108,7 +108,7 @@ const TasksPage = () => {
         </Box>
 
         {/* Tabs Header - Fixed */}
-        <Box className="flex-shrink-0 border-gray-200 border-b bg-white px-4 pb-2 dark:border-gray-700 dark:bg-gray-900">
+        <Box className="flex-shrink-0 border-gray-200 border-b px-4 pb-2 dark:border-gray-700">
           <Tabs.Root defaultValue="board">
             <Tabs.List
               className="flex w-fit shrink-0 rounded-md bg-gray-3 shadow-none"

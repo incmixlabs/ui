@@ -6,7 +6,6 @@ import {
   dashboardTemplateSchemaLiteral,
   formProjectSchemaLiteral,
   projectSchemaLiteral,
-  taskDataSchemaLiteral,
   taskSchemaLiteral,
   taskStatusSchemaLiteral,
 } from "@incmix/utils/schema"
@@ -64,7 +63,7 @@ type LocalDatabaseOptions = {
   options?: any
 }
 const defaultDatabaseOptions: LocalDatabaseOptions = {
-  forceReset: true,
+  forceReset: false,
   dbName: "incmix-db",
   options: {
     allowSlowCount: true, // Helps with development
