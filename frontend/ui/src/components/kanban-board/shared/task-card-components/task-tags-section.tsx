@@ -1,6 +1,6 @@
 // task-card-components/task-tags-section.tsx
 import React, { useRef, useState, useEffect } from "react"
-import { Tag, X } from "lucide-react"
+import { Tag, X, Plus } from "lucide-react"
 import ColorPicker, { ColorSelectType } from "@components/color-picker"
 import { Box, Button, Flex, Heading, IconButton } from "@incmix/ui"
 import type { TaskTagsSectionProps, Tag as TagType } from "./utils/types"
@@ -46,7 +46,7 @@ export function TaskTagsSection({
   return (
     <Box className="space-y-4">
       <Flex align={"center"} justify={"between"}>
-        <Heading size={"3"} className="text-gray-12 ">LEBELS</Heading>
+        <Heading size={"3"} className="text-gray-12">LABELS</Heading>
         <IconButton 
           onClick={() => onAddingTagChange(true)}
           color="blue"
@@ -87,17 +87,17 @@ export function TaskTagsSection({
       </div>
 
       {isAddingTag && (
-        <div className="space-y-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900">
+        <div className="space-y-3 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-6">
           <input
             value={newTagName}
             onChange={(e) => onNewTagNameChange(e.target.value)}
             placeholder="Tag name"
             autoFocus
             onKeyDown={handleKeyDown}
-            className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-md bg-white dark:bg-gray-5 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           <div className="flex items-center gap-3">
-            <label className="text-sm font-medium">Color:</label>
+            {/* <label className="text-sm font-medium">Color:</label> */}
             <div>
               <div className="relative" ref={colorPickerRef}>
                 <Button
@@ -124,15 +124,17 @@ export function TaskTagsSection({
             <button 
               onClick={handleAddTag} 
               disabled={!newTagName.trim()}
-              className="px-3 py-1.5 text-sm font-medium rounded-md bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-gray-900 dark:hover:bg-gray-100 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-7 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
+              <Plus className="h-4 w-4" />
               Add Tag
             </button>
             <button 
               onClick={() => onAddingTagChange(false)}
-              className="px-3 py-1.5 text-sm font-medium rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+              className="p-1.5 rounded-md text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
+              aria-label="Cancel"
             >
-              Cancel
+              <X className="h-5 w-5" />
             </button>
           </div>
         </div>
