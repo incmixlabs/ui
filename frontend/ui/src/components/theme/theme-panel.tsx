@@ -26,6 +26,7 @@ import {
   useThemeStore,
   useAppearanceStore,
   SIDEBAR_COLOR_OPTIONS,
+  extractColorName,
 } from "@incmix/store/use-settings-store";
 
 import { useTranslation } from "react-i18next";
@@ -91,7 +92,8 @@ export function ThemePlayground() {
                         }}
                       />
                       <Text>
-                        {opt.match(/--([a-z]+)-\d+/)?.[1] ?? "Unknown"}
+                        {/* {opt.match(/--([a-z]+)-\d+/)?.[1] ?? "Unknown"} */}
+                        {extractColorName(opt)}
                       </Text>
                     </>
                   )}
@@ -157,20 +159,6 @@ export function ThemePlayground() {
             themeContext?.onScalingChange(v as RadixScaling);
           }}
         />
-        {/* <SelectRow
-        label="Panel Background"
-        value={theme.panelBackground}
-        options={[...PANEL_BACKGROUND_OPTIONS]}
-        onChange={(v) => setTheme({ panelBackground: v })}
-      /> */}
-
-        {/* Brand extensions */}
-        {/* <SelectRow
-          label="Sidebar Background"
-          value={theme.sidebarBg}
-          options={RADIX_ACCENT_COLORS.map((g) => `var(--${g}-9)`)}
-          onChange={(v) => setTheme({ sidebarBg: v })}
-        /> */}
         <Flex gap="4" align={"center"} justify={"between"}>
           <Text>{t("Sidebar")}</Text>
           <Select.Root
