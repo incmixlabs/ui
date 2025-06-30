@@ -18,10 +18,9 @@ import {
 } from "@incmix/ui";
 
 import { ModalPresets } from "./confirmation-modal";
-import { assignData, attachments, commentsData, labelsData } from "../data";
+import { attachments } from "../data";
 
 import {
-  TaskHeader,
   TaskActionButtons,
   TaskTitleSection,
   TaskDescriptionSection,
@@ -30,7 +29,6 @@ import {
   TaskRefUrlsSection,
   TaskAssigneesSection,
   TaskSubtasksSection,
-  TaskCommentsSection,
   useTaskActions,
   useTaskDrawerState,
   type TaskCardDrawerProps,
@@ -39,7 +37,7 @@ import { TaskAcceptanceCriteriaSection, AcceptanceCriteriaItem } from "./task-ca
 import { TaskChecklist } from "./task-checklist";
 import { MotionSheet } from "@components/custom-sheet";
 import { KanbanImages } from "../images";
-import { ComboBox } from "@components/combo-box";
+
 import { useState } from "react";
 import { Download, FileArchive, Plus, Trash2, X } from "lucide-react";
 import { v4 as uuidv4 } from "uuid";
@@ -349,13 +347,7 @@ export function TaskCardDrawer({
                 readonly={false}
               />
 
-              {/* Assignees */}
-              <TaskAssigneesSection
-                currentTask={currentTask}
-                isMemberPickerOpen={drawerState.isMemberPickerOpen}
-                onMemberPickerOpenChange={drawerState.setIsMemberPickerOpen}
-                onUpdateTask={taskActions.handleUpdateTask}
-              />
+              {/* Assignees - moved to bottom section */}
 
               {/* Subtasks */}
               <TaskSubtasksSection
@@ -470,25 +462,13 @@ export function TaskCardDrawer({
                 </Flex>
               </Box>
 
-              <Box className="space-y-3 border-gray-1 dark:border-gray-3 border-t-2 p-4 py-3">
-                <Flex justify={"between"} align={"center"}>
-                  <Heading size={"4"} className=" font-medium text-gray-12">
-                    ASSIGNED TO
-                  </Heading>
-                  <ComboBox
-                    options={assignData}
-                    onValueChange={setSelectedMemebers}
-                    defaultValue={selectedMemebers}
-                    placeholder="Find Person..."
-                    title="Assign To"
-                  />
-                </Flex>
-                <Flex className="gap-1">
-                  <Avatar src={KanbanImages.user1} className="h-8 w-8" />
-                  <Avatar src={KanbanImages.user2} className="h-8 w-8" />
-                  <Avatar src={KanbanImages.user1} className="h-8 w-8" />
-                </Flex>
-              </Box>
+              {/* Assignees */}
+              <TaskAssigneesSection
+                currentTask={currentTask}
+                isMemberPickerOpen={drawerState.isMemberPickerOpen}
+                onMemberPickerOpenChange={drawerState.setIsMemberPickerOpen}
+                onUpdateTask={taskActions.handleUpdateTask}
+              />
 
               {/* Dates */}
               <TaskDatesSection
