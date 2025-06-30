@@ -247,7 +247,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   return (
     <>
-      <Sidebar isDefaultMobile={true} collapsible="icon" {...props}>
+      <Sidebar isDefaultMobile={true} collapsible="icon" {...props} className="bg-[var(--sidebar-background)] text-[var(--sidebar-foreground)]">
         <SidebarHeader>
           <OrgSwitcher />
           <SidebarHeaderLabel asChild>

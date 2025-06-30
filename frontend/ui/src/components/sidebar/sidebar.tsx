@@ -236,7 +236,7 @@ const Sidebar = React.forwardRef<
     const SideBarTrigger = (
       <SidebarTrigger
         icon={
-          <ChevronsLeft className="stroke-[hsl(var(--sidebar-background))]" />
+          <ChevronsLeft className="stroke-[var(--sidebar-background)]" />
         }
         className="-right-5 fixed top-10 left-[calc(var(--sidebar-width)_-_20px)] z-50 h-10 w-10 rounded-full border border-[hsl(var(--sidebar-trigger-border))] border-solid bg-[hsl(var(--sidebar-trigger-background))] transition-all duration-200 ease-linear group-data-[collapsible=icon]:left-[calc(var(--sidebar-width-icon)_-_20px)] group-data-[collapsible=icon]:rotate-180"
       />
@@ -344,7 +344,7 @@ const Sidebar = React.forwardRef<
             <div
               data-sidebar="sidebar"
               className={cn(
-                `flex h-full w-full flex-col px-1 bg-[var(--sidebar-bg)] text-[var(--sidebar-base-foreground)] group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow`,
+                `flex h-full w-full flex-col px-1 group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow`,
                 // sidebarBgClass,
                 className
               )}
@@ -723,7 +723,7 @@ const SidebarMenuButton = React.forwardRef<
           sidebarMenuButtonVariants({ variant, size }),
           "hover:bg-[var(--sidebar-hover)] dark:hover:bg-[var(--sidebar-hover)]",
           `${isSelected && open && "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[var(--sidebar-hover)] font-[600] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[4px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-[var(--sidebar-bg-foreground)] before:content-['']"}`,
-          `${(isSelected || isSubMenuSelected) && !open && " bg-[var(--sidebar-hover)]  text-[var(--sidebar-bg-foreground)]"}`,
+          `${(isSelected || isSubMenuSelected) && !open && " bg-[var(--sidebar-foreground)]  text-[var(--sidebar-background)]"}`,
           className
         )}
         {...props}

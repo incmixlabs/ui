@@ -20,6 +20,7 @@ import {
   type RadixColor,
   type RadixRadius,
   type RadixScaling,
+  breakFontColor,
 } from "@incmix/utils/types";
 import { ThemeContext } from "@radix-ui/themes";
 import {
@@ -159,36 +160,39 @@ export function ThemePlayground() {
             themeContext?.onScalingChange(v as RadixScaling);
           }}
         />
-        <Flex gap="4" align={"center"} justify={"between"}>
+        <Flex gap="4" align="center" justify="between">
           <Text>{t("Sidebar")}</Text>
           <Select.Root
-            value={sidebarBg}
+            value={extractColorName(sidebarBg)}
             onValueChange={(selectedBg) => {
-              const matched = SIDEBAR_COLOR_OPTIONS.find(
-                (opt) => opt.bg === selectedBg,
+              // Directly set sidebarBg string (e.g. "var(--blue-10)")
+              const getColor = SIDEBAR_COLOR_OPTIONS.find(
+                (opt) => opt.bg.color === selectedBg,
               );
-              if (matched) {
-                setTheme({
-                  sidebarBg: matched.bg,
-                });
-              }
+        
+              const bgColor = getColor?.bg.color as string;
+            
+              setTheme({
+                sidebarBg: `var(--${bgColor}-${getColor?.bg.break})`,
+              });
             }}
           >
             <Select.Trigger />
             <Select.Content>
               {SIDEBAR_COLOR_OPTIONS.map((opt) => (
-                <Select.Item key={opt.bg} value={opt.bg}>
+                <Select.Item key={opt.bg.color} value={opt.bg.color}>
                   <div className="flex items-center gap-2">
                     <Box
                       style={{
-                        backgroundColor: opt.bg,
+                        backgroundColor: `var(--${opt.bg.color}-${opt.bg.break})`,
                         width: "1rem",
                         height: "1rem",
                         borderRadius: "0.25rem",
                       }}
                     />
                     <Text>
-                      {opt.bg.match(/--([a-z]+)-\d+/)?.[1] ?? "Unknown"}
+                      {/* Extract color name from CSS variable string, e.g. "blue" from "var(--blue-10)" */}
+                      {extractColorName(opt.bg.color)}
                     </Text>
                   </div>
                 </Select.Item>
@@ -197,7 +201,15 @@ export function ThemePlayground() {
           </Select.Root>
         </Flex>
 
-        <Flex gap="4" align="center" justify="between">
+        <SelectRow
+          label={t("Dashboard Color #1")}
+          value={dashboard.color1}
+          options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
+          onChange={(v) =>
+            setTheme({ dashboard: { ...dashboard, color1: v as RadixColor } })
+          }
+        />
+        {/* <Flex gap="4" align="center" justify="between">
           <Text>{t("Dashboard Color2 #1")}</Text>
           <Select.Root
             value={dashboard.color1}
@@ -224,7 +236,7 @@ export function ThemePlayground() {
               ))}
             </Select.Content>
           </Select.Root>
-        </Flex>
+        </Flex> */}
 
         <SelectRow
           label={t("Dashboard Color #2")}

@@ -129,10 +129,7 @@ function App() {
     }
   }, [language])
 
-  const _isMock = useMemo(() => {
-    const search = window.location.search
-    return search.includes("mock")
-  }, [])
+
 
   return (
     <Theme
@@ -143,9 +140,8 @@ function App() {
       scaling={scaling}
       style={
         {
-          "--sidebar-bg": sidebarColors.bg,
-          "--sidebar-bg-foreground": sidebarColors.fg,
-          "--sidebar-hover": sidebarColors.hover,
+          "--sidebar-background": sidebarColors.bg,
+          "--sidebar-foreground": sidebarColors.text,
 
           "--dashboard-color-1": dashboardColors.color1,
           "--dashboard-text-1": dashboardColors.text1,
