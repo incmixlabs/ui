@@ -205,26 +205,32 @@ export function useProjectData(
         const maxOrder = Math.max(...tasksInColumn.map((t) => t.order), -1)
 
         // Transform any array items to ensure they have required fields like 'order' and 'checked'
-        const processedAcceptanceCriteria = (taskData.acceptanceCriteria || []).map((item, index) => ({
-          id: item.id || generateBrowserUniqueId('ac'),
-          text: item.text || '',
+        const processedAcceptanceCriteria = (
+          taskData.acceptanceCriteria || []
+        ).map((item, index) => ({
+          id: item.id || generateBrowserUniqueId("ac"),
+          text: item.text || "",
           checked: item.checked ?? false,
           order: item.order ?? index,
         }))
 
-        const processedChecklist = (taskData.checklist || []).map((item, index) => ({
-          id: item.id || generateBrowserUniqueId('cl'),
-          text: item.text || '',
-          checked: item.checked ?? false,
-          order: item.order ?? index,
-        }))
+        const processedChecklist = (taskData.checklist || []).map(
+          (item, index) => ({
+            id: item.id || generateBrowserUniqueId("cl"),
+            text: item.text || "",
+            checked: item.checked ?? false,
+            order: item.order ?? index,
+          })
+        )
 
-        const processedSubTasks = (taskData.subTasks || []).map((item, index) => ({
-          id: item.id || generateBrowserUniqueId('st'),
-          name: item.name || '',
-          completed: item.completed ?? false,
-          order: item.order ?? index,
-        }))
+        const processedSubTasks = (taskData.subTasks || []).map(
+          (item, index) => ({
+            id: item.id || generateBrowserUniqueId("st"),
+            name: item.name || "",
+            completed: item.completed ?? false,
+            order: item.order ?? index,
+          })
+        )
 
         const newTask: TaskDataSchema = {
           id: generateBrowserUniqueId("task"),
@@ -271,33 +277,35 @@ export function useProjectData(
         const user = getCurrentUser(currentUser)
 
         // Process array updates if present to ensure schema compliance
-        let processedUpdates = { ...updates }
-        
+        const processedUpdates = { ...updates }
+
         // Handle acceptanceCriteria updates
         if (updates.acceptanceCriteria) {
-          processedUpdates.acceptanceCriteria = updates.acceptanceCriteria.map((item, index) => ({
-            id: item.id || generateBrowserUniqueId('ac'),
-            text: item.text || '',
-            checked: item.checked ?? false,
-            order: item.order ?? index,
-          }))
+          processedUpdates.acceptanceCriteria = updates.acceptanceCriteria.map(
+            (item, index) => ({
+              id: item.id || generateBrowserUniqueId("ac"),
+              text: item.text || "",
+              checked: item.checked ?? false,
+              order: item.order ?? index,
+            })
+          )
         }
-        
+
         // Handle checklist updates
         if (updates.checklist) {
           processedUpdates.checklist = updates.checklist.map((item, index) => ({
-            id: item.id || generateBrowserUniqueId('cl'),
-            text: item.text || '',
+            id: item.id || generateBrowserUniqueId("cl"),
+            text: item.text || "",
             checked: item.checked ?? false,
             order: item.order ?? index,
           }))
         }
-        
+
         // Handle subTasks updates
         if (updates.subTasks) {
           processedUpdates.subTasks = updates.subTasks.map((item, index) => ({
-            id: item.id || generateBrowserUniqueId('st'),
-            name: item.name || '',
+            id: item.id || generateBrowserUniqueId("st"),
+            name: item.name || "",
             completed: item.completed ?? false,
             order: item.order ?? index,
           }))
