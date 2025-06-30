@@ -3,6 +3,7 @@ import { Checkbox, TextField } from "@incmix/ui";
 import { Pencil, Trash, Check, X, GripVertical, Plus } from "lucide-react";
 import { Reorder, useDragControls } from "framer-motion";
 import { ConfirmationModal } from "./confirmation-modal";
+import { ProgressBar } from "./progress-bar";
 
 interface ChecklistItem {
   id: string;
@@ -13,6 +14,7 @@ interface ChecklistItem {
 
 interface TaskChecklistProps {
   checklist: ChecklistItem[];
+  hideTitle?: boolean;
   onChecklistItemToggle: (id: string, checked: boolean) => void;
   onChecklistItemEdit: (id: string, text: string) => void;
   onChecklistItemDelete: (id: string) => void;
@@ -147,6 +149,7 @@ const ChecklistItem = ({
 
 export function TaskChecklist({
   checklist,
+  hideTitle = false,
   onChecklistItemToggle,
   onChecklistItemEdit,
   onChecklistItemDelete,
@@ -298,24 +301,16 @@ export function TaskChecklist({
   return (
     <>
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-            CHECKLIST ({completedItems}/{totalItems})
-          </h3>
-        </div>
+        {!hideTitle && (
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              CHECKLIST ({completedItems}/{totalItems})
+            </h3>
+          </div>
+        )}
         
         {totalItems > 0 && (
-          <div className="space-y-2">
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-              <div
-                className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${progressPercentage}%` }}
-              />
-            </div>
-            <p className="text-xs text-gray-500">
-              {completedItems} of {totalItems} items complete
-            </p>
-          </div>
+          <ProgressBar completedItems={completedItems} totalItems={totalItems} />
         )}
 
         

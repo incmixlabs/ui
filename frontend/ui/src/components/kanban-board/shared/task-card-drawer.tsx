@@ -11,8 +11,12 @@ import {
   IconButton,
   ScrollArea,
   Text,
-  Accordion
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
 } from "@incmix/ui";
+
 import { ModalPresets } from "./confirmation-modal";
 import { assignData, attachments, commentsData, labelsData } from "../data";
 
@@ -218,76 +222,123 @@ export function TaskCardDrawer({
                 }
               />
 
-              {/* Task Acceptance Criteria */}
-              <TaskAcceptanceCriteriaSection
-                acceptanceCriteria={currentTask.acceptanceCriteria || []}
-                onAcceptanceCriteriaAdd={handleAddAcceptanceCriteria}
-                onAcceptanceCriteriaEdit={handleEditAcceptanceCriteria}
-                onAcceptanceCriteriaDelete={handleDeleteAcceptanceCriteria}
-                onReorderAcceptanceCriteria={handleAcceptanceCriteriaReorder}
-                onAcceptanceCriteriaToggle={handleAcceptanceCriteriaToggle}
-              />
+              {/* Task Sections in Accordion */}
+              <Accordion type="multiple" defaultValue={["acceptance-criteria", "checklist"]} className="w-full mt-4">
+                {/* Acceptance Criteria Accordion Item */}
+                <AccordionItem value="acceptance-criteria">
+                  <AccordionTrigger className="font-medium text-base hover:no-underline">
+                    {(() => {
+                      const criteria = currentTask.acceptanceCriteria || [];
+                      const completedItems = criteria.filter(item => item.checked).length;
+                      const totalItems = criteria.length;
+                      return (
+                        <div className="flex items-center gap-2 w-full">
+                          <span>Acceptance Criteria</span>
+                          {totalItems > 0 && (
+                            <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">
+                              ({completedItems}/{totalItems})
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })()} 
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <TaskAcceptanceCriteriaSection
+                      acceptanceCriteria={currentTask.acceptanceCriteria || []}
+                      onAcceptanceCriteriaAdd={handleAddAcceptanceCriteria}
+                      onAcceptanceCriteriaEdit={handleEditAcceptanceCriteria}
+                      onAcceptanceCriteriaDelete={handleDeleteAcceptanceCriteria}
+                      onReorderAcceptanceCriteria={handleAcceptanceCriteriaReorder}
+                      onAcceptanceCriteriaToggle={handleAcceptanceCriteriaToggle}
+                      hideTitle={true}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
 
-              {/* Task Checklist */}
-              <TaskChecklist
-                checklist={currentTask.checklist || []}
-                onChecklistItemToggle={(id, checked) => {
-                  const updatedChecklist = currentTask.checklist?.map(
-                    (item: { id: string; text: string; checked: boolean; order: number }) =>
-                      item.id === id ? { ...item, checked } : item,
-                  );
-                  if (currentTask.taskId) {
-                    updateTask(currentTask.taskId, {
-                      checklist: updatedChecklist,
-                    });
-                  }
-                }}
-                onChecklistItemEdit={(id, text) => {
-                  const updatedChecklist = currentTask.checklist?.map(
-                    (item: { id: string; text: string; checked: boolean; order: number }) =>
-                      item.id === id ? { ...item, text } : item,
-                  );
-                  if (currentTask.taskId) {
-                    updateTask(currentTask.taskId, {
-                      checklist: updatedChecklist,
-                    });
-                  }
-                }}
-                onChecklistItemDelete={(id) => {
-                  const updatedChecklist = currentTask.checklist?.filter(
-                    (item: { id: string }) => item.id !== id,
-                  );
-                  if (currentTask.taskId) {
-                    updateTask(currentTask.taskId, {
-                      checklist: updatedChecklist,
-                    });
-                  }
-                }}
-                onChecklistItemAdd={(text) => {
-                  // Find the highest order to place new item at the end
-                  const maxOrder = Math.max(
-                    0,
-                    ...(currentTask.checklist || []).map(item => item.order || 0)
-                  );
-                  
-                  const newChecklist = [
-                    ...(currentTask.checklist || []),
-                    { 
-                      id: crypto.randomUUID(), 
-                      text, 
-                      checked: false,
-                      order: maxOrder + 1 // Set order to place at end
-                    },
-                  ];
-                  
-                  if (currentTask.taskId) {
-                    updateTask(currentTask.taskId, { checklist: newChecklist });
-                  }
-                }}
-                onReorderChecklist={(reorderedChecklist) => {
-                  handleChecklistReorder(reorderedChecklist);
-                }}
-              />
+                {/* Checklist Accordion Item */}
+                <AccordionItem value="checklist">
+                  <AccordionTrigger className="font-medium text-base hover:no-underline">
+                    {(() => {
+                      const checklist = currentTask.checklist || [];
+                      const completedItems = checklist.filter(item => item.checked).length;
+                      const totalItems = checklist.length;
+                      return (
+                        <div className="flex items-center gap-2 w-full">
+                          <span>Checklist</span>
+                          {totalItems > 0 && (
+                            <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">
+                              ({completedItems}/{totalItems})
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })()} 
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <TaskChecklist
+                      checklist={currentTask.checklist || []}
+                      hideTitle={true}
+                      onChecklistItemToggle={(id, checked) => {
+                        const updatedChecklist = currentTask.checklist?.map(
+                          (item: { id: string; text: string; checked: boolean; order: number }) =>
+                            item.id === id ? { ...item, checked } : item,
+                        );
+                        if (currentTask.taskId) {
+                          updateTask(currentTask.taskId, {
+                            checklist: updatedChecklist,
+                          });
+                        }
+                      }}
+                      onChecklistItemEdit={(id, text) => {
+                        const updatedChecklist = currentTask.checklist?.map(
+                          (item: { id: string; text: string; checked: boolean; order: number }) =>
+                            item.id === id ? { ...item, text } : item,
+                        );
+                        if (currentTask.taskId) {
+                          updateTask(currentTask.taskId, {
+                            checklist: updatedChecklist,
+                          });
+                        }
+                      }}
+                      onChecklistItemDelete={(id) => {
+                        const updatedChecklist = currentTask.checklist?.filter(
+                          (item: { id: string }) => item.id !== id,
+                        );
+                        if (currentTask.taskId) {
+                          updateTask(currentTask.taskId, {
+                            checklist: updatedChecklist,
+                          });
+                        }
+                      }}
+                      onChecklistItemAdd={(text) => {
+                        // Find the highest order to place new item at the end
+                        const maxOrder = Math.max(
+                          0,
+                          ...(currentTask.checklist || []).map(item => item.order || 0)
+                        );
+                        
+                        const newChecklist = [
+                          ...(currentTask.checklist || []),
+                          { 
+                            id: crypto.randomUUID(), 
+                            text, 
+                            checked: false,
+                            order: maxOrder + 1 // Set order to place at end
+                          },
+                        ];
+                        
+                        if (currentTask.taskId) {
+                          updateTask(currentTask.taskId, { checklist: newChecklist });
+                        }
+                      }}
+                      onReorderChecklist={(reorderedChecklist) => {
+                        handleChecklistReorder(reorderedChecklist);
+                      }}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
 
               {/* Reference URLs */}
               <TaskRefUrlsSection

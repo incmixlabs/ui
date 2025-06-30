@@ -3,6 +3,7 @@ import { Checkbox } from "@incmix/ui";
 import { Pencil, Trash, Check, X, GripVertical, Plus } from "lucide-react";
 import { Reorder, useDragControls } from "framer-motion";
 import { ConfirmationModal } from "../confirmation-modal";
+import { ProgressBar } from "../progress-bar";
 import { cn } from "@utils";
 
 export interface AcceptanceCriteriaItem {
@@ -15,6 +16,7 @@ export interface AcceptanceCriteriaItem {
 interface TaskAcceptanceCriteriaSectionProps {
   acceptanceCriteria?: AcceptanceCriteriaItem[];
   className?: string;
+  hideTitle?: boolean;
   onAcceptanceCriteriaAdd?: (text: string) => void;
   onAcceptanceCriteriaEdit?: (id: string, text: string) => void;
   onAcceptanceCriteriaDelete?: (id: string) => void;
@@ -159,6 +161,7 @@ const AcceptanceCriteriaItemComponent = ({
 export function TaskAcceptanceCriteriaSection({
   acceptanceCriteria = [],
   className,
+  hideTitle = false,
   onAcceptanceCriteriaAdd,
   onAcceptanceCriteriaEdit,
   onAcceptanceCriteriaDelete,
@@ -221,6 +224,7 @@ export function TaskAcceptanceCriteriaSection({
   // Sort criteria by order
   const sortedCriteria = [...(optimisticCriteria || [])].sort((a, b) => a.order - b.order);
   const totalItems = sortedCriteria.length;
+  const completedItems = sortedCriteria.filter(item => item.checked).length;
   
   const handleReorderCriteria = (newOrder: AcceptanceCriteriaItem[]) => {
     // Update the order property for each item based on its new position
@@ -238,11 +242,17 @@ export function TaskAcceptanceCriteriaSection({
   
   return (
     <div className={cn("space-y-4", className)}>
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-          ACCEPTANCE CRITERIA
-        </h3>
-      </div>
+      {!hideTitle && (
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            ACCEPTANCE CRITERIA
+          </h3>
+        </div>
+      )}
+      
+      {totalItems > 0 && (
+        <ProgressBar completedItems={completedItems} totalItems={totalItems} />
+      )}
       
       <div className="space-y-2">
         {totalItems > 0 ? (

@@ -110,6 +110,13 @@ import { KanbanColumn } from "@incmix/utils/schema"
               </Select.Item>
             </Select.Content>
           </Select.Root>
+
+          {/* {isOverdue && (
+          <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-md bg-red-50 text-red-700 border border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-800">
+            <Clock className="h-3 w-3" />
+            Overdue
+          </span>
+        )} */} 
           
           {/* 3-dot menu positioned directly next to the priority dropdown */}
           <DropdownMenu.Root>

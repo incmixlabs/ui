@@ -33,7 +33,7 @@ export function TaskTitleSection({
   }
 
   return (
-    <Box className="space-y-2 py-5">
+    <Box className="py-2">
       {isEditing ? (
         <div className="flex items-center gap-2">
           <Input
