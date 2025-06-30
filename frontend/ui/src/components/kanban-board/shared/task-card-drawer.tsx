@@ -83,6 +83,8 @@ export function TaskCardDrawer({
     columns,
   });
 
+  console.log("Current task details:", currentTask);
+
   if (!currentTask || !currentColumn) {
     return null;
   }
@@ -511,7 +513,7 @@ export function TaskCardDrawer({
                     Created
                   </Heading>
                   <Text as="span" className="text-gray-9">
-                    January 2, 2020 4:30 PM
+                    {currentTask.createdAt ? new Date(currentTask.createdAt).toLocaleString() : 'Not available'}
                   </Text>
                 </Box>
                 <Box>
@@ -519,7 +521,7 @@ export function TaskCardDrawer({
                     Updated
                   </Heading>
                   <Text as="span" className="text-gray-9">
-                    January 2, 2020 4:55 PM
+                    {currentTask.updatedAt ? new Date(currentTask.updatedAt).toLocaleString() : 'Not available'}
                   </Text>
                 </Box>
               </Box>
