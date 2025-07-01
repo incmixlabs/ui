@@ -11,6 +11,7 @@ import { useAIFeaturesStore, useAIUserStory } from "@incmix/store"
 import { nanoid } from "nanoid"
 import { createTaskFormSchema } from "./add-task-schema"
 import { useAIDescriptionGeneration } from "../../../hooks/use-ai-description-generation"
+import { useStreamingDisplay, useStreamingResponse } from "../../../hooks"
 
 interface AddTaskFormProps {
   projectId: string
@@ -90,7 +91,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
       // Only update if we're opening the dialog (isOpen is true)
       if (isOpen) {
         // Force a clean reset of form data when dialog opens
-        setFormData({...defaultFormValues});
+        setFormData({ ...defaultFormValues });
       }
     }
   }, [defaultFormValues, isOpen])
@@ -172,50 +173,75 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
   // Track if we've had a generation error for the current title
   const [hadGenerationError, setHadGenerationError] = useState(false);
 
-  // Function to generate description using AI
-  const generateDescription = useCallback(async (title: string): Promise<void> => {
-    if (!title || !useAI) return;
+  // Fetch data from AI endpoint as event stream and format it for rendering
+  const [streamingState, streamingActions] = useStreamingResponse<{
+    userStory: {
+      description: string;
+      acceptanceCriteria: string[];
+      checklist: string[];
+    }
+  }>({
+    endpoint: "/generate-user-story",
+    method: "POST",
+    body: { prompt: formData.name, userTier: "free", templateId: 1 },
+  });
 
+  // Function to take stream data and set it to form data
+  const setFormDataFromStream = (data?: { description: string, acceptanceCriteria: string[], checklist: string[] }) => {
     try {
-      const aiResult = await generateUserStory(title)
-      if (aiResult) {
+      // const aiResult = await generateUserStory(title)
+      if (data) {
         // Make sure checklist items have proper structure with id, text, checked fields
-        const formattedChecklist = (aiResult.checklist || []).map((item: any) => ({
-          id: item.id || generateUniqueId('cl'),
-          text: item.text || item.name || item,
-          checked: item.checked || false
+        const formattedChecklist = (data.checklist || []).map((item: string) => ({
+          id:  generateUniqueId('cl'),
+          text: item,
+          checked: false
         }))
 
         // Format acceptance criteria items
-        const formattedAcceptanceCriteria = (aiResult.acceptanceCriteria || []).map((item: any) => ({
-          id: item.id || generateUniqueId('ac'),
-          text: item.text || item.name || item
+        const formattedAcceptanceCriteria = (data.acceptanceCriteria || []).map((item: string) => ({
+          id: generateUniqueId('ac'),
+          text: item
         }))
-
+        console.log(data)
         setFormData((prev) => ({
           ...prev,
-          description: aiResult.description,
+          description: data.description,
           acceptanceCriteria: formattedAcceptanceCriteria, // Add properly formatted acceptance criteria
           checklist: formattedChecklist, // Add the properly formatted AI-generated checklist to form data
         }))
-        setLastProcessedTitle(title)
+        setLastProcessedTitle(formData.name || '')
       }
     } catch (error) {
       console.error("Error generating AI description:", error)
       setHadGenerationError(true);
     }
-  }, [generateUserStory, useAI, generateUniqueId])
+  }
+
+  // Use callback to pass data to form
+   useStreamingDisplay({
+    streamingData: streamingState.data,
+    isStreaming: streamingState.isStreaming,
+    connectionStatus: streamingState.connectionStatus,
+    onDataUpdate: (data) => {
+      setFormDataFromStream(data.userStory)
+    }
+  })
+
+
 
   // Use the custom hook to handle AI description generation
-  useAIDescriptionGeneration(
-    formData.name,
-    useAI,
-    Boolean(formData.description?.trim()),
-    hadGenerationError,
-    lastProcessedTitle,
-    generateDescription,
-    () => setHadGenerationError(false)
-  );
+  // useAIDescriptionGeneration(
+  //   formData.name,
+  //   useAI,
+  //   Boolean(formData.description?.trim()),
+  //   hadGenerationError,
+  //   lastProcessedTitle,
+  //   generateDescription,
+  //   () => setHadGenerationError(false)
+  // );
+
+
 
   // Handle form values change
   const handleValuesChange = useCallback((values: any) => {
@@ -321,40 +347,61 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
           )}
 
           {/* AI Status Message */}
-          {useAI && (
-            <div className="mb-4">
-              {isGenerating && (
+
+          {useAI &&
+            <div className="mb-4 flex flex-col gap-2">
+              <div className="flex gap-2">
+                <Button onClick={() => streamingActions.startStreaming()} disabled={streamingState.isStreaming|| !formData.name?.trim().length}>
+                  {streamingState.isStreaming ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      Generate User Story
+                    </>
+                  )}
+                </Button>
+                {streamingState.isStreaming && <Button onClick={() => streamingActions.stopStreaming()}>Stop Streaming</Button>}
+                <span className="text-sm font-medium capitalize">
+                  {streamingState.connectionStatus}
+                </span>
+              </div>
+
+
+              {streamingState.isStreaming && streamingState.connectionStatus === "connected" && (
                 <div className="flex items-center p-2 bg-blue-50 dark:bg-blue-900/20 rounded text-blue-600 dark:text-blue-300">
                   <Sparkles size={16} className="mr-2 animate-pulse" />
                   <span>AI is generating a task description...</span>
                 </div>
               )}
-              {aiError && (
-                <div className="flex items-center p-2 bg-red-50 dark:bg-red-900/20 rounded text-red-600 dark:text-red-300">
-                  <span className="mr-2">⚠️</span>
-                  <span>{aiError}</span>
+
+
+              {streamingState.error && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+                  <strong>Error:</strong> {streamingState.error}
                 </div>
               )}
-              {lastProcessedTitle && !isGenerating && !aiError && formData.description && (
+              {lastProcessedTitle && !streamingState.isStreaming && !streamingState.error && formData.description && (
                 <div className="flex items-center p-2 bg-green-50 dark:bg-green-900/20 rounded text-green-600 dark:text-green-300">
                   <Sparkles size={16} className="mr-2" />
                   <span>AI-generated description based on your title</span>
                 </div>
               )}
             </div>
-          )}
+          }
 
           <AutoForm
             formSchema={taskFormSchema.formSchema}
             fieldConfig={taskFormSchema.fieldConfig}
             onSubmit={handleSubmit}
             onValuesChange={handleValuesChange}
-
             values={formData}
             className="space-y-6"
           >
             {/* AI Generated Checklist Display - Below description field */}
-            {useAI && formData.checklist && formData.checklist.length > 0 && (
+            {formData.checklist && formData.checklist.length > 0 && (
               <div className="border rounded-md p-4 bg-white dark:bg-gray-800 mt-4 mb-5">
                 <h4 className="text-sm font-medium mb-3 flex items-center">
                   <Sparkles size={16} className="mr-2 text-blue-500" />
@@ -374,6 +421,37 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
                               : checkItem
                           )
                           setFormData(prev => ({ ...prev, checklist: updatedChecklist }))
+                        }}
+                        className="mt-1"
+                      />
+                      <span className={item.checked ? "line-through text-gray-500" : ""}>
+                        {item.text}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {formData.acceptanceCriteria && formData.acceptanceCriteria.length > 0 && (
+              <div className="border rounded-md p-4 bg-white dark:bg-gray-800 mt-4 mb-5">
+                <h4 className="text-sm font-medium mb-3 flex items-center">
+                  <Sparkles size={16} className="mr-2 text-blue-500" />
+                  AI Generated Acceptance Criteria
+                </h4>
+                <div className="space-y-2">
+                  {formData.acceptanceCriteria.map((item: { id: string; text: string; checked: boolean }) => (
+                    <div key={item.id} className="flex items-start gap-2">
+                      <input
+                        type="checkbox"
+                        checked={item.checked || false}
+                        onChange={() => {
+                          // Toggle the checked state for this item
+                          const updatedAcceptanceCriteria = (formData.acceptanceCriteria || []).map(
+                            (checkItem: any) => checkItem.id === item.id
+                              ? { ...checkItem, checked: !checkItem.checked }
+                              : checkItem
+                          )
+                          setFormData(prev => ({ ...prev, acceptanceCriteria: updatedAcceptanceCriteria }))
                         }}
                         className="mt-1"
                       />
