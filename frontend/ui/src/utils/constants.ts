@@ -10,3 +10,4 @@ export const EMAIL_API_URL = `${BFF_API_URL}${API.EMAIL}`
 export const FILES_API_URL = `${BFF_API_URL}${API.FILES}`
 export const LOCATION_API_URL = `${BFF_API_URL}${API.LOCATION}`
 export const RATELIMIT_API_URL = `${BFF_API_URL}${API.RATELIMITS}`
+export const GENAI_API_URL = `${BFF_API_URL}${API.GENAI}`
