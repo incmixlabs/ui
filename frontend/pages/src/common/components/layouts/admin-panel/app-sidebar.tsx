@@ -274,11 +274,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </ScrollArea>
         </SidebarContent>
         {user && (
-          <SidebarFooter>
+          <SidebarFooter className="transition-colors duration-300">
             <NavUser userId={user.id} />
           </SidebarFooter>
         )}
-        <SidebarRail />
+        <SidebarRail className="" />
       </Sidebar>
       {pathname.includes("/file-manager") && (
         <ErrorBoundary

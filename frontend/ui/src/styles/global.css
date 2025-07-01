@@ -23,6 +23,9 @@
   }
 
   :root {
+    --color-black: #000000;
+    --color-white: #ffffff;
+
     --color-done: #ffcc33;
     --color-yellow: #ffd240;
     --color-hold: #3366ff;
@@ -71,6 +74,7 @@
 
     --sidebar-background: var(--gray-3);
     --sidebar-foreground: var(--gray-12);
+    --sidebar-active: #D9D9D926;
     
     --sidebar-border: 220 7% 92%;
     --sidebar-trigger-border: 0 0% 85%;
@@ -80,6 +84,9 @@
   }
 
   .dark {
+    --color-black: #000000;
+    --color-white: #ffffff;
+    
     --color-primary: #fcfcfc;
     --color-foreground: #111111;
     --color-muted: #838383;
@@ -118,6 +125,7 @@
 
     --sidebar-background: var(--gray-3);
     --sidebar-foreground: var(--gray-12);
+    --sidebar-active: #D9D9D926;
 
     --sidebar-border: 222 9% 22%;
     --sidebar-trigger-border: 0 0% 85%;

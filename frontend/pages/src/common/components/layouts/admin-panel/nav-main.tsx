@@ -195,14 +195,15 @@ export function NavMain({
                     isSelected={item.isSelected}
                     isSubMenuSelected={item.isActive}
                     tooltip={item.title}
+                    className="active:bg-[var(--sidebar-background)] active:text-[var(--sidebar-foreground)]"
                   >
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
-                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    <ChevronRight className="group-data-[state=open]/collapsible:transform-x-90 ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
                 <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
-                  <SidebarMenuSub className="px-0.5">
+                  <SidebarMenuSub className="px-0 py-1">
                     {item.items.map((subItem) => {
                       const switcher =
                         subItem.title.toLowerCase() === "tasks" ? (
@@ -254,7 +255,6 @@ export function NavMain({
                 <SidebarMenuButton
                   isSelected={item.isSelected}
                   tooltip={item.title}
-                  className="text-[var(--sidebar-foreground)]"
                   asChild
                 >
                   <Link to={item.url}>
@@ -277,7 +277,7 @@ export function NavMain({
           return mainItemContextMenu ? (
             <ContextMenu.Root key={item.title}>
               <ContextMenu.Trigger>{content}</ContextMenu.Trigger>
-              <ContextMenu.Content className="z-50 min-w-[150px] rounded-md bg-white p-1 shadow-md dark:bg-neutral-900">
+              <ContextMenu.Content className="z-50 min-w-[150px] rounded-md border border-gray-5 bg-gray-2 p-1 shadow-md">
                 {mainItemContextMenu}
               </ContextMenu.Content>
             </ContextMenu.Root>
