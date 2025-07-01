@@ -235,7 +235,7 @@ export function NavMain({
                           <ContextMenu.Trigger>
                             {subItemContent}
                           </ContextMenu.Trigger>
-                          <ContextMenu.Content className="z-50 min-w-[150px] rounded-md bg-white p-1 shadow-md dark:bg-neutral-900">
+                          <ContextMenu.Content className="z-50 min-w-[150px] rounded-md border border-gray-5 bg-popover p-1 shadow-md">
                             {subItemContextMenu}
                           </ContextMenu.Content>
                         </ContextMenu.Root>
@@ -277,7 +277,7 @@ export function NavMain({
           return mainItemContextMenu ? (
             <ContextMenu.Root key={item.title}>
               <ContextMenu.Trigger>{content}</ContextMenu.Trigger>
-              <ContextMenu.Content className="z-50 min-w-[150px] rounded-md border border-gray-5 bg-gray-2 p-1 shadow-md">
+              <ContextMenu.Content className="z-50 min-w-[150px] rounded-md border border-gray-5 bg-popover p-1 shadow-md">
                 {mainItemContextMenu}
               </ContextMenu.Content>
             </ContextMenu.Root>
