@@ -38,7 +38,7 @@ export const baseColor = [
   "orange",
   "yellow",
   "green",
-] 
+]
 
 export const SIDEBAR_COLOR_OPTIONS = [
   { bg: { color: "blue", break: 10 } },
