@@ -1,6 +1,7 @@
-import { Box, Heading } from "@incmix/ui"
-import { DateTime } from "luxon"
-import { GanttChart, type Task } from "./components/gantt-chart"
+import { Box, Heading } from "@incmix/ui";
+import { DateTime } from "luxon";
+import { GanttChart, type Task } from "./components/gantt-chart";
+import { useTableView } from "@/components/kanban-board/table";
 const tasks: Task[] = [
   {
     id: "1",
@@ -164,13 +165,16 @@ const tasks: Task[] = [
     progress: 60,
     color: "blue",
   },
-]
+];
 
-export function RoadmapView() {
+export function RoadmapView({
+  projectId = "default-project",
+}: {
+  projectId: string;
+}) {
   return (
-    <Box className="h-full w-full overflow-hidden">
-      <Heading className="mb-6 font-bold text-2xl">Project Timeline</Heading>
+    <Box className="py-5">
       <GanttChart projectTasks={tasks} />
     </Box>
-  )
+  );
 }
