@@ -181,6 +181,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
       checklist: string[];
     }
   }>({
+    endpoint: "/generate-user-story",
     method: "POST",
     body: { prompt: formData.name, userTier: "free", templateId: 1 },
   });
@@ -350,7 +351,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
           {useAI &&
             <div className="mb-4 flex flex-col gap-2">
               <div className="flex gap-2">
-                <Button onClick={() => streamingActions.startStreaming()}>
+                <Button onClick={() => streamingActions.startStreaming()} disabled={streamingState.isStreaming|| !formData.name?.trim().length}>
                   {streamingState.isStreaming ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />

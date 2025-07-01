@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 export type ConnectionStatus = "idle" | "connecting" | "connected" | "completed" | "error" | "stopped";
 
 export interface StreamingOptions {
-  url?: string;
+  endpoint: string;
   method?: "GET" | "POST" | "PUT" | "DELETE";
   headers?: Record<string, string>;
   credentials?: RequestCredentials;
@@ -78,7 +78,7 @@ export function useStreamingResponse<T = Record<string, unknown>>(options: Strea
       }
 
       // Make request to the API endpoint
-      const response = await fetch(options.url || `${BASE_URL}/generate-user-story`, requestOptions);
+      const response = await fetch(`${BASE_URL}${options.endpoint}`, requestOptions);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -141,7 +141,7 @@ export function useStreamingResponse<T = Record<string, unknown>>(options: Strea
                   }
 
                   // Handle Vercel AI SDK format if present
-                  if (data.type === "object") {
+                  else if (data.type === "object") {
                     setState((prev: StreamingState<T>) => ({
                       ...prev,
                       data: {

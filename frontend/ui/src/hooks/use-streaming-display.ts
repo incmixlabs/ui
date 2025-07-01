@@ -42,7 +42,7 @@ export function useStreamingDisplay<T extends Record<string, unknown>>({
       if (Object.keys(streamingData).length > 0) {
         setHasData(true);
       }
-    } else if (connectionStatus === "idle" && !hasData) {
+    } else if (connectionStatus === "idle") {
       // Reset when going back to idle state
       setDisplayData({} as T);
       setHasData(false);
@@ -52,7 +52,7 @@ export function useStreamingDisplay<T extends Record<string, unknown>>({
     if (onDataUpdate) {
       onDataUpdate(streamingData);
     }
-  }, [streamingData, isStreaming, connectionStatus, hasData]);
+  }, [streamingData, isStreaming, connectionStatus]);
 
   const resetDisplay = () => {
     setDisplayData({} as T);
