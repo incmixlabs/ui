@@ -12,6 +12,7 @@ import {
   Card,
   Flex,
   ListBoard,
+  RoadmapView,
   Switch,
   TableView,
   Tabs,
@@ -132,6 +133,12 @@ const TasksPage = () => {
               >
                 Table
               </Tabs.Trigger>
+              <Tabs.Trigger
+                className="flex cursor-pointer select-none px-4 py-2 text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
+                value="roadmap"
+              >
+                Roadmap
+              </Tabs.Trigger>
             </Tabs.List>
 
             {/* Content Area - Natural height, allows page to scroll vertically */}
@@ -145,6 +152,9 @@ const TasksPage = () => {
 
             <Tabs.Content value="table">
               <TableView projectId={selectedProject || "default-project"} />
+            </Tabs.Content>
+            <Tabs.Content value="roadmap">
+              <RoadmapView projectId={selectedProject || "default-project"} />
             </Tabs.Content>
           </Tabs.Root>
         </Box>
