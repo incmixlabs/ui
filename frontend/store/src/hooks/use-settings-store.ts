@@ -28,14 +28,26 @@ export type SidebarColorConfig = {
   color: string
   break: number
 }
+
+export const baseColor = [
+  "blue",
+  "violet",
+  "gray",
+  "red",
+  "indigo",
+  "orange",
+  "yellow",
+  "green",
+] 
+
 export const SIDEBAR_COLOR_OPTIONS = [
-  { bg: { color: "gray", break: 2 } },
-  { bg: { color: "red", break: 10 } },
   { bg: { color: "blue", break: 10 } },
   { bg: { color: "violet", break: 10 } },
+  { bg: { color: "gray", break: 2 } },
+  { bg: { color: "red", break: 10 } },
   { bg: { color: "indigo", break: 10 } },
   { bg: { color: "orange", break: 10 } },
-  { bg: { color: "yellow", break: 10 } },
+  { bg: { color: "yellow", break: 9 } },
   { bg: { color: "green", break: 10 } },
 ] satisfies { bg: SidebarColorConfig }[]
 
