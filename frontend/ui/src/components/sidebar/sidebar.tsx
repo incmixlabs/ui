@@ -144,6 +144,7 @@ const SidebarProvider = forwardRef<
     // const sidebarBg = useMemo(() => getTheme().sidebarBg, [getTheme])
     const sidebarStore = useSidebarStore()
     const [sidebar, setsideBar] = useState<undefined | string>("")
+
     const contextValue = useMemo<SidebarContext>(
       () => ({
         state,
@@ -169,19 +170,6 @@ const SidebarProvider = forwardRef<
         toggleSecondarySidebar,
       ]
     )
-    // useEffect(() => {
-    //   if (sidebar !== sidebarBg) {
-    //     const sideBarColor = SIDEBAR_COLOR_OPTIONS.find(color => color.bg === sidebarBg)?? SIDEBAR_COLOR_OPTIONS[0]
-    //     setsideBar(sidebarBg)
-    //     console.log(sideBarColor);
-        
-    //     document.documentElement.style.setProperty('--sidebar-foreground', sideBarColor.text);
-    //     document.documentElement.style.setProperty('--sidebar-background', sideBarColor.bg);
-    //     document.documentElement.style.setProperty('--sidebar-fg', sideBarColor.text);
-    //     document.documentElement.style.setProperty('--bg-sidebar', sideBarColor.bg);
-    //     document.documentElement.style.setProperty('--sidebar-hover', sideBarColor.hover);
-    //   }
-    // }, [sidebarBg]);
 
     return (
       <SidebarContext.Provider value={contextValue}>
@@ -238,7 +226,7 @@ const Sidebar = React.forwardRef<
         icon={
           <ChevronsLeft className="stroke-[var(--sidebar-background)]" />
         }
-        className="-right-5 fixed top-10 left-[calc(var(--sidebar-width)_-_20px)] z-50 h-10 w-10 rounded-full border border-[hsl(var(--sidebar-trigger-border))] border-solid bg-[hsl(var(--sidebar-trigger-background))] transition-all duration-200 ease-linear group-data-[collapsible=icon]:left-[calc(var(--sidebar-width-icon)_-_20px)] group-data-[collapsible=icon]:rotate-180"
+        className="-right-5 fixed top-10 left-[calc(var(--sidebar-width)_-_20px)] z-50 h-10 w-10 rounded-full border border-[var(--sidebar-active)] border-solid bg-[var(--sidebar-foreground)] transition-all duration-200 ease-linear group-data-[collapsible=icon]:left-[calc(var(--sidebar-width-icon)_-_20px)] group-data-[collapsible=icon]:rotate-180"
       />
     )
 
@@ -666,11 +654,11 @@ const SidebarMenuItem = React.forwardRef<
 SidebarMenuItem.displayName = "SidebarMenuItem"
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+  "peer/menu-button group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-[width,height,padding] hover:bg-[var(--sidebar-active)] hover:text-[var(--sidebar-foreground)] focus-visible:ring-2 active:bg-[var(--sidebar-active)] active:text-[var(--sidebar-foreground)] disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-[var(--sidebar-active)] data-[active=true]:font-medium data-[active=true]:text-[var(--sidebar-foreground)] data-[state=open]:hover:bg-[var(--sidebar-active)] data-[state=open]:hover:text-[var(--sidebar-foreground)] [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+        default: "hover:bg-[var(--sidebar-active)] hover:text-[var(--sidebar-foreground)]",
         outline:
           "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
       },
@@ -721,9 +709,9 @@ const SidebarMenuButton = React.forwardRef<
         data-active={isActive}
         className={cn(
           sidebarMenuButtonVariants({ variant, size }),
-          "hover:bg-[var(--sidebar-hover)] dark:hover:bg-[var(--sidebar-hover)]",
-          `${isSelected && open && "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[var(--sidebar-hover)] font-[600] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[4px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-[var(--sidebar-bg-foreground)] before:content-['']"}`,
-          `${(isSelected || isSubMenuSelected) && !open && " bg-[var(--sidebar-foreground)]  text-[var(--sidebar-background)]"}`,
+          "hover:bg-[var(--sidebar-active)]",
+          `${isSelected && open && "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[var(--sidebar-active)] font-[600] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[4px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-[var(--sidebar-foreground)] before:content-['']"}`,
+          `${(isSelected || isSubMenuSelected) && !open && " bg-[var(--sidebar-active)] text-[var(--sidebar-background)]"}`,
           className
         )}
         {...props}
@@ -854,7 +842,7 @@ const SidebarMenuSub = React.forwardRef<
     ref={ref}
     data-sidebar="menu-sub"
     className={cn(
-      "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-sidebar-border border-l px-2.5 py-0.5",
+      "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-[var(--sidebar-foreground)] border-l px-2.5 py-0.5",
       "group-data-[collapsible=icon]:hidden",
       className
     )}
@@ -891,14 +879,14 @@ const SidebarMenuSubButton = React.forwardRef<
         data-size={size}
         data-active={isActive}
         className={cn(
-          "-translate-x-px flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-md px-2 text-[var(--sidebar-bg-foreground)] outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-[var(--sidebar-bg-foreground)] focus-visible:ring-2 active:bg-sidebar-accent active:text-[var(--sidebar-bg-foreground)] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-[var(--sidebar-bg-foreground)]",
-          "data-[active=true]:bg-sidebar-accent data-[active=true]:text-[var(--sidebar-bg-foreground)]",
-          "hover:bg-[var(--sidebar-hover)] dark:hover:bg-[var(--sidebar-hover)]",
+          "-translate-x-px flex h-7 min-w-0 items-center gap-2 overflow-hidden rounded-md px-2 text-[var(--sidebar-foreground)] outline-none ring-sidebar-ring hover:bg-sidebar-accent hover:text-[var(--sidebar-foreground)] focus-visible:ring-2 active:bg-sidebar-accent active:text-[var(--sidebar-foreground)] disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-[var(--sidebar-foreground)]",
+          "data-[active=true]:bg-sidebar-accent data-[active=true]:text-[var(--sidebar-foreground)]",
+          "hover:bg-[var(--sidebar-active)]",
           size === "sm" && "text-xs",
           size === "md" && "text-sm",
           isSelected &&
             open &&
-            "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[var(--sidebar-hover)] font-[600] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[3px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-[var(--sidebar-primary-foreground)] before:content-['']",
+            "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[var(--sidebar-active)] font-[600] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[3px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-[var(--sidebar-foreground)] before:content-['']",
           "group-data-[collapsible=icon]:hidden",
           className
         )}

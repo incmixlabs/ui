@@ -29,15 +29,14 @@ export type SidebarColorConfig = {
   break: number
 }
 export const SIDEBAR_COLOR_OPTIONS = [
-  { bg: { color: "gray", break: 10 } },
+  { bg: { color: "gray", break: 2 } },
   { bg: { color: "red", break: 10 } },
-  { bg: { color: "mauve", break: 10 } },
   { bg: { color: "blue", break: 10 } },
   { bg: { color: "violet", break: 10 } },
-  { bg: { color: "purple", break: 10 } },
   { bg: { color: "indigo", break: 10 } },
   { bg: { color: "orange", break: 10 } },
   { bg: { color: "yellow", break: 10 } },
+  { bg: { color: "green", break: 10 } },
 ] satisfies { bg: SidebarColorConfig }[]
 
 export type ThemeStoreConfig = ThemeConfig & {
@@ -534,32 +533,37 @@ export const useThemeStore = create<ThemeStoreConfig>()(
             }
       },
       getSidebarColor: () => {
-        const { sidebarBg, breakFontColor } = get()
-
-        console.log("sidebarBg", sidebarBg)
-        console.log("breakFontColor", breakFontColor)
+        const { sidebarBg } = get()
 
         const regex = /var\(--(\w+)-(\d+)\)/
         const match = sidebarBg.match(regex)
 
         let color = "gray"
-        let shade = 5
 
         if (match) {
-          color = match[1]
-          shade = Number(match[2])
+          color = match[1] // e.g., "yellow"
         }
 
-        const threshold =
-          (typeof breakFontColor === "object"
-            ? (breakFontColor[color as keyof BreakFontColor] ??
-              breakFontColor.default)
-            : 5) ?? 5
-        const text = shade <= threshold ? "var(--gray-12)" : "var(--gray-1)"
+        // Case: yellow → use black text
+        if (color === "yellow") {
+          return {
+            bg: sidebarBg,
+            text: "var(--color-black)",
+          }
+        }
 
+        // Case: gray → use gray-12 text
+        if (color === "gray") {
+          return {
+            bg: sidebarBg,
+            text: "var(--gray-12)",
+          }
+        }
+
+        // Default fallback (white text for dark backgrounds)
         return {
           bg: sidebarBg,
-          text,
+          text: "var(--color-white)",
         }
       },
     }),

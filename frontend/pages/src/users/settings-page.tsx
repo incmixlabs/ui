@@ -195,8 +195,7 @@ const GeneralInfoForm: React.FC<ReturnType<typeof useGeneralInfoForm>> = ({
         <ReactiveButton
           type="submit"
           loading={isUpdatingUser}
-          color="blue"
-          className="w-full"
+          className="h-11 w-full"
         >
           {isUpdatingUser ? t("saving") : t("saveChanges")}
         </ReactiveButton>
@@ -230,9 +229,8 @@ const PasswordChangeForm: React.FC<
         )}
         <ReactiveButton
           type="submit"
-          color="blue"
           loading={isPasswordChangePending}
-          className="w-full"
+          className="h-11 w-full"
         >
           {t("changePassword")}
         </ReactiveButton>
@@ -255,7 +253,7 @@ const LanguageSelector: React.FC = () => {
           {t("selectLanguage")}
         </Text>
         <Select.Root value={language} onValueChange={setLanguage}>
-          <Select.Trigger />
+          <Select.Trigger className="h-11" />
           <Select.Content>
             <Select.Item value="en">English</Select.Item>
             <Select.Item value="pt">Português</Select.Item>
