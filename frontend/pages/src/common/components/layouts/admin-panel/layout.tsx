@@ -1,10 +1,6 @@
 import { useEditingStore, useThemeStore } from "@incmix/store"
 import { Button, Separator, iconSize } from "@incmix/ui"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@incmix/ui/sidebar"
+import { SidebarInset, SidebarProvider } from "@incmix/ui/sidebar"
 import type React from "react"
 import { AppSidebar } from "./app-sidebar"
 

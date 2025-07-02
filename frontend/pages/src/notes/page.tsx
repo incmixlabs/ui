@@ -3,7 +3,7 @@ import { DashboardLayout } from "@layouts/admin-panel/layout"
 
 const NotesPage = () => {
   return (
-    <DashboardLayout breadcrumbItems={[{ label: "Notes", url: "/notes" }]}>
+    <DashboardLayout>
       <NoteComponent />
     </DashboardLayout>
   )

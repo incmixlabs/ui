@@ -19,6 +19,7 @@ import { type FileItem, projectFolders } from "../data"
 import ProjectCard from "./project-card"
 import { ProjectDetails } from "./project-details"
 import { ProjectListView } from "./project-list"
+import { PageHeader } from "@components/page-header"
 
 interface FileGridProps {
   title: string
@@ -95,8 +96,10 @@ const ProjectBox = ({ title }: FileGridProps) => {
       <Box className={"flex-1 rounded-lg border border-gray-5 transition-all "}>
         <Flex
           className="border-gray-5 border-b px-8 py-4 font-medium text-gray-10"
+          align={"center"}
           gap={"1"}
         >
+          <PageHeader />
           <IconButton
             className={`mr-2 rounded-full ${iconSize}`}
             onClick={() => {

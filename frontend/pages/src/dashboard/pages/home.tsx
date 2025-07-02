@@ -18,6 +18,7 @@ import {
   EditDashboard,
   Flex,
   Heading,
+  PageHeader,
   SaveTemplateDialog,
   SidebarTrigger,
   Switch,
@@ -205,6 +206,7 @@ const DashboardHomePage: React.FC = () => {
         <Box as="div" className="container mx-auto flex overflow-x-hidden">
           <Box className="h-full w-full overflow-hidden pt-5">
             <Flex justify={"between"} align={"center"} className="pb-4">
+              {!isEditing && <PageHeader />}
               <Flex align={"center"} gap="2">
                 {pathname.includes("/file-manager") ||
                   (pathname.includes("/dashboard") && isEditing && (

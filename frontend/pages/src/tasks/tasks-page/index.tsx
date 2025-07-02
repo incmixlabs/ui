@@ -12,6 +12,7 @@ import {
   Card,
   Flex,
   ListBoard,
+  PageHeader,
   RoadmapView,
   Switch,
   TableView,
@@ -80,7 +81,8 @@ const TasksPage = () => {
           <Box className="p-4">
             {/* Project Selection and Creation */}
             <Flex justify="between" align="center">
-              <Flex className="gap-4">
+              <Flex className="gap-4" align={"center"}>
+                <PageHeader />
                 <CreateProjectForm
                   onSuccess={(p) => {
                     refetchProjects()

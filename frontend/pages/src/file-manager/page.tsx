@@ -3,9 +3,7 @@ import { DashboardLayout } from "@layouts/admin-panel/layout"
 
 const FileManagerPage = () => {
   return (
-    <DashboardLayout
-      breadcrumbItems={[{ label: "File Manager", url: "/file-manager" }]}
-    >
+    <DashboardLayout>
       <FileManager />
     </DashboardLayout>
   )
