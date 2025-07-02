@@ -151,11 +151,14 @@ export class LocalDatabase {
                 oldDoc.attachments || oldDoc.attachment
               )
                 ? (oldDoc.attachments || oldDoc.attachment).map((att: any) => ({
-                    id: att.id || nanoid(),
+                    // Prefer existing id, then legacy attachmentId, then generate a new one
+                    id: att.id ?? att.attachmentId ?? nanoid(),
                     name: att.name || "",
                     url: att.url || "",
                     size: att.size || "0",
                     type: att.type || "",
+                    // Preserve legacy attachmentId for downstream fetching
+                    attachmentId: att.attachmentId,
                   }))
                 : [],
               // Ensure completed field exists
@@ -206,7 +209,7 @@ export class LocalDatabase {
     try {
       await initializeDefaultData(this.database, {
         projectId: "default-project", // Change to your desired default project ID
-        statusesOnly: false, // Set to true if you only want task statuses without sample tasks
+        labelsOnly: false, // Set to true if you only want labels without sample tasks
       })
       console.log("Default data initialized successfully")
     } catch (error) {

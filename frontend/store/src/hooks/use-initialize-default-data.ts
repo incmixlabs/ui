@@ -136,9 +136,11 @@ async function initializeTasks(
 
     const mediumPriority =
       labels.find((l) => l.type === "priority" && l.name === "Medium") ||
-      labels.find((l) => l.type === "priority") ||
-      // If no priority labels exist, use a status label as fallback
-      labels[0]
+      labels.find((l) => l.type === "priority")
+      
+    if (!mediumPriority) {
+      throw new Error("No priority labels found. Cannot create sample tasks.")
+    }
 
     /**
      * Helper function to create a fully typed TaskDocType from partial data

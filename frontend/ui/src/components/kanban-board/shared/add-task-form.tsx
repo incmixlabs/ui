@@ -466,7 +466,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
             <div className="mt-4 flex justify-end">
               <Button
                 type="submit"
-                disabled={!formData.name?.trim() || !formData.columnId || isLoading}
+                disabled={!formData.name?.trim() || !formData.statusId || isLoading}
                 className="bg-blue-600 hover:bg-blue-700 text-white"
               >
                 {isLoading ? (

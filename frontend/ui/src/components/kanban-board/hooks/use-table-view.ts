@@ -5,6 +5,7 @@ import { nanoid } from "nanoid"
 import type { TaskDataSchema, TableTask } from "@incmix/utils/schema"
 import type { ListColumn } from "./use-list-view"
 import { useListView } from "./use-list-view"
+import { useKanban } from "./use-kanban-data"
 
 // Define locally to ensure compatibility with our implementation
 export interface UseTableViewReturn {
@@ -52,9 +53,31 @@ export function useTableView(
 ): UseTableViewReturn {
   // Reuse list view hook for data consistency
   const listViewData = useListView(projectId)
+  
+  // Get direct access to project data to access priority labels
+  const kanbanData = useKanban(projectId)
 
   // Transform tasks for table display with computed properties
   const tableTasks = useMemo<TableTask[]>(() => {
+    // Instead of trying to access projectData directly, we can infer priority information
+    // by examining the tasks that have priorityId values
+    // Collect unique priorityIds from tasks
+    const uniquePriorityIds = new Set<string>()
+    listViewData.columns.forEach(column => {
+      column.tasks.forEach(task => {
+        if (task.priorityId) uniquePriorityIds.add(task.priorityId)
+      })
+    })
+    
+    // Create a mapping of priorityId to their display properties
+    // We'll use a hardcoded set of common priorities as fallback
+    const priorityMap: Record<string, {name: string, color: string}> = {
+      'low': { name: 'Low', color: '#6b7280' },
+      'medium': { name: 'Medium', color: '#3b82f6' },
+      'high': { name: 'High', color: '#f59e0b' },
+      'urgent': { name: 'Urgent', color: '#ef4444' },
+    }
+    
     // Flatten all tasks from all columns
     const allTasks = listViewData.columns.flatMap((column) =>
       column.tasks.map((task) => {
@@ -71,6 +94,12 @@ export function useTableView(
             order: index // Default to index position for order
           };
         })
+        
+        // Try to map the priorityId to a known priority
+        // If it's not in our map, we can use the raw ID value as fallback
+        const priorityInfo = task.priorityId ? 
+          priorityMap[task.priorityId] || { name: task.priorityId, color: '#64748b' } : 
+          undefined;
 
         return {
           ...task,
@@ -78,12 +107,9 @@ export function useTableView(
           statusLabel: column.name,
           statusColor: column.color,
           
-          // Add priority information if available
-          // Need to look up priority labels from the full labels list, not just status columns
-          // We'd need to access the raw labels from projectData, which we don't have direct access to
-          // For now, we'll use undefined and let consuming components handle this
-          priorityLabel: undefined,
-          priorityColor: undefined,
+          // Add priority information
+          priorityLabel: priorityInfo?.name,
+          priorityColor: priorityInfo?.color,
 
           // Format assigned users
           assignedToNames:

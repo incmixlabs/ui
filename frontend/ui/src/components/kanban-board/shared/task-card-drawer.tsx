@@ -1,4 +1,5 @@
 // components/shared/task-card-drawer.tsx
+import React from "react";
 import { useKanban } from "../hooks/use-kanban-data";
 import { useListView } from "../hooks/use-list-view";
 import { useKanbanDrawer } from "../hooks/use-kanban-drawer";
@@ -50,7 +51,7 @@ export function TaskCardDrawer({
 }: TaskCardDrawerProps) {
   // Get drawer state from the shared context
   const { taskId, isOpen, handleDrawerClose } = useKanbanDrawer();
-  console.log(taskId);
+  // Removed console.log to prevent unnecessary re-renders
 
   const [selectedMemebers, setSelectedMemebers] = useState<string[]>([
     "regina-cooper",
@@ -59,20 +60,31 @@ export function TaskCardDrawer({
   const { columns, updateTask, deleteTask, createTask, moveTask } =
     viewType === "board" ? useKanban(projectId) : useListView(projectId);
 
-  // Find the current task and its column
-  const foundTask = taskId
-    ? columns.flatMap((col) => col.tasks).find((task) => task.id === taskId)
-    : null;
+  // Find the current task and its column - Memoize to prevent re-renders
+  const foundTask = React.useMemo(() => 
+    taskId ? columns.flatMap((col) => col.tasks).find((task) => task.id === taskId) : null,
+    [taskId, columns]
+  );
   
-  // Type assertion to handle KanbanTask vs TaskDataSchema compatibility
-  // This ensures that the task always has required fields like id
-  const currentTask = foundTask && foundTask.id ? foundTask as unknown as TaskDataSchema : null;
+  // Safely convert to TaskDataSchema with proper validation - Memoize this as well
+  const currentTask = React.useMemo(() => 
+    foundTask && foundTask.id ? {
+      ...foundTask,
+      // Ensure all required TaskDataSchema fields are present
+      id: foundTask.id,
+      // Use currentColumn.id as fallback if statusId is not present
+      statusId: foundTask.statusId || '',
+      priorityId: foundTask.priorityId || 'medium'
+    } as TaskDataSchema : null,
+    [foundTask]
+  );
 
-  const currentColumn = currentTask
-    ? columns.find((col) =>
-        col.tasks.some((task) => task.id === currentTask.id),
-      )
-    : null;
+  const currentColumn = React.useMemo(() => 
+    currentTask ? columns.find((col) =>
+      col.tasks.some((task) => task.id === currentTask.id)
+    ) : null,
+    [currentTask, columns]
+  );
 
   // Use custom hooks for state and actions
   const drawerState = useTaskDrawerState(currentTask);
@@ -87,8 +99,8 @@ export function TaskCardDrawer({
     handleDrawerClose,
     columns,
   });
-
-  console.log("Current task details:", currentTask);
+  
+  // Removed console.log to prevent unnecessary re-renders
 
   if (!currentTask || !currentColumn) {
     return null;

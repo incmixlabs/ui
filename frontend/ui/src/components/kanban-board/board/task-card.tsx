@@ -9,11 +9,12 @@ import React, { useCallback, useEffect, useRef, useState, memo, type MutableRefO
 import { createPortal } from "react-dom"
 import invariant from "tiny-invariant"
 // Define necessary types for drag-and-drop functionality
-type ElementDragPayload = any
+// Using a more specific type for ElementDragPayload instead of 'any'
+type ElementDragPayload = Record<string, unknown>;
 const canUseDOM = typeof window !== 'undefined' && !!window.document && !!window.document.createElement
-// Define types for drag and drop props
-type DraggableProps = Record<string, any>
-type DragHandleProps = Record<string, any>
+// Define types for drag and drop props with improved type safety
+type DraggableProps = Record<string, unknown>
+type DragHandleProps = Record<string, unknown>
 // Type for card data with closestEdge
 interface TCardDataWithEdge extends ReturnType<typeof getCardData> {
   closestEdge?: Edge
@@ -43,7 +44,8 @@ import { IconButton,  DropdownMenu,
   Flex,
   Heading,
   Text,
-  Badge, } from "@base"
+  Badge } from "@base"
+import { toast } from "@incmix/ui"
 import  {
   isCardData,
   isDraggingACard,
@@ -151,11 +153,9 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
       .catch((err) => {
         setIsDeleting(false)
         console.error("Error deleting task:", err)
-        // toast({
-        //   title: "Delete failed",
-        //   description: "Could not delete task.",
-        //   variant: "destructive",
-        // })
+        toast.error("Could not delete task. Please try again.", {
+          duration: 5000,
+        })
       })
   }, [card.id, onDeleteTask])
 
@@ -172,11 +172,9 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
         .catch((err) => {
           // setIsUpdating(false)
           console.error("Error updating task completion status:", err)
-          // toast({
-          //   title: "Update failed",
-          //   description: "Could not update task completion status.",
-          //   variant: "destructive",
-          // })
+          toast.error("Could not update task completion status. Please try again.", {
+            duration: 5000,
+          })
         })
     },
     [card.completed, card.id, onUpdateTask]

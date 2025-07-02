@@ -155,7 +155,36 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
         <TableRowActions
           task={row}
           taskStatuses={labels as unknown as LabelSchema[]}
-          onUpdateTask={((taskId, updates) => updateTask(taskId, updates as any)) as (taskId: string, updates: Partial<TableTask>) => Promise<void>}
+          onUpdateTask={async (taskId, updates) => {
+            // Convert TableTask updates to TaskDataSchema updates
+            const schemaUpdates: Partial<TaskDataSchema> = {};
+            
+            // Copy only properties that exist on TaskDataSchema
+            // Handle known properties specially
+            if (updates.name !== undefined) schemaUpdates.name = updates.name;
+            if (updates.description !== undefined) schemaUpdates.description = updates.description;
+            if (updates.statusId !== undefined) schemaUpdates.statusId = updates.statusId;
+            if (updates.priorityId !== undefined) schemaUpdates.priorityId = updates.priorityId;
+            if (updates.completed !== undefined) schemaUpdates.completed = updates.completed;
+            if (updates.endDate !== undefined) schemaUpdates.endDate = updates.endDate;
+            if (updates.startDate !== undefined) schemaUpdates.startDate = updates.startDate;
+            
+            // Handle subTasks with special mapping to ensure order property
+            if (updates.subTasks !== undefined) {
+              schemaUpdates.subTasks = updates.subTasks.map((subTask, index) => ({
+                id: subTask.id || '',
+                name: subTask.name,
+                completed: subTask.completed,
+                order: index // Use index as order if not provided
+              }));
+            }
+            
+            if (updates.assignedTo !== undefined) schemaUpdates.assignedTo = updates.assignedTo;
+            if (updates.labelsTags !== undefined) schemaUpdates.labelsTags = updates.labelsTags;
+            if (updates.attachments !== undefined) schemaUpdates.attachments = updates.attachments;
+            
+            return updateTask(taskId, schemaUpdates);
+          }}
           onDeleteTask={deleteTask}
           onMoveTaskToStatus={moveTaskToStatus}
         />
@@ -194,6 +223,15 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     try {
       // Special handling for status changes
       if (columnId === "status") {
+        // Validate that the status exists
+        const validStatus = (labels as unknown as LabelSchema[]).some(label =>
+          label.type === "status" && label.id === newValue
+        );
+        if (!validStatus) {
+          console.error(`Invalid status ID: ${newValue}`);
+          return;
+        }
+        // Use rowData.id for consistency with other operations
         await moveTaskToStatus(rowData.id, newValue)
       } else {
         // Map column IDs to task properties
@@ -383,7 +421,26 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       <CreateTaskDialog
         isOpen={isCreateTaskOpen}
         onClose={() => setIsCreateTaskOpen(false)}
-        onCreateTask={((taskData) => createTask(taskData as any)) as (taskData: Partial<TableTask>) => Promise<void>}
+        onCreateTask={async (taskData) => {
+          // Convert TableTask data to TaskDataSchema
+          const schemaData: Partial<TaskDataSchema> = {};
+          
+          // Map TableTask properties to TaskDataSchema
+          if (taskData.name !== undefined) schemaData.name = taskData.name;
+          if (taskData.description !== undefined) schemaData.description = taskData.description;
+          if (taskData.statusId !== undefined) schemaData.statusId = taskData.statusId;
+          if (taskData.priorityId !== undefined) schemaData.priorityId = taskData.priorityId;
+          if (taskData.startDate !== undefined) schemaData.startDate = taskData.startDate;
+          if (taskData.endDate !== undefined) schemaData.endDate = taskData.endDate;
+          if (taskData.completed !== undefined) schemaData.completed = taskData.completed;
+          
+          // Convert complex properties if needed
+          if (taskData.assignedTo) schemaData.assignedTo = taskData.assignedTo;
+          if (taskData.labelsTags) schemaData.labelsTags = taskData.labelsTags;
+          if (taskData.attachments) schemaData.attachments = taskData.attachments;
+          
+          return createTask(schemaData);
+        }}
         taskStatuses={(labels as unknown as LabelSchema[]) || []}
       />
 

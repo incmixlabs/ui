@@ -200,7 +200,7 @@ export const PriorityDropdownCell: React.FC<PriorityDropdownCellProps> = ({
 export const createEnhancedTaskTableColumns = (
   taskStatuses: Array<{ id: string; name: string; color: string }>,
   onStatusChange: (taskId: string, statusId: string) => Promise<void>,
-  onPriorityChange: (taskId: string, priorityId: string) => Promise<void>
+  onPriorityChange: (taskId: string, priorityId: PriorityType) => Promise<void>
 ) => {
   return [
     // ... other columns (same as before)

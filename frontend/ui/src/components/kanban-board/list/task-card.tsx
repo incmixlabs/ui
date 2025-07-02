@@ -292,11 +292,31 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
                     // Find the priority label by its ID
                     const priorityLabel = priorityLabels.find(label => label.id === card.priorityId);
                     
-                    // Determine color based on priority name
-                    if (priorityLabel?.name.toLowerCase().includes("urgent")) return "red";
-                    if (priorityLabel?.name.toLowerCase().includes("high")) return "orange";
-                    // Only use supported colors from ExtendedColorType
-                    // Ignore custom colors from the label for now
+                    // Use a priority-to-color mapping with valid Radix UI colors
+                    // These colors conform to ExtendedColorType
+                    const colorMap: Record<string, "red" | "orange" | "blue" | "green" | "gray"> = {
+                      urgent: "red",
+                      high: "orange",
+                      medium: "blue",
+                      low: "green"
+                    };
+                    
+                    // Get normalized priority key from label name
+                    const priorityKey = priorityLabel?.name.toLowerCase() || "medium";
+                    
+                    // First try exact match
+                    if (Object.prototype.hasOwnProperty.call(colorMap, priorityKey)) {
+                      return colorMap[priorityKey as keyof typeof colorMap];
+                    }
+                    
+                    // Then try substring match
+                    for (const [key, color] of Object.entries(colorMap)) {
+                      if (priorityKey.includes(key)) {
+                        return color;
+                      }
+                    }
+                    
+                    // Default fallback
                     return "gray";
                   })()}
                   variant="soft"
@@ -549,7 +569,7 @@ export const ListTaskCard = memo(function ListTaskCard({
         getIsSticky: () => true,
         canDrop: isDraggingACard,
         getData: ({ element, input }) => {
-          const data = getCardDropTargetData({ card: { id: card.id, priorityId: card.priorityId }, statusId })
+          const data = getCardDropTargetData({ card, statusId })
           return attachClosestEdge(data, {
             element,
             input,

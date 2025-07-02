@@ -71,7 +71,7 @@ interface ListColumnProps {
   onUpdateColumn: (columnId: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
   onDeleteColumn: (columnId: string) => Promise<void>
   isDragging?: boolean
-  selectedTaskIds?: {[key: string]: {id: string, name: string}}
+  selectedTaskIds?: {[key: string]: boolean} // Simplified to just a map of IDs to boolean
   onTaskSelect?: (taskId: string, selected: boolean, taskName: string) => void
   onSelectAll?: (columnId: string, selected: boolean) => void
 }
@@ -88,7 +88,7 @@ const CardList = memo(function CardList({
   columns: ListColumn[]
   onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
-  selectedTaskIds?: {[key: string]: {id: string, name: string}}
+  selectedTaskIds?: {[key: string]: boolean}
   onTaskSelect?: (taskId: string, selected: boolean, taskName: string) => void
 }) {
   return (
