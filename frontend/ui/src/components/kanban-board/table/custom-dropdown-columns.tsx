@@ -25,11 +25,11 @@ export const StatusDropdownCell: React.FC<StatusDropdownCellProps> = ({
   const currentStatus = taskStatuses.find(status => status.id === value)
   
   const handleStatusChange = async (newStatusId: string) => {
-    if (newStatusId === value || !row.taskId || isLoading) return
+    if (newStatusId === value || !row.id || isLoading) return
     
     setIsLoading(true)
     try {
-      await onStatusChange(row.taskId, newStatusId)
+      await onStatusChange(row.id, newStatusId)
     } catch (error) {
       console.error("Failed to update status:", error)
     } finally {
@@ -103,7 +103,7 @@ export const StatusDropdownCell: React.FC<StatusDropdownCellProps> = ({
 interface PriorityDropdownCellProps {
   value: PriorityType | string
   row: TableTask
-  onPriorityChange: (taskId: string, newPriority: PriorityType) => Promise<void>
+  onPriorityChange: (taskId: string, newPriorityId: PriorityType) => Promise<void>
   disabled?: boolean
 }
 
@@ -128,12 +128,12 @@ export const PriorityDropdownCell: React.FC<PriorityDropdownCellProps> = ({
   const safeValue = (Object.keys(PRIORITY_CONFIG).includes(value as string) ? value : "medium") as PriorityType
   const currentPriority = PRIORITY_CONFIG[safeValue]
   
-  const handlePriorityChange = async (newPriority: PriorityType) => {
-    if (newPriority === value || !row.taskId || isLoading) return
+  const handlePriorityChange = async (newPriorityId: PriorityType) => {
+    if (newPriorityId === value || !row.id || isLoading) return
     
     setIsLoading(true)
     try {
-      await onPriorityChange(row.taskId, newPriority)
+      await onPriorityChange(row.id, newPriorityId)
     } catch (error) {
       console.error("Failed to update priority:", error)
     } finally {
@@ -200,7 +200,7 @@ export const PriorityDropdownCell: React.FC<PriorityDropdownCellProps> = ({
 export const createEnhancedTaskTableColumns = (
   taskStatuses: Array<{ id: string; name: string; color: string }>,
   onStatusChange: (taskId: string, statusId: string) => Promise<void>,
-  onPriorityChange: (taskId: string, priority: string) => Promise<void>
+  onPriorityChange: (taskId: string, priorityId: string) => Promise<void>
 ) => {
   return [
     // ... other columns (same as before)
@@ -208,7 +208,7 @@ export const createEnhancedTaskTableColumns = (
     {
       headingName: "Status",
       type: "String" as const, // Using String since we're handling the dropdown ourselves
-      accessorKey: "columnId",
+      accessorKey: "statusId",
       id: "status",
       enableSorting: true,
       enableInlineEdit: false, // Disable inline edit since we're using custom dropdown
@@ -224,7 +224,7 @@ export const createEnhancedTaskTableColumns = (
     {
       headingName: "Priority",
       type: "String" as const,
-      accessorKey: "priority",
+      accessorKey: "priorityId",
       id: "priority",
       enableSorting: true,
       enableInlineEdit: false,

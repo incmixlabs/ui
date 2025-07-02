@@ -2,6 +2,7 @@
 import { useKanban } from "../hooks/use-kanban-data";
 import { useListView } from "../hooks/use-list-view";
 import { useKanbanDrawer } from "../hooks/use-kanban-drawer";
+import { TaskDataSchema } from "@incmix/utils/schema";
 import {
   Avatar,
   Box,
@@ -59,13 +60,17 @@ export function TaskCardDrawer({
     viewType === "board" ? useKanban(projectId) : useListView(projectId);
 
   // Find the current task and its column
-  const currentTask = taskId
-    ? columns.flatMap((col) => col.tasks).find((task) => task.taskId === taskId)
+  const foundTask = taskId
+    ? columns.flatMap((col) => col.tasks).find((task) => task.id === taskId)
     : null;
+  
+  // Type assertion to handle KanbanTask vs TaskDataSchema compatibility
+  // This ensures that the task always has required fields like id
+  const currentTask = foundTask && foundTask.id ? foundTask as unknown as TaskDataSchema : null;
 
   const currentColumn = currentTask
     ? columns.find((col) =>
-        col.tasks.some((task) => task.taskId === currentTask.taskId),
+        col.tasks.some((task) => task.id === currentTask.id),
       )
     : null;
 
@@ -91,14 +96,14 @@ export function TaskCardDrawer({
 
   // Checklist handlers
   const handleChecklistReorder = (reorderedChecklist: any[]) => {
-    if (currentTask.taskId) {
-      updateTask(currentTask.taskId, { checklist: reorderedChecklist });
+    if (currentTask.id) {
+      updateTask(currentTask.id, { checklist: reorderedChecklist });
     }
   };
   
   // Acceptance Criteria handlers
   const handleAddAcceptanceCriteria = (text: string) => {
-    if (!currentTask.taskId) return;
+    if (!currentTask.id) return;
     
     const newItem: AcceptanceCriteriaItem = {
       id: uuidv4(),
@@ -114,45 +119,45 @@ export function TaskCardDrawer({
     ];
     
     // Use type assertion to resolve TypeScript compatibility issue
-    updateTask(currentTask.taskId, { acceptanceCriteria: updatedCriteria as any });
+    updateTask(currentTask.id, { acceptanceCriteria: updatedCriteria as any });
   };
   
   const handleEditAcceptanceCriteria = (id: string, text: string) => {
-    if (!currentTask.taskId || !currentTask.acceptanceCriteria) return;
+    if (!currentTask.id || !currentTask.acceptanceCriteria) return;
     
     const updatedCriteria = currentTask.acceptanceCriteria.map(item => 
       item.id === id ? { ...item, text } : item
     );
     
     // Use type assertion to resolve TypeScript compatibility issue
-    updateTask(currentTask.taskId, { acceptanceCriteria: updatedCriteria as any });
+    updateTask(currentTask.id, { acceptanceCriteria: updatedCriteria as any });
   };
   
   const handleDeleteAcceptanceCriteria = (id: string) => {
-    if (!currentTask.taskId || !currentTask.acceptanceCriteria) return;
+    if (!currentTask.id || !currentTask.acceptanceCriteria) return;
     
     const updatedCriteria = currentTask.acceptanceCriteria.filter(item => item.id !== id);
     
     // Use type assertion to resolve TypeScript compatibility issue
-    updateTask(currentTask.taskId, { acceptanceCriteria: updatedCriteria as any });
+    updateTask(currentTask.id, { acceptanceCriteria: updatedCriteria as any });
   };
   
   const handleAcceptanceCriteriaReorder = (reorderedCriteria: AcceptanceCriteriaItem[]) => {
-    if (currentTask.taskId) {
+    if (currentTask.id) {
       // Use type assertion to resolve TypeScript compatibility issue
-      updateTask(currentTask.taskId, { acceptanceCriteria: reorderedCriteria as any });
+      updateTask(currentTask.id, { acceptanceCriteria: reorderedCriteria as any });
     }
   };
   
   const handleAcceptanceCriteriaToggle = (id: string, checked: boolean) => {
-    if (!currentTask.taskId || !currentTask.acceptanceCriteria) return;
+    if (!currentTask.id || !currentTask.acceptanceCriteria) return;
     
     const updatedCriteria = currentTask.acceptanceCriteria.map(item => 
       item.id === id ? { ...item, checked } : item
     );
     
     // Use type assertion to resolve TypeScript compatibility issue
-    updateTask(currentTask.taskId, { acceptanceCriteria: updatedCriteria as any });
+    updateTask(currentTask.id, { acceptanceCriteria: updatedCriteria as any });
   };
 
   return (
@@ -284,8 +289,8 @@ export function TaskCardDrawer({
                           (item: { id: string; text: string; checked: boolean; order: number }) =>
                             item.id === id ? { ...item, checked } : item,
                         );
-                        if (currentTask.taskId) {
-                          updateTask(currentTask.taskId, {
+                        if (currentTask.id) {
+                          updateTask(currentTask.id, {
                             checklist: updatedChecklist,
                           });
                         }
@@ -295,8 +300,8 @@ export function TaskCardDrawer({
                           (item: { id: string; text: string; checked: boolean; order: number }) =>
                             item.id === id ? { ...item, text } : item,
                         );
-                        if (currentTask.taskId) {
-                          updateTask(currentTask.taskId, {
+                        if (currentTask.id) {
+                          updateTask(currentTask.id, {
                             checklist: updatedChecklist,
                           });
                         }
@@ -305,8 +310,8 @@ export function TaskCardDrawer({
                         const updatedChecklist = currentTask.checklist?.filter(
                           (item: { id: string }) => item.id !== id,
                         );
-                        if (currentTask.taskId) {
-                          updateTask(currentTask.taskId, {
+                        if (currentTask.id) {
+                          updateTask(currentTask.id, {
                             checklist: updatedChecklist,
                           });
                         }
@@ -328,8 +333,8 @@ export function TaskCardDrawer({
                           },
                         ];
                         
-                        if (currentTask.taskId) {
-                          updateTask(currentTask.taskId, { checklist: newChecklist });
+                        if (currentTask.id) {
+                          updateTask(currentTask.id, { checklist: newChecklist });
                         }
                       }}
                       onReorderChecklist={(reorderedChecklist) => {

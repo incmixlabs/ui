@@ -30,8 +30,9 @@ interface TableRowActionsProps {
     id: string
     name: string
     color: string
+    type: string
   }>
-  onUpdateTask: (taskId: string, updates: any) => Promise<void>
+  onUpdateTask: (taskId: string, updates: Partial<TableTask>) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
   onMoveTaskToStatus: (taskId: string, statusId: string) => Promise<void>
   disabled?: boolean
@@ -53,23 +54,23 @@ export function TableRowActions({
 
   // Handle task completion toggle
   const handleToggleComplete = useCallback(async () => {
-    if (!task.taskId || isLoading) return
+    if (!task.id || isLoading) return
 
     setIsLoading(true)
     try {
-      await onUpdateTask(task.taskId, { completed: !task.completed })
+      await onUpdateTask(task.id, { completed: !task.completed })
     } catch (error) {
       console.error("Failed to toggle task completion:", error)
     } finally {
       setIsLoading(false)
     }
-  }, [task.taskId, task.completed, onUpdateTask, isLoading])
+  }, [task.id, task.completed, onUpdateTask, isLoading])
 
   // Handle task view in drawer
   const handleViewTask = useCallback(() => {
-    if (!task.taskId) return
-    handleDrawerOpen(task.taskId)
-  }, [task.taskId, handleDrawerOpen])
+    if (!task.id) return
+    handleDrawerOpen(task.id)
+  }, [task.id, handleDrawerOpen])
 
   // Handle task deletion
   const handleDeleteTask = useCallback(() => {
@@ -78,18 +79,18 @@ export function TableRowActions({
 
   // Confirm task deletion
   const confirmDeleteTask = useCallback(async () => {
-    if (!task.taskId) return
+    if (!task.id) return
 
     setIsLoading(true)
     try {
-      await onDeleteTask(task.taskId)
+      await onDeleteTask(task.id)
       setShowDeleteConfirmation(false)
     } catch (error) {
       console.error("Failed to delete task:", error)
     } finally {
       setIsLoading(false)
     }
-  }, [task.taskId, onDeleteTask])
+  }, [task.id, onDeleteTask])
 
   // Handle task duplication
   const handleDuplicateTask = useCallback(async () => {
@@ -100,31 +101,31 @@ export function TableRowActions({
 
   // Handle moving task to different status
   const handleMoveToStatus = useCallback(async (statusId: string) => {
-    if (!task.taskId || isLoading) return
+    if (!task.id || isLoading) return
 
     setIsLoading(true)
     try {
-      await onMoveTaskToStatus(task.taskId, statusId)
+      await onMoveTaskToStatus(task.id, statusId)
     } catch (error) {
       console.error("Failed to move task:", error)
     } finally {
       setIsLoading(false)
     }
-  }, [task.taskId, onMoveTaskToStatus, isLoading])
+  }, [task.id, onMoveTaskToStatus, isLoading])
 
   // Handle quick priority change
-  const handleSetPriority = useCallback(async (priority: string) => {
-    if (!task.taskId || isLoading) return
+  const handleSetPriority = useCallback(async (priorityId: string) => {
+    if (!task.id || isLoading) return
 
     setIsLoading(true)
     try {
-      await onUpdateTask(task.taskId, { priority })
+      await onUpdateTask(task.id, { priorityId })
     } catch (error) {
       console.error("Failed to update priority:", error)
     } finally {
       setIsLoading(false)
     }
-  }, [task.taskId, onUpdateTask, isLoading])
+  }, [task.id, onUpdateTask, isLoading])
 
   return (
     <>
@@ -179,8 +180,8 @@ export function TableRowActions({
               </Flex>
             </DropdownMenu.SubTrigger>
             <DropdownMenu.SubContent>
-              {taskStatuses.map((status) => {
-                const isCurrentStatus = task.columnId === status.id
+              {taskStatuses.filter(status => status.type === "status").map((status) => {
+                const isCurrentStatus = task.statusId === status.id
                 return (
                   <DropdownMenu.Item
                     key={status.id}
@@ -209,15 +210,21 @@ export function TableRowActions({
               </Flex>
             </DropdownMenu.SubTrigger>
             <DropdownMenu.SubContent>
-              {["low", "medium", "high", "urgent"].map((priority) => {
-                const isCurrentPriority = task.priority === priority
+              {taskStatuses.filter(status => status.type === "priority").map((priority) => {
+                const isCurrentPriority = task.priorityId === priority.id
                 return (
                   <DropdownMenu.Item
-                    key={priority}
-                    onClick={() => handleSetPriority(priority)}
+                    key={priority.id}
+                    onClick={() => handleSetPriority(priority.id)}
                     className={isCurrentPriority ? "bg-accent" : ""}
                   >
-                    <Text className="capitalize">{priority}</Text>
+                    <Flex align="center" gap="2">
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: priority.color }}
+                      />
+                      <Text>{priority.name}</Text>
+                    </Flex>
                   </DropdownMenu.Item>
                 )
               })}

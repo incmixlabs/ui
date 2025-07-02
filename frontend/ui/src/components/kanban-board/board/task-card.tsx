@@ -8,6 +8,16 @@ import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/el
 import React, { useCallback, useEffect, useRef, useState, memo, type MutableRefObject } from "react"
 import { createPortal } from "react-dom"
 import invariant from "tiny-invariant"
+// Define necessary types for drag-and-drop functionality
+type ElementDragPayload = any
+const canUseDOM = typeof window !== 'undefined' && !!window.document && !!window.document.createElement
+// Define types for drag and drop props
+type DraggableProps = Record<string, any>
+type DragHandleProps = Record<string, any>
+// Type for card data with closestEdge
+interface TCardDataWithEdge extends ReturnType<typeof getCardData> {
+  closestEdge?: Edge
+}
 
 import {
   type Edge,
@@ -86,7 +96,6 @@ export const TaskCardShadow = memo(function TaskCardShadow({
 export const TaskCardDisplay = memo(function TaskCardDisplay({
   card,
   state,
-  outerRef,
   innerRef,
   onUpdateTask,
   onDeleteTask,
@@ -94,7 +103,6 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
 }: {
   card: KanbanTask
   state: TCardState
-  outerRef?: React.MutableRefObject<HTMLDivElement | null>
   innerRef?: MutableRefObject<HTMLDivElement | null>
   onUpdateTask?: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask?: (taskId: string) => Promise<void>
@@ -104,59 +112,93 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
 
   const handleTaskClick = useCallback((e: React.MouseEvent) => {
     // Don't open task if clicking on dropdown or other interactive elements
-    if ((e.target as HTMLElement).closest('button, [role="menuitem"]')) {
+    if (
+      e.target instanceof Element &&
+      (e.target.closest('[data-no-drawer]') ||
+        e.target.closest('[role="menuitem"]'))
+    ) {
       return
     }
 
-    if (state.type !== "is-dragging" && card.taskId) {
-      if (onTaskOpen) {
-        onTaskOpen(card.taskId)
-      } else {
-        handleDrawerOpen(card.taskId)
-      }
+    // Ensure card.id exists before using it
+    if (!card.id) return
+    
+    if (onTaskOpen) {
+      onTaskOpen(card.id)
+    } else {
+      handleDrawerOpen(card.id)
     }
-  }, [handleDrawerOpen, card.taskId, state.type, onTaskOpen])
+  }, [card.id, handleDrawerOpen, onTaskOpen])
 
   // Modal state for task deletion
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
-  const handleDelete = useCallback(async (e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (!onDeleteTask) return
+  const handleDelete = useCallback(() => {
     setShowDeleteConfirmation(true)
-  }, [onDeleteTask])
+  }, [card.id])
 
   // Confirm task deletion handler
-  const confirmDeleteTask = useCallback(async () => {
-    if (!onDeleteTask || !card.taskId) return
-    try {
-      await onDeleteTask(card.taskId)
-    } catch (error) {
-      console.error("Failed to delete task:", error)
-    }
-  }, [onDeleteTask, card.taskId])
+  const confirmDelete = useCallback(() => {
+    if (!onDeleteTask || !card.id) return
 
-  const handleToggleComplete = useCallback(async (e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (!onUpdateTask || !card.taskId) return
+    setIsDeleting(true)
+    onDeleteTask(card.id)
+      .then(() => {
+        setIsDeleting(false)
+        setShowDeleteConfirmation(false)
+      })
+      .catch((err) => {
+        setIsDeleting(false)
+        console.error("Error deleting task:", err)
+        // toast({
+        //   title: "Delete failed",
+        //   description: "Could not delete task.",
+        //   variant: "destructive",
+        // })
+      })
+  }, [card.id, onDeleteTask])
 
-    try {
-      await onUpdateTask(card.taskId, { completed: !card.completed })
-    } catch (error) {
-      console.error("Failed to toggle task completion:", error)
-    }
-  }, [onUpdateTask, card.taskId, card.completed])
+  const handleToggleCompleted = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.stopPropagation()
+      if (!onUpdateTask || !card.id) return
+
+      // setIsUpdating(true)
+      onUpdateTask(card.id, { completed: !card.completed })
+        .then(() => {
+          // setIsUpdating(false)
+        })
+        .catch((err) => {
+          // setIsUpdating(false)
+          console.error("Error updating task completion status:", err)
+          // toast({
+          //   title: "Update failed",
+          //   description: "Could not update task completion status.",
+          //   variant: "destructive",
+          // })
+        })
+    },
+    [card.completed, card.id, onUpdateTask]
+  )
 
   const handleOpenTaskDetails = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
-    if (!card.taskId) return
-    
-    if (onTaskOpen) {
-      onTaskOpen(card.taskId)
-    } else {
-      handleDrawerOpen(card.taskId)
+    if (onTaskOpen && card.id) {
+      onTaskOpen(card.id)
+    } else if (card.id) {
+      handleDrawerOpen(card.id)
     }
-  }, [onTaskOpen, handleDrawerOpen, card.taskId])
+  }, [card.id, handleDrawerOpen, onTaskOpen])
+  
+  // Handle task actions
+  const handleEdit = useCallback(() => {
+    if (onTaskOpen && card.id) {
+      onTaskOpen(card.id)
+    } else if (card.id) {
+      handleDrawerOpen(card.id)
+    }
+  }, [card.id, handleDrawerOpen, onTaskOpen])
 
   // Using the shared priority configuration from priority-config.ts
 
@@ -204,9 +246,9 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
   const totalSubTasks = card.subTasks?.length || 0
   const progressPercentage = totalSubTasks > 0 ? (completedSubTasks / totalSubTasks) * 100 : 0
 
-  const priorityInfo = getPriorityInfo(card.priority)
+  const priorityInfo = getPriorityInfo(card.priorityId)
   const PriorityIcon = priorityInfo.icon
-  const dueDateInfo = formatDate(card.startDate)
+  const dueDateInfo = formatDate(card.startDate ? String(card.startDate) : undefined)
 
   return (
     <>
@@ -214,21 +256,21 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
       {ModalPresets.deleteTask({
         isOpen: showDeleteConfirmation,
         onOpenChange: setShowDeleteConfirmation,
+        onConfirm: confirmDelete,
         taskName: card.name,
-        onConfirm: confirmDeleteTask
+        isLoading: isDeleting,
       })}
 
       <Box
-        ref={outerRef}
         onClick={handleTaskClick}
-      onKeyDown={(e) => {
+        onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === "Space") {
           e.preventDefault()
           handleTaskClick(e as any)
         }
       }}
-      className={`flex flex-shrink-0 flex-col gap-1 p-1 ${outerStyles[state.type] || ""}`}
-      data-task-id={card.taskId}
+      className={cn("flex flex-shrink-0 flex-col gap-1 p-1", outerStyles[state.type] || "")}
+      data-task-id={card.id}
     >
       {/* Drop indicator above */}
       {state.type === "is-over" && state.closestEdge === "top" ? (
@@ -260,15 +302,14 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
         <Flex justify="between" align="start" className="gap-2 -mt-1">
           <Flex align="center" gap="2" className="flex-1 min-w-0">
             {/* Priority indicator */}
-            {card.priority && card.priority !== "medium" && (
+            {card.priorityId && (
               <Badge
-                color={priorityInfo.color}
                 size="1"
+                color="gray"
                 variant="soft"
-                className="flex items-center gap-1 flex-shrink-0"
+                className={`px-2 py-0.5 ${getPriorityInfo(card.priorityId).color}`}
               >
-                <PriorityIcon size={10} />
-                {priorityInfo.label}
+                {getPriorityInfo(card.priorityId).label}
               </Badge>
             )}
 
@@ -294,11 +335,11 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
                 </IconButton>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content>
-                <DropdownMenu.Item onClick={handleOpenTaskDetails}>
+                <DropdownMenu.Item onClick={handleEdit}>
                   <Edit3 size={12} />
                   Edit Task
                 </DropdownMenu.Item>
-                <DropdownMenu.Item onClick={handleToggleComplete}>
+                <DropdownMenu.Item onClick={(e) => handleToggleCompleted(e as unknown as React.MouseEvent<HTMLButtonElement>)}>
                   <CheckSquare size={12} />
                   {card.completed ? "Mark Incomplete" : "Mark Complete"}
                 </DropdownMenu.Item>
@@ -406,16 +447,16 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
               </Flex>
             )}
 
-            {/* Comments - Updated to use commentsCount */}
-            {card.commentsCount !== undefined && card.commentsCount > 0 && (
-              <Flex align="center" gap="1" className="text-gray-500">
-                <MessageSquareText size={12} />
-                <Text size="1" className="font-medium">{card.commentsCount}</Text>
-              </Flex>
+            {/* Comments count */}
+            {card.comments && card.comments.length > 0 && (
+              <div className="flex items-center gap-1 text-gray-500" title="Comments">
+                <MessageSquareText className="w-3.5 h-3.5" />
+                <span className="text-xs">{card.comments.length}</span>
+              </div>
             )}
           </Flex>
 
-          {/* Assigned users - Updated to use 'image' instead of 'avatar' */}
+          {/* Assigned users */}
           {card.assignedTo && card.assignedTo.length > 0 && (
             <Flex align="center" className="-space-x-1">
               {card.assignedTo.slice(0, 3).map((member, index) => (
@@ -447,51 +488,53 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
   )
 })
 
-export const TaskCard = memo(function TaskCard({
+export function TaskCard({
   card,
-  columnId,
+  statusId,
   onUpdateTask,
   onDeleteTask,
-  onTaskOpen
+  onTaskOpen,
+  provided,
 }: {
   card: KanbanTask
-  columnId: string
-  onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
-  onDeleteTask: (taskId: string) => Promise<void>
+  statusId: string
+  onUpdateTask?: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
+  onDeleteTask?: (taskId: string) => Promise<void>
   onTaskOpen?: (taskId: string) => void
+  provided?: {
+    draggableProps: DraggableProps
+    dragHandleProps?: DragHandleProps
+  }
 }) {
-  const outerRef = useRef<HTMLDivElement | null>(null)
   const innerRef = useRef<HTMLDivElement | null>(null)
   const [state, setState] = useState<TCardState>(idle)
 
   useEffect(() => {
-    const outer = outerRef.current
-    const inner = innerRef.current
-    invariant(outer && inner)
+    // Safety check to prevent errors with missing refs
+    if (!canUseDOM || !innerRef.current) return undefined
 
     return combine(
       draggable({
-        element: inner,
-        getInitialData: ({ element }) =>
-          getCardData({
-            card,
-            columnId,
-            rect: element.getBoundingClientRect(),
-          }),
+        element: innerRef.current as HTMLDivElement,
+        getInitialData: ({ element }) => {
+          invariant(element instanceof HTMLElement)
+          const rect = element.getBoundingClientRect()
+          return getCardData({ card, statusId, rect })
+        },
         onGenerateDragPreview({ nativeSetDragImage, location, source }) {
           const data = source.data
           invariant(isCardData(data))
           setCustomNativeDragPreview({
             nativeSetDragImage,
             getOffset: preserveOffsetOnSource({
-              element: inner,
-              input: location.current.input,
+              element: innerRef.current as HTMLDivElement,
+              input: location.current?.input,
             }),
             render({ container }) {
               setState({
                 type: "preview",
                 container,
-                dragging: inner.getBoundingClientRect(),
+                dragging: innerRef.current ? innerRef.current.getBoundingClientRect() : new DOMRect(),
               })
             },
           })
@@ -499,28 +542,45 @@ export const TaskCard = memo(function TaskCard({
         onDragStart() {
           setState({ type: "is-dragging" })
         },
+        // Simplified drag handling without using 'self' property
+        onDrag({ source }) {
+          if (!isCardData(source.data)) return
+          // Check id instead of taskId for the new schema
+          if (source.data.card.id === card.id) return
+          
+          // Get edge information from the source data
+          const dataWithEdge = source.data as TCardDataWithEdge
+          const closestEdge = dataWithEdge.closestEdge || 'bottom'
+
+          setState({
+            type: "is-over",
+            dragging: source.data.rect,
+            closestEdge,
+          })
+        },
         onDrop() {
           setState(idle)
         },
       }),
       dropTargetForElements({
-        element: outer,
+        element: innerRef.current as unknown as Element,
         getIsSticky: () => true,
         canDrop: isDraggingACard,
         getData: ({ element, input }) => {
-          const data = getCardDropTargetData({ card, columnId })
+          const data = getCardDropTargetData({ card, statusId })
           return attachClosestEdge(data, {
             element,
             input,
             allowedEdges: ["top", "bottom"],
           })
         },
-        onDragEnter({ source, self }) {
+        onDragEnter({ source }) {
           if (!isCardData(source.data)) return
-          if (source.data.card.taskId === card.taskId) return
+          if (source.data.card.id === card.id) return
 
-          const closestEdge = extractClosestEdge(self.data)
-          if (!closestEdge) return
+          // Get edge information from the source data
+          const dataWithEdge = source.data as TCardDataWithEdge
+          const closestEdge = dataWithEdge.closestEdge || 'bottom'
 
           setState({
             type: "is-over",
@@ -530,7 +590,8 @@ export const TaskCard = memo(function TaskCard({
         },
         onDrag({ source, self }) {
           if (!isCardData(source.data)) return
-          if (source.data.card.taskId === card.taskId) return
+          // Check id instead of taskId for the new schema
+          if (source.data.card.id === card.id) return
 
           const closestEdge = extractClosestEdge(self.data)
           if (!closestEdge) return
@@ -551,7 +612,7 @@ export const TaskCard = memo(function TaskCard({
         onDragLeave({ source }) {
           if (!isCardData(source.data)) return
 
-          if (source.data.card.taskId === card.taskId) {
+          if (source.data.card.id === card.id) {
             setState({ type: "is-dragging-and-left-self" })
             return
           }
@@ -562,14 +623,13 @@ export const TaskCard = memo(function TaskCard({
         },
       })
     )
-  }, [card.taskId, columnId])
+  }, [card.id, statusId])
 
   return (
     <div className="group">
       <TaskCardDisplay
         card={card}
         state={state}
-        outerRef={outerRef}
         innerRef={innerRef}
         onUpdateTask={onUpdateTask}
         onDeleteTask={onDeleteTask}
@@ -588,5 +648,7 @@ export const TaskCard = memo(function TaskCard({
           )
         : null}
     </div>
-  )
-})
+  );
+}
+
+export default TaskCard;

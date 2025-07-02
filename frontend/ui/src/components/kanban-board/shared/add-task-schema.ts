@@ -2,7 +2,7 @@
 import type { FieldConfig } from "@components/auto-form/types"
 import type { ZodObjectOrWrapped } from "@components/auto-form/utils"
 import type { z } from "zod"
-import { KanbanColumn } from "../types"
+import { KanbanColumn } from "@incmix/utils/schema"
 
 // Hardcoded members (matching projects structure exactly with rich data)
 const members = [
@@ -87,11 +87,11 @@ const baseTaskFormSchema = {
       type: "string",
       title: "Description",
     },
-    columnId: {
+    statusId: {
       type: "string",
       title: "Status",
     },
-    priority: {
+    priorityId: {
       type: "string",
       enum: ["low", "medium", "high", "urgent"],
       title: "Priority",
@@ -148,7 +148,7 @@ const baseTaskFormSchema = {
       title: "Subtasks",
     },
   },
-  required: ["name", "columnId"],
+  required: ["name", "statusId"],
 }
 
 // Function to create schema with dynamic columns
@@ -161,7 +161,7 @@ export const createTaskFormSchema = (columns: KanbanColumn[]): TaskFormSchema =>
   }))
 
   // Get default column (prefer "To Do" or first column)
-  const defaultColumnId = columns.find(col => 
+  const defaultStatusId = columns.find(col => 
     col.name.toLowerCase().includes("todo") || 
     col.name.toLowerCase().includes("to do")
   )?.id || columns[0]?.id || ""
@@ -171,12 +171,12 @@ export const createTaskFormSchema = (columns: KanbanColumn[]): TaskFormSchema =>
     ...baseTaskFormSchema,
     properties: {
       ...baseTaskFormSchema.properties,
-      columnId: {
-        ...baseTaskFormSchema.properties.columnId,
-        default: defaultColumnId
+      statusId: {
+        ...baseTaskFormSchema.properties.statusId,
+        default: defaultStatusId
       },
-      priority: {
-        ...baseTaskFormSchema.properties.priority,
+      priorityId: {
+        ...baseTaskFormSchema.properties.priorityId,
         default: "medium"
       }
     }
@@ -199,7 +199,7 @@ export const createTaskFormSchema = (columns: KanbanColumn[]): TaskFormSchema =>
           // Note: rows property will be handled by the textarea component
         },
       },
-      columnId: {
+      statusId: {
         description: "Select the task status",
         fieldType: "select",
         options: columnOptions,
@@ -207,7 +207,7 @@ export const createTaskFormSchema = (columns: KanbanColumn[]): TaskFormSchema =>
           placeholder: "Select status...",
         },
       },
-      priority: {
+      priorityId: {
         description: "Set task priority level",
         fieldType: "select",
         options: [
@@ -296,7 +296,7 @@ export const createTaskFormSchema = (columns: KanbanColumn[]): TaskFormSchema =>
           className: "mb-4",
         },
         {
-          fields: ["columnId", "priority"],
+          fields: ["statusId", "priorityId"],
           layout: "row",
           gap: 4,
           className: "mb-4",

@@ -1,14 +1,14 @@
 // main.ts
 
 import {
-  columnSchemaLiteral,
   dashboardSchemaLiteral,
   dashboardTemplateSchemaLiteral,
   formProjectSchemaLiteral,
+  labelSchemaLiteral,
   projectSchemaLiteral,
   taskSchemaLiteral,
-  taskStatusSchemaLiteral,
 } from "@incmix/utils/schema"
+import { nanoid } from "nanoid"
 import { addRxPlugin, createRxDatabase } from "rxdb"
 import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode"
 
@@ -129,8 +129,12 @@ export class LocalDatabase {
           1: (oldDoc: any) => {
             return {
               ...oldDoc,
-              // Renamed: taskOrder -> order
-              order: oldDoc.taskOrder !== undefined ? oldDoc.taskOrder : 0,
+              // Ensure we use statusId instead of columnId
+              statusId: oldDoc.statusId || oldDoc.columnId || '',
+              // Ensure we have priorityId
+              priorityId: oldDoc.priorityId || '',
+              // Ensure taskOrder exists (previous name: order)
+              taskOrder: oldDoc.taskOrder !== undefined ? oldDoc.taskOrder : (oldDoc.order || 0),
               // Ensure labelsTags has correct structure
               labelsTags: Array.isArray(oldDoc.labelsTags)
                 ? oldDoc.labelsTags.map((tag: any) => ({
@@ -144,24 +148,44 @@ export class LocalDatabase {
                 oldDoc.attachments || oldDoc.attachment
               )
                 ? (oldDoc.attachments || oldDoc.attachment).map((att: any) => ({
-                    id: att.id || crypto.randomUUID(),
+                    id: att.id || nanoid(),
                     name: att.name || "",
                     url: att.url || "",
                     size: att.size || "0",
                     type: att.type || "",
                   }))
                 : [],
-              // Add/ensure other fields with defaults
-              priority: oldDoc.priority || "medium",
+              // Ensure completed field exists
               completed:
                 oldDoc.completed === undefined ? false : oldDoc.completed,
-              comments: oldDoc.comments || 0,
             }
           },
         },
       },
-      taskStatus: { schema: taskStatusSchemaLiteral, autoMigrate: true },
-      columns: { schema: columnSchemaLiteral, autoMigrate: true },
+      // Replace taskStatus and columns with the new labels collection
+      labels: { 
+        schema: labelSchemaLiteral, 
+        autoMigrate: true,
+        migrationStrategies: {
+          // Add migration strategy for converting old taskStatus documents to labels
+          1: (oldDoc: any) => {
+            // Basic migration from any older format to the new label format
+            return {
+              id: oldDoc.id || nanoid(),
+              projectId: oldDoc.projectId || 'default-project',
+              type: 'status', // Default to status type for old documents
+              name: oldDoc.name || oldDoc.label || '',
+              color: oldDoc.color || '#6366f1',
+              order: oldDoc.order || oldDoc.columnOrder || 0,
+              description: oldDoc.description || '',
+              createdAt: oldDoc.createdAt || Date.now(),
+              updatedAt: oldDoc.updatedAt || Date.now(),
+              createdBy: oldDoc.createdBy || { id: 'system', name: 'System' },
+              updatedBy: oldDoc.updatedBy || { id: 'system', name: 'System' },
+            }
+          },
+        },
+      },
       projects: { schema: projectSchemaLiteral, autoMigrate: true },
       formProjects: { schema: formProjectSchemaLiteral, autoMigrate: true },
       dashboardTemplates: {

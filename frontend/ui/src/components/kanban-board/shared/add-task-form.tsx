@@ -27,10 +27,10 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
   const [formData, setFormData] = useState<{
     name?: string;
     description?: string;
-    columnId?: string;
-    priority?: string;
-    startDate?: string;
-    endDate?: string;
+    statusId?: string;
+    priorityId?: string;
+    startDate?: number;
+    endDate?: number;
     assignedTo?: any[];
     labelsTags?: any[];
     subTasks?: any[];
@@ -61,22 +61,22 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
     if (!taskFormSchema || columns.length === 0) return {}
 
     // Get default column (prefer "To Do" or first column)
-    const defaultColumnId = columns.find(col =>
+    const defaultStatusId = columns.find(col =>
       col.name.toLowerCase().includes("todo") ||
       col.name.toLowerCase().includes("to do")
     )?.id || columns[0]?.id || ""
 
     const defaults = {
-      priority: "medium",
-      columnId: defaultColumnId,
+      priorityId: "medium",
+      statusId: defaultStatusId,
       assignedTo: [],
       labelsTags: [],
       subTasks: [],
       refUrlsJson: JSON.stringify([]),
       name: "",
       description: "",
-      startDate: "",
-      endDate: "",
+      startDate: null,
+      endDate: null,
     }
 
 
@@ -121,9 +121,9 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
     return {
       name: data.name?.trim() || "",
       description: data.description?.trim() || "",
-      priority: data.priority || "medium",
-      startDate: data.startDate || "",
-      endDate: data.endDate || "",
+      priorityId: data.priorityId || "medium",
+      startDate: data.startDate || null,
+      endDate: data.endDate || null,
       completed: false,
 
       // Transform labelsTags from multipleSelector format to TaskDataSchema format
@@ -166,7 +166,6 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
       // Initialize empty arrays for other fields
       attachments: [],
       comments: [],
-      commentsCount: 0,
     }
   }, [getColorForLabel])
 
@@ -254,8 +253,8 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
 
   // Handle form submission
   const handleSubmit = useCallback(async (data: any) => {
-    if (!data.name?.trim() || !data.columnId) {
-      console.warn("Task name and column are required")
+    if (!data.name?.trim() || !data.statusId) {
+      console.warn("Task name and status are required")
       return
     }
 
@@ -274,7 +273,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
       const taskData = transformFormDataToTask(mergedData)
 
       // Create the task using the properly transformed data
-      await createTask(data.columnId, taskData)
+      await createTask(data.statusId, taskData)
 
       // Reset form and close dialog
       setFormData(defaultFormValues)
@@ -338,9 +337,9 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
               <Text size="2" weight="medium" className="text-blue-700 dark:text-blue-300">
                 📝 Task Preview: {formData.name}
               </Text>
-              {formData.columnId && (
+              {formData.statusId && (
                 <Text size="1" className="text-blue-600 dark:text-blue-400 mt-1">
-                  Status: {columns.find(col => col.id === (formData.columnId as string))?.name}
+                  Status: {columns.find(col => col.id === (formData.statusId as string))?.name}
                 </Text>
               )}
             </Box>

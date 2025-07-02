@@ -42,7 +42,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   const [isDragging, setIsDragging] = useState(false)
 
   // Task selection state
-  const [selectedTasks, setSelectedTasks] = useState<Record<string, { taskId: string; name: string }>>({});
+  const [selectedTasks, setSelectedTasks] = useState<Record<string, { id: string; name: string }>>({});
 
   // Confirmation dialog state
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -80,9 +80,9 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     updateTask,
     deleteTask,
     moveTask,
-    createColumn,
-    updateColumn,
-    deleteColumn,
+    createStatusLabel, // Using compatibility methods instead
+    updateStatusLabel, // Using compatibility methods instead
+    deleteStatusLabel, // Using compatibility methods instead
     projectStats
   } = useListView(projectId)
 
@@ -106,33 +106,33 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
 
 
   // Handle task selection
-  const handleTaskSelect = useCallback((taskId: string, selected: boolean, taskName: string) => {
+  const handleTaskSelect = useCallback((id: string, selected: boolean, taskName: string) => {
     setSelectedTasks(prev => {
       if (selected) {
-        return { ...prev, [taskId]: { taskId, name: taskName } }
+        return { ...prev, [id]: { id, name: taskName } }
       } else {
         const newSelected = { ...prev }
-        delete newSelected[taskId]
+        delete newSelected[id]
         return newSelected
       }
     })
   }, [])
 
   // Handle bulk selection for a column
-  const handleColumnSelectAll = useCallback((columnId: string, selected: boolean) => {
-    const column = columns.find(col => col.id === columnId)
+  const handleColumnSelectAll = useCallback((statusId: string, selected: boolean) => {
+    const column = columns.find(col => col.id === statusId)
     if (!column) return
 
     setSelectedTasks(prev => {
       const newSelected = { ...prev }
 
       column.tasks.forEach(task => {
-        if (!task.taskId) return; // Skip tasks without a taskId
+        if (!task.id) return; // Skip tasks without a id
         
         if (selected) {
-          newSelected[task.taskId] = { taskId: task.taskId, name: task.name || '' }
+          newSelected[task.id] = { id: task.id, name: task.name || '' }
         } else {
-          delete newSelected[task.taskId]
+          delete newSelected[task.id]
         }
       })
 
@@ -225,28 +225,28 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
 
           const dropTargetData = innerMost.data
           const homeColumn = columns.find(
-            (column) => column.id === dragging.columnId
+            (column) => column.id === dragging.statusId
           )
 
           if (!homeColumn) {
             return
           }
 
-          // Ensure taskId exists before proceeding
-          const draggedTaskId = dragging.card.taskId
+          // Ensure id exists before proceeding
+          const draggedTaskId = dragging.card.id
           if (!draggedTaskId) {
             console.error("Task ID is missing for dragged card")
             return
           }
 
           const cardIndexInHome = homeColumn.tasks.findIndex(
-            (task) => task.taskId === draggedTaskId
+            (task) => task.id === draggedTaskId
           )
 
           // Dropping on a card
           if (isCardDropTargetData(dropTargetData)) {
             const destinationColumn = columns.find(
-              (column) => column.id === dropTargetData.columnId
+              (column) => column.id === dropTargetData.statusId
             )
 
             if (!destinationColumn) {
@@ -255,14 +255,14 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
 
             // Reordering in same column
             if (homeColumn.id === destinationColumn.id) {
-              const targetTaskId = dropTargetData.card.taskId
+              const targetTaskId = dropTargetData.card.id
               if (!targetTaskId) {
                 console.error("Target task ID is missing")
                 return
               }
 
               const cardFinishIndex = homeColumn.tasks.findIndex(
-                (task) => task.taskId === targetTaskId
+                (task) => task.id === targetTaskId
               )
 
               if (cardIndexInHome === -1 || cardFinishIndex === -1) {
@@ -283,7 +283,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
               })
 
               // Use moveTask with same column but new index
-              const newIndex = reordered.findIndex(t => t.taskId === draggedTaskId)
+              const newIndex = reordered.findIndex(t => t.id === draggedTaskId)
               if (newIndex === -1) return
               moveTask(draggedTaskId, homeColumn.id, newIndex).catch((error) => {
                 console.error("Failed to reorder tasks:", error)
@@ -293,14 +293,14 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
             }
 
             // Moving to different column
-            const targetTaskId = dropTargetData.card.taskId
+            const targetTaskId = dropTargetData.card.id
             if (!targetTaskId) {
               console.error("Target task ID is missing")
               return
             }
 
             const indexOfTarget = destinationColumn.tasks.findIndex(
-              (task) => task.taskId === targetTaskId
+              (task) => task.id === targetTaskId
             )
             const closestEdge = extractClosestEdge(dropTargetData)
             const finalIndex = closestEdge === "bottom" ? indexOfTarget + 1 : indexOfTarget
@@ -534,7 +534,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
             </Box>
 
             <Flex gap="6" className="text-sm text-gray-600 dark:text-gray-400">
-              <span>{projectStats.totalColumns} columns</span>
+              <span>{projectStats.totalStatusLabels} columns</span>
               <span>{projectStats.totalTasks} tasks</span>
               <span>{projectStats.completedTasks} completed</span>
               {projectStats.overdueTasks > 0 && (
@@ -615,7 +615,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
 
                       setIsCreatingColumn(true)
                       try {
-                        await createColumn(
+                        await createStatusLabel(
                           newColumnName.trim(),
                           newColumnColor,
                           newColumnDescription.trim()
@@ -637,26 +637,26 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                     {isCreatingColumn ? 'Creating...' : 'Create Column'}
                   </Button>
                 </Flex>
-              </Flex>
-            </Box>
-          )}
+                </Flex>
+              </Box>
+            )}
 
-          {filteredColumns.map((column) => (
-            <ListColumn
-              key={column.id}
-              column={column}
-              columns={columns}
-              onCreateTask={createTask}
-              onUpdateTask={updateTask}
-              onDeleteTask={deleteTask}
-              onUpdateColumn={updateColumn}
-              onDeleteColumn={deleteColumn}
-              isDragging={isDragging}
-              selectedTaskIds={selectedTasks}
-              onTaskSelect={handleTaskSelect}
-              onSelectAll={handleColumnSelectAll}
-            />
-          ))}
+            {filteredColumns.map((column) => (
+              <ListColumn
+                key={column.id}
+                column={column}
+                columns={columns}
+                onCreateTask={createTask}
+                onUpdateTask={updateTask}
+                onDeleteTask={deleteTask}
+                onUpdateColumn={(id, updates) => updateStatusLabel(id, updates)}
+                onDeleteColumn={deleteStatusLabel}
+                isDragging={isDragging}
+                selectedTaskIds={selectedTasks}
+                onTaskSelect={handleTaskSelect}
+                onSelectAll={handleColumnSelectAll}
+              />
+            ))}
 
           {filteredColumns.length === 0 && searchQuery && (
             <Box className="text-center py-12">

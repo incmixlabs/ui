@@ -112,8 +112,8 @@ const QuickTaskForm = memo(function QuickTaskForm({
   // Task form state
   const [taskName, setTaskName] = useState("")
   const [description, setDescription] = useState("")
-  const [checklist, setChecklist] = useState<Array<{ id: string; text: string; checked: boolean }>>([])
-  const [acceptanceCriteria, setAcceptanceCriteria] = useState<Array<{ id: string; text: string }>>([])
+  const [checklist, setChecklist] = useState<Array<{ id: string; text: string; checked: boolean; order: number }>>([])
+  const [acceptanceCriteria, setAcceptanceCriteria] = useState<Array<{ id: string; text: string; checked: boolean; order: number }>>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [hadGenerationError, setHadGenerationError] = useState(false)
 
@@ -135,8 +135,21 @@ const QuickTaskForm = memo(function QuickTaskForm({
           const userStoryResult = await generateUserStory(taskName)
           if (userStoryResult) {
             setDescription(userStoryResult.description)
-            setChecklist(userStoryResult.checklist || [])
-            setAcceptanceCriteria(userStoryResult.acceptanceCriteria || [])
+            
+            // Add order property to each checklist item
+            const formattedChecklist = (userStoryResult.checklist || []).map((item, index) => ({
+              ...item,
+              order: index
+            }))
+            setChecklist(formattedChecklist)
+            
+            // Add checked and order properties to each acceptance criteria item
+            const formattedAcceptanceCriteria = (userStoryResult.acceptanceCriteria || []).map((item, index) => ({
+              ...item,
+              checked: false,
+              order: index
+            }))
+            setAcceptanceCriteria(formattedAcceptanceCriteria)
           }
         } catch (error) {
           console.error("AI description generation failed:", error)
@@ -166,22 +179,22 @@ const QuickTaskForm = memo(function QuickTaskForm({
       await onCreateTask(columnId, {
         name: taskName.trim(),
         description: description.trim(),
-        priority: "medium",
+        priorityId: "medium",  // Updated: priority → priorityId
         completed: false,
         labelsTags: [],
         attachments: [],
         assignedTo: [],
         subTasks: [],
         comments: [],
-        commentsCount: 0,
+        // commentsCount removed as it's no longer in schema
         checklist: checklist,
         acceptanceCriteria: acceptanceCriteria,
       })
 
       setTaskName("")
       setDescription("")
-      setChecklist([])
-      setAcceptanceCriteria([])
+      setChecklist([]) // Empty array is fine since it's a reset
+      setAcceptanceCriteria([]) // Empty array is fine since it's a reset
       setIsSubmitting(false)
     } catch (error) {
       console.error("Failed to create task:", error)
@@ -276,9 +289,9 @@ const CardList = memo(function CardList({
     <>
       {column.tasks.map((card) => (
         <TaskCard
-          key={card.taskId}
+          key={card.id}
           card={card}
-          columnId={column.id}
+          statusId={column.id}
           onUpdateTask={onUpdateTask}
           onDeleteTask={onDeleteTask}
           onTaskOpen={onTaskOpen}

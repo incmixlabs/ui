@@ -72,11 +72,12 @@ const outerStyles: { [Key in TCardState["type"]]?: string } = {
 
 interface ListTaskCardProps {
   card: KanbanTask
-  columnId: string
+  statusId: string
   columns: ListColumn[]
-  onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
-  onDeleteTask: (taskId: string) => Promise<void>
-  onTaskSelect?: (taskId: string, selected: boolean) => void
+  priorityLabels?: { id: string; name: string; color: string; type: string }[]
+  onUpdateTask: (id: string, updates: Partial<TaskDataSchema>) => Promise<void>
+  onDeleteTask: (id: string) => Promise<void>
+  onTaskSelect?: (id: string, selected: boolean) => void
   isSelected?: boolean
 }
 
@@ -96,6 +97,7 @@ export const ListTaskCardShadow = memo(function ListTaskCardShadow({
 const TaskCardDisplay = memo(function TaskCardDisplay({
   card,
   columns,
+  priorityLabels,
   state,
   outerRef,
   innerRef,
@@ -106,12 +108,13 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
 }: {
   card: KanbanTask
   columns: ListColumn[]
+  priorityLabels?: { id: string; name: string; color: string; type: string }[]
   state: TCardState
   outerRef?: React.MutableRefObject<HTMLDivElement | null>
   innerRef?: React.MutableRefObject<HTMLDivElement | null>
-  onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
-  onDeleteTask: (taskId: string) => Promise<void>
-  onTaskSelect?: (taskId: string, selected: boolean) => void
+  onUpdateTask: (id: string, updates: Partial<TaskDataSchema>) => Promise<void>
+  onDeleteTask: (id: string) => Promise<void>
+  onTaskSelect?: (id: string, selected: boolean) => void
   isSelected?: boolean
 }) {
   const { handleDrawerOpen } = useKanbanDrawer()
@@ -119,57 +122,54 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
 
   // Handle task selection instead of completion toggle
   const handleTaskSelect = useCallback((checked: boolean | string) => {
-    // Ensure taskId exists
-    if (!card.taskId) {
+    // Ensure id exists
+    if (!card.id) {
       console.error("Task ID is missing")
       return
     }
 
     // Call the selection handler from props
     if (onTaskSelect) {
-      onTaskSelect(card.taskId, typeof checked === 'boolean' ? checked : checked === 'indeterminate' ? false : true)
+      onTaskSelect(card.id, typeof checked === 'boolean' ? checked : checked === 'indeterminate' ? false : true)
     }
-  }, [card.taskId, onTaskSelect])
+  }, [card.id, onTaskSelect])
 
-  const handleUpdateTask = useCallback(async (updates: Partial<TaskDataSchema>) => {
-    if (!card.taskId) {
-      console.error("Task ID is missing")
-      return
-    }
-
+  const handleUpdateTask = useCallback(async (id: string, updates: Partial<TaskDataSchema>) => {
+    if (!onUpdateTask) return
+    
     try {
-      await onUpdateTask(card.taskId, updates)
+      await onUpdateTask(id, updates)
     } catch (error) {
       console.error("Failed to update task:", error)
     }
-  }, [card.taskId, onUpdateTask])
+  }, [onUpdateTask])
 
   // Modal state for task deletion
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
 
   // Opens the delete confirmation modal
   const handleDeleteTask = useCallback(async () => {
-    if (!card.taskId) {
+    if (!card.id) {
       console.error("Task ID is missing")
       return
     }
     setShowDeleteConfirmation(true)
-  }, [card.taskId])
+  }, [card.id])
 
   // Confirm task deletion handler
   const confirmDeleteTask = useCallback(async () => {
     try {
-      // Ensure taskId exists
-      if (!card.taskId) {
+      // Ensure id exists
+      if (!card.id) {
         console.error("Task ID is missing")
         return
       }
       
-      await onDeleteTask(card.taskId)
+      await onDeleteTask(card.id)
     } catch (error) {
       console.error("Failed to delete task:", error)
     }
-  }, [card.taskId, onDeleteTask])
+  }, [card.id, onDeleteTask])
 
   const handleDuplicateTask = useCallback(async () => {
     // Implementation for task duplication could be added here
@@ -179,13 +179,13 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
   const handleOpenDrawer = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
 
-    if (!card.taskId) {
+    if (!card.id) {
       console.error("Task ID is missing")
       return
     }
 
-    handleDrawerOpen(card.taskId)
-  }, [card.taskId, handleDrawerOpen])
+    handleDrawerOpen(card.id)
+  }, [card.id, handleDrawerOpen])
 
   const completedSubTasks = card.subTasks?.filter(st => st.completed).length || 0
   const totalSubTasks = card.subTasks?.length || 0
@@ -210,9 +210,9 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
     return { status: "future", className: "text-blue-600 bg-blue-50" }
   }, [])
 
-  // Don't render if taskId is missing
-  if (!card.taskId) {
-    console.error("Task card missing taskId:", card)
+  // Don't render if id is missing
+  if (!card.id) {
+    console.error("Task card missing id:", card)
     return null
   }
 
@@ -285,17 +285,28 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
             </Flex>
 
             <Flex align="center" gap="3" className="flex-shrink-0">
-              {/* Priority Badge */}
-              {card.priority && card.priority !== "medium" && (
+              {/* Priority Badge - Updated for new schema using priorityId */}
+              {card.priorityId && priorityLabels?.length && (
                 <Badge
-                  color={
-                    card.priority === "urgent" ? "red" :
-                    card.priority === "high" ? "orange" : "gray"
-                  }
+                  color={(() => {
+                    // Find the priority label by its ID
+                    const priorityLabel = priorityLabels.find(label => label.id === card.priorityId);
+                    
+                    // Determine color based on priority name
+                    if (priorityLabel?.name.toLowerCase().includes("urgent")) return "red";
+                    if (priorityLabel?.name.toLowerCase().includes("high")) return "orange";
+                    // Only use supported colors from ExtendedColorType
+                    // Ignore custom colors from the label for now
+                    return "gray";
+                  })()}
                   variant="soft"
                   size="1"
                 >
-                  {card.priority}
+                  {(() => {
+                    // Find the priority label by its ID
+                    const priorityLabel = priorityLabels.find(label => label.id === card.priorityId);
+                    return priorityLabel?.name || "Medium";
+                  })()}
                 </Badge>
               )}
 
@@ -403,11 +414,23 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
                 columns={columns.map(col => ({
                   id: col.id,
                   name: col.name,
-                  color: col.color,
                   projectId: col.projectId,
-                  order: col.order,
+                  // Map required TaskDataSchema fields
+                  statusId: col.id, // Using column id as statusId since this is a status column
+                  priorityId: '', // Default empty string for required field
+                  taskOrder: col.order || 0, // Map order to taskOrder
+                  completed: false, // Default value
+                  // Include color from the column
+                  color: col.color,
                   description: col.description,
-                  isDefault: col.isDefault,
+                  // Default empty arrays for required array fields
+                  refUrls: [],
+                  labelsTags: [],
+                  attachments: [],
+                  assignedTo: [],
+                  subTasks: [],
+                  comments: [],
+                  // Timestamps and audit fields
                   createdAt: col.createdAt,
                   updatedAt: col.updatedAt,
                   createdBy: col.createdBy,
@@ -464,8 +487,9 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
 
 export const ListTaskCard = memo(function ListTaskCard({
   card,
-  columnId,
+  statusId,
   columns,
+  priorityLabels,
   onUpdateTask,
   onDeleteTask,
   onTaskSelect,
@@ -475,9 +499,9 @@ export const ListTaskCard = memo(function ListTaskCard({
   const innerRef = useRef<HTMLDivElement | null>(null)
   const [state, setState] = useState<TCardState>(idle)
 
-  // Don't render if taskId is missing
-  if (!card.taskId) {
-    console.error("Task card missing taskId:", card)
+  // Don't render if id is missing
+  if (!card.id) {
+    console.error("Task card missing id:", card)
     return null
   }
 
@@ -492,7 +516,7 @@ export const ListTaskCard = memo(function ListTaskCard({
         getInitialData: ({ element }) =>
           getCardData({
             card,
-            columnId,
+            statusId,
             rect: element.getBoundingClientRect(),
           }),
         onGenerateDragPreview({ nativeSetDragImage, location, source }) {
@@ -525,7 +549,7 @@ export const ListTaskCard = memo(function ListTaskCard({
         getIsSticky: () => true,
         canDrop: isDraggingACard,
         getData: ({ element, input }) => {
-          const data = getCardDropTargetData({ card, columnId })
+          const data = getCardDropTargetData({ card: { id: card.id, priorityId: card.priorityId }, statusId })
           return attachClosestEdge(data, {
             element,
             input,
@@ -533,7 +557,7 @@ export const ListTaskCard = memo(function ListTaskCard({
           })
         },
         onDragEnter({ source, self }) {
-          if (!isCardData(source.data) || source.data.card.taskId === card.taskId) {
+          if (!isCardData(source.data) || source.data.card.id === card.id) {
             return
           }
 
@@ -547,7 +571,7 @@ export const ListTaskCard = memo(function ListTaskCard({
           })
         },
         onDrag({ source, self }) {
-          if (!isCardData(source.data) || source.data.card.taskId === card.taskId) {
+          if (!isCardData(source.data) || source.data.card.id === card.id) {
             return
           }
 
@@ -570,7 +594,7 @@ export const ListTaskCard = memo(function ListTaskCard({
         onDragLeave({ source }) {
           if (!isCardData(source.data)) return
 
-          if (source.data.card.taskId === card.taskId) {
+          if (source.data.card.id === card.id) {
             setState({ type: "is-dragging-and-left-self" })
             return
           }
@@ -581,13 +605,14 @@ export const ListTaskCard = memo(function ListTaskCard({
         },
       })
     )
-  }, [card, columnId])
+  }, [card, statusId])
 
   return (
     <>
       <TaskCardDisplay
           card={card}
           columns={columns}
+          priorityLabels={priorityLabels}
           state={state}
           outerRef={outerRef}
           innerRef={innerRef}
@@ -601,6 +626,7 @@ export const ListTaskCard = memo(function ListTaskCard({
           <TaskCardDisplay
             card={card}
             columns={columns}
+            priorityLabels={priorityLabels}
             state={state}
             onUpdateTask={onUpdateTask}
             onDeleteTask={onDeleteTask}

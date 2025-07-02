@@ -2,12 +2,46 @@
 
 import { useMemo } from "react"
 import { nanoid } from "nanoid"
-import type {
-  TableTask,
-  TaskDataSchema,
-  UseTableViewReturn
-} from "@incmix/utils/schema"
+import type { TaskDataSchema, TableTask } from "@incmix/utils/schema"
+import type { ListColumn } from "./use-list-view"
 import { useListView } from "./use-list-view"
+
+// Define locally to ensure compatibility with our implementation
+export interface UseTableViewReturn {
+  tasks: TableTask[]
+  labels: ListColumn[]
+  isLoading: boolean
+  error: string | null
+
+  // Task operations
+  createTask: (taskData: Partial<TaskDataSchema>) => Promise<void>
+  updateTask: (id: string, updates: Partial<TaskDataSchema>) => Promise<void>
+  deleteTask: (id: string) => Promise<void>
+  moveTaskToStatus: (id: string, statusId: string) => Promise<void>
+
+  // Label operations
+  createLabel: (type: "status" | "priority", name: string, color?: string, description?: string) => Promise<string>
+  updateLabel: (id: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
+  deleteLabel: (id: string) => Promise<void>
+
+  // Bulk operations
+  bulkUpdateTasks: (taskIds: string[], updates: Partial<TaskDataSchema>) => Promise<void>
+  bulkMoveTasks: (taskIds: string[], targetStatusId: string) => Promise<void>
+  bulkDeleteTasks: (taskIds: string[]) => Promise<void>
+
+  // Utility
+  refetch: () => void
+  clearError: () => void
+
+  // Statistics
+  projectStats: {
+    totalTasks: number
+    completedTasks: number
+    totalLabels: number // Total labels (both status and priority)
+    overdueTasks: number
+    urgentTasks: number
+  }
+}
 
 
 /**
@@ -43,6 +77,13 @@ export function useTableView(
           // Add status information
           statusLabel: column.name,
           statusColor: column.color,
+          
+          // Add priority information if available
+          // Need to look up priority labels from the full labels list, not just status columns
+          // We'd need to access the raw labels from projectData, which we don't have direct access to
+          // For now, we'll use undefined and let consuming components handle this
+          priorityLabel: undefined,
+          priorityColor: undefined,
 
           // Format assigned users
           assignedToNames:
@@ -74,8 +115,8 @@ export function useTableView(
 
   // Enhanced create task function for table context
   const createTaskForTable = async (taskData: Partial<TaskDataSchema>) => {
-    // Default to first available status if no columnId provided
-    const statusId = taskData.columnId || listViewData.columns[0]?.id
+    // Default to first available status if no statusId provided
+    const statusId = taskData.statusId || listViewData.columns[0]?.id
     if (!statusId) {
       throw new Error("No task status available. Please create a status first.")
     }
@@ -84,13 +125,13 @@ export function useTableView(
   }
 
   // Move task to different status (for table status changes)
-  const moveTaskToStatus = async (taskId: string, statusId: string) => {
-    await listViewData.moveTask(taskId, statusId)
+  const moveTaskToStatus = async (id: string, statusId: string) => {
+    await listViewData.moveTask(id, statusId)
   }
 
   return {
     tasks: tableTasks,
-    taskStatuses: listViewData.columns,
+    labels: listViewData.columns, // Updated from taskStatuses to labels
     isLoading: listViewData.isLoading,
     error: listViewData.error,
 
@@ -100,10 +141,15 @@ export function useTableView(
     deleteTask: listViewData.deleteTask,
     moveTaskToStatus,
 
-    // Status operations
-    createTaskStatus: listViewData.createColumn,
-    updateTaskStatus: listViewData.updateColumn,
-    deleteTaskStatus: listViewData.deleteColumn,
+    // Label operations with updated naming
+    createLabel: listViewData.createStatusLabel, // This will need to be updated to handle both types
+    updateLabel: listViewData.updateStatusLabel,
+    deleteLabel: listViewData.deleteStatusLabel,
+    
+    // Bulk operations
+    bulkUpdateTasks: listViewData.bulkUpdateTasks,
+    bulkMoveTasks: listViewData.bulkMoveTasks,
+    bulkDeleteTasks: listViewData.bulkDeleteTasks,
 
     // Utility
     refetch: listViewData.refetch,
@@ -111,8 +157,11 @@ export function useTableView(
 
     // Statistics
     projectStats: {
-      ...listViewData.projectStats,
-      totalStatuses: listViewData.columns.length,
+      totalTasks: listViewData.projectStats.totalTasks,
+      completedTasks: listViewData.projectStats.completedTasks,
+      totalLabels: listViewData.projectStats.totalStatusLabels, // Map totalStatusLabels to totalLabels
+      overdueTasks: listViewData.projectStats.overdueTasks,
+      urgentTasks: listViewData.projectStats.urgentTasks,
     },
   }
 }

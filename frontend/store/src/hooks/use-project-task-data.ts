@@ -4,13 +4,14 @@ import type {
   CurrentUser,
   ProjectData,
   TaskDataSchema,
-  TaskStatusDocType,
+  LabelSchema,
   UseProjectDataReturn,
 } from "@incmix/utils/schema"
+import { DEFAULT_LABELS } from "@incmix/utils/schema"
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { Subscription } from "rxjs"
 import { database } from "sql"
-import type { TaskDocType } from "sql/types"
+import type { TaskDocType, LabelDocType } from "sql/types"
 // Import browser-compatible helpers instead of Node.js Buffer-using ones
 import {
   generateBrowserUniqueId,
@@ -36,23 +37,8 @@ const getCurrentUser = (user?: CurrentUser) => {
   }
 }
 
-const DEFAULT_TASK_STATUSES = [
-  {
-    name: "To Do",
-    color: "#6366f1",
-    description: "Tasks that need to be started",
-  },
-  {
-    name: "In Progress",
-    color: "#f59e0b",
-    description: "Tasks currently being worked on",
-  },
-  {
-    name: "Done",
-    color: "#10b981",
-    description: "Completed tasks",
-  },
-]
+// Instead of defining default labels here, we'll use the DEFAULT_LABELS constant
+// from @incmix/utils/schema which contains both status and priority labels
 
 export function useProjectData(
   projectId = "default-project",
@@ -60,7 +46,7 @@ export function useProjectData(
 ): UseProjectDataReturn {
   const [data, setData] = useState<ProjectData>({
     tasks: [],
-    taskStatuses: [],
+    labels: [],
     isLoading: true,
     error: null,
   })
@@ -68,7 +54,7 @@ export function useProjectData(
   // Track subscriptions for cleanup
   const subscriptionsRef = useRef<{
     tasks?: Subscription
-    taskStatuses?: Subscription
+    labels?: Subscription
   }>({})
 
   // Initialize reactive subscriptions
@@ -77,38 +63,57 @@ export function useProjectData(
       try {
         setData((prev) => ({ ...prev, isLoading: true, error: null }))
 
-        // Check and create default statuses if needed - Using count() for efficiency
-        const existingStatusCount = await database.taskStatus
-          .count({ selector: { projectId } })
+        // Check and create default labels if needed - Using find() instead of count() to avoid RxDB restriction
+        const existingLabels = await database.labels
+          .find({ selector: { projectId, type: "status" } })
           .exec()
+        const existingLabelsCount = existingLabels.length
 
-        if (existingStatusCount === 0) {
-          await createDefaultStatuses(projectId)
+        if (existingLabelsCount === 0) {
+          await createDefaultLabels(projectId)
         }
 
-        // Set up reactive subscription for task statuses
-        subscriptionsRef.current.taskStatuses = database.taskStatus
+        // Set up reactive subscription for labels (both status and priority labels)
+        subscriptionsRef.current.labels = database.labels
           .find({
             selector: { projectId },
-            sort: [{ order: "asc" }],
+            sort: [{ order: "asc" }], // Changed from labelOrder to order to match schema
           })
           .$.subscribe({
-            next: (statusDocs: Array<{ toJSON(): TaskStatusDocType }>) => {
-              const taskStatuses = statusDocs.map(
-                (doc: { toJSON(): TaskStatusDocType }) => doc.toJSON()
+            next: (labelDocs: Array<{ toJSON(): LabelDocType }>) => {
+              const labels = labelDocs.map(
+                (doc: { toJSON(): LabelDocType }) => doc.toJSON()
               )
-              setData((prev) => ({
-                ...prev,
-                taskStatuses,
-                // Set loading to false once data is received
-                isLoading: false,
-              }))
+              setData((prev) => {
+                // Handle type compatibility with LabelSchema - proper mapping instead of type assertion
+                const typeSafeLabels: LabelSchema[] = labels.map(l => ({
+                  ...l,
+                  color: l.color || "#6E6E6E", // Ensure color is never undefined
+                  description: l.description || "", // Ensure description is never undefined
+                  // Ensure all required properties are present with correct types
+                  id: l.id,
+                  projectId: l.projectId,
+                  type: l.type as "status" | "priority",
+                  name: l.name,
+                  order: l.order,
+                  createdAt: l.createdAt,
+                  updatedAt: l.updatedAt,
+                  createdBy: l.createdBy,
+                  updatedBy: l.updatedBy
+                }))
+                
+                return {
+                  ...prev,
+                  labels: typeSafeLabels,
+                  isLoading: false,
+                }
+              })
             },
             error: (error: Error) => {
-              console.error("Task statuses subscription error:", error)
+              console.error("Labels subscription error:", error)
               setData((prev) => ({
                 ...prev,
-                error: "Failed to load task statuses",
+                error: "Failed to load labels",
                 isLoading: false,
               }))
             },
@@ -118,11 +123,11 @@ export function useProjectData(
         subscriptionsRef.current.tasks = database.tasks
           .find({
             selector: { projectId },
-            sort: [{ columnId: "asc" }, { order: "asc" }],
+            sort: [{ statusId: "asc" }, { taskOrder: "asc" }],
           })
           .$.subscribe({
-            next: (taskDocs: Array<{ toJSON(): TaskDocType }>) => {
-              const tasks = taskDocs.map((doc: { toJSON(): TaskDocType }) => {
+            next: (taskDocs) => {
+              const tasks = taskDocs.map((doc) => {
                 const task = doc.toJSON()
                 return {
                   ...task,
@@ -164,45 +169,65 @@ export function useProjectData(
       if (subscriptionsRef.current.tasks) {
         subscriptionsRef.current.tasks.unsubscribe()
       }
-      if (subscriptionsRef.current.taskStatuses) {
-        subscriptionsRef.current.taskStatuses.unsubscribe()
+      if (subscriptionsRef.current.labels) {
+        subscriptionsRef.current.labels.unsubscribe()
       }
     }
   }, [projectId])
 
-  // Helper to create default task statuses
-  const createDefaultStatuses = async (projectId: string) => {
+  /**
+   * Create default labels (statuses and priorities) for a project
+   */
+  const createDefaultLabels = async (projectId: string) => {
     const now = getCurrentTimestamp()
     const user = getCurrentUser(currentUser)
 
-    for (let i = 0; i < DEFAULT_TASK_STATUSES.length; i++) {
-      const status = DEFAULT_TASK_STATUSES[i]
-      await database.taskStatus.insert({
-        id: generateBrowserUniqueId("ts"),
-        projectId,
-        name: status.name,
-        color: status.color,
-        description: status.description,
-        order: i,
-        isDefault: true,
-        createdAt: now,
-        updatedAt: now,
-        createdBy: user,
-        updatedBy: user,
-      })
+    const newLabels: LabelSchema[] = DEFAULT_LABELS.map((label, index) => ({
+      id: generateBrowserUniqueId("label"),
+      projectId,
+      name: label.name,
+      type: label.type as "status" | "priority",
+      order: index,  // Using 'order' as specified in LabelSchema instead of 'labelOrder'
+      color: label.color || "#6E6E6E", // Default color if none provided
+      description: label.description || "", // Default empty description
+      createdAt: now,
+      updatedAt: now,
+      createdBy: user,
+      updatedBy: user,
+    }))
+
+    // Insert all labels at once
+    for (const label of newLabels) {
+      await database.labels.insert(label as LabelDocType)
     }
+
+    return newLabels
   }
 
   // Task operations - simplified without manual state management
   const createTask = useCallback(
-    async (columnId: string, taskData: Partial<TaskDataSchema>) => {
+    async (statusId: string, taskData: Partial<TaskDataSchema>) => {
       try {
         const now = getCurrentTimestamp()
         const user = getCurrentUser(currentUser)
+        
+        // Ensure we have a valid priorityId - required field validation
+        if (!taskData.priorityId) {
+          // Find default priority (medium or first available)
+          const defaultPriority = data.labels.find(
+            (l) => l.type === "priority" && l.name.toLowerCase() === "medium"
+          ) || data.labels.find((l) => l.type === "priority")
+          
+          if (!defaultPriority) {
+            throw new Error("No priority labels found. Cannot create task.")
+          }
+          
+          taskData.priorityId = defaultPriority.id
+        }
 
-        // Get highest order in target column
-        const tasksInColumn = data.tasks.filter((t) => t.columnId === columnId)
-        const maxOrder = Math.max(...tasksInColumn.map((t) => t.order), -1)
+        // Get highest order in target status column
+        const tasksInStatus = data.tasks.filter((t) => t.statusId === statusId)
+        const maxOrder = Math.max(...tasksInStatus.map((t) => t.taskOrder || 0), -1)
 
         // Transform any array items to ensure they have required fields like 'order' and 'checked'
         const processedAcceptanceCriteria = (
@@ -211,7 +236,7 @@ export function useProjectData(
           id: item.id || generateBrowserUniqueId("ac"),
           text: item.text || "",
           checked: item.checked ?? false,
-          order: item.order ?? index,
+          order: item.order ?? index, // Keep as 'order' to match the expected types
         }))
 
         const processedChecklist = (taskData.checklist || []).map(
@@ -219,7 +244,7 @@ export function useProjectData(
             id: item.id || generateBrowserUniqueId("cl"),
             text: item.text || "",
             checked: item.checked ?? false,
-            order: item.order ?? index,
+            order: item.order ?? index, // Keep as 'order' to match the expected types
           })
         )
 
@@ -228,29 +253,28 @@ export function useProjectData(
             id: item.id || generateBrowserUniqueId("st"),
             name: item.name || "",
             completed: item.completed ?? false,
-            order: item.order ?? index,
+            order: item.order ?? index, // Keep as 'order' to match the expected types
           })
         )
 
         const newTask: TaskDataSchema = {
           id: generateBrowserUniqueId("task"),
-          taskId: generateBrowserUniqueId("tsk"),
           projectId,
           name: taskData.name || "New Task",
-          columnId,
-          order: maxOrder + 1,
-          startDate: taskData.startDate || new Date().toISOString(),
-          endDate: taskData.endDate || "",
+          statusId, // Changed from columnId to statusId
+          taskOrder: maxOrder + 1, // Changed from order to taskOrder
+          startDate: taskData.startDate ? Number(new Date(taskData.startDate)) : Number(new Date()),
+          endDate: taskData.endDate ? Number(new Date(taskData.endDate)) : 0,
           description: taskData.description || "",
           completed: taskData.completed ?? false,
-          priority: taskData.priority || "medium",
+          priorityId: taskData.priorityId, // Changed from priority to priorityId - now validated above
           refUrls: taskData.refUrls || [],
           labelsTags: taskData.labelsTags || [],
           attachments: taskData.attachments || [],
           assignedTo: taskData.assignedTo || [],
           subTasks: processedSubTasks,
           comments: taskData.comments || [],
-          commentsCount: 0,
+          // Removed commentsCount as it's no longer part of the schema
           // Use processed arrays that ensure schema compliance
           checklist: processedChecklist,
           acceptanceCriteria: processedAcceptanceCriteria,
@@ -271,7 +295,7 @@ export function useProjectData(
   )
 
   const updateTask = useCallback(
-    async (taskId: string, updates: Partial<TaskDataSchema>) => {
+    async (id: string, updates: Partial<TaskDataSchema>) => {
       try {
         const now = getCurrentTimestamp()
         const user = getCurrentUser(currentUser)
@@ -318,7 +342,7 @@ export function useProjectData(
         }
 
         const task = await database.tasks
-          .findOne({ selector: { taskId } })
+          .findOne({ selector: { id } }) // Updated from taskId to id
           .exec()
         if (!task) throw new Error("Task not found")
 
@@ -332,9 +356,9 @@ export function useProjectData(
     []
   )
 
-  const deleteTask = useCallback(async (taskId: string) => {
+  const deleteTask = useCallback(async (id: string) => {
     try {
-      const task = await database.tasks.findOne({ selector: { taskId } }).exec()
+      const task = await database.tasks.findOne({ selector: { id } }).exec() // Updated from taskId to id
       if (task) {
         // Just remove - RxDB subscription will update UI
         await task.remove()
@@ -346,54 +370,54 @@ export function useProjectData(
   }, [])
 
   const moveTask = useCallback(
-    async (taskId: string, targetColumnId: string, targetIndex?: number) => {
+    async (id: string, targetStatusId: string, targetIndex?: number) => {
       try {
         const now = getCurrentTimestamp()
         const user = getCurrentUser(currentUser)
 
         // Simplified order calculation for RxDB/local storage
         const targetTasks = data.tasks
-          .filter((t) => t.columnId === targetColumnId && t.taskId !== taskId)
-          .sort((a, b) => a.order - b.order)
+          .filter((t) => t.statusId === targetStatusId && t.id !== id) // Updated field names
+          .sort((a, b) => a.taskOrder - b.taskOrder) // Updated to taskOrder
 
-        let newOrder: number
+        let newTaskOrder: number // Updated variable name
         if (targetIndex === undefined || targetIndex >= targetTasks.length) {
           // Add to end
-          newOrder =
+          newTaskOrder = // Updated variable name
             targetTasks.length > 0
-              ? targetTasks[targetTasks.length - 1].order + 1000
+              ? targetTasks[targetTasks.length - 1].taskOrder + 1000 // Updated to taskOrder
               : 1000
         } else if (targetIndex <= 0) {
           // Add to beginning
-          newOrder =
+          newTaskOrder = // Updated variable name
             targetTasks.length > 0
-              ? Math.max(targetTasks[0].order - 1000, 100)
+              ? Math.max(targetTasks[0].taskOrder - 1000, 100) // Updated to taskOrder
               : 1000
         } else {
           // Insert between tasks
-          const prevOrder = targetTasks[targetIndex - 1].order
-          const nextOrder = targetTasks[targetIndex].order
-          newOrder = (prevOrder + nextOrder) / 2
+          const prevOrder = targetTasks[targetIndex - 1].taskOrder // Updated to taskOrder
+          const nextOrder = targetTasks[targetIndex].taskOrder // Updated to taskOrder
+          newTaskOrder = (prevOrder + nextOrder) / 2 // Updated variable name
         }
 
         const task = await database.tasks
-          .findOne({ selector: { taskId } })
+          .findOne({ selector: { id } }) // Updated from taskId to id
           .exec()
         if (!task) throw new Error("Task not found")
 
         // Just update - RxDB subscription handles UI
         await task.update({
           $set: {
-            columnId: targetColumnId,
-            order: newOrder,
+            statusId: targetStatusId, // Updated from columnId to statusId
+            taskOrder: newTaskOrder, // Updated from order to taskOrder
             updatedAt: now,
             updatedBy: user,
           },
         })
 
         // Optional: Clean up order values if they get too close to 0
-        if (newOrder < 1) {
-          setTimeout(() => reorderColumnTasks(targetColumnId), 100)
+        if (newTaskOrder < 1) {
+          setTimeout(() => reorderStatusTasks(targetStatusId), 100)
         }
       } catch (error) {
         console.error("Failed to move task:", error)
@@ -404,26 +428,26 @@ export function useProjectData(
   )
 
   // Helper to clean up order values when they get too small
-  const reorderColumnTasks = async (columnId: string) => {
+  const reorderStatusTasks = async (statusId: string) => {
     try {
       const now = getCurrentTimestamp()
       const user = getCurrentUser(currentUser)
 
-      const columnTasks = data.tasks
-        .filter((t) => t.columnId === columnId)
-        .sort((a, b) => a.order - b.order)
+      const statusTasks = data.tasks
+        .filter((t) => t.statusId === statusId) 
+        .sort((a, b) => a.taskOrder - b.taskOrder) // Updated from order to taskOrder
 
-      if (columnTasks.length <= 1) return
-
+      if (statusTasks.length <= 1) return
+      
       // Update each task with clean order values
-      for (let i = 0; i < columnTasks.length; i++) {
+      for (let i = 0; i < statusTasks.length; i++) {
         const task = await database.tasks
-          .findOne({ selector: { taskId: columnTasks[i].taskId } })
+          .findOne({ selector: { id: statusTasks[i].id } }) // Updated from taskId to id
           .exec()
         if (task) {
           await task.update({
             $set: {
-              order: (i + 1) * 1000, // Give plenty of space
+              taskOrder: (i + 1) * 1000, // Give plenty of space, updated from order to taskOrder
               updatedAt: now,
               updatedBy: user,
             },
@@ -431,13 +455,16 @@ export function useProjectData(
         }
       }
     } catch (error) {
-      console.error("Failed to reorder column tasks:", error)
+      console.error("Failed to reorder status tasks:", error)
     }
   }
 
-  // Task status operations - simplified
-  const createTaskStatus = useCallback(
+  /**
+   * Create a new label (either status or priority)
+   */
+  const createLabel = useCallback(
     async (
+      type: "status" | "priority",
       name: string,
       color = "#6366f1",
       description = ""
@@ -445,42 +472,81 @@ export function useProjectData(
       try {
         const now = getCurrentTimestamp()
         const user = getCurrentUser(currentUser)
-        const id = generateBrowserUniqueId("ts")
-
-        const maxOrder = Math.max(
-          ...data.taskStatuses.map((ts) => ts.order),
-          -1
-        )
-
-        const newStatus: TaskStatusDocType = {
-          id,
+        
+        // Find the highest order in the current labels of this type
+        const labelsOfType = data.labels.filter(l => l.type === type)
+        const maxOrder = Math.max(...labelsOfType.map(l => l.order), -1)
+        
+        const newLabel: LabelSchema = {
+          id: generateBrowserUniqueId("label"),
           projectId,
           name,
+          type,
+          order: maxOrder + 1,
           color,
           description,
-          order: maxOrder + 1,
-          isDefault: false,
           createdAt: now,
           updatedAt: now,
           createdBy: user,
           updatedBy: user,
         }
-
-        // Just insert - RxDB subscription will update UI
-        await database.taskStatus.insert(newStatus)
-        return id
+        
+        // Insert with proper typing - RxDB subscription will update UI
+        await database.labels.insert(newLabel as LabelDocType)
+        return newLabel.id
       } catch (error) {
-        console.error("Failed to create task status:", error)
+        console.error("Failed to create label:", error)
         throw error
       }
     },
-    [data.taskStatuses, projectId]
+    []
   )
 
-  const updateTaskStatus = useCallback(
+  /**
+   * Delete a label (either status or priority)
+   */
+  const deleteLabel = useCallback(
+    async (labelId: string) => {
+      try {
+        // Get the label to check its type
+        const label = await database.labels
+          .findOne({ selector: { id: labelId } })
+          .exec()
+        
+        if (!label) {
+          throw new Error("Label not found")
+        }
+        
+        // If it's a status label, check if there are tasks using it
+        if (label.get('type') === 'status') {
+          const tasksUsingLabel = data.tasks.filter((t) => t.statusId === labelId)
+          if (tasksUsingLabel.length > 0) {
+            throw new Error("Cannot delete status with tasks. Move tasks first.")
+          }
+        } else if (label.get('type') === 'priority') {
+          const tasksUsingLabel = data.tasks.filter((t) => t.priorityId === labelId)
+          if (tasksUsingLabel.length > 0) {
+            throw new Error("Cannot delete priority with tasks. Change task priorities first.")
+          }
+        }
+
+        // Just remove - RxDB subscription handles UI
+        await label.remove()
+      } catch (error) {
+        console.error("Failed to delete label:", error)
+        throw error
+      }
+    },
+    [data.tasks]
+  )
+
+  /**
+   * Update a label (either status or priority)
+   */
+  const updateLabel = useCallback(
     async (
-      statusId: string,
-      updates: { name?: string; color?: string; description?: string }
+      labelId: string,
+      updates: { name?: string; color?: string; description?: string; order?: number }
     ) => {
       try {
         const now = getCurrentTimestamp()
@@ -492,57 +558,38 @@ export function useProjectData(
           updatedBy: user,
         }
 
-        const status = await database.taskStatus
-          .findOne({ selector: { id: statusId } })
+        const label = await database.labels
+          .findOne({ selector: { id: labelId } })
           .exec()
-        if (!status) throw new Error("Status not found")
+        if (!label) throw new Error("Label not found")
 
         // Just update - RxDB subscription handles UI
-        await status.update({ $set: finalUpdates })
+        await label.update({ $set: finalUpdates })
       } catch (error) {
-        console.error("Failed to update task status:", error)
+        console.error("Failed to update label:", error)
         throw error
       }
     },
     []
   )
 
-  const deleteTaskStatus = useCallback(
-    async (statusId: string) => {
-      try {
-        // Check if there are tasks in this status
-        const tasksInStatus = data.tasks.filter((t) => t.columnId === statusId)
-        if (tasksInStatus.length > 0) {
-          throw new Error("Cannot delete status with tasks. Move tasks first.")
-        }
-
-        const status = await database.taskStatus
-          .findOne({ selector: { id: statusId } })
-          .exec()
-        if (status) {
-          // Just remove - RxDB subscription handles UI
-          await status.remove()
-        }
-      } catch (error) {
-        console.error("Failed to delete task status:", error)
-        throw error
-      }
-    },
-    [data.tasks]
-  )
-
-  const reorderTaskStatuses = useCallback(async (statusIds: string[]) => {
+  /**
+   * Reorder labels of a specific type (status or priority)
+   */
+  const reorderLabels = useCallback(async (labelIds: string[]) => {
     try {
       const now = getCurrentTimestamp()
       const user = getCurrentUser(currentUser)
 
-      // Update each status with new order
-      for (let i = 0; i < statusIds.length; i++) {
-        const status = await database.taskStatus
-          .findOne({ selector: { id: statusIds[i] } })
+      // Update each label with new order
+      for (let i = 0; i < labelIds.length; i++) {
+        const label = await database.labels
+          .findOne({ selector: { id: labelIds[i] } })
           .exec()
-        if (status) {
-          await status.update({
+          
+        if (label) {
+          // Update the order using the database order field
+          await label.update({
             $set: { order: i, updatedAt: now, updatedBy: user },
           })
         }
@@ -573,10 +620,10 @@ export function useProjectData(
     updateTask,
     deleteTask,
     moveTask,
-    createTaskStatus,
-    updateTaskStatus,
-    deleteTaskStatus,
-    reorderTaskStatuses,
+    createLabel,       // Updated from createTaskStatus
+    updateLabel,       // Updated from updateTaskStatus
+    deleteLabel,       // Updated from deleteTaskStatus
+    reorderLabels,     // Updated from reorderTaskStatuses
     refetch,
     clearError,
   }

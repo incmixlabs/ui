@@ -1,15 +1,19 @@
 // task-card-components/hooks/use-task-actions.ts
 import { useCallback } from "react"
-import { TaskDataSchema, KanbanColumn } from "@incmix/store"
-import type { Subtask, Tag } from "../utils/types"
+import { KanbanColumn, TaskDataSchema, TaskSubTask } from "@incmix/utils/schema";
+
+// Local types for the component
+type Tag = TaskDataSchema['labelsTags'][0];
+type Comment = TaskDataSchema['comments'][0];
+type Subtask = TaskDataSchema['subTasks'][0];
 
 interface UseTaskActionsProps {
   currentTask: TaskDataSchema | null;
   currentColumn: KanbanColumn | null | undefined;
-  updateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>;
-  deleteTask: (taskId: string) => Promise<void>;
-  createTask: (columnId: string, taskData: Partial<TaskDataSchema>) => Promise<void>;
-  moveTask: (taskId: string, targetColumnId: string, targetIndex?: number) => Promise<void>;
+  updateTask: (id: string, updates: Partial<TaskDataSchema>) => Promise<void>;
+  deleteTask: (id: string) => Promise<void>;
+  createTask: (statusId: string, taskData: Partial<TaskDataSchema>) => Promise<void>;
+  moveTask: (id: string, targetStatusId: string, targetIndex?: number) => Promise<void>;
   onTaskModified?: () => void;
   handleDrawerClose: () => void;
   columns: KanbanColumn[];
@@ -31,7 +35,7 @@ export function useTaskActions({
   const handleUpdateTask = useCallback(async (updates: Partial<TaskDataSchema>) => {
     if (!currentTask) return
     try {
-      await updateTask(currentTask.taskId, updates)
+      await updateTask(currentTask.id, updates) // Changed from taskId to id to match schema
       if (onTaskModified) onTaskModified()
     } catch (error) {
       console.error("Failed to update task:", error)
@@ -59,28 +63,28 @@ export function useTaskActions({
   }, [currentTask, handleUpdateTask])
 
   // Priority management
-  const handlePriorityChange = useCallback(async (priority: string) => {
-    await handleUpdateTask({ priority: priority as any })
+  const handlePriorityChange = useCallback(async (priorityId: string) => {
+    await handleUpdateTask({ priorityId })
   }, [handleUpdateTask])
   
-  // Status/column management
-  const handleStatusChange = useCallback(async (columnId: string) => {
-    if (!currentTask || columnId === currentTask.columnId) return
-    await moveTask(currentTask.taskId, columnId)
+  // Status management
+  const handleStatusChange = useCallback(async (statusId: string) => {
+    if (!currentTask || statusId === currentTask.statusId) return
+    await moveTask(currentTask.id, statusId)
   }, [currentTask, moveTask])
   
   // Date management
   const handleStartDateChange = useCallback(async (date: Date | null) => {
     if (!currentTask) return
     await handleUpdateTask({ 
-      startDate: date ? date.toISOString() : ""
+      startDate: date ? date.getTime() : undefined
     })
   }, [currentTask, handleUpdateTask])
   
   const handleEndDateChange = useCallback(async (date: Date | null) => {
     if (!currentTask) return
     await handleUpdateTask({ 
-      endDate: date ? date.toISOString() : ""
+      endDate: date ? date.getTime() : undefined
     })
   }, [currentTask, handleUpdateTask])
   
@@ -105,7 +109,7 @@ export function useTaskActions({
     
     await handleUpdateTask({ 
       comments: updatedComments,
-      commentsCount: updatedComments.length
+     
     })
   }, [currentTask, handleUpdateTask])
   
@@ -137,13 +141,16 @@ export function useTaskActions({
   const handleAddSubtask = useCallback(async (newSubtaskName: string) => {
     if (!newSubtaskName.trim() || !currentTask) return
     
+    const subTasks = [...(currentTask.subTasks || [])]
+    
     const newSubtask = {
       id: crypto.randomUUID(),
       name: newSubtaskName.trim(),
       completed: false,
+      order: subTasks.length // Set order to end of list
     }
     
-    const updatedSubTasks = [...(currentTask.subTasks || []), newSubtask]
+    const updatedSubTasks = [...subTasks, newSubtask]
     await handleUpdateTask({ subTasks: updatedSubTasks })
   }, [currentTask, handleUpdateTask])
 
@@ -178,7 +185,7 @@ export function useTaskActions({
     if (!currentTask) return
     
     try {
-      await deleteTask(currentTask.taskId)
+      await deleteTask(currentTask.id)
       handleDrawerClose()
       if (onTaskModified) onTaskModified()
     } catch (error) {
@@ -193,17 +200,17 @@ export function useTaskActions({
       await createTask(currentColumn.id, {
         name: `${currentTask.name} (Copy)`,
         description: currentTask.description,
-        priority: currentTask.priority,
+        priorityId: currentTask.priorityId,
         labelsTags: currentTask.labelsTags,
         assignedTo: currentTask.assignedTo,
         subTasks: currentTask.subTasks?.map((st: Subtask) => ({ 
           ...st, 
           id: crypto.randomUUID(), 
-          completed: false 
+          completed: false,
+          order: st.order
         })),
         completed: false,
-        comments: [],
-        commentsCount: 0,
+        comments: []
       })
       if (onTaskModified) onTaskModified()
     } catch (error) {

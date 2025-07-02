@@ -54,9 +54,8 @@ export function Board({
     updateTask,
     deleteTask,
     moveTask,
-    createColumn,
-    updateColumn,
-    deleteColumn,
+    updateStatusLabel, // Using the compatibility methods instead
+    deleteStatusLabel, // Using the compatibility methods instead
     refetch,
     clearError,
     projectStats
@@ -102,13 +101,13 @@ export function Board({
           const dropTargetData = destination.data
 
           // Find the task being dragged
-          const sourceColumn = optimisticColumns.find(col => col.id === dragging.columnId)
+          const sourceColumn = optimisticColumns.find(col => col.id === dragging.statusId)
           if (!sourceColumn) {
             setIsDragging(false)
             return
           }
 
-          const taskIndex = sourceColumn.tasks.findIndex(task => task.taskId === dragging.card.taskId)
+          const taskIndex = sourceColumn.tasks.findIndex(task => task.id === dragging.card.id)
           if (taskIndex === -1) {
             setIsDragging(false)
             return
@@ -120,7 +119,7 @@ export function Board({
 
           if (isCardDropTargetData(dropTargetData)) {
             // Dropping on another card
-            const destColumn = optimisticColumns.find(col => col.id === dropTargetData.columnId)
+            const destColumn = optimisticColumns.find(col => col.id === dropTargetData.statusId)
             if (!destColumn) {
               setIsDragging(false)
               return
@@ -130,7 +129,7 @@ export function Board({
 
             if (sourceColumn.id === destColumn.id) {
               // Same column reorder - update optimistically
-              const targetTaskIndex = destColumn.tasks.findIndex(task => task.taskId === dropTargetData.card.taskId)
+              const targetTaskIndex = destColumn.tasks.findIndex(task => task.id === dropTargetData.card.id)
               if (targetTaskIndex === -1 || targetTaskIndex === taskIndex) {
                 setIsDragging(false)
                 return
@@ -159,20 +158,20 @@ export function Board({
               setOptimisticColumns(newOptimisticColumns)
 
               // Update backend (this will eventually update the real state)
-              const newIndex = reordered.findIndex(t => t.taskId === dragging.card.taskId)
+              const newIndex = reordered.findIndex(t => t.id === dragging.card.id)
               
-              if (dragging.card.taskId) {
-                moveTask(dragging.card.taskId, destColumn.id, newIndex).finally(() => {
+              if (dragging.card.id) {
+                moveTask(dragging.card.id, destColumn.id, newIndex).finally(() => {
                   setIsDragging(false)
                 })
               } else {
-                console.error("Cannot move task: taskId is undefined")
+                console.error("Cannot move task: id is undefined")
                 setIsDragging(false)
               }
               return
             } else {
               // Different column
-              const targetTaskIndex = destColumn.tasks.findIndex(task => task.taskId === dropTargetData.card.taskId)
+              const targetTaskIndex = destColumn.tasks.findIndex(task => task.id === dropTargetData.card.id)
               const closestEdge = extractClosestEdge(dropTargetData)
               targetIndex = closestEdge === "bottom" ? targetTaskIndex + 1 : targetTaskIndex
             }
@@ -203,7 +202,7 @@ export function Board({
                 }
               } else if (col.id === targetColumnId) {
                 const newTasks = [...col.tasks]
-                newTasks.splice(targetIndex, 0, { ...taskToMove, columnId: targetColumnId })
+                newTasks.splice(targetIndex, 0, { ...taskToMove, statusId: targetColumnId })
                 return {
                   ...col,
                   tasks: newTasks
@@ -214,12 +213,12 @@ export function Board({
             setOptimisticColumns(newOptimisticColumns)
 
             // Update backend
-            if (dragging.card.taskId) {
-              moveTask(dragging.card.taskId, targetColumnId, targetIndex).finally(() => {
+            if (dragging.card.id) {
+              moveTask(dragging.card.id, targetColumnId, targetIndex).finally(() => {
                 setIsDragging(false)
               })
             } else {
-              console.error("Cannot move task: taskId is undefined")
+              console.error("Cannot move task: id is undefined")
               setIsDragging(false)
             }
           } else {
@@ -304,7 +303,7 @@ export function Board({
           {/* Board Stats */}
           <Flex gap="6" className="text-sm text-gray-600 dark:text-gray-400">
             <Text>
-              {projectStats.totalColumns} column{projectStats.totalColumns !== 1 ? "s" : ""}
+              {projectStats.totalStatusLabels} column{projectStats.totalStatusLabels !== 1 ? "s" : ""}
             </Text>
             <Text>
               {projectStats.totalTasks} task{projectStats.totalTasks !== 1 ? "s" : ""}
@@ -345,8 +344,8 @@ export function Board({
                   onCreateTask={createTask}
                   onUpdateTask={updateTask}
                   onDeleteTask={deleteTask}
-                  onUpdateColumn={updateColumn}
-                  onDeleteColumn={deleteColumn}
+                  onUpdateColumn={updateStatusLabel}
+                  onDeleteColumn={deleteStatusLabel}
                   isDragging={isDragging}
                   onTaskOpen={onTaskOpen}
                 />
