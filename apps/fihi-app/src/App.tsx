@@ -139,7 +139,7 @@ function App() {
       style={
         {
           "--sidebar-background": sidebarColors.bg,
-          "--sidebar-foreground": sidebarColors.text,
+          "--sidebar-foreground": sidebarColors.fg,
 
           "--dashboard-color-1": dashboardColors.color1,
           "--dashboard-text-1": dashboardColors.text1,

@@ -6,7 +6,7 @@ import { ChevronsLeft, PanelLeft } from "lucide-react"
 
 import { useIsMobile } from "@hooks/use-mobile"
 import { cn } from "@utils/cn"
-import { Button, IconButton, Input, Separator, Sheet, SheetContent, SheetDescription, SheetTitle,  Skeleton } from "@base"
+import { Box, Button, IconButton, Input, Separator, Sheet, SheetContent, SheetDescription, SheetTitle,  Skeleton } from "@base"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip"
 import { useThemeStore, useAppearanceStore, useSidebarStore, SIDEBAR_COLOR_OPTIONS  } from "@incmix/store/use-settings-store"
 import { set } from "date-fns"
@@ -174,7 +174,7 @@ const SidebarProvider = forwardRef<
     return (
       <SidebarContext.Provider value={contextValue}>
         <TooltipProvider delayDuration={0}>
-          <div
+          <Box
             style={
               {
                 "--sidebar-width": SIDEBAR_WIDTH,
@@ -190,7 +190,7 @@ const SidebarProvider = forwardRef<
             {...props}
           >
             {children}
-          </div>
+          </Box>
         </TooltipProvider>
       </SidebarContext.Provider>
     )
@@ -232,7 +232,7 @@ const Sidebar = React.forwardRef<
 
     if (collapsible === "none") {
       return (
-        <div
+        <Box
           className={cn(
             "flex h-full w-[--sidebar-width] flex-col  text-sidebar-foreground",
           )}
@@ -242,7 +242,7 @@ const Sidebar = React.forwardRef<
         >
           {SideBarTrigger}
           {children}
-        </div>
+        </Box>
       )
     }
 
@@ -266,7 +266,7 @@ const Sidebar = React.forwardRef<
             {SideBarTrigger}
             <SheetTitle className="sr-only">Sidebar</SheetTitle>
             <SheetDescription className="sr-only">Sidebar</SheetDescription>
-            <div className="flex h-full w-full flex-col">{children}</div>
+            <Box className="flex h-full w-full flex-col">{children}</Box>
           </SheetContent>
         </Sheet>
       )
@@ -286,7 +286,7 @@ const Sidebar = React.forwardRef<
           />
         )}
 
-        <div
+        <Box
           ref={ref}
           className={cn(
             "group peer relative text-sidebar-foreground",
@@ -304,7 +304,7 @@ const Sidebar = React.forwardRef<
         >
           {SideBarTrigger}
           {/* This is what handles the sidebar gap on desktop */}
-          <div
+          <Box
             className={cn(
               "relative h-svh w-[--sidebar-width] bg-transparent transition-[width] duration-200 ease-linear",
               "group-data-[collapsible=offcanvas]:w-0",
@@ -314,7 +314,7 @@ const Sidebar = React.forwardRef<
                 : "group-data-[collapsible=icon]:w-[--sidebar-width-icon]"
             )}
           />
-          <div
+          <Box
             className={cn(
               "fixed inset-y-0 z-10 flex h-svh w-[--sidebar-width] transition-[left,right,width] duration-200 ease-linear",
               isMobile && openMobile ? "z-40 bg-sidebar shadow-lg" : "",
@@ -329,7 +329,7 @@ const Sidebar = React.forwardRef<
             )}
             {...props}
           >
-            <div
+            <Box
               data-sidebar="sidebar"
               className={cn(
                 `flex h-full w-full flex-col px-1 group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow`,
@@ -338,9 +338,9 @@ const Sidebar = React.forwardRef<
               )}
             >
               {children}
-            </div>
-          </div>
-        </div>
+            </Box>
+          </Box>
+        </Box>
       </>
     )
   }
@@ -808,7 +808,7 @@ const SidebarMenuSkeleton = React.forwardRef<
   }, [])
 
   return (
-    <div
+    <Box
       ref={ref}
       data-sidebar="menu-skeleton"
       className={cn("flex h-8 items-center gap-2 rounded-md px-2", className)}
@@ -829,7 +829,7 @@ const SidebarMenuSkeleton = React.forwardRef<
           } as React.CSSProperties
         }
       />
-    </div>
+    </Box>
   )
 })
 SidebarMenuSkeleton.displayName = "SidebarMenuSkeleton"

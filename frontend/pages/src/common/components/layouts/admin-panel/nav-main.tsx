@@ -3,7 +3,7 @@
 import { ChevronRight, type LucideIcon } from "lucide-react"
 
 import type { Dashboard } from "@incmix/store"
-import { ContextMenu, useModalStore } from "@incmix/ui"
+import { Box, ContextMenu, Text, useModalStore } from "@incmix/ui"
 import {
   Collapsible,
   CollapsibleContent,
@@ -89,10 +89,12 @@ export function NavMain({
       return (
         <ContextMenu.Item
           color="indigo"
-          className="cursor-pointer px-2 py-1 text-sm "
+          className="cursor-pointer px-2 py-1 "
           onSelect={openCreateDashboardModal}
         >
-          Create Dashboard
+          <Text size="2" as="span">
+            Create Dashboard
+          </Text>
         </ContextMenu.Item>
       )
     }
@@ -102,10 +104,12 @@ export function NavMain({
       return (
         <ContextMenu.Item
           color="indigo"
-          className="cursor-pointer px-2 py-1 text-sm"
+          className="cursor-pointer px-2 py-1"
           onSelect={() => console.log("Create Project")}
         >
-          Create Project
+          <Text size="2" as="span">
+            Create Project
+          </Text>
         </ContextMenu.Item>
       )
     }
@@ -123,17 +127,21 @@ export function NavMain({
         <>
           <ContextMenu.Item
             color="indigo"
-            className="cursor-pointer px-2 py-1 text-sm "
+            className="cursor-pointer px-2 py-1"
             onSelect={openCreateDashboardModal}
           >
-            Create Dashboard
+            <Text size="2" as="span">
+              Create Dashboard
+            </Text>
           </ContextMenu.Item>
           <ContextMenu.Item
             color="indigo"
             className="cursor-pointer px-2 py-1 text-sm "
             onSelect={() => console.log("Copy Dashboard", subItem.title)}
           >
-            Copy Dashboard
+            <Text size="2" as="span">
+              Copy Dashboard
+            </Text>
           </ContextMenu.Item>
         </>
       )
@@ -144,32 +152,40 @@ export function NavMain({
         <>
           <ContextMenu.Item
             color="indigo"
-            className="cursor-pointer px-2 py-1 text-sm "
+            className="cursor-pointer px-2 py-1"
             onSelect={openCreateDashboardModal}
           >
-            Create Dashboard
+            <Text size="2" as="span">
+              Create Dashboard
+            </Text>
           </ContextMenu.Item>
           <ContextMenu.Item
             color="indigo"
-            className="cursor-pointer px-2 py-1 text-sm "
+            className="cursor-pointer px-2 py-1"
             onSelect={() => console.log("Edit Dashboard", subItem.title)}
           >
-            Edit Dashboard
+            <Text size="2" as="span">
+              Edit Dashboard
+            </Text>
           </ContextMenu.Item>
           <ContextMenu.Item
             color="indigo"
-            className="cursor-pointer px-2 py-1 text-sm "
+            className="cursor-pointer px-2 py-1"
             onSelect={() => console.log("Copy Dashboard", subItem.title)}
           >
-            Copy Dashboard
+            <Text size="2" as="span">
+              Copy Dashboard
+            </Text>
           </ContextMenu.Item>
           <ContextMenu.Separator className="my-1 border-neutral-200 border-t dark:border-neutral-700" />
           <ContextMenu.Item
             color="red"
-            className="cursor-pointer px-2 py-1 text-sm "
+            className="cursor-pointer px-2 py-1"
             onSelect={() => console.log("Delete Dashboard", subItem.title)}
           >
-            Delete Dashboard
+            <Text size="2" as="span">
+              Delete Dashboard
+            </Text>
           </ContextMenu.Item>
         </>
       )
@@ -197,8 +213,10 @@ export function NavMain({
                     tooltip={item.title}
                     className="active:bg-[var(--sidebar-background)] active:text-[var(--sidebar-foreground)]"
                   >
-                    {item.icon && <item.icon />}
-                    <span>{item.title}</span>
+                    {item.icon && <item.icon className="scale-icon" />}
+                    <Text size="2" as="span">
+                      {item.title}
+                    </Text>
                     <ChevronRight className="group-data-[state=open]/collapsible:transform-x-90 ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 </CollapsibleTrigger>
@@ -220,7 +238,9 @@ export function NavMain({
                               asChild
                             >
                               <Link to={subItem.url}>
-                                <span>{subItem.title}</span>
+                                <Text size="2" as="span">
+                                  {subItem.title}
+                                </Text>
                               </Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
@@ -258,12 +278,14 @@ export function NavMain({
                   asChild
                 >
                   <Link to={item.url}>
-                    {item.icon && <item.icon />}
-                    <span>{item.title}</span>
+                    {item.icon && <item.icon className="scale-icon" />}
+                    <Text size="2" as="span">
+                      {item.title}
+                    </Text>
                     {item.notificationCount && (
-                      <div className="ml-auto min-w-[16px] rounded-md bg-[var(--sidebar-foreground)] px-1 py-0.5 text-center font-semibold text-[10px] text-[var(--sidebar-background)] transition-transform duration-200">
+                      <Box className="ml-auto min-w-[16px] rounded-md bg-[var(--sidebar-foreground)] px-1 py-0.5 text-center font-semibold text-[10px] text-[var(--sidebar-background)] transition-transform duration-200">
                         {item.notificationCount}
-                      </div>
+                      </Box>
                     )}
                   </Link>
                 </SidebarMenuButton>
