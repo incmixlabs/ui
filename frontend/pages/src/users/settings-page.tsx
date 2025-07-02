@@ -4,9 +4,11 @@ import {
   Grid,
   Heading,
   Select,
+  SidebarTrigger,
   Switch,
   Text,
   ThemePlayground,
+  useIsMobile,
 } from "@incmix/ui"
 import AutoForm from "@incmix/ui/auto-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -19,7 +21,7 @@ import {
   useAppearanceStore,
   useThemeStore,
 } from "@incmix/store/use-settings-store"
-import { Button, CardContainer, ReactiveButton } from "@incmix/ui"
+import { CardContainer, PageHeader, ReactiveButton } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import type { UserProfile } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
@@ -35,7 +37,6 @@ const useGeneralInfoForm = (userId: string, initialName: string) => {
     useProfileUpdate(userId)
   const { t } = useTranslation(["profile"])
 
-  // Create a schema with translated validation messages
   const schemaWithTranslations = {
     ...generalInfoFormSchema.formSchema,
     properties: {
@@ -294,9 +295,7 @@ const SettingsPage: React.FC = () => {
   return (
     <DashboardLayout>
       <Flex direction="column" className="min-h-full">
-        <Heading size="6" mb="6">
-          {t("settings")}
-        </Heading>
+        <PageHeader title={t("settings")} />
         <Grid
           columns={{ initial: "1", md: "2" }}
           gap="6"
@@ -305,7 +304,6 @@ const SettingsPage: React.FC = () => {
           <Flex direction="column" gap="6">
             <ProfileSection user={user} />
             <LanguageSelector />
-            {/* <ThemeSettings /> */}
             <ThemePlayground />
           </Flex>
 

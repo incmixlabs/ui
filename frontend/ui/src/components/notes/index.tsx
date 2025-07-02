@@ -27,6 +27,7 @@ import {
   X,
 } from "lucide-react"
 import { type INote, notesData } from "./data"
+import {PageHeader} from "@incmix/ui"
 
 const TiptapEditor = lazy(() =>
   import("./components/tiptap-editor").then((mod) => ({
@@ -54,7 +55,10 @@ export function NoteComponent() {
     <>
       <Box className="p-4">
         <Flex align={"center"} justify={"between"}>
-          <Heading size={"7"}>Notes</Heading>
+          <PageHeader
+        title={"Notes"}
+        className="w-full"
+      />
           <Flex gap={"2"}>
             <Button variant="soft" color="gray">
               <SlidersHorizontal className="h-5 w-5" />

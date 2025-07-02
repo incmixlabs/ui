@@ -30,5 +30,6 @@ export * from "./active-btn"
 export * from "./list-combo-box"
 export * from "./theme/theme-panel"
 export * from "./theme/theme"
+export * from "./page-header"
 
 

@@ -1,4 +1,5 @@
 import { LoadingPage } from "@common"
+import { PageHeader } from "@incmix/ui"
 import AutoForm from "@incmix/ui/auto-form"
 import {
   Button,
@@ -32,10 +33,15 @@ const OrganizationHeader: React.FC<{ onCreateClick: () => void }> = ({
   const { t } = useTranslation(["organizations"])
   return (
     <Flex justify="between" align="center">
-      <Heading size="6">{t("organizations:title")}</Heading>
-      <Button onClick={onCreateClick}>
-        {t("organizations:createOrganization")}
-      </Button>
+      <PageHeader
+        title={t("organizations:title")}
+        className="w-full"
+        actions={
+          <Button onClick={onCreateClick}>
+            {t("organizations:createOrganization")}
+          </Button>
+        }
+      />
     </Flex>
   )
 }
@@ -172,11 +178,7 @@ const OrganizationsPage: React.FC = () => {
   }
 
   return (
-    <DashboardLayout
-      breadcrumbItems={[
-        { label: t("organizations:title"), url: "/organizations" },
-      ]}
-    >
+    <DashboardLayout>
       <Container>
         <CardContainer>
           <Flex direction="column" gap="4">
