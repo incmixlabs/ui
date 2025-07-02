@@ -28,7 +28,6 @@ import {
   useAppearanceStore,
   SIDEBAR_COLOR_OPTIONS,
   extractColorName,
-  baseColor,
 } from "@incmix/store/use-settings-store";
 
 import { useTranslation } from "react-i18next";
@@ -127,7 +126,7 @@ export function ThemePlayground() {
           label="Accent Color"
           value={accentColor}
           isSolidColor={true}
-          options={baseColor}
+          options={[...RADIX_ACCENT_COLORS]}
           onChange={(v) => {
             onAccentColorChange(v as RadixColor);
             themeContext?.onAccentColorChange(v as RadixColor);
@@ -194,7 +193,6 @@ export function ThemePlayground() {
                       }}
                     />
                     <Text>
-                      {/* Extract color name from CSS variable string, e.g. "blue" from "var(--blue-10)" */}
                       {extractColorName(opt.bg.color)}
                     </Text>
                   </div>
@@ -207,7 +205,7 @@ export function ThemePlayground() {
         <SelectRow
           label={t("Dashboard Color #1")}
           value={dashboard.color1}
-          options={baseColor.map((c) => `var(--${c}-9)`)}
+          options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
           onChange={(v) =>
             setTheme({ dashboard: { ...dashboard, color1: v as RadixColor } })
           }
@@ -216,7 +214,7 @@ export function ThemePlayground() {
         <SelectRow
           label={t("Dashboard Color #2")}
           value={dashboard.color2}
-          options={baseColor.map((c) => `var(--${c}-9)`)}
+          options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
           onChange={(v) =>
             setTheme({ dashboard: { ...dashboard, color2: v as RadixColor } })
           }
@@ -225,7 +223,7 @@ export function ThemePlayground() {
         <SelectRow
           label={t("Dashboard Color #3")}
           value={dashboard.color3}
-          options={baseColor.map((c) => `var(--${c}-9)`)}
+          options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
           onChange={(v) =>
             setTheme({ dashboard: { ...dashboard, color3: v as RadixColor } })
           }
@@ -233,37 +231,11 @@ export function ThemePlayground() {
         <SelectRow
           label={t("Dashboard Color #4")}
           value={dashboard.color4}
-          options={baseColor.map((c) => `var(--${c}-9)`)}
+          options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
           onChange={(v) =>
             setTheme({ dashboard: { ...dashboard, color4: v as RadixColor } })
           }
         />
-
-        {/* <Flex align={"center"} justify={"between"}>
-          <Text mt="4" mb="1" size="2">
-            Dashboard Multi
-          </Text>
-          <Select.Root
-            value={theme.dashboardMulti}
-            onValueChange={(v) => setTheme({ dashboardMulti: v })}
-          >
-            <Select.Trigger />
-            <Select.Content>
-              {RADIX_ACCENT_COLORS.flatMap((from) =>
-                RADIX_ACCENT_COLORS.map((to) => (
-                  <Select.Item
-                    key={`${from}-${to}`}
-                    value={`linear-gradient(to right, var(--${from}-9), var(--${to}-9))`}
-                  >
-                    {`${from} → ${to}`}
-                  </Select.Item>
-                )),
-              )}
-            </Select.Content>
-          </Select.Root>
-        </Flex> */}
-
-        {/* <ThemePanel accents={false} /> */}
       </Grid>
     </CardContainer>
   );

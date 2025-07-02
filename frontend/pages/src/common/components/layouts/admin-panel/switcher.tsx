@@ -2,7 +2,7 @@ import { ChevronsUpDown } from "lucide-react"
 import * as React from "react"
 
 import { useOrganizationStore } from "@incmix/store"
-import { DropdownMenu } from "@incmix/ui"
+import { Box, DropdownMenu, Text } from "@incmix/ui"
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -57,12 +57,12 @@ export function Switcher({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
+              <Box className="grid flex-1 text-left text-sm leading-tight">
+                <Text size="2" as="span" className="truncate font-semibold">
                   {selectedItem.name}
-                </span>
-              </div>
-              <ChevronsUpDown className="ml-auto" />
+                </Text>
+              </Box>
+              <ChevronsUpDown className="ml-auto scale-icon" />
             </SidebarMenuButton>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content
@@ -80,7 +80,9 @@ export function Switcher({
                 onClick={() => setSwitchedItem(item.id)}
                 className="ml-6 gap-2 p-2"
               >
-                {item.name}
+                <Text size="2" as="span">
+                  {item.name}
+                </Text>
               </DropdownMenu.Item>
             ))}
           </DropdownMenu.Content>

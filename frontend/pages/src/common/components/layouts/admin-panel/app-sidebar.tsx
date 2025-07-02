@@ -16,7 +16,7 @@ import {
   useEditingStore,
   useOrganizationStore,
 } from "@incmix/store"
-import { DashboardSidebar, ScrollArea } from "@incmix/ui"
+import { DashboardSidebar, ScrollArea, Text } from "@incmix/ui"
 import { USERS_API_URL } from "@incmix/ui/constants"
 import {
   SecondarySidebar,
@@ -262,9 +262,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 src="/incmix.svg"
                 alt="Incmix logo"
               />
-              <span className="group-data-[collapsible=icon]:hidden">
+              <Text as="span" className="group-data-[collapsible=icon]:hidden">
                 Incmix
-              </span>
+              </Text>
             </div>
           </SidebarHeaderLabel>
         </SidebarHeader>

@@ -21,7 +21,21 @@
 
     background-color: aliceblue;
   }
-
+  [data-scaling='90%'] .scale-icon {
+    transform: scale(0.9);
+  }
+  [data-scaling='95%'] .scale-icon {
+    transform: scale(0.95);
+  }
+  [data-scaling='100%'] .scale-icon {
+    transform: scale(1);
+  }
+  [data-scaling='105%'] .scale-icon {
+    transform: scale(1.05);
+  }
+  [data-scaling='110%'] .scale-icon {
+    transform: scale(1.1);
+  }
   :root {
     --color-black: #000000;
     --color-white: #ffffff;

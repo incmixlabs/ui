@@ -4,6 +4,7 @@ import {
   type BreakFontColor,
   type IntegrationConfig,
   type KeyOption,
+  RADIX_ACCENT_COLORS,
   type RadixColor,
   type RadixGrayColor,
   type RadixRadius,
@@ -29,26 +30,11 @@ export type SidebarColorConfig = {
   break: number
 }
 
-export const baseColor = [
-  "blue",
-  "violet",
-  "gray",
-  "red",
-  "indigo",
-  "orange",
-  "yellow",
-  "green",
-]
-
 export const SIDEBAR_COLOR_OPTIONS = [
-  { bg: { color: "blue", break: 10 } },
-  { bg: { color: "violet", break: 10 } },
   { bg: { color: "gray", break: 2 } },
-  { bg: { color: "red", break: 10 } },
-  { bg: { color: "indigo", break: 10 } },
-  { bg: { color: "orange", break: 10 } },
-  { bg: { color: "yellow", break: 9 } },
-  { bg: { color: "green", break: 10 } },
+  ...RADIX_ACCENT_COLORS.map((color) => ({
+    bg: { color, break: 10 },
+  })),
 ] satisfies { bg: SidebarColorConfig }[]
 
 export type ThemeStoreConfig = ThemeConfig & {
@@ -94,7 +80,7 @@ export type ThemeStoreConfig = ThemeConfig & {
   }
   getSidebarColor: () => {
     bg: string
-    text: string
+    fg: string
   }
 }
 export type UsePreferencesStoreConfig = UserPreference & {
@@ -553,29 +539,32 @@ export const useThemeStore = create<ThemeStoreConfig>()(
         let color = "gray"
 
         if (match) {
-          color = match[1] // e.g., "yellow"
+          color = match[1]
         }
 
-        // Case: yellow → use black text
-        if (color === "yellow") {
+        if (
+          color === "yellow" ||
+          color === "amber" ||
+          color === "lime" ||
+          color === "sky" ||
+          color === "mint"
+        ) {
           return {
             bg: sidebarBg,
-            text: "var(--color-black)",
+            fg: "var(--color-black)",
           }
         }
 
-        // Case: gray → use gray-12 text
         if (color === "gray") {
           return {
             bg: sidebarBg,
-            text: "var(--gray-12)",
+            fg: "var(--gray-12)",
           }
         }
 
-        // Default fallback (white text for dark backgrounds)
         return {
           bg: sidebarBg,
-          text: "var(--color-white)",
+          fg: "var(--color-white)",
         }
       },
     }),
