@@ -86,8 +86,6 @@
     --navbar-height: theme("width.14");
     --sidebar-width: theme("width.64");
 
-    --sidebar-background: var(--gray-3);
-    --sidebar-foreground: var(--gray-12);
     --sidebar-active: #D9D9D926;
     
     --sidebar-border: 220 7% 92%;
@@ -137,8 +135,6 @@
     --navbar-height: theme("width.14");
     --sidebar-width: theme("width.64");
 
-    --sidebar-background: var(--gray-3);
-    --sidebar-foreground: var(--gray-12);
     --sidebar-active: #D9D9D926;
 
     --sidebar-border: 222 9% 22%;

@@ -1,8 +1,11 @@
 import {
   Box,
+  CardContainer,
   Flex,
   Grid,
   Heading,
+  PageHeader,
+  ReactiveButton,
   Select,
   SidebarTrigger,
   Switch,
@@ -21,7 +24,6 @@ import {
   useAppearanceStore,
   useThemeStore,
 } from "@incmix/store/use-settings-store"
-import { CardContainer, PageHeader, ReactiveButton } from "@incmix/ui"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import type { UserProfile } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"

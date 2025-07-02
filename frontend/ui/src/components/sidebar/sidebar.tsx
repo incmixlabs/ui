@@ -289,7 +289,7 @@ const Sidebar = React.forwardRef<
         <Box
           ref={ref}
           className={cn(
-            "group peer relative text-sidebar-foreground",
+            "group peer relative text-[var(--sidebar-foreground)] bg-[var(--sidebar-background)]",
             isMobile && openMobile
               ? "fixed inset-y-0 left-0 z-40 w-[--sidebar-width]"
               : "hidden",
@@ -581,7 +581,7 @@ const SidebarHeaderLabel = React.forwardRef<
       ref={ref}
       data-sidebar="group-label"
       className={cn(
-        "mt-2 flex h-8 shrink-0 items-center gap-3 rounded-md px-2 font-medium text-lg text-[var(--sidebar-bg-foreground)] outline-none ring-sidebar-ring transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>span:last-child]:text-2xl [&>svg]:size-4 [&>svg]:shrink-0",
+        "mt-2 flex h-8 shrink-0 items-center gap-3 rounded-md px-2 font-medium text-lg text-[var(--sidebar-foreground)] outline-none ring-sidebar-ring transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2 [&>span:last-child]:text-2xl [&>svg]:size-4 [&>svg]:shrink-0",
         "group-data-[collapsible=icon]:p-0",
         className
       )}
@@ -711,7 +711,7 @@ const SidebarMenuButton = React.forwardRef<
           sidebarMenuButtonVariants({ variant, size }),
           "hover:bg-[var(--sidebar-active)]",
           `${isSelected && open && "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[var(--sidebar-active)] font-[600] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[4px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-[var(--sidebar-foreground)] before:content-['']"}`,
-          `${(isSelected || isSubMenuSelected) && !open && " bg-[var(--sidebar-active)] text-[var(--sidebar-background)]"}`,
+          `${(isSelected || isSubMenuSelected) && !open && " bg-[var(--sidebar-active)] text-[var(--sidebar-foreground)]"}`,
           className
         )}
         {...props}
