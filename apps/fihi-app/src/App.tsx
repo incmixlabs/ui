@@ -173,7 +173,8 @@ function App() {
       accentColor={accentColor}
       grayColor={grayColor}
       radius={radius}
-      scaling={scaling}>
+      scaling={scaling}
+    >
       <RxdbProvider db={db}>
         <Suspense fallback={<LoadingPage />}>
           <Toaster />
