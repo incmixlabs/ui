@@ -32,12 +32,12 @@ export interface ListColumn extends KanbanColumn {
   isExpanded?: boolean
 }
 // Making most properties optional for mock data compatibility
-export interface KanbanTask extends Partial<Omit<TaskDataSchema, 'attachments' | 'labelsTags' | 'createdBy' | 'assignedTo' | 'subTasks' | 'updatedBy' | 'completed' | 'priority'>> {
+export interface KanbanTask extends Partial<Omit<TaskDataSchema, 'attachments' | 'labelsTags' | 'createdBy' | 'assignedTo' | 'subTasks' | 'updatedBy' | 'completed' | 'priorityId'>> {
   // Make completed optional
   completed?: boolean
 
-  // Make priority optional
-  priority?: 'low' | 'medium' | 'high' | 'urgent'
+  // Make priorityId optional
+  priorityId?: string
   // Make attachments mutable to match the UI component expectations
   attachments?: {
     id: string
@@ -168,24 +168,24 @@ const cardKey = Symbol("card")
 export type TCardData = {
   [cardKey]: true
   card: KanbanTask
-  columnId: string
+  statusId: string  // Updated from columnId to statusId
   rect: DOMRect
 }
 
 export function getCardData({
   card,
   rect,
-  columnId,
+  statusId,  // Updated parameter name
 }: {
   card: KanbanTask
-  columnId: string
+  statusId: string  // Updated parameter name
   rect: DOMRect
 }): TCardData {
   return {
     [cardKey]: true,
     rect,
     card,
-    columnId,
+    statusId,  // Updated property name
   }
 }
 export function isCardData(
@@ -206,7 +206,7 @@ const cardDropTargetKey = Symbol("card-drop-target")
 export type TCardDropTargetData = {
   [cardDropTargetKey]: true
   card: KanbanTask
-  columnId: string
+  statusId: string  // Updated from columnId to statusId
 }
 
 export function isCardDropTargetData(
@@ -217,15 +217,15 @@ export function isCardDropTargetData(
 
 export function getCardDropTargetData({
   card,
-  columnId,
+  statusId,  // Updated parameter name
 }: {
   card: KanbanTask
-  columnId: string
+  statusId: string  // Updated parameter name
 }): TCardDropTargetData {
   return {
     [cardDropTargetKey]: true,
     card,
-    columnId,
+    statusId,  // Updated property name
   }
 }
 
@@ -263,6 +263,8 @@ export interface TableTask extends KanbanTask {
   // Additional computed properties for table display
   statusLabel?: string
   statusColor?: string
+  priorityLabel?: string  // Added to support priorityId lookup
+  priorityColor?: string  // Added to support priorityId display
   assignedToNames?: string
   totalSubTasks?: number
   completedSubTasks?: number

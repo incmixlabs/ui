@@ -71,7 +71,7 @@ interface ListColumnProps {
   onUpdateColumn: (columnId: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
   onDeleteColumn: (columnId: string) => Promise<void>
   isDragging?: boolean
-  selectedTaskIds?: {[key: string]: {taskId: string, name: string}}
+  selectedTaskIds?: {[key: string]: boolean} // Simplified to just a map of IDs to boolean
   onTaskSelect?: (taskId: string, selected: boolean, taskName: string) => void
   onSelectAll?: (columnId: string, selected: boolean) => void
 }
@@ -88,21 +88,21 @@ const CardList = memo(function CardList({
   columns: ListColumn[]
   onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
-  selectedTaskIds?: {[key: string]: {taskId: string, name: string}}
+  selectedTaskIds?: {[key: string]: boolean}
   onTaskSelect?: (taskId: string, selected: boolean, taskName: string) => void
 }) {
   return (
     <>
       {column.tasks.map((task: KanbanTask) => (
         <ListTaskCard
-          key={task.taskId}
+          key={task.id}
           card={task}
-          columnId={column.id}
+          statusId={column.id}
           columns={columns}
           onUpdateTask={onUpdateTask}
           onDeleteTask={onDeleteTask}
           onTaskSelect={onTaskSelect ? (taskId, selected) => onTaskSelect(taskId, selected, task.name || '') : undefined}
-          isSelected={task.taskId ? !!selectedTaskIds?.[task.taskId] : false}
+          isSelected={task.id ? !!selectedTaskIds?.[task.id] : false}
         />
       ))}
     </>
@@ -136,7 +136,7 @@ export function ListColumn({
   const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
 
   // Calculate selection state
-  const selectedTasksInColumn = column.tasks.filter(task => task.taskId ? !!selectedTaskIds[task.taskId] : false).length
+  const selectedTasksInColumn = column.tasks.filter(task => task.id ? !!selectedTaskIds[task.id] : false).length
   const allTasksSelected = selectedTasksInColumn === totalTasks && totalTasks > 0
   const someTasksSelected = selectedTasksInColumn > 0 && selectedTasksInColumn < totalTasks
 
@@ -632,11 +632,23 @@ export function ListColumn({
                     columns={columns.map(col => ({
                       id: col.id,
                       name: col.name,
-                      color: col.color,
                       projectId: col.projectId,
-                      order: col.order,
+                      // Map required TaskDataSchema fields
+                      statusId: col.id, // Using column id as statusId since this is a status column
+                      priorityId: '', // Default empty string for required field
+                      taskOrder: col.order || 0, // Map order to taskOrder
+                      completed: false, // Default value
+                      // Include color from the column
+                      color: col.color,
                       description: col.description,
-                      isDefault: col.isDefault,
+                      // Default empty arrays for required array fields
+                      refUrls: [],
+                      labelsTags: [],
+                      attachments: [],
+                      assignedTo: [],
+                      subTasks: [],
+                      comments: [],
+                      // Timestamps and audit fields
                       createdAt: col.createdAt,
                       updatedAt: col.updatedAt,
                       createdBy: col.createdBy,

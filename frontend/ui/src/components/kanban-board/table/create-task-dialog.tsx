@@ -14,7 +14,7 @@ import {
 } from "@incmix/ui"
 import { X, Calendar, User, Flag } from "lucide-react"
 import { PRIORITY_OPTIONS, getPriorityInfo } from "./table-columns-config"
-import type { TaskDataSchema } from "@incmix/utils/schema"
+import type { TableTask } from "../types"
 
 // Mock members data (same as in mention input)
 const AVAILABLE_MEMBERS = [
@@ -38,7 +38,7 @@ const AVAILABLE_MEMBERS = [
 interface CreateTaskDialogProps {
   isOpen: boolean
   onClose: () => void
-  onCreateTask: (taskData: Partial<TaskDataSchema>) => Promise<void>
+  onCreateTask: (taskData: Partial<TableTask>) => Promise<void>
   taskStatuses: Array<{
     id: string
     name: string
@@ -88,17 +88,20 @@ export function CreateTaskDialog({
       await onCreateTask({
         name: formData.name.trim(),
         description: formData.description.trim(),
-        columnId: formData.columnId,
-        priority: formData.priority as "low" | "medium" | "high" | "urgent",
-        startDate: formData.startDate || undefined,
-        endDate: formData.endDate || undefined,
-        assignedTo: formData.assignedTo,
+        statusId: formData.columnId, // Map columnId from form to statusId for TableTask
+        priorityId: formData.priority as "low" | "medium" | "high" | "urgent", // Map priority from form to priorityId for TableTask
+        startDate: formData.startDate ? new Date(formData.startDate).getTime() : undefined,
+        endDate: formData.endDate ? new Date(formData.endDate).getTime() : undefined,
+        assignedTo: formData.assignedTo.map(user => ({
+          id: user.id,
+          name: user.name,
+          avatar: user.image
+        })),
         completed: false,
         labelsTags: [],
         attachments: [],
         subTasks: [],
-        comments: [],
-        commentsCount: 0
+        comments: []
       })
       
       onClose()

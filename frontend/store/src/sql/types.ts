@@ -1,13 +1,11 @@
 import {
-  columnSchemaLiteral,
   dashboardSchemaLiteral,
   dashboardTemplateSchemaLiteral,
   formProjectSchemaLiteral,
+  labelSchemaLiteral,
   projectSchemaLiteral,
-  taskDataSchemaLiteral,
   taskSchemaLiteral,
 } from "@incmix/utils/schema"
-import type { TaskStatusDocType } from "@incmix/utils/schema"
 import {
   type ExtractDocumentTypeFromTypedRxJsonSchema,
   type RxCollection,
@@ -15,7 +13,7 @@ import {
 } from "rxdb"
 
 // Task schema conversions have been moved to ../utils/task-schema.ts
-const columnsTyped = toTypedRxJsonSchema(columnSchemaLiteral)
+
 const projectTyped = toTypedRxJsonSchema(projectSchemaLiteral)
 const formProjectTyped = toTypedRxJsonSchema(formProjectSchemaLiteral)
 const dashboardTemplateTyped = toTypedRxJsonSchema(
@@ -23,12 +21,9 @@ const dashboardTemplateTyped = toTypedRxJsonSchema(
 )
 const dashboardTyped = toTypedRxJsonSchema(dashboardSchemaLiteral)
 const taskTyped = toTypedRxJsonSchema(taskSchemaLiteral)
+const labelTyped = toTypedRxJsonSchema(labelSchemaLiteral)
 
 // Task types have been moved to ../utils/task-schema.ts
-
-export type ColumnDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
-  typeof columnsTyped
->
 
 export type ProjectDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof projectTyped
@@ -50,10 +45,13 @@ export type TaskDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof taskTyped
 >
 
+export type LabelDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
+  typeof labelTyped
+>
+
 export interface TaskCollections {
   tasks: RxCollection<TaskDocType>
-  taskStatus: RxCollection<TaskStatusDocType>
-  columns: RxCollection<ColumnDocType>
+  labels: RxCollection<LabelDocType>
   projects: RxCollection<ProjectDocType>
   formProjects: RxCollection<FormProjectDocType>
   dashboardTemplates: RxCollection<DashboardTemplateDocType>

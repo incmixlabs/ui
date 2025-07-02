@@ -1,5 +1,5 @@
-import type { TaskStatusDocType } from "@incmix/utils/schema"
-import type { TaskCollections, TaskDocType } from "../sql/types"
+import { DEFAULT_LABELS, type DefaultDataOptions } from "@incmix/utils/schema"
+import type { LabelDocType, TaskCollections, TaskDocType } from "../sql/types"
 // Import browser-compatible helpers instead of Node.js Buffer-using ones
 import {
   generateBrowserUniqueId,
@@ -16,14 +16,10 @@ const getDefaultUser = () => ({
   image: "/placeholder-avatar.png",
 })
 
-export interface DefaultDataOptions {
-  projectId?: string
-  statusesOnly?: boolean
-  forceStatusCreation?: boolean
-}
+// DefaultDataOptions is imported from @incmix/utils/schema
 
 /**
- * Initializes default task statuses and optional sample tasks
+ * Initializes default labels (status and priority) and optional sample tasks
  * Only creates data if the respective collections are empty
  * @param options Configuration options
  * @returns Promise that resolves when initialization is complete
@@ -37,18 +33,18 @@ export async function initializeDefaultData(
   const defaultUser = getDefaultUser()
 
   try {
-    // Initialize task statuses if needed
-    const statuses = await initializeTaskStatuses(
+    // Initialize status and priority labels if needed
+    const labels = await initializeLabels(
       db,
       projectId,
       now,
       defaultUser,
-      options.forceStatusCreation
+      options.forceLabelCreation
     )
 
-    // Only initialize tasks if not in statusesOnly mode and we have statuses
-    if (!options.statusesOnly && statuses.length > 0) {
-      await initializeTasks(db, projectId, statuses, now, defaultUser)
+    // Only initialize tasks if not in labelsOnly mode and we have labels
+    if (!options.labelsOnly && labels.length > 0) {
+      await initializeTasks(db, projectId, labels, now, defaultUser)
     }
   } catch (error) {
     console.error("Error initializing default data:", error)
@@ -59,84 +55,55 @@ export async function initializeDefaultData(
 }
 
 /**
- * Creates default task statuses if none exist for the project
+ * Creates default labels for statuses and priorities if none exist for the project
  */
-async function initializeTaskStatuses(
+async function initializeLabels(
   db: TaskCollections,
   projectId: string,
   timestamp: number,
   user: { id: string; name: string; image: string },
   forceCreation = false
-): Promise<any[]> {
-  // Change return type to any[] to accommodate RxDocument objects
-  const taskStatusCollection = db.taskStatus
+): Promise<LabelDocType[]> {
+  // Use the labels collection instead of taskStatus
+  const labelCollection = db.labels
 
-  // Check if task statuses already exist for this project
-  const existingStatuses = await taskStatusCollection
+  // Check if labels already exist for this project
+  const existingLabels = await labelCollection
     .find({
       selector: { projectId },
     })
     .exec()
 
-  if (existingStatuses.length === 0 || forceCreation) {
-    console.log("Creating default task statuses...")
+  if (existingLabels.length === 0 || forceCreation) {
+    console.log("Creating default status and priority labels...")
 
-    const defaultTaskStatuses = [
-      {
-        id: generateBrowserUniqueId("ts"),
-        projectId,
-        name: "To Do",
-        color: "#6366f1", // Indigo
-        order: 0,
-        description: "Tasks to be started",
-        isDefault: true,
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        createdBy: user,
-        updatedBy: user,
-      },
-      {
-        id: generateBrowserUniqueId("ts"),
-        projectId,
-        name: "In Progress",
-        color: "#f97316", // Orange
-        order: 1,
-        description: "Tasks currently being worked on",
-        isDefault: false,
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        createdBy: user,
-        updatedBy: user,
-      },
-      {
-        id: generateBrowserUniqueId("ts"),
-        projectId,
-        name: "Done",
-        color: "#10b981", // Emerald
-        order: 2,
-        description: "Completed tasks",
-        isDefault: false,
-        createdAt: timestamp,
-        updatedAt: timestamp,
-        createdBy: user,
-        updatedBy: user,
-      },
-    ]
+    // Create both status and priority labels based on DEFAULT_LABELS
+    const defaultLabels = DEFAULT_LABELS.map((label) => ({
+      id: generateBrowserUniqueId(label.type === "status" ? "st" : "pr"),
+      projectId,
+      type: label.type as "status" | "priority", // Ensure proper typing
+      name: label.name,
+      color: label.color,
+      order: label.order,
+      description: label.description,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+      createdBy: user,
+      updatedBy: user,
+    }))
 
-    const insertedStatuses = await Promise.all(
-      defaultTaskStatuses.map((status) => taskStatusCollection.insert(status))
+    const insertedLabels = await Promise.all(
+      defaultLabels.map((label) => labelCollection.insert(label))
     )
 
-    console.log(
-      `Created ${insertedStatuses.length} default task statuses successfully.`
-    )
-    return insertedStatuses
+    console.log(`Created ${insertedLabels.length} default labels successfully.`)
+    return insertedLabels
   }
 
   console.log(
-    `${existingStatuses.length} task statuses already exist for project. Skipping creation.`
+    `${existingLabels.length} labels already exist for project. Skipping creation.`
   )
-  return existingStatuses
+  return existingLabels
 }
 
 /**
@@ -145,7 +112,7 @@ async function initializeTaskStatuses(
 async function initializeTasks(
   db: TaskCollections,
   projectId: string,
-  statuses: TaskStatusDocType[],
+  labels: LabelDocType[],
   timestamp: number,
   user: { id: string; name: string; image: string }
 ): Promise<void> {
@@ -161,13 +128,19 @@ async function initializeTasks(
   if (existingTasks.length === 0) {
     console.log("Creating sample tasks...")
 
-    // Find the "To Do" status, or use the first status if not found
-    // Find status by name, handling both RxDocument and plain objects safely
+    // Find the "To Do" status and "Medium" priority labels
     const todoStatus =
-      statuses.find((s) => {
-        // Check if it's a string property directly or via an rx method
-        return (s.name as string) === "To Do"
-      }) || statuses[0]
+      labels.find((l) => l.type === "status" && l.name === "To Do") ||
+      labels.find((l) => l.type === "status") ||
+      labels[0]
+
+    const mediumPriority =
+      labels.find((l) => l.type === "priority" && l.name === "Medium") ||
+      labels.find((l) => l.type === "priority")
+
+    if (!mediumPriority) {
+      throw new Error("No priority labels found. Cannot create sample tasks.")
+    }
 
     /**
      * Helper function to create a fully typed TaskDocType from partial data
@@ -178,10 +151,11 @@ async function initializeTasks(
       // Validate required fields are present
       if (
         !input.id ||
-        !input.taskId ||
         !input.projectId ||
         !input.name ||
-        !input.columnId
+        !input.statusId ||
+        !input.priorityId ||
+        !input.taskOrder
       ) {
         throw new Error(
           `Missing required fields for task: ${JSON.stringify(input)}`
@@ -203,24 +177,25 @@ async function initializeTasks(
       return {
         // Required fields (now validated above)
         id: input.id,
-        taskId: input.taskId,
         projectId: input.projectId,
         name: input.name,
-        columnId: input.columnId,
+        statusId: input.statusId,
+        priorityId: input.priorityId,
+        taskOrder: input.taskOrder,
 
         // Fields with defaults
-        order: input.order ?? 0,
-        startDate: input.startDate ?? new Date().toISOString(),
-        endDate: input.endDate ?? "",
+        startDate: input.startDate ?? timestamp,
+        endDate: input.endDate ?? timestamp + 604800000, // One week later
         description: input.description ?? "",
         completed: input.completed ?? false,
-        priority: input.priority ?? ("medium" as const),
+        acceptanceCriteria: input.acceptanceCriteria ?? [],
+        checklist: input.checklist ?? [],
+        refUrls: input.refUrls ?? [],
         labelsTags: input.labelsTags ?? [],
         attachments: input.attachments ?? [],
         assignedTo: input.assignedTo ?? [],
         subTasks: input.subTasks ?? [],
         comments: input.comments ?? [],
-        commentsCount: input.commentsCount ?? 0,
 
         // Audit fields (now validated above)
         createdAt: input.createdAt,
@@ -234,16 +209,15 @@ async function initializeTasks(
     const sampleTasks: Partial<TaskDocType>[] = [
       {
         id: generateBrowserUniqueId("task"),
-        taskId: generateBrowserUniqueId("tsk"),
         projectId,
         name: "Project setup",
-        columnId: todoStatus.id,
-        order: 0,
-        startDate: new Date().toISOString(),
-        endDate: "",
+        statusId: todoStatus.id,
+        priorityId: mediumPriority.id, // Use the medium priority we found
+        taskOrder: 0,
+        startDate: timestamp,
+        endDate: timestamp + 604800000, // One week later
         description: "Set up the initial project repository and documentation",
         completed: false,
-        priority: "high",
         labelsTags: [{ value: "setup", label: "Setup", color: "#818cf8" }],
         attachments: [],
         assignedTo: [],
@@ -262,7 +236,6 @@ async function initializeTasks(
           },
         ],
         comments: [],
-        commentsCount: 0,
         createdAt: timestamp,
         updatedAt: timestamp,
         createdBy: user,
@@ -270,23 +243,21 @@ async function initializeTasks(
       },
       {
         id: generateBrowserUniqueId("task"),
-        taskId: generateBrowserUniqueId("tsk"),
         projectId,
         name: "Design user interface",
-        columnId: todoStatus.id,
-        order: 1,
-        startDate: new Date().toISOString(),
-        endDate: "",
+        statusId: todoStatus.id,
+        priorityId: mediumPriority.id,
+        taskOrder: 1,
+        startDate: timestamp,
+        endDate: timestamp + 1209600000, // Two weeks later
         description:
           "Create wireframes and mockups for the main application screens",
         completed: false,
-        priority: "medium",
         labelsTags: [{ value: "design", label: "Design", color: "#f472b6" }],
         attachments: [],
         assignedTo: [],
         subTasks: [],
         comments: [],
-        commentsCount: 0,
         createdAt: timestamp,
         updatedAt: timestamp,
         createdBy: user,
@@ -294,23 +265,21 @@ async function initializeTasks(
       },
       {
         id: generateBrowserUniqueId("task"),
-        taskId: generateBrowserUniqueId("tsk"),
         projectId,
         name: "Kickoff meeting",
-        columnId: todoStatus.id,
-        order: 2,
-        startDate: new Date().toISOString(),
-        endDate: "",
+        statusId: todoStatus.id,
+        priorityId: mediumPriority.id,
+        taskOrder: 2,
+        startDate: timestamp,
+        endDate: timestamp + 172800000, // Two days later
         description:
           "Schedule and conduct project kickoff meeting with stakeholders",
         completed: false,
-        priority: "urgent",
-        labelsTags: [{ value: "meeting", label: "Meeting", color: "#fbbf24" }],
+        labelsTags: [],
         attachments: [],
         assignedTo: [],
         subTasks: [],
         comments: [],
-        commentsCount: 0,
         createdAt: timestamp,
         updatedAt: timestamp,
         createdBy: user,
@@ -318,16 +287,25 @@ async function initializeTasks(
       },
     ]
 
-    // Insert tasks using the helper function to ensure type safety
-    for (const taskData of sampleTasks) {
-      await tasksCollection.insert(createTaskDoc(taskData))
+    try {
+      await Promise.all(
+        sampleTasks.map(async (taskData) => {
+          // Convert the partial to a fully typed document
+          const fullTaskDoc = createTaskDoc(taskData)
+          // Insert the task
+          return await tasksCollection.insert(fullTaskDoc)
+        })
+      )
+      console.log(`Created ${sampleTasks.length} sample tasks successfully.`)
+    } catch (error) {
+      console.error("Error creating sample tasks:", error)
+      throw new Error(
+        `Failed to create sample tasks: ${error instanceof Error ? error.message : String(error)}`
+      )
     }
-
-    console.log(`Created ${sampleTasks.length} sample tasks successfully.`)
-    return
+  } else {
+    console.log(
+      `${existingTasks.length} tasks already exist for project. Skipping creation.`
+    )
   }
-
-  console.log(
-    `${existingTasks.length} tasks already exist for project. Skipping creation.`
-  )
 }

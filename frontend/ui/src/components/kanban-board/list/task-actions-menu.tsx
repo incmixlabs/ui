@@ -24,7 +24,7 @@ import {
   AlertCircle,
   Clock,
 } from "lucide-react"
-import { TaskDataSchema, TaskStatusDocType } from "@incmix/utils/schema"
+import { TaskDataSchema } from "@incmix/utils/schema"
 import { KanbanTask } from "../types" // Import KanbanTask type
 
 
@@ -78,44 +78,47 @@ const members = [
 ]
 
 interface TaskActionsMenuProps {
-  // For existing tasks
-  task?: TaskDataSchema | KanbanTask
-  
-  // For new task creation context
-  newTaskData?: {
-    priority?: string
-    startDate?: string
-    endDate?: string
-    assignedTo?: Array<{ id: string; name: string; image?: string }>
-    columnId?: string
-  }
-  
-  // Available columns for moving tasks
-  columns?: TaskStatusDocType[] 
-  
-  // Callbacks
-  onUpdateTask?: (updates: Partial<TaskDataSchema>) => Promise<void>
+  task?: KanbanTask | TaskDataSchema
+  columns: TaskDataSchema[]
+  onNewTaskDataChange?: (newData: any) => void
+  priorityLabels?: { 
+    id: string; 
+    name: string; 
+    color: string; 
+    type: string 
+  }[]
+  onUpdateTask?: (id: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask?: () => Promise<void>
   onDuplicateTask?: () => Promise<void>
-  onNewTaskDataChange?: (data: any) => void
-  
-  // UI props
+  onCreateTask?: (task: Partial<TaskDataSchema>) => Promise<void>
+  newTaskData?: { 
+    priorityId?: string;
+    startDate?: string;
+    endDate?: string;
+    assignedTo?: { 
+      id: string; 
+      name: string; 
+      image?: string 
+    }[];
+    statusId?: string;
+  }
+  setNewTaskData?: React.Dispatch<React.SetStateAction<Partial<TaskDataSchema>>>
   disabled?: boolean
   size?: "1" | "2" | "3"
-  variant?: "ghost" | "soft" | "solid"
-  
-  // Context - determines which options to show
-  mode?: "existing-task" | "new-task" | "both"
+  variant?: "ghost" | "soft" | "outline"
+  mode?: "existing-task" | "new-task"
 }
 
 export function TaskActionsMenu({
   task,
-  newTaskData,
-  columns = [],
+  columns,
+  priorityLabels = [],
   onUpdateTask,
   onDeleteTask,
   onDuplicateTask,
-  onNewTaskDataChange,
+  onCreateTask,
+  newTaskData,
+  setNewTaskData,
   disabled = false,
   size = "1",
   variant = "ghost",
@@ -125,37 +128,54 @@ export function TaskActionsMenu({
   const [isMemberPickerOpen, setIsMemberPickerOpen] = useState(false)
 
   // Get current values - either from existing task or new task data
-  const currentPriority = task?.priority || newTaskData?.priority || "medium"
+  const currentPriorityId = task?.priorityId || newTaskData?.priorityId || ""
   const currentStartDate = task?.startDate || newTaskData?.startDate
   const currentEndDate = task?.endDate || newTaskData?.endDate
   const currentAssignedTo = task?.assignedTo || newTaskData?.assignedTo || []
-  const currentColumnId = task?.columnId || newTaskData?.columnId
+  const currentStatusId = task?.statusId || newTaskData?.statusId
 
-  // Priority helpers
-  const getPriorityInfo = (priority: string) => {
-    switch (priority) {
-      case "urgent": return { color: "red" as const, icon: AlertCircle, label: "Urgent" }
-      case "high": return { color: "orange" as const, icon: Flag, label: "High" }
-      case "medium": return { color: "blue" as const, icon: Clock, label: "Medium" }
-      case "low": return { color: "gray" as const, icon: Clock, label: "Low" }
-      default: return { color: "blue" as const, icon: Clock, label: "Medium" }
+  // Priority helpers - updated for new schema with priorityId and labels
+  const getPriorityInfo = (priorityId: string | undefined) => {
+    // Find the priority label by its ID
+    const priorityLabel = priorityLabels.find(label => label.id === priorityId)
+    
+    if (!priorityLabel) {
+      // Default when no priorityId or label found
+      return { color: "blue" as const, icon: Clock, label: "Medium" }
+    }
+    
+    // Determine display based on priority name
+    const name = priorityLabel.name.toLowerCase()
+    if (name.includes("urgent")) {
+      return { color: "red" as const, icon: AlertCircle, label: priorityLabel.name }
+    } else if (name.includes("high")) {
+      return { color: "orange" as const, icon: Flag, label: priorityLabel.name }
+    } else if (name.includes("low")) {
+      return { color: "gray" as const, icon: Clock, label: priorityLabel.name }
+    } else {
+      // Medium or any other priority
+      return { color: "blue" as const, icon: Clock, label: priorityLabel.name }
     }
   }
 
-  // Update handlers
-  const handleUpdateField = useCallback(async (field: string, value: any) => {
-    if (task && onUpdateTask) {
-      // Existing task - update directly
-      await onUpdateTask({ [field]: value })
-    } else if (onNewTaskDataChange) {
-      // New task - update the creation data
-      onNewTaskDataChange({ [field]: value })
+  // Task action handlers - updated for priorityId
+  const handlePriorityChange = useCallback((priorityId: string) => {
+    if (mode === "existing-task" && task?.id && onUpdateTask) {
+      onUpdateTask(task.id, { priorityId })
+    } else if (mode === "new-task" && setNewTaskData) {
+      setNewTaskData(prev => ({ ...prev, priorityId }))
     }
-  }, [task, onUpdateTask, onNewTaskDataChange])
+  }, [mode, task?.id, onUpdateTask, setNewTaskData])
 
-  const handlePriorityChange = useCallback((priority: string) => {
-    handleUpdateField("priority", priority)
-  }, [handleUpdateField])
+  const handleUpdateField = useCallback(async (field: string, value: any) => {
+    if (task?.id && onUpdateTask) {
+      // Existing task - update directly
+      await onUpdateTask(task.id, { [field]: value })
+    } else if (setNewTaskData) {
+      // New task - update the creation data
+      setNewTaskData(prev => ({ ...prev, [field]: value }))
+    }
+  }, [task, onUpdateTask, setNewTaskData])
 
   const handleDateChange = useCallback((type: "start" | "end", date: Date | undefined) => {
     if (date) {
@@ -181,19 +201,19 @@ export function TaskActionsMenu({
     handleUpdateField("assignedTo", newAssignedTo)
   }, [currentAssignedTo, handleUpdateField])
 
-  const handleMoveToColumn = useCallback((columnId: string) => {
-    handleUpdateField("columnId", columnId)
+  const handleMoveToColumn = useCallback((statusId: string) => {
+    handleUpdateField("statusId", statusId)
   }, [handleUpdateField])
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", { 
+  const formatDate = (dateInput: string | number) => {
+    return new Date(dateInput).toLocaleDateString("en-US", { 
       month: "short", 
       day: "numeric",
-      year: new Date(dateString).getFullYear() !== new Date().getFullYear() ? "numeric" : undefined
+      year: new Date(dateInput).getFullYear() !== new Date().getFullYear() ? "numeric" : undefined
     })
   }
 
-  const priorityInfo = getPriorityInfo(currentPriority)
+  const priorityInfo = getPriorityInfo(currentPriorityId)
   const PriorityIcon = priorityInfo.icon
 
   return (
@@ -210,7 +230,7 @@ export function TaskActionsMenu({
       </DropdownMenu.Trigger>
       
       <DropdownMenu.Content align="end" className="w-56">
-        {/* Priority Section */}
+        {/* Priority Section - Updated for priorityId and labels */}
         <DropdownMenu.Sub>
           <DropdownMenu.SubTrigger>
             <Flex align="center" gap="2">
@@ -227,24 +247,24 @@ export function TaskActionsMenu({
             </Flex>
           </DropdownMenu.SubTrigger>
           <DropdownMenu.SubContent>
-            {["low", "medium", "high", "urgent"].map((priority) => {
-              const info = getPriorityInfo(priority)
+            {priorityLabels
+              .filter(label => label.type === "priority")
+              .map((priorityLabel) => {
+              const info = getPriorityInfo(priorityLabel.id)
               const Icon = info.icon
-              const isSelected = currentPriority === priority
+              const isSelected = currentPriorityId === priorityLabel.id
               return (
                 <DropdownMenu.Item
-                  key={priority}
-                  onClick={() => handlePriorityChange(priority)}
+                  key={priorityLabel.id}
+                  onClick={() => handlePriorityChange(priorityLabel.id)}
                   className={isSelected ? "bg-accent" : ""}
                 >
                   <Flex align="center" gap="2">
-                    <Icon size={14} className={{
-                      red: "text-red-500",
-                      orange: "text-orange-500",
-                      blue: "text-blue-500",
-                      gray: "text-gray-500"
-                    }[info.color]} />
-                    <Text>{info.label}</Text>
+                    <Icon size={14} />
+                    <Text>{priorityLabel.name}</Text>
+                    <Badge color={info.color} variant="soft" size="1" className="ml-auto">
+                      {priorityLabel.name}
+                    </Badge>
                   </Flex>
                 </DropdownMenu.Item>
               )
@@ -371,37 +391,53 @@ export function TaskActionsMenu({
           </DropdownMenu.SubContent>
         </DropdownMenu.Sub>
 
-        {/* Move To Column (only for existing tasks) */}
-        {mode !== "new-task" && columns.length > 0 && (
-          <DropdownMenu.Sub>
-            <DropdownMenu.SubTrigger>
-              <Flex align="center" gap="2">
-                <ArrowRight size={14} />
-                <Text>Move To</Text>
-              </Flex>
-            </DropdownMenu.SubTrigger>
-            <DropdownMenu.SubContent>
-              {columns.map((column) => {
-                const isCurrentColumn = currentColumnId === column.id
-                return (
-                  <DropdownMenu.Item
-                    key={column.id}
-                    onClick={() => handleMoveToColumn(column.id)}
-                    className={isCurrentColumn ? "bg-accent" : ""}
-                  >
-                    <Flex align="center" gap="2">
-                      <div 
-                        className="w-3 h-3 rounded-full" 
-                        style={{ backgroundColor: column.color }}
-                      />
-                      <Text>{column.name}</Text>
-                    </Flex>
-                  </DropdownMenu.Item>
-                )
+        {/* Move to Column Section - Updated for statusId */}
+        <DropdownMenu.Sub>
+          <DropdownMenu.SubTrigger>
+            <Flex align="center" gap="2">
+              <ArrowRight size={14} />
+              <Text>Move to</Text>
+              {columns.map(col => {
+                const isCurrentColumn = col.id === currentStatusId
+                if (isCurrentColumn) {
+                  return (
+                    <Badge 
+                      key={col.id}
+                      style={{ backgroundColor: `${(col as any).color ? `${(col as any).color}20` : '#e0e0e020'}`, color: (col as any).color || '#808080' }}
+                      variant="soft"
+                      size="1"
+                      className="ml-auto"
+                    >
+                      {col.name}
+                    </Badge>
+                  )
+                }
+                return null
               })}
+            </Flex>
+          </DropdownMenu.SubTrigger>
+          <DropdownMenu.SubContent>
+            {columns.map((column) => {
+              const isCurrentColumn = column.id === currentStatusId
+              return (
+                <DropdownMenu.Item
+                  key={column.id}
+                  onClick={() => handleMoveToColumn(column.id)}
+                  className={isCurrentColumn ? "bg-accent" : ""}
+                  disabled={isCurrentColumn}
+                >
+                  <Flex align="center" gap="2">
+                    <Box
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: (column as any).color || '#808080' }}
+                    />
+                    <Text>{column.name}</Text>
+                  </Flex>
+                </DropdownMenu.Item>
+              )
+            })}
             </DropdownMenu.SubContent>
           </DropdownMenu.Sub>
-        )}
 
         {/* Separator for task actions */}
         {mode !== "new-task" && (

@@ -1,12 +1,11 @@
 // File: use-kanban-data.ts
 
 import { useMemo } from "react"
-import type { TaskDataSchema, TaskStatusDocType, UseKanbanReturn } from "@incmix/utils/schema"
-import type { KanbanColumn, KanbanTask } from "../types"
+import type { TaskDataSchema, UseKanbanReturn, KanbanColumn, KanbanTask } from "@incmix/utils/schema"
 
 import { useProjectData } from "@incmix/store"
 
-// Export the types for compatibility, but use the ones from kanban-view.types.ts
+// Re-export the types from schema package
 export type { KanbanColumn, KanbanTask }
 
 export function useKanban(projectId = "default-project"): UseKanbanReturn {
@@ -17,20 +16,28 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
   // In your use-kanban-data.ts file, update the columns transformation:
 
   const columns = useMemo<KanbanColumn[]>(() => {
-    if (projectData.isLoading || !projectData.taskStatuses.length) {
+    if (projectData.isLoading) {
+      return []
+    }
+    
+    // Filter to only get status labels
+    const statusLabels = projectData.labels.filter(label => label.type === "status")
+    
+    if (statusLabels.length === 0) {
       return []
     }
 
-    return projectData.taskStatuses.map((status: TaskStatusDocType) => {
+    return statusLabels.map((status) => {
       const tasks = projectData.tasks
-        .filter((task) => task.columnId === status.id)
-        .sort((a, b) => a.order - b.order)
+        .filter((task) => task.statusId === status.id)
+        .sort((a, b) => a.taskOrder - b.taskOrder)
         // Transform TaskDataSchema to KanbanTask
         .map((task): KanbanTask => ({
           ...task,
           // Ensure these properties are properly typed
           completed: task.completed ?? false,
-          priority: task.priority ?? "medium",
+          // Don't default priorityId to empty string as it's required
+          priorityId: task.priorityId,
           // Ensure array properties have proper structure
           acceptanceCriteria: task.acceptanceCriteria?.map(item => ({
             ...item,
@@ -56,15 +63,18 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
           ? Math.round((completedTasksCount / totalTasksCount) * 100)
           : 0
 
-      return {
+      // Create a properly typed KanbanColumn without type assertion
+      const column: KanbanColumn = {
         ...status,
         tasks,
         completedTasksCount,
         totalTasksCount,
         progressPercentage,
-      } as KanbanColumn
+      }
+      
+      return column
     })
-  }, [projectData.taskStatuses, projectData.tasks, projectData.isLoading])
+  }, [projectData.labels, projectData.tasks, projectData.isLoading])
 
   // Calculate project statistics
   const projectStats = useMemo(() => {
@@ -72,7 +82,7 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
     const completedTasks = projectData.tasks.filter(
       (task) => task.completed === true
     ).length
-    const totalColumns = projectData.taskStatuses.length
+    const totalStatusLabels = projectData.labels.filter(label => label.type === "status").length
 
     // Calculate overdue tasks (tasks with end date in the past)
     const now = new Date()
@@ -82,19 +92,25 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
       return endDate < now && !task.completed
     }).length
 
-    // Calculate urgent tasks
-    const urgentTasks = projectData.tasks.filter(
-      (task) => task.priority === "urgent" && !task.completed
-    ).length
+    // Calculate urgent tasks by finding tasks assigned to urgent priority labels
+    const urgentPriorityLabel = projectData.labels.find(
+      (label) => label.type === "priority" && label.name.toLowerCase() === "urgent"
+    )
+    
+    const urgentTasks = urgentPriorityLabel
+      ? projectData.tasks.filter(
+          (task) => task.priorityId === urgentPriorityLabel.id && !task.completed
+        ).length
+      : 0
 
     return {
       totalTasks,
       completedTasks,
-      totalColumns,
+      totalStatusLabels,
       overdueTasks,
       urgentTasks,
     }
-  }, [projectData.tasks, projectData.taskStatuses])
+  }, [projectData.tasks, projectData.labels])
 
   // Memoize operation functions to prevent unnecessary re-renders
   const operations = useMemo(
@@ -105,11 +121,19 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
       deleteTask: projectData.deleteTask,
       moveTask: projectData.moveTask,
 
-      // Column operations (mapped from task status operations)
-      createColumn: projectData.createTaskStatus,
-      updateColumn: projectData.updateTaskStatus,
-      deleteColumn: projectData.deleteTaskStatus,
-      reorderColumns: projectData.reorderTaskStatuses,
+      // Status label operations (renamed from Column operations for consistency)
+      createStatusLabel: (name: string, color?: string, description?: string) => 
+        projectData.createLabel("status", name, color, description),
+      updateStatusLabel: (id: string, updates: { name?: string; color?: string; description?: string }) => 
+        projectData.updateLabel(id, updates),
+      deleteStatusLabel: projectData.deleteLabel,
+      reorderStatusLabels: projectData.reorderLabels,
+
+      // Label operations (map directly from projectData)
+      createLabel: projectData.createLabel,
+      updateLabel: projectData.updateLabel,
+      deleteLabel: projectData.deleteLabel,
+      reorderLabels: projectData.reorderLabels,
 
       // Utility
       refetch: projectData.refetch,
@@ -124,7 +148,7 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
       try {
         // Update tasks in parallel for better performance
         await Promise.all(
-          taskIds.map((taskId) => operations.updateTask(taskId, updates))
+          taskIds.map((id) => operations.updateTask(id, updates))
         )
       } catch (error) {
         console.error("Failed to bulk update tasks:", error)
@@ -135,11 +159,11 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
   )
 
   const bulkMoveTasks = useMemo(
-    () => async (taskIds: string[], targetColumnId: string) => {
+    () => async (taskIds: string[], targetStatusId: string) => {
       try {
         // Move tasks in sequence to maintain order
         for (let i = 0; i < taskIds.length; i++) {
-          await operations.moveTask(taskIds[i], targetColumnId, i)
+          await operations.moveTask(taskIds[i], targetStatusId, i)
         }
       } catch (error) {
         console.error("Failed to bulk move tasks:", error)
@@ -154,7 +178,7 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
       try {
         // Delete tasks in parallel
         await Promise.all(
-          taskIds.map((taskId) => operations.deleteTask(taskId))
+          taskIds.map((id) => operations.deleteTask(id))
         )
       } catch (error) {
         console.error("Failed to bulk delete tasks:", error)
@@ -170,10 +194,21 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
     error: projectData.error,
     projectStats,
 
-    // Operations
-    ...operations,
+    // Core operations
+    createTask: operations.createTask,
+    updateTask: operations.updateTask,
+    deleteTask: operations.deleteTask,
+    moveTask: operations.moveTask,
+    refetch: operations.refetch,
+    clearError: operations.clearError,
     bulkUpdateTasks,
     bulkMoveTasks,
     bulkDeleteTasks,
+    
+    // Status label operations are exposed directly
+    createStatusLabel: operations.createStatusLabel,
+    updateStatusLabel: operations.updateStatusLabel,
+    deleteStatusLabel: operations.deleteStatusLabel,
+    reorderStatusLabels: operations.reorderStatusLabels
   }
 }

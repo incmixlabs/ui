@@ -2,8 +2,8 @@
 import { AlertCircle, Flag, Clock } from "lucide-react"
 import type { PriorityConfig, Member } from "./types"
 
-export const getPriorityConfig = (priority?: string): PriorityConfig => {
-  switch (priority) {
+export const getPriorityConfig = (priorityId?: string): PriorityConfig => {
+  switch (priorityId) {
     case "urgent":
       return {
         color: "red" as const,
@@ -56,8 +56,11 @@ export const formatDate = (date: string | null | undefined): string => {
   })
 }
 
-export const isTaskOverdue = (task: { endDate?: string; completed: boolean }): boolean => {
-  return !!(task.endDate && new Date(task.endDate) < new Date() && !task.completed)
+export const isTaskOverdue = (task: { endDate?: number | string; completed: boolean }): boolean => {
+  if (!task.endDate) return false;
+  // Handle both number timestamp and string date format
+  const endDate = typeof task.endDate === 'number' ? new Date(task.endDate) : new Date(task.endDate);
+  return endDate < new Date() && !task.completed;
 }
 
 export const calculateSubtaskProgress = (subtasks: { completed: boolean }[] = []) => {

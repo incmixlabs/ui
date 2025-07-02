@@ -1,7 +1,9 @@
 // components/shared/task-card-drawer.tsx
+import React from "react";
 import { useKanban } from "../hooks/use-kanban-data";
 import { useListView } from "../hooks/use-list-view";
 import { useKanbanDrawer } from "../hooks/use-kanban-drawer";
+import { TaskDataSchema } from "@incmix/utils/schema";
 import {
   Avatar,
   Box,
@@ -49,7 +51,7 @@ export function TaskCardDrawer({
 }: TaskCardDrawerProps) {
   // Get drawer state from the shared context
   const { taskId, isOpen, handleDrawerClose } = useKanbanDrawer();
-  console.log(taskId);
+  // Removed console.log to prevent unnecessary re-renders
 
   const [selectedMemebers, setSelectedMemebers] = useState<string[]>([
     "regina-cooper",
@@ -58,16 +60,31 @@ export function TaskCardDrawer({
   const { columns, updateTask, deleteTask, createTask, moveTask } =
     viewType === "board" ? useKanban(projectId) : useListView(projectId);
 
-  // Find the current task and its column
-  const currentTask = taskId
-    ? columns.flatMap((col) => col.tasks).find((task) => task.taskId === taskId)
-    : null;
+  // Find the current task and its column - Memoize to prevent re-renders
+  const foundTask = React.useMemo(() => 
+    taskId ? columns.flatMap((col) => col.tasks).find((task) => task.id === taskId) : null,
+    [taskId, columns]
+  );
+  
+  // Safely convert to TaskDataSchema with proper validation - Memoize this as well
+  const currentTask = React.useMemo(() => 
+    foundTask && foundTask.id ? {
+      ...foundTask,
+      // Ensure all required TaskDataSchema fields are present
+      id: foundTask.id,
+      // Use currentColumn.id as fallback if statusId is not present
+      statusId: foundTask.statusId || '',
+      priorityId: foundTask.priorityId || 'medium'
+    } as TaskDataSchema : null,
+    [foundTask]
+  );
 
-  const currentColumn = currentTask
-    ? columns.find((col) =>
-        col.tasks.some((task) => task.taskId === currentTask.taskId),
-      )
-    : null;
+  const currentColumn = React.useMemo(() => 
+    currentTask ? columns.find((col) =>
+      col.tasks.some((task) => task.id === currentTask.id)
+    ) : null,
+    [currentTask, columns]
+  );
 
   // Use custom hooks for state and actions
   const drawerState = useTaskDrawerState(currentTask);
@@ -82,8 +99,8 @@ export function TaskCardDrawer({
     handleDrawerClose,
     columns,
   });
-
-  console.log("Current task details:", currentTask);
+  
+  // Removed console.log to prevent unnecessary re-renders
 
   if (!currentTask || !currentColumn) {
     return null;
@@ -91,14 +108,14 @@ export function TaskCardDrawer({
 
   // Checklist handlers
   const handleChecklistReorder = (reorderedChecklist: any[]) => {
-    if (currentTask.taskId) {
-      updateTask(currentTask.taskId, { checklist: reorderedChecklist });
+    if (currentTask.id) {
+      updateTask(currentTask.id, { checklist: reorderedChecklist });
     }
   };
   
   // Acceptance Criteria handlers
   const handleAddAcceptanceCriteria = (text: string) => {
-    if (!currentTask.taskId) return;
+    if (!currentTask.id) return;
     
     const newItem: AcceptanceCriteriaItem = {
       id: uuidv4(),
@@ -114,45 +131,45 @@ export function TaskCardDrawer({
     ];
     
     // Use type assertion to resolve TypeScript compatibility issue
-    updateTask(currentTask.taskId, { acceptanceCriteria: updatedCriteria as any });
+    updateTask(currentTask.id, { acceptanceCriteria: updatedCriteria as any });
   };
   
   const handleEditAcceptanceCriteria = (id: string, text: string) => {
-    if (!currentTask.taskId || !currentTask.acceptanceCriteria) return;
+    if (!currentTask.id || !currentTask.acceptanceCriteria) return;
     
     const updatedCriteria = currentTask.acceptanceCriteria.map(item => 
       item.id === id ? { ...item, text } : item
     );
     
     // Use type assertion to resolve TypeScript compatibility issue
-    updateTask(currentTask.taskId, { acceptanceCriteria: updatedCriteria as any });
+    updateTask(currentTask.id, { acceptanceCriteria: updatedCriteria as any });
   };
   
   const handleDeleteAcceptanceCriteria = (id: string) => {
-    if (!currentTask.taskId || !currentTask.acceptanceCriteria) return;
+    if (!currentTask.id || !currentTask.acceptanceCriteria) return;
     
     const updatedCriteria = currentTask.acceptanceCriteria.filter(item => item.id !== id);
     
     // Use type assertion to resolve TypeScript compatibility issue
-    updateTask(currentTask.taskId, { acceptanceCriteria: updatedCriteria as any });
+    updateTask(currentTask.id, { acceptanceCriteria: updatedCriteria as any });
   };
   
   const handleAcceptanceCriteriaReorder = (reorderedCriteria: AcceptanceCriteriaItem[]) => {
-    if (currentTask.taskId) {
+    if (currentTask.id) {
       // Use type assertion to resolve TypeScript compatibility issue
-      updateTask(currentTask.taskId, { acceptanceCriteria: reorderedCriteria as any });
+      updateTask(currentTask.id, { acceptanceCriteria: reorderedCriteria as any });
     }
   };
   
   const handleAcceptanceCriteriaToggle = (id: string, checked: boolean) => {
-    if (!currentTask.taskId || !currentTask.acceptanceCriteria) return;
+    if (!currentTask.id || !currentTask.acceptanceCriteria) return;
     
     const updatedCriteria = currentTask.acceptanceCriteria.map(item => 
       item.id === id ? { ...item, checked } : item
     );
     
     // Use type assertion to resolve TypeScript compatibility issue
-    updateTask(currentTask.taskId, { acceptanceCriteria: updatedCriteria as any });
+    updateTask(currentTask.id, { acceptanceCriteria: updatedCriteria as any });
   };
 
   return (
@@ -284,8 +301,8 @@ export function TaskCardDrawer({
                           (item: { id: string; text: string; checked: boolean; order: number }) =>
                             item.id === id ? { ...item, checked } : item,
                         );
-                        if (currentTask.taskId) {
-                          updateTask(currentTask.taskId, {
+                        if (currentTask.id) {
+                          updateTask(currentTask.id, {
                             checklist: updatedChecklist,
                           });
                         }
@@ -295,8 +312,8 @@ export function TaskCardDrawer({
                           (item: { id: string; text: string; checked: boolean; order: number }) =>
                             item.id === id ? { ...item, text } : item,
                         );
-                        if (currentTask.taskId) {
-                          updateTask(currentTask.taskId, {
+                        if (currentTask.id) {
+                          updateTask(currentTask.id, {
                             checklist: updatedChecklist,
                           });
                         }
@@ -305,8 +322,8 @@ export function TaskCardDrawer({
                         const updatedChecklist = currentTask.checklist?.filter(
                           (item: { id: string }) => item.id !== id,
                         );
-                        if (currentTask.taskId) {
-                          updateTask(currentTask.taskId, {
+                        if (currentTask.id) {
+                          updateTask(currentTask.id, {
                             checklist: updatedChecklist,
                           });
                         }
@@ -328,8 +345,8 @@ export function TaskCardDrawer({
                           },
                         ];
                         
-                        if (currentTask.taskId) {
-                          updateTask(currentTask.taskId, { checklist: newChecklist });
+                        if (currentTask.id) {
+                          updateTask(currentTask.id, { checklist: newChecklist });
                         }
                       }}
                       onReorderChecklist={(reorderedChecklist) => {

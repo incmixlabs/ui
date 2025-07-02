@@ -26,7 +26,7 @@ import { KanbanColumn } from "@incmix/utils/schema"
     onDeleteTask,
     onDuplicateTask,
   }: TaskActionButtonsProps) {
-    const priorityConfig = getPriorityConfig(currentTask.priority)
+    const priorityConfig = getPriorityConfig(currentTask.priorityId)
     const PriorityIcon = priorityConfig.icon
     const isOverdue = isTaskOverdue(currentTask)
   
@@ -51,7 +51,7 @@ import { KanbanColumn } from "@incmix/utils/schema"
     
           {/* Status/Column Dropdown */}
           <Select.Root
-            value={currentTask.columnId}
+            value={currentTask.statusId}
             onValueChange={onStatusChange}
           >
             <Select.Trigger className="flex h-9 px-4 py-2 w-40 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
@@ -74,7 +74,7 @@ import { KanbanColumn } from "@incmix/utils/schema"
     
           {/* Priority Dropdown */}
           <Select.Root
-            value={currentTask.priority || "medium"}
+            value={currentTask.priorityId || "medium"}
             onValueChange={onPriorityChange}
           >
             <Select.Trigger className="flex h-9 px-4 py-2 min-w-[140px] rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">

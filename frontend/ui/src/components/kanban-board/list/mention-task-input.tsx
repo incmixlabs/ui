@@ -4,12 +4,12 @@ import { Box, Flex, Button, TextField, TextArea, Text } from "@incmix/ui"
 import { Plus, X, Loader2, Check } from "lucide-react"
 import { TaskActionsMenu } from "./task-actions-menu"
 import { useAIUserStory, useAIFeaturesStore } from "@incmix/store"
-import { TaskStatusDocType } from "@incmix/utils/schema"
+import { TaskDataSchema } from "@incmix/utils/schema"
 
 interface SimpleTaskInputProps {
   onCreateTask: (taskName: string, taskData: any) => Promise<void>
   onCancel: () => void
-  columns?: TaskStatusDocType[]
+  columns?: TaskDataSchema[]
   placeholder?: string
   disabled?: boolean
 }

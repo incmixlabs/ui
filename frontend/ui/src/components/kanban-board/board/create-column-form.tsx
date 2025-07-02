@@ -63,8 +63,8 @@ export function CreateColumnForm({
     }
   }, [colorPickerRef])
 
-  // Use the new useKanban hook
-  const { createColumn } = useKanban(projectId)
+  // Use the new useKanban hook with createStatusLabel for columns
+  const { createStatusLabel } = useKanban(projectId)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -76,8 +76,8 @@ export function CreateColumnForm({
     setIsLoading(true)
 
     try {
-      // Use createColumn method from the new hook
-      const columnId = await createColumn(
+      // Use createStatusLabel method from the new hook
+      const columnId = await createStatusLabel(
         formData.name.trim(),
         formData.color,
         formData.description.trim()

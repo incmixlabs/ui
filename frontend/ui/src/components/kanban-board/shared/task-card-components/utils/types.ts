@@ -1,5 +1,5 @@
 // task-card-components/utils/types.ts
-import { TaskDataSchema, KanbanColumn } from "@incmix/store"
+import { TaskDataSchema, KanbanColumn } from "@incmix/utils/schema"
 
 export type ViewType = 'board' | 'list';
 
@@ -36,6 +36,7 @@ export interface Subtask {
   id: string;
   name: string;
   completed: boolean;
+  order: number;
 }
 
 export interface Member {
