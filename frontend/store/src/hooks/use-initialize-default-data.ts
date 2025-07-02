@@ -1,8 +1,5 @@
-import {
-  type DefaultDataOptions,
-  DEFAULT_LABELS
-} from "@incmix/utils/schema"
-import type { TaskCollections, LabelDocType, TaskDocType } from "../sql/types"
+import { DEFAULT_LABELS, type DefaultDataOptions } from "@incmix/utils/schema"
+import type { LabelDocType, TaskCollections, TaskDocType } from "../sql/types"
 // Import browser-compatible helpers instead of Node.js Buffer-using ones
 import {
   generateBrowserUniqueId,
@@ -81,7 +78,7 @@ async function initializeLabels(
     console.log("Creating default status and priority labels...")
 
     // Create both status and priority labels based on DEFAULT_LABELS
-    const defaultLabels = DEFAULT_LABELS.map(label => ({
+    const defaultLabels = DEFAULT_LABELS.map((label) => ({
       id: generateBrowserUniqueId(label.type === "status" ? "st" : "pr"),
       projectId,
       type: label.type as "status" | "priority", // Ensure proper typing
@@ -93,15 +90,13 @@ async function initializeLabels(
       updatedAt: timestamp,
       createdBy: user,
       updatedBy: user,
-    }));
+    }))
 
     const insertedLabels = await Promise.all(
       defaultLabels.map((label) => labelCollection.insert(label))
     )
 
-    console.log(
-      `Created ${insertedLabels.length} default labels successfully.`
-    )
+    console.log(`Created ${insertedLabels.length} default labels successfully.`)
     return insertedLabels
   }
 
@@ -134,11 +129,14 @@ async function initializeTasks(
     console.log("Creating sample tasks...")
 
     // Find the "To Do" status and "Medium" priority labels
-    const todoStatus = labels.find((l) => l.type === "status" && l.name === "To Do") || 
-      labels.find((l) => l.type === "status") || labels[0]
-    
-    const mediumPriority = labels.find((l) => l.type === "priority" && l.name === "Medium") ||
-      labels.find((l) => l.type === "priority") || 
+    const todoStatus =
+      labels.find((l) => l.type === "status" && l.name === "To Do") ||
+      labels.find((l) => l.type === "status") ||
+      labels[0]
+
+    const mediumPriority =
+      labels.find((l) => l.type === "priority" && l.name === "Medium") ||
+      labels.find((l) => l.type === "priority") ||
       // If no priority labels exist, use a status label as fallback
       labels[0]
 

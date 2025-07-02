@@ -130,11 +130,14 @@ export class LocalDatabase {
             return {
               ...oldDoc,
               // Ensure we use statusId instead of columnId
-              statusId: oldDoc.statusId || oldDoc.columnId || '',
+              statusId: oldDoc.statusId || oldDoc.columnId || "",
               // Ensure we have priorityId
-              priorityId: oldDoc.priorityId || '',
+              priorityId: oldDoc.priorityId || "",
               // Ensure taskOrder exists (previous name: order)
-              taskOrder: oldDoc.taskOrder !== undefined ? oldDoc.taskOrder : (oldDoc.order || 0),
+              taskOrder:
+                oldDoc.taskOrder !== undefined
+                  ? oldDoc.taskOrder
+                  : oldDoc.order || 0,
               // Ensure labelsTags has correct structure
               labelsTags: Array.isArray(oldDoc.labelsTags)
                 ? oldDoc.labelsTags.map((tag: any) => ({
@@ -163,8 +166,8 @@ export class LocalDatabase {
         },
       },
       // Replace taskStatus and columns with the new labels collection
-      labels: { 
-        schema: labelSchemaLiteral, 
+      labels: {
+        schema: labelSchemaLiteral,
         autoMigrate: true,
         migrationStrategies: {
           // Add migration strategy for converting old taskStatus documents to labels
@@ -172,16 +175,16 @@ export class LocalDatabase {
             // Basic migration from any older format to the new label format
             return {
               id: oldDoc.id || nanoid(),
-              projectId: oldDoc.projectId || 'default-project',
-              type: 'status', // Default to status type for old documents
-              name: oldDoc.name || oldDoc.label || '',
-              color: oldDoc.color || '#6366f1',
+              projectId: oldDoc.projectId || "default-project",
+              type: "status", // Default to status type for old documents
+              name: oldDoc.name || oldDoc.label || "",
+              color: oldDoc.color || "#6366f1",
               order: oldDoc.order || oldDoc.columnOrder || 0,
-              description: oldDoc.description || '',
+              description: oldDoc.description || "",
               createdAt: oldDoc.createdAt || Date.now(),
               updatedAt: oldDoc.updatedAt || Date.now(),
-              createdBy: oldDoc.createdBy || { id: 'system', name: 'System' },
-              updatedBy: oldDoc.updatedBy || { id: 'system', name: 'System' },
+              createdBy: oldDoc.createdBy || { id: "system", name: "System" },
+              updatedBy: oldDoc.updatedBy || { id: "system", name: "System" },
             }
           },
         },

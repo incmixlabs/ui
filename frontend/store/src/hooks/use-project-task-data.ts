@@ -2,16 +2,16 @@
 
 import type {
   CurrentUser,
+  LabelSchema,
   ProjectData,
   TaskDataSchema,
-  LabelSchema,
   UseProjectDataReturn,
 } from "@incmix/utils/schema"
 import { DEFAULT_LABELS } from "@incmix/utils/schema"
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { Subscription } from "rxjs"
 import { database } from "sql"
-import type { TaskDocType, LabelDocType } from "sql/types"
+import type { LabelDocType, TaskDocType } from "sql/types"
 // Import browser-compatible helpers instead of Node.js Buffer-using ones
 import {
   generateBrowserUniqueId,
@@ -81,12 +81,12 @@ export function useProjectData(
           })
           .$.subscribe({
             next: (labelDocs: Array<{ toJSON(): LabelDocType }>) => {
-              const labels = labelDocs.map(
-                (doc: { toJSON(): LabelDocType }) => doc.toJSON()
+              const labels = labelDocs.map((doc: { toJSON(): LabelDocType }) =>
+                doc.toJSON()
               )
               setData((prev) => {
                 // Handle type compatibility with LabelSchema - proper mapping instead of type assertion
-                const typeSafeLabels: LabelSchema[] = labels.map(l => ({
+                const typeSafeLabels: LabelSchema[] = labels.map((l) => ({
                   ...l,
                   color: l.color || "#6E6E6E", // Ensure color is never undefined
                   description: l.description || "", // Ensure description is never undefined
@@ -99,9 +99,9 @@ export function useProjectData(
                   createdAt: l.createdAt,
                   updatedAt: l.updatedAt,
                   createdBy: l.createdBy,
-                  updatedBy: l.updatedBy
+                  updatedBy: l.updatedBy,
                 }))
-                
+
                 return {
                   ...prev,
                   labels: typeSafeLabels,
@@ -187,7 +187,7 @@ export function useProjectData(
       projectId,
       name: label.name,
       type: label.type as "status" | "priority",
-      order: index,  // Using 'order' as specified in LabelSchema instead of 'labelOrder'
+      order: index, // Using 'order' as specified in LabelSchema instead of 'labelOrder'
       color: label.color || "#6E6E6E", // Default color if none provided
       description: label.description || "", // Default empty description
       createdAt: now,
@@ -210,24 +210,28 @@ export function useProjectData(
       try {
         const now = getCurrentTimestamp()
         const user = getCurrentUser(currentUser)
-        
+
         // Ensure we have a valid priorityId - required field validation
         if (!taskData.priorityId) {
           // Find default priority (medium or first available)
-          const defaultPriority = data.labels.find(
-            (l) => l.type === "priority" && l.name.toLowerCase() === "medium"
-          ) || data.labels.find((l) => l.type === "priority")
-          
+          const defaultPriority =
+            data.labels.find(
+              (l) => l.type === "priority" && l.name.toLowerCase() === "medium"
+            ) || data.labels.find((l) => l.type === "priority")
+
           if (!defaultPriority) {
             throw new Error("No priority labels found. Cannot create task.")
           }
-          
+
           taskData.priorityId = defaultPriority.id
         }
 
         // Get highest order in target status column
         const tasksInStatus = data.tasks.filter((t) => t.statusId === statusId)
-        const maxOrder = Math.max(...tasksInStatus.map((t) => t.taskOrder || 0), -1)
+        const maxOrder = Math.max(
+          ...tasksInStatus.map((t) => t.taskOrder || 0),
+          -1
+        )
 
         // Transform any array items to ensure they have required fields like 'order' and 'checked'
         const processedAcceptanceCriteria = (
@@ -263,7 +267,9 @@ export function useProjectData(
           name: taskData.name || "New Task",
           statusId, // Changed from columnId to statusId
           taskOrder: maxOrder + 1, // Changed from order to taskOrder
-          startDate: taskData.startDate ? Number(new Date(taskData.startDate)) : Number(new Date()),
+          startDate: taskData.startDate
+            ? Number(new Date(taskData.startDate))
+            : Number(new Date()),
           endDate: taskData.endDate ? Number(new Date(taskData.endDate)) : 0,
           description: taskData.description || "",
           completed: taskData.completed ?? false,
@@ -434,11 +440,11 @@ export function useProjectData(
       const user = getCurrentUser(currentUser)
 
       const statusTasks = data.tasks
-        .filter((t) => t.statusId === statusId) 
+        .filter((t) => t.statusId === statusId)
         .sort((a, b) => a.taskOrder - b.taskOrder) // Updated from order to taskOrder
 
       if (statusTasks.length <= 1) return
-      
+
       // Update each task with clean order values
       for (let i = 0; i < statusTasks.length; i++) {
         const task = await database.tasks
@@ -472,11 +478,11 @@ export function useProjectData(
       try {
         const now = getCurrentTimestamp()
         const user = getCurrentUser(currentUser)
-        
+
         // Find the highest order in the current labels of this type
-        const labelsOfType = data.labels.filter(l => l.type === type)
-        const maxOrder = Math.max(...labelsOfType.map(l => l.order), -1)
-        
+        const labelsOfType = data.labels.filter((l) => l.type === type)
+        const maxOrder = Math.max(...labelsOfType.map((l) => l.order), -1)
+
         const newLabel: LabelSchema = {
           id: generateBrowserUniqueId("label"),
           projectId,
@@ -490,7 +496,7 @@ export function useProjectData(
           createdBy: user,
           updatedBy: user,
         }
-        
+
         // Insert with proper typing - RxDB subscription will update UI
         await database.labels.insert(newLabel as LabelDocType)
         return newLabel.id
@@ -512,21 +518,29 @@ export function useProjectData(
         const label = await database.labels
           .findOne({ selector: { id: labelId } })
           .exec()
-        
+
         if (!label) {
           throw new Error("Label not found")
         }
-        
+
         // If it's a status label, check if there are tasks using it
-        if (label.get('type') === 'status') {
-          const tasksUsingLabel = data.tasks.filter((t) => t.statusId === labelId)
+        if (label.get("type") === "status") {
+          const tasksUsingLabel = data.tasks.filter(
+            (t) => t.statusId === labelId
+          )
           if (tasksUsingLabel.length > 0) {
-            throw new Error("Cannot delete status with tasks. Move tasks first.")
+            throw new Error(
+              "Cannot delete status with tasks. Move tasks first."
+            )
           }
-        } else if (label.get('type') === 'priority') {
-          const tasksUsingLabel = data.tasks.filter((t) => t.priorityId === labelId)
+        } else if (label.get("type") === "priority") {
+          const tasksUsingLabel = data.tasks.filter(
+            (t) => t.priorityId === labelId
+          )
           if (tasksUsingLabel.length > 0) {
-            throw new Error("Cannot delete priority with tasks. Change task priorities first.")
+            throw new Error(
+              "Cannot delete priority with tasks. Change task priorities first."
+            )
           }
         }
 
@@ -546,7 +560,12 @@ export function useProjectData(
   const updateLabel = useCallback(
     async (
       labelId: string,
-      updates: { name?: string; color?: string; description?: string; order?: number }
+      updates: {
+        name?: string
+        color?: string
+        description?: string
+        order?: number
+      }
     ) => {
       try {
         const now = getCurrentTimestamp()
@@ -586,7 +605,7 @@ export function useProjectData(
         const label = await database.labels
           .findOne({ selector: { id: labelIds[i] } })
           .exec()
-          
+
         if (label) {
           // Update the order using the database order field
           await label.update({
@@ -620,10 +639,10 @@ export function useProjectData(
     updateTask,
     deleteTask,
     moveTask,
-    createLabel,       // Updated from createTaskStatus
-    updateLabel,       // Updated from updateTaskStatus
-    deleteLabel,       // Updated from deleteTaskStatus
-    reorderLabels,     // Updated from reorderTaskStatuses
+    createLabel, // Updated from createTaskStatus
+    updateLabel, // Updated from updateTaskStatus
+    deleteLabel, // Updated from deleteTaskStatus
+    reorderLabels, // Updated from reorderTaskStatuses
     refetch,
     clearError,
   }

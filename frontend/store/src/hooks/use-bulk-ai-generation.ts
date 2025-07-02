@@ -1,8 +1,8 @@
+import type { TaskDataSchema } from "@incmix/utils/schema"
 import { useCallback, useState } from "react"
 import type { ProcessedUserStory } from "../services/ai-service"
 import { useAIFeaturesStore } from "./use-ai-features-store"
 import { useAIUserStory } from "./use-ai-user-story"
-import type { TaskDataSchema } from "@incmix/utils/schema"
 
 interface TaskToUpdate {
   id: string // Changed from taskId to id to match schema
@@ -16,7 +16,10 @@ interface BulkGenerationStats {
 }
 
 export function useBulkAIGeneration(
-  updateTaskFn: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
+  updateTaskFn: (
+    taskId: string,
+    updates: Partial<TaskDataSchema>
+  ) => Promise<void>
 ) {
   const [isGenerating, setIsGenerating] = useState(false)
   const [stats, setStats] = useState<BulkGenerationStats>({
@@ -53,21 +56,26 @@ export function useBulkAIGeneration(
             // Update the task with the AI generated content if successful
             if (userStoryResult) {
               // Transform the AI-generated content to match TaskDataSchema structure
-              const checklist = userStoryResult.checklist.map((item, index) => ({
-                id: item.id,
-                text: item.text,
-                checked: item.checked || false,
-                order: index // Add required order property
-              }))
-              
-              const acceptanceCriteria = userStoryResult.acceptanceCriteria.map((item, index) => ({
-                id: item.id,
-                text: item.text,
-                checked: false, // Add required checked property
-                order: index // Add required order property
-              }))
-              
-              await updateTaskFn(task.id, { // Using id instead of taskId
+              const checklist = userStoryResult.checklist.map(
+                (item, index) => ({
+                  id: item.id,
+                  text: item.text,
+                  checked: item.checked || false,
+                  order: index, // Add required order property
+                })
+              )
+
+              const acceptanceCriteria = userStoryResult.acceptanceCriteria.map(
+                (item, index) => ({
+                  id: item.id,
+                  text: item.text,
+                  checked: false, // Add required checked property
+                  order: index, // Add required order property
+                })
+              )
+
+              await updateTaskFn(task.id, {
+                // Using id instead of taskId
                 description: userStoryResult.description,
                 checklist,
                 acceptanceCriteria,
