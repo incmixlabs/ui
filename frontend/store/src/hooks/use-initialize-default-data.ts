@@ -137,7 +137,7 @@ async function initializeTasks(
     const mediumPriority =
       labels.find((l) => l.type === "priority" && l.name === "Medium") ||
       labels.find((l) => l.type === "priority")
-      
+
     if (!mediumPriority) {
       throw new Error("No priority labels found. Cannot create sample tasks.")
     }
