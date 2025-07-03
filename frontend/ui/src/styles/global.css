@@ -21,6 +21,9 @@
 
     background-color: aliceblue;
   }
+  .main-nav .rt-ScrollAreaViewport{
+    overflow: visible !important;
+  }
   [data-scaling='90%'] .scale-icon {
     transform: scale(0.9);
   }

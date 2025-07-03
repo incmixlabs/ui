@@ -3,7 +3,7 @@
 import { ChevronRight, type LucideIcon } from "lucide-react"
 
 import type { Dashboard } from "@incmix/store"
-import { Box, ContextMenu, Text, useModalStore } from "@incmix/ui"
+import { Box, ContextMenu, Flex, Text, useModalStore } from "@incmix/ui"
 import {
   Collapsible,
   CollapsibleContent,
@@ -34,6 +34,55 @@ type NavItem = {
     url: string
     isSelected?: boolean
   }[]
+}
+
+function generateHoverContent(item: NavItem) {
+  return (
+    <Box className="min-w-[200px] p-2">
+      <Flex align={"center"} gap={"2"} className="px-2 py-1.5 font-medium">
+        {item.icon && <item.icon className="h-4 w-4" />}
+        <Text size="2" weight="medium">
+          {item.title}
+        </Text>
+        {item.notificationCount && (
+          <Box className="ml-auto w-fit rounded-md bg-[var(--sidebar-foreground)] px-1 py-0.5 text-center font-semibold text-[10px] text-[var(--sidebar-background)]">
+            {item.notificationCount}
+          </Box>
+        )}
+      </Flex>
+
+      {item.items && item.items.length > 0 && (
+        <Box className="mt-2 border-gray-6 border-t pt-2">
+          {item.items.map((subItem) => {
+            // Check if we need to show ProjectSwitcher for this subItem
+            const showProjectSwitcher = subItem.title.toLowerCase() === "tasks"
+
+            return (
+              <Box key={subItem.title} className="w-full">
+                {showProjectSwitcher && (
+                  <Box className="mb-2 w-full px-2">
+                    <ProjectSwitcher className="!w-full !h-fit !p-2" />
+                  </Box>
+                )}
+                <Link
+                  to={subItem.url}
+                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-gray-3"
+                >
+                  <Box className="w-4" />
+                  <Text
+                    size="2"
+                    className={subItem.isSelected ? "font-medium" : ""}
+                  >
+                    {subItem.title}
+                  </Text>
+                </Link>
+              </Box>
+            )
+          })}
+        </Box>
+      )}
+    </Box>
+  )
 }
 
 export function NavMain({
@@ -198,6 +247,8 @@ export function NavMain({
     <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => {
+          const hoverContent = generateHoverContent(item)
+          console.log(hoverContent)
           const content = item.items?.length ? (
             <Collapsible
               key={item.title}
@@ -211,6 +262,7 @@ export function NavMain({
                     isSelected={item.isSelected}
                     isSubMenuSelected={item.isActive}
                     tooltip={item.title}
+                    hoverContent={hoverContent}
                     className="active:bg-[var(--sidebar-background)] active:text-[var(--sidebar-foreground)]"
                   >
                     {item.icon && <item.icon className="scale-icon" />}

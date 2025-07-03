@@ -2,7 +2,7 @@ import { ChevronsUpDown } from "lucide-react"
 import * as React from "react"
 
 import { useOrganizationStore } from "@incmix/store"
-import { Box, DropdownMenu, Text } from "@incmix/ui"
+import { Box, DropdownMenu, Text, cn } from "@incmix/ui"
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -21,11 +21,13 @@ export type SwitcherProps = {
   switchedItem: SwitcherItem | null
   setSwitchedItem: (id: string | null) => void
   title: string
+  className?: string
 }
 export function Switcher({
   switchedItem,
   items,
   setSwitchedItem,
+  className,
   title,
 }: SwitcherProps) {
   const { isMobile } = useSidebar()
@@ -55,7 +57,10 @@ export function Switcher({
           <DropdownMenu.Trigger>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className={cn(
+                "data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground",
+                className
+              )}
             >
               <Box className="grid flex-1 text-left text-sm leading-tight">
                 <Text size="2" as="span" className="truncate font-semibold">

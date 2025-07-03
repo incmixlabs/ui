@@ -6,10 +6,11 @@ import { ChevronsLeft, PanelLeft } from "lucide-react"
 
 import { useIsMobile } from "@hooks/use-mobile"
 import { cn } from "@utils/cn"
-import { Box, Button, IconButton, Input, Separator, Sheet, SheetContent, SheetDescription, SheetTitle,  Skeleton } from "@base"
+import { Box, Button, HoverCard, IconButton, Input, Separator, Sheet, SheetContent, SheetDescription, SheetTitle,  Skeleton, Text } from "@base"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip"
 import { useThemeStore, useAppearanceStore, useSidebarStore, SIDEBAR_COLOR_OPTIONS  } from "@incmix/store/use-settings-store"
 import { set } from "date-fns"
+import { HoverMenu } from "./hovermenu"
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -173,7 +174,7 @@ const SidebarProvider = forwardRef<
 
     return (
       <SidebarContext.Provider value={contextValue}>
-        <TooltipProvider delayDuration={0}>
+        <>
           <Box
             style={
               {
@@ -191,7 +192,7 @@ const SidebarProvider = forwardRef<
           >
             {children}
           </Box>
-        </TooltipProvider>
+        </>
       </SidebarContext.Provider>
     )
   }
@@ -682,6 +683,7 @@ const SidebarMenuButton = React.forwardRef<
     isActive?: boolean
     isSelected?: boolean
     isSubMenuSelected?: boolean
+    hoverContent?: React.ReactNode
     tooltip?: string | React.ComponentProps<typeof TooltipContent>
   } & VariantProps<typeof sidebarMenuButtonVariants>
 >(
@@ -692,6 +694,7 @@ const SidebarMenuButton = React.forwardRef<
       variant = "default",
       size = "default",
       tooltip,
+      hoverContent,
       className,
       isSelected,
       isSubMenuSelected,
@@ -701,6 +704,7 @@ const SidebarMenuButton = React.forwardRef<
   ) => {
     const Comp = asChild ? Slot : "button"
     const { isMobile, state, open } = useSidebar()
+ 
     const button = (
       <Comp
         ref={ref}
@@ -717,29 +721,29 @@ const SidebarMenuButton = React.forwardRef<
         {...props}
       />
     )
-
-    if (!tooltip) {
-      return button
-    }
-
-    if (typeof tooltip === "string") {
-      tooltip = {
-        children: tooltip,
-      }
-    }
-
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
-        <TooltipContent
+    if (state === "collapsed" && (hoverContent || tooltip)) {
+      return (
+        <HoverMenu
+          content={
+            hoverContent || (
+              <Box className="px-3 py-2 w-fit">
+              <Text as="span" size="2" className="font-medium whitespace-nowrap">
+                {tooltip}
+              </Text>
+            </Box>
+            )
+          }
           side="right"
           align="center"
-          className="border border-gray-4 bg-gray-2"
-          hidden={state !== "collapsed" || isMobile}
-          {...tooltip}
-        />
-      </Tooltip>
-    )
+          sideOffset={8}
+          openDelay={50}
+          closeDelay={150}
+        >
+          {button}
+        </HoverMenu>
+      )
+    }
+    return button
   }
 )
 SidebarMenuButton.displayName = "SidebarMenuButton"

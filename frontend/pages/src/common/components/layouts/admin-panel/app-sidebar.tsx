@@ -268,8 +268,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </div>
           </SidebarHeaderLabel>
         </SidebarHeader>
-        <SidebarContent className="overflow-hidden">
-          <ScrollArea className="h-full">
+        <SidebarContent className="overflow-visible group-data-[collapsible=icon]:overflow-visible">
+          <ScrollArea className="!overflow-visible main-nav h-full">
             <NavMain items={navItems} dashboards={dashboards} />
           </ScrollArea>
         </SidebarContent>
