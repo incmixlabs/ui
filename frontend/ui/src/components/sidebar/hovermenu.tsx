@@ -116,6 +116,7 @@ export function HoverMenu({
   }
 
   const getContentPosition = () => {
+    // Add viewport boundary checks
     switch (side) {
       case 'right':
         return {
@@ -162,6 +163,16 @@ export function HoverMenu({
         ref={triggerRef}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                   e.preventDefault()
+                   handleOpen()
+              }
+                    if (e.key === 'Escape') {
+                   handleClose()
+                 }
+               }}
+                  tabIndex={0}
         style={{ display: 'contents' }}
       >
         {children}
