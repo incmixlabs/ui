@@ -1,10 +1,12 @@
 // components/shared/simple-task-input.tsx
 import React, { useState, useCallback, useEffect } from "react"
 import { Box, Flex, Button, TextField, TextArea, Text } from "@incmix/ui"
-import { Plus, X, Loader2, Check } from "lucide-react"
+import { Plus, X, Loader2, Check, Sparkles } from "lucide-react"
 import { TaskActionsMenu } from "./task-actions-menu"
-import { useAIUserStory, useAIFeaturesStore } from "@incmix/store"
+import { useAIFeaturesStore } from "@incmix/store"
 import { TaskDataSchema } from "@incmix/utils/schema"
+import { useStreamingResponse, useStreamingDisplay } from "../../../hooks"
+import { nanoid } from "nanoid"
 
 interface SimpleTaskInputProps {
   onCreateTask: (taskName: string, taskData: any) => Promise<void>
@@ -37,50 +39,62 @@ export function SimpleTaskInput({
     columnId: ""
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [hadGenerationError, setHadGenerationError] = useState(false)
 
-  // AI description generation hook
-  const {
-    generateUserStory,
-    isGenerating,
-    error: generationError,
-    clearError: resetError
-  } = useAIUserStory()
+  // Generate unique ID helper
+  const generateUniqueId = useCallback((prefix?: string, length = 10): string => {
+    const randomId = nanoid(length)
+    return prefix ? `${prefix}-${randomId}` : randomId
+  }, [])
 
   const handleTaskDataChange = useCallback((newData: any) => {
     setTaskData(prev => ({ ...prev, ...newData }))
   }, [])
 
-  // Generate description when task name changes (if AI enabled)
-  useEffect(() => {
-    // Only generate if AI is enabled, task name has content, and description is empty
-    if (useAI && taskName.trim() && !description && !hadGenerationError) {
-      // Add a delay to avoid generating on every keystroke
-      const timer = setTimeout(async () => {
-        try {
-          const userStoryResult = await generateUserStory(taskName)
-          if (userStoryResult) {
-            setDescription(userStoryResult.description)
-            setChecklist(userStoryResult.checklist || [])
-            setAcceptanceCriteria(userStoryResult.acceptanceCriteria || [])
-          }
-        } catch (error) {
-          console.error("AI description generation failed:", error)
-          setHadGenerationError(true)
-        }
-      }, 1000) // 1 second delay
-
-      return () => clearTimeout(timer)
+  // Fetch data from AI endpoint as event stream
+  const [streamingState, streamingActions] = useStreamingResponse<{
+    userStory: {
+      description: string;
+      acceptanceCriteria: string[];
+      checklist: string[];
     }
-  }, [taskName, useAI, description, generateUserStory, hadGenerationError])
+  }>({
+    endpoint: "/generate-user-story",
+    method: "POST",
+    body: { prompt: taskName, userTier: "free", templateId: 1 },
+  });
 
-  // Reset error state when task name changes
-  useEffect(() => {
-    if (hadGenerationError) {
-      setHadGenerationError(false)
-      resetError()
+  // Function to process streaming data and update form
+  const setFormDataFromStream = useCallback((data?: { description: string, acceptanceCriteria: string[], checklist: string[] }) => {
+    if (data) {
+      // Set description
+      setDescription(data.description || "");
+      
+      // Format checklist items
+      const formattedChecklist = (data.checklist || []).map((item, index) => ({
+        id: generateUniqueId('cl'),
+        text: item,
+        checked: false
+      }));
+      setChecklist(formattedChecklist);
+      
+      // Format acceptance criteria items
+      const formattedAcceptanceCriteria = (data.acceptanceCriteria || []).map((item, index) => ({
+        id: generateUniqueId('ac'),
+        text: item
+      }));
+      setAcceptanceCriteria(formattedAcceptanceCriteria);
     }
-  }, [taskName, resetError, hadGenerationError])
+  }, [generateUniqueId]);
+
+  // Connect streaming data to form updates
+  useStreamingDisplay({
+    streamingData: streamingState.data,
+    isStreaming: streamingState.isStreaming,
+    connectionStatus: streamingState.connectionStatus,
+    onDataUpdate: (data) => {
+      setFormDataFromStream(data.userStory)
+    }
+  });
 
   const handleSubmit = useCallback(async () => {
     if (!taskName.trim() || isSubmitting) return
@@ -153,27 +167,48 @@ export function SimpleTaskInput({
       </Flex>
 
       {/* Description field */}
+      {useAI && taskName.trim() && (
+        <Button 
+          onClick={() => streamingActions.startStreaming()} 
+          disabled={streamingState.isStreaming || !taskName.trim() || isSubmitting || disabled}
+          size="1"
+          className="mt-2 mb-2"
+        >
+          {streamingState.isStreaming ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-4 h-4 mr-2" />
+              Generate Description
+            </>
+          )}
+        </Button>
+      )}
+
       <TextArea
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        placeholder={useAI ? "AI will generate description based on title..." : "Enter task description..."}
+        placeholder={useAI ? "Generate description with AI or enter manually..." : "Enter task description..."}
         rows={3}
-        disabled={disabled || isSubmitting || isGenerating}
+        disabled={disabled || isSubmitting || streamingState.isStreaming}
       />
 
       {/* AI Status Indicator */}
-      {useAI && taskName.trim() && (
+      {useAI && (
         <Box className="text-xs">
-          {isGenerating && (
+          {streamingState.isStreaming && (
             <Flex align="center" gap="1" className="text-blue-500">
               <Loader2 size={12} className="animate-spin" />
               <Text>Generating description...</Text>
             </Flex>
           )}
-          {generationError && (
-            <Text className="text-red-500">Failed to generate description</Text>
+          {streamingState.error && (
+            <Text className="text-red-500">Failed to generate description: {streamingState.error}</Text>
           )}
-          {!isGenerating && !generationError && description && (
+          {!streamingState.isStreaming && !streamingState.error && description && streamingState.connectionStatus === "completed" && (
             <Flex align="center" gap="1" className="text-green-600">
               <Check size={12} />
               <Text>AI description generated</Text>
@@ -186,7 +221,7 @@ export function SimpleTaskInput({
       <Flex gap="2">
         <Button
           onClick={handleSubmit}
-          disabled={!taskName.trim() || isSubmitting}
+          disabled={!taskName.trim() || isSubmitting || streamingState.isStreaming}
           className="flex-1"
           size="2"
         >
@@ -194,7 +229,13 @@ export function SimpleTaskInput({
           {isSubmitting ? "Adding..." : "Add Task"}
         </Button>
         <Button
-          onClick={onCancel}
+          onClick={() => {
+            // Cancel streaming if in progress
+            if (streamingState.isStreaming) {
+              streamingActions.stopStreaming();
+            }
+            onCancel();
+          }}
           variant="soft"
           disabled={isSubmitting}
           size="2"
