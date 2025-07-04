@@ -4,7 +4,7 @@ import { useProjectStore } from "@incmix/store"
 import { useProjects } from "../../../../projects/utils"
 import { Switcher, type SwitcherItem } from "./switcher"
 
-export function ProjectSwitcher() {
+export function ProjectSwitcher({ className }: { className?: string }) {
   // biome-ignore lint/correctness/noUnusedVariables: <explanation>
   const { projects, isLoading } = useProjects()
   const { selectedProject, setSelectedProject } = useProjectStore()
@@ -26,6 +26,7 @@ export function ProjectSwitcher() {
           setSelectedProject(proj)
         }
       }}
+      className={className}
       title="projects"
     />
   )
