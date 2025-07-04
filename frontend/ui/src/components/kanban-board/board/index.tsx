@@ -12,7 +12,8 @@ import {
   Text,
   IconButton,
   Heading,
-  DropdownMenu
+  DropdownMenu,
+  ScrollArea
 } from "@base"
 import {
   Loader2,
@@ -327,8 +328,10 @@ export function Board({
 
       {/* Columns area - Horizontal scroll only, natural height growth */}
       <Box className="w-full">
-        <div
-          className="w-full overflow-x-auto"
+        <ScrollArea 
+          scrollbars="horizontal" 
+          type="hover" 
+          className="w-full"
           ref={scrollableRef}
         >
           {/* Columns container - Natural height, horizontal scroll */}
@@ -373,7 +376,7 @@ export function Board({
               </Box>
             </div>
           </div>
-        </div>
+        </ScrollArea>
       </Box>
 
       {/* Task Drawer */}
