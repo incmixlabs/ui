@@ -431,9 +431,10 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   }
 
   return (
-    <>
-      {/* Header */}
-      <Box className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+    // FIX: Making ListBoard structure consistent with Board component to fix double scrollbars
+    <Box className="w-full h-full flex flex-col">
+      {/* HEADER: Fixed header area */}
+      <Box className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
         <Flex direction="column" gap="4" className="p-4">
 
           {/* Selected Tasks Actions */}
@@ -548,139 +549,141 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         </Flex>
       </Box>
 
-      {/* Main Content */}
-      <Box className="flex w-full gap-6 h-full relative p-4" ref={scrollableRef}>
-        <Box className="w-full space-y-6">
-          {/* Add New Column Form */}
-          {isAddingColumn && (
-            <Box className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 shadow-sm">
-              <Flex direction="column" gap="3">
-                <Heading size="3">Add New Status Column</Heading>
+      {/* CONTENT AREA: Flexible content area with proper overflow handling */}
+      <Box className="flex-1 h-full">
+        {/* The main content container shouldn't have its own scroll */}
+        <Box className="w-full h-full p-4" ref={scrollableRef}>
+          <Box className="w-full space-y-6">
+            {/* Add New Column Form */}
+            {isAddingColumn && (
+              <Box className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 shadow-sm">
+                <Flex direction="column" gap="3">
+                  <Heading size="3">Add New Status Column</Heading>
 
-                <TextField.Root
-                  placeholder="Column name"
-                  value={newColumnName}
-                  onChange={(e) => setNewColumnName(e.target.value)}
-                />
+                  <TextField.Root
+                    placeholder="Column name"
+                    value={newColumnName}
+                    onChange={(e) => setNewColumnName(e.target.value)}
+                  />
 
-                <TextArea
-                  placeholder="Column description (optional)"
-                  value={newColumnDescription}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewColumnDescription(e.target.value)}
-                  rows={2}
-                />
+                  <TextArea
+                    placeholder="Column description (optional)"
+                    value={newColumnDescription}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewColumnDescription(e.target.value)}
+                    rows={2}
+                  />
 
-                <Flex align="center" gap="2" className="items-start">
-                  <div className="relative" ref={colorPickerRef}>
+                  <Flex align="center" gap="2" className="items-start">
+                    <div className="relative" ref={colorPickerRef}>
+                      <Button
+                        variant="solid"
+                        className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
+                        style={{ backgroundColor: newColumnColor }}
+                        onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
+                      />
+                      {isColorPickerOpen && (
+                        <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
+                          <ColorPicker
+                            colorType="base"
+                            onColorSelect={(color: ColorSelectType) => {
+                              setNewColumnColor(color.hex);
+                              setIsColorPickerOpen(false);
+                            }}
+                            activeColor={newColumnColor}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <Text size="1" className="text-gray-500">Column color</Text>
+                  </Flex>
+
+                  <Flex gap="2" justify="end">
                     <Button
-                      variant="solid"
-                      className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
-                      style={{ backgroundColor: newColumnColor }}
-                      onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
-                    />
-                    {isColorPickerOpen && (
-                      <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
-                        <ColorPicker
-                          colorType="base"
-                          onColorSelect={(color: ColorSelectType) => {
-                            setNewColumnColor(color.hex);
-                            setIsColorPickerOpen(false);
-                          }}
-                          activeColor={newColumnColor}
-                        />
-                      </div>
-                    )}
-                  </div>
-                  <Text size="1" className="text-gray-500">Column color</Text>
-                </Flex>
-
-                <Flex gap="2" justify="end">
-                  <Button
-                    variant="soft"
-                    onClick={() => {
-                      setIsAddingColumn(false)
-                      setNewColumnName('')
-                      setNewColumnDescription('')
-                      setNewColumnColor('#3B82F6')
-                    }}
-                    disabled={isCreatingColumn}
-                  >
-                    <X size={14} />
-                    Cancel
-                  </Button>
-
-                  <Button
-                    onClick={async () => {
-                      if (!newColumnName.trim()) return
-
-                      setIsCreatingColumn(true)
-                      try {
-                        await createStatusLabel(
-                          newColumnName.trim(),
-                          newColumnColor,
-                          newColumnDescription.trim()
-                        )
-
-                        // Reset form
+                      variant="soft"
+                      onClick={() => {
+                        setIsAddingColumn(false)
                         setNewColumnName('')
                         setNewColumnDescription('')
                         setNewColumnColor('#3B82F6')
-                        setIsAddingColumn(false)
-                      } catch (error) {
-                        console.error('Failed to create column:', error)
-                      } finally {
-                        setIsCreatingColumn(false)
-                      }
-                    }}
-                    disabled={!newColumnName.trim() || isCreatingColumn}
-                  >
-                    {isCreatingColumn ? 'Creating...' : 'Create Column'}
-                  </Button>
-                </Flex>
+                      }}
+                      disabled={isCreatingColumn}
+                    >
+                      <X size={14} />
+                      Cancel
+                    </Button>
+
+                    <Button
+                      onClick={async () => {
+                        if (!newColumnName.trim()) return
+
+                        setIsCreatingColumn(true)
+                        try {
+                          await createStatusLabel(
+                            newColumnName.trim(),
+                            newColumnColor,
+                            newColumnDescription.trim()
+                          )
+
+                          // Reset form
+                          setNewColumnName('')
+                          setNewColumnDescription('')
+                          setNewColumnColor('#3B82F6')
+                          setIsAddingColumn(false)
+                        } catch (error) {
+                          console.error('Failed to create column:', error)
+                        } finally {
+                          setIsCreatingColumn(false)
+                        }
+                      }}
+                      disabled={!newColumnName.trim() || isCreatingColumn}
+                    >
+                      {isCreatingColumn ? 'Creating...' : 'Create Column'}
+                    </Button>
+                  </Flex>
                 </Flex>
               </Box>
             )}
 
-            {filteredColumns.map((column) => (
-              <ListColumn
-                key={column.id}
-                column={column}
-                columns={columns}
-                onCreateTask={createTask}
-                onUpdateTask={updateTask}
-                onDeleteTask={deleteTask}
-                onUpdateColumn={(id, updates) => updateStatusLabel(id, updates)}
-                onDeleteColumn={deleteStatusLabel}
-                isDragging={isDragging}
-                selectedTaskIds={selectedTasks}
-                onTaskSelect={handleTaskSelect}
-                onSelectAll={handleColumnSelectAll}
-              />
-            ))}
+              {filteredColumns.map((column) => (
+                <ListColumn
+                  key={column.id}
+                  column={column}
+                  columns={columns}
+                  onCreateTask={createTask}
+                  onUpdateTask={updateTask}
+                  onDeleteTask={deleteTask}
+                  onUpdateColumn={(id, updates) => updateStatusLabel(id, updates)}
+                  onDeleteColumn={deleteStatusLabel}
+                  isDragging={isDragging}
+                  selectedTaskIds={selectedTasks}
+                  onTaskSelect={handleTaskSelect}
+                  onSelectAll={handleColumnSelectAll}
+                />
+              ))}
 
-          {filteredColumns.length === 0 && searchQuery && (
-            <Box className="text-center py-12">
-              <div className="text-gray-500">No tasks found matching "{searchQuery}"</div>
-            </Box>
-          )}
+            {filteredColumns.length === 0 && searchQuery && (
+              <Box className="text-center py-12">
+                <div className="text-gray-500">No tasks found matching "{searchQuery}"</div>
+              </Box>
+            )}
 
-          {filteredColumns.length === 0 && !searchQuery && !isAddingColumn && (
-            <Flex direction="column" align="center" className="py-12 space-y-4">
-              <Text className="text-gray-500">No status columns found. Create your first column to get started.</Text>
-              <Button
-                onClick={() => setIsAddingColumn(true)}
-                variant="soft"
-              >
-                <Plus size={14} />
-                Add Status Column
-              </Button>
-            </Flex>
-          )}
+            {filteredColumns.length === 0 && !searchQuery && !isAddingColumn && (
+              <Flex direction="column" align="center" className="py-12 space-y-4">
+                <Text className="text-gray-500">No status columns found. Create your first column to get started.</Text>
+                <Button
+                  onClick={() => setIsAddingColumn(true)}
+                  variant="soft"
+                >
+                  <Plus size={14} />
+                  Add Status Column
+                </Button>
+              </Flex>
+            )}
+          </Box>
+
+          <TaskCardDrawer viewType="list" projectId={projectId} />
         </Box>
-
-        <TaskCardDrawer viewType="list" projectId={projectId} />
       </Box>
-
 
       {/* AI Generation Confirmation Dialog */}
       <ConfirmationDialog
@@ -696,6 +699,6 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         cancelText="Cancel"
         isLoading={isGenerating}
       />
-    </>
+    </Box>
   )
 }
