@@ -9,6 +9,7 @@ import {
   TextField,
   Text,
   Badge,
+  DropdownMenu,
 } from "@base"
 import { TanstackDataTable } from "../../tanstack-table"
 import {
@@ -17,12 +18,15 @@ import {
   RefreshCw,
   Settings,
   MoreVertical,
-  Download
+  Download,
+  ChevronDown,
+  Check
 } from "lucide-react"
 
 import type { TableTask } from "../types"
 import type { LabelSchema, TaskDataSchema } from "@incmix/utils/schema"
 import { useAIFeaturesStore } from "@incmix/store"
+import { KeyboardShortcutsHelp } from "../../tanstack-table/components/KeyboardShortcutsHelp"
 import { useTableView } from "../hooks/use-table-view"
 import { TASK_TABLE_COLUMNS } from "./table-columns-config"
 import { TableRowActions } from "./table-row-actions"
@@ -41,6 +45,8 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
 
   const [searchQuery, setSearchQuery] = useState("")
   const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false)
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false)
+  const [isColumnsMenuOpen, setIsColumnsMenuOpen] = useState(false)
 
   // Use the table view hook
   const {
@@ -327,18 +333,53 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
               <IconButton variant="ghost" onClick={handleRefresh}>
                 <RefreshCw size={16} />
               </IconButton>
+              
+              {/* Keyboard shortcuts help */}
+              <KeyboardShortcutsHelp />
+              
+              {/* Column visibility dropdown */}
+              <DropdownMenu.Root open={isColumnsMenuOpen} onOpenChange={setIsColumnsMenuOpen}>
+                <DropdownMenu.Trigger>
+                  <Button variant="ghost" className="flex items-center gap-1">
+                    Columns
+                    <ChevronDown size={14} />
+                  </Button>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content>
+                  {enhancedColumns.map((column) => (
+                    <DropdownMenu.Item key={column.id}>
+                      <Flex align="center" gap="2">
+                        <div className="mr-2 h-4 w-4">
+                          <Check size={16} className="h-4 w-4" />
+                        </div>
+                        <Text>{column.headingName}</Text>
+                      </Flex>
+                    </DropdownMenu.Item>
+                  ))}
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
 
-              <IconButton variant="ghost">
-                <Download size={16} />
-              </IconButton>
-
-              <IconButton variant="ghost">
-                <Settings size={16} />
-              </IconButton>
-
-              <IconButton variant="ghost">
-                <MoreVertical size={16} />
-              </IconButton>
+              <DropdownMenu.Root open={isMoreMenuOpen} onOpenChange={setIsMoreMenuOpen}>
+                <DropdownMenu.Trigger>
+                  <IconButton variant="ghost">
+                    <MoreVertical size={16} />
+                  </IconButton>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content>
+                  <DropdownMenu.Item>
+                    <Flex align="center" gap="2">
+                      <Download size={16} />
+                      <Text>Download</Text>
+                    </Flex>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item>
+                    <Flex align="center" gap="2">
+                      <Settings size={16} />
+                      <Text>Settings</Text>
+                    </Flex>
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
             </Flex>
           </Flex>
 
@@ -381,14 +422,14 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           enableRowSelection={true}
           enableSorting={true}
           enablePagination={true}
-          enableColumnVisibility={true}
-          filterColumn="name"
-          filterPlaceholder="Filter tasks..."
+          enableColumnVisibility={false} /* Hide column visibility dropdown */
+          enableFiltering={false} /* Hide filter input field */
           facets={tableFacets}
           isPaginationLoading={isLoading}
 
-          // Inline editing functionality
-          enableInlineCellEdit={true}
+          // Inline editing functionality - disabled to hide keyboard shortcuts icon
+          enableInlineCellEdit={false}
+          // Still provide columns and handler in case inline editing is needed elsewhere
           inlineEditableColumns={["name", "startDate", "endDate"]} // Status and priority handled by custom components
           onCellEdit={handleCellEdit}
 
