@@ -67,6 +67,8 @@ export function Board({
 
   const displayColumns = isDragging ? optimisticColumns : columns
 
+  
+
   useEffect(() => {
     const element = scrollableRef.current
     if (!element || isLoading || columns.length === 0) {
