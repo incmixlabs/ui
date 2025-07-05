@@ -91,7 +91,7 @@ const TasksPage = () => {
 
             <Flex align="center" gap="4">
               <Flex align="center" gap="2">
-                <div className="text-sm">Use AI</div>
+                <div className="text-sm">Gen AI</div>
                 <Switch checked={useAI} onCheckedChange={setUseAI} />
               </Flex>
               <AddTaskForm projectId="default-project" onSuccess={() => {}} />
