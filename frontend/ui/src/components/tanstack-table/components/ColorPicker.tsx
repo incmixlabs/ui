@@ -3,6 +3,8 @@ import React, { useState, useRef, useEffect } from 'react';
 interface ColorPickerProps {
   color: string;
   onChange: (color: string) => void;
+  // Optional prop to determine if component is inside a dialog
+  insideDialog?: boolean;
 }
 
 // Add these styles to your global CSS or add them inline as we do here
@@ -21,7 +23,7 @@ const colorOptionHoverStyle: React.CSSProperties = {
 /**
  * Simplified color picker component with circular options
  */
-const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => {
+const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, insideDialog = false }) => {
   const [showPicker, setShowPicker] = useState(false);
   const [hoveredColor, setHoveredColor] = useState<string | null>(null);
   const buttonRef = useRef<HTMLDivElement>(null);
@@ -50,21 +52,25 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => {
     }
   }, [showPicker]);
 
-  // Close on outside click
+  // Close on outside click - with modifications for dialogs
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (buttonRef.current && popupRef.current && 
-          !buttonRef.current.contains(e.target as Node) && 
-          !popupRef.current.contains(e.target as Node)) {
-        setShowPicker(false);
+      // Only process if our refs are valid
+      if (buttonRef.current && popupRef.current) {
+        // Check if click is outside both the button and popup
+        if (!buttonRef.current.contains(e.target as Node) && 
+            !popupRef.current.contains(e.target as Node)) {
+          setShowPicker(false);
+        }
       }
     };
     
     if (showPicker) {
-      document.addEventListener('mousedown', handleClickOutside);
+      // Use capturing phase to ensure our handler runs before dialog's handlers
+      document.addEventListener('mousedown', handleClickOutside, { capture: true });
     }
     
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside, { capture: true });
   }, [showPicker]);
 
   return (
@@ -72,7 +78,13 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => {
       {/* Color button - square button to select color */}
       <div 
         ref={buttonRef}
-        onClick={() => setShowPicker(!showPicker)}
+        onClick={(e) => {
+          // Stop propagation to prevent dialog from closing
+          if (insideDialog) {
+            e.stopPropagation();
+          }
+          setShowPicker(!showPicker);
+        }}
         style={{
           width: '28px',
           height: '28px',
@@ -87,6 +99,12 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => {
       {showPicker && (
         <div 
           ref={popupRef}
+          onClick={(e) => {
+            // Stop propagation to prevent dialog from closing when clicking inside popup
+            if (insideDialog) {
+              e.stopPropagation();
+            }
+          }}
           style={{
             position: 'fixed',
             top: '0px',
@@ -110,7 +128,13 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => {
             {colorPalette.slice(0, 6).map((c, i) => (
               <div 
                 key={`color-row1-${i}`}
-                onClick={() => handleColorSelect(c)}
+                onClick={(e) => {
+                  // Stop propagation to prevent dialog from closing
+                  if (insideDialog) {
+                    e.stopPropagation();
+                  }
+                  handleColorSelect(c);
+                }}
                 onMouseEnter={() => setHoveredColor(c)}
                 onMouseLeave={() => setHoveredColor(null)}
                 style={{
@@ -132,7 +156,13 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange }) => {
             {colorPalette.slice(6).map((c, i) => (
               <div 
                 key={`color-row2-${i}`}
-                onClick={() => handleColorSelect(c)}
+                onClick={(e) => {
+                  // Stop propagation to prevent dialog from closing
+                  if (insideDialog) {
+                    e.stopPropagation();
+                  }
+                  handleColorSelect(c);
+                }}
                 onMouseEnter={() => setHoveredColor(c)}
                 onMouseLeave={() => setHoveredColor(null)}
                 style={{

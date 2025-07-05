@@ -19,6 +19,12 @@ import ColorPicker, { ColorSelectType } from "@components/color-picker"
 interface CreateColumnFormProps {
   projectId: string
   onSuccess?: (columnId: string) => void
+  // Optional control props for Dialog
+  controlled?: boolean
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  // Optional custom trigger element
+  customTrigger?: React.ReactNode
 }
 
 const DEFAULT_COLORS = [
@@ -37,8 +43,20 @@ const DEFAULT_COLORS = [
 export function CreateColumnForm({
   projectId,
   onSuccess,
+  controlled = false,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+  customTrigger,
 }: CreateColumnFormProps) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpenInternal, setIsOpenInternal] = useState(false)
+  
+  // Use either controlled or internal state
+  const isOpen = controlled ? controlledOpen : isOpenInternal
+  const setIsOpen = controlled 
+    ? (value: boolean) => {
+        if (controlledOnOpenChange) controlledOnOpenChange(value)
+      } 
+    : setIsOpenInternal
   const [isLoading, setIsLoading] = useState(false)
   const [colorError, setColorError] = useState<string | null>(null)
   const [formData, setFormData] = useState({
@@ -47,7 +65,8 @@ export function CreateColumnForm({
     color: DEFAULT_COLORS[0].value,
   })
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
-  const colorPickerRef = useRef<HTMLDivElement>(null)
+  const colorPickerRef = useRef<HTMLDivElement | null>(null)
+  const colorPickerButtonRef = useRef<HTMLButtonElement | null>(null)
 
   // Close color picker when clicking outside
   useEffect(() => {
@@ -127,14 +146,37 @@ export function CreateColumnForm({
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
-      <Dialog.Trigger>
-        <Button variant="ghost" size="2" className="w-full h-12 border-2 border-dashed border-gray-300 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500">
-          <Plus size={20} />
-          <Text className="ml-2">Add Column</Text>
-        </Button>
-      </Dialog.Trigger>
+      {!controlled && (
+        <Dialog.Trigger>
+          {customTrigger || (
+            <Button variant="ghost" size="2" className="w-full h-12 border-2 border-dashed border-gray-300 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500">
+              <Plus size={20} />
+              <Text className="ml-2">Add Column</Text>
+            </Button>
+          )}
+        </Dialog.Trigger>
+      )}
 
-      <Dialog.Content className="max-w-md">
+      <Dialog.Content 
+        className="max-w-md" 
+        onPointerDownOutside={(e) => {
+          // Prevent the dialog from closing if we're clicking inside the color picker
+          // or on the color picker button
+          if (isColorPickerOpen && 
+              (colorPickerRef.current?.contains(e.target as Node) ||
+               colorPickerButtonRef.current?.contains(e.target as Node))) {
+            e.preventDefault()
+          }
+        }}
+        onInteractOutside={(e) => {
+          // Also prevent interaction outside events if inside color picker
+          if (isColorPickerOpen && 
+              (colorPickerRef.current?.contains(e.target as Node) ||
+               colorPickerButtonRef.current?.contains(e.target as Node))) {
+            e.preventDefault()
+          }
+        }}
+      >
         <Dialog.Header>
           <Dialog.Title>Create New Column</Dialog.Title>
           <Dialog.Description>
@@ -245,22 +287,54 @@ export function CreateColumnForm({
                 <Flex align="center" gap="2" className="items-start">
                   <div className="relative" ref={colorPickerRef}>
                     <Button
-                      variant="solid"
-                      className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
+                      ref={colorPickerButtonRef}
+                      className="h-8 w-8 cursor-pointer rounded-md border border-gray-6"
                       style={{ backgroundColor: formData.color }}
-                      disabled={isLoading}
-                      onClick={() => !isLoading && setIsColorPickerOpen(!isColorPickerOpen)}
+                      onClick={(e) => {
+                        // Prevent the click from bubbling up to the dialog's close handler
+                        e.stopPropagation()
+                        e.preventDefault()
+                        if (!isLoading) setIsColorPickerOpen(!isColorPickerOpen)
+                      }}
+                      onPointerDown={(e) => {
+                        // Stop all pointer events to prevent dialog from closing
+                        e.stopPropagation()
+                      }}
                     />
                     {isColorPickerOpen && (
-                      <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
-                        <ColorPicker
-                          colorType="base"
-                          onColorSelect={(color: ColorSelectType) => {
-                            handleColorSelect(color.hex);
-                            setIsColorPickerOpen(false);
-                          }}
-                          activeColor={formData.color}
-                        />
+                      <div 
+                        ref={colorPickerRef}
+                        className="absolute z-50 mt-1" 
+                        style={{ minWidth: "240px" }}
+                        onClick={(e) => {
+                          // Prevent all click events from propagating out
+                          e.stopPropagation()
+                          e.preventDefault()
+                        }}
+                        onMouseDown={(e) => {
+                          // Prevent mouse events from bubbling up to the document
+                          e.stopPropagation()
+                          e.preventDefault()
+                        }}
+                        onPointerDown={(e) => {
+                          // Prevent pointer events from bubbling up
+                          e.stopPropagation()
+                          e.preventDefault()
+                        }}
+                      >
+                        <div
+                          onClick={(e) => e.stopPropagation()}
+                          onPointerDown={(e) => e.stopPropagation()}
+                        >
+                          <ColorPicker
+                            colorType="base"
+                            onColorSelect={(color: ColorSelectType) => {
+                              handleColorSelect(color.hex);
+                              setIsColorPickerOpen(false);
+                            }}
+                            activeColor={formData.color}
+                          />
+                        </div>
                       </div>
                     )}
                   </div>
@@ -306,7 +380,7 @@ export function CreateColumnForm({
             </Box>
           </Flex>
 
-          <Dialog.Footer>
+          <div className="flex justify-end gap-3 mt-6">
             <Dialog.Close>
               <Button variant="soft" color="gray" disabled={isLoading}>
                 Cancel
@@ -318,7 +392,7 @@ export function CreateColumnForm({
             >
               {isLoading ? "Creating..." : "Create Column"}
             </Button>
-          </Dialog.Footer>
+          </div>
         </form>
       </Dialog.Content>
     </Dialog.Root>

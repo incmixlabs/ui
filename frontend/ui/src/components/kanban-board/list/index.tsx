@@ -9,9 +9,13 @@ import { bindAll } from "bind-event-listener"
 import {  useEffect, useRef, useState, useCallback, useMemo } from "react"
 import { ListColumn } from "./list-column"
 import { ConfirmationDialog } from "./confirmation-dialog"
-import { Box, Flex, Heading, IconButton, Button, Text, TextField, TextArea, Badge, Tooltip, toast } from "@incmix/ui"
+import { Box, Flex, Heading, IconButton, Button, Text, TextField, TextArea, Badge, Tooltip, toast, DropdownMenu, Dialog } from "@incmix/ui"
 
 import { Plus, Search, RefreshCw, Settings, MoreVertical, X, ClipboardList, XCircle, Sparkles, Loader2 } from "lucide-react"
+import { CreateColumnForm } from "../shared/create-column-form"
+
+// Import useKanban hook for form logic consistency
+import { useKanban } from "../hooks/use-kanban-data"
 
 import {
 
@@ -47,29 +51,17 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   // Confirmation dialog state
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
-  // New column creation state
-  const [isAddingColumn, setIsAddingColumn] = useState(false)
-  const [newColumnName, setNewColumnName] = useState("")
-  const [newColumnDescription, setNewColumnDescription] = useState("")
-  const [newColumnColor, setNewColumnColor] = useState("#3B82F6")
-  const [addColumnFormOpen, setAddColumnFormOpen] = useState(false)
-  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
-  const colorPickerRef = useRef<HTMLDivElement>(null)
-
-  // Close color picker when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
-        setIsColorPickerOpen(false);
-      }
-    }
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [colorPickerRef]);
-  const [isCreatingColumn, setIsCreatingColumn] = useState(false)
+  // Dialog open state for add column form
+  const [isAddColumnDialogOpen, setIsAddColumnDialogOpen] = useState(false)
+  
+  // Column refresh handler
+  const handleColumnAdded = useCallback((columnId: string) => {
+    // Close the dialog when column is added successfully
+    setIsAddColumnDialogOpen(false)
+    
+    // No need to do anything specific here as the list will update automatically
+    // through the useListView hook
+  }, [])
 
   // Use the list view hook
   const {
@@ -499,26 +491,38 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
             <Heading size="6">Project Tasks</Heading>
 
             <Flex align="center" gap="2">
-              <Button
-                variant="soft"
-                onClick={() => setIsAddingColumn(true)}
-                disabled={isAddingColumn}
+              <Button 
+                variant="ghost" 
+                size="1" 
+                className="flex items-center gap-1" 
+                onClick={() => setIsAddColumnDialogOpen(true)}
               >
                 <Plus size={14} />
-                Add Status Column
+                Add Column
               </Button>
-
+              
               <IconButton variant="ghost" onClick={() => window.location.reload()}>
                 <RefreshCw size={16} />
               </IconButton>
 
-              <IconButton variant="ghost">
-                <Settings size={16} />
-              </IconButton>
-
-              <IconButton variant="ghost">
-                <MoreVertical size={16} />
-              </IconButton>
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger>
+                  <IconButton variant="ghost">
+                    <MoreVertical size={16} />
+                  </IconButton>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content>
+                  <DropdownMenu.Group>
+                    {/* Settings items go here */}
+                    <DropdownMenu.Item>
+                      <Flex align="center" gap="2">
+                        <Settings size={16} />
+                        <span>Settings</span>
+                      </Flex>
+                    </DropdownMenu.Item>
+                  </DropdownMenu.Group>
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
             </Flex>
           </Flex>
 
@@ -554,95 +558,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         {/* The main content container shouldn't have its own scroll */}
         <Box className="w-full h-full p-4" ref={scrollableRef}>
           <Box className="w-full space-y-6">
-            {/* Add New Column Form */}
-            {isAddingColumn && (
-              <Box className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 shadow-sm">
-                <Flex direction="column" gap="3">
-                  <Heading size="3">Add New Status Column</Heading>
-
-                  <TextField.Root
-                    placeholder="Column name"
-                    value={newColumnName}
-                    onChange={(e) => setNewColumnName(e.target.value)}
-                  />
-
-                  <TextArea
-                    placeholder="Column description (optional)"
-                    value={newColumnDescription}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewColumnDescription(e.target.value)}
-                    rows={2}
-                  />
-
-                  <Flex align="center" gap="2" className="items-start">
-                    <div className="relative" ref={colorPickerRef}>
-                      <Button
-                        variant="solid"
-                        className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
-                        style={{ backgroundColor: newColumnColor }}
-                        onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
-                      />
-                      {isColorPickerOpen && (
-                        <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
-                          <ColorPicker
-                            colorType="base"
-                            onColorSelect={(color: ColorSelectType) => {
-                              setNewColumnColor(color.hex);
-                              setIsColorPickerOpen(false);
-                            }}
-                            activeColor={newColumnColor}
-                          />
-                        </div>
-                      )}
-                    </div>
-                    <Text size="1" className="text-gray-500">Column color</Text>
-                  </Flex>
-
-                  <Flex gap="2" justify="end">
-                    <Button
-                      variant="soft"
-                      onClick={() => {
-                        setIsAddingColumn(false)
-                        setNewColumnName('')
-                        setNewColumnDescription('')
-                        setNewColumnColor('#3B82F6')
-                      }}
-                      disabled={isCreatingColumn}
-                    >
-                      <X size={14} />
-                      Cancel
-                    </Button>
-
-                    <Button
-                      onClick={async () => {
-                        if (!newColumnName.trim()) return
-
-                        setIsCreatingColumn(true)
-                        try {
-                          await createStatusLabel(
-                            newColumnName.trim(),
-                            newColumnColor,
-                            newColumnDescription.trim()
-                          )
-
-                          // Reset form
-                          setNewColumnName('')
-                          setNewColumnDescription('')
-                          setNewColumnColor('#3B82F6')
-                          setIsAddingColumn(false)
-                        } catch (error) {
-                          console.error('Failed to create column:', error)
-                        } finally {
-                          setIsCreatingColumn(false)
-                        }
-                      }}
-                      disabled={!newColumnName.trim() || isCreatingColumn}
-                    >
-                      {isCreatingColumn ? 'Creating...' : 'Create Column'}
-                    </Button>
-                  </Flex>
-                </Flex>
-              </Box>
-            )}
+            {/* Column creation is now handled by the CreateColumnForm in the dropdown menu */}
 
               {filteredColumns.map((column) => (
                 <ListColumn
@@ -667,12 +583,12 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
               </Box>
             )}
 
-            {filteredColumns.length === 0 && !searchQuery && !isAddingColumn && (
+            {filteredColumns.length === 0 && !searchQuery && (
               <Flex direction="column" align="center" className="py-12 space-y-4">
                 <Text className="text-gray-500">No status columns found. Create your first column to get started.</Text>
                 <Button
-                  onClick={() => setIsAddingColumn(true)}
                   variant="soft"
+                  onClick={() => setIsAddColumnDialogOpen(true)}
                 >
                   <Plus size={14} />
                   Add Status Column
@@ -699,6 +615,15 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         cancelText="Cancel"
         isLoading={isGenerating}
       />
+      
+      {/* Controlled CreateColumnForm dialog */}
+      <CreateColumnForm
+        projectId={projectId}
+        onSuccess={handleColumnAdded}
+        controlled={true}
+        open={isAddColumnDialogOpen}
+        onOpenChange={setIsAddColumnDialogOpen}
+      />
     </Box>
-  )
+  );
 }

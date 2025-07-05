@@ -27,7 +27,7 @@ import {  useAIFeaturesStore } from "@incmix/store"
 import { useKanban } from "../hooks/use-kanban-data"
 import { BoardColumn } from "./board-column"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
-import { CreateColumnForm } from "./create-column-form"
+import { CreateColumnForm } from "../shared/create-column-form"
 
 interface BoardProps {
   projectId?: string
@@ -276,11 +276,6 @@ export function Board({
         </Flex>
       </Box>
 
-      {/*
-        SCROLLABLE COLUMNS AREA: This is the flexible part.
-        - `flex-1`: Makes this container take all remaining vertical space.
-        - `overflow-hidden`: Creates the final boundary to contain the wide content.
-      */}
       <Box className="flex-1 overflow-hidden">
         <ScrollArea 
           scrollbars="horizontal" 
