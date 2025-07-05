@@ -501,9 +501,11 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                 Add Column
               </Button>
               
-              <IconButton variant="ghost" onClick={() => window.location.reload()}>
-                <RefreshCw size={16} />
-              </IconButton>
+              <Tooltip content="Refresh">
+                <IconButton variant="ghost" onClick={() => window.location.reload()}>
+                  <RefreshCw size={16} />
+                </IconButton>
+              </Tooltip>
 
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger>

@@ -10,6 +10,7 @@ import {
   Text,
   Badge,
   DropdownMenu,
+  Tooltip,
 } from "@base"
 import { TanstackDataTable } from "../../tanstack-table"
 import {
@@ -20,7 +21,8 @@ import {
   MoreVertical,
   Download,
   ChevronDown,
-  Check
+  Check,
+  HelpCircle as HelpCircleIcon
 } from "lucide-react"
 
 import type { TableTask } from "../types"
@@ -44,7 +46,6 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
   const { useAI } = useAIFeaturesStore()
 
   const [searchQuery, setSearchQuery] = useState("")
-  const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false)
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false)
   const [isColumnsMenuOpen, setIsColumnsMenuOpen] = useState(false)
 
@@ -322,20 +323,20 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
             <Heading size="6">Task Table</Heading>
 
             <Flex align="center" gap="2">
-              <Button
-                variant="soft"
-                onClick={() => setIsCreateTaskOpen(true)}
-              >
-                <Plus size={14} />
-                Add Task
-              </Button>
-
-              <IconButton variant="ghost" onClick={handleRefresh}>
-                <RefreshCw size={16} />
-              </IconButton>
+              <Tooltip content="Refresh">
+                <IconButton variant="ghost" onClick={handleRefresh}>
+                  <RefreshCw size={16} />
+                </IconButton>
+              </Tooltip>
               
               {/* Keyboard shortcuts help */}
-              <KeyboardShortcutsHelp />
+              <div>
+                <Tooltip content="Keyboard Shortcuts">
+                  <div>
+                    <KeyboardShortcutsHelp />
+                  </div>
+                </Tooltip>
+              </div>
               
               {/* Column visibility dropdown */}
               <DropdownMenu.Root open={isColumnsMenuOpen} onOpenChange={setIsColumnsMenuOpen}>
@@ -446,44 +447,10 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
 
         {tasks.length === 0 && !searchQuery && (
           <Flex direction="column" align="center" className="py-12 space-y-4">
-            <Text className="text-gray-500">No tasks found. Create your first task to get started.</Text>
-            <Button
-              onClick={() => setIsCreateTaskOpen(true)}
-              variant="soft"
-            >
-              <Plus size={14} />
-              Create Task
-            </Button>
+            <Text className="text-gray-500">No tasks found. Use the Board or List view to add tasks.</Text>
           </Flex>
         )}
       </Box>
-
-      {/* Create Task Dialog */}
-      <CreateTaskDialog
-        isOpen={isCreateTaskOpen}
-        onClose={() => setIsCreateTaskOpen(false)}
-        onCreateTask={async (taskData) => {
-          // Convert TableTask data to TaskDataSchema
-          const schemaData: Partial<TaskDataSchema> = {};
-          
-          // Map TableTask properties to TaskDataSchema
-          if (taskData.name !== undefined) schemaData.name = taskData.name;
-          if (taskData.description !== undefined) schemaData.description = taskData.description;
-          if (taskData.statusId !== undefined) schemaData.statusId = taskData.statusId;
-          if (taskData.priorityId !== undefined) schemaData.priorityId = taskData.priorityId;
-          if (taskData.startDate !== undefined) schemaData.startDate = taskData.startDate;
-          if (taskData.endDate !== undefined) schemaData.endDate = taskData.endDate;
-          if (taskData.completed !== undefined) schemaData.completed = taskData.completed;
-          
-          // Convert complex properties if needed
-          if (taskData.assignedTo) schemaData.assignedTo = taskData.assignedTo;
-          if (taskData.labelsTags) schemaData.labelsTags = taskData.labelsTags;
-          if (taskData.attachments) schemaData.attachments = taskData.attachments;
-          
-          return createTask(schemaData);
-        }}
-        taskStatuses={(labels as unknown as LabelSchema[]) || []}
-      />
 
       {/* Task Detail Drawer */}
       <TaskCardDrawer viewType="list" projectId={projectId} />

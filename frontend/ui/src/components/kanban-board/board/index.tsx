@@ -14,7 +14,9 @@ import {
   IconButton,
   Heading,
   DropdownMenu,
-  ScrollArea
+  ScrollArea,
+  Tooltip
+
 } from "@base"
 import {
   Loader2,
@@ -252,13 +254,16 @@ export function Board({
   return (
     // FIX: The Board is now a flex column that fills the height of its container.
     <Box className="w-full h-full flex flex-col">
+     
       {/* HEADER: This part is fixed and will not shrink. */}
       <Box className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700">
         <Flex direction="column" gap="4" className="p-4">
           <Flex justify="between" align="center">
             <Heading size="6">Project Board</Heading>
             <Flex align="center" gap="2">
-              <IconButton variant="ghost" onClick={handleRefresh}><RefreshCw size={16} /></IconButton>
+              <Tooltip content="Refresh">
+                <IconButton variant="ghost" onClick={handleRefresh}><RefreshCw size={16} /></IconButton>
+              </Tooltip>
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger><IconButton variant="ghost"><MoreVertical size={16} /></IconButton></DropdownMenu.Trigger>
                 <DropdownMenu.Content>
