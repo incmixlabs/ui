@@ -5,7 +5,7 @@ import {
   draggable,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
-import { Ellipsis, Plus, Trash2, Edit3, GripVertical, Check, X, Loader2 } from "lucide-react"
+import { Ellipsis, Plus, Trash2, Edit3, GripVertical, Check, X, Loader2, Sparkles } from "lucide-react"
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import ColorPicker, { ColorSelectType } from "@components/color-picker"
 import invariant from "tiny-invariant"
@@ -39,7 +39,6 @@ import { isShallowEqual } from "@incmix/utils/objects"
 import { blockBoardPanningAttr } from "../data-attributes"
 import { TaskCard, TaskCardShadow } from "./task-card"
 import {
-  useAIUserStory,
   useAIFeaturesStore
 } from "@incmix/store"
 import { TaskDataSchema } from "@incmix/utils/schema"
@@ -96,6 +95,9 @@ interface BoardColumnProps {
   onTaskOpen?: (taskId: string) => void
 }
 
+import { useStreamingResponse, useStreamingDisplay } from "../../../hooks"
+import { nanoid } from "nanoid"
+
 // Quick Task Creation Form
 const QuickTaskForm = memo(function QuickTaskForm({
   columnId,
@@ -115,59 +117,61 @@ const QuickTaskForm = memo(function QuickTaskForm({
   const [checklist, setChecklist] = useState<Array<{ id: string; text: string; checked: boolean; order: number }>>([])
   const [acceptanceCriteria, setAcceptanceCriteria] = useState<Array<{ id: string; text: string; checked: boolean; order: number }>>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [hadGenerationError, setHadGenerationError] = useState(false)
+  
+  // Generate unique ID helper
+  const generateUniqueId = useCallback((prefix?: string, length = 10): string => {
+    const randomId = nanoid(length)
+    return prefix ? `${prefix}-${randomId}` : randomId
+  }, [])
 
-  // AI description generation hook
-  const {
-    generateUserStory,
-    isGenerating,
-    error: generationError,
-    clearError: resetError
-  } = useAIUserStory()
-
-  // Generate description when task name changes (if AI enabled)
-  useEffect(() => {
-    // Only generate if AI is enabled, task name has content, and description is empty
-    if (useAI && taskName.trim() && !description && !hadGenerationError) {
-      // Add a delay to avoid generating on every keystroke
-      const timer = setTimeout(async () => {
-        try {
-          const userStoryResult = await generateUserStory(taskName)
-          if (userStoryResult) {
-            setDescription(userStoryResult.description)
-            
-            // Add order property to each checklist item
-            const formattedChecklist = (userStoryResult.checklist || []).map((item, index) => ({
-              ...item,
-              order: index
-            }))
-            setChecklist(formattedChecklist)
-            
-            // Add checked and order properties to each acceptance criteria item
-            const formattedAcceptanceCriteria = (userStoryResult.acceptanceCriteria || []).map((item, index) => ({
-              ...item,
-              checked: false,
-              order: index
-            }))
-            setAcceptanceCriteria(formattedAcceptanceCriteria)
-          }
-        } catch (error) {
-          console.error("AI description generation failed:", error)
-          setHadGenerationError(true)
-        }
-      }, 1000) // 1 second delay
-
-      return () => clearTimeout(timer)
+  // Fetch data from AI endpoint as event stream
+  const [streamingState, streamingActions] = useStreamingResponse<{
+    userStory: {
+      description: string;
+      acceptanceCriteria: string[];
+      checklist: string[];
     }
-  }, [taskName, useAI, description, generateUserStory, hadGenerationError])
+  }>({
+    endpoint: "/generate-user-story",
+    method: "POST",
+    body: { prompt: taskName, userTier: "free", templateId: 1 },
+  });
 
-  // Reset error state when task name changes
-  useEffect(() => {
-    if (hadGenerationError) {
-      setHadGenerationError(false)
-      resetError()
+  // Function to process streaming data and update form
+  const setFormDataFromStream = useCallback((data?: { description: string, acceptanceCriteria: string[], checklist: string[] }) => {
+    if (data) {
+      // Set description
+      setDescription(data.description || "");
+      
+      // Format checklist items with id, checked status and order
+      const formattedChecklist = (data.checklist || []).map((item, index) => ({
+        id: generateUniqueId('cl'),
+        text: item,
+        checked: false,
+        order: index
+      }));
+      setChecklist(formattedChecklist);
+      
+      // Format acceptance criteria items with id, checked status and order
+      const formattedAcceptanceCriteria = (data.acceptanceCriteria || []).map((item, index) => ({
+        id: generateUniqueId('ac'),
+        text: item,
+        checked: false,
+        order: index
+      }));
+      setAcceptanceCriteria(formattedAcceptanceCriteria);
     }
-  }, [taskName, resetError, hadGenerationError])
+  }, [generateUniqueId]);
+
+  // Connect streaming data to form updates
+  useStreamingDisplay({
+    streamingData: streamingState.data,
+    isStreaming: streamingState.isStreaming,
+    connectionStatus: streamingState.connectionStatus,
+    onDataUpdate: (data) => {
+      setFormDataFromStream(data.userStory)
+    }
+  });
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
@@ -218,30 +222,51 @@ const QuickTaskForm = memo(function QuickTaskForm({
           placeholder="Enter task title..."
           autoFocus
           onKeyDown={handleKeyDown}
-          disabled={isSubmitting}
+          disabled={isSubmitting || streamingState.isStreaming}
         />
+
+        {useAI && taskName.trim() && (
+          <Button 
+            onClick={() => streamingActions.startStreaming()} 
+            disabled={streamingState.isStreaming || !taskName.trim() || isSubmitting}
+            size="1"
+            className="mt-2 mb-2"
+          >
+            {streamingState.isStreaming ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4 mr-2" />
+                Generate Description
+              </>
+            )}
+          </Button>
+        )}
 
         <TextArea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder={useAI ? "AI will generate description based on title..." : "Enter task description..."}
+          placeholder={useAI ? "Generate description with AI or enter manually..." : "Enter task description..."}
           rows={3}
-          disabled={isSubmitting || isGenerating}
+          disabled={isSubmitting || streamingState.isStreaming}
         />
 
         {/* AI Status Indicator */}
-        {useAI && taskName.trim() && (
+        {useAI && (
           <Box className="text-xs">
-            {isGenerating && (
+            {streamingState.isStreaming && (
               <Flex align="center" gap="1" className="text-blue-500">
                 <Loader2 size={12} className="animate-spin" />
                 <Text>Generating description...</Text>
               </Flex>
             )}
-            {generationError && (
-              <Text className="text-red-500">Failed to generate description</Text>
+            {streamingState.error && (
+              <Text className="text-red-500">Failed to generate description: {streamingState.error}</Text>
             )}
-            {!isGenerating && !generationError && description && (
+            {!streamingState.isStreaming && !streamingState.error && description && streamingState.connectionStatus === "completed" && (
               <Flex align="center" gap="1" className="text-green-600">
                 <Check size={12} />
                 <Text>AI description generated</Text>
@@ -254,7 +279,7 @@ const QuickTaskForm = memo(function QuickTaskForm({
           <Button
             type="submit"
             size="2"
-            disabled={!taskName.trim() || isSubmitting}
+            disabled={!taskName.trim() || isSubmitting || streamingState.isStreaming}
             className="flex-1"
           >
             {isSubmitting ? "Adding..." : "Add Task"}
@@ -263,7 +288,13 @@ const QuickTaskForm = memo(function QuickTaskForm({
             type="button"
             size="2"
             variant="soft"
-            onClick={onCancel}
+            onClick={() => {
+              // Cancel streaming if in progress
+              if (streamingState.isStreaming) {
+                streamingActions.stopStreaming();
+              }
+              onCancel();
+            }}
             disabled={isSubmitting}
           >
             Cancel
