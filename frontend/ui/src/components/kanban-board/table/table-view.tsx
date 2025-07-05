@@ -416,7 +416,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       </Box>
 
       {/* Main Content */}
-      <Box className="flex-1 p-4">
+      <Box className=" px-4">
         <TanstackDataTable
           columns={enhancedColumns}
           data={filteredTasks}
