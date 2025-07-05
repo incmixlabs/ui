@@ -9,6 +9,8 @@ import {
   TextField,
   Text,
   Badge,
+  DropdownMenu,
+  Tooltip,
 } from "@base"
 import { TanstackDataTable } from "../../tanstack-table"
 import {
@@ -17,12 +19,16 @@ import {
   RefreshCw,
   Settings,
   MoreVertical,
-  Download
+  Download,
+  ChevronDown,
+  Check,
+  HelpCircle as HelpCircleIcon
 } from "lucide-react"
 
 import type { TableTask } from "../types"
 import type { LabelSchema, TaskDataSchema } from "@incmix/utils/schema"
 import { useAIFeaturesStore } from "@incmix/store"
+import { KeyboardShortcutsHelp } from "../../tanstack-table/components/KeyboardShortcutsHelp"
 import { useTableView } from "../hooks/use-table-view"
 import { TASK_TABLE_COLUMNS } from "./table-columns-config"
 import { TableRowActions } from "./table-row-actions"
@@ -40,7 +46,8 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
   const { useAI } = useAIFeaturesStore()
 
   const [searchQuery, setSearchQuery] = useState("")
-  const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false)
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false)
+  const [isColumnsMenuOpen, setIsColumnsMenuOpen] = useState(false)
 
   // Use the table view hook
   const {
@@ -316,29 +323,64 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
             <Heading size="6">Task Table</Heading>
 
             <Flex align="center" gap="2">
-              <Button
-                variant="soft"
-                onClick={() => setIsCreateTaskOpen(true)}
-              >
-                <Plus size={14} />
-                Add Task
-              </Button>
+              <Tooltip content="Refresh">
+                <IconButton variant="ghost" onClick={handleRefresh}>
+                  <RefreshCw size={16} />
+                </IconButton>
+              </Tooltip>
+              
+              {/* Keyboard shortcuts help */}
+              <div>
+                <Tooltip content="Keyboard Shortcuts">
+                  <div>
+                    <KeyboardShortcutsHelp />
+                  </div>
+                </Tooltip>
+              </div>
+              
+              {/* Column visibility dropdown */}
+              <DropdownMenu.Root open={isColumnsMenuOpen} onOpenChange={setIsColumnsMenuOpen}>
+                <DropdownMenu.Trigger>
+                  <Button variant="ghost" className="flex items-center gap-1">
+                    Columns
+                    <ChevronDown size={14} />
+                  </Button>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content>
+                  {enhancedColumns.map((column) => (
+                    <DropdownMenu.Item key={column.id}>
+                      <Flex align="center" gap="2">
+                        <div className="mr-2 h-4 w-4">
+                          <Check size={16} className="h-4 w-4" />
+                        </div>
+                        <Text>{column.headingName}</Text>
+                      </Flex>
+                    </DropdownMenu.Item>
+                  ))}
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
 
-              <IconButton variant="ghost" onClick={handleRefresh}>
-                <RefreshCw size={16} />
-              </IconButton>
-
-              <IconButton variant="ghost">
-                <Download size={16} />
-              </IconButton>
-
-              <IconButton variant="ghost">
-                <Settings size={16} />
-              </IconButton>
-
-              <IconButton variant="ghost">
-                <MoreVertical size={16} />
-              </IconButton>
+              <DropdownMenu.Root open={isMoreMenuOpen} onOpenChange={setIsMoreMenuOpen}>
+                <DropdownMenu.Trigger>
+                  <IconButton variant="ghost">
+                    <MoreVertical size={16} />
+                  </IconButton>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content>
+                  <DropdownMenu.Item>
+                    <Flex align="center" gap="2">
+                      <Download size={16} />
+                      <Text>Download</Text>
+                    </Flex>
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item>
+                    <Flex align="center" gap="2">
+                      <Settings size={16} />
+                      <Text>Settings</Text>
+                    </Flex>
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
             </Flex>
           </Flex>
 
@@ -374,21 +416,21 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       </Box>
 
       {/* Main Content */}
-      <Box className="flex-1 p-4">
+      <Box className=" px-4">
         <TanstackDataTable
           columns={enhancedColumns}
           data={filteredTasks}
           enableRowSelection={true}
           enableSorting={true}
           enablePagination={true}
-          enableColumnVisibility={true}
-          filterColumn="name"
-          filterPlaceholder="Filter tasks..."
+          enableColumnVisibility={false} /* Hide column visibility dropdown */
+          enableFiltering={false} /* Hide filter input field */
           facets={tableFacets}
           isPaginationLoading={isLoading}
 
-          // Inline editing functionality
-          enableInlineCellEdit={true}
+          // Inline editing functionality - disabled to hide keyboard shortcuts icon
+          enableInlineCellEdit={false}
+          // Still provide columns and handler in case inline editing is needed elsewhere
           inlineEditableColumns={["name", "startDate", "endDate"]} // Status and priority handled by custom components
           onCellEdit={handleCellEdit}
 
@@ -405,44 +447,10 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
 
         {tasks.length === 0 && !searchQuery && (
           <Flex direction="column" align="center" className="py-12 space-y-4">
-            <Text className="text-gray-500">No tasks found. Create your first task to get started.</Text>
-            <Button
-              onClick={() => setIsCreateTaskOpen(true)}
-              variant="soft"
-            >
-              <Plus size={14} />
-              Create Task
-            </Button>
+            <Text className="text-gray-500">No tasks found. Use the Board or List view to add tasks.</Text>
           </Flex>
         )}
       </Box>
-
-      {/* Create Task Dialog */}
-      <CreateTaskDialog
-        isOpen={isCreateTaskOpen}
-        onClose={() => setIsCreateTaskOpen(false)}
-        onCreateTask={async (taskData) => {
-          // Convert TableTask data to TaskDataSchema
-          const schemaData: Partial<TaskDataSchema> = {};
-          
-          // Map TableTask properties to TaskDataSchema
-          if (taskData.name !== undefined) schemaData.name = taskData.name;
-          if (taskData.description !== undefined) schemaData.description = taskData.description;
-          if (taskData.statusId !== undefined) schemaData.statusId = taskData.statusId;
-          if (taskData.priorityId !== undefined) schemaData.priorityId = taskData.priorityId;
-          if (taskData.startDate !== undefined) schemaData.startDate = taskData.startDate;
-          if (taskData.endDate !== undefined) schemaData.endDate = taskData.endDate;
-          if (taskData.completed !== undefined) schemaData.completed = taskData.completed;
-          
-          // Convert complex properties if needed
-          if (taskData.assignedTo) schemaData.assignedTo = taskData.assignedTo;
-          if (taskData.labelsTags) schemaData.labelsTags = taskData.labelsTags;
-          if (taskData.attachments) schemaData.attachments = taskData.attachments;
-          
-          return createTask(schemaData);
-        }}
-        taskStatuses={(labels as unknown as LabelSchema[]) || []}
-      />
 
       {/* Task Detail Drawer */}
       <TaskCardDrawer viewType="list" projectId={projectId} />

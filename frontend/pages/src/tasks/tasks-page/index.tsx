@@ -25,8 +25,6 @@ import { useEffect, useState } from "react"
 import type { RxDatabase } from "rxdb"
 import { useRxDB } from "rxdb-hooks"
 
-import { CreateProjectForm } from "./create-project-form"
-
 const TasksPage = () => {
   const { selectedOrganisation } = useOrganizationStore()
   // Define default project ID
@@ -37,7 +35,7 @@ const TasksPage = () => {
   const { useAI, setUseAI } = useAIFeaturesStore()
 
   // Get projects for the selected organization
-  const { data: projects, refetch: refetchProjects } = useQuery({
+  const { data: projects } = useQuery({
     queryKey: ["projects", selectedOrganisation?.id],
     enabled: !!selectedOrganisation?.id && !!db.projects,
     queryFn: () => {
@@ -74,93 +72,54 @@ const TasksPage = () => {
 
   return (
     <DashboardLayout>
-      {/* Main container - Natural height for vertical scrolling */}
-      <Box className="flex min-h-screen flex-col">
-        {/* Fixed Header Section - Project Selection */}
-        <Box className="flex-shrink-0 border-gray-200 border-b dark:border-gray-700">
-          <Box className="p-4">
-            {/* Project Selection and Creation */}
-            <Flex justify="between" align="center">
-              <Flex className="gap-4" align={"center"}>
-                <PageHeader />
-                <CreateProjectForm
-                  onSuccess={(p) => {
-                    refetchProjects()
-                    setSelectedProject(p.id)
-                  }}
-                />
-              </Flex>
-              <Flex align="center" gap="4">
-                {/* Use AI Toggle */}
-                <Flex align="center" gap="2">
-                  <div className="text-sm">Use AI</div>
-                  <Switch checked={useAI} onCheckedChange={setUseAI} />
-                </Flex>
-
-                {/* Add Task Form - Always visible */}
-                <AddTaskForm
-                  projectId="default-project"
-                  onSuccess={() => {
-                    // You might want to implement a refetch function here
-                    // if needed to update task lists after creation
-                  }}
-                />
-              </Flex>
-            </Flex>
-          </Box>
-        </Box>
-
-        {/* Tabs Header - Fixed */}
-        <Box className="flex-shrink-0 border-gray-200 border-b px-4 pb-2 dark:border-gray-700">
-          <Tabs.Root defaultValue="board">
+      {/*
+        FIX: The entire page is now a flex column that fills the height of the main area.
+      */}
+      <Tabs.Root defaultValue="board" className="flex h-full flex-col">
+        {/* HEADER AREA: This part is fixed and does not shrink. */}
+        <Box className="flex-shrink-0 border-gray-200 border-b px-4 py-3 dark:border-gray-700">
+          <Flex justify="between" align="center" className="w-full">
             <Tabs.List
               className="flex w-fit shrink-0 rounded-md bg-gray-3 shadow-none"
               aria-label="View options"
             >
-              <Tabs.Trigger
-                className="flex cursor-pointer select-none px-4 py-2 text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
-                value="board"
-              >
-                Board (Kanban)
-              </Tabs.Trigger>
-              <Tabs.Trigger
-                className="flex cursor-pointer select-none px-4 py-2 text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
-                value="list"
-              >
-                List
-              </Tabs.Trigger>
-              <Tabs.Trigger
-                className="flex cursor-pointer select-none px-4 py-2 text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
-                value="table"
-              >
-                Table
-              </Tabs.Trigger>
-              <Tabs.Trigger
-                className="flex cursor-pointer select-none px-4 py-2 text-[15px] text-mauve11 leading-none outline-none first:rounded-tl-md last:rounded-tr-md hover:text-indigo-9 data-[state=active]:text-indigo-9"
-                value="roadmap"
-              >
-                Roadmap
-              </Tabs.Trigger>
+              <Tabs.Trigger value="board">Board</Tabs.Trigger>
+              <Tabs.Trigger value="list">List</Tabs.Trigger>
+              <Tabs.Trigger value="table">Table</Tabs.Trigger>
+              <Tabs.Trigger value="roadmap">Roadmap</Tabs.Trigger>
             </Tabs.List>
 
-            {/* Content Area - Natural height, allows page to scroll vertically */}
-            <Tabs.Content value="board">
-              <Board projectId={selectedProject || "default-project"} />
-            </Tabs.Content>
-
-            <Tabs.Content value="list">
-              <ListBoard projectId={selectedProject || "default-project"} />
-            </Tabs.Content>
-
-            <Tabs.Content value="table">
-              <TableView projectId={selectedProject || "default-project"} />
-            </Tabs.Content>
-            <Tabs.Content value="roadmap">
-              <RoadmapView projectId={selectedProject || "default-project"} />
-            </Tabs.Content>
-          </Tabs.Root>
+            <Flex align="center" gap="4">
+              <Flex align="center" gap="2">
+                <div className="text-sm">Gen AI</div>
+                <Switch checked={useAI} onCheckedChange={setUseAI} />
+              </Flex>
+              <AddTaskForm projectId="default-project" onSuccess={() => {}} />
+            </Flex>
+          </Flex>
         </Box>
-      </Box>
+
+        {/*
+          CONTENT AREA: This wrapper is now the flexible part.
+          - `flex-1`: Makes it take all available vertical space.
+          - `overflow-y-auto`: Allows for vertical scrolling if needed.
+          - `relative`: Provides a positioning context for its children.
+        */}
+        <Box className="relative flex-1 overflow-y-auto">
+          <Tabs.Content value="board" className="h-full">
+            <Board projectId={selectedProject || "default-project"} />
+          </Tabs.Content>
+          <Tabs.Content value="list" className="h-full">
+            <ListBoard projectId={selectedProject || "default-project"} />
+          </Tabs.Content>
+          <Tabs.Content value="table" className="h-full">
+            <TableView projectId={selectedProject || "default-project"} />
+          </Tabs.Content>
+          <Tabs.Content value="roadmap" className="h-full">
+            <RoadmapView projectId={selectedProject || "default-project"} />
+          </Tabs.Content>
+        </Box>
+      </Tabs.Root>
     </DashboardLayout>
   )
 }

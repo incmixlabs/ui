@@ -1,4 +1,5 @@
-// components/board/index.tsx - Fixed drag and drop smoothness and horizontal scrolling
+// components/board/index.tsx - Fixed horizontal scrolling
+
 import { useRef, useEffect, useState, useCallback } from "react"
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
@@ -12,7 +13,10 @@ import {
   Text,
   IconButton,
   Heading,
-  DropdownMenu
+  DropdownMenu,
+  ScrollArea,
+  Tooltip
+
 } from "@base"
 import {
   Loader2,
@@ -25,7 +29,7 @@ import {  useAIFeaturesStore } from "@incmix/store"
 import { useKanban } from "../hooks/use-kanban-data"
 import { BoardColumn } from "./board-column"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
-import { CreateColumnForm } from "./create-column-form"
+import { CreateColumnForm } from "../shared/create-column-form"
 
 interface BoardProps {
   projectId?: string
@@ -39,13 +43,9 @@ export function Board({
   const scrollableRef = useRef<HTMLDivElement | null>(null)
   const [isDragging, setIsDragging] = useState(false)
 
-  // Local state for optimistic updates
+  // ... (all your existing hooks and logic remain the same)
   const [optimisticColumns, setOptimisticColumns] = useState<KanbanColumn[]>([])
-
-  // Get AI features state
   const { useAI } = useAIFeaturesStore()
-
-  // Use the new useKanban hook
   const {
     columns,
     isLoading,
@@ -54,36 +54,35 @@ export function Board({
     updateTask,
     deleteTask,
     moveTask,
-    updateStatusLabel, // Using the compatibility methods instead
-    deleteStatusLabel, // Using the compatibility methods instead
+    updateStatusLabel,
+    deleteStatusLabel,
     refetch,
     clearError,
     projectStats
   } = useKanban(projectId)
 
-  // Update optimistic state when real data changes
   useEffect(() => {
     if (!isDragging) {
       setOptimisticColumns(columns)
     }
   }, [columns, isDragging])
 
-  // Use optimistic columns during drag, real columns otherwise
   const displayColumns = isDragging ? optimisticColumns : columns
 
-  // Optimistic drag and drop implementation
+  
+
   useEffect(() => {
     const element = scrollableRef.current
     if (!element || isLoading || columns.length === 0) {
       return
     }
-
+    // ... (your entire drag and drop useEffect remains the same)
     return combine(
       monitorForElements({
         canMonitor: isDraggingACard,
         onDragStart() {
           setIsDragging(true)
-          setOptimisticColumns([...columns]) // Initialize optimistic state
+          setOptimisticColumns([...columns])
         },
         onDrop({ source, location }) {
           const dragging = source.data
@@ -99,8 +98,6 @@ export function Board({
           }
 
           const dropTargetData = destination.data
-
-          // Find the task being dragged
           const sourceColumn = optimisticColumns.find(col => col.id === dragging.statusId)
           if (!sourceColumn) {
             setIsDragging(false)
@@ -118,7 +115,6 @@ export function Board({
           let newOptimisticColumns = [...optimisticColumns]
 
           if (isCardDropTargetData(dropTargetData)) {
-            // Dropping on another card
             const destColumn = optimisticColumns.find(col => col.id === dropTargetData.statusId)
             if (!destColumn) {
               setIsDragging(false)
@@ -128,7 +124,6 @@ export function Board({
             targetColumnId = destColumn.id
 
             if (sourceColumn.id === destColumn.id) {
-              // Same column reorder - update optimistically
               const targetTaskIndex = destColumn.tasks.findIndex(task => task.id === dropTargetData.card.id)
               if (targetTaskIndex === -1 || targetTaskIndex === taskIndex) {
                 setIsDragging(false)
@@ -149,15 +144,13 @@ export function Board({
                 closestEdgeOfTarget: closestEdge,
               })
 
-              // Update optimistic state immediately
               newOptimisticColumns = newOptimisticColumns.map(col =>
                 col.id === sourceColumn.id
                   ? { ...col, tasks: reordered }
                   : col
               )
               setOptimisticColumns(newOptimisticColumns)
-
-              // Update backend (this will eventually update the real state)
+              
               const newIndex = reordered.findIndex(t => t.id === dragging.card.id)
               
               if (dragging.card.id) {
@@ -170,13 +163,11 @@ export function Board({
               }
               return
             } else {
-              // Different column
               const targetTaskIndex = destColumn.tasks.findIndex(task => task.id === dropTargetData.card.id)
               const closestEdge = extractClosestEdge(dropTargetData)
               targetIndex = closestEdge === "bottom" ? targetTaskIndex + 1 : targetTaskIndex
             }
           } else if (isColumnData(dropTargetData)) {
-            // Dropping on column
             const destColumn = optimisticColumns.find(col => col.id === dropTargetData.column.id)
             if (!destColumn) {
               setIsDragging(false)
@@ -189,11 +180,8 @@ export function Board({
             return
           }
 
-          // Cross-column move - update optimistically
           if (targetColumnId !== sourceColumn.id) {
             const taskToMove = sourceColumn.tasks[taskIndex]
-
-            // Update optimistic state immediately
             newOptimisticColumns = newOptimisticColumns.map(col => {
               if (col.id === sourceColumn.id) {
                 return {
@@ -212,7 +200,6 @@ export function Board({
             })
             setOptimisticColumns(newOptimisticColumns)
 
-            // Update backend
             if (dragging.card.id) {
               moveTask(dragging.card.id, targetColumnId, targetIndex).finally(() => {
                 setIsDragging(false)
@@ -233,10 +220,10 @@ export function Board({
     )
   }, [optimisticColumns, moveTask, isDragging])
 
-  // Handle refresh
   const handleRefresh = useCallback(() => {
     refetch()
   }, [refetch])
+
 
   if (isLoading) {
     return (
@@ -263,82 +250,50 @@ export function Board({
     )
   }
 
+
   return (
-    <Box className="w-full">
-      {/* Fixed Board Header - Always visible, doesn't scroll horizontally */}
-      <Box className="border-b border-gray-200 dark:border-gray-700">
+    // FIX: The Board is now a flex column that fills the height of its container.
+    <Box className="w-full h-full flex flex-col">
+     
+      {/* HEADER: This part is fixed and will not shrink. */}
+      <Box className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700">
         <Flex direction="column" gap="4" className="p-4">
           <Flex justify="between" align="center">
             <Heading size="6">Project Board</Heading>
-
             <Flex align="center" gap="2">
-              {/* Global Add Task Button - Always visible */}
-
-
-              {/* Board Actions */}
-              <IconButton variant="ghost" onClick={handleRefresh}>
-                <RefreshCw size={16} />
-              </IconButton>
-
+              <Tooltip content="Refresh">
+                <IconButton variant="ghost" onClick={handleRefresh}><RefreshCw size={16} /></IconButton>
+              </Tooltip>
               <DropdownMenu.Root>
-                <DropdownMenu.Trigger>
-                  <IconButton variant="ghost">
-                    <MoreVertical size={16} />
-                  </IconButton>
-                </DropdownMenu.Trigger>
+                <DropdownMenu.Trigger><IconButton variant="ghost"><MoreVertical size={16} /></IconButton></DropdownMenu.Trigger>
                 <DropdownMenu.Content>
-                  <DropdownMenu.Item onClick={handleRefresh}>
-                    <RefreshCw size={14} />
-                    Refresh Board
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item>
-                    <Settings size={14} />
-                    Board Settings
-                  </DropdownMenu.Item>
+                  <DropdownMenu.Item onClick={handleRefresh}><RefreshCw size={14} /> Refresh Board</DropdownMenu.Item>
+                  <DropdownMenu.Item><Settings size={14} /> Board Settings</DropdownMenu.Item>
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
             </Flex>
           </Flex>
-
-          {/* Board Stats */}
           <Flex gap="6" className="text-sm text-gray-600 dark:text-gray-400">
-            <Text>
-              {projectStats.totalStatusLabels} column{projectStats.totalStatusLabels !== 1 ? "s" : ""}
-            </Text>
-            <Text>
-              {projectStats.totalTasks} task{projectStats.totalTasks !== 1 ? "s" : ""}
-            </Text>
-            <Text>
-              {projectStats.completedTasks} completed
-            </Text>
-            {projectStats.overdueTasks > 0 && (
-              <Text className="text-red-600">
-                {projectStats.overdueTasks} overdue
-              </Text>
-            )}
-            {projectStats.urgentTasks > 0 && (
-              <Text className="text-orange-600">
-                {projectStats.urgentTasks} urgent
-              </Text>
-            )}
+            <Text>{projectStats.totalStatusLabels} column{projectStats.totalStatusLabels !== 1 ? "s" : ""}</Text>
+            <Text>{projectStats.totalTasks} task{projectStats.totalTasks !== 1 ? "s" : ""}</Text>
+            <Text>{projectStats.completedTasks} completed</Text>
+            {projectStats.overdueTasks > 0 && <Text className="text-red-600">{projectStats.overdueTasks} overdue</Text>}
+            {projectStats.urgentTasks > 0 && <Text className="text-orange-600">{projectStats.urgentTasks} urgent</Text>}
           </Flex>
         </Flex>
       </Box>
 
-      {/* Columns area - Horizontal scroll only, natural height growth */}
-      <Box className="w-full">
-        <div
-          className="w-full overflow-x-auto"
+      <Box className="flex-1 overflow-hidden">
+        <ScrollArea 
+          scrollbars="horizontal" 
+          type="hover" 
+          className="w-full h-full"
           ref={scrollableRef}
         >
-          {/* Columns container - Natural height, horizontal scroll */}
-          <div className="p-4 flex gap-6" style={{ width: 'max-content' }}>
-            {/* Kanban Columns */}
+          {/* This inner div can now be as wide as it needs, and the ScrollArea will handle it. */}
+          <div className="p-4 flex gap-6 h-full" style={{ width: 'max-content' }}>
             {displayColumns.map((column) => (
-              <div
-                key={column.id}
-                className="w-80 flex-shrink-0"
-              >
+              <div key={column.id} className="w-80 flex-shrink-0 h-full">
                 <BoardColumn
                   column={column}
                   onCreateTask={createTask}
@@ -351,21 +306,10 @@ export function Board({
                 />
               </div>
             ))}
-
-            {/* Add Column */}
-            <div className="w-80 flex-shrink-0">
-              <Box className="min-h-[500px] rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
-                <Flex
-                  align="center"
-                  justify="center"
-                  className="h-full p-4"
-                  direction="column"
-                  gap="4"
-                >
-                  <CreateColumnForm
-                    projectId={projectId}
-                    onSuccess={handleRefresh}
-                  />
+            <div className="w-80 flex-shrink-0 h-full">
+              <Box className="h-full rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
+                <Flex align="center" justify="center" className="h-full p-4" direction="column" gap="4">
+                  <CreateColumnForm projectId={projectId} onSuccess={handleRefresh} />
                   <Text size="2" className="text-gray-500 text-center max-w-48">
                     Create a new status column to organize your workflow
                   </Text>
@@ -373,10 +317,9 @@ export function Board({
               </Box>
             </div>
           </div>
-        </div>
+        </ScrollArea>
       </Box>
 
-      {/* Task Drawer */}
       <TaskCardDrawer />
     </Box>
   )

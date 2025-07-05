@@ -156,7 +156,7 @@ export const TableFiltersComponent = <TData extends object>({
   }, [table]);
 
   return (
-    <div className="flex items-center py-4 gap-2 flex-wrap">
+    <div className="flex items-center py-1 gap-2 flex-wrap">
       {/* Sidebar toggle button */}
       {enableSidebarFilters && onToggleSidebar && (
         <Button
