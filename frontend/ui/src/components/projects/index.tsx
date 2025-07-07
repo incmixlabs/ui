@@ -19,6 +19,10 @@ import { nanoid } from "nanoid"
 import { useQueryState } from "nuqs"
 import { Suspense, lazy } from "react"
 import { MotionSheet } from "../custom-sheet"
+export {
+  ReusableAddProject,
+  useAddProject
+} from './components/reusable-add-project'
 
 // Dynamically import heavy components
 const AddProjectAutoForm = lazy(() =>
@@ -145,7 +149,7 @@ export function ProjectPageComponents() {
       const searchLower = filters.search.toLowerCase()
       filtered = filtered.filter(
         (project) =>
-          project.title.toLowerCase().includes(searchLower) ||
+          project.name.toLowerCase().includes(searchLower) ||
           project.company.toLowerCase().includes(searchLower) ||
           project.description.toLowerCase().includes(searchLower)
       )

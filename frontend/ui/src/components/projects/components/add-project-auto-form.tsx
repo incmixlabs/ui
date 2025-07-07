@@ -42,7 +42,7 @@ export function AddProjectAutoForm({
 
     // Transform form data to match the Project type
     const newProject: Omit<Project, "id"> = {
-      title: data.title,
+      name: data.name,
       company: data.company,
       logo: ProjectsImages.user, // Default logo
       description: data.description,

@@ -21,6 +21,7 @@ import {
 import { Link } from "@tanstack/react-router"
 import { OrgSwitcher } from "./org-switcher"
 import { ProjectSwitcher } from "./project-switcher"
+import { ReusableAddProject, useAddProject } from "@incmix/ui"
 
 type NavItem = {
   title: string
@@ -95,6 +96,9 @@ export function NavMain({
   const openCreateDashboardModal = useModalStore(
     (state) => state.openDashboardCreate
   )
+  
+  // Add Project dialog state
+  const { isOpen, openAddProject, closeAddProject } = useAddProject()
 
   console.log(dashboards)
 
@@ -149,12 +153,11 @@ export function NavMain({
     }
     // For exact "/projects" root
     if (isProjectsRoot(item)) {
-      console.log("Returning projects root context menu")
       return (
         <ContextMenu.Item
           color="indigo"
           className="cursor-pointer px-2 py-1"
-          onSelect={() => console.log("Create Project")}
+          onSelect={openAddProject}
         >
           <Text size="2" as="span">
             Create Project
@@ -244,7 +247,11 @@ export function NavMain({
   }
 
   return (
-    <SidebarGroup>
+    <>
+      {/* Add Project dialog */}
+      <ReusableAddProject isOpen={isOpen} onClose={closeAddProject} />
+      
+      <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => {
           const hoverContent = generateHoverContent(item)
@@ -361,5 +368,6 @@ export function NavMain({
         })}
       </SidebarMenu>
     </SidebarGroup>
+    </>
   )
 }
