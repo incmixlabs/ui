@@ -48,11 +48,6 @@ export function ReusableAddProject({
       // Process the form data
       const uniqueId = nanoid()
       
-      // Make sure we use title property directly from the form data
-      if (!data.title && data.name) {
-        data.title = data.name; // Use name as title if title is missing but name exists
-      }
-      
       // Create a Project object with required fields
       const newProject = {
         id: uniqueId,
@@ -64,16 +59,16 @@ export function ReusableAddProject({
         timeLeft: data.timeLeft || "2 weeks",
         timeType: data.timeType || "week",
         status: data.status || "started",
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
+        createdAt: new Date(), // Convert to proper Date object
+        updatedAt: new Date(), // Convert to proper Date object
         budget: data.budget || 0,
         // Transform members to match expected format
         members: data.members?.map((option: Option) => ({
-          label: option.label || "", // Use 'label' property as required by schema
-          value: option.value
+          label: option.label || option.value || "", // Fallback to value if label is missing
+          value: option.value || ""
         })) || [],
         fileData: data.files?.[0] || null
-      } as unknown as Project
+      } satisfies Project
       
       // Save to RxDB
       await saveFormProject(newProject)
