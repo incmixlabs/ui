@@ -269,29 +269,8 @@ const Sidebar = React.forwardRef<
         </Box>
       );
     }
-
-    // if (isMobile && isDefaultMobile) {
-    //   return (
-    //     <div open={openMobile} onOpenChange={setOpenMobile} {...props}>
-    //       <SheetContent
-    //         data-sidebar="sidebar"
-    //         data-mobile="true"
-    //         className={cn(
-    //           "px-1 text-sidebar-foreground [&>button]:hidden border-l-0 w-[--sidebar-width]",
-    //           className,
-    //         )}
-    //         side={side}
-    //       >
-    //         {SideBarTrigger}
-    //         <SheetTitle className="sr-only">Sidebar</SheetTitle>
-    //         <SheetDescription className="sr-only">Sidebar</SheetDescription>
-    //         <Box className="flex h-full w-full flex-col">{children}</Box>
-    //       </SheetContent>
-    //     </div>
-    //   );
-    // }
-    {
-      isMobile && isDefaultMobile && (
+    if (isMobile && isDefaultMobile) {
+      return (
         <Box {...props}>
           {openMobile && (
             <Box
@@ -317,7 +296,7 @@ const Sidebar = React.forwardRef<
             <Box className="flex h-full w-full flex-col">{children}</Box>
           </Box>
         </Box>
-      );
+      )
     }
 
     return (
