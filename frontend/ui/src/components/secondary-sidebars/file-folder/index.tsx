@@ -1,22 +1,22 @@
-"use client"
-import { Box, Flex, Progress, ScrollArea, Text, iconSize } from "@incmix/ui"
-import { FolderClosed, type LucideIcon } from "lucide-react"
-import { type JSX, useState } from "react"
-import { secondaryFooterData, secondarySidebarData } from "./data"
-import { FolderClose } from "./icons/folder-close"
-import { FolderOpen } from "./icons/folder-open"
-import { Tree } from "./tree-view"
+"use client";
+import { Box, Flex, Progress, ScrollArea, Text, iconSize } from "@incmix/ui";
+import { FolderClosed, type LucideIcon } from "lucide-react";
+import { type JSX, useState } from "react";
+import { secondaryFooterData, secondarySidebarData } from "./data";
+import { FolderClose } from "./icons/folder-close";
+import { FolderOpen } from "./icons/folder-open";
+import { Tree } from "./tree-view";
 
 interface footerTypes {
-  icon?: LucideIcon
-  title: string
-  storageAvailable?: number
+  icon?: LucideIcon;
+  title: string;
+  storageAvailable?: number;
 }
 
-const footerData: footerTypes[] = secondaryFooterData
+const footerData: footerTypes[] = secondaryFooterData;
 
 export function FileFolder(): JSX.Element {
-  const [_selectedItem, setSelectedItem] = useState<string>("Admin Page")
+  const [_selectedItem, setSelectedItem] = useState<string>("Admin Page");
   return (
     <>
       <Flex
@@ -24,8 +24,8 @@ export function FileFolder(): JSX.Element {
         align={"center"}
         className="shrink-0 border-b-[1px] border-b-gray-6 px-8 py-2 "
       >
-        <FolderClosed className="stroke-sidebar-secondary-active" size={20} />
-        <Text className="font-medium text-[16px] text-sidebar-secondary-active">
+        <FolderClosed className="stroke-gray-12" size={20} />
+        <Text className="font-medium text-[16px] text-gray-12">
           File Manager
         </Text>
       </Flex>
@@ -64,7 +64,7 @@ export function FileFolder(): JSX.Element {
                   className="mt-4"
                 />
               </Box>
-            )
+            );
           }
           return (
             <Box
@@ -79,9 +79,9 @@ export function FileFolder(): JSX.Element {
               )}
               <Text className=" font-medium text-[16px]">{item.title}</Text>
             </Box>
-          )
+          );
         })}
       </Box>
     </>
-  )
+  );
 }
