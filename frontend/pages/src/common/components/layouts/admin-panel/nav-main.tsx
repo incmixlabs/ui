@@ -4,6 +4,7 @@ import { ChevronRight, type LucideIcon } from "lucide-react"
 
 import type { Dashboard } from "@incmix/store"
 import { Box, ContextMenu, Flex, Text, useModalStore } from "@incmix/ui"
+import { ReusableAddProject, useAddProject } from "@incmix/ui"
 import {
   Collapsible,
   CollapsibleContent,
@@ -21,7 +22,6 @@ import {
 import { Link } from "@tanstack/react-router"
 import { OrgSwitcher } from "./org-switcher"
 import { ProjectSwitcher } from "./project-switcher"
-import { ReusableAddProject, useAddProject } from "@incmix/ui"
 
 type NavItem = {
   title: string
@@ -96,7 +96,7 @@ export function NavMain({
   const openCreateDashboardModal = useModalStore(
     (state) => state.openDashboardCreate
   )
-  
+
   // Add Project dialog state
   const { isOpen, openAddProject, closeAddProject } = useAddProject()
 
@@ -250,124 +250,125 @@ export function NavMain({
     <>
       {/* Add Project dialog */}
       <ReusableAddProject isOpen={isOpen} onClose={closeAddProject} />
-      
+
       <SidebarGroup>
-      <SidebarMenu>
-        {items.map((item) => {
-          const hoverContent = generateHoverContent(item)
-          console.log(hoverContent)
-          const content = item.items?.length ? (
-            <Collapsible
-              key={item.title}
-              asChild
-              defaultOpen={item.isActive}
-              className="group/collapsible"
-            >
-              <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
+        <SidebarMenu>
+          {items.map((item) => {
+            const hoverContent = generateHoverContent(item)
+            console.log(hoverContent)
+            const content = item.items?.length ? (
+              <Collapsible
+                key={item.title}
+                asChild
+                defaultOpen={item.isActive}
+                className="group/collapsible"
+              >
+                <SidebarMenuItem>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      isSelected={item.isSelected}
+                      isSubMenuSelected={item.isActive}
+                      tooltip={item.title}
+                      hoverContent={hoverContent}
+                      className="active:bg-[var(--sidebar-background)] active:text-[var(--sidebar-foreground)]"
+                    >
+                      {item.icon && <item.icon className="scale-icon" />}
+                      <Text size="2" as="span">
+                        {item.title}
+                      </Text>
+                      <ChevronRight className="group-data-[state=open]/collapsible:transform-x-90 ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+                    <SidebarMenuSub className="px-0 py-1">
+                      {item.items.map((subItem) => {
+                        const switcher =
+                          subItem.title.toLowerCase() === "tasks" ? (
+                            <ProjectSwitcher
+                              key={`project-switcher-${subItem.title}`}
+                            />
+                          ) : null
+                        const subItemContent = (
+                          <>
+                            {switcher}
+                            <SidebarMenuSubItem key={subItem.title}>
+                              <SidebarMenuSubButton
+                                isSelected={subItem.isSelected}
+                                asChild
+                              >
+                                <Link to={subItem.url}>
+                                  <Text size="2" as="span">
+                                    {subItem.title}
+                                  </Text>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          </>
+                        )
+
+                        // Check if this sub-item needs a context menu
+                        const subItemContextMenu =
+                          getSubItemContextMenu(subItem)
+
+                        return subItemContextMenu ? (
+                          <ContextMenu.Root key={subItem.title}>
+                            <ContextMenu.Trigger>
+                              {subItemContent}
+                            </ContextMenu.Trigger>
+                            <ContextMenu.Content className="z-50 min-w-[150px] rounded-md border border-gray-5 bg-popover p-1 shadow-md">
+                              {subItemContextMenu}
+                            </ContextMenu.Content>
+                          </ContextMenu.Root>
+                        ) : (
+                          subItemContent
+                        )
+                      })}
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </SidebarMenuItem>
+              </Collapsible>
+            ) : (
+              <SidebarMenuItem key={item.title}>
+                {item.url === "/projects" ? (
+                  <ProjectSwitcher />
+                ) : (
                   <SidebarMenuButton
                     isSelected={item.isSelected}
-                    isSubMenuSelected={item.isActive}
                     tooltip={item.title}
-                    hoverContent={hoverContent}
-                    className="active:bg-[var(--sidebar-background)] active:text-[var(--sidebar-foreground)]"
+                    asChild
                   >
-                    {item.icon && <item.icon className="scale-icon" />}
-                    <Text size="2" as="span">
-                      {item.title}
-                    </Text>
-                    <ChevronRight className="group-data-[state=open]/collapsible:transform-x-90 ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    <Link to={item.url}>
+                      {item.icon && <item.icon className="scale-icon" />}
+                      <Text size="2" as="span">
+                        {item.title}
+                      </Text>
+                      {item.notificationCount && (
+                        <Box className="ml-auto min-w-[16px] rounded-md bg-[var(--sidebar-foreground)] px-1 py-0.5 text-center font-semibold text-[10px] text-[var(--sidebar-background)] transition-transform duration-200">
+                          {item.notificationCount}
+                        </Box>
+                      )}
+                    </Link>
                   </SidebarMenuButton>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
-                  <SidebarMenuSub className="px-0 py-1">
-                    {item.items.map((subItem) => {
-                      const switcher =
-                        subItem.title.toLowerCase() === "tasks" ? (
-                          <ProjectSwitcher
-                            key={`project-switcher-${subItem.title}`}
-                          />
-                        ) : null
-                      const subItemContent = (
-                        <>
-                          {switcher}
-                          <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton
-                              isSelected={subItem.isSelected}
-                              asChild
-                            >
-                              <Link to={subItem.url}>
-                                <Text size="2" as="span">
-                                  {subItem.title}
-                                </Text>
-                              </Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        </>
-                      )
-
-                      // Check if this sub-item needs a context menu
-                      const subItemContextMenu = getSubItemContextMenu(subItem)
-
-                      return subItemContextMenu ? (
-                        <ContextMenu.Root key={subItem.title}>
-                          <ContextMenu.Trigger>
-                            {subItemContent}
-                          </ContextMenu.Trigger>
-                          <ContextMenu.Content className="z-50 min-w-[150px] rounded-md border border-gray-5 bg-popover p-1 shadow-md">
-                            {subItemContextMenu}
-                          </ContextMenu.Content>
-                        </ContextMenu.Root>
-                      ) : (
-                        subItemContent
-                      )
-                    })}
-                  </SidebarMenuSub>
-                </CollapsibleContent>
+                )}
               </SidebarMenuItem>
-            </Collapsible>
-          ) : (
-            <SidebarMenuItem key={item.title}>
-              {item.url === "/projects" ? (
-                <ProjectSwitcher />
-              ) : (
-                <SidebarMenuButton
-                  isSelected={item.isSelected}
-                  tooltip={item.title}
-                  asChild
-                >
-                  <Link to={item.url}>
-                    {item.icon && <item.icon className="scale-icon" />}
-                    <Text size="2" as="span">
-                      {item.title}
-                    </Text>
-                    {item.notificationCount && (
-                      <Box className="ml-auto min-w-[16px] rounded-md bg-[var(--sidebar-foreground)] px-1 py-0.5 text-center font-semibold text-[10px] text-[var(--sidebar-background)] transition-transform duration-200">
-                        {item.notificationCount}
-                      </Box>
-                    )}
-                  </Link>
-                </SidebarMenuButton>
-              )}
-            </SidebarMenuItem>
-          )
+            )
 
-          // Get context menu for main item
-          const mainItemContextMenu = getMainItemContextMenu(item)
+            // Get context menu for main item
+            const mainItemContextMenu = getMainItemContextMenu(item)
 
-          return mainItemContextMenu ? (
-            <ContextMenu.Root key={item.title}>
-              <ContextMenu.Trigger>{content}</ContextMenu.Trigger>
-              <ContextMenu.Content className="z-50 min-w-[150px] rounded-md border border-gray-5 bg-popover p-1 shadow-md">
-                {mainItemContextMenu}
-              </ContextMenu.Content>
-            </ContextMenu.Root>
-          ) : (
-            content
-          )
-        })}
-      </SidebarMenu>
-    </SidebarGroup>
+            return mainItemContextMenu ? (
+              <ContextMenu.Root key={item.title}>
+                <ContextMenu.Trigger>{content}</ContextMenu.Trigger>
+                <ContextMenu.Content className="z-50 min-w-[150px] rounded-md border border-gray-5 bg-popover p-1 shadow-md">
+                  {mainItemContextMenu}
+                </ContextMenu.Content>
+              </ContextMenu.Root>
+            ) : (
+              content
+            )
+          })}
+        </SidebarMenu>
+      </SidebarGroup>
     </>
   )
 }
