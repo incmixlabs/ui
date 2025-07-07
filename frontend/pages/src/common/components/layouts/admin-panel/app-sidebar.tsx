@@ -30,6 +30,7 @@ import {
   SidebarHeader,
   SidebarHeaderLabel,
   SidebarRail,
+  useSidebar,
 } from "@incmix/ui/sidebar"
 import { createAbilityFromPermissions } from "@incmix/utils/casl"
 import type { Permission } from "@incmix/utils/types"
@@ -44,6 +45,7 @@ import { OrgSwitcher } from "./org-switcher"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation(["common", "sidebar"])
+  const { isMobile } = useSidebar()
 
   const { pathname } = useLocation()
   const { authUser: user } = useAuth()
@@ -122,11 +124,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: Layers,
         items: [
           {
+            title: "All Projects",
+            url: "/projects",
+            isSelected: pathname.includes("/projects"),
+          },
+          {
             title: "Tasks",
             url: "/tasks",
             isSelected: pathname.includes("/tasks"),
           },
-
           {
             title: "Users",
             url: "/users",
@@ -279,25 +285,52 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarFooter>
         )}
         <SidebarRail className="" />
-      </Sidebar>
-      {pathname.includes("/file-manager") && (
-        <ErrorBoundary
-          fallback={<SidebarErrorFallback message="secondary sidebar" />}
-        >
-          <SecondarySidebar>
-            <FileFolder />
-          </SecondarySidebar>
-        </ErrorBoundary>
-      )}
+        {isMobile && (
+          <>
+            {pathname.includes("/file-manager") && (
+              <ErrorBoundary
+                fallback={<SidebarErrorFallback message="secondary sidebar" />}
+              >
+                <SecondarySidebar>
+                  <FileFolder />
+                </SecondarySidebar>
+              </ErrorBoundary>
+            )}
 
-      {pathname.includes("/dashboard") && isEditing && (
-        <ErrorBoundary
-          fallback={<SidebarErrorFallback message="dashboard sidebar" />}
-        >
-          <SecondarySidebar>
-            <DashboardSidebar />
-          </SecondarySidebar>
-        </ErrorBoundary>
+            {pathname.includes("/dashboard") && isEditing && (
+              <ErrorBoundary
+                fallback={<SidebarErrorFallback message="dashboard sidebar" />}
+              >
+                <SecondarySidebar>
+                  <DashboardSidebar />
+                </SecondarySidebar>
+              </ErrorBoundary>
+            )}
+          </>
+        )}
+      </Sidebar>
+      {!isMobile && (
+        <>
+          {pathname.includes("/file-manager") && (
+            <ErrorBoundary
+              fallback={<SidebarErrorFallback message="secondary sidebar" />}
+            >
+              <SecondarySidebar>
+                <FileFolder />
+              </SecondarySidebar>
+            </ErrorBoundary>
+          )}
+
+          {pathname.includes("/dashboard") && isEditing && (
+            <ErrorBoundary
+              fallback={<SidebarErrorFallback message="dashboard sidebar" />}
+            >
+              <SecondarySidebar>
+                <DashboardSidebar />
+              </SecondarySidebar>
+            </ErrorBoundary>
+          )}
+        </>
       )}
     </>
   )

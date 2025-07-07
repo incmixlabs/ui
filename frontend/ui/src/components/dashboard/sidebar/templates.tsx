@@ -45,9 +45,6 @@ export function TemplatesSidebar({
 }: TemplatesSidebarProps) {
   const { applyTemplates } = useLayoutStore();
   const [isTemplate, setIsTemplate] = useQueryState("template");
-  // const [searchTerm, setSearchTerm] = useState("");
-
-
 
   const handleDeleteTemplate = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -65,6 +62,7 @@ export function TemplatesSidebar({
       }
     }
   };
+
   const handleActiveTemplate = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     if (window.confirm("Are you sure you want to active this template?")) {
@@ -89,8 +87,6 @@ export function TemplatesSidebar({
     applyTemplates(template.mainLayouts, template.id);
     toast.success(`Template "${template?.id}" loaded successfully`);
   };
-console.log(filteredTemplates);
-
 
   return (
     <Flex
