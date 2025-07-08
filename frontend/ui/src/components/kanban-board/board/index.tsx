@@ -256,10 +256,17 @@ export function Board({
     <Box className="w-full h-full flex flex-col">
      
       {/* HEADER: This part is fixed and will not shrink. */}
-      <Box className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700">
-        <Flex direction="column" gap="4" className="p-4">
+      <Box className="flex-shrink-0 border-b border-gray-3">
+        <Flex direction="column" gap="4" className="p-4 px-6">
           <Flex justify="between" align="center">
-            <Heading size="6">Project Board</Heading>
+            {/* <Heading size="6">Project Board</Heading> */}
+            <Flex gap="6" className="text-sm text-gray-11">
+            <Text>{projectStats.totalStatusLabels} column{projectStats.totalStatusLabels !== 1 ? "s" : ""}</Text>
+            <Text>{projectStats.totalTasks} task{projectStats.totalTasks !== 1 ? "s" : ""}</Text>
+            <Text>{projectStats.completedTasks} completed</Text>
+            {projectStats.overdueTasks > 0 && <Text className="text-red-600">{projectStats.overdueTasks} overdue</Text>}
+            {projectStats.urgentTasks > 0 && <Text className="text-orange-600">{projectStats.urgentTasks} urgent</Text>}
+          </Flex>
             <Flex align="center" gap="2">
               <Tooltip content="Refresh">
                 <IconButton variant="ghost" onClick={handleRefresh}><RefreshCw size={16} /></IconButton>
@@ -273,13 +280,7 @@ export function Board({
               </DropdownMenu.Root>
             </Flex>
           </Flex>
-          <Flex gap="6" className="text-sm text-gray-600 dark:text-gray-400">
-            <Text>{projectStats.totalStatusLabels} column{projectStats.totalStatusLabels !== 1 ? "s" : ""}</Text>
-            <Text>{projectStats.totalTasks} task{projectStats.totalTasks !== 1 ? "s" : ""}</Text>
-            <Text>{projectStats.completedTasks} completed</Text>
-            {projectStats.overdueTasks > 0 && <Text className="text-red-600">{projectStats.overdueTasks} overdue</Text>}
-            {projectStats.urgentTasks > 0 && <Text className="text-orange-600">{projectStats.urgentTasks} urgent</Text>}
-          </Flex>
+          
         </Flex>
       </Box>
 

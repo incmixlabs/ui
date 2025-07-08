@@ -596,7 +596,7 @@ export const BoardColumn = memo(function BoardColumn({
       })}
 
       <div
-        className={`rounded-lg bg-gray-50 dark:bg-gray-900 transition-all duration-200 ${stateStyles[state.type]} flex flex-col`}
+        className={`rounded-lg bg-gray-2 transition-all duration-200 ${stateStyles[state.type]} flex flex-col`}
         ref={innerRef}
       >
         <div className={`flex flex-col ${state.type === "is-column-over" ? "invisible" : ""}`}>
@@ -669,16 +669,16 @@ export const BoardColumn = memo(function BoardColumn({
             ) : (
               <Flex justify="between" align="center">
                 <Flex align="center" gap="2" className="flex-1 min-w-0">
-                  <GripVertical size={16} className="text-gray-400 flex-shrink-0" />
-                  <div
+                  {/* <GripVertical size={16} className="text-gray-400 flex-shrink-0" /> */}
+                  {/* <div
                     className="w-3 h-3 rounded-full flex-shrink-0"
                     style={{ backgroundColor: column.color }}
-                  />
-                  <Heading size="4" as="h3" className="font-semibold leading-4 truncate">
+                  /> */}
+                  <Heading size="5" as="h3" className="font-semibold leading-4 truncate">
                     {column.name}
                   </Heading>
                   <Flex gap="1" className="flex-shrink-0">
-                    <Text size="1" className="text-gray-500 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-full">
+                    <Text size="1" className="text-gray-12 bg-gray-1 px-2 py-1 rounded-1">
                       {totalTasks}
                     </Text>
                     {completedTasks > 0 && (
@@ -719,13 +719,13 @@ export const BoardColumn = memo(function BoardColumn({
           </div>
 
           {/* Column Description */}
-          {!isEditingColumn && column.description && (
+          {/* {!isEditingColumn && column.description && (
             <div className="flex-shrink-0 px-4 pb-2">
               <Text size="1" className="text-gray-600 dark:text-gray-400">
                 {column.description}
               </Text>
             </div>
-          )}
+          )} */}
 
           {/* Progress Bar for Completed Tasks */}
           {totalTasks > 0 && completedTasks > 0 && (
@@ -769,12 +769,13 @@ export const BoardColumn = memo(function BoardColumn({
               />
             ) : (
               <Button
-                variant="ghost"
-                className="w-full justify-start text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600"
+                variant="soft"
+                color="blue"
+                className="grid place-items-center gap-2 w-10 h-10 mx-auto"
                 onClick={() => setIsCreatingTask(true)}
               >
-                <Plus size={16} />
-                {"Add a task"}
+                <Plus size={20} />
+                <Text className="sr-only">Add a task</Text>
               </Button>
             )}
           </div>
