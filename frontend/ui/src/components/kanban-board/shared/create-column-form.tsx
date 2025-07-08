@@ -149,7 +149,7 @@ export function CreateColumnForm({
       {!controlled && (
         <Dialog.Trigger>
           {customTrigger || (
-            <Button variant="ghost" size="2" className="w-full h-12 border-2 border-dashed border-gray-300 hover:border-gray-400 dark:border-gray-600 dark:hover:border-gray-500">
+            <Button variant="ghost" size="2" className="w-fit h-12 bg-blue-9 px-4 text-white">
               <Plus size={20} />
               <Text className="ml-2">Add Column</Text>
             </Button>
@@ -382,7 +382,7 @@ export function CreateColumnForm({
 
           <div className="flex justify-end gap-3 mt-6">
             <Dialog.Close>
-              <Button variant="soft" color="gray" disabled={isLoading}>
+              <Button variant="soft" color="red" disabled={isLoading}>
                 Cancel
               </Button>
             </Dialog.Close>

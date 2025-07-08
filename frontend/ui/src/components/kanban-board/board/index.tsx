@@ -308,10 +308,10 @@ export function Board({
               </div>
             ))}
             <div className="w-80 flex-shrink-0 h-full">
-              <Box className="h-full rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
+              <Box className="h-full rounded-lg border bg-gray-3 border-gray-6">
                 <Flex align="center" justify="center" className="h-full p-4" direction="column" gap="4">
                   <CreateColumnForm projectId={projectId} onSuccess={handleRefresh} />
-                  <Text size="2" className="text-gray-500 text-center max-w-48">
+                  <Text size="2" className="text-gray-10 text-center max-w-48">
                     Create a new status column to organize your workflow
                   </Text>
                 </Flex>

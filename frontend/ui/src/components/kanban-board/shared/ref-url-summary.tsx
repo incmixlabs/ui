@@ -20,20 +20,20 @@ export function RefUrlSummary({ refUrls, className }: RefUrlSummaryProps) {
     <Flex align="center" gap="2" className={className}>
       {urlCounts.figma > 0 && (
         <Flex align="center" gap="1" title={`${urlCounts.figma} Figma link${urlCounts.figma > 1 ? 's' : ''}`}>
-          <Figma size={12} className="text-purple-500" />
-          {urlCounts.figma > 1 && <Text size="1" className="font-medium">{urlCounts.figma}</Text>}
+          <Figma size={20} className="text-purple-500" />
+          {urlCounts.figma > 0 && <Text size="2" className="font-medium">{urlCounts.figma}</Text>}
         </Flex>
       )}
       {urlCounts.task > 0 && (
         <Flex align="center" gap="1" title={`${urlCounts.task} Task link${urlCounts.task > 1 ? 's' : ''}`}>
-          <Link size={12} className="text-blue-500" />
-          {urlCounts.task > 1 && <Text size="1" className="font-medium">{urlCounts.task}</Text>}
+          <Link size={20} className="text-blue-500" />
+          {urlCounts.task > 0 && <Text size="4" className="font-medium">{urlCounts.task}</Text>}
         </Flex>
       )}
       {urlCounts.external > 0 && (
         <Flex align="center" gap="1" title={`${urlCounts.external} External link${urlCounts.external > 1 ? 's' : ''}`}>
-          <ExternalLink size={12} className="text-green-500" />
-          {urlCounts.external > 1 && <Text size="1" className="font-medium">{urlCounts.external}</Text>}
+          <ExternalLink size={20} className="text-green-500" />
+          {urlCounts.external > 0 && <Text size="4" className="font-medium">{urlCounts.external}</Text>}
         </Flex>
       )}
     </Flex>

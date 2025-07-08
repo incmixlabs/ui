@@ -1,20 +1,30 @@
 // components/board/board-column.tsx - Fixed layout and spacing
-"use client"
+"use client";
 
 import {
   draggable,
   dropTargetForElements,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
-import { Ellipsis, Plus, Trash2, Edit3, GripVertical, Check, X, Loader2, Sparkles } from "lucide-react"
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
-import ColorPicker, { ColorSelectType } from "@components/color-picker"
-import invariant from "tiny-invariant"
-import { ModalPresets } from "../shared/confirmation-modal"
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import {
+  Ellipsis,
+  Plus,
+  Trash2,
+  Edit3,
+  GripVertical,
+  Check,
+  X,
+  Loader2,
+  Sparkles,
+} from "lucide-react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import ColorPicker, { ColorSelectType } from "@components/color-picker";
+import invariant from "tiny-invariant";
+import { ModalPresets } from "../shared/confirmation-modal";
 
-import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
-import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
-import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
+import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source";
+import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
 import {
   getColumnData,
   isCardData,
@@ -22,7 +32,8 @@ import {
   isColumnData,
   isDraggingACard,
   isDraggingAColumn,
-  type KanbanColumn } from "../types"
+  type KanbanColumn,
+} from "../types";
 import {
   Box,
   Flex,
@@ -32,71 +43,78 @@ import {
   TextField,
   Text,
   DropdownMenu,
-  TextArea
-} from "@radixui"
-import { isSafari } from "@utils/browser"
-import { isShallowEqual } from "@incmix/utils/objects"
-import { blockBoardPanningAttr } from "../data-attributes"
-import { TaskCard, TaskCardShadow } from "./task-card"
-import {
-  useAIFeaturesStore
-} from "@incmix/store"
-import { TaskDataSchema } from "@incmix/utils/schema"
+  TextArea,
+} from "@radixui";
+import { isSafari } from "@utils/browser";
+import { isShallowEqual } from "@incmix/utils/objects";
+import { blockBoardPanningAttr } from "../data-attributes";
+import { TaskCard, TaskCardShadow } from "./task-card";
+import { useAIFeaturesStore } from "@incmix/store";
+import { TaskDataSchema } from "@incmix/utils/schema";
 
 // Define types for drag and drop operations
 type DragData = {
-  rect: DOMRect
-  [key: string]: unknown
-}
+  rect: DOMRect;
+  [key: string]: unknown;
+};
 
 type DropTarget = {
-  data: Record<string | symbol, unknown>
-}
+  data: Record<string | symbol, unknown>;
+};
 
 type DragLocation = {
   current: {
-    dropTargets: DropTarget[]
-  }
-}
+    dropTargets: DropTarget[];
+  };
+};
 
 type TColumnState =
   | {
-      type: "is-card-over"
-      isOverChildCard: boolean
-      dragging: DOMRect
+      type: "is-card-over";
+      isOverChildCard: boolean;
+      dragging: DOMRect;
     }
   | {
-      type: "is-column-over"
+      type: "is-column-over";
     }
   | {
-      type: "idle"
+      type: "idle";
     }
   | {
-      type: "is-dragging"
-    }
+      type: "is-dragging";
+    };
 
 const stateStyles: { [Key in TColumnState["type"]]: string } = {
   idle: "",
   "is-card-over": "outline outline-2 outline-blue-400 outline-offset-2",
   "is-dragging": "opacity-60 outline outline-2 outline-gray-400",
   "is-column-over": "bg-blue-50 dark:bg-blue-950",
-}
+};
 
-const idle = { type: "idle" } satisfies TColumnState
+const idle = { type: "idle" } satisfies TColumnState;
 
 interface BoardColumnProps {
-  column: KanbanColumn
-  onCreateTask: (columnId: string, taskData: Partial<TaskDataSchema>) => Promise<void>
-  onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
-  onDeleteTask: (taskId: string) => Promise<void>
-  onUpdateColumn: (columnId: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
-  onDeleteColumn: (columnId: string) => Promise<void>
-  isDragging?: boolean
-  onTaskOpen?: (taskId: string) => void
+  column: KanbanColumn;
+  onCreateTask: (
+    columnId: string,
+    taskData: Partial<TaskDataSchema>,
+  ) => Promise<void>;
+  onUpdateTask: (
+    taskId: string,
+    updates: Partial<TaskDataSchema>,
+  ) => Promise<void>;
+  onDeleteTask: (taskId: string) => Promise<void>;
+  onUpdateColumn: (
+    columnId: string,
+    updates: { name?: string; color?: string; description?: string },
+  ) => Promise<void>;
+  onDeleteColumn: (columnId: string) => Promise<void>;
+  isDragging?: boolean;
+  onTaskOpen?: (taskId: string) => void;
 }
 
-import { useStreamingResponse, useStreamingDisplay } from "../../../hooks"
-import { nanoid } from "nanoid"
+import { useStreamingResponse, useStreamingDisplay } from "../../../hooks";
+import { nanoid } from "nanoid";
 
 // Quick Task Creation Form
 const QuickTaskForm = memo(function QuickTaskForm({
@@ -104,25 +122,35 @@ const QuickTaskForm = memo(function QuickTaskForm({
   onCreateTask,
   onCancel,
 }: {
-  columnId: string
-  onCreateTask: (columnId: string, taskData: Partial<TaskDataSchema>) => Promise<void>
-  onCancel: () => void
+  columnId: string;
+  onCreateTask: (
+    columnId: string,
+    taskData: Partial<TaskDataSchema>,
+  ) => Promise<void>;
+  onCancel: () => void;
 }) {
   // Get AI features state
-  const { useAI } = useAIFeaturesStore()
+  const { useAI } = useAIFeaturesStore();
 
   // Task form state
-  const [taskName, setTaskName] = useState("")
-  const [description, setDescription] = useState("")
-  const [checklist, setChecklist] = useState<Array<{ id: string; text: string; checked: boolean; order: number }>>([])
-  const [acceptanceCriteria, setAcceptanceCriteria] = useState<Array<{ id: string; text: string; checked: boolean; order: number }>>([])
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  
+  const [taskName, setTaskName] = useState("");
+  const [description, setDescription] = useState("");
+  const [checklist, setChecklist] = useState<
+    Array<{ id: string; text: string; checked: boolean; order: number }>
+  >([]);
+  const [acceptanceCriteria, setAcceptanceCriteria] = useState<
+    Array<{ id: string; text: string; checked: boolean; order: number }>
+  >([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Generate unique ID helper
-  const generateUniqueId = useCallback((prefix?: string, length = 10): string => {
-    const randomId = nanoid(length)
-    return prefix ? `${prefix}-${randomId}` : randomId
-  }, [])
+  const generateUniqueId = useCallback(
+    (prefix?: string, length = 10): string => {
+      const randomId = nanoid(length);
+      return prefix ? `${prefix}-${randomId}` : randomId;
+    },
+    [],
+  );
 
   // Fetch data from AI endpoint as event stream
   const [streamingState, streamingActions] = useStreamingResponse<{
@@ -130,7 +158,7 @@ const QuickTaskForm = memo(function QuickTaskForm({
       description: string;
       acceptanceCriteria: string[];
       checklist: string[];
-    }
+    };
   }>({
     endpoint: "/generate-user-story",
     method: "POST",
@@ -138,30 +166,41 @@ const QuickTaskForm = memo(function QuickTaskForm({
   });
 
   // Function to process streaming data and update form
-  const setFormDataFromStream = useCallback((data?: { description: string, acceptanceCriteria: string[], checklist: string[] }) => {
-    if (data) {
-      // Set description
-      setDescription(data.description || "");
-      
-      // Format checklist items with id, checked status and order
-      const formattedChecklist = (data.checklist || []).map((item, index) => ({
-        id: generateUniqueId('cl'),
-        text: item,
-        checked: false,
-        order: index
-      }));
-      setChecklist(formattedChecklist);
-      
-      // Format acceptance criteria items with id, checked status and order
-      const formattedAcceptanceCriteria = (data.acceptanceCriteria || []).map((item, index) => ({
-        id: generateUniqueId('ac'),
-        text: item,
-        checked: false,
-        order: index
-      }));
-      setAcceptanceCriteria(formattedAcceptanceCriteria);
-    }
-  }, [generateUniqueId]);
+  const setFormDataFromStream = useCallback(
+    (data?: {
+      description: string;
+      acceptanceCriteria: string[];
+      checklist: string[];
+    }) => {
+      if (data) {
+        // Set description
+        setDescription(data.description || "");
+
+        // Format checklist items with id, checked status and order
+        const formattedChecklist = (data.checklist || []).map(
+          (item, index) => ({
+            id: generateUniqueId("cl"),
+            text: item,
+            checked: false,
+            order: index,
+          }),
+        );
+        setChecklist(formattedChecklist);
+
+        // Format acceptance criteria items with id, checked status and order
+        const formattedAcceptanceCriteria = (data.acceptanceCriteria || []).map(
+          (item, index) => ({
+            id: generateUniqueId("ac"),
+            text: item,
+            checked: false,
+            order: index,
+          }),
+        );
+        setAcceptanceCriteria(formattedAcceptanceCriteria);
+      }
+    },
+    [generateUniqueId],
+  );
 
   // Connect streaming data to form updates
   useStreamingDisplay({
@@ -169,52 +208,58 @@ const QuickTaskForm = memo(function QuickTaskForm({
     isStreaming: streamingState.isStreaming,
     connectionStatus: streamingState.connectionStatus,
     onDataUpdate: (data) => {
-      setFormDataFromStream(data.userStory)
-    }
+      setFormDataFromStream(data.userStory);
+    },
   });
 
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
 
-    if (!taskName.trim()) return
+      if (!taskName.trim()) return;
 
-    setIsSubmitting(true)
-    try {
-      await onCreateTask(columnId, {
-        name: taskName.trim(),
-        description: description.trim(),
-        priorityId: "medium",  // Updated: priority → priorityId
-        completed: false,
-        labelsTags: [],
-        attachments: [],
-        assignedTo: [],
-        subTasks: [],
-        comments: [],
-        // commentsCount removed as it's no longer in schema
-        checklist: checklist,
-        acceptanceCriteria: acceptanceCriteria,
-      })
+      setIsSubmitting(true);
+      try {
+        await onCreateTask(columnId, {
+          name: taskName.trim(),
+          description: description.trim(),
+          priorityId: "medium", // Updated: priority → priorityId
+          completed: false,
+          labelsTags: [],
+          attachments: [],
+          assignedTo: [],
+          subTasks: [],
+          comments: [],
+          // commentsCount removed as it's no longer in schema
+          checklist: checklist,
+          acceptanceCriteria: acceptanceCriteria,
+        });
 
-      setTaskName("")
-      setDescription("")
-      setChecklist([]) // Empty array is fine since it's a reset
-      setAcceptanceCriteria([]) // Empty array is fine since it's a reset
-      setIsSubmitting(false)
-    } catch (error) {
-      console.error("Failed to create task:", error)
-    } finally {
-      setIsSubmitting(false)
-    }
-  }, [taskName, description, onCreateTask, columnId, onCancel])
+        setTaskName("");
+        setDescription("");
+        setChecklist([]); // Empty array is fine since it's a reset
+        setAcceptanceCriteria([]); // Empty array is fine since it's a reset
+        setIsSubmitting(false);
+      } catch (error) {
+        console.error("Failed to create task:", error);
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [taskName, description, onCreateTask, columnId, onCancel],
+  );
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === "Escape") {
-      onCancel()
-    }
-  }, [onCancel])
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onCancel();
+      }
+    },
+    [onCancel],
+  );
 
   return (
-    <Box className="p-3 bg-white dark:bg-gray-800 rounded-lg border shadow-sm">
+    <Box className="p-3 bg-gray-4 rounded-lg border border-gray-6 shadow-sm">
       <form onSubmit={handleSubmit} className="space-y-3">
         <TextField.Root
           value={taskName}
@@ -226,9 +271,11 @@ const QuickTaskForm = memo(function QuickTaskForm({
         />
 
         {useAI && taskName.trim() && (
-          <Button 
-            onClick={() => streamingActions.startStreaming()} 
-            disabled={streamingState.isStreaming || !taskName.trim() || isSubmitting}
+          <Button
+            onClick={() => streamingActions.startStreaming()}
+            disabled={
+              streamingState.isStreaming || !taskName.trim() || isSubmitting
+            }
             size="1"
             className="mt-2 mb-2"
           >
@@ -249,7 +296,11 @@ const QuickTaskForm = memo(function QuickTaskForm({
         <TextArea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder={useAI ? "Generate description with AI or enter manually..." : "Enter task description..."}
+          placeholder={
+            useAI
+              ? "Generate description with AI or enter manually..."
+              : "Enter task description..."
+          }
           rows={3}
           disabled={isSubmitting || streamingState.isStreaming}
         />
@@ -264,14 +315,19 @@ const QuickTaskForm = memo(function QuickTaskForm({
               </Flex>
             )}
             {streamingState.error && (
-              <Text className="text-red-500">Failed to generate description: {streamingState.error}</Text>
+              <Text className="text-red-500">
+                Failed to generate description: {streamingState.error}
+              </Text>
             )}
-            {!streamingState.isStreaming && !streamingState.error && description && streamingState.connectionStatus === "completed" && (
-              <Flex align="center" gap="1" className="text-green-600">
-                <Check size={12} />
-                <Text>AI description generated</Text>
-              </Flex>
-            )}
+            {!streamingState.isStreaming &&
+              !streamingState.error &&
+              description &&
+              streamingState.connectionStatus === "completed" && (
+                <Flex align="center" gap="1" className="text-green-600">
+                  <Check size={12} />
+                  <Text>AI description generated</Text>
+                </Flex>
+              )}
           </Box>
         )}
 
@@ -279,7 +335,9 @@ const QuickTaskForm = memo(function QuickTaskForm({
           <Button
             type="submit"
             size="2"
-            disabled={!taskName.trim() || isSubmitting || streamingState.isStreaming}
+            disabled={
+              !taskName.trim() || isSubmitting || streamingState.isStreaming
+            }
             className="flex-1"
           >
             {isSubmitting ? "Adding..." : "Add Task"}
@@ -288,6 +346,7 @@ const QuickTaskForm = memo(function QuickTaskForm({
             type="button"
             size="2"
             variant="soft"
+            color="red"
             onClick={() => {
               // Cancel streaming if in progress
               if (streamingState.isStreaming) {
@@ -302,8 +361,8 @@ const QuickTaskForm = memo(function QuickTaskForm({
         </Flex>
       </form>
     </Box>
-  )
-})
+  );
+});
 
 const CardList = memo(function CardList({
   column,
@@ -311,10 +370,13 @@ const CardList = memo(function CardList({
   onDeleteTask,
   onTaskOpen,
 }: {
-  column: KanbanColumn
-  onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
-  onDeleteTask: (taskId: string) => Promise<void>
-  onTaskOpen?: (taskId: string) => void
+  column: KanbanColumn;
+  onUpdateTask: (
+    taskId: string,
+    updates: Partial<TaskDataSchema>,
+  ) => Promise<void>;
+  onDeleteTask: (taskId: string) => Promise<void>;
+  onTaskOpen?: (taskId: string) => void;
 }) {
   return (
     <>
@@ -329,8 +391,8 @@ const CardList = memo(function CardList({
         />
       ))}
     </>
-  )
-})
+  );
+});
 
 export const BoardColumn = memo(function BoardColumn({
   column,
@@ -342,97 +404,99 @@ export const BoardColumn = memo(function BoardColumn({
   isDragging = false,
   onTaskOpen,
 }: BoardColumnProps) {
-  const scrollableRef = useRef<HTMLDivElement | null>(null)
-  const outerRef = useRef<HTMLDivElement | null>(null)
-  const headerRef = useRef<HTMLDivElement | null>(null)
-  const innerRef = useRef<HTMLDivElement | null>(null)
-  const [state, setState] = useState<TColumnState>(idle)
+  const scrollableRef = useRef<HTMLDivElement | null>(null);
+  const outerRef = useRef<HTMLDivElement | null>(null);
+  const headerRef = useRef<HTMLDivElement | null>(null);
+  const innerRef = useRef<HTMLDivElement | null>(null);
+  const [state, setState] = useState<TColumnState>(idle);
 
-  const [isAddingTask, setIsAddingTask] = useState(false)
-  const [isEditingColumn, setIsEditingColumn] = useState(false)
-  const [editColumnName, setEditColumnName] = useState(column.name)
-  const [editColumnColor, setEditColumnColor] = useState(column.color)
-  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
-  const colorPickerRef = useRef<HTMLDivElement>(null)
+  const [isAddingTask, setIsAddingTask] = useState(false);
+  const [isEditingColumn, setIsEditingColumn] = useState(false);
+  const [editColumnName, setEditColumnName] = useState(column.name);
+  const [editColumnColor, setEditColumnColor] = useState(column.color);
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+  const colorPickerRef = useRef<HTMLDivElement>(null);
 
   // Close color picker when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+      if (
+        colorPickerRef.current &&
+        !colorPickerRef.current.contains(event.target as Node)
+      ) {
         setIsColorPickerOpen(false);
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [colorPickerRef]);
-  const [editColumnDescription, setEditColumnDescription] = useState(column.description || "")
+  const [editColumnDescription, setEditColumnDescription] = useState(
+    column.description || "",
+  );
 
   // Modal states
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [showErrorModal, setShowErrorModal] = useState(false)
-  const [showValidationModal, setShowValidationModal] = useState(false)
-  const [validationMessage, setValidationMessage] = useState('')
-  const [isDeleting, setIsDeleting] = useState(false)
-  const [isUpdating, setIsUpdating] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showValidationModal, setShowValidationModal] = useState(false);
+  const [validationMessage, setValidationMessage] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   // Task creation state
-  const [isCreatingTask, setIsCreatingTask] = useState(false)
+  const [isCreatingTask, setIsCreatingTask] = useState(false);
 
   // Update edit state when column changes
   useEffect(() => {
-    setEditColumnName(column.name)
-    setEditColumnColor(column.color)
-    setEditColumnDescription(column.description || "")
-  }, [column.name, column.color, column.description])
+    setEditColumnName(column.name);
+    setEditColumnColor(column.color);
+    setEditColumnDescription(column.description || "");
+  }, [column.name, column.color, column.description]);
 
-  const setIsCardOver = useCallback(({
-    data,
-    location,
-  }: {
-    data: DragData
-    location: DragLocation
-  }) => {
-    const innerMost = location.current.dropTargets[0]
-    const isOverChildCard = Boolean(
-      innerMost && isCardDropTargetData(innerMost.data)
-    )
+  const setIsCardOver = useCallback(
+    ({ data, location }: { data: DragData; location: DragLocation }) => {
+      const innerMost = location.current.dropTargets[0];
+      const isOverChildCard = Boolean(
+        innerMost && isCardDropTargetData(innerMost.data),
+      );
 
-    const proposed: TColumnState = {
-      type: "is-card-over",
-      dragging: data.rect,
-      isOverChildCard,
-    }
+      const proposed: TColumnState = {
+        type: "is-card-over",
+        dragging: data.rect,
+        isOverChildCard,
+      };
 
-    setState((current) => {
-      if (isShallowEqual(proposed, current)) {
-        return current
-      }
-      return proposed
-    })
-  }, [])
+      setState((current) => {
+        if (isShallowEqual(proposed, current)) {
+          return current;
+        }
+        return proposed;
+      });
+    },
+    [],
+  );
 
-  const columnData = getColumnData({ column })
+  const columnData = getColumnData({ column });
 
   useEffect(() => {
-    const outer = outerRef.current
-    const scrollable = scrollableRef.current
-    const header = headerRef.current
-    const inner = innerRef.current
-    invariant(outer)
-    invariant(scrollable)
-    invariant(header)
-    invariant(inner)
+    const outer = outerRef.current;
+    const scrollable = scrollableRef.current;
+    const header = headerRef.current;
+    const inner = innerRef.current;
+    invariant(outer);
+    invariant(scrollable);
+    invariant(header);
+    invariant(inner);
 
     return combine(
       draggable({
         element: header,
         getInitialData: () => columnData,
         onGenerateDragPreview({ source, location, nativeSetDragImage }) {
-          const data = source.data
-          invariant(isColumnData(data))
+          const data = source.data;
+          invariant(isColumnData(data));
           setCustomNativeDragPreview({
             nativeSetDragImage,
             getOffset: preserveOffsetOnSource({
@@ -440,55 +504,55 @@ export const BoardColumn = memo(function BoardColumn({
               input: location.current.input,
             }),
             render({ container }) {
-              const rect = inner.getBoundingClientRect()
-              const preview = inner.cloneNode(true)
-              invariant(preview instanceof HTMLElement)
-              preview.style.width = `${rect.width}px`
-              preview.style.height = `${rect.height}px`
+              const rect = inner.getBoundingClientRect();
+              const preview = inner.cloneNode(true);
+              invariant(preview instanceof HTMLElement);
+              preview.style.width = `${rect.width}px`;
+              preview.style.height = `${rect.height}px`;
 
               if (!isSafari()) {
-                preview.style.transform = "rotate(4deg)"
+                preview.style.transform = "rotate(4deg)";
               }
 
-              container.appendChild(preview)
+              container.appendChild(preview);
             },
-          })
+          });
         },
         onDragStart() {
-          setState({ type: "is-dragging" })
+          setState({ type: "is-dragging" });
         },
         onDrop() {
-          setState(idle)
+          setState(idle);
         },
       }),
       dropTargetForElements({
         element: outer,
         getData: () => columnData,
         canDrop({ source }) {
-          return isDraggingACard({ source }) || isDraggingAColumn({ source })
+          return isDraggingACard({ source }) || isDraggingAColumn({ source });
         },
         getIsSticky: () => true,
         onDragStart({ source, location }) {
           if (isCardData(source.data)) {
-            setIsCardOver({ data: source.data, location })
+            setIsCardOver({ data: source.data, location });
           }
         },
         onDragEnter({ source, location }) {
           if (isCardData(source.data)) {
-            setIsCardOver({ data: source.data, location })
-            return
+            setIsCardOver({ data: source.data, location });
+            return;
           }
           if (
             isColumnData(source.data) &&
             source.data.column.id !== column.id
           ) {
-            setState({ type: "is-column-over" })
+            setState({ type: "is-column-over" });
           }
         },
         onDropTargetChange({ source, location }) {
           if (isCardData(source.data)) {
-            setIsCardOver({ data: source.data, location })
-            return
+            setIsCardOver({ data: source.data, location });
+            return;
           }
         },
         onDragLeave({ source }) {
@@ -496,78 +560,85 @@ export const BoardColumn = memo(function BoardColumn({
             isColumnData(source.data) &&
             source.data.column.id === column.id
           ) {
-            return
+            return;
           }
-          setState(idle)
+          setState(idle);
         },
         onDrop() {
-          setState(idle)
+          setState(idle);
         },
       }),
       autoScrollForElements({
         canScroll({ source }) {
-          return isDraggingACard({ source })
+          return isDraggingACard({ source });
         },
         element: scrollable,
-      })
-    )
-  }, [column.id, columnData, setIsCardOver])
+      }),
+    );
+  }, [column.id, columnData, setIsCardOver]);
 
   const handleUpdateColumn = useCallback(async () => {
     if (!editColumnName.trim()) {
-      setValidationMessage('Column name cannot be empty')
-      setShowValidationModal(true)
-      return
+      setValidationMessage("Column name cannot be empty");
+      setShowValidationModal(true);
+      return;
     }
 
-    setIsUpdating(true)
+    setIsUpdating(true);
     try {
       await onUpdateColumn(column.id, {
         name: editColumnName.trim(),
         color: editColumnColor,
         description: editColumnDescription.trim(),
-      })
-      setIsEditingColumn(false)
+      });
+      setIsEditingColumn(false);
     } catch (error) {
-      console.error("Failed to update column:", error)
-      setValidationMessage('Failed to update column. Please try again.')
-      setShowValidationModal(true)
+      console.error("Failed to update column:", error);
+      setValidationMessage("Failed to update column. Please try again.");
+      setShowValidationModal(true);
     } finally {
-      setIsUpdating(false)
+      setIsUpdating(false);
     }
-  }, [editColumnName, editColumnColor, editColumnDescription, onUpdateColumn, column.id])
+  }, [
+    editColumnName,
+    editColumnColor,
+    editColumnDescription,
+    onUpdateColumn,
+    column.id,
+  ]);
 
   const handleDeleteColumn = useCallback(() => {
     if (column.tasks.length > 0) {
-      setShowErrorModal(true)
-      return
+      setShowErrorModal(true);
+      return;
     }
 
-    setShowDeleteModal(true)
-  }, [column.tasks.length])
+    setShowDeleteModal(true);
+  }, [column.tasks.length]);
 
   const confirmDeleteColumn = async () => {
-    setIsDeleting(true)
+    setIsDeleting(true);
     try {
-      await onDeleteColumn(column.id)
+      await onDeleteColumn(column.id);
       // Modal will close automatically via the preset
     } catch (error) {
-      console.error("Failed to delete column:", error)
-      setIsDeleting(false)
+      console.error("Failed to delete column:", error);
+      setIsDeleting(false);
     }
-  }
+  };
 
   const handleCancelEdit = useCallback(() => {
-    setIsEditingColumn(false)
-    setEditColumnName(column.name)
-    setEditColumnColor(column.color)
-    setEditColumnDescription(column.description || "")
-  }, [column.name, column.color, column.description])
+    setIsEditingColumn(false);
+    setEditColumnName(column.name);
+    setEditColumnColor(column.color);
+    setEditColumnDescription(column.description || "");
+  }, [column.name, column.color, column.description]);
 
   // Calculate column statistics
-  const completedTasks = column.tasks.filter(task => task.completed).length
-  const totalTasks = column.tasks.length
-  const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
+  const completedTasks = column.tasks.filter((task) => task.completed).length;
+  const totalTasks = column.tasks.length;
+  const completionPercentage =
+    totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
   return (
     <div className="w-full select-none" ref={outerRef}>
@@ -585,28 +656,31 @@ export const BoardColumn = memo(function BoardColumn({
         isOpen: showErrorModal,
         onOpenChange: setShowErrorModal,
         title: "Cannot Delete Column",
-        description: "This column contains tasks. Please move or delete all tasks from this column before deleting it."
+        description:
+          "This column contains tasks. Please move or delete all tasks from this column before deleting it.",
       })}
 
       {/* Validation Error Modal */}
       {ModalPresets.validation({
         isOpen: showValidationModal,
         onOpenChange: setShowValidationModal,
-        message: validationMessage
+        message: validationMessage,
       })}
 
       <div
-        className={`rounded-lg bg-gray-2 transition-all duration-200 ${stateStyles[state.type]} flex flex-col`}
+        className={`rounded-lg bg-gray-3 transition-all duration-200 ${stateStyles[state.type]} flex flex-col`}
         ref={innerRef}
       >
-        <div className={`flex flex-col ${state.type === "is-column-over" ? "invisible" : ""}`}>
+        <div
+          className={`flex flex-col  ${state.type === "is-column-over" ? "invisible" : ""}`}
+        >
           {/* Column Header */}
           <div
             className="flex-shrink-0 p-4 pb-2 cursor-grab active:cursor-grabbing rounded-t-lg"
             ref={headerRef}
             style={{
               backgroundColor: `${column.color}15`,
-              borderTop: `3px solid ${column.color}`
+              borderTop: `3px solid ${column.color}`,
             }}
           >
             {isEditingColumn ? (
@@ -623,47 +697,57 @@ export const BoardColumn = memo(function BoardColumn({
                   placeholder="Column description (optional)"
                   rows={2}
                 />
-                <Flex align="center" gap="2" className="items-start">
-                  <div className="relative" ref={colorPickerRef}>
+                <Flex justify={"between"}>
+                  <Flex align="center" gap="2" className="items-start">
+                    <div className="relative" ref={colorPickerRef}>
+                      <Button
+                        variant="solid"
+                        className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
+                        style={{ backgroundColor: editColumnColor }}
+                        onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
+                      />
+                      {isColorPickerOpen && (
+                        <div
+                          className="absolute z-50 mt-1"
+                          style={{ minWidth: "240px" }}
+                        >
+                          <ColorPicker
+                            colorType="base"
+                            onColorSelect={(color: ColorSelectType) => {
+                              setEditColumnColor(color.hex);
+                              setIsColorPickerOpen(false);
+                            }}
+                            activeColor={editColumnColor}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    {/* <Text size="1" className="text-gray-500">
+                      Column color
+                    </Text> */}
+                  </Flex>
+                  <Flex gap="2">
                     <Button
-                      variant="solid"
-                      className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
-                      style={{ backgroundColor: editColumnColor }}
-                      onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
-                    />
-                    {isColorPickerOpen && (
-                      <div className="absolute z-50 mt-1" style={{ minWidth: "240px" }}>
-                        <ColorPicker
-                          colorType="base"
-                          onColorSelect={(color: ColorSelectType) => {
-                            setEditColumnColor(color.hex);
-                            setIsColorPickerOpen(false);
-                          }}
-                          activeColor={editColumnColor}
-                        />
-                      </div>
-                    )}
-                  </div>
-                  <Text size="1" className="text-gray-500">Column color</Text>
-                </Flex>
-                <Flex gap="2">
-                  <Button
-                    size="1"
-                    onClick={handleUpdateColumn}
-                    disabled={isUpdating}
-                  >
-                    <Check size={14} />
-                    {isUpdating ? 'Saving...' : 'Save'}
-                  </Button>
-                  <Button
-                    size="1"
-                    variant="soft"
-                    onClick={handleCancelEdit}
-                    disabled={isUpdating}
-                  >
-                    <X size={14} />
-                    Cancel
-                  </Button>
+                      size="1"
+                      className="h-6"
+                      onClick={handleUpdateColumn}
+                      disabled={isUpdating}
+                    >
+                      <Check size={14} />
+                      {isUpdating ? "Saving..." : "Save"}
+                    </Button>
+                    <Button
+                      size="1"
+                      variant="soft"
+                      color="red"
+                      className="h-6"
+                      onClick={handleCancelEdit}
+                      disabled={isUpdating}
+                    >
+                      <X size={14} />
+                      Cancel
+                    </Button>
+                  </Flex>
                 </Flex>
               </Flex>
             ) : (
@@ -674,15 +758,25 @@ export const BoardColumn = memo(function BoardColumn({
                     className="w-3 h-3 rounded-full flex-shrink-0"
                     style={{ backgroundColor: column.color }}
                   /> */}
-                  <Heading size="5" as="h3" className="font-semibold leading-4 truncate">
+                  <Heading
+                    size="5"
+                    as="h3"
+                    className="font-semibold leading-4 truncate"
+                  >
                     {column.name}
                   </Heading>
                   <Flex gap="1" className="flex-shrink-0">
-                    <Text size="1" className="text-gray-12 bg-gray-1 px-2 py-1 rounded-1">
+                    <Text
+                      size="1"
+                      className="text-gray-12 bg-gray-1 px-2 py-1 rounded-1"
+                    >
                       {totalTasks}
                     </Text>
                     {completedTasks > 0 && (
-                      <Text size="1" className="text-green-600 bg-green-100 dark:bg-green-900 px-2 py-1 rounded-full">
+                      <Text
+                        size="1"
+                        className="text-green-600 bg-green-100 dark:bg-green-900 px-2 py-1 rounded-full"
+                      >
                         {completionPercentage}%
                       </Text>
                     )}
@@ -705,10 +799,7 @@ export const BoardColumn = memo(function BoardColumn({
                       Edit Column
                     </DropdownMenu.Item>
                     <DropdownMenu.Separator />
-                    <DropdownMenu.Item
-                      onClick={handleDeleteColumn}
-                      className="text-red-600 hover:text-red-700"
-                    >
+                    <DropdownMenu.Item onClick={handleDeleteColumn} color="red">
                       <Trash2 size={14} />
                       Delete Column
                     </DropdownMenu.Item>
@@ -740,10 +831,7 @@ export const BoardColumn = memo(function BoardColumn({
           )}
 
           {/* Tasks Container - No internal scrolling, grows naturally */}
-          <div
-            className="px-2"
-            ref={scrollableRef}
-          >
+          <div className="px-2" ref={scrollableRef}>
             <div className="space-y-1 py-2">
               <CardList
                 column={column}
@@ -782,5 +870,5 @@ export const BoardColumn = memo(function BoardColumn({
         </div>
       </div>
     </div>
-  )
-})
+  );
+});
