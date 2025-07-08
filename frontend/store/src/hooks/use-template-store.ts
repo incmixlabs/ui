@@ -1,5 +1,6 @@
 import type { Layout } from "@incmix/react-grid-layout"
-import { generateUniqueId } from "@incmix/utils/helper"
+import { generateUniqueId } from "../utils/browser-helpers"
+
 import { database } from "sql/main"
 import { create } from "zustand"
 

@@ -1,6 +1,8 @@
-import { generateNameBasedId, generateUniqueId } from "@incmix/utils/helper"
 import { create } from "zustand"
 import { database } from "../sql/main"
+
+import { generateNameBasedId } from "@incmix/utils/helper"
+import { generateUniqueId } from "../utils/browser-helpers"
 
 export interface Dashboard {
   id: string
@@ -103,6 +105,7 @@ export const useDashboardStore = create<DashboardState>()((set, get) => ({
     try {
       const dashboardsCollection = database.dashboards
       const collectionId = generateUniqueId("dashboard")
+      console.log("collectionId: ", collectionId)
 
       const newDashboardId = await generateNameBasedId(
         dashboard.dashboardName,
@@ -251,6 +254,7 @@ export const useDashboardStore = create<DashboardState>()((set, get) => ({
 
       const originalData = originalDashboard.toJSON()
       const newCollectionId = generateUniqueId("dashboard")
+      console.log("newCollectionId: ", newCollectionId)
 
       // const newDashboardId = `${currentDashboardId}-copy`
       // let counter = 1
