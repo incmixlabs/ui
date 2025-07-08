@@ -1,4 +1,5 @@
-import { generateUniqueId } from "@/utils/browser-helpers"
+
+import { generateUniqueId } from "../utils/browser-helpers"
 import type { Layout } from "@incmix/react-grid-layout"
 
 import { database } from "sql/main"
