@@ -1,5 +1,6 @@
+import { generateUniqueId } from "@/utils/browser-helpers"
 import type { Layout } from "@incmix/react-grid-layout"
-import { generateUniqueId } from "@incmix/utils/helper"
+
 import { database } from "sql/main"
 import { create } from "zustand"
 
@@ -14,6 +15,8 @@ export interface LayoutItemWithNested extends Layout {
 export type CustomLayouts = {
   [key in Breakpoint]: LayoutItemWithNested[]
 }
+
+
 
 export interface DashboardTemplate {
   id: string
