@@ -24,7 +24,7 @@ export const projectFormSchema: ProjectFormSchema = {
         type: "object",
         title: "Project Image",
       },
-      title: {
+      name: {
         type: "string",
         minLength: 1,
         title: "Project Name",
@@ -65,7 +65,7 @@ export const projectFormSchema: ProjectFormSchema = {
         title: "Budget",
       },
     },
-    required: ["title", "company", "description"],
+    required: ["name", "company", "description"],
   },
   fieldConfig: {
     files: {

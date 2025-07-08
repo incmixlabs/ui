@@ -10,8 +10,8 @@ catalogs:
       specifier: 5.0.0
       version: 5.0.0
     '@incmix/utils':
-      specifier: 0.28.2
-      version: 0.28.2
+      specifier: 0.29.1
+      version: 0.29.1
     '@julr/vite-plugin-validate-env':
       specifier: 1.3.0
       version: 1.3.0
@@ -190,7 +190,7 @@ importers:
         version: link:../../frontend/ui
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.28.2(@types/luxon@3.4.2)(luxon@3.5.0)
+        version: 0.29.1(@types/luxon@3.4.2)(luxon@3.5.0)
       '@sentry/react':
         specifier: 8.51.0
         version: 8.51.0(react@19.1.0)
@@ -218,7 +218,7 @@ importers:
         version: link:../../shared/config
       '@julr/vite-plugin-validate-env':
         specifier: 'catalog:'
-        version: 1.3.0(vite@7.0.0(@types/node@22.14.1)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1))(zod@3.25.67)
+        version: 1.3.0(vite@7.0.0(@types/node@22.14.1)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1))(zod@3.25.74)
       '@sentry/vite-plugin':
         specifier: 3.0.0
         version: 3.0.0
@@ -278,7 +278,7 @@ importers:
         version: link:../../frontend/ui
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.28.2(@types/luxon@3.4.2)(luxon@3.5.0)
+        version: 0.29.1(@types/luxon@3.4.2)(luxon@3.5.0)
       '@tanstack/react-query':
         specifier: 'catalog:'
         version: 5.81.5(react@19.1.0)
@@ -372,7 +372,7 @@ importers:
         version: link:../ui
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.28.2(@types/luxon@3.4.2)(luxon@3.5.0)
+        version: 0.29.1(@types/luxon@3.4.2)(luxon@3.5.0)
       '@radix-ui/themes':
         specifier: 'catalog:'
         version: 3.2.1(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -469,7 +469,7 @@ importers:
     dependencies:
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.28.2(@types/luxon@3.4.2)(luxon@3.5.0)
+        version: 0.29.1(@types/luxon@3.4.2)(luxon@3.5.0)
       '@koale/useworker':
         specifier: 4.1.0
         version: 4.1.0(react@19.1.0)
@@ -581,7 +581,7 @@ importers:
         version: link:../store
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.28.2(@types/luxon@3.4.2)(luxon@3.5.0)
+        version: 0.29.1(@types/luxon@3.4.2)(luxon@3.5.0)
       '@mantine/hooks':
         specifier: 8.1.2
         version: 8.1.2(react@19.1.0)
@@ -813,13 +813,13 @@ importers:
     dependencies:
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.28.2(@types/luxon@3.4.2)(luxon@3.5.0)
+        version: 0.29.1(@types/luxon@3.4.2)(luxon@3.5.0)
 
   shared/config:
     dependencies:
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.28.2(@types/luxon@3.4.2)(luxon@3.5.0)
+        version: 0.29.1(@types/luxon@3.4.2)(luxon@3.5.0)
     devDependencies:
       next:
         specifier: 15.1.4
@@ -2603,8 +2603,8 @@ packages:
       react: 19.1.0
       react-dom: 19.1.0
 
-  '@incmix/utils@0.28.2':
-    resolution: {integrity: sha512-Xa9avG+fMAmt6XpCwVuREOIp7dP5v0FqGD5i/2LagE1iODqG5t+pI0H7gJ4PYp1rKlgviIgj60xbw3+UAc/Lyw==}
+  '@incmix/utils@0.29.1':
+    resolution: {integrity: sha512-JQbfOdBSvH0O1QSZqlgxqKBeSqYq2ZkPklHDozfFpohJuCvyJSdDBcoWWmKdoOwGmfkHh21y6r3NCZpI2i9btA==}
     engines: {node: '>=22.13.0'}
     peerDependencies:
       '@types/luxon': '>=3.0'
@@ -9567,11 +9567,11 @@ packages:
     engines: {node: '>=16.0.0'}
     hasBin: true
 
-  zod@3.24.2:
-    resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
-
   zod@3.25.67:
     resolution: {integrity: sha512-idA2YXwpCdqUSKRCACDE6ItZD9TZzy3OZMtpfLoh6oPR47lipysRrJfjzMqFxQ3uJuUPyUeWe1r9vLH33xO/Qw==}
+
+  zod@3.25.74:
+    resolution: {integrity: sha512-J8poo92VuhKjNknViHRAIuuN6li/EwFbAC8OedzI8uxpEPGiXHGQu9wemIAioIpqgfB4SySaJhdk0mH5Y4ICBg==}
 
   zustand-middleware-computed-state@0.1.3:
     resolution: {integrity: sha512-Gkb3h/AxUKu6oG1RQXuGTXXu/lNmOSdWhqdw7TNFQ3rAZhNFllBPbciAZ/x5fR6Jz6xsu0ZE+ekbzSa1uTaI/Q==}
@@ -12046,7 +12046,7 @@ snapshots:
       react-resizable: 3.0.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       resize-observer-polyfill: 1.5.1
 
-  '@incmix/utils@0.28.2(@types/luxon@3.4.2)(luxon@3.5.0)':
+  '@incmix/utils@0.29.1(@types/luxon@3.4.2)(luxon@3.5.0)':
     dependencies:
       '@casl/ability': 6.7.3
       '@date-fns/tz': 1.2.0
@@ -12057,7 +12057,7 @@ snapshots:
       superstruct: 2.0.2
       ulidx: 2.4.1
       validator: 13.15.0
-      zod: 3.24.2
+      zod: 3.25.74
 
   '@isaacs/cliui@8.0.2':
     dependencies:
@@ -12099,14 +12099,14 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@julr/vite-plugin-validate-env@1.3.0(vite@7.0.0(@types/node@22.14.1)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1))(zod@3.25.67)':
+  '@julr/vite-plugin-validate-env@1.3.0(vite@7.0.0(@types/node@22.14.1)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1))(zod@3.25.74)':
     dependencies:
       '@poppinss/cliui': 6.4.3
       '@poppinss/validator-lite': 1.0.3
       unconfig: 0.6.1
       vite: 7.0.0(@types/node@22.14.1)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1)
     optionalDependencies:
-      zod: 3.25.67
+      zod: 3.25.74
     transitivePeerDependencies:
       - supports-color
 
@@ -19812,9 +19812,9 @@ snapshots:
     optionalDependencies:
       commander: 11.1.0
 
-  zod@3.24.2: {}
-
   zod@3.25.67: {}
+
+  zod@3.25.74: {}
 
   zustand-middleware-computed-state@0.1.3: {}
 
