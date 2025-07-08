@@ -1,4 +1,3 @@
-import { ChevronRight, type LucideIcon } from "lucide-react"
 import { Box, ContextMenu, Flex, Text, useModalStore } from "@incmix/ui"
 import { ReusableAddProject, useAddProject } from "@incmix/ui"
 import {
@@ -16,6 +15,7 @@ import {
   SidebarMenuSubItem,
 } from "@incmix/ui/sidebar"
 import { Link } from "@tanstack/react-router"
+import { ChevronRight, type LucideIcon } from "lucide-react"
 import { ProjectSwitcher } from "./project-switcher"
 
 type NavItem = {
