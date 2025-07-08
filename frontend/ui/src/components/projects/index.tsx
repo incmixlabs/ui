@@ -1,12 +1,13 @@
-import { useState } from "react"
+import { useState } from "react";
 
-import { saveFormProject } from "@incmix/store"
+import { saveFormProject } from "@incmix/store";
 import {
   Box,
   Button,
   Flex,
   Heading,
   IconButton,
+  PageHeader,
   ScrollArea,
   Text,
   iconSize,
@@ -28,25 +29,25 @@ export {
 const AddProjectAutoForm = lazy(() =>
   import("./components/add-project-auto-form").then((module) => ({
     default: module.AddProjectAutoForm,
-  }))
-)
+  })),
+);
 const ProjectCard = lazy(() =>
   import("./components/project-card").then((module) => ({
     default: module.ProjectCard,
-  }))
-)
+  })),
+);
 const ProjectDrawer = lazy(() =>
   import("./components/project-drawer").then((module) => ({
     default: module.default,
-  }))
-)
+  })),
+);
 const ProjectFilter = lazy(() =>
   import("./components/project-filter").then((module) => ({
     default: module.ProjectFilter,
-  }))
-)
-import { projects as initialProjects } from "./data"
-import type { Project } from "./types"
+  })),
+);
+import { projects as initialProjects } from "./data";
+import type { Project } from "./types";
 
 /**
  * Renders the project management page with filtering, view mode switching, and project creation functionality.
@@ -61,146 +62,149 @@ import type { Project } from "./types"
 export function ProjectPageComponents() {
   const [projectId, setProjectId] = useQueryState("projectId", {
     defaultValue: "",
-  })
-  const [projects, setProjects] = useState<Project[]>(initialProjects)
+  });
+  const [projects, setProjects] = useState<Project[]>(initialProjects);
   const [filteredProjects, setFilteredProjects] =
-    useState<Project[]>(initialProjects)
+    useState<Project[]>(initialProjects);
   const [activeTab, setActiveTab] = useState<
     "all" | "started" | "on-hold" | "completed"
-  >("all")
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const [isFilterOpen, setIsFilterOpen] = useState(false)
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
+  >("all");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const handleTabChange = (
-    tab: "all" | "started" | "on-hold" | "completed"
+    tab: "all" | "started" | "on-hold" | "completed",
   ) => {
-    setActiveTab(tab)
+    setActiveTab(tab);
     if (tab === "all") {
-      setFilteredProjects(projects)
+      setFilteredProjects(projects);
     } else {
-      setFilteredProjects(projects.filter((project) => project.status === tab))
+      setFilteredProjects(projects.filter((project) => project.status === tab));
     }
-  }
+  };
 
   const handleAddProject = async (newProject: Omit<Project, "id">) => {
     // Create the project with ID
-    const uniqueId = nanoid()
+    const uniqueId = nanoid();
 
     // Create the project with a unique ID
     const projectWithId = {
       ...newProject,
       id: uniqueId, // Use our simple unique ID instead of array length
-    }
+    };
 
     try {
       // Save to RxDB
-      await saveFormProject(projectWithId)
+      await saveFormProject(projectWithId);
 
       // Update local state
-      const updatedProjects = [...projects, projectWithId]
-      setProjects(updatedProjects)
+      const updatedProjects = [...projects, projectWithId];
+      setProjects(updatedProjects);
 
       if (activeTab === "all" || activeTab === newProject.status) {
-        setFilteredProjects([...filteredProjects, projectWithId])
+        setFilteredProjects([...filteredProjects, projectWithId]);
       }
       toast.success("Project created successfully", {
         description: `"${newProject.name}" has been added to your projects.`,
-      })
+      });
     } catch (error) {
-      console.error("Failed to save project to RxDB:", error)
+      console.error("Failed to save project to RxDB:", error);
       toast.error("Failed to save project", {
         description: "Your project couldn't be saved Please try again.",
-      })
+      });
       // Still update the UI state even if DB save fails
-      const updatedProjects = [...projects, projectWithId]
-      setProjects(updatedProjects)
+      const updatedProjects = [...projects, projectWithId];
+      setProjects(updatedProjects);
 
       if (activeTab === "all" || activeTab === newProject.status) {
-        setFilteredProjects([...filteredProjects, projectWithId])
+        setFilteredProjects([...filteredProjects, projectWithId]);
       }
     }
-  }
+  };
 
   const handleAddMember = (project: Project) => {
-    console.log("TODO: Implement member selection for project", project.id)
-  }
+    console.log("TODO: Implement member selection for project", project.id);
+  };
 
   const handleAddDueDate = (project: Project) => {
-    console.log("TODO: Implement due date picker for project", project.id)
-  }
+    console.log("TODO: Implement due date picker for project", project.id);
+  };
 
   const handleDeleteProject = (projectId: string) => {
-    const updatedProjects = projects.filter((p) => p.id !== projectId)
-    setProjects(updatedProjects)
-    setFilteredProjects(filteredProjects.filter((p) => p.id !== projectId))
-  }
+    const updatedProjects = projects.filter((p) => p.id !== projectId);
+    setProjects(updatedProjects);
+    setFilteredProjects(filteredProjects.filter((p) => p.id !== projectId));
+  };
 
   const handleApplyFilters = (filters: {
-    search: string
-    members: string[]
-    dueDate: string
-    status: string
+    search: string;
+    members: string[];
+    dueDate: string;
+    status: string;
   }) => {
-    let filtered = [...projects]
+    let filtered = [...projects];
 
     // Filter by search term
     if (filters.search) {
-      const searchLower = filters.search.toLowerCase()
+      const searchLower = filters.search.toLowerCase();
       filtered = filtered.filter(
         (project) =>
           project.name.toLowerCase().includes(searchLower) ||
           project.company.toLowerCase().includes(searchLower) ||
-          project.description.toLowerCase().includes(searchLower)
-      )
+          project.description.toLowerCase().includes(searchLower),
+      );
     }
 
     // Filter by members
     if (filters.members.length > 0) {
       filtered = filtered.filter((project) =>
         project.members.some(
-          (member) => member.id && filters.members.includes(member.id)
-        )
-      )
+          (member) => member.id && filters.members.includes(member.id),
+        ),
+      );
     }
 
     // Filter by status if not "all"
     if (filters.status && filters.status !== "all") {
-      filtered = filtered.filter((project) => project.status === filters.status)
+      filtered = filtered.filter(
+        (project) => project.status === filters.status,
+      );
     }
 
     // Apply active tab filter
     if (activeTab !== "all") {
-      filtered = filtered.filter((project) => project.status === activeTab)
+      filtered = filtered.filter((project) => project.status === activeTab);
     }
 
-    setFilteredProjects(filtered)
-    setIsFilterOpen(false)
-  }
+    setFilteredProjects(filtered);
+    setIsFilterOpen(false);
+  };
 
   const handleResetFilters = () => {
     if (activeTab === "all") {
-      setFilteredProjects(projects)
+      setFilteredProjects(projects);
     } else {
       setFilteredProjects(
-        projects.filter((project) => project.status === activeTab)
-      )
+        projects.filter((project) => project.status === activeTab),
+      );
     }
-    setIsFilterOpen(false)
-  }
+    setIsFilterOpen(false);
+  };
 
   const handleOpenListView = () => {
-    setFilteredProjects(projects)
-    setActiveTab("all")
-    setViewMode("list")
+    setFilteredProjects(projects);
+    setActiveTab("all");
+    setViewMode("list");
     if (!projectId) {
-      setProjectId(filteredProjects[0]?.id)
+      setProjectId(filteredProjects[0]?.id);
     }
-  }
+  };
 
   return (
     <Box className="min-h-screen bg-gray-1">
       <Box className="mx-auto max-w-7xl px-4 py-8">
+        <PageHeader title={"Projects"} className="w-full" />
         <Box className={"relative mb-6"}>
           {viewMode === "grid" && (
             <Box className="flex w-full items-center justify-start rounded-none border-gray-5 border-b bg-transparent ">
@@ -290,14 +294,12 @@ export function ProjectPageComponents() {
               >
                 <SlidersHorizontal size={16} />
               </IconButton>
-
-             
             </Flex>
           </Box>
           <Box
             className={cn(
               "relative mb-6",
-              viewMode === "list" ? "flex gap-5 pt-10" : "pt-4"
+              viewMode === "list" ? "flex gap-5 pt-10" : "pt-4",
             )}
           >
             <ScrollArea
@@ -380,5 +382,5 @@ export function ProjectPageComponents() {
         </Suspense>
       </MotionSheet>
     </Box>
-  )
+  );
 }

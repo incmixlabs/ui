@@ -304,7 +304,6 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
             </>
           )}
         </Box>
-
         <TemplatesSidebar
           filteredTemplates={filteredTemplates}
           templates={templates}

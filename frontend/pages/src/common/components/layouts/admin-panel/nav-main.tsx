@@ -86,21 +86,13 @@ function generateHoverContent(item: NavItem) {
   )
 }
 
-export function NavMain({
-  items,
-  dashboards,
-}: {
-  items: NavItem[]
-  dashboards: Dashboard[]
-}) {
+export function NavMain({ items }: { items: NavItem[] }) {
   const openCreateDashboardModal = useModalStore(
     (state) => state.openDashboardCreate
   )
 
   // Add Project dialog state
   const { isOpen, openAddProject, closeAddProject } = useAddProject()
-
-  console.log(dashboards)
 
   function isProjectsRoot(item: NavItem): boolean {
     console.log(
