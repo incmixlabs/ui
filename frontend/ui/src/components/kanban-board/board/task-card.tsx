@@ -74,6 +74,7 @@ import { ModalPresets } from "../shared/confirmation-modal";
 import { TaskDataSchema } from "@incmix/utils/schema";
 import { RefUrlSummary } from "../shared/ref-url-summary";
 import { getPriorityInfo } from "../priority-config";
+import { useAppearanceStore } from "@incmix/store";
 
 type TCardState =
   | { type: "idle" }
@@ -125,6 +126,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
   onDeleteTask?: (taskId: string) => Promise<void>;
   onTaskOpen?: (taskId: string) => void;
 }) {
+  const { appearance, toggleAppearance } = useAppearanceStore();
   const { handleDrawerOpen } = useKanbanDrawer();
 
   const handleTaskClick = useCallback(
@@ -274,6 +276,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
     typeof card.startDate === "number" ? new Date(card.startDate) : undefined,
   );
 
+  console.log("appearance", appearance);
 
   return (
     <>
@@ -317,11 +320,11 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
               ? {
                   width: state.dragging.width,
                   height: state.dragging.height,
-                  backgroundColor: "black",
-                  opacity: 0.95,
+                  backgroundColor: appearance === "dark" ? "black" : "white",
+                  // opacity: 0.95,
                   border: "2px solid #3b82f6",
                   transform: !isSafari() ? "rotate(1deg)" : undefined,
-                  boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+                  // boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
                 }
               : undefined
           }
@@ -398,10 +401,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
                       {card.completed ? "Mark Incomplete" : "Mark Complete"}
                     </DropdownMenu.Item>
                     <DropdownMenu.Separator />
-                    <DropdownMenu.Item
-                      onClick={handleDelete}
-                      color="red"
-                    >
+                    <DropdownMenu.Item onClick={handleDelete} color="red">
                       <Trash2 size={12} />
                       Delete Task
                     </DropdownMenu.Item>
@@ -481,10 +481,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
               <Flex align="center" justify="between">
                 <Flex align="center" gap="1">
                   <CheckSquare size={12} className="text-gray-11" />
-                  <Text
-                    size="1"
-                    className="text-gray-11 font-medium"
-                  >
+                  <Text size="1" className="text-gray-11 font-medium">
                     {completedSubTasks}/{totalSubTasks} subtasks
                   </Text>
                 </Flex>
@@ -512,7 +509,10 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
           >
             <Flex align="center" gap="3">
               {/* Reference URLs */}
-              <RefUrlSummary refUrls={card.refUrls} className="text-gray-12 mr-2" />
+              <RefUrlSummary
+                refUrls={card.refUrls}
+                className="text-gray-12 mr-2"
+              />
 
               {/* Attachments */}
               {card.attachments && card.attachments.length > 0 && (
