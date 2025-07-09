@@ -1,15 +1,14 @@
 import { useState } from "react"
 import { nanoid } from "nanoid"
-import { Button, Dialog, toast } from "@incmix/ui"
-import { saveFormProject, useOrganizationStore } from "@incmix/store"
+import { Button, Dialog, toast } from "@base"
+import { saveFormProject } from "@incmix/store"
 
 import { projectFormSchema } from "./project-form-schema"
 import type { Project } from "../types"
 
 import AutoForm from "@components/auto-form"
 import type { Option } from "@components/multiple-selector/multiple-selector"
-import { useMutation } from "@tanstack/react-query"
-import { PROJECTS_API_URL } from "../../../utils/constants"
+import { useProjectMutation } from "../hooks/use-project-mutation"
 
 /**
  * Props for the ReusableAddProject component
@@ -45,49 +44,7 @@ export function ReusableAddProject({
     setFormData(values)
   }
 
-  const { selectedOrganisation } = useOrganizationStore();
-
-  const { mutateAsync: saveProjectToBackend } = useMutation({
-    mutationFn: async (project: Project) => {
-      if (!selectedOrganisation) {
-        throw new Error("No organisation selected");
-      }
-      const formData = new FormData();
-      formData.append("name", project.name || "");
-      formData.append("orgId", selectedOrganisation.id);
-      formData.append("description", project.description || "");
-      formData.append("status", project.status || "");
-      if (project.startDate) {
-        formData.append("startDate", new Date(project.startDate).toISOString());
-      }
-      if (project.endDate) {
-        formData.append("endDate", new Date(project.endDate).toISOString());
-      }
-      if (project.budget) {
-        formData.append("budget", String(project.budget));
-      }
-      formData.append("company", project.company || "");
-      // If project.logo is a File or Blob, append it; otherwise, append empty string
-      if (project.fileData instanceof File) {
-        formData.append("logo", project.fileData);
-      }
-      // members as comma-separated string
-      if (Array.isArray(project.members)) {
-        formData.append("members", JSON.stringify(project.members.map((member) => ({
-          id: member.id,
-          role: member.position,
-        }))));
-      }
-
-
-      const response = await fetch(PROJECTS_API_URL, {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
-      return response.json();
-    },
-  });
+  const { mutateAsync: saveProjectToBackend } = useProjectMutation();
 
   const handleSubmit = async (data: Record<string, any>) => {
     try {

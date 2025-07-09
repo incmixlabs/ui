@@ -1,34 +1,32 @@
-import { useState } from "react";
+import { useState, Suspense, lazy } from "react";
 
-import { saveFormProject, useOrganizationStore } from "@incmix/store";
+import { LayoutGrid, List, Plus, SlidersHorizontal } from "lucide-react";
+import { motion } from "motion/react";
+import { nanoid } from "nanoid";
+import { useQueryState } from "nuqs";
+
+import { saveFormProject } from "@incmix/store";
 import {
   Box,
   Button,
   Flex,
   Heading,
   IconButton,
-  PageHeader,
   ScrollArea,
   Text,
   iconSize,
   toast,
-} from "@incmix/ui";
+} from "@base";
+import { PageHeader } from "@components/page-header";
 import { cn } from "@utils";
-import { LayoutGrid, List, Plus, SlidersHorizontal } from "lucide-react";
-import { motion } from "motion/react";
-import { nanoid } from "nanoid";
-import { useQueryState } from "nuqs";
-import { Suspense, lazy } from "react";
 import { MotionSheet } from "../custom-sheet";
 export {
   ReusableAddProject,
   useAddProject
 } from './components/reusable-add-project';
-
-import { PROJECTS_API_URL } from "../../utils/constants";
-import { useMutation } from "@tanstack/react-query";
 import { projects as initialProjects } from "./data";
 import type { Project } from "./types";
+import { useProjectMutation } from "./hooks/use-project-mutation";
 
 // Dynamically import heavy components
 const AddProjectAutoForm = lazy(() =>
@@ -87,47 +85,7 @@ export function ProjectPageComponents() {
     }
   };
 
-  const { selectedOrganisation } = useOrganizationStore();
-
-  const { mutateAsync: saveProjectToBackend } = useMutation({
-    mutationFn: async (project: Project) => {
-      if (!selectedOrganisation) {
-        throw new Error("No organisation selected");
-      }
-      const formData = new FormData();
-      formData.append("name", project.name || "");
-      formData.append("orgId", selectedOrganisation.id);
-      formData.append("description", project.description || "");
-      formData.append("status", project.status || "");
-      if (project.startDate) {
-        formData.append("startDate", new Date(project.startDate).toISOString());
-      }
-      if (project.endDate) {
-        formData.append("endDate", new Date(project.endDate).toISOString());
-      }
-      formData.append("budget", project.budget != null ? String(project.budget) : "");
-      formData.append("company", project.company || "");
-      // If project.logo is a File or Blob, append it; otherwise, append empty string
-      if (project.fileData instanceof File) {
-        formData.append("logo", project.fileData);
-      }
-      // members as comma-separated string
-      if (Array.isArray(project.members)) {
-        formData.append("members", JSON.stringify(project.members.map((member) => ({
-          id: member.id,
-          role: member.position,
-        }))));
-      }
-
-
-      const response = await fetch(PROJECTS_API_URL, {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      });
-      return response.json();
-    },
-  });
+ const { mutateAsync: saveProjectToBackend } = useProjectMutation();
 
   const handleAddProject = async (newProject: Omit<Project, "id">) => {
     // Create the project with ID
