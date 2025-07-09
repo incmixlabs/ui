@@ -1,13 +1,15 @@
 import { useState } from "react"
 import { nanoid } from "nanoid"
 import { Button, Dialog, toast } from "@incmix/ui"
-import { saveFormProject } from "@incmix/store"
+import { saveFormProject, useOrganizationStore } from "@incmix/store"
 
 import { projectFormSchema } from "./project-form-schema"
 import type { Project } from "../types"
 
 import AutoForm from "@components/auto-form"
 import type { Option } from "@components/multiple-selector/multiple-selector"
+import { useMutation } from "@tanstack/react-query"
+import { PROJECTS_API_URL } from "../../../utils/constants"
 
 /**
  * Props for the ReusableAddProject component
@@ -17,12 +19,12 @@ export interface ReusableAddProjectProps {
    * Whether the dialog is open
    */
   isOpen: boolean
-  
+
   /**
    * Callback when dialog is closed
    */
   onClose: () => void
-  
+
   /**
    * Optional callback after project is successfully added
    */
@@ -32,10 +34,10 @@ export interface ReusableAddProjectProps {
 /**
  * A reusable component for adding projects that can be used anywhere in the application
  */
-export function ReusableAddProject({ 
-  isOpen, 
+export function ReusableAddProject({
+  isOpen,
   onClose,
-  onProjectAdded 
+  onProjectAdded
 }: ReusableAddProjectProps) {
   const [formData, setFormData] = useState<Record<string, any>>({})
 
@@ -43,11 +45,55 @@ export function ReusableAddProject({
     setFormData(values)
   }
 
+  const { selectedOrganisation } = useOrganizationStore();
+
+  const { mutateAsync: saveProjectToBackend } = useMutation({
+    mutationFn: async (project: Project) => {
+      if (!selectedOrganisation) {
+        throw new Error("No organisation selected");
+      }
+      const formData = new FormData();
+      formData.append("name", project.name || "");
+      formData.append("orgId", selectedOrganisation.id);
+      formData.append("description", project.description || "");
+      formData.append("status", project.status || "");
+      if (project.startDate) {
+        formData.append("startDate", new Date(project.startDate).toISOString());
+      }
+      if (project.endDate) {
+        formData.append("endDate", new Date(project.endDate).toISOString());
+      }
+      if (project.budget) {
+        formData.append("budget", String(project.budget));
+      }
+      formData.append("company", project.company || "");
+      // If project.logo is a File or Blob, append it; otherwise, append empty string
+      if (project.fileData instanceof File) {
+        formData.append("logo", project.fileData);
+      }
+      // members as comma-separated string
+      if (Array.isArray(project.members)) {
+        formData.append("members", JSON.stringify(project.members.map((member) => ({
+          id: member.id,
+          role: member.position,
+        }))));
+      }
+
+
+      const response = await fetch(PROJECTS_API_URL, {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+      return response.json();
+    },
+  });
+
   const handleSubmit = async (data: Record<string, any>) => {
     try {
       // Process the form data
       const uniqueId = nanoid()
-      
+
       // Create a Project object with required fields
       const newProject = {
         id: uniqueId,
@@ -69,19 +115,21 @@ export function ReusableAddProject({
         })) || [],
         fileData: data.files?.[0] || null
       } satisfies Project
-      
+
       // Save to RxDB
       await saveFormProject(newProject)
-      
+
+      await saveProjectToBackend(newProject);
+
       toast.success("Project created successfully", {
         description: `"${newProject.name}" has been added to your projects.`,
       })
-      
+
       // Call the callback if provided
       if (onProjectAdded) {
         onProjectAdded(newProject)
       }
-      
+
       // Close the dialog
       onClose()
     } catch (error) {
@@ -122,10 +170,10 @@ export function ReusableAddProject({
  */
 export function useAddProject() {
   const [isOpen, setIsOpen] = useState(false)
-  
+
   const openAddProject = () => setIsOpen(true)
   const closeAddProject = () => setIsOpen(false)
-  
+
   return {
     isOpen,
     openAddProject,
