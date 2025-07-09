@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 
 import { throwError, useOrganizationStore } from "@incmix/store";
-import { PROJECTS_API_URL } from "@/utils/constants";
+import { PROJECTS_API_URL } from "@utils/constants";
 import { Project } from "../types";
 
 export function useProjectMutation() {
