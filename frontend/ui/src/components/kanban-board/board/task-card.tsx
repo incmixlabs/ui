@@ -276,7 +276,6 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
     typeof card.startDate === "number" ? new Date(card.startDate) : undefined,
   );
 
-  console.log("appearance", appearance);
 
   return (
     <>
@@ -294,7 +293,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === "Space") {
             e.preventDefault();
-            handleTaskClick(e as any);
+            handleTaskClick(e as unknown as React.MouseEvent);
           }
         }}
         className={cn(
@@ -424,7 +423,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
                   colors[Math.floor(Math.random() * colors.length)];
                 return (
                   <Text
-                    key={assignee}
+                    key={assignee.name}
                     className={`flex h-1 w-6 items-center gap-1 rounded-full ${randomColor}`}
                   />
                 );
@@ -502,50 +501,19 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
           )}
 
           {/* Footer with meta information */}
-          <Flex
-            align="center"
-            justify="between"
-            className="pt-2 border-t border-gray-4"
-          >
-            <Flex align="center" gap="3">
-              {/* Reference URLs */}
-              <RefUrlSummary
-                refUrls={card.refUrls}
-                className="text-gray-12 mr-2"
-              />
-
-              {/* Attachments */}
-              {card.attachments && card.attachments.length > 0 && (
-                <Flex align="center" gap="1" className="text-gray-12">
-                  <Paperclip size={12} />
-                  <Text size="1" className="font-medium">
-                    {card.attachments.length}
-                  </Text>
-                </Flex>
-              )}
-
-              {/* Comments count */}
-              {card.comments && card.comments.length > 0 && (
-                <Flex
-                  align="center"
-                  gap="1"
-                  className="text-gray-12"
-                  title="Comments"
-                >
-                  <MessageSquareText size={12} />
-                  <Text size="1" className="font-medium">
-                    {card.comments.length}
-                  </Text>
-                </Flex>
-              )}
-            </Flex>
-
+        
             <Flex
               align={"center"}
               justify={"between"}
               className="gap-2 py-1 w-full"
             >
               <Flex align={"center"} gap="4">
+                   {/* Reference URLs */}
+              <RefUrlSummary
+                refUrls={card.refUrls}
+                className="text-gray-12"
+              />
+            
                 {card.attachments && (
                   <IconButton className="flex items-center gap-1 bg-transparent text-gray-700 dark:text-gray-200">
                     <Paperclip size={20} />
@@ -585,7 +553,6 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
               </Flex>
             </Flex>
             {/* Assigned users */}
-          </Flex>
         </Card>
 
         {/* Drop indicator below */}
