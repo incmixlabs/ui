@@ -77,7 +77,7 @@ const TasksPage = () => {
       */}
       <Tabs.Root defaultValue="board" className="flex h-full flex-col">
         {/* HEADER AREA: This part is fixed and does not shrink. */}
-        <Box className="flex-shrink-0 border-gray-200 border-b px-4 py-3 dark:border-gray-700">
+        <Box className="flex-shrink-0 border-gray-2 border-b px-6 py-3">
           <Flex justify="between" align="center" className="w-full">
             <Tabs.List
               className="flex w-fit shrink-0 rounded-md bg-gray-3 shadow-none"

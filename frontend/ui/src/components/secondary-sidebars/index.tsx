@@ -16,7 +16,7 @@ export function SecondarySidebar({
       className={cn(
         "relative h-screen md:w-[240px] w-fit transition-all duration-200 ease-linear xl:w-[270px]",
         isMobile
-          ? `fixed md:left-16 left-16 z-30 min-w-[270px] bg-gray-2 ${open && "hidden"} ${!openMobile && "hidden"}`
+          ? `fixed left-16 z-30 min-w-[270px] bg-gray-2 ${open && "hidden"} ${!openMobile && "hidden"}`
           : `${secondaryOpen ? "flex w-[250px] xl:min-w-[270px]" : "hidden w-0"}`
       )}
     >

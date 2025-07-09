@@ -256,10 +256,17 @@ export function Board({
     <Box className="w-full h-full flex flex-col">
      
       {/* HEADER: This part is fixed and will not shrink. */}
-      <Box className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700">
-        <Flex direction="column" gap="4" className="p-4">
+      <Box className="flex-shrink-0 border-b border-gray-3">
+        <Flex direction="column" gap="4" className="p-4 px-6">
           <Flex justify="between" align="center">
-            <Heading size="6">Project Board</Heading>
+            {/* <Heading size="6">Project Board</Heading> */}
+            <Flex gap="6" className="text-sm text-gray-11">
+            <Text>{projectStats.totalStatusLabels} column{projectStats.totalStatusLabels !== 1 ? "s" : ""}</Text>
+            <Text>{projectStats.totalTasks} task{projectStats.totalTasks !== 1 ? "s" : ""}</Text>
+            <Text>{projectStats.completedTasks} completed</Text>
+            {projectStats.overdueTasks > 0 && <Text className="text-red-600">{projectStats.overdueTasks} overdue</Text>}
+            {projectStats.urgentTasks > 0 && <Text className="text-orange-600">{projectStats.urgentTasks} urgent</Text>}
+          </Flex>
             <Flex align="center" gap="2">
               <Tooltip content="Refresh">
                 <IconButton variant="ghost" onClick={handleRefresh}><RefreshCw size={16} /></IconButton>
@@ -273,13 +280,7 @@ export function Board({
               </DropdownMenu.Root>
             </Flex>
           </Flex>
-          <Flex gap="6" className="text-sm text-gray-600 dark:text-gray-400">
-            <Text>{projectStats.totalStatusLabels} column{projectStats.totalStatusLabels !== 1 ? "s" : ""}</Text>
-            <Text>{projectStats.totalTasks} task{projectStats.totalTasks !== 1 ? "s" : ""}</Text>
-            <Text>{projectStats.completedTasks} completed</Text>
-            {projectStats.overdueTasks > 0 && <Text className="text-red-600">{projectStats.overdueTasks} overdue</Text>}
-            {projectStats.urgentTasks > 0 && <Text className="text-orange-600">{projectStats.urgentTasks} urgent</Text>}
-          </Flex>
+          
         </Flex>
       </Box>
 
@@ -307,10 +308,10 @@ export function Board({
               </div>
             ))}
             <div className="w-80 flex-shrink-0 h-full">
-              <Box className="h-full rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600">
+              <Box className="h-full rounded-lg border bg-gray-3 border-gray-6">
                 <Flex align="center" justify="center" className="h-full p-4" direction="column" gap="4">
                   <CreateColumnForm projectId={projectId} onSuccess={handleRefresh} />
-                  <Text size="2" className="text-gray-500 text-center max-w-48">
+                  <Text size="2" className="text-gray-10 text-center max-w-48">
                     Create a new status column to organize your workflow
                   </Text>
                 </Flex>
