@@ -434,11 +434,10 @@ export function ListColumn({
       })}
       <Flex
         direction="column"
-        className={`rounded-md bg-gray-1 dark:bg-gray-2 border border-gray-4 dark:border-gray-5 ${stateStyles[state.type]}`}
+        className={`rounded-md ${stateStyles[state.type]}`}
         ref={innerRef}
         style={{ 
-          transition: 'all 0.15s ease-in-out',
-          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)'
+          transition: 'all 0.15s ease-in-out'
         }}
         {...{ [blockBoardPanningAttr]: true }}
       >
@@ -447,12 +446,9 @@ export function ListColumn({
           className={`pb-2 ${state.type === "is-column-over" ? "invisible" : ""}`}
         >
           {/* Column Header */}
-          <Box className="border-b border-gray-4 dark:border-gray-5">
+          <Box>
             {isEditingColumn ? (
-              <Box className="p-3" style={{
-                backgroundColor: `${column.color}15`,
-                borderTop: `2px solid ${column.color}`
-              }}>
+              <Box className="mt-1 w-full">
                 <Flex direction="column" gap="3" className="flex-1">
                 <TextField.Root
                   value={editColumnName}
@@ -514,36 +510,29 @@ export function ListColumn({
               <Flex
                 justify="between"
                 align="center"
-                className="p-3 cursor-grab active:cursor-grabbing"
+                className="py-3 cursor-grab active:cursor-grabbing group"
                 ref={headerRef}
-                style={{
-                  backgroundColor: `${column.color}15`,
-                  borderTop: `2px solid ${column.color}`
-                }}
               >
-                <Flex align="center" gap="2" className="flex-1 min-w-0">
+                <div className="flex items-center pl-6">
                   <Button
                     variant="ghost"
                     size="1"
                     onClick={() => setIsExpanded(!isExpanded)}
-                    className="p-1"
+                    className="p-0 flex-shrink-0"
                   >
-                    {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                    {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                   </Button>
-
+                  
                   <Checkbox
                     checked={allTasksSelected ? true : someTasksSelected ? 'indeterminate' : false}
                     onCheckedChange={handleSelectAllChange}
-                    className="flex-shrink-0"
+                    className="flex-shrink-0 ml-[20px] my-auto"
                     disabled={totalTasks === 0}
                   />
-
-                  <div
-                    className="w-2 h-2 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: column.color }}
-                  />
-
-                  <Text size="2" className="font-medium truncate text-gray-12 dark:text-gray-11">
+                </div>
+                
+                <Flex align="center" className="flex-1 min-w-0 ml-4 gap-2">
+                  <Text size="4" className="font-semibold truncate text-black dark:text-white">
                     {column.name}
                   </Text>
 
@@ -562,8 +551,8 @@ export function ListColumn({
                 {/* Column Actions Menu with edit and delete options */}
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger>
-                    <IconButton size="1" variant="ghost">
-                      <Ellipsis size={16} />
+                    <IconButton size="1" variant="ghost" className="opacity-0 group-hover:opacity-100 transition-opacity mr-3">
+                      <Ellipsis size={14} />
                     </IconButton>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content>
@@ -585,8 +574,8 @@ export function ListColumn({
             )}
 
             {/* Column Description */}
-            {column.description && (
-              <Box className="px-3 pb-2">
+            {column.description && isExpanded && (
+              <Box className="pb-2 pl-6 pr-6">
                 <Text size="1" className="text-gray-10 dark:text-gray-9">
                   {column.description}
                 </Text>
@@ -594,8 +583,8 @@ export function ListColumn({
             )}
 
             {/* Progress Bar */}
-            {totalTasks > 0 && completedTasks > 0 && (
-              <Box className="px-3 pb-2">
+            {totalTasks > 0 && completedTasks > 0 && isExpanded && (
+              <Box className="pb-2 pl-6 pr-6">
                 <div className="w-full bg-gray-5 dark:bg-gray-6 rounded-full h-1">
                   <div
                     className="bg-green-8 dark:bg-green-7 h-1 rounded-full transition-all duration-300"
@@ -609,13 +598,13 @@ export function ListColumn({
           {/* Tasks List */}
           {isExpanded && (
             <Flex
-              className="flex flex-col overflow-y-auto [overflow-anchor:none] max-h-[calc(100vh-180px)] space-y-2 pt-2"
+              className="flex flex-col overflow-y-auto [overflow-anchor:none] max-h-[calc(100vh-180px)] space-y-0.5 pt-1"
               ref={scrollableRef}
               style={{ 
                 scrollbarWidth: 'thin', 
                 scrollbarColor: 'var(--gray-6) transparent',
-                paddingLeft: '0.75rem',
-                paddingRight: '0.75rem'
+                paddingLeft: '0.5rem',
+                paddingRight: '0.5rem'
               }}
             >
               <CardList
@@ -634,7 +623,7 @@ export function ListColumn({
               ) : null} */}
 
               {/* Simple Add Task Section */}
-              <Box className="p-3">
+              <Box className="pt-1 pb-2">
                 {isCreatingTask ? (
                   <SimpleTaskInput
                     onCreateTask={handleCreateTaskWithData}
@@ -667,14 +656,18 @@ export function ListColumn({
                     placeholder="Enter task title..."
                   />
                 ) : (
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start text-gray-10 dark:text-gray-9 hover:bg-gray-3 dark:hover:bg-gray-4 border border-dashed border-gray-6 dark:border-gray-7"
-                    onClick={() => setIsCreatingTask(true)}
-                  >
-                    <Plus size={16} />
-                    Add a task
-                  </Button>
+                  <Box className="flex flex-shrink-0 flex-col px-2 py-1.5 w-full">
+                    <Box 
+                      className="group relative px-6 rounded-[20px] transition-all duration-150 bg-white border border-dashed border-gray-6 dark:bg-gray-1 dark:border dark:border-dashed dark:border-gray-6 hover:bg-gray-3 dark:hover:bg-gray-2 w-full"
+                      style={{ height: "56px" }}
+                      onClick={() => setIsCreatingTask(true)}
+                    >
+                      <Flex justify="start" align="center" className="h-full w-full gap-2 cursor-pointer">
+                        <Plus size={14} className="text-blue-9" />
+                        <Text className="text-blue-9">Add task</Text>
+                      </Flex>
+                    </Box>
+                  </Box>
                 )}
               </Box>
             </Flex>

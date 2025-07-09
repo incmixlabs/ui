@@ -16,7 +16,6 @@ import { CreateColumnForm } from "../shared/create-column-form"
 
 
 import {
-
   isCardData,
   isCardDropTargetData,
   isColumnData,
