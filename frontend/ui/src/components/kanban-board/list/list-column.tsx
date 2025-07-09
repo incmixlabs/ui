@@ -53,9 +53,9 @@ type TColumnState =
 
 const stateStyles: { [Key in TColumnState["type"]]: string } = {
   idle: "",
-  "is-card-over": "outline outline-2 outline-blue-400 outline-offset-2",
-  "is-dragging": "opacity-60 outline outline-2 outline-gray-400",
-  "is-column-over": "bg-blue-50 dark:bg-blue-950",
+  "is-card-over": "outline outline-2 outline-blue-8 outline-offset-2",
+  "is-dragging": "opacity-60 outline outline-2 outline-gray-8",
+  "is-column-over": "bg-blue-3",
 }
 
 const idle = { type: "idle" } satisfies TColumnState
@@ -434,7 +434,7 @@ export function ListColumn({
       })}
       <Flex
         direction="column"
-        className={`rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 ${stateStyles[state.type]}`}
+        className={`rounded-lg bg-gray-2 border border-gray-6 ${stateStyles[state.type]}`}
         ref={innerRef}
         {...{ [blockBoardPanningAttr]: true }}
       >
@@ -443,7 +443,7 @@ export function ListColumn({
           className={`pb-2 ${state.type === "is-column-over" ? "invisible" : ""}`}
         >
           {/* Column Header */}
-          <Box className="border-b border-gray-200 dark:border-gray-700">
+          <Box className="border-b border-gray-6">
             {isEditingColumn ? (
               <Box className="p-4" style={{
                 backgroundColor: `${column.color}15`,
@@ -483,7 +483,7 @@ export function ListColumn({
                       </div>
                     )}
                   </div>
-                  <Text size="1" className="text-gray-500">Column color</Text>
+                  <Text size="1" className="text-gray-9">Column color</Text>
                 </Flex>
                 <Flex gap="2">
                   <Button
@@ -570,7 +570,7 @@ export function ListColumn({
                     <DropdownMenu.Separator />
                     <DropdownMenu.Item
                       onClick={handleDeleteColumn}
-                      className="text-red-600 hover:text-red-700"
+                      className="text-red-9 hover:text-red-10"
                     >
                       <Trash2 size={14} />
                       Delete Column
@@ -583,7 +583,7 @@ export function ListColumn({
             {/* Column Description */}
             {column.description && (
               <Box className="px-4 pb-3">
-                <Text size="2" className="text-gray-600 dark:text-gray-400">
+                <Text size="2" className="text-gray-11">
                   {column.description}
                 </Text>
               </Box>
@@ -592,9 +592,9 @@ export function ListColumn({
             {/* Progress Bar */}
             {totalTasks > 0 && completedTasks > 0 && (
               <Box className="px-4 pb-3">
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                <div className="w-full bg-gray-6 rounded-full h-2">
                   <div
-                    className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                    className="bg-green-9 h-2 rounded-full transition-all duration-300"
                     style={{ width: `${completionPercentage}%` }}
                   />
                 </div>
@@ -659,7 +659,7 @@ export function ListColumn({
                 ) : (
                   <Button
                     variant="ghost"
-                    className="w-full justify-start text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600"
+                    className="w-full justify-start text-gray-11 hover:bg-gray-4 border-2 border-dashed border-gray-7"
                     onClick={() => setIsCreatingTask(true)}
                   >
                     <Plus size={16} />

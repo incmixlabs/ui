@@ -14,8 +14,6 @@ import { Box, Flex, Heading, IconButton, Button, Text, TextField, TextArea, Badg
 import { Plus, Search, RefreshCw, Settings, MoreVertical, X, ClipboardList, XCircle, Sparkles, Loader2 } from "lucide-react"
 import { CreateColumnForm } from "../shared/create-column-form"
 
-// Import useKanban hook for form logic consistency
-import { useKanban } from "../hooks/use-kanban-data"
 
 import {
 
@@ -30,7 +28,6 @@ import {
   useBulkAIGeneration
 } from "@incmix/store"
 import { useListView } from "../hooks/use-list-view"
-import ColorPicker, { ColorSelectType } from "@components/color-picker"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
 import { blockBoardPanningAttr } from "../data-attributes"
 
@@ -412,7 +409,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     return (
       <Box className="flex items-center justify-center h-64">
         <Flex direction="column" align="center" gap="4">
-          <div className="text-red-500">Error: {error}</div>
+          <div className="text-red-9">Error: {error}</div>
           <Button onClick={() => window.location.reload()} variant="outline">
             <RefreshCw size={16} />
             Retry
@@ -426,18 +423,18 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     // FIX: Making ListBoard structure consistent with Board component to fix double scrollbars
     <Box className="w-full h-full flex flex-col">
       {/* HEADER: Fixed header area */}
-      <Box className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+      <Box className="flex-shrink-0 border-b border-gray-6 bg-gray-1">
         <Flex direction="column" gap="4" className="p-4">
 
           {/* Selected Tasks Actions */}
           {selectedTasksCount > 0 && (
-            <Box className="p-3 border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 dark:border-blue-800 rounded-lg shadow-sm">
+            <Box className="p-3 border border-blue-6 bg-blue-3 rounded-lg shadow-sm">
               <Flex justify="between" align="center">
                 <Flex align="center" gap="2">
                   <Badge variant="solid" color="blue" size="2" className="px-3 py-0.5">
                     {selectedTasksCount}
                   </Badge>
-                  <Text className="font-medium text-blue-800 dark:text-blue-300">
+                  <Text className="font-medium text-blue-11">
                     {selectedTasksCount === 1 ? 'task' : 'tasks'} selected
                   </Text>
                 </Flex>
@@ -477,7 +474,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                     variant="outline"
                     color="gray"
                     size="2"
-                    className="shadow-sm hover:shadow hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                    className="shadow-sm hover:shadow hover:bg-gray-4 transition-all"
                     onClick={() => setSelectedTasks({})}
                   >
                     <XCircle size={16} />
@@ -531,7 +528,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
           {/* Search and Stats */}
           <Flex justify="between" align="center" gap="4">
             <Box className="flex-1 relative max-w-md">
-              <Search size={20} className="absolute top-3 left-3 text-gray-400" />
+              <Search size={20} className="absolute top-3 left-3 text-gray-8" />
               <TextField.Root
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -540,15 +537,15 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
               />
             </Box>
 
-            <Flex gap="6" className="text-sm text-gray-600 dark:text-gray-400">
+            <Flex gap="6" className="text-sm text-gray-11">
               <span>{projectStats.totalStatusLabels} columns</span>
               <span>{projectStats.totalTasks} tasks</span>
               <span>{projectStats.completedTasks} completed</span>
               {projectStats.overdueTasks > 0 && (
-                <span className="text-red-600">{projectStats.overdueTasks} overdue</span>
+                <span className="text-red-9">{projectStats.overdueTasks} overdue</span>
               )}
               {projectStats.urgentTasks > 0 && (
-                <span className="text-orange-600">{projectStats.urgentTasks} urgent</span>
+                <span className="text-orange-9">{projectStats.urgentTasks} urgent</span>
               )}
             </Flex>
           </Flex>
@@ -581,13 +578,13 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
 
             {filteredColumns.length === 0 && searchQuery && (
               <Box className="text-center py-12">
-                <div className="text-gray-500">No tasks found matching "{searchQuery}"</div>
+                <div className="text-gray-9">No tasks found matching "{searchQuery}"</div>
               </Box>
             )}
 
             {filteredColumns.length === 0 && !searchQuery && (
               <Flex direction="column" align="center" className="py-12 space-y-4">
-                <Text className="text-gray-500">No status columns found. Create your first column to get started.</Text>
+                <Text className="text-gray-9">No status columns found. Create your first column to get started.</Text>
                 <Button
                   variant="soft"
                   onClick={() => setIsAddColumnDialogOpen(true)}

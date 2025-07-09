@@ -125,7 +125,6 @@ export function TaskActionsMenu({
   mode = "existing-task"
 }: TaskActionsMenuProps) {
   const [isDatePickerOpen, setIsDatePickerOpen] = useState<"start" | "end" | null>(null)
-  const [isMemberPickerOpen, setIsMemberPickerOpen] = useState(false)
 
   // Get current values - either from existing task or new task data
   const currentPriorityId = task?.priorityId || newTaskData?.priorityId || ""
@@ -290,10 +289,10 @@ export function TaskActionsMenu({
                 <Popover.Trigger>
                   <Button variant="ghost" className="w-full justify-start">
                     <Flex align="center" gap="2" className="w-full">
-                      <CalendarIcon size={12} className="text-green-600" />
+                      <CalendarIcon size={12} className="text-green-9" />
                       <Text size="2">Start Date</Text>
                       {currentStartDate && (
-                        <Text size="1" className="ml-auto text-muted-foreground">
+                        <Text size="1" className="ml-auto text-gray-9">
                           {formatDate(currentStartDate)}
                         </Text>
                       )}
@@ -318,10 +317,10 @@ export function TaskActionsMenu({
                 <Popover.Trigger>
                   <Button variant="ghost" className="w-full justify-start">
                     <Flex align="center" gap="2" className="w-full">
-                      <CalendarIcon size={12} className="text-muted-foreground" />
+                      <CalendarIcon size={12} className="text-gray-9" />
                       <Text size="2">End Date</Text>
                       {currentEndDate && (
-                        <Text size="1" className="ml-auto text-muted-foreground">
+                        <Text size="1" className="ml-auto text-gray-9">
                           {formatDate(currentEndDate)}
                         </Text>
                       )}
@@ -378,7 +377,7 @@ export function TaskActionsMenu({
                         <p className="text-sm font-medium leading-none">{member.name}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">{member.position}</p>
+                        <p className="text-xs text-gray-9">{member.position}</p>
                       </div>
                     </div>
                     {isAssigned && (

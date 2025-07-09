@@ -61,7 +61,7 @@ type TCardState =
 const idle: TCardState = { type: "idle" }
 
 const innerStyles: { [Key in TCardState["type"]]?: string } = {
-  idle: "hover:outline outline-2 outline-gray-200 hover:shadow-sm transition-all duration-200",
+  idle: "hover:outline outline-2 outline-gray-6 hover:shadow-sm transition-all duration-200",
   "is-dragging": "opacity-40 cursor-grabbing scale-[0.98]",
 }
 
@@ -88,7 +88,7 @@ export const ListTaskCardShadow = memo(function ListTaskCardShadow({
 }) {
   return (
     <div
-      className="flex-shrink-0 rounded-lg bg-blue-100 dark:bg-blue-900 border-2 border-dashed border-blue-300 dark:border-blue-700 transition-all duration-200"
+      className="flex-shrink-0 rounded-lg bg-blue-3 border-2 border-dashed border-blue-6 transition-all duration-200"
       style={{ height: Math.max(dragging.height, 80) }}
     />
   )
@@ -204,10 +204,10 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
     const diffTime = date.getTime() - now.getTime()
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
-    if (diffDays < 0) return { status: "overdue", className: "text-red-600 bg-red-50" }
-    if (diffDays === 0) return { status: "today", className: "text-orange-600 bg-orange-50" }
-    if (diffDays <= 3) return { status: "soon", className: "text-yellow-600 bg-yellow-50" }
-    return { status: "future", className: "text-blue-600 bg-blue-50" }
+    if (diffDays < 0) return { status: "overdue", className: "text-red-9 bg-red-3" }
+    if (diffDays === 0) return { status: "today", className: "text-orange-9 bg-orange-3" }
+    if (diffDays <= 3) return { status: "soon", className: "text-yellow-9 bg-yellow-3" }
+    return { status: "future", className: "text-blue-9 bg-blue-3" }
   }, [])
 
   // Don't render if id is missing
@@ -236,7 +236,7 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
 
       <Card
         className={cn(
-          "relative p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700",
+          "relative p-4 bg-card border border-gray-6",
           innerStyles[state.type] || "",
           card.completed && "opacity-75"
         )}
@@ -246,9 +246,9 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
             ? {
                 width: state.dragging.width,
                 height: state.dragging.height,
-                backgroundColor: "white",
+                backgroundColor: "var(--gray-1)",
                 opacity: 0.95,
-                border: "2px solid #3b82f6",
+                border: "2px solid var(--blue-9)",
                 transform: !isSafari() ? "rotate(2deg)" : undefined,
                 boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
               }
@@ -275,8 +275,8 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
               <Heading
                 size="3"
                 className={cn(
-                  "flex-1 font-medium cursor-pointer hover:text-blue-600 transition-colors",
-                  card.completed && "line-through text-gray-500"
+                  "flex-1 font-medium cursor-pointer hover:text-blue-9 transition-colors",
+                  card.completed && "line-through text-gray-9"
                 )}
                 onClick={handleOpenDrawer}
               >
@@ -342,19 +342,19 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
                       <Flex align="center" gap="2">
                         {figmaUrls > 0 && (
                           <Flex align="center" gap="1" title={`${figmaUrls} Figma link${figmaUrls > 1 ? 's' : ''}`}>
-                            <Figma size={12} className="text-purple-500" />
+                            <Figma size={12} className="text-purple-9" />
                             {figmaUrls > 1 && <Text size="1" className="font-medium">{figmaUrls}</Text>}
                           </Flex>
                         )}
                         {taskUrls > 0 && (
                           <Flex align="center" gap="1" title={`${taskUrls} Task link${taskUrls > 1 ? 's' : ''}`}>
-                            <Link size={12} className="text-blue-500" />
+                            <Link size={12} className="text-blue-9" />
                             {taskUrls > 1 && <Text size="1" className="font-medium">{taskUrls}</Text>}
                           </Flex>
                         )}
                         {externalUrls > 0 && (
                           <Flex align="center" gap="1" title={`${externalUrls} External link${externalUrls > 1 ? 's' : ''}`}>
-                            <ExternalLink size={12} className="text-green-500" />
+                            <ExternalLink size={12} className="text-green-9" />
                             {externalUrls > 1 && <Text size="1" className="font-medium">{externalUrls}</Text>}
                           </Flex>
                         )}
@@ -368,8 +368,8 @@ const TaskCardDisplay = memo(function TaskCardDisplay({
               <Flex align="center" gap="2" className="text-xs">
                 {card.startDate && (
                   <Flex align="center" gap="1">
-                    <CalendarDays size={12} className="text-green-600" />
-                    <Text size="1" className="text-green-600">
+                    <CalendarDays size={12} className="text-green-9" />
+                    <Text size="1" className="text-green-9">
                       {formatDate(new Date(card.startDate))}
                     </Text>
                   </Flex>
