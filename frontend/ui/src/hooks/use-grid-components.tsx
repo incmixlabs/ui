@@ -12,7 +12,7 @@ import {
   StatisticWidgets2,
   TotalProject,
   TotalTasks,
-  UserPanelOverview,
+  UserProfile,
 } from "@incmix/ui/widgets"
 
 import { dashboardImg } from "@incmix/ui/dashboard"
@@ -40,27 +40,27 @@ export function useGridComponents(isEditing: boolean) {
       component: <ProjectWidgets2 />,
       title: "Project Widgets",
       componentName: "project-widget",
-      compImage: dashboardImg?.ProjectImg,
+      compImage: dashboardImg?.darkProjectChartImg,
     },
     {
       slotId: "grid-b|0",
       component: <StatisticWidgets2 />,
       title: "Statistic Widgets",
       componentName: "statistic-widget",
-      compImage: dashboardImg?.statisticsImg,
+      compImage: dashboardImg?.darkStatisticsImg,
     },
     {
       slotId: "grid-b|1",
       component: <ActiveTask />,
       title: "Active Task",
       componentName: "active-task",
-      compImage: dashboardImg?.activeTaskImg,
+      compImage: dashboardImg?.darkActiveTaskImg,
     },
     {
       slotId: "f",
       component: <TotalProject />,
       componentName: "total-project",
-      compImage: dashboardImg?.totalProjectImg,
+      compImage: dashboardImg?.darkTotalProjectImg,
       title: "Total Project",
     },
     {
@@ -68,35 +68,35 @@ export function useGridComponents(isEditing: boolean) {
       component: <PostingTask />,
       title: "Posting Task",
       componentName: "posting-task",
-      compImage: dashboardImg?.postingTaskImg,
+      compImage: dashboardImg?.darkPostingTaskImg,
     },
     {
       slotId: "h",
-      component: <UserPanelOverview />,
-      title: "User Panel Overview",
-      componentName: "user-panel-overview",
-      compImage: dashboardImg?.postingTaskImg,
+      component: <UserProfile />,
+      title: "User Profile",
+      componentName: "user-profile",
+      compImage: dashboardImg?.darkProfileImg,
     },
     {
       slotId: "grid-a|0",
       component: <NewTasks />,
       title: "Nested New Tasks 1",
       componentName: "new-tasks",
-      compImage: dashboardImg?.newTaskImg,
+      compImage: dashboardImg?.darkNewTaskImg,
     },
     {
       slotId: "grid-a|1",
       component: <TotalTasks />,
       title: "Nested New Tasks 2",
       componentName: "total-tasks",
-      compImage: dashboardImg?.newTaskImg,
+      compImage: dashboardImg?.darkTotalTasksImg,
     },
     {
       slotId: "o",
       component: <ProjectTimelineWidgets />,
       title: "Project Timeline",
       componentName: "project-timeline",
-      compImage: dashboardImg?.ProjectImg,
+      compImage: dashboardImg?.darkProjectTimelineImg,
     },
   ])
 
@@ -437,14 +437,14 @@ export function useGridComponents(isEditing: boolean) {
         component: <NewTasks />,
         title: "New Tasks",
         componentName: "new-tasks",  
-        compImage: dashboardImg?.newTaskImg,
+        compImage: dashboardImg?.darkNewTaskImg,
       },
       {
         slotId: `${newGroupId}|1`,
         component: <TotalTasks />,
         title: "Total Tasks",
         componentName: "total-tasks",
-        compImage: dashboardImg?.newTaskImg,
+        compImage: dashboardImg?.darkTotalTasksImg,
       },
     ]
 

@@ -2,11 +2,8 @@ import { KanbanImages } from "@components/kanban-board/images";
 import { Avatar, Box, CardContainer, Flex, IconButton, Text } from "@incmix/ui";
 import { Settings } from "lucide-react";
 import React from "react";
-import { RecentActivity } from "../recent-activity";
-import { Calendar } from "../calendar";
 
-export function UserPanelOverview(
-
+export function UserProfile(
   {
     user = {
       name: "ArtTemplate",
@@ -20,7 +17,7 @@ export function UserPanelOverview(
       <Flex
         justify={"between"}
         align={"center"}
-        className="w-full border-gray-5 border-"
+        className="w-full border-gray-5 "
       >
         <Flex gap={"3"} align={"center"}>
           <Avatar src={user.avatar} />
@@ -35,8 +32,6 @@ export function UserPanelOverview(
           <Settings />
         </IconButton>
       </Flex>
-        <Calendar className="w-full shadow-none" />
-        <RecentActivity />
     </CardContainer>
   );
 }

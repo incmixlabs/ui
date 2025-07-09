@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@components/shadcn/card"
+import { cn } from "@utils"
 
 interface CardContainerProps {
   children: React.ReactNode
@@ -20,7 +21,7 @@ const CardContainer: React.FC<CardContainerProps> = ({
   ...props
 }) => {
   return (
-    <RadixCard className={`bg-gray-2 p-6 ${className}`} {...props}>
+    <RadixCard className={cn(`bg-gray-2 p-6`,className)} {...props}>
       {children}
     </RadixCard>
   )

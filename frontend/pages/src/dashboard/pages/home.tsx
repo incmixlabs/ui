@@ -133,6 +133,7 @@ const DashboardHomePage: React.FC = () => {
       try {
         const getProject = await getDashboardById(projectId)
         if (cancelled) return
+        // @ts-ignore
         setProject(getProject)
       } catch (error) {
         console.error("Failed to get dashboard:", error)
