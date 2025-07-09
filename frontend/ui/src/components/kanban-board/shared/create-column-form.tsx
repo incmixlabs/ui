@@ -382,7 +382,7 @@ export function CreateColumnForm({
 
           <div className="flex justify-end gap-3 mt-6">
             <Dialog.Close>
-              <Button variant="soft" color="gray" disabled={isLoading}>
+              <Button variant="soft" color="red" disabled={isLoading}>
                 Cancel
               </Button>
             </Dialog.Close>

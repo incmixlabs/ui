@@ -62,7 +62,7 @@ export function CalendarWidget({ storageKey }: CalendarWidgetProps) {
   )
 
   return (
-    <CardContainer>
+    <CardContainer className="p-2">
       <Calendar
         events={events}
         onAddEvent={handleAddEvent}

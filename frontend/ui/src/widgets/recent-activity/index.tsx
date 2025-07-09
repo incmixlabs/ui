@@ -114,7 +114,8 @@ const activityGroups: ActivityGroup[] = [
 
 export function RecentActivity({className}: {className?: string}) {
   return (
-    <Box className={cn("", className)}>
+    <CardContainer className={cn("", className)}>
+       <Box >
       <Flex align={"center"} justify={"between"} className="mb-4">
         <Heading size={"4"}>Recent Activity</Heading>
         <IconButton variant="ghost">
@@ -155,6 +156,7 @@ export function RecentActivity({className}: {className?: string}) {
           </Box>
         ))}
       </Box>
-    </Box>
+      </Box>
+    </CardContainer>
   )
 }
