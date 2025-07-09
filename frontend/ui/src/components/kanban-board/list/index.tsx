@@ -421,20 +421,20 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
 
   return (
     // FIX: Making ListBoard structure consistent with Board component to fix double scrollbars
-    <Box className="w-full h-full flex flex-col">
+    <Box className="w-full h-full flex flex-col overflow-hidden">
       {/* HEADER: Fixed header area */}
-      <Box className="flex-shrink-0 border-b border-gray-6 bg-gray-1">
+      <Box className="flex-shrink-0 border-b border-gray-4 dark:border-gray-5 bg-gray-1 dark:bg-gray-2">
         <Flex direction="column" gap="4" className="p-4">
 
           {/* Selected Tasks Actions */}
           {selectedTasksCount > 0 && (
-            <Box className="p-3 border border-blue-6 bg-blue-3 rounded-lg shadow-sm">
+            <Box className="p-3 border border-blue-6 dark:border-blue-7 bg-blue-3 dark:bg-blue-4 rounded-md shadow-sm">
               <Flex justify="between" align="center">
                 <Flex align="center" gap="2">
-                  <Badge variant="solid" color="blue" size="2" className="px-3 py-0.5">
+                  <Badge variant="solid" color="blue" size="1" className="px-2 py-0.5">
                     {selectedTasksCount}
                   </Badge>
-                  <Text className="font-medium text-blue-11">
+                  <Text size="2" className="font-medium text-blue-11">
                     {selectedTasksCount === 1 ? 'task' : 'tasks'} selected
                   </Text>
                 </Flex>
@@ -445,7 +445,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                         variant="soft"
                         color="purple"
                         size="2"
-                        className="shadow-sm hover:shadow transition-all"
+                        className="shadow-sm hover:shadow-md transition-all duration-150"
                         onClick={promptGenerateAIContent}
                         disabled={isGenerating}
                       >
@@ -464,7 +464,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                     variant="soft"
                     color="blue"
                     size="2"
-                    className="shadow-sm hover:shadow transition-all"
+                    className="shadow-sm hover:shadow-md transition-all duration-150"
                     onClick={handleLogSelectedTasks}
                   >
                     <ClipboardList size={16} />
@@ -474,7 +474,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                     variant="outline"
                     color="gray"
                     size="2"
-                    className="shadow-sm hover:shadow hover:bg-gray-4 transition-all"
+                    className="shadow-sm hover:shadow-md hover:bg-gray-3 transition-all duration-150"
                     onClick={() => setSelectedTasks({})}
                   >
                     <XCircle size={16} />
@@ -485,13 +485,13 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
             </Box>
           )}
           <Flex justify="between" align="center">
-            <Heading size="6">Project Tasks</Heading>
+            <Heading size="5" className="font-semibold text-gray-12 dark:text-gray-11">Project Tasks</Heading>
 
             <Flex align="center" gap="2">
               <Button 
-                variant="ghost" 
-                size="1" 
-                className="flex items-center gap-1" 
+                variant="soft" 
+                size="2" 
+                className="flex items-center gap-1 shadow-sm hover:shadow-md transition-all duration-150" 
                 onClick={() => setIsAddColumnDialogOpen(true)}
               >
                 <Plus size={14} />
@@ -499,15 +499,24 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
               </Button>
               
               <Tooltip content="Refresh">
-                <IconButton variant="ghost" onClick={() => window.location.reload()}>
-                  <RefreshCw size={16} />
+                <IconButton 
+                  variant="soft" 
+                  size="1"
+                  className="hover:shadow-sm transition-all duration-150"
+                  onClick={() => window.location.reload()}
+                >
+                  <RefreshCw size={14} />
                 </IconButton>
               </Tooltip>
 
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger>
-                  <IconButton variant="ghost">
-                    <MoreVertical size={16} />
+                  <IconButton 
+                    variant="soft" 
+                    size="1"
+                    className="hover:shadow-sm transition-all duration-150"
+                  >
+                    <MoreVertical size={14} />
                   </IconButton>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
@@ -515,8 +524,8 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                     {/* Settings items go here */}
                     <DropdownMenu.Item>
                       <Flex align="center" gap="2">
-                        <Settings size={16} />
-                        <span>Settings</span>
+                        <Settings size={14} className="text-gray-11" />
+                        <Text size="2">Settings</Text>
                       </Flex>
                     </DropdownMenu.Item>
                   </DropdownMenu.Group>
@@ -528,24 +537,25 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
           {/* Search and Stats */}
           <Flex justify="between" align="center" gap="4">
             <Box className="flex-1 relative max-w-md">
-              <Search size={20} className="absolute top-3 left-3 text-gray-8" />
+              <Search size={16} className="absolute top-2.5 left-3 text-gray-9" />
               <TextField.Root
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search tasks..."
-                className="pl-10 h-12"
+                className="pl-9 h-9"
+                size="2"
               />
             </Box>
 
-            <Flex gap="6" className="text-sm text-gray-11">
-              <span>{projectStats.totalStatusLabels} columns</span>
-              <span>{projectStats.totalTasks} tasks</span>
-              <span>{projectStats.completedTasks} completed</span>
+            <Flex gap="6" className="text-gray-10">
+              <Text size="1">{projectStats.totalStatusLabels} columns</Text>
+              <Text size="1">{projectStats.totalTasks} tasks</Text>
+              <Text size="1">{projectStats.completedTasks} completed</Text>
               {projectStats.overdueTasks > 0 && (
-                <span className="text-red-9">{projectStats.overdueTasks} overdue</span>
+                <Text size="1" className="text-red-9">{projectStats.overdueTasks} overdue</Text>
               )}
               {projectStats.urgentTasks > 0 && (
-                <span className="text-orange-9">{projectStats.urgentTasks} urgent</span>
+                <Text size="1" className="text-orange-9">{projectStats.urgentTasks} urgent</Text>
               )}
             </Flex>
           </Flex>

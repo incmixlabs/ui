@@ -31,7 +31,7 @@ import {
   blockBoardPanningAttr } from "../data-attributes"
 import { TaskDataSchema } from "@incmix/utils/schema"
 import ColorPicker, { ColorSelectType } from "@components/color-picker"
-import { ListTaskCard, ListTaskCardShadow } from "./task-card"
+import { ListTaskCard } from "./task-card"
 import { SimpleTaskInput } from "./mention-task-input"
 import { isShallowEqual } from "@incmix/utils/objects"
 
@@ -53,9 +53,9 @@ type TColumnState =
 
 const stateStyles: { [Key in TColumnState["type"]]: string } = {
   idle: "",
-  "is-card-over": "outline outline-2 outline-blue-8 outline-offset-2",
-  "is-dragging": "opacity-60 outline outline-2 outline-gray-8",
-  "is-column-over": "bg-blue-3",
+  "is-card-over": "outline outline-1 outline-blue-8 dark:outline-blue-7 outline-offset-1 shadow-md",
+  "is-dragging": "opacity-70 shadow-md",
+  "is-column-over": "bg-blue-3 dark:bg-blue-4",
 }
 
 const idle = { type: "idle" } satisfies TColumnState
@@ -434,8 +434,12 @@ export function ListColumn({
       })}
       <Flex
         direction="column"
-        className={`rounded-lg bg-gray-2 border border-gray-6 ${stateStyles[state.type]}`}
+        className={`rounded-md bg-gray-1 dark:bg-gray-2 border border-gray-4 dark:border-gray-5 ${stateStyles[state.type]}`}
         ref={innerRef}
+        style={{ 
+          transition: 'all 0.15s ease-in-out',
+          boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.05)'
+        }}
         {...{ [blockBoardPanningAttr]: true }}
       >
         <Flex
@@ -443,11 +447,11 @@ export function ListColumn({
           className={`pb-2 ${state.type === "is-column-over" ? "invisible" : ""}`}
         >
           {/* Column Header */}
-          <Box className="border-b border-gray-6">
+          <Box className="border-b border-gray-4 dark:border-gray-5">
             {isEditingColumn ? (
-              <Box className="p-4" style={{
+              <Box className="p-3" style={{
                 backgroundColor: `${column.color}15`,
-                borderTop: `3px solid ${column.color}`
+                borderTop: `2px solid ${column.color}`
               }}>
                 <Flex direction="column" gap="3" className="flex-1">
                 <TextField.Root
@@ -510,14 +514,14 @@ export function ListColumn({
               <Flex
                 justify="between"
                 align="center"
-                className="p-4 cursor-grab active:cursor-grabbing"
+                className="p-3 cursor-grab active:cursor-grabbing"
                 ref={headerRef}
                 style={{
                   backgroundColor: `${column.color}15`,
-                  borderTop: `3px solid ${column.color}`
+                  borderTop: `2px solid ${column.color}`
                 }}
               >
-                <Flex align="center" gap="3" className="flex-1 min-w-0">
+                <Flex align="center" gap="2" className="flex-1 min-w-0">
                   <Button
                     variant="ghost"
                     size="1"
@@ -535,20 +539,20 @@ export function ListColumn({
                   />
 
                   <div
-                    className="w-3 h-3 rounded-full flex-shrink-0"
+                    className="w-2 h-2 rounded-full flex-shrink-0"
                     style={{ backgroundColor: column.color }}
                   />
 
-                  <Heading size="4" as="h3" className="font-semibold leading-4 truncate">
+                  <Text size="2" className="font-medium truncate text-gray-12 dark:text-gray-11">
                     {column.name}
-                  </Heading>
+                  </Text>
 
-                  <Flex gap="2" className="flex-shrink-0">
-                    <Badge variant="soft" color="gray" size="1">
+                  <Flex gap="1" className="flex-shrink-0">
+                    <Badge variant="surface" color="gray" size="1" className="text-gray-10">
                       {totalTasks} tasks
                     </Badge>
                     {completedTasks > 0 && (
-                      <Badge variant="soft" color="green" size="1">
+                      <Badge variant="surface" color="green" size="1" className="text-green-10">
                         {completionPercentage}% done
                       </Badge>
                     )}
@@ -582,8 +586,8 @@ export function ListColumn({
 
             {/* Column Description */}
             {column.description && (
-              <Box className="px-4 pb-3">
-                <Text size="2" className="text-gray-11">
+              <Box className="px-3 pb-2">
+                <Text size="1" className="text-gray-10 dark:text-gray-9">
                   {column.description}
                 </Text>
               </Box>
@@ -591,10 +595,10 @@ export function ListColumn({
 
             {/* Progress Bar */}
             {totalTasks > 0 && completedTasks > 0 && (
-              <Box className="px-4 pb-3">
-                <div className="w-full bg-gray-6 rounded-full h-2">
+              <Box className="px-3 pb-2">
+                <div className="w-full bg-gray-5 dark:bg-gray-6 rounded-full h-1">
                   <div
-                    className="bg-green-9 h-2 rounded-full transition-all duration-300"
+                    className="bg-green-8 dark:bg-green-7 h-1 rounded-full transition-all duration-300"
                     style={{ width: `${completionPercentage}%` }}
                   />
                 </div>
@@ -605,8 +609,14 @@ export function ListColumn({
           {/* Tasks List */}
           {isExpanded && (
             <Flex
-              className="flex flex-col overflow-y-auto [overflow-anchor:none] max-h-96"
+              className="flex flex-col overflow-y-auto [overflow-anchor:none] max-h-[calc(100vh-180px)] space-y-2 pt-2"
               ref={scrollableRef}
+              style={{ 
+                scrollbarWidth: 'thin', 
+                scrollbarColor: 'var(--gray-6) transparent',
+                paddingLeft: '0.75rem',
+                paddingRight: '0.75rem'
+              }}
             >
               <CardList
                 column={column}
@@ -616,12 +626,12 @@ export function ListColumn({
                 selectedTaskIds={selectedTaskIds}
                 onTaskSelect={onTaskSelect}
               />
-
+{/* 
               {state.type === "is-card-over" && !state.isOverChildCard ? (
                 <Box className="flex-shrink-0 px-3 py-1">
                   <ListTaskCardShadow dragging={state.dragging} />
                 </Box>
-              ) : null}
+              ) : null} */}
 
               {/* Simple Add Task Section */}
               <Box className="p-3">
@@ -659,7 +669,7 @@ export function ListColumn({
                 ) : (
                   <Button
                     variant="ghost"
-                    className="w-full justify-start text-gray-11 hover:bg-gray-4 border-2 border-dashed border-gray-7"
+                    className="w-full justify-start text-gray-10 dark:text-gray-9 hover:bg-gray-3 dark:hover:bg-gray-4 border border-dashed border-gray-6 dark:border-gray-7"
                     onClick={() => setIsCreatingTask(true)}
                   >
                     <Plus size={16} />
