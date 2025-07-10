@@ -1,8 +1,20 @@
 
 import { Button,CardContainer, Flex, Box, Text, Heading } from "@incmix/ui"
 import { MoreHorizontal, Play, FileText } from "lucide-react"
-
-const activities = [
+interface Activity {  
+  id: number;  
+  title: string;  
+  description: string;  
+  date: string;  
+  color: string;  
+  link?: string;  
+  attachment?: string;  
+  icon?: React.ComponentType;  
+}  
+interface ActivityTimelineProps {  
+  activities?: Activity[];  
+}  
+const defaultActivities: Activity[] = [
   {
     id: 1,
     title: "Create youtube video for next product 🤩",
@@ -30,7 +42,7 @@ const activities = [
   },
 ]
 
-export function ActivityTimeline() {
+export function ActivityTimeline({ activities = defaultActivities }: ActivityTimelineProps) {
   return (
     <CardContainer>
       <Box className="pb-4">
@@ -43,7 +55,7 @@ export function ActivityTimeline() {
       </Box>
       <Box className="space-y-4">
         {activities.map((activity, index) => (
-          <Flex key={activity.id} className="gap-3 relative before:absolute before:w-[1px] before:h-[70%] before:bg-gray-6 before:left-1.5 before:top-6">
+          <Flex key={activity.id} className={`gap-3 relative ${index < activities.length - 1 ? 'before:absolute before:w-[1px] before:h-[calc(100%+1rem)] before:bg-gray-6 before:left-1.5 before:top-6' : ''}`}>
             <Box className={`w-3.5 h-3.5 rounded-full ${activity.color} mt-1 flex-shrink-0`} />
             <Box className="flex-1 space-y-2">
               <Flex align={"start"} justify={"between"}>

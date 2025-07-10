@@ -24,7 +24,7 @@ export function LiveVisitors() {
       <Box className="pb-2">
         <Flex align={"center"} justify={"between"}>
           <Heading size="6" className="font-medium">Live Visitors</Heading>
-          <Flex align={"center"} gap={"1"} className="text-green-9">
+          <Flex align={"center"} gap={"1"} className="text-green-9" aria-label="Visitor trend">
             <TrendingUp className="w-4 h-4 mr-1" />
             +78.2%
           </Flex>
@@ -32,7 +32,7 @@ export function LiveVisitors() {
       </Box>
         <Box className="h-44">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} barCategoryGap="20%">
+            <BarChart data={data} barCategoryGap="20%" aria-label="Live visitors chart">
               <Bar dataKey="value" fill="#22c55e" radius={[2, 2, 0, 0]} maxBarSize={12} />
             </BarChart>
           </ResponsiveContainer>

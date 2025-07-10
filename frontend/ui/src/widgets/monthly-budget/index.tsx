@@ -28,9 +28,9 @@ export function MonthlyBudget() {
           </Button>
         </Flex>
       </Box>
-        <Box className="h-40 mb-2">
+        <Box className="h-40 mb-2" aria-label="Monthly budget chart">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data}>
+            <AreaChart data={data} aria-label="Monthly budget chart">
               <defs>
                 <linearGradient id="budgetGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#22c55e" stopOpacity={0.3} />
@@ -49,7 +49,7 @@ export function MonthlyBudget() {
             </AreaChart>
           </ResponsiveContainer>
         </Box>
-        <Text size="2" className="text-gray-11">
+        <Text size="2" className="text-gray-11" aria-label="Monthly budget description">
           Last month you had $2.42 expense transactions, 12 savings entries and 4 bills.
         </Text>
     </CardContainer>

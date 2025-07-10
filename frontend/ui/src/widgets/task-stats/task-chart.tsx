@@ -28,7 +28,6 @@ export function TaskChart({
   const { getDashboardColors } = useThemeStore()
   const dashboardColors = getDashboardColors()
   const color = dashboardColors.color1
-  console.log("color",color,dashboardColors);
   
   return (
     <CardContainer className="h-full space-y-2 text-center">

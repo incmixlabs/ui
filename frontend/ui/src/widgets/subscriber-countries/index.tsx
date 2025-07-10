@@ -2,8 +2,19 @@
 import { Box, Button,Card, CardContainer, Flex, Grid, Heading, Text } from "@incmix/ui"
 import { MoreHorizontal, TrendingUp, TrendingDown } from "lucide-react"
 import { flagsImg } from "./assets"
+interface Country {  
+  name: string;  
+  flag: string;  
+  subscribers: string;  
+  change: string;  
+  isPositive: boolean;  
+}  
 
-const countries = [
+interface SubscribersByCountriesProps {  
+  countries?: Country[];  
+}  
+
+const defaultCountries: Country[] = [ 
   {
     name: "USA",
     flag: flagsImg.usaflag,
@@ -48,7 +59,9 @@ const countries = [
   },
 ]
 
-export function SubscribersByCountries() {
+export function SubscribersByCountries({  
+  countries = defaultCountries,  
+}: SubscribersByCountriesProps) {
   return (
     <CardContainer>
       <Box className="pb-4">
@@ -68,10 +81,17 @@ export function SubscribersByCountries() {
           </Grid>
 
           {/* Data rows */}
-          {countries.map((country, index) => (
-            <Grid columns={"3"} gap={"4"} key={index} className="py-3">
+          {countries.map((country) => (  
+           <Grid columns={"3"} gap={"4"} key={country.name} className="py-3">  
               <Flex align={"center"} gap={"2"}>
-                <img src={country.flag} alt={country.name} />
+              <img 
+                src={country.flag} 
+                alt={`${country.name} flag`} 
+                className="w-5 h-5"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
                 <Text size="2" className="font-medium text-gray-12">{country.name}</Text>
               </Flex>
               <Text size="2" className="text-sm text-gray-12 text-center">{country.subscribers}</Text>
