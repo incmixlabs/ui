@@ -69,7 +69,7 @@ export function RadialTaskStatusChart({
         </ResponsiveContainer>
       </Box>
       <Flex justify="center" align="center" className="absolute inset-0 top-12 flex-col">
-          <Heading size="8">{totalVisitors}</Heading>
+          <Heading size="8">{totalVisitors.toLocaleString()}</Heading>
           <Text className="text-gray-11 mt-1">Visitors</Text>
         </Flex>
 
