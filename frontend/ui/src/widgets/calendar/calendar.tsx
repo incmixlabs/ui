@@ -450,7 +450,7 @@ export function Calendar({
   }, [])
 
   return (
-    <Box className={cn("rounded-md bg-gray-1 shadow-md", className)}>
+    <Box className={cn("rounded-md bg-gray-2 shadow-none", className)}>
       <CalendarHeader
         currentDate={currentDate}
         onPrevMonth={prevMonth}

@@ -16,7 +16,7 @@ export function StatsCard({
   icon,
 }: StatsCardProps) {
   return (
-    <Card.Root className="w-full h-full p-0">
+    <Card.Root className="w-full h-full p-0 bg-gray-2 border-0 shadow-none">
       <Card.Header
         className={cn(" flex flex-col items-center justify-center", className)}
       >
