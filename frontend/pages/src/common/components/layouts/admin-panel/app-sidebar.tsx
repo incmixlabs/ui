@@ -33,7 +33,7 @@ import {
   useSidebar,
 } from "@incmix/ui/sidebar"
 import { createAbilityFromPermissions } from "@incmix/utils/casl"
-import { UserRoles, type Permission } from "@incmix/utils/types"
+import { type Permission, UserRoles } from "@incmix/utils/types"
 import { useQuery } from "@tanstack/react-query"
 import { useLocation } from "@tanstack/react-router"
 import { I18n } from "i18n"
