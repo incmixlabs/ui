@@ -97,6 +97,7 @@ export const OverlappingAvatarGroup: React.FC<OverlappingAvatarGroupProps> = ({
             // Real image
             <Avatar
               src={user.image}
+              name={user.name}
               className="w-full h-full"
             />
           ) : (
