@@ -1,5 +1,6 @@
 import {
   dashboardImg,
+  StatisticsBarChartView,
 } from "@incmix/ui";
 import {
     ActiveTask,
@@ -286,7 +287,7 @@ export const sidebarComponents = [
   },
   {
     slotId: "st2",
-    component: <ProjectTimelineWidgets />,
+    component: <StatisticsBarChartView />,
     componentName: "statistics2",
     darkCompImage: dashboardImg.darkStatisticsImg2,
     lightCompImage: dashboardImg.lightStatisticsImg2,

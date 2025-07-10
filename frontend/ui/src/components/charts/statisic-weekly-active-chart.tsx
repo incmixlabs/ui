@@ -1,10 +1,8 @@
-"use client"
-
 import { Box } from "@incmix/ui"
 import { cn } from "@utils"
 import { lazy, useEffect, useState } from "react"
 import { useThemeStore } from "@incmix/store"
-const ReactApexChart = lazy(() => import("react-apexcharts"))
+import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis } from "recharts"
 
 interface WeeklyActivityChartProps {
   /**
@@ -57,6 +55,17 @@ interface WeeklyActivityChartProps {
   className?: string
 }
 
+const data = [
+  { id: 'M', name: 'Mon', value: 45 },
+  { id: 'T', name: 'Tue', value: 85 },
+  { id: 'W', name: 'Wed', value: 65 },
+  { id: 'T', name: 'Thu', value: 95 },
+  { id: 'F', name: 'Fri', value: 75 },
+  { id: 'S', name: 'Sat', value: 55 },
+  { id: 'S', name: 'Sun', value: 80 }
+];
+
+const colors = ['var(--indigo-9)', 'var(--indigo-9)', 'var(--indigo-9)', 'var(--orange-9)', 'var(--indigo-9)', 'var(--indigo-9)', 'var(--indigo-9)'];
 export function WeeklyActivityChart({
   values = [30, 65, 45, 80, 55, 40, 65],
   days = ["M", "T", "W", "T", "F", "S", "S"],
@@ -67,102 +76,51 @@ export function WeeklyActivityChart({
   borderRadius = 10,
   className,
 }: WeeklyActivityChartProps) {
-  const [mounted, setMounted] = useState(false)
   const { getDashboardColors } = useThemeStore()
   const dashboardColorValues = getDashboardColors()
   highlightColor = highlightColor?? dashboardColorValues.color3
   primaryColor = primaryColor?? dashboardColorValues.color1
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  // Create colors array with the highlighted day
-  const colors = days.map((_, index) =>
-    index === highlightDay ? highlightColor : primaryColor
-  )
-
-  // Chart options
-  const options = {
-    chart: {
-      type: "bar",
-      toolbar: {
-        show: false,
-      },
-      sparkline: {
-        enabled: false,
-      },
-    },
-    plotOptions: {
-      bar: {
-        borderRadius,
-        columnWidth: barWidth,
-        distributed: true,
-        endingShape: "rounded",
-      },
-    },
-    colors: colors,
-    grid: {
-      show: false,
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    xaxis: {
-      categories: days,
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-      labels: {
-        style: {
-          colors: Array(days.length).fill("var(--color-muted)"),
-          fontSize: "14px",
-        },
-      },
-    },
-    yaxis: {
-      show: false,
-    },
-    tooltip: {
-      enabled: false,
-    },
-    legend: {
-      show: false,
-    },
-    states: {
-      hover: {
-        filter: {
-          type: "none",
-        },
-      },
-      active: {
-        filter: {
-          type: "none",
-        },
-      },
-    },
-  }
-
-  const series = [
-    {
-      name: "Activity",
-      data: values,
-    },
-  ]
 
   return (
-    <Box className={cn("w-full", className)}>
-      {mounted && (
-        <ReactApexChart
-          options={options}
-          series={series}
-          type="bar"
-          height={"100%"}
-        />
-      )}
+    <Box className={cn("w-full h-fit", className)}>
+       <ResponsiveContainer width="100%" height={280}>
+        <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+       
+          <Tooltip
+          cursor={{fill:"var(--gray-3)"}}
+        content={({ active, payload }) => {
+         if (active && payload && payload.length) {
+          const { name, value, info } = payload[0].payload;
+          return (
+            <div style={{
+              background: 'var(--gray-2)',
+              border: '1px solid var(--gray-5)',
+              padding: '10px',
+              borderRadius: '6px',
+              fontSize: '14px'
+            }}>
+              <p><strong>{name}</strong></p>
+              <p>Value: {value}</p>
+            </div>
+          );
+        }
+        return null;
+      }}
+    />
+       <XAxis
+            dataKey="id" 
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: 'var(--gray-11)', fontSize: 12 }}
+          />
+          <Bar dataKey="value" radius={[5, 5, 5, 5]} barSize={24}>
+      {data.map((entry, index) => (
+        <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+      ))}
+    </Bar>
+        </BarChart>
+      </ResponsiveContainer>
     </Box>
   )
 }

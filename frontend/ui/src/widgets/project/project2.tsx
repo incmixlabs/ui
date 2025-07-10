@@ -6,6 +6,7 @@ import {
   Grid,
   Heading,
   IconButton,
+  RadialBarChartStacked,
   RadialTaskStatusChart,
   Text,
 } from "@incmix/ui"
@@ -41,6 +42,7 @@ export function ProjectWidgets2() {
           </IconButton>
         </Flex>
         <RadialTaskStatusChart className="mx-auto h-72 w-fit" />
+        {/* <RadialBarChartStacked/> */}
         <Grid columns={"3"} gap="4" className="mt-2">
           {stats.map((stat) => (
             <div
