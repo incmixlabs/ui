@@ -8,7 +8,7 @@ import {
   NewTasks,
   PostingTask,
   ProjectTimelineWidgets,
-  ProjectWidgets2,
+  ProjectWidgets,
   StatisticWidgets2,
   TotalProject,
   TotalTasks,
@@ -37,7 +37,7 @@ export function useGridComponents(isEditing: boolean) {
   const [gridComponents, setGridComponents] = useState<ComponentSlot[]>([
     {
       slotId: "c",
-      component: <ProjectWidgets2 />,
+      component: <ProjectWidgets />,
       title: "Project Widgets",
       componentName: "project-widget",
       compImage: dashboardImg?.darkProjectChartImg,
