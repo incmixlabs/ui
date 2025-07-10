@@ -2,14 +2,14 @@ import { Box } from "@incmix/ui"
 import { cn } from "@utils"
 import { Bar, BarChart, ResponsiveContainer } from "recharts"
 
-interface TaskCardProps {
+interface SparkChartProps {
   title: string
   data: {value:number}[]
   color: string
   className?: string
 }
 
-export function SparkChart({ title, data, color, className }: TaskCardProps) {
+export function SparkChart({ title, data, color, className }: SparkChartProps) {
 
   return (
     <>

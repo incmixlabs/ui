@@ -25,7 +25,7 @@ export function TaskChart({
   data = [{value:25},{value:30},{value:35},{value:25},{value:45},{value:75},{value:55},{value:25},{value:30},{value:25}],
   total = 820,
   label = "Total Task",
-  color
+  color = "var(--blue-9)"
 }: TaskChartProps) {
   const { getDashboardColors } = useThemeStore()
   // const dashboardColors = getDashboardColors()

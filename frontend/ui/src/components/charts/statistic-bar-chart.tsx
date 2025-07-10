@@ -1,10 +1,8 @@
 import { useThemeStore, useAppearanceStore } from "@incmix/store/use-settings-store"
-import { Suspense, lazy } from "react"
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import { CardContainer } from "../radixui"
 import { Flex } from "@incmix/ui"
 
-const ReactApexChart = lazy(() => import("react-apexcharts"))
 
 interface StatisticsBarChartViewProps {
   /** Title of the chart */
