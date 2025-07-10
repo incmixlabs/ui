@@ -12,24 +12,24 @@ import {
 import { Ellipsis } from "lucide-react"
 
 let stats = [
-  { label: "Ongoing", value: 420, color: "blue" },
-  { label: "Hold", value: 210, color: "orange" },
-  { label: "Done", value: 200, color: "green" },
+  { label: "Ongoing", value: 420, color: "var(--blue-9)" },
+  { label: "Hold", value: 210, color: "var(--orange-9)" },
+  { label: "Done", value: 200, color: "var(--green-9)" },
 ]
 
 export function ProjectWidgets() {
   const { getIndicatorColors } = useThemeStore()
   const colors = getIndicatorColors()
+  const colorMap = {
+    "Ongoing": colors.info,
+    "Hold": colors.warning,
+    "Done": colors.success
+  }
+
+
   stats = stats.map((stat) => ({
     ...stat,
-    color:
-      stat.label === "Ongoing"
-        ? colors.info
-        : stat.label === "Hold"
-          ? colors.warning
-          : stat.label === "Done"
-            ? colors.success
-            : colors.default, // Fallback color
+    color: colorMap[stat.label as keyof typeof colorMap] || colors.default,
   }))
   return (
     <>
@@ -40,7 +40,13 @@ export function ProjectWidgets() {
             <Ellipsis size={16} />
           </IconButton>
         </Flex>
-        <RadialTaskStatusChart className="mx-auto h-72 w-fit" />
+        <RadialTaskStatusChart 
+         tasks={stats.map(stat => ({
+             name: stat.label,
+             value: stat.value,
+             fill: stat.color,
+           }))} 
+        />
         {/* <RadialBarChartStacked/> */}
         <Grid columns={"3"} gap="4" className="mt-2">
           {stats.map((stat) => (

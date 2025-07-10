@@ -1,11 +1,16 @@
-import { Box, Flex, Heading, Text } from "@incmix/ui"
+import { Box, CardContainer, Text } from "@incmix/ui"
 import { cn } from "@utils"
-import { PolarAngleAxis, RadialBar, RadialBarChart, ResponsiveContainer } from "recharts"
+import { lazy, useEffect, useState } from "react"
+import { useThemeStore,useAppearanceStore } from "@incmix/store/use-settings-store"
+import { Label, PolarAngleAxis, PolarRadiusAxis, RadialBar, RadialBarChart, ResponsiveContainer } from "recharts"
 
 export interface TaskItem {
+ 
   name: string
   value: number
   fill: string
+
+
 }
 
 interface RadialTaskStatusChartProps {
@@ -27,30 +32,24 @@ interface RadialTaskStatusChartProps {
    * @default 135
    */
   endAngle?: number
-
-  /**
-   * Show labels below the chart
-   * @default true
-   */
-  showLabels?: boolean
 }
-
 
 export function RadialTaskStatusChart({
   tasks = [
-    { name: "Ongoing", value: 420,fill: "var(--indigo-9)" },
-    { name: "Hold", value: 210,fill: "var(--orange-9)" },
-    { name: "Done", value: 200,fill: "var(--green-9)" },
+    { name: "Ongoing", value: 45, fill: 'var(--indigo-9)' },
+    { name: "Hold", value: 55, fill: 'var(--orange-9)' },
+    { name: "Done", value: 55, fill: 'var(--green-9)' },
   ],
   startAngle = 180,
   endAngle = 0,
   className,
 }: RadialTaskStatusChartProps) {
 
-    const totalVisitors = tasks.reduce((sum, task) => sum + task.value, 0)
+ 
+
   return (
     <>
-      <Box className={cn("w-full relative h-72", className)}>
+      <Box className={cn("w-full relative h-72",className)}>
       <Box className="xl:h-[28rem] h-full ">
         <ResponsiveContainer width="100%" height="100%">
           <RadialBarChart
@@ -68,11 +67,10 @@ export function RadialTaskStatusChart({
           </RadialBarChart>
         </ResponsiveContainer>
       </Box>
-      <Flex justify="center" align="center" className="absolute inset-0 top-12 flex-col">
-          <Heading size="8">{totalVisitors.toLocaleString()}</Heading>
-          <Text className="text-gray-11 mt-1">Visitors</Text>
-        </Flex>
-
+      <Box className="absolute inset-0 top-12 flex flex-col items-center justify-center">
+          <Text size="4" className="font-bold text-gray-12">1,830</Text>
+          <Text size="2" className="text-gray-11 mt-1">Visitors</Text>
+        </Box>
     </Box>
 
     </>
