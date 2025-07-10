@@ -36,7 +36,7 @@ export function ProjectListWidgets() {
 
     return (
         <>
-            <Card.Root className="shadow-sm h-full px-0">
+            <Card.Root className="shadow-sm bg-gray-2 h-full px-0">
                 <Flex>
                     <Box className="w-80">
                         <Card.Header className="pb-4">
