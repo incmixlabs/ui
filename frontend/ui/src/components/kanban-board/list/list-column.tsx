@@ -31,7 +31,7 @@ import {
   blockBoardPanningAttr } from "../data-attributes"
 import { TaskDataSchema } from "@incmix/utils/schema"
 import ColorPicker, { ColorSelectType } from "@components/color-picker"
-import { ListTaskCard, ListTaskCardShadow } from "./task-card"
+import { ListTaskCard } from "./task-card"
 import { SimpleTaskInput } from "./mention-task-input"
 import { isShallowEqual } from "@incmix/utils/objects"
 
@@ -53,9 +53,9 @@ type TColumnState =
 
 const stateStyles: { [Key in TColumnState["type"]]: string } = {
   idle: "",
-  "is-card-over": "outline outline-2 outline-blue-400 outline-offset-2",
-  "is-dragging": "opacity-60 outline outline-2 outline-gray-400",
-  "is-column-over": "bg-blue-50 dark:bg-blue-950",
+  "is-card-over": "outline outline-1 outline-blue-8 dark:outline-blue-7 outline-offset-1 shadow-md",
+  "is-dragging": "opacity-70 shadow-md",
+  "is-column-over": "bg-blue-3 dark:bg-blue-4",
 }
 
 const idle = { type: "idle" } satisfies TColumnState
@@ -147,6 +147,7 @@ export function ListColumn({
     }
   }, [column.id, onSelectAll])
 
+  // State handlers for drag and drop operations
   const setIsCardOver = useCallback(({
     data,
     location,
@@ -179,28 +180,28 @@ export function ListColumn({
     const outer = outerFullHeightRef.current
     const scrollable = scrollableRef.current
     const header = headerRef.current
-    const inner = innerRef.current
 
-    if (!outer || !scrollable || !header || !inner) {
-      return
+    if (!outer || !scrollable || !header) {
+      return undefined
     }
 
+    // Track if a TaskCard is being dragged over the list column
     return combine(
       draggable({
         element: header,
         getInitialData: () => columnData,
         onGenerateDragPreview({ source, location, nativeSetDragImage }) {
-          const data = source.data
-          invariant(isColumnData(data))
+          const offset = preserveOffsetOnSource({
+            element: header,
+            input: location.current?.input,
+          })
+
           setCustomNativeDragPreview({
             nativeSetDragImage,
-            getOffset: preserveOffsetOnSource({
-              element: header,
-              input: location.current.input,
-            }),
+            getOffset: offset,
             render({ container }) {
-              const rect = inner.getBoundingClientRect()
-              const preview = inner.cloneNode(true)
+              const rect = header.getBoundingClientRect()
+              const preview = header.cloneNode(true)
               invariant(preview instanceof HTMLElement)
               preview.style.width = `${rect.width}px`
               preview.style.height = `${rect.height}px`
@@ -434,8 +435,11 @@ export function ListColumn({
       })}
       <Flex
         direction="column"
-        className={`rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 ${stateStyles[state.type]}`}
+        className={`rounded-md ${stateStyles[state.type]}`}
         ref={innerRef}
+        style={{ 
+          transition: 'all 0.15s ease-in-out'
+        }}
         {...{ [blockBoardPanningAttr]: true }}
       >
         <Flex
@@ -443,12 +447,9 @@ export function ListColumn({
           className={`pb-2 ${state.type === "is-column-over" ? "invisible" : ""}`}
         >
           {/* Column Header */}
-          <Box className="border-b border-gray-200 dark:border-gray-700">
+          <Box>
             {isEditingColumn ? (
-              <Box className="p-4" style={{
-                backgroundColor: `${column.color}15`,
-                borderTop: `3px solid ${column.color}`
-              }}>
+              <Box className="mt-1 w-full">
                 <Flex direction="column" gap="3" className="flex-1">
                 <TextField.Root
                   value={editColumnName}
@@ -483,7 +484,7 @@ export function ListColumn({
                       </div>
                     )}
                   </div>
-                  <Text size="1" className="text-gray-500">Column color</Text>
+                  <Text size="1" className="text-gray-9">Column color</Text>
                 </Flex>
                 <Flex gap="2">
                   <Button
@@ -510,45 +511,38 @@ export function ListColumn({
               <Flex
                 justify="between"
                 align="center"
-                className="p-4 cursor-grab active:cursor-grabbing"
+                className="py-3 cursor-grab active:cursor-grabbing group"
                 ref={headerRef}
-                style={{
-                  backgroundColor: `${column.color}15`,
-                  borderTop: `3px solid ${column.color}`
-                }}
               >
-                <Flex align="center" gap="3" className="flex-1 min-w-0">
+                <div className="flex items-center pl-4">
                   <Button
                     variant="ghost"
                     size="1"
                     onClick={() => setIsExpanded(!isExpanded)}
-                    className="p-1"
+                    className="p-0 flex-shrink-0"
                   >
-                    {isExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                    {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                   </Button>
-
+                  
                   <Checkbox
                     checked={allTasksSelected ? true : someTasksSelected ? 'indeterminate' : false}
                     onCheckedChange={handleSelectAllChange}
-                    className="flex-shrink-0"
+                    className="flex-shrink-0 ml-[20px] my-auto"
                     disabled={totalTasks === 0}
                   />
-
-                  <div
-                    className="w-3 h-3 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: column.color }}
-                  />
-
-                  <Heading size="4" as="h3" className="font-semibold leading-4 truncate">
+                </div>
+                
+                <Flex align="center" className="flex-1 min-w-0 ml-4 gap-2">
+                  <Text size="4" className="font-semibold truncate text-black dark:text-white">
                     {column.name}
-                  </Heading>
+                  </Text>
 
-                  <Flex gap="2" className="flex-shrink-0">
-                    <Badge variant="soft" color="gray" size="1">
+                  <Flex gap="1" className="flex-shrink-0">
+                    <Badge variant="surface" color="gray" size="1" className="text-gray-10">
                       {totalTasks} tasks
                     </Badge>
                     {completedTasks > 0 && (
-                      <Badge variant="soft" color="green" size="1">
+                      <Badge variant="surface" color="green" size="1" className="text-green-10">
                         {completionPercentage}% done
                       </Badge>
                     )}
@@ -558,8 +552,8 @@ export function ListColumn({
                 {/* Column Actions Menu with edit and delete options */}
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger>
-                    <IconButton size="1" variant="ghost">
-                      <Ellipsis size={16} />
+                    <IconButton size="1" variant="ghost" className="opacity-0 group-hover:opacity-100 transition-opacity mr-3">
+                      <Ellipsis size={14} />
                     </IconButton>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content>
@@ -570,7 +564,7 @@ export function ListColumn({
                     <DropdownMenu.Separator />
                     <DropdownMenu.Item
                       onClick={handleDeleteColumn}
-                      className="text-red-600 hover:text-red-700"
+                      className="text-red-9 hover:text-red-10"
                     >
                       <Trash2 size={14} />
                       Delete Column
@@ -581,20 +575,20 @@ export function ListColumn({
             )}
 
             {/* Column Description */}
-            {column.description && (
-              <Box className="px-4 pb-3">
-                <Text size="2" className="text-gray-600 dark:text-gray-400">
+            {column.description && isExpanded && (
+              <Box className="pb-2 pl-6 pr-6">
+                <Text size="1" className="text-gray-10 dark:text-gray-9">
                   {column.description}
                 </Text>
               </Box>
             )}
 
             {/* Progress Bar */}
-            {totalTasks > 0 && completedTasks > 0 && (
-              <Box className="px-4 pb-3">
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+            {totalTasks > 0 && completedTasks > 0 && isExpanded && (
+              <Box className="pb-2 pl-6 pr-6">
+                <div className="w-full bg-gray-5 dark:bg-gray-6 rounded-full h-1">
                   <div
-                    className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                    className="bg-green-8 dark:bg-green-7 h-1 rounded-full transition-all duration-300"
                     style={{ width: `${completionPercentage}%` }}
                   />
                 </div>
@@ -605,26 +599,29 @@ export function ListColumn({
           {/* Tasks List */}
           {isExpanded && (
             <Flex
-              className="flex flex-col overflow-y-auto [overflow-anchor:none] max-h-96"
+              direction="column"
+              className="flex-1 mt-2"
               ref={scrollableRef}
             >
-              <CardList
-                column={column}
-                columns={columns}
-                onUpdateTask={onUpdateTask}
-                onDeleteTask={onDeleteTask}
-                selectedTaskIds={selectedTaskIds}
-                onTaskSelect={onTaskSelect}
-              />
-
-              {state.type === "is-card-over" && !state.isOverChildCard ? (
-                <Box className="flex-shrink-0 px-3 py-1">
-                  <ListTaskCardShadow dragging={state.dragging} />
-                </Box>
-              ) : null}
-
+              <Box className="relative overflow-auto [overflow-anchor:none]">
+                {/* Column drop target indicator - shows when a card is being dragged over empty space in the column */}
+                {state.type === "is-card-over" && !state.isOverChildCard && (
+                  <Box
+                    className="absolute inset-0 border-2 border-dashed border-blue-6 dark:border-blue-7 rounded-md z-10 pointer-events-none"
+                  />
+                )}
+                <CardList
+                  column={column}
+                  columns={columns}
+                  onUpdateTask={onUpdateTask}
+                  onDeleteTask={onDeleteTask}
+                  selectedTaskIds={selectedTaskIds}
+                  onTaskSelect={onTaskSelect}
+                />
+              </Box>
+                
               {/* Simple Add Task Section */}
-              <Box className="p-3">
+              <Box className="pt-1 pb-2">
                 {isCreatingTask ? (
                   <SimpleTaskInput
                     onCreateTask={handleCreateTaskWithData}
@@ -657,14 +654,18 @@ export function ListColumn({
                     placeholder="Enter task title..."
                   />
                 ) : (
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600"
-                    onClick={() => setIsCreatingTask(true)}
-                  >
-                    <Plus size={16} />
-                    Add a task
-                  </Button>
+                  <Box className="flex flex-shrink-0 flex-col px-2 py-1.5 w-full">
+                    <Box 
+                      className="group relative px-6 rounded-[20px] transition-all duration-150 bg-white border border-dashed border-gray-6 dark:bg-gray-1 dark:border dark:border-dashed dark:border-gray-6 hover:bg-gray-3 dark:hover:bg-gray-2 w-full"
+                      style={{ height: "56px" }}
+                      onClick={() => setIsCreatingTask(true)}
+                    >
+                      <Flex justify="start" align="center" className="h-full w-full gap-2 cursor-pointer">
+                        <Plus size={14} className="text-blue-9" />
+                        <Text className="text-blue-9">Add task</Text>
+                      </Flex>
+                    </Box>
+                  </Box>
                 )}
               </Box>
             </Flex>
