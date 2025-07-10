@@ -147,6 +147,7 @@ export function ListColumn({
     }
   }, [column.id, onSelectAll])
 
+  // State handlers for drag and drop operations
   const setIsCardOver = useCallback(({
     data,
     location,
@@ -179,28 +180,28 @@ export function ListColumn({
     const outer = outerFullHeightRef.current
     const scrollable = scrollableRef.current
     const header = headerRef.current
-    const inner = innerRef.current
 
-    if (!outer || !scrollable || !header || !inner) {
-      return
+    if (!outer || !scrollable || !header) {
+      return undefined
     }
 
+    // Track if a TaskCard is being dragged over the list column
     return combine(
       draggable({
         element: header,
         getInitialData: () => columnData,
         onGenerateDragPreview({ source, location, nativeSetDragImage }) {
-          const data = source.data
-          invariant(isColumnData(data))
+          const offset = preserveOffsetOnSource({
+            element: header,
+            input: location.current?.input,
+          })
+
           setCustomNativeDragPreview({
             nativeSetDragImage,
-            getOffset: preserveOffsetOnSource({
-              element: header,
-              input: location.current.input,
-            }),
+            getOffset: offset,
             render({ container }) {
-              const rect = inner.getBoundingClientRect()
-              const preview = inner.cloneNode(true)
+              const rect = header.getBoundingClientRect()
+              const preview = header.cloneNode(true)
               invariant(preview instanceof HTMLElement)
               preview.style.width = `${rect.width}px`
               preview.style.height = `${rect.height}px`
@@ -513,7 +514,7 @@ export function ListColumn({
                 className="py-3 cursor-grab active:cursor-grabbing group"
                 ref={headerRef}
               >
-                <div className="flex items-center pl-6">
+                <div className="flex items-center pl-4">
                   <Button
                     variant="ghost"
                     size="1"
@@ -598,30 +599,27 @@ export function ListColumn({
           {/* Tasks List */}
           {isExpanded && (
             <Flex
-              className="flex flex-col overflow-y-auto [overflow-anchor:none] max-h-[calc(100vh-180px)] space-y-0.5 pt-1"
+              direction="column"
+              className="flex-1 mt-2"
               ref={scrollableRef}
-              style={{ 
-                scrollbarWidth: 'thin', 
-                scrollbarColor: 'var(--gray-6) transparent',
-                paddingLeft: '0.5rem',
-                paddingRight: '0.5rem'
-              }}
             >
-              <CardList
-                column={column}
-                columns={columns}
-                onUpdateTask={onUpdateTask}
-                onDeleteTask={onDeleteTask}
-                selectedTaskIds={selectedTaskIds}
-                onTaskSelect={onTaskSelect}
-              />
-{/* 
-              {state.type === "is-card-over" && !state.isOverChildCard ? (
-                <Box className="flex-shrink-0 px-3 py-1">
-                  <ListTaskCardShadow dragging={state.dragging} />
-                </Box>
-              ) : null} */}
-
+              <Box className="relative overflow-auto [overflow-anchor:none]">
+                {/* Column drop target indicator - shows when a card is being dragged over empty space in the column */}
+                {state.type === "is-card-over" && !state.isOverChildCard && (
+                  <Box
+                    className="absolute inset-0 border-2 border-dashed border-blue-6 dark:border-blue-7 rounded-md z-10 pointer-events-none"
+                  />
+                )}
+                <CardList
+                  column={column}
+                  columns={columns}
+                  onUpdateTask={onUpdateTask}
+                  onDeleteTask={onDeleteTask}
+                  selectedTaskIds={selectedTaskIds}
+                  onTaskSelect={onTaskSelect}
+                />
+              </Box>
+                
               {/* Simple Add Task Section */}
               <Box className="pt-1 pb-2">
                 {isCreatingTask ? (

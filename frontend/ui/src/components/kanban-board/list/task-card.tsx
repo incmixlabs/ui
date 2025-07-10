@@ -1,5 +1,19 @@
-// components/list/task-card.tsx - Updated styling to match Figma design
-import React, { useCallback, useState, memo } from "react"
+// components/list/task-card.tsx - Updated styling to match Figma design with drag and drop
+import React, { useCallback, useState, memo, useEffect, useRef, useMemo } from "react"
+import { createPortal } from "react-dom"
+import {
+  draggable,
+  dropTargetForElements,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
+import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source"
+import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview"
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine"
+import {
+  type Edge,
+  attachClosestEdge,
+  extractClosestEdge,
+} from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
+import invariant from "tiny-invariant"
 import {
   CalendarDays,
   Link,
@@ -17,7 +31,13 @@ import {
 } from "@incmix/utils/schema"
 import {
   type KanbanTask,
+  isCardData,
+  isDraggingACard,
+  getCardData,
+  getCardDropTargetData
 } from "../types"
+import { isShallowEqual } from "@incmix/utils/objects"
+import { isSafari } from "@utils/browser"
 import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
 import { ModalPresets } from "../shared/confirmation-modal"
 import { OverlappingAvatarGroup, type AssignedUser } from "../shared/overlapping-avatar-group"
@@ -33,13 +53,35 @@ import {
 import { TaskActionsMenu } from "./task-actions-menu"
 import { ListColumn } from "../hooks/use-list-view"
 
+// Constants for DOM manipulation checks
+const canUseDOM =
+  typeof window !== "undefined" &&
+  !!window.document &&
+  !!window.document.createElement
+
+// Type for card data with closestEdge
+interface TCardDataWithEdge extends ReturnType<typeof getCardData> {
+  closestEdge?: Edge;
+}
+
+// Card state types for drag and drop operations
+type TCardState =
+  | { type: "idle" }
+  | { type: "is-dragging" }
+  | { type: "is-dragging-and-left-self" }
+  | { type: "is-over"; dragging: DOMRect; closestEdge: Edge }
+  | { type: "preview"; container: HTMLElement; dragging: DOMRect };
+
+const idle: TCardState = { type: "idle" };
+
 // Card style constants based on Figma design for both light and dark themes
 const cardStyles = {
   base: "rounded-[20px] transition-all duration-150",
   light: "bg-white border border-gray-6", 
   dark: "dark:bg-gray-1 dark:border dark:border-gray-6",
   hover: "hover:bg-gray-3 dark:hover:bg-gray-2",
-  selected: "bg-gray-3 dark:bg-gray-2"
+  selected: "bg-gray-3 dark:bg-gray-2",
+  dragging: "opacity-40 cursor-grabbing shadow-lg"
 }
 
 // Checkbox style constants for both light and dark themes
@@ -63,6 +105,20 @@ interface ListTaskCardProps {
   isSelected?: boolean
 }
 
+// Shadow component for drag and drop indicators
+export const TaskCardShadow = memo(function TaskCardShadow({
+  dragging,
+}: {
+  dragging: DOMRect;
+}) {
+  return (
+    <div
+      className="flex-shrink-0 rounded-lg bg-blue-3 dark:bg-blue-9/25 border-2 border-dashed border-blue-6 dark:border-blue-7 transition-all duration-200"
+      style={{ height: Math.max(dragging.height, 50) }}
+    />
+  );
+});
+
 export const ListTaskCard = memo(function ListTaskCard({
   card,
   statusId,
@@ -74,6 +130,8 @@ export const ListTaskCard = memo(function ListTaskCard({
   isSelected,
 }: ListTaskCardProps) {
   const { handleDrawerOpen } = useKanbanDrawer()
+  const innerRef = useRef<HTMLDivElement | null>(null)
+  const [state, setState] = useState<TCardState>(idle)
   
   // Handle task selection instead of completion toggle
   const handleTaskSelect = useCallback((checked: boolean | string) => {
@@ -188,6 +246,122 @@ export const ListTaskCard = memo(function ListTaskCard({
     return null
   }
 
+  useEffect(() => {
+    // Safety check to prevent errors with missing refs
+    if (!canUseDOM || !innerRef.current) return undefined;
+
+    return combine(
+      draggable({
+        element: innerRef.current as HTMLDivElement,
+        getInitialData: ({ element }) => {
+          invariant(element instanceof HTMLElement);
+          const rect = element.getBoundingClientRect();
+          return getCardData({ card, statusId, rect });
+        },
+        onGenerateDragPreview({ nativeSetDragImage, location, source }) {
+          const data = source.data;
+          invariant(isCardData(data));
+          setCustomNativeDragPreview({
+            nativeSetDragImage,
+            getOffset: preserveOffsetOnSource({
+              element: innerRef.current as HTMLDivElement,
+              input: location.current?.input,
+            }),
+            render({ container }) {
+              setState({
+                type: "preview",
+                container,
+                dragging: innerRef.current
+                  ? innerRef.current.getBoundingClientRect()
+                  : new DOMRect(),
+              });
+            },
+          });
+        },
+        onDragStart() {
+          setState({ type: "is-dragging" });
+        },
+        onDrag({ source }) {
+          if (!isCardData(source.data)) return;
+          if (source.data.card.id === card.id) return;
+
+          // Get edge information from the source data
+          const dataWithEdge = source.data as TCardDataWithEdge;
+          const closestEdge = dataWithEdge.closestEdge || "bottom";
+
+          setState({
+            type: "is-over",
+            dragging: source.data.rect,
+            closestEdge,
+          });
+        },
+        onDrop() {
+          setState(idle);
+        },
+      }),
+      dropTargetForElements({
+        element: innerRef.current as unknown as Element,
+        getIsSticky: () => true,
+        canDrop: isDraggingACard,
+        getData: ({ element, input }) => {
+          const data = getCardDropTargetData({ card, statusId });
+          return attachClosestEdge(data, {
+            element,
+            input,
+            allowedEdges: ["top", "bottom"],
+          });
+        },
+        onDragEnter({ source }) {
+          if (!isCardData(source.data)) return;
+          if (source.data.card.id === card.id) return;
+
+          // Get edge information from the source data
+          const dataWithEdge = source.data as TCardDataWithEdge;
+          const closestEdge = dataWithEdge.closestEdge || "bottom";
+
+          setState({
+            type: "is-over",
+            dragging: source.data.rect,
+            closestEdge,
+          });
+        },
+        onDrag({ source, self }) {
+          if (!isCardData(source.data)) return;
+          // Check id instead of taskId for the new schema
+          if (source.data.card.id === card.id) return;
+
+          const closestEdge = extractClosestEdge(self.data);
+          if (!closestEdge) return;
+
+          const proposed: TCardState = {
+            type: "is-over",
+            dragging: source.data.rect,
+            closestEdge,
+          };
+
+          setState((current) => {
+            if (isShallowEqual(proposed, current)) {
+              return current;
+            }
+            return proposed;
+          });
+        },
+        onDragLeave({ source }) {
+          if (!isCardData(source.data)) return;
+
+          if (source.data.card.id === card.id) {
+            setState({ type: "is-dragging-and-left-self" });
+            return;
+          }
+          setState(idle);
+        },
+        onDrop() {
+          setState(idle);
+        },
+      }),
+    );
+  }, [card.id, statusId]);
+
   return (
     <>
       {/* Delete Task Confirmation Modal */}
@@ -199,8 +373,13 @@ export const ListTaskCard = memo(function ListTaskCard({
       })}
 
       <Box className="flex flex-shrink-0 flex-col px-2 py-1.5">
+        {/* Drop indicator above */}
+        {state.type === "is-over" && state.closestEdge === "top" ? (
+          <TaskCardShadow dragging={state.dragging} />
+        ) : null}
         <Box
-          className={`group relative px-6 ${cardStyles.base} ${cardStyles.light} ${cardStyles.dark} ${cardStyles.hover} ${isSelected ? cardStyles.selected : ""}`}
+          ref={innerRef}
+          className={`group relative px-6 ${cardStyles.base} ${cardStyles.light} ${cardStyles.dark} ${cardStyles.hover} ${isSelected ? cardStyles.selected : ""} ${state.type === "is-dragging" ? cardStyles.dragging : ""}`}
           style={{ height: "56px" }}
         >
           {/* All content in a single horizontal row */}
@@ -338,7 +517,53 @@ export const ListTaskCard = memo(function ListTaskCard({
             </Flex>
           </Flex>
         </Box>
+        
+        {/* Drop indicator below */}
+        {state.type === "is-over" && state.closestEdge === "bottom" ? (
+          <TaskCardShadow dragging={state.dragging} />
+        ) : null}
       </Box>
+      
+      {/* Portal for drag preview */}
+      {state.type === "preview"
+        ? createPortal(
+            <div className="drag-preview-wrapper" 
+              style={{
+                filter: 'brightness(0.8) contrast(1.2)', // Make it darker to match dark mode 
+                backgroundColor: '#1a1a1a', // Dark background
+                borderRadius: '20px',
+                overflow: 'hidden' 
+              }}
+            >
+              <Box
+                className="group relative px-6 cursor-grabbing"
+                style={{ 
+                  height: "56px", 
+                  width: state.dragging.width,
+                  backgroundColor: '#1a1a1a', // Dark background
+                  border: '1px solid #333', // Dark border
+                  borderRadius: '20px',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+                }}
+              >
+                <Flex justify="between" align="center" className="h-full w-full">
+                  <Flex align="center" gap="2" className="flex-shrink-0">
+                    <Checkbox
+                      checked={card.completed || false}
+                      className={`${checkboxStyles.base} ${card.completed ? checkboxStyles.checked : checkboxStyles.unchecked}`}
+                      style={{ opacity: 0.9 }}
+                      disabled
+                    />
+                    <Text size="2" style={{ color: '#fff', fontWeight: 500, opacity: 0.9 }} className="truncate">
+                      {card.name}
+                    </Text>
+                  </Flex>
+                </Flex>
+              </Box>
+            </div>,
+            state.container,
+          )
+        : null}
     </>
   );
 });

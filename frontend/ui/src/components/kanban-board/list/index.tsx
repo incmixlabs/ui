@@ -9,6 +9,7 @@ import { bindAll } from "bind-event-listener"
 import {  useEffect, useRef, useState, useCallback, useMemo } from "react"
 import { ListColumn } from "./list-column"
 import { ConfirmationDialog } from "./confirmation-dialog"
+import { type KanbanTask } from "../types"
 import { Box, Flex, Heading, IconButton, Button, Text, TextField, TextArea, Badge, Tooltip, toast, DropdownMenu, Dialog } from "@incmix/ui"
 
 import { Plus, Search, RefreshCw, Settings, MoreVertical, X, ClipboardList, XCircle, Sparkles, Loader2 } from "lucide-react"
@@ -40,6 +41,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   const scrollableRef = useRef<HTMLDivElement | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [isDragging, setIsDragging] = useState(false)
+  const [optimisticColumns, setOptimisticColumns] = useState<typeof columns>([])
 
   // Task selection state
   const [selectedTasks, setSelectedTasks] = useState<Record<string, { id: string; name: string }>>({});
@@ -197,138 +199,145 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         canMonitor: isDraggingACard,
         onDragStart() {
           setIsDragging(true)
+          setOptimisticColumns([...columns])
         },
         onDrop({ source, location }) {
-          setIsDragging(false)
-
           const dragging = source.data
           if (!isCardData(dragging)) {
+            setIsDragging(false)
             return
           }
 
-          const innerMost = location.current.dropTargets[0]
-          if (!innerMost) {
+          const destination = location.current.dropTargets[0]
+          if (!destination) {
+            setIsDragging(false)
             return
           }
 
-          const dropTargetData = innerMost.data
-          const homeColumn = columns.find(
-            (column) => column.id === dragging.statusId
-          )
-
-          if (!homeColumn) {
+          const dropTargetData = destination.data
+          const sourceColumn = optimisticColumns.find(col => col.id === dragging.statusId)
+          if (!sourceColumn) {
+            setIsDragging(false)
             return
           }
 
-          // Ensure id exists before proceeding
-          const draggedTaskId = dragging.card.id
-          if (!draggedTaskId) {
-            console.error("Task ID is missing for dragged card")
+          const taskIndex = sourceColumn.tasks.findIndex((task: KanbanTask) => task.id === dragging.card.id)
+          if (taskIndex === -1) {
+            setIsDragging(false)
             return
           }
 
-          const cardIndexInHome = homeColumn.tasks.findIndex(
-            (task) => task.id === draggedTaskId
-          )
+          let targetColumnId: string
+          let targetIndex: number
+          let newOptimisticColumns = [...optimisticColumns]
 
-          // Dropping on a card
           if (isCardDropTargetData(dropTargetData)) {
-            const destinationColumn = columns.find(
-              (column) => column.id === dropTargetData.statusId
-            )
-
-            if (!destinationColumn) {
+            const destColumn = optimisticColumns.find(col => col.id === dropTargetData.statusId)
+            if (!destColumn) {
+              setIsDragging(false)
               return
             }
 
-            // Reordering in same column
-            if (homeColumn.id === destinationColumn.id) {
-              const targetTaskId = dropTargetData.card.id
-              if (!targetTaskId) {
-                console.error("Target task ID is missing")
-                return
-              }
+            targetColumnId = destColumn.id
 
-              const cardFinishIndex = homeColumn.tasks.findIndex(
-                (task) => task.id === targetTaskId
-              )
-
-              if (cardIndexInHome === -1 || cardFinishIndex === -1) {
-                return
-              }
-
-              if (cardIndexInHome === cardFinishIndex) {
+            if (sourceColumn.id === destColumn.id) {
+              // Moving within the same column
+              const targetTaskIndex = destColumn.tasks.findIndex(task => task.id === dropTargetData.card.id)
+              if (targetTaskIndex === -1 || targetTaskIndex === taskIndex) {
+                setIsDragging(false)
                 return
               }
 
               const closestEdge = extractClosestEdge(dropTargetData)
+              if (!closestEdge) {
+                setIsDragging(false)
+                return
+              }
+
               const reordered = reorderWithEdge({
                 axis: "vertical",
-                list: homeColumn.tasks,
-                startIndex: cardIndexInHome,
-                indexOfTarget: cardFinishIndex,
+                list: sourceColumn.tasks,
+                startIndex: taskIndex,
+                indexOfTarget: targetTaskIndex,
                 closestEdgeOfTarget: closestEdge,
               })
 
-              // Use moveTask with same column but new index
-              const newIndex = reordered.findIndex(t => t.id === draggedTaskId)
-              if (newIndex === -1) return
-              moveTask(draggedTaskId, homeColumn.id, newIndex).catch((error) => {
-                console.error("Failed to reorder tasks:", error)
-              })
-
+              newOptimisticColumns = newOptimisticColumns.map(col =>
+                col.id === sourceColumn.id
+                  ? { ...col, tasks: reordered }
+                  : col
+              )
+              setOptimisticColumns(newOptimisticColumns)
+              
+              const newIndex = reordered.findIndex((t: KanbanTask) => t.id === dragging.card.id)
+              
+              if (dragging.card.id) {
+                moveTask(dragging.card.id, destColumn.id, newIndex).finally(() => {
+                  setIsDragging(false)
+                })
+              } else {
+                console.error("Cannot move task: id is undefined")
+                setIsDragging(false)
+              }
               return
+            } else {
+              // Moving between columns
+              const targetTaskIndex = destColumn.tasks.findIndex(task => task.id === dropTargetData.card.id)
+              const closestEdge = extractClosestEdge(dropTargetData)
+              targetIndex = closestEdge === "bottom" ? targetTaskIndex + 1 : targetTaskIndex
             }
-
-            // Moving to different column
-            const targetTaskId = dropTargetData.card.id
-            if (!targetTaskId) {
-              console.error("Target task ID is missing")
-              return
-            }
-
-            const indexOfTarget = destinationColumn.tasks.findIndex(
-              (task) => task.id === targetTaskId
-            )
-            const closestEdge = extractClosestEdge(dropTargetData)
-            const finalIndex = closestEdge === "bottom" ? indexOfTarget + 1 : indexOfTarget
-
-            moveTask(draggedTaskId, destinationColumn.id, finalIndex).catch((error) => {
-              console.error("Failed to move task:", error)
-            })
-
+          } else if (isColumnData(dropTargetData)) {
+            // Dropping directly on a column
+            targetColumnId = dropTargetData.column.id
+            targetIndex = 0
+          } else {
+            setIsDragging(false)
             return
           }
 
-          // Dropping onto a column
-          if (isColumnData(dropTargetData)) {
-            const destinationColumn = columns.find(
-              (column) => column.id === dropTargetData.column.id
-            )
-
-            if (!destinationColumn || homeColumn.id === destinationColumn.id) {
-              return
+          // Optimistically update the columns
+          newOptimisticColumns = newOptimisticColumns.map(col => {
+            if (col.id === sourceColumn.id) {
+              return {
+                ...col,
+                tasks: col.tasks.filter((_t: KanbanTask, i: number) => i !== taskIndex),
+              }
             }
+            if (col.id === targetColumnId) {
+              const newTasks = [...col.tasks]
+              newTasks.splice(targetIndex, 0, sourceColumn.tasks[taskIndex])
+              return { ...col, tasks: newTasks }
+            }
+            return col
+          })
 
-            // Move to end of destination column
-            moveTask(
-              draggedTaskId,
-              destinationColumn.id,
-              destinationColumn.tasks.length
-            ).catch((error) => {
-              console.error("Failed to move task:", error)
+          setOptimisticColumns(newOptimisticColumns)
+
+          if (dragging.card.id) {
+            moveTask(dragging.card.id, targetColumnId, targetIndex).finally(() => {
+              setIsDragging(false)
             })
+          } else {
+            console.error("Cannot move task: id is undefined")
+            setIsDragging(false)
           }
         },
       }),
       autoScrollForElements({
-        canScroll({ source }) {
-          return isDraggingACard({ source }) || isDraggingAColumn({ source })
-        },
         element,
+        canScroll: ({ source }) => isCardData(source.data),
       })
     )
-  }, [columns, moveTask, isLoading])
+  }, [columns, isLoading, moveTask, optimisticColumns])
+
+  // Use optimistic columns for drag and drop operations
+  useEffect(() => {
+    if (!isDragging) {
+      setOptimisticColumns(columns)
+    }
+  }, [columns, isDragging])
+
+  const displayColumns = isDragging ? optimisticColumns : columns
 
   // Handle board panning
   useEffect(() => {
@@ -565,7 +574,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
       <Box className="flex-1 h-full">
         {/* The main content container shouldn't have its own scroll */}
         <Box className="w-full h-full p-4" ref={scrollableRef}>
-          <Box className="w-full space-y-6">
+          <Box className="w-full space-y-2">
             {/* Column creation is now handled by the CreateColumnForm in the dropdown menu */}
 
               {filteredColumns.map((column) => (
