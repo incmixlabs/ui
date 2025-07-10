@@ -1,8 +1,6 @@
-import { Box, CardContainer, Text } from "@incmix/ui"
+import { Box, Text } from "@incmix/ui"
 import { cn } from "@utils"
-import { lazy, useEffect, useState } from "react"
-import { useThemeStore,useAppearanceStore } from "@incmix/store/use-settings-store"
-import { Label, PolarAngleAxis, PolarRadiusAxis, RadialBar, RadialBarChart, ResponsiveContainer } from "recharts"
+import { PolarAngleAxis, RadialBar, RadialBarChart, ResponsiveContainer } from "recharts"
 
 export interface TaskItem {
  
