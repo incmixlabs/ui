@@ -1,4 +1,3 @@
-
 import { Box, Button,Card, CardContainer, Flex, Grid, Heading, Text } from "@base"
 import { MoreHorizontal, TrendingUp, TrendingDown } from "lucide-react"
 
@@ -65,6 +64,11 @@ const defaultCountries: Country[] = [
   }
 })
 
+/**
+ * Displays a card with subscriber statistics by country, including flag, name, subscriber count, and percentage change.
+ *
+ * If no `countries` prop is provided, a default list of countries is shown. Each row displays the country's flag emoji, name, subscriber count, and a colored indicator for percentage change.
+ */
 export function SubscribersByCountries({
   countries = defaultCountries,
 }: SubscribersByCountriesProps) {
