@@ -90,7 +90,9 @@ export function SubscribersByCountries({
           {countries.map((country) => (
            <Grid columns={"3"} gap={"4"} key={country.name} className="py-3">
               <Flex align={"center"} gap={"2"}>
-                <span>{country.flag}</span>
+                <span role="img" aria-label={`${country.name} flag`}>
+                  {country.flag}
+                </span>
                 <Text size="2" className="font-medium text-gray-12">{country.name}</Text>
               </Flex>
               <Text size="2" className="text-sm text-gray-12 text-center">{country.subscribers}</Text>
