@@ -3,7 +3,7 @@ import { Box, Button,Card, CardContainer, Flex, Grid, Heading, Text } from "@bas
 import { MoreHorizontal, TrendingUp, TrendingDown } from "lucide-react"
 
 import {countries} from "@incmix/utils/countries"
-interface Country {
+export interface Country {
   name: string;
   flag: string;
   subscribers: string;
@@ -11,7 +11,7 @@ interface Country {
   isPositive: boolean;
 }
 
-interface SubscribersByCountriesProps {
+export interface SubscribersByCountriesProps {
   countries?: Country[];
 }
 
