@@ -28,6 +28,7 @@ export function TaskChart({
   const { getDashboardColors } = useThemeStore()
   const dashboardColors = getDashboardColors()
   const color = dashboardColors.color1
+  
   return (
     <CardContainer className="h-full space-y-2 text-center">
       <SparkChart title={title} className="h-24" data={data} color={color} />

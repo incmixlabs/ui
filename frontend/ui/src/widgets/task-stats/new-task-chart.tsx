@@ -8,6 +8,6 @@ export function NewTasksChart() {
       total={820}
       color="bg-orange-3"
       label="New Task"
-    />
+      />
   )
 }

@@ -1,4 +1,4 @@
-import { Card, Badge, Flex, Box, Text, Heading, DropdownMenu, IconButton, Link } from "@base";
+import { Card, Badge, Flex, Box, Text, Heading, DropdownMenu, IconButton, Link, CardContainer } from "@base";
 import { MoreHorizontal, Smartphone, Sparkles, Palette } from "lucide-react";
 
 interface ITimelineData {
@@ -80,7 +80,7 @@ export function ProjectTimelineWidgets() {
 
     return (
         <>
-            <Card.Root className="shadow-sm h-full px-0">
+            <Card.Root className="shadow-sm bg-gray-2 h-full px-0">
                 <Flex>
                     <Box className="flex-1 border-r border-gray-4">
                         <Card.Header className="pb-4">

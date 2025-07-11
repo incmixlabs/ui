@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { Card as RadixCard } from "@radix-ui/themes"
 export { cardPropDefs } from "@radix-ui/themes/components/card.props"
 import {
@@ -21,7 +20,7 @@ const CardContainer: React.FC<CardContainerProps> = ({
   ...props
 }) => {
   return (
-    <RadixCard className={cn(`bg-gray-2 p-6`,className)} {...props}>
+    <RadixCard className={cn(`bg-gray-2 p-4 border-0`,className)} {...props}>
       {children}
     </RadixCard>
   )
