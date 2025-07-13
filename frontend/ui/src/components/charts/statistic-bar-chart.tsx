@@ -5,32 +5,19 @@ import { Flex } from "@incmix/ui"
 
 
 interface StatisticsBarChartViewProps {
-  /** Title of the chart */
-  title?: string
-  /** Categories for x-axis (e.g. months) */
-  categories?: string[]
-  /** Data for new tasks */
-  newTasksData?: number[]
-  /** Data for in progress tasks */
-  inProgressData?: number[]
-  /** Color for new tasks bars */
-  newTasksColor?: string
-  /** Color for in progress tasks bars */
-  inProgressColor?: string
+  statisticData?: {name: string, newTasks: number, inProgress: number}[]
 }
-const data = [
-  { name: 'Mon', newTasks: 90, inProgress: 0 },
-  { name: 'Tue', newTasks: 170, inProgress: 50 },
-  { name: 'Wed', newTasks: 260, inProgress: 60 },
-  { name: 'Thu', newTasks: 0, inProgress: 110 },
-  { name: 'Fri', newTasks: 170, inProgress: 30 },
-  { name: 'Sat', newTasks: 150, inProgress: 0 },
-  { name: 'Sun', newTasks: 110, inProgress: 100 }
-];
+
 export const StatisticsBarChartView: React.FC<StatisticsBarChartViewProps> = ({
-  categories = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-  newTasksData = [160, 240, 80, 200, 160, 140, 100],
-  inProgressData = [50, 70, 40, 100, 40, 0, 110],
+    statisticData = [ 
+      { name: 'Mon', newTasks: 90, inProgress: 0 },
+      { name: 'Tue', newTasks: 170, inProgress: 50 },
+      { name: 'Wed', newTasks: 260, inProgress: 60 },
+      { name: 'Thu', newTasks: 0, inProgress: 110 },
+      { name: 'Fri', newTasks: 170, inProgress: 30 },
+      { name: 'Sat', newTasks: 150, inProgress: 0 },
+      { name: 'Sun', newTasks: 110, inProgress: 100 }
+    ],
 }) => {
   const { appearance } = useAppearanceStore()
   const { getDashboardColors } = useThemeStore()
@@ -57,7 +44,7 @@ export const StatisticsBarChartView: React.FC<StatisticsBarChartViewProps> = ({
       </Flex>
       
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        <BarChart data={statisticData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
           <XAxis 
             dataKey="name" 
             axisLine={false}
