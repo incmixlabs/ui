@@ -1,5 +1,4 @@
-import { Card, Badge, Flex, Box, Text, Heading, DropdownMenu, IconButton, Link, CardContainer } from "@base";
-import { MoreHorizontal, Smartphone, Sparkles, Palette } from "lucide-react";
+import { Card, Badge, Flex, Box, Text } from "@base";
 
 interface ITimelineData {
   name: string;

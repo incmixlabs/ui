@@ -1,27 +1,23 @@
 import { useThemeStore, useAppearanceStore } from "@incmix/store/use-settings-store"
-import { Suspense, lazy } from "react"
+import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+import { CardContainer } from "../radixui"
+import { Flex } from "@incmix/ui"
 
-const ReactApexChart = lazy(() => import("react-apexcharts"))
 
 interface StatisticsBarChartViewProps {
-  /** Title of the chart */
-  title?: string
-  /** Categories for x-axis (e.g. months) */
-  categories?: string[]
-  /** Data for new tasks */
-  newTasksData?: number[]
-  /** Data for in progress tasks */
-  inProgressData?: number[]
-  /** Color for new tasks bars */
-  newTasksColor?: string
-  /** Color for in progress tasks bars */
-  inProgressColor?: string
+  statisticData?: {name: string, newTasks: number, inProgress: number}[]
 }
 
 export const StatisticsBarChartView: React.FC<StatisticsBarChartViewProps> = ({
-  categories = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-  newTasksData = [160, 240, 80, 200, 160, 140, 100],
-  inProgressData = [50, 70, 40, 100, 40, 0, 110],
+    statisticData = [ 
+      { name: 'Mon', newTasks: 90, inProgress: 0 },
+      { name: 'Tue', newTasks: 170, inProgress: 50 },
+      { name: 'Wed', newTasks: 260, inProgress: 60 },
+      { name: 'Thu', newTasks: 0, inProgress: 110 },
+      { name: 'Fri', newTasks: 170, inProgress: 30 },
+      { name: 'Sat', newTasks: 150, inProgress: 0 },
+      { name: 'Sun', newTasks: 110, inProgress: 100 }
+    ],
 }) => {
   const { appearance } = useAppearanceStore()
   const { getDashboardColors } = useThemeStore()
@@ -29,173 +25,64 @@ export const StatisticsBarChartView: React.FC<StatisticsBarChartViewProps> = ({
   const isDarkMode = appearance === "dark"
   const textColor = "hsl(var(--foreground))"
 
-  const chartData = {
-    series: [
-      {
-        name: "New Tasks",
-        data: newTasksData,
-      },
-      {
-        name: "In Progress",
-        data: inProgressData,
-      },
-    ],
-    options: {
-      chart: {
-        type: "bar",
-        stacked: true,
-        toolbar: {
-          show: false,
-        },
-        foreColor: textColor,
-      },
-      plotOptions: {
-        bar: {
-          horizontal: false,
-          columnWidth: "40%",
-          borderRadius: 6,
-        },
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      xaxis: {
-        categories: categories,
-        axisBorder: {
-          show: false,
-        },
-        axisTicks: {
-          show: false,
-        },
-        labels: {
-          style: {
-            colors: textColor,
-          },
-        },
-      },
-      yaxis: {
-        max: 400,
-        tickAmount: 4,
-        labels: {
-          style: {
-            colors: textColor,
-          },
-        },
-      },
-      grid: {
-        show: false,
-        padding: {
-          top: -20,
-          right: 0,
-          bottom: -8,
-          left: 12,
-        },
-      },
-      colors: [dashboard.color2, dashboard.color3],
-      states: {
-        hover: {
-          filter: {
-            type: "darken",
-            value: 0.1,
-          },
-        },
-      },
-      legend: {
-        position: "bottom",
-        horizontalAlign: "right",
-        offsetX: 0,
-        labels: {
-          colors: textColor,
-        },
-        markers: {
-          radius: 50,
-        },
-      },
-      tooltip: {
-        shared: true,
-        intersect: false,
-        theme: isDarkMode ? "dark" : "light",
-        style: {
-          fontSize: "14px",
-        },
-        y: {
-          formatter: (val: number) => `${val} tasks`,
-        },
-      },
-    },
-    // options: {
-    //   chart: {
-    //     type: "bar" as const,
-    //     height: 340,
-    //     stacked: true,
-    //     toolbar: {
-    //       show: false,
-    //     },
-    //     foreColor: textColor, // Default text color for the chart
-    //   },
-    //   plotOptions: {
-    //     bar: {
-    //       horizontal: false,
-    //       columnWidth: "55%",
-    //       endingShape: "rounded",
-    //     },
-    //   },
-    //   dataLabels: {
-    //     enabled: false,
-    //   },
-    //   stroke: {
-    //     show: true,
-    //     width: 2,
-    //     colors: ["transparent"],
-    //   },
-    //   xaxis: {
-    //     categories: categories,
-    //     labels: {
-    //       style: {
-    //         colors: textColor,
-    //       },
-    //     },
-    //   },
-    //   yaxis: {
-    //     title: {
-    //       text: "Tasks",
-    //       style: {
-    //         color: textColor,
-    //       },
-    //     },
-    //     labels: {
-    //       style: {
-    //         colors: textColor,
-    //       },
-    //     },
-    //   },
-    //   fill: {
-    //     opacity: 1,
-    //   },
-    //   legend: {
-    //     show: false, // Completely hide the legend
-    //   },
-    //   tooltip: {
-    //     theme: isDarkMode ? "dark" : "light",
-    //     y: {
-    //       formatter: (val: number) => `${val}`,
-    //     },
-    //   },
-    // },
-  }
 
   return (
     <>
-      <Suspense
-        fallback={<div className="h-[260px] animate-pulse bg-gray-50" />}
-      >
-        <ReactApexChart
-          options={chartData.options}
-          series={chartData.series}
-          type="bar"
-          height={260}
-        />
-      </Suspense>
+       <CardContainer>
+      <Flex justify="between" className="mb-6">
+        <h3 className="text-lg font-semibold text-gray-12">Statistics</h3>
+        <Flex gap="2" align="center" className="space-x-4">
+          <Flex gap="2" align="center" className="space-x-2">
+            <div className="w-3 h-3 bg-[var(--blue-9)] rounded-full"></div>
+            <span className="text-sm text-gray-12">New Tasks</span>
+          </Flex>
+          <Flex gap="2" align="center" className="space-x-2">
+            <div className="w-3 h-3 bg-[var(--orange-9)] rounded-full"></div>
+            <span className="text-sm text-gray-12">In Progress</span>
+          </Flex>
+        </Flex>
+      </Flex>
+      
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={statisticData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+          <XAxis 
+            dataKey="name" 
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: 'var(--gray-11)', fontSize: 12 }}
+          />
+                <Tooltip
+                    cursor={{fill:"var(--gray-6)"}}
+                  content={({ active, payload }) => {
+                   if (active && payload && payload.length) {
+                    const { name, newTasks, inProgress } = payload[0].payload;
+                    return (
+                      <div style={{
+                        background: 'var(--gray-2)',
+                        border: '1px solid var(--gray-5)',
+                        padding: '10px',
+                        borderRadius: '6px',
+                        fontSize: '14px'
+                      }}>
+                        <p><strong>{name}</strong></p>
+                        <p>New Tasks: {newTasks}</p>
+                        <p>In Progress: {inProgress}</p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+          <YAxis
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: 'var(--gray-11)', fontSize: 12 }}
+          />
+          <Bar dataKey="newTasks" stackId="a" fill="var(--blue-9)" radius={[0, 0, 10, 10]} />
+          <Bar dataKey="inProgress" stackId="a" fill="var(--orange-9)" radius={[10, 10, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
+    </CardContainer>
     </>
   )
 }

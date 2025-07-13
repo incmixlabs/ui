@@ -4,9 +4,9 @@ export function TotalTasksChart() {
   return (
     <TaskChart
       title="Total Tasks"
-      data={[25, 30, 35, 25, 45, 75, 55, 25, 30, 25]}
+      data={[{value:25},{value:30},{value:35},{value:25},{value:45},{value:75},{value:55},{value:25},{value:30},{value:25}]}
       total={820}
-      color="bg-indigo-3"
+      color="var(--indigo-9)"
       label="Total Task"
     />
   )
