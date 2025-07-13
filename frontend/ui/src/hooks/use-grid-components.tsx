@@ -1,17 +1,28 @@
 
 import { useState, useRef, useCallback } from "react"
-import { toast, useLayoutStore } from "@incmix/ui"
+import { StatisticsBarChartView, toast, useLayoutStore } from "@incmix/ui"
 import type { ComponentSlot, CustomLayouts, LayoutItemWithNested } from "@incmix/ui/dashboard"
 import type { Layout } from "@incmix/react-grid-layout"
 import {
   ActiveTask,
+  ActivityTimeline,
+  CalendarWidget,
+  DoneTasks,
+  InProgressTask,
+  LiveVisitors,
+  MonthlyBudget,
   NewTasks,
+  NewTasksChart,
   PostingTask,
+  ProjectListWidgets,
   ProjectTimelineWidgets,
   ProjectWidgets,
+  RecentActivity,
   StatisticWidgets2,
+  SubscribersByCountries,
   TotalProject,
   TotalTasks,
+  TotalTasksChart,
   UserProfile,
 } from "@incmix/ui/widgets"
 
@@ -36,11 +47,18 @@ export function useGridComponents(isEditing: boolean) {
 
   const [gridComponents, setGridComponents] = useState<ComponentSlot[]>([
     {
-      slotId: "c",
-      component: <ProjectWidgets />,
-      title: "Project Widgets",
-      componentName: "project-widget",
-      compImage: dashboardImg?.darkProjectChartImg,
+      slotId: "grid-a|0",
+      component: <NewTasks />,
+      title: "Nested New Tasks 1",
+      componentName: "new-tasks",
+      compImage: dashboardImg?.darkNewTaskImg,
+    },
+    {
+      slotId: "grid-a|1",
+      component: <TotalTasks />,
+      title: "Nested New Tasks 2",
+      componentName: "total-tasks",
+      compImage: dashboardImg?.darkTotalTasksImg,
     },
     {
       slotId: "grid-b|0",
@@ -57,6 +75,20 @@ export function useGridComponents(isEditing: boolean) {
       compImage: dashboardImg?.darkActiveTaskImg,
     },
     {
+      slotId: "d",
+      component: <ProjectTimelineWidgets />,
+      title: "Project Timeline",
+      componentName: "project-timeline",
+      compImage: dashboardImg?.darkProjectTimelineImg,
+    },
+    {
+      slotId: "c",
+      component: <ProjectWidgets />,
+      title: "Project Widgets",
+      componentName: "project-widget",
+      compImage: dashboardImg?.darkProjectChartImg,
+    },
+    {
       slotId: "f",
       component: <TotalProject />,
       componentName: "total-project",
@@ -71,25 +103,11 @@ export function useGridComponents(isEditing: boolean) {
       compImage: dashboardImg?.darkPostingTaskImg,
     },
     {
-      slotId: "h",
+      slotId: "usp",
       component: <UserProfile />,
       title: "User Profile",
       componentName: "user-profile",
       compImage: dashboardImg?.darkProfileImg,
-    },
-    {
-      slotId: "grid-a|0",
-      component: <NewTasks />,
-      title: "Nested New Tasks 1",
-      componentName: "new-tasks",
-      compImage: dashboardImg?.darkNewTaskImg,
-    },
-    {
-      slotId: "grid-a|1",
-      component: <TotalTasks />,
-      title: "Nested New Tasks 2",
-      componentName: "total-tasks",
-      compImage: dashboardImg?.darkTotalTasksImg,
     },
     {
       slotId: "o",
@@ -98,7 +116,95 @@ export function useGridComponents(isEditing: boolean) {
       componentName: "project-timeline",
       compImage: dashboardImg?.darkProjectTimelineImg,
     },
-  ])
+  
+    // ✅ Remaining widgets from sidebarComponents
+  
+    {
+      slotId: "p",
+      component: <NewTasksChart />,
+      title: "New Tasks Chart",
+      componentName: "new-tasks-chart",
+      compImage: dashboardImg?.darkNewTaskChartImg,
+    },
+    {
+      slotId: "q",
+      component: <TotalTasksChart />,
+      title: "Total Tasks Chart",
+      componentName: "total-tasks-chart",
+      compImage: dashboardImg?.darkTotalTaskChartImg,
+    },
+    {
+      slotId: "tp",
+      component: <InProgressTask />,
+      title: "Tasks In Progress",
+      componentName: "tasks-in-progress",
+      compImage: dashboardImg?.darkInProgressTaskImg,
+    },
+    {
+      slotId: "s",
+      component: <DoneTasks />,
+      title: "Tasks Done",
+      componentName: "tasks-done",
+      compImage: dashboardImg?.darkDoneTaskImg,
+    },
+    {
+      slotId: "r",
+      component: <ProjectListWidgets />,
+      title: "Project List",
+      componentName: "project-list",
+      compImage: dashboardImg?.darkProjectListImg,
+    },
+    {
+      slotId: "cld",
+      component: <CalendarWidget storageKey="calendar" />,
+      title: "Calendar",
+      componentName: "calendar",
+      compImage: dashboardImg?.darkCalendarImg,
+    },
+    {
+      slotId: "st2",
+      component: <StatisticsBarChartView />,
+      title: "Statistics 2",
+      componentName: "statistics2",
+      compImage: dashboardImg?.darkStatisticsImg2,
+    },
+    {
+      slotId: "rc",
+      component: <RecentActivity />,
+      title: "Recent Activity",
+      componentName: "recent-activity",
+      compImage: dashboardImg?.darkRecentActivityImg,
+    },
+    {
+      slotId: "csbr",
+      component: <SubscribersByCountries />,
+      title: "Countries Subscriber",
+      componentName: "countries-subscriber",
+      compImage: dashboardImg?.darkSubscriberImg,
+    },
+    {
+      slotId: "lv",
+      component: <LiveVisitors />,
+      title: "Live Visitor",
+      componentName: "live-visitor",
+      compImage: dashboardImg?.darkLiveVisitorImg,
+    },
+    {
+      slotId: "mb",
+      component: <MonthlyBudget />,
+      title: "Monthly Budget",
+      componentName: "monthly-budget",
+      compImage: dashboardImg?.darkMonthlyBudgetImg,
+    },
+    {
+      slotId: "act",
+      component: <ActivityTimeline />,
+      title: "Activity Timeline",
+      componentName: "activity-timeline",
+      compImage: dashboardImg?.darkActivityTimelineImg,
+    },
+  ]);
+  
 
   // Use a ref to store removal history instead of state
   const removalHistoryRef = useRef<RemovalHistoryItem[]>([])

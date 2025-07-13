@@ -131,13 +131,13 @@ export const sidebarComponents = [
     className: "col-span-3",
   },
   {
-    slotId: "t",
+    slotId: "usp",
     component: <UserProfile />,
-    componentName: "profile",
+    componentName: "user-profile",
     darkCompImage: dashboardImg.darkProfileImg,
     lightCompImage: dashboardImg.lightProfileImg,
     title: "Profile",
-    tags: ["profile"],
+    tags: ["profile","user-profile"],
     layouts: {
       lg: { w: 4, h: 6 },
       md: { w: 4, h: 6 },
