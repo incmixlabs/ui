@@ -17,12 +17,14 @@ const data = [
   { value: 80 },
   { value: 75 },
 ]
-const calculateTrend = (data: {value: number}[]) => {
-  if (data.length < 2) return 0;
+
+const calculateTrend = (data: {value: number}[]): string => {
+  if (data.length < 6) return "0.0";
   const recent = data.slice(-3).reduce((sum, item) => sum + item.value, 0);
   const previous = data.slice(-6, -3).reduce((sum, item) => sum + item.value, 0);
-  return previous > 0 ? ((recent - previous) / previous * 100).toFixed(1) : 0;
+  return previous > 0 ? ((recent - previous) / previous * 100).toFixed(1) : "0.0";
 };
+
 export function LiveVisitors() {
   const trend = calculateTrend(data);
   return (

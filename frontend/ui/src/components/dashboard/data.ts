@@ -578,6 +578,7 @@ export const presetLayouts: LayoutPreset[] = [
           h: 24,
           x: 3,
           y: 188,
+          componentName: "project-widget",
           i: "c",
           moved: false,
           static: false,
