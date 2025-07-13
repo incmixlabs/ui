@@ -15,9 +15,19 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-
-export function RadialBarChartStacked() {
-  const totalVisitors = chartData[0].desktop + chartData[0].mobile
+interface RadialBarChartStackedProps {
+  endAngle?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  data?: typeof chartData;
+}
+export function RadialBarChartStacked({
+  endAngle = 180,
+  innerRadius = 80,
+  outerRadius = 130,
+  data = chartData,
+}: RadialBarChartStackedProps) {
+  const totalVisitors = data[0].desktop + data[0].mobile
 
   return (
     <div className="flex flex-col">
@@ -27,10 +37,10 @@ export function RadialBarChartStacked() {
           className="mx-auto aspect-square w-full max-w-[250px] h-72"
         >
           <RadialBarChart
-            data={chartData}
-            endAngle={180}
-            innerRadius={80}
-            outerRadius={130}
+            data={data}
+            endAngle={endAngle}
+            innerRadius={innerRadius}
+            outerRadius={outerRadius}
           >
             <ChartTooltip
               cursor={false}

@@ -15,7 +15,7 @@ export function SparkChart({ title, data, color, className }: SparkChartProps) {
     <>
       <Box className={cn("w-full", className)}>
       <ResponsiveContainer width="100%" height={"100%"}>
-          <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+         <BarChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
             <Bar 
                dataKey="value" 
               fill={color} 

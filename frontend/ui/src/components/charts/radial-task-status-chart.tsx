@@ -3,12 +3,9 @@ import { cn } from "@utils"
 import { PolarAngleAxis, RadialBar, RadialBarChart, ResponsiveContainer } from "recharts"
 
 export interface TaskItem {
- 
   name: string
   value: number
   fill: string
-
-
 }
 
 interface RadialTaskStatusChartProps {
@@ -66,11 +63,10 @@ export function RadialTaskStatusChart({
         </ResponsiveContainer>
       </Box>
       <Box className="absolute inset-0 top-12 flex flex-col items-center justify-center">
-          <Text size="4" className="font-bold text-gray-12">1,830</Text>
-          <Text size="2" className="text-gray-11 mt-1">Visitors</Text>
-        </Box>
+      <Text size="4" className="font-bold text-gray-12">{tasks.reduce((sum, task) => sum + task.value, 0).toLocaleString()}</Text>
+        <Text size="2" className="text-gray-11 mt-1">Visitors</Text>
+      </Box>
     </Box>
-
     </>
   )
 }

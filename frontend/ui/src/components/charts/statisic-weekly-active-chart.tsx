@@ -91,7 +91,7 @@ export function WeeklyActivityChart({
           cursor={{fill:"var(--gray-3)"}}
         content={({ active, payload }) => {
          if (active && payload && payload.length) {
-          const { name, value, info } = payload[0].payload;
+          const { name, value } = payload[0].payload;
           return (
             <div style={{
               background: 'var(--gray-2)',

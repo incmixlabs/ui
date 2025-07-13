@@ -58,7 +58,6 @@ export const StatisticsBarChartView: React.FC<StatisticsBarChartViewProps> = ({
       
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-          {/* <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f04c" /> */}
           <XAxis 
             dataKey="name" 
             axisLine={false}
@@ -79,8 +78,8 @@ export const StatisticsBarChartView: React.FC<StatisticsBarChartViewProps> = ({
                         fontSize: '14px'
                       }}>
                         <p><strong>{name}</strong></p>
-                        <p>new-task: {newTasks}</p>
-                        <p>in-progress: {inProgress}</p>
+                        <p>New Tasks: {newTasks}</p>
+                        <p>In Progress: {inProgress}</p>
                       </div>
                     );
                   }

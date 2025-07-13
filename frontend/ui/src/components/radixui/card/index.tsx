@@ -20,7 +20,7 @@ const CardContainer: React.FC<CardContainerProps> = ({
   ...props
 }) => {
   return (
-    <RadixCard className={cn(`bg-gray-2 p-4 border-0`,className)} {...props}>
+    <RadixCard variant="surface" className={cn(`bg-gray-2 p-4 border-0`,className)} {...props}>
       {children}
     </RadixCard>
   )
