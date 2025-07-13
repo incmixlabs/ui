@@ -34,7 +34,7 @@ export function TaskChart({
   return (
     <CardContainer className="h-full space-y-2 text-center w-full">
       <Box className="flex flex-col items-center justify-center w-full h-full">
-      <SparkChart title={title} className="h-24 w-full" data={data} color={color} />
+      <SparkChart className="h-24 w-full" data={data} color={color} />
       <Heading size={"8"}>{total}</Heading>
       <Text className="inline-block text-gray-10">{label}</Text>
       </Box>

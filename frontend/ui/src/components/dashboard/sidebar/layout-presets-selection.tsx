@@ -1,3 +1,4 @@
+import { useAppearanceStore } from "@incmix/store";
 import {
   Box,
   Button,
@@ -27,6 +28,7 @@ import { useState } from "react";
 export function LayoutPresetsSection() {
   const { activePresetId, applyPreset } = useLayoutStore();
   const [isExpanded, setIsExpanded] = useState(false);
+  const { appearance } = useAppearanceStore();
 
   return (
     <Box
@@ -61,19 +63,27 @@ export function LayoutPresetsSection() {
             key={preset.id}
             className={`border border-gray-4 cursor-pointer  rounded-lg p-2 transition-all duration-200 ${
               activePresetId === preset.id
-                ? "border-2 border-indigo-5 bg-indigo-5 dark:bg-indigo-8"
-                : "border-2 border-transparent hover:bg-gray-5 dark:hover:bg-gray-4"
+                ? "bg-indigo-5 dark:bg-indigo-8"
+                : "border-transparent "
             }`}
             onClick={() => applyPreset(preset.id)}
           >
-            <Box className="relative mb-2  w-full overflow-hidden rounded-md border border-gray-8">
-              <img
-                src={preset.image || "/placeholder.svg"}
-                alt={preset.name}
-                className="h-full w-full object-cover"
-              />
+            <Box className="relative mb-2 w-full overflow-hidden rounded-md">
+              {appearance === "dark" ? (
+                <img
+                  src={preset.darkImage || "/placeholder.svg"}
+                  alt={preset.name}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <img
+                  src={preset.lightImage || "/placeholder.svg"}
+                  alt={preset.name}
+                  className="h-full w-full object-cover"
+                />
+              )}
             </Box>
-            <Box as="span" className="text-sm font-medium">{preset.name}</Box>
+            <Box as="span" className="text-xs font-medium">{preset.name}</Box>
           </Box>
         ))}
       </Grid>

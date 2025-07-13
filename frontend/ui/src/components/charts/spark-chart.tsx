@@ -3,13 +3,12 @@ import { cn } from "@utils"
 import { Bar, BarChart, ResponsiveContainer } from "recharts"
 
 interface SparkChartProps {
-  title: string
   data: {value:number}[]
   color: string
   className?: string
 }
 
-export function SparkChart({ title, data, color, className }: SparkChartProps) {
+export function SparkChart({data, color, className }: SparkChartProps) {
 
   return (
     <>
@@ -20,7 +19,6 @@ export function SparkChart({ title, data, color, className }: SparkChartProps) {
                dataKey="value" 
               fill={color} 
               radius={[2, 2, 2, 2]}
-              width={8}
             />
           </BarChart>
         </ResponsiveContainer>

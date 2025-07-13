@@ -43,6 +43,10 @@ import lightTotalTasksImg from "./light-total-task.svg"
 
 import defaultPreset from "./default-presets.png"
 import presetsImg from "./presets2.png"
+import lightDefaultPreset from "./light-default-layout.svg"
+import darkDefaultPreset from "./dark-default-layout.svg"
+import darkGrpTemplate from "./dark-group-template.svg"
+import lightGrpTemplate from "./light-group-template.svg"
 
 
 export const dashboardImg = {
@@ -90,4 +94,8 @@ export const dashboardImg = {
   lightTotalTasksImg,
   defaultPreset,
   presetsImg,
+  lightDefaultPreset,
+  darkDefaultPreset,
+  darkGrpTemplate,
+  lightGrpTemplate
 }

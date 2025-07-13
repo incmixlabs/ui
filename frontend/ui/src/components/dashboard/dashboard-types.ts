@@ -34,7 +34,8 @@ export type CustomLayouts = {
 export interface LayoutPreset {
   id: string
   name: string
-  image: string
+  lightImage: string
+  darkImage: string
   description: string
   mainLayouts: CustomLayouts
 }

@@ -96,11 +96,11 @@ export function useDragAndDrop(
     console.log(`Adding component ${draggedSlotId} to nested grid ${targetGroupId}`)
 
     // Check if the component is already in the grid
-    const isAlreadyInGrid = gridComponents.some((comp) => comp.slotId === draggedSlotId)
-    if (isAlreadyInGrid) {
-      toast.error("This component is already added to the grid. Please remove it first if you want to add it again.")
-      return false
-    }
+    // const isAlreadyInGrid = gridComponents.some((comp) => comp.slotId === draggedSlotId)
+    // if (isAlreadyInGrid) {
+    //   toast.error("This component is already added to the grid. Please remove it first if you want to add it again.")
+    //   return false
+    // }
 
     // Find the component to add
     const draggedComponent = sidebarComponents.find((comp) => comp.slotId === draggedSlotId)
