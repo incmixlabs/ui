@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { nanoid } from "nanoid"
-import { Button, Dialog, toast } from "@incmix/ui"
+import { Button, Dialog, toast } from "@base"
 import { saveFormProject } from "@incmix/store"
 
 import { projectFormSchema } from "./project-form-schema"
@@ -8,6 +8,7 @@ import type { Project } from "../types"
 
 import AutoForm from "@components/auto-form"
 import type { Option } from "@components/multiple-selector/multiple-selector"
+import { useProjectMutation } from "../hooks/use-project-mutation"
 
 /**
  * Props for the ReusableAddProject component
@@ -17,12 +18,12 @@ export interface ReusableAddProjectProps {
    * Whether the dialog is open
    */
   isOpen: boolean
-  
+
   /**
    * Callback when dialog is closed
    */
   onClose: () => void
-  
+
   /**
    * Optional callback after project is successfully added
    */
@@ -32,10 +33,10 @@ export interface ReusableAddProjectProps {
 /**
  * A reusable component for adding projects that can be used anywhere in the application
  */
-export function ReusableAddProject({ 
-  isOpen, 
+export function ReusableAddProject({
+  isOpen,
   onClose,
-  onProjectAdded 
+  onProjectAdded
 }: ReusableAddProjectProps) {
   const [formData, setFormData] = useState<Record<string, any>>({})
 
@@ -43,11 +44,13 @@ export function ReusableAddProject({
     setFormData(values)
   }
 
+  const { mutateAsync: saveProjectToBackend } = useProjectMutation();
+
   const handleSubmit = async (data: Record<string, any>) => {
     try {
       // Process the form data
       const uniqueId = nanoid()
-      
+
       // Create a Project object with required fields
       const newProject = {
         id: uniqueId,
@@ -69,19 +72,21 @@ export function ReusableAddProject({
         })) || [],
         fileData: data.files?.[0] || null
       } satisfies Project
-      
+
       // Save to RxDB
       await saveFormProject(newProject)
-      
+
+      await saveProjectToBackend(newProject);
+
       toast.success("Project created successfully", {
         description: `"${newProject.name}" has been added to your projects.`,
       })
-      
+
       // Call the callback if provided
       if (onProjectAdded) {
         onProjectAdded(newProject)
       }
-      
+
       // Close the dialog
       onClose()
     } catch (error) {
@@ -122,10 +127,10 @@ export function ReusableAddProject({
  */
 export function useAddProject() {
   const [isOpen, setIsOpen] = useState(false)
-  
+
   const openAddProject = () => setIsOpen(true)
   const closeAddProject = () => setIsOpen(false)
-  
+
   return {
     isOpen,
     openAddProject,

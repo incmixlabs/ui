@@ -1,4 +1,9 @@
-import { useState } from "react";
+import { useState, Suspense, lazy } from "react";
+
+import { LayoutGrid, List, Plus, SlidersHorizontal } from "lucide-react";
+import { motion } from "motion/react";
+import { nanoid } from "nanoid";
+import { useQueryState } from "nuqs";
 
 import { saveFormProject } from "@incmix/store";
 import {
@@ -7,23 +12,21 @@ import {
   Flex,
   Heading,
   IconButton,
-  PageHeader,
   ScrollArea,
   Text,
   iconSize,
-} from "@incmix/ui"
-import { toast } from "@incmix/ui"
-import { cn } from "@utils"
-import { LayoutGrid, List, Plus, SlidersHorizontal, X } from "lucide-react"
-import { motion } from "motion/react"
-import { nanoid } from "nanoid"
-import { useQueryState } from "nuqs"
-import { Suspense, lazy } from "react"
-import { MotionSheet } from "../custom-sheet"
+  toast,
+} from "@base";
+import { PageHeader } from "@components/page-header";
+import { cn } from "@utils";
+import { MotionSheet } from "../custom-sheet";
 export {
   ReusableAddProject,
   useAddProject
-} from './components/reusable-add-project'
+} from './components/reusable-add-project';
+import { projects as initialProjects } from "./data";
+import type { Project } from "./types";
+import { useProjectMutation } from "./hooks/use-project-mutation";
 
 // Dynamically import heavy components
 const AddProjectAutoForm = lazy(() =>
@@ -46,8 +49,6 @@ const ProjectFilter = lazy(() =>
     default: module.ProjectFilter,
   })),
 );
-import { projects as initialProjects } from "./data";
-import type { Project } from "./types";
 
 /**
  * Renders the project management page with filtering, view mode switching, and project creation functionality.
@@ -84,6 +85,8 @@ export function ProjectPageComponents() {
     }
   };
 
+ const { mutateAsync: saveProjectToBackend } = useProjectMutation();
+
   const handleAddProject = async (newProject: Omit<Project, "id">) => {
     // Create the project with ID
     const uniqueId = nanoid();
@@ -97,6 +100,9 @@ export function ProjectPageComponents() {
     try {
       // Save to RxDB
       await saveFormProject(projectWithId);
+
+
+      await saveProjectToBackend(projectWithId);
 
       // Update local state
       const updatedProjects = [...projects, projectWithId];
