@@ -1,6 +1,5 @@
 import { Box } from "@incmix/ui"
 import { cn } from "@utils"
-import { lazy, useEffect, useState } from "react"
 import { useThemeStore } from "@incmix/store"
 import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis } from "recharts"
 
