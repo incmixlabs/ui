@@ -1,5 +1,5 @@
 import { StatsCard } from "@incmix/ui/charts"
-import { ClipBoardAdd } from "@incmix/ui"
+import { CardContainer, ClipBoardAdd } from "@incmix/ui"
 
 export function NewTasks() {
   return (

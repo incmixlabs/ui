@@ -9,16 +9,14 @@ import { bindAll } from "bind-event-listener"
 import {  useEffect, useRef, useState, useCallback, useMemo } from "react"
 import { ListColumn } from "./list-column"
 import { ConfirmationDialog } from "./confirmation-dialog"
+import { type KanbanTask } from "../types"
 import { Box, Flex, Heading, IconButton, Button, Text, TextField, TextArea, Badge, Tooltip, toast, DropdownMenu, Dialog } from "@incmix/ui"
 
 import { Plus, Search, RefreshCw, Settings, MoreVertical, X, ClipboardList, XCircle, Sparkles, Loader2 } from "lucide-react"
 import { CreateColumnForm } from "../shared/create-column-form"
 
-// Import useKanban hook for form logic consistency
-import { useKanban } from "../hooks/use-kanban-data"
 
 import {
-
   isCardData,
   isCardDropTargetData,
   isColumnData,
@@ -30,7 +28,6 @@ import {
   useBulkAIGeneration
 } from "@incmix/store"
 import { useListView } from "../hooks/use-list-view"
-import ColorPicker, { ColorSelectType } from "@components/color-picker"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
 import { blockBoardPanningAttr } from "../data-attributes"
 
@@ -44,6 +41,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   const scrollableRef = useRef<HTMLDivElement | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [isDragging, setIsDragging] = useState(false)
+  const [optimisticColumns, setOptimisticColumns] = useState<typeof columns>([])
 
   // Task selection state
   const [selectedTasks, setSelectedTasks] = useState<Record<string, { id: string; name: string }>>({});
@@ -201,138 +199,145 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         canMonitor: isDraggingACard,
         onDragStart() {
           setIsDragging(true)
+          setOptimisticColumns([...columns])
         },
         onDrop({ source, location }) {
-          setIsDragging(false)
-
           const dragging = source.data
           if (!isCardData(dragging)) {
+            setIsDragging(false)
             return
           }
 
-          const innerMost = location.current.dropTargets[0]
-          if (!innerMost) {
+          const destination = location.current.dropTargets[0]
+          if (!destination) {
+            setIsDragging(false)
             return
           }
 
-          const dropTargetData = innerMost.data
-          const homeColumn = columns.find(
-            (column) => column.id === dragging.statusId
-          )
-
-          if (!homeColumn) {
+          const dropTargetData = destination.data
+          const sourceColumn = optimisticColumns.find(col => col.id === dragging.statusId)
+          if (!sourceColumn) {
+            setIsDragging(false)
             return
           }
 
-          // Ensure id exists before proceeding
-          const draggedTaskId = dragging.card.id
-          if (!draggedTaskId) {
-            console.error("Task ID is missing for dragged card")
+          const taskIndex = sourceColumn.tasks.findIndex((task: KanbanTask) => task.id === dragging.card.id)
+          if (taskIndex === -1) {
+            setIsDragging(false)
             return
           }
 
-          const cardIndexInHome = homeColumn.tasks.findIndex(
-            (task) => task.id === draggedTaskId
-          )
+          let targetColumnId: string
+          let targetIndex: number
+          let newOptimisticColumns = [...optimisticColumns]
 
-          // Dropping on a card
           if (isCardDropTargetData(dropTargetData)) {
-            const destinationColumn = columns.find(
-              (column) => column.id === dropTargetData.statusId
-            )
-
-            if (!destinationColumn) {
+            const destColumn = optimisticColumns.find(col => col.id === dropTargetData.statusId)
+            if (!destColumn) {
+              setIsDragging(false)
               return
             }
 
-            // Reordering in same column
-            if (homeColumn.id === destinationColumn.id) {
-              const targetTaskId = dropTargetData.card.id
-              if (!targetTaskId) {
-                console.error("Target task ID is missing")
-                return
-              }
+            targetColumnId = destColumn.id
 
-              const cardFinishIndex = homeColumn.tasks.findIndex(
-                (task) => task.id === targetTaskId
-              )
-
-              if (cardIndexInHome === -1 || cardFinishIndex === -1) {
-                return
-              }
-
-              if (cardIndexInHome === cardFinishIndex) {
+            if (sourceColumn.id === destColumn.id) {
+              // Moving within the same column
+              const targetTaskIndex = destColumn.tasks.findIndex(task => task.id === dropTargetData.card.id)
+              if (targetTaskIndex === -1 || targetTaskIndex === taskIndex) {
+                setIsDragging(false)
                 return
               }
 
               const closestEdge = extractClosestEdge(dropTargetData)
+              if (!closestEdge) {
+                setIsDragging(false)
+                return
+              }
+
               const reordered = reorderWithEdge({
                 axis: "vertical",
-                list: homeColumn.tasks,
-                startIndex: cardIndexInHome,
-                indexOfTarget: cardFinishIndex,
+                list: sourceColumn.tasks,
+                startIndex: taskIndex,
+                indexOfTarget: targetTaskIndex,
                 closestEdgeOfTarget: closestEdge,
               })
 
-              // Use moveTask with same column but new index
-              const newIndex = reordered.findIndex(t => t.id === draggedTaskId)
-              if (newIndex === -1) return
-              moveTask(draggedTaskId, homeColumn.id, newIndex).catch((error) => {
-                console.error("Failed to reorder tasks:", error)
-              })
-
+              newOptimisticColumns = newOptimisticColumns.map(col =>
+                col.id === sourceColumn.id
+                  ? { ...col, tasks: reordered }
+                  : col
+              )
+              setOptimisticColumns(newOptimisticColumns)
+              
+              const newIndex = reordered.findIndex((t: KanbanTask) => t.id === dragging.card.id)
+              
+              if (dragging.card.id) {
+                moveTask(dragging.card.id, destColumn.id, newIndex).finally(() => {
+                  setIsDragging(false)
+                })
+              } else {
+                console.error("Cannot move task: id is undefined")
+                setIsDragging(false)
+              }
               return
+            } else {
+              // Moving between columns
+              const targetTaskIndex = destColumn.tasks.findIndex(task => task.id === dropTargetData.card.id)
+              const closestEdge = extractClosestEdge(dropTargetData)
+              targetIndex = closestEdge === "bottom" ? targetTaskIndex + 1 : targetTaskIndex
             }
-
-            // Moving to different column
-            const targetTaskId = dropTargetData.card.id
-            if (!targetTaskId) {
-              console.error("Target task ID is missing")
-              return
-            }
-
-            const indexOfTarget = destinationColumn.tasks.findIndex(
-              (task) => task.id === targetTaskId
-            )
-            const closestEdge = extractClosestEdge(dropTargetData)
-            const finalIndex = closestEdge === "bottom" ? indexOfTarget + 1 : indexOfTarget
-
-            moveTask(draggedTaskId, destinationColumn.id, finalIndex).catch((error) => {
-              console.error("Failed to move task:", error)
-            })
-
+          } else if (isColumnData(dropTargetData)) {
+            // Dropping directly on a column
+            targetColumnId = dropTargetData.column.id
+            targetIndex = 0
+          } else {
+            setIsDragging(false)
             return
           }
 
-          // Dropping onto a column
-          if (isColumnData(dropTargetData)) {
-            const destinationColumn = columns.find(
-              (column) => column.id === dropTargetData.column.id
-            )
-
-            if (!destinationColumn || homeColumn.id === destinationColumn.id) {
-              return
+          // Optimistically update the columns
+          newOptimisticColumns = newOptimisticColumns.map(col => {
+            if (col.id === sourceColumn.id) {
+              return {
+                ...col,
+                tasks: col.tasks.filter((_t: KanbanTask, i: number) => i !== taskIndex),
+              }
             }
+            if (col.id === targetColumnId) {
+              const newTasks = [...col.tasks]
+              newTasks.splice(targetIndex, 0, sourceColumn.tasks[taskIndex])
+              return { ...col, tasks: newTasks }
+            }
+            return col
+          })
 
-            // Move to end of destination column
-            moveTask(
-              draggedTaskId,
-              destinationColumn.id,
-              destinationColumn.tasks.length
-            ).catch((error) => {
-              console.error("Failed to move task:", error)
+          setOptimisticColumns(newOptimisticColumns)
+
+          if (dragging.card.id) {
+            moveTask(dragging.card.id, targetColumnId, targetIndex).finally(() => {
+              setIsDragging(false)
             })
+          } else {
+            console.error("Cannot move task: id is undefined")
+            setIsDragging(false)
           }
         },
       }),
       autoScrollForElements({
-        canScroll({ source }) {
-          return isDraggingACard({ source }) || isDraggingAColumn({ source })
-        },
         element,
+        canScroll: ({ source }) => isCardData(source.data),
       })
     )
-  }, [columns, moveTask, isLoading])
+  }, [columns, isLoading, moveTask, optimisticColumns])
+
+  // Use optimistic columns for drag and drop operations
+  useEffect(() => {
+    if (!isDragging) {
+      setOptimisticColumns(columns)
+    }
+  }, [columns, isDragging])
+
+  const displayColumns = isDragging ? optimisticColumns : columns
 
   // Handle board panning
   useEffect(() => {
@@ -412,7 +417,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     return (
       <Box className="flex items-center justify-center h-64">
         <Flex direction="column" align="center" gap="4">
-          <div className="text-red-500">Error: {error}</div>
+          <div className="text-red-9">Error: {error}</div>
           <Button onClick={() => window.location.reload()} variant="outline">
             <RefreshCw size={16} />
             Retry
@@ -424,20 +429,20 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
 
   return (
     // FIX: Making ListBoard structure consistent with Board component to fix double scrollbars
-    <Box className="w-full h-full flex flex-col">
+    <Box className="w-full h-full flex flex-col overflow-hidden">
       {/* HEADER: Fixed header area */}
-      <Box className="flex-shrink-0 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+      <Box className="flex-shrink-0 border-b border-gray-4 dark:border-gray-5 bg-gray-1 dark:bg-gray-2">
         <Flex direction="column" gap="4" className="p-4">
 
           {/* Selected Tasks Actions */}
           {selectedTasksCount > 0 && (
-            <Box className="p-3 border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 dark:border-blue-800 rounded-lg shadow-sm">
+            <Box className="p-3 border border-blue-6 dark:border-blue-7 bg-blue-3 dark:bg-blue-4 rounded-md shadow-sm">
               <Flex justify="between" align="center">
                 <Flex align="center" gap="2">
-                  <Badge variant="solid" color="blue" size="2" className="px-3 py-0.5">
+                  <Badge variant="solid" color="blue" size="1" className="px-2 py-0.5">
                     {selectedTasksCount}
                   </Badge>
-                  <Text className="font-medium text-blue-800 dark:text-blue-300">
+                  <Text size="2" className="font-medium text-blue-11">
                     {selectedTasksCount === 1 ? 'task' : 'tasks'} selected
                   </Text>
                 </Flex>
@@ -448,7 +453,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                         variant="soft"
                         color="purple"
                         size="2"
-                        className="shadow-sm hover:shadow transition-all"
+                        className="shadow-sm hover:shadow-md transition-all duration-150"
                         onClick={promptGenerateAIContent}
                         disabled={isGenerating}
                       >
@@ -467,7 +472,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                     variant="soft"
                     color="blue"
                     size="2"
-                    className="shadow-sm hover:shadow transition-all"
+                    className="shadow-sm hover:shadow-md transition-all duration-150"
                     onClick={handleLogSelectedTasks}
                   >
                     <ClipboardList size={16} />
@@ -477,7 +482,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                     variant="outline"
                     color="gray"
                     size="2"
-                    className="shadow-sm hover:shadow hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                    className="shadow-sm hover:shadow-md hover:bg-gray-3 transition-all duration-150"
                     onClick={() => setSelectedTasks({})}
                   >
                     <XCircle size={16} />
@@ -488,13 +493,13 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
             </Box>
           )}
           <Flex justify="between" align="center">
-            <Heading size="6">Project Tasks</Heading>
+            <Heading size="5" className="font-semibold text-gray-12 dark:text-gray-11">Project Tasks</Heading>
 
             <Flex align="center" gap="2">
               <Button 
-                variant="ghost" 
-                size="1" 
-                className="flex items-center gap-1" 
+                variant="soft" 
+                size="2" 
+                className="flex items-center gap-1 shadow-sm hover:shadow-md transition-all duration-150" 
                 onClick={() => setIsAddColumnDialogOpen(true)}
               >
                 <Plus size={14} />
@@ -502,15 +507,24 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
               </Button>
               
               <Tooltip content="Refresh">
-                <IconButton variant="ghost" onClick={() => window.location.reload()}>
-                  <RefreshCw size={16} />
+                <IconButton 
+                  variant="soft" 
+                  size="1"
+                  className="hover:shadow-sm transition-all duration-150"
+                  onClick={() => window.location.reload()}
+                >
+                  <RefreshCw size={14} />
                 </IconButton>
               </Tooltip>
 
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger>
-                  <IconButton variant="ghost">
-                    <MoreVertical size={16} />
+                  <IconButton 
+                    variant="soft" 
+                    size="1"
+                    className="hover:shadow-sm transition-all duration-150"
+                  >
+                    <MoreVertical size={14} />
                   </IconButton>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
@@ -518,8 +532,8 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                     {/* Settings items go here */}
                     <DropdownMenu.Item>
                       <Flex align="center" gap="2">
-                        <Settings size={16} />
-                        <span>Settings</span>
+                        <Settings size={14} className="text-gray-11" />
+                        <Text size="2">Settings</Text>
                       </Flex>
                     </DropdownMenu.Item>
                   </DropdownMenu.Group>
@@ -531,24 +545,25 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
           {/* Search and Stats */}
           <Flex justify="between" align="center" gap="4">
             <Box className="flex-1 relative max-w-md">
-              <Search size={20} className="absolute top-3 left-3 text-gray-400" />
+              <Search size={16} className="absolute top-2.5 left-3 text-gray-9" />
               <TextField.Root
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search tasks..."
-                className="pl-10 h-12"
+                className="pl-9 h-9"
+                size="2"
               />
             </Box>
 
-            <Flex gap="6" className="text-sm text-gray-600 dark:text-gray-400">
-              <span>{projectStats.totalStatusLabels} columns</span>
-              <span>{projectStats.totalTasks} tasks</span>
-              <span>{projectStats.completedTasks} completed</span>
+            <Flex gap="6" className="text-gray-10">
+              <Text size="1">{projectStats.totalStatusLabels} columns</Text>
+              <Text size="1">{projectStats.totalTasks} tasks</Text>
+              <Text size="1">{projectStats.completedTasks} completed</Text>
               {projectStats.overdueTasks > 0 && (
-                <span className="text-red-600">{projectStats.overdueTasks} overdue</span>
+                <Text size="1" className="text-red-9">{projectStats.overdueTasks} overdue</Text>
               )}
               {projectStats.urgentTasks > 0 && (
-                <span className="text-orange-600">{projectStats.urgentTasks} urgent</span>
+                <Text size="1" className="text-orange-9">{projectStats.urgentTasks} urgent</Text>
               )}
             </Flex>
           </Flex>
@@ -559,7 +574,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
       <Box className="flex-1 h-full">
         {/* The main content container shouldn't have its own scroll */}
         <Box className="w-full h-full p-4" ref={scrollableRef}>
-          <Box className="w-full space-y-6">
+          <Box className="w-full space-y-2">
             {/* Column creation is now handled by the CreateColumnForm in the dropdown menu */}
 
               {filteredColumns.map((column) => (
@@ -581,13 +596,13 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
 
             {filteredColumns.length === 0 && searchQuery && (
               <Box className="text-center py-12">
-                <div className="text-gray-500">No tasks found matching "{searchQuery}"</div>
+                <div className="text-gray-9">No tasks found matching "{searchQuery}"</div>
               </Box>
             )}
 
             {filteredColumns.length === 0 && !searchQuery && (
               <Flex direction="column" align="center" className="py-12 space-y-4">
-                <Text className="text-gray-500">No status columns found. Create your first column to get started.</Text>
+                <Text className="text-gray-9">No status columns found. Create your first column to get started.</Text>
                 <Button
                   variant="soft"
                   onClick={() => setIsAddColumnDialogOpen(true)}
