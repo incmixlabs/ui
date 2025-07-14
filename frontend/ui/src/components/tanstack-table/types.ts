@@ -167,6 +167,9 @@ export interface DataTableProps<TData extends object> {
   enableRowSelection?: boolean;
   enableColumnVisibility?: boolean;
   initialColumnVisibility?: Record<string, boolean>;
+  // External column visibility control
+  columnVisibility?: Record<string, boolean>;
+  onColumnVisibilityChange?: (visibility: Record<string, boolean>) => void;
   enableColumnResizing?: boolean;
   enableColumnReordering?: boolean;
 

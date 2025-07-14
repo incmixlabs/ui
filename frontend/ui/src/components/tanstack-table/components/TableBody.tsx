@@ -139,6 +139,9 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
         aria-selected={row.getIsSelected() || isExpanded ? "true" : undefined}
       >
         {visibleCells.map(cell => {
+          // Skip rendering cells for hidden columns
+          if (!cell.column.getIsVisible()) return null;
+          
           // Get column definition for styling and type information
           const columnDef = flatColumns.find(col =>
             col.accessorKey?.toString() === cell.column.id ||
