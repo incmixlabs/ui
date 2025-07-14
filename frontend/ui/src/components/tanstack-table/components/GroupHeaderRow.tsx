@@ -4,6 +4,7 @@ import React, { memo } from "react";
 import { ChevronRight, ChevronDown, Plus } from "lucide-react";
 
 import { Table } from "@shadcn";
+import { Checkbox } from "@base";
 
 interface GroupHeaderRowProps {
   groupKey: string;
@@ -13,6 +14,12 @@ interface GroupHeaderRowProps {
   colSpan: number;
   // Custom render function
   renderGroupHeader?: (groupValue: string, count: number) => React.ReactNode;
+  // Group-specific selection props
+  groupSelectProps?: {
+    isAllRowsSelected: boolean;
+    isSomeRowsSelected: boolean;
+    toggleAllRowsSelected: (value: boolean) => void;
+  };
 }
 
 // Define category styles mapping using standardized identifiers
@@ -44,10 +51,16 @@ function GroupHeaderRowComponent({
   toggleCollapsed,
   colSpan,
   renderGroupHeader,
+  groupSelectProps,
 }: GroupHeaderRowProps) {
   // Handle click on the group header
   const handleToggleClick = () => {
     toggleCollapsed(groupKey);
+  };
+
+  // Prevent checkbox click from toggling group collapse
+  const handleCheckboxClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
   };
 
   // Get the styles for this category or use defaults
@@ -77,8 +90,22 @@ function GroupHeaderRowComponent({
         ) : (
           // Default rendering
           <div className="flex justify-between items-center h-10 px-3 w-full">
-            {/* Left section: bullet, name, count */}
+            {/* Left section: checkbox, bullet, name, count */}
             <div className="flex items-center">
+              {/* Group-specific checkbox for row selection */}
+              {groupSelectProps && (
+                <Checkbox
+                  checked={
+                    groupSelectProps.isAllRowsSelected ||
+                    (groupSelectProps.isSomeRowsSelected && "indeterminate")
+                  }
+                  onCheckedChange={(value) => groupSelectProps.toggleAllRowsSelected(!!value)}
+                  onClick={handleCheckboxClick}
+                  aria-label={`Select all rows in ${displayLabel} group`}
+                  className="mr-2 translate-y-[2px]"
+                />
+              )}
+            
               <span className={`h-2 w-2 rounded-full ${bulletColor} mr-2`}></span>
               
               {/* Category name */}

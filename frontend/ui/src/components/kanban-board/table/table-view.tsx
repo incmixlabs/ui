@@ -63,6 +63,8 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     clearError,
     projectStats
   } = useTableView(projectId)
+  console.log("TASK DATA: ", tasks)
+  console.log("LABELS DATA: ", labels)
 
   // Enhanced columns with row actions
   const enhancedColumns = useMemo((): DataTableColumn<TableTask>[] => {

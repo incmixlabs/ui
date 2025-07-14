@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useMemo, memo } from "react";
-import { flexRender, Table as TanStackTable, Row, Cell } from "@tanstack/react-table";
+import React, { useMemo, memo, useCallback } from "react";
+import { flexRender, Table as TanStackTable, Row, Cell, RowSelectionState } from "@tanstack/react-table";
 import { Table } from "@shadcn";
 import { LoadingRow, EmptyRow } from "./TableUtilityRows";
 import { DataTableColumn, RowGroupingOptions } from "../types";
@@ -164,6 +164,18 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           // Get the cell value
           const cellValue = cell.getValue();
 
+          // Special styling for the checkbox column
+          if (cell.column.id === 'select') {
+            return (
+              <Table.Cell
+                key={cell.id}
+                className={`pl-3 pr-0 py-1.5 ${columnDef?.className || ""} overflow-hidden`}
+              >
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </Table.Cell>
+            );
+          }
+          
           return (
             <Table.Cell
               key={cell.id}
@@ -344,6 +356,34 @@ function TableBodyComponent<TData extends object>({
   
   const columnCount = useMemo(() => table.getAllColumns().length, [table.getAllColumns().length]);
 
+  // Group selection helper functions
+  const isGroupFullySelected = useCallback((groupRows: Row<TData>[]) => {
+    // Check if all rows in this group are selected
+    return groupRows.length > 0 && groupRows.every(row => row.getIsSelected());
+  }, []);
+
+  const isGroupPartiallySelected = useCallback((groupRows: Row<TData>[]) => {
+    // Check if some (but not all) rows in this group are selected
+    const selectedCount = groupRows.filter(row => row.getIsSelected()).length;
+    return selectedCount > 0 && selectedCount < groupRows.length;
+  }, []);
+
+  const toggleGroupSelection = useCallback((groupRows: Row<TData>[], value: boolean) => {
+    // Create a new selection state object that only modifies rows in this group
+    const newSelectionState: RowSelectionState = {};
+    
+    // Set selection state for only this group's rows
+    groupRows.forEach(row => {
+      newSelectionState[row.id] = value;
+    });
+    
+    // Update the selection state while preserving the selection of other rows
+    table.setRowSelection(prev => ({
+      ...prev,
+      ...newSelectionState
+    }));
+  }, [table]);
+
   // Initialize row grouping if enabled
   const grouping = useTableGrouping(
     rows,
@@ -392,7 +432,7 @@ function TableBodyComponent<TData extends object>({
 
             return (
               <React.Fragment key={`group-${groupKey}`}>
-                {/* Render group header */}
+                {/* Render group header with group-specific selection */}
                 <GroupHeaderRow
                   groupKey={groupKey}
                   rowCount={rowCount}
@@ -400,6 +440,11 @@ function TableBodyComponent<TData extends object>({
                   toggleCollapsed={toggleGroupCollapsed}
                   colSpan={visibleColumnCount} // Use visible columns count instead of all columns
                   renderGroupHeader={rowGrouping.renderGroupHeader}
+                  groupSelectProps={{
+                    isAllRowsSelected: isGroupFullySelected(group.rows),
+                    isSomeRowsSelected: isGroupPartiallySelected(group.rows),
+                    toggleAllRowsSelected: (value) => toggleGroupSelection(group.rows, value)
+                  }}
                 />
 
                 {/* Only render the content if the group is not collapsed */}
@@ -411,6 +456,17 @@ function TableBodyComponent<TData extends object>({
                         // Skip the status column if it's hidden
                         if (header.id === 'status' && !header.column.getIsVisible()) {
                           return null;
+                        }
+                        
+                        // Add an empty placeholder cell for the selection column instead of skipping it
+                        // This maintains alignment with the data rows below
+                        if (header.id === 'select') {
+                          return (
+                            <Table.Cell
+                              key={header.id}
+                              className="px-2 py-2 w-[40px]"
+                            />
+                          );
                         }
 
                         return (
