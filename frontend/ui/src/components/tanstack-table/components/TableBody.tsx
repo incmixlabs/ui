@@ -336,6 +336,12 @@ function TableBodyComponent<TData extends object>({
 }: TableBodyProps<TData>) {
   // Memoize the row model to prevent unnecessary recalculations
   const rows = useMemo(() => table.getRowModel().rows, [table.getRowModel().rows]);
+  
+  // Calculate the number of visible columns for proper colSpan calculation
+  const visibleColumnCount = useMemo(() => {
+    return table.getVisibleFlatColumns().length;
+  }, [table.getVisibleFlatColumns().length]);
+  
   const columnCount = useMemo(() => table.getAllColumns().length, [table.getAllColumns().length]);
 
   // Initialize row grouping if enabled
@@ -392,7 +398,7 @@ function TableBodyComponent<TData extends object>({
                   rowCount={rowCount}
                   isCollapsed={group.isCollapsed}
                   toggleCollapsed={toggleGroupCollapsed}
-                  colSpan={flatColumns.length}
+                  colSpan={visibleColumnCount} // Use visible columns count instead of all columns
                   renderGroupHeader={rowGrouping.renderGroupHeader}
                 />
 
