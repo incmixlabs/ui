@@ -16,6 +16,8 @@ import { TanstackDataTable } from "../../tanstack-table"
 import {
   Plus,
   Search,
+  Layers as LayersIcon,
+  LayoutGrid as LayoutGridIcon,
   RefreshCw,
   Settings,
   MoreVertical,
@@ -48,6 +50,19 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false)
   const [isColumnsMenuOpen, setIsColumnsMenuOpen] = useState(false)
+  
+  // State for grouping - default to status grouping
+  const [groupByField, setGroupByField] = useState<'statusLabel' | 'priorityLabel'>('statusLabel')
+  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({
+    name: true,
+    status: true,
+    priority: true,
+    startDate: true,
+    endDate: true,
+    assignedTo: true,
+    createdAt: false,
+    actions: true
+  })
 
   // Use the table view hook
   const {
@@ -260,6 +275,177 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     }
   }, [updateTask, moveTaskToStatus])
 
+  // Helper function to detect if dark mode is active
+  const isDarkMode = () => {
+    // Check if dark mode is active via media query or HTML tag class
+    return (
+      window.matchMedia && 
+      window.matchMedia('(prefers-color-scheme: dark)').matches ||
+      document.documentElement.classList.contains('dark')
+    );
+  };
+  
+  // Create a mapping for group colors based on the currently selected grouping type
+  const labelColorMapping = useMemo(() => {
+    const mapping: Record<string, { 
+      lightColor: string, // Original color for light mode
+      darkColor: string,  // Brighter color for dark mode
+      lightBgColor: string, // Semi-transparent bg for light mode
+      darkBgColor: string   // Semi-transparent bg for dark mode
+    }> = {};
+    
+    // Add the colors for each label of the selected type
+    const labelsData = labels as unknown as LabelSchema[];
+    const targetLabels = labelsData.filter(label => {
+      return groupByField === 'statusLabel' 
+        ? label.type === 'status' 
+        : label.type === 'priority';
+    });
+    
+    targetLabels.forEach(label => {
+      // Convert hex color to rgba for transparency
+      const hexToRgba = (hex: string, alpha: number = 0.15) => {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      };
+      
+      // For dark mode, brighten the color slightly to improve visibility
+      const lightenColor = (hex: string, percent: number = 20) => {
+        const r = Math.min(255, parseInt(hex.slice(1, 3), 16) + percent);
+        const g = Math.min(255, parseInt(hex.slice(3, 5), 16) + percent);
+        const b = Math.min(255, parseInt(hex.slice(5, 7), 16) + percent);
+        return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+      };
+      
+      // Generate a brighter version of the color for dark mode
+      const brightColor = lightenColor(label.color);
+      
+      // Store colors for both light and dark modes
+      mapping[label.name] = {
+        lightColor: label.color,
+        darkColor: brightColor,
+        lightBgColor: hexToRgba(label.color, 0.15),
+        darkBgColor: hexToRgba(brightColor, 0.25)  // Slightly more opacity for dark mode
+      };
+    });
+    
+    return mapping;
+  }, [labels, groupByField]);
+
+  // Add CSS variables for group colors to support dark mode
+  React.useEffect(() => {
+    const root = document.documentElement;
+    const labelsData = labels as unknown as LabelSchema[];
+    
+    // Reset any previously set CSS variables
+    const allLabels = labelsData.filter(label => [
+      'status', 'priority'
+    ].includes(label.type));
+    
+    allLabels.forEach(label => {
+      const baseName = label.name.toLowerCase().replace(/\s+/g, '-');
+      
+      // Convert hex color to rgba for transparency
+      const hexToRgba = (hex: string, alpha: number = 0.15) => {
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      };
+      
+      // Light mode - softer background with original color
+      root.style.setProperty(
+        `--group-${baseName}-bg-light`,
+        hexToRgba(label.color, 0.15)
+      );
+      root.style.setProperty(
+        `--group-${baseName}-text-light`,
+        label.color
+      );
+      root.style.setProperty(
+        `--group-${baseName}-border-light`,
+        hexToRgba(label.color, 0.5)
+      );
+      
+      // Dark mode - darker background with brighter text
+      root.style.setProperty(
+        `--group-${baseName}-bg-dark`,
+        hexToRgba(label.color, 0.25)
+      );
+      root.style.setProperty(
+        `--group-${baseName}-text-dark`, 
+        label.color
+      );
+      root.style.setProperty(
+        `--group-${baseName}-border-dark`,
+        hexToRgba(label.color, 0.6)
+      );
+    });
+    
+    // Add media query to switch between light and dark mode variables
+    const styleElement = document.createElement('style');
+    styleElement.textContent = `
+      :root {
+        ${allLabels.map(label => {
+          const baseName = label.name.toLowerCase().replace(/\s+/g, '-');
+          return `
+            --group-${baseName}-bg: var(--group-${baseName}-bg-light);
+            --group-${baseName}-text: var(--group-${baseName}-text-light);
+            --group-${baseName}-border: var(--group-${baseName}-border-light);
+          `;
+        }).join('')}
+      }
+      
+      @media (prefers-color-scheme: dark) {
+        :root {
+          ${allLabels.map(label => {
+            const baseName = label.name.toLowerCase().replace(/\s+/g, '-');
+            return `
+              --group-${baseName}-bg: var(--group-${baseName}-bg-dark);
+              --group-${baseName}-text: var(--group-${baseName}-text-dark);
+              --group-${baseName}-border: var(--group-${baseName}-border-dark);
+            `;
+          }).join('')}
+        }
+      }
+      
+      .dark {
+        ${allLabels.map(label => {
+          const baseName = label.name.toLowerCase().replace(/\s+/g, '-');
+          return `
+            --group-${baseName}-bg: var(--group-${baseName}-bg-dark);
+            --group-${baseName}-text: var(--group-${baseName}-text-dark);
+            --group-${baseName}-border: var(--group-${baseName}-border-dark);
+          `;
+        }).join('')}
+      }
+    `;
+    
+    document.head.appendChild(styleElement);
+    
+    return () => {
+      document.head.removeChild(styleElement);
+      
+      // Clean up CSS variables
+      allLabels.forEach(label => {
+        const baseName = label.name.toLowerCase().replace(/\s+/g, '-');
+        root.style.removeProperty(`--group-${baseName}-bg-light`);
+        root.style.removeProperty(`--group-${baseName}-text-light`);
+        root.style.removeProperty(`--group-${baseName}-border-light`);
+        root.style.removeProperty(`--group-${baseName}-bg-dark`);
+        root.style.removeProperty(`--group-${baseName}-text-dark`);
+        root.style.removeProperty(`--group-${baseName}-border-dark`);
+      });
+    };
+  }, [labels]);
+  
+  // Toggle between grouping by status or priority
+  const toggleGrouping = useCallback(() => {
+    setGroupByField(prev => prev === 'statusLabel' ? 'priorityLabel' : 'statusLabel');
+  }, []);
+
   // Table facets for filtering
   const tableFacets = useMemo(() => [
     {
@@ -325,6 +511,25 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
             <Heading size="6">Task Table</Heading>
 
             <Flex align="center" gap="2">
+              {/* Grouping toggle button */}
+              <Button 
+                variant="outline" 
+                onClick={toggleGrouping}
+                className="flex items-center gap-1"
+                size="2"
+              >
+                {groupByField === 'statusLabel' ? (
+                  <>
+                    <LayersIcon size={14} />
+                    <span>Group by Status</span>
+                  </>
+                ) : (
+                  <>
+                    <LayoutGridIcon size={14} />
+                    <span>Group by Priority</span>
+                  </>
+                )}
+              </Button>
               <Tooltip content="Refresh">
                 <IconButton variant="ghost" onClick={handleRefresh}>
                   <RefreshCw size={16} />
@@ -425,7 +630,9 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           enableRowSelection={true}
           enableSorting={true}
           enablePagination={true}
-          enableColumnVisibility={false} /* Hide column visibility dropdown */
+          enableColumnVisibility={true}
+          columnVisibility={columnVisibility}
+          onColumnVisibilityChange={setColumnVisibility}
           enableFiltering={false} /* Hide filter input field */
           facets={tableFacets}
           isPaginationLoading={isLoading}
@@ -435,6 +642,87 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           // Still provide columns and handler in case inline editing is needed elsewhere
           inlineEditableColumns={["name", "startDate", "endDate"]} // Status and priority handled by custom components
           onCellEdit={handleCellEdit}
+          
+          // Row grouping configuration
+          enableRowGrouping={true}
+          rowGrouping={{
+            groupByColumn: groupByField,
+            initiallyCollapsed: false,
+            toggleOnClick: true,
+            // Implement a proper dark-mode aware group header renderer
+            renderGroupHeader: (groupValue: string, count: number) => {
+              // Get the theme-aware color mapping for this group
+              const labelData = labelColorMapping[groupValue];
+              if (!labelData) return null;
+              
+              // Listen for theme changes
+              const [darkMode, setDarkMode] = React.useState(isDarkMode);
+              
+              // Set up listeners for theme changes
+              React.useEffect(() => {
+                // Function to check dark mode
+                const checkDarkMode = () => {
+                  setDarkMode(isDarkMode());
+                };
+                
+                // Check initially and on system preference change
+                checkDarkMode();
+                
+                // Listen for system preference changes
+                const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+                if (mediaQuery?.addEventListener) {
+                  mediaQuery.addEventListener('change', checkDarkMode);
+                }
+                
+                // Listen for class changes on the HTML element (for manual theme switching)
+                const observer = new MutationObserver(checkDarkMode);
+                observer.observe(document.documentElement, {
+                  attributes: true,
+                  attributeFilter: ['class']
+                });
+                
+                // Clean up
+                return () => {
+                  if (mediaQuery?.removeEventListener) {
+                    mediaQuery.removeEventListener('change', checkDarkMode);
+                  }
+                  observer.disconnect();
+                };
+              }, []);
+              
+              // Use the appropriate colors based on the current theme
+              const textColor = darkMode ? labelData.darkColor : labelData.lightColor;
+              const bgColor = darkMode ? labelData.darkBgColor : labelData.lightBgColor;
+              
+              // Return the styled group header
+              return (
+                <div 
+                  className="flex justify-between items-center h-10 px-3 w-full"
+                  style={{ backgroundColor: bgColor }}
+                >
+                  <div className="flex items-center">
+                    {/* Color bullet */}
+                    <span 
+                      className="h-2 w-2 rounded-full mr-2"
+                      style={{ backgroundColor: textColor }}
+                    ></span>
+                    
+                    {/* Group name with colored text */}
+                    <span 
+                      className="font-medium"
+                      style={{ color: textColor }}
+                    >
+                      {groupValue}
+                    </span>
+                    
+                    {/* Task count */}
+                    <span className="text-muted-foreground ml-1">{count}</span>
+                  </div>
+                </div>
+              );
+            }
+          }}
+          hideMainHeader={false}
 
           // Additional table settings
           pageSize={50}

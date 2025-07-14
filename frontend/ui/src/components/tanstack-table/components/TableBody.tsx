@@ -451,7 +451,7 @@ function TableBodyComponent<TData extends object>({
                 {!group.isCollapsed && (
                   <>
                     {/* Column headers for this group */}
-                    <Table.Row className="border-t border-b border-gray-100 bg-gray-50">
+                    <Table.Row className="border-t border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
                       {table.getHeaderGroups()[0].headers.map(header => {
                         // Skip the status column if it's hidden
                         if (header.id === 'status' && !header.column.getIsVisible()) {
@@ -472,7 +472,7 @@ function TableBodyComponent<TData extends object>({
                         return (
                           <Table.Cell
                             key={header.id}
-                            className="px-2 py-2 text-xs font-medium text-gray-500"
+                            className="px-2 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900"
                           >
                             {header.isPlaceholder
                               ? null

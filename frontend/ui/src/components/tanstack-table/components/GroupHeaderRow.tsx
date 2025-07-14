@@ -24,20 +24,85 @@ interface GroupHeaderRowProps {
 
 // Define category styles mapping using standardized identifiers
 // This should match your design system
-const categoryStyleMap: Record<string, { color: string, textColor: string, bgColor: string, label?: string }> = {
+const categoryStyleMap: Record<string, { color: string, textColor: string, darkTextColor: string, bgColor: string, darkBgColor: string, label?: string }> = {
   // Standard identifiers
-  "todo": { color: "bg-purple-500", textColor: "text-purple-800", bgColor: "bg-purple-100", label: "Todo" },
-  "in_design": { color: "bg-violet-500", textColor: "text-violet-800", bgColor: "bg-violet-100", label: "In Design" },
-  "in_review": { color: "bg-orange-500", textColor: "text-orange-800", bgColor: "bg-orange-100", label: "In Review" },
-  "working": { color: "bg-blue-500", textColor: "text-blue-800", bgColor: "bg-blue-100", label: "Working" },
-  "done": { color: "bg-green-500", textColor: "text-green-800", bgColor: "bg-green-100", label: "Done" },
+  "todo": { 
+    color: "bg-purple-500", 
+    textColor: "text-purple-800", 
+    darkTextColor: "text-purple-300", 
+    bgColor: "bg-purple-100", 
+    darkBgColor: "bg-purple-900/30", 
+    label: "Todo" 
+  },
+  "in_design": { 
+    color: "bg-violet-500", 
+    textColor: "text-violet-800", 
+    darkTextColor: "text-violet-300", 
+    bgColor: "bg-violet-100", 
+    darkBgColor: "bg-violet-900/30", 
+    label: "In Design" 
+  },
+  "in_review": { 
+    color: "bg-orange-500", 
+    textColor: "text-orange-800", 
+    darkTextColor: "text-orange-300", 
+    bgColor: "bg-orange-100", 
+    darkBgColor: "bg-orange-900/30", 
+    label: "In Review" 
+  },
+  "working": { 
+    color: "bg-blue-500", 
+    textColor: "text-blue-800", 
+    darkTextColor: "text-blue-300", 
+    bgColor: "bg-blue-100", 
+    darkBgColor: "bg-blue-900/30", 
+    label: "Working" 
+  },
+  "done": { 
+    color: "bg-green-500", 
+    textColor: "text-green-800", 
+    darkTextColor: "text-green-300", 
+    bgColor: "bg-green-100", 
+    darkBgColor: "bg-green-900/30", 
+    label: "Done" 
+  },
   
   // Legacy support for display values (for backward compatibility)
-  "Todo": { color: "bg-purple-500", textColor: "text-purple-800", bgColor: "bg-purple-100" },
-  "In Design": { color: "bg-violet-500", textColor: "text-violet-800", bgColor: "bg-violet-100" },
-  "In Review": { color: "bg-orange-500", textColor: "text-orange-800", bgColor: "bg-orange-100" },
-  "Working": { color: "bg-blue-500", textColor: "text-blue-800", bgColor: "bg-blue-100" },
-  "Done": { color: "bg-green-500", textColor: "text-green-800", bgColor: "bg-green-100" }
+  "Todo": { 
+    color: "bg-purple-500", 
+    textColor: "text-purple-800", 
+    darkTextColor: "text-purple-300", 
+    bgColor: "bg-purple-100", 
+    darkBgColor: "bg-purple-900/30" 
+  },
+  "In Design": { 
+    color: "bg-violet-500", 
+    textColor: "text-violet-800", 
+    darkTextColor: "text-violet-300", 
+    bgColor: "bg-violet-100", 
+    darkBgColor: "bg-violet-900/30" 
+  },
+  "In Review": { 
+    color: "bg-orange-500", 
+    textColor: "text-orange-800", 
+    darkTextColor: "text-orange-300", 
+    bgColor: "bg-orange-100", 
+    darkBgColor: "bg-orange-900/30" 
+  },
+  "Working": { 
+    color: "bg-blue-500", 
+    textColor: "text-blue-800", 
+    darkTextColor: "text-blue-300", 
+    bgColor: "bg-blue-100", 
+    darkBgColor: "bg-blue-900/30" 
+  },
+  "Done": { 
+    color: "bg-green-500", 
+    textColor: "text-green-800", 
+    darkTextColor: "text-green-300", 
+    bgColor: "bg-green-100", 
+    darkBgColor: "bg-green-900/30" 
+  }
 };
 
 /**
@@ -64,17 +129,22 @@ function GroupHeaderRowComponent({
   };
 
   // Get the styles for this category or use defaults
-  const styles = categoryStyleMap[groupKey] || { color: "bg-gray-400", textColor: "text-gray-600", bgColor: "bg-gray-50" };
+  const styles = categoryStyleMap[groupKey] || { 
+    color: "bg-gray-400", 
+    textColor: "text-gray-600", 
+    darkTextColor: "text-gray-400", 
+    bgColor: "bg-gray-50", 
+    darkBgColor: "bg-gray-800/50" 
+  };
+  
   const bulletColor = styles.color;
-  const textColor = styles.textColor;
-  const bgColor = styles.bgColor;
   
   // Use the display label if available, otherwise use the groupKey
   const displayLabel = styles.label || groupKey;
 
   return (
     <Table.Row
-      className={`group-header border-b-0 cursor-pointer hover:opacity-90 ${bgColor}`}
+      className={`group-header border-b-0 border-gray-200 dark:border-gray-800 cursor-pointer hover:opacity-90 ${styles.bgColor} dark:${styles.darkBgColor}`}
       onClick={handleToggleClick}
       role="row"
       aria-expanded={!isCollapsed}
@@ -109,7 +179,7 @@ function GroupHeaderRowComponent({
               <span className={`h-2 w-2 rounded-full ${bulletColor} mr-2`}></span>
               
               {/* Category name */}
-              <span className={`font-medium ${textColor}`}>{displayLabel}</span>
+              <span className={`font-medium ${styles.textColor} dark:${styles.darkTextColor}`}>{displayLabel}</span>
               
               {/* Count */}
               <span className="text-muted-foreground ml-1">  

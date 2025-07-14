@@ -29,7 +29,7 @@ function TableHeaderComponent<TData>({ table, flatColumns }: TableHeaderProps<TD
             return (
               <Table.HeaderCell
                 key={header.id}
-                className="text-sm font-medium text-gray-500 dark:text-gray-400 h-10 px-2 text-left"
+                className="text-sm font-medium text-gray-500 dark:text-gray-400 h-10 px-2 text-left bg-gray-50 dark:bg-gray-900"
                 style={{
                   width: columnDef?.width,
                   minWidth: columnDef?.minWidth,
