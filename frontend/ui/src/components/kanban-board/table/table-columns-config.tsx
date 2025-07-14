@@ -41,11 +41,6 @@ export const formatDate = (dateString: string | undefined): { text: string; clas
 // Custom cell renderers
 export const TaskNameCell: React.FC<{ value: string; row: TableTask }> = ({ value, row }) => (
   <Flex align="center" gap="3" className="min-w-0">
-    <Checkbox
-      checked={row.completed}
-      size="1"
-      className="flex-shrink-0"
-    />
     <div className="min-w-0 flex-1">
       <Text 
         size="2" 

@@ -11,8 +11,10 @@ import {
   Badge,
   DropdownMenu,
   Tooltip,
+  Checkbox,
 } from "@base"
 import { TanstackDataTable } from "../../tanstack-table"
+import { Table, Row } from "@tanstack/react-table"
 import {
   Plus,
   Search,
@@ -24,13 +26,15 @@ import {
   Download,
   ChevronDown,
   Check,
-  HelpCircle as HelpCircleIcon
+  HelpCircle as HelpCircleIcon,
+  ChevronRight
 } from "lucide-react"
 
 import type { TableTask } from "../types"
 import type { LabelSchema, TaskDataSchema } from "@incmix/utils/schema"
 import { useAIFeaturesStore } from "@incmix/store"
 import { KeyboardShortcutsHelp } from "../../tanstack-table/components/KeyboardShortcutsHelp"
+import { GroupHeaderWithCheckbox } from "./components/group-header-with-checkbox"
 import { useTableView } from "../hooks/use-table-view"
 import { TASK_TABLE_COLUMNS } from "./table-columns-config"
 import { TableRowActions } from "./table-row-actions"
@@ -78,8 +82,27 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     clearError,
     projectStats
   } = useTableView(projectId)
-  console.log("TASK DATA: ", tasks)
-  console.log("LABELS DATA: ", labels)
+  // Store the selected row ids for custom group selection handling
+  const [selectedRowIds, setSelectedRowIds] = useState<Record<string, boolean>>({});
+  
+  // Handle selection changes from the table
+  const handleSelectionChange = (selectedRows: TableTask[]) => {
+    // Create a map of selected row IDs
+    const newSelectedIds = selectedRows.reduce<Record<string, boolean>>(
+      (acc, row) => {
+        if (row.id) {
+          acc[row.id.toString()] = true;
+        }
+        return acc;
+      }, {}
+    );
+    setSelectedRowIds(newSelectedIds);
+    
+    // For debugging - log selected tasks
+    if (selectedRows.length > 0) {
+      console.log('Selected tasks:', selectedRows.map(row => ({ id: row.id, name: row.name })));
+    }
+  };
 
   // Enhanced columns with row actions
   const enhancedColumns = useMemo((): DataTableColumn<TableTask>[] => {
@@ -636,27 +659,31 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           enableFiltering={false} /* Hide filter input field */
           facets={tableFacets}
           isPaginationLoading={isLoading}
+          hideMainHeader={true} // Hide the main header to show column headers only within groups
 
           // Inline editing functionality - disabled to hide keyboard shortcuts icon
           enableInlineCellEdit={false}
           // Still provide columns and handler in case inline editing is needed elsewhere
           inlineEditableColumns={["name", "startDate", "endDate"]} // Status and priority handled by custom components
           onCellEdit={handleCellEdit}
-          
+
+          // Track selection changes
+          onSelectionChange={handleSelectionChange}
+
           // Row grouping configuration
           enableRowGrouping={true}
           rowGrouping={{
             groupByColumn: groupByField,
             initiallyCollapsed: false,
             toggleOnClick: true,
-            // Implement a proper dark-mode aware group header renderer
+            // Direct inline rendering with proper theme support
             renderGroupHeader: (groupValue: string, count: number) => {
               // Get the theme-aware color mapping for this group
               const labelData = labelColorMapping[groupValue];
               if (!labelData) return null;
               
-              // Listen for theme changes
-              const [darkMode, setDarkMode] = React.useState(isDarkMode);
+              // Get current dark mode status
+              const [darkMode, setDarkMode] = React.useState(isDarkMode());
               
               // Set up listeners for theme changes
               React.useEffect(() => {
@@ -694,13 +721,68 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
               const textColor = darkMode ? labelData.darkColor : labelData.lightColor;
               const bgColor = darkMode ? labelData.darkBgColor : labelData.lightBgColor;
               
-              // Return the styled group header
+              // Filter tasks to get only those in this group
+              const tasksInGroup = tasks.filter(task => task[groupByField as keyof TableTask] === groupValue);
+              const tasksInGroupIds = tasksInGroup.map(task => task.id?.toString() || '');
+              
+              // Check if all tasks in group are selected
+              const allSelected = tasksInGroupIds.length > 0 && 
+                tasksInGroupIds.every(id => id && selectedRowIds[id]);
+              
+              // Check if some tasks in group are selected
+              const someSelected = !allSelected && 
+                tasksInGroupIds.some(id => id && selectedRowIds[id]);
+              
+              // Function to select or deselect all rows in this group
+              const toggleGroupSelection = (e: React.MouseEvent, selected: boolean) => {
+                e.stopPropagation(); // Prevent group collapse toggling
+                
+                // Create a copy of the current selection
+                const newSelection = { ...selectedRowIds };
+                
+                // Update selection status for all tasks in this group
+                tasksInGroupIds.forEach(id => {
+                  if (id) {
+                    if (selected) {
+                      newSelection[id] = true;
+                    } else {
+                      delete newSelection[id];
+                    }
+                  }
+                });
+                
+                // Update state
+                setSelectedRowIds(newSelection);
+                
+                // Calculate which rows are now selected based on the new selection
+                const updatedSelectedRows = tasks.filter(task => task.id && newSelection[task.id.toString()]);
+                
+                // For debugging
+                if (selected) {
+                  console.log('Selected tasks in group:', tasksInGroup.map(row => ({ id: row.id, name: row.name })));
+                }
+              };
+              
+              // Return the styled group header with checkbox
               return (
                 <div 
-                  className="flex justify-between items-center h-10 px-3 w-full"
+                  className="flex justify-between items-center h-10 px-3 w-full cursor-pointer hover:opacity-90"
                   style={{ backgroundColor: bgColor }}
                 >
                   <div className="flex items-center">
+                    {/* Group selection checkbox */}
+                    <Checkbox
+                      checked={allSelected || (someSelected && "indeterminate")}
+                      onCheckedChange={(value) => {
+                        if (typeof window !== 'undefined' && window.event) {
+                          toggleGroupSelection(window.event as unknown as React.MouseEvent, !!value);
+                        }
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                      aria-label={`Select all rows in ${groupValue} group`}
+                      className="mr-2 translate-y-[2px]"
+                    />
+                    
                     {/* Color bullet */}
                     <span 
                       className="h-2 w-2 rounded-full mr-2"
@@ -718,11 +800,18 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
                     {/* Task count */}
                     <span className="text-muted-foreground ml-1">{count}</span>
                   </div>
+                  
+                  {/* Expand/collapse chevron */}
+                  <div className="flex items-center">
+                    <div className="transition-transform duration-200 ease-in-out rotate-90">
+                      <ChevronRight className="h-4 w-4 text-gray-500" />
+                    </div>
+                  </div>
                 </div>
               );
             }
           }}
-          hideMainHeader={false}
+          // Additional configuration
 
           // Additional table settings
           pageSize={50}
