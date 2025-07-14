@@ -43,6 +43,7 @@ export const useAuth = () => {
 
   const authUser = isError || !data ? null : data
 
+  // TODO: Enable this later
   // useRateLimits()
 
   return { authUser: authUser, isLoading, isError, fetchStatus }
