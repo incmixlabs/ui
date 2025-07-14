@@ -33,7 +33,7 @@ import {
   useSidebar,
 } from "@incmix/ui/sidebar"
 import { createAbilityFromPermissions } from "@incmix/utils/casl"
-import type { Permission } from "@incmix/utils/types"
+import { type Permission, UserRoles } from "@incmix/utils/types"
 import { useQuery } from "@tanstack/react-query"
 import { useLocation } from "@tanstack/react-router"
 import { I18n } from "i18n"
@@ -82,6 +82,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       return await res.json()
     },
   })
+
+  const isSuperAdmin = user?.userType === UserRoles.ROLE_SUPER_ADMIN
 
   const ability = createAbilityFromPermissions(permissions ?? [])
 
@@ -219,12 +221,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: BoxIcon,
         isSelected: pathname.includes("/organizations"),
       },
-      {
-        title: "Roles and Permissions",
-        url: "/roles",
-        icon: LockIcon,
-        isSelected: pathname.includes("/roles"),
-      },
+      ...(isSuperAdmin
+        ? [
+            {
+              title: "Roles and Permissions",
+              url: "/roles",
+              icon: LockIcon,
+              isSelected: pathname.includes("/roles"),
+            },
+          ]
+        : []),
       // {
       //   title: t("sidebar:docs"),
       //   url: "/docs",

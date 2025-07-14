@@ -1,32 +1,22 @@
 "use client"
-import { useCurrentUser } from "@auth"
+import { useAuth } from "@auth"
 import { LoadingPage } from "@common"
-import { CardContainer } from "@incmix/ui"
-import { Button, Container, Flex, Heading } from "@incmix/ui"
-import { AUTH_API_URL } from "@incmix/ui/constants"
-import { useMutation } from "@tanstack/react-query"
+import { Button, CardContainer, Container, Flex, Heading } from "@incmix/ui"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { useEffect } from "react"
 
 function HomePage() {
-  const { user, isLoading, isError } = useCurrentUser()
+  const { authUser, isLoading, isError } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (user && !isLoading && !isError) {
-      navigate({ to: "/dashboard" })
+    console.log("authUser", authUser, isLoading, isError)
+    if (authUser && !isLoading && !isError) {
+      navigate({ to: "/dashboard/home" })
     }
-  }, [user, isLoading, isError, navigate])
+  }, [authUser, isLoading, isError, navigate])
 
-  const { mutate: testSentry } = useMutation({
-    mutationKey: ["test-sentry"],
-    mutationFn: () => {
-      const url = `${AUTH_API_URL}/test-sentry`
-      return fetch(url)
-    },
-  })
-
-  if (isLoading || user) {
+  if (isLoading) {
     return <LoadingPage />
   }
 
@@ -44,9 +34,6 @@ function HomePage() {
               </Button>
               <Button asChild>
                 <Link to="/signup">Sign Up</Link>
-              </Button>
-              <Button onClick={() => testSentry()} color="red">
-                Test sentry
               </Button>
             </Flex>
           </Flex>
