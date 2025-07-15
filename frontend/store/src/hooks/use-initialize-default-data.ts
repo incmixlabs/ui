@@ -1,4 +1,4 @@
-import type {  DefaultDataOptions } from "@incmix/utils/schema"
+import type { DefaultDataOptions } from "@incmix/utils/schema"
 import type { LabelDocType, TaskCollections, TaskDocType } from "../sql/types"
 // Import browser-compatible helpers instead of Node.js Buffer-using ones
 import {
@@ -16,7 +16,6 @@ const getDefaultUser = () => ({
   name: "System",
   image: "/placeholder-avatar.png",
 })
-
 
 // DefaultDataOptions is imported from @incmix/utils/schema
 

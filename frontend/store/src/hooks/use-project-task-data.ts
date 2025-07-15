@@ -17,7 +17,7 @@ import {
   generateBrowserUniqueId,
   getCurrentTimestamp,
 } from "../utils/browser-helpers"
-import {DEFAULT_LABELS} from "../utils/default-labels"
+import { DEFAULT_LABELS } from "../utils/default-labels"
 
 // Get the current user - accepts user context to make it injectable
 const getCurrentUser = (user?: CurrentUser) => {
