@@ -20,6 +20,11 @@ interface GroupHeaderRowProps {
     isSomeRowsSelected: boolean;
     toggleAllRowsSelected: (value: boolean) => void;
   };
+  // Dynamic color mapping from the parent component
+  categoryMapping?: Record<string, {
+    color: string;       // Text/accent color
+    backgroundColor: string; // Background color
+  }>;
 }
 
 // Define category styles mapping using standardized identifiers
@@ -117,6 +122,7 @@ function GroupHeaderRowComponent({
   colSpan,
   renderGroupHeader,
   groupSelectProps,
+  categoryMapping,
 }: GroupHeaderRowProps) {
   // Handle click on the group header
   const handleToggleClick = () => {
@@ -128,27 +134,56 @@ function GroupHeaderRowComponent({
     e.stopPropagation();
   };
 
-  // Get the styles for this category or use defaults
-  const styles = categoryStyleMap[groupKey] || { 
-    color: "bg-gray-400", 
-    textColor: "text-gray-600", 
-    darkTextColor: "text-gray-400", 
-    bgColor: "bg-gray-50", 
-    darkBgColor: "bg-gray-800/50" 
+  // Check if we have dynamic mapping for this category
+  const dynamicStyles = categoryMapping && categoryMapping[groupKey];
+  
+  // If we have dynamic mapping, use it; otherwise fall back to the static map
+  let styles: { 
+    color: string; 
+    textColor: string;
+    darkTextColor: string;
+    bgColor: string;
+    darkBgColor: string;
+    label?: string;
   };
   
-  const bulletColor = styles.color;
+  if (dynamicStyles) {
+    // When using dynamic styles, we'll use inline style attributes instead of Tailwind classes
+    // Just use placeholder classes here, actual styling will be done via style attributes
+    styles = {
+      color: "bg-transparent", // Will use style attribute instead
+      textColor: "text-current", // Will use style attribute instead
+      darkTextColor: "text-current", // Will use style attribute instead
+      bgColor: "bg-transparent", // Will use style attribute instead
+      darkBgColor: "bg-transparent" // Will use style attribute instead
+    };
+  } else {
+    // Fallback to hardcoded styles
+    styles = categoryStyleMap[groupKey] || {
+      color: "bg-gray-400",
+      textColor: "text-gray-600", 
+      darkTextColor: "text-gray-400", 
+      bgColor: "bg-gray-50", 
+      darkBgColor: "bg-gray-800/50"
+    };
+  }
   
   // Use the display label if available, otherwise use the groupKey
   const displayLabel = styles.label || groupKey;
+  
+  // If we have dynamic styles, use the color directly for the bullet
+  const bulletColor = dynamicStyles ? dynamicStyles.color : styles.color;
 
   return (
     <Table.Row
-      className={`group-header border-b-0 border-gray-200 dark:border-gray-800 cursor-pointer hover:opacity-90 ${styles.bgColor} dark:${styles.darkBgColor}`}
+      className={`group-header border-b-0 border-gray-200 dark:border-gray-800 cursor-pointer hover:opacity-90`}
       onClick={handleToggleClick}
       role="row"
       aria-expanded={!isCollapsed}
       data-state={isCollapsed ? "collapsed" : "expanded"}
+      style={{
+        backgroundColor: dynamicStyles ? dynamicStyles.backgroundColor : undefined
+      }}
     >
       <Table.Cell
         colSpan={colSpan}
@@ -176,10 +211,22 @@ function GroupHeaderRowComponent({
                 />
               )}
             
-              <span className={`h-2 w-2 rounded-full ${bulletColor} mr-2`}></span>
+              <span 
+                className={`h-2 w-2 rounded-full mr-2`}
+                style={{
+                  backgroundColor: dynamicStyles ? dynamicStyles.color : undefined,
+                }}
+              ></span>
               
               {/* Category name */}
-              <span className={`font-medium ${styles.textColor} dark:${styles.darkTextColor}`}>{displayLabel}</span>
+              <span 
+                className={`font-medium ${!dynamicStyles ? `${styles.textColor} dark:${styles.darkTextColor}` : ''}`}
+                style={{
+                  color: dynamicStyles ? dynamicStyles.color : undefined
+                }}
+              >
+                {displayLabel}
+              </span>
               
               {/* Count */}
               <span className="text-muted-foreground ml-1">  

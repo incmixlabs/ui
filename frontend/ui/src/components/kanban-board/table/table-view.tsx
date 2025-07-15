@@ -11,12 +11,9 @@ import {
   Badge,
   DropdownMenu,
   Tooltip,
-  Checkbox,
 } from "@base"
 import { TanstackDataTable } from "../../tanstack-table"
-import { Table, Row } from "@tanstack/react-table"
 import {
-  Plus,
   Search,
   Layers as LayersIcon,
   LayoutGrid as LayoutGridIcon,
@@ -26,22 +23,18 @@ import {
   Download,
   ChevronDown,
   Check,
-  HelpCircle as HelpCircleIcon,
-  ChevronRight
 } from "lucide-react"
 
 import type { TableTask } from "../types"
 import type { LabelSchema, TaskDataSchema } from "@incmix/utils/schema"
 import { useAIFeaturesStore } from "@incmix/store"
 import { KeyboardShortcutsHelp } from "../../tanstack-table/components/KeyboardShortcutsHelp"
-import { GroupHeaderWithCheckbox } from "./components/group-header-with-checkbox"
 import { useTableView } from "../hooks/use-table-view"
 import { TASK_TABLE_COLUMNS } from "./table-columns-config"
 import { TableRowActions } from "./table-row-actions"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
-import { CreateTaskDialog } from "./create-task-dialog"
 import { DataTableColumn } from "@/components/tanstack-table/types"
-import { StatusDropdownCell, PriorityDropdownCell, createEnhancedTaskTableColumns } from "./custom-dropdown-columns"
+import { StatusDropdownCell, PriorityDropdownCell } from "./custom-dropdown-columns"
 
 interface TableViewProps {
   projectId?: string
@@ -309,11 +302,21 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
   };
   
   // Helper function to convert hex to rgba for group header colors
-  const hexToRgba = (hex: string, alpha: number = 0.15) => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  const hexToRgba = (hex: string, alpha: number = 0.3) => {
+    // Handle case where hex might not be valid
+    if (!hex || typeof hex !== 'string' || !hex.startsWith('#') || hex.length !== 7) {
+      return `rgba(128, 128, 128, ${alpha})`; // Default gray if invalid color
+    }
+    
+    try {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    } catch (e) {
+      console.error('Invalid color format:', hex);
+      return `rgba(128, 128, 128, ${alpha})`; // Default gray on error
+    }
   };
   
   // Helper function to lighten a color for dark mode
@@ -342,8 +345,9 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     targetLabels.forEach(label => {
       // For dark mode support, we use the original color for text and a semi-transparent version for background
       const originalColor = label.color;
-      const bgColor = hexToRgba(originalColor, 0.15);
+      const bgColor = hexToRgba(originalColor, 0.3); // Using 0.3 alpha for better visibility (70% transparent)
       
+      // Map by name for the UI display, which is what the grouping shows
       mapping[label.name] = {
         color: originalColor,
         backgroundColor: bgColor

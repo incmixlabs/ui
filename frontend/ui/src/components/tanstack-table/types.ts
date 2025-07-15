@@ -150,7 +150,9 @@ export interface RowGroupingOptions<TData> {
     valueToIdentifier?: Record<string, string>;
     // Maps standardized identifiers to display labels
     identifierToLabel?: Record<string, string>;
-  };
+    // Maps category keys to color settings for group headers
+    [key: string]: any; // Allow for additional properties like color mappings
+  } | Record<string, { color: string; backgroundColor: string }>;
 }
 
 // Main DataTable props

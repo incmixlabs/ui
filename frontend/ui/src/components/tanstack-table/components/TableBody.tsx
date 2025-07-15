@@ -440,6 +440,7 @@ function TableBodyComponent<TData extends object>({
                   toggleCollapsed={toggleGroupCollapsed}
                   colSpan={visibleColumnCount} // Use visible columns count instead of all columns
                   renderGroupHeader={rowGrouping.renderGroupHeader}
+                  categoryMapping={rowGrouping.categoryMapping} // Pass the dynamic color mapping
                   groupSelectProps={{
                     isAllRowsSelected: isGroupFullySelected(group.rows),
                     isSomeRowsSelected: isGroupPartiallySelected(group.rows),
