@@ -321,10 +321,18 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
   
   // Helper function to lighten a color for dark mode
   const lightenColor = (hex: string, percent: number = 20) => {
-    const r = Math.min(255, parseInt(hex.slice(1, 3), 16) + percent);
-    const g = Math.min(255, parseInt(hex.slice(3, 5), 16) + percent);
-    const b = Math.min(255, parseInt(hex.slice(5, 7), 16) + percent);
-    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+    if (!hex || typeof hex !== 'string' || !hex.startsWith('#') || hex.length !== 7) {
+      return hex; // Return original if invalid
+    }
+    try {
+      const r = Math.min(255, parseInt(hex.slice(1, 3), 16) + percent);
+      const g = Math.min(255, parseInt(hex.slice(3, 5), 16) + percent);
+      const b = Math.min(255, parseInt(hex.slice(5, 7), 16) + percent);
+      return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+    } catch (e) {
+      console.error('Invalid color format in lightenColor:', hex);
+      return hex; // Return original on error
+    }
   };
   
   // Create dynamic color mapping for group headers based on the currently selected grouping type
