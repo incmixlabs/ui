@@ -18,7 +18,15 @@ const data = [
   { value: 75 },
 ]
 
+const calculateTrend = (data: {value: number}[]): string => {
+  if (data.length < 6) return "0.0";
+  const recent = data.slice(-3).reduce((sum, item) => sum + item.value, 0);
+  const previous = data.slice(-6, -3).reduce((sum, item) => sum + item.value, 0);
+  return previous > 0 ? ((recent - previous) / previous * 100).toFixed(1) : "0.0";
+};
+
 export function LiveVisitors() {
+  const trend = calculateTrend(data);
   return (
     <CardContainer>
       <Box className="pb-2">
@@ -26,7 +34,7 @@ export function LiveVisitors() {
           <Heading size="6" className="font-medium">Live Visitors</Heading>
           <Flex align={"center"} gap={"1"} className="text-green-9" aria-label="Visitor trend">
             <TrendingUp className="w-4 h-4 mr-1" />
-            +78.2%
+            +{trend}%
           </Flex>
         </Flex>
       </Box>

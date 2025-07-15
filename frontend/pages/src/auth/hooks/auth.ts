@@ -38,14 +38,15 @@ export const useAuth = () => {
       if (!res.ok) throw new Error("Not authenticated")
       return res.json() as Promise<AuthUserSession>
     },
-    retry: false,
+    retry: true,
   })
 
-  const authUser = isError ? null : data
+  const authUser = isError || !data ? null : data
 
-  useRateLimits()
+  // TODO: Enable this later
+  // useRateLimits()
 
-  return { authUser, isLoading, isError, fetchStatus }
+  return { authUser: authUser, isLoading, isError, fetchStatus }
 }
 
 export const useUser = (userId: string) => {

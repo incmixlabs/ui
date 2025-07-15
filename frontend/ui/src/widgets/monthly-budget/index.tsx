@@ -50,7 +50,7 @@ export function MonthlyBudget() {
           </ResponsiveContainer>
         </Box>
         <Text size="2" className="text-gray-11" aria-label="Monthly budget description">
-          Last month you had $2.42 expense transactions, 12 savings entries and 4 bills.
+          Last month you had 12 expense transactions, 8 savings entries and 4 bills.
         </Text>
     </CardContainer>
   )

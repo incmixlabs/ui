@@ -1,4 +1,3 @@
-// components/NewTasks.tsx
 import { StatsCard } from "@incmix/ui/charts"
 import { CardContainer, ClipBoardAdd } from "@incmix/ui"
 

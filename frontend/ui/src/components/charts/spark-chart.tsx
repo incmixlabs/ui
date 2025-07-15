@@ -1,68 +1,27 @@
 import { Box } from "@incmix/ui"
 import { cn } from "@utils"
-import { lazy } from "react"
-const ReactApexChart = lazy(() => import("react-apexcharts"))
+import { Bar, BarChart, ResponsiveContainer } from "recharts"
 
-// Dynamically import ApexCharts to avoid SSR issues
-
-interface TaskCardProps {
-  title: string
-  data: number[]
+interface SparkChartProps {
+  data: {value:number}[]
   color: string
   className?: string
 }
 
-export function SparkChart({ title, data, color, className }: TaskCardProps) {
-  const chartData = {
-    series: [
-      {
-        name: title,
-        data: data,
-      },
-    ],
-    options: {
-      chart: {
-        type: "bar",
-        height: 40,
-        sparkline: {
-          enabled: true,
-        },
-        toolbar: {
-          show: false,
-        },
-      },
-      colors: [color],
-      plotOptions: {
-        bar: {
-          columnWidth: "50%",
-          borderRadius: 2,
-        },
-      },
-      tooltip: {
-        enabled: false,
-      },
-      xaxis: {
-        crosshairs: {
-          width: 1,
-        },
-      },
-      stroke: {
-        width: 0,
-      },
-    },
-  }
+export function SparkChart({data, color, className }: SparkChartProps) {
 
   return (
     <>
-      <Box className={cn("", className)}>
-        {typeof window !== "undefined" && (
-          <ReactApexChart
-            options={chartData.options}
-            series={chartData.series}
-            type="bar"
-            height={"100%"}
-          />
-        )}
+      <Box className={cn("w-full", className)}>
+      <ResponsiveContainer width="100%" height={"100%"}>
+         <BarChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+            <Bar 
+               dataKey="value" 
+              fill={color} 
+              radius={[2, 2, 2, 2]}
+            />
+          </BarChart>
+        </ResponsiveContainer>
       </Box>
     </>
   )

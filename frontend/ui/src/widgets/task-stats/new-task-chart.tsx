@@ -1,12 +1,16 @@
 import { TaskChart } from "./task-chart"
-
+const DEFAULT_NEW_TASKS_DATA = [
+    {value:25},{value:30},{value:35},{value:25},{value:45},
+    {value:75},{value:55},{value:25},{value:30},{value:25}
+];
+  
 export function NewTasksChart() {
   return (
     <TaskChart
       title="New Tasks"
-      data={[25, 30, 35, 25, 45, 75, 55, 25, 30, 25]}
+      data={DEFAULT_NEW_TASKS_DATA}
       total={820}
-      color="bg-orange-3"
+      color="var(--orange-9)"
       label="New Task"
       />
   )
