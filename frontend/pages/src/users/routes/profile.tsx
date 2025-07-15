@@ -1,11 +1,10 @@
 "use client"
 
 import { RootRoute } from "@common"
-import { createRoute } from "@tanstack/react-router"
-import ProfilePage from "../profile-page"
+import { createRoute, lazyRouteComponent } from "@tanstack/react-router"
 
 export default createRoute({
   getParentRoute: () => RootRoute,
   path: "/profile",
-  component: () => <ProfilePage />,
+  component: lazyRouteComponent(() => import("../profile-page")),
 })

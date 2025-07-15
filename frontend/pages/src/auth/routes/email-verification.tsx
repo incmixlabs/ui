@@ -1,12 +1,11 @@
 "use client"
 import { RootRoute } from "@common"
-import { createRoute } from "@tanstack/react-router"
-import EmailVerificationPage from "../email-verification-page"
+import { createRoute, lazyRouteComponent } from "@tanstack/react-router"
 
 export default createRoute({
   getParentRoute: () => RootRoute,
   path: "/email-verification",
-  component: () => <EmailVerificationPage />,
+  component: lazyRouteComponent(() => import("../email-verification-page")),
   validateSearch: (search: Record<string, string>) => ({
     email: (search["email"] as string) || "",
     code: (search["code"] as string) || "",

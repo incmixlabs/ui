@@ -1,12 +1,11 @@
 "use client"
 import { RootRoute } from "@common"
-import { createRoute } from "@tanstack/react-router"
-import WelcomePage from "../welcome-page"
+import { createRoute, lazyRouteComponent } from "@tanstack/react-router"
 
 export default createRoute({
   getParentRoute: () => RootRoute,
   path: "/welcome",
-  component: WelcomePage,
+  component: lazyRouteComponent(() => import("../welcome-page")),
   validateSearch: (search: Record<string, unknown>) => ({
     email: (search["email"] as string) || "",
   }),

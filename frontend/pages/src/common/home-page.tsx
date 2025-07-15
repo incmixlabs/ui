@@ -10,13 +10,12 @@ function HomePage() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    console.log("authUser", authUser, isLoading, isError)
     if (authUser && !isLoading && !isError) {
       navigate({ to: "/dashboard/home" })
     }
   }, [authUser, isLoading, isError, navigate])
 
-  if (isLoading) {
+  if (isLoading || !authUser) {
     return <LoadingPage />
   }
 

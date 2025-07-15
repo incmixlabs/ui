@@ -1,10 +1,9 @@
 "use client"
 import { RootRoute } from "@common"
-import { createRoute } from "@tanstack/react-router"
-import LoginPage from "../login-page"
+import { createRoute, lazyRouteComponent } from "@tanstack/react-router"
 
 export default createRoute({
   getParentRoute: () => RootRoute,
   path: "/login",
-  component: () => <LoginPage />,
+  component: lazyRouteComponent(() => import("../login-page")),
 })
