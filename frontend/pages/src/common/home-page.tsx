@@ -15,7 +15,7 @@ function HomePage() {
     }
   }, [authUser, isLoading, isError, navigate])
 
-  if (isLoading || !authUser) {
+  if (isLoading) {
     return <LoadingPage />
   }
 
