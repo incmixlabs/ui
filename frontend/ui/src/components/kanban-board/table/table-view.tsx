@@ -14,15 +14,15 @@ import {
 } from "@base"
 import { TanstackDataTable } from "../../tanstack-table"
 import {
-  Plus,
   Search,
+  Layers as LayersIcon,
+  LayoutGrid as LayoutGridIcon,
   RefreshCw,
   Settings,
   MoreVertical,
   Download,
   ChevronDown,
   Check,
-  HelpCircle as HelpCircleIcon
 } from "lucide-react"
 
 import type { TableTask } from "../types"
@@ -33,9 +33,8 @@ import { useTableView } from "../hooks/use-table-view"
 import { TASK_TABLE_COLUMNS } from "./table-columns-config"
 import { TableRowActions } from "./table-row-actions"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
-import { CreateTaskDialog } from "./create-task-dialog"
 import { DataTableColumn } from "@/components/tanstack-table/types"
-import { StatusDropdownCell, PriorityDropdownCell, createEnhancedTaskTableColumns } from "./custom-dropdown-columns"
+import { StatusDropdownCell, PriorityDropdownCell } from "./custom-dropdown-columns"
 
 interface TableViewProps {
   projectId?: string
@@ -48,6 +47,19 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false)
   const [isColumnsMenuOpen, setIsColumnsMenuOpen] = useState(false)
+  
+  // State for grouping - default to status grouping
+  const [groupByField, setGroupByField] = useState<'statusLabel' | 'priorityLabel'>('statusLabel')
+  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({
+    name: true,
+    status: true,
+    priority: true,
+    startDate: true,
+    endDate: true,
+    assignedTo: true,
+    createdAt: false,
+    actions: true
+  })
 
   // Use the table view hook
   const {
@@ -63,6 +75,27 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     clearError,
     projectStats
   } = useTableView(projectId)
+  // Store the selected row ids for custom group selection handling
+  const [selectedRowIds, setSelectedRowIds] = useState<Record<string, boolean>>({});
+  
+  // Handle selection changes from the table
+  const handleSelectionChange = (selectedRows: TableTask[]) => {
+    // Create a map of selected row IDs
+    const newSelectedIds = selectedRows.reduce<Record<string, boolean>>(
+      (acc, row) => {
+        if (row.id) {
+          acc[row.id.toString()] = true;
+        }
+        return acc;
+      }, {}
+    );
+    setSelectedRowIds(newSelectedIds);
+    
+    // For debugging - log selected tasks
+    if (selectedRows.length > 0) {
+      console.log('Selected tasks:', selectedRows.map(row => ({ id: row.id, name: row.name })));
+    }
+  };
 
   // Enhanced columns with row actions
   const enhancedColumns = useMemo((): DataTableColumn<TableTask>[] => {
@@ -258,6 +291,85 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     }
   }, [updateTask, moveTaskToStatus])
 
+  // Helper function to detect if dark mode is active
+  const isDarkMode = () => {
+    // Check if dark mode is active via media query or HTML tag class
+    return (
+      window.matchMedia && 
+      window.matchMedia('(prefers-color-scheme: dark)').matches ||
+      document.documentElement.classList.contains('dark')
+    );
+  };
+  
+  // Helper function to convert hex to rgba for group header colors
+  const hexToRgba = (hex: string, alpha: number = 0.3) => {
+    // Handle case where hex might not be valid
+    if (!hex || typeof hex !== 'string' || !hex.startsWith('#') || hex.length !== 7) {
+      return `rgba(128, 128, 128, ${alpha})`; // Default gray if invalid color
+    }
+    
+    try {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    } catch (e) {
+      console.error('Invalid color format:', hex);
+      return `rgba(128, 128, 128, ${alpha})`; // Default gray on error
+    }
+  };
+  
+  // Helper function to lighten a color for dark mode
+  const lightenColor = (hex: string, percent: number = 20) => {
+    if (!hex || typeof hex !== 'string' || !hex.startsWith('#') || hex.length !== 7) {
+      return hex; // Return original if invalid
+    }
+    try {
+      const r = Math.min(255, parseInt(hex.slice(1, 3), 16) + percent);
+      const g = Math.min(255, parseInt(hex.slice(3, 5), 16) + percent);
+      const b = Math.min(255, parseInt(hex.slice(5, 7), 16) + percent);
+      return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+    } catch (e) {
+      console.error('Invalid color format in lightenColor:', hex);
+      return hex; // Return original on error
+    }
+  };
+  
+  // Create dynamic color mapping for group headers based on the currently selected grouping type
+  const categoryMapping = useMemo(() => {
+    const mapping: Record<string, {
+      color: string,       // Text/accent color
+      backgroundColor: string // Background color
+    }> = {};
+    
+    // Add the colors for each label of the selected type
+    const labelsData = labels as unknown as LabelSchema[];
+    const targetLabels = labelsData.filter(label => {
+      return groupByField === 'statusLabel' 
+        ? label.type === 'status' 
+        : label.type === 'priority';
+    });
+    
+    targetLabels.forEach(label => {
+      // For dark mode support, we use the original color for text and a semi-transparent version for background
+      const originalColor = label.color;
+      const bgColor = hexToRgba(originalColor, 0.3); // Using 0.3 alpha for better visibility (70% transparent)
+      
+      // Map by name for the UI display, which is what the grouping shows
+      mapping[label.name] = {
+        color: originalColor,
+        backgroundColor: bgColor
+      };
+    });
+    
+    return mapping;
+  }, [labels, groupByField]);
+
+  // Toggle between grouping by status or priority
+  const toggleGrouping = useCallback(() => {
+    setGroupByField(prev => prev === 'statusLabel' ? 'priorityLabel' : 'statusLabel');
+  }, []);
+
   // Table facets for filtering
   const tableFacets = useMemo(() => [
     {
@@ -323,6 +435,25 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
             <Heading size="6">Task Table</Heading>
 
             <Flex align="center" gap="2">
+              {/* Grouping toggle button */}
+              <Button 
+                variant="outline" 
+                onClick={toggleGrouping}
+                className="flex items-center gap-1"
+                size="2"
+              >
+                {groupByField === 'statusLabel' ? (
+                  <>
+                    <LayersIcon size={14} />
+                    <span>Group by Status</span>
+                  </>
+                ) : (
+                  <>
+                    <LayoutGridIcon size={14} />
+                    <span>Group by Priority</span>
+                  </>
+                )}
+              </Button>
               <Tooltip content="Refresh">
                 <IconButton variant="ghost" onClick={handleRefresh}>
                   <RefreshCw size={16} />
@@ -423,16 +554,34 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           enableRowSelection={true}
           enableSorting={true}
           enablePagination={true}
-          enableColumnVisibility={false} /* Hide column visibility dropdown */
+          enableColumnVisibility={false} /* Disabled internal column visibility dropdown */
+          columnVisibility={columnVisibility}
+          onColumnVisibilityChange={setColumnVisibility}
           enableFiltering={false} /* Hide filter input field */
           facets={tableFacets}
           isPaginationLoading={isLoading}
+          hideMainHeader={true} // Hide the main header to show column headers only within groups
 
           // Inline editing functionality - disabled to hide keyboard shortcuts icon
           enableInlineCellEdit={false}
           // Still provide columns and handler in case inline editing is needed elsewhere
           inlineEditableColumns={["name", "startDate", "endDate"]} // Status and priority handled by custom components
           onCellEdit={handleCellEdit}
+
+          // Track selection changes
+          onSelectionChange={handleSelectionChange}
+
+          // Row grouping configuration with dynamic color mapping
+          enableRowGrouping={true}
+          rowGrouping={{
+            groupByColumn: groupByField,
+            initiallyCollapsed: false,
+            toggleOnClick: true,
+            categoryMapping,
+            // Group header rendering configuration handled by DataTable internally
+            // with our categoryMapping colors
+          }}
+          // Additional configuration
 
           // Additional table settings
           pageSize={50}

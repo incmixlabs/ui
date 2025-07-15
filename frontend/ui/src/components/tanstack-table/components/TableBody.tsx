@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useMemo, memo } from "react";
-import { flexRender, Table as TanStackTable, Row, Cell } from "@tanstack/react-table";
+import React, { useMemo, memo, useCallback } from "react";
+import { flexRender, Table as TanStackTable, Row, Cell, RowSelectionState } from "@tanstack/react-table";
 import { Table } from "@shadcn";
 import { LoadingRow, EmptyRow } from "./TableUtilityRows";
 import { DataTableColumn, RowGroupingOptions } from "../types";
@@ -139,6 +139,9 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
         aria-selected={row.getIsSelected() || isExpanded ? "true" : undefined}
       >
         {visibleCells.map(cell => {
+          // Skip rendering cells for hidden columns
+          if (!cell.column.getIsVisible()) return null;
+          
           // Get column definition for styling and type information
           const columnDef = flatColumns.find(col =>
             col.accessorKey?.toString() === cell.column.id ||
@@ -161,6 +164,18 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           // Get the cell value
           const cellValue = cell.getValue();
 
+          // Special styling for the checkbox column
+          if (cell.column.id === 'select') {
+            return (
+              <Table.Cell
+                key={cell.id}
+                className={`pl-3 pr-0 py-1.5 ${columnDef?.className || ""} overflow-hidden`}
+              >
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </Table.Cell>
+            );
+          }
+          
           return (
             <Table.Cell
               key={cell.id}
@@ -333,7 +348,41 @@ function TableBodyComponent<TData extends object>({
 }: TableBodyProps<TData>) {
   // Memoize the row model to prevent unnecessary recalculations
   const rows = useMemo(() => table.getRowModel().rows, [table.getRowModel().rows]);
+  
+  // Calculate the number of visible columns for proper colSpan calculation
+  const visibleColumnCount = useMemo(() => {
+    return table.getVisibleFlatColumns().length;
+  }, [table.getVisibleFlatColumns().length]);
+  
   const columnCount = useMemo(() => table.getAllColumns().length, [table.getAllColumns().length]);
+
+  // Group selection helper functions
+  const isGroupFullySelected = useCallback((groupRows: Row<TData>[]) => {
+    // Check if all rows in this group are selected
+    return groupRows.length > 0 && groupRows.every(row => row.getIsSelected());
+  }, []);
+
+  const isGroupPartiallySelected = useCallback((groupRows: Row<TData>[]) => {
+    // Check if some (but not all) rows in this group are selected
+    const selectedCount = groupRows.filter(row => row.getIsSelected()).length;
+    return selectedCount > 0 && selectedCount < groupRows.length;
+  }, []);
+
+  const toggleGroupSelection = useCallback((groupRows: Row<TData>[], value: boolean) => {
+    // Create a new selection state object that only modifies rows in this group
+    const newSelectionState: RowSelectionState = {};
+    
+    // Set selection state for only this group's rows
+    groupRows.forEach(row => {
+      newSelectionState[row.id] = value;
+    });
+    
+    // Update the selection state while preserving the selection of other rows
+    table.setRowSelection(prev => ({
+      ...prev,
+      ...newSelectionState
+    }));
+  }, [table]);
 
   // Initialize row grouping if enabled
   const grouping = useTableGrouping(
@@ -383,31 +432,48 @@ function TableBodyComponent<TData extends object>({
 
             return (
               <React.Fragment key={`group-${groupKey}`}>
-                {/* Render group header */}
+                {/* Render group header with group-specific selection */}
                 <GroupHeaderRow
                   groupKey={groupKey}
                   rowCount={rowCount}
                   isCollapsed={group.isCollapsed}
                   toggleCollapsed={toggleGroupCollapsed}
-                  colSpan={flatColumns.length}
+                  colSpan={visibleColumnCount} // Use visible columns count instead of all columns
                   renderGroupHeader={rowGrouping.renderGroupHeader}
+                  categoryMapping={rowGrouping.categoryMapping} // Pass the dynamic color mapping
+                  groupSelectProps={{
+                    isAllRowsSelected: isGroupFullySelected(group.rows),
+                    isSomeRowsSelected: isGroupPartiallySelected(group.rows),
+                    toggleAllRowsSelected: (value) => toggleGroupSelection(group.rows, value)
+                  }}
                 />
 
                 {/* Only render the content if the group is not collapsed */}
                 {!group.isCollapsed && (
                   <>
                     {/* Column headers for this group */}
-                    <Table.Row className="border-t border-b border-gray-100 bg-gray-50">
+                    <Table.Row className="border-t border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
                       {table.getHeaderGroups()[0].headers.map(header => {
                         // Skip the status column if it's hidden
                         if (header.id === 'status' && !header.column.getIsVisible()) {
                           return null;
                         }
+                        
+                        // Add an empty placeholder cell for the selection column instead of skipping it
+                        // This maintains alignment with the data rows below
+                        if (header.id === 'select') {
+                          return (
+                            <Table.Cell
+                              key={header.id}
+                              className="px-2 py-2 w-[40px]"
+                            />
+                          );
+                        }
 
                         return (
                           <Table.Cell
                             key={header.id}
-                            className="px-2 py-2 text-xs font-medium text-gray-500"
+                            className="px-2 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900"
                           >
                             {header.isPlaceholder
                               ? null

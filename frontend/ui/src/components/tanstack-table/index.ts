@@ -7,6 +7,7 @@ export { default as InlineEditDemo } from "./demo/inline-edit-demo";
 export { default as GroupedDemo } from "./demo/grouped-demo";
 export { default as TaskTimelineDemo } from "./demo/tasks-timeline-demo";
 export { default as TaskStatusDemo } from "./demo/task-status-demo";
+export { default as UpdatedGroupedDemo } from "./demo/updated-group-demo";
 
 // Export the main DataTable component with renamed version
 export { TanstackDataTable, DataTable } from "./components/DataTable";

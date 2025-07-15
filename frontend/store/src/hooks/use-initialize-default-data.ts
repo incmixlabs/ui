@@ -1,10 +1,11 @@
-import { DEFAULT_LABELS, type DefaultDataOptions } from "@incmix/utils/schema"
+import type { DefaultDataOptions } from "@incmix/utils/schema"
 import type { LabelDocType, TaskCollections, TaskDocType } from "../sql/types"
 // Import browser-compatible helpers instead of Node.js Buffer-using ones
 import {
   generateBrowserUniqueId,
   getCurrentTimestamp,
 } from "../utils/browser-helpers"
+import { DEFAULT_LABELS } from "../utils/default-labels"
 
 /**
  * Creates a default user for audit fields when no real user data is available
