@@ -4,6 +4,7 @@ interface ITimelineData {
   name: string;
   project: string;
   color: string;
+  textColor: string;
   startMonth: string;
   endMonth: string;
 }
@@ -16,35 +17,40 @@ export function ProjectTimelineWidgets() {
         {
             name: "Jaqueline",
             project: "Development Apps",
-            color: "bg-[var(--iris-10)]",
+            color: "bg-[var(--dashboard-color-1)]",
+            textColor: "text-[var(--dashboard-text-1)]",
             startMonth: "Feb",
             endMonth: "Apr",
         },
         {
             name: "Janelle",
             project: "UI Design",
-            color: "bg-[var(--green-10)]",
+            color: "bg-[var(--dashboard-color-2)]",
+            textColor: "text-[var(--dashboard-text-2)]",
             startMonth: "Mar",
             endMonth: "Apr",
         },
         {
             name: "Wellington",
             project: "IOS Application",
-            color: "bg-[var(--gray-10)]",
+            color: "bg-[var(--dashboard-color-3)]",
+            textColor: "text-[var(--dashboard-text-3)]",
             startMonth: "Apr",
             endMonth: "Jun",
         },
         {
             name: "Blake",
             project: "Web App Wireframing",
-            color: "bg-[var(--blue-10)]",
+            color: "bg-[var(--dashboard-color-4)]",
+            textColor: "text-[var(--dashboard-text-4)]",
             startMonth: "Mar",
             endMonth: "Jul",
         },
         {
             name: "Quinn",
             project: "Prototyping",
-            color: "bg-[var(--amber-10)]",
+            color: "bg-[var(--dashboard-color-1)]",
+            textColor: "text-[var(--dashboard-text-1)]",
             startMonth: "May",
             endMonth: "Jul",
         },
@@ -102,7 +108,7 @@ export function ProjectTimelineWidgets() {
                                                   role="img"
                                                   aria-label={`${item.project} from ${item.startMonth} to ${item.endMonth}`}
                                                 >
-                                                    <Badge className={`${item.color} text-white border-none px-3 py-2 rounded-full text-xs font-medium w-full text-center`}>{item.project}</Badge>
+                                                    <Badge className={`${item.color} ${item.textColor} border-none px-3 py-2 rounded-full text-xs font-medium w-full text-center`}>{item.project}</Badge>
                                                 </Box>
                                             </Box>
                                         </Flex>

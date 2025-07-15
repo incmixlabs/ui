@@ -26,7 +26,6 @@ export function ProjectWidgets() {
     "Done": colors.success
   }
 
-
   stats = stats.map((stat) => ({
     ...stat,
     color: colorMap[stat.label as keyof typeof colorMap] || colors.default,

@@ -10,7 +10,7 @@ export function NewTasksChart() {
       title="New Tasks"
       data={DEFAULT_NEW_TASKS_DATA}
       total={820}
-      color="var(--orange-9)"
+      color="var(--dashboard-color-2)"
       label="New Task"
       />
   )

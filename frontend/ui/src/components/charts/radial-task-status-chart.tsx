@@ -58,13 +58,13 @@ export function RadialTaskStatusChart({
             endAngle={endAngle}
           >
             <PolarAngleAxis type="number" domain={[0, 100]} tick={false} tickLine={false} />
-            <RadialBar dataKey="value" cornerRadius={4} fill="#f3f4f61d" background={{ fill: "#f3f4f61f" }} />
+            <RadialBar dataKey="value" cornerRadius={4} background={{ fill: "var(--gray-5)" }} />
           </RadialBarChart>
         </ResponsiveContainer>
       </Box>
       <Box className="absolute inset-0 top-12 flex flex-col items-center justify-center">
-      <Text size="4" className="font-bold text-gray-12">{tasks.reduce((sum, task) => sum + task.value, 0).toLocaleString()}</Text>
-        <Text size="2" className="text-gray-11 mt-1">Visitors</Text>
+      <Text size="8" className="font-bold text-gray-12">{tasks.reduce((sum, task) => sum + task.value, 0).toLocaleString()}</Text>
+        <Text size="3" className="text-gray-11 mt-1">Visitors</Text>
       </Box>
     </Box>
     </>

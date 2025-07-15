@@ -60,16 +60,16 @@ export function TotalProject() {
         {progressItems.map((item, index) => (
           <Box key={index} className="space-y-2">
             <Flex justify={"between"}>
-              <Text className="font-medium text-gray-700 text-sm">
+              <Text className="font-medium text-gray-12 text-sm">
                 {item.category}
               </Text>
-              <Text className="font-medium text-gray-900 text-sm">
+              <Text className="font-medium text-gray-11 text-sm">
                 {item.value}%
               </Text>
             </Flex>
             <Progress
               value={Math.min((item.value / item.maxValue) * 100, 100)}
-              className="h-2 bg-gray-100"
+              className="h-2 bg-gray-7"
               color={item.color as BadgeProps["color"]}
             />
           </Box>
