@@ -60,8 +60,18 @@ export function TotalProject() {
                 {item.value}%
               </Text>
             </Flex>
-            <Box className="h-2 relative w-full rounded-lg bg-gray-7">
-              <Box className="h-full transition-all duration-300 absolute inset-0 rounded-lg" style={{width: `${item.value}%`, backgroundColor: item.color}}></Box>
+            <Box 
+              className="h-2 relative w-full rounded-lg bg-gray-7"
+              role="progressbar"
+              aria-valuenow={item.value}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label={`${item.category} progress`}
+            >
+              <Box 
+                className="h-full transition-all duration-300 absolute inset-0 rounded-lg" 
+                style={{width: `${item.value}%`, backgroundColor: item.color}}
+              />
             </Box>
           </Box>
         ))}
