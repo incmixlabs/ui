@@ -118,10 +118,15 @@ const SidebarProvider = forwardRef<
     const [_secondaryOpen, _setSecondaryOpen] = useState(defaultSecondaryOpen);
     const secondaryOpen = secondaryOpenProp ?? _secondaryOpen;
 
-    // This is the internal state of the sidebar.
-    // We use openProp and setOpenProp for control from outside the component.
-    const [_open, _setOpen] = useState(defaultOpen);
+    const shouldAlwaysCollapse = useMemo(() => {
+      return pathname.startsWith("/dashboard") || pathname.startsWith("/file-manager");
+    }, [pathname]);
+
+    const [_open, _setOpen] = useState(
+      shouldAlwaysCollapse ? false : defaultOpen
+    );
     const open = openProp ?? _open;
+
     const setOpen = useCallback(
       (value: boolean | ((value: boolean) => boolean)) => {
         const openState = typeof value === "function" ? value(open) : value;
@@ -136,10 +141,12 @@ const SidebarProvider = forwardRef<
       },
       [setOpenProp, open],
     );
+
     // Helper to toggle the sidebar.
     const toggleSidebar = useCallback(() => {
+      if (shouldAlwaysCollapse) return;
       setOpen((open) => !open);
-    }, [setOpen]);
+    }, [setOpen, shouldAlwaysCollapse]);
 
     const setSecondaryOpen = useCallback(
       (value: boolean | ((prev: boolean) => boolean)) => {
@@ -170,7 +177,13 @@ const SidebarProvider = forwardRef<
       return () => window.removeEventListener("keydown", handleKeyDown);
     }, [toggleSidebar]);
 
-    // This makes it easier to style the sidebar with Tailwind classes.
+
+    useEffect(() => {
+      if (shouldAlwaysCollapse) {
+        setOpen(false);
+      }
+    }, [shouldAlwaysCollapse, setOpen]);
+
     const state = open ? "expanded" : "collapsed";
 
     const contextValue = useMemo<SidebarContext>(
