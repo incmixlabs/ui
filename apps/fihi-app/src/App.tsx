@@ -58,7 +58,6 @@ function App() {
       setDefaultOptions({ locale: language })
     }
   }, [language])
-  console.log("dashboardColors", dashboardColors)
 
   useEffect(() => {
     const root = document.documentElement
