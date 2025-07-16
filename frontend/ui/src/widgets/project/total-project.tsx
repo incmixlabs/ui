@@ -1,11 +1,9 @@
 import {
   Box,
   CardContainer,
-  type ExtendedColorType,
   Flex,
   Heading,
   IconButton,
-  Progress,
   Text,
 } from "@incmix/ui"
 import type { BadgeProps } from "@radix-ui/themes"
@@ -14,8 +12,7 @@ import { useState } from "react"
 interface ProgressItem {
   category: string
   value: number
-  maxValue: number
-  color: ExtendedColorType
+  color: string
 }
 
 export function TotalProject() {
@@ -23,26 +20,22 @@ export function TotalProject() {
     {
       category: "Product Design",
       value: 87,
-      maxValue: 120,
-      color: "indigo",
+      color: "var(--dashboard-color-1)",
     },
     {
       category: "Graphic Design",
-      value: 108,
-      maxValue: 120,
-      color: "orange",
+      value: 50,
+      color: "var(--dashboard-color-2)",
     },
     {
       category: "iOS Apps",
       value: 100,
-      maxValue: 120,
-      color: "yellow",
+      color : "var(--dashboard-color-3)",
     },
     {
       category: "Android Apps",
       value: 24,
-      maxValue: 120,
-      color: "green",
+      color: "var(--dashboard-color-4)",
     },
   ])
   return (
@@ -67,11 +60,9 @@ export function TotalProject() {
                 {item.value}%
               </Text>
             </Flex>
-            <Progress
-              value={Math.min((item.value / item.maxValue) * 100, 100)}
-              className="h-2 bg-gray-7"
-              color={item.color as BadgeProps["color"]}
-            />
+            <Box className="h-2 relative w-full rounded-lg bg-gray-7">
+              <Box className="h-full transition-all duration-300 absolute inset-0 rounded-lg" style={{width: `${item.value}%`, backgroundColor: item.color}}></Box>
+            </Box>
           </Box>
         ))}
       </Box>

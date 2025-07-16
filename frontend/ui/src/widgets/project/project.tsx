@@ -1,4 +1,3 @@
-import { useThemeStore } from "@incmix/store/use-settings-store"
 import {
   Box,
   CardContainer,
@@ -12,24 +11,13 @@ import {
 import { Ellipsis } from "lucide-react"
 
 let stats = [
-  { label: "Ongoing", value: 420, color: "var(--blue-9)" },
-  { label: "Hold", value: 210, color: "var(--orange-9)" },
-  { label: "Done", value: 200, color: "var(--green-9)" },
+  { label: "Ongoing", value: 420, color: "var(--indicator-info)" },
+  { label: "Hold", value: 210, color: "var(--indicator-warning)" },
+  { label: "Done", value: 200, color: "var(--indicator-success)" },
 ]
 
 export function ProjectWidgets() {
-  const { getIndicatorColors } = useThemeStore()
-  const colors = getIndicatorColors()
-  const colorMap = {
-    "Ongoing": colors.info,
-    "Hold": colors.warning,
-    "Done": colors.success
-  }
 
-  stats = stats.map((stat) => ({
-    ...stat,
-    color: colorMap[stat.label as keyof typeof colorMap] || colors.default,
-  }))
   return (
     <>
       <CardContainer className="h-full">

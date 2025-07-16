@@ -292,10 +292,10 @@ export function PostingTask() {
                       className={cn(
                         "flex h-10 w-full cursor-pointer items-center justify-center rounded",
                         hasTask
-                          ? "bg-dashboard-orange/30"
-                          : "bg-gray-3 hover:bg-gray-5",
+                          ? "bg-[var(--dashboard-color-1)]"
+                          : "bg-gray-3 dark:bg-gray-4 hover:bg-gray-5",
                         hasLightning &&
-                          "bg-dashboard-orange/80 hover:bg-dashboard-orange"
+                          "bg-[var(--dashboard-color-1)] hover:bg-[var(--dashboard-color-2)]"
                       )}
                     >
                       {hasLightning && (
