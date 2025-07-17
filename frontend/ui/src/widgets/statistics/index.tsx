@@ -1,2 +1,2 @@
 export { StatisticWidgets } from "./statistics"
-export { StatisticWidgets2 } from "./statistics2"
+export { BarStatisticWidgets } from "./bar-statistics"

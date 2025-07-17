@@ -21,7 +21,7 @@ const defaultActivities: Activity[] = [
     description: "Product introduction and details video",
     link: "www.youtube.com/channel/UCuryo5s0CW4aP8ltLjIdZg",
     date: "Tomorrow",
-    color: "bg-blue-9",
+    color: "bg-[var(--dashboard-color-1)]",
     icon: Play,
   },
   {
@@ -29,7 +29,7 @@ const defaultActivities: Activity[] = [
     title: "Received payment from usa client 🤑",
     description: "Received payment $1,490 for banking ios app",
     date: "January, 18",
-    color: "bg-cyan-9",
+    color: "bg-[var(--dashboard-color-2)]",
   },
   {
     id: 3,
@@ -37,7 +37,7 @@ const defaultActivities: Activity[] = [
     description: "Meeting Video call on zoom at 9pm",
     attachment: "presentation.pdf",
     date: "April, 23",
-    color: "bg-orange-9",
+    color: "bg-[var(--dashboard-color-3)]",
     icon: FileText,
   },
 ]

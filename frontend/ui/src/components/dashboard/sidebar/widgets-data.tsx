@@ -1,12 +1,10 @@
 import {
   dashboardImg,
-  StatisticsBarChartView,
 } from "@incmix/ui";
 import {
     ActiveTask,
     NewTasks,
     PostingTask,
-    StatisticWidgets2,
     TotalProject,
     TotalTasksChart,
     TotalTasks,
@@ -23,6 +21,8 @@ import {
     InProgressTask,
     DoneTasks,
     ProjectWidgets,
+    StatisticWidgets,
+    BarStatisticWidgets,
   } from "@incmix/ui/widgets";
 
 export const sidebarComponents = [
@@ -167,7 +167,7 @@ export const sidebarComponents = [
  
   {
     slotId: "k",
-    component: <StatisticWidgets2 />,
+    component: <StatisticWidgets />,
     componentName: "statistic-widget",
     darkCompImage: dashboardImg.darkStatisticsImg,
     lightCompImage: dashboardImg.lightStatisticsImg,
@@ -287,7 +287,7 @@ export const sidebarComponents = [
   },
   {
     slotId: "st2",
-    component: <StatisticsBarChartView />,
+    component: <BarStatisticWidgets />,
     componentName: "statistics2",
     darkCompImage: dashboardImg.darkStatisticsImg2,
     lightCompImage: dashboardImg.lightStatisticsImg2,

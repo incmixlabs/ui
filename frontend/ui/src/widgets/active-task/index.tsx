@@ -21,7 +21,7 @@ export const revisionData = [
     projectNumber: "783",
     recipient: "Leslie Miles",
     checked: false,
-    color: "var(--blue-9)", // blue
+    color: "var(--dashboard-color-1)",
   },
   {
     id: "2",
@@ -29,7 +29,7 @@ export const revisionData = [
     projectNumber: "675",
     recipient: "Kristin Edwards",
     checked: true,
-    color: "var(--purple-9)", // purple
+    color: "var(--dashboard-color-2)",
   },
   {
     id: "3",
@@ -38,7 +38,7 @@ export const revisionData = [
     projectNumber: "788",
     recipient: "Regina Warren",
     checked: false,
-    color: "var(--green-9)", // green
+    color: "var(--dashboard-color-3)",
   },
   {
     id: "4",
@@ -47,7 +47,7 @@ export const revisionData = [
     projectNumber: "543",
     recipient: "Stella Penas",
     checked: false,
-    color: "var(--yellow-9)", // yellow
+    color: "var(--dashboard-color-4)",
   },
 ]
 
@@ -105,7 +105,6 @@ export function ActiveTask() {
           <Text className="text-gray-8 text-sm">No revisions found</Text>
         ) : (
           <>
-            {" "}
             {revisions.map((revision) => (
               <Flex
                 key={revision.id}
@@ -119,7 +118,7 @@ export function ActiveTask() {
                 <Box className="mr-3 flex-shrink-0">
                   <Checkbox
                     size={"3"}
-                    className="h-5 w-5 rounded-md border border-black bg-gray-12 text-secondary group-hover:bg-white "
+                    className="h-5 w-5 rounded-md bg-gray-12 text-secondary group-hover:bg-white "
                   />
                 </Box>
 
@@ -129,7 +128,7 @@ export function ActiveTask() {
                   </Text>
                   <Text className="truncate text-gray-8 text-sm">
                     Sending project{" "}
-                    <span className="text-blue-600">
+                    <span className="text-blue-9">
                       #{revision.projectNumber}
                     </span>{" "}
                     for revision to {revision.recipient}
