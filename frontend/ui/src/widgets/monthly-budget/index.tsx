@@ -19,7 +19,7 @@ const data = [
 
 export function MonthlyBudget() {
   return (
-    <CardContainer>
+    <CardContainer className="h-full flex flex-col justify-center @container">
       <Box className="pb-2">
         <Flex align={"center"} justify={"between"}>
           <Heading size="6" className="font-medium">Monthly Budget</Heading>
@@ -49,7 +49,7 @@ export function MonthlyBudget() {
             </AreaChart>
           </ResponsiveContainer>
         </Box>
-        <Text size="2" className="text-gray-11" aria-label="Monthly budget description">
+        <Text className="text-gray-11 @md:text-base text-xs" aria-label="Monthly budget description">
           Last month you had 12 expense transactions, 8 savings entries and 4 bills.
         </Text>
     </CardContainer>

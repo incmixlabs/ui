@@ -1,8 +1,4 @@
 import {
-  useThemeStore,
-  useAppearanceStore,
-} from "@incmix/store/use-settings-store";
-import {
   Bar,
   BarChart,
   ResponsiveContainer,
@@ -34,7 +30,7 @@ export const StatisticsBarChartView: React.FC<StatisticsBarChartViewProps> = ({
 }) => {
   return (
     <>
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={"100%"} className={"@md:h-80 pb-6"}>
         <BarChart
           data={statisticData}
           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}

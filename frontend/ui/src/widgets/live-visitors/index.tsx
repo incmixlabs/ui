@@ -28,7 +28,7 @@ const calculateTrend = (data: {value: number}[]): string => {
 export function LiveVisitors() {
   const trend = calculateTrend(data);
   return (
-    <CardContainer>
+    <CardContainer className="h-full flex flex-col justify-center">
       <Box className="pb-2">
         <Flex align={"center"} justify={"between"}>
           <Heading size="6" className="font-medium">Live Visitors</Heading>

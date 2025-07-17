@@ -1,39 +1,39 @@
-import { Box, Flex, Heading, Text, TextField } from "@incmix/ui"
+import { Box, Flex, Heading, Text, TextField } from "@incmix/ui";
 import {
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
   Minus as MinusIcon,
   Plus as PlusIcon,
-} from "lucide-react"
-import { cn } from "@utils/cn"
-import { AnimatePresence, motion } from "motion/react"
-import { DateTime, Info } from "luxon"
-import { useCallback, useState } from "react"
-import { useTranslation } from "react-i18next"
+} from "lucide-react";
+import { cn } from "@utils/cn";
+import { AnimatePresence, motion } from "motion/react";
+import { DateTime, Info } from "luxon";
+import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 export interface CalendarEvent {
-  id: string
-  eventName: string
-  calendar: string
-  color: "blue" | "orange" | "green" | "yellow"
-  date: DateTime
+  id: string;
+  eventName: string;
+  calendar: string;
+  color: "blue" | "orange" | "green" | "yellow";
+  date: DateTime;
 }
 
 interface CalendarProps {
-  className?: string
-  events?: CalendarEvent[]
-  onAddEvent?: (date: DateTime) => void
-  onRemoveEvent?: (event: CalendarEvent) => void
-  onEditEvent?: (event: CalendarEvent, newName: string) => void
+  className?: string;
+  events?: CalendarEvent[];
+  onAddEvent?: (date: DateTime) => void;
+  onRemoveEvent?: (event: CalendarEvent) => void;
+  onEditEvent?: (event: CalendarEvent, newName: string) => void;
 }
 
 function capitalizeFirstLetter(val: string) {
-  return String(val).charAt(0).toUpperCase() + String(val).slice(1)
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 }
 
 interface CalendarHeaderProps {
-  currentDate: DateTime
-  onPrevMonth: () => void
-  onNextMonth: () => void
+  currentDate: DateTime;
+  onPrevMonth: () => void;
+  onNextMonth: () => void;
 }
 
 const CalendarHeader = ({
@@ -58,15 +58,15 @@ const CalendarHeader = ({
       onClick={onNextMonth}
     />
   </Flex>
-)
+);
 
 interface CalendarDayProps {
-  day: DateTime
-  events: CalendarEvent[]
-  isCurrentMonth: boolean
-  isSelected: boolean
-  isToday: boolean
-  onSelectDay: (day: DateTime) => void
+  day: DateTime;
+  events: CalendarEvent[];
+  isCurrentMonth: boolean;
+  isSelected: boolean;
+  isToday: boolean;
+  onSelectDay: (day: DateTime) => void;
 }
 
 const CalendarDay = ({
@@ -77,17 +77,17 @@ const CalendarDay = ({
   isToday,
   onSelectDay,
 }: CalendarDayProps) => {
-  const dayEvents = events.filter((event) => event.date?.hasSame(day, "day"))
-  const hasMoreEvents = dayEvents.length > 6
+  const dayEvents = events.filter((event) => event.date?.hasSame(day, "day"));
+  const hasMoreEvents = dayEvents.length > 6;
 
   // Show 5 events + ellipsis if there are more than 6 events
   // Otherwise show all events up to 6
-  const eventsToShow = hasMoreEvents ? dayEvents.slice(0, 5) : dayEvents
-  const totalDots = 6
+  const eventsToShow = hasMoreEvents ? dayEvents.slice(0, 5) : dayEvents;
+  const totalDots = 6;
   const placeholderDots = Math.max(
     0,
-    totalDots - (hasMoreEvents ? 6 : dayEvents.length)
-  )
+    totalDots - (hasMoreEvents ? 6 : dayEvents.length),
+  );
 
   return (
     <Flex
@@ -102,7 +102,7 @@ const CalendarDay = ({
           "bg-gray-3": isSelected && dayEvents.length === 0,
           "text-gray-8": !isCurrentMonth,
           "font-medium": isToday,
-        }
+        },
       )}
       onClick={() => onSelectDay(day)}
     >
@@ -164,19 +164,19 @@ const CalendarDay = ({
         )}
       </AnimatePresence>
     </Flex>
-  )
-}
+  );
+};
 
 interface CalendarDaysProps {
-  currentDate: DateTime
-  events: CalendarEvent[]
-  selectedDay: DateTime | null
-  today: DateTime
-  onSelectDay: (day: DateTime) => void
-  direction: number
-  onAddEvent?: (date: DateTime) => void
-  onRemoveEvent?: (event: CalendarEvent) => void
-  onEditEvent?: (event: CalendarEvent, newName: string) => void
+  currentDate: DateTime;
+  events: CalendarEvent[];
+  selectedDay: DateTime | null;
+  today: DateTime;
+  onSelectDay: (day: DateTime) => void;
+  direction: number;
+  onAddEvent?: (date: DateTime) => void;
+  onRemoveEvent?: (event: CalendarEvent) => void;
+  onEditEvent?: (event: CalendarEvent, newName: string) => void;
 }
 
 const CalendarDays = ({
@@ -190,15 +190,15 @@ const CalendarDays = ({
   onRemoveEvent,
   onEditEvent,
 }: CalendarDaysProps) => {
-  const monthStart = currentDate.startOf("month")
-  const monthEnd = currentDate.endOf("month")
-  const startDate = monthStart.startOf("week")
-  const endDate = monthEnd.endOf("week")
+  const monthStart = currentDate.startOf("month");
+  const monthEnd = currentDate.endOf("month");
+  const startDate = monthStart.startOf("week");
+  const endDate = monthEnd.endOf("week");
 
-  const rows = []
-  let days = []
-  let day = startDate
-  let selectedWeekIndex: number | null = null
+  const rows = [];
+  let days = [];
+  let day = startDate;
+  let selectedWeekIndex: number | null = null;
 
   const dayNames = Info.weekdays("short", {
     locale: currentDate.toLocal().locale || undefined,
@@ -208,24 +208,24 @@ const CalendarDays = ({
         {dayName.substring(0, 3)}
       </Text>
     </Box>
-  ))
+  ));
 
   rows.push(
     <Flex key="day-names" className="mt-2 mb-6" gap="1">
       {dayNames}
-    </Flex>
-  )
+    </Flex>,
+  );
 
-  let weekIndex = 0
+  let weekIndex = 0;
   while (day <= endDate) {
-    const weekStart = day
+    const weekStart = day;
 
     for (let i = 0; i < 7; i++) {
-      const cloneDay = day
-      const isCurrentMonth = day.hasSame(currentDate, "month")
+      const cloneDay = day;
+      const isCurrentMonth = day.hasSame(currentDate, "month");
 
       if (selectedDay?.hasSame(cloneDay, "day")) {
-        selectedWeekIndex = weekIndex
+        selectedWeekIndex = weekIndex;
       }
 
       days.push(
@@ -237,9 +237,9 @@ const CalendarDays = ({
           isSelected={selectedDay ? day.hasSame(selectedDay, "day") : false}
           isToday={day.hasSame(today, "day")}
           onSelectDay={onSelectDay}
-        />
-      )
-      day = day.plus({ days: 1 })
+        />,
+      );
+      day = day.plus({ days: 1 });
     }
 
     rows.push(
@@ -274,10 +274,10 @@ const CalendarDays = ({
             </motion.div>
           )}
         </AnimatePresence>
-      </Box>
-    )
-    days = []
-    weekIndex++
+      </Box>,
+    );
+    days = [];
+    weekIndex++;
   }
 
   return (
@@ -307,15 +307,15 @@ const CalendarDays = ({
         {rows}
       </motion.div>
     </AnimatePresence>
-  )
-}
+  );
+};
 
 interface SelectedDayEventsProps {
-  selectedDay: DateTime
-  events: CalendarEvent[]
-  onAddEvent?: (date: DateTime) => void
-  onRemoveEvent?: (event: CalendarEvent) => void
-  onEditEvent?: (event: CalendarEvent, newName: string) => void
+  selectedDay: DateTime;
+  events: CalendarEvent[];
+  onAddEvent?: (date: DateTime) => void;
+  onRemoveEvent?: (event: CalendarEvent) => void;
+  onEditEvent?: (event: CalendarEvent, newName: string) => void;
 }
 
 const SelectedDayEvents = ({
@@ -325,33 +325,33 @@ const SelectedDayEvents = ({
   onRemoveEvent,
   onEditEvent,
 }: SelectedDayEventsProps) => {
-  const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null)
-  const [editText, setEditText] = useState("")
-  const { t } = useTranslation(["calendar"])
+  const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
+  const [editText, setEditText] = useState("");
+  const { t } = useTranslation(["calendar"]);
 
   const handleStartEdit = (event: CalendarEvent) => {
-    setEditingEvent(event)
-    setEditText(event.eventName)
-  }
+    setEditingEvent(event);
+    setEditText(event.eventName);
+  };
 
   const handleSaveEdit = () => {
     if (editingEvent && editText.trim() !== "") {
-      onEditEvent?.(editingEvent, editText.trim())
-      setEditingEvent(null)
+      onEditEvent?.(editingEvent, editText.trim());
+      setEditingEvent(null);
     }
-  }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      handleSaveEdit()
+      handleSaveEdit();
     } else if (e.key === "Escape") {
-      setEditingEvent(null)
+      setEditingEvent(null);
     }
-  }
+  };
 
   const dayEvents = events.filter((event) =>
-    event.date?.hasSame(selectedDay, "day")
-  )
+    event.date?.hasSame(selectedDay, "day"),
+  );
 
   return (
     <Box className="relative mt-2 mb-2 rounded-md rounded-t-none bg-gray-3 p-3">
@@ -420,8 +420,8 @@ const SelectedDayEvents = ({
         </Flex>
       </Box>
     </Box>
-  )
-}
+  );
+};
 
 export function Calendar({
   className,
@@ -430,33 +430,41 @@ export function Calendar({
   onRemoveEvent,
   onEditEvent,
 }: CalendarProps) {
-  const today = DateTime.now()
-  const [currentDate, setCurrentDate] = useState(today.startOf("month"))
-  const [selectedDay, setSelectedDay] = useState<DateTime | null>(null)
-  const [direction, setDirection] = useState(0)
+  const today = DateTime.now();
+  const [currentDate, setCurrentDate] = useState(today.startOf("month"));
+  const [selectedDay, setSelectedDay] = useState<DateTime | null>(null);
+  const [direction, setDirection] = useState(0);
 
   const nextMonth = useCallback(() => {
-    setDirection(1)
-    setCurrentDate((prev) => prev.plus({ months: 1 }))
-  }, [])
+    setDirection(1);
+    setCurrentDate((prev) => prev.plus({ months: 1 }));
+  }, []);
 
   const prevMonth = useCallback(() => {
-    setDirection(-1)
-    setCurrentDate((prev) => prev.minus({ months: 1 }))
-  }, [])
+    setDirection(-1);
+    setCurrentDate((prev) => prev.minus({ months: 1 }));
+  }, []);
 
   const handleDaySelect = useCallback((day: DateTime) => {
-    setSelectedDay((prev) => (prev?.hasSame(day, "day") ? null : day))
-  }, [])
+    setSelectedDay((prev) => (prev?.hasSame(day, "day") ? null : day));
+  }, []);
 
   return (
-    <Box className={cn("rounded-md bg-gray-2 shadow-none", className)}>
+    <Box
+      className={cn(
+        "rounded-xl bg-gray-2 shadow-none flex flex-col overflow-hidden",
+        className,
+      )}
+    >
+      {/* Header stays fixed */}
       <CalendarHeader
         currentDate={currentDate}
         onPrevMonth={prevMonth}
         onNextMonth={nextMonth}
       />
-      <Box className="overflow-hidden p-2">
+
+      {/* Scrollable Calendar Days */}
+      <Box className="flex-1 overflow-y-auto p-2">
         <CalendarDays
           currentDate={currentDate}
           events={events}
@@ -470,5 +478,5 @@ export function Calendar({
         />
       </Box>
     </Box>
-  )
+  );
 }
