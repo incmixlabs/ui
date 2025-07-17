@@ -1,66 +1,72 @@
 
-import { Box, Button,Card, CardContainer, Flex, Grid, Heading, Text } from "@incmix/ui"
+import { Box, Button,Card, CardContainer, Flex, Grid, Heading, Text } from "@base"
 import { MoreHorizontal, TrendingUp, TrendingDown } from "lucide-react"
-import { flagsImg } from "./assets"
-interface Country {  
-  name: string;  
-  flag: string;  
-  subscribers: string;  
-  change: string;  
-  isPositive: boolean;  
-}  
 
-interface SubscribersByCountriesProps {  
-  countries?: Country[];  
-}  
+import {countries} from "@incmix/utils/countries"
+export interface Country {
+  name: string;
+  flag: string;
+  subscribers: string;
+  change: string;
+  isPositive: boolean;
+}
 
-const defaultCountries: Country[] = [ 
+export interface SubscribersByCountriesProps {
+  countries?: Country[];
+}
+
+const defaultCountries: Country[] = [
   {
-    name: "USA",
-    flag: flagsImg.usaflag,
+    code: "US",
     subscribers: "22,450",
     change: "+22.5%",
     isPositive: true,
   },
   {
-    name: "India",
-    flag: flagsImg.inflag,
+    code: "IN",
     subscribers: "18,568",
     change: "+18.5%",
     isPositive: true,
   },
   {
-    name: "Brazil",
-    flag: flagsImg.brflag,
+    code: "BR",
     subscribers: "8,457",
     change: "-8.3%",
     isPositive: false,
   },
   {
-    name: "Australia",
-    flag: flagsImg.auflag,
+    code: "AU",
     subscribers: "2,850",
     change: "+15.2%",
     isPositive: true,
   },
   {
-    name: "France",
-    flag: flagsImg.frflag,
+    code: "FR",
     subscribers: "1,930",
     change: "-12.6%",
     isPositive: false,
   },
   {
-    name: "China",
-    flag: flagsImg.chflag,
+    code: "CN",
     subscribers: "852",
     change: "-2.4%",
     isPositive: false,
   },
-]
+].map(country => {
+  const c = countries[country.code]
+  const flag = c?.flag || `🇺🇸` // Fallback to US flag if not found
+  const name = c?.short || c?.name || country.code // Use short name or full name if available
+  return {
+    flag,
+    name,
+    change: country.change,
+    subscribers: country.subscribers,
+    isPositive: country.isPositive,
+  }
+})
 
-export function SubscribersByCountries({  
-  countries = defaultCountries,  
+export function SubscribersByCountries({
+  countries = defaultCountries,
 }: SubscribersByCountriesProps) {
   return (
     <CardContainer>
@@ -81,17 +87,12 @@ export function SubscribersByCountries({
           </Grid>
 
           {/* Data rows */}
-          {countries.map((country) => (  
-           <Grid columns={"3"} gap={"4"} key={country.name} className="py-3">  
+          {countries.map((country) => (
+           <Grid columns={"3"} gap={"4"} key={country.name} className="py-3">
               <Flex align={"center"} gap={"2"}>
-              <img 
-                src={country.flag} 
-                alt={`${country.name} flag`} 
-                className="w-5 h-5"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                }}
-              />
+                <span role="img" aria-label={`${country.name} flag`}>
+                  {country.flag}
+                </span>
                 <Text size="2" className="font-medium text-gray-12">{country.name}</Text>
               </Flex>
               <Text size="2" className="text-sm text-gray-12 text-center">{country.subscribers}</Text>
