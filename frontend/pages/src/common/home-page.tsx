@@ -10,7 +10,6 @@ function HomePage() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    console.log("authUser", authUser, isLoading, isError)
     if (authUser && !isLoading && !isError) {
       navigate({ to: "/dashboard/home" })
     }

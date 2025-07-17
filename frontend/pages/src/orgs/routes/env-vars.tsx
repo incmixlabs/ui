@@ -1,9 +1,8 @@
 import { RootRoute } from "@common"
-import { createRoute } from "@tanstack/react-router"
-import OrganisationEnvVarsPage from "../env-vars-page"
+import { createRoute, lazyRouteComponent } from "@tanstack/react-router"
 
 export default createRoute({
   getParentRoute: () => RootRoute,
   path: "/organization/$orgHandle/env-vars",
-  component: () => <OrganisationEnvVarsPage />,
+  component: lazyRouteComponent(() => import("../env-vars-page")),
 })

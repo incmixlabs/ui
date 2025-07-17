@@ -115,7 +115,7 @@ const AddUserForm: React.FC<{
   )
 }
 
-const OrganizationDetailsPage: React.FC = () => {
+const OrganizationUsersPage: React.FC = () => {
   const { t } = useTranslation(["organizationDetails", "common"])
   const { orgHandle } = OrganisationUsersRoute.useParams()
   const { organization, isLoading: isOrgLoading } = useOrganization(orgHandle)
@@ -335,4 +335,4 @@ const OrganizationDetailsPage: React.FC = () => {
   )
 }
 
-export default OrganizationDetailsPage
+export default OrganizationUsersPage

@@ -1,9 +1,8 @@
 import { RootRoute } from "@common"
-import { createRoute } from "@tanstack/react-router"
-import OrganizationsPage from "../organisations-page"
+import { createRoute, lazyRouteComponent } from "@tanstack/react-router"
 
 export default createRoute({
   getParentRoute: () => RootRoute,
   path: "/organizations",
-  component: () => <OrganizationsPage />,
+  component: lazyRouteComponent(() => import("../organisations-page")),
 })

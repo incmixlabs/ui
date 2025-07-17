@@ -97,11 +97,11 @@ function App() {
     )
   }, [sidebarColors, dashboardColors, indicatorColors])
 
-  const { authUser } = useAuth()
+  const { authUser, isLoading } = useAuth()
 
   const router = useMemo(() => {
-    return buildRouteTree(authUser)
-  }, [authUser])
+    return buildRouteTree(authUser, isLoading)
+  }, [authUser, isLoading])
 
   return (
     <Theme

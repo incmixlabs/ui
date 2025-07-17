@@ -1,11 +1,10 @@
 "use client"
 
 import { RootRoute } from "@common"
-import { createRoute } from "@tanstack/react-router"
-import SettingsPage from "../settings-page"
+import { createRoute, lazyRouteComponent } from "@tanstack/react-router"
 
 export default createRoute({
   getParentRoute: () => RootRoute,
   path: "/settings",
-  component: () => <SettingsPage />,
+  component: lazyRouteComponent(() => import("../settings-page")),
 })

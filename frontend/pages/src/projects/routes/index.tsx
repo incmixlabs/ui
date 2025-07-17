@@ -1,12 +1,11 @@
-import { createRoute } from "@tanstack/react-router"
+import { createRoute, lazyRouteComponent } from "@tanstack/react-router"
 
 import { RootRoute } from "@common"
 import { searchParamsSchema } from "@incmix/utils/data-table"
-import ProjectsPage from "../page"
 
 export default createRoute({
   getParentRoute: () => RootRoute,
   path: "/projects",
-  component: () => <ProjectsPage />,
+  component: lazyRouteComponent(() => import("../page")),
   validateSearch: searchParamsSchema,
 })

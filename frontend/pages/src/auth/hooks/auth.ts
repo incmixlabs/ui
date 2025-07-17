@@ -38,7 +38,7 @@ export const useAuth = () => {
       if (!res.ok) throw new Error("Not authenticated")
       return res.json() as Promise<AuthUserSession>
     },
-    retry: true,
+    retry: false,
   })
 
   const authUser = isError || !data ? null : data

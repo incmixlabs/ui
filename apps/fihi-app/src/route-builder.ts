@@ -7,6 +7,7 @@ import {
   GoogleAuthCallbackRoute,
   IndexRoute,
   ListUsersRoute,
+  LoadingPage,
   LoadingRoute,
   LoginRoute,
   NotFoundPage,
@@ -33,6 +34,8 @@ import {
 import { type AuthUserSession, UserRoles } from "@incmix/utils/types"
 import { createRouter } from "@tanstack/react-router"
 
+const baseRoutes = [IndexRoute, NotFoundRoute]
+
 const routeTypes = {
   PUBLIC: "public",
   PROTECTED: "protected",
@@ -41,17 +44,14 @@ const routeTypes = {
 } as const
 
 const routes = [
-  { route: DashboardHomeRoute, routeType: routeTypes.PUBLIC },
+  { route: DashboardHomeRoute, routeType: routeTypes.MEMBER },
   { route: DynamicDashboard, routeType: routeTypes.MEMBER },
   { route: EmailVerificationRoute, routeType: routeTypes.PUBLIC },
   { route: FileManagerRoute, routeType: routeTypes.MEMBER },
   { route: ForgotPasswordRoute, routeType: routeTypes.PUBLIC },
   { route: GoogleAuthCallbackRoute, routeType: routeTypes.PUBLIC },
-  { route: IndexRoute, routeType: routeTypes.PUBLIC },
   { route: ListUsersRoute, routeType: routeTypes.SUPER_ADMIN },
-  { route: LoadingRoute, routeType: routeTypes.PUBLIC },
   { route: LoginRoute, routeType: routeTypes.PUBLIC },
-  { route: NotFoundRoute, routeType: routeTypes.PUBLIC },
   { route: NotesRoute, routeType: routeTypes.MEMBER },
   { route: NotificationsRoute, routeType: routeTypes.PROTECTED },
   { route: OnboardingRoute, routeType: routeTypes.PUBLIC },
@@ -71,25 +71,38 @@ const routes = [
   { route: WelcomeRoute, routeType: routeTypes.PUBLIC },
 ]
 
-export function buildRouteTree(authUser: AuthUserSession | null) {
+export function buildRouteTree(
+  authUser: AuthUserSession | null,
+  isLoading: boolean
+) {
+  if (isLoading) {
+    return createRouter({
+      routeTree: RootRoute.addChildren([...baseRoutes, LoadingRoute]),
+      defaultNotFoundComponent: LoadingPage,
+    })
+  }
   if (!authUser) {
     const publicRoutes = routes
       .filter((route) => route.routeType === routeTypes.PUBLIC)
       .map((route) => route.route)
 
     return createRouter({
-      routeTree: RootRoute.addChildren(publicRoutes),
+      routeTree: RootRoute.addChildren([...publicRoutes, ...baseRoutes]),
       defaultNotFoundComponent: NotFoundPage,
     })
   }
 
   if (authUser.userType === UserRoles.ROLE_MEMBER) {
     const memberRoutes = routes
-      .filter((route) => route.routeType !== routeTypes.SUPER_ADMIN)
+      .filter(
+        (route) =>
+          route.routeType === routeTypes.MEMBER ||
+          route.routeType === routeTypes.PROTECTED
+      )
       .map((route) => route.route)
 
     return createRouter({
-      routeTree: RootRoute.addChildren(memberRoutes),
+      routeTree: RootRoute.addChildren([...memberRoutes, ...baseRoutes]),
       defaultNotFoundComponent: NotFoundPage,
     })
   }
@@ -98,7 +111,7 @@ export function buildRouteTree(authUser: AuthUserSession | null) {
     const superAdminRoutes = routes.map((route) => route.route)
 
     return createRouter({
-      routeTree: RootRoute.addChildren(superAdminRoutes),
+      routeTree: RootRoute.addChildren([...superAdminRoutes, ...baseRoutes]),
       defaultNotFoundComponent: NotFoundPage,
     })
   }
@@ -112,7 +125,7 @@ export function buildRouteTree(authUser: AuthUserSession | null) {
     .map((route) => route.route)
 
   return createRouter({
-    routeTree: RootRoute.addChildren(protectedRoutes),
+    routeTree: RootRoute.addChildren([...protectedRoutes, ...baseRoutes]),
     defaultNotFoundComponent: NotFoundPage,
   })
 }
