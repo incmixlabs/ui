@@ -28,6 +28,7 @@ import {
 } from "lucide-react"
 import { TaskDataSchema } from "@incmix/utils/schema"
 import { KanbanTask } from "../types" // Import KanbanTask type
+import { OverlappingAvatarGroup, type AssignedUser, type SelectableUser } from "../shared/overlapping-avatar-group"
 
 
 // Hard-coded members data (same as in mention input)
@@ -366,38 +367,27 @@ export function TaskActionsMenu({
             </Flex>
           </DropdownMenu.SubTrigger>
           <DropdownMenu.SubContent className="w-64">
-            <Box className="p-2 space-y-1 max-h-64 overflow-y-auto">
-              {members.map((member) => {
-                const isAssigned = currentAssignedTo.find(u => u.id === member.id)
-                return (
-                  <div
-                    key={member.id}
-                    className={`
-                      flex items-start gap-3 w-full p-3 rounded-md cursor-pointer transition-colors
-                      hover:bg-accent
-                      ${isAssigned ? 'bg-accent/50' : ''}
-                    `}
-                    onClick={() => handleMemberToggle(member)}
-                  >
-                    <Avatar 
-                      src={member.avatar} 
-                      name={member.name}
-                      className="w-6 h-6"
-                    />
-                    <div className="flex-1 flex flex-col gap-3">
-                      <div>
-                        <p className="text-sm font-medium leading-none">{member.name}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-9">{member.position}</p>
-                      </div>
-                    </div>
-                    {isAssigned && (
-                      <div className="w-2 h-2 bg-primary rounded-full" />
-                    )}
-                  </div>
-                )
-              })}
+            <Box className="p-2">
+              <Text size="2" weight="medium" className="mb-2 px-1">Assign Members</Text>
+              <OverlappingAvatarGroup
+                users={currentAssignedTo as AssignedUser[]}
+                maxDisplayed={5}
+                size="sm"
+                interactive={true}
+                allUsers={members.map(member => ({
+                  id: member.id,
+                  name: member.name,
+                  avatar: member.avatar,
+                  position: member.position,
+                  color: member.color,
+                  value: member.value,
+                  label: member.label
+                }))}
+                onUsersChange={(newUsers) => {
+                  handleUpdateField("assignedTo", newUsers);
+                }}
+                className="justify-center"
+              />
             </Box>
           </DropdownMenu.SubContent>
         </DropdownMenu.Sub>

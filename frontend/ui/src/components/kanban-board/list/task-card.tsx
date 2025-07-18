@@ -14,6 +14,55 @@ import {
   extractClosestEdge,
 } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import invariant from "tiny-invariant"
+
+// Hard-coded members data (shared with task-actions-menu)
+const members = [
+  {
+    id: "1",
+    value: "shane-black",
+    name: "Shane Black",
+    label: "Shane Black",
+    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
+    position: "UI/UX Designer",
+    color: "blue",
+  },
+  {
+    id: "2",
+    value: "john-doe",
+    name: "John Doe", 
+    label: "John Doe",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
+    position: "Project Manager",
+    color: "amber",
+  },
+  {
+    id: "3",
+    value: "jane-smith",
+    name: "Jane Smith",
+    label: "Jane Smith", 
+    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b589?w=32&h=32&fit=crop&crop=face",
+    position: "Business Analyst",
+    color: "indigo",
+  },
+  {
+    id: "4",
+    value: "emily-johnson",
+    name: "Emily Johnson",
+    label: "Emily Johnson",
+    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face",
+    color: "cyan",
+    position: "Web Developer",
+  },
+  {
+    id: "5",
+    value: "micheal-brown",
+    label: "Michael Brown",
+    name: "Michael Brown",
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=32&h=32&fit=crop&crop=face",
+    position: "Product Designer", 
+    color: "orange",
+  },
+]
 import {
   CalendarDays,
   Link,
@@ -42,7 +91,7 @@ import { isShallowEqual } from "@incmix/utils/objects"
 import { isSafari } from "@utils/browser"
 import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
 import { ModalPresets } from "../shared/confirmation-modal"
-import { OverlappingAvatarGroup, type AssignedUser } from "../shared/overlapping-avatar-group"
+import { OverlappingAvatarGroup, type AssignedUser, type SelectableUser } from "../shared/overlapping-avatar-group"
 import { cn } from "@utils"
 import {
   Box,
@@ -767,13 +816,33 @@ export const ListTaskCard = memo(function ListTaskCard({
               
               {/* Assigned users with avatar stack - fixed width */}
               <Flex align="center" justify="center" className="flex-shrink-0 min-w-[6rem] w-24">
-                {card.assignedTo && card.assignedTo.length > 0 && (
-                  <OverlappingAvatarGroup 
-                    users={card.assignedTo as AssignedUser[]}
-                    maxDisplayed={3}
-                    size="md"
-                  />
-                )}
+                <OverlappingAvatarGroup 
+                  users={(card.assignedTo || []) as AssignedUser[]}
+                  maxDisplayed={3}
+                  size="md"
+                  interactive={true}
+                  allUsers={members.map(member => ({
+                    id: member.id,
+                    name: member.name,
+                    avatar: member.avatar,
+                    position: member.position,
+                    color: member.color,
+                    value: member.value,
+                    label: member.label
+                  }))}
+                  onUsersChange={async (updatedUsers) => {
+                    if (!card.id) return;
+                    
+                    try {
+                      // Update the task with the new assigned users
+                      await onUpdateTask(card.id, {
+                        assignedTo: updatedUsers
+                      });
+                    } catch (error) {
+                      console.error("Failed to update assigned users:", error);
+                    }
+                  }}
+                />
               </Flex>
               
               {/* Task Actions Menu - with left margin to prevent flush right edge */}
