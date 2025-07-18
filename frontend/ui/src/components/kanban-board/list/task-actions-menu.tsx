@@ -23,6 +23,8 @@ import {
   Edit3,
   AlertCircle,
   Clock,
+  IndentIcon,
+  OutdentIcon,
 } from "lucide-react"
 import { TaskDataSchema } from "@incmix/utils/schema"
 import { KanbanTask } from "../types" // Import KanbanTask type
@@ -91,6 +93,11 @@ interface TaskActionsMenuProps {
   onDeleteTask?: () => Promise<void>
   onDuplicateTask?: () => Promise<void>
   onCreateTask?: (task: Partial<TaskDataSchema>) => Promise<void>
+  // New subtask operations
+  onIndentTask?: (taskId: string) => Promise<void>
+  onUnindentTask?: (taskId: string) => Promise<void>
+  canIndent?: boolean
+  canUnindent?: boolean
   newTaskData?: { 
     priorityId?: string;
     startDate?: string;
@@ -117,6 +124,11 @@ export function TaskActionsMenu({
   onDeleteTask,
   onDuplicateTask,
   onCreateTask,
+  // New subtask operation props
+  onIndentTask,
+  onUnindentTask,
+  canIndent = false,
+  canUnindent = false,
   newTaskData,
   setNewTaskData,
   disabled = false,
@@ -443,6 +455,29 @@ export function TaskActionsMenu({
           <>
             <DropdownMenu.Separator />
             
+            {/* Task Hierarchy Actions - New Section */}
+            {/* Indent Task (convert to subtask) */}
+            {onIndentTask && (
+              <DropdownMenu.Item 
+                onClick={() => task?.id && onIndentTask(task.id)} 
+                disabled={!canIndent}
+              >
+                <IndentIcon size={14} />
+                <Text>Convert to Subtask</Text>
+              </DropdownMenu.Item>
+            )}
+
+            {/* Unindent Task (convert from subtask) */}
+            {onUnindentTask && (
+              <DropdownMenu.Item 
+                onClick={() => task?.id && onUnindentTask(task.id)} 
+                disabled={!canUnindent}
+              >
+                <OutdentIcon size={14} />
+                <Text>Convert to Task</Text>
+              </DropdownMenu.Item>
+            )}
+
             {/* Edit Task */}
             <DropdownMenu.Item>
               <Edit3 size={14} />

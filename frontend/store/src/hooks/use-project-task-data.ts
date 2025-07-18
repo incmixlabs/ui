@@ -8,6 +8,18 @@ import type {
   UseProjectDataReturn,
 } from "@incmix/utils/schema"
 
+// Extend the UseProjectDataReturn type to include subtask operations
+declare module "@incmix/utils/schema" {
+  interface UseProjectDataReturn {
+    // Subtask operations
+    convertTaskToSubtask: (taskId: string, parentTaskId: string) => Promise<void>
+    convertSubtaskToTask: (taskId: string) => Promise<void>
+    canTaskBeIndented: (taskId: string) => boolean
+    canTaskBeUnindented: (taskId: string) => boolean
+    findPotentialParentTask: (taskId: string) => string | null
+  }
+}
+
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { Subscription } from "rxjs"
 import { database } from "sql"
@@ -634,6 +646,146 @@ export function useProjectData(
     setData((prev) => ({ ...prev, error: null }))
   }, [])
 
+  // Add new functions for parent-child task relationships
+  const convertTaskToSubtask = useCallback(
+    async (taskId: string, parentTaskId: string) => {
+      try {
+        // Validate both tasks exist
+        const task = await database.tasks.findOne({ selector: { id: taskId } }).exec()
+        const parentTask = await database.tasks.findOne({ selector: { id: parentTaskId } }).exec()
+        
+        if (!task) {
+          throw new Error("Task not found")
+        }
+        
+        if (!parentTask) {
+          throw new Error("Parent task not found")
+        }
+
+        // Prevent creating cyclic dependencies - check if the parent is already a subtask of this task
+        const potentialParentTask = parentTask.toJSON()
+        if (potentialParentTask.parentTaskId === taskId || potentialParentTask.isSubtask) {
+          throw new Error("Cannot create cyclic task relationships or make a subtask a parent")
+        }
+        
+        const now = getCurrentTimestamp()
+        const user = getCurrentUser(currentUser)
+        
+        // Update the task to become a subtask
+        await task.update({
+          $set: {
+            parentTaskId,
+            isSubtask: true,
+            updatedAt: now,
+            updatedBy: user,
+          },
+        })
+      } catch (error) {
+        console.error("Failed to convert task to subtask:", error)
+        throw error
+      }
+    },
+    []
+  )
+
+  const convertSubtaskToTask = useCallback(
+    async (taskId: string) => {
+      try {
+        const task = await database.tasks.findOne({ selector: { id: taskId } }).exec()
+        
+        if (!task) {
+          throw new Error("Task not found")
+        }
+        
+        const now = getCurrentTimestamp()
+        const user = getCurrentUser(currentUser)
+        
+        // Update the task to become a regular task (not a subtask)
+        await task.update({
+          $set: {
+            parentTaskId: "",
+            isSubtask: false,
+            updatedAt: now,
+            updatedBy: user,
+          },
+        })
+      } catch (error) {
+        console.error("Failed to convert subtask to task:", error)
+        throw error
+      }
+    },
+    []
+  )
+
+  // Check if a task can be indented (converted to subtask)
+  const canTaskBeIndented = useCallback(
+    (taskId: string) => {
+      // Get the current task
+      const task = data.tasks.find(t => t.id === taskId)
+      if (!task) return false
+      
+      // If already a subtask or already at max nesting level (3), can't indent further
+      if (task.isSubtask) {
+        // Check nesting level by tracing up the hierarchy
+        let currentTask = task;
+        let nestingLevel = 1; // Current task is already at level 1
+        
+        // Traverse up to find the nesting level
+        while (currentTask.parentTaskId) {
+          const parentTask = data.tasks.find(t => t.id === currentTask.parentTaskId);
+          if (!parentTask) break;
+          nestingLevel++;
+          currentTask = parentTask;
+          
+          // Max nesting level check
+          if (nestingLevel >= 3) return false;
+        }
+      }
+      
+      // Find if there's a task above this one in the same status
+      const tasksInSameStatus = data.tasks
+        .filter(t => t.statusId === task.statusId && !t.isSubtask) // Only consider top-level tasks
+        .sort((a, b) => a.taskOrder - b.taskOrder)
+      
+      const taskIndex = tasksInSameStatus.findIndex(t => t.id === taskId)
+      
+      // Can only indent if there's a task before this one
+      return taskIndex > 0
+    },
+    [data.tasks]
+  )
+  
+  // Check if a task can be unindented (converted from subtask to regular task)
+  const canTaskBeUnindented = useCallback(
+    (taskId: string) => {
+      // Get the current task
+      const task = data.tasks.find(t => t.id === taskId)
+      // Can only unindent if it's currently a subtask
+      return task?.isSubtask === true
+    },
+    [data.tasks]
+  )
+
+  // Find the potential parent for a task if it were to be indented
+  const findPotentialParentTask = useCallback(
+    (taskId: string) => {
+      const task = data.tasks.find(t => t.id === taskId)
+      if (!task) return null
+      
+      // Find tasks in the same status column
+      const tasksInSameStatus = data.tasks
+        .filter(t => t.statusId === task.statusId && !t.isSubtask) // Only consider top-level tasks
+        .sort((a, b) => a.taskOrder - b.taskOrder)
+      
+      const taskIndex = tasksInSameStatus.findIndex(t => t.id === taskId)
+      if (taskIndex <= 0) return null
+      
+      // Return the task above this one
+      return tasksInSameStatus[taskIndex - 1].id
+    },
+    [data.tasks]
+  )
+
   return {
     ...data,
     createTask,
@@ -644,6 +796,11 @@ export function useProjectData(
     updateLabel, // Updated from updateTaskStatus
     deleteLabel, // Updated from deleteTaskStatus
     reorderLabels, // Updated from reorderTaskStatuses
+    convertTaskToSubtask,
+    convertSubtaskToTask,
+    canTaskBeIndented,
+    canTaskBeUnindented,
+    findPotentialParentTask,
     refetch,
     clearError,
   }

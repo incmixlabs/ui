@@ -5,7 +5,7 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import {     ModalPresets } from "../shared/confirmation-modal"
 import { Ellipsis, Plus, ChevronDown, ChevronRight, Trash2, Edit3, Check, X } from "lucide-react"
-import { memo, useEffect, useRef, useState, useCallback } from "react"
+import { memo, useEffect, useRef, useState, useCallback, useMemo } from "react"
 import invariant from "tiny-invariant"
 
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element"
@@ -31,7 +31,7 @@ import {
   blockBoardPanningAttr } from "../data-attributes"
 import { TaskDataSchema } from "@incmix/utils/schema"
 import ColorPicker, { ColorSelectType } from "@components/color-picker"
-import { ListTaskCard } from "./task-card"
+import { ListTaskCard, ExpandedTasksProvider } from "./task-card"
 import { SimpleTaskInput } from "./mention-task-input"
 import { isShallowEqual } from "@incmix/utils/objects"
 
@@ -76,7 +76,7 @@ interface ListColumnProps {
   onSelectAll?: (columnId: string, selected: boolean) => void
 }
 
-const CardList = memo(function CardList({
+export const CardList = memo(function CardList({
   column,
   columns,
   onUpdateTask,
@@ -91,9 +91,74 @@ const CardList = memo(function CardList({
   selectedTaskIds?: {[key: string]: boolean}
   onTaskSelect?: (taskId: string, selected: boolean, taskName: string) => void
 }) {
+  // Organize tasks hierarchically to ensure subtasks are always rendered below their parent
+  // while maintaining the proper drag-and-drop behavior
+  const organizedTasks = useMemo(() => {
+    // Create maps for efficient lookups and relationships
+    const parentToSubtasks: Record<string, KanbanTask[]> = {}
+    const isProcessed = new Set<string>()
+    const result: KanbanTask[] = []
+    
+    // First, identify all parent-child relationships and ensure subtasks are sorted
+    column.tasks.forEach(task => {
+      if (task.isSubtask && task.parentTaskId) {
+        if (!parentToSubtasks[task.parentTaskId]) {
+          parentToSubtasks[task.parentTaskId] = []
+        }
+        parentToSubtasks[task.parentTaskId].push(task)
+      }
+    })
+    
+    // Sort subtasks by their position in the original task array
+    // This ensures consistent ordering of subtasks
+    Object.keys(parentToSubtasks).forEach(parentId => {
+      const subtasksForParent = parentToSubtasks[parentId]
+      subtasksForParent.sort((a, b) => {
+        const aIndex = column.tasks.findIndex(t => t.id === a.id)
+        const bIndex = column.tasks.findIndex(t => t.id === b.id)
+        return aIndex - bIndex
+      })
+    })
+    
+    // Process tasks in their original order
+    // This preserves the task order while ensuring subtasks follow their parent
+    for (let i = 0; i < column.tasks.length; i++) {
+      const task = column.tasks[i]
+      const taskId = task.id
+      
+      // Skip if already processed or if it's a subtask (we'll handle it with its parent)
+      if (!taskId || isProcessed.has(taskId) || task.isSubtask) {
+        continue
+      }
+      
+      // Add the parent task
+      result.push(task)
+      isProcessed.add(taskId)
+      
+      // Then add all of its subtasks
+      const subtasks = parentToSubtasks[taskId] || []
+      for (const subtask of subtasks) {
+        if (subtask.id) {
+          result.push(subtask)
+          isProcessed.add(subtask.id)
+        }
+      }
+    }
+    
+    // Handle any remaining tasks that weren't processed
+    // This ensures we don't lose any tasks in edge cases
+    column.tasks.forEach(task => {
+      if (task.id && !isProcessed.has(task.id)) {
+        result.push(task)
+      }
+    })
+    
+    return result
+  }, [column.tasks])
+  
   return (
-    <>
-      {column.tasks.map((task: KanbanTask) => (
+    <ExpandedTasksProvider>
+      {organizedTasks.map((task: KanbanTask) => (
         <ListTaskCard
           key={task.id}
           card={task}
@@ -105,7 +170,7 @@ const CardList = memo(function CardList({
           isSelected={task.id ? !!selectedTaskIds?.[task.id] : false}
         />
       ))}
-    </>
+    </ExpandedTasksProvider>
   )
 })
 
@@ -511,15 +576,20 @@ export function ListColumn({
               <Flex
                 justify="between"
                 align="center"
-                className="py-3 cursor-grab active:cursor-grabbing group"
+                className="py-2.5 cursor-grab active:cursor-grabbing group rounded-md"
+                style={{ 
+                  backgroundColor: column.color ? `${column.color}15` : 'var(--gray-3)', 
+                  borderTopLeftRadius: '6px',
+                  borderTopRightRadius: '6px'
+                }}
                 ref={headerRef}
               >
-                <div className="flex items-center pl-4">
+                <div className="flex items-center pl-2">
                   <Button
                     variant="ghost"
                     size="1"
                     onClick={() => setIsExpanded(!isExpanded)}
-                    className="p-0 flex-shrink-0"
+                    className="p-0.5 flex-shrink-0 text-gray-11 hover:text-gray-12 hover:bg-gray-4 dark:hover:bg-gray-5"
                   >
                     {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                   </Button>
@@ -527,23 +597,28 @@ export function ListColumn({
                   <Checkbox
                     checked={allTasksSelected ? true : someTasksSelected ? 'indeterminate' : false}
                     onCheckedChange={handleSelectAllChange}
-                    className="flex-shrink-0 ml-[20px] my-auto"
+                    className="flex-shrink-0 ml-3 my-auto"
                     disabled={totalTasks === 0}
                   />
                 </div>
                 
-                <Flex align="center" className="flex-1 min-w-0 ml-4 gap-2">
-                  <Text size="4" className="font-semibold truncate text-black dark:text-white">
+                <Flex align="center" className="flex-1 min-w-0 ml-2 gap-2">
+                  {/* Colored dot before title */}
+                  <div 
+                    className="h-2.5 w-2.5 rounded-full flex-shrink-0" 
+                    style={{ backgroundColor: column.color || 'var(--gray-9)' }}
+                  />
+                  <Text size="2" className="font-medium truncate text-gray-12 dark:text-gray-11">
                     {column.name}
                   </Text>
 
-                  <Flex gap="1" className="flex-shrink-0">
-                    <Badge variant="surface" color="gray" size="1" className="text-gray-10">
-                      {totalTasks} tasks
+                  <Flex gap="2" className="flex-shrink-0">
+                    <Badge variant="solid" color="gray" size="1" className="bg-gray-5 text-gray-11 dark:bg-gray-6 dark:text-gray-11">
+                      {totalTasks}
                     </Badge>
                     {completedTasks > 0 && (
-                      <Badge variant="surface" color="green" size="1" className="text-green-10">
-                        {completionPercentage}% done
+                      <Badge variant="solid" color="green" size="1" className="bg-green-3 text-green-11 dark:bg-green-3 dark:text-green-11">
+                        {completionPercentage}%
                       </Badge>
                     )}
                   </Flex>
@@ -552,8 +627,8 @@ export function ListColumn({
                 {/* Column Actions Menu with edit and delete options */}
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger>
-                    <IconButton size="1" variant="ghost" className="opacity-0 group-hover:opacity-100 transition-opacity mr-3">
-                      <Ellipsis size={14} />
+                    <IconButton size="1" variant="ghost" className="opacity-0 group-hover:opacity-100 transition-opacity mr-2 hover:bg-gray-4 dark:hover:bg-gray-5">
+                      <Ellipsis size={14} className="text-gray-11" />
                     </IconButton>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content>
@@ -574,33 +649,15 @@ export function ListColumn({
               </Flex>
             )}
 
-            {/* Column Description */}
-            {column.description && isExpanded && (
-              <Box className="pb-2 pl-6 pr-6">
-                <Text size="1" className="text-gray-10 dark:text-gray-9">
-                  {column.description}
-                </Text>
-              </Box>
-            )}
-
-            {/* Progress Bar */}
-            {totalTasks > 0 && completedTasks > 0 && isExpanded && (
-              <Box className="pb-2 pl-6 pr-6">
-                <div className="w-full bg-gray-5 dark:bg-gray-6 rounded-full h-1">
-                  <div
-                    className="bg-green-8 dark:bg-green-7 h-1 rounded-full transition-all duration-300"
-                    style={{ width: `${completionPercentage}%` }}
-                  />
-                </div>
-              </Box>
-            )}
           </Box>
 
+          {/* Column Headers Row removed */}
+          
           {/* Tasks List */}
           {isExpanded && (
             <Flex
               direction="column"
-              className="flex-1 mt-2"
+              className="flex-1"
               ref={scrollableRef}
             >
               <Box className="relative overflow-auto [overflow-anchor:none]">
