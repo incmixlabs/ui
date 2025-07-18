@@ -35,6 +35,55 @@ import { ListTaskCard, ExpandedTasksProvider } from "./task-card"
 import { SimpleTaskInput } from "./mention-task-input"
 import { isShallowEqual } from "@incmix/utils/objects"
 
+/**
+ * Helper function to create a semi-transparent version of a color
+ * Handles both CSS variables and hex colors
+ */
+const createTransparentColor = (color: string | undefined, opacity: number = 0.1): string => {
+  // Handle empty values
+  if (!color) return 'var(--gray-3)' // Default fallback
+  
+  // If color is a CSS variable like "var(--red-9)"
+  if (color.startsWith('var(')) {
+    // Extract the CSS variable name
+    const varName = color.match(/var\(([^)]+)\)/)?.[1]
+    
+    if (varName) {
+      // Create a transparent version by adding the appropriate opacity variable
+      // This maintains the CSS variable while making it transparent
+      return `var(${varName.replace(/-\d+$/, '-3')})`
+    }
+    return 'var(--gray-3)' // Fallback
+  }
+  
+  // Handle hex colors - convert to rgba with opacity
+  try {
+    if (color.startsWith('#')) {
+      // Remove # if present
+      const cleanHex = color.replace(/^#/, '')
+      
+      // Handle both 3-digit and 6-digit hex
+      const normalized = cleanHex.length === 3
+        ? cleanHex[0] + cleanHex[0] + cleanHex[1] + cleanHex[1] + cleanHex[2] + cleanHex[2]
+        : cleanHex
+      
+      // Parse the hex values
+      const bigint = parseInt(normalized, 16)
+      const r = (bigint >> 16) & 255
+      const g = (bigint >> 8) & 255
+      const b = bigint & 255
+      
+      // Return as rgba
+      return `rgba(${r}, ${g}, ${b}, ${opacity})`
+    }
+  } catch (error) {
+    console.error('Error processing color:', error)
+  }
+  
+  // For any other format or on error, return the original with opacity
+  return `${color}${Math.round(opacity * 100)}` // This handles formats like "#FF000015" where 15 is ~10% opacity
+}
+
 type TColumnState =
   | {
       type: "is-card-over"
@@ -578,7 +627,7 @@ export function ListColumn({
                 align="center"
                 className="py-2.5 cursor-grab active:cursor-grabbing group rounded-md"
                 style={{ 
-                  backgroundColor: column.color ? `${column.color}15` : 'var(--gray-3)', 
+                  backgroundColor: createTransparentColor(column.color), 
                   borderTopLeftRadius: '6px',
                   borderTopRightRadius: '6px'
                 }}
