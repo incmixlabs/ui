@@ -622,26 +622,28 @@ export function ListColumn({
               </Flex>
               </Box>
             ) : (
-              <Flex
-                justify="between"
-                align="center"
-                className="py-2.5 cursor-grab active:cursor-grabbing group rounded-md"
-                style={{ 
-                  backgroundColor: createTransparentColor(column.color), 
-                  borderTopLeftRadius: '6px',
-                  borderTopRightRadius: '6px'
-                }}
-                ref={headerRef}
-              >
-                <div className="flex items-center pl-2">
-                  <Button
-                    variant="ghost"
-                    size="1"
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    className="p-0.5 flex-shrink-0 text-gray-11 hover:text-gray-12 hover:bg-gray-4 dark:hover:bg-gray-5"
-                  >
-                    {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                  </Button>
+              <div className="flex items-center">
+                <Button
+                  variant="ghost"
+                  size="1"
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className="p-1 mr-1 flex-shrink-0 text-gray-11 hover:text-gray-12"
+                >
+                  {isExpanded ? <ChevronDown size={18} strokeWidth={2.5} /> : <ChevronRight size={18} strokeWidth={2.5} />}
+                </Button>
+
+                <Flex
+                  justify="between"
+                  align="center"
+                  className="py-2.5 cursor-grab active:cursor-grabbing group rounded-md flex-1"
+                  style={{ 
+                    backgroundColor: createTransparentColor(column.color), 
+                    borderTopLeftRadius: '6px',
+                    borderTopRightRadius: '6px'
+                  }}
+                  ref={headerRef}
+                >
+                  <div className="flex items-center ">
                   
                   <Checkbox
                     checked={allTasksSelected ? true : someTasksSelected ? 'indeterminate' : false}
@@ -695,7 +697,8 @@ export function ListColumn({
                     </DropdownMenu.Item>
                   </DropdownMenu.Content>
                 </DropdownMenu.Root>
-              </Flex>
+                </Flex>
+              </div>
             )}
 
           </Box>

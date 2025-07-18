@@ -595,7 +595,7 @@ export const ListTaskCard = memo(function ListTaskCard({
         onConfirm: confirmDeleteTask
       })}
 
-      <Box className="flex flex-shrink-0 flex-col">
+      <Box className="flex flex-shrink-0 flex-col pl-5">
         {/* Drop indicator above */}
         {state.type === "is-over" && state.closestEdge === "top" ? (
           <TaskCardShadow dragging={state.dragging} />
