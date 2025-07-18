@@ -31,6 +31,7 @@ interface WeeklyActivityChartProps {
    */
   borderRadius?: number;
   className?: string;
+  colors?: string[];
 }
 
 // const data = [
@@ -43,15 +44,7 @@ interface WeeklyActivityChartProps {
 //   { id: 'S', name: 'Sun', value: 80 }
 // ];
 
-const colors = [
-  "var(--dashboard-color-1)",
-  "var(--dashboard-color-1)",
-  "var(--dashboard-color-1)",
-  "var(--dashboard-color-2)",
-  "var(--dashboard-color-1)",
-  "var(--dashboard-color-1)",
-  "var(--dashboard-color-1)",
-];
+
 
 export function WeeklyActivityChart({
   statisticdata = [
@@ -63,18 +56,21 @@ export function WeeklyActivityChart({
     { id: "S", name: "Sat", value: 55 },
     { id: "S", name: "Sun", value: 80 },
   ],
-  highlightColor,
-  primaryColor,
+  colors = [
+    "var(--dashboard-color-1)",
+    "var(--dashboard-color-1)",
+    "var(--dashboard-color-1)",
+    "var(--dashboard-color-2)",
+    "var(--dashboard-color-1)",
+    "var(--dashboard-color-1)",
+    "var(--dashboard-color-1)",
+  ],
   className,
 }: WeeklyActivityChartProps) {
-  const { getDashboardColors } = useThemeStore();
-  const dashboardColorValues = getDashboardColors();
-  highlightColor = highlightColor ?? dashboardColorValues.color3;
-  primaryColor = primaryColor ?? dashboardColorValues.color1;
 
   return (
-    <Box className={cn("w-full h-fit", className)}>
-      <ResponsiveContainer width="100%" height={280}>
+    <Box className={cn("w-full @sm:h-72 h-60", className)}>
+      <ResponsiveContainer width="100%" height={"100%"} className={"h-full w-full"}>
         <BarChart
           data={statisticdata}
           margin={{ top: 20, right: 30, left: 20, bottom: 5 }}

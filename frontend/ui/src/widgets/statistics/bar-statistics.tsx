@@ -10,7 +10,7 @@ import {
 export function BarStatisticWidgets() {
   return (
     <>
-      <CardContainer className="h-full">
+      <CardContainer className="h-full @container">
         <Flex justify="between" className="mb-6">
           <Heading size="5">Statistics</Heading>
           <Flex gap="2" align="center" className="space-x-4">

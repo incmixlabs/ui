@@ -18,7 +18,7 @@ export function StatisticWidgets() {
   }
   return (
     <>
-      <CardContainer className="h-full">
+      <CardContainer className="h-full @container">
         <Flex align={"center"} gap={"2"} justify={"between"}>
           <Heading size="5">Statistics</Heading>
           <IconButton onClick={onMoreOptionsClick}>
@@ -26,7 +26,6 @@ export function StatisticWidgets() {
           </IconButton>
         </Flex>
         <WeeklyActivityChart
-          className="h-72"
           statisticdata={[
             { id: "M", name: "Mon", value: 45 },
             { id: "T", name: "Tue", value: 85 },
@@ -36,8 +35,6 @@ export function StatisticWidgets() {
             { id: "S", name: "Sat", value: 55 },
             { id: "S", name: "Sun", value: 80 },
           ]}
-          primaryColor={"var(--indigo-9)"}
-          highlightColor={"var(--orange-9)"}
         />
         <Flex
           align={"center"}

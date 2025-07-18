@@ -7,12 +7,13 @@ import {
   Grid,
   Heading,
   IconButton,
+  ScrollArea,
   Text,
   Tooltip,
-} from "@incmix/ui"
-import { EllipsisVertical } from "lucide-react"
-import { motion } from "motion/react"
-import React, { useState } from "react"
+} from "@incmix/ui";
+import { EllipsisVertical } from "lucide-react";
+import { motion } from "motion/react";
+import React, { useState } from "react";
 
 export const revisionData = [
   {
@@ -49,33 +50,34 @@ export const revisionData = [
     checked: false,
     color: "var(--dashboard-color-4)",
   },
-]
+];
 
 interface ProjectRevision {
-  id: string
-  projectNumber: string
-  recipient: string
-  checked: boolean
-  color: string
-  type: string
+  id: string;
+  projectNumber: string;
+  recipient: string;
+  checked: boolean;
+  color: string;
+  type: string;
 }
 
-type TabType = "month" | "week" | "day"
+type TabType = "month" | "week" | "day";
 
 export function ActiveTask() {
-  const [activeTab, setActiveTab] = useState<TabType>("month")
-  const [revisions, setRevisions] = useState<ProjectRevision[]>(revisionData)
+  const [activeTab, setActiveTab] = useState<TabType>("month");
+  const [revisions, setRevisions] = useState<ProjectRevision[]>(revisionData);
   const handleFilterRevision = (tab: TabType) => {
-    setActiveTab(tab)
-    setRevisions(revisionData.filter((revision) => revision.type === tab))
-  }
+    setActiveTab(tab);
+    setRevisions(revisionData.filter((revision) => revision.type === tab));
+  };
   return (
-    <CardContainer className="h-full">
-      <Flex justify={"between"} align={"center"} className="pb-4">
+    <CardContainer className="min-h-64 h-full flex flex-col overflow-hidden">
+      {/* Header Section */}
+      <Flex justify="between" align="center" className="pb-4 flex-shrink-0">
         <Heading size="5">Active Tasks</Heading>
         <Flex
-          align={"center"}
-          gap={"2"}
+          align="center"
+          gap="2"
           className="rounded-xl border border-gray-5 p-2 px-3"
         >
           {(["month", "week", "day"] as const).map((tab) => (
@@ -83,7 +85,7 @@ export function ActiveTask() {
               key={tab}
               variant="ghost"
               onClick={() => {
-                handleFilterRevision(tab)
+                handleFilterRevision(tab);
               }}
               className={`relative inline-block flex-1 cursor-pointer rounded-xl px-4 py-1.5 font-medium text-sm transition-colors ${
                 activeTab === tab ? "text-white" : ""
@@ -91,7 +93,7 @@ export function ActiveTask() {
             >
               {activeTab === tab && (
                 <motion.span
-                  layoutId={"tab-indicator"}
+                  layoutId="tab-indicator"
                   className="absolute inset-0 inline-block h-full w-full rounded-xl bg-indigo-9"
                 />
               )}
@@ -100,52 +102,59 @@ export function ActiveTask() {
           ))}
         </Flex>
       </Flex>
-      <Box className="space-y-3">
-        {revisions.length === 0 ? (
-          <Text className="text-gray-8 text-sm">No revisions found</Text>
-        ) : (
-          <>
-            {revisions.map((revision) => (
-              <Flex
-                key={revision.id}
-                align={"center"}
-                className="relative rounded-lg border border-gray-5 p-3"
-                style={{
-                  borderLeftWidth: "4px",
-                  borderLeftColor: revision.color,
-                }}
-              >
-                <Box className="mr-3 flex-shrink-0">
-                  <Checkbox
-                    size={"3"}
-                    className="h-5 w-5 rounded-md bg-gray-12 text-secondary group-hover:bg-white "
-                  />
-                </Box>
 
-                <Box className="min-w-0 flex-1">
-                  <Text as="p" className="font-medium text-sm">
-                    {revision.recipient || "Regina Cooper"}
-                  </Text>
-                  <Text className="truncate text-gray-8 text-sm">
-                    Sending project{" "}
-                    <span className="text-blue-9">
-                      #{revision.projectNumber}
-                    </span>{" "}
-                    for revision to {revision.recipient}
-                  </Text>
-                </Box>
-
-                <IconButton
-                  variant="ghost"
-                  className="ml-2 flex-shrink-0 cursor-pointer"
+      {/* Scrollable Task List */}
+      <ScrollArea className="flex-1 overflow-hidden">
+        <Box className="space-y-3 pr-2">
+          {revisions.length === 0 ? (
+            <Text className="text-gray-8 text-sm">No revisions found</Text>
+          ) : (
+            <>
+              {revisions.map((revision) => (
+                <Flex
+                  key={revision.id}
+                  align="center"
+                  className="relative rounded-lg border border-gray-5 p-3"
+                  style={{
+                    borderLeftWidth: "4px",
+                    borderLeftColor: revision.color,
+                  }}
                 >
-                  <EllipsisVertical className="h-5 w-5" />
-                </IconButton>
-              </Flex>
-            ))}
-          </>
-        )}
-      </Box>
+                  {/* Checkbox */}
+                  <Box className="mr-3 flex-shrink-0">
+                    <Checkbox
+                      size="3"
+                      className="h-5 w-5 rounded-md bg-gray-6 text-secondary group-hover:bg-gray-11"
+                    />
+                  </Box>
+
+                  {/* Task Details */}
+                  <Box className="min-w-0 flex-1">
+                    <Text as="p" className="font-medium text-sm">
+                      {revision.recipient || "Regina Cooper"}
+                    </Text>
+                    <Text className="truncate text-gray-11 text-sm">
+                      Sending project{" "}
+                      <span className="text-blue-9">
+                        #{revision.projectNumber}
+                      </span>{" "}
+                      for revision to {revision.recipient}
+                    </Text>
+                  </Box>
+
+                  {/* Menu */}
+                  <IconButton
+                    variant="ghost"
+                    className="ml-2 flex-shrink-0 cursor-pointer"
+                  >
+                    <EllipsisVertical className="h-5 w-5" />
+                  </IconButton>
+                </Flex>
+              ))}
+            </>
+          )}
+        </Box>
+      </ScrollArea>
     </CardContainer>
-  )
+  );
 }
