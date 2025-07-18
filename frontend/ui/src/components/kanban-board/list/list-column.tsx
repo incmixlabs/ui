@@ -80,8 +80,8 @@ const createTransparentColor = (color: string | undefined, opacity: number = 0.1
     console.error('Error processing color:', error)
   }
   
-  // For any other format or on error, return the original with opacity
-  return `${color}${Math.round(opacity * 100)}` // This handles formats like "#FF000015" where 15 is ~10% opacity
+  // For any other format or on error, return a default transparent gray
+  return 'rgba(128, 128, 128, 0.1)'
 }
 
 type TColumnState =

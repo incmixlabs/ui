@@ -59,6 +59,7 @@ export const OverlappingAvatarGroup: React.FC<OverlappingAvatarGroupProps> = ({
                 <Checkbox 
                   checked={isSelected} 
                   onCheckedChange={() => toggleUserSelection(user)}
+                  onClick={(e) => e.stopPropagation()}
                 />
                 <div className="flex gap-2 items-center flex-1">
                   {/* User Avatar */}
@@ -197,6 +198,39 @@ export const OverlappingAvatarGroup: React.FC<OverlappingAvatarGroupProps> = ({
     
     return colors[Math.abs(hash) % colors.length];
   };
+  
+  // Reusable avatar component to avoid code duplication
+  const UserAvatar: React.FC<{
+    user: AssignedUser;
+    size: { width: string; height: string; borderWidth: string; fontSize: string };
+    style?: React.CSSProperties;
+    getColorForUser: (userId: string) => string;
+    getInitials: (name: string) => string;
+  }> = ({ user, size, style, getColorForUser, getInitials }) => {
+    const { width, height, borderWidth, fontSize } = size;
+    const isPlaceholder = user.image?.includes('placeholder');
+    
+    return (
+      <div 
+        className={`${width} ${height} rounded-full ${borderWidth} border-background overflow-hidden`} 
+        style={style}
+      >
+        {user.image && !isPlaceholder ? (
+          <Avatar
+            src={user.image}
+            name={user.name}
+            className="w-full h-full"
+          />
+        ) : (
+          <div className={`w-full h-full rounded-full ${getColorForUser(user.id)} flex items-center justify-center`}>
+            <span className={`${fontSize} font-medium text-white`}>
+              {getInitials(user.name)}
+            </span>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   // This section was moved above to resolve the issue of using functions before declaration
   
@@ -211,25 +245,14 @@ export const OverlappingAvatarGroup: React.FC<OverlappingAvatarGroupProps> = ({
             >
               {/* Display users as before, but clickable */}
               {displayUsers.map((user, index) => (
-                <div 
-                  key={user.id} 
-                  className={`${width} ${height} rounded-full ${borderWidth} border-background overflow-hidden`} 
+                <UserAvatar
+                  key={user.id}
+                  user={user}
+                  size={{ width, height, borderWidth, fontSize }}
                   style={{ zIndex: zIndexBase - index }}
-                >
-                  {user.image && user.image !== "/placeholder-avatar.png" && user.image !== "/placeholder.svg" ? (
-                    <Avatar
-                      src={user.image}
-                      name={user.name}
-                      className="w-full h-full"
-                    />
-                  ) : (
-                    <div className={`w-full h-full rounded-full ${getColorForUser(user.id)} flex items-center justify-center`}>
-                      <span className={`${fontSize} font-medium text-white`}>
-                        {getInitials(user.name)}
-                      </span>
-                    </div>
-                  )}
-                </div>
+                  getColorForUser={getColorForUser}
+                  getInitials={getInitials}
+                />
               ))}
               
               {/* Show additional count if there are more users than maxDisplayed */}
@@ -259,25 +282,14 @@ export const OverlappingAvatarGroup: React.FC<OverlappingAvatarGroupProps> = ({
         // Non-interactive version
         <>
           {displayUsers.map((user, index) => (
-            <div 
-              key={user.id} 
-              className={`${width} ${height} rounded-full ${borderWidth} border-background overflow-hidden`} 
+            <UserAvatar
+              key={user.id}
+              user={user}
+              size={{ width, height, borderWidth, fontSize }}
               style={{ zIndex: zIndexBase - index }}
-            >
-              {user.image && user.image !== "/placeholder-avatar.png" && user.image !== "/placeholder.svg" ? (
-                <Avatar
-                  src={user.image}
-                  name={user.name}
-                  className="w-full h-full"
-                />
-              ) : (
-                <div className={`w-full h-full rounded-full ${getColorForUser(user.id)} flex items-center justify-center`}>
-                  <span className={`${fontSize} font-medium text-white`}>
-                    {getInitials(user.name)}
-                  </span>
-                </div>
-              )}
-            </div>
+              getColorForUser={getColorForUser}
+              getInitials={getInitials}
+            />
           ))}
           
           {/* Show additional count if there are more users than maxDisplayed */}

@@ -260,7 +260,14 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                 sourceColumn.tasks
                   .filter(task => task.isSubtask && task.parentTaskId === draggingTask.id)
                   .map(task => task.id)
-                  
+              
+              // Prevent dropping a parent task onto its own subtask
+              const targetTask = sourceColumn.tasks[targetTaskIndex]
+              if (targetTask && subtaskIds.includes(targetTask.id)) {
+                setIsDragging(false)
+                return
+              }
+              
               // If we're moving a task with subtasks, we need special handling
               if (subtaskIds.length > 0) {
                 // Create a copy of the tasks array to work with

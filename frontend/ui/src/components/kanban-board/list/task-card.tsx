@@ -15,54 +15,8 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import invariant from "tiny-invariant"
 
-// Hard-coded members data (shared with task-actions-menu)
-const members = [
-  {
-    id: "1",
-    value: "shane-black",
-    name: "Shane Black",
-    label: "Shane Black",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
-    position: "UI/UX Designer",
-    color: "blue",
-  },
-  {
-    id: "2",
-    value: "john-doe",
-    name: "John Doe", 
-    label: "John Doe",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
-    position: "Project Manager",
-    color: "amber",
-  },
-  {
-    id: "3",
-    value: "jane-smith",
-    name: "Jane Smith",
-    label: "Jane Smith", 
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b589?w=32&h=32&fit=crop&crop=face",
-    position: "Business Analyst",
-    color: "indigo",
-  },
-  {
-    id: "4",
-    value: "emily-johnson",
-    name: "Emily Johnson",
-    label: "Emily Johnson",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face",
-    color: "cyan",
-    position: "Web Developer",
-  },
-  {
-    id: "5",
-    value: "micheal-brown",
-    label: "Michael Brown",
-    name: "Michael Brown",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=32&h=32&fit=crop&crop=face",
-    position: "Product Designer", 
-    color: "orange",
-  },
-]
+// Import members data hook
+import { useMembers } from "../hooks/use-members"
 import {
   CalendarDays,
   Link,
@@ -190,13 +144,9 @@ const getPriorityStyles = (priorityId: string, priorityLabels?: { id: string; na
 
 // Helper function to get priority name from ID
 const getPriorityName = (priorityId: string, priorityLabels?: { id: string; name: string; color: string; type: string }[]): string => {
-  // Debug log for getPriorityName function
-  console.log('getPriorityName called with:', { priorityId, priorityLabelsAvailable: Boolean(priorityLabels) });
-  
   // First try to get from priorityLabels if available
   if (priorityLabels && priorityLabels.length > 0) {
     const priority = priorityLabels.find(p => p.id === priorityId);
-    console.log('Priority match found:', priority);
     if (priority?.name) return priority.name;
   }
   
@@ -274,10 +224,7 @@ export const ListTaskCard = memo(function ListTaskCard({
   isSelected = false,
   projectId = "default-project",
 }: ListTaskCardProps) {
-  // Debug logs for priority display issues
-  console.log('Task Card Render:', card.id, card.name);
-  console.log('Priority ID:', card.priorityId);
-  console.log('Priority Labels:', priorityLabels);
+
   const { handleDrawerOpen } = useKanbanDrawer()
   const innerRef = useRef<HTMLDivElement | null>(null)
   const [state, setState] = useState<TCardState>(idle)
@@ -290,18 +237,24 @@ export const ListTaskCard = memo(function ListTaskCard({
   // Access kanban data to get the subtask functions
   const kanbanData = useKanban(projectId)
   
+  // Get members data from hook
+  const { members, isLoading: membersLoading } = useMembers(projectId)
+  
   // Check if the current task is a parent task (has subtasks)
   const hasChildTasks = useMemo(() => {
-    // Use the kanban data to find out if any task has this task as parent
     if (!card.id) return false;
     
-    // Look through all tasks in all columns
-    const allTasks: KanbanTask[] = [];
+    // Create a parent-to-children index once
+    const childrenByParent = new Map<string, boolean>();
     kanbanData.columns.forEach(column => {
-      allTasks.push(...column.tasks);
+      column.tasks.forEach((task: KanbanTask) => {
+        if (task.parentTaskId) {
+          childrenByParent.set(task.parentTaskId, true);
+        }
+      });
     });
     
-    return allTasks.some((task: KanbanTask) => task.parentTaskId === card.id);
+    return childrenByParent.has(card.id);
   }, [card.id, kanbanData.columns])
 
   // Check if task is a subtask
@@ -430,7 +383,6 @@ export const ListTaskCard = memo(function ListTaskCard({
 
   const handleDuplicateTask = useCallback(async () => {
     // Implementation for task duplication could be added here
-    console.log("Duplicate task functionality not implemented yet")
   }, [])
 
   const handleOpenDrawer = useCallback((e: React.MouseEvent) => {
@@ -802,15 +754,6 @@ export const ListTaskCard = memo(function ListTaskCard({
               <Flex align="center" justify="center" className="flex-shrink-0 min-w-[5rem] w-20">
                 {/* Display priority based on available data */}
                 {(() => {
-                  // Debug log for priority rendering condition
-                  console.log('Priority rendering check:', {
-                    hasPriorityId: Boolean(card.priorityId),
-                    priorityId: card.priorityId,
-                    hasPriorityLabels: Boolean(priorityLabels),
-                    priorityLabelsLength: priorityLabels?.length,
-                    matchingLabel: priorityLabels?.find(p => p.id === card.priorityId),
-                    conditionResult: Boolean(card.priorityId && priorityLabels?.some(p => p.id === card.priorityId))
-                  });
                   return null;
                 })()}
                 {card.priorityId ? (
