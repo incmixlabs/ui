@@ -190,9 +190,13 @@ const getPriorityStyles = (priorityId: string, priorityLabels?: { id: string; na
 
 // Helper function to get priority name from ID
 const getPriorityName = (priorityId: string, priorityLabels?: { id: string; name: string; color: string; type: string }[]): string => {
+  // Debug log for getPriorityName function
+  console.log('getPriorityName called with:', { priorityId, priorityLabelsAvailable: Boolean(priorityLabels) });
+  
   // First try to get from priorityLabels if available
   if (priorityLabels && priorityLabels.length > 0) {
     const priority = priorityLabels.find(p => p.id === priorityId);
+    console.log('Priority match found:', priority);
     if (priority?.name) return priority.name;
   }
   
@@ -270,6 +274,10 @@ export const ListTaskCard = memo(function ListTaskCard({
   isSelected = false,
   projectId = "default-project",
 }: ListTaskCardProps) {
+  // Debug logs for priority display issues
+  console.log('Task Card Render:', card.id, card.name);
+  console.log('Priority ID:', card.priorityId);
+  console.log('Priority Labels:', priorityLabels);
   const { handleDrawerOpen } = useKanbanDrawer()
   const innerRef = useRef<HTMLDivElement | null>(null)
   const [state, setState] = useState<TCardState>(idle)
@@ -790,6 +798,41 @@ export const ListTaskCard = memo(function ListTaskCard({
 
             {/* Right side content with better distribution */}
             <Flex align="center" gap="3" className="flex-1 justify-end pr-2">
+              {/* Priority label indicator - fixed width */}
+              <Flex align="center" justify="center" className="flex-shrink-0 min-w-[5rem] w-20">
+                {/* Display priority based on available data */}
+                {(() => {
+                  // Debug log for priority rendering condition
+                  console.log('Priority rendering check:', {
+                    hasPriorityId: Boolean(card.priorityId),
+                    priorityId: card.priorityId,
+                    hasPriorityLabels: Boolean(priorityLabels),
+                    priorityLabelsLength: priorityLabels?.length,
+                    matchingLabel: priorityLabels?.find(p => p.id === card.priorityId),
+                    conditionResult: Boolean(card.priorityId && priorityLabels?.some(p => p.id === card.priorityId))
+                  });
+                  return null;
+                })()}
+                {card.priorityId ? (
+                  <Badge
+                    variant="soft"
+                    size="1"
+                    className={getPriorityStyles(card.priorityId, priorityLabels)}
+                  >
+                    {priorityLabels?.some(p => p.id === card.priorityId) 
+                      ? getPriorityName(card.priorityId, priorityLabels)
+                      : card.priorityId.startsWith('pr-') 
+                        ? card.priorityId.substring(3, 8) // Show shorter ID for custom priorities
+                        : getPriorityName(card.priorityId) // Use default formatting for standard priorities
+                    }
+                  </Badge>
+                ) : (
+                  <Text size="1" className="text-gray-8">
+                    No priority
+                  </Text>
+                )}
+              </Flex>
+              
               {/* Due date with "Due:" label - fixed width */}
               <Flex align="center" justify="center" className="flex-shrink-0 min-w-[6rem] w-24">
                 {card.endDate ? (
@@ -798,19 +841,6 @@ export const ListTaskCard = memo(function ListTaskCard({
                   </Text>
                 ) : (
                   <span></span>
-                )}
-              </Flex>
-              
-              {/* Priority label indicator - fixed width */}
-              <Flex align="center" justify="center" className="flex-shrink-0 min-w-[5rem] w-20">
-                {card.priorityId && priorityLabels?.some(p => p.id === card.priorityId) && (
-                  <Badge
-                    variant="soft"
-                    size="1"
-                    className={getPriorityStyles(card.priorityId, priorityLabels)}
-                  >
-                    {getPriorityName(card.priorityId, priorityLabels)}
-                  </Badge>
                 )}
               </Flex>
               
