@@ -753,9 +753,6 @@ export const ListTaskCard = memo(function ListTaskCard({
               {/* Priority label indicator - fixed width */}
               <Flex align="center" justify="center" className="flex-shrink-0 min-w-[5rem] w-20">
                 {/* Display priority based on available data */}
-                {(() => {
-                  return null;
-                })()}
                 {card.priorityId ? (
                   <Badge
                     variant="soft"
