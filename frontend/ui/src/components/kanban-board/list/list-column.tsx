@@ -768,8 +768,7 @@ export function ListColumn({
                 ) : (
                   <Box className="flex flex-shrink-0 flex-col px-2 py-1.5 w-full">
                     <Box 
-                      className="group relative px-6 rounded-[20px] transition-all duration-150 bg-white border border-dashed border-gray-6 dark:bg-gray-1 dark:border dark:border-dashed dark:border-gray-6 hover:bg-gray-3 dark:hover:bg-gray-2 w-full"
-                      style={{ height: "56px" }}
+                      className="group relative px-6 h-10 rounded-xl transition-all duration-150 bg-white border border-dashed border-gray-6 dark:bg-gray-1 dark:border dark:border-dashed dark:border-gray-6 hover:bg-gray-3 dark:hover:bg-gray-2 w-full"
                       onClick={() => setIsCreatingTask(true)}
                     >
                       <Flex justify="start" align="center" className="h-full w-full gap-2 cursor-pointer">

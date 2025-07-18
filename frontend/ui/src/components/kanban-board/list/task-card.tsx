@@ -257,11 +257,36 @@ export const ListTaskCard = memo(function ListTaskCard({
     // If this task is a parent (has children), remove its bottom border
     if (hasChildTasks) return true;
     
-    // If this task is a subtask, also remove its border
-    if (isSubtask) return true;
+    // If this task is a subtask but NOT the last subtask, remove its border
+    // We need a border for the last subtask in a group
+    if (isSubtask) {
+      // Check if this is the last subtask for its parent
+      const parentId = card.parentTaskId;
+      if (parentId) {
+        // Get all tasks from all columns
+        const allTasks: KanbanTask[] = [];
+        kanbanData.columns.forEach(column => {
+          allTasks.push(...column.tasks);
+        });
+        
+        // Get all subtasks for this parent
+        const siblingTasks = allTasks.filter(task => task.parentTaskId === parentId);
+        
+        // Sort by taskOrder to find the last one
+        const sortedSiblings = [...siblingTasks].sort((a, b) => 
+          (a.taskOrder ?? 0) - (b.taskOrder ?? 0)
+        );
+        
+        // If this is the last subtask, keep the border
+        if (sortedSiblings.length > 0 && sortedSiblings[sortedSiblings.length - 1].id === card.id) {
+          return false; // Keep the border
+        }
+        return true; // Remove border for other subtasks
+      }
+    }
     
     return false;
-  }, [hasChildTasks, isSubtask])
+  }, [hasChildTasks, isSubtask, card.id, card.parentTaskId, kanbanData.columns])
   
   // Determine if a task should be visible based on parent collapsed state
   const isVisible = useMemo(() => {
