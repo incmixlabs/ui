@@ -125,73 +125,11 @@ export class LocalDatabase {
       tasks: {
         schema: taskSchemaLiteral,
         autoMigrate: true,
-        migrationStrategies: {
-          // Handle migration from version 0 to 1
-          1: (oldDoc: any) => {
-            return {
-              ...oldDoc,
-              // Ensure we use statusId instead of columnId
-              statusId: oldDoc.statusId || oldDoc.columnId || "",
-              // Ensure we have priorityId
-              priorityId: oldDoc.priorityId || "",
-              // Ensure taskOrder exists (previous name: order)
-              taskOrder:
-                oldDoc.taskOrder !== undefined
-                  ? oldDoc.taskOrder
-                  : oldDoc.order || 0,
-              // Ensure labelsTags has correct structure
-              labelsTags: Array.isArray(oldDoc.labelsTags)
-                ? oldDoc.labelsTags.map((tag: any) => ({
-                    value: tag.value || "",
-                    label: tag.label || "",
-                    color: tag.color || "#6366f1",
-                  }))
-                : [],
-              // Ensure attachments has correct structure
-              attachments: Array.isArray(
-                oldDoc.attachments || oldDoc.attachment
-              )
-                ? (oldDoc.attachments || oldDoc.attachment).map((att: any) => ({
-                    // Prefer existing id, then legacy attachmentId, then generate a new one
-                    id: att.id ?? att.attachmentId ?? nanoid(),
-                    name: att.name || "",
-                    url: att.url || "",
-                    size: att.size || "0",
-                    type: att.type || "",
-                    // Preserve legacy attachmentId for downstream fetching
-                    attachmentId: att.attachmentId,
-                  }))
-                : [],
-              // Ensure completed field exists
-              completed:
-                oldDoc.completed === undefined ? false : oldDoc.completed,
-            }
-          },
-        },
       },
       // Replace taskStatus and columns with the new labels collection
       labels: {
         schema: labelSchemaLiteral,
         autoMigrate: true,
-        migrationStrategies: {
-          // Add migration strategy for converting old taskStatus documents to labels
-          1: (oldDoc: any) => {
-            // Basic migration from any older format to the new label format
-            return {
-              id: oldDoc.id || nanoid(),
-              projectId: oldDoc.projectId || "default-project",
-              type: "status", // Default to status type for old documents
-              name: oldDoc.name || oldDoc.label || "",
-              color: oldDoc.color || "#6366f1",
-              order: oldDoc.order || oldDoc.columnOrder || 0,
-              description: oldDoc.description || "",
-              createdAt: oldDoc.createdAt || Date.now(),
-              updatedAt: oldDoc.updatedAt || Date.now(),
-              createdBy: oldDoc.createdBy || { id: "system", name: "System" },
-              updatedBy: oldDoc.updatedBy || { id: "system", name: "System" },
-            }
-          },
-        },
       },
       projects: { schema: projectSchemaLiteral, autoMigrate: true },
       formProjects: { schema: formProjectSchemaLiteral, autoMigrate: true },

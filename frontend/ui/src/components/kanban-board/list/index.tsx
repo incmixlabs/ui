@@ -247,29 +247,85 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                 setIsDragging(false)
                 return
               }
-
+              
               const closestEdge = extractClosestEdge(dropTargetData)
               if (!closestEdge) {
                 setIsDragging(false)
                 return
               }
-
-              const reordered = reorderWithEdge({
-                axis: "vertical",
-                list: sourceColumn.tasks,
-                startIndex: taskIndex,
-                indexOfTarget: targetTaskIndex,
-                closestEdgeOfTarget: closestEdge,
-              })
-
-              newOptimisticColumns = newOptimisticColumns.map(col =>
-                col.id === sourceColumn.id
-                  ? { ...col, tasks: reordered }
-                  : col
-              )
+              
+              // Check if the dragged task has subtasks that need to move with it
+              const draggingTask = sourceColumn.tasks[taskIndex]
+              const subtaskIds = draggingTask.isSubtask ? [] : 
+                sourceColumn.tasks
+                  .filter(task => task.isSubtask && task.parentTaskId === draggingTask.id)
+                  .map(task => task.id)
+              
+              // Prevent dropping a parent task onto its own subtask
+              const targetTask = sourceColumn.tasks[targetTaskIndex]
+              if (targetTask && subtaskIds.includes(targetTask.id)) {
+                setIsDragging(false)
+                return
+              }
+              
+              // If we're moving a task with subtasks, we need special handling
+              if (subtaskIds.length > 0) {
+                // Create a copy of the tasks array to work with
+                let tasksCopy = [...sourceColumn.tasks]
+                
+                // Remove the parent task and all its subtasks from their original positions
+                const parentTask = {...tasksCopy[taskIndex]}
+                const subtasks = tasksCopy.filter(task => subtaskIds.includes(task.id || ''))
+                
+                // Remove the parent and subtasks from the array
+                tasksCopy = tasksCopy.filter(task => 
+                  task.id !== parentTask.id && !subtaskIds.includes(task.id || ''))
+                
+                // Calculate where to insert the tasks
+                let insertIndex
+                if (targetTaskIndex < taskIndex) {
+                  // Moving upward
+                  insertIndex = closestEdge === 'bottom' ? targetTaskIndex + 1 : targetTaskIndex
+                } else {
+                  // Moving downward (need to account for the removed items)
+                  const removedItemsBeforeTarget = [parentTask.id, ...subtaskIds]
+                    .filter(id => {
+                      const idx = sourceColumn.tasks.findIndex(t => t.id === id)
+                      return idx !== -1 && idx < targetTaskIndex
+                    }).length
+                  
+                  insertIndex = closestEdge === 'bottom' ? 
+                    targetTaskIndex + 1 - removedItemsBeforeTarget : 
+                    targetTaskIndex - removedItemsBeforeTarget
+                }
+                
+                // Insert the parent task and all its subtasks at the new position
+                tasksCopy.splice(insertIndex, 0, parentTask, ...subtasks)
+                
+                // Update the column with the reordered tasks
+                newOptimisticColumns = newOptimisticColumns.map(col =>
+                  col.id === sourceColumn.id ? { ...col, tasks: tasksCopy } : col
+                )
+              } else {
+                // Standard reordering for tasks without subtasks
+                const reordered = reorderWithEdge({
+                  axis: "vertical",
+                  list: sourceColumn.tasks,
+                  startIndex: taskIndex,
+                  indexOfTarget: targetTaskIndex,
+                  closestEdgeOfTarget: closestEdge,
+                })
+                
+                newOptimisticColumns = newOptimisticColumns.map(col =>
+                  col.id === sourceColumn.id ? { ...col, tasks: reordered } : col
+                )
+              }
+              
               setOptimisticColumns(newOptimisticColumns)
               
-              const newIndex = reordered.findIndex((t: KanbanTask) => t.id === dragging.card.id)
+              // Find the new index of the dragged task
+              const updatedColumn = newOptimisticColumns.find(col => col.id === sourceColumn.id)
+              const newIndex = updatedColumn?.tasks.findIndex((t: KanbanTask) => t.id === dragging.card.id) || 0
               
               if (dragging.card.id) {
                 moveTask(dragging.card.id, destColumn.id, newIndex).finally(() => {
@@ -434,19 +490,22 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
       <Box className="flex-shrink-0 border-b border-gray-4 dark:border-gray-5 bg-gray-1 dark:bg-gray-2">
         <Flex direction="column" gap="4" className="p-4">
 
-          {/* Selected Tasks Actions */}
-          {selectedTasksCount > 0 && (
-            <Box className="p-3 border border-blue-6 dark:border-blue-7 bg-blue-3 dark:bg-blue-4 rounded-md shadow-sm">
-              <Flex justify="between" align="center">
-                <Flex align="center" gap="2">
-                  <Badge variant="solid" color="blue" size="1" className="px-2 py-0.5">
-                    {selectedTasksCount}
-                  </Badge>
-                  <Text size="2" className="font-medium text-blue-11">
-                    {selectedTasksCount === 1 ? 'task' : 'tasks'} selected
-                  </Text>
-                </Flex>
-                <Flex gap="3" align="center">
+          <Flex justify="between" align="center">
+            <Heading size="5" className="font-semibold text-gray-12 dark:text-gray-11">Project Tasks</Heading>
+
+            <Flex align="center" gap="2">
+              {/* Selected Tasks Actions - moved here from separate row */}
+              {selectedTasksCount > 0 && (
+                <>
+                  <Flex align="center" gap="2" className="mr-2">
+                    <Badge variant="solid" color="blue" size="1" className="px-2 py-0.5">
+                      {selectedTasksCount}
+                    </Badge>
+                    <Text size="2" className="font-medium text-blue-11">
+                      {selectedTasksCount === 1 ? 'task' : 'tasks'} selected
+                    </Text>
+                  </Flex>
+                  
                   {useAI && (
                     <Tooltip content={!isGenerating ? "Generate AI content for selected tasks" : "Generating content..."}>
                       <Button
@@ -460,24 +519,15 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                         {isGenerating ? (
                           <Loader2 size={16} className="animate-spin mr-1" />
                         ) : (
-                          <Sparkles size={16} />
+                          <Sparkles size={16} className="mr-1" />
                         )}
                         {isGenerating ?
-                          `Generating ${generationStats.completed}/${generationStats.total}` :
-                          "Generate AI Content"}
+                          `Generating...` :
+                          "Generate AI"}
                       </Button>
                     </Tooltip>
                   )}
-                  <Button
-                    variant="soft"
-                    color="blue"
-                    size="2"
-                    className="shadow-sm hover:shadow-md transition-all duration-150"
-                    onClick={handleLogSelectedTasks}
-                  >
-                    <ClipboardList size={16} />
-                    Log Selected
-                  </Button>
+                  
                   <Button
                     variant="outline"
                     color="gray"
@@ -485,17 +535,12 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                     className="shadow-sm hover:shadow-md hover:bg-gray-3 transition-all duration-150"
                     onClick={() => setSelectedTasks({})}
                   >
-                    <XCircle size={16} />
+                    <XCircle size={16} className="mr-1" />
                     Clear
                   </Button>
-                </Flex>
-              </Flex>
-            </Box>
-          )}
-          <Flex justify="between" align="center">
-            <Heading size="5" className="font-semibold text-gray-12 dark:text-gray-11">Project Tasks</Heading>
-
-            <Flex align="center" gap="2">
+                </>
+              )}
+              
               <Button 
                 variant="soft" 
                 size="2" 

@@ -4,6 +4,18 @@ import { useMemo } from "react"
 import type { TaskDataSchema, KanbanColumn, KanbanTask } from "@incmix/utils/schema"
 import { useKanban } from "./use-kanban-data"
 
+// Extend the UseListViewReturn type to include subtask operations
+declare module "@incmix/utils/schema" {
+  interface UseListViewReturn {
+    // Subtask operations
+    convertTaskToSubtask: (taskId: string, parentTaskId: string) => Promise<void>
+    convertSubtaskToTask: (taskId: string) => Promise<void>
+    canTaskBeIndented: (taskId: string) => boolean
+    canTaskBeUnindented: (taskId: string) => boolean
+    findPotentialParentTask: (taskId: string) => string | null
+  }
+}
+
 // List-specific types that extend schema types
 export interface ListColumn extends KanbanColumn {
   isExpanded?: boolean
@@ -32,6 +44,13 @@ export interface UseListViewReturn {
     targetStatusId: string,
     targetIndex?: number
   ) => Promise<void>
+
+  // Subtask operations
+  convertTaskToSubtask: (taskId: string, parentTaskId: string) => Promise<void>
+  convertSubtaskToTask: (taskId: string) => Promise<void>
+  canTaskBeIndented: (taskId: string) => boolean
+  canTaskBeUnindented: (taskId: string) => boolean
+  findPotentialParentTask: (taskId: string) => string | null
 
   // Status label methods with legacy column naming for backwards compatibility
   createColumn: (name: string, color?: string, description?: string) => Promise<string>
@@ -99,6 +118,13 @@ export function useListView(projectId = "default-project"): UseListViewReturn {
     updateTask: kanbanData.updateTask,
     deleteTask: kanbanData.deleteTask,
     moveTask: kanbanData.moveTask,
+    
+    // Subtask operations
+    convertTaskToSubtask: kanbanData.convertTaskToSubtask,
+    convertSubtaskToTask: kanbanData.convertSubtaskToTask,
+    canTaskBeIndented: kanbanData.canTaskBeIndented,
+    canTaskBeUnindented: kanbanData.canTaskBeUnindented,
+    findPotentialParentTask: kanbanData.findPotentialParentTask,
     
     // Status label methods with legacy column naming for backwards compatibility
     createColumn: kanbanData.createStatusLabel,
