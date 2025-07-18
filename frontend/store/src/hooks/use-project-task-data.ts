@@ -394,45 +394,92 @@ export function useProjectData(
         const now = getCurrentTimestamp()
         const user = getCurrentUser(currentUser)
 
+        // Get the task and all its subtasks (if any)
+        const taskToMove = data.tasks.find(t => t.id === id)
+        if (!taskToMove) throw new Error("Task not found")
+
+        // Find all subtasks of this task (direct and nested)
+        const getSubtaskIds = (parentId: string): string[] => {
+          const directSubtasks = data.tasks.filter(t => t.parentTaskId === parentId)
+          return [
+            ...directSubtasks.map(t => t.id),
+            ...directSubtasks.flatMap(t => getSubtaskIds(t.id))
+          ]
+        }
+        const subtaskIds = getSubtaskIds(id)
+        
         // Simplified order calculation for RxDB/local storage
         const targetTasks = data.tasks
-          .filter((t) => t.statusId === targetStatusId && t.id !== id) // Updated field names
-          .sort((a, b) => a.taskOrder - b.taskOrder) // Updated to taskOrder
+          .filter((t) => t.statusId === targetStatusId && t.id !== id && !subtaskIds.includes(t.id))
+          .sort((a, b) => a.taskOrder - b.taskOrder)
 
-        let newTaskOrder: number // Updated variable name
+        let newTaskOrder: number
         if (targetIndex === undefined || targetIndex >= targetTasks.length) {
           // Add to end
-          newTaskOrder = // Updated variable name
+          newTaskOrder =
             targetTasks.length > 0
-              ? targetTasks[targetTasks.length - 1].taskOrder + 1000 // Updated to taskOrder
+              ? targetTasks[targetTasks.length - 1].taskOrder + 1000
               : 1000
         } else if (targetIndex <= 0) {
           // Add to beginning
-          newTaskOrder = // Updated variable name
+          newTaskOrder =
             targetTasks.length > 0
-              ? Math.max(targetTasks[0].taskOrder - 1000, 100) // Updated to taskOrder
+              ? Math.max(targetTasks[0].taskOrder - 1000, 100)
               : 1000
         } else {
           // Insert between tasks
-          const prevOrder = targetTasks[targetIndex - 1].taskOrder // Updated to taskOrder
-          const nextOrder = targetTasks[targetIndex].taskOrder // Updated to taskOrder
-          newTaskOrder = (prevOrder + nextOrder) / 2 // Updated variable name
+          const prevOrder = targetTasks[targetIndex - 1].taskOrder
+          const nextOrder = targetTasks[targetIndex].taskOrder
+          // Ensure taskOrder is always an integer to satisfy schema validation
+          newTaskOrder = Math.floor((prevOrder + nextOrder) / 2)
+          
+          // If the calculated value is the same as prevOrder, increment it by 1
+          // This handles cases where prevOrder and nextOrder are consecutive integers
+          if (newTaskOrder === prevOrder) {
+            newTaskOrder = prevOrder + 1
+          }
         }
 
+        // Update the main task
         const task = await database.tasks
-          .findOne({ selector: { id } }) // Updated from taskId to id
+          .findOne({ selector: { id } })
           .exec()
         if (!task) throw new Error("Task not found")
 
-        // Just update - RxDB subscription handles UI
         await task.update({
           $set: {
-            statusId: targetStatusId, // Updated from columnId to statusId
-            taskOrder: newTaskOrder, // Updated from order to taskOrder
+            statusId: targetStatusId,
+            taskOrder: newTaskOrder,
             updatedAt: now,
             updatedBy: user,
           },
         })
+
+        // Also move all subtasks to the new status with the parent
+        if (subtaskIds.length > 0) {
+          // Calculate order offset based on the difference between old and new parent order
+          const orderOffset = newTaskOrder - taskToMove.taskOrder
+          
+          // Update each subtask
+          for (const subtaskId of subtaskIds) {
+            const subtask = await database.tasks
+              .findOne({ selector: { id: subtaskId } })
+              .exec()
+              
+            if (subtask) {
+              const subtaskData = subtask.toJSON()
+              await subtask.update({
+                $set: {
+                  statusId: targetStatusId,
+                  // Maintain relative position by applying the same offset
+                  taskOrder: subtaskData.taskOrder + orderOffset,
+                  updatedAt: now,
+                  updatedBy: user,
+                },
+              })
+            }
+          }
+        }
 
         // Optional: Clean up order values if they get too close to 0
         if (newTaskOrder < 1) {

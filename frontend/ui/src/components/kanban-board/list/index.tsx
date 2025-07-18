@@ -247,29 +247,78 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                 setIsDragging(false)
                 return
               }
-
+              
               const closestEdge = extractClosestEdge(dropTargetData)
               if (!closestEdge) {
                 setIsDragging(false)
                 return
               }
-
-              const reordered = reorderWithEdge({
-                axis: "vertical",
-                list: sourceColumn.tasks,
-                startIndex: taskIndex,
-                indexOfTarget: targetTaskIndex,
-                closestEdgeOfTarget: closestEdge,
-              })
-
-              newOptimisticColumns = newOptimisticColumns.map(col =>
-                col.id === sourceColumn.id
-                  ? { ...col, tasks: reordered }
-                  : col
-              )
+              
+              // Check if the dragged task has subtasks that need to move with it
+              const draggingTask = sourceColumn.tasks[taskIndex]
+              const subtaskIds = draggingTask.isSubtask ? [] : 
+                sourceColumn.tasks
+                  .filter(task => task.isSubtask && task.parentTaskId === draggingTask.id)
+                  .map(task => task.id)
+                  
+              // If we're moving a task with subtasks, we need special handling
+              if (subtaskIds.length > 0) {
+                // Create a copy of the tasks array to work with
+                let tasksCopy = [...sourceColumn.tasks]
+                
+                // Remove the parent task and all its subtasks from their original positions
+                const parentTask = {...tasksCopy[taskIndex]}
+                const subtasks = tasksCopy.filter(task => subtaskIds.includes(task.id || ''))
+                
+                // Remove the parent and subtasks from the array
+                tasksCopy = tasksCopy.filter(task => 
+                  task.id !== parentTask.id && !subtaskIds.includes(task.id || ''))
+                
+                // Calculate where to insert the tasks
+                let insertIndex
+                if (targetTaskIndex < taskIndex) {
+                  // Moving upward
+                  insertIndex = closestEdge === 'bottom' ? targetTaskIndex + 1 : targetTaskIndex
+                } else {
+                  // Moving downward (need to account for the removed items)
+                  const removedItemsBeforeTarget = [parentTask.id, ...subtaskIds]
+                    .filter(id => {
+                      const idx = sourceColumn.tasks.findIndex(t => t.id === id)
+                      return idx !== -1 && idx < targetTaskIndex
+                    }).length
+                  
+                  insertIndex = closestEdge === 'bottom' ? 
+                    targetTaskIndex + 1 - removedItemsBeforeTarget : 
+                    targetTaskIndex - removedItemsBeforeTarget
+                }
+                
+                // Insert the parent task and all its subtasks at the new position
+                tasksCopy.splice(insertIndex, 0, parentTask, ...subtasks)
+                
+                // Update the column with the reordered tasks
+                newOptimisticColumns = newOptimisticColumns.map(col =>
+                  col.id === sourceColumn.id ? { ...col, tasks: tasksCopy } : col
+                )
+              } else {
+                // Standard reordering for tasks without subtasks
+                const reordered = reorderWithEdge({
+                  axis: "vertical",
+                  list: sourceColumn.tasks,
+                  startIndex: taskIndex,
+                  indexOfTarget: targetTaskIndex,
+                  closestEdgeOfTarget: closestEdge,
+                })
+                
+                newOptimisticColumns = newOptimisticColumns.map(col =>
+                  col.id === sourceColumn.id ? { ...col, tasks: reordered } : col
+                )
+              }
+              
               setOptimisticColumns(newOptimisticColumns)
               
-              const newIndex = reordered.findIndex((t: KanbanTask) => t.id === dragging.card.id)
+              // Find the new index of the dragged task
+              const updatedColumn = newOptimisticColumns.find(col => col.id === sourceColumn.id)
+              const newIndex = updatedColumn?.tasks.findIndex((t: KanbanTask) => t.id === dragging.card.id) || 0
               
               if (dragging.card.id) {
                 moveTask(dragging.card.id, destColumn.id, newIndex).finally(() => {

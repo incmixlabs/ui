@@ -658,9 +658,12 @@ export function ListColumn({
             <Flex
               direction="column"
               className="flex-1"
-              ref={scrollableRef}
             >
-              <Box className="relative overflow-auto [overflow-anchor:none]">
+              <Box 
+                className="relative overflow-auto [overflow-anchor:none] max-h-[calc(100vh-240px)]" 
+                ref={scrollableRef}
+                style={{ overflowX: 'hidden', overflowY: 'auto' }}
+              >
                 {/* Column drop target indicator - shows when a card is being dragged over empty space in the column */}
                 {state.type === "is-card-over" && !state.isOverChildCard && (
                   <Box
