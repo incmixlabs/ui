@@ -722,25 +722,28 @@ export function useProjectData(
         }
 
         // Prevent creating cyclic dependencies - recursive check to detect all cycles
-        const checkForCycle = (currentId: string, targetId: string): boolean => {
-          if (currentId === targetId) return true;
-          
-          const current = data.tasks.find(t => t.id === currentId);
-          if (!current || !current.parentTaskId) return false;
-          
-          return checkForCycle(current.parentTaskId, targetId);
-        };
-        
-        const potentialParentTask = parentTask.toJSON();
-        
+        const checkForCycle = (
+          currentId: string,
+          targetId: string
+        ): boolean => {
+          if (currentId === targetId) return true
+
+          const current = data.tasks.find((t) => t.id === currentId)
+          if (!current || !current.parentTaskId) return false
+
+          return checkForCycle(current.parentTaskId, targetId)
+        }
+
+        const potentialParentTask = parentTask.toJSON()
+
         // Check if making this relationship would create a cycle
         if (checkForCycle(parentTaskId, taskId)) {
-          throw new Error("Cannot create cyclic task relationships");
+          throw new Error("Cannot create cyclic task relationships")
         }
-        
+
         // Also prevent making a subtask a parent
         if (potentialParentTask.isSubtask) {
-          throw new Error("Cannot make a subtask a parent task");
+          throw new Error("Cannot make a subtask a parent task")
         }
 
         const now = getCurrentTimestamp()
