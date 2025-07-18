@@ -483,19 +483,22 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
       <Box className="flex-shrink-0 border-b border-gray-4 dark:border-gray-5 bg-gray-1 dark:bg-gray-2">
         <Flex direction="column" gap="4" className="p-4">
 
-          {/* Selected Tasks Actions */}
-          {selectedTasksCount > 0 && (
-            <Box className="p-3 border border-blue-6 dark:border-blue-7 bg-blue-3 dark:bg-blue-4 rounded-md shadow-sm">
-              <Flex justify="between" align="center">
-                <Flex align="center" gap="2">
-                  <Badge variant="solid" color="blue" size="1" className="px-2 py-0.5">
-                    {selectedTasksCount}
-                  </Badge>
-                  <Text size="2" className="font-medium text-blue-11">
-                    {selectedTasksCount === 1 ? 'task' : 'tasks'} selected
-                  </Text>
-                </Flex>
-                <Flex gap="3" align="center">
+          <Flex justify="between" align="center">
+            <Heading size="5" className="font-semibold text-gray-12 dark:text-gray-11">Project Tasks</Heading>
+
+            <Flex align="center" gap="2">
+              {/* Selected Tasks Actions - moved here from separate row */}
+              {selectedTasksCount > 0 && (
+                <>
+                  <Flex align="center" gap="2" className="mr-2">
+                    <Badge variant="solid" color="blue" size="1" className="px-2 py-0.5">
+                      {selectedTasksCount}
+                    </Badge>
+                    <Text size="2" className="font-medium text-blue-11">
+                      {selectedTasksCount === 1 ? 'task' : 'tasks'} selected
+                    </Text>
+                  </Flex>
+                  
                   {useAI && (
                     <Tooltip content={!isGenerating ? "Generate AI content for selected tasks" : "Generating content..."}>
                       <Button
@@ -509,24 +512,15 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                         {isGenerating ? (
                           <Loader2 size={16} className="animate-spin mr-1" />
                         ) : (
-                          <Sparkles size={16} />
+                          <Sparkles size={16} className="mr-1" />
                         )}
                         {isGenerating ?
-                          `Generating ${generationStats.completed}/${generationStats.total}` :
-                          "Generate AI Content"}
+                          `Generating...` :
+                          "Generate AI"}
                       </Button>
                     </Tooltip>
                   )}
-                  <Button
-                    variant="soft"
-                    color="blue"
-                    size="2"
-                    className="shadow-sm hover:shadow-md transition-all duration-150"
-                    onClick={handleLogSelectedTasks}
-                  >
-                    <ClipboardList size={16} />
-                    Log Selected
-                  </Button>
+                  
                   <Button
                     variant="outline"
                     color="gray"
@@ -534,17 +528,12 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                     className="shadow-sm hover:shadow-md hover:bg-gray-3 transition-all duration-150"
                     onClick={() => setSelectedTasks({})}
                   >
-                    <XCircle size={16} />
+                    <XCircle size={16} className="mr-1" />
                     Clear
                   </Button>
-                </Flex>
-              </Flex>
-            </Box>
-          )}
-          <Flex justify="between" align="center">
-            <Heading size="5" className="font-semibold text-gray-12 dark:text-gray-11">Project Tasks</Heading>
-
-            <Flex align="center" gap="2">
+                </>
+              )}
+              
               <Button 
                 variant="soft" 
                 size="2" 
