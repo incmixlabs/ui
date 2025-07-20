@@ -200,9 +200,7 @@ export const incmixTailwindPreset: Config = {
         radius: "0.5rem",
       },
       fontFamily: {
-        /*        sans: ["var(--font-geist-sans)"],
-        mono: ["var(--font-geist-mono)"], */
-        sans: ["InterVariable", ...defaultTheme.fontFamily.sans],
+        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
       },
       keyframes: {
         "accordion-down": {

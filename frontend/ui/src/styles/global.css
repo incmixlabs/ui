@@ -7,7 +7,7 @@
 
 @layer tw_base, radix_ui, tw_components_utils;
 @import "@radix-ui/themes/styles.css" layer(radix_ui);
-
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @layer tw_base {
   @tailwind base;
 }
@@ -40,6 +40,8 @@
     transform: scale(1.1);
   }
   :root {
+    --font-inter: 'Inter', ui-sans-serif, system-ui;
+
     --color-black: #000000;
     --color-white: #ffffff;
 
@@ -144,6 +146,9 @@
     --sidebar-trigger-border: 0 0% 85%;
     --sidebar-trigger-background: 0 0% 100%;
 
+  }
+  * {
+    font-family: var(--font-inter);
   }
 }
 
