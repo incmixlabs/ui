@@ -186,7 +186,6 @@ const DashboardHomePage: React.FC = () => {
     handleDragEnd,
   } = useDragAndDrop(isEditing, gridComponents, setGridComponents)
 
-  // Show loading while auth is loading, store is loading, or dashboard is loading
   if (isLoading || isDashLoading) {
     return <LoadingPage />
   }
@@ -196,7 +195,7 @@ const DashboardHomePage: React.FC = () => {
 
   const isEmpty = gridComponents.length === 0
 
-  console.log("active drag data", activeDragData)
+  // console.log("active drag data", activeDragData)
 
   return (
     <DndContext

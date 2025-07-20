@@ -3,21 +3,17 @@ import type { Breakpoint, CustomLayouts } from "@incmix/ui/dashboard";
 
 import type { Layout } from "@incmix/react-grid-layout";
 import { presetLayouts } from "@incmix/ui/dashboard";
-import {
-  addGroupToLayouts,
-  getNextGroupId,
-} from "@utils";
-
+import { addGroupToLayouts, getNextGroupId } from "@utils";
 
 interface LayoutState {
-  defaultLayouts: CustomLayouts
-  activePresetId: string
-  applyPreset: (presetId?: string) => void
-  applyTemplates: (mainLayouts?: CustomLayouts, templateId?: string) => void
-  setDefaultLayouts: (layouts: CustomLayouts) => void
-  handleLayoutChange: (_layout: any, allLayouts: any) => void
-  handleNestedLayoutChange: (nestedLayout: Layout[], itemKey: string) => void
-  addNewGroup: () => string
+  defaultLayouts: CustomLayouts;
+  activePresetId: string;
+  applyPreset: (presetId?: string) => void;
+  applyTemplates: (mainLayouts?: CustomLayouts, templateId?: string) => void;
+  setDefaultLayouts: (layouts: CustomLayouts) => void;
+  handleLayoutChange: (_layout: any, allLayouts: any) => void;
+  handleNestedLayoutChange: (nestedLayout: Layout[], itemKey: string) => void;
+  addNewGroup: () => string;
 }
 
 export const useLayoutStore = create<LayoutState>((set, get) => ({
@@ -49,10 +45,9 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
 
   handleLayoutChange: (_layout, allLayouts) => {
     const { defaultLayouts } = get();
-    console.log("handleLayoutChange defaultLayouts", defaultLayouts);
+    // console.log("handleLayoutChange defaultLayouts", defaultLayouts);
 
     const updatedLayouts = JSON.parse(JSON.stringify(defaultLayouts));
-
 
     Object.keys(allLayouts).forEach((breakpoint) => {
       const breakpointKey = breakpoint as Breakpoint;
@@ -60,16 +55,17 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
       if (updatedLayouts[breakpointKey] && allLayouts[breakpointKey]) {
         allLayouts[breakpointKey].forEach((newItem: Layout) => {
           const existingItemIndex = updatedLayouts[breakpointKey].findIndex(
-            (item: { i: string; }) => item.i === newItem.i,
+            (item: { i: string }) => item.i === newItem.i,
           );
+          // console.log("existingItemIndex", existingItemIndex);
 
           if (existingItemIndex !== -1) {
             // Get the existing item
             const existingItem =
               updatedLayouts[breakpointKey][existingItemIndex];
+            // console.log("existingItem", existingItem);
 
             if (existingItem.layouts && existingItem.layouts.length > 0) {
-
               const preservedNestedLayouts = JSON.parse(
                 JSON.stringify(existingItem.layouts),
               );
@@ -78,8 +74,6 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
                 ...newItem,
                 layouts: preservedNestedLayouts,
               };
-
-           
             } else {
               // This is a regular item without nested layouts - preserve componentName
               updatedLayouts[breakpointKey][existingItemIndex] = {
@@ -88,13 +82,12 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
               };
             }
           } else {
-            // This is a new item, add it to the layouts
             updatedLayouts[breakpointKey].push({
               ...newItem,
               componentName:
-                (defaultLayouts[breakpointKey].find(i => i.i === newItem.i)?.componentName) ??
-                undefined,
-            })
+                defaultLayouts[breakpointKey].find((i) => i.i === newItem.i)
+                  ?.componentName ?? undefined,
+            });
           }
         });
 
@@ -143,8 +136,8 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
     });
   },
   addNewGroup: () => {
-    const currentLayouts = get().defaultLayouts
-    const newGroupId = getNextGroupId(currentLayouts)
+    const currentLayouts = get().defaultLayouts;
+    const newGroupId = getNextGroupId(currentLayouts);
     set((state) => {
       const updatedLayouts = addGroupToLayouts(currentLayouts, newGroupId);
 
