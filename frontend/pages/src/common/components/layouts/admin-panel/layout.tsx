@@ -16,7 +16,7 @@ export function DashboardLayout({ children }: Props) {
         2. `overflow-x-hidden` is added. This is the key change that prevents
            the main content area from ever expanding horizontally beyond the viewport.
       */}
-      <SidebarInset className="flex flex-1 flex-col overflow-x-hidden">
+      <SidebarInset className="flex flex-1 flex-col overflow-x-hidden px-5">
         {children}
       </SidebarInset>
     </SidebarProvider>

@@ -39,6 +39,9 @@ function DataTableComponent<TData extends object>({
   enableRowSelection = true,
   enableColumnVisibility = true,
   initialColumnVisibility,
+  // New props for external column visibility control
+  columnVisibility,
+  onColumnVisibilityChange,
   enableColumnResizing = false,
   enableColumnReordering = false,
   showRowCount = true,
@@ -80,7 +83,12 @@ function DataTableComponent<TData extends object>({
   onCellEdit,
 }: DataTableProps<TData>) {
   // Use our extracted hooks to organize the component
-  const tableState = useTableState(initialSidebarOpen, initialColumnVisibility);
+  const tableState = useTableState(
+    initialSidebarOpen, 
+    initialColumnVisibility,
+    columnVisibility,
+    onColumnVisibilityChange
+  );
 
   const {
     sidebarOpen,

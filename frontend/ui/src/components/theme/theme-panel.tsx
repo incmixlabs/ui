@@ -32,34 +32,17 @@ import {
 
 import { useTranslation } from "react-i18next";
 
-
-
-export function ThemePlayground() {
+const SelectRow = (props: {
+  label: string;
+  value: string;
+  isNotColor?: boolean;
+  isSolidColor?: boolean;
+  options: string[];
+  onChange: (v: string) => void;
+}) => {
   const { t } = useTranslation(["settings", "common"]);
-  const { appearance, toggleAppearance } = useAppearanceStore();
-  const {
-    accentColor,
-    onAccentColorChange,
-    grayColor,
-    onGrayColorChange,
-    radius,
-    onRadiusChange,
-    scaling,
-    onScalingChange,
-    sidebarBg,
-    setTheme,
-    dashboard,
-  } = useThemeStore();
-  const themeContext = useContext(ThemeContext);
 
-  const SelectRow = (props: {
-    label: string;
-    value: string;
-    isNotColor?: boolean;
-    isSolidColor?: boolean;
-    options: string[];
-    onChange: (v: string) => void;
-  }) => (
+  return (
     <>
       <Flex gap="4" align={"center"} justify={"between"}>
         <Text>{t(props.label)}</Text>
@@ -108,6 +91,27 @@ export function ThemePlayground() {
       </Flex>
     </>
   );
+};
+
+export function ThemePlayground() {
+  const { t } = useTranslation(["settings", "common"]);
+  const { appearance, toggleAppearance } = useAppearanceStore();
+  const {
+    accentColor,
+    onAccentColorChange,
+    grayColor,
+    onGrayColorChange,
+    radius,
+    onRadiusChange,
+    scaling,
+    onScalingChange,
+    sidebarBg,
+    setTheme,
+    dashboard,
+    pastel,
+    togglePastel,
+  } = useThemeStore();
+  const themeContext = useContext(ThemeContext);
 
   return (
     <CardContainer>
@@ -171,9 +175,9 @@ export function ThemePlayground() {
               const getColor = SIDEBAR_COLOR_OPTIONS.find(
                 (opt) => opt.bg.color === selectedBg,
               );
-        
+
               const bgColor = getColor?.bg.color as string;
-            
+
               setTheme({
                 sidebarBg: `var(--${bgColor}-${getColor?.bg.break})`,
               });
@@ -192,50 +196,53 @@ export function ThemePlayground() {
                         borderRadius: "0.25rem",
                       }}
                     />
-                    <Text>
-                      {extractColorName(opt.bg.color)}
-                    </Text>
+                    <Text>{extractColorName(opt.bg.color)}</Text>
                   </div>
                 </Select.Item>
               ))}
             </Select.Content>
           </Select.Root>
         </Flex>
+        <Box className="bg-gray-4 p-3 rounded-lg border border-gray-6 space-y-1.5">
+          <Flex align="center" justify="between">
+            <Text>{t("Pastel Colors")}</Text>
+            <Switch checked={pastel} onCheckedChange={togglePastel} />
+          </Flex>
+          <SelectRow
+            label={t("Dashboard Color #1")}
+            value={dashboard.color1}
+            options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
+            onChange={(v) =>
+              setTheme({ dashboard: { ...dashboard, color1: v as RadixColor } })
+            }
+          />
 
-        <SelectRow
-          label={t("Dashboard Color #1")}
-          value={dashboard.color1}
-          options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
-          onChange={(v) =>
-            setTheme({ dashboard: { ...dashboard, color1: v as RadixColor } })
-          }
-        />
+          <SelectRow
+            label={t("Dashboard Color #2")}
+            value={dashboard.color2}
+            options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
+            onChange={(v) =>
+              setTheme({ dashboard: { ...dashboard, color2: v as RadixColor } })
+            }
+          />
 
-        <SelectRow
-          label={t("Dashboard Color #2")}
-          value={dashboard.color2}
-          options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
-          onChange={(v) =>
-            setTheme({ dashboard: { ...dashboard, color2: v as RadixColor } })
-          }
-        />
-
-        <SelectRow
-          label={t("Dashboard Color #3")}
-          value={dashboard.color3}
-          options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
-          onChange={(v) =>
-            setTheme({ dashboard: { ...dashboard, color3: v as RadixColor } })
-          }
-        />
-        <SelectRow
-          label={t("Dashboard Color #4")}
-          value={dashboard.color4}
-          options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
-          onChange={(v) =>
-            setTheme({ dashboard: { ...dashboard, color4: v as RadixColor } })
-          }
-        />
+          <SelectRow
+            label={t("Dashboard Color #3")}
+            value={dashboard.color3}
+            options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
+            onChange={(v) =>
+              setTheme({ dashboard: { ...dashboard, color3: v as RadixColor } })
+            }
+          />
+          <SelectRow
+            label={t("Dashboard Color #4")}
+            value={dashboard.color4}
+            options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
+            onChange={(v) =>
+              setTheme({ dashboard: { ...dashboard, color4: v as RadixColor } })
+            }
+          />
+        </Box>
       </Grid>
     </CardContainer>
   );

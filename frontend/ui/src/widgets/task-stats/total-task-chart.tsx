@@ -11,7 +11,7 @@ export function TotalTasksChart() {
       title="Total Tasks"
       data={DEFAULT_TOTAL_TASKS_DATA}
       total={820}
-      color="var(--indigo-9)"
+      color="var(--dashboard-color-1)"
       label="Total Task"
     />
   )

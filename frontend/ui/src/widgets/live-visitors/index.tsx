@@ -28,7 +28,7 @@ const calculateTrend = (data: {value: number}[]): string => {
 export function LiveVisitors() {
   const trend = calculateTrend(data);
   return (
-    <CardContainer>
+    <CardContainer className="h-full flex flex-col justify-center">
       <Box className="pb-2">
         <Flex align={"center"} justify={"between"}>
           <Heading size="6" className="font-medium">Live Visitors</Heading>
@@ -41,7 +41,7 @@ export function LiveVisitors() {
         <Box className="h-44">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} barCategoryGap="20%" aria-label="Live visitors chart">
-              <Bar dataKey="value" fill="#22c55e" radius={[2, 2, 0, 0]} maxBarSize={12} />
+              <Bar dataKey="value" fill="var(--dashboard-color-1)" radius={[2, 2, 0, 0]} maxBarSize={12} />
             </BarChart>
           </ResponsiveContainer>
         </Box>

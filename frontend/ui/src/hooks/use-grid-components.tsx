@@ -1,11 +1,12 @@
 
 import { useState, useRef, useCallback } from "react"
-import { StatisticsBarChartView, toast, useLayoutStore } from "@incmix/ui"
+import { toast, useLayoutStore } from "@incmix/ui"
 import type { ComponentSlot, CustomLayouts, LayoutItemWithNested } from "@incmix/ui/dashboard"
 import type { Layout } from "@incmix/react-grid-layout"
 import {
   ActiveTask,
   ActivityTimeline,
+  BarStatisticWidgets,
   CalendarWidget,
   DoneTasks,
   InProgressTask,
@@ -18,7 +19,7 @@ import {
   ProjectTimelineWidgets,
   ProjectWidgets,
   RecentActivity,
-  StatisticWidgets2,
+  StatisticWidgets,
   SubscribersByCountries,
   TotalProject,
   TotalTasks,
@@ -62,7 +63,7 @@ export function useGridComponents(isEditing: boolean) {
     },
     {
       slotId: "grid-b|0",
-      component: <StatisticWidgets2 />,
+      component: <StatisticWidgets />,
       title: "Statistic Widgets",
       componentName: "statistic-widget",
       compImage: dashboardImg?.darkStatisticsImg,
@@ -163,7 +164,7 @@ export function useGridComponents(isEditing: boolean) {
     },
     {
       slotId: "st2",
-      component: <StatisticsBarChartView />,
+      component: <BarStatisticWidgets />,
       title: "Statistics 2",
       componentName: "statistics2",
       compImage: dashboardImg?.darkStatisticsImg2,

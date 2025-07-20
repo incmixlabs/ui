@@ -19,7 +19,7 @@ const data = [
 
 export function MonthlyBudget() {
   return (
-    <CardContainer>
+    <CardContainer className="h-full flex flex-col justify-center @container">
       <Box className="pb-2">
         <Flex align={"center"} justify={"between"}>
           <Heading size="6" className="font-medium">Monthly Budget</Heading>
@@ -33,23 +33,23 @@ export function MonthlyBudget() {
             <AreaChart data={data} aria-label="Monthly budget chart">
               <defs>
                 <linearGradient id="budgetGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#22c55e" stopOpacity={0.3} />
-                  <stop offset="100%" stopColor="#22c55e" stopOpacity={0.05} />
+                  <stop offset="0%" stopColor="var(--dashboard-color-2)" stopOpacity={0.3} />
+                  <stop offset="100%" stopColor="var(--dashboard-color-2)" stopOpacity={0.05} />
                 </linearGradient>
               </defs>
               <Area
                 type="monotone"
                 dataKey="value"
-                stroke="#22c55e"
+                stroke="var(--dashboard-color-2)"
                 strokeWidth={3}
                 fill="url(#budgetGradient)"
-                dot={{ fill: "#22c55e", strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, fill: "#22c55e" }}
+                dot={{ fill: "var(--dashboard-color-2)", strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, fill: "var(--dashboard-color-2)" }}
               />
             </AreaChart>
           </ResponsiveContainer>
         </Box>
-        <Text size="2" className="text-gray-11" aria-label="Monthly budget description">
+        <Text className="text-gray-11 @md:text-base text-xs" aria-label="Monthly budget description">
           Last month you had 12 expense transactions, 8 savings entries and 4 bills.
         </Text>
     </CardContainer>

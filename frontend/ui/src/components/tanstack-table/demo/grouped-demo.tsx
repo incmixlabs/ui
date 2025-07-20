@@ -293,32 +293,96 @@ export default function GroupedTasksDemo() {
     status: false, // Hide the status column since we're grouping by it
     category: false // Hide the category column since we're grouping by it
   };
+
+  // State for external column visibility control
+  const [columnVisibility, setColumnVisibility] = React.useState<Record<string, boolean>>(initialColumnVisibility);
+  
+  // Toggle individual column visibility from outside the DataTable
+  const toggleColumnVisibility = (columnId: string) => {
+    setColumnVisibility(prev => ({
+      ...prev,
+      [columnId]: !prev[columnId]
+    }));
+  };
+
+  // Toggle all columns visibility
+  const toggleAllColumns = (visible: boolean) => {
+    const allColumns = TASK_TABLE_COLUMNS.reduce((acc, column) => {
+      acc[column.id || String(column.accessorKey)] = visible;
+      return acc;
+    }, {} as Record<string, boolean>);
+    
+    setColumnVisibility(allColumns);
+  };
   
   return (
-    <div className="w-full max-w-5xl mx-auto border border-gray-200 rounded-md shadow-sm overflow-hidden">
-      <DataTable
-        columns={TASK_TABLE_COLUMNS}
-        data={SAMPLE_TASKS}
-        // Enabling row grouping feature with the category field
-        enableRowGrouping={true}
-        rowGrouping={{
-          groupByColumn: "category", // Using standardized category identifiers
-          initiallyCollapsed: false,
-          toggleOnClick: true,
-          // Pass category mapping for standardized identifiers
-          categoryMapping: categoryMapping
-        }}
-        // Other options
-        enableRowSelection={true}
-        enableFiltering={false}
-        showRowCount={false}
-        enableColumnVisibility={true} // Enable column visibility control
-        initialColumnVisibility={initialColumnVisibility} // Set initial hidden columns
-        enablePagination={false}
-        className="border-none"
-        // Custom props to hide main header and show at group level
-        hideMainHeader={true}
-      />
+    <div className="w-full max-w-5xl mx-auto">
+      {/* External Column Visibility Controls */}
+      <div className="mb-4 p-4 border border-gray-200 rounded-md">
+        <h3 className="text-lg font-medium mb-2">External Column Controls</h3>
+        <div className="flex flex-wrap gap-2">
+          {TASK_TABLE_COLUMNS.map(column => {
+            const columnId = column.id || String(column.accessorKey);
+            const isVisible = columnVisibility[columnId] !== false; // Default to visible if not specified
+            
+            return (
+              <button
+                key={columnId}
+                onClick={() => toggleColumnVisibility(columnId)}
+                className={`px-3 py-1 text-sm rounded-md transition-colors ${isVisible 
+                  ? 'bg-blue-100 text-blue-700 border border-blue-300' 
+                  : 'bg-gray-100 text-gray-500 border border-gray-200'}`}
+              >
+                {column.headingName}
+                <span className="ml-2">{isVisible ? '✓' : '✗'}</span>
+              </button>
+            );
+          })}
+          <div className="w-full mt-2 flex gap-2">
+            <button 
+              onClick={() => toggleAllColumns(true)}
+              className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded-md border border-green-300"
+            >
+              Show All
+            </button>
+            <button 
+              onClick={() => toggleAllColumns(false)}
+              className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-md border border-red-300"
+            >
+              Hide All
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* DataTable */}
+      <div className="border border-gray-200 rounded-md shadow-sm overflow-hidden">
+        <DataTable
+          columns={TASK_TABLE_COLUMNS}
+          data={SAMPLE_TASKS}
+          // Enabling row grouping feature with the category field
+          enableRowGrouping={true}
+          rowGrouping={{
+            groupByColumn: "category", // Using standardized category identifiers
+            initiallyCollapsed: false,
+            toggleOnClick: true,
+            // Pass category mapping for standardized identifiers
+            categoryMapping: categoryMapping
+          }}
+          // Other options
+          enableRowSelection={true}
+          enableFiltering={false}
+          showRowCount={false}
+          enableColumnVisibility={true} // Enable column visibility control
+          // External column visibility control
+          columnVisibility={columnVisibility}
+          onColumnVisibilityChange={setColumnVisibility}
+          enablePagination={false}
+          className="border-none"
+          // Custom props to hide main header and show at group level
+          hideMainHeader={true}
+        />
+      </div>
     </div>
   )
 }

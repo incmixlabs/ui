@@ -7,7 +7,7 @@ import type {
   TaskDataSchema,
   UseProjectDataReturn,
 } from "@incmix/utils/schema"
-import { DEFAULT_LABELS } from "@incmix/utils/schema"
+
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { Subscription } from "rxjs"
 import { database } from "sql"
@@ -17,6 +17,7 @@ import {
   generateBrowserUniqueId,
   getCurrentTimestamp,
 } from "../utils/browser-helpers"
+import { DEFAULT_LABELS } from "../utils/default-labels"
 
 // Get the current user - accepts user context to make it injectable
 const getCurrentUser = (user?: CurrentUser) => {

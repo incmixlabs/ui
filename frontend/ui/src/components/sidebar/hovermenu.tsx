@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import {Box} from "@base"
 
 interface HoverMenuProps {
   children: React.ReactNode
@@ -158,8 +159,8 @@ export function HoverMenu({
 // console.log(content);
 
   return (
-    <div ref={containerRef} style={{ position: 'relative', display: 'contents' }}>
-      <div
+    <Box ref={containerRef} style={{ position: 'relative', display: 'contents' }}>
+      <Box
         ref={triggerRef}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -176,9 +177,9 @@ export function HoverMenu({
         style={{ display: 'contents' }}
       >
         {children}
-      </div>
+      </Box>
       {isOpen && (
-        <div
+        <Box
           ref={contentRef}
           style={{
             position: 'absolute',
@@ -190,11 +191,11 @@ export function HoverMenu({
           onMouseEnter={handleContentMouseEnter}
           onMouseLeave={handleContentMouseLeave}
         >
-          <div className="rounded-md border border-gray-4 bg-gray-2 shadow-lg">
+          <Box className="rounded-md border border-gray-4 bg-gray-2 text-gray-12 shadow-lg">
             {content}
-          </div>
-        </div>
+          </Box>
+        </Box>
       )}
-    </div>
+    </Box>
   )
 }

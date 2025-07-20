@@ -41,6 +41,7 @@ export type ThemeStoreConfig = ThemeConfig & {
   setTheme: (partial: Partial<ThemeConfig>) => void
   theme: (prop: keyof ThemeConfig) => any
   onAccentColorChange: (color: RadixColor) => void
+  togglePastel: () => void
   onGrayColorChange: (color: RadixGrayColor) => void
   onRadiusChange: (radius: RadixRadius) => void
   onScalingChange: (scaling: RadixScaling) => void
@@ -280,6 +281,7 @@ export const useThemeStore = create<ThemeStoreConfig>()(
         set((s) => {
           return { ...s, accentColor: color }
         }),
+      togglePastel: () => set((state) => ({ pastel: !state.pastel })),
       onGrayColorChange: (color: RadixGrayColor) =>
         set((s) => {
           return { ...s, grayColor: color }
@@ -351,81 +353,56 @@ export const useThemeStore = create<ThemeStoreConfig>()(
       getDashboardColors: () => {
         const {
           pastel = true,
-          pastelShade,
-          brightShade,
+          pastelShade = 6,
+          brightShade = 9,
           dashboard,
           breakFontColor,
         } = get()
         const { color1, color2, color3, color4 } = dashboard
-        const dash = pastel
-          ? {
-              color1: `var(--${color1}-${pastelShade})`,
-              text1: getTextColor({
-                color: color1,
-                pastel,
-                breakFontColor,
-                brightShade,
-                pastelShade,
-              }),
-              color2: `var(--${color2}-${pastelShade})`,
-              text2: getTextColor({
-                color: color2,
-                pastel,
-                breakFontColor,
-                brightShade,
-                pastelShade,
-              }),
-              text3: getTextColor({
-                color: color3,
-                pastel,
-                breakFontColor,
-                brightShade,
-                pastelShade,
-              }),
-              text4: getTextColor({
-                color: color4,
-                pastel,
-                breakFontColor,
-                brightShade,
-                pastelShade,
-              }),
-              color3: `var(--${color3}-${pastelShade})`,
-              color4: `var(--${color4}-${pastelShade})`,
-            }
-          : {
-              color1: `var(--${color1}-${brightShade})`,
-              text1: getTextColor({
-                color: color1,
-                pastel,
-                breakFontColor,
-                brightShade,
-                pastelShade,
-              }),
-              color2: `var(--${color2}-${brightShade})`,
-              text2: getTextColor({
-                color: color2,
-                pastel,
-                breakFontColor,
-                brightShade,
-                pastelShade,
-              }),
-              text3: getTextColor({
-                color: color3,
-                pastel,
-                breakFontColor,
-                brightShade,
-                pastelShade,
-              }),
-              text4: getTextColor({
-                color: color4,
-                pastel,
-                breakFontColor,
-                brightShade,
-                pastelShade,
-              }),
-              color3: `var(--${color3}-${brightShade})`,
-              color4: `var(--${color4}-${brightShade})`,
-            }
+
+        const buildColorVar = (varString: string, shade: string | number) => {
+          const match = varString.match(/--([a-zA-Z0-9-]+)-\d+/)
+          const base = match?.[1] || varString
+          return `var(--${base}-${shade})`
+        }
+
+        const shade = pastel ? pastelShade : brightShade
+
+        const dash = {
+          color1: buildColorVar(color1, shade.toString()),
+          text1: getTextColor({
+            color: color1,
+            pastel,
+            breakFontColor,
+            brightShade,
+            pastelShade,
+          }),
+          color2: buildColorVar(color2, shade.toString()),
+          text2: getTextColor({
+            color: color2,
+            pastel,
+            breakFontColor,
+            brightShade,
+            pastelShade,
+          }),
+          color3: buildColorVar(color3, shade.toString()),
+          text3: getTextColor({
+            color: color3,
+            pastel,
+            breakFontColor,
+            brightShade,
+            pastelShade,
+          }),
+          color4: buildColorVar(color4, shade?.toString()),
+          text4: getTextColor({
+            color: color4,
+            pastel,
+            breakFontColor,
+            brightShade,
+            pastelShade,
+          }),
+        }
+
         return dash
       },
       getIndicatorColors: (pastel = false) => {

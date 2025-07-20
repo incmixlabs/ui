@@ -1,37 +1,61 @@
-import { SmartDatetimeInput } from "@components/datetime-picker"
 import {
   Box,
   CardContainer,
   Flex,
   Heading,
-  StatisticsBarChartView,
+  IconButton,
+  Text,
+  WeeklyActivityChart,
 } from "@incmix/ui"
-import React, { useState } from "react"
+import { Clipboard, Ellipsis } from "lucide-react"
 
 export function StatisticWidgets() {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
-
-  const handleDateChange = (date: Date) => {
-    setSelectedDate(date)
+  const onMoreOptionsClick = ()=>{
+    console.log("More Options Clicked")
   }
-
+  const onClipboardClick = ()=>{
+    console.log("Clipboard Clicked")
+  }
   return (
-    <CardContainer>
-      <Flex justify={"between"}>
-        <Heading size="5" className="pb-4">
-          Statistics
-        </Heading>
-        <Box className="w-40">
-          <SmartDatetimeInput
-            className="bg-gray-2"
-            showTimePicker={false}
-            value={selectedDate}
-            onValueChange={handleDateChange}
-            placeholder="Enter a date"
-          />
-        </Box>
-      </Flex>
-      <StatisticsBarChartView />
-    </CardContainer>
+    <>
+      <CardContainer className="h-full @container">
+        <Flex align={"center"} gap={"2"} justify={"between"}>
+          <Heading size="5">Statistics</Heading>
+          <IconButton onClick={onMoreOptionsClick}>
+            <Ellipsis size={16} />
+          </IconButton>
+        </Flex>
+        <WeeklyActivityChart
+          statisticdata={[
+            { id: "M", name: "Mon", value: 45 },
+            { id: "T", name: "Tue", value: 85 },
+            { id: "W", name: "Wed", value: 65 },
+            { id: "T", name: "Thu", value: 95 },
+            { id: "F", name: "Fri", value: 75 },
+            { id: "S", name: "Sat", value: 55 },
+            { id: "S", name: "Sun", value: 80 },
+          ]}
+        />
+        <Flex
+          align={"center"}
+          gap={"2"}
+          justify={"between"}
+          className="border-gray-5 border-t pt-2"
+        >
+          <Flex align={"center"} gap={"2"}>
+            <IconButton onClick={onClipboardClick}>
+              <Clipboard size={16} />
+            </IconButton>
+            <Box>
+              <Text as="p">Completed Project</Text>
+              <Text className="text-gray-10">Current Week</Text>
+            </Box>
+          </Flex>
+          <Heading size="5" className="font-medium">
+            874
+          </Heading>
+        </Flex>
+      </CardContainer>
+    </>
   )
 }
