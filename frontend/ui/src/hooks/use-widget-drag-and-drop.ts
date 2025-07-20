@@ -191,7 +191,7 @@ export function useWidgetDragAndDrop(
     if (!draggedComponent) return false;
   
     // Generate unique ID for the grid instance
-    const newItemId = `${draggedSlotId}|${Date.now()}`;
+    const newItemId = `${draggedSlotId}|${crypto.randomUUID()}`;
   
     const componentName = activeDragData?.componentName || draggedComponent.componentName || "empty";
   

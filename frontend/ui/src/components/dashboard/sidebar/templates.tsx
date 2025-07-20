@@ -88,8 +88,6 @@ export function TemplatesSidebar({
     toast.success(`Template "${template?.id}" loaded successfully`);
   };
 
-  console.log("templates", templates);
-
   return (
     <Flex
       direction="column"
