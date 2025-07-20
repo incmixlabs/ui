@@ -22,10 +22,10 @@ import {
   generateDOM,
   initialLayouts,
   useDevicePreview,
-  useWidgetDragAndDrop,
   useGridComponents,
   useLayoutStore,
   useModalStore,
+  useWidgetDragAndDrop,
 } from "@incmix/ui"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useParams } from "@tanstack/react-router"
@@ -148,7 +148,6 @@ const DynamicDashboardPage: React.FC = () => {
   if (!project) return <div>Project not found</div>
 
   const isEmpty = gridComponents.length === 0
-
 
   return (
     <DndContext

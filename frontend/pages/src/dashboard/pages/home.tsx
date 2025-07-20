@@ -26,10 +26,10 @@ import {
   cn,
   generateDOM,
   useDevicePreview,
-  useWidgetDragAndDrop,
   useGridComponents,
   useLayoutStore,
   useModalStore,
+  useWidgetDragAndDrop,
 } from "@incmix/ui"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useLocation, useParams } from "@tanstack/react-router"
@@ -251,7 +251,6 @@ const DashboardHomePage: React.FC = () => {
                 overflow: "hidden",
               }}
             >
-          
               <ResponsiveGridLayout
                 onDragStart={(
                   _a: any,
