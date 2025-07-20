@@ -13,7 +13,7 @@ function HomePage() {
     if (authUser && !isLoading && !isError) {
       navigate({ to: "/dashboard/home" })
     }
-  }, [authUser, isLoading, isError, navigate])
+  }, [authUser, isLoading, isError])
 
   if (isLoading) {
     return <LoadingPage />

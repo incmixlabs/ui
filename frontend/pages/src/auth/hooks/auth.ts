@@ -35,7 +35,7 @@ export const useAuth = () => {
           "Accept-Language": I18n.language ?? "en",
         },
       })
-      if (!res.ok) throw new Error("Not authenticated")
+      if (!res.ok) return null
       return res.json() as Promise<AuthUserSession>
     },
     retry: false,
