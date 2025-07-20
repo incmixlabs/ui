@@ -9,7 +9,7 @@ import { sidebarComponents } from "@incmix/ui/dashboard"
 import type { LayoutItemWithNested } from "@incmix/ui/dashboard"
 import { LayoutItem } from "@incmix/ui/dashboard"
 
-export function useDragAndDrop(
+export function useWidgetDragAndDrop(
   isEditing: boolean,
   gridComponents: ComponentSlot[],
   setGridComponents: React.Dispatch<React.SetStateAction<ComponentSlot[]>>,
@@ -187,50 +187,48 @@ export function useDragAndDrop(
     //   return false
     // }
 
-    const draggedComponent = sidebarComponents.find((comp) => comp.slotId === draggedSlotId)
-    if (!draggedComponent) {
-      return false
-    }
-    const componentName = activeDragData?.componentName || draggedComponent.componentName || "empty"
-
-    // Create a component slot with the component name
+    const draggedComponent = sidebarComponents.find((comp) => comp.slotId === draggedSlotId);
+    if (!draggedComponent) return false;
+  
+    // Generate unique ID for the grid instance
+    const newItemId = `${draggedSlotId}|${Date.now()}`;
+  
+    const componentName = activeDragData?.componentName || draggedComponent.componentName || "empty";
+  
     const newComponent: ComponentSlot = {
-      slotId: draggedSlotId,
+      slotId: newItemId, // use unique ID
       component: draggedComponent.component,
       title: draggedComponent.title,
-      compImage: draggedComponent.compImage,
-      componentName: componentName,
-    }
-    setGridComponents((prev) => [...prev, newComponent])
-
-    const componentLayouts = draggedComponent.layouts || DEFAULT_SIZES_CONST
-    const newLayouts = { ...defaultLayouts }
-    ;(Object.keys(newLayouts) as Breakpoint[]).forEach((breakpoint) => {
-      const { w, h } = componentLayouts[breakpoint]
-      const currentLayout = [...newLayouts[breakpoint]]
-
-      // Calculate new layout with the component
-      const updatedLayout = calculateGridPosition(currentLayout, targetWidgetId, w, h, draggedSlotId)
-
-      // Add component name to the new layout item
-      newLayouts[breakpoint] = updatedLayout.map((item) => {
-        if (item.i === draggedSlotId) {
-          return {
-            ...item,
-            componentName: componentName, // Add component name information
-          }
-        }
-        return item
-      })
-    })
-    setDefaultLayouts(newLayouts)
-
+      componentName,
+    };
+  
+    setGridComponents((prev) => [...prev, newComponent]);
+  
+    const componentLayouts = draggedComponent.layouts || DEFAULT_SIZES_CONST;
+    const newLayouts = { ...defaultLayouts };
+  
+    (Object.keys(newLayouts) as Breakpoint[]).forEach((breakpoint) => {
+      const { w, h } = componentLayouts[breakpoint];
+      const currentLayout = [...newLayouts[breakpoint]];
+  
+      // Pass the new unique ID
+      const updatedLayout = calculateGridPosition(currentLayout, targetWidgetId, w, h, newItemId);
+  
+      // Add componentName to the layout
+      newLayouts[breakpoint] = updatedLayout.map((item) =>
+        item.i === newItemId ? { ...item, componentName } : item
+      );
+    });
+  
+    setDefaultLayouts(newLayouts);
+  
     toast.success("Component added", {
       description: `${draggedComponent.title} has been added to your dashboard.`,
-    })
-
-    return true
-  }
+    });
+  
+    return true;
+  };
+  
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
@@ -284,4 +282,4 @@ export function useDragAndDrop(
     addComponentToGrid,
     addComponentToNestedGrid,
   }
-}
+} 

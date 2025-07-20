@@ -22,7 +22,7 @@ import {
   generateDOM,
   initialLayouts,
   useDevicePreview,
-  useDragAndDrop,
+  useWidgetDragAndDrop,
   useGridComponents,
   useLayoutStore,
   useModalStore,
@@ -123,25 +123,6 @@ const DynamicDashboardPage: React.FC = () => {
   const { activeDevice, setActiveDevice, deviceTabs, getViewportWidth } =
     useDevicePreview()
 
-  const [actualWidth, setActualWidth] = useState<number | null>(null)
-  const boxRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!boxRef.current) return
-
-    const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setActualWidth(Math.round(entry.contentRect.width))
-      }
-    })
-
-    resizeObserver.observe(boxRef.current)
-
-    return () => {
-      resizeObserver.disconnect()
-    }
-  }, [])
-
   const {
     gridComponents,
     setGridComponents,
@@ -156,7 +137,7 @@ const DynamicDashboardPage: React.FC = () => {
     sensors,
     handleDragStart,
     handleDragEnd,
-  } = useDragAndDrop(isEditing, gridComponents, setGridComponents)
+  } = useWidgetDragAndDrop(isEditing, gridComponents, setGridComponents)
 
   // Show loading while auth is loading, store is loading, or dashboard is loading
   if (isLoading || isDashLoading) {
@@ -167,11 +148,7 @@ const DynamicDashboardPage: React.FC = () => {
   if (!project) return <div>Project not found</div>
 
   const isEmpty = gridComponents.length === 0
-  // console.log(
-  //   "defaultLayouts from dynamic-dashboard-page",
-  //   defaultLayouts,
-  //   actualWidth
-  // )
+
 
   return (
     <DndContext
@@ -189,7 +166,7 @@ const DynamicDashboardPage: React.FC = () => {
                     <SidebarTrigger
                       isSecondary
                       mobileSidebarTrigger
-                      className="-ml-1"
+                      className=""
                       aria-label={t("toggleSecondarySidebar")}
                     />
                   ))}
@@ -237,7 +214,6 @@ const DynamicDashboardPage: React.FC = () => {
               </Flex>
             </Flex>
             <Box
-              ref={boxRef}
               className={`relative mx-auto h-full rounded-lg transition-width duration-200 ${
                 isEditing && !isEmpty
                   ? "border-2 border-indigo-8 border-dashed bg-indigo-2 "
@@ -249,11 +225,6 @@ const DynamicDashboardPage: React.FC = () => {
                 overflow: "hidden",
               }}
             >
-              {isEditing && (
-                <span className="absolute top-0.5 right-0.5 z-10 rounded-md border border-gray-5 bg-gray-3 px-2 py-1">
-                  width: {actualWidth && `${actualWidth}px`}
-                </span>
-              )}
               <ResponsiveGridLayout
                 onDragStart={(
                   _a: any,
