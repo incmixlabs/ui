@@ -11,6 +11,7 @@ import {
 } from "@incmix/ui";
 import { MoreHorizontal, TrendingUp, TrendingDown } from "lucide-react";
 import { flagsImg } from "./assets";
+import {countries} from "@incmix/utils/countries"
 
 interface Country {
   name: string;
@@ -26,48 +27,63 @@ interface SubscribersByCountriesProps {
 
 const defaultCountries: Country[] = [
   {
+    code:"US",
     name: "USA",
-    flag: flagsImg.usaflag,
     subscribers: "22,450",
     change: "+22.5%",
     isPositive: true,
   },
   {
+    code:"IN",
     name: "India",
-    flag: flagsImg.inflag,
     subscribers: "18,568",
     change: "+18.5%",
     isPositive: true,
   },
   {
+    code:"BR",
     name: "Brazil",
-    flag: flagsImg.brflag,
     subscribers: "8,457",
     change: "-8.3%",
     isPositive: false,
   },
   {
+    code:"AU",
     name: "Australia",
-    flag: flagsImg.auflag,
     subscribers: "2,850",
     change: "+15.2%",
     isPositive: true,
   },
   {
+    code:"FR",
     name: "France",
-    flag: flagsImg.frflag,
     subscribers: "1,930",
     change: "-12.6%",
     isPositive: false,
   },
   {
+    code:"CN",
     name: "China",
-    flag: flagsImg.chflag,
     subscribers: "852",
     change: "-2.4%",
     isPositive: false,
   },
-];
+].map(country => {
+  const c = countries[country.code]
+  const flag = c?.flag || `🇺🇸` // Fallback to US flag if not found
+  const name = c?.short || c?.name || country.code // Use short name or full name if available
+  return {
+    flag,
+    name,
+    change: country.change,
+    subscribers: country.subscribers,
+    isPositive: country.isPositive,
+  }
+})
+
+console.log("coutnries",countries);
+console.log("defaultCountries",defaultCountries);
+
 
 export function SubscribersByCountries({
   countries = defaultCountries,
@@ -100,7 +116,7 @@ export function SubscribersByCountries({
             <Grid columns="3" gap="4" key={country.name} className="py-3">
               <Flex align="center" gap="2">
                 <img
-                  src={country.flag}
+                  src={`https://flagcdn.com/16x12/${country.flag.toLowerCase()}.png`}
                   alt={`${country.name} flag`}
                   className="w-5 h-5"
                   onError={(e) => {
