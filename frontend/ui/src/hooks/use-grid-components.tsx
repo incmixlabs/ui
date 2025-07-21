@@ -7,11 +7,14 @@ import {
   ActiveTask,
   ActivityTimeline,
   BarStatisticWidgets,
+  BatteryWidget,
   CalendarWidget,
+  ClockWidget,
   DoneTasks,
   InProgressTask,
   LiveVisitors,
   MonthlyBudget,
+  NewsWidget,
   NewTasks,
   NewTasksChart,
   PostingTask,
@@ -25,6 +28,7 @@ import {
   TotalTasks,
   TotalTasksChart,
   UserProfile,
+  WeatherWidget,
 } from "@incmix/ui/widgets"
 
 import { dashboardImg } from "@incmix/ui/dashboard"

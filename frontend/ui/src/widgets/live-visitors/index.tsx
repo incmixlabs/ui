@@ -31,7 +31,7 @@ export function LiveVisitors() {
     <CardContainer className="h-full flex flex-col justify-center">
       <Box className="pb-2">
         <Flex align={"center"} justify={"between"}>
-          <Heading size="6" className="font-medium">Live Visitors</Heading>
+          <Heading weight={"medium"}>Live Visitors</Heading>
           <Flex align={"center"} gap={"1"} className="text-green-9" aria-label="Visitor trend">
             <TrendingUp className="w-4 h-4 mr-1" />
             +{trend}%

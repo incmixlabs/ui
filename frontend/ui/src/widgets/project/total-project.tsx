@@ -41,7 +41,7 @@ export function TotalProject() {
   return (
     <CardContainer className="col-span-5 h-full 2xl:col-span-4">
       <Flex justify={"between"} align={"center"}>
-        <Heading className="font-poppins text-[20px]">Total Projects</Heading>
+        <Heading weight={"medium"}>Total Projects</Heading>
         <IconButton
           variant="ghost"
           className="m-0 flex cursor-pointer flex-row items-center p-0"

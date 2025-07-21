@@ -189,8 +189,7 @@ export function useWidgetDragAndDrop(
 
     const draggedComponent = sidebarComponents.find((comp) => comp.slotId === draggedSlotId);
     if (!draggedComponent) return false;
-  
-    // Generate unique ID for the grid instance
+
     const newItemId = `${draggedSlotId}|${crypto.randomUUID()}`;
   
     const componentName = activeDragData?.componentName || draggedComponent.componentName || "empty";

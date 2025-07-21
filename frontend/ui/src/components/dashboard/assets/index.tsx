@@ -97,5 +97,5 @@ export const dashboardImg = {
   lightDefaultPreset,
   darkDefaultPreset,
   darkGrpTemplate,
-  lightGrpTemplate
+  lightGrpTemplate,
 }

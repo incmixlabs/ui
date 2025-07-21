@@ -21,7 +21,7 @@ export function ProjectWidgets() {
     <>
       <CardContainer className="h-full @container">
         <Flex align={"center"} gap={"2"} justify={"between"}>
-          <Heading size="5">Projects</Heading>
+          <Heading weight={"medium"}>Projects</Heading>
           <IconButton>
             <Ellipsis size={16} />
           </IconButton>

@@ -56,6 +56,7 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
           const existingItemIndex = updatedLayouts[breakpointKey].findIndex(
             (item: { i: string }) => item.i === newItem.i,
           );
+          // console.log("existingItemIndex", existingItemIndex);
 
           if (existingItemIndex !== -1) {
             // Get the existing item

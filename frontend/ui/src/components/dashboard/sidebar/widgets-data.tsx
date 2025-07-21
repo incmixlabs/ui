@@ -23,6 +23,10 @@ import {
     ProjectWidgets,
     StatisticWidgets,
     BarStatisticWidgets,
+    ClockWidget,
+    BatteryWidget,
+    WeatherWidget,
+    NewsWidget,
   } from "@incmix/ui/widgets";
 
 export const sidebarComponents = [
@@ -336,24 +340,6 @@ export const sidebarComponents = [
     },
     className:"col-span-8"
   },
-
-  // {
-  //   slotId: "st",
-  //   component: <ProjectTimelineWidgets />,
-  //   componentName: "statistics",
-  //   darkCompImage: dashboardImg.darkStatisticsImg,
-  //   lightCompImage: dashboardImg.lightStatisticsImg,
-  //   title: "Statistics",
-  //   tags: ["statistics"],
-  //   layouts: {
-  //     lg: { w: 8, h: 20 },
-  //     md: { w: 8, h: 20 },
-  //     sm: { w: 8, h: 20 },
-  //     xs: { w: 8, h: 20 },
-  //     xxs: { w: 8, h: 20 },
-  //   },
-  //   className:"col-span-5"
-  // },
   {
     slotId: "lv",
     component: <LiveVisitors />,
