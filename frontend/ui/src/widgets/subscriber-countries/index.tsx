@@ -11,6 +11,7 @@ import {
 } from "@incmix/ui";
 import { MoreHorizontal, TrendingUp, TrendingDown } from "lucide-react";
 import { flagsImg } from "./assets";
+
 interface Country {
   name: string;
   flag: string;
