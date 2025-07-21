@@ -117,9 +117,6 @@ export function useGridComponents(isEditing: boolean) {
       componentName: "project-timeline",
       compImage: dashboardImg?.darkProjectTimelineImg,
     },
-  
-    // ✅ Remaining widgets from sidebarComponents
-  
     {
       slotId: "p",
       component: <NewTasksChart />,
