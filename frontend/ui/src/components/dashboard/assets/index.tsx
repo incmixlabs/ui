@@ -40,6 +40,8 @@ import darkTotalTaskChartImg from "./dark-total-task-chart.svg"
 import lightTotalTaskChartImg from "./light-total-task-chart.svg"
 import darkTotalTasksImg from "./dark-total-task.svg"
 import lightTotalTasksImg from "./light-total-task.svg"
+import darkClockImg from "./dark-clock.svg"
+import lightClockImg from "./light-clock.svg"
 
 import defaultPreset from "./default-presets.png"
 import presetsImg from "./presets2.png"
@@ -98,4 +100,6 @@ export const dashboardImg = {
   darkDefaultPreset,
   darkGrpTemplate,
   lightGrpTemplate,
+  darkClockImg,
+  lightClockImg
 }
