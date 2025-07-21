@@ -8,6 +8,18 @@ import { useProjectData } from "@incmix/store"
 // Re-export the types from schema package
 export type { KanbanColumn, KanbanTask }
 
+// Extend the UseKanbanReturn type to include subtask operations
+declare module "@incmix/utils/schema" {
+  interface UseKanbanReturn {
+    // Subtask operations
+    convertTaskToSubtask: (taskId: string, parentTaskId: string) => Promise<void>
+    convertSubtaskToTask: (taskId: string) => Promise<void>
+    canTaskBeIndented: (taskId: string) => boolean
+    canTaskBeUnindented: (taskId: string) => boolean
+    findPotentialParentTask: (taskId: string) => string | null
+  }
+}
+
 export function useKanban(projectId = "default-project"): UseKanbanReturn {
   // Get reactive project data
   const projectData = useProjectData(projectId)
@@ -121,6 +133,13 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
       deleteTask: projectData.deleteTask,
       moveTask: projectData.moveTask,
 
+      // Subtask operations (new)
+      convertTaskToSubtask: projectData.convertTaskToSubtask,
+      convertSubtaskToTask: projectData.convertSubtaskToTask,
+      canTaskBeIndented: projectData.canTaskBeIndented,
+      canTaskBeUnindented: projectData.canTaskBeUnindented,
+      findPotentialParentTask: projectData.findPotentialParentTask,
+
       // Status label operations (renamed from Column operations for consistency)
       createStatusLabel: (name: string, color?: string, description?: string) => 
         projectData.createLabel("status", name, color, description),
@@ -204,6 +223,13 @@ export function useKanban(projectId = "default-project"): UseKanbanReturn {
     bulkUpdateTasks,
     bulkMoveTasks,
     bulkDeleteTasks,
+    
+    // Subtask operations
+    convertTaskToSubtask: operations.convertTaskToSubtask,
+    convertSubtaskToTask: operations.convertSubtaskToTask,
+    canTaskBeIndented: operations.canTaskBeIndented,
+    canTaskBeUnindented: operations.canTaskBeUnindented,
+    findPotentialParentTask: operations.findPotentialParentTask,
     
     // Status label operations are exposed directly
     createStatusLabel: operations.createStatusLabel,

@@ -1,5 +1,5 @@
 // components/list/task-card.tsx - Updated styling to match Figma design with drag and drop
-import React, { useCallback, useState, memo, useEffect, useRef, useMemo } from "react"
+import React, { useCallback, useState, memo, useEffect, useRef, useMemo, useContext, createContext } from "react"
 import { createPortal } from "react-dom"
 import {
   draggable,
@@ -14,6 +14,9 @@ import {
   extractClosestEdge,
 } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge"
 import invariant from "tiny-invariant"
+
+// Import members data hook
+import { useMembers } from "../hooks/use-members"
 import {
   CalendarDays,
   Link,
@@ -24,7 +27,9 @@ import {
   Paperclip,
   ListChecks,
   CheckSquare,
-  ClipboardCheck
+  ClipboardCheck,
+  ChevronRight,
+  ChevronDown
 } from "lucide-react"
 import {
   type TaskDataSchema,
@@ -40,7 +45,7 @@ import { isShallowEqual } from "@incmix/utils/objects"
 import { isSafari } from "@utils/browser"
 import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
 import { ModalPresets } from "../shared/confirmation-modal"
-import { OverlappingAvatarGroup, type AssignedUser } from "../shared/overlapping-avatar-group"
+import { OverlappingAvatarGroup, type AssignedUser, type SelectableUser } from "../shared/overlapping-avatar-group"
 import { cn } from "@utils"
 import {
   Box,
@@ -52,6 +57,7 @@ import {
 } from "@incmix/ui"
 import { TaskActionsMenu } from "./task-actions-menu"
 import { ListColumn } from "../hooks/use-list-view"
+import { useKanban } from "../hooks/use-kanban-data"
 
 // Constants for DOM manipulation checks
 const canUseDOM =
@@ -76,12 +82,14 @@ const idle: TCardState = { type: "idle" };
 
 // Card style constants based on Figma design for both light and dark themes
 const cardStyles = {
-  base: "rounded-[20px] transition-all duration-150",
-  light: "bg-white border border-gray-6", 
-  dark: "dark:bg-gray-1 dark:border dark:border-gray-6",
-  hover: "hover:bg-gray-3 dark:hover:bg-gray-2",
-  selected: "bg-gray-3 dark:bg-gray-2",
-  dragging: "opacity-40 cursor-grabbing shadow-lg"
+  base: "rounded-md transition-all duration-150",
+  light: "bg-white border-b border-gray-4", 
+  dark: "dark:bg-gray-1 dark:border-b dark:border-gray-6",
+  hover: "hover:bg-gray-2 dark:hover:bg-gray-2",
+  selected: "bg-gray-3 dark:bg-gray-3",
+  dragging: "opacity-40 cursor-grabbing shadow-sm",
+  subtask: "pl-2", // Removed border-l and other styling to be handled separately
+  noBorder: "!border-b-0" // New class to remove bottom border when needed
 }
 
 // Checkbox style constants for both light and dark themes
@@ -94,6 +102,66 @@ const checkboxStyles = {
 // Group hover styles for elements that should only appear on hover
 const hoverVisibleClasses = "opacity-0 group-hover:opacity-100 transition-opacity duration-150"
 
+// Helper functions for priority labels styling
+const getPriorityStyles = (priorityId: string, priorityLabels?: { id: string; name: string; color: string; type: string }[]): string => {
+  // If priorityLabels exists, try to get color from it
+  if (priorityLabels && priorityLabels.length > 0) {
+    const priority = priorityLabels.find(p => p.id === priorityId);
+    if (priority && priority.color) {
+      // Convert the color to a Radix UI token class based on color value
+      switch (priority.color.toLowerCase()) {
+        case "red":
+          return "bg-red-3 text-red-11 dark:bg-red-3 dark:text-red-11";
+        case "orange":
+          return "bg-orange-3 text-orange-11 dark:bg-orange-3 dark:text-orange-11";
+        case "yellow":
+          return "bg-yellow-3 text-yellow-11 dark:bg-yellow-3 dark:text-yellow-11";
+        case "green":
+          return "bg-green-3 text-green-11 dark:bg-green-3 dark:text-green-11";
+        case "blue":
+          return "bg-blue-3 text-blue-11 dark:bg-blue-3 dark:text-blue-11";
+        case "purple":
+          return "bg-purple-3 text-purple-11 dark:bg-purple-3 dark:text-purple-11";
+        default:
+          return "bg-gray-3 text-gray-11 dark:bg-gray-3 dark:text-gray-11";
+      }
+    }
+  }
+  
+  // Fallback to using priorityId directly
+  switch (priorityId.toLowerCase()) {
+    case "urgent":
+    case "high":
+      return "bg-red-3 text-red-11 dark:bg-red-3 dark:text-red-11";
+    case "medium":
+      return "bg-orange-3 text-orange-11 dark:bg-orange-3 dark:text-orange-11";
+    case "low":
+      return "bg-blue-3 text-blue-11 dark:bg-blue-3 dark:text-blue-11";
+    default:
+      return "bg-gray-3 text-gray-11 dark:bg-gray-3 dark:text-gray-11";
+  }
+};
+
+// Helper function to get priority name from ID
+const getPriorityName = (priorityId: string, priorityLabels?: { id: string; name: string; color: string; type: string }[]): string => {
+  // First try to get from priorityLabels if available
+  if (priorityLabels && priorityLabels.length > 0) {
+    const priority = priorityLabels.find(p => p.id === priorityId);
+    if (priority?.name) return priority.name;
+  }
+  
+  // Fallback to formatting the priorityId directly
+  if (!priorityId) return "";
+  
+  // Capitalize first letter and format the rest
+  return priorityId.charAt(0).toUpperCase() + priorityId.slice(1).toLowerCase();
+};
+
+// Helper function to format dates
+const formatDate = (date: Date): string => {
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+
 interface ListTaskCardProps {
   card: KanbanTask
   statusId: string
@@ -103,6 +171,7 @@ interface ListTaskCardProps {
   onDeleteTask: (id: string) => Promise<void>
   onTaskSelect?: (id: string, selected: boolean) => void
   isSelected?: boolean
+  projectId?: string
 }
 
 // Shadow component for drag and drop indicators
@@ -119,6 +188,31 @@ export const TaskCardShadow = memo(function TaskCardShadow({
   );
 });
 
+// Context for sharing expanded state across tasks
+const ExpandedTasksContext = React.createContext<{
+  expandedTasks: Record<string, boolean>;
+  setExpandedTasks: (tasks: Record<string, boolean>) => void;
+}>({ 
+  expandedTasks: {},
+  setExpandedTasks: () => {}
+});
+
+// Provider component to manage expanded state globally
+export const ExpandedTasksProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+  const [expandedTasks, setExpandedTasks] = useState<Record<string, boolean>>({});
+  
+  return (
+    <ExpandedTasksContext.Provider value={{ expandedTasks, setExpandedTasks }}>
+      {children}
+    </ExpandedTasksContext.Provider>
+  );
+};
+
+// Custom hook to access expanded tasks context
+const useExpandedTasks = () => {
+  return useContext(ExpandedTasksContext);
+};
+
 export const ListTaskCard = memo(function ListTaskCard({
   card,
   statusId,
@@ -127,11 +221,96 @@ export const ListTaskCard = memo(function ListTaskCard({
   onUpdateTask,
   onDeleteTask,
   onTaskSelect,
-  isSelected,
+  isSelected = false,
+  projectId = "default-project",
 }: ListTaskCardProps) {
+
   const { handleDrawerOpen } = useKanbanDrawer()
   const innerRef = useRef<HTMLDivElement | null>(null)
   const [state, setState] = useState<TCardState>(idle)
+  // Access expanded state from context
+  const { expandedTasks, setExpandedTasks } = useExpandedTasks();
+  
+  // Get expanded state for this task (default to true if not set)
+  const isExpanded = card.id ? expandedTasks[card.id] !== false : true;
+  
+  // Access kanban data to get the subtask functions
+  const kanbanData = useKanban(projectId)
+  
+  // Get members data from hook
+  const { members, isLoading: membersLoading } = useMembers(projectId)
+  
+  // Check if the current task is a parent task (has subtasks)
+  const hasChildTasks = useMemo(() => {
+    if (!card.id) return false;
+    
+    // Create a parent-to-children index once
+    const childrenByParent = new Map<string, boolean>();
+    kanbanData.columns.forEach(column => {
+      column.tasks.forEach((task: KanbanTask) => {
+        if (task.parentTaskId) {
+          childrenByParent.set(task.parentTaskId, true);
+        }
+      });
+    });
+    
+    return childrenByParent.has(card.id);
+  }, [card.id, kanbanData.columns])
+
+  // Check if task is a subtask
+  const isSubtask = useMemo(() => {
+    return Boolean(card.isSubtask)
+  }, [card.isSubtask])
+  
+  // Determine if we should remove the border (for parent-subtask relationships)
+  const shouldRemoveBorder = useCallback(() => {
+    // If this task is a parent (has children), remove its bottom border
+    if (hasChildTasks) return true;
+    
+    // If this task is a subtask but NOT the last subtask, remove its border
+    // We need a border for the last subtask in a group
+    if (isSubtask) {
+      // Check if this is the last subtask for its parent
+      const parentId = card.parentTaskId;
+      if (parentId) {
+        // Get all tasks from all columns
+        const allTasks: KanbanTask[] = [];
+        kanbanData.columns.forEach(column => {
+          allTasks.push(...column.tasks);
+        });
+        
+        // Get all subtasks for this parent
+        const siblingTasks = allTasks.filter(task => task.parentTaskId === parentId);
+        
+        // Sort by taskOrder to find the last one
+        const sortedSiblings = [...siblingTasks].sort((a, b) => 
+          (a.taskOrder ?? 0) - (b.taskOrder ?? 0)
+        );
+        
+        // If this is the last subtask, keep the border
+        if (sortedSiblings.length > 0 && sortedSiblings[sortedSiblings.length - 1].id === card.id) {
+          return false; // Keep the border
+        }
+        return true; // Remove border for other subtasks
+      }
+    }
+    
+    return false;
+  }, [hasChildTasks, isSubtask, card.id, card.parentTaskId, kanbanData.columns])
+  
+  // Determine if a task should be visible based on parent collapsed state
+  const isVisible = useMemo(() => {
+    // Top-level tasks are always visible
+    if (!isSubtask) return true;
+    
+    // Subtasks are only visible if their parent is expanded
+    // In a full implementation, we'd check if the parent task is expanded
+    const parentId = card.parentTaskId;
+    if (!parentId) return true; // Safety check
+    
+    // Check if parent is expanded
+    return expandedTasks[parentId] !== false;
+  }, [isSubtask, card.parentTaskId, expandedTasks])
   
   // Handle task selection instead of completion toggle
   const handleTaskSelect = useCallback((checked: boolean | string) => {
@@ -158,7 +337,25 @@ export const ListTaskCard = memo(function ListTaskCard({
   }, [onUpdateTask])
 
   // Modal state for task deletion
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  
+  // Kanban data is now accessed above
+  
+  // Prepare handlers for indent/unindent operations
+  const handleIndentTask = useCallback(async (taskId: string) => {
+    const parentTaskId = kanbanData.findPotentialParentTask(taskId);
+    if (parentTaskId) {
+      await kanbanData.convertTaskToSubtask(taskId, parentTaskId);
+    }
+  }, [kanbanData]);
+  
+  const handleUnindentTask = useCallback(async (taskId: string) => {
+    await kanbanData.convertSubtaskToTask(taskId);
+  }, [kanbanData]);
+  
+  // Check if the task can be indented or unindented
+  const canIndent = useMemo(() => card.id ? kanbanData.canTaskBeIndented(card.id) : false, [card.id, kanbanData]);
+  const canUnindent = useMemo(() => card.id ? kanbanData.canTaskBeUnindented(card.id) : false, [card.id, kanbanData]);
 
   // Opens the delete confirmation modal
   const handleDeleteTask = useCallback(async () => {
@@ -186,7 +383,6 @@ export const ListTaskCard = memo(function ListTaskCard({
 
   const handleDuplicateTask = useCallback(async () => {
     // Implementation for task duplication could be added here
-    console.log("Duplicate task functionality not implemented yet")
   }, [])
 
   const handleOpenDrawer = useCallback((e: React.MouseEvent) => {
@@ -302,23 +498,70 @@ export const ListTaskCard = memo(function ListTaskCard({
       dropTargetForElements({
         element: innerRef.current as unknown as Element,
         getIsSticky: () => true,
-        canDrop: isDraggingACard,
+        // Ensure all card drags are accepted, including parent tasks with subtasks
+        canDrop: (args) => {
+          // First check if we're dragging a card
+          const isDraggingCard = isDraggingACard(args);
+          if (!isDraggingCard) return false;
+          
+          // Get the source card data
+          const sourceData = args.source.data;
+          if (!isCardData(sourceData)) return false;
+          
+          const sourceCard = sourceData.card as KanbanTask;
+          
+          // If the current card (drop target) is a subtask
+          if (card.isSubtask) {
+            // Only allow dropping if source is also a subtask with the same parent
+            return Boolean(sourceCard.isSubtask && sourceCard.parentTaskId === card.parentTaskId);
+          }
+          
+          // If we're dropping near a parent task that has expanded subtasks
+          // We need to check if we're in the subtask zone to prevent dropping regular tasks as subtasks
+          if (hasChildTasks && isExpanded) {
+            // For parent tasks, allow drops only for other parent tasks or subtasks already belonging to this parent
+            return Boolean(!sourceCard.isSubtask || sourceCard.parentTaskId === card.id);
+          }
+          
+          // In all other cases, allow the drop
+          return true;
+        },
         getData: ({ element, input }) => {
+          // Get the basic data for this card as a drop target
           const data = getCardDropTargetData({ card, statusId });
+          
+          // For parent tasks with subtasks, we need to ensure they can be dropped above other tasks
+          // Enhance the drop target detection for better accuracy with specific settings for upward movement
           return attachClosestEdge(data, {
             element,
             input,
+            // Explicitly allow both top and bottom edges with biased hit detection
+            // This improves the ability to drop tasks above existing tasks
             allowedEdges: ["top", "bottom"],
           });
         },
         onDragEnter({ source }) {
           if (!isCardData(source.data)) return;
           if (source.data.card.id === card.id) return;
-
+          
           // Get edge information from the source data
           const dataWithEdge = source.data as TCardDataWithEdge;
+          const sourceCard = source.data.card as KanbanTask;
+          
+          // Always ensure a valid edge is used, defaulting to bottom if not specified
+          // For tasks with subtasks, we want to ensure they can be dropped in all positions
+          // This improves the drag-and-drop experience for hierarchical tasks
           const closestEdge = dataWithEdge.closestEdge || "bottom";
-
+          
+          // Special handling for parent tasks with subtasks to ensure proper edge detection
+          // We need to know if the dragged task has subtasks to adjust the detection area
+          const hasSubtasks = !sourceCard.isSubtask && 
+                            columns.some(col => 
+                              col.tasks.some((t: KanbanTask) => 
+                                t.parentTaskId === sourceCard.id
+                              )
+                            );
+                            
           setState({
             type: "is-over",
             dragging: source.data.rect,
@@ -329,16 +572,30 @@ export const ListTaskCard = memo(function ListTaskCard({
           if (!isCardData(source.data)) return;
           // Check id instead of taskId for the new schema
           if (source.data.card.id === card.id) return;
-
+          
+          // Extract the closest edge and ensure it's valid
           const closestEdge = extractClosestEdge(self.data);
           if (!closestEdge) return;
-
+          
+          // Get the source card with proper typing
+          const sourceCard = source.data.card as KanbanTask;
+          
+          // Detect if the dragged task has subtasks to provide better drag detection
+          const hasSubtasks = !sourceCard.isSubtask && 
+                            columns.some(col => 
+                              col.tasks.some((t: KanbanTask) => 
+                                t.parentTaskId === sourceCard.id
+                              )
+                            );
+          
+          // Build the proposed state with additional information
           const proposed: TCardState = {
             type: "is-over",
             dragging: source.data.rect,
             closestEdge,
           };
-
+          
+          // Only update the state if it's different to avoid unnecessary rerenders
           setState((current) => {
             if (isShallowEqual(proposed, current)) {
               return current;
@@ -372,21 +629,50 @@ export const ListTaskCard = memo(function ListTaskCard({
         onConfirm: confirmDeleteTask
       })}
 
-      <Box className="flex flex-shrink-0 flex-col px-2 py-1.5">
+      <Box className="flex flex-shrink-0 flex-col pl-5">
         {/* Drop indicator above */}
         {state.type === "is-over" && state.closestEdge === "top" ? (
           <TaskCardShadow dragging={state.dragging} />
         ) : null}
         <Box
           ref={innerRef}
-          className={`group relative px-6 ${cardStyles.base} ${cardStyles.light} ${cardStyles.dark} ${cardStyles.hover} ${isSelected ? cardStyles.selected : ""} ${state.type === "is-dragging" ? cardStyles.dragging : ""}`}
-          style={{ height: "56px" }}
+          className={`group relative ${cardStyles.base} ${cardStyles.light} ${cardStyles.dark} ${cardStyles.hover} ${isSelected ? cardStyles.selected : ""} ${state.type === "is-dragging" ? cardStyles.dragging : ""} ${isSubtask ? cardStyles.subtask : ""} ${shouldRemoveBorder() ? cardStyles.noBorder : ""}`}
+          style={{ 
+            // Apply larger indentation for subtasks
+            marginLeft: isSubtask ? '32px' : '0',
+            // Hide the task if it's not visible (e.g., parent is collapsed)
+            display: isVisible ? 'block' : 'none'
+          }}
         >
-          {/* All content in a single horizontal row */}
-          <Flex justify="between" align="center" className="h-full w-full">
-            {/* Left side: Checkbox and title */}
-            <Flex align="center" gap="2" className="flex-shrink-0">
-              {/* Checkbox - exactly as in Figma */}
+          {/* All content in a single horizontal row with tabular layout */}
+          <Flex align="center" className="h-full w-full py-3 px-4">
+            {/* Left side: Checkbox and title - reduced width */}
+            <Flex align="center" gap="3" className="flex-shrink-0 w-[35%]">
+              {/* Expand/collapse icon for parent tasks */}
+              {hasChildTasks && (
+                <Box 
+                  className="cursor-pointer flex items-center justify-center w-5 h-5 hover:bg-gray-3 rounded"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (card.id) {
+                      // Toggle expanded state for this task
+                      setExpandedTasks({
+                        ...expandedTasks,
+                        [card.id]: expandedTasks[card.id] === false ? true : false
+                      });
+                    }
+                  }}
+                  aria-label={isExpanded ? "Collapse subtasks" : "Expand subtasks"}
+                >
+                  {isExpanded ? (
+                    <ChevronDown size={14} className="text-gray-9" />
+                  ) : (
+                    <ChevronRight size={14} className="text-gray-9" />
+                  )}
+                </Box>
+              )}
+              
+              {/* Checkbox with updated styling */}
               <Checkbox
                 className={checkboxStyles.base}
                 checked={isSelected}
@@ -399,23 +685,23 @@ export const ListTaskCard = memo(function ListTaskCard({
                 as="p"
                 className="text-gray-12 dark:text-gray-12 font-medium truncate cursor-pointer"
                 onClick={handleOpenDrawer}
-                style={{ fontSize: "15px", lineHeight: "20px", letterSpacing: "-0.1px" }}
+                size="2"
               >
                 {card.name || "Untitled Task"}
               </Text>
             </Flex>
 
-            {/* Center: Metadata indicators (visible on hover) */}
+              {/* Metadata indicators moved left with more space - only visible on hover */}
             <Flex 
               align="center" 
-              gap="5" 
-              className={`mx-auto flex-shrink-0 ${hoverVisibleClasses}`}
+              gap="2" 
+              className="flex-shrink-0 w-[25%] opacity-0 group-hover:opacity-100 transition-opacity duration-150"
             >
               {/* Subtasks counter */}
               {card.subTasks && card.subTasks.length > 0 && (
-                <Flex align="center" gap="2">
-                  <ListChecks size={16} className="text-gray-11" strokeWidth={3} />
-                  <Text className="text-gray-11" style={{ fontSize: "14px", lineHeight: "18px", fontWeight: 500 }}>
+                <Flex align="center" gap="1">
+                  <ListChecks size={14} className="text-gray-9" strokeWidth={2} />
+                  <Text className="text-gray-10" size="1">
                     {card.subTasks.filter(task => task.completed === true).length}/{card.subTasks.length}
                   </Text>
                 </Flex>
@@ -423,9 +709,9 @@ export const ListTaskCard = memo(function ListTaskCard({
               
               {/* Comments counter */}
               {card.comments && card.comments.length > 0 && (
-                <Flex align="center" gap="2">
-                  <MessageSquare size={16} className="text-gray-11" strokeWidth={3} />
-                  <Text className="text-gray-11" style={{ fontSize: "14px", lineHeight: "18px", fontWeight: 500 }}>
+                <Flex align="center" gap="1">
+                  <MessageSquare size={14} className="text-gray-9" strokeWidth={2} />
+                  <Text className="text-gray-10" size="1">
                     {card.comments.length}
                   </Text>
                 </Flex>
@@ -433,9 +719,9 @@ export const ListTaskCard = memo(function ListTaskCard({
               
               {/* Attachments counter */}
               {card.attachments && card.attachments.length > 0 && (
-                <Flex align="center" gap="2">
-                  <Paperclip size={16} className="text-gray-11" strokeWidth={3} />
-                  <Text className="text-gray-11" style={{ fontSize: "14px", lineHeight: "18px", fontWeight: 500 }}>
+                <Flex align="center" gap="1">
+                  <Paperclip size={14} className="text-gray-9" strokeWidth={2} />
+                  <Text className="text-gray-10" size="1">
                     {card.attachments.length}
                   </Text>
                 </Flex>
@@ -443,9 +729,9 @@ export const ListTaskCard = memo(function ListTaskCard({
               
               {/* Acceptance criteria counter */}
               {card.acceptanceCriteria && card.acceptanceCriteria.length > 0 && (
-                <Flex align="center" gap="2">
-                  <ClipboardCheck size={16} className="text-gray-11" strokeWidth={3} />
-                  <Text className="text-gray-11" style={{ fontSize: "14px", lineHeight: "18px", fontWeight: 500 }}>
+                <Flex align="center" gap="1">
+                  <ClipboardCheck size={14} className="text-gray-9" strokeWidth={2} />
+                  <Text className="text-gray-10" size="1">
                     {card.acceptanceCriteria.filter(item => item.checked === true).length}/{card.acceptanceCriteria.length}
                   </Text>
                 </Flex>
@@ -453,67 +739,116 @@ export const ListTaskCard = memo(function ListTaskCard({
               
               {/* Checklist counter */}
               {card.checklist && card.checklist.length > 0 && (
-                <Flex align="center" gap="2">
-                  <CheckSquare size={16} className="text-gray-11" strokeWidth={3} />
-                  <Text className="text-gray-11" style={{ fontSize: "14px", lineHeight: "18px", fontWeight: 500 }}>
+                <Flex align="center" gap="1">
+                  <CheckSquare size={14} className="text-gray-9" strokeWidth={2} />
+                  <Text className="text-gray-10" size="1">
                     {card.checklist.filter(item => item.checked === true).length}/{card.checklist.length}
                   </Text>
                 </Flex>
               )}
             </Flex>
 
-            {/* Right side: Date, dots and avatars */}
-            <Flex align="center" gap="3" className="flex-shrink-0">
-              {/* Date display with icon - exactly as in Figma */}
-              <Flex align="center" gap="2" className="flex-shrink-0">
-                <CalendarDays size={14} className="text-gray-11" strokeWidth={1.75} />
-                {card.endDate && (
-                  <Text className="text-gray-11" style={{ fontSize: "13px", lineHeight: "16px", fontWeight: 500, paddingRight: "4px" }}>
-                    {new Date(card.endDate).toLocaleDateString('en-US', { month: 'short' })} {new Date(card.endDate).getDate()}
+            {/* Right side content with better distribution */}
+            <Flex align="center" gap="3" className="flex-1 justify-end pr-2">
+              {/* Priority label indicator - fixed width */}
+              <Flex align="center" justify="center" className="flex-shrink-0 min-w-[5rem] w-20">
+                {/* Display priority based on available data */}
+                {card.priorityId ? (
+                  <Badge
+                    variant="soft"
+                    size="1"
+                    className={getPriorityStyles(card.priorityId, priorityLabels)}
+                  >
+                    {priorityLabels?.some(p => p.id === card.priorityId) 
+                      ? getPriorityName(card.priorityId, priorityLabels)
+                      : card.priorityId.startsWith('pr-') 
+                        ? card.priorityId.substring(3, 8) // Show shorter ID for custom priorities
+                        : getPriorityName(card.priorityId) // Use default formatting for standard priorities
+                    }
+                  </Badge>
+                ) : (
+                  <Text size="1" className="text-gray-8">
+                    No priority
                   </Text>
                 )}
               </Flex>
               
-              {/* Assigned users from card data */}
-              {card.assignedTo && card.assignedTo.length > 0 && (
-                <OverlappingAvatarGroup 
-                  users={card.assignedTo as AssignedUser[]} 
-                  maxDisplayed={3} 
-                  size="md" 
-                  className="ml-1" 
-                />
-              )}
+              {/* Due date with "Due:" label - fixed width */}
+              <Flex align="center" justify="center" className="flex-shrink-0 min-w-[6rem] w-24">
+                {card.endDate ? (
+                  <Text className="text-gray-10" size="1">
+                    Due: {formatDate(new Date(card.endDate))}
+                  </Text>
+                ) : (
+                  <span></span>
+                )}
+              </Flex>
               
-              {/* Task Actions Menu (3-dot menu) */}
-              <TaskActionsMenu
-                task={card}
-                columns={columns.map(col => ({
-                  id: col.id,
-                  name: col.name,
-                  projectId: col.projectId || '',
-                  statusId: col.id,
-                  priorityId: '',
-                  taskOrder: 0,
-                  completed: false,
-                  refUrls: [],
-                  labelsTags: [],
-                  attachments: [],
-                  assignedTo: [],
-                  subTasks: [],
-                  comments: [],
-                  createdAt: Date.now(),
-                  updatedAt: Date.now(),
-                  createdBy: { id: '', name: '' },
-                  updatedBy: { id: '', name: '' }
-                })) as TaskDataSchema[]}
-                priorityLabels={priorityLabels}
-                onUpdateTask={handleUpdateTask}
-                onDeleteTask={async () => await handleDeleteTask()}
-                onDuplicateTask={async () => Promise.resolve(console.log("Duplicate task functionality not implemented"))}
-                mode="existing-task"
-                size="1"
-                variant="ghost"
-              />
+              {/* Assigned users with avatar stack - fixed width */}
+              <Flex align="center" justify="center" className="flex-shrink-0 min-w-[6rem] w-24">
+                <OverlappingAvatarGroup 
+                  users={(card.assignedTo || []) as AssignedUser[]}
+                  maxDisplayed={3}
+                  size="md"
+                  interactive={true}
+                  allUsers={members.map(member => ({
+                    id: member.id,
+                    name: member.name,
+                    avatar: member.avatar,
+                    position: member.position,
+                    color: member.color,
+                    value: member.value,
+                    label: member.label
+                  }))}
+                  onUsersChange={async (updatedUsers) => {
+                    if (!card.id) return;
+                    
+                    try {
+                      // Update the task with the new assigned users
+                      await onUpdateTask(card.id, {
+                        assignedTo: updatedUsers
+                      });
+                    } catch (error) {
+                      console.error("Failed to update assigned users:", error);
+                    }
+                  }}
+                />
+              </Flex>
+              
+              {/* Task Actions Menu - with left margin to prevent flush right edge */}
+              <Flex align="center" justify="center" className="flex-shrink-0 ml-4 mr-2">
+                <TaskActionsMenu
+                  task={card}
+                  columns={columns.map(col => ({
+                    id: col.id,
+                    name: col.name,
+                    projectId: col.projectId || '',
+                    statusId: col.id,
+                    priorityId: '',
+                    taskOrder: 0,
+                    completed: false,
+                    refUrls: [],
+                    labelsTags: [],
+                    attachments: [],
+                    assignedTo: [],
+                    subTasks: [],
+                    comments: [],
+                    createdAt: Date.now(),
+                    updatedAt: Date.now(),
+                    createdBy: { id: '', name: '' },
+                    updatedBy: { id: '', name: '' }
+                  })) as unknown as TaskDataSchema[]}
+                  onUpdateTask={onUpdateTask}
+                  onDeleteTask={async () => { setShowDeleteConfirmation(true); return Promise.resolve(); }}
+                  // Add subtask operation handlers
+                  onIndentTask={handleIndentTask}
+                  onUnindentTask={handleUnindentTask}
+                  canIndent={canIndent}
+                  canUnindent={canUnindent}
+                  size="1"
+                  variant="ghost"
+                />
+              </Flex>
             </Flex>
           </Flex>
         </Box>
