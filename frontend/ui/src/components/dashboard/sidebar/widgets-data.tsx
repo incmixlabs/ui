@@ -23,6 +23,10 @@ import {
     ProjectWidgets,
     StatisticWidgets,
     BarStatisticWidgets,
+    ClockWidget,
+    BatteryWidget,
+    WeatherWidget,
+    NewsWidget,
   } from "@incmix/ui/widgets";
 
 export const sidebarComponents = [
@@ -386,5 +390,73 @@ export const sidebarComponents = [
       xxs: { w: 5, h: 16 },
     },
     className:"col-span-7"
+  },
+  {
+    slotId: "clk",
+    component: <ClockWidget />,
+    componentName: "clock",
+    darkCompImage: dashboardImg.darkClockImg,
+    lightCompImage: dashboardImg.lightClockImg,
+    title: "Clock",
+    tags: ["clock"],
+    layouts: {
+      lg: { w: 2, h: 12 },
+      md: { w: 2, h: 12 },
+      sm: { w: 2, h: 12 },
+      xs: { w: 2, h: 12 },
+      xxs: { w: 2, h: 12 },
+    },
+    className:"col-span-5"
+  },
+  {
+    slotId: "bat",
+    component: <BatteryWidget />,
+    componentName: "battery",
+    darkCompImage: dashboardImg.darkActivityTimelineImg,
+    lightCompImage: dashboardImg.lightActivityTimelineImg,
+    title: "Battery",
+    tags: ["battery"],
+    layouts: {
+      lg: { w: 1, h: 4 },
+      md: { w: 1, h: 4 },
+      sm: { w: 1, h: 4 },
+      xs: { w: 1, h: 4 },
+      xxs: { w: 1, h: 4 },
+    },
+    className:"col-span-2"
+  },
+  {
+    slotId: "wthr",
+    component: <WeatherWidget />,
+    componentName: "weather",
+    darkCompImage: dashboardImg.darkActivityTimelineImg,
+    lightCompImage: dashboardImg.lightActivityTimelineImg,
+    title: "Weather",
+    tags: ["weather"],
+    layouts: {
+      lg: { w: 2, h: 12 },
+      md: { w: 2, h: 12 },
+      sm: { w: 2, h: 12 },
+      xs: { w: 2, h: 12 },
+      xxs: { w: 2, h: 12 },
+    },
+    className:"col-span-5"
+  },
+  {
+    slotId: "nws",
+    component: <NewsWidget />,
+    componentName: "news",
+    darkCompImage: dashboardImg.darkActivityTimelineImg,
+    lightCompImage: dashboardImg.lightActivityTimelineImg,
+    title: "News",
+    tags: ["news"],
+    layouts: {
+      lg: { w: 5, h: 24 },
+      md: { w: 5, h: 24 },
+      sm: { w: 5, h: 24 },
+      xs: { w: 5, h: 24 },
+      xxs: { w: 5, h: 24 },
+    },
+    className:"col-span-5"
   },
 ];

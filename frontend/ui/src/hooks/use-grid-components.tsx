@@ -7,11 +7,14 @@ import {
   ActiveTask,
   ActivityTimeline,
   BarStatisticWidgets,
+  BatteryWidget,
   CalendarWidget,
+  ClockWidget,
   DoneTasks,
   InProgressTask,
   LiveVisitors,
   MonthlyBudget,
+  NewsWidget,
   NewTasks,
   NewTasksChart,
   PostingTask,
@@ -25,6 +28,7 @@ import {
   TotalTasks,
   TotalTasksChart,
   UserProfile,
+  WeatherWidget,
 } from "@incmix/ui/widgets"
 
 import { dashboardImg } from "@incmix/ui/dashboard"
@@ -200,6 +204,34 @@ export function useGridComponents(isEditing: boolean) {
       title: "Activity Timeline",
       componentName: "activity-timeline",
       compImage: dashboardImg?.darkActivityTimelineImg,
+    },
+    {
+      slotId: "clk",
+      component: <ClockWidget />,
+      title: "Clock",
+      componentName: "clock",
+      compImage: dashboardImg?.darkClockImg,
+    },
+    {
+      slotId: "bat",
+      component: <BatteryWidget />,
+      title: "Battery",
+      componentName: "battery",
+      compImage: dashboardImg?.darkClockImg,
+    },
+    {
+      slotId: "wthr",
+      component: <WeatherWidget />,
+      title: "Weather",
+      componentName: "weather",
+      compImage: dashboardImg?.darkClockImg,
+    },
+    {
+      slotId: "nws",
+      component: <NewsWidget />,
+      title: "News",
+      componentName: "news",
+      compImage: dashboardImg?.darkClockImg,
     },
   ]);
   
