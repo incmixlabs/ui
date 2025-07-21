@@ -1,10 +1,10 @@
 // Frontend/store/src/hooks/use-projects-check.ts
-import { useState, useEffect } from 'react'
-import { useRxDB } from 'rxdb-hooks'
-import type { RxDatabase } from 'rxdb'
+import { useEffect, useState } from "react"
+import type { RxDatabase } from "rxdb"
+import { useRxDB } from "rxdb-hooks"
+import { useOrganizationStore } from "../services/organizations"
 // Import from local types and services
-import type { TaskCollections } from '../sql/types'
-import { useOrganizationStore } from '../services/organizations'
+import type { TaskCollections } from "../sql/types"
 
 // Define a project item type that matches what our UI expects
 // This is compatible with the Switcher component's SwitcherItem
@@ -35,7 +35,7 @@ export function useProjectsCheck() {
   useEffect(() => {
     const fetchProjects = async () => {
       setIsLoading(true)
-      
+
       try {
         // Only check if we have a selected organization and database is available
         if (!selectedOrganisation?.id || !db.formProjects) {
@@ -47,18 +47,16 @@ export function useProjectsCheck() {
         }
 
         // Get projects from formProjects collection
-        const projectDocs = await db.formProjects
-          .find()
-          .exec()
+        const projectDocs = await db.formProjects.find().exec()
 
         const projectsExist = projectDocs && projectDocs.length > 0
         setHasProjects(projectsExist)
-        
+
         if (projectsExist) {
           // Convert RxDocuments to ProjectItem objects that are compatible with the Switcher
-          const projectItems: ProjectItem[] = projectDocs.map(doc => {
+          const projectItems: ProjectItem[] = projectDocs.map((doc) => {
             const docData = doc.toJSON()
-            
+
             return {
               id: doc.id,
               name: docData.name || `Project ${doc.id.substring(0, 6)}`,
@@ -69,9 +67,9 @@ export function useProjectsCheck() {
               // Add other fields as needed
             }
           })
-          
+
           setProjects(projectItems)
-          
+
           // If projects exist, set the first one's ID
           if (projectItems[0]) {
             setFirstProjectId(projectItems[0].id)
@@ -81,7 +79,7 @@ export function useProjectsCheck() {
           setFirstProjectId(null)
         }
       } catch (error) {
-        console.error('Error fetching projects:', error)
+        console.error("Error fetching projects:", error)
         setProjects([])
         setHasProjects(false)
         setFirstProjectId(null)
@@ -97,7 +95,7 @@ export function useProjectsCheck() {
     projects,
     hasProjects,
     isLoading,
-    firstProjectId
+    firstProjectId,
   }
 }
 

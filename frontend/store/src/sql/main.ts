@@ -145,8 +145,9 @@ export class LocalDatabase {
 
     // Default data initialization is now handled in project-utils.ts
     // when a new project is created, so we don't initialize data here anymore
-    console.log("Database initialized successfully - default data will be created when projects are created")
-    
+    console.log(
+      "Database initialized successfully - default data will be created when projects are created"
+    )
   }
   static async create() {
     const db = new LocalDatabase()

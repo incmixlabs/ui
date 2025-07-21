@@ -2,8 +2,8 @@
 import {
   useAIFeaturesStore,
   useOrganizationStore,
-  useProjectsCheck,
   useProjectStore,
+  useProjectsCheck,
 } from "@incmix/store"
 
 import {
@@ -26,8 +26,9 @@ import { useEffect, useState } from "react"
 const TasksPage = () => {
   const { selectedOrganisation } = useOrganizationStore()
   // Use the new hook to check if projects exist
-  const { hasProjects, isLoading, firstProjectId, projects } = useProjectsCheck()
-  
+  const { hasProjects, isLoading, firstProjectId, projects } =
+    useProjectsCheck()
+
   // Get selected project from the store instead of local state
   const { selectedProject, setSelectedProject } = useProjectStore()
 
@@ -39,7 +40,7 @@ const TasksPage = () => {
   useEffect(() => {
     if (firstProjectId && !selectedProject) {
       // Find the project object from the projects array
-      const firstProject = projects.find(p => p.id === firstProjectId)
+      const firstProject = projects.find((p) => p.id === firstProjectId)
       if (firstProject) {
         // Set the full project object in the store
         setSelectedProject(firstProject as any)
@@ -116,7 +117,10 @@ const TasksPage = () => {
                 <div className="text-sm">Gen AI</div>
                 <Switch checked={useAI} onCheckedChange={setUseAI} />
               </Flex>
-              <AddTaskForm projectId={selectedProject?.id || ""} onSuccess={() => {}} />
+              <AddTaskForm
+                projectId={selectedProject?.id || ""}
+                onSuccess={() => {}}
+              />
             </Flex>
           </Flex>
         </Box>

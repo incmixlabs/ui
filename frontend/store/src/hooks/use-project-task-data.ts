@@ -64,7 +64,7 @@ export function useProjectData(
 ): UseProjectDataReturn {
   // Get the selected project from the store
   const { selectedProject } = useProjectStore()
-  
+
   // Use the provided projectId if available, otherwise use selectedProject.id
   // If neither is available, don't use a default - this will show appropriate empty state
   const projectId = providedProjectId || selectedProject?.id || ""
@@ -93,11 +93,11 @@ export function useProjectData(
       })
       return
     }
-    
+
     const setupReactiveData = async () => {
       try {
         setData((prev) => ({ ...prev, isLoading: true, error: null }))
-        
+
         // We no longer auto-create default labels here
         // Labels are now only created when a project is explicitly created
         // This prevents unwanted label creation when browsing tasks
