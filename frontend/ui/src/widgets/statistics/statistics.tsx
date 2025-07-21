@@ -20,7 +20,7 @@ export function StatisticWidgets() {
     <>
       <CardContainer className="h-full @container">
         <Flex align={"center"} gap={"2"} justify={"between"}>
-          <Heading weight={"medium"}>Statistics</Heading>
+          <Heading weight={"medium"} className="font-sans">Statistics</Heading>
           <IconButton onClick={onMoreOptionsClick}>
             <Ellipsis size={16} />
           </IconButton>

@@ -12,7 +12,7 @@ export function BarStatisticWidgets() {
     <>
       <CardContainer className="h-full @container">
         <Flex justify="between" className="mb-6">
-          <Heading weight={"medium"}>Statistics</Heading>
+          <Heading weight={"medium"} className="font-sans">Statistics</Heading>
           <Flex gap="2" align="center" className="space-x-4">
             <Flex gap="2" align="center" className="space-x-2">
               <Box className="w-3 h-3 bg-[var(--dashboard-color-2)] rounded-full"></Box>
