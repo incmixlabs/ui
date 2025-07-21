@@ -7,8 +7,7 @@
 
 @layer tw_base, radix_ui, tw_components_utils;
 @import "@radix-ui/themes/styles.css" layer(radix_ui);
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 @layer tw_base {
   @tailwind base;
@@ -23,27 +22,26 @@
 
     background-color: aliceblue;
   }
-  .main-nav .rt-ScrollAreaViewport{
+  .main-nav .rt-ScrollAreaViewport {
     overflow: visible !important;
   }
-  [data-scaling='90%'] .scale-icon {
+  [data-scaling="90%"] .scale-icon {
     transform: scale(0.9);
   }
-  [data-scaling='95%'] .scale-icon {
+  [data-scaling="95%"] .scale-icon {
     transform: scale(0.95);
   }
-  [data-scaling='100%'] .scale-icon {
+  [data-scaling="100%"] .scale-icon {
     transform: scale(1);
   }
-  [data-scaling='105%'] .scale-icon {
+  [data-scaling="105%"] .scale-icon {
     transform: scale(1.05);
   }
-  [data-scaling='110%'] .scale-icon {
+  [data-scaling="110%"] .scale-icon {
     transform: scale(1.1);
   }
   :root {
-    
-    --font-inter: 'Inter', ui-sans-serif, system-ui;
+    --font-inter: "Inter", ui-sans-serif, system-ui;
 
     --color-black: #000000;
     --color-white: #ffffff;
@@ -94,19 +92,17 @@
     --navbar-height: theme("width.14");
     --sidebar-width: theme("width.64");
 
-    --sidebar-active: #D9D9D926;
-    
+    --sidebar-active: #d9d9d926;
+
     --sidebar-border: 220 7% 92%;
     --sidebar-trigger-border: 0 0% 85%;
     --sidebar-trigger-background: 0 0% 100%;
-
-
   }
 
   .dark {
     --color-black: #000000;
     --color-white: #ffffff;
-    
+
     --color-primary: #fcfcfc;
     --color-foreground: #111111;
     --color-muted: #838383;
@@ -143,16 +139,24 @@
     --navbar-height: theme("width.14");
     --sidebar-width: theme("width.64");
 
-    --sidebar-active: #D9D9D926;
+    --sidebar-active: #d9d9d926;
 
     --sidebar-border: 222 9% 22%;
     --sidebar-trigger-border: 0 0% 85%;
     --sidebar-trigger-background: 0 0% 100%;
-
   }
   * {
     font-family: var(--font-inter);
   }
+}
+
+.radix-themes {
+  --default-font-family: var(--font-inter);
+  --heading-font-family: var(--font-inter); 
+  --code-font-family: "JetBrains Mono", "Fira Code", monospace;
+  --strong-font-family: var(--font-inter);
+  --em-font-family: var(--font-inter);
+  --quote-font-family: var(--font-inter);
 }
 
 @keyframes blink {
