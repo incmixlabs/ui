@@ -23,9 +23,7 @@ export function generateDOM(
   const layoutItems = defaultLayouts?.[activeBreakpoint] ?? [];
 
   return layoutItems.map((item: LayoutItemWithNested) => {
-    const gridComponent = gridComponents.find((comp) => comp.slotId === item.i);
-    // console.log(gridComponents);
-    // console.log(item.i, gridComponent);
+    const gridComponent = gridComponents.find((comp) => comp.componentName === item.componentName);
 
     if (item.i.startsWith("grid-")) {
       const nested = item.layouts || [];

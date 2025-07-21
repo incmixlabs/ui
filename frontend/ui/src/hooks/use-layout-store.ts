@@ -45,7 +45,6 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
 
   handleLayoutChange: (_layout, allLayouts) => {
     const { defaultLayouts } = get();
-    // console.log("handleLayoutChange defaultLayouts", defaultLayouts);
 
     const updatedLayouts = JSON.parse(JSON.stringify(defaultLayouts));
 
@@ -102,12 +101,6 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
       }
     });
 
-    // Debug the updated layouts before setting
-    // debugComponentNames(
-    //   updatedLayouts,
-    //   "updated layouts in handleLayoutChange",
-    // );
-    // Update the store with the merged layouts
     set({ defaultLayouts: updatedLayouts });
   },
 
