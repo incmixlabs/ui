@@ -1,4 +1,5 @@
 // File: use-list-view.ts
+// Updated to use the selected project from project store
 
 import { useMemo } from "react"
 import type { TaskDataSchema, KanbanColumn, KanbanTask } from "@incmix/utils/schema"
@@ -92,9 +93,9 @@ export interface UseListViewReturn {
  * Hook for list view that reuses kanban data structure
  * This ensures consistency between views while allowing list-specific optimizations
  */
-export function useListView(projectId = "default-project"): UseListViewReturn {
+export function useListView(providedProjectId?: string): UseListViewReturn {
   // Reuse kanban hook for data consistency
-  const kanbanData = useKanban(projectId)
+  const kanbanData = useKanban(providedProjectId)
 
   // Transform kanban columns to list columns if needed
   const listColumns = useMemo<ListColumn[]>(() => {

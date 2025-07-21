@@ -3,6 +3,7 @@ import { ensureFileObject, validateProjectData } from "@incmix/utils/validate"
 // sql/project-utils.ts
 import { database } from "./main" // Added import for TaskDataSchema
 import type { FormProjectDocType } from "./types"
+import { initializeDefaultData } from "../hooks/use-initialize-default-data"
 
 /**
  * Saves a project form submission to the RxDB formProjects collection
@@ -73,6 +74,20 @@ export const saveFormProject = async (projectData: ProjectFormData) => {
         // Continue with the document saved, just without the attachment
       }
     }
+    // After successfully saving the project, create default labels and tasks for it
+    try {
+      console.log(`Creating default labels and tasks for project: ${insertedDoc.id}`)
+      // Create default labels and tasks for this project
+      await initializeDefaultData(database, {
+        projectId: insertedDoc.id, // Use the newly created project's ID
+        forceLabelCreation: true // Force creation even if there are existing labels
+      })
+      console.log(`Default labels and tasks created successfully for project: ${insertedDoc.id}`)
+    } catch (initError) {
+      // Log but don't fail the project creation if default data creation fails
+      console.error("Error creating default labels and tasks:", initError)
+    }
+    
     return insertedDoc
   } catch (error) {
     console.error("Failed to save project to RxDB:", error)

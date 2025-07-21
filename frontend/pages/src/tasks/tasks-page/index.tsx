@@ -1,8 +1,9 @@
 // pages/tasks/index.tsx - Fixed horizontal scrolling
 import {
-  type TaskCollections,
   useAIFeaturesStore,
   useOrganizationStore,
+  useProjectsCheck,
+  useProjectStore,
 } from "@incmix/store"
 
 import {
@@ -20,41 +21,31 @@ import {
 } from "@incmix/ui"
 import { CardContent } from "@incmix/ui/card"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { useQuery } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
-import type { RxDatabase } from "rxdb"
-import { useRxDB } from "rxdb-hooks"
 
 const TasksPage = () => {
   const { selectedOrganisation } = useOrganizationStore()
-  // Define default project ID
-  const [selectedProject, setSelectedProject] =
-    useState<string>("default-project")
-  const db: RxDatabase<TaskCollections> = useRxDB()
+  // Use the new hook to check if projects exist
+  const { hasProjects, isLoading, firstProjectId, projects } = useProjectsCheck()
+  
+  // Get selected project from the store instead of local state
+  const { selectedProject, setSelectedProject } = useProjectStore()
 
   const { useAI, setUseAI } = useAIFeaturesStore()
 
-  // Get projects for the selected organization
-  const { data: projects } = useQuery({
-    queryKey: ["projects", selectedOrganisation?.id],
-    enabled: !!selectedOrganisation?.id && !!db.projects,
-    queryFn: () => {
-      if (!selectedOrganisation) return []
-      return db.projects
-        .find({
-          selector: { orgId: selectedOrganisation.id },
-          sort: [{ createdAt: "asc" }],
-        })
-        .exec()
-    },
-  })
+  // We no longer need this query as the useProjectsCheck hook handles this
 
-  // Set first project as selected when projects load
+  // Set first project as selected when hook data loads
   useEffect(() => {
-    if (!selectedProject && projects?.length) {
-      setSelectedProject(projects[0].id)
+    if (firstProjectId && !selectedProject) {
+      // Find the project object from the projects array
+      const firstProject = projects.find(p => p.id === firstProjectId)
+      if (firstProject) {
+        // Set the full project object in the store
+        setSelectedProject(firstProject as any)
+      }
     }
-  }, [projects, selectedProject])
+  }, [firstProjectId, projects, selectedProject, setSelectedProject])
 
   if (!selectedOrganisation) {
     return (
@@ -66,6 +57,37 @@ const TasksPage = () => {
             </p>
           </CardContent>
         </Card.Root>
+      </DashboardLayout>
+    )
+  }
+
+  // Show loading state while checking for projects
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <Card.Root>
+          <CardContent>
+            <p className="text-center">Loading projects...</p>
+          </CardContent>
+        </Card.Root>
+      </DashboardLayout>
+    )
+  }
+
+  // Show message when no projects exist
+  if (!hasProjects) {
+    return (
+      <DashboardLayout>
+        {/* Use flex layout to center the message vertically and horizontally */}
+        <div className="flex h-full w-full items-center justify-center">
+          <Card.Root className="max-w-md">
+            <CardContent className="p-8">
+              <p className="text-center font-medium text-lg">
+                No projects. Please create one.
+              </p>
+            </CardContent>
+          </Card.Root>
+        </div>
       </DashboardLayout>
     )
   }
@@ -94,7 +116,7 @@ const TasksPage = () => {
                 <div className="text-sm">Gen AI</div>
                 <Switch checked={useAI} onCheckedChange={setUseAI} />
               </Flex>
-              <AddTaskForm projectId="default-project" onSuccess={() => {}} />
+              <AddTaskForm projectId={selectedProject?.id || ""} onSuccess={() => {}} />
             </Flex>
           </Flex>
         </Box>
@@ -107,16 +129,16 @@ const TasksPage = () => {
         */}
         <Box className="relative flex-1 overflow-y-auto">
           <Tabs.Content value="board" className="h-full">
-            <Board projectId={selectedProject || "default-project"} />
+            <Board projectId={selectedProject?.id || ""} />
           </Tabs.Content>
           <Tabs.Content value="list" className="h-full">
-            <ListBoard projectId={selectedProject || "default-project"} />
+            <ListBoard projectId={selectedProject?.id || ""} />
           </Tabs.Content>
           <Tabs.Content value="table" className="h-full">
-            <TableView projectId={selectedProject || "default-project"} />
+            <TableView projectId={selectedProject?.id || ""} />
           </Tabs.Content>
           <Tabs.Content value="roadmap" className="h-full">
-            <RoadmapView projectId={selectedProject || "default-project"} />
+            <RoadmapView projectId={selectedProject?.id || ""} />
           </Tabs.Content>
         </Box>
       </Tabs.Root>

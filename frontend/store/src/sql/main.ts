@@ -143,18 +143,10 @@ export class LocalDatabase {
       },
     })
 
-    // Initialize default data (only if collections are empty)
-    // This creates default task statuses and sample tasks
-    try {
-      await initializeDefaultData(this.database, {
-        projectId: "default-project", // Change to your desired default project ID
-        labelsOnly: false, // Set to true if you only want labels without sample tasks
-      })
-      console.log("Default data initialized successfully")
-    } catch (error) {
-      console.error("Error initializing default data:", error)
-      // Don't throw - we should continue even if data initialization fails
-    }
+    // Default data initialization is now handled in project-utils.ts
+    // when a new project is created, so we don't initialize data here anymore
+    console.log("Database initialized successfully - default data will be created when projects are created")
+    
   }
   static async create() {
     const db = new LocalDatabase()
