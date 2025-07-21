@@ -125,13 +125,11 @@ export class LocalDatabase {
       tasks: {
         schema: taskSchemaLiteral,
         autoMigrate: true,
-       
       },
       // Replace taskStatus and columns with the new labels collection
       labels: {
         schema: labelSchemaLiteral,
         autoMigrate: true,
-        
       },
       projects: { schema: projectSchemaLiteral, autoMigrate: true },
       formProjects: { schema: formProjectSchemaLiteral, autoMigrate: true },
