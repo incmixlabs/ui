@@ -64,7 +64,7 @@ export function ActivityTimeline({
       {/* Header */}
       <Box className="pb-4 flex-shrink-0">
         <Flex align="center" justify="between">
-          <Heading size="6" className="font-medium">
+          <Heading weight={"medium"}>
             Activity Timeline
           </Heading>
           <Button variant="ghost" size="2">

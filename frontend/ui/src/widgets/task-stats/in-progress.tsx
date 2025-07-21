@@ -7,8 +7,8 @@ export function InProgressTask({ count = 324 }: { count?: number }) {
     className="h-full"
       count={count}
       label="In Progress"
-      iconClassName="bg-amber-3"
-      icon={<ClipBoardStatus size="20" />}
+      iconClassName="bg-gray-3"
+      icon={<ClipBoardStatus size="20" color="var(--indicator-default)" />}
     />
   )
 }

@@ -1,4 +1,4 @@
-import { Card} from "@base"
+import { Box, Card} from "@base"
 import { cn } from "@utils"
 interface StatsCardProps {
   count: number
@@ -20,7 +20,7 @@ export function StatsCard({
       <Card.Header
         className={cn(" flex flex-col items-center justify-center", className)}
       >
-        <div className={cn("mb-2 rounded-xl p-4", iconClassName)}>{icon}</div>
+        <Box className={cn("mb-2 rounded-xl p-4", iconClassName)}>{icon}</Box>
         <Card.Title className="text-center font-medium font-poppins text-3xl">
           {count}
         </Card.Title>

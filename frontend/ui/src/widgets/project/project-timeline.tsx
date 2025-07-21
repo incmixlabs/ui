@@ -93,7 +93,7 @@ export function ProjectTimelineWidgets() {
         <Flex className="h-full">
           <Box className="flex-1 border-r border-gray-4">
             <Card.Header className="pb-4">
-              <Card.Title className="text-xl font-semibold text-gray-12">
+              <Card.Title className="text-xl font-medium text-gray-12">
                 Project Timeline
               </Card.Title>
               <Text as="p" className="text-sm text-gray-11">

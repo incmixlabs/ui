@@ -1,7 +1,7 @@
 import type { IconProps } from "@/types"
 
 export function ClipBoardStatus({
-  color = "var(--color-yellow)",
+  color,
   size = "15",
   ...props
 }: IconProps) {

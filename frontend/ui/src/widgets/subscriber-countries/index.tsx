@@ -75,9 +75,7 @@ export function SubscribersByCountries({
     <CardContainer className="min-h-72 h-full flex flex-col overflow-hidden">
       <Box className="pb-4 flex-shrink-0">
         <Flex align="center" justify="between">
-          <Heading size="6" className="font-medium">
-            Subscriber by Countries
-          </Heading>
+          <Heading weight={"medium"}>Subscriber by Countries</Heading>
           <Button variant="ghost" size="2">
             <MoreHorizontal className="w-4 h-4" />
           </Button>

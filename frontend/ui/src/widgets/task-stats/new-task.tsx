@@ -9,7 +9,7 @@ export function NewTasks() {
       label="New Tasks"
       iconClassName="bg-orange-3"
       className="h-full"
-      icon={<ClipBoardAdd size="20" />}
+      icon={<ClipBoardAdd size="20" color="var(--indicator-warning)" />}
       />
     </>
   )
