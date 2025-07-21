@@ -176,8 +176,6 @@ const DashboardHomePage: React.FC = () => {
 
   const isEmpty = gridComponents.length === 0
 
-  // console.log("active drag data", activeDragData)
-
   return (
     <DndContext
       onDragStart={handleDragStart}
