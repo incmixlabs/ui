@@ -1,4 +1,4 @@
-import { Box } from "@incmix/ui"
+import { Box, CardContainer } from "@incmix/ui"
 import { useEffect, useState } from "react"
 import { Battery, type BatteryInfo } from "./battery"
 
@@ -16,11 +16,7 @@ export async function getBattery(): Promise<BatteryManagerInfo | null> {
   return null
 }
 
-export interface BatteryWidgetProps {
-  className?: string
-}
-
-export function BatteryWidget({ className }: BatteryWidgetProps) {
+export function BatteryWidget() {
   const [batteryInfo, setBatteryInfo] = useState<BatteryInfo | null>(null)
 
   useEffect(() => {
@@ -49,8 +45,8 @@ export function BatteryWidget({ className }: BatteryWidgetProps) {
   }, [])
 
   return (
-    <Box>
-      <Battery className={className} batteryInfo={batteryInfo} />
-    </Box>
+    <CardContainer className="p-1">
+      <Battery className={"px-1 pr-2"} batteryInfo={batteryInfo} />
+    </CardContainer>
   )
 }
