@@ -102,4 +102,4 @@ export const dashboardImg = {
   lightGrpTemplate,
   darkClockImg,
   lightClockImg
-
+}
