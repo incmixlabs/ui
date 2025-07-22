@@ -1,7 +1,5 @@
 import { useAppearanceStore } from "@incmix/store/use-settings-store";
-import {
-  dashboardImg,
-} from "@incmix/ui";
+
 import {
     ActiveTask,
     NewTasks,
@@ -31,223 +29,223 @@ import {
     PropertySheet,
   } from "@incmix/ui/widgets";
 
-export const sidebarComponents = () => {
-  const { appearance } = useAppearanceStore()
-  const rootDir = '/images/dashboard/'
-  const dir = appearance === "dark" ? `${rootDir}/dark` : `${rootDir}/light`
+export  const rootDir = '/images/dashboard/'
 
-  return [
-  {
-    slotId: "i",
-    component: <NewTasks />,
-    componentName: "new-tasks",
-    image: `${dir}/new-task.svg`,
-    dragPreviewSize:"w-16 h-16 text-xs",
-    title: "New Tasks",
-    tags: ["task", "new", "todo"],
-    layouts: {
-      lg: { w: 3, h: 14 },
-      md: { w: 3, h: 14 },
-      sm: { w: 3, h: 14 },
-      xs: { w: 3, h: 14 },
-      xxs: { w: 3, h: 14 },
-    },
-    className: "col-span-3",
-  },
-  {
-    slotId: "p",
-    component: <NewTasksChart />,
-    componentName: "new-tasks-chart",
-    image: `${dir}/new-task-chart.svg`,
-    title: "New Tasks Chart",
-    tags: ["task", "new", "todo"],
-    layouts: {
-      lg: { w: 3, h: 14 },
-      md: { w: 3, h: 14 },
-      sm: { w: 3, h: 14 },
-      xs: { w: 3, h: 14 },
-      xxs: { w: 3, h: 14 },
-    },
-    className: "col-span-3",
-  },
-  {
-    slotId: "h",
-    component: <TotalTasks />,
-    componentName: "total-tasks",
-    image: `${dir}/total-tasks.svg`,
-    title: "Total Tasks",
-    tags: ["task", "total", "summary"],
-    layouts: {
-      lg: { w: 3, h: 14 },
-      md: { w: 3, h: 14 },
-      sm: { w: 3, h: 14 },
-      xs: { w: 3, h: 14 },
-      xxs: { w: 3, h: 14 },
-    },
-    className: "col-span-3",
-  },
-  {
-    slotId: "q",
-    component: <TotalTasksChart />,
-    componentName: "total-tasks-chart",
-    image:  `${dir}/total-task-chart.svg`,
-    title: "Total Tasks Chart",
-    tags: ["task", "total", "summary"],
-    layouts: {
-      lg: { w: 3, h: 14 },
-      md: { w: 3, h: 14 },
-      sm: { w: 3, h: 14 },
-      xs: { w: 3, h: 14 },
-      xxs: { w: 3, h: 14 },
-    },
-    className: "col-span-3",
-  },
-  {
-    slotId: "tp",
-    component: <InProgressTask />,
-    componentName: "tasks-in-progress",
-    image: `${dir}/in-progress-task.svg`,
-    title: "Tasks In Progress",
-    tags: ["task", "total", "in-progress"],
-    layouts: {
-      lg: { w: 3, h: 14 },
-      md: { w: 3, h: 14 },
-      sm: { w: 3, h: 14 },
-      xs: { w: 3, h: 14 },
-      xxs: { w: 3, h: 14 },
-    },
-    className: "col-span-3",
-  },
-  {
-    slotId: "s",
-    component: <DoneTasks />,
-    componentName: "tasks-done",
-    image: `${dir}/done-task.svg`,
-    title: "Tasks Done",
-    tags: ["task", "task-done", "done"],
-    layouts: {
-      lg: { w: 3, h: 14 },
-      md: { w: 3, h: 14 },
-      sm: { w: 3, h: 14 },
-      xs: { w: 3, h: 14 },
-      xxs: { w: 3, h: 14 },
-    },
-    className: "col-span-3",
-  },
-  {
-    slotId: "usp",
-    component: <UserProfile />,
-    componentName: "user-profile",
-    image: `${dir}/profile.svg`,
-    title: "Profile",
-    tags: ["profile","user-profile"],
-    layouts: {
-      lg: { w: 4, h: 6 },
-      md: { w: 4, h: 6 },
-      sm: { w: 4, h: 6 },
-      xs: { w: 4, h: 6 },
-      xxs: { w: 4, h: 6 },
-    },
-    className: "col-span-6",
-  },
-  {
-    slotId: "m",
-    component: <TotalProject />,
-    componentName: "total-project",
-    image: `${dir}/total-project.svg`,
-    title: "Total Project",
-    tags: ["project", "total", "summary"],
-    layouts: {
-      lg: { w: 4, h: 22 },
-      md: { w: 4, h: 22 },
-      sm: { w: 4, h: 22 },
-      xs: { w: 4, h: 22 },
-      xxs: { w: 4, h: 22 },
-    },
-    className:"col-span-6"
-  },
+export const getWidgets = () => {
+  const isDark =  useAppearanceStore.getState().getIsDarkAppearance();
+  const dir = isDark ? `${rootDir}/dark` : `${rootDir}/light`
 
-  {
-    slotId: "k",
-    component: <StatisticWidgets />,
-    componentName: "statistic-widget",
-    image: `${dir}/statistic.svg`,
-    title: "Statistic Widgets",
-    tags: ["statistics", "analytics", "data"],
-    layouts: {
-      lg: { w: 4, h: 22 },
-      md: { w: 4, h: 22 },
-      sm: { w: 4, h: 22 },
-      xs: { w: 4, h: 22 },
-      xxs: { w: 4, h: 22 },
+  return {
+    "new-tasks": {
+      slotId: "i",
+      component: <NewTasks />,
+      componentName: "new-tasks",
+      image: `${dir}/new-task.svg`,
+      dragPreviewSize: "w-16 h-16 text-xs",
+      title: "New Tasks",
+      tags: ["task", "new", "todo"],
+      layouts: {
+        lg: { w: 3, h: 14 },
+        md: { w: 3, h: 14 },
+        sm: { w: 3, h: 14 },
+        xs: { w: 3, h: 14 },
+        xxs: { w: 3, h: 14 },
+      },
+      className: "col-span-3",
     },
-    className:"col-span-6"
-  },
-  {
-    slotId: "l",
-    component: <ActiveTask />,
-    componentName: "active-task",
-    image: `${dir}/active-tasks.svg`,
-    title: "Active Tasks",
-    tags: ["task", "active", "ongoing"],
-    layouts: {
-      lg: { w: 4, h: 22 },
-      md: { w: 4, h: 22 },
-      sm: { w: 4, h: 22 },
-      xs: { w: 4, h: 22 },
-      xxs: { w: 4, h: 22 },
+    "new-tasks-chart": {
+      slotId: "p",
+      component: <NewTasksChart />,
+      componentName: "new-tasks-chart",
+      image: `${dir}/new-task-chart.svg`,
+      title: "New Tasks Chart",
+      tags: ["task", "new", "todo"],
+      layouts: {
+        lg: { w: 3, h: 14 },
+        md: { w: 3, h: 14 },
+        sm: { w: 3, h: 14 },
+        xs: { w: 3, h: 14 },
+        xxs: { w: 3, h: 14 },
+      },
+      className: "col-span-3",
     },
-    className:"col-span-6"
-  },
-  {
-    slotId: "j",
-    component: <ProjectWidgets />,
-    componentName: "project-widget",
-    image: `${dir}/project-chart.svg`,
-    title: "Project Widgets",
-    tags: ["project", "widget", "summary"],
-    layouts: {
-      lg: { w: 5, h: 24 },
-      md: { w: 5, h: 24 },
-      sm: { w: 5, h: 24 },
-      xs: { w: 5, h: 24 },
-      xxs: { w: 5, h: 24 },
+    "total-tasks": {
+      slotId: "h",
+      component: <TotalTasks />,
+      componentName: "total-tasks",
+      image: `${dir}/total-tasks.svg`,
+      title: "Total Tasks",
+      tags: ["task", "total", "summary"],
+      layouts: {
+        lg: { w: 3, h: 14 },
+        md: { w: 3, h: 14 },
+        sm: { w: 3, h: 14 },
+        xs: { w: 3, h: 14 },
+        xxs: { w: 3, h: 14 },
+      },
+      className: "col-span-3",
     },
-    className:"col-span-6"
-  },
-  {
-    slotId: "n",
-    component: <PostingTask />,
-    componentName: "posting-task",
-    image: `${dir}/posting-task.svg`,
-    title: "Posting Task",
-    tags: ["task", "posting", "create"],
-    layouts: {
-      lg: { w: 12, h: 25 },
-      md: { w: 12, h: 25 },
-      sm: { w: 12, h: 25 },
-      xs: { w: 12, h: 25 },
-      xxs: { w: 12, h: 25 },
+    "total-tasks-chart": {
+      slotId: "q",
+      component: <TotalTasksChart />,
+      componentName: "total-tasks-chart",
+      image:  `${dir}/total-task-chart.svg`,
+      title: "Total Tasks Chart",
+      tags: ["task", "total", "summary"],
+      layouts: {
+        lg: { w: 3, h: 14 },
+        md: { w: 3, h: 14 },
+        sm: { w: 3, h: 14 },
+        xs: { w: 3, h: 14 },
+        xxs: { w: 3, h: 14 },
+      },
+      className: "col-span-3",
     },
-    className:"col-span-12"
-  },
-  {
-    slotId: "o",
-    component: <ProjectTimelineWidgets />,
-    componentName: "project-timeline",
-    image: `${dir}/project-timeline.svg`,
-    title: "Project Timeline",
-    tags: ["project", "timeline", "summary", "project-timeline"],
-    layouts: {
-      lg: { w: 6, h: 20 },
-      md: { w: 6, h: 20 },
-      sm: { w: 6, h: 20 },
-      xs: { w: 6, h: 20 },
-      xxs: { w: 6, h: 20 },
+    "tasks-in-progress": {
+      slotId: "tp",
+      component: <InProgressTask />,
+      componentName: "tasks-in-progress",
+      image: `${dir}/in-progress-tasks.svg`,
+      title: "Tasks In Progress",
+      tags: ["task", "total", "in-progress"],
+      layouts: {
+        lg: { w: 3, h: 14 },
+        md: { w: 3, h: 14 },
+        sm: { w: 3, h: 14 },
+        xs: { w: 3, h: 14 },
+        xxs: { w: 3, h: 14 },
+      },
+      className: "col-span-3",
     },
-    className:"col-span-8"
-  },
-  {
+    "tasks-done": {
+      slotId: "s",
+      component: <DoneTasks />,
+      componentName: "tasks-done",
+      image: `${dir}/done-tasks.svg`,
+      title: "Tasks Done",
+      tags: ["task", "task-done", "done"],
+      layouts: {
+        lg: { w: 3, h: 14 },
+        md: { w: 3, h: 14 },
+        sm: { w: 3, h: 14 },
+        xs: { w: 3, h: 14 },
+        xxs: { w: 3, h: 14 },
+      },
+      className: "col-span-3",
+    },
+    "user-profile": {
+      slotId: "usp",
+      component: <UserProfile />,
+      componentName: "user-profile",
+      image: `${dir}/profile.svg`,
+      title: "Profile",
+      tags: ["profile","user-profile"],
+      layouts: {
+        lg: { w: 4, h: 6 },
+        md: { w: 4, h: 6 },
+        sm: { w: 4, h: 6 },
+        xs: { w: 4, h: 6 },
+        xxs: { w: 4, h: 6 },
+      },
+      className: "col-span-6",
+    },
+    "total-project": {
+      slotId: "m",
+      component: <TotalProject />,
+      componentName: "total-project",
+      image: `${dir}/total-project.svg`,
+      title: "Total Project",
+      tags: ["project", "total", "summary"],
+      layouts: {
+        lg: { w: 4, h: 22 },
+        md: { w: 4, h: 22 },
+        sm: { w: 4, h: 22 },
+        xs: { w: 4, h: 22 },
+        xxs: { w: 4, h: 22 },
+      },
+      className:"col-span-6"
+    },
+    "statistic-widget": {
+      slotId: "k",
+      component: <StatisticWidgets />,
+      componentName: "statistic-widget",
+      image: `${dir}/statistic.svg`,
+      title: "Statistic Widgets",
+      tags: ["statistics", "analytics", "data"],
+      layouts: {
+        lg: { w: 4, h: 22 },
+        md: { w: 4, h: 22 },
+        sm: { w: 4, h: 22 },
+        xs: { w: 4, h: 22 },
+        xxs: { w: 4, h: 22 },
+      },
+      className:"col-span-6"
+    },
+    "active-task": {
+      slotId: "l",
+      component: <ActiveTask />,
+      componentName: "active-task",
+      image: `${dir}/active-tasks.svg`,
+      title: "Active Tasks",
+      tags: ["task", "active", "ongoing"],
+      layouts: {
+        lg: { w: 4, h: 22 },
+        md: { w: 4, h: 22 },
+        sm: { w: 4, h: 22 },
+        xs: { w: 4, h: 22 },
+        xxs: { w: 4, h: 22 },
+      },
+      className:"col-span-6"
+    },
+    "project-widget": {
+      slotId: "j",
+      component: <ProjectWidgets />,
+      componentName: "project-widget",
+      image: `${dir}/project-chart.svg`,
+      title: "Project Widgets",
+      tags: ["project", "widget", "summary"],
+      layouts: {
+        lg: { w: 5, h: 24 },
+        md: { w: 5, h: 24 },
+        sm: { w: 5, h: 24 },
+        xs: { w: 5, h: 24 },
+        xxs: { w: 5, h: 24 },
+      },
+      className:"col-span-6"
+    },
+    "posting-task": {
+      slotId: "n",
+      component: <PostingTask />,
+      componentName: "posting-task",
+      image: `${dir}/posting-task.svg`,
+      title: "Posting Task",
+      tags: ["task", "posting", "create"],
+      layouts: {
+        lg: { w: 12, h: 25 },
+        md: { w: 12, h: 25 },
+        sm: { w: 12, h: 25 },
+        xs: { w: 12, h: 25 },
+        xxs: { w: 12, h: 25 },
+      },
+      className:"col-span-12"
+    },
+    "project-timeline": {
+      slotId: "o",
+      component: <ProjectTimelineWidgets />,
+      componentName: "project-timeline",
+      image: `${dir}/project-timeline.svg`,
+      title: "Project Timeline",
+      tags: ["project", "timeline", "summary", "project-timeline"],
+      layouts: {
+        lg: { w: 6, h: 20 },
+        md: { w: 6, h: 20 },
+        sm: { w: 6, h: 20 },
+        xs: { w: 6, h: 20 },
+        xxs: { w: 6, h: 20 },
+      },
+      className:"col-span-8"
+    },
+  "project-list":{
     slotId: "r",
     component: <ProjectListWidgets />,
     componentName: "project-list",
@@ -264,7 +262,7 @@ export const sidebarComponents = () => {
     className:"col-span-4"
   },
 
-  {
+  "calendar": {
     slotId: "cld",
     component: <CalendarWidget storageKey="calendar" />,
     componentName: "calendar",
@@ -280,10 +278,11 @@ export const sidebarComponents = () => {
     },
     className:"col-span-6"
   },
-  {
+  "statistics2": {
     slotId: "st2",
     component: <BarStatisticWidgets />,
-    image: `${dir}/statistics2.svg`,
+    componentName: "statistics2",
+    image: `${dir}/statistic-2.svg`,
     title: "Statistics 2",
     tags: ["statistics2"],
     layouts: {
@@ -295,7 +294,7 @@ export const sidebarComponents = () => {
     },
     className:"col-span-6"
   },
-  {
+  "recent-activity": {
     slotId: "rc",
     component: <RecentActivity />,
     image: `${dir}/recent-activity.svg`,
@@ -311,11 +310,11 @@ export const sidebarComponents = () => {
     },
     className:"col-span-4"
   },
-  {
+  "countries-subscriber": {
     slotId: "csbr",
     component: <SubscribersByCountries />,
     componentName: "countries-subscriber",
-    image: `${dir}/subscriber.svg`,
+    image: `${dir}/subscriber-by-countries.svg`,
     title: "Countries Subscriber",
     tags: ["subscriber","countries-subscriber"],
     layouts: {
@@ -327,7 +326,7 @@ export const sidebarComponents = () => {
     },
     className:"col-span-8"
   },
-  {
+  "live-visitor": {
     slotId: "lv",
     component: <LiveVisitors />,
     componentName: "live-visitor",
@@ -343,7 +342,7 @@ export const sidebarComponents = () => {
     },
     className:"col-span-6"
   },
-  {
+  "monthly-budget": {
     slotId: "mb",
     component: <MonthlyBudget />,
     componentName: "monthly-budget",
@@ -359,7 +358,7 @@ export const sidebarComponents = () => {
     },
     className:"col-span-6"
   },
-  {
+  "activity-timeline": {
     slotId: "act",
     component: <ActivityTimeline />,
     componentName: "activity-timeline",
@@ -375,13 +374,11 @@ export const sidebarComponents = () => {
     },
     className:"col-span-7"
   },
-<<<<<<< HEAD
-  {
+  "clock": {
     slotId: "clk",
     component: <ClockWidget />,
     componentName: "clock",
-    darkCompImage: dashboardImg.darkClockImg,
-    lightCompImage: dashboardImg.lightClockImg,
+    image: `${dir}/clock.svg`,
     title: "Clock",
     tags: ["clock"],
     layouts: {
@@ -393,7 +390,7 @@ export const sidebarComponents = () => {
     },
     className:"col-span-5"
   },
-  {
+  "battery": {
     slotId: "bat",
     component: <BatteryWidget />,
     componentName: "battery",
@@ -409,7 +406,7 @@ export const sidebarComponents = () => {
     },
     className:"col-span-2"
   },
-  {
+  "weather": {
     slotId: "wthr",
     component: <WeatherWidget />,
     componentName: "weather",
@@ -425,7 +422,7 @@ export const sidebarComponents = () => {
     },
     className:"col-span-5"
   },
-  {
+  "news": {
     slotId: "nws",
     component: <NewsWidget />,
     componentName: "news",
@@ -441,12 +438,11 @@ export const sidebarComponents = () => {
     },
     className:"col-span-5"
   },
-  {
+  "property-sheet": {
     slotId: "prts",
     component: <PropertySheet />,
     componentName: "property-sheet",
-    darkCompImage: dashboardImg.darkPropertySheet,
-    lightCompImage: dashboardImg.lightPropertySheet,
+    image: `${dir}/property-sheet.svg`,
     title: "Property Sheet",
     tags: ["property-sheet"],
     layouts: {
@@ -458,8 +454,17 @@ export const sidebarComponents = () => {
     },
     className:"col-span-5"
   },
-];
-=======
-]
+  }
 }
->>>>>>> 6ee3f0b (feat: move-widgets-svg-to-public)
+
+export const getPresets = () => {
+  const isDark =  useAppearanceStore.getState().getIsDarkAppearance();
+  const dir = isDark ? `${rootDir}/dark` : `${rootDir}/light`
+
+  return {
+    default: `${rootDir}/default-presets.png`,
+    presets2: `${rootDir}/presets2.png`,
+    layout: `${dir}/default-layout.svg`,
+    "group-template": `${dir}/group-template.svg`
+  }
+};

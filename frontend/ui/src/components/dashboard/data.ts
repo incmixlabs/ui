@@ -1,4 +1,3 @@
-import { dashboardImg } from "./assets";
 import { LayoutPreset } from "./dashboard-types";
 
 export const initialLayouts = {
@@ -934,8 +933,7 @@ export const presetLayouts: LayoutPreset[] = [
     id: "default",
     name: "Default",
     description: "Standard dashboard layout with widgets arranged in a grid",
-    lightImage: dashboardImg.lightDefaultPreset,
-    darkImage: dashboardImg.darkDefaultPreset,
+    image: dashboardImg.lightDefaultPreset,
     mainLayouts: {
       lg: [
         {
@@ -1868,8 +1866,7 @@ export const presetLayouts: LayoutPreset[] = [
     id: "group-template",
     name: "Group Template",
     description: "Layout with group",
-    lightImage: dashboardImg.lightGrpTemplate,
-    darkImage: dashboardImg.darkGrpTemplate,
+    image: dashboardImg.lightGroupTemplatePreset,
     mainLayouts: {
       lg: [
         {

@@ -28,8 +28,8 @@ import {
 } from "lucide-react";
 import { TemplatesSidebar } from "./templates";
 import { useLocation, useParams } from "@tanstack/react-router";
-import { useTemplateStore } from "@incmix/store";
-import { sidebarComponents } from "./widgets-data";
+import { useAppearanceStore, useTemplateStore } from "@incmix/store";
+import { getWidgets } from "./widgets-data";
 
 
 interface DashboardSidebarProps {
@@ -60,7 +60,9 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
     getTemplateById,
     templateActive,
   } = useTemplateStore();
-
+  const appearance = useAppearanceStore();
+  const isDark = appearance.appearance === "dark";
+  const widgets = useMemo(getWidgets, [isDark]);
   const [availableComponents] = useState(sidebarComponents);
   const [_draggingComponentId, setDraggingComponentId] = useState<
     string | null
@@ -289,8 +291,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
                       <DraggableComponent
                         id={comp.slotId}
                         title={comp.title}
-                        darkImage={comp.darkCompImage}
-                        lightImage={comp.lightCompImage}
+                        image={comp.image}
                         component={comp.component}
                         componentName={comp.componentName}
                         disabled={!isEditing || selectedWidgets.length > 0}

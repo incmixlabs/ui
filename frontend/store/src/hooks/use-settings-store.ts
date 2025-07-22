@@ -25,20 +25,6 @@ export const extractColorName = (cssVar: string): string => {
     "Unknown"
   )
 }
-
-export const RADIUS_MAP: Record<RadixRadius, string> = {
-  none: "0px",
-  small: "4px",
-  medium: "8px",
-  large: "12px",
-  full: "9999px",
-}
-
-export const getRadiusValue = (radiusLevel?: RadixRadius | string): string => {
-  if (!radiusLevel) return RADIUS_MAP.medium
-  return RADIUS_MAP[radiusLevel as RadixRadius] ?? RADIUS_MAP.medium
-}
-
 export type SidebarColorConfig = {
   color: string
   break: number
@@ -81,7 +67,6 @@ export type ThemeStoreConfig = ThemeConfig & {
     color3: string
     color4: string
   }
-
   getIndicatorColors: (pastel?: boolean) => {
     danger: string
     dangerText: string
@@ -98,7 +83,6 @@ export type ThemeStoreConfig = ThemeConfig & {
     bg: string
     fg: string
   }
-  getRadiusValue: (radiusLevel?: RadixRadius | string) => string
 }
 export type UsePreferencesStoreConfig = UserPreference & {
   setUserPreference: (partial: Partial<UserPreference>) => void
@@ -110,6 +94,7 @@ export type UsePreferencesStoreConfig = UserPreference & {
   toggleDirection: () => void
   toggleSystemAppearance: () => void
   isSystemAppearance: () => boolean
+  hasNetworkConnection: () => boolean
 }
 export type IntegrationStoreConfig = IntegrationConfig & {
   setAPIKeys: (keys: IntegrationConfig["keys"]) => void
@@ -161,6 +146,7 @@ export const userPreference: UserPreference = {
   isSystemAppearance: true,
   direction: "ltr",
   language: "en",
+  hasNetwork: true,
 }
 
 export type UserPreferenceStoreConfig = UserPreference & {
@@ -172,6 +158,9 @@ export type UserPreferenceStoreConfig = UserPreference & {
   setDirection: (direction: "ltr" | "rtl") => void
   getDirection: () => "ltr" | "rtl"
   getIsSystemAppearance: () => boolean
+  getIsDarkAppearance: () => boolean
+  getHasNetworkConnection: () => boolean
+  setHasNetworkConnection: (hasNetwork: boolean) => void
 }
 
 export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
@@ -219,8 +208,15 @@ export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
           ...s,
           direction: direction,
         })),
+      setHasNetworkConnection: (hasNetwork: boolean) =>
+        set((s) => ({
+          ...s,
+          hasNetwork: hasNetwork,
+        })),
       getDirection: () => get().direction ?? "ltr",
       getIsSystemAppearance: () => get().isSystemAppearance ?? false,
+      getIsDarkAppearance: () => get().appearance === "dark",
+      getHasNetworkConnection: () => get().hasNetwork ?? true,
     }),
     {
       name: "incmix-appearance-store",
@@ -230,6 +226,7 @@ export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
         isSystemAppearance: state.isSystemAppearance,
         direction: state.direction,
         language: state.language,
+        hasNetwork: state.hasNetwork,
       }),
     }
   )
@@ -420,10 +417,6 @@ export const useThemeStore = create<ThemeStoreConfig>()(
         }
 
         return dash
-      },
-      getRadiusValue: (radiusLevel?: RadixRadius | string) => {
-        const level = (radiusLevel ?? get().radius) as RadixRadius
-        return RADIUS_MAP[level] ?? RADIUS_MAP.medium
       },
       getIndicatorColors: (pastel = false) => {
         const {
@@ -678,17 +671,3 @@ export const useSidebarStore = create<SidebarStore>()(
     }
   )
 )
-
-// export function IncmixThemeApplier() {
-//   const { sidebarBg } = useThemeStore()
-
-//   useEffect(() => {
-//     document.documentElement.style.setProperty("--primary-color", primaryColor)
-//     document.documentElement.style.setProperty(
-//       "--secondary-color",
-//       secondaryColor
-//     )
-//   }, [sidebarBg]) // Re-run effect when colors change
-
-//   return null // This component doesn't render anything visible
-// }

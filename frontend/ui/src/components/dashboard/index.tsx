@@ -1,4 +1,3 @@
-export * from "./assets"
 export * from "./sidebar"
 export * from "./widget-drop-zone"
 export * from "./create-dashboard-modal"

@@ -1,4 +1,3 @@
-import { useAppearanceStore } from "@incmix/store";
 import {
   Box,
   Button,
@@ -28,7 +27,6 @@ import { useState } from "react";
 export function LayoutPresetsSection() {
   const { activePresetId, applyPreset } = useLayoutStore();
   const [isExpanded, setIsExpanded] = useState(false);
-  const { appearance } = useAppearanceStore();
 
   return (
     <Box
@@ -68,20 +66,14 @@ export function LayoutPresetsSection() {
             }`}
             onClick={() => applyPreset(preset.id)}
           >
-            <Box className="relative mb-2 w-full overflow-hidden rounded-app">
-              {appearance === "dark" ? (
+            <Box className="relative mb-2 w-full overflow-hidden rounded-md">
+
                 <img
-                  src={preset.darkImage || "/placeholder.svg"}
+                  src={preset.image || "/placeholder.svg"}
                   alt={preset.name}
                   className="h-full w-full object-cover"
                 />
-              ) : (
-                <img
-                  src={preset.lightImage || "/placeholder.svg"}
-                  alt={preset.name}
-                  className="h-full w-full object-cover"
-                />
-              )}
+
             </Box>
             <Box as="span" className="text-xs font-medium">{preset.name}</Box>
           </Box>

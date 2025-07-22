@@ -1,4 +1,3 @@
-import { KanbanImages } from "./images"
 import type { TCustomBoard } from "./types"
 
 export const attachments = [

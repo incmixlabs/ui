@@ -297,19 +297,11 @@ const DashboardHomePage: React.FC = () => {
           >
             <img
               src={
-                activeDragData.darkImage ||
+                activeDragData.image ||
                 "/placeholder.svg?height=150&width=150"
               }
               alt={activeDragData.title || "Component"}
-              className="hidden h-full w-full rounded-app dark:block"
-            />
-            <img
-              src={
-                activeDragData.lightImage ||
-                "/placeholder.svg?height=150&width=150"
-              }
-              alt={activeDragData.title || "Component"}
-              className="block h-full w-full rounded-app dark:hidden"
+              className="block h-full w-full rounded-lg"
             />
           </Box>
         )}
