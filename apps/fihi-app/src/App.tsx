@@ -1,4 +1,4 @@
-import React from "react"
+import type React from "react"
 import { Suspense, useEffect, useMemo } from "react"
 
 import { useQuery } from "@tanstack/react-query"
