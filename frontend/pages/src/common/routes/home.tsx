@@ -1,10 +1,10 @@
 "use client"
 import { createRoute } from "@tanstack/react-router"
-import LoadingPage from "../loading-page"
+import HomePage from "../home-page"
 import RootRoute from "./root"
 
 export default createRoute({
   getParentRoute: () => RootRoute,
-  path: "/loading",
-  component: LoadingPage,
+  path: "/",
+  component: () => <HomePage />,
 })
