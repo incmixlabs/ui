@@ -1,3 +1,4 @@
+import { useAppearanceStore } from "@incmix/store/use-settings-store";
 import {
   dashboardImg,
 } from "@incmix/ui";
@@ -30,14 +31,17 @@ import {
     PropertySheet,
   } from "@incmix/ui/widgets";
 
-export const sidebarComponents = [
+export const sidebarComponents = () => {
+  const { appearance } = useAppearanceStore()
+  const rootDir = '/images/dashboard/'
+  const dir = appearance === "dark" ? `${rootDir}/dark` : `${rootDir}/light`
 
+  return [
   {
     slotId: "i",
     component: <NewTasks />,
     componentName: "new-tasks",
-    darkCompImage: dashboardImg.darkNewTaskImg,
-    lightCompImage: dashboardImg.lightNewTaskImg,
+    image: `${dir}/new-task.svg`,
     dragPreviewSize:"w-16 h-16 text-xs",
     title: "New Tasks",
     tags: ["task", "new", "todo"],
@@ -54,8 +58,7 @@ export const sidebarComponents = [
     slotId: "p",
     component: <NewTasksChart />,
     componentName: "new-tasks-chart",
-    darkCompImage: dashboardImg.darkNewTaskChartImg,
-    lightCompImage: dashboardImg.lightNewTaskChartImg,
+    image: `${dir}/new-task-chart.svg`,
     title: "New Tasks Chart",
     tags: ["task", "new", "todo"],
     layouts: {
@@ -71,8 +74,7 @@ export const sidebarComponents = [
     slotId: "h",
     component: <TotalTasks />,
     componentName: "total-tasks",
-    darkCompImage: dashboardImg.darkTotalTasksImg,
-    lightCompImage: dashboardImg.lightTotalTasksImg,
+    image: `${dir}/total-tasks.svg`,
     title: "Total Tasks",
     tags: ["task", "total", "summary"],
     layouts: {
@@ -88,8 +90,7 @@ export const sidebarComponents = [
     slotId: "q",
     component: <TotalTasksChart />,
     componentName: "total-tasks-chart",
-    darkCompImage: dashboardImg.darkTotalTaskChartImg,
-    lightCompImage: dashboardImg.lightTotalTaskChartImg,
+    image:  `${dir}/total-task-chart.svg`,
     title: "Total Tasks Chart",
     tags: ["task", "total", "summary"],
     layouts: {
@@ -105,8 +106,7 @@ export const sidebarComponents = [
     slotId: "tp",
     component: <InProgressTask />,
     componentName: "tasks-in-progress",
-    darkCompImage: dashboardImg.darkInProgressTaskImg,
-    lightCompImage: dashboardImg.lightInProgressTaskImg,
+    image: `${dir}/in-progress-task.svg`,
     title: "Tasks In Progress",
     tags: ["task", "total", "in-progress"],
     layouts: {
@@ -122,8 +122,7 @@ export const sidebarComponents = [
     slotId: "s",
     component: <DoneTasks />,
     componentName: "tasks-done",
-    darkCompImage: dashboardImg.darkDoneTaskImg,
-    lightCompImage: dashboardImg.lightDoneTaskImg,
+    image: `${dir}/done-task.svg`,
     title: "Tasks Done",
     tags: ["task", "task-done", "done"],
     layouts: {
@@ -139,8 +138,7 @@ export const sidebarComponents = [
     slotId: "usp",
     component: <UserProfile />,
     componentName: "user-profile",
-    darkCompImage: dashboardImg.darkProfileImg,
-    lightCompImage: dashboardImg.lightProfileImg,
+    image: `${dir}/profile.svg`,
     title: "Profile",
     tags: ["profile","user-profile"],
     layouts: {
@@ -156,8 +154,7 @@ export const sidebarComponents = [
     slotId: "m",
     component: <TotalProject />,
     componentName: "total-project",
-    darkCompImage: dashboardImg.darkTotalProjectImg,
-    lightCompImage: dashboardImg.lightTotalProjectImg,
+    image: `${dir}/total-project.svg`,
     title: "Total Project",
     tags: ["project", "total", "summary"],
     layouts: {
@@ -169,13 +166,12 @@ export const sidebarComponents = [
     },
     className:"col-span-6"
   },
- 
+
   {
     slotId: "k",
     component: <StatisticWidgets />,
     componentName: "statistic-widget",
-    darkCompImage: dashboardImg.darkStatisticsImg,
-    lightCompImage: dashboardImg.lightStatisticsImg,
+    image: `${dir}/statistic.svg`,
     title: "Statistic Widgets",
     tags: ["statistics", "analytics", "data"],
     layouts: {
@@ -191,9 +187,8 @@ export const sidebarComponents = [
     slotId: "l",
     component: <ActiveTask />,
     componentName: "active-task",
-    darkCompImage: dashboardImg.darkActiveTaskImg,
-    lightCompImage: dashboardImg.lightActiveTaskImg,
-    title: "Active Task",
+    image: `${dir}/active-tasks.svg`,
+    title: "Active Tasks",
     tags: ["task", "active", "ongoing"],
     layouts: {
       lg: { w: 4, h: 22 },
@@ -208,8 +203,7 @@ export const sidebarComponents = [
     slotId: "j",
     component: <ProjectWidgets />,
     componentName: "project-widget",
-    darkCompImage: dashboardImg.darkProjectChartImg,
-    lightCompImage: dashboardImg.lightProjectChartImg,
+    image: `${dir}/project-chart.svg`,
     title: "Project Widgets",
     tags: ["project", "widget", "summary"],
     layouts: {
@@ -225,8 +219,7 @@ export const sidebarComponents = [
     slotId: "n",
     component: <PostingTask />,
     componentName: "posting-task",
-    darkCompImage: dashboardImg.darkPostingTaskImg,
-    lightCompImage: dashboardImg.lightPostingTaskImg,
+    image: `${dir}/posting-task.svg`,
     title: "Posting Task",
     tags: ["task", "posting", "create"],
     layouts: {
@@ -242,8 +235,7 @@ export const sidebarComponents = [
     slotId: "o",
     component: <ProjectTimelineWidgets />,
     componentName: "project-timeline",
-    darkCompImage: dashboardImg.darkProjectTimelineImg,
-    lightCompImage: dashboardImg.lightProjectTimelineImg,
+    image: `${dir}/project-timeline.svg`,
     title: "Project Timeline",
     tags: ["project", "timeline", "summary", "project-timeline"],
     layouts: {
@@ -259,8 +251,7 @@ export const sidebarComponents = [
     slotId: "r",
     component: <ProjectListWidgets />,
     componentName: "project-list",
-    darkCompImage: dashboardImg.darkProjectListImg,
-    lightCompImage: dashboardImg.lightProjectListImg,
+    image: `${dir}/project-list.svg`,
     title: "Project List",
     tags: ["project", "list", "project-list"],
     layouts: {
@@ -277,8 +268,7 @@ export const sidebarComponents = [
     slotId: "cld",
     component: <CalendarWidget storageKey="calendar" />,
     componentName: "calendar",
-    darkCompImage: dashboardImg.darkCalendarImg,
-    lightCompImage: dashboardImg.lightCalendarImg,
+    image: `${dir}/calendar.svg`,
     title: "Calendar",
     tags: ["calendar"],
     layouts: {
@@ -293,9 +283,7 @@ export const sidebarComponents = [
   {
     slotId: "st2",
     component: <BarStatisticWidgets />,
-    componentName: "statistics2",
-    darkCompImage: dashboardImg.darkStatisticsImg2,
-    lightCompImage: dashboardImg.lightStatisticsImg2,
+    image: `${dir}/statistics2.svg`,
     title: "Statistics 2",
     tags: ["statistics2"],
     layouts: {
@@ -310,9 +298,8 @@ export const sidebarComponents = [
   {
     slotId: "rc",
     component: <RecentActivity />,
+    image: `${dir}/recent-activity.svg`,
     componentName: "recent-activity",
-    darkCompImage: dashboardImg.darkRecentActivityImg,
-    lightCompImage: dashboardImg.lightRecentActivityImg,
     title: "Recent Activity",
     tags: ["activity", "recent", "recent-activity"],
     layouts: {
@@ -328,8 +315,7 @@ export const sidebarComponents = [
     slotId: "csbr",
     component: <SubscribersByCountries />,
     componentName: "countries-subscriber",
-    darkCompImage: dashboardImg.darkSubscriberImg,
-    lightCompImage: dashboardImg.lightSubscriberImg,
+    image: `${dir}/subscriber.svg`,
     title: "Countries Subscriber",
     tags: ["subscriber","countries-subscriber"],
     layouts: {
@@ -345,8 +331,7 @@ export const sidebarComponents = [
     slotId: "lv",
     component: <LiveVisitors />,
     componentName: "live-visitor",
-    darkCompImage: dashboardImg.darkLiveVisitorImg,
-    lightCompImage: dashboardImg.lightLiveVisitorImg,
+    image: `${dir}/live-visitor.svg`,
     title: "Live Visitor",
     tags: ["live-visitor"],
     layouts: {
@@ -362,8 +347,7 @@ export const sidebarComponents = [
     slotId: "mb",
     component: <MonthlyBudget />,
     componentName: "monthly-budget",
-    darkCompImage: dashboardImg.darkMonthlyBudgetImg,
-    lightCompImage: dashboardImg.lightMonthlyBudgetImg,
+    image: `${dir}/monthly-budget.svg`,
     title: "Monthly Budget",
     tags: ["monthly-budget"],
     layouts: {
@@ -379,8 +363,7 @@ export const sidebarComponents = [
     slotId: "act",
     component: <ActivityTimeline />,
     componentName: "activity-timeline",
-    darkCompImage: dashboardImg.darkActivityTimelineImg,
-    lightCompImage: dashboardImg.lightActivityTimelineImg,
+    image: `${dir}/activity-timeline.svg`,
     title: "Activity Timeline",
     tags: ["activity","activity-timeline"],
     layouts: {
@@ -392,6 +375,7 @@ export const sidebarComponents = [
     },
     className:"col-span-7"
   },
+<<<<<<< HEAD
   {
     slotId: "clk",
     component: <ClockWidget />,
@@ -413,8 +397,7 @@ export const sidebarComponents = [
     slotId: "bat",
     component: <BatteryWidget />,
     componentName: "battery",
-    darkCompImage: dashboardImg.darkActivityTimelineImg,
-    lightCompImage: dashboardImg.lightActivityTimelineImg,
+    image: `${dir}/activity-timeline.svg`,
     title: "Battery",
     tags: ["battery"],
     layouts: {
@@ -430,8 +413,7 @@ export const sidebarComponents = [
     slotId: "wthr",
     component: <WeatherWidget />,
     componentName: "weather",
-    darkCompImage: dashboardImg.darkActivityTimelineImg,
-    lightCompImage: dashboardImg.lightActivityTimelineImg,
+    image: `${dir}/activity-timeline.svg`,
     title: "Weather",
     tags: ["weather"],
     layouts: {
@@ -447,8 +429,7 @@ export const sidebarComponents = [
     slotId: "nws",
     component: <NewsWidget />,
     componentName: "news",
-    darkCompImage: dashboardImg.darkActivityTimelineImg,
-    lightCompImage: dashboardImg.lightActivityTimelineImg,
+    image: `${dir}/activity-timeline.svg`,
     title: "News",
     tags: ["news"],
     layouts: {
@@ -478,3 +459,7 @@ export const sidebarComponents = [
     className:"col-span-5"
   },
 ];
+=======
+]
+}
+>>>>>>> 6ee3f0b (feat: move-widgets-svg-to-public)
