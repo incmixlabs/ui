@@ -1,10 +1,10 @@
 import type { Dashboard } from "@incmix/store"
 import { type AuthUserSession, UserRoles } from "@incmix/utils/types"
 import {
-  createRoute,
-  createRouter,
   type Redirect,
   type Route,
+  createRoute,
+  createRouter,
 } from "@tanstack/react-router"
 import {
   BoxIcon,
