@@ -76,7 +76,7 @@ export function ReusableAddProject({
       // Save to RxDB
       await saveFormProject(newProject)
 
-      await saveProjectToBackend(newProject);
+      // await saveProjectToBackend(newProject);
 
       toast.success("Project created successfully", {
         description: `"${newProject.name}" has been added to your projects.`,
