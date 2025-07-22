@@ -1,3 +1,4 @@
+// biome-ignore lint/style/useImportType: <explanation>
 import React from "react"
 import { Suspense, useEffect, useMemo } from "react"
 
