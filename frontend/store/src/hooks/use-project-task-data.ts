@@ -1,4 +1,5 @@
 // File: use-project-task-data.ts
+// Updated to use the selected project from project store
 
 import type {
   CurrentUser,
@@ -7,6 +8,7 @@ import type {
   TaskDataSchema,
   UseProjectDataReturn,
 } from "@incmix/utils/schema"
+import { useProjectStore } from "../services/projects"
 
 // Extend the UseProjectDataReturn type to include subtask operations
 declare module "@incmix/utils/schema" {
@@ -57,9 +59,15 @@ const getCurrentUser = (user?: CurrentUser) => {
 // from @incmix/utils/schema which contains both status and priority labels
 
 export function useProjectData(
-  projectId = "default-project",
+  providedProjectId?: string,
   currentUser?: CurrentUser
 ): UseProjectDataReturn {
+  // Get the selected project from the store
+  const { selectedProject } = useProjectStore()
+
+  // Use the provided projectId if available, otherwise use selectedProject.id
+  // If neither is available, don't use a default - this will show appropriate empty state
+  const projectId = providedProjectId || selectedProject?.id || ""
   const [data, setData] = useState<ProjectData>({
     tasks: [],
     labels: [],
@@ -75,19 +83,24 @@ export function useProjectData(
 
   // Initialize reactive subscriptions
   useEffect(() => {
+    // If no projectId is provided, show empty state
+    if (!projectId) {
+      setData({
+        tasks: [],
+        labels: [],
+        isLoading: false,
+        error: null,
+      })
+      return
+    }
+
     const setupReactiveData = async () => {
       try {
         setData((prev) => ({ ...prev, isLoading: true, error: null }))
 
-        // Check and create default labels if needed - Using find() instead of count() to avoid RxDB restriction
-        const existingLabels = await database.labels
-          .find({ selector: { projectId, type: "status" } })
-          .exec()
-        const existingLabelsCount = existingLabels.length
-
-        if (existingLabelsCount === 0) {
-          await createDefaultLabels(projectId)
-        }
+        // We no longer auto-create default labels here
+        // Labels are now only created when a project is explicitly created
+        // This prevents unwanted label creation when browsing tasks
 
         // Set up reactive subscription for labels (both status and priority labels)
         subscriptionsRef.current.labels = database.labels
@@ -190,35 +203,6 @@ export function useProjectData(
       }
     }
   }, [projectId])
-
-  /**
-   * Create default labels (statuses and priorities) for a project
-   */
-  const createDefaultLabels = async (projectId: string) => {
-    const now = getCurrentTimestamp()
-    const user = getCurrentUser(currentUser)
-
-    const newLabels: LabelSchema[] = DEFAULT_LABELS.map((label, index) => ({
-      id: generateBrowserUniqueId("label"),
-      projectId,
-      name: label.name,
-      type: label.type as "status" | "priority",
-      order: index, // Using 'order' as specified in LabelSchema instead of 'labelOrder'
-      color: label.color || "#6E6E6E", // Default color if none provided
-      description: label.description || "", // Default empty description
-      createdAt: now,
-      updatedAt: now,
-      createdBy: user,
-      updatedBy: user,
-    }))
-
-    // Insert all labels at once
-    for (const label of newLabels) {
-      await database.labels.insert(label as LabelDocType)
-    }
-
-    return newLabels
-  }
 
   // Task operations - simplified without manual state management
   const createTask = useCallback(

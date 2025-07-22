@@ -1,9 +1,9 @@
 # Incmix Monorepo
 
-## To get started, 
+## To get started,
   copy/link public directory from root into apps/fihi-app and apps/storybook.
-  
-  In fihi-app, create .env file with VITE_BFF_API_URL, and register. 
+
+  In fihi-app, create .env file with VITE_BFF_API_URL, and register.
 
 
 ## Directory structure
@@ -22,9 +22,9 @@
 
  ### frontend/store (@incmix/store)
  Offline first approach. Store in localstorage, pglite etc to offer local persistency, user preferences etc. will be persisted to backend of a period basis.
-  
-  
-     
+
+
+
 
 ## The Tech stack is
 
@@ -57,6 +57,25 @@
 | lucia auth     | lucia.io     |
 | *email-api*    |              |
 | email          | sendgrid.com |
+
+
+
+## How to Add New Routes
+
+To add a new route to the application, follow these steps:
+
+1. **Create the Route and Page Component**
+   - In the `/frontend/pages` directory, add a new route file (e.g., `my-feature/routes/my-route.tsx`).
+   - Implement the corresponding page component (e.g., `my-feature/my-route-page.tsx`).
+
+2. **Register the Route in the Route Configuration**
+   - Open `frontend/pages/src/route-config.ts`.
+   - Import your new route at the top of the file.
+   - Add an entry for your route in the `ROUTES_CONFIG` array.
+   - If you want your route to appear in the sidebar, provide a `sidebar` configuration with a title, icon, and (optionally) children.
+
+3. **(Optional) Add Access Control**
+   - Specify the `access` property for your route to control who can view it (e.g., `ROUTE_ACCESS.PUBLIC`, `ROUTE_ACCESS.MEMBER`).
 
 
 

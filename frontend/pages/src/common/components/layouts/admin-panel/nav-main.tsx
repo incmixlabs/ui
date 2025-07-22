@@ -16,21 +16,9 @@ import {
 } from "@incmix/ui/sidebar"
 import { Link } from "@tanstack/react-router"
 import { ChevronRight, type LucideIcon } from "lucide-react"
+import React from "react"
+import type { NavItem } from "../../../../route-config"
 import { ProjectSwitcher } from "./project-switcher"
-
-type NavItem = {
-  title: string
-  url: string
-  icon?: LucideIcon
-  isActive?: boolean
-  isSelected?: boolean
-  notificationCount?: number
-  items?: {
-    title: string
-    url: string
-    isSelected?: boolean
-  }[]
-}
 
 function generateHoverContent(item: NavItem) {
   return (
@@ -104,7 +92,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
   }
 
   function isDynamicDashboard(item: {
-    isSelected: boolean
+    isSelected?: boolean
     title: string
     url: string
   }): boolean {
@@ -307,7 +295,9 @@ export function NavMain({ items }: { items: NavItem[] }) {
                             </ContextMenu.Content>
                           </ContextMenu.Root>
                         ) : (
-                          subItemContent
+                          <React.Fragment key={subItem.title}>
+                            {subItemContent}
+                          </React.Fragment>
                         )
                       })}
                     </SidebarMenuSub>

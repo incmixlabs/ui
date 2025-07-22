@@ -1,0 +1,5 @@
+export { default as RootRoute } from "./root"
+export { default as TestRoute } from "./test"
+export { default as NotFoundRoute } from "./not-found"
+export { default as LoadingRoute } from "./loading"
+export { default as IndexRoute } from "./home"
