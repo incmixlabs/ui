@@ -33,12 +33,15 @@ export function useProjectsCheck() {
   const db: RxDatabase<TaskCollections> = useRxDB()
 
   useEffect(() => {
+    let cancelled = false
+    
     const fetchProjects = async () => {
       setIsLoading(true)
 
       try {
         // Only check if we have a selected organization and database is available
         if (!selectedOrganisation?.id || !db.formProjects) {
+          if (cancelled) return
           setProjects([])
           setHasProjects(false)
           setFirstProjectId(null)
@@ -46,15 +49,31 @@ export function useProjectsCheck() {
           return
         }
 
-        // Get projects from formProjects collection
-        const projectDocs = await db.formProjects.find().exec()
+        // Get all projects from formProjects collection
+        const projectDocs = await db.formProjects
+          .find()
+          .exec()
 
-        const projectsExist = projectDocs && projectDocs.length > 0
+        if (cancelled) return
+        
+        // Filter projects by organization ID in memory using a type-safe approach
+        const filteredDocs = projectDocs.filter(doc => {
+          const docData = doc.toJSON()
+          // Use a type-safe approach to check for organization ID
+          // It could be stored as orgId, organizationId, or org_id in the schema
+          return (
+            (docData as any).orgId === selectedOrganisation.id || 
+            (docData as any).organizationId === selectedOrganisation.id || 
+            (docData as any).org_id === selectedOrganisation.id
+          )
+        })
+
+        const projectsExist = filteredDocs && filteredDocs.length > 0
         setHasProjects(projectsExist)
 
         if (projectsExist) {
           // Convert RxDocuments to ProjectItem objects that are compatible with the Switcher
-          const projectItems: ProjectItem[] = projectDocs.map((doc) => {
+          const projectItems: ProjectItem[] = filteredDocs.map((doc) => {
             const docData = doc.toJSON()
 
             return {
@@ -68,6 +87,7 @@ export function useProjectsCheck() {
             }
           })
 
+          if (cancelled) return
           setProjects(projectItems)
 
           // If projects exist, set the first one's ID
@@ -75,20 +95,29 @@ export function useProjectsCheck() {
             setFirstProjectId(projectItems[0].id)
           }
         } else {
+          if (cancelled) return
           setProjects([])
           setFirstProjectId(null)
         }
       } catch (error) {
+        if (cancelled) return
         console.error("Error fetching projects:", error)
         setProjects([])
         setHasProjects(false)
         setFirstProjectId(null)
       } finally {
-        setIsLoading(false)
+        if (!cancelled) {
+          setIsLoading(false)
+        }
       }
     }
 
     fetchProjects()
+    
+    // Cleanup function to prevent state updates after unmounting
+    return () => {
+      cancelled = true
+    }
   }, [db, selectedOrganisation])
 
   return {

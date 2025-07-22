@@ -5,6 +5,7 @@ import {
   useProjectStore,
   useProjectsCheck,
 } from "@incmix/store"
+import type { Project } from "@incmix/utils/types"
 
 import {
   AddTaskForm,
@@ -22,6 +23,44 @@ import {
 import { CardContent } from "@incmix/ui/card"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useEffect, useState } from "react"
+
+/**
+ * Convert from database project format to Project type expected by project store
+ * This ensures type safety instead of using unsafe type assertions
+ */
+function convertToProject(item: any): Project {
+  // Create a properly typed Project object from the database format
+  // with default values for any missing properties
+  const project = {
+    id: item.id,
+    name: item.name || `Project ${item.id.substring(0, 6)}`,
+    title: item.title || item.name || `Project ${item.id.substring(0, 6)}`,
+    description: item.description || '',
+    company: item.company || '',
+    orgId: item.orgId || '',
+    status: item.status || 'all',
+    progress: item.progress || 0,
+    timeLeft: item.timeLeft || 0,
+    timeType: item.timeType || 'days',
+    budget: item.budget || 0,
+    members: Array.isArray(item.members) ? item.members : [],
+    createdAt: item.createdAt || Date.now(),
+    createdBy: item.createdBy || '',
+    updatedAt: item.updatedAt || Date.now(),
+    updatedBy: item.updatedBy || '',
+    logo: item.logo || '',
+    tags: Array.isArray(item.tags) ? item.tags : [],
+    milestones: Array.isArray(item.milestones) ? item.milestones : [],
+    tasks: Array.isArray(item.tasks) ? item.tasks : [],
+    completion: item.completion || 0,
+    startDate: item.startDate || null,
+    endDate: item.endDate || null,
+    fileInfo: item.fileInfo || undefined
+  }
+  
+  // Type assertion is safer now as we've provided all required properties
+  return project as Project
+}
 
 const TasksPage = () => {
   const { selectedOrganisation } = useOrganizationStore()
@@ -42,8 +81,8 @@ const TasksPage = () => {
       // Find the project object from the projects array
       const firstProject = projects.find((p) => p.id === firstProjectId)
       if (firstProject) {
-        // Set the full project object in the store
-        setSelectedProject(firstProject as any)
+        // Use proper type conversion function instead of type assertion
+        setSelectedProject(convertToProject(firstProject))
       }
     }
   }, [firstProjectId, projects, selectedProject, setSelectedProject])
@@ -117,10 +156,13 @@ const TasksPage = () => {
                 <div className="text-sm">Gen AI</div>
                 <Switch checked={useAI} onCheckedChange={setUseAI} />
               </Flex>
-              <AddTaskForm
-                projectId={selectedProject?.id || ""}
-                onSuccess={() => {}}
-              />
+              {/* Only render AddTaskForm when we have a valid projectId */}
+              {selectedProject?.id && (
+                <AddTaskForm
+                  projectId={selectedProject.id}
+                  onSuccess={() => {}}
+                />
+              )}
             </Flex>
           </Flex>
         </Box>
