@@ -5,7 +5,7 @@ import { useSensor, useSensors, PointerSensor } from "@dnd-kit/core"
 import type { DragStartEvent, DragEndEvent } from "@dnd-kit/core"
 import type { ComponentSlot, DragData, Breakpoint } from "@incmix/ui/dashboard"
 import { DEFAULT_SIZES as DEFAULT_SIZES_CONST } from "@incmix/ui/dashboard"
-import { sidebarComponents } from "@incmix/ui/dashboard"
+import { getWidgets } from "@incmix/ui/dashboard/sidebar/widgets-data"
 import type { LayoutItemWithNested } from "@incmix/ui/dashboard"
 import { LayoutItem } from "@incmix/ui/dashboard"
 
@@ -154,8 +154,8 @@ export function useWidgetDragAndDrop(
           i: nestedItemId,
           x: 0,
           y: newY,
-          w: 12, 
-          h: 6, 
+          w: 12,
+          h: 6,
           moved: false,
           static: false,
           componentName: componentName,
@@ -191,43 +191,43 @@ export function useWidgetDragAndDrop(
     if (!draggedComponent) return false;
 
     const newItemId = `${draggedSlotId}|${crypto.randomUUID()}`;
-  
+
     const componentName = activeDragData?.componentName || draggedComponent.componentName || "empty";
-  
+
     const newComponent: ComponentSlot = {
       slotId: newItemId, // use unique ID
       component: draggedComponent.component,
       title: draggedComponent.title,
       componentName,
     };
-  
+
     setGridComponents((prev) => [...prev, newComponent]);
-  
+
     const componentLayouts = draggedComponent.layouts || DEFAULT_SIZES_CONST;
     const newLayouts = { ...defaultLayouts };
-  
+
     (Object.keys(newLayouts) as Breakpoint[]).forEach((breakpoint) => {
       const { w, h } = componentLayouts[breakpoint];
       const currentLayout = [...newLayouts[breakpoint]];
-  
+
       // Pass the new unique ID
       const updatedLayout = calculateGridPosition(currentLayout, targetWidgetId, w, h, newItemId);
-  
+
       // Add componentName to the layout
       newLayouts[breakpoint] = updatedLayout.map((item) =>
         item.i === newItemId ? { ...item, componentName } : item
       );
     });
-  
+
     setDefaultLayouts(newLayouts);
-  
+
     toast.success("Component added", {
       description: `${draggedComponent.title} has been added to your dashboard.`,
     });
-  
+
     return true;
   };
-  
+
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
@@ -281,4 +281,4 @@ export function useWidgetDragAndDrop(
     addComponentToGrid,
     addComponentToNestedGrid,
   }
-} 
+}

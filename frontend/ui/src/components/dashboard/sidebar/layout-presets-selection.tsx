@@ -1,13 +1,14 @@
 import {
   Box,
   Button,
-  cn,
   Flex,
   Grid,
   Heading,
+} from "@base"
+import { useLayoutStore } from "../hooks/use-layout-store";
+import {
   presetLayouts,
-  useLayoutStore,
-} from "@incmix/ui";
+} from "../data";
 import { ChevronDown, ChevronUp, Minus, Plus } from "lucide-react";
 import { useState } from "react";
 

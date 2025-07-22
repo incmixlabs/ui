@@ -4,17 +4,14 @@ import {
   Button,
   DropdownMenu,
   Flex,
-  Grid,
   Heading,
   IconButton,
   Input,
-  LayoutPresetsSection,
   ScrollArea,
-  cn,
-  dashboardImg,
-  useSelectionStore,
-} from "@incmix/ui";
+} from "@base";
 
+import { LayoutPresetsSection } from "./layout-presets-selection";
+import { cn } from "@utils/cn"
 import { useEffect, useMemo, useState } from "react";
 import { DraggableComponent } from "./draggable-component";
 import {
@@ -30,7 +27,7 @@ import { TemplatesSidebar } from "./templates";
 import { useLocation, useParams } from "@tanstack/react-router";
 import { useAppearanceStore, useTemplateStore } from "@incmix/store";
 import { getWidgets } from "./widgets-data";
-
+import { useSelectionStore } from "../hooks/use-widgets-selection";
 
 interface DashboardSidebarProps {
   isEditing?: boolean;

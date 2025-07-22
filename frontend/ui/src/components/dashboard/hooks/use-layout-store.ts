@@ -3,7 +3,7 @@ import type { Breakpoint, CustomLayouts } from "@incmix/ui/dashboard";
 
 import type { Layout } from "@incmix/react-grid-layout";
 import { presetLayouts } from "@incmix/ui/dashboard";
-import { addGroupToLayouts, getNextGroupId } from "@utils";
+import { addGroupToLayouts, getNextGroupId } from "../utils";
 
 interface LayoutState {
   defaultLayouts: CustomLayouts;

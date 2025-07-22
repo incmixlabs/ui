@@ -9,7 +9,7 @@ import {
   Box,
   Grid,
   Text,
-} from "@incmix/ui/base";
+} from "@base";
 import {
   Trash2,
   CheckCheck,
@@ -18,8 +18,9 @@ import {
   ChevronUp,
   ChevronDown,
 } from "lucide-react";
-import { shortFormatDistanceToNow, toast, useLayoutStore } from "@incmix/ui";
-import { cn } from "@incmix/ui";
+import {  toast } from "@incmix/ui";
+import { shortFormatDistanceToNow } from "@incmix/utils/time"
+import { cn } from "@utils/cn";
 import { formatDistanceToNow } from "date-fns";
 import { useQueryState } from "nuqs";
 import { DashboardTemplate } from "@incmix/store";
@@ -115,7 +116,7 @@ export function TemplatesSidebar({
       </Flex>
       {isTemplateExpanded && (
         <>
-          {filteredTemplates.length > 0 ? 
+          {filteredTemplates.length > 0 ?
           (
             <Grid columns={"2"} gap={"2"} className="mt-2">
               {filteredTemplates.map((template) => (

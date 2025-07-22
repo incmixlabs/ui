@@ -1,4 +1,6 @@
 export * from "./sidebar"
+export * from "./hooks"
+export * from "./utils"
 export * from "./widget-drop-zone"
 export * from "./create-dashboard-modal"
 export * from "./dashboard-types"

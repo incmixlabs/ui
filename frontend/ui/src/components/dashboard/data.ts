@@ -1,4 +1,6 @@
+import { useAppearanceStore } from "@incmix/store/use-settings-store";
 import { LayoutPreset } from "./dashboard-types";
+import { getWidgets, rootDir } from "./sidebar/widgets-data"
 
 export const initialLayouts = {
   lg: [
@@ -928,12 +930,21 @@ export const initialLayouts = {
   ],
 };
 
-export const presetLayouts: LayoutPreset[] = [
+export const getLayoutPresets = (): typeof initialLayouts => {
+  return initialLayouts;
+};
+
+export const presetLayouts: () => LayoutPreset[] = () => {
+  const widget = getWidgets().find((widget) => widget.componentName === "preset-widgets");
+  const { appearance } = useAppearanceStore();
+  const isDarkMode = appearance === "dark";
+  const dir = rootDir + (isDarkMode ? "dark" : "light");
+  return [
   {
     id: "default",
     name: "Default",
     description: "Standard dashboard layout with widgets arranged in a grid",
-    image: dashboardImg.lightDefaultPreset,
+    image: widget?.image ?? "",
     mainLayouts: {
       lg: [
         {
@@ -1866,7 +1877,7 @@ export const presetLayouts: LayoutPreset[] = [
     id: "group-template",
     name: "Group Template",
     description: "Layout with group",
-    image: dashboardImg.lightGroupTemplatePreset,
+    image: `${dir}/group-template.svg`,
     mainLayouts: {
       lg: [
         {
@@ -2756,4 +2767,6 @@ export const presetLayouts: LayoutPreset[] = [
       ],
     },
   },
-];
+]
+}
+
