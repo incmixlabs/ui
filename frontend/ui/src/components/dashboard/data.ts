@@ -935,7 +935,7 @@ export const getLayoutPresets = (): typeof initialLayouts => {
 };
 
 export const presetLayouts: () => LayoutPreset[] = () => {
-  const widget = getWidgets().find((widget) => widget.componentName === "preset-widgets");
+  const widget = getWidgets()[ "preset-widgets"]
   const { appearance } = useAppearanceStore();
   const isDarkMode = appearance === "dark";
   const dir = rootDir + (isDarkMode ? "dark" : "light");
