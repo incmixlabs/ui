@@ -1,6 +1,11 @@
 import type { Dashboard } from "@incmix/store"
 import { type AuthUserSession, UserRoles } from "@incmix/utils/types"
-import { createRouter } from "@tanstack/react-router"
+import {
+  createRoute,
+  createRouter,
+  type Redirect,
+  type Route,
+} from "@tanstack/react-router"
 import {
   BoxIcon,
   FolderClosed,
@@ -73,8 +78,10 @@ type RouteConfig = {
   path: string
   /**
    * The route object, typically created by createRoute from @tanstack/react-router.
+   * Using Route type from @tanstack/react-router will cause type errors.
+   * Using unknown type to avoid type errors.
    */
-  route: any
+  route: unknown | null
   /**
    * Sidebar configuration for this route (optional) - if not provided, the route will not be displayed in the sidebar.
    */
@@ -106,7 +113,7 @@ type RouteConfig = {
 const ROUTES_CONFIG: RouteConfig[] = [
   {
     path: "/dashboard",
-    route: DashboardHomeRoute,
+    route: null,
     sidebar: {
       title: "Dashboard",
       icon: LayoutDashboardIcon,
@@ -301,7 +308,11 @@ export function buildRouteTree(
   // Recursively collect all route objects from config and children
   function collectRoutes(configs: RouteConfig[], acc: Map<any, any>) {
     for (const r of configs) {
-      if (hasAccess(r.access, userType) && r.route && !acc.has(r.route)) {
+      if (
+        hasAccess(r.access, userType) &&
+        r.route !== null &&
+        !acc.has(r.route)
+      ) {
         acc.set(r.route, true)
       }
       if (r.sidebar?.children) {

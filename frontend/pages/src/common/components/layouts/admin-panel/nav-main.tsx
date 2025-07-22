@@ -17,7 +17,7 @@ import {
 import { Link } from "@tanstack/react-router"
 import { ChevronRight, type LucideIcon } from "lucide-react"
 import React from "react"
-import type { NavItem } from "route-config"
+import type { NavItem } from "../../../../route-config"
 import { ProjectSwitcher } from "./project-switcher"
 
 function generateHoverContent(item: NavItem) {
