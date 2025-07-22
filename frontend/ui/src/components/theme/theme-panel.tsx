@@ -26,7 +26,7 @@ import { ThemeContext } from "@radix-ui/themes";
 import {
   useThemeStore,
   useAppearanceStore,
-  SIDEBAR_COLOR_OPTIONS,
+  SIDEBAR_COLOR_OPTIONS as BASE_SIDEBAR_COLOR_OPTIONS,
   extractColorName,
 } from "@incmix/store/use-settings-store";
 
@@ -112,7 +112,10 @@ export function ThemePlayground() {
     togglePastel,
   } = useThemeStore();
   const themeContext = useContext(ThemeContext);
-
+  const SIDEBAR_COLOR_OPTIONS = [
+    { bg: { color: "background", break: 0 } },
+    ...BASE_SIDEBAR_COLOR_OPTIONS,
+  ];
   return (
     <CardContainer>
       <Heading size="4" mb="2" color="gray">
