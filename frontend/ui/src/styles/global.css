@@ -45,9 +45,9 @@
 
     --color-black: #000000;
     --color-white: #ffffff;
-    
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
+
+    --background: #111111;
+    --foreground: #fcfcfc;
 
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
@@ -89,8 +89,8 @@
     --color-black: #000000;
     --color-white: #ffffff;
 
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    --background: #fcfcfc;
+    --foreground: #111111;
 
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
