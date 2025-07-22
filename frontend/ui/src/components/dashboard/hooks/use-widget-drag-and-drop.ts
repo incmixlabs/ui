@@ -5,7 +5,7 @@ import { useSensor, useSensors, PointerSensor } from "@dnd-kit/core"
 import type { DragStartEvent, DragEndEvent } from "@dnd-kit/core"
 import type { ComponentSlot, DragData, Breakpoint } from "@incmix/ui/dashboard"
 import { DEFAULT_SIZES as DEFAULT_SIZES_CONST } from "@incmix/ui/dashboard"
-import { getWidgets } from "@incmix/ui/dashboard/sidebar/widgets-data"
+import { getWidgets} from "../sidebar/widgets-data"
 import type { LayoutItemWithNested } from "@incmix/ui/dashboard"
 import { LayoutItem } from "@incmix/ui/dashboard"
 
@@ -15,6 +15,7 @@ export function useWidgetDragAndDrop(
   setGridComponents: React.Dispatch<React.SetStateAction<ComponentSlot[]>>,
 ) {
   // Get what we need from the layout store
+  const widgets = getWidgets();
   const { setDefaultLayouts, defaultLayouts } = useLayoutStore()
 
   const [activeDragId, setActiveDragId] = useState<string | null>(null)
@@ -103,7 +104,7 @@ export function useWidgetDragAndDrop(
     // }
 
     // Find the component to add
-    const draggedComponent = sidebarComponents.find((comp) => comp.slotId === draggedSlotId)
+    const draggedComponent = widgets.find((comp) => comp.slotId === draggedSlotId)
     if (!draggedComponent) {
       console.error(`Component with ID ${draggedSlotId} not found in sidebar components`)
       return false
@@ -161,6 +162,11 @@ export function useWidgetDragAndDrop(
           componentName: componentName,
         }
 
+        // Convert resizeHandles to mutable array if present
+        if ((newNestedItem as any).resizeHandles && Array.isArray((newNestedItem as any).resizeHandles)) {
+          (newNestedItem as any).resizeHandles = Array.from((newNestedItem as any).resizeHandles)
+        }
+
         parentItem.layouts.push(newNestedItem)
 
         // Update the parent item in the layouts
@@ -187,7 +193,7 @@ export function useWidgetDragAndDrop(
     //   return false
     // }
 
-    const draggedComponent = sidebarComponents.find((comp) => comp.slotId === draggedSlotId);
+    const draggedComponent = widgets.find((comp) => comp.slotId === draggedSlotId);
     if (!draggedComponent) return false;
 
     const newItemId = `${draggedSlotId}|${crypto.randomUUID()}`;
@@ -211,7 +217,7 @@ export function useWidgetDragAndDrop(
       const currentLayout = [...newLayouts[breakpoint]];
 
       // Pass the new unique ID
-      const updatedLayout = calculateGridPosition(currentLayout, targetWidgetId, w, h, newItemId);
+      const updatedLayout = calculateGridPosition(currentLayout as LayoutItem[], targetWidgetId, w, h, newItemId);
 
       // Add componentName to the layout
       newLayouts[breakpoint] = updatedLayout.map((item) =>

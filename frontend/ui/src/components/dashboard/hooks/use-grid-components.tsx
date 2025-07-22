@@ -215,7 +215,7 @@ export function useGridComponents(isEditing: boolean) {
       componentName: "property-sheet",
     },
   ]);
-  
+
 
   // Use a ref to store removal history instead of state
   const removalHistoryRef = useRef<RemovalHistoryItem[]>([])
@@ -553,7 +553,7 @@ export function useGridComponents(isEditing: boolean) {
         slotId: `${newGroupId}|0`,
         component: <NewTasks />,
         title: "New Tasks",
-        componentName: "new-tasks",  
+        componentName: "new-tasks",
         compImage: dashboardImg?.darkNewTaskImg,
       },
       {
