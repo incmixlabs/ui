@@ -1,5 +1,5 @@
 
-import { useState, useRef, useCallback } from "react"
+import { useState, useRef, useCallback, useMemo } from "react"
 import { toast, useLayoutStore } from "@incmix/ui"
 import type { ComponentSlot, CustomLayouts, LayoutItemWithNested } from "@incmix/ui/dashboard"
 import type { Layout } from "@incmix/react-grid-layout"
@@ -32,7 +32,8 @@ import {
   WeatherWidget,
 } from "@incmix/ui/widgets"
 
-import { dashboardImg } from "@incmix/ui/dashboard"
+import { getWidgets } from "../sidebar/widgets-data"
+import { useAppearanceStore } from "@incmix/store/use-settings-store"
 
 // Define a type for the removal history
 interface RemovalHistoryItem {
@@ -49,8 +50,11 @@ interface RemovalHistoryItem {
 }
 
 export function useGridComponents(isEditing: boolean) {
-  const { setDefaultLayouts, handleNestedLayoutChange, defaultLayouts, addNewGroup } = useLayoutStore()
+  const { setDefaultLayouts, handleNestedLayoutChange, defaultLayouts, addNewGroup } = useLayoutStore(  const { use}
 
+  const { appearance } = useAppearanceStore()
+  const isDark = appearance === "dark"
+  const widgets = useMemo(() => getWidgets(), [isDark])
   const [gridComponents, setGridComponents] = useState<ComponentSlot[]>([
     {
       slotId: "grid-a|0",
