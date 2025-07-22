@@ -538,6 +538,12 @@ export const useThemeStore = create<ThemeStoreConfig>()(
             fg: "var(--gray-12)",
           }
         }
+        if (color === "background") {
+          return {
+            bg: "var(--background)",
+            fg: "var(--foreground)",
+          }
+        }
 
         return {
           bg: sidebarBg,

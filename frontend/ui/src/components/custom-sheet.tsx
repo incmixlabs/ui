@@ -170,7 +170,7 @@ export const MotionSheet: React.FC<SheetProps> = ({
                       style={{
                         margin: "4px 0 0 0",
                         fontSize: "14px",
-                        color: "var(--color-muted)",
+                        color: "var(--muted)",
                       }}
                     >
                       {description}
