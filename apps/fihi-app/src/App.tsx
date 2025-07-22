@@ -5,9 +5,9 @@ import { RouterProvider } from "@tanstack/react-router"
 import { setDefaultOptions } from "date-fns"
 
 import { useAuth } from "@incmix/pages"
-import { buildRouteTree } from "@incmix/pages/route-config"
 import { LoadingPage } from "@incmix/pages/common"
 import { I18n, usei18n } from "@incmix/pages/i18n"
+import { buildRouteTree } from "@incmix/pages/route-config"
 import { database as db } from "@incmix/store"
 import {
   useAppearanceStore,

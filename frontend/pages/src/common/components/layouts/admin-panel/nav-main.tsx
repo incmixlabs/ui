@@ -16,9 +16,9 @@ import {
 } from "@incmix/ui/sidebar"
 import { Link } from "@tanstack/react-router"
 import { ChevronRight, type LucideIcon } from "lucide-react"
-import { ProjectSwitcher } from "./project-switcher"
-import type { NavItem } from "route-config"
 import React from "react"
+import type { NavItem } from "route-config"
+import { ProjectSwitcher } from "./project-switcher"
 
 function generateHoverContent(item: NavItem) {
   return (
