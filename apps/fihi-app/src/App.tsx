@@ -5,6 +5,7 @@ import { RouterProvider } from "@tanstack/react-router"
 import { setDefaultOptions } from "date-fns"
 
 import { useAuth } from "@incmix/pages"
+import { buildRouteTree } from "@incmix/pages/route-config"
 import { LoadingPage } from "@incmix/pages/common"
 import { I18n, usei18n } from "@incmix/pages/i18n"
 import { database as db } from "@incmix/store"
@@ -15,7 +16,7 @@ import {
 import { Theme, Toaster } from "@incmix/ui"
 import type { LanguageOption as Language } from "@incmix/utils/types"
 import { Provider as RxdbProvider } from "rxdb-hooks"
-import { buildRouteTree } from "./route-builder"
+
 import { translations } from "./translations"
 
 export const dateFNSLocale: Record<Language, string> = {
