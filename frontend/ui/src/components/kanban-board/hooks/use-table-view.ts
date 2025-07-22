@@ -1,4 +1,5 @@
 // File: use-table-view.ts
+// Updated to use the selected project from project store
 
 import { useMemo } from "react"
 import { nanoid } from "nanoid"
@@ -49,13 +50,13 @@ export interface UseTableViewReturn {
  * Hook for table view that enhances list view data with table-specific properties
  */
 export function useTableView(
-  projectId = "default-project"
+  providedProjectId?: string
 ): UseTableViewReturn {
   // Reuse list view hook for data consistency
-  const listViewData = useListView(projectId)
+  const listViewData = useListView(providedProjectId)
   
   // Get direct access to project data to access priority labels
-  const kanbanData = useKanban(projectId)
+  const kanbanData = useKanban(providedProjectId)
 
   // Transform tasks for table display with computed properties
   const tableTasks = useMemo<TableTask[]>(() => {
