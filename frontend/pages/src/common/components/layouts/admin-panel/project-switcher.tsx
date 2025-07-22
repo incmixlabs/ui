@@ -14,29 +14,29 @@ function convertToProject(item: any): Project {
     id: item.id,
     name: item.name || `Project ${item.id.substring(0, 6)}`,
     title: item.title || item.name || `Project ${item.id.substring(0, 6)}`,
-    description: item.description || '',
-    company: item.company || '',
-    orgId: item.orgId || '',
-    status: item.status || 'all',
+    description: item.description || "",
+    company: item.company || "",
+    orgId: item.orgId || "",
+    status: item.status || "all",
     progress: item.progress || 0,
     timeLeft: item.timeLeft || 0,
-    timeType: item.timeType || 'days',
+    timeType: item.timeType || "days",
     budget: item.budget || 0,
     members: Array.isArray(item.members) ? item.members : [],
     createdAt: item.createdAt || Date.now(),
-    createdBy: item.createdBy || '',
+    createdBy: item.createdBy || "",
     updatedAt: item.updatedAt || Date.now(),
-    updatedBy: item.updatedBy || '',
-    logo: item.logo || '',
+    updatedBy: item.updatedBy || "",
+    logo: item.logo || "",
     tags: Array.isArray(item.tags) ? item.tags : [],
     milestones: Array.isArray(item.milestones) ? item.milestones : [],
     tasks: Array.isArray(item.tasks) ? item.tasks : [],
     completion: item.completion || 0,
     startDate: item.startDate || null,
     endDate: item.endDate || null,
-    fileInfo: item.fileInfo || undefined
+    fileInfo: item.fileInfo || undefined,
   }
-  
+
   // Type assertion is safer now as we've provided all required properties
   return project as Project
 }

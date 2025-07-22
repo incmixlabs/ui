@@ -34,7 +34,7 @@ export function useProjectsCheck() {
 
   useEffect(() => {
     let cancelled = false
-    
+
     const fetchProjects = async () => {
       setIsLoading(true)
 
@@ -50,20 +50,18 @@ export function useProjectsCheck() {
         }
 
         // Get all projects from formProjects collection
-        const projectDocs = await db.formProjects
-          .find()
-          .exec()
+        const projectDocs = await db.formProjects.find().exec()
 
         if (cancelled) return
-        
+
         // Filter projects by organization ID in memory using a type-safe approach
-        const filteredDocs = projectDocs.filter(doc => {
+        const filteredDocs = projectDocs.filter((doc) => {
           const docData = doc.toJSON()
           // Use a type-safe approach to check for organization ID
           // It could be stored as orgId, organizationId, or org_id in the schema
           return (
-            (docData as any).orgId === selectedOrganisation.id || 
-            (docData as any).organizationId === selectedOrganisation.id || 
+            (docData as any).orgId === selectedOrganisation.id ||
+            (docData as any).organizationId === selectedOrganisation.id ||
             (docData as any).org_id === selectedOrganisation.id
           )
         })
@@ -113,7 +111,7 @@ export function useProjectsCheck() {
     }
 
     fetchProjects()
-    
+
     // Cleanup function to prevent state updates after unmounting
     return () => {
       cancelled = true
