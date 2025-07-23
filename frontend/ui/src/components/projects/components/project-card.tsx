@@ -50,7 +50,7 @@ export function ProjectCard({
           <Box className="relative grid h-14 w-14 place-content-center rounded-app border-2 border-gray-4 p-2">
             <img
               src={project.logo}
-              alt={project.title}
+              alt={project.name}
               width={40}
               height={40}
               className="object-contain"
@@ -58,7 +58,7 @@ export function ProjectCard({
           </Box>
           <Box>
             <Heading as="h3" className="font-medium text-gray-12" size={"3"}>
-              {project.title}
+              {project.name}
             </Heading>
             <Text as="p" className="text-gray-11 text-sm">
               {project.company}
