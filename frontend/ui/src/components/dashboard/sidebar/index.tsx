@@ -169,7 +169,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
     <Box className="h-screen bg-gray-3">
       <ScrollArea className="h-full p-2">
         <Flex align={"center"} gap="2" className="mb-4">
-          <Box className=" relative">
+          <Box className="relative">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search..."
@@ -185,11 +185,11 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
                 <span className="sr-only">Filter</span>
               </IconButton>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content className="w-48 rounded-lg">
+            <DropdownMenu.Content className="w-48 rounded-app">
               <DropdownMenu.Item
                 onClick={() => setFilterType("both")}
                 className={
-                  filterType === "both" ? "bg-indigo-600 text-white" : ""
+                  filterType === "both" ? "bg-indigo-9 text-white" : ""
                 }
               >
                 <span>All</span>
@@ -197,7 +197,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
               <DropdownMenu.Item
                 onClick={() => setFilterType("widgets")}
                 className={
-                  filterType === "widgets" ? "bg-indigo-600 text-white" : ""
+                  filterType === "widgets" ? "bg-indigo-9 text-white" : ""
                 }
               >
                 <span>Widgets</span>
@@ -205,7 +205,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
               <DropdownMenu.Item
                 onClick={() => setFilterType("templates")}
                 className={
-                  filterType === "templates" ? "bg-indigo-600 text-white" : ""
+                  filterType === "templates" ? "bg-indigo-9 text-white" : ""
                 }
               >
                 <span>Templates</span>
@@ -251,12 +251,12 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
             className="-translate-y-1.5 translate-x-2"
           >
             <X size={16} />
-            <span className="sr-only">Filter</span>
+            <span className="sr-only">Remove Filter</span>
           </IconButton>
         </Flex>
 
         <Box
-          className={`bg-gray-1 p-2 mt-2 rounded-xl overflow-hidden ${
+          className={`bg-gray-1 p-2 mt-2 rounded-app overflow-hidden ${
             isWidgetExpanded ? "max-h-full" : "max-h-20"
           } relative border border-gray-6 transition-all duration-300 `}
         >

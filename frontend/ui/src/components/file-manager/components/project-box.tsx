@@ -120,14 +120,14 @@ const ProjectBox = ({ title }: FileGridProps) => {
                   placeholder="Search..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="absolute top-0 left-0 h-full w-full rounded-md bg-transparent pl-10"
+                  className="absolute top-0 left-0 h-full w-full bg-transparent pl-10"
                 />
               </Box>
             )}
-            <Button>
+            <Button className="h-10">
               <Plus className={iconSize} /> Add Folder
             </Button>
-            <Button>
+            <Button className="h-10">
               <Upload className={iconSize}/> Upload
             </Button>
           </Flex>
@@ -140,7 +140,7 @@ const ProjectBox = ({ title }: FileGridProps) => {
                 gap={"2"}
                 className="w-full"
               >
-                <Box className="relative flex h-9 w-10 cursor-pointer items-center rounded-lg border border-gray-5 md:w-64 md:cursor-default md:border-none">
+                <Box className="relative flex h-9 w-10 cursor-pointer items-center rounded-app border border-gray-5 md:w-64 md:cursor-default md:border-none">
                   <Search className="ml-2 h-5 w-5 text-gray-10" />
                   <Input
                     placeholder="Search files..."
@@ -153,10 +153,9 @@ const ProjectBox = ({ title }: FileGridProps) => {
               <Flex
                 align={"center"}
                 gap={"1"}
-                className="h-9 rounded-md border border-gray-5 p-1"
+                className="h-9 rounded-app border border-gray-5 p-1"
               >
                  <IconButton
-
                     onClick={() => setViewMode("grid")}
                   >
                     <FilterIcon className={iconSize}/>
@@ -174,7 +173,6 @@ const ProjectBox = ({ title }: FileGridProps) => {
                 </IconButton>
                 {isMobile && (
                   <IconButton
-
                     onClick={() => setViewMode("side")}
                   >
                     <Columns2 className={cn("h-5 w-5")} />
@@ -248,7 +246,7 @@ const ProjectBox = ({ title }: FileGridProps) => {
                 onClick={() => currentPage > 1 && paginate(currentPage - 1)}
                 variant={currentPage === 1 ? "outline" : "solid"}
                 className={
-                  "flex cursor-pointer items-center gap-1 rounded-md p-2 font-medium text-sm transition-colors"
+                  "flex cursor-pointer items-center gap-1 p-2 font-medium text-sm transition-colors"
                 }
                 disabled={currentPage === 1}
               >
@@ -268,7 +266,7 @@ const ProjectBox = ({ title }: FileGridProps) => {
                         variant={currentPage === page ? "solid" : "outline"}
                         onClick={() => paginate(page as number)}
                         className={
-                          "flex h-8 w-8 cursor-pointer items-center justify-center rounded-md font-medium text-sm transition-colors"
+                          "flex h-8 w-8 cursor-pointer items-center justify-center font-medium text-sm transition-colors"
                         }
                       >
                         {page}
@@ -284,7 +282,7 @@ const ProjectBox = ({ title }: FileGridProps) => {
                 }
                 variant={currentPage === totalPages ? "outline" : "solid"}
                 className={
-                  "flex cursor-pointer items-center gap-1 rounded-md p-2 font-medium text-sm transition-colors"
+                  "flex cursor-pointer items-center gap-1 p-2 font-medium text-sm transition-colors"
                 }
                 disabled={currentPage === totalPages}
               >

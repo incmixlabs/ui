@@ -1,6 +1,6 @@
 import type React from "react";
 import { useEffect, useState } from "react";
-import { Button, Flex } from "@incmix/ui/base";
+import { Button, Flex, Tooltip } from "@incmix/ui/base";
 import { Input } from "@incmix/ui/base";
 import { Label } from "@incmix/ui/base";
 import { Dialog } from "@incmix/ui/base";
@@ -18,6 +18,7 @@ import { useQueryState } from "nuqs";
 import type { CustomLayouts } from "@incmix/store";
 
 interface SaveTemplateDialogProps {
+  isDesktop: boolean;
   projectId: string;
   layouts: CustomLayouts;
   open: boolean;
@@ -25,6 +26,7 @@ interface SaveTemplateDialogProps {
 }
 
 export function SaveTemplateDialog({
+  isDesktop,
   projectId,
   layouts,
   open,
@@ -44,9 +46,9 @@ export function SaveTemplateDialog({
         const existingTemplate = await templatesCollection
           .findOne(templateId)
           .exec();
-          
-        const templates = await database.dashboardTemplates.find().exec()
-        setAllTags([...new Set(templates.flatMap(t => t.tags || []))])
+
+        const templates = await database.dashboardTemplates.find().exec();
+        setAllTags([...new Set(templates.flatMap((t) => t.tags || []))]);
 
         if (!existingTemplate) {
           toast.error("Template not found");
@@ -68,14 +70,12 @@ export function SaveTemplateDialog({
     }
   }, [isTemplate, setTemplateName, setTags]);
 
-
   const handleSave = async () => {
     if (!templateName.trim()) {
       toast.error("Please enter a template name");
       return;
     }
     console.log("layouts", layouts);
-    
 
     await addTemplate({
       templateName: templateName.trim(),
@@ -126,7 +126,7 @@ export function SaveTemplateDialog({
   };
 
   console.log(allTags);
-  
+
   return (
     <Flex justify="center" align={"center"} gap="2">
       <Dialog.Root
@@ -137,8 +137,20 @@ export function SaveTemplateDialog({
       >
         <Dialog.Trigger>
           <Button variant="solid" color={isTemplate ? "indigo" : "orange"}>
-            <Save size={20} />{" "}
-            {isTemplate ? "Update Template" : "Save Template"}
+            {isDesktop ? (
+              <>
+                <Save size={20} />
+                {isTemplate ? "Update Template" : "Save Template"}
+              </>
+            ) : (
+              <>
+                <Tooltip
+                  content={isTemplate ? "Update Template" : "Save Template"}
+                >
+                  <Save size={20} />
+                </Tooltip>
+              </>
+            )}
           </Button>
         </Dialog.Trigger>
         <Dialog.Content>
@@ -166,7 +178,10 @@ export function SaveTemplateDialog({
               <Label htmlFor="template-tags">Tags</Label>
               <MultipleSelector
                 value={tags.map((tag) => ({ value: tag, label: tag }))}
-                defaultOptions={allTags.map((tag) => ({ value: tag, label: tag }))}
+                defaultOptions={allTags.map((tag) => ({
+                  value: tag,
+                  label: tag,
+                }))}
                 defaultColor="indigo"
                 onChange={(options) =>
                   setTags(options.map((option) => option.value))

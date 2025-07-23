@@ -25,6 +25,20 @@ export const extractColorName = (cssVar: string): string => {
     "Unknown"
   )
 }
+
+export const RADIUS_MAP: Record<RadixRadius, string> = {
+  none: "0px",
+  small: "4px",
+  medium: "8px",
+  large: "12px",
+  full: "9999px",
+}
+
+export const getRadiusValue = (radiusLevel?: RadixRadius | string): string => {
+  if (!radiusLevel) return RADIUS_MAP.medium
+  return RADIUS_MAP[radiusLevel as RadixRadius] ?? RADIUS_MAP.medium
+}
+
 export type SidebarColorConfig = {
   color: string
   break: number
@@ -67,6 +81,7 @@ export type ThemeStoreConfig = ThemeConfig & {
     color3: string
     color4: string
   }
+
   getIndicatorColors: (pastel?: boolean) => {
     danger: string
     dangerText: string
@@ -83,6 +98,7 @@ export type ThemeStoreConfig = ThemeConfig & {
     bg: string
     fg: string
   }
+  getRadiusValue: (radiusLevel?: RadixRadius | string) => string
 }
 export type UsePreferencesStoreConfig = UserPreference & {
   setUserPreference: (partial: Partial<UserPreference>) => void
@@ -404,6 +420,10 @@ export const useThemeStore = create<ThemeStoreConfig>()(
         }
 
         return dash
+      },
+      getRadiusValue: (radiusLevel?: RadixRadius | string) => {
+        const level = (radiusLevel ?? get().radius) as RadixRadius
+        return RADIUS_MAP[level] ?? RADIUS_MAP.medium
       },
       getIndicatorColors: (pastel = false) => {
         const {

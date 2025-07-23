@@ -198,6 +198,7 @@ export const incmixTailwindPreset: Config = {
       borderRadius: {
         ...radiusScale,
         radius: "0.5rem",
+        'app': 'var(--app-radius)',
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui'],

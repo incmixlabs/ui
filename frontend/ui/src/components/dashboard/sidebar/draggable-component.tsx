@@ -77,16 +77,16 @@ export const DraggableComponent = forwardRef<
     return (
       <>
         {isDragging && (
-          <Box className="absolute z-50  rounded-lg border border-gray-400 border-dashed bg-gray-1 opacity-50 h-full">
+          <Box className="absolute z-50  rounded-app border border-gray-400 border-dashed bg-gray-1 opacity-50 h-full">
             <img
               src={lightImage || "/placeholder.svg?height=150&width=150"}
               alt={title}
-              className="h-full w-full rounded-lg dark:hidden block"
+              className="h-full w-full rounded-app dark:hidden block"
             />
             <img
               src={darkImage || "/placeholder.svg?height=150&width=150"}
               alt={title}
-              className="h-full w-full rounded-lg dark:block hidden"
+              className="h-full w-full rounded-app dark:block hidden"
             />
           </Box>
         )}
@@ -97,7 +97,7 @@ export const DraggableComponent = forwardRef<
           {...listeners}
           {...attributes}
           onMouseDown={handleMouseDown}
-          className={`rounded-lg border border-gray-5 h-full dark:bg-gray-2 bg-white  ${
+          className={`rounded-app border border-gray-5 h-full dark:bg-gray-2 bg-white  ${
             disabled
               ? "cursor-not-allowed opacity-60"
               : "cursor-grab active:cursor-grabbing"
@@ -106,14 +106,14 @@ export const DraggableComponent = forwardRef<
           <img
             src={lightImage || "/placeholder.svg?height=150&width=150"}
             alt={title}
-            className="h-full w-full rounded-lg dark:hidden block"
+            className="h-full w-full rounded-app dark:hidden block"
           />
           <img
             src={darkImage || "/placeholder.svg?height=150&width=150"}
             alt={title}
-            className="h-full w-full rounded-lg dark:block hidden"
+            className="h-full w-full rounded-app dark:block hidden"
           />
-          <Box className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/30 opacity-0 transition-opacity hover:opacity-100">
+          <Box className="absolute inset-0 flex items-center justify-center rounded-app bg-black/30 opacity-0 transition-opacity hover:opacity-100">
             <span className="text-center text-xs font-medium text-white">
               {title}
             </span>

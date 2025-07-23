@@ -3,7 +3,7 @@ import  { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import jsonSchemaToZod from "json-schema-to-zod"
 
-import { Button, Form } from "@base"
+import { Box, Button, Form } from "@base"
 import { cn } from "@utils/cn"
 
 import AutoFormObject from "./fields/object"
@@ -122,10 +122,10 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
   }
 
   return (
-    <div className="w-full">
+    <Box className="w-full">
       <Form {...form}>
         <form
-          noValidate // Add noValidate to disable browser validation
+          noValidate 
           onSubmit={(e) => {
             form.handleSubmit(onSubmit)(e)
           }}
@@ -149,7 +149,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
           {children}
         </form>
       </Form>
-    </div>
+    </Box>
   )
 }
 
