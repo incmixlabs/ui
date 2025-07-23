@@ -17,3 +17,4 @@ export * from "./hooks/use-bulk-ai-generation"
 export * from "./hooks/use-task-status-store"
 // Re-export everything from kanban-view.types (including its KanbanColumn)
 export * from "./hooks/use-settings-store"
+export * from "./hooks/use-projects-check"

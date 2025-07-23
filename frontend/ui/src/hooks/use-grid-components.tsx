@@ -21,6 +21,7 @@ import {
   ProjectListWidgets,
   ProjectTimelineWidgets,
   ProjectWidgets,
+  PropertySheet,
   RecentActivity,
   StatisticWidgets,
   SubscribersByCountries,
@@ -206,6 +207,12 @@ export function useGridComponents(isEditing: boolean) {
       component: <NewsWidget />,
       title: "News",
       componentName: "news",
+    },
+    {
+      slotId: "prts",
+      component: <PropertySheet />,
+      title: "Property Sheet",
+      componentName: "property-sheet",
     },
   ]);
   

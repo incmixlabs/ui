@@ -20,7 +20,8 @@
     "./roles": "./src/roles/index.ts",
     "./tasks": "./src/tasks/index.ts",
     "./translations": "./src/translations/index.ts",
-    "./users": "./src/users/index.ts"
+    "./users": "./src/users/index.ts",
+    "./route-config": "./src/route-config.ts"
   },
   "scripts": {
     "build": "pnpm clean && echo 'Skipping build' && exit 0",

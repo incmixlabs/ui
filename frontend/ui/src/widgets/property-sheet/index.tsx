@@ -12,7 +12,8 @@ import { Input,
   Popover,
   Select,
   Text,
-  iconSize } from "@base"
+  iconSize, 
+  CardContainer} from "@base"
 
 
 import ColorPicker from "@components/color-picker"
@@ -44,7 +45,7 @@ const resolveColorVariable = (colorVar: string) => {
 }
 
 export function PropertySheet() {
-  const [color, setColor] = useState("var(--indicator-warning)")
+  const [color, setColor] = useState("#F76B15")
 
   const [width, setWidth] = useState(200)
   const [height, setHeight] = useState(480)
@@ -62,9 +63,9 @@ export function PropertySheet() {
   }
 
   return (
-    <Card.Root className="w-96 rounded-none p-0 ">
+    <CardContainer className="p-1 h-full">
       <Box>
-        <Heading as="h2" className="bg-gray-2 p-2 font-medium">
+        <Heading as="h3" className="bg-gray-2 p-2 font-medium">
           Layout
         </Heading>
         <Box className="border-gray-4 border-y">
@@ -99,7 +100,7 @@ export function PropertySheet() {
         </Box>
       </Box>
       <Box>
-        <Heading as="h2" className="bg-gray-2 p-2 font-medium">
+        <Heading as="h3" className="bg-gray-2 p-2 font-medium">
           Data loading
         </Heading>
         <Box className="border-gray-4 border-y">
@@ -151,7 +152,7 @@ export function PropertySheet() {
         </Box>
       </Box>
       <Box>
-        <Heading as="h2" className="bg-gray-2 p-2 font-medium">
+        <Heading as="h3" className="bg-gray-2 p-2 font-medium">
           Styling
         </Heading>
         <Box className="border-gray-4 border-y">
@@ -197,7 +198,7 @@ export function PropertySheet() {
             Main Color
           </Text>
           <Flex
-            className="w-full p-2 px-3 "
+            className="w-full p-2 pl-1 pr-3 "
             justify={"between"}
             align={"center"}
           >
@@ -230,6 +231,6 @@ export function PropertySheet() {
           </Flex>
         </Flex>
       </Box>
-    </Card.Root>
+    </CardContainer>
   )
 }
