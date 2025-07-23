@@ -32,7 +32,7 @@ export function LayoutPresetsSection() {
 
   return (
     <Box
-      className={`bg-gray-1 p-2 mt-2 rounded-xl relative border border-gray-5
+      className={`bg-gray-1 p-2 mt-2 rounded-app relative border border-gray-5
         ${
           isExpanded ? 'max-h-full' : 'max-h-20'
         }
@@ -61,14 +61,14 @@ export function LayoutPresetsSection() {
         {presetLayouts.map((preset) => (
           <Box
             key={preset.id}
-            className={`border border-gray-4 cursor-pointer  rounded-lg p-2 transition-all duration-200 ${
+            className={`border border-gray-4 cursor-pointer  rounded-app p-2 transition-all duration-200 ${
               activePresetId === preset.id
                 ? "bg-indigo-5 dark:bg-indigo-8"
                 : "border-transparent "
             }`}
             onClick={() => applyPreset(preset.id)}
           >
-            <Box className="relative mb-2 w-full overflow-hidden rounded-md">
+            <Box className="relative mb-2 w-full overflow-hidden rounded-app">
               {appearance === "dark" ? (
                 <img
                   src={preset.darkImage || "/placeholder.svg"}

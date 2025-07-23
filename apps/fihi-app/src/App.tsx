@@ -37,6 +37,7 @@ function App() {
     getDashboardColors,
     getIndicatorColors,
     getPastel,
+    getRadiusValue,
   } = useThemeStore()
 
   // Get computed colors from your theme store
@@ -99,6 +100,8 @@ function App() {
           "--indicator-info-text": indicatorColors.infoText,
           "--indicator-default": indicatorColors.default,
           "--indicator-default-text": indicatorColors.defaultText,
+
+          "--app-radius": getRadiusValue(radius),
         } as React.CSSProperties
       }
     >

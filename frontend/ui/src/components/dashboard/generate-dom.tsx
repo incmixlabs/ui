@@ -111,7 +111,7 @@ export function generateDOM(
         key={item.i}
         className={cn(
           "",
-          isEditing && "rounded-lg dark:bg-gray-8 bg-gray-5 p-0 shadow",
+          isEditing && "rounded-app dark:bg-gray-8 bg-gray-5 p-0 shadow",
         )}
       >
         <WidgetDropZone

@@ -28,6 +28,7 @@ import {
   useDevicePreview,
   useGridComponents,
   useLayoutStore,
+  useMediaQuery,
   useModalStore,
   useWidgetDragAndDrop,
 } from "@incmix/ui"
@@ -62,6 +63,7 @@ const DashboardHomePage: React.FC = () => {
   const pathSegments = pathname.split("/").filter(Boolean)
   const projectId =
     pathname === "/dashboard/home" ? "home" : pathSegments[1] || "home"
+  const isDesktop = useMediaQuery("(min-width: 1280px)")
 
   const isCreateDashModalOpen = useModalStore(
     (state) => state.isDashboardCreateOpen
@@ -218,15 +220,18 @@ const DashboardHomePage: React.FC = () => {
                 {isEditing && (
                   <Flex align={"center"} gap="2">
                     <AddGroupButton
+                      isDesktop={isDesktop}
                       isEditing={isEditing}
                       onAddGroup={handleAddNewGroup}
                     />
                     <ActiveBtn
                       items={deviceTabs}
+                      isDesktop={isDesktop}
                       defaultActiveId={activeDevice}
                       onChange={setActiveDevice}
                     />
                     <SaveTemplateDialog
+                      isDesktop={isDesktop}
                       projectId={"home"}
                       layouts={defaultLayouts}
                       open={openSaveDialog}
@@ -238,7 +243,7 @@ const DashboardHomePage: React.FC = () => {
               </Flex>
             </Flex>
             <Box
-              className={`relative mx-auto h-full rounded-lg transition-width duration-200 ${
+              className={`relative mx-auto h-full rounded-app transition-width duration-200 ${
                 isEditing && !isEmpty
                   ? "border-2 border-indigo-8 border-dashed bg-indigo-2 "
                   : ""
@@ -287,7 +292,7 @@ const DashboardHomePage: React.FC = () => {
         {activeDragId && activeDragData && (
           <Box
             className={cn(
-              "pointer-events-none rounded-lg border border-gray-5 bg-gray-1 opacity-100 shadow"
+              "pointer-events-none rounded-app border border-gray-5 bg-gray-1 opacity-100 shadow"
             )}
           >
             <img
@@ -296,7 +301,7 @@ const DashboardHomePage: React.FC = () => {
                 "/placeholder.svg?height=150&width=150"
               }
               alt={activeDragData.title || "Component"}
-              className="hidden h-full w-full rounded-lg dark:block"
+              className="hidden h-full w-full rounded-app dark:block"
             />
             <img
               src={
@@ -304,7 +309,7 @@ const DashboardHomePage: React.FC = () => {
                 "/placeholder.svg?height=150&width=150"
               }
               alt={activeDragData.title || "Component"}
-              className="block h-full w-full rounded-lg dark:hidden"
+              className="block h-full w-full rounded-app dark:hidden"
             />
           </Box>
         )}

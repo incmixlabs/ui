@@ -7,27 +7,27 @@ import {
   EditIcon,
   Tooltip,
   CloneIcon,
-  toast
+  toast,
 } from "@incmix/ui/base";
-import {  useDashboardStore } from "@incmix/store";
+import { useDashboardStore } from "@incmix/store";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
-
-export function CloneDashboardHomeModal({dashboardId}: {dashboardId: string}) {
+export function CloneDashboardHomeModal({
+  dashboardId,
+}: {
+  dashboardId: string;
+}) {
   const [name, setName] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const { cloneHomeDashboard, getDashboards } = useDashboardStore()
+  const { cloneHomeDashboard, getDashboards } = useDashboardStore();
   const navigate = useNavigate();
-
-
-
 
   const handleCloneHomeDash = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
     try {
-      const newDashboardId = await cloneHomeDashboard(dashboardId, name.trim())
+      const newDashboardId = await cloneHomeDashboard(dashboardId, name.trim());
 
       setName("");
       setIsOpen(false);
@@ -37,7 +37,7 @@ export function CloneDashboardHomeModal({dashboardId}: {dashboardId: string}) {
         to: "/dashboard/$projectId",
         params: { projectId: newDashboardId },
       });
-      await getDashboards()
+      await getDashboards();
     } catch (error) {
       toast.error("Failed to clone dashboard", {
         description:
@@ -51,9 +51,9 @@ export function CloneDashboardHomeModal({dashboardId}: {dashboardId: string}) {
   return (
     <>
       <Tooltip content={"Clone Dashboard"}>
-        <Button onClick={() => setIsOpen(true)} color="orange">
-        <CloneIcon size={20}/>
-        <span className="sr-only">Clone</span>
+        <Button onClick={() => setIsOpen(true)} color="orange" className="px-2">
+          <CloneIcon size={20} />
+          <span className="sr-only">Clone</span>
         </Button>
       </Tooltip>
       <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
@@ -87,8 +87,3 @@ export function CloneDashboardHomeModal({dashboardId}: {dashboardId: string}) {
     </>
   );
 }
-
-
-
-
-

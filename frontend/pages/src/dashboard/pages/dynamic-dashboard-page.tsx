@@ -24,6 +24,7 @@ import {
   useDevicePreview,
   useGridComponents,
   useLayoutStore,
+  useMediaQuery,
   useModalStore,
   useWidgetDragAndDrop,
 } from "@incmix/ui"
@@ -43,6 +44,7 @@ const DynamicDashboardPage: React.FC = () => {
   const { projectId } = useParams({ from: "/dashboard/$projectId" })
   const { t } = useTranslation("navbar")
   const { pathname } = useLocation()
+  const isDesktop = useMediaQuery("(min-width: 1024px)")
   const [isTemplate, setIsTemplate] = useQueryState("template")
   const [project, setProject] = useState<Dashboard | undefined>()
 
@@ -193,15 +195,18 @@ const DynamicDashboardPage: React.FC = () => {
                 {isEditing && (
                   <Flex align={"center"} gap="2">
                     <AddGroupButton
+                      isDesktop={isDesktop}
                       isEditing={isEditing}
                       onAddGroup={handleAddNewGroup}
                     />
                     <ActiveBtn
+                      isDesktop={isDesktop}
                       items={deviceTabs}
                       defaultActiveId={activeDevice}
                       onChange={setActiveDevice}
                     />
                     <SaveTemplateDialog
+                      isDesktop={isDesktop}
                       projectId={projectId}
                       layouts={defaultLayouts}
                       open={openSaveDialog}
