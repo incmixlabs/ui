@@ -27,6 +27,7 @@ import {
     BatteryWidget,
     WeatherWidget,
     NewsWidget,
+    PropertySheet,
   } from "@incmix/ui/widgets";
 
 export const sidebarComponents = [
@@ -450,6 +451,23 @@ export const sidebarComponents = [
     lightCompImage: dashboardImg.lightActivityTimelineImg,
     title: "News",
     tags: ["news"],
+    layouts: {
+      lg: { w: 5, h: 24 },
+      md: { w: 5, h: 24 },
+      sm: { w: 5, h: 24 },
+      xs: { w: 5, h: 24 },
+      xxs: { w: 5, h: 24 },
+    },
+    className:"col-span-5"
+  },
+  {
+    slotId: "prts",
+    component: <PropertySheet />,
+    componentName: "property-sheet",
+    darkCompImage: dashboardImg.darkPropertySheet,
+    lightCompImage: dashboardImg.lightPropertySheet,
+    title: "Property Sheet",
+    tags: ["property-sheet"],
     layouts: {
       lg: { w: 5, h: 24 },
       md: { w: 5, h: 24 },

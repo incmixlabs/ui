@@ -49,6 +49,8 @@ import lightDefaultPreset from "./light-default-layout.svg"
 import darkDefaultPreset from "./dark-default-layout.svg"
 import darkGrpTemplate from "./dark-group-template.svg"
 import lightGrpTemplate from "./light-group-template.svg"
+import darkPropertySheet from "./dark-property-sheet.svg"
+import lightPropertySheet from "./light-property-sheet.svg"
 
 
 export const dashboardImg = {
@@ -101,5 +103,7 @@ export const dashboardImg = {
   darkGrpTemplate,
   lightGrpTemplate,
   darkClockImg,
-  lightClockImg
+  lightClockImg,
+  darkPropertySheet,
+  lightPropertySheet
 }
