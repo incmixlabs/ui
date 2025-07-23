@@ -16,13 +16,15 @@ interface LayoutState {
   addNewGroup: () => string;
 }
 
-export const useLayoutStore = create<LayoutState>((set, get) => ({
- 
-  defaultLayouts: presetLayouts[0].mainLayouts,
-  activePresetId: presetLayouts[0].id,
+export const useLayoutStore = create<LayoutState>((set, get) => {
+  const presets = getPresets();
+  const defaultPreset = presets.default
+  return {
+  defaultLayouts: defaultPreset.mainLayouts,
+  activePresetId: defaultPreset.id,
 
-  applyPreset: (presetId) => {
-    const preset = presetLayouts.find((p) => p.id === presetId);
+  applyPreset: (presetId?: string) => {
+    const preset = presetLayouts.find((p: typeof presetLayouts[0]) => p.id === presetId);
     if (!preset) return;
 
     set({
@@ -31,7 +33,7 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
     });
   },
 
-  applyTemplates: (mainLayouts, templateId) => {
+  applyTemplates: (mainLayouts?: CustomLayouts, templateId?: string) => {
     const { defaultLayouts } = get();
 
     set({
@@ -40,11 +42,11 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
     });
   },
 
-  setDefaultLayouts: (layouts) => {
+  setDefaultLayouts: (layouts: CustomLayouts) => {
     set({ defaultLayouts: layouts });
   },
 
-  handleLayoutChange: (_layout, allLayouts) => {
+  handleLayoutChange: (_layout: Layout[], allLayouts: CustomLayouts) => {
     const { defaultLayouts } = get();
 
     const updatedLayouts = JSON.parse(JSON.stringify(defaultLayouts));
@@ -85,7 +87,7 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
             updatedLayouts[breakpointKey].push({
               ...newItem,
               componentName:
-                defaultLayouts[breakpointKey].find((i) => i.i === newItem.i)
+                defaultLayouts[breakpointKey].find((i: { i: string }) => i.i === newItem.i)
                   ?.componentName ?? undefined,
             });
           }
@@ -105,7 +107,7 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
     set({ defaultLayouts: updatedLayouts });
   },
 
-  handleNestedLayoutChange: (nestedLayout, itemKey) => {
+  handleNestedLayoutChange: (nestedLayout: Layout[], itemKey: string) => {
     set((state) => {
       const updatedLayouts = { ...state.defaultLayouts };
 
@@ -113,7 +115,7 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
       breakpoints.forEach((breakpoint) => {
         if (updatedLayouts[breakpoint]) {
           updatedLayouts[breakpoint] = updatedLayouts[breakpoint].map(
-            (item) => {
+            (item: Layout) => {
               if (item.i === itemKey) {
                 return {
                   ...item,
@@ -129,7 +131,7 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
       return { defaultLayouts: updatedLayouts };
     });
   },
-  addNewGroup: () => {
+  addNewGroup: (): string => {
     const currentLayouts = get().defaultLayouts;
     const newGroupId = getNextGroupId(currentLayouts);
     set((state) => {
@@ -142,4 +144,4 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
 
     return newGroupId;
   },
-}));
+}}));
