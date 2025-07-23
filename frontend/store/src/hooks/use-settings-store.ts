@@ -159,8 +159,6 @@ export type UserPreferenceStoreConfig = UserPreference & {
   getDirection: () => "ltr" | "rtl"
   getIsSystemAppearance: () => boolean
   getIsDarkAppearance: () => boolean
-  getHasNetworkConnection: () => boolean
-  setHasNetworkConnection: (hasNetwork: boolean) => void
 }
 
 export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
@@ -216,7 +214,6 @@ export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
       getDirection: () => get().direction ?? "ltr",
       getIsSystemAppearance: () => get().isSystemAppearance ?? false,
       getIsDarkAppearance: () => get().appearance === "dark",
-      getHasNetworkConnection: () => get().hasNetwork ?? true,
     }),
     {
       name: "incmix-appearance-store",

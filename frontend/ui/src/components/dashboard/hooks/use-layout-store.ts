@@ -2,7 +2,7 @@ import { create } from "zustand";
 import type { Breakpoint, CustomLayouts } from "@incmix/ui/dashboard";
 
 import type { Layout } from "@incmix/react-grid-layout";
-import { presetLayouts } from "@incmix/ui/dashboard";
+import { getPresets } from "../sidebar/widgets-data";
 import { addGroupToLayouts, getNextGroupId } from "../utils";
 
 interface LayoutState {
@@ -17,6 +17,7 @@ interface LayoutState {
 }
 
 export const useLayoutStore = create<LayoutState>((set, get) => ({
+ 
   defaultLayouts: presetLayouts[0].mainLayouts,
   activePresetId: presetLayouts[0].id,
 

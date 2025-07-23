@@ -1,6 +1,7 @@
 
 import { useState, useRef, useCallback, useMemo } from "react"
-import { toast, useLayoutStore } from "@incmix/ui"
+import { toast } from "@base"
+import { useLayoutStore } from "./use-layout-store"
 import type { ComponentSlot, CustomLayouts, LayoutItemWithNested } from "@incmix/ui/dashboard"
 import type { Layout } from "@incmix/react-grid-layout"
 import {
@@ -50,10 +51,11 @@ interface RemovalHistoryItem {
 }
 
 export function useGridComponents(isEditing: boolean) {
-  const { setDefaultLayouts, handleNestedLayoutChange, defaultLayouts, addNewGroup } = useLayoutStore(  const { use}
+  const { setDefaultLayouts, handleNestedLayoutChange, defaultLayouts, addNewGroup } = useLayoutStore()
 
-  const { appearance } = useAppearanceStore()
-  const isDark = appearance === "dark"
+  const appearanceStore = useAppearanceStore()
+  debugger;
+  const isDark = appearanceStore.getIsDarkAppearance()
   const widgets = useMemo(() => getWidgets(), [isDark])
   const [gridComponents, setGridComponents] = useState<ComponentSlot[]>([
     {
@@ -548,7 +550,7 @@ export function useGridComponents(isEditing: boolean) {
    * Adds a new group with default components at the top of the dashboard
    */
   const handleAddNewGroup = useCallback(() => {
-
+    const widgets = useMemo(() => getWidgets(), [appearance])
     // Add the new group to layouts and get its ID
     const newGroupId = addNewGroup()
 
@@ -558,14 +560,14 @@ export function useGridComponents(isEditing: boolean) {
         component: <NewTasks />,
         title: "New Tasks",
         componentName: "new-tasks",
-        compImage: dashboardImg?.darkNewTaskImg,
+        compImage: widgets['new-tasks'].image
       },
       {
         slotId: `${newGroupId}|1`,
         component: <TotalTasks />,
         title: "Total Tasks",
         componentName: "total-tasks",
-        compImage: dashboardImg?.darkTotalTasksImg,
+        compImage: widgets['total-tasks'].image
       },
     ]
 
