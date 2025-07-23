@@ -169,7 +169,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
     <Box className="h-screen bg-gray-3">
       <ScrollArea className="h-full p-2">
         <Flex align={"center"} gap="2" className="mb-4">
-          <Box className=" relative">
+          <Box className="relative">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search..."

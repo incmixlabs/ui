@@ -43,11 +43,11 @@ export function ProjectCard({
           handleDrawerOpen(project.id.toString())
         }
       }}
-      className={`flex flex-col gap-4 rounded-lg p-5 ${isListFilter && "cursor-pointer"}`}
+      className={`flex flex-col gap-4 rounded-app p-5 ${isListFilter && "cursor-pointer"}`}
     >
       <Flex align={"center"} justify={"between"}>
         <Flex align={"center"} gap={"3"}>
-          <Box className="relative grid h-14 w-14 place-content-center rounded-xl border-2 border-gray-4 p-2">
+          <Box className="relative grid h-14 w-14 place-content-center rounded-app border-2 border-gray-4 p-2">
             <img
               src={project.logo}
               alt={project.title}
@@ -131,10 +131,9 @@ export function ProjectCard({
         <Flex
           align={"center"}
           gap={"1"}
-          className="rounded-md bg-gray-3 p-2 font-medium text-gray-11"
+          className="rounded-app bg-gray-3 p-2 font-medium text-gray-11"
         >
           <Clock className={`${iconSize}`} />
-
           <Text as="span" className="text-sm ">
             {project.timeLeft} {project.timeType} left
           </Text>
@@ -143,12 +142,11 @@ export function ProjectCard({
           {project.members.slice(0, 3).map((member) => (
             <Box
               key={member.id}
-              className="h-8 w-8 overflow-hidden rounded-full"
+              className="h-8 w-8 overflow-hidden rounded-app"
             >
               <Avatar
                 src={member.avatar}
                 name={member.name}
-
               />
             </Box>
           ))}
