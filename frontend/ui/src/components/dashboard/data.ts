@@ -936,10 +936,8 @@ export const getLayoutPresets = (): typeof initialLayouts => {
   return initialLayouts;
 };
 export const presetLayouts = (): LayoutPreset[] => {
-  const {appearance} = useAppearanceStore.getState();
-  const presets = useMemo(() => getPresets(), [appearance]);
-  const widgets = useMemo(() => getWidgets(), [appearance]);
-
+  const presets =getPresets();
+  
   return [
     {
     id: "default",
@@ -1878,7 +1876,7 @@ export const presetLayouts = (): LayoutPreset[] => {
       id: "group-template",
       name: "Group Template",
       description: "Layout with group",
-      image: widgets["group-template"]?.image ?? "",
+      image: presets["group-template"]?? "",
       mainLayouts: {
         lg: [
           {

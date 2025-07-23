@@ -29,6 +29,7 @@ import {
     PropertySheet,
   } from "@incmix/ui/widgets";
 
+
 export  const rootDir = '/images/dashboard/'
 
 export const getWidgets = () => {
@@ -460,7 +461,6 @@ export const getWidgets = () => {
 export const getPresets = () => {
   const isDark =  useAppearanceStore.getState().getIsDarkAppearance();
   const dir = isDark ? `${rootDir}/dark` : `${rootDir}/light`
-
   return {
     default: `${rootDir}/default-presets.png`,
     presets2: `${rootDir}/presets2.png`,

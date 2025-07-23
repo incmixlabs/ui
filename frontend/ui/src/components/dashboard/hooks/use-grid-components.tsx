@@ -52,11 +52,6 @@ interface RemovalHistoryItem {
 
 export function useGridComponents(isEditing: boolean) {
   const { setDefaultLayouts, handleNestedLayoutChange, defaultLayouts, addNewGroup } = useLayoutStore()
-
-  const appearanceStore = useAppearanceStore()
-  debugger;
-  const isDark = appearanceStore.getIsDarkAppearance()
-  const widgets = useMemo(() => getWidgets(), [isDark])
   const [gridComponents, setGridComponents] = useState<ComponentSlot[]>([
     {
       slotId: "grid-a|0",

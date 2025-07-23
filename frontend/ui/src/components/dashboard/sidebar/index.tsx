@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { TemplatesSidebar } from "./templates";
 import { useLocation, useParams } from "@tanstack/react-router";
-import { useAppearanceStore, useTemplateStore } from "@incmix/store";
+import {  useTemplateStore } from "@incmix/store";
 import { getWidgets } from "./widgets-data";
 import { useSelectionStore } from "../hooks/use-widgets-selection";
 
@@ -57,10 +57,8 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
     getTemplateById,
     templateActive,
   } = useTemplateStore();
-  const appearance = useAppearanceStore();
-  const isDark = appearance.appearance === "dark";
-  const widgets = useMemo(getWidgets, [isDark]);
-  const [availableComponents] = useState(sidebarComponents);
+  const [availableComponents] = useState(getWidgets());
+  debugger;
   const [_draggingComponentId, setDraggingComponentId] = useState<
     string | null
   >(null);
