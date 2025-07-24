@@ -23,7 +23,9 @@ export function generateDOM(
   const layoutItems = defaultLayouts?.[activeBreakpoint] ?? [];
 
   return layoutItems.map((item: LayoutItemWithNested) => {
-    const gridComponent = gridComponents.find((comp) => comp.componentName === item.componentName);
+    const gridComponent = gridComponents.find(
+      (comp) => comp.componentName === item.componentName,
+    );
 
     if (item.i.startsWith("grid-")) {
       const nested = item.layouts || [];
@@ -73,7 +75,7 @@ export function generateDOM(
             isDraggable={isEditing}
             isResizable={isEditing}
           >
-            {nested?.map((nestedItem: { i: string,componentName:string}) => {
+            {nested?.map((nestedItem: { i: string; componentName: string }) => {
               const nestedComponent = gridComponents.find(
                 (comp) => comp.componentName === nestedItem.componentName,
               );

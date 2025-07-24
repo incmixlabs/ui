@@ -1,131 +1,134 @@
-import { LoadingPage } from "@common"
-import { DndContext, DragOverlay } from "@dnd-kit/core"
-import { Responsive, WidthProvider } from "@incmix/react-grid-layout"
+import { LoadingPage } from "@common";
+import { DndContext, DragOverlay } from "@dnd-kit/core";
+import { Responsive, WidthProvider } from "@incmix/react-grid-layout";
 import {
   type Dashboard,
   useDashboardStore,
   useEditingStore,
   useTemplateStore,
-} from "@incmix/store"
+} from "@incmix/store";
 import {
   ActiveBtn,
   AddGroupButton,
   Box,
   CloneDashboardModal,
   CreateProjectModal,
-  DeleteDashboard,
-  EditDashboard,
   Flex,
   Heading,
   SaveTemplateDialog,
   SidebarTrigger,
-  generateDOM,
-  useLayoutStore,
   useMediaQuery,
   useModalStore,
-} from "@incmix/ui"
+} from "@incmix/ui";
+
 import {
   initialLayouts,
+  useLayoutStore,
   useDevicePreview,
   useGridComponents,
   useWidgetDragAndDrop,
+  EditDashboard,
+  DeleteDashboard,
+  generateDOM,
 } from "@incmix/ui/dashboard"
-import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { useParams } from "@tanstack/react-router"
-import type React from "react"
-import { useEffect, useRef, useState } from "react"
-import { useAuth } from "../../auth"
-import { EditWidgetsControl } from "./home"
-import "@incmix/react-grid-layout/css/styles.css"
-import { useLocation } from "@tanstack/react-router"
-import { useQueryState } from "nuqs"
-import { useTranslation } from "react-i18next"
-const ResponsiveGridLayout = WidthProvider(Responsive)
+import { DashboardLayout } from "@layouts/admin-panel/layout";
+import { useParams } from "@tanstack/react-router";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
+import { useAuth } from "../../auth";
+import { EditWidgetsControl } from "./home";
+import "@incmix/react-grid-layout/css/styles.css";
+import { useLocation } from "@tanstack/react-router";
+import { useQueryState } from "nuqs";
+import { useTranslation } from "react-i18next";
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const DynamicDashboardPage: React.FC = () => {
-  const { projectId } = useParams({ from: "/dashboard/$projectId" })
-  const { t } = useTranslation("navbar")
-  const { pathname } = useLocation()
-  const isDesktop = useMediaQuery("(min-width: 1024px)")
-  const [isTemplate, setIsTemplate] = useQueryState("template")
-  const [project, setProject] = useState<Dashboard | undefined>()
+  const { projectId } = useParams({ from: "/dashboard/$projectId" });
+  const { t } = useTranslation("navbar");
+  const { pathname } = useLocation();
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const [isTemplate, setIsTemplate] = useQueryState("template");
+  const [project, setProject] = useState<Dashboard | undefined>();
 
   const isCreateDashModalOpen = useModalStore(
-    (state) => state.isDashboardCreateOpen
-  )
+    (state) => state.isDashboardCreateOpen,
+  );
   const openCreateDashboardModal = useModalStore(
-    (state) => state.openDashboardCreate
-  )
+    (state) => state.openDashboardCreate,
+  );
   const closeCreateDashboardModal = useModalStore(
-    (state) => state.closeDashboardCreate
-  )
+    (state) => state.closeDashboardCreate,
+  );
 
-  const isDashLoading = useDashboardStore((state) => state.isDashLoading)
+  const isDashLoading = useDashboardStore((state) => state.isDashLoading);
 
-  const getDashboardById = useDashboardStore((state) => state.getDashboardById)
+  const getDashboardById = useDashboardStore((state) => state.getDashboardById);
 
-  const { authUser, isLoading } = useAuth()
-  const { isEditing, setIsEditing } = useEditingStore()
-  const { getTemplateById, getActiveTemplate } = useTemplateStore()
+  const { authUser, isLoading } = useAuth();
+  const { isEditing, setIsEditing } = useEditingStore();
+  const { getTemplateById, getActiveTemplate } = useTemplateStore();
 
   const {
     defaultLayouts,
     handleLayoutChange,
     handleNestedLayoutChange,
     applyTemplates,
-  } = useLayoutStore()
+  } = useLayoutStore();
 
-  const [openSaveDialog, setOpenSaveDialog] = useState(false)
+  const [openSaveDialog, setOpenSaveDialog] = useState(false);
 
   useEffect(() => {
     const fetchTemplate = async () => {
       if (isTemplate) {
         try {
-          const template = await getTemplateById(isTemplate)
+          const template = await getTemplateById(isTemplate);
           if (!template) {
-            setIsTemplate(null)
-            return
+            setIsTemplate(null);
+            return;
           }
-          applyTemplates(template.mainLayouts, template.id)
+          applyTemplates(template.mainLayouts, template.id);
         } catch (error) {
-          console.error("Failed to load template:", error)
+          console.error("Failed to load template:", error);
         }
       } else {
         try {
           // console.log(projectId, "projectId")
 
-          const activeTemplate = await getActiveTemplate(projectId)
+          const activeTemplate = await getActiveTemplate(projectId);
           // console.log("activeTemplate",activeTemplate);
 
           if (activeTemplate) {
-            applyTemplates(activeTemplate.mainLayouts, activeTemplate.id)
+            applyTemplates(activeTemplate.mainLayouts, activeTemplate.id);
           }
         } catch (error) {
-          console.error("Failed to load active template:", error)
+          console.error("Failed to load active template:", error);
         }
       }
-    }
+    };
 
-    fetchTemplate()
-  }, [isTemplate, projectId])
+    fetchTemplate();
+  }, [isTemplate, projectId]);
 
   useEffect(() => {
     const getProjectName = async () => {
       try {
-        const getProject = await getDashboardById(projectId)
-        setProject(getProject)
+        const getProject = await getDashboardById(projectId);
+        if (getProject) {
+          setProject(getProject);
+        }
       } catch (error) {
-        console.error("Failed to get dashboard:", error)
+        console.error("Failed to get dashboard:", error);
       }
-    }
+    };
 
     if (projectId) {
-      getProjectName()
+      getProjectName();
     }
-  }, [projectId, getDashboardById])
+  }, [projectId, getDashboardById]);
 
   const { activeDevice, setActiveDevice, deviceTabs, getViewportWidth } =
-    useDevicePreview()
+    useDevicePreview();
 
   const {
     gridComponents,
@@ -133,7 +136,7 @@ const DynamicDashboardPage: React.FC = () => {
     handleRemoveComponent,
     handleRemoveNestedComponent,
     handleAddNewGroup,
-  } = useGridComponents(isEditing)
+  } = useGridComponents(isEditing);
 
   const {
     activeDragId,
@@ -141,17 +144,17 @@ const DynamicDashboardPage: React.FC = () => {
     sensors,
     handleDragStart,
     handleDragEnd,
-  } = useWidgetDragAndDrop(isEditing, gridComponents, setGridComponents)
+  } = useWidgetDragAndDrop(isEditing, gridComponents, setGridComponents);
 
   // Show loading while auth is loading, store is loading, or dashboard is loading
   if (isLoading || isDashLoading) {
-    return <LoadingPage />
+    return <LoadingPage />;
   }
 
-  if (!authUser) return null
-  if (!project) return <div>Project not found</div>
+  if (!authUser) return null;
+  if (!project) return <div>Project not found</div>;
 
-  const isEmpty = gridComponents.length === 0
+  const isEmpty = gridComponents.length === 0;
 
   return (
     <DndContext
@@ -237,7 +240,7 @@ const DynamicDashboardPage: React.FC = () => {
                   _b: any,
                   _c: any,
                   _d: any,
-                  e: { stopPropagation: () => any }
+                  e: { stopPropagation: () => any },
                 ) => e.stopPropagation()}
                 layouts={defaultLayouts}
                 onLayoutChange={handleLayoutChange}
@@ -257,7 +260,7 @@ const DynamicDashboardPage: React.FC = () => {
                   handleNestedLayoutChange,
                   isEditing,
                   handleRemoveComponent,
-                  handleRemoveNestedComponent
+                  handleRemoveNestedComponent,
                 )}
               </ResponsiveGridLayout>
             </Box>
@@ -282,7 +285,7 @@ const DynamicDashboardPage: React.FC = () => {
         )}
       </DragOverlay>
     </DndContext>
-  )
-}
+  );
+};
 
-export default DynamicDashboardPage
+export default DynamicDashboardPage;
