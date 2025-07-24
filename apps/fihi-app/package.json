@@ -40,8 +40,12 @@
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plugin-bundlesize": "catalog:",
-    "vite-plugin-chunk-split": "0.5.0",
-    "vite-plugin-top-level-await": "1.5.0",
+--- a/apps/fihi-app/package.json
++++ b/apps/fihi-app/package.json
+@@ -43,2 +43,2 @@
+     "vite-plugin-chunk-split": "0.5.0",
+-    "vite-plugin-top-level-await": "1.5.0",
++    "vite-plugin-top-level-await": "1.6.0",
     "vite-tsconfig-paths": "catalog:"
   }
 }
