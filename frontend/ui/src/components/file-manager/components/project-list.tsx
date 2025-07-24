@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { ScrollArea } from "@base"
-import { DataTable } from "@incmix/ui/tanstack-table"
+import { TanstackDataTable as DataTable } from "@incmix/ui/tanstack-table"
 import { useMediaQuery } from "@hooks/use-media-query"
 import type { FileItem } from "../data"
 import { getProjectListColumns, sortFiles } from "./project-list-utils"

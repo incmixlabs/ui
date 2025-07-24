@@ -12,7 +12,7 @@ import {
   DropdownMenu,
   Tooltip,
 } from "@base"
-import { TanstackDataTable } from "../../tanstack-table"
+import { TanstackDataTable } from "../../tanstack-table/components/DataTable"
 import {
   Search,
   Layers as LayersIcon,
