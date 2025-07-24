@@ -169,7 +169,7 @@ importers:
         version: 19.6.0
       '@turbo/gen':
         specifier: 2.3.4
-        version: 2.3.4(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.8.2)
+        version: 2.3.4(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.8.2)
       lefthook:
         specifier: 1.10.4
         version: 1.10.4
@@ -248,7 +248,7 @@ importers:
         version: 5.14.0(rollup@4.40.0)
       tailwindcss:
         specifier: 'catalog:'
-        version: 3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.8.2))
+        version: 3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.8.2))
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -262,8 +262,8 @@ importers:
         specifier: 0.5.0
         version: 0.5.0(vite@7.0.0(@types/node@22.14.1)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1))
       vite-plugin-top-level-await:
-        specifier: 1.5.0
-        version: 1.5.0(rollup@4.40.0)(vite@7.0.0(@types/node@22.14.1)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1))
+        specifier: 1.6.0
+        version: 1.6.0(rollup@4.40.0)(vite@7.0.0(@types/node@22.14.1)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1))
       vite-tsconfig-paths:
         specifier: 'catalog:'
         version: 5.1.4(typescript@5.8.2)(vite@7.0.0(@types/node@22.14.1)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1))
@@ -348,7 +348,7 @@ importers:
         version: 8.6.12(prettier@3.5.3)
       tailwindcss:
         specifier: 'catalog:'
-        version: 3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.8.2))
+        version: 3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.8.2))
       typescript:
         specifier: 'catalog:'
         version: 5.8.2
@@ -435,10 +435,10 @@ importers:
         version: 3.1.0
       tailwindcss:
         specifier: 'catalog:'
-        version: 3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.8.2))
+        version: 3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.8.2))
       tailwindcss-animate:
         specifier: 'catalog:'
-        version: 1.0.7(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.8.2)))
+        version: 1.0.7(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.8.2)))
       zod:
         specifier: 'catalog:'
         version: 3.25.67
@@ -614,16 +614,16 @@ importers:
         version: 5.1.6(react@19.1.0)(typescript@5.7.3)
       '@tailwindcss/aspect-ratio':
         specifier: 0.4.2
-        version: 0.4.2(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)))
+        version: 0.4.2(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)))
       '@tailwindcss/container-queries':
         specifier: 0.1.1
-        version: 0.1.1(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)))
+        version: 0.1.1(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)))
       '@tailwindcss/forms':
         specifier: 0.5.10
-        version: 0.5.10(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)))
+        version: 0.5.10(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)))
       '@tailwindcss/typography':
         specifier: 0.5.16
-        version: 0.5.16(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)))
+        version: 0.5.16(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)))
       '@tanstack/react-form':
         specifier: 'catalog:'
         version: 1.12.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -740,7 +740,7 @@ importers:
         version: 2.3.0
       tailwindcss-animate:
         specifier: 1.0.7
-        version: 1.0.7(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)))
+        version: 1.0.7(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)))
       tiny-invariant:
         specifier: 1.3.1
         version: 1.3.1
@@ -749,10 +749,10 @@ importers:
         version: 11.0.5
       windy-radix-palette:
         specifier: 2.0.0-beta.7
-        version: 2.0.0-beta.7(@radix-ui/colors@3.0.0)(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)))
+        version: 2.0.0-beta.7(@radix-ui/colors@3.0.0)(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)))
       windy-radix-typography:
         specifier: 1.0.0-beta.0
-        version: 1.0.0-beta.0(@radix-ui/colors@3.0.0)(@tailwindcss/typography@0.5.16(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3))))(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)))(windy-radix-palette@2.0.0-beta.7(@radix-ui/colors@3.0.0)(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3))))
+        version: 1.0.0-beta.0(@radix-ui/colors@3.0.0)(@tailwindcss/typography@0.5.16(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3))))(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)))(windy-radix-palette@2.0.0-beta.7(@radix-ui/colors@3.0.0)(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3))))
       zod:
         specifier: 'catalog:'
         version: 3.25.67
@@ -798,7 +798,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       tailwindcss:
         specifier: 'catalog:'
-        version: 3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3))
+        version: 3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3))
       typescript:
         specifier: 5.7.3
         version: 5.7.3
@@ -4248,8 +4248,20 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
+  '@swc/core-darwin-arm64@1.13.2':
+    resolution: {integrity: sha512-44p7ivuLSGFJ15Vly4ivLJjg3ARo4879LtEBAabcHhSZygpmkP8eyjyWxrH3OxkY1eRZSIJe8yRZPFw4kPXFPw==}
+    engines: {node: '>=10'}
+    cpu: [arm64]
+    os: [darwin]
+
   '@swc/core-darwin-x64@1.12.7':
     resolution: {integrity: sha512-jN6LhFfGOpm4DY2mXPgwH4aa9GLOwublwMVFFZ/bGnHYYCRitLZs9+JWBbyWs7MyGcA246Ew+EREx36KVEAxjA==}
+    engines: {node: '>=10'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@swc/core-darwin-x64@1.13.2':
+    resolution: {integrity: sha512-Lb9EZi7X2XDAVmuUlBm2UvVAgSCbD3qKqDCxSI4jEOddzVOpNCnyZ/xEampdngUIyDDhhJLYU9duC+Mcsv5Y+A==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [darwin]
@@ -4260,8 +4272,20 @@ packages:
     cpu: [arm]
     os: [linux]
 
+  '@swc/core-linux-arm-gnueabihf@1.13.2':
+    resolution: {integrity: sha512-9TDe/92ee1x57x+0OqL1huG4BeljVx0nWW4QOOxp8CCK67Rpc/HHl2wciJ0Kl9Dxf2NvpNtkPvqj9+BUmM9WVA==}
+    engines: {node: '>=10'}
+    cpu: [arm]
+    os: [linux]
+
   '@swc/core-linux-arm64-gnu@1.12.7':
     resolution: {integrity: sha512-N15hKizSSh+hkZ2x3TDVrxq0TDcbvDbkQJi2ZrLb9fK+NdFUV/x+XF16ZDPlbxtrGXl1CT7VD439SNaMN9F7qw==}
+    engines: {node: '>=10'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@swc/core-linux-arm64-gnu@1.13.2':
+    resolution: {integrity: sha512-KJUSl56DBk7AWMAIEcU83zl5mg3vlQYhLELhjwRFkGFMvghQvdqQ3zFOYa4TexKA7noBZa3C8fb24rI5sw9Exg==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [linux]
@@ -4272,8 +4296,20 @@ packages:
     cpu: [arm64]
     os: [linux]
 
+  '@swc/core-linux-arm64-musl@1.13.2':
+    resolution: {integrity: sha512-teU27iG1oyWpNh9CzcGQ48ClDRt/RCem7mYO7ehd2FY102UeTws2+OzLESS1TS1tEZipq/5xwx3FzbVgiolCiQ==}
+    engines: {node: '>=10'}
+    cpu: [arm64]
+    os: [linux]
+
   '@swc/core-linux-x64-gnu@1.12.7':
     resolution: {integrity: sha512-PR4tPVwU1BQBfFDk2XfzXxsEIjF3x/bOV1BzZpYvrlkU0TKUDbR4t2wzvsYwD/coW7/yoQmlL70/qnuPtTp1Zw==}
+    engines: {node: '>=10'}
+    cpu: [x64]
+    os: [linux]
+
+  '@swc/core-linux-x64-gnu@1.13.2':
+    resolution: {integrity: sha512-dRPsyPyqpLD0HMRCRpYALIh4kdOir8pPg4AhNQZLehKowigRd30RcLXGNVZcc31Ua8CiPI4QSgjOIxK+EQe4LQ==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [linux]
@@ -4284,8 +4320,20 @@ packages:
     cpu: [x64]
     os: [linux]
 
+  '@swc/core-linux-x64-musl@1.13.2':
+    resolution: {integrity: sha512-CCxETW+KkYEQDqz1SYC15YIWYheqFC+PJVOW76Maa/8yu8Biw+HTAcblKf2isrlUtK8RvrQN94v3UXkC2NzCEw==}
+    engines: {node: '>=10'}
+    cpu: [x64]
+    os: [linux]
+
   '@swc/core-win32-arm64-msvc@1.12.7':
     resolution: {integrity: sha512-52PeF0tyX04ZFD8nibNhy/GjMFOZWTEWPmIB3wpD1vIJ1po+smtBnEdRRll5WIXITKoiND8AeHlBNBPqcsdcwA==}
+    engines: {node: '>=10'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@swc/core-win32-arm64-msvc@1.13.2':
+    resolution: {integrity: sha512-Wv/QTA6PjyRLlmKcN6AmSI4jwSMRl0VTLGs57PHTqYRwwfwd7y4s2fIPJVBNbAlXd795dOEP6d/bGSQSyhOX3A==}
     engines: {node: '>=10'}
     cpu: [arm64]
     os: [win32]
@@ -4296,14 +4344,35 @@ packages:
     cpu: [ia32]
     os: [win32]
 
+  '@swc/core-win32-ia32-msvc@1.13.2':
+    resolution: {integrity: sha512-PuCdtNynEkUNbUXX/wsyUC+t4mamIU5y00lT5vJcAvco3/r16Iaxl5UCzhXYaWZSNVZMzPp9qN8NlSL8M5pPxw==}
+    engines: {node: '>=10'}
+    cpu: [ia32]
+    os: [win32]
+
   '@swc/core-win32-x64-msvc@1.12.7':
     resolution: {integrity: sha512-R52ivBi2lgjl+Bd3XCPum0YfgbZq/W1AUExITysddP9ErsNSwnreYyNB3exEijiazWGcqHEas2ChiuMOP7NYrA==}
     engines: {node: '>=10'}
     cpu: [x64]
     os: [win32]
 
+  '@swc/core-win32-x64-msvc@1.13.2':
+    resolution: {integrity: sha512-qlmMkFZJus8cYuBURx1a3YAG2G7IW44i+FEYV5/32ylKkzGNAr9tDJSA53XNnNXkAB5EXSPsOz7bn5C3JlEtdQ==}
+    engines: {node: '>=10'}
+    cpu: [x64]
+    os: [win32]
+
   '@swc/core@1.12.7':
     resolution: {integrity: sha512-bcpllEihyUSnqp0UtXTvXc19CT4wp3tGWLENhWnjr4B5iEOkzqMu+xHGz1FI5IBatjfqOQb29tgIfv6IL05QaA==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      '@swc/helpers': '>=0.5.17'
+    peerDependenciesMeta:
+      '@swc/helpers':
+        optional: true
+
+  '@swc/core@1.13.2':
+    resolution: {integrity: sha512-YWqn+0IKXDhqVLKoac4v2tV6hJqB/wOh8/Br8zjqeqBkKa77Qb0Kw2i7LOFzjFNZbZaPH6AlMGlBwNrxaauaAg==}
     engines: {node: '>=10'}
     peerDependencies:
       '@swc/helpers': '>=0.5.17'
@@ -4319,6 +4388,9 @@ packages:
 
   '@swc/types@0.1.23':
     resolution: {integrity: sha512-u1iIVZV9Q0jxY+yM2vw/hZGDNudsN85bBpTqzAQ9rzkxW9D+e3aEM4Han+ow518gSewkXgjmEK0BD79ZcNVgPw==}
+
+  '@swc/wasm@1.13.2':
+    resolution: {integrity: sha512-iOOnBRjL4k8Yna/JTjOEOcn9bry0KiOnrOj8ztK/iUU1/SPWXnndX7l+Fa6ssGEOpnScLk5j9GthWX1kzMutTA==}
 
   '@tailwindcss/aspect-ratio@0.4.2':
     resolution: {integrity: sha512-8QPrypskfBa7QIMuKHg2TA7BqES6vhBrDLOv8Unb6FcFyd3TjKbc6lcmb9UPQHxfl24sXoJ41ux/H7qQQvfaSQ==}
@@ -9232,6 +9304,11 @@ packages:
     peerDependencies:
       vite: '>=2.8'
 
+  vite-plugin-top-level-await@1.6.0:
+    resolution: {integrity: sha512-bNhUreLamTIkoulCR9aDXbTbhLk6n1YE8NJUTTxl5RYskNRtzOR0ASzSjBVRtNdjIfngDXo11qOsybGLNsrdww==}
+    peerDependencies:
+      vite: '>=2.8'
+
   vite-tsconfig-paths@5.1.4:
     resolution: {integrity: sha512-cYj0LRuLV2c2sMqhqhGpaO3LretdtMn/BVX4cPLanIZuwwrkVl+lK84E/miEXkCHWXuq65rhNN4rXsBcOB3S4w==}
     peerDependencies:
@@ -13786,31 +13863,61 @@ snapshots:
   '@swc/core-darwin-arm64@1.12.7':
     optional: true
 
+  '@swc/core-darwin-arm64@1.13.2':
+    optional: true
+
   '@swc/core-darwin-x64@1.12.7':
+    optional: true
+
+  '@swc/core-darwin-x64@1.13.2':
     optional: true
 
   '@swc/core-linux-arm-gnueabihf@1.12.7':
     optional: true
 
+  '@swc/core-linux-arm-gnueabihf@1.13.2':
+    optional: true
+
   '@swc/core-linux-arm64-gnu@1.12.7':
+    optional: true
+
+  '@swc/core-linux-arm64-gnu@1.13.2':
     optional: true
 
   '@swc/core-linux-arm64-musl@1.12.7':
     optional: true
 
+  '@swc/core-linux-arm64-musl@1.13.2':
+    optional: true
+
   '@swc/core-linux-x64-gnu@1.12.7':
+    optional: true
+
+  '@swc/core-linux-x64-gnu@1.13.2':
     optional: true
 
   '@swc/core-linux-x64-musl@1.12.7':
     optional: true
 
+  '@swc/core-linux-x64-musl@1.13.2':
+    optional: true
+
   '@swc/core-win32-arm64-msvc@1.12.7':
+    optional: true
+
+  '@swc/core-win32-arm64-msvc@1.13.2':
     optional: true
 
   '@swc/core-win32-ia32-msvc@1.12.7':
     optional: true
 
+  '@swc/core-win32-ia32-msvc@1.13.2':
+    optional: true
+
   '@swc/core-win32-x64-msvc@1.12.7':
+    optional: true
+
+  '@swc/core-win32-x64-msvc@1.13.2':
     optional: true
 
   '@swc/core@1.12.7':
@@ -13829,6 +13936,22 @@ snapshots:
       '@swc/core-win32-ia32-msvc': 1.12.7
       '@swc/core-win32-x64-msvc': 1.12.7
 
+  '@swc/core@1.13.2':
+    dependencies:
+      '@swc/counter': 0.1.3
+      '@swc/types': 0.1.23
+    optionalDependencies:
+      '@swc/core-darwin-arm64': 1.13.2
+      '@swc/core-darwin-x64': 1.13.2
+      '@swc/core-linux-arm-gnueabihf': 1.13.2
+      '@swc/core-linux-arm64-gnu': 1.13.2
+      '@swc/core-linux-arm64-musl': 1.13.2
+      '@swc/core-linux-x64-gnu': 1.13.2
+      '@swc/core-linux-x64-musl': 1.13.2
+      '@swc/core-win32-arm64-msvc': 1.13.2
+      '@swc/core-win32-ia32-msvc': 1.13.2
+      '@swc/core-win32-x64-msvc': 1.13.2
+
   '@swc/counter@0.1.3': {}
 
   '@swc/helpers@0.5.15':
@@ -13839,26 +13962,28 @@ snapshots:
     dependencies:
       '@swc/counter': 0.1.3
 
-  '@tailwindcss/aspect-ratio@0.4.2(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)))':
-    dependencies:
-      tailwindcss: 3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3))
+  '@swc/wasm@1.13.2': {}
 
-  '@tailwindcss/container-queries@0.1.1(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)))':
+  '@tailwindcss/aspect-ratio@0.4.2(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)))':
     dependencies:
-      tailwindcss: 3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3))
+      tailwindcss: 3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3))
 
-  '@tailwindcss/forms@0.5.10(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)))':
+  '@tailwindcss/container-queries@0.1.1(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)))':
+    dependencies:
+      tailwindcss: 3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3))
+
+  '@tailwindcss/forms@0.5.10(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)))':
     dependencies:
       mini-svg-data-uri: 1.4.4
-      tailwindcss: 3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3))
+      tailwindcss: 3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3))
 
-  '@tailwindcss/typography@0.5.16(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)))':
+  '@tailwindcss/typography@0.5.16(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)))':
     dependencies:
       lodash.castarray: 4.4.0
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       postcss-selector-parser: 6.0.10
-      tailwindcss: 3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3))
+      tailwindcss: 3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3))
 
   '@tanstack/form-core@0.42.1':
     dependencies:
@@ -14267,7 +14392,7 @@ snapshots:
 
   '@tsconfig/node16@1.0.4': {}
 
-  '@turbo/gen@2.3.4(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.8.2)':
+  '@turbo/gen@2.3.4(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.8.2)':
     dependencies:
       '@turbo/workspaces': 2.3.4
       commander: 10.0.1
@@ -14277,7 +14402,7 @@ snapshots:
       node-plop: 0.26.3
       picocolors: 1.0.1
       proxy-agent: 6.5.0
-      ts-node: 10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.8.2)
+      ts-node: 10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.8.2)
       update-check: 1.5.4
       validate-npm-package-name: 5.0.1
     transitivePeerDependencies:
@@ -17888,21 +18013,21 @@ snapshots:
       camelcase-css: 2.0.1
       postcss: 8.5.6
 
-  postcss-load-config@4.0.2(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)):
+  postcss-load-config@4.0.2(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)):
     dependencies:
       lilconfig: 3.1.3
       yaml: 2.7.1
     optionalDependencies:
       postcss: 8.5.6
-      ts-node: 10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)
+      ts-node: 10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)
 
-  postcss-load-config@4.0.2(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.8.2)):
+  postcss-load-config@4.0.2(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.8.2)):
     dependencies:
       lilconfig: 3.1.3
       yaml: 2.7.1
     optionalDependencies:
       postcss: 8.5.6
-      ts-node: 10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.8.2)
+      ts-node: 10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.8.2)
 
   postcss-nested@6.2.0(postcss@8.5.6):
     dependencies:
@@ -19104,15 +19229,15 @@ snapshots:
 
   tailwind-merge@3.1.0: {}
 
-  tailwindcss-animate@1.0.7(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3))):
+  tailwindcss-animate@1.0.7(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3))):
     dependencies:
-      tailwindcss: 3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3))
+      tailwindcss: 3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3))
 
-  tailwindcss-animate@1.0.7(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.8.2))):
+  tailwindcss-animate@1.0.7(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.8.2))):
     dependencies:
-      tailwindcss: 3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.8.2))
+      tailwindcss: 3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.8.2))
 
-  tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)):
+  tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)):
     dependencies:
       '@alloc/quick-lru': 5.2.0
       arg: 5.0.2
@@ -19131,7 +19256,7 @@ snapshots:
       postcss: 8.5.6
       postcss-import: 15.1.0(postcss@8.5.6)
       postcss-js: 4.0.1(postcss@8.5.6)
-      postcss-load-config: 4.0.2(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3))
+      postcss-load-config: 4.0.2(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3))
       postcss-nested: 6.2.0(postcss@8.5.6)
       postcss-selector-parser: 6.1.2
       resolve: 1.22.10
@@ -19139,7 +19264,7 @@ snapshots:
     transitivePeerDependencies:
       - ts-node
 
-  tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.8.2)):
+  tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.8.2)):
     dependencies:
       '@alloc/quick-lru': 5.2.0
       arg: 5.0.2
@@ -19158,7 +19283,7 @@ snapshots:
       postcss: 8.5.6
       postcss-import: 15.1.0(postcss@8.5.6)
       postcss-js: 4.0.1(postcss@8.5.6)
-      postcss-load-config: 4.0.2(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.8.2))
+      postcss-load-config: 4.0.2(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.8.2))
       postcss-nested: 6.2.0(postcss@8.5.6)
       postcss-selector-parser: 6.1.2
       resolve: 1.22.10
@@ -19268,7 +19393,7 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3):
+  ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
@@ -19286,10 +19411,11 @@ snapshots:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     optionalDependencies:
-      '@swc/core': 1.12.7
+      '@swc/core': 1.13.2
+      '@swc/wasm': 1.13.2
     optional: true
 
-  ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.8.2):
+  ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.8.2):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
@@ -19307,7 +19433,8 @@ snapshots:
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     optionalDependencies:
-      '@swc/core': 1.12.7
+      '@swc/core': 1.13.2
+      '@swc/wasm': 1.13.2
 
   tsconfck@3.1.5(typescript@5.8.2):
     optionalDependencies:
@@ -19599,6 +19726,17 @@ snapshots:
       - '@swc/helpers'
       - rollup
 
+  vite-plugin-top-level-await@1.6.0(rollup@4.40.0)(vite@7.0.0(@types/node@22.14.1)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1)):
+    dependencies:
+      '@rollup/plugin-virtual': 3.0.2(rollup@4.40.0)
+      '@swc/core': 1.13.2
+      '@swc/wasm': 1.13.2
+      uuid: 10.0.0
+      vite: 7.0.0(@types/node@22.14.1)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1)
+    transitivePeerDependencies:
+      - '@swc/helpers'
+      - rollup
+
   vite-tsconfig-paths@5.1.4(typescript@5.8.2)(vite@7.0.0(@types/node@22.14.1)(jiti@2.4.2)(tsx@4.19.3)(yaml@2.7.1)):
     dependencies:
       debug: 4.4.0
@@ -19772,18 +19910,18 @@ snapshots:
       siginfo: 2.0.0
       stackback: 0.0.2
 
-  windy-radix-palette@2.0.0-beta.7(@radix-ui/colors@3.0.0)(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3))):
+  windy-radix-palette@2.0.0-beta.7(@radix-ui/colors@3.0.0)(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3))):
     dependencies:
       '@paralleldrive/cuid2': 2.2.2
       '@radix-ui/colors': 3.0.0
-      tailwindcss: 3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3))
+      tailwindcss: 3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3))
 
-  windy-radix-typography@1.0.0-beta.0(@radix-ui/colors@3.0.0)(@tailwindcss/typography@0.5.16(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3))))(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)))(windy-radix-palette@2.0.0-beta.7(@radix-ui/colors@3.0.0)(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)))):
+  windy-radix-typography@1.0.0-beta.0(@radix-ui/colors@3.0.0)(@tailwindcss/typography@0.5.16(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3))))(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)))(windy-radix-palette@2.0.0-beta.7(@radix-ui/colors@3.0.0)(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)))):
     dependencies:
       '@radix-ui/colors': 3.0.0
-      '@tailwindcss/typography': 0.5.16(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)))
-      tailwindcss: 3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3))
-      windy-radix-palette: 2.0.0-beta.7(@radix-ui/colors@3.0.0)(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.12.7)(@types/node@22.14.1)(typescript@5.7.3)))
+      '@tailwindcss/typography': 0.5.16(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)))
+      tailwindcss: 3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3))
+      windy-radix-palette: 2.0.0-beta.7(@radix-ui/colors@3.0.0)(tailwindcss@3.4.14(ts-node@10.9.2(@swc/core@1.13.2)(@swc/wasm@1.13.2)(@types/node@22.14.1)(typescript@5.7.3)))
 
   wordwrap@1.0.0: {}
 
