@@ -51,30 +51,39 @@ export function useProjectsCheck() {
 
         // Filter projects directly at the database level using RxDB's query capabilities
         // This is much more efficient than fetching all projects and filtering in memory
-        const filteredDocs = await db.formProjects.find({
-          selector: {
-            orgId: selectedOrganisation.id
-          }
-        }).exec()
-        
+        const filteredDocs = await db.formProjects
+          .find({
+            selector: {
+              orgId: selectedOrganisation.id,
+            },
+          })
+          .exec()
+
         // Log what we found for debugging
-        console.log(`Found ${filteredDocs.length} projects with orgId: ${selectedOrganisation.id}`);
-        
+        console.log(
+          `Found ${filteredDocs.length} projects with orgId: ${selectedOrganisation.id}`
+        )
+
         // Also check for projects without orgId to help with debugging
         // This is only for debugging, not needed in production
-        const isDevelopment = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+        const isDevelopment =
+          typeof window !== "undefined" &&
+          window.location.hostname === "localhost"
         if (isDevelopment) {
-          const missingOrgIdDocs = await db.formProjects.find({
-            selector: {
-              orgId: { $exists: false }
-            }
-          }).exec();
-          
+          const missingOrgIdDocs = await db.formProjects
+            .find({
+              selector: {
+                orgId: { $exists: false },
+              },
+            })
+            .exec()
+
           if (missingOrgIdDocs.length > 0) {
-            console.warn(`Found ${missingOrgIdDocs.length} projects missing orgId field. Migration might not have completed.`);
+            console.warn(
+              `Found ${missingOrgIdDocs.length} projects missing orgId field. Migration might not have completed.`
+            )
           }
         }
-        
 
         const projectsExist = filteredDocs && filteredDocs.length > 0
         setHasProjects(projectsExist)

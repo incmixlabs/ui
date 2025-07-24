@@ -45,15 +45,15 @@ export function ProjectSwitcher({ className }: { className?: string }) {
   // Use our enhanced hook that fetches real project data from RxDB filtered by organization
   const { projects, isLoading, hasProjects } = useProjectsCheck()
   const { selectedProject, setSelectedProject } = useProjectStore()
-  
+
   // More detailed logging to help diagnose any issues
-  console.log('ProjectSwitcher rendering:', {
+  console.log("ProjectSwitcher rendering:", {
     projects: projects?.length || 0,
-    projectIds: projects.map(p => p.id).join(', '),
+    projectIds: projects.map((p) => p.id).join(", "),
     hasProjects,
     isLoading,
-    selectedProject: selectedProject?.id || 'none',
-    selectedProjectTitle: selectedProject?.title || 'none'
+    selectedProject: selectedProject?.id || "none",
+    selectedProjectTitle: selectedProject?.title || "none",
   })
 
   // Create a list of SwitcherItems from our projects for the Switcher component
@@ -77,17 +77,25 @@ export function ProjectSwitcher({ className }: { className?: string }) {
 
   // Show a message if projects are loading
   if (isLoading) {
-    return <div className="px-2 py-1 text-gray-500 text-xs">Loading projects...</div>
+    return (
+      <div className="px-2 py-1 text-gray-500 text-xs">Loading projects...</div>
+    )
   }
-  
+
   // If there are no projects after filtering by organization ID, show a helpful message
   if (!hasProjects || projects.length === 0) {
-    return <div className="px-2 py-1 text-gray-500 text-xs">No projects in current org</div>
+    return (
+      <div className="px-2 py-1 text-gray-500 text-xs">
+        No projects in current org
+      </div>
+    )
   }
 
   return (
     <Switcher
-      switchedItem={projectItems.find(item => item.id === selectedProject?.id) || null}
+      switchedItem={
+        projectItems.find((item) => item.id === selectedProject?.id) || null
+      }
       items={projectItems}
       setSwitchedItem={handleProjectSelect}
       className={className}
