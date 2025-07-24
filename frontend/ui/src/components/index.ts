@@ -3,6 +3,7 @@ export * from "./avatar-editable"
 export * from "./avatar-group"
 export * from "./carousel"
 export * from "./charts"
+export * from "./data-table"
 // Export DataTable from original data-table with renamed export
 export * from "./drag-handle"
 export { useDropzone } from "react-dropzone"
