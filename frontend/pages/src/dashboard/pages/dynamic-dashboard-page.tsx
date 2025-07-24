@@ -26,9 +26,9 @@ import {
 } from "@incmix/ui"
 import {
   initialLayouts,
-  useWidgetDragAndDrop,
   useDevicePreview,
-  useGridComponents
+  useGridComponents,
+  useWidgetDragAndDrop,
 } from "@incmix/ui/dashboard"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useParams } from "@tanstack/react-router"

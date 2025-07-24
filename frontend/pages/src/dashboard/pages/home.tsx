@@ -297,8 +297,7 @@ const DashboardHomePage: React.FC = () => {
           >
             <img
               src={
-                activeDragData.image ||
-                "/placeholder.svg?height=150&width=150"
+                activeDragData.image || "/placeholder.svg?height=150&width=150"
               }
               alt={activeDragData.title || "Component"}
               className="block h-full w-full rounded-lg"
