@@ -9,7 +9,7 @@ import { useLayoutStore } from "../hooks/use-layout-store";
 
 import { ChevronDown, ChevronUp, Minus, Plus } from "lucide-react";
 import { useState } from "react";
-
+import { presetLayouts } from "../data";
   /**
    * Renders a section that displays a list of layout presets.
    *
@@ -54,7 +54,7 @@ export function LayoutPresetsSection() {
 
       {isExpanded && (
       <Grid columns={"2"} className="pb-2" gap={"2"}>
-        {presets.map((preset) => (
+        {presetLayouts().map((preset) => (
           <Box
             key={preset.id}
             className={`border border-gray-4 cursor-pointer  rounded-app p-2 transition-all duration-200 ${

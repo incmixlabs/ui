@@ -17,9 +17,6 @@ type WorkerFormat = "es" | "iife"
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
   worker: { format: "es" as WorkerFormat },
-  define: {
-    global: "globalThis",
-  },
   build: {
     // using hidden sourcemap to avoid the vscode type error
     sourcemap: "hidden" as unknown as boolean, // Source map generation must be turned on
@@ -35,8 +32,10 @@ export default defineConfig(async () => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      crypto: "crypto-browserify",
     },
+  },
+  optimizeDeps: {
+    include: ["events"],
   },
   plugins: [
     bundlesize({ limits: [{ name: "**/*", limit: "4 mB" }] }),
