@@ -46,6 +46,13 @@ export function ProjectSwitcher({ className }: { className?: string }) {
   const { projects, isLoading, hasProjects } = useProjectsCheck()
   const { selectedProject, setSelectedProject } = useProjectStore()
 
+  console.log('ProjectSwitcher rendering:', {
+    projects: projects?.length || 0,
+    hasProjects,
+    isLoading,
+    selectedProject: selectedProject?.id || 'none'
+  })
+
   // Create a list of SwitcherItems from our projects for the Switcher component
   const projectItems: SwitcherItem[] = React.useMemo(() => {
     return projects.map((p) => ({
@@ -55,18 +62,15 @@ export function ProjectSwitcher({ className }: { className?: string }) {
   }, [projects])
 
   // Find the currently selected project in our list
-  const selectedItem = React.useMemo(() => {
-    if (!selectedProject) return null
-    return projectItems.find((item) => item.id === selectedProject.id) || null
-  }, [selectedProject, projectItems])
-
-  React.useEffect(() => {
-    // If no project is selected but we have projects, select the first one
-    if (!selectedProject && projects.length > 0) {
-      // Use proper type conversion function instead of type assertion
-      setSelectedProject(convertToProject(projects[0]))
+  const handleProjectSelect = (id: string | null) => {
+    if (id) {
+      const proj = projects.find((p) => p.id === id)
+      if (proj) {
+        // Use proper type conversion function instead of type assertion
+        setSelectedProject(convertToProject(proj))
+      }
     }
-  }, [selectedProject, projects, setSelectedProject])
+  }
 
   // If there are no projects or we're still loading, don't render the switcher
   if (!hasProjects || isLoading || projects.length === 0) {
@@ -75,19 +79,11 @@ export function ProjectSwitcher({ className }: { className?: string }) {
 
   return (
     <Switcher
-      switchedItem={selectedItem}
+      switchedItem={projectItems.find(item => item.id === selectedProject?.id) || null}
       items={projectItems}
-      setSwitchedItem={(id: string | null) => {
-        if (id) {
-          const proj = projects.find((p) => p.id === id)
-          if (proj) {
-            // Use proper type conversion function instead of type assertion
-            setSelectedProject(convertToProject(proj))
-          }
-        }
-      }}
+      setSwitchedItem={handleProjectSelect}
       className={className}
-      title="projects"
+      title="Projects"
     />
   )
 }
