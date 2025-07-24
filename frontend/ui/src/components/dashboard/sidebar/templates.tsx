@@ -9,6 +9,7 @@ import {
   Box,
   Grid,
   Text,
+  toast,
 } from "@base";
 import {
   Trash2,
@@ -18,13 +19,10 @@ import {
   ChevronUp,
   ChevronDown,
 } from "lucide-react";
-import {  toast } from "@incmix/ui";
-import { shortFormatDistanceToNow } from "@incmix/utils/time"
 import { cn } from "@utils/cn";
-import { formatDistanceToNow } from "date-fns";
 import { useQueryState } from "nuqs";
 import { DashboardTemplate } from "@incmix/store";
-
+import { useLayoutStore } from "../hooks/use-layout-store";
 interface TemplatesSidebarProps {
   filteredTemplates:DashboardTemplate[]
   templates: DashboardTemplate[];

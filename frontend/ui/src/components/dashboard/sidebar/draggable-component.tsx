@@ -31,9 +31,7 @@ export const DraggableComponent = forwardRef<
     _ref
   ) => {
     const [isDraggingLocal, setIsDraggingLocal] = useState(false)
-    const { appearance } = useAppearanceStore()
-    const isDark = appearance === "dark"
-    const widgets = useMemo(getWidgets, [isDark]);
+    const widgets = Object.values(getWidgets());
     const componentData = widgets.find((comp) => comp.slotId === id)
     const layouts = componentData?.layouts
     // If componentName is not provided, try to get it from componentData

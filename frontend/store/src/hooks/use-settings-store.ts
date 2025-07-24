@@ -10,10 +10,8 @@ import {
   type RadixRadius,
   type RadixScaling,
   type ThemeConfig,
-  User,
   type UserPreference,
   breakFontColor as defaultFontColor,
-  fontColor,
 } from "@incmix/utils/types"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
@@ -94,7 +92,6 @@ export type UsePreferencesStoreConfig = UserPreference & {
   toggleDirection: () => void
   toggleSystemAppearance: () => void
   isSystemAppearance: () => boolean
-  hasNetworkConnection: () => boolean
 }
 export type IntegrationStoreConfig = IntegrationConfig & {
   setAPIKeys: (keys: IntegrationConfig["keys"]) => void
@@ -146,7 +143,6 @@ export const userPreference: UserPreference = {
   isSystemAppearance: true,
   direction: "ltr",
   language: "en",
-  hasNetwork: true,
 }
 
 export type UserPreferenceStoreConfig = UserPreference & {
@@ -206,11 +202,6 @@ export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
           ...s,
           direction: direction,
         })),
-      setHasNetworkConnection: (hasNetwork: boolean) =>
-        set((s) => ({
-          ...s,
-          hasNetwork: hasNetwork,
-        })),
       getDirection: () => get().direction ?? "ltr",
       getIsSystemAppearance: () => get().isSystemAppearance ?? false,
       getIsDarkAppearance: () => get().appearance === "dark",
@@ -223,7 +214,6 @@ export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
         isSystemAppearance: state.isSystemAppearance,
         direction: state.direction,
         language: state.language,
-        hasNetwork: state.hasNetwork,
       }),
     }
   )

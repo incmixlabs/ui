@@ -47,7 +47,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false)
   const [isColumnsMenuOpen, setIsColumnsMenuOpen] = useState(false)
-  
+
   // State for grouping - default to status grouping
   const [groupByField, setGroupByField] = useState<'statusLabel' | 'priorityLabel'>('statusLabel')
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({
@@ -77,7 +77,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
   } = useTableView(projectId)
   // Store the selected row ids for custom group selection handling
   const [selectedRowIds, setSelectedRowIds] = useState<Record<string, boolean>>({});
-  
+
   // Handle selection changes from the table
   const handleSelectionChange = (selectedRows: TableTask[]) => {
     // Create a map of selected row IDs
@@ -90,7 +90,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       }, {}
     );
     setSelectedRowIds(newSelectedIds);
-    
+
     // For debugging - log selected tasks
     if (selectedRows.length > 0) {
       console.log('Selected tasks:', selectedRows.map(row => ({ id: row.id, name: row.name })));
@@ -198,7 +198,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           onUpdateTask={async (taskId, updates) => {
             // Convert TableTask updates to TaskDataSchema updates
             const schemaUpdates: Partial<TaskDataSchema> = {};
-            
+
             // Copy only properties that exist on TaskDataSchema
             // Handle known properties specially
             if (updates.name !== undefined) schemaUpdates.name = updates.name;
@@ -208,7 +208,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
             if (updates.completed !== undefined) schemaUpdates.completed = updates.completed;
             if (updates.endDate !== undefined) schemaUpdates.endDate = updates.endDate;
             if (updates.startDate !== undefined) schemaUpdates.startDate = updates.startDate;
-            
+
             // Handle subTasks with special mapping to ensure order property
             if (updates.subTasks !== undefined) {
               schemaUpdates.subTasks = updates.subTasks.map((subTask, index) => ({
@@ -218,11 +218,11 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
                 order: index // Use index as order if not provided
               }));
             }
-            
+
             if (updates.assignedTo !== undefined) schemaUpdates.assignedTo = updates.assignedTo;
             if (updates.labelsTags !== undefined) schemaUpdates.labelsTags = updates.labelsTags;
             if (updates.attachments !== undefined) schemaUpdates.attachments = updates.attachments;
-            
+
             return updateTask(taskId, schemaUpdates);
           }}
           onDeleteTask={deleteTask}
@@ -240,7 +240,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
 
     const query = searchQuery.toLowerCase()
     return tasks.filter(task =>
-      task.name?.toLowerCase().includes(query) || 
+      task.name?.toLowerCase().includes(query) ||
       task.description?.toLowerCase().includes(query) ||
       // Find status label name from labels using task.statusId
       (labels as unknown as LabelSchema[]).find(s => s.id === task.statusId)?.name?.toLowerCase().includes(query) ||
@@ -291,23 +291,15 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     }
   }, [updateTask, moveTaskToStatus])
 
-  // Helper function to detect if dark mode is active
-  const isDarkMode = () => {
-    // Check if dark mode is active via media query or HTML tag class
-    return (
-      window.matchMedia && 
-      window.matchMedia('(prefers-color-scheme: dark)').matches ||
-      document.documentElement.classList.contains('dark')
-    );
-  };
-  
+
+
   // Helper function to convert hex to rgba for group header colors
   const hexToRgba = (hex: string, alpha: number = 0.3) => {
     // Handle case where hex might not be valid
     if (!hex || typeof hex !== 'string' || !hex.startsWith('#') || hex.length !== 7) {
       return `rgba(128, 128, 128, ${alpha})`; // Default gray if invalid color
     }
-    
+
     try {
       const r = parseInt(hex.slice(1, 3), 16);
       const g = parseInt(hex.slice(3, 5), 16);
@@ -318,7 +310,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       return `rgba(128, 128, 128, ${alpha})`; // Default gray on error
     }
   };
-  
+
   // Helper function to lighten a color for dark mode
   const lightenColor = (hex: string, percent: number = 20) => {
     if (!hex || typeof hex !== 'string' || !hex.startsWith('#') || hex.length !== 7) {
@@ -334,34 +326,34 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       return hex; // Return original on error
     }
   };
-  
+
   // Create dynamic color mapping for group headers based on the currently selected grouping type
   const categoryMapping = useMemo(() => {
     const mapping: Record<string, {
       color: string,       // Text/accent color
       backgroundColor: string // Background color
     }> = {};
-    
+
     // Add the colors for each label of the selected type
     const labelsData = labels as unknown as LabelSchema[];
     const targetLabels = labelsData.filter(label => {
-      return groupByField === 'statusLabel' 
-        ? label.type === 'status' 
+      return groupByField === 'statusLabel'
+        ? label.type === 'status'
         : label.type === 'priority';
     });
-    
+
     targetLabels.forEach(label => {
       // For dark mode support, we use the original color for text and a semi-transparent version for background
       const originalColor = label.color;
       const bgColor = hexToRgba(originalColor, 0.3); // Using 0.3 alpha for better visibility (70% transparent)
-      
+
       // Map by name for the UI display, which is what the grouping shows
       mapping[label.name] = {
         color: originalColor,
         backgroundColor: bgColor
       };
     });
-    
+
     return mapping;
   }, [labels, groupByField]);
 
@@ -436,8 +428,8 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
 
             <Flex align="center" gap="2">
               {/* Grouping toggle button */}
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={toggleGrouping}
                 className="flex items-center gap-1"
                 size="2"
@@ -459,7 +451,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
                   <RefreshCw size={16} />
                 </IconButton>
               </Tooltip>
-              
+
               {/* Keyboard shortcuts help */}
               <div>
                 <Tooltip content="Keyboard Shortcuts">
@@ -468,7 +460,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
                   </div>
                 </Tooltip>
               </div>
-              
+
               {/* Column visibility dropdown */}
               <DropdownMenu.Root open={isColumnsMenuOpen} onOpenChange={setIsColumnsMenuOpen}>
                 <DropdownMenu.Trigger>

@@ -57,7 +57,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
     getTemplateById,
     templateActive,
   } = useTemplateStore();
-  const [availableComponents] = useState(getWidgets());
+  const [availableComponents] = useState(Object.values(getWidgets()));
   debugger;
   const [_draggingComponentId, setDraggingComponentId] = useState<
     string | null
