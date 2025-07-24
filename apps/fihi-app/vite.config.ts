@@ -18,7 +18,7 @@ type WorkerFormat = "es" | "iife"
 export default defineConfig(async () => ({
   worker: { format: "es" as WorkerFormat },
   define: {
-    global: 'globalThis',
+    global: "globalThis",
   },
   build: {
     // using hidden sourcemap to avoid the vscode type error
@@ -35,7 +35,7 @@ export default defineConfig(async () => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      crypto: 'crypto-browserify',
+      crypto: "crypto-browserify",
     },
   },
   plugins: [
