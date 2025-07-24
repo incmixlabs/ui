@@ -4,6 +4,8 @@ import { initializeDefaultData } from "../hooks/use-initialize-default-data"
 // sql/project-utils.ts
 import { database } from "./main" // Added import for TaskDataSchema
 import type { FormProjectDocType } from "./types"
+// Import organization store hook to get current organization ID
+import { useOrganizationStore } from "../services/organizations"
 
 /**
  * Saves a project form submission to the RxDB formProjects collection
@@ -13,11 +15,33 @@ import type { FormProjectDocType } from "./types"
 export const saveFormProject = async (projectData: ProjectFormData) => {
   try {
     const now = Date.now()
+    
+    // Get organization ID from localStorage directly
+    let orgId = '';
+    try {
+      const orgStore = localStorage.getItem('organization-store');
+      if (orgStore) {
+        const orgData = JSON.parse(orgStore);
+        if (orgData.state?.selectedOrganisation?.id) {
+          orgId = orgData.state.selectedOrganisation.id;
+        }
+      }
+    } catch (error) {
+      console.error('Error getting organization ID from store:', error);
+    }
+    
+    // If no organization ID was found, throw error as orgId is required
+    if (!orgId) {
+      console.warn('No selected organization found when creating project');
+      throw new Error('Cannot create project: No organization selected');
+    }
+    
     // Validate and sanitize the project data
     const validatedData = validateProjectData(projectData)
     // Prepare the document with required tracking fields
     const projectDoc = {
       ...validatedData,
+      orgId, // Add organization ID to the project document
       createdAt: now,
       updatedAt: now,
     } as FormProjectDocType

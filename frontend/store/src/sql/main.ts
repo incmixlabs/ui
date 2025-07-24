@@ -132,7 +132,42 @@ export class LocalDatabase {
         autoMigrate: true,
       },
       projects: { schema: projectSchemaLiteral, autoMigrate: true },
-      formProjects: { schema: formProjectSchemaLiteral, autoMigrate: true },
+      formProjects: { 
+        schema: formProjectSchemaLiteral, 
+        autoMigrate: true,
+        migrationStrategies: {
+          1: (oldDoc: Record<string, any>) => {
+            // Get the current organization ID from localStorage
+            let orgId = '';
+            try {
+              const orgStore = localStorage.getItem('organization-store');
+              if (orgStore) {
+                const orgData = JSON.parse(orgStore);
+                orgId = orgData?.state?.selectedOrganisation?.id;
+                if (orgId) {
+                  console.log('Migration: Found organization ID:', orgId);
+                }
+              }
+            } catch (error) {
+              console.error('Migration: Error getting organization ID from store:', error);
+            }
+            
+            // If we still don't have an orgId, use a fallback value
+            // This is critical since orgId is required by the schema
+            if (!orgId) {
+              orgId = oldDoc.id?.slice(0, 15) || 'FHOdwilwTHuCp11'; // Use part of the doc id or fallback to a known valid ID
+              console.warn(`Migration: No orgId found for project ${oldDoc.id}, using fallback: ${orgId}`);
+            }
+            
+            // Add organization ID to the document
+            console.log(`Migration: Migrating project ${oldDoc.id} to version 1 with orgId: ${orgId}`);
+            return {
+              ...oldDoc,
+              orgId: orgId
+            };
+          }
+        }
+      },
       dashboardTemplates: {
         schema: dashboardTemplateSchemaLiteral,
         autoMigrate: true,

@@ -49,26 +49,32 @@ export function useProjectsCheck() {
           return
         }
 
-        // Get all projects from formProjects collection
-        const projectDocs = await db.formProjects.find().exec()
-        console.log("projectDocs: ", projectDocs)
-
-        if (cancelled) return
-
-        // NOTE: Organization filtering is temporarily disabled until the project schema includes org IDs
-        // Once the schema is updated, we'll re-enable filtering by organization
-        const filteredDocs = projectDocs;
+        // Filter projects directly at the database level using RxDB's query capabilities
+        // This is much more efficient than fetching all projects and filtering in memory
+        const filteredDocs = await db.formProjects.find({
+          selector: {
+            orgId: selectedOrganisation.id
+          }
+        }).exec()
         
-        /* Organization filtering logic to re-enable later:
-        const filteredDocs = projectDocs.filter((doc) => {
-          const docData = doc.toJSON()
-          return (
-            (docData as any).orgId === selectedOrganisation.id ||
-            (docData as any).organizationId === selectedOrganisation.id ||
-            (docData as any).org_id === selectedOrganisation.id
-          )
-        })
-        */
+        // Log what we found for debugging
+        console.log(`Found ${filteredDocs.length} projects with orgId: ${selectedOrganisation.id}`);
+        
+        // Also check for projects without orgId to help with debugging
+        // This is only for debugging, not needed in production
+        const isDevelopment = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+        if (isDevelopment) {
+          const missingOrgIdDocs = await db.formProjects.find({
+            selector: {
+              orgId: { $exists: false }
+            }
+          }).exec();
+          
+          if (missingOrgIdDocs.length > 0) {
+            console.warn(`Found ${missingOrgIdDocs.length} projects missing orgId field. Migration might not have completed.`);
+          }
+        }
+        
 
         const projectsExist = filteredDocs && filteredDocs.length > 0
         setHasProjects(projectsExist)
