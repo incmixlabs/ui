@@ -11,6 +11,7 @@ import { addRxPlugin, createRxDatabase } from "rxdb"
 import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode"
 // main.ts
 import { replicateRxCollection } from "rxdb/plugins/replication"
+import { organizationStore } from "../services/organizations"
 
 import { API } from "@incmix/utils/env"
 import { getRxStorageIndexedDB } from "rxdb-premium/plugins/storage-indexeddb"
@@ -155,13 +156,20 @@ export class LocalDatabase {
               )
             }
 
-            // If we still don't have an orgId, use a fallback value
+            // If we still don't have an orgId, try to get from Zustand store directly
             // This is critical since orgId is required by the schema
             if (!orgId) {
-              orgId = oldDoc.id?.slice(0, 15) || "FHOdwilwTHuCp11" // Use part of the doc id or fallback to a known valid ID
-              console.warn(
-                `Migration: No orgId found for project ${oldDoc.id}, using fallback: ${orgId}`
-              )
+              // Try to get from Zustand store directly
+              const selectedOrg = organizationStore.getState().selectedOrganisation
+              orgId = selectedOrg?.id || ""
+              
+              // If still no orgId, use a more descriptive fallback with a unique ID
+              if (!orgId) {
+                orgId = oldDoc.id?.slice(0, 15) || `migration-${nanoid(10)}`
+                console.warn(
+                  `Migration: No orgId found for project ${oldDoc.id}, using generated fallback: ${orgId}`
+                )
+              }
             }
 
             // Add organization ID to the document
