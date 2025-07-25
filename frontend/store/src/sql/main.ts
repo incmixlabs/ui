@@ -160,9 +160,10 @@ export class LocalDatabase {
             // This is critical since orgId is required by the schema
             if (!orgId) {
               // Try to get from Zustand store directly
-              const selectedOrg = organizationStore.getState().selectedOrganisation
+              const selectedOrg =
+                organizationStore.getState().selectedOrganisation
               orgId = selectedOrg?.id || ""
-              
+
               // If still no orgId, use a more descriptive fallback with a unique ID
               if (!orgId) {
                 orgId = oldDoc.id?.slice(0, 15) || `migration-${nanoid(10)}`
