@@ -1,8 +1,8 @@
 import type { ProjectFormData } from "@incmix/utils/schema"
 import { ensureFileObject, validateProjectData } from "@incmix/utils/validate"
 import { initializeDefaultData } from "../hooks/use-initialize-default-data"
-// Import organization store hook to get current organization ID
-import { useOrganizationStore } from "../services/organizations"
+// Import organization store to get current organization ID
+import { organizationStore } from "../services/organizations"
 // sql/project-utils.ts
 import { database } from "./main" // Added import for TaskDataSchema
 import type { FormProjectDocType } from "./types"
@@ -16,15 +16,13 @@ export const saveFormProject = async (projectData: ProjectFormData) => {
   try {
     const now = Date.now()
 
-    // Get organization ID from localStorage directly
+    // Get organization ID directly from the Zustand store
     let orgId = ""
     try {
-      const orgStore = localStorage.getItem("organization-store")
-      if (orgStore) {
-        const orgData = JSON.parse(orgStore)
-        if (orgData.state?.selectedOrganisation?.id) {
-          orgId = orgData.state.selectedOrganisation.id
-        }
+      // Access the store state directly using getState()
+      const selectedOrg = organizationStore.getState().selectedOrganisation
+      if (selectedOrg?.id) {
+        orgId = selectedOrg.id
       }
     } catch (error) {
       console.error("Error getting organization ID from store:", error)
