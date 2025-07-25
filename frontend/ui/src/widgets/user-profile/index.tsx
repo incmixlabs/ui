@@ -1,14 +1,13 @@
-import { KanbanImages } from "@components/kanban-board/images";
+import React from "react";
 import { Avatar, Box, CardContainer, Flex, IconButton, Text } from "@incmix/ui";
 import { Settings } from "lucide-react";
-import React from "react";
+
 
 export function UserProfile(
   {
     user = {
       name: "ArtTemplate",
-      email: "example@mail.com",
-      avatar: KanbanImages?.user1
+      email: "example@mail.com"
     }
   }
 ) {

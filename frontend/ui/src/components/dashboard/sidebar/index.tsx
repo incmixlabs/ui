@@ -4,17 +4,14 @@ import {
   Button,
   DropdownMenu,
   Flex,
-  Grid,
   Heading,
   IconButton,
   Input,
-  LayoutPresetsSection,
   ScrollArea,
-  cn,
-  dashboardImg,
-  useSelectionStore,
-} from "@incmix/ui";
+} from "@base";
 
+import { LayoutPresetsSection } from "./layout-presets-selection";
+import { cn } from "@utils/cn"
 import { useEffect, useMemo, useState } from "react";
 import { DraggableComponent } from "./draggable-component";
 import {
@@ -28,9 +25,9 @@ import {
 } from "lucide-react";
 import { TemplatesSidebar } from "./templates";
 import { useLocation, useParams } from "@tanstack/react-router";
-import { useTemplateStore } from "@incmix/store";
-import { sidebarComponents } from "./widgets-data";
-
+import {  useTemplateStore } from "@incmix/store";
+import { getWidgets } from "./widgets-data";
+import { useSelectionStore } from "../hooks/use-widgets-selection";
 
 interface DashboardSidebarProps {
   isEditing?: boolean;
@@ -60,8 +57,8 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
     getTemplateById,
     templateActive,
   } = useTemplateStore();
-
-  const [availableComponents] = useState(sidebarComponents);
+  const [availableComponents] = useState(Object.values(getWidgets()));
+  debugger;
   const [_draggingComponentId, setDraggingComponentId] = useState<
     string | null
   >(null);
@@ -289,8 +286,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
                       <DraggableComponent
                         id={comp.slotId}
                         title={comp.title}
-                        darkImage={comp.darkCompImage}
-                        lightImage={comp.lightCompImage}
+                        image={comp.image}
                         component={comp.component}
                         componentName={comp.componentName}
                         disabled={!isEditing || selectedWidgets.length > 0}

@@ -20,14 +20,16 @@ import {
   SaveTemplateDialog,
   SidebarTrigger,
   generateDOM,
-  initialLayouts,
-  useDevicePreview,
-  useGridComponents,
   useLayoutStore,
   useMediaQuery,
   useModalStore,
-  useWidgetDragAndDrop,
 } from "@incmix/ui"
+import {
+  initialLayouts,
+  useDevicePreview,
+  useGridComponents,
+  useWidgetDragAndDrop,
+} from "@incmix/ui/dashboard"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useParams } from "@tanstack/react-router"
 import type React from "react"

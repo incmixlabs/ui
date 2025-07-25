@@ -1,12 +1,10 @@
 "use client";
 
-import type React from "react";
+import { memo} from "react";
 import { useDroppable } from "@dnd-kit/core";
-import { memo } from "react";
-import { useSelectionStore } from "@hooks";
-import { Checkbox, IconButton,Box} from "@incmix/ui/base";
+import { IconButton,Box} from "@incmix/ui/base";
 import { cn } from "@utils";
-import { Link, Trash } from "lucide-react";
+import { Trash } from "lucide-react";
 
 interface WidgetDropZoneProps {
   id: string

@@ -46,7 +46,8 @@
     "./date-picker": "./src/components/date-picker.tsx",
     "./onboarding": "./src/components/onboarding/index.tsx",
     "./tanstack-table": "./src/components/tanstack-table/index.ts",
-    "./auto-form": "./src/components/auto-form/index.tsx"
+    "./auto-form": "./src/components/auto-form/index.tsx",
+    "./file-manager": "./src/components/file-manager/index.tsx"
   },
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "1.7.4",

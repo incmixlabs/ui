@@ -15,7 +15,7 @@ import {
   TextField,
   Tooltip,
 } from "@incmix/ui/base"
-import { DataTable } from "@incmix/ui/tanstack-table"
+import { TanstackDataTable as DataTable } from "@incmix/ui/tanstack-table"
 import {
   type MemberDetails,
   type Organization,

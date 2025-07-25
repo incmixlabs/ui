@@ -22,7 +22,7 @@ export type ReactGridLayoutType = Layout[]
 export type CustomLayout = LayoutItem[]
 
 export interface LayoutItemWithNested extends Layout {
-  layouts?: ExtendedLayout[] 
+  layouts?: ExtendedLayout[]
   compactType?: "horizontal" | "vertical" | null
   [key: string]: any
 }
@@ -34,8 +34,7 @@ export type CustomLayouts = {
 export interface LayoutPreset {
   id: string
   name: string
-  lightImage: string
-  darkImage: string
+  image: string
   description: string
   mainLayouts: CustomLayouts
 }
@@ -44,7 +43,7 @@ export interface ComponentSlot {
   slotId: string
   component: React.ReactNode
   title: string
-  compImage?: string
+  image?: string
   componentName?:string
   layouts?: Record<Breakpoint, { w: number; h: number }>
 }
@@ -53,8 +52,6 @@ export interface DragData {
   title?: string
   image?: string
   componentName?:string
-  darkImage?:string
-  lightImage?:string
   dragPreviewSize?:string
   [key: string]: any
 }

@@ -10,10 +10,8 @@ import {
   type RadixRadius,
   type RadixScaling,
   type ThemeConfig,
-  User,
   type UserPreference,
   breakFontColor as defaultFontColor,
-  fontColor,
 } from "@incmix/utils/types"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
@@ -25,6 +23,10 @@ export const extractColorName = (cssVar: string): string => {
     "Unknown"
   )
 }
+export type SidebarColorConfig = {
+  color: string
+  break: number
+}
 
 export const RADIUS_MAP: Record<RadixRadius, string> = {
   none: "0px",
@@ -34,23 +36,12 @@ export const RADIUS_MAP: Record<RadixRadius, string> = {
   full: "9999px",
 }
 
-export const getRadiusValue = (radiusLevel?: RadixRadius | string): string => {
-  if (!radiusLevel) return RADIUS_MAP.medium
-  return RADIUS_MAP[radiusLevel as RadixRadius] ?? RADIUS_MAP.medium
-}
-
-export type SidebarColorConfig = {
-  color: string
-  break: number
-}
-
 export const SIDEBAR_COLOR_OPTIONS = [
   { bg: { color: "gray", break: 2 } },
   ...RADIX_ACCENT_COLORS.map((color) => ({
     bg: { color, break: 10 },
   })),
 ] satisfies { bg: SidebarColorConfig }[]
-
 export type ThemeStoreConfig = ThemeConfig & {
   setTheme: (partial: Partial<ThemeConfig>) => void
   theme: (prop: keyof ThemeConfig) => any
@@ -172,6 +163,7 @@ export type UserPreferenceStoreConfig = UserPreference & {
   setDirection: (direction: "ltr" | "rtl") => void
   getDirection: () => "ltr" | "rtl"
   getIsSystemAppearance: () => boolean
+  getIsDarkAppearance: () => boolean
 }
 
 export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
@@ -221,6 +213,7 @@ export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
         })),
       getDirection: () => get().direction ?? "ltr",
       getIsSystemAppearance: () => get().isSystemAppearance ?? false,
+      getIsDarkAppearance: () => get().appearance === "dark",
     }),
     {
       name: "incmix-appearance-store",
@@ -678,17 +671,3 @@ export const useSidebarStore = create<SidebarStore>()(
     }
   )
 )
-
-// export function IncmixThemeApplier() {
-//   const { sidebarBg } = useThemeStore()
-
-//   useEffect(() => {
-//     document.documentElement.style.setProperty("--primary-color", primaryColor)
-//     document.documentElement.style.setProperty(
-//       "--secondary-color",
-//       secondaryColor
-//     )
-//   }, [sidebarBg]) // Re-run effect when colors change
-
-//   return null // This component doesn't render anything visible
-// }

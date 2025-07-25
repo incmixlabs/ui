@@ -1,15 +1,12 @@
 "use client"
 
-import React, { useCallback, useMemo, memo, useEffect } from "react";
-import { Table as TanStackTable } from "@tanstack/react-table";
-import { Table } from "@shadcn";
+import  { useCallback, useMemo, memo, useEffect } from "react";
 
 // Import UI components
 import { TableFilters } from "./TableFilters";
 import { TablePagination } from "./TablePagination";
 import { TableSidebar } from "../sidebar-filter";
 import { TableContent } from "./TableContent";
-import { KeyboardShortcutsHelp } from "./KeyboardShortcutsHelp";
 // Import EditTableForm and wrap it with memo for better performance
 import EditTableFormComponent from "./EditTableForm";
 const EditTableForm = memo(EditTableFormComponent);
@@ -84,7 +81,7 @@ function DataTableComponent<TData extends object>({
 }: DataTableProps<TData>) {
   // Use our extracted hooks to organize the component
   const tableState = useTableState(
-    initialSidebarOpen, 
+    initialSidebarOpen,
     initialColumnVisibility,
     columnVisibility,
     onColumnVisibilityChange
@@ -212,7 +209,7 @@ function DataTableComponent<TData extends object>({
   // Memoize row and column data to prevent unnecessary recalculations
   const memoizedRowData = useMemo(() => {
     if (!enableInlineCellEdit || inlineEditableColumns.length === 0) return null;
-    
+
     return rowModel.rows.map((row, index) => ({
       id: row.id,
       index,
@@ -221,7 +218,7 @@ function DataTableComponent<TData extends object>({
 
   const memoizedColumnData = useMemo(() => {
     if (!enableInlineCellEdit || inlineEditableColumns.length === 0) return null;
-    
+
     return table.getAllLeafColumns()
       .filter(col => col.getIsVisible())
       .map((col, index) => ({
@@ -233,7 +230,7 @@ function DataTableComponent<TData extends object>({
   // Initialize the editable cells map for keyboard navigation using the memoized data
   useEffect(() => {
     if (!memoizedRowData || !memoizedColumnData || inlineEditableColumns.length === 0) return;
-    
+
     // Initialize the map of editable cells - only when row/column structure actually changes
     if (memoizedRowData.length > 0 && memoizedColumnData.length > 0) {
       initializeEditableCells(memoizedRowData, memoizedColumnData, inlineEditableColumns as string[]);
@@ -265,7 +262,7 @@ function DataTableComponent<TData extends object>({
       ? `table-${table.options.data.length}-${Object.keys(table.getState().columnVisibility || {}).length}`
       : 'empty-table';
   }, [table.options.data, table.getState().columnVisibility]);
-  
+
   const tableRowsById = useMemo(
     () => table.getRowModel().rowsById,
     [table.getRowModel()]
@@ -370,33 +367,33 @@ function DataTableComponent<TData extends object>({
   ), [
     // UI structure and styling
     className,
-    
+
     // Edit dialog props
     isEditDialogOpen, currentRowData, editFormSchema, editFieldConfig, handleCloseEditDialog,
-    handleEditSubmit, editDialogTitle, 
-    
+    handleEditSubmit, editDialogTitle,
+
     // Sidebar filter props
-    enableSidebarFilters, sidebarOpen, sidebarFilters, toggleSidebar, 
-    
+    enableSidebarFilters, sidebarOpen, sidebarFilters, toggleSidebar,
+
     // Table core props
     table, enableFiltering, filterColumn, filterPlaceholder, enableColumnVisibility,
-    visibilityItems, facets, 
-    
+    visibilityItems, facets,
+
     // Export functionality
-    exportOptions, handleExport, 
-    
+    exportOptions, handleExport,
+
     // Pagination props
-    isPaginationVisible, paginationInfo, handlePageChange, handlePageSizeChange, isPaginationLoading, 
-    
+    isPaginationVisible, paginationInfo, handlePageChange, handlePageSizeChange, isPaginationLoading,
+
     // Row selection
     enableRowSelection, rowSelectionCount, filteredRowCount,
-    
+
     // Row expansion props - previously missing
     expandableRows, expandedRows, toggleRowExpanded, onRowClick,
-    
+
     // Row grouping props - previously missing
     enableRowGrouping, rowGrouping, hideMainHeader,
-    
+
     // Inline editing props - previously missing
     enableInlineCellEdit, inlineEditableColumns, isEditing, isSelected,
     selectCell, startEditing, cancelEditing, handleCellEdit
