@@ -13,21 +13,22 @@ import {
   Box,
   CloneDashboardModal,
   CreateProjectModal,
-  DeleteDashboard,
-  EditDashboard,
   Flex,
   Heading,
   SaveTemplateDialog,
   SidebarTrigger,
-  generateDOM,
-  useLayoutStore,
   useMediaQuery,
   useModalStore,
 } from "@incmix/ui"
+
 import {
+  DeleteDashboard,
+  EditDashboard,
+  generateDOM,
   initialLayouts,
   useDevicePreview,
   useGridComponents,
+  useLayoutStore,
   useWidgetDragAndDrop,
 } from "@incmix/ui/dashboard"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
@@ -113,7 +114,9 @@ const DynamicDashboardPage: React.FC = () => {
     const getProjectName = async () => {
       try {
         const getProject = await getDashboardById(projectId)
-        setProject(getProject)
+        if (getProject) {
+          setProject(getProject)
+        }
       } catch (error) {
         console.error("Failed to get dashboard:", error)
       }
