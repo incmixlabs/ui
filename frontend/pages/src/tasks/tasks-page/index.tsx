@@ -75,17 +75,58 @@ const TasksPage = () => {
 
   // We no longer need this query as the useProjectsCheck hook handles this
 
-  // Set first project as selected when hook data loads
+  // Effect to handle project selection on load and organization changes
   useEffect(() => {
+    // Check if we need to select or update the selected project
+    // This is triggered when:
+    // 1. Initial load and there's no selected project yet
+    // 2. Organization changes and firstProjectId changes (projects list filtered by new org)
+    // 3. Organization changes and there are no projects in the new org
+
+    // If we have projects for the current org but no selected project, select the first one
     if (firstProjectId && !selectedProject) {
-      // Find the project object from the projects array
+      console.log("Setting first project as selected", firstProjectId)
       const firstProject = projects.find((p) => p.id === firstProjectId)
       if (firstProject) {
-        // Use proper type conversion function instead of type assertion
         setSelectedProject(convertToProject(firstProject))
       }
     }
-  }, [firstProjectId, projects, selectedProject, setSelectedProject])
+    // If the currently selected project doesn't exist in the current projects list
+    // (which happens when switching orgs), we need to reset it or choose a new one
+    else if (
+      selectedProject &&
+      projects.length > 0 &&
+      !projects.some((p) => p.id === selectedProject.id)
+    ) {
+      console.log(
+        "Selected project not found in current org, selecting first project"
+      )
+      const firstProject = projects[0]
+      if (firstProject) {
+        setSelectedProject(convertToProject(firstProject))
+      }
+    }
+    // If no projects in current org but a project is selected, clear the selection
+    else if (selectedProject && projects.length === 0) {
+      console.log("No projects in current org, clearing selected project")
+      setSelectedProject(undefined)
+    }
+  }, [
+    firstProjectId,
+    projects,
+    selectedProject,
+    setSelectedProject,
+    selectedOrganisation,
+  ])
+
+  // Add a specific effect to log and debug when organization changes
+  useEffect(() => {
+    console.log("Organization changed:", {
+      orgId: selectedOrganisation?.id,
+      projectsCount: projects.length,
+      selectedProject: selectedProject?.id || "none",
+    })
+  }, [selectedOrganisation, projects.length, selectedProject])
 
   if (!selectedOrganisation) {
     return (

@@ -1,6 +1,8 @@
 import type { ProjectFormData } from "@incmix/utils/schema"
 import { ensureFileObject, validateProjectData } from "@incmix/utils/validate"
 import { initializeDefaultData } from "../hooks/use-initialize-default-data"
+// Import organization store to get current organization ID
+import { organizationStore } from "../services/organizations"
 // sql/project-utils.ts
 import { database } from "./main" // Added import for TaskDataSchema
 import type { FormProjectDocType } from "./types"
@@ -13,11 +15,31 @@ import type { FormProjectDocType } from "./types"
 export const saveFormProject = async (projectData: ProjectFormData) => {
   try {
     const now = Date.now()
+
+    // Get organization ID directly from the Zustand store
+    let orgId = ""
+    try {
+      // Access the store state directly using getState()
+      const selectedOrg = organizationStore.getState().selectedOrganisation
+      if (selectedOrg?.id) {
+        orgId = selectedOrg.id
+      }
+    } catch (error) {
+      console.error("Error getting organization ID from store:", error)
+    }
+
+    // If no organization ID was found, throw error as orgId is required
+    if (!orgId) {
+      console.warn("No selected organization found when creating project")
+      throw new Error("Cannot create project: No organization selected")
+    }
+
     // Validate and sanitize the project data
     const validatedData = validateProjectData(projectData)
     // Prepare the document with required tracking fields
     const projectDoc = {
       ...validatedData,
+      orgId, // Add organization ID to the project document
       createdAt: now,
       updatedAt: now,
     } as FormProjectDocType

@@ -42,9 +42,19 @@ function convertToProject(item: any): Project {
 }
 
 export function ProjectSwitcher({ className }: { className?: string }) {
-  // Use our enhanced hook that fetches real project data from RxDB
+  // Use our enhanced hook that fetches real project data from RxDB filtered by organization
   const { projects, isLoading, hasProjects } = useProjectsCheck()
   const { selectedProject, setSelectedProject } = useProjectStore()
+
+  // More detailed logging to help diagnose any issues
+  console.log("ProjectSwitcher rendering:", {
+    projects: projects?.length || 0,
+    projectIds: projects.map((p) => p.id).join(", "),
+    hasProjects,
+    isLoading,
+    selectedProject: selectedProject?.id || "none",
+    selectedProjectTitle: selectedProject?.title || "none",
+  })
 
   // Create a list of SwitcherItems from our projects for the Switcher component
   const projectItems: SwitcherItem[] = React.useMemo(() => {
@@ -55,39 +65,41 @@ export function ProjectSwitcher({ className }: { className?: string }) {
   }, [projects])
 
   // Find the currently selected project in our list
-  const selectedItem = React.useMemo(() => {
-    if (!selectedProject) return null
-    return projectItems.find((item) => item.id === selectedProject.id) || null
-  }, [selectedProject, projectItems])
-
-  React.useEffect(() => {
-    // If no project is selected but we have projects, select the first one
-    if (!selectedProject && projects.length > 0) {
-      // Use proper type conversion function instead of type assertion
-      setSelectedProject(convertToProject(projects[0]))
+  const handleProjectSelect = (id: string | null) => {
+    if (id) {
+      const proj = projects.find((p) => p.id === id)
+      if (proj) {
+        // Use proper type conversion function instead of type assertion
+        setSelectedProject(convertToProject(proj))
+      }
     }
-  }, [selectedProject, projects, setSelectedProject])
+  }
 
-  // If there are no projects or we're still loading, don't render the switcher
-  if (!hasProjects || isLoading || projects.length === 0) {
-    return null
+  // Show a message if projects are loading
+  if (isLoading) {
+    return (
+      <div className="px-2 py-1 text-gray-500 text-xs">Loading projects...</div>
+    )
+  }
+
+  // If there are no projects after filtering by organization ID, show a helpful message
+  if (!hasProjects || projects.length === 0) {
+    return (
+      <div className="px-2 py-1 text-gray-500 text-xs">
+        No projects in current org
+      </div>
+    )
   }
 
   return (
     <Switcher
-      switchedItem={selectedItem}
+      switchedItem={
+        projectItems.find((item) => item.id === selectedProject?.id) || null
+      }
       items={projectItems}
-      setSwitchedItem={(id: string | null) => {
-        if (id) {
-          const proj = projects.find((p) => p.id === id)
-          if (proj) {
-            // Use proper type conversion function instead of type assertion
-            setSelectedProject(convertToProject(proj))
-          }
-        }
-      }}
+      setSwitchedItem={handleProjectSelect}
       className={className}
-      title="projects"
+      title="Projects"
     />
   )
 }
