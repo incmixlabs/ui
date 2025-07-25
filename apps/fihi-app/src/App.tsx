@@ -21,11 +21,6 @@ import { Provider as RxdbProvider } from "rxdb-hooks"
 
 import { translations } from "./translations"
 
-export const dateFNSLocale: Record<Language, string> = {
-  en: "en",
-  pt: "pt-BR",
-}
-
 function App() {
   const appearance = useAppearanceStore()
   const {
