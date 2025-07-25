@@ -227,7 +227,7 @@ export function useWidgetDragAndDrop(
     //   return false
     // }
 
-    const draggedComponent = sidebarComponents.find(
+    const draggedComponent = Object.values(widgets).find(
       (comp) => comp.slotId === draggedSlotId,
     );
     if (!draggedComponent) return false;

@@ -19,33 +19,18 @@ import {
   SidebarTrigger,
   useMediaQuery,
   useModalStore,
-<<<<<<< HEAD
-} from "@incmix/ui";
+} from "@incmix/ui"
 
 import {
+  DeleteDashboard,
+  EditDashboard,
+  generateDOM,
   initialLayouts,
-  useLayoutStore,
   useDevicePreview,
   useGridComponents,
+  useLayoutStore,
   useWidgetDragAndDrop,
-  EditDashboard,
-  DeleteDashboard,
-  generateDOM,
 } from "@incmix/ui/dashboard"
-import { DashboardLayout } from "@layouts/admin-panel/layout";
-import { useParams } from "@tanstack/react-router";
-import type React from "react";
-import { useEffect, useRef, useState } from "react";
-import { useAuth } from "../../auth";
-import { EditWidgetsControl } from "./home";
-import "@incmix/react-grid-layout/css/styles.css";
-import { useLocation } from "@tanstack/react-router";
-import { useQueryState } from "nuqs";
-import { useTranslation } from "react-i18next";
-const ResponsiveGridLayout = WidthProvider(Responsive);
-=======
-  useWidgetDragAndDrop,
-} from "@incmix/ui"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useParams } from "@tanstack/react-router"
 import type React from "react"
@@ -57,7 +42,6 @@ import { useLocation } from "@tanstack/react-router"
 import { useQueryState } from "nuqs"
 import { useTranslation } from "react-i18next"
 const ResponsiveGridLayout = WidthProvider(Responsive)
->>>>>>> b1f653c (fix: resolved biome issue)
 
 const DynamicDashboardPage: React.FC = () => {
   const { projectId } = useParams({ from: "/dashboard/$projectId" })
@@ -129,9 +113,9 @@ const DynamicDashboardPage: React.FC = () => {
   useEffect(() => {
     const getProjectName = async () => {
       try {
-        const getProject = await getDashboardById(projectId);
+        const getProject = await getDashboardById(projectId)
         if (getProject) {
-          setProject(getProject);
+          setProject(getProject)
         }
       } catch (error) {
         console.error("Failed to get dashboard:", error)
