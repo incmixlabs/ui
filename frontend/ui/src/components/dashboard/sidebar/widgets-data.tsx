@@ -460,10 +460,10 @@ export const getWidgets = () => {
 
 export const getPresets = () => {
   const isDark =  useAppearanceStore.getState().getIsDarkAppearance();
-  const dir = isDark ? `${rootDir}/dark` : `${rootDir}/light`
+  const dir = isDark ? `${rootDir}/presets/dark` : `${rootDir}/presets/light`
   return {
-    default: `${rootDir}/default-presets.png`,
-    presets2: `${rootDir}/presets2.png`,
+    default: `${rootDir}/presets/default-presets.png`,
+    presets2: `${rootDir}/presets/presets2.png`,
     layout: `${dir}/default-layout.svg`,
     "group-template": `${dir}/group-template.svg`
   }
