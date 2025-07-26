@@ -28,6 +28,7 @@
     "typescript": "catalog:"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.3.5",
     "@incmix/utils": "catalog:",
     "@koale/useworker": "4.1.0",
     "@radix-ui/themes": "catalog:",

@@ -30,9 +30,9 @@ catalog:
   react-i18next: 15.4.1
   remark-gfm: 4.0.1
   rollup-plugin-visualizer: 5.14.0
-  rxdb: 16.15.0
+  rxdb: 16.16.0
   rxdb-hooks: 5.0.2
-  rxdb-premium: 16.15.0
+  rxdb-premium: 16.16.0
   semver: 7.7.1
   swapy: 1.0.5
   tailwindcss: 3.4.14
