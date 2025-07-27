@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from "@incmix/ui"
+import { Box, CardContainer, Flex, Text } from "@incmix/ui"
 import { getWeekDay } from "@incmix/utils/date"
 import { MapPin as PaperPlaneIcon } from "lucide-react"
 import type React from "react"
@@ -64,7 +64,7 @@ export function WeatherCard({ days, location }: WeatherCardProps) {
 
   const TodayIcon = WeatherCodes[today.weatherCode].Icon
   return (
-    <Flex gap="1" direction="column" className="weather-container space-y-3">
+    <CardContainer className="w-full border-none rounded-app p-4 text-gray-12 bg-gradient-to-b from-gray-1 to-amber-4 dark:from-indigo-3 dark:to-gray-2">
       <Flex align="start" justify="between">
         <Box>
           <Flex gap="2" align="center">
@@ -114,7 +114,7 @@ export function WeatherCard({ days, location }: WeatherCardProps) {
           )
         })}
       </Flex>
-    </Flex>
+    </CardContainer>
   )
 }
 

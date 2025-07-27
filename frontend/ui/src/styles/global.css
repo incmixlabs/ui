@@ -166,8 +166,7 @@
     border-right: 2px solid var(--foreground) !important; 
     border-bottom: 2px solid var(--foreground) !important; 
   }
-  /* .nested-layout .react-grid-item > .react-resizable-handle::after {
-    border-right: 2px solid var(--background) !important; 
-    border-bottom: 2px solid var(--background) !important; 
-  } */
+  .react-grid-item > .react-resizable-handle {
+    cursor: e-resize; 
+  }
 }
