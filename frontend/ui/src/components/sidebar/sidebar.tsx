@@ -68,6 +68,8 @@ type SidebarContext = {
   setOpenMobile: (open: boolean) => void;
   toggleSidebar: () => void;
   toggleSecondarySidebar: () => void;
+
+  shouldAlwaysCollapse:boolean
 };
 
 const SidebarContext = createContext<SidebarContext | null>(null);
@@ -170,6 +172,7 @@ const SidebarProvider = forwardRef<
         ) {
           event.preventDefault();
           toggleSidebar();
+          setOpenMobile(false);
         }
       };
 
@@ -181,9 +184,11 @@ const SidebarProvider = forwardRef<
     useEffect(() => {
       if (shouldAlwaysCollapse) {
         setOpen(false);
-      }
+        setOpenMobile(false);
+      } 
     }, [shouldAlwaysCollapse, setOpen]);
-
+    
+    
     const state = open ? "expanded" : "collapsed";
 
     const contextValue = useMemo<SidebarContext>(
@@ -195,6 +200,7 @@ const SidebarProvider = forwardRef<
         openMobile,
         setOpenMobile,
         toggleSidebar,
+        shouldAlwaysCollapse,
         setSecondaryOpen,
         secondaryOpen,
         toggleSecondarySidebar,
@@ -206,6 +212,7 @@ const SidebarProvider = forwardRef<
         isMobile,
         openMobile,
         toggleSidebar,
+        shouldAlwaysCollapse,
         setSecondaryOpen,
         secondaryOpen,
         toggleSecondarySidebar,
@@ -260,7 +267,7 @@ const Sidebar = React.forwardRef<
     },
     ref,
   ) => {
-    const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+    const { isMobile, state, openMobile,shouldAlwaysCollapse, setOpenMobile } = useSidebar();
     const SideBarTrigger = (
       <SidebarTrigger
         icon={<ChevronsLeft className="stroke-[var(--sidebar-background)]" />}
@@ -296,21 +303,19 @@ const Sidebar = React.forwardRef<
             data-sidebar="sidebar"
             data-mobile="true"
             className={cn(
-              "fixed inset-y-0 left-0 z-50  transform text-sidebar-foreground transition-transform duration-300 ease-in-out",
+              "group fixed inset-y-0 left-0 z-50 transform text-sidebar-foreground transition-transform duration-300 ease-in-out",
               openMobile ? "translate-x-0" : "-translate-x-full",
               className,
             )}
           >
-            {SideBarTrigger}
-
             <Text className="sr-only">Sidebar</Text>
-
             {/* Content */}
             <Box className="flex h-full w-full flex-col">{children}</Box>
           </Box>
         </Box>
       )
     }
+    console.log("state",state);
 
     return (
       <>
@@ -340,9 +345,9 @@ const Sidebar = React.forwardRef<
           data-variant={variant}
           data-side={side}
           data-sidebar="sidebar"
-          data-mobile="true"
+          data-mobile="false"
         >
-          {SideBarTrigger}
+         {!shouldAlwaysCollapse && SideBarTrigger}
           {/* This is what handles the sidebar gap on desktop */}
           <Box
             className={cn(
@@ -373,7 +378,6 @@ const Sidebar = React.forwardRef<
               data-sidebar="sidebar"
               className={cn(
                 `flex h-full w-full flex-col px-1 group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow`,
-                // sidebarBgClass,
                 className,
               )}
             >
@@ -409,6 +413,7 @@ const SidebarTrigger = React.forwardRef<
       isMobile,
       openMobile,
       setOpenMobile,
+      shouldAlwaysCollapse
     } = useSidebar();
 
     return (
@@ -419,6 +424,7 @@ const SidebarTrigger = React.forwardRef<
         className={cn("h-7 w-7", className)}
         onClick={(event) => {
           onClick?.(event);
+     
           if (isMobile) {
             if (mobileSidebarTrigger) {
               setOpenMobile(!openMobile);
