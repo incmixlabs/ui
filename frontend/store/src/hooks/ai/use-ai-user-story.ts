@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { type ProcessedUserStory, aiService } from "../services/ai-service"
+import { type ProcessedUserStory, aiService } from "../../services/ai-service"
 import { useAIFeaturesStore } from "./use-ai-features-store"
 
 /**

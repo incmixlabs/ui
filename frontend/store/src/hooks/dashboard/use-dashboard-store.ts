@@ -1,8 +1,8 @@
 import { create } from "zustand"
-import { database } from "../sql/main"
+import { database } from "../../sql/main"
 
 import { generateNameBasedId } from "@incmix/utils/helper"
-import { generateUniqueId } from "../utils/browser-helpers"
+import { generateUniqueId } from "../../utils/browser-helpers"
 
 export interface Dashboard {
   id: string

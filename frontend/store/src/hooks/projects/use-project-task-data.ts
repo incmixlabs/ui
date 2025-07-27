@@ -8,7 +8,7 @@ import type {
   TaskDataSchema,
   UseProjectDataReturn,
 } from "@incmix/utils/schema"
-import { useProjectStore } from "../services/projects"
+import { useProjectStore } from "../../services/projects"
 
 // Extend the UseProjectDataReturn type to include subtask operations
 declare module "@incmix/utils/schema" {
@@ -33,8 +33,8 @@ import type { LabelDocType, TaskDocType } from "sql/types"
 import {
   generateBrowserUniqueId,
   getCurrentTimestamp,
-} from "../utils/browser-helpers"
-import { DEFAULT_LABELS } from "../utils/default-labels"
+} from "../../utils/browser-helpers"
+import { DEFAULT_LABELS } from "../../utils/default-labels"
 
 // Get the current user - accepts user context to make it injectable
 const getCurrentUser = (user?: CurrentUser) => {
