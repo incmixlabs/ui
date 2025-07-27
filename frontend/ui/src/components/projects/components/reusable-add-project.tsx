@@ -1,13 +1,12 @@
-import { useState, useCallback } from "react"
+import { Box, Button, Dialog, Text, toast } from "@base"
+import { saveFormProject, useOrganizationStore } from "@incmix/store"
+import { Loader2, Sparkles } from "lucide-react"
 import { nanoid } from "nanoid"
-import { Button, Dialog, toast, Text, Box } from "@base"
-import { Sparkles, Loader2 } from "lucide-react"
-import { saveFormProject } from "@incmix/store"
-import { useAIFeaturesStore } from "@incmix/store"
+import { useCallback, useState } from "react"
 import { useStreamingDisplay, useStreamingResponse } from "../../../hooks"
 
-import { projectFormSchema } from "./project-form-schema"
 import type { Project } from "../types"
+import { projectFormSchema } from "./project-form-schema"
 
 import AutoForm from "@components/auto-form"
 import type { Option } from "@components/multiple-selector/multiple-selector"
@@ -86,7 +85,7 @@ export function ReusableAddProject({
           checked: false
         }))
 
-        console.log('AI generated project data:', data)
+
         setFormData((prev) => ({
           ...prev,
           description: data.description,
@@ -114,10 +113,17 @@ export function ReusableAddProject({
     setFormData(values)
   }
 
+  const { selectedOrganisation } = useOrganizationStore()
+
   const { mutateAsync: saveProjectToBackend } = useProjectMutation();
 
   const handleSubmit = async (data: Record<string, any>) => {
     try {
+      if (!selectedOrganisation) {
+        toast.error("Please select an organisation")
+        return
+      }
+
       // Process the form data
       const uniqueId = nanoid()
 
@@ -140,13 +146,14 @@ export function ReusableAddProject({
           label: option.label || option.value || "", // Fallback to value if label is missing
           value: option.value || ""
         })) || [],
-        fileData: data.files?.[0] || null
-      } satisfies Project
+        fileData: data.files?.[0] || null,
+        orgId: selectedOrganisation.id
+      } satisfies Project & { orgId: string }
 
       // Save to RxDB
-      await saveFormProject(newProject)
+      await saveFormProject(newProject )
 
-      // await saveProjectToBackend(newProject);
+      await saveProjectToBackend(newProject);
 
       toast.success("Project created successfully", {
         description: `"${newProject.name}" has been added to your projects.`,
