@@ -225,29 +225,8 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
           className="w-full h-full flex items-center p-1"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Simple test: just show a button that saves when clicked */}
           <div className="flex items-center gap-2">
             <AvatarGroup users={selectedUsers} maxDisplay={maxDisplay} />
-            <button
-              onClick={() => {
-                console.log('Test save button clicked');
-                // Toggle first user for testing
-                const firstUser = availableUsers[0];
-                if (firstUser) {
-                  const isSelected = selectedUsers.some(u => u.id === firstUser.id);
-                  const newUsers = isSelected
-                    ? selectedUsers.filter(u => u.id !== firstUser.id)
-                    : [...selectedUsers, firstUser];
-                  console.log('Updating selectedUsers from', selectedUsers, 'to', newUsers);
-                  setSelectedUsers(newUsers);
-                  // Call save with the new users directly
-                  onSave(rowData, columnId, newUsers);
-                }
-              }}
-              className="px-2 py-1 text-xs bg-blue-500 text-white rounded"
-            >
-              Test
-            </button>
           </div>
         </div>
 
