@@ -15,25 +15,10 @@ import {
 import { X, Calendar, User, Flag } from "lucide-react"
 import { PRIORITY_OPTIONS, getPriorityInfo } from "./table-columns-config"
 import type { TableTask } from "../types"
+import { getMembersForAssignment } from "../constants/mock-members"
 
-// Mock members data (same as in mention input)
-const AVAILABLE_MEMBERS = [
-  {
-    id: "1",
-    name: "Shane Black",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
-  },
-  {
-    id: "2", 
-    name: "John Doe",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
-  },
-  {
-    id: "3",
-    name: "Jane Smith",
-    image: "https://images.unsplash.com/photo-1494790108755-2616b612b589?w=32&h=32&fit=crop&crop=face",
-  },
-]
+// Get members data from centralized source
+const AVAILABLE_MEMBERS = getMembersForAssignment()
 
 interface CreateTaskDialogProps {
   isOpen: boolean

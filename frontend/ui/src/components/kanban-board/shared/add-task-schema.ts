@@ -3,55 +3,7 @@ import type { FieldConfig } from "@components/auto-form/types"
 import type { ZodObjectOrWrapped } from "@components/auto-form/utils"
 import type { z } from "zod"
 import { KanbanColumn } from "@incmix/utils/schema"
-
-// Hardcoded members (matching projects structure exactly with rich data)
-const members = [
-  {
-    id: "1",
-    value: "shane-black",
-    name: "Shane Black",
-    label: "Shane Black",
-    avatar: "/placeholder.svg", // You can replace with actual image paths
-    position: "UI/UX Designer",
-    color: "blue",
-  },
-  {
-    id: "2",
-    value: "john-doe",
-    name: "John Doe",
-    label: "John Doe",
-    avatar: "/placeholder.svg",
-    position: "Project Manager",
-    color: "amber",
-  },
-  {
-    id: "3",
-    value: "jane-smith",
-    name: "Jane Smith",
-    label: "Jane Smith",
-    avatar: "/placeholder.svg",
-    position: "Business Analyst",
-    color: "indigo",
-  },
-  {
-    id: "4",
-    value: "emily-johnson",
-    name: "Emily Johnson",
-    label: "Emily Johnson",
-    avatar: "/placeholder.svg",
-    color: "cyan",
-    position: "Web Developer",
-  },
-  {
-    id: "5",
-    value: "micheal-brown",
-    label: "micheal-brown",
-    name: "Michael Brown",
-    avatar: "/placeholder.svg",
-    position: "Product Designer",
-    color: "orange",
-  },
-]
+import { getMembersForSelect } from "../constants/mock-members"
 
 // Predefined labels for tasks
 const PREDEFINED_LABELS = [
@@ -256,7 +208,7 @@ export const createTaskFormSchema = (columns: KanbanColumn[]): TaskFormSchema =>
         description: "Assign team members to this task",
         fieldType: "multipleSelector",
         inputProps: {
-          defaultOptions: members,
+          defaultOptions: getMembersForSelect(),
           placeholder: "Select members",
           defaultColor: "gray",
           className: "border-1 dark:bg-gray-1",
