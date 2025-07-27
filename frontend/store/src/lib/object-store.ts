@@ -253,7 +253,7 @@ export class ObjectStore {
   }
 
   private generateId(): string {
-    return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`
   }
 
   private async calculateChecksum(buffer: ArrayBuffer): Promise<string> {
@@ -262,8 +262,9 @@ export class ObjectStore {
       const hashArray = Array.from(new Uint8Array(hashBuffer))
       return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")
     } catch (error) {
-      console.warn("Failed to calculate checksum:", error)
-      return ""
+      throw new Error(
+        `Failed to calculate checksum: ${error instanceof Error ? error.message : "Unknown error"}`
+      )
     }
   }
 }
