@@ -71,15 +71,15 @@ export function NoteComponent() {
               </Dialog.Trigger>
               <Dialog.Content>
                 <Dialog.Header>
-                  <Dialog.Title>Add Note</Dialog.Title>
+                  <Dialog.Title className="font-semibold uppercase">Add Note</Dialog.Title>
                 </Dialog.Header>
-                <Dialog.Description>
+                <Dialog.Description className="space-y-3">
                   <Box className="space-y-2">
                     <Label>Title</Label>
                     <Input
                       type="text"
                       placeholder="The title of a note"
-                      className="w-[80%] "
+                      className="w-full bg-gray-1 px-1.5"
                       ref={titleInputRef}
                     />
                   </Box>
@@ -153,14 +153,14 @@ export function NoteComponent() {
       </Box>
 
       <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
-        <Dialog.Content>
+        <Dialog.Content className="relative pt-10">
           <Dialog.Header>
-            <Dialog.Title>Add New Note</Dialog.Title>
+            <Dialog.Title className="font-semibold uppercase">Edit Note</Dialog.Title>
             <Flex
               align={"center"}
               className={cn(
                 "absolute right-8 space-x-2",
-                isEditing ? "-top-5" : "-top-3"
+                isEditing ? "top-5" : "top-3"
               )}
             >
               {isEditing ? (
@@ -188,7 +188,6 @@ export function NoteComponent() {
                     variant="ghost"
                     color="red"
                     className="h-6"
-                    onClick={() => setIsEditing(true)}
                   >
                     <Trash className="h-4 w-4" />
                   </Button>
@@ -196,7 +195,6 @@ export function NoteComponent() {
                     variant="ghost"
                     color="blue"
                     className="h-6"
-                    onClick={() => setIsEditing(true)}
                   >
                     <Ellipsis className="h-4 w-4" />
                   </Button>
