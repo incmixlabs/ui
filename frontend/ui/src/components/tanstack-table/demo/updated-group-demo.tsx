@@ -1,8 +1,10 @@
 "use client"
 
-import React from "react"
+import React, { useState, useCallback } from "react"
 import { DataTable } from "../components/DataTable"
 import { MoreHorizontal } from "lucide-react"
+import { DropdownOption, getContrastingTextColor, adjustColor, AvatarGroup } from "../cell-renderers"
+import DropdownCellEditor from "../components/DropdownCellEditor"
 
 // Define interfaces based on the provided data structure
 interface User {
@@ -114,14 +116,14 @@ const Avatar: React.FC<AvatarProps> = ({ user, size = 24 }) => {
   };
 
   return (
-    <div 
+    <div
       className="rounded-full flex items-center justify-center text-xs font-medium text-white bg-blue-500"
       style={{ width: size, height: size }}
     >
       {user.image ? (
-        <img 
-          src={user.image} 
-          alt={user.name} 
+        <img
+          src={user.image}
+          alt={user.name}
           className="w-full h-full rounded-full object-cover"
         />
       ) : (
@@ -131,74 +133,12 @@ const Avatar: React.FC<AvatarProps> = ({ user, size = 24 }) => {
   );
 };
 
-// Avatar group component for showing multiple users with overlap
-interface AvatarGroupProps {
-  users: User[];
-  maxDisplay?: number;
-}
 
-const AvatarGroup: React.FC<AvatarGroupProps> = ({ users, maxDisplay = 3 }) => {
-  if (!users || users.length === 0) {
-    return <span className="text-muted-foreground">None</span>;
-  }
-  
-  const displayUsers = users.slice(0, maxDisplay);
-  const remaining = users.length - maxDisplay;
-  
-  return (
-    <div className="flex -space-x-2">
-      {displayUsers.map((user, index) => (
-        <div 
-          key={user.id} 
-          className="ring-2 ring-white" 
-          style={{ zIndex: 10 - index }}
-        >
-          <Avatar user={user} />
-        </div>
-      ))}
-      {remaining > 0 && (
-        <div 
-          className="ring-2 ring-white flex items-center justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-600" 
-          style={{ width: 24, height: 24, zIndex: 10 - maxDisplay }}
-        >
-          +{remaining}
-        </div>
-      )}
-    </div>
-  );
-};
-
-const EmptyAvatar = () => (
-  <div className="h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-  </div>
-);
-
-// People cell renderer for assignedTo
-const PeopleCell = ({ value }: { value: User[] }) => {
-  if (!value || value.length === 0) {
-    return <EmptyAvatar />;
-  }
-  
-  return (
-    <div className="flex -space-x-2">
-      {value.slice(0, 3).map((user, index) => (
-        <div key={user.id} className="ring-1 ring-white" style={{ zIndex: 10 - index }}>
-          <Avatar user={user} />
-        </div>
-      ))}
-      {value.length > 3 && (
-        <div className="h-6 w-6 rounded-full bg-gray-200 flex items-center justify-center ring-1 ring-white text-xs">
-          +{value.length - 3}
-        </div>
-      )}
-    </div>
-  );
-};
 
 // Label component for rendering status or priority with color
 const StatusLabel: React.FC<{ text: string, color: string, bgColor: string }> = ({ text, color, bgColor }) => (
-  <div 
-    className="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold" 
+  <div
+    className="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold"
     style={{ borderColor: 'transparent', backgroundColor: bgColor, color: color }}
   >
     {text}
@@ -208,22 +148,22 @@ const StatusLabel: React.FC<{ text: string, color: string, bgColor: string }> = 
 // Actions menu button component
 const ActionsMenu: React.FC = () => (
   <div className="flex justify-end">
-    <button 
+    <button
       className="p-1 rounded-md hover:bg-gray-100"
       onClick={(e) => {
         e.stopPropagation();
         // This would open a menu in a real implementation
       }}
     >
-      <svg 
-        xmlns="http://www.w3.org/2000/svg" 
-        width="16" 
-        height="16" 
-        viewBox="0 0 24 24" 
-        fill="none" 
-        stroke="currentColor" 
-        strokeWidth="2" 
-        strokeLinecap="round" 
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
         strokeLinejoin="round"
         className="text-gray-500"
       >
@@ -238,7 +178,7 @@ const ActionsMenu: React.FC = () => (
 // Label cell renderer (for status and priority)
 const LabelCell = ({ value, color }: { value: string, color: string }) => {
   if (!value) return <span className="text-muted-foreground">-</span>;
-  
+
   // Convert hex color to rgba for transparent background
   const hexToRgba = (hex: string, alpha: number = 0.2) => {
     const r = parseInt(hex.slice(1, 3), 16);
@@ -246,10 +186,10 @@ const LabelCell = ({ value, color }: { value: string, color: string }) => {
     const b = parseInt(hex.slice(5, 7), 16);
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   };
-  
+
   const bgColor = hexToRgba(color, 0.15);
   const textColor = color;
-  
+
   return (
     <StatusLabel text={value} color={textColor} bgColor={bgColor} />
   );
@@ -398,6 +338,20 @@ const PRIORITY_LABELS: Label[] = [
     isExpanded: true
   }
 ];
+
+// Convert status labels to dropdown options
+const STATUS_OPTIONS: DropdownOption[] = STATUS_LABELS.map(label => ({
+  value: label.name,
+  label: label.name,
+  color: label.color
+}));
+
+// Convert priority labels to dropdown options
+const PRIORITY_OPTIONS: DropdownOption[] = PRIORITY_LABELS.map(label => ({
+  value: label.name,
+  label: label.name,
+  color: label.color
+}));
 
 // Sample task data using the new data structure
 const SAMPLE_TASKS: Task[] = [
@@ -731,46 +685,95 @@ const TASK_TABLE_COLUMNS = [
     accessorKey: "name" as const,
     id: "name",
     enableSorting: true,
+    enableInlineEdit: true,
     size: 250,
+    cellAttributes: {
+      className: "cursor-pointer transition-colors duration-150 hover:bg-gray-50",
+      title: "Double-click to edit title"
+    }
   },
   {
     headingName: "Status",
-    type: "String" as const,
+    type: "Dropdown" as const,
     accessorKey: "statusLabel" as const,
     id: "statusLabel",
     enableSorting: true,
+    enableInlineEdit: true,
     size: 120,
+    meta: {
+      dropdownOptions: STATUS_OPTIONS,
+      strictDropdown: true
+    },
     cell: ({ row }: { row: any }) => {
       const status = row.original.statusLabel;
       const color = row.original.statusColor || '#6B7280';
       const bgColor = `${color}20`; // 20% opacity version of the color
-      
+
       return (
-        <StatusLabel 
-          text={status} 
-          color={color} 
-          bgColor={bgColor} 
+        <StatusLabel
+          text={status}
+          color={color}
+          bgColor={bgColor}
+        />
+      );
+    },
+    cellAttributes: {
+      className: "cursor-pointer transition-colors duration-150 hover:bg-gray-50",
+      title: "Double-click to select from dropdown"
+    },
+    inlineCellEditor: (props: { value: any, onSave: (newValue: any) => void, onCancel: () => void, columnDef?: any }) => {
+      const { value, onSave, onCancel } = props;
+
+      return (
+        <DropdownCellEditor
+          value={value as string}
+          options={STATUS_OPTIONS}
+          strictDropdown={true}
+          onSave={onSave}
+          onCancel={onCancel}
         />
       );
     }
   },
   {
     headingName: "Priority",
-    type: "String" as const,
+    type: "Dropdown" as const,
     accessorKey: "priorityLabel" as const,
     id: "priorityLabel",
     enableSorting: true,
+    enableInlineEdit: true,
     size: 120,
+    meta: {
+      dropdownOptions: PRIORITY_OPTIONS,
+      strictDropdown: true
+    },
     cell: ({ row }: { row: any }) => {
       const priority = row.original.priorityLabel;
       const color = row.original.priorityColor || '#6B7280';
       const bgColor = `${color}20`; // 20% opacity version of the color
-      
+
       return (
-        <StatusLabel 
-          text={priority} 
-          color={color} 
-          bgColor={bgColor} 
+        <StatusLabel
+          text={priority}
+          color={color}
+          bgColor={bgColor}
+        />
+      );
+    },
+    cellAttributes: {
+      className: "cursor-pointer transition-colors duration-150 hover:bg-gray-50",
+      title: "Double-click to select from dropdown"
+    },
+    inlineCellEditor: (props: { value: any, onSave: (newValue: any) => void, onCancel: () => void, columnDef?: any }) => {
+      const { value, onSave, onCancel } = props;
+
+      return (
+        <DropdownCellEditor
+          value={value as string}
+          options={PRIORITY_OPTIONS}
+          strictDropdown={true}
+          onSave={onSave}
+          onCancel={onCancel}
         />
       );
     }
@@ -781,9 +784,21 @@ const TASK_TABLE_COLUMNS = [
     accessorKey: "startDate" as const,
     id: "startDate",
     enableSorting: true,
+    enableInlineEdit: true,
     size: 120,
+    format: {
+      dateFormat: "YYYY-MM-DD"
+    },
+    // Custom accessor function to convert timestamp to ISO string for EditableDateCell
+    accessorFn: (row: Task) => {
+      return row.startDate ? new Date(row.startDate).toISOString() : '';
+    },
     cell: ({ row }: { row: any }) => {
       return formatDate(row.original.startDate);
+    },
+    cellAttributes: {
+      className: "cursor-pointer transition-colors duration-150 hover:bg-gray-50",
+      title: "Double-click to edit start date"
     }
   },
   {
@@ -792,21 +807,39 @@ const TASK_TABLE_COLUMNS = [
     accessorKey: "endDate" as const,
     id: "endDate",
     enableSorting: true,
+    enableInlineEdit: true,
     size: 120,
+    format: {
+      dateFormat: "YYYY-MM-DD"
+    },
+    // Custom accessor function to convert timestamp to ISO string for EditableDateCell
+    accessorFn: (row: Task) => {
+      return row.endDate ? new Date(row.endDate).toISOString() : '';
+    },
     cell: ({ row }: { row: any }) => {
       return formatDate(row.original.endDate);
+    },
+    cellAttributes: {
+      className: "cursor-pointer transition-colors duration-150 hover:bg-gray-50",
+      title: "Double-click to edit due date"
     }
   },
   {
     headingName: "Assigned to",
-    type: "String" as const,
-    accessorKey: "assignedTo" as const,
+    type: "People" as const,
+    accessorKey: "assignedTo" as const, // Use the User[] array directly
     id: "assignedTo",
     enableSorting: false,
+    enableInlineEdit: true,
     size: 150,
-    cell: ({ row }: { row: any }) => {
-      const assignedUsers = row.original.assignedTo;
-      return <AvatarGroup users={assignedUsers} maxDisplay={3} />;
+    meta: {
+      availableUsers: SAMPLE_USERS,
+      maxDisplay: 3,
+      maxSelections: 10
+    },
+    cellAttributes: {
+      className: "cursor-pointer transition-colors duration-150 hover:bg-gray-50",
+      title: "Double-click to edit assignments"
     }
   },
   {
@@ -822,6 +855,13 @@ const TASK_TABLE_COLUMNS = [
 
 // Main demo component
 export default function UpdatedGroupedTasksDemo() {
+  // Task data state management
+  const [allTasks, setAllTasks] = useState<Task[]>([...SAMPLE_TASKS]);
+  const [displayTasks, setDisplayTasks] = useState<Task[]>([...SAMPLE_TASKS]);
+
+  // Track last edited cell for visual feedback
+  const [lastEditedCell, setLastEditedCell] = useState<{ id: string, column: string } | null>(null);
+
   // Column visibility state
   const [columnVisibility, setColumnVisibility] = React.useState<Record<string, boolean>>({
     status: true,
@@ -842,13 +882,13 @@ export default function UpdatedGroupedTasksDemo() {
   // Create a mapping for group colors based on the currently selected grouping type
   const labelColorMapping = React.useMemo(() => {
     const mapping: Record<string, string> = {};
-    
+
     // Add the colors for each label of the selected type
     const labels = getLabels();
     labels.forEach(label => {
       mapping[label.name] = label.color;
     });
-    
+
     return mapping;
   }, [groupByLabelType]);
 
@@ -857,15 +897,142 @@ export default function UpdatedGroupedTasksDemo() {
     setGroupByLabelType(prev => prev === 'status' ? 'priority' : 'status');
   };
 
+  // Update display tasks when allTasks changes
+  React.useEffect(() => {
+    setDisplayTasks([...allTasks]);
+  }, [allTasks]);
+
+  /**
+   * Handle cell edit - key functionality for inline editing
+   * This implementation prevents full table reloads by immutably updating only the changed data
+   */
+  const handleCellEdit = useCallback((rowData: Task, columnId: string, newValue: any) => {
+    console.log(`Editing cell ${columnId} for task ${rowData.id}:`, newValue);
+
+    // Validation for title field - prevent empty titles
+    if (columnId === 'name') {
+      const trimmedValue = typeof newValue === 'string' ? newValue.trim() : String(newValue).trim();
+      if (!trimmedValue) {
+        console.warn('Title cannot be empty');
+        // You could show a toast notification here in a real implementation
+        return; // Don't save empty titles
+      }
+      newValue = trimmedValue; // Use the trimmed value
+    }
+
+    // Handle date fields - convert ISO date strings back to timestamps
+    if (columnId === 'startDate' || columnId === 'endDate') {
+      if (typeof newValue === 'string') {
+        const dateValue = new Date(newValue);
+        if (!isNaN(dateValue.getTime())) {
+          newValue = dateValue.getTime(); // Convert ISO string back to timestamp
+        } else {
+          console.warn('Invalid date value:', newValue);
+          return; // Don't save invalid dates
+        }
+      }
+    }
+
+    // Track which cell was just edited (for visual feedback)
+    setLastEditedCell({ id: rowData.id, column: columnId });
+
+    // Create updated task with immutable update
+    let updatedTask = {
+      ...rowData,
+      [columnId]: newValue,
+      updatedAt: Date.now() // Update timestamp
+    };
+
+    // Special handling for status field - update both label and color
+    if (columnId === 'statusLabel') {
+      const statusLabel = STATUS_LABELS.find(label => label.name === newValue);
+      if (statusLabel) {
+        updatedTask = {
+          ...updatedTask,
+          statusLabel: statusLabel.name,
+          statusColor: statusLabel.color,
+          statusId: statusLabel.id
+        };
+      } else {
+        // Fallback for unknown status values
+        updatedTask = {
+          ...updatedTask,
+          statusLabel: String(newValue),
+          statusColor: '#6B7280', // Default gray color
+          statusId: 'status1' // Default to first status
+        };
+      }
+    }
+
+    // Special handling for priority field - update both label and color
+    if (columnId === 'priorityLabel') {
+      const priorityLabel = PRIORITY_LABELS.find(label => label.name === newValue);
+      if (priorityLabel) {
+        updatedTask = {
+          ...updatedTask,
+          priorityLabel: priorityLabel.name,
+          priorityColor: priorityLabel.color,
+          priorityId: priorityLabel.id
+        };
+      } else {
+        // Fallback for unknown priority values
+        updatedTask = {
+          ...updatedTask,
+          priorityLabel: String(newValue),
+          priorityColor: '#6B7280', // Default gray color
+          priorityId: 'priority1' // Default to first priority
+        };
+      }
+    }
+
+    // Special handling for assignedTo field - update both the User[] array and string representation
+    if (columnId === 'assignedTo') {
+      if (Array.isArray(newValue)) {
+        // newValue is User[] from PeopleCellEditor
+        const assignedUsers = newValue as User[];
+        updatedTask = {
+          ...updatedTask,
+          assignedTo: assignedUsers,
+          assignedToNames: assignedUsers.map(user => user.name).join(', ')
+        };
+      } else {
+        // Fallback for string input (shouldn't happen with PeopleCellEditor but good to have)
+        updatedTask = {
+          ...updatedTask,
+          assignedToNames: typeof newValue === 'string' ? newValue : String(newValue)
+        };
+      }
+    }
+
+    // Update the task in the full dataset (immutably)
+    setAllTasks(prevTasks =>
+      prevTasks.map(task =>
+        task.id === updatedTask.id ? updatedTask : task
+      )
+    );
+
+    // Update the display tasks as well
+    setDisplayTasks(prevTasks =>
+      prevTasks.map(task =>
+        task.id === updatedTask.id ? updatedTask : task
+      )
+    );
+
+    // Clear the visual feedback after a delay
+    setTimeout(() => {
+      setLastEditedCell(null);
+    }, 1000);
+  }, []);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-medium">Tasks</h1>
-        
+
         <div className="flex items-center gap-4">
           {/* Column visibility controls */}
           <div className="flex items-center gap-2">
-            <button 
+            <button
               onClick={() => setColumnVisibility({
                 status: true,
                 priority: true,
@@ -877,7 +1044,7 @@ export default function UpdatedGroupedTasksDemo() {
             >
               Show All
             </button>
-            <button 
+            <button
               onClick={() => setColumnVisibility({
                 status: false,
                 priority: false,
@@ -890,9 +1057,9 @@ export default function UpdatedGroupedTasksDemo() {
               Hide All
             </button>
           </div>
-          
+
           {/* Toggle grouping button */}
-          <button 
+          <button
             onClick={toggleGrouping}
             className="px-3 py-1 text-sm border rounded hover:bg-gray-50"
           >
@@ -903,7 +1070,7 @@ export default function UpdatedGroupedTasksDemo() {
 
       <div className="border rounded-lg">
         <DataTable
-          data={SAMPLE_TASKS}
+          data={displayTasks}
           columns={TASK_TABLE_COLUMNS}
           // External column visibility control - fixes the bug where only headers were hidden
           columnVisibility={columnVisibility}
@@ -924,6 +1091,10 @@ export default function UpdatedGroupedTasksDemo() {
             toggleOnClick: true,
             categoryMapping: labelColorMapping
           }}
+          // Inline editing functionality
+          enableInlineCellEdit={true}
+          inlineEditableColumns={["name", "statusLabel", "priorityLabel", "startDate", "endDate", "assignedTo"]}
+          onCellEdit={handleCellEdit}
         />
       </div>
     </div>

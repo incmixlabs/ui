@@ -15,13 +15,15 @@ export type ColumnType =
   | "Link"
   | "Custom"
   | "Dropdown"
-  | "TimelineProgress";
+  | "TimelineProgress"
+  | "People";
 
 // Column definition interface
 export interface DataTableColumn<TData> {
   headingName: string;
   type: ColumnType;
   accessorKey: keyof TData | string;
+  accessorFn?: (row: TData) => any; // Custom accessor function
   id?: string;
   enableSorting?: boolean;
   enableFiltering?: boolean;
@@ -58,6 +60,16 @@ export interface DataTableColumn<TData> {
     onCancel: () => void,
     columnDef?: any
   }) => React.ReactNode;
+
+  // Meta properties for column-specific configuration
+  meta?: {
+    dropdownOptions?: Array<{ value: string; label: string; color?: string }>;
+    strictDropdown?: boolean;
+    availableUsers?: Array<{ id: string; name: string; image?: string; email: string }>;
+    maxDisplay?: number;
+    maxSelections?: number;
+    [key: string]: any; // Allow additional meta properties
+  };
 }
 
 // Column group interface

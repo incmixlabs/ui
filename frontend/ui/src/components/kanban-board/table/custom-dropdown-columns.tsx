@@ -21,12 +21,12 @@ export const StatusDropdownCell: React.FC<StatusDropdownCellProps> = ({
   disabled = false
 }) => {
   const [isLoading, setIsLoading] = useState(false)
-  
+
   const currentStatus = taskStatuses.find(status => status.id === value)
-  
+
   const handleStatusChange = async (newStatusId: string) => {
     if (newStatusId === value || !row.id || isLoading) return
-    
+
     setIsLoading(true)
     try {
       await onStatusChange(row.id, newStatusId)
@@ -55,23 +55,23 @@ export const StatusDropdownCell: React.FC<StatusDropdownCellProps> = ({
           disabled={disabled || isLoading}
           onClick={(e) => e.stopPropagation()}
         >
-          <Circle 
-            size={8} 
-            fill={currentStatus?.color} 
+          <Circle
+            size={8}
+            fill={currentStatus?.color}
             color={currentStatus?.color}
           />
           {currentStatus?.name || "Unknown"}
           <ChevronDown size={12} />
         </button>
       </DropdownMenu.Trigger>
-      
+
       <DropdownMenu.Content align="start" className="w-56">
         <DropdownMenu.Label>Change Status</DropdownMenu.Label>
         <DropdownMenu.Separator />
-        
+
         {taskStatuses.map((status) => {
           const isCurrentStatus = status.id === value
-          
+
           return (
             <DropdownMenu.Item
               key={status.id}
@@ -81,9 +81,9 @@ export const StatusDropdownCell: React.FC<StatusDropdownCellProps> = ({
                 ${isCurrentStatus ? 'bg-accent' : ''}
               `}
             >
-              <Circle 
-                size={8} 
-                fill={status.color} 
+              <Circle
+                size={8}
+                fill={status.color}
                 color={status.color}
               />
               <Text size="2">{status.name}</Text>
@@ -123,14 +123,14 @@ export const PriorityDropdownCell: React.FC<PriorityDropdownCellProps> = ({
   disabled = false
 }) => {
   const [isLoading, setIsLoading] = useState(false)
-  
+
   // Ensure value is a valid priority type or default to medium
   const safeValue = (Object.keys(PRIORITY_CONFIG).includes(value as string) ? value : "medium") as PriorityType
   const currentPriority = PRIORITY_CONFIG[safeValue]
-  
+
   const handlePriorityChange = async (newPriorityId: PriorityType) => {
     if (newPriorityId === value || !row.id || isLoading) return
-    
+
     setIsLoading(true)
     try {
       await onPriorityChange(row.id, newPriorityId)
@@ -164,14 +164,14 @@ export const PriorityDropdownCell: React.FC<PriorityDropdownCellProps> = ({
           <ChevronDown size={12} />
         </button>
       </DropdownMenu.Trigger>
-      
+
       <DropdownMenu.Content align="start" className="w-48">
         <DropdownMenu.Label>Set Priority</DropdownMenu.Label>
         <DropdownMenu.Separator />
-        
+
         {Object.entries(PRIORITY_CONFIG).map(([key, config]) => {
           const isCurrentPriority = key === safeValue
-          
+
           return (
             <DropdownMenu.Item
               key={key}
@@ -204,7 +204,7 @@ export const createEnhancedTaskTableColumns = (
 ) => {
   return [
     // ... other columns (same as before)
-    
+
     {
       headingName: "Status",
       type: "String" as const, // Using String since we're handling the dropdown ourselves
@@ -236,7 +236,7 @@ export const createEnhancedTaskTableColumns = (
         />
       )
     }
-    
+
     // ... rest of columns
   ]
 }

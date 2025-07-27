@@ -206,6 +206,88 @@ export const DropdownCell: React.FC<{
   );
 };
 
+// Interface for User objects
+export interface User {
+  id: string;
+  name: string;
+  image?: string;
+  email: string;
+}
+
+// Avatar component for showing a user
+export const Avatar: React.FC<{ user: User; size?: number }> = ({ user, size = 24 }) => {
+  const getInitials = (name: string): string => {
+    const parts = name.split(' ');
+    if (parts.length > 1) {
+      return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+    }
+    return name[0].toUpperCase();
+  };
+
+  return (
+    <div
+      className="rounded-full flex items-center justify-center text-xs font-medium text-white bg-blue-500 flex-shrink-0"
+      style={{ width: size, height: size }}
+      title={user.name}
+    >
+      {user.image ? (
+        <img
+          src={user.image}
+          alt={user.name}
+          className="w-full h-full rounded-full object-cover"
+        />
+      ) : (
+        getInitials(user.name)
+      )}
+    </div>
+  );
+};
+
+// Avatar group component for showing multiple users with overlap
+export const AvatarGroup: React.FC<{ users: User[]; maxDisplay?: number }> = ({ users, maxDisplay = 3 }) => {
+  if (!users || users.length === 0) {
+    return (
+      <div className="h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+        <span className="text-xs text-gray-400">—</span>
+      </div>
+    );
+  }
+
+  const displayUsers = users.slice(0, maxDisplay);
+  const remaining = users.length - maxDisplay;
+
+  return (
+    <div className="flex -space-x-2">
+      {displayUsers.map((user, index) => (
+        <div
+          key={user.id}
+          className="ring-2 ring-white"
+          style={{ zIndex: 10 - index }}
+        >
+          <Avatar user={user} />
+        </div>
+      ))}
+      {remaining > 0 && (
+        <div
+          className="ring-2 ring-white flex items-center justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-600"
+          style={{ width: 24, height: 24, zIndex: 10 - maxDisplay }}
+          title={`+${remaining} more users`}
+        >
+          +{remaining}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// People Cell Renderer
+export const PeopleCell: React.FC<{ 
+  value: User[];
+  maxDisplay?: number;
+}> = ({ value, maxDisplay = 3 }) => {
+  return <AvatarGroup users={value || []} maxDisplay={maxDisplay} />;
+};
+
 // Define the type for cell renderer functions
 export type CellRendererFn = (value: any, options?: any) => React.ReactNode;
 
@@ -300,6 +382,7 @@ export const defaultCellRenderers: Record<string, CellRendererFn> = {
   "Status": (value: any, statusMap?: Record<string, { color: string }>, defaultColor?: string) => <StatusCell value={value} statusMap={statusMap} defaultColor={defaultColor} />,
   "Boolean": (value: any) => <BooleanCell value={value} />,
   "Dropdown": (value: any, options?: DropdownOption[]) => <DropdownCell value={value} options={options} />,
+  "People": (value: any, options?: any) => <PeopleCell value={value} maxDisplay={options?.maxDisplay} />,
   "TimelineProgress": (value: any, options?: any) => {
     // Extract format options if they exist
     const formatOptions = options?.format || {};

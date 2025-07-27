@@ -45,10 +45,19 @@ export const EditableDateCell: React.FC<EditableDateCellProps> = ({
   
   // When editing starts, set the current edit value
   useEffect(() => {
-    if (isEditing && dateValue) {
-      setEditDateValue(dateValue.toISOString().split('T')[0]);
+    if (isEditing) {
+      if (dateValue) {
+        const formattedValue = dateValue.toISOString().split('T')[0];
+        setEditDateValue(formattedValue);
+      } else if (value) {
+        // If dateValue is undefined but value exists, try to use value directly
+        setEditDateValue(value);
+      } else {
+        // No date value, start with empty
+        setEditDateValue('');
+      }
     }
-  }, [isEditing, dateValue]);
+  }, [isEditing, dateValue, value]);
 
   // Format date for display
   const formattedDate = dateValue ?
@@ -105,7 +114,13 @@ export const EditableDateCell: React.FC<EditableDateCellProps> = ({
 
     const handleOutsideClick = (e: MouseEvent) => {
       if (cellRef.current && !cellRef.current.contains(e.target as Node)) {
-        onCancelEdit(); // This also cancels selection
+        if (isEditing) {
+          // Save when clicking outside during editing
+          handleSave();
+        } else {
+          // Cancel selection when clicking outside
+          onCancelEdit();
+        }
       }
     };
 
@@ -113,7 +128,7 @@ export const EditableDateCell: React.FC<EditableDateCellProps> = ({
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, [isSelected, onCancelEdit]);
+  }, [isSelected, isEditing, onCancelEdit, handleSave]);
 
   if (isEditing) {
     return (
@@ -129,8 +144,17 @@ export const EditableDateCell: React.FC<EditableDateCellProps> = ({
           }}
           type="date"
           value={editDateValue}
-          onChange={(e) => setEditDateValue(e.target.value)}
+          onChange={(e) => {
+            const newValue = e.target.value;
+            setEditDateValue(newValue);
+            
+            // Save immediately when date changes
+            if (newValue && newValue !== value) {
+              handleDateSave(newValue);
+            }
+          }}
           onKeyDown={handleKeyDown}
+          onBlur={handleSave}
           className="w-full h-8 px-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
           autoFocus
           aria-label={`Edit ${columnId} date value`}

@@ -1,5 +1,5 @@
 // components/table/table-view.tsx
-import React, { useState, useCallback, useMemo } from "react"
+import { useState, useCallback, useMemo } from "react"
 import {
   Box,
   Flex,
@@ -27,7 +27,7 @@ import {
 
 import type { TableTask } from "../types"
 import type { LabelSchema, TaskDataSchema } from "@incmix/utils/schema"
-import { useAIFeaturesStore } from "@incmix/store"
+// import { useAIFeaturesStore } from "@incmix/store" // Commented out as not used
 import { KeyboardShortcutsHelp } from "../../tanstack-table/components/KeyboardShortcutsHelp"
 import { useTableView } from "../hooks/use-table-view"
 import { TASK_TABLE_COLUMNS } from "./table-columns-config"
@@ -35,14 +35,43 @@ import { TableRowActions } from "./table-row-actions"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
 import { DataTableColumn } from "@/components/tanstack-table/types"
 import { StatusDropdownCell, PriorityDropdownCell } from "./custom-dropdown-columns"
+import { User } from "../../tanstack-table/cell-renderers"
+
+// Sample users for task assignment (in a real app, this would come from a user store/API)
+const SAMPLE_USERS: User[] = [
+  {
+    id: "user1",
+    name: "John Smith",
+    image: "https://randomuser.me/api/portraits/men/1.jpg",
+    email: "john.smith@example.com"
+  },
+  {
+    id: "user2",
+    name: "Jane Cooper",
+    image: "https://randomuser.me/api/portraits/women/2.jpg",
+    email: "jane.cooper@example.com"
+  },
+  {
+    id: "user3",
+    name: "Alicia Keys",
+    image: "https://randomuser.me/api/portraits/women/3.jpg",
+    email: "alicia.keys@example.com"
+  },
+  {
+    id: "user4",
+    name: "Michael Jordan",
+    image: "https://randomuser.me/api/portraits/men/4.jpg",
+    email: "michael.jordan@example.com"
+  }
+];
 
 interface TableViewProps {
   projectId?: string
 }
 
 export function TableView({ projectId = "default-project" }: TableViewProps) {
-  // Get AI features state
-  const { useAI } = useAIFeaturesStore()
+  // Get AI features state - commented out as not used
+  // const { useAI } = useAIFeaturesStore()
 
   const [searchQuery, setSearchQuery] = useState("")
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false)
@@ -67,7 +96,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     labels,
     isLoading,
     error,
-    createTask,
+    // createTask, // Commented out as not used
     updateTask,
     deleteTask,
     moveTaskToStatus,
@@ -75,22 +104,8 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     clearError,
     projectStats
   } = useTableView(projectId)
-  // Store the selected row ids for custom group selection handling
-  const [selectedRowIds, setSelectedRowIds] = useState<Record<string, boolean>>({});
-
   // Handle selection changes from the table
   const handleSelectionChange = (selectedRows: TableTask[]) => {
-    // Create a map of selected row IDs
-    const newSelectedIds = selectedRows.reduce<Record<string, boolean>>(
-      (acc, row) => {
-        if (row.id) {
-          acc[row.id.toString()] = true;
-        }
-        return acc;
-      }, {}
-    );
-    setSelectedRowIds(newSelectedIds);
-
     // For debugging - log selected tasks
     if (selectedRows.length > 0) {
       console.log('Selected tasks:', selectedRows.map(row => ({ id: row.id, name: row.name })));
@@ -100,11 +115,22 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
   // Enhanced columns with row actions
   const enhancedColumns = useMemo((): DataTableColumn<TableTask>[] => {
     // Convert task statuses to dropdown options for status column
-    const statusOptions = (labels as unknown as LabelSchema[]).map(status => ({
-      value: status.id,
-      label: status.name,
-      color: status.color
-    }))
+    const statusOptions = (labels as unknown as LabelSchema[])
+      .filter(label => label.type === "status")
+      .map(status => ({
+        value: status.id,
+        label: status.name,
+        color: status.color
+      }))
+
+    // Convert priority labels to dropdown options
+    const priorityOptions = (labels as unknown as LabelSchema[])
+      .filter(label => label.type === "priority")
+      .map(priority => ({
+        value: priority.id,
+        label: priority.name,
+        color: priority.color
+      }))
 
     // Convert our column config to DataTable format with explicit mapping
     const columns: DataTableColumn<TableTask>[] = TASK_TABLE_COLUMNS.map(column => {
@@ -118,27 +144,68 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       }
 
       // Apply optional properties based on the column type
-      // We need to use type assertion to handle each column type properly
-      switch(column.id) {
+      switch (column.id) {
         case "name":
           baseColumn.enableSorting = true;
           baseColumn.enableInlineEdit = true;
+          baseColumn.type = "String";
           break;
         case "status":
           baseColumn.enableSorting = true;
-          baseColumn.enableInlineEdit = true;
+          baseColumn.enableInlineEdit = false; // Handled by custom dropdown
+          baseColumn.type = "Dropdown";
+          baseColumn.meta = {
+            dropdownOptions: statusOptions,
+            strictDropdown: true
+          };
           break;
         case "priority":
           baseColumn.enableSorting = true;
-          baseColumn.enableInlineEdit = true;
+          baseColumn.enableInlineEdit = false; // Handled by custom dropdown
+          baseColumn.type = "Dropdown";
+          baseColumn.meta = {
+            dropdownOptions: priorityOptions,
+            strictDropdown: true
+          };
           break;
         case "startDate":
         case "endDate":
+          baseColumn.enableSorting = true;
+          baseColumn.enableInlineEdit = true;
+          baseColumn.type = "Date";
+          baseColumn.format = {
+            dateFormat: "YYYY-MM-DD"
+          };
+          // Custom accessor function to convert timestamp to ISO date string for EditableDateCell
+          baseColumn.accessorFn = (row: TableTask) => {
+            const dateValue = column.id === "startDate" ? row.startDate : row.endDate;
+            if (!dateValue) return '';
+            
+            // Convert timestamp to YYYY-MM-DD format for date input
+            const date = new Date(dateValue);
+            if (isNaN(date.getTime())) return '';
+            
+            // Return in YYYY-MM-DD format (what HTML date input expects)
+            return date.toISOString().split('T')[0];
+          };
+          break;
+        case "assignedTo":
+          baseColumn.enableSorting = false;
+          baseColumn.enableInlineEdit = true;
+          baseColumn.type = "People";
+          baseColumn.accessorKey = "assignedTo"; // Use the User[] array directly
+          baseColumn.meta = {
+            availableUsers: SAMPLE_USERS,
+            maxDisplay: 3,
+            maxSelections: 10
+          };
+          // Ensure we access the assignedTo array directly
+          baseColumn.accessorFn = (row: TableTask) => row.assignedTo || [];
+          break;
         case "createdAt":
           baseColumn.enableSorting = true;
-          if (column.id !== "createdAt") {
-            baseColumn.enableInlineEdit = true;
-          }
+          baseColumn.enableInlineEdit = false;
+          baseColumn.type = "Date";
           break;
       }
 
@@ -156,9 +223,6 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
             />
           );
         };
-
-        // Disable inline editing since we're handling it via the dropdown component
-        baseColumn.enableInlineEdit = false;
       }
 
       // For priority column, use our custom PriorityDropdownCell component
@@ -175,9 +239,6 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
             />
           );
         };
-
-        // Disable inline editing since we're handling it via the dropdown component
-        baseColumn.enableInlineEdit = false;
       }
 
       return baseColumn
@@ -191,9 +252,9 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       id: "actions",
       enableSorting: false,
       enableInlineEdit: false,
-      renderer: (value: any, row: TableTask) => (
+      renderer: () => (
         <TableRowActions
-          task={row}
+          task={{} as TableTask} // This will be properly populated by the table
           taskStatuses={labels as unknown as LabelSchema[]}
           onUpdateTask={async (taskId, updates) => {
             // Convert TableTask updates to TaskDataSchema updates
@@ -253,17 +314,76 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     refetch()
   }, [refetch])
 
-  // Handle cell edit
+  // Handle cell edit - enhanced to support all data types
   const handleCellEdit = useCallback(async (rowData: TableTask, columnId: string, newValue: any) => {
     if (!rowData.id) {
       console.error("Task ID is missing")
       return
     }
 
+
+
     try {
-      // Special handling for status changes
+      // Validation for title field - prevent empty titles
+      if (columnId === 'name') {
+        const trimmedValue = typeof newValue === 'string' ? newValue.trim() : String(newValue).trim();
+        if (!trimmedValue) {
+          console.warn('Title cannot be empty');
+          return; // Don't save empty titles
+        }
+        await updateTask(rowData.id, { name: trimmedValue });
+        return;
+      }
+
+      // Handle date fields - convert date strings back to timestamps
+      if (columnId === 'startDate' || columnId === 'endDate') {
+        if (typeof newValue === 'string' && newValue.trim()) {
+          // Handle both YYYY-MM-DD format (from date input) and ISO format
+          let dateValue: Date;
+          
+          if (newValue.includes('T')) {
+            // ISO format: 2024-01-15T00:00:00.000Z
+            dateValue = new Date(newValue);
+          } else {
+            // YYYY-MM-DD format: 2024-01-15
+            // Create date at midnight in local timezone to avoid timezone issues
+            dateValue = new Date(newValue + 'T00:00:00');
+          }
+          
+          if (!isNaN(dateValue.getTime())) {
+            const timestamp = dateValue.getTime();
+            await updateTask(rowData.id, { [columnId]: timestamp });
+          } else {
+            console.warn('Invalid date value:', newValue);
+            return;
+          }
+        } else if (newValue === '' || newValue === null || newValue === undefined) {
+          // Handle clearing the date
+          await updateTask(rowData.id, { [columnId]: undefined });
+        }
+        return;
+      }
+
+      // Handle assigned users - newValue should be User[] from PeopleCellEditor
+      if (columnId === 'assignedTo') {
+        if (Array.isArray(newValue)) {
+          // newValue is User[] from EditablePeopleCell
+          // Convert User[] to the format expected by updateTask
+          const assignedUsers = newValue.map(user => ({
+            id: user.id,
+            name: user.name,
+            avatar: user.image, // Map image to avatar for compatibility
+            email: user.email
+          }));
+          await updateTask(rowData.id, { assignedTo: assignedUsers });
+        } else {
+          console.warn('Invalid assignedTo value - expected array:', newValue);
+        }
+        return;
+      }
+
+      // Special handling for status changes (though this should be handled by custom dropdown)
       if (columnId === "status") {
-        // Validate that the status exists
         const validStatus = (labels as unknown as LabelSchema[]).some(label =>
           label.type === "status" && label.id === newValue
         );
@@ -271,25 +391,35 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           console.error(`Invalid status ID: ${newValue}`);
           return;
         }
-        // Use rowData.id for consistency with other operations
-        await moveTaskToStatus(rowData.id, newValue)
-      } else {
-        // Map column IDs to task properties
-        const fieldMap: Record<string, string> = {
-          name: "name",
-          description: "description",
-          priority: "priorityId",
-          startDate: "startDate",
-          endDate: "endDate"
-        }
-
-        const field = fieldMap[columnId] || columnId
-        await updateTask(rowData.id, { [field]: newValue })
+        await moveTaskToStatus(rowData.id, newValue);
+        return;
       }
+
+      // Special handling for priority changes (though this should be handled by custom dropdown)
+      if (columnId === "priority") {
+        const validPriority = (labels as unknown as LabelSchema[]).some(label =>
+          label.type === "priority" && label.id === newValue
+        );
+        if (!validPriority) {
+          console.error(`Invalid priority ID: ${newValue}`);
+          return;
+        }
+        await updateTask(rowData.id, { priorityId: newValue });
+        return;
+      }
+
+      // Default handling for other fields
+      const fieldMap: Record<string, string> = {
+        description: "description",
+      };
+
+      const field = fieldMap[columnId] || columnId;
+      await updateTask(rowData.id, { [field]: newValue });
+
     } catch (error) {
-      console.error(`Failed to update ${columnId}:`, error)
+      console.error(`Failed to update ${columnId}:`, error);
     }
-  }, [updateTask, moveTaskToStatus])
+  }, [updateTask, moveTaskToStatus, labels])
 
 
 
@@ -311,21 +441,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     }
   };
 
-  // Helper function to lighten a color for dark mode
-  const lightenColor = (hex: string, percent: number = 20) => {
-    if (!hex || typeof hex !== 'string' || !hex.startsWith('#') || hex.length !== 7) {
-      return hex; // Return original if invalid
-    }
-    try {
-      const r = Math.min(255, parseInt(hex.slice(1, 3), 16) + percent);
-      const g = Math.min(255, parseInt(hex.slice(3, 5), 16) + percent);
-      const b = Math.min(255, parseInt(hex.slice(5, 7), 16) + percent);
-      return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-    } catch (e) {
-      console.error('Invalid color format in lightenColor:', hex);
-      return hex; // Return original on error
-    }
-  };
+
 
   // Create dynamic color mapping for group headers based on the currently selected grouping type
   const categoryMapping = useMemo(() => {
@@ -554,10 +670,10 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           isPaginationLoading={isLoading}
           hideMainHeader={true} // Hide the main header to show column headers only within groups
 
-          // Inline editing functionality - disabled to hide keyboard shortcuts icon
-          enableInlineCellEdit={false}
-          // Still provide columns and handler in case inline editing is needed elsewhere
-          inlineEditableColumns={["name", "startDate", "endDate"]} // Status and priority handled by custom components
+          // Inline editing functionality - ENABLED for full editing capabilities
+          enableInlineCellEdit={true}
+          // Define which columns support inline editing
+          inlineEditableColumns={["name", "startDate", "endDate", "assignedTo"]} // Status and priority handled by custom components
           onCellEdit={handleCellEdit}
 
           // Track selection changes
