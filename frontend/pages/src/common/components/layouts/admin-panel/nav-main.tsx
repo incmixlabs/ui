@@ -1,10 +1,10 @@
-import { Box, ContextMenu, Flex, Text, useModalStore } from "@incmix/ui";
-import { ReusableAddProject, useAddProject } from "@incmix/ui";
+import { Box, ContextMenu, Flex, Text, useModalStore } from "@incmix/ui"
+import { ReusableAddProject, useAddProject } from "@incmix/ui"
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@incmix/ui/collapsible";
+} from "@incmix/ui/collapsible"
 import {
   SidebarGroup,
   SidebarMenu,
@@ -13,12 +13,12 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@incmix/ui/sidebar";
-import { Link } from "@tanstack/react-router";
-import { ChevronRight, type LucideIcon } from "lucide-react";
-import React from "react";
-import type { NavItem } from "../../../../route-config";
-import { ProjectSwitcher } from "./project-switcher";
+} from "@incmix/ui/sidebar"
+import { Link } from "@tanstack/react-router"
+import { ChevronRight, type LucideIcon } from "lucide-react"
+import React from "react"
+import type { NavItem } from "../../../../route-config"
+import { ProjectSwitcher } from "./project-switcher"
 
 function generateHoverContent(item: NavItem) {
   return (
@@ -39,7 +39,7 @@ function generateHoverContent(item: NavItem) {
         <Box className="mt-2 border-gray-6 border-t pt-2">
           {item.items.map((subItem) => {
             // Check if we need to show ProjectSwitcher for this subItem
-            const showProjectSwitcher = subItem.title.toLowerCase() === "tasks";
+            const showProjectSwitcher = subItem.title.toLowerCase() === "tasks"
 
             return (
               <Box key={subItem.title} className="w-full">
@@ -61,42 +61,42 @@ function generateHoverContent(item: NavItem) {
                   </Text>
                 </Link>
               </Box>
-            );
+            )
           })}
         </Box>
       )}
     </Box>
-  );
+  )
 }
 
 export function NavMain({ items }: { items: NavItem[] }) {
   const openCreateDashboardModal = useModalStore(
-    (state) => state.openDashboardCreate,
-  );
+    (state) => state.openDashboardCreate
+  )
 
   // Add Project dialog state
-  const { isOpen, openAddProject, closeAddProject } = useAddProject();
+  const { isOpen, openAddProject, closeAddProject } = useAddProject()
 
   function isProjectsRoot(item: NavItem): boolean {
     console.log(
       "isProjectsRoot check:",
       item.url,
       "result:",
-      item.url === "/projects",
-    );
-    return item.url === "/projects";
+      item.url === "/projects"
+    )
+    return item.url === "/projects"
   }
 
   function isDashboardRoot(item: NavItem): boolean {
-    return item.url === "/dashboard";
+    return item.url === "/dashboard"
   }
 
   function isDynamicDashboard(item: {
-    isSelected?: boolean;
-    title: string;
-    url: string;
+    isSelected?: boolean
+    title: string
+    url: string
   }): boolean {
-    return item?.url?.startsWith("/dashboard/") && item?.url !== "/dashboard";
+    return item?.url?.startsWith("/dashboard/") && item?.url !== "/dashboard"
   }
 
   // Get context menu for main items (parent level)
@@ -113,7 +113,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
             Create Dashboard
           </Text>
         </ContextMenu.Item>
-      );
+      )
     }
     // For exact "/projects" root
     if (isProjectsRoot(item)) {
@@ -127,16 +127,16 @@ export function NavMain({ items }: { items: NavItem[] }) {
             Create Project
           </Text>
         </ContextMenu.Item>
-      );
+      )
     }
-    return null;
+    return null
   }
 
   // Get context menu for sub items
   function getSubItemContextMenu(subItem: {
-    title: string;
-    url: string;
-    isSelected?: boolean;
+    title: string
+    url: string
+    isSelected?: boolean
   }) {
     if (subItem.url === "/dashboard/home") {
       return (
@@ -160,7 +160,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
             </Text>
           </ContextMenu.Item>
         </>
-      );
+      )
     }
     // For dashboard sub-items
     if (isDynamicDashboard(subItem)) {
@@ -204,10 +204,10 @@ export function NavMain({ items }: { items: NavItem[] }) {
             </Text>
           </ContextMenu.Item>
         </>
-      );
+      )
     }
 
-    return null;
+    return null
   }
 
   return (
@@ -218,7 +218,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
       <SidebarGroup>
         <SidebarMenu>
           {items.map((item) => {
-            const hoverContent = generateHoverContent(item);
+            const hoverContent = generateHoverContent(item)
             const content = item.items?.length ? (
               <Collapsible
                 key={item.title}
@@ -236,7 +236,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
                       className="active:bg-[var(--sidebar-background)] active:text-[var(--sidebar-foreground)]"
                     >
                       {item.icon && <item.icon className="scale-icon" />}
-                      <Text size="2" as="span" className="group-data-[mobile=true]:hidden">
+                      <Text size="2" as="span">
                         {item.title}
                       </Text>
                       <ChevronRight className="group-data-[state=open]/collapsible:transform-x-90 ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -249,13 +249,13 @@ export function NavMain({ items }: { items: NavItem[] }) {
                         console.log("SubItem title check:", {
                           title: subItem.title,
                           isTasksMatch: subItem.title.toLowerCase() === "tasks",
-                        });
+                        })
                         const switcher =
                           subItem.title.toLowerCase() === "tasks" ? (
                             <ProjectSwitcher
                               key={`project-switcher-${subItem.title}`}
                             />
-                          ) : null;
+                          ) : null
                         const subItemContent = (
                           <>
                             {switcher}
@@ -272,11 +272,11 @@ export function NavMain({ items }: { items: NavItem[] }) {
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
                           </>
-                        );
+                        )
 
                         // Check if this sub-item needs a context menu
                         const subItemContextMenu =
-                          getSubItemContextMenu(subItem);
+                          getSubItemContextMenu(subItem)
 
                         return subItemContextMenu ? (
                           <ContextMenu.Root key={subItem.title}>
@@ -291,7 +291,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
                           <React.Fragment key={subItem.title}>
                             {subItemContent}
                           </React.Fragment>
-                        );
+                        )
                       })}
                     </SidebarMenuSub>
                   </CollapsibleContent>
@@ -321,10 +321,10 @@ export function NavMain({ items }: { items: NavItem[] }) {
                   </SidebarMenuButton>
                 )}
               </SidebarMenuItem>
-            );
+            )
 
             // Get context menu for main item
-            const mainItemContextMenu = getMainItemContextMenu(item);
+            const mainItemContextMenu = getMainItemContextMenu(item)
 
             return mainItemContextMenu ? (
               <ContextMenu.Root key={item.title}>
@@ -335,10 +335,10 @@ export function NavMain({ items }: { items: NavItem[] }) {
               </ContextMenu.Root>
             ) : (
               content
-            );
+            )
           })}
         </SidebarMenu>
       </SidebarGroup>
     </>
-  );
+  )
 }

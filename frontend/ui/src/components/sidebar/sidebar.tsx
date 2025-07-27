@@ -189,7 +189,9 @@ const SidebarProvider = forwardRef<
     }, [shouldAlwaysCollapse, setOpen]);
     
     
-    const state = open ? "expanded" : "collapsed";
+    const state = isMobile 
+      ? (shouldAlwaysCollapse ? "collapsed" : "expanded")
+      : (shouldAlwaysCollapse || !open) ? "collapsed" : "expanded";
 
     const contextValue = useMemo<SidebarContext>(
       () => ({
@@ -302,6 +304,8 @@ const Sidebar = React.forwardRef<
           <Box
             data-sidebar="sidebar"
             data-mobile="true"
+            data-state={state}
+            data-collapsible={state === "collapsed" ? collapsible : ""}
             className={cn(
               "group fixed inset-y-0 left-0 z-50 transform text-sidebar-foreground transition-transform duration-300 ease-in-out",
               openMobile ? "translate-x-0" : "-translate-x-full",
@@ -751,6 +755,9 @@ const SidebarMenuButton = React.forwardRef<
     const Comp = asChild ? Slot : "button";
     const { isMobile, state, open, setOpen } = useSidebar();
 
+
+    console.log("checkstate",state);
+    
     const button = (
       <Comp
         ref={ref}
