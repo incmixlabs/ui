@@ -190,7 +190,7 @@ const SidebarProvider = forwardRef<
     
     
     const state = isMobile 
-      ? (shouldAlwaysCollapse ? "collapsed" : "expanded")
+      ? (shouldAlwaysCollapse ? "collapsed" : (openMobile ? "expanded" : "collapsed"))
       : (shouldAlwaysCollapse || !open) ? "collapsed" : "expanded";
 
     const contextValue = useMemo<SidebarContext>(
@@ -319,8 +319,6 @@ const Sidebar = React.forwardRef<
         </Box>
       )
     }
-    console.log("state",state);
-
     return (
       <>
         {isMobile && openMobile && (
@@ -754,9 +752,6 @@ const SidebarMenuButton = React.forwardRef<
   ) => {
     const Comp = asChild ? Slot : "button";
     const { isMobile, state, open, setOpen } = useSidebar();
-
-
-    console.log("checkstate",state);
     
     const button = (
       <Comp
