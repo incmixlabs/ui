@@ -52,6 +52,8 @@ const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "4rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
+const COLLAPSE_ROUTES = ["/dashboard", "/file-manager"];
+
 type SidebarContext = {
   // Primary sidebar
   state: "expanded" | "collapsed";
@@ -69,7 +71,7 @@ type SidebarContext = {
   toggleSidebar: () => void;
   toggleSecondarySidebar: () => void;
 
-  shouldAlwaysCollapse:boolean
+  shouldAlwaysCollapse: boolean
 };
 
 const SidebarContext = createContext<SidebarContext | null>(null);
@@ -121,7 +123,7 @@ const SidebarProvider = forwardRef<
     const secondaryOpen = secondaryOpenProp ?? _secondaryOpen;
 
     const shouldAlwaysCollapse = useMemo(() => {
-      return pathname.startsWith("/dashboard") || pathname.startsWith("/file-manager");
+      return COLLAPSE_ROUTES.some(route => pathname.startsWith(route));
     }, [pathname]);
 
     const [_open, _setOpen] = useState(
