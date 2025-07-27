@@ -25,17 +25,18 @@ import {
   Check,
 } from "lucide-react"
 
-import type { TableTask } from "../types"
+import type { TableTask, ListColumn } from "../types"
 import type { LabelSchema, TaskDataSchema } from "@incmix/utils/schema"
+import type { CellContext } from "@tanstack/react-table"
 // import { useAIFeaturesStore } from "@incmix/store" // Commented out as not used
 import { KeyboardShortcutsHelp } from "../../tanstack-table/components/KeyboardShortcutsHelp"
 import { useTableView } from "../hooks/use-table-view"
 import { TASK_TABLE_COLUMNS } from "./table-columns-config"
 import { TableRowActions } from "./table-row-actions"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
-import { DataTableColumn } from "@/components/tanstack-table/types"
 import { StatusDropdownCell, PriorityDropdownCell } from "./custom-dropdown-columns"
 import { User } from "../../tanstack-table/cell-renderers"
+import { StatusColumnConfigDialog } from "./status-column-config-dialog"
 
 // Sample users for task assignment (in a real app, this would come from a user store/API)
 const SAMPLE_USERS: User[] = [
@@ -76,6 +77,8 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false)
   const [isColumnsMenuOpen, setIsColumnsMenuOpen] = useState(false)
+  const [isStatusConfigOpen, setIsStatusConfigOpen] = useState(false)
+  const [allowCustomStatusValues, setAllowCustomStatusValues] = useState(false)
 
   // State for grouping - default to status grouping
   const [groupByField, setGroupByField] = useState<'statusLabel' | 'priorityLabel'>('statusLabel')
@@ -102,7 +105,11 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     moveTaskToStatus,
     refetch,
     clearError,
-    projectStats
+    projectStats,
+    // Status management functions
+    createLabel,
+    updateLabel,
+    deleteLabel
   } = useTableView(projectId)
   // Handle selection changes from the table
   const handleSelectionChange = (selectedRows: TableTask[]) => {
@@ -112,31 +119,70 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     }
   };
 
+  // Handle status column header double-click
+  const handleStatusColumnDoubleClick = useCallback(() => {
+    setIsStatusConfigOpen(true)
+  }, [])
+
+  // Generate a unique color for new status values
+  const generateUniqueStatusColor = useCallback(() => {
+    const existingColors = labels.map(label => label.color).filter(Boolean)
+    const colorPalette = [
+      '#93c5fd', // Light blue
+      '#fcd34d', // Light yellow  
+      '#86efac', // Light green
+      '#f9a8d4', // Light pink
+      '#c4b5fd', // Light purple
+      '#a5b4fc', // Lavender
+      '#fdba74', // Light orange
+      '#67e8f9', // Light teal
+      '#d8b4fe', // Light violet
+      '#f87171', // Light red
+      '#fde68a', // Light gold
+      '#6ee7b7', // Mint
+    ]
+
+    // Find an unused color from the palette
+    const unusedColor = colorPalette.find(color => !existingColors.includes(color))
+    return unusedColor || '#93c5fd' // Default to light blue if all colors are used
+  }, [labels])
+
   // Enhanced columns with row actions
-  const enhancedColumns = useMemo((): DataTableColumn<TableTask>[] => {
+  const enhancedColumns = useMemo((): any[] => {
     // Convert task statuses to dropdown options for status column
-    const statusOptions = (labels as unknown as LabelSchema[])
-      .filter(label => label.type === "status")
-      .map(status => ({
-        value: status.id,
-        label: status.name,
-        color: status.color
-      }))
+    // Note: labels are actually ListColumn[] from the list view, not LabelSchema[]
+    const statusOptions = labels.map(status => ({
+      value: status.id,
+      label: status.name,
+      color: status.color
+    }))
 
     // Convert priority labels to dropdown options
-    const priorityOptions = (labels as unknown as LabelSchema[])
-      .filter(label => label.type === "priority")
-      .map(priority => ({
-        value: priority.id,
-        label: priority.name,
-        color: priority.color
-      }))
+    // For now, we'll use hardcoded priority options since priority management isn't implemented yet
+    const priorityOptions = [
+      { value: "low", label: "Low", color: "#6b7280" },
+      { value: "medium", label: "Medium", color: "#3b82f6" },
+      { value: "high", label: "High", color: "#f59e0b" },
+      { value: "urgent", label: "Urgent", color: "#ef4444" },
+    ]
 
     // Convert our column config to DataTable format with explicit mapping
-    const columns: DataTableColumn<TableTask>[] = TASK_TABLE_COLUMNS.map(column => {
+    const columns: any[] = TASK_TABLE_COLUMNS.map(column => {
       // Create a base column with required properties
-      const baseColumn: DataTableColumn<TableTask> = {
-        headingName: column.headingName,
+      const baseColumn: any = {
+        headingName: column.id === "status" ? (
+          <div
+            onDoubleClick={handleStatusColumnDoubleClick}
+            style={{ cursor: 'pointer' }}
+            title={`Double-click to configure status options${allowCustomStatusValues ? ' • Custom values allowed' : ' • Only predefined values'}`}
+            className="w-full flex items-center gap-1"
+          >
+            {column.headingName}
+            {allowCustomStatusValues && (
+              <span className="text-xs text-blue-600 dark:text-blue-400">*</span>
+            )}
+          </div>
+        ) : column.headingName,
         type: column.type,
         accessorKey: column.accessorKey as string,
         id: column.id,
@@ -156,7 +202,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           baseColumn.type = "Dropdown";
           baseColumn.meta = {
             dropdownOptions: statusOptions,
-            strictDropdown: true
+            strictDropdown: !allowCustomStatusValues // Invert the logic: strict when custom values are NOT allowed
           };
           break;
         case "priority":
@@ -180,11 +226,11 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           baseColumn.accessorFn = (row: TableTask) => {
             const dateValue = column.id === "startDate" ? row.startDate : row.endDate;
             if (!dateValue) return '';
-            
+
             // Convert timestamp to YYYY-MM-DD format for date input
             const date = new Date(dateValue);
             if (isNaN(date.getTime())) return '';
-            
+
             // Return in YYYY-MM-DD format (what HTML date input expects)
             return date.toISOString().split('T')[0];
           };
@@ -212,14 +258,25 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       // For columns that need dropdown options (like status), we'll handle this with cell properties
       if (column.id === "status") {
         // For status column, we use our custom StatusDropdownCell component
-        baseColumn.cell = (info) => {
+        baseColumn.cell = (info: CellContext<TableTask, unknown>) => {
           const task = info.row.original as TableTask;
           return (
             <StatusDropdownCell
               value={task.statusId || ''}
               row={task}
-              taskStatuses={(labels as unknown as LabelSchema[]).filter(status => status.type === "status")}
+              taskStatuses={labels.map(label => ({
+                id: label.id,
+                name: label.name,
+                color: label.color
+              }))}
               onStatusChange={(taskId, newStatusId) => moveTaskToStatus(taskId, newStatusId)}
+              onCreateStatus={async (name: string, color: string) => {
+                const newStatusId = await createLabel("status", name, color);
+                // Refresh to show the new status in all dropdowns
+                refetch();
+                return newStatusId;
+              }}
+              allowCustomValues={allowCustomStatusValues}
             />
           );
         };
@@ -227,7 +284,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
 
       // For priority column, use our custom PriorityDropdownCell component
       if (column.id === "priority") {
-        baseColumn.cell = (info) => {
+        baseColumn.cell = (info: CellContext<TableTask, unknown>) => {
           const task = info.row.original as TableTask;
           return (
             <PriorityDropdownCell
@@ -245,7 +302,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     })
 
     // Add the actions column
-    const actionsColumn: DataTableColumn<TableTask> = {
+    const actionsColumn: any = {
       headingName: "Actions",
       type: "String",
       accessorKey: "id", // Use a valid accessor key
@@ -255,7 +312,12 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       renderer: () => (
         <TableRowActions
           task={{} as TableTask} // This will be properly populated by the table
-          taskStatuses={labels as unknown as LabelSchema[]}
+          taskStatuses={labels.map(label => ({
+            id: label.id,
+            name: label.name,
+            color: label.color,
+            type: "status" // All labels from list view are status labels
+          }))}
           onUpdateTask={async (taskId, updates) => {
             // Convert TableTask updates to TaskDataSchema updates
             const schemaUpdates: Partial<TaskDataSchema> = {};
@@ -293,7 +355,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     }
 
     return [...columns, actionsColumn]
-  }, [labels, updateTask, deleteTask, moveTaskToStatus])
+  }, [labels, updateTask, deleteTask, moveTaskToStatus, allowCustomStatusValues, handleStatusColumnDoubleClick])
 
   // Filter tasks based on search query
   const filteredTasks = useMemo(() => {
@@ -304,7 +366,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       task.name?.toLowerCase().includes(query) ||
       task.description?.toLowerCase().includes(query) ||
       // Find status label name from labels using task.statusId
-      (labels as unknown as LabelSchema[]).find(s => s.id === task.statusId)?.name?.toLowerCase().includes(query) ||
+      labels.find(s => s.id === task.statusId)?.name?.toLowerCase().includes(query) ||
       task.assignedToNames?.toLowerCase().includes(query) || false
     )
   }, [tasks, searchQuery, labels])
@@ -340,7 +402,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
         if (typeof newValue === 'string' && newValue.trim()) {
           // Handle both YYYY-MM-DD format (from date input) and ISO format
           let dateValue: Date;
-          
+
           if (newValue.includes('T')) {
             // ISO format: 2024-01-15T00:00:00.000Z
             dateValue = new Date(newValue);
@@ -349,7 +411,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
             // Create date at midnight in local timezone to avoid timezone issues
             dateValue = new Date(newValue + 'T00:00:00');
           }
-          
+
           if (!isNaN(dateValue.getTime())) {
             const timestamp = dateValue.getTime();
             await updateTask(rowData.id, { [columnId]: timestamp });
@@ -382,17 +444,35 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
         return;
       }
 
-      // Special handling for status changes (though this should be handled by custom dropdown)
+      // Special handling for status changes
       if (columnId === "status") {
-        const validStatus = (labels as unknown as LabelSchema[]).some(label =>
-          label.type === "status" && label.id === newValue
-        );
-        if (!validStatus) {
-          console.error(`Invalid status ID: ${newValue}`);
+        // Check if this is an existing status
+        const existingStatus = labels.find(label => label.id === newValue);
+
+        if (existingStatus) {
+          // Use existing status
+          await moveTaskToStatus(rowData.id, newValue);
+          return;
+        } else if (allowCustomStatusValues && typeof newValue === 'string' && newValue.trim()) {
+          // Create new status if custom values are allowed
+          try {
+            const uniqueColor = generateUniqueStatusColor()
+            const newStatusId = await createLabel("status", newValue.trim(), uniqueColor);
+            await moveTaskToStatus(rowData.id, newStatusId);
+            // Refresh to show the new status in dropdowns
+            refetch();
+
+            // Show a brief success message (optional - could be implemented with a toast system)
+            console.log(`Created new status: "${newValue.trim()}" with color ${uniqueColor}`);
+            return;
+          } catch (error) {
+            console.error("Failed to create new status:", error);
+            return;
+          }
+        } else {
+          console.error(`Invalid status: ${newValue}. Custom values are not allowed.`);
           return;
         }
-        await moveTaskToStatus(rowData.id, newValue);
-        return;
       }
 
       // Special handling for priority changes (though this should be handled by custom dropdown)
@@ -419,7 +499,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     } catch (error) {
       console.error(`Failed to update ${columnId}:`, error);
     }
-  }, [updateTask, moveTaskToStatus, labels])
+  }, [updateTask, moveTaskToStatus, labels, allowCustomStatusValues, createLabel, refetch, generateUniqueStatusColor])
 
 
 
@@ -451,12 +531,14 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     }> = {};
 
     // Add the colors for each label of the selected type
-    const labelsData = labels as unknown as LabelSchema[];
-    const targetLabels = labelsData.filter(label => {
-      return groupByField === 'statusLabel'
-        ? label.type === 'status'
-        : label.type === 'priority';
-    });
+    const targetLabels = groupByField === 'statusLabel'
+      ? labels // All labels from list view are status labels
+      : [ // Hardcoded priority labels for now
+        { id: "low", name: "Low", color: "#6b7280" },
+        { id: "medium", name: "Medium", color: "#3b82f6" },
+        { id: "high", name: "High", color: "#f59e0b" },
+        { id: "urgent", name: "Urgent", color: "#ef4444" },
+      ];
 
     targetLabels.forEach(label => {
       // For dark mode support, we use the original color for text and a semi-transparent version for background
@@ -483,24 +565,21 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     {
       column: "statusId",
       title: "Status",
-      options: (labels as unknown as LabelSchema[])
-        .filter(status => status.type === "status")
-        .map(status => ({
-          label: status.name,
-          value: status.id,
-          color: status.color
-        }))
+      options: labels.map(status => ({
+        label: status.name,
+        value: status.id,
+        color: status.color
+      }))
     },
     {
       column: "priorityId",
       title: "Priority",
-      options: (labels as unknown as LabelSchema[])
-        .filter(status => status.type === "priority")
-        .map(priority => ({
-          label: priority.name,
-          value: priority.id,
-          color: priority.color
-        }))
+      options: [
+        { label: "Low", value: "low", color: "#6b7280" },
+        { label: "Medium", value: "medium", color: "#3b82f6" },
+        { label: "High", value: "high", color: "#f59e0b" },
+        { label: "Urgent", value: "urgent", color: "#ef4444" },
+      ]
     },
     {
       column: "completed",
@@ -708,6 +787,26 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           </Flex>
         )}
       </Box>
+
+      {/* Status Column Configuration Dialog */}
+      <StatusColumnConfigDialog
+        isOpen={isStatusConfigOpen}
+        onClose={() => setIsStatusConfigOpen(false)}
+        statusLabels={labels as unknown as ListColumn[]}
+        tasks={filteredTasks}
+        onCreateStatus={async (name: string, color?: string, description?: string) => {
+          return await createLabel("status", name, color, description)
+        }}
+        onUpdateStatus={async (id: string, updates: { name?: string; color?: string; description?: string }) => {
+          await updateLabel(id, updates)
+        }}
+        onDeleteStatus={async (id: string) => {
+          await deleteLabel(id)
+        }}
+        onRefresh={refetch}
+        allowCustomValues={allowCustomStatusValues}
+        onAllowCustomValuesChange={setAllowCustomStatusValues}
+      />
 
       {/* Task Detail Drawer */}
       <TaskCardDrawer viewType="list" projectId={projectId} />

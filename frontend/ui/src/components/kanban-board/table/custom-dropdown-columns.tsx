@@ -1,8 +1,118 @@
 // components/table/custom-dropdown-columns.tsx
 import React, { useState, useRef, useEffect } from "react"
-import { Badge, Flex, Text, DropdownMenu, IconButton } from "@incmix/ui"
-import { ChevronDown, Flag, Circle } from "lucide-react"
+import { Flex, Text, DropdownMenu, TextField, Button } from "@base"
+import { ChevronDown, Flag, Circle, Plus } from "lucide-react"
 import { TableTask } from "../types"
+
+// Color picker component for inline status creation
+interface ColorPickerProps {
+  color: string;
+  onChange: (color: string) => void;
+  size?: 'sm' | 'md';
+}
+
+const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, size = 'md' }) => {
+  const [showPicker, setShowPicker] = useState(false);
+  const [hoveredColor, setHoveredColor] = useState<string | null>(null);
+  const buttonRef = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+
+  // Color palette for status creation
+  const colorPalette = [
+    '#93c5fd', '#fcd34d', '#86efac', '#f9a8d4', '#c4b5fd', '#a5b4fc',
+    '#fdba74', '#67e8f9', '#d8b4fe', '#f87171', '#fde68a', '#6ee7b7'
+  ];
+
+  const handleColorSelect = (selectedColor: string) => {
+    onChange(selectedColor);
+    setShowPicker(false);
+  };
+
+  // Position popup relative to button
+  useEffect(() => {
+    if (showPicker && buttonRef.current && popupRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      popupRef.current.style.top = `${rect.bottom + window.scrollY + 5}px`;
+      popupRef.current.style.left = `${rect.left + window.scrollX - 5}px`;
+    }
+  }, [showPicker]);
+
+  // Close on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (buttonRef.current && popupRef.current) {
+        if (!buttonRef.current.contains(e.target as Node) &&
+          !popupRef.current.contains(e.target as Node)) {
+          setShowPicker(false);
+        }
+      }
+    };
+
+    if (showPicker) {
+      document.addEventListener('mousedown', handleClickOutside, { capture: true });
+    }
+
+    return () => document.removeEventListener('mousedown', handleClickOutside, { capture: true });
+  }, [showPicker]);
+
+  const sizeClass = size === 'sm' ? 'w-6 h-6' : 'w-8 h-8';
+
+  return (
+    <div className="relative inline-block">
+      <div
+        ref={buttonRef}
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowPicker(!showPicker);
+        }}
+        className={`${sizeClass} border border-gray-300 rounded cursor-pointer bg-gray-200`}
+        style={{ backgroundColor: color }}
+      />
+
+      {showPicker && (
+        <div
+          ref={popupRef}
+          onClick={(e) => e.stopPropagation()}
+          className="fixed top-0 left-0 p-3 bg-white rounded-xl shadow-lg border border-gray-200 z-[9999] w-[200px]"
+        >
+          <div className="flex gap-2.5 justify-between mb-2.5">
+            {colorPalette.slice(0, 6).map((c, i) => (
+              <div
+                key={`color-row1-${i}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleColorSelect(c);
+                }}
+                onMouseEnter={() => setHoveredColor(c)}
+                onMouseLeave={() => setHoveredColor(null)}
+                className={`w-6 h-6 rounded-full cursor-pointer transition-transform duration-200 ease-in-out ${c === color ? 'border-2 border-black' : 'border border-gray-300'
+                  } ${hoveredColor === c ? 'scale-115' : 'scale-100'}`}
+                style={{ backgroundColor: c }}
+              />
+            ))}
+          </div>
+
+          <div className="flex gap-2.5 justify-between">
+            {colorPalette.slice(6).map((c, i) => (
+              <div
+                key={`color-row2-${i}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleColorSelect(c);
+                }}
+                onMouseEnter={() => setHoveredColor(c)}
+                onMouseLeave={() => setHoveredColor(null)}
+                className={`w-6 h-6 rounded-full cursor-pointer transition-transform duration-200 ease-in-out ${c === color ? 'border-2 border-black' : 'border border-gray-300'
+                  } ${hoveredColor === c ? 'scale-115' : 'scale-100'}`}
+                style={{ backgroundColor: c }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 
 interface StatusDropdownCellProps {
@@ -10,6 +120,8 @@ interface StatusDropdownCellProps {
   row: TableTask
   taskStatuses: Array<{ id: string; name: string; color: string }>
   onStatusChange: (taskId: string, newStatusId: string) => Promise<void>
+  onCreateStatus?: (name: string, color: string) => Promise<string>
+  allowCustomValues?: boolean
   disabled?: boolean
 }
 
@@ -18,9 +130,14 @@ export const StatusDropdownCell: React.FC<StatusDropdownCellProps> = ({
   row,
   taskStatuses,
   onStatusChange,
+  onCreateStatus,
+  allowCustomValues = false,
   disabled = false
 }) => {
   const [isLoading, setIsLoading] = useState(false)
+  const [newStatusName, setNewStatusName] = useState("")
+  const [newStatusColor, setNewStatusColor] = useState("#93c5fd")
+  const [isCreatingStatus, setIsCreatingStatus] = useState(false)
 
   const currentStatus = taskStatuses.find(status => status.id === value)
 
@@ -37,6 +154,55 @@ export const StatusDropdownCell: React.FC<StatusDropdownCellProps> = ({
     }
   }
 
+  const handleCreateNewStatus = async () => {
+    if (!newStatusName.trim() || !onCreateStatus || isCreatingStatus || !row.id) return
+
+    // Check for duplicate names
+    const nameExists = taskStatuses.some(status =>
+      status.name.toLowerCase() === newStatusName.trim().toLowerCase()
+    )
+    if (nameExists) {
+      console.error("A status with this name already exists")
+      return
+    }
+
+    setIsCreatingStatus(true)
+    try {
+      const newStatusId = await onCreateStatus(newStatusName.trim(), newStatusColor)
+
+      // Automatically select the newly created status
+      if (row.id) {
+        await onStatusChange(row.id, newStatusId)
+      }
+
+      // Reset form
+      setNewStatusName("")
+      setNewStatusColor(generateUniqueColor())
+    } catch (error) {
+      console.error("Failed to create new status:", error)
+    } finally {
+      setIsCreatingStatus(false)
+    }
+  }
+
+  const generateUniqueColor = () => {
+    const existingColors = taskStatuses.map(status => status.color).filter(Boolean)
+    const colorPalette = [
+      '#93c5fd', '#fcd34d', '#86efac', '#f9a8d4', '#c4b5fd', '#a5b4fc',
+      '#fdba74', '#67e8f9', '#d8b4fe', '#f87171', '#fde68a', '#6ee7b7'
+    ]
+
+    const unusedColor = colorPalette.find(color => !existingColors.includes(color))
+    return unusedColor || '#93c5fd'
+  }
+
+  // Set a unique color when component mounts
+  useEffect(() => {
+    if (allowCustomValues) {
+      setNewStatusColor(generateUniqueColor())
+    }
+  }, [allowCustomValues, taskStatuses])
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger >
@@ -45,14 +211,14 @@ export const StatusDropdownCell: React.FC<StatusDropdownCellProps> = ({
             inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium
             transition-all duration-200 cursor-pointer
             hover:opacity-80 hover:scale-105
-            ${disabled || isLoading ? 'opacity-50 cursor-not-allowed' : ''}
+            ${disabled || isLoading || isCreatingStatus ? 'opacity-50 cursor-not-allowed' : ''}
           `}
           style={{
             backgroundColor: `${currentStatus?.color}20`,
             color: currentStatus?.color,
             border: `1px solid ${currentStatus?.color}40`
           }}
-          disabled={disabled || isLoading}
+          disabled={disabled || isLoading || isCreatingStatus}
           onClick={(e) => e.stopPropagation()}
         >
           <Circle
@@ -65,10 +231,11 @@ export const StatusDropdownCell: React.FC<StatusDropdownCellProps> = ({
         </button>
       </DropdownMenu.Trigger>
 
-      <DropdownMenu.Content align="start" className="w-56">
+      <DropdownMenu.Content align="start" className="w-64">
         <DropdownMenu.Label>Change Status</DropdownMenu.Label>
         <DropdownMenu.Separator />
 
+        {/* Existing Status Options */}
         {taskStatuses.map((status) => {
           const isCurrentStatus = status.id === value
 
@@ -95,6 +262,62 @@ export const StatusDropdownCell: React.FC<StatusDropdownCellProps> = ({
             </DropdownMenu.Item>
           )
         })}
+
+        {/* Add New Status Section - Only show if custom values are allowed */}
+        {allowCustomValues && onCreateStatus && (
+          <>
+            <DropdownMenu.Separator />
+            <div className="px-3 py-2">
+              <Text size="1" className="text-muted-foreground mb-2 block">
+                Create New Status
+              </Text>
+
+              <div className="flex items-center gap-2 mb-2">
+                <ColorPicker
+                  color={newStatusColor}
+                  onChange={setNewStatusColor}
+                  size="sm"
+                />
+                <TextField.Root
+                  value={newStatusName}
+                  onChange={(e) => setNewStatusName(e.target.value)}
+                  onKeyDown={(e) => {
+                    e.stopPropagation()
+                    if (e.key === 'Enter') {
+                      handleCreateNewStatus()
+                    }
+                  }}
+                  placeholder="Status name"
+                  className="flex-1 text-sm"
+                  disabled={isCreatingStatus}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleCreateNewStatus()
+                }}
+                disabled={!newStatusName.trim() || isCreatingStatus}
+                size="1"
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white text-xs"
+              >
+                {isCreatingStatus ? (
+                  <Flex align="center" gap="1">
+                    <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin" />
+                    Creating...
+                  </Flex>
+                ) : (
+                  <Flex align="center" gap="1">
+                    <Plus size={12} />
+                    Create & Select
+                  </Flex>
+                )}
+              </Button>
+            </div>
+          </>
+        )}
       </DropdownMenu.Content>
     </DropdownMenu.Root>
   )

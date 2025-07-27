@@ -169,7 +169,15 @@ export function useTableView(
     moveTaskToStatus,
 
     // Label operations with updated naming
-    createLabel: listViewData.createStatusLabel, // This will need to be updated to handle both types
+    createLabel: async (type: "status" | "priority", name: string, color?: string, description?: string) => {
+      if (type === "status") {
+        return await listViewData.createStatusLabel(name, color, description)
+      } else {
+        // For now, priority creation is not implemented in the backend
+        // This would need to be implemented when priority management is added
+        throw new Error("Priority label creation is not yet implemented")
+      }
+    },
     updateLabel: listViewData.updateStatusLabel,
     deleteLabel: listViewData.deleteStatusLabel,
     
