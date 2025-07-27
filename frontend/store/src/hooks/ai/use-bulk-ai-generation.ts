@@ -1,6 +1,6 @@
 import type { TaskDataSchema } from "@incmix/utils/schema"
 import { useCallback, useState } from "react"
-import type { ProcessedUserStory } from "../services/ai-service"
+import type { ProcessedUserStory } from "../../services/ai-service"
 import { useAIFeaturesStore } from "./use-ai-features-store"
 import { useAIUserStory } from "./use-ai-user-story"
 

@@ -1,8 +1,8 @@
 import { generateUniqueId, getCurrentTimestamp } from "@incmix/utils/helper"
+import type { TaskDataSchema } from "@incmix/utils/schema"
 import type { Subscription } from "rxjs"
 import { create } from "zustand"
-import { database } from "../sql"
-import type { TaskDataSchema } from "../sql/task-schemas"
+import { database } from "../../sql"
 
 /**
  * Helper function to convert ReadonlyArrays to mutable arrays for RxDB

@@ -2,9 +2,9 @@
 import { useEffect, useState } from "react"
 import type { RxDatabase } from "rxdb"
 import { useRxDB } from "rxdb-hooks"
-import { useOrganizationStore } from "../services/organizations"
+import { useOrganizationStore } from "../../services/organizations"
 // Import from local types and services
-import type { TaskCollections } from "../sql/types"
+import type { TaskCollections } from "../../sql/types"
 
 // Define a project item type that matches what our UI expects
 // This is compatible with the Switcher component's SwitcherItem

@@ -112,8 +112,8 @@ catalogs:
       specifier: 5.14.0
       version: 5.14.0
     rxdb:
-      specifier: 16.15.0
-      version: 16.15.0
+      specifier: 16.16.0
+      version: 16.16.0
     rxdb-hooks:
       specifier: 5.0.2
       version: 5.0.2
@@ -211,7 +211,7 @@ importers:
         version: 19.1.0(react@19.1.0)
       rxdb-hooks:
         specifier: 'catalog:'
-        version: 5.0.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxdb@16.15.0(rxjs@7.8.2)(socks@2.8.4))(rxjs@7.8.2)
+        version: 5.0.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxdb@16.16.0(rxjs@7.8.2)(socks@2.8.4))(rxjs@7.8.2)
     devDependencies:
       '@incmix/config':
         specifier: 'workspace: *'
@@ -426,10 +426,10 @@ importers:
         version: 15.4.1(i18next@24.2.3(typescript@5.8.2))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       rxdb:
         specifier: 'catalog:'
-        version: 16.15.0(rxjs@7.8.2)(socks@2.8.4)
+        version: 16.16.0(rxjs@7.8.2)(socks@2.8.4)
       rxdb-hooks:
         specifier: 'catalog:'
-        version: 5.0.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxdb@16.15.0(rxjs@7.8.2)(socks@2.8.4))(rxjs@7.8.2)
+        version: 5.0.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxdb@16.16.0(rxjs@7.8.2)(socks@2.8.4))(rxjs@7.8.2)
       swapy:
         specifier: 'catalog:'
         version: 1.0.5
@@ -470,6 +470,9 @@ importers:
 
   frontend/store:
     dependencies:
+      '@electric-sql/pglite':
+        specifier: ^0.3.5
+        version: 0.3.5
       '@incmix/utils':
         specifier: 'catalog:'
         version: 0.35.2(@types/luxon@3.4.2)(luxon@3.5.0)
@@ -1803,6 +1806,9 @@ packages:
     resolution: {integrity: sha512-+MKAJEOfaBe5SmV6t34p80MMKhjvUz0vRrvVJbPT0WElzaOJ/1xs+D+KDv+tD/NE5ujfrChEcshd4fLn0wpiqg==}
     peerDependencies:
       react: '>=16.8.0'
+
+  '@electric-sql/pglite@0.3.5':
+    resolution: {integrity: sha512-fhODErXJjOrnsJj5f1A8sH/Zj0INpLUbqOCiskufIUImUsFOBNHE6/FApY656Q2VSOp46wkXX3rvbBBO8O8Cag==}
 
   '@emnapi/runtime@1.4.3':
     resolution: {integrity: sha512-pBPWdu6MLKROBX05wSNKcNb++m5Er+KQ9QkB+WVM+pW2Kx9hoSrVTnu3BdkI5eBLZoKu/J6mW/B6i6bJB2ytXQ==}
@@ -8589,8 +8595,8 @@ packages:
     peerDependencies:
       rxjs: ^7.8.0
 
-  rxdb@16.15.0:
-    resolution: {integrity: sha512-IMsa5C7A5QrXwXZtQkdatyKOiNWJyeiS+NJTKGyFcj4aqWvh5zgr9idy/PMjUKQ+jPtkoa5H2UGWSJVFs6Ob2A==}
+  rxdb@16.16.0:
+    resolution: {integrity: sha512-t3vR/7om2DKb5WAuTG7i734yaGee7HGfKJ6UaUVNbD0vK6Aqf7/p0AFg+t6hlz631iiigMyoZGbOxrsh8zC7+g==}
     engines: {node: '>=18'}
     peerDependencies:
       rxjs: ^7.8.0
@@ -11070,6 +11076,8 @@ snapshots:
     dependencies:
       react: 19.1.0
       tslib: 2.8.1
+
+  '@electric-sql/pglite@0.3.5': {}
 
   '@emnapi/runtime@1.4.3':
     dependencies:
@@ -18910,11 +18918,11 @@ snapshots:
     dependencies:
       queue-microtask: 1.2.3
 
-  rxdb-hooks@5.0.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxdb@16.15.0(rxjs@7.8.2)(socks@2.8.4))(rxjs@7.8.2):
+  rxdb-hooks@5.0.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(rxdb@16.16.0(rxjs@7.8.2)(socks@2.8.4))(rxjs@7.8.2):
     dependencies:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
-      rxdb: 16.15.0(rxjs@7.8.2)(socks@2.8.4)
+      rxdb: 16.16.0(rxjs@7.8.2)(socks@2.8.4)
       rxjs: 7.8.2
 
   rxdb-premium@16.11.0(rxdb@16.11.0(rxjs@7.8.2)(socks@2.8.4))(rxjs@7.8.2):
@@ -18980,7 +18988,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  rxdb@16.15.0(rxjs@7.8.2)(socks@2.8.4):
+  rxdb@16.16.0(rxjs@7.8.2)(socks@2.8.4):
     dependencies:
       '@babel/runtime': 7.27.6
       '@types/clone': 2.1.4
