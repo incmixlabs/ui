@@ -33,6 +33,7 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
+    "crypto-browserify": "^3.12.1",
     "internal-ip": "8.0.0",
     "postcss": "catalog:",
     "rollup-plugin-visualizer": "catalog:",
@@ -40,8 +41,8 @@
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-plugin-bundlesize": "catalog:",
-    "vite-plugin-chunk-split": "^0.5.0",
-    "vite-plugin-top-level-await": "^1.5.0",
+    "vite-plugin-chunk-split": "0.5.0",
+    "vite-plugin-top-level-await": "1.6.0",
     "vite-tsconfig-paths": "catalog:"
   }
 }

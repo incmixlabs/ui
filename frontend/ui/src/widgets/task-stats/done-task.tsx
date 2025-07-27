@@ -9,7 +9,7 @@ export function DoneTasks() {
       count={215}
       label="Done Tasks"
       iconClassName="bg-green-3"
-      icon={<ClipBoardCheck size="20" />}
+      icon={<ClipBoardCheck size="20" color="var(--indicator-success)" />}
     />
   )
 }

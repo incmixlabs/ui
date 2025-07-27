@@ -1,27 +1,61 @@
-import { Button } from "@incmix/ui/base"
-import { Plus } from "lucide-react"
-import { toast } from "@incmix/ui"
+import { Button, Tooltip } from "@incmix/ui/base";
+import { Plus } from "lucide-react";
+import { toast } from "@incmix/ui";
 
 interface AddGroupButtonProps {
-  className?: string
-  onAddGroup: () => void
-  isEditing: boolean
+  isDesktop: boolean;
+  className?: string;
+  onAddGroup: () => void;
+  isEditing: boolean;
 }
 
-export function AddGroupButton({ className, onAddGroup, isEditing }: AddGroupButtonProps) {
+export function AddGroupButton({
+  isDesktop,
+  className,
+  onAddGroup,
+  isEditing,
+}: AddGroupButtonProps) {
   const handleAddGroup = () => {
     if (!isEditing) {
-      toast.error("Editing mode is disabled. Please enable editing mode to add groups.")
-      return
+      toast.error(
+        "Editing mode is disabled. Please enable editing mode to add groups.",
+      );
+      return;
     }
 
-    onAddGroup()
-  }
+    onAddGroup();
+  };
 
   return (
-    <Button onClick={handleAddGroup} className={className} variant="solid" color="green" disabled={!isEditing}>
-      <Plus className="h-4 w-4" />
-      Add Group
-    </Button>
-  )
+    <>
+      {isDesktop ? (
+        <Button
+          onClick={handleAddGroup}
+          className={className}
+          variant="solid"
+          color="green"
+          disabled={!isEditing}
+        >
+          <Plus className="h-4 w-4" />
+          Add Group
+        </Button>
+      ) : (
+        <Tooltip
+          content={
+            "Add Group"
+          }
+        >
+          <Button
+            onClick={handleAddGroup}
+            className={className}
+            variant="solid"
+            color="green"
+            disabled={!isEditing}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        </Tooltip>
+      )}
+    </>
+  );
 }

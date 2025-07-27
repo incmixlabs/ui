@@ -9,7 +9,8 @@ import {
   Box,
   Grid,
   Text,
-} from "@incmix/ui/base";
+  toast,
+} from "@base";
 import {
   Trash2,
   CheckCheck,
@@ -18,12 +19,10 @@ import {
   ChevronUp,
   ChevronDown,
 } from "lucide-react";
-import { shortFormatDistanceToNow, toast, useLayoutStore } from "@incmix/ui";
-import { cn } from "@incmix/ui";
-import { formatDistanceToNow } from "date-fns";
+import { cn } from "@utils/cn";
 import { useQueryState } from "nuqs";
 import { DashboardTemplate } from "@incmix/store";
-
+import { useLayoutStore } from "../hooks/use-layout-store";
 interface TemplatesSidebarProps {
   filteredTemplates:DashboardTemplate[]
   templates: DashboardTemplate[];
@@ -88,10 +87,12 @@ export function TemplatesSidebar({
     toast.success(`Template "${template?.id}" loaded successfully`);
   };
 
+  console.log("templates", templates);
+
   return (
     <Flex
       direction="column"
-      className={`bg-gray-1 p-2 mt-2 rounded-xl overflow-hidden ${
+      className={`bg-gray-1 p-2 mt-2 rounded-app overflow-hidden ${
         isTemplateExpanded ? 'max-h-full' : 'max-h-20'
       } relative border border-gray-5 transition-all duration-300`}
     >
@@ -113,14 +114,14 @@ export function TemplatesSidebar({
       </Flex>
       {isTemplateExpanded && (
         <>
-          {filteredTemplates.length > 0 ? 
+          {filteredTemplates.length > 0 ?
           (
             <Grid columns={"2"} gap={"2"} className="mt-2">
               {filteredTemplates.map((template) => (
                 <Box
                   key={template.id}
                   className={cn(
-                    `border  relative border-gray-5 rounded-md pt-1 bg-gray-1  hover:bg-gray-2 cursor-pointer transition-colors`,
+                    `border  relative border-gray-5 rounded-app pt-1 bg-gray-1  hover:bg-gray-2 cursor-pointer transition-colors`,
                     template?.isActive &&
                       "border-4 border-green-8 bg-green-4 hover:bg-green-3",
                     template?.id === isTemplate &&
@@ -132,16 +133,6 @@ export function TemplatesSidebar({
                     <Heading size="1" className="font-medium">
                       {template?.templateName}
                     </Heading>
-                    {/* <Flex
-                      align={"center"}
-                      className="text-xs text-muted-foreground mt-1"
-                    >
-                      <Box as="span">
-                        {shortFormatDistanceToNow(new Date(template.updatedAt))}
-                        ago
-                      </Box>
-                    </Flex> */}
-
                     {template.tags.length > 0 && (
                       <Flex  align={"center"} className="mt-2 flex-wrap gap-1">
                         {template.tags.slice(0, 2).map((tag) => (
@@ -169,7 +160,7 @@ export function TemplatesSidebar({
                     align={"center"}
                     justify={"between"}
                     className={cn(
-                      template?.isActive && "bg-green-8 px-1 py-0.5 rounded",
+                      template?.isActive && "bg-green-8 px-1 py-0.5 rounded-app",
                     )}
                   >
                     {!template?.isActive ? (
@@ -184,7 +175,7 @@ export function TemplatesSidebar({
                     ) : (
                       <Text
                         size={"1"}
-                        className="bg-green-8 px-1 py-0.5 rounded"
+                        className="bg-green-8 px-1 py-0.5 rounded-app"
                       >
                         Active
                       </Text>

@@ -3,14 +3,12 @@ export * from "./avatar-editable"
 export * from "./avatar-group"
 export * from "./carousel"
 export * from "./charts"
-// Export DataTable from original data-table with renamed export
 export * from "./data-table"
-
+// Export DataTable from original data-table with renamed export
 export * from "./drag-handle"
 export { useDropzone } from "react-dropzone"
 export * from "./layout-grid"
 export * from "./sidebar"
-export * from "./swapy"
 export * from "./dnd-kit"
 export * from "./tree-view"
 export * from "./dashboard"

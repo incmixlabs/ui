@@ -210,7 +210,7 @@ export function PostingTask() {
   return (
     <CardContainer className="h-full">
       <Flex justify={"between"} align={"center"} className="mb-4">
-        <Heading size={"5"}>Posting Tasks</Heading>
+        <Heading weight={"medium"}>Posting Tasks</Heading>
         <IconButton variant="ghost">
           <Ellipsis />
         </IconButton>

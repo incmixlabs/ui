@@ -1,8 +1,8 @@
 import { Box } from "@incmix/ui"
 import { Suspense, lazy, useState } from "react"
 
-// Dynamically import component
 const ProjectBox = lazy(() => import("./components/project-box"))
+
 export function FileManager() {
   const [_currentFolderId, _setCurrentFolderId] = useState<string | null>(null)
   const [breadcrumbs, _setBreadcrumbs] = useState<

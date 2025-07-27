@@ -93,7 +93,7 @@ export function ProjectTimelineWidgets() {
         <Flex className="h-full">
           <Box className="flex-1 border-r border-gray-4">
             <Card.Header className="pb-4">
-              <Card.Title className="text-xl font-semibold text-gray-12">
+              <Card.Title className="text-xl font-medium text-gray-12">
                 Project Timeline
               </Card.Title>
               <Text as="p" className="text-sm text-gray-11">
@@ -124,13 +124,13 @@ export function ProjectTimelineWidgets() {
                       </Text>
                       <Box className="flex-1 relative h-8">
                         <Box
-                          className="absolute top-1/2 transform -translate-y-1/2 h-6 rounded-full flex items-center justify-center"
+                          className="absolute top-1/2 transform -translate-y-1/2 h-6 rounded-app flex items-center justify-center"
                           style={timelineStyle}
                           role="img"
                           aria-label={`${item.project} from ${item.startMonth} to ${item.endMonth}`}
                         >
                           <Badge
-                            className={`${item.color} ${item.textColor} border-none px-3 py-2 rounded-full text-xs font-medium w-full text-center`}
+                            className={`${item.color} ${item.textColor} border-none px-3 py-2 rounded-app text-xs font-medium w-full text-center`}
                           >
                             {item.project}
                           </Badge>

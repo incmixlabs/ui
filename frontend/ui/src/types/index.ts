@@ -14,6 +14,7 @@ export const direction = {
 
 export type IconProps = SVGProps<SVGSVGElement> & {
   size?: string | number
+  color?: string
 }
 export const iconWidth = {
   "1": 15,

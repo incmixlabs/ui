@@ -41,7 +41,7 @@ export function NavUser({
             >
               <Avatar
                 src={avatarUrl}
-                className="h-8 w-8 rounded-lg"
+                className="h-8 w-8 rounded-app"
                 name={user.name}
               />
 
@@ -57,7 +57,7 @@ export function NavUser({
             </SidebarMenuButton>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-app"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
@@ -66,7 +66,7 @@ export function NavUser({
               <Flex align="center" className="gap-2 px-1 py-1.5 text-left">
                 <Avatar
                   src={avatarUrl}
-                  className="h-8 w-8 rounded-lg"
+                  className="h-8 w-8 rounded-app"
                   name={user.name}
                 />
                 <Box className="grid flex-1 text-left leading-tight">

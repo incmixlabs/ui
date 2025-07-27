@@ -13,20 +13,24 @@ import {
   Box,
   CloneDashboardModal,
   CreateProjectModal,
-  DeleteDashboard,
-  EditDashboard,
   Flex,
   Heading,
   SaveTemplateDialog,
   SidebarTrigger,
+  useMediaQuery,
+  useModalStore,
+} from "@incmix/ui"
+
+import {
+  DeleteDashboard,
+  EditDashboard,
   generateDOM,
   initialLayouts,
   useDevicePreview,
   useGridComponents,
   useLayoutStore,
-  useModalStore,
   useWidgetDragAndDrop,
-} from "@incmix/ui"
+} from "@incmix/ui/dashboard"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useParams } from "@tanstack/react-router"
 import type React from "react"
@@ -43,6 +47,7 @@ const DynamicDashboardPage: React.FC = () => {
   const { projectId } = useParams({ from: "/dashboard/$projectId" })
   const { t } = useTranslation("navbar")
   const { pathname } = useLocation()
+  const isDesktop = useMediaQuery("(min-width: 1024px)")
   const [isTemplate, setIsTemplate] = useQueryState("template")
   const [project, setProject] = useState<Dashboard | undefined>()
 
@@ -109,7 +114,9 @@ const DynamicDashboardPage: React.FC = () => {
     const getProjectName = async () => {
       try {
         const getProject = await getDashboardById(projectId)
-        setProject(getProject)
+        if (getProject) {
+          setProject(getProject)
+        }
       } catch (error) {
         console.error("Failed to get dashboard:", error)
       }
@@ -193,15 +200,18 @@ const DynamicDashboardPage: React.FC = () => {
                 {isEditing && (
                   <Flex align={"center"} gap="2">
                     <AddGroupButton
+                      isDesktop={isDesktop}
                       isEditing={isEditing}
                       onAddGroup={handleAddNewGroup}
                     />
                     <ActiveBtn
+                      isDesktop={isDesktop}
                       items={deviceTabs}
                       defaultActiveId={activeDevice}
                       onChange={setActiveDevice}
                     />
                     <SaveTemplateDialog
+                      isDesktop={isDesktop}
                       projectId={projectId}
                       layouts={defaultLayouts}
                       open={openSaveDialog}

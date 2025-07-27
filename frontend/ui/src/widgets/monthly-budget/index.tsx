@@ -22,7 +22,7 @@ export function MonthlyBudget() {
     <CardContainer className="h-full flex flex-col justify-center @container">
       <Box className="pb-2">
         <Flex align={"center"} justify={"between"}>
-          <Heading size="6" className="font-medium">Monthly Budget</Heading>
+          <Heading weight={"medium"}>Monthly Budget</Heading>
           <Button variant="ghost" size="2">
             <MoreHorizontal className="w-4 h-4" />
           </Button>

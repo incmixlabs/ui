@@ -1,9 +1,15 @@
+import type React from "react"
+
 import { useDraggable } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
-import { Box } from "@incmix/ui"
-import type React from "react"
-import { forwardRef, useEffect, useState } from "react"
-import { sidebarComponents } from "./widgets-data"
+import { Box } from "@base"
+// If useSettingsStore is a default export:
+import {useAppearanceStore} from "@incmix/store/use-settings-store"
+// Or, if the export is named differently, use the correct name:
+// import { correctExportName } from "@incmix/store/use-settings-store"
+import { forwardRef, useEffect, useMemo, useState } from "react"
+import { getWidgets } from "./widgets-data"
+
 
 interface DraggableComponentProps {
   id: string
@@ -12,8 +18,6 @@ interface DraggableComponentProps {
   component: React.ReactNode
   componentName?: string
   disabled?: boolean
-  darkImage?: string
-  lightImage?: string
   onDragStart?: () => void
   onDragEnd?: () => void
 }
@@ -23,11 +27,12 @@ export const DraggableComponent = forwardRef<
   DraggableComponentProps
 >(
   (
-    { id, title, image, darkImage, lightImage, component, componentName, disabled = false, onDragStart, onDragEnd },
+    { id, title, image,  component, componentName, disabled = false, onDragStart, onDragEnd },
     _ref
   ) => {
     const [isDraggingLocal, setIsDraggingLocal] = useState(false)
-    const componentData = sidebarComponents.find((comp) => comp.slotId === id)
+    const widgets = Object.values(getWidgets());
+    const componentData = widgets.find((comp) => comp.slotId === id)
     const layouts = componentData?.layouts
     // If componentName is not provided, try to get it from componentData
     const effectiveComponentName = componentName || componentData?.componentName
@@ -41,8 +46,6 @@ export const DraggableComponent = forwardRef<
           title,
           component,
           image,
-          darkImage,
-          lightImage,
           layouts,
           componentName: effectiveComponentName,
         },
@@ -77,16 +80,11 @@ export const DraggableComponent = forwardRef<
     return (
       <>
         {isDragging && (
-          <Box className="absolute z-50  rounded-lg border border-gray-400 border-dashed bg-gray-1 opacity-50 h-full">
+          <Box className="absolute z-50  rounded-app border border-gray-400 border-dashed bg-gray-1 opacity-50 h-full">
             <img
-              src={lightImage || "/placeholder.svg?height=150&width=150"}
+              src={image || "/placeholder.svg?height=150&width=150"}
               alt={title}
-              className="h-full w-full rounded-lg dark:hidden block"
-            />
-            <img
-              src={darkImage || "/placeholder.svg?height=150&width=150"}
-              alt={title}
-              className="h-full w-full rounded-lg dark:block hidden"
+              className="h-full w-full rounded-lg block"
             />
           </Box>
         )}
@@ -97,23 +95,18 @@ export const DraggableComponent = forwardRef<
           {...listeners}
           {...attributes}
           onMouseDown={handleMouseDown}
-          className={`rounded-lg border border-gray-5 h-full dark:bg-gray-2 bg-white  ${
+          className={`rounded-app border border-gray-5 h-full dark:bg-gray-2 bg-white  ${
             disabled
               ? "cursor-not-allowed opacity-60"
               : "cursor-grab active:cursor-grabbing"
           } relative ${isDragging ? "opacity-0" : ""}`}
         >
           <img
-            src={lightImage || "/placeholder.svg?height=150&width=150"}
+            src={image || "/placeholder.svg?height=150&width=150"}
             alt={title}
-            className="h-full w-full rounded-lg dark:hidden block"
+            className="h-full w-full rounded-lg  block"
           />
-          <img
-            src={darkImage || "/placeholder.svg?height=150&width=150"}
-            alt={title}
-            className="h-full w-full rounded-lg dark:block hidden"
-          />
-          <Box className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/30 opacity-0 transition-opacity hover:opacity-100">
+          <Box className="absolute inset-0 flex items-center justify-center rounded-app bg-black/30 opacity-0 transition-opacity hover:opacity-100">
             <span className="text-center text-xs font-medium text-white">
               {title}
             </span>

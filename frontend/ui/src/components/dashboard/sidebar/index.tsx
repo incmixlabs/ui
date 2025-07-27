@@ -4,17 +4,14 @@ import {
   Button,
   DropdownMenu,
   Flex,
-  Grid,
   Heading,
   IconButton,
   Input,
-  LayoutPresetsSection,
   ScrollArea,
-  cn,
-  dashboardImg,
-  useSelectionStore,
-} from "@incmix/ui";
+} from "@base";
 
+import { LayoutPresetsSection } from "./layout-presets-selection";
+import { cn } from "@utils/cn"
 import { useEffect, useMemo, useState } from "react";
 import { DraggableComponent } from "./draggable-component";
 import {
@@ -28,9 +25,9 @@ import {
 } from "lucide-react";
 import { TemplatesSidebar } from "./templates";
 import { useLocation, useParams } from "@tanstack/react-router";
-import { useTemplateStore } from "@incmix/store";
-import { sidebarComponents } from "./widgets-data";
-
+import {  useTemplateStore } from "@incmix/store";
+import { getWidgets } from "./widgets-data";
+import { useSelectionStore } from "../hooks/use-widgets-selection";
 
 interface DashboardSidebarProps {
   isEditing?: boolean;
@@ -60,8 +57,8 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
     getTemplateById,
     templateActive,
   } = useTemplateStore();
-
-  const [availableComponents] = useState(sidebarComponents);
+  const [availableComponents] = useState(Object.values(getWidgets()));
+  debugger;
   const [_draggingComponentId, setDraggingComponentId] = useState<
     string | null
   >(null);
@@ -169,7 +166,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
     <Box className="h-screen bg-gray-3">
       <ScrollArea className="h-full p-2">
         <Flex align={"center"} gap="2" className="mb-4">
-          <Box className=" relative">
+          <Box className="relative">
             <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search..."
@@ -185,11 +182,11 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
                 <span className="sr-only">Filter</span>
               </IconButton>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content className="w-48 rounded-lg">
+            <DropdownMenu.Content className="w-48 rounded-app">
               <DropdownMenu.Item
                 onClick={() => setFilterType("both")}
                 className={
-                  filterType === "both" ? "bg-indigo-600 text-white" : ""
+                  filterType === "both" ? "bg-indigo-9 text-white" : ""
                 }
               >
                 <span>All</span>
@@ -197,7 +194,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
               <DropdownMenu.Item
                 onClick={() => setFilterType("widgets")}
                 className={
-                  filterType === "widgets" ? "bg-indigo-600 text-white" : ""
+                  filterType === "widgets" ? "bg-indigo-9 text-white" : ""
                 }
               >
                 <span>Widgets</span>
@@ -205,7 +202,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
               <DropdownMenu.Item
                 onClick={() => setFilterType("templates")}
                 className={
-                  filterType === "templates" ? "bg-indigo-600 text-white" : ""
+                  filterType === "templates" ? "bg-indigo-9 text-white" : ""
                 }
               >
                 <span>Templates</span>
@@ -251,12 +248,12 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
             className="-translate-y-1.5 translate-x-2"
           >
             <X size={16} />
-            <span className="sr-only">Filter</span>
+            <span className="sr-only">Remove Filter</span>
           </IconButton>
         </Flex>
 
         <Box
-          className={`bg-gray-1 p-2 mt-2 rounded-xl overflow-hidden ${
+          className={`bg-gray-1 p-2 mt-2 rounded-app overflow-hidden ${
             isWidgetExpanded ? "max-h-full" : "max-h-20"
           } relative border border-gray-6 transition-all duration-300 `}
         >
@@ -289,8 +286,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
                       <DraggableComponent
                         id={comp.slotId}
                         title={comp.title}
-                        darkImage={comp.darkCompImage}
-                        lightImage={comp.lightCompImage}
+                        image={comp.image}
                         component={comp.component}
                         componentName={comp.componentName}
                         disabled={!isEditing || selectedWidgets.length > 0}

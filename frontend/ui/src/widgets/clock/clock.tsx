@@ -1,12 +1,9 @@
-"use client"
-
 import { useEffect, useState } from "react"
 import RClock from "react-clock"
-import "react-clock/dist/Clock.css"
 import { useThemeStore } from "@incmix/store"
 export { Clock as ClockIcon } from "lucide-react"
 import { CardContainer } from "@components/card/card-container"
-import { Flex, Text, Theme } from "@incmix/ui"
+import { Flex, Text, Box } from "@incmix/ui"
 import { getDate } from "@incmix/utils/date"
 import type { TextProps } from "@radix-ui/themes"
 
@@ -50,31 +47,20 @@ const textSizeMap: Record<ClockSize, TextProps["size"]> = {
 }
 
 export function ClockWidget({ clocks, size = "2", flip = false }: ClockProps) {
-  const { theme } = useThemeStore()
   clocks = clocks || [{ city: "New York", timeZone: "America/New_York" }]
   const date = tzDate(clocks)
   const [values, setValues] = useState(date)
 
-  function invertTheme() {
-    return theme === "dark" ? "light" : "dark"
-  }
-
   useEffect(() => {
     const interval = setInterval(() => setValues(tzDate(clocks)), 1000)
-
     return () => {
       clearInterval(interval)
     }
   }, [clocks])
 
   return (
-    <Flex direction="row" gap="4">
+    <Box>
       {values.map((value: ClockOutput) => (
-        <Theme
-          appearance={flip ? invertTheme() : theme}
-          key={value.city}
-          className="bg-transparent"
-        >
           <CardContainer key={value.city}>
             <RClock
               key={value.city}
@@ -87,8 +73,7 @@ export function ClockWidget({ clocks, size = "2", flip = false }: ClockProps) {
               </Text>
             </Flex>
           </CardContainer>
-        </Theme>
       ))}
-    </Flex>
+    </Box>
   )
 }

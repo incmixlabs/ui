@@ -7,7 +7,7 @@ interface OrganizationStore {
   setSelectedOrganisation: (org?: Organization) => void
 }
 
-const organizationStore = create<OrganizationStore>()(
+export const organizationStore = create<OrganizationStore>()(
   persist(
     (set) => {
       return {

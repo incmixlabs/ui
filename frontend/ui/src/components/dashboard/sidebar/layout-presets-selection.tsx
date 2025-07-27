@@ -1,17 +1,15 @@
-import { useAppearanceStore } from "@incmix/store";
 import {
   Box,
   Button,
-  cn,
   Flex,
   Grid,
   Heading,
-  presetLayouts,
-  useLayoutStore,
-} from "@incmix/ui";
+} from "@base"
+import { useLayoutStore } from "../hooks/use-layout-store";
+
 import { ChevronDown, ChevronUp, Minus, Plus } from "lucide-react";
 import { useState } from "react";
-
+import { presetLayouts } from "../data";
   /**
    * Renders a section that displays a list of layout presets.
    *
@@ -28,11 +26,9 @@ import { useState } from "react";
 export function LayoutPresetsSection() {
   const { activePresetId, applyPreset } = useLayoutStore();
   const [isExpanded, setIsExpanded] = useState(false);
-  const { appearance } = useAppearanceStore();
-
   return (
     <Box
-      className={`bg-gray-1 p-2 mt-2 rounded-xl relative border border-gray-5
+      className={`bg-gray-1 p-2 mt-2 rounded-app relative border border-gray-5
         ${
           isExpanded ? 'max-h-full' : 'max-h-20'
         }
@@ -58,10 +54,10 @@ export function LayoutPresetsSection() {
 
       {isExpanded && (
       <Grid columns={"2"} className="pb-2" gap={"2"}>
-        {presetLayouts.map((preset) => (
+        {presetLayouts().map((preset) => (
           <Box
             key={preset.id}
-            className={`border border-gray-4 cursor-pointer  rounded-lg p-2 transition-all duration-200 ${
+            className={`border border-gray-4 cursor-pointer  rounded-app p-2 transition-all duration-200 ${
               activePresetId === preset.id
                 ? "bg-indigo-5 dark:bg-indigo-8"
                 : "border-transparent "
@@ -69,19 +65,13 @@ export function LayoutPresetsSection() {
             onClick={() => applyPreset(preset.id)}
           >
             <Box className="relative mb-2 w-full overflow-hidden rounded-md">
-              {appearance === "dark" ? (
+
                 <img
-                  src={preset.darkImage || "/placeholder.svg"}
+                  src={preset.image || "/placeholder.svg"}
                   alt={preset.name}
                   className="h-full w-full object-cover"
                 />
-              ) : (
-                <img
-                  src={preset.lightImage || "/placeholder.svg"}
-                  alt={preset.name}
-                  className="h-full w-full object-cover"
-                />
-              )}
+
             </Box>
             <Box as="span" className="text-xs font-medium">{preset.name}</Box>
           </Box>

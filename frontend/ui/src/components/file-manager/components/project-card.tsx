@@ -26,12 +26,12 @@ export default function ProjectCard({
   return (
     <Box
       className={cn(
-        "group aspect relative cursor-pointer overflow-hidden rounded-md border border-gray-5 hover:border-sidebar-secondary-active/30 hover:bg-sidebar-secondary-active/5 md:border-gray-1",
+        "group aspect relative cursor-pointer overflow-hidden rounded-app border border-gray-5 bg-gray-1",
         viewMode === "grid"
           ? "flex flex-col items-center py-10 "
           : "flex items-center p-3 ",
         isSelected &&
-          "border border-sidebar-secondary-active/30 bg-sidebar-secondary-active/5"
+          "border border-gray-5 bg-gray-3"
       )}
       onClick={onClick}
     >

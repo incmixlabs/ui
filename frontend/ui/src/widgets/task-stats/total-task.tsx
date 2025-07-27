@@ -8,7 +8,7 @@ export function TotalTasks() {
       count={780}
       label="Total Tasks"
       iconClassName="bg-indigo-3"
-      icon={<ClipBoard size="20" />}
+      icon={<ClipBoard size="20" color="var(--indicator-info)" />}
     />
   )
 }

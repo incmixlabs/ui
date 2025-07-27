@@ -10,10 +10,8 @@ import {
   type RadixRadius,
   type RadixScaling,
   type ThemeConfig,
-  User,
   type UserPreference,
   breakFontColor as defaultFontColor,
-  fontColor,
 } from "@incmix/utils/types"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
@@ -30,13 +28,20 @@ export type SidebarColorConfig = {
   break: number
 }
 
+export const RADIUS_MAP: Record<RadixRadius, string> = {
+  none: "0px",
+  small: "4px",
+  medium: "8px",
+  large: "12px",
+  full: "9999px",
+}
+
 export const SIDEBAR_COLOR_OPTIONS = [
   { bg: { color: "gray", break: 2 } },
   ...RADIX_ACCENT_COLORS.map((color) => ({
     bg: { color, break: 10 },
   })),
 ] satisfies { bg: SidebarColorConfig }[]
-
 export type ThemeStoreConfig = ThemeConfig & {
   setTheme: (partial: Partial<ThemeConfig>) => void
   theme: (prop: keyof ThemeConfig) => any
@@ -67,6 +72,7 @@ export type ThemeStoreConfig = ThemeConfig & {
     color3: string
     color4: string
   }
+
   getIndicatorColors: (pastel?: boolean) => {
     danger: string
     dangerText: string
@@ -83,6 +89,7 @@ export type ThemeStoreConfig = ThemeConfig & {
     bg: string
     fg: string
   }
+  getRadiusValue: (radiusLevel?: RadixRadius | string) => string
 }
 export type UsePreferencesStoreConfig = UserPreference & {
   setUserPreference: (partial: Partial<UserPreference>) => void
@@ -156,6 +163,7 @@ export type UserPreferenceStoreConfig = UserPreference & {
   setDirection: (direction: "ltr" | "rtl") => void
   getDirection: () => "ltr" | "rtl"
   getIsSystemAppearance: () => boolean
+  getIsDarkAppearance: () => boolean
 }
 
 export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
@@ -205,6 +213,7 @@ export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
         })),
       getDirection: () => get().direction ?? "ltr",
       getIsSystemAppearance: () => get().isSystemAppearance ?? false,
+      getIsDarkAppearance: () => get().appearance === "dark",
     }),
     {
       name: "incmix-appearance-store",
@@ -405,6 +414,10 @@ export const useThemeStore = create<ThemeStoreConfig>()(
 
         return dash
       },
+      getRadiusValue: (radiusLevel?: RadixRadius | string) => {
+        const level = (radiusLevel ?? get().radius) as RadixRadius
+        return RADIUS_MAP[level] ?? RADIUS_MAP.medium
+      },
       getIndicatorColors: (pastel = false) => {
         const {
           pastelShade,
@@ -538,6 +551,12 @@ export const useThemeStore = create<ThemeStoreConfig>()(
             fg: "var(--gray-12)",
           }
         }
+        if (color === "background") {
+          return {
+            bg: "var(--background)",
+            fg: "var(--foreground)",
+          }
+        }
 
         return {
           bg: sidebarBg,
@@ -652,17 +671,3 @@ export const useSidebarStore = create<SidebarStore>()(
     }
   )
 )
-
-// export function IncmixThemeApplier() {
-//   const { sidebarBg } = useThemeStore()
-
-//   useEffect(() => {
-//     document.documentElement.style.setProperty("--primary-color", primaryColor)
-//     document.documentElement.style.setProperty(
-//       "--secondary-color",
-//       secondaryColor
-//     )
-//   }, [sidebarBg]) // Re-run effect when colors change
-
-//   return null // This component doesn't render anything visible
-// }

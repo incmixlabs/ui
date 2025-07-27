@@ -34,6 +34,9 @@ export default defineConfig(async () => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    include: ["events"],
+  },
   plugins: [
     bundlesize({ limits: [{ name: "**/*", limit: "4 mB" }] }),
     react(),

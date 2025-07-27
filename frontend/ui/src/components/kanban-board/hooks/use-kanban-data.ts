@@ -1,4 +1,5 @@
 // File: use-kanban-data.ts
+// Updated to use the selected project from project store
 
 import { useMemo } from "react"
 import type { TaskDataSchema, UseKanbanReturn, KanbanColumn, KanbanTask } from "@incmix/utils/schema"
@@ -20,9 +21,9 @@ declare module "@incmix/utils/schema" {
   }
 }
 
-export function useKanban(projectId = "default-project"): UseKanbanReturn {
+export function useKanban(providedProjectId?: string): UseKanbanReturn {
   // Get reactive project data
-  const projectData = useProjectData(projectId)
+  const projectData = useProjectData(providedProjectId)
 
   // Transform data into kanban columns with computed properties
   // In your use-kanban-data.ts file, update the columns transformation:

@@ -1,4 +1,6 @@
-import React, { Suspense, useEffect, useMemo } from "react"
+// biome-ignore lint/style/useImportType: <explanation>
+import React from "react"
+import { Suspense, useEffect, useMemo } from "react"
 
 import { useQuery } from "@tanstack/react-query"
 import { RouterProvider } from "@tanstack/react-router"
@@ -19,11 +21,6 @@ import { Provider as RxdbProvider } from "rxdb-hooks"
 
 import { translations } from "./translations"
 
-export const dateFNSLocale: Record<Language, string> = {
-  en: "en",
-  pt: "pt-BR",
-}
-
 function App() {
   const appearance = useAppearanceStore()
   const {
@@ -35,6 +32,7 @@ function App() {
     getDashboardColors,
     getIndicatorColors,
     getPastel,
+    getRadiusValue,
   } = useThemeStore()
 
   // Get computed colors from your theme store
@@ -60,44 +58,6 @@ function App() {
     }
   }, [language])
 
-  useEffect(() => {
-    const root = document.documentElement
-    root.style.setProperty("--sidebar-background", sidebarColors.bg)
-    root.style.setProperty("--sidebar-foreground", sidebarColors.fg)
-
-    root.style.setProperty("--dashboard-color-1", dashboardColors.color1)
-    root.style.setProperty("--dashboard-text-1", dashboardColors.text1)
-    root.style.setProperty("--dashboard-color-2", dashboardColors.color2)
-    root.style.setProperty("--dashboard-text-2", dashboardColors.text2)
-    root.style.setProperty("--dashboard-color-3", dashboardColors.color3)
-    root.style.setProperty("--dashboard-text-3", dashboardColors.text3)
-    root.style.setProperty("--dashboard-color-4", dashboardColors.color4)
-    root.style.setProperty("--dashboard-text-4", dashboardColors.text4)
-
-    root.style.setProperty("--indicator-danger", indicatorColors.danger)
-    root.style.setProperty(
-      "--indicator-danger-text",
-      indicatorColors.dangerText
-    )
-    root.style.setProperty("--indicator-warning", indicatorColors.warning)
-    root.style.setProperty(
-      "--indicator-warning-text",
-      indicatorColors.warningText
-    )
-    root.style.setProperty("--indicator-success", indicatorColors.success)
-    root.style.setProperty(
-      "--indicator-success-text",
-      indicatorColors.successText
-    )
-    root.style.setProperty("--indicator-info", indicatorColors.info)
-    root.style.setProperty("--indicator-info-text", indicatorColors.infoText)
-    root.style.setProperty("--indicator-default", indicatorColors.default)
-    root.style.setProperty(
-      "--indicator-default-text",
-      indicatorColors.defaultText
-    )
-  }, [sidebarColors, dashboardColors, indicatorColors])
-
   const { authUser, isLoading } = useAuth()
 
   const router = useMemo(() => {
@@ -111,6 +71,34 @@ function App() {
       grayColor={grayColor}
       radius={radius}
       scaling={scaling}
+      style={
+        {
+          "--sidebar-background": sidebarColors.bg,
+          "--sidebar-foreground": sidebarColors.fg,
+
+          "--dashboard-color-1": dashboardColors.color1,
+          "--dashboard-text-1": dashboardColors.text1,
+          "--dashboard-color-2": dashboardColors.color2,
+          "--dashboard-text-2": dashboardColors.text2,
+          "--dashboard-color-3": dashboardColors.color3,
+          "--dashboard-text-3": dashboardColors.text3,
+          "--dashboard-color-4": dashboardColors.color4,
+          "--dashboard-text-4": dashboardColors.text4,
+
+          "--indicator-danger": indicatorColors.danger,
+          "--indicator-danger-text": indicatorColors.dangerText,
+          "--indicator-warning": indicatorColors.warning,
+          "--indicator-warning-text": indicatorColors.warningText,
+          "--indicator-success": indicatorColors.success,
+          "--indicator-success-text": indicatorColors.successText,
+          "--indicator-info": indicatorColors.info,
+          "--indicator-info-text": indicatorColors.infoText,
+          "--indicator-default": indicatorColors.default,
+          "--indicator-default-text": indicatorColors.defaultText,
+
+          "--app-radius": getRadiusValue(radius),
+        } as React.CSSProperties
+      }
     >
       <RxdbProvider db={db}>
         <Suspense fallback={<LoadingPage />}>

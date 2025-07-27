@@ -4,6 +4,14 @@
   "version": "0.0.0",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
+  "typesVersions": {
+    "*": {
+      "ai": ["./src/ai.ts"],
+      "projects": ["./src/projects.ts"],
+      "tasks": ["./src/tasks.ts"],
+      "dashboard": ["./src/dashboard.ts"]
+    }
+  },
   "devDependencies": {
     "@incmix/config": "workspace: *",
     "@types/node": "^22.13.4",
@@ -18,7 +26,11 @@
     "./use-kanban-data": "./src/hooks/use-kanban-data.ts",
     "./sql/tasks": "./src/sql/tasks/index.ts",
     "./sql/helper": "./src/sql/helper.ts",
-    "./color": "./src/utils/color.ts"
+    "./color": "./src/utils/color.ts",
+    "./ai": "./src/ai.ts",
+    "./projects": "./src/projects.ts",
+    "./tasks": "./src/tasks.ts",
+    "./dashboard": "./src/dashboard.ts"
   },
   "scripts": {
     "typecheck": "tsc",
@@ -28,6 +40,7 @@
     "typescript": "catalog:"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.3.5",
     "@incmix/utils": "catalog:",
     "@koale/useworker": "4.1.0",
     "@radix-ui/themes": "catalog:",
