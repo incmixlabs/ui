@@ -188,29 +188,53 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
 
 
 
+  // Get color for user based on user ID - consistent coloring
+  const getColorForUser = (userId: string) => {
+    const colors = [
+      "bg-blue-9", "bg-amber-9", "bg-green-9", 
+      "bg-purple-9", "bg-pink-9", "bg-orange-9"
+    ];
+    
+    // Simple hash function to get consistent color for same user ID
+    const hash = userId.split("").reduce((acc, char) => {
+      return ((acc << 5) - acc) + char.charCodeAt(0);
+    }, 0);
+    
+    return colors[Math.abs(hash) % colors.length];
+  };
+
+  // Generate initials from name
+  const getInitials = (name: string): string => {
+    if (!name) return "";
+    const nameParts = name.split(" ");
+    if (nameParts.length >= 2) {
+      return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
+
   // Avatar component for showing a user
   const Avatar: React.FC<{ user: User; size?: number }> = ({ user, size = 24 }) => {
-    const getInitials = (name: string): string => {
-      const parts = name.split(' ');
-      if (parts.length > 1) {
-        return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
-      }
-      return name[0].toUpperCase();
-    };
-
+    const isPlaceholder = user.image?.includes('placeholder');
+    
     return (
       <div
-        className="rounded-full flex items-center justify-center text-xs font-medium text-white bg-blue-500 flex-shrink-0"
+        className="rounded-full flex items-center justify-center text-xs font-medium text-white flex-shrink-0 overflow-hidden"
         style={{ width: size, height: size }}
+        title={user.name}
       >
-        {user.image ? (
+        {user.image && !isPlaceholder ? (
           <img
             src={user.image}
             alt={user.name}
             className="w-full h-full rounded-full object-cover"
           />
         ) : (
-          getInitials(user.name)
+          <div className={`w-full h-full rounded-full ${getColorForUser(user.id)} flex items-center justify-center`}>
+            <span className="text-[10px] font-medium text-white">
+              {getInitials(user.name)}
+            </span>
+          </div>
         )}
       </div>
     );

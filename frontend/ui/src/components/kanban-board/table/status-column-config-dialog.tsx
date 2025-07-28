@@ -11,127 +11,7 @@ import {
 import { Select, Switch } from "@radix-ui/themes"
 import { Plus, Trash2, ChevronDown } from "lucide-react"
 
-// Use the same ColorPicker as in the demo
-interface ColorPickerProps {
-  color: string;
-  onChange: (color: string) => void;
-  insideDialog?: boolean;
-}
-
-// Simplified color picker component matching the demo
-const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, insideDialog = false }) => {
-  const [showPicker, setShowPicker] = useState(false);
-  const [hoveredColor, setHoveredColor] = useState<string | null>(null);
-  const buttonRef = useRef<HTMLDivElement>(null);
-  const popupRef = useRef<HTMLDivElement>(null);
-
-  // Define a simpler color palette for the compact design
-  const colorPalette = [
-    // Row 1
-    '#93c5fd', '#fcd34d', '#86efac', '#f9a8d4', '#c4b5fd', '#a5b4fc',
-    // Row 2
-    '#fdba74', '#67e8f9', '#d8b4fe', '#f87171', '#fde68a', '#6ee7b7'
-  ];
-
-  // Handle color selection
-  const handleColorSelect = (selectedColor: string) => {
-    onChange(selectedColor);
-    setShowPicker(false);
-  };
-
-  // Update popup position when shown
-  useEffect(() => {
-    if (showPicker && buttonRef.current && popupRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      popupRef.current.style.top = `${rect.bottom + window.scrollY + 5}px`;
-      popupRef.current.style.left = `${rect.left + window.scrollX - 5}px`;
-    }
-  }, [showPicker]);
-
-  // Close on outside click
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (buttonRef.current && popupRef.current) {
-        if (!buttonRef.current.contains(e.target as Node) &&
-          !popupRef.current.contains(e.target as Node)) {
-          setShowPicker(false);
-        }
-      }
-    };
-
-    if (showPicker) {
-      document.addEventListener('mousedown', handleClickOutside, { capture: true });
-    }
-
-    return () => document.removeEventListener('mousedown', handleClickOutside, { capture: true });
-  }, [showPicker]);
-
-  return (
-    <div className="relative inline-block">
-      <div
-        ref={buttonRef}
-        onClick={(e) => {
-          if (insideDialog) {
-            e.stopPropagation();
-          }
-          setShowPicker(!showPicker);
-        }}
-        className="w-8 h-8 border border-gray-300 rounded cursor-pointer bg-gray-200"
-        style={{ backgroundColor: color }}
-      />
-
-      {showPicker && (
-        <div
-          ref={popupRef}
-          onClick={(e) => {
-            if (insideDialog) {
-              e.stopPropagation();
-            }
-          }}
-          className="fixed top-0 left-0 p-3 bg-white rounded-xl shadow-lg border border-gray-200 z-[9999] w-[200px]"
-        >
-          <div className="flex gap-2.5 justify-between mb-2.5">
-            {colorPalette.slice(0, 6).map((c, i) => (
-              <div
-                key={`color-row1-${i}`}
-                onClick={(e) => {
-                  if (insideDialog) {
-                    e.stopPropagation();
-                  }
-                  handleColorSelect(c);
-                }}
-                onMouseEnter={() => setHoveredColor(c)}
-                onMouseLeave={() => setHoveredColor(null)}
-                className={`w-6 h-6 rounded-full cursor-pointer transition-transform duration-200 ease-in-out ${c === color ? 'border-2 border-black' : 'border border-gray-300'
-                  } ${hoveredColor === c ? 'scale-115' : 'scale-100'}`}
-                style={{ backgroundColor: c }}
-              />
-            ))}
-          </div>
-
-          <div className="flex gap-2.5 justify-between">
-            {colorPalette.slice(6).map((c, i) => (
-              <div
-                key={`color-row2-${i}`}
-                onClick={(e) => {
-                  if (insideDialog) {
-                    e.stopPropagation();
-                  }
-                  handleColorSelect(c);
-                }}
-                onMouseEnter={() => setHoveredColor(c)}
-                onMouseLeave={() => setHoveredColor(null)}
-                className={`w-6 h-6 rounded-full cursor-pointer transition-transform duration-200 ease-in-out ${c === color ? 'border-2 border-black' : 'border border-gray-300'
-                  } ${hoveredColor === c ? 'scale-115' : 'scale-100'}`}
-                style={{ backgroundColor: c }}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
+import ColorPicker, { ColorSelectType } from "@components/color-picker";
 import { ListColumn, TableTask } from "../types"
 
 interface StatusOption {
@@ -175,6 +55,9 @@ export const StatusColumnConfigDialog: React.FC<StatusColumnConfigDialogProps> =
   // New status form
   const [newStatusName, setNewStatusName] = useState("")
   const [newStatusColor, setNewStatusColor] = useState("#93c5fd")
+  
+  // Track which color picker is currently open
+  const [activeColorPicker, setActiveColorPicker] = useState<string | null>(null)
 
   // Initialize status options when dialog opens
   useEffect(() => {
@@ -432,11 +315,30 @@ export const StatusColumnConfigDialog: React.FC<StatusColumnConfigDialogProps> =
               {statusOptions.map((option) => (
                 <div key={option.id} className="flex items-center gap-3">
                   {/* Color picker */}
-                  <ColorPicker
-                    color={option.color}
-                    onChange={(newColor) => handleUpdateStatusColor(option.id, newColor)}
-                    insideDialog={true}
-                  />
+                  <div className="w-8 h-8 flex-shrink-0 relative">
+                    <Button
+                      variant="solid"
+                      className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
+                      style={{backgroundColor: option.color}}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveColorPicker(activeColorPicker === option.id ? null : option.id);
+                      }}
+                    />
+                    {activeColorPicker === option.id && (
+                      <div className="absolute top-9 left-0 z-50" style={{ minWidth: '260px' }}>
+                        <ColorPicker 
+                          colorType="base"
+                          onColorSelect={(colorSelect: ColorSelectType) => {
+                            if (colorSelect.hex) {
+                              handleUpdateStatusColor(option.id, colorSelect.hex);
+                              setActiveColorPicker(null); // Close after selection
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
 
                   {/* Status name input */}
                   <TextField.Root
@@ -497,11 +399,30 @@ export const StatusColumnConfigDialog: React.FC<StatusColumnConfigDialogProps> =
 
               <div className="flex items-center gap-3">
                 {/* Color picker for new status */}
-                <ColorPicker
-                  color={newStatusColor}
-                  onChange={(newColor) => setNewStatusColor(newColor)}
-                  insideDialog={true}
-                />
+                <div className="w-8 h-8 flex-shrink-0 relative">
+                  <Button
+                    variant="solid"
+                    className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
+                    style={{backgroundColor: newStatusColor}}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveColorPicker(activeColorPicker === "new" ? null : "new");
+                    }}
+                  />
+                  {activeColorPicker === "new" && (
+                    <div className="absolute top-9 left-0 z-50" style={{ minWidth: '260px' }}>
+                      <ColorPicker 
+                        colorType="base"
+                        onColorSelect={(colorSelect: ColorSelectType) => {
+                          if (colorSelect.hex) {
+                            setNewStatusColor(colorSelect.hex);
+                            setActiveColorPicker(null); // Close after selection
+                          }
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
 
                 {/* New status name input */}
                 <TextField.Root

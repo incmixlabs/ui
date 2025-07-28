@@ -332,11 +332,32 @@ interface PriorityDropdownCellProps {
 
 export type PriorityType = "low" | "medium" | "high" | "urgent";
 
-const PRIORITY_CONFIG: Record<PriorityType, { label: string, color: string, bgColor: string }> = {
-  low: { label: "Low", color: "#6b7280", bgColor: "#f9fafb" },
-  medium: { label: "Medium", color: "#3b82f6", bgColor: "#eff6ff" },
-  high: { label: "High", color: "#f59e0b", bgColor: "#fffbeb" },
-  urgent: { label: "Urgent", color: "#ef4444", bgColor: "#fef2f2" },
+// Configuration for both light and dark modes
+const PRIORITY_CONFIG: Record<PriorityType, { 
+  label: string, 
+  color: { light: string, dark: string }, 
+  bgColor: { light: string, dark: string }
+}> = {
+  low: { 
+    label: "Low", 
+    color: { light: "#6b7280", dark: "#9ca3af" },
+    bgColor: { light: "#f9fafb", dark: "#374151" }
+  },
+  medium: { 
+    label: "Medium", 
+    color: { light: "#3b82f6", dark: "#60a5fa" }, 
+    bgColor: { light: "#eff6ff", dark: "#1e3a8a" }
+  },
+  high: { 
+    label: "High", 
+    color: { light: "#f59e0b", dark: "#fbbf24" }, 
+    bgColor: { light: "#fffbeb", dark: "#783c00" }
+  },
+  urgent: { 
+    label: "Urgent", 
+    color: { light: "#ef4444", dark: "#f87171" }, 
+    bgColor: { light: "#fef2f2", dark: "#7f1d1d" }
+  },
 }
 
 export const PriorityDropdownCell: React.FC<PriorityDropdownCellProps> = ({
@@ -346,10 +367,68 @@ export const PriorityDropdownCell: React.FC<PriorityDropdownCellProps> = ({
   disabled = false
 }) => {
   const [isLoading, setIsLoading] = useState(false)
+  
+  // Detect dark mode using a data attribute on document.documentElement
+  // This checks for the common dark mode implementation with data-theme="dark"
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      // Check for various dark mode indicators
+      const htmlEl = document.documentElement;
+      return (
+        htmlEl.classList.contains('dark') ||
+        htmlEl.dataset.theme === 'dark' ||
+        window.matchMedia?.('(prefers-color-scheme: dark)').matches ||
+        document.body.classList.contains('dark-theme')
+      );
+    }
+    return false;
+  });
+
+  // Set up listener for theme changes
+  useEffect(() => {
+    const updateTheme = () => {
+      if (typeof window !== 'undefined') {
+        const htmlEl = document.documentElement;
+        setIsDarkMode(
+          htmlEl.classList.contains('dark') ||
+          htmlEl.dataset.theme === 'dark' ||
+          window.matchMedia?.('(prefers-color-scheme: dark)').matches ||
+          document.body.classList.contains('dark-theme')
+        );
+      }
+    };
+
+    // Listen for theme changes (common implementations)
+    const mediaQuery = window.matchMedia?.('(prefers-color-scheme: dark)');
+    if (mediaQuery) {
+      mediaQuery.addEventListener('change', updateTheme);
+    }
+
+    // Check for theme changes via mutations
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class', 'data-theme']
+    });
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    return () => {
+      mediaQuery?.removeEventListener('change', updateTheme);
+      observer.disconnect();
+    };
+  }, []);
 
   // Ensure value is a valid priority type or default to medium
   const safeValue = (Object.keys(PRIORITY_CONFIG).includes(value as string) ? value : "medium") as PriorityType
   const currentPriority = PRIORITY_CONFIG[safeValue]
+
+  // Get the appropriate colors based on the current theme
+  const themeMode = isDarkMode ? 'dark' : 'light';
+  const priorityColor = currentPriority.color[themeMode];
+  const priorityBgColor = currentPriority.bgColor[themeMode];
 
   const handlePriorityChange = async (newPriorityId: PriorityType) => {
     if (newPriorityId === value || !row.id || isLoading) return
@@ -375,14 +454,14 @@ export const PriorityDropdownCell: React.FC<PriorityDropdownCellProps> = ({
             ${disabled || isLoading ? 'opacity-50 cursor-not-allowed' : ''}
           `}
           style={{
-            backgroundColor: currentPriority.bgColor,
-            color: currentPriority.color,
-            border: `1px solid ${currentPriority.color}40`
+            backgroundColor: priorityBgColor,
+            color: priorityColor,
+            border: `1px solid ${priorityColor}40`
           }}
           disabled={disabled || isLoading}
           onClick={(e) => e.stopPropagation()}
         >
-          <Flag size={12} color={currentPriority.color} />
+          <Flag size={12} color={priorityColor} />
           {currentPriority.label}
           <ChevronDown size={12} />
         </button>
@@ -404,7 +483,7 @@ export const PriorityDropdownCell: React.FC<PriorityDropdownCellProps> = ({
                 ${isCurrentPriority ? 'bg-accent' : ''}
               `}
             >
-              <Flag size={12} color={config.color} />
+              <Flag size={12} color={config.color[themeMode]} />
               <Text size="2">{config.label}</Text>
               {isCurrentPriority && (
                 <Text size="1" className="text-muted-foreground ml-auto">

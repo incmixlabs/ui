@@ -214,30 +214,53 @@ export interface User {
   email: string;
 }
 
+// Get color for user based on user ID - consistent coloring
+const getColorForUser = (userId: string) => {
+  const colors = [
+    "bg-blue-9", "bg-amber-9", "bg-green-9", 
+    "bg-purple-9", "bg-pink-9", "bg-orange-9"
+  ];
+  
+  // Simple hash function to get consistent color for same user ID
+  const hash = userId.split("").reduce((acc, char) => {
+    return ((acc << 5) - acc) + char.charCodeAt(0);
+  }, 0);
+  
+  return colors[Math.abs(hash) % colors.length];
+};
+
+// Generate initials from name
+const getInitials = (name: string): string => {
+  if (!name) return "";
+  const nameParts = name.split(" ");
+  if (nameParts.length >= 2) {
+    return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
+  }
+  return name.substring(0, 2).toUpperCase();
+};
+
 // Avatar component for showing a user
 export const Avatar: React.FC<{ user: User; size?: number }> = ({ user, size = 24 }) => {
-  const getInitials = (name: string): string => {
-    const parts = name.split(' ');
-    if (parts.length > 1) {
-      return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
-    }
-    return name[0].toUpperCase();
-  };
-
+  const isPlaceholder = user.image?.includes('placeholder');
+  
   return (
     <div
-      className="rounded-full flex items-center justify-center text-xs font-medium text-white bg-blue-500 flex-shrink-0"
+      className="rounded-full flex items-center justify-center text-xs font-medium text-white flex-shrink-0 overflow-hidden"
       style={{ width: size, height: size }}
       title={user.name}
     >
-      {user.image ? (
+      {user.image && !isPlaceholder ? (
         <img
           src={user.image}
           alt={user.name}
           className="w-full h-full rounded-full object-cover"
         />
       ) : (
-        getInitials(user.name)
+        <div className={`w-full h-full rounded-full ${getColorForUser(user.id)} flex items-center justify-center`}>
+          <span className="text-[10px] font-medium text-white">
+            {getInitials(user.name)}
+          </span>
+        </div>
       )}
     </div>
   );
@@ -247,33 +270,34 @@ export const Avatar: React.FC<{ user: User; size?: number }> = ({ user, size = 2
 export const AvatarGroup: React.FC<{ users: User[]; maxDisplay?: number }> = ({ users, maxDisplay = 3 }) => {
   if (!users || users.length === 0) {
     return (
-      <div className="h-6 w-6 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
-        <span className="text-xs text-gray-400">—</span>
+      <div className="h-7 w-7 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden border-2 border-white dark:border-background">
+        <span className="text-xs text-gray-400 dark:text-gray-500">—</span>
       </div>
     );
   }
 
   const displayUsers = users.slice(0, maxDisplay);
   const remaining = users.length - maxDisplay;
+  const zIndexBase = 30; // Match the zIndex from OverlappingAvatarGroup
 
   return (
     <div className="flex -space-x-2">
       {displayUsers.map((user, index) => (
         <div
           key={user.id}
-          className="ring-2 ring-white"
-          style={{ zIndex: 10 - index }}
+          className="w-7 h-7 rounded-full border-2 border-white dark:border-background overflow-hidden"
+          style={{ zIndex: zIndexBase - index }}
         >
-          <Avatar user={user} />
+          <Avatar user={user} size={28} />
         </div>
       ))}
       {remaining > 0 && (
         <div
-          className="ring-2 ring-white flex items-center justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-600"
-          style={{ width: 24, height: 24, zIndex: 10 - maxDisplay }}
+          className="w-7 h-7 rounded-full border-2 border-white dark:border-background overflow-hidden bg-gray-9 flex items-center justify-center"
+          style={{ zIndex: zIndexBase - maxDisplay }}
           title={`+${remaining} more users`}
         >
-          +{remaining}
+          <span className="text-[10px] font-medium text-white">+{remaining}</span>
         </div>
       )}
     </div>

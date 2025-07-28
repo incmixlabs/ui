@@ -22,5 +22,5 @@
   "[markdown]": {
     "editor.defaultFormatter": "yzhang.markdown-all-in-one"
   },
-  "kiroAgent.configureMCP": "Disabled",
+  "kiroAgent.configureMCP": "Enabled",
 }
