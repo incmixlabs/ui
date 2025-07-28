@@ -1,6 +1,6 @@
 import { Card, CardContent, CardTitle } from "@components/card/card"
 import { CarouselItem } from "@components/carousel"
-import { Box, Flex, Text } from "@incmix/ui"
+import { Box, Flex, ScrollArea, Text } from "@incmix/ui"
 import { cn } from "@utils/cn"
 
 import { getRelativeTime } from "@incmix/utils/date"
@@ -23,8 +23,8 @@ export function NewsCard({ position, highlight, stories }: NewsCardProps) {
   return (
     <CarouselItem>
       <Card>
-        <CardContent className="p-4 pt-4 ">
-          <Flex gap="6">
+        <CardContent className="p-2 pt-2">
+           <Flex gap="6">
             <Box
               className={cn(
                 stories?.length
@@ -54,7 +54,7 @@ export function NewsCard({ position, highlight, stories }: NewsCardProps) {
                 </Box>
               </Box>
             )}
-          </Flex>
+           </Flex>
         </CardContent>
       </Card>
     </CarouselItem>

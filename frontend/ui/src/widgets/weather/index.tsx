@@ -4,7 +4,7 @@ import { LOCATION_API_URL } from "@utils/constants"
 import { WeatherCard, type WeatherCardProps } from "./weather-card"
 import "./weather.css"
 
-const locationApiUrl = `${LOCATION_API_URL}/weather`
+const locationApiUrl = `${LOCATION_API_URL}/weather?lat=40.730610&lon=-73.935242`
 
 export function WeatherWidget({
   location,
@@ -12,13 +12,12 @@ export function WeatherWidget({
   const { data, error, isPending } = useQuery<WeatherCardProps>({
     queryKey: ["weather", location],
     queryFn: async () => {
-      const searchParams = new URLSearchParams()
-      if (location) {
-        searchParams.append("lat", location.lat)
-        searchParams.append("lon", location.lon)
-      }
-
-      const res = await fetch(`${locationApiUrl}?${searchParams.toString()}`, {
+      // const searchParams = new URLSearchParams()
+      // if (location) {
+      //   searchParams.append("lat", location.lat)
+      //   searchParams.append("lon", location.lon)
+      // }
+      const res = await fetch(`${locationApiUrl}`, {
         method: "get",
         headers: {
           "Content-Type": "application/json",

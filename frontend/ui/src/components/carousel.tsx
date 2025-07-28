@@ -5,6 +5,7 @@ import { cn } from "@utils/cn"
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from "embla-carousel-react"
+import {Box} from "@incmix/ui"
 import {
   createContext,
   forwardRef,
@@ -131,7 +132,7 @@ const Carousel = forwardRef<
     }, [api, onSelect])
 
     return (
-      <div className="px-12">
+      <Box className="px-6">
         <CarouselContext.Provider
           value={{
             carouselRef,
@@ -155,7 +156,7 @@ const Carousel = forwardRef<
             {children}
           </div>
         </CarouselContext.Provider>
-      </div>
+      </Box>
     )
   }
 )
