@@ -116,7 +116,6 @@ export function ThemePlayground() {
     { bg: { color: "background", break: 0 } },
     ...BASE_SIDEBAR_COLOR_OPTIONS,
   ];
-  console.log("dashboard",dashboard);
   
   return (
     <>
@@ -222,7 +221,7 @@ export function ThemePlayground() {
           </Flex>
           <SelectRow
             label={t("Dashboard Color #1")}
-            value={dashboard.color1 === "pink" ? `var(--${dashboard.color1}-9)` : dashboard.color1}
+            value={dashboard.color1.startsWith('var(') ? dashboard.color1 : `var(--${dashboard.color1}-9)`}
             options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
             onChange={(v) =>
               setTheme({ dashboard: { ...dashboard, color1: v as RadixColor } })
@@ -231,7 +230,7 @@ export function ThemePlayground() {
 
           <SelectRow
             label={t("Dashboard Color #2")}
-            value={dashboard.color2 === "yellow" ? `var(--${dashboard.color2}-9)` : dashboard.color2}
+            value={dashboard.color2.startsWith('var(') ? dashboard.color2 : `var(--${dashboard.color2}-9)`}
             options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
             onChange={(v) =>
               setTheme({ dashboard: { ...dashboard, color2: v as RadixColor } })
@@ -240,7 +239,7 @@ export function ThemePlayground() {
 
           <SelectRow
             label={t("Dashboard Color #3")}
-            value={dashboard.color3 === "lime" ? `var(--${dashboard.color3}-9)` : dashboard.color3}
+            value={dashboard.color3.startsWith('var(') ? dashboard.color3 : `var(--${dashboard.color3}-9)`}
             options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
             onChange={(v) =>
               setTheme({ dashboard: { ...dashboard, color3: v as RadixColor } })
@@ -248,7 +247,7 @@ export function ThemePlayground() {
           />
           <SelectRow
             label={t("Dashboard Color #4")}
-            value={dashboard.color4 === "cyan" ? `var(--${dashboard.color4}-9)` : dashboard.color4}
+            value={dashboard.color4.startsWith('var(') ? dashboard.color4 : `var(--${dashboard.color4}-9)`}
             options={RADIX_ACCENT_COLORS.map((c) => `var(--${c}-9)`)}
             onChange={(v) =>
               setTheme({ dashboard: { ...dashboard, color4: v as RadixColor } })

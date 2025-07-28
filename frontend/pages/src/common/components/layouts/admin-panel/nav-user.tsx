@@ -104,6 +104,7 @@ export function NavUser({
               onClick={handleLogout}
               disabled={isLogoutLoading}
               className="px-1.5"
+              color="red"
             >
               <LogOut className="size-4" />
               {t("logout")}
