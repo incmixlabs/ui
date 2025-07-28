@@ -372,5 +372,6 @@ export function buildSidebarItems(
       })
   }
   const items = buildItems(ROUTES_CONFIG)
+
   return items
 }
