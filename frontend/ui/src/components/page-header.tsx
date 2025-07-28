@@ -40,11 +40,9 @@ export function PageHeader({
       className={cn("my-4 gap-2", className)}
     >
       <Flex align="center" gap="2">
-        {isPreviousIcon && (
-          <IconButton onClick={() => router.history.back()}>
-            <ArrowLeftIcon />
-          </IconButton>
-        )}
+        <IconButton onClick={() => router.history.back()}>
+          <ArrowLeftIcon />
+        </IconButton>
         {isMobile && <SidebarTrigger mobileSidebarTrigger />}
         <Box>
           {title && (
