@@ -99,17 +99,6 @@ export function NavMain({ items }: { items: NavItem[] }) {
     return item?.url?.startsWith("/dashboard/") && item?.url !== "/dashboard"
   }
 
-  // function isDynamicProject(item: {
-  //   isSelected: boolean
-  //   title: string
-  //   url: string
-  // }): boolean {
-  //   const result =
-  //     item?.url?.startsWith("/projects/") && item?.url !== "/projects"
-  //   console.log("isDynamicProject check:", item.url, "result:", result)
-  //   return result
-  // }
-
   // Get context menu for main items (parent level)
   function getMainItemContextMenu(item: NavItem) {
     // For exact "/dashboard" root
@@ -230,7 +219,6 @@ export function NavMain({ items }: { items: NavItem[] }) {
         <SidebarMenu>
           {items.map((item) => {
             const hoverContent = generateHoverContent(item)
-            console.log(hoverContent)
             const content = item.items?.length ? (
               <Collapsible
                 key={item.title}
