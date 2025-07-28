@@ -77,7 +77,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarHeader>
         <SidebarContent className="overflow-visible group-data-[collapsible=icon]:overflow-visible">
           <ScrollArea className="!overflow-visible main-nav h-full">
-            <NavMain items={navItems} dashboards={dashboards} />
+            <NavMain items={navItems} />
           </ScrollArea>
         </SidebarContent>
         {user && (

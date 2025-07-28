@@ -63,6 +63,7 @@ export function WeatherCard({ days, location }: WeatherCardProps) {
   const [today, ...rest] = days
 
   const TodayIcon = WeatherCodes[today.weatherCode].Icon
+  
   return (
     <CardContainer className="w-full border-none rounded-app p-4 text-gray-12 bg-gradient-to-b from-gray-1 to-amber-4 dark:from-indigo-3 dark:to-gray-2">
       <Flex align="start" justify="between">

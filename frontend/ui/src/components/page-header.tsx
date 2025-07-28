@@ -1,25 +1,38 @@
-import { Box, cn, Flex, Heading, Text, useIsMobile } from "@incmix/ui"
-import { SidebarTrigger } from "@incmix/ui/sidebar"
-
+import {
+  Box,
+  cn,
+  Flex,
+  Heading,
+  IconButton,
+  Text,
+  useIsMobile,
+} from "@incmix/ui";
+import { SidebarTrigger } from "@incmix/ui/sidebar";
+import { useRouter } from "@tanstack/react-router";
+import { ArrowLeftIcon } from "lucide-react";
 interface PageHeaderProps {
-  title?: string | React.ReactNode
-  description?: string | React.ReactNode
-  actions?: React.ReactNode
-  className?: string
-  align?: "center" | "start" | "end" | "baseline" | "stretch"
-  justify?: "center" | "start" | "end" | "between"
+  title?: string | React.ReactNode;
+  email?: string | React.ReactNode;
+  description?: string | React.ReactNode;
+  actions?: React.ReactNode;
+  isPreviousIcon?: boolean;
+  className?: string;
+  align?: "center" | "start" | "end" | "baseline" | "stretch";
+  justify?: "center" | "start" | "end" | "between";
 }
 
 export function PageHeader({
   title,
+  email,
+  isPreviousIcon = false,
   align = "center",
   justify = "between",
   description,
   actions,
   className,
 }: PageHeaderProps) {
-  const isMobile = useIsMobile()
-
+  const isMobile = useIsMobile();
+  const router = useRouter();
   return (
     <Flex
       align={align}
@@ -27,11 +40,23 @@ export function PageHeader({
       className={cn("my-4 gap-2", className)}
     >
       <Flex align="center" gap="2">
+        {isPreviousIcon && (
+          <IconButton onClick={() => router.history.back()}>
+            <ArrowLeftIcon />
+          </IconButton>
+        )}
         {isMobile && <SidebarTrigger mobileSidebarTrigger />}
         <Box>
-          {title &&
-          <Heading size="6">{title}</Heading>
-          }
+          {title && (
+            <Heading size="6" weight="medium" className="capitalize">
+              {title}
+            </Heading>
+          )}
+          {email && (
+            <Text as="p" className="text-muted-foreground text-sm">
+              {email}
+            </Text>
+          )}
           {description && (
             <Text as="p" className="text-muted-foreground text-sm">
               {description}
@@ -41,5 +66,5 @@ export function PageHeader({
       </Flex>
       {actions && <Box>{actions}</Box>}
     </Flex>
-  )
+  );
 }

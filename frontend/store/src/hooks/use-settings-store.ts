@@ -372,6 +372,8 @@ export const useThemeStore = create<ThemeStoreConfig>()(
         const buildColorVar = (varString: string, shade: string | number) => {
           const match = varString.match(/--([a-zA-Z0-9-]+)-\d+/)
           const base = match?.[1] || varString
+          console.log("base shade", base, shade)
+
           return `var(--${base}-${shade})`
         }
 
@@ -411,6 +413,7 @@ export const useThemeStore = create<ThemeStoreConfig>()(
             pastelShade,
           }),
         }
+        console.log("dash", dash)
 
         return dash
       },
