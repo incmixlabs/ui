@@ -161,7 +161,8 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
   rowData
 }) => {
   const [isOpen, setIsOpen] = useState(true)
-  const [customValue, setCustomValue] = useState(value)
+  // Initialize with empty string instead of the value (which might be an ID)
+  const [customValue, setCustomValue] = useState("")
   const [customColor, setCustomColor] = useState("#93c5fd")
   const [isCreating, setIsCreating] = useState(false)
   const [isPositioned, setIsPositioned] = useState(false)
