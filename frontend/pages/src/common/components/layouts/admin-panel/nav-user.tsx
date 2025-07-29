@@ -3,7 +3,8 @@
 import { Bell, ChevronsUpDown, LogOut, Settings2, UserIcon } from "lucide-react"
 
 import { useLogout, useProfilePictureUrl, useUser } from "@auth"
-import { Avatar, Box, DropdownMenu, Flex, Text } from "@incmix/ui"
+import { useAppearanceStore } from "@incmix/store"
+import { Avatar, Box, DropdownMenu, Flex, Switch, Text } from "@incmix/ui"
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -13,16 +14,13 @@ import {
 import { Link } from "@tanstack/react-router"
 import { useTranslation } from "react-i18next"
 
-export function NavUser({
-  userId,
-}: {
-  userId: string
-}) {
+export function NavUser({ userId }: { userId: string }) {
   const { isMobile } = useSidebar()
   const { t } = useTranslation("navbar")
   const { handleLogout, isPending: isLogoutLoading } = useLogout()
   const { user } = useUser(userId)
   const profilePictureUrl = useProfilePictureUrl(user?.id ?? "")
+  const { appearance, toggleAppearance } = useAppearanceStore()
 
   const avatarUrl = profilePictureUrl || user?.avatar || undefined
 
@@ -81,12 +79,6 @@ export function NavUser({
             <DropdownMenu.Separator />
             <DropdownMenu.Group>
               <DropdownMenu.Item asChild className="px-1.5">
-                <Link to="/profile">
-                  <UserIcon className="size-4" />
-                  {t("profile")}
-                </Link>
-              </DropdownMenu.Item>
-              <DropdownMenu.Item asChild className="px-1.5">
                 <Link to="/settings">
                   <Settings2 className="size-4" />
                   {t("settings")}
@@ -97,6 +89,15 @@ export function NavUser({
                   <Bell className="size-4" />
                   {t("notifications")}
                 </Link>
+              </DropdownMenu.Item>
+              <DropdownMenu.Item asChild className="px-1.5">
+                <Flex align="center" justify="between">
+                  <Text>{t("Theme")}</Text>
+                  <Switch
+                    checked={appearance === "dark"}
+                    onCheckedChange={toggleAppearance}
+                  />
+                </Flex>
               </DropdownMenu.Item>
             </DropdownMenu.Group>
             <DropdownMenu.Separator />

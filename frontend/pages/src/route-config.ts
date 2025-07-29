@@ -41,7 +41,6 @@ import TasksRoute from "./tasks/routes/index"
 import TranslationsRoute from "./translations/routes/translations"
 import ListUsersRoute from "./users/routes/list-users"
 import NotificationsRoute from "./users/routes/notifications"
-import ProfileRoute from "./users/routes/profile"
 import SettingsRoute from "./users/routes/settings"
 
 export type NavItem = {
@@ -232,11 +231,6 @@ const ROUTES_CONFIG: RouteConfig[] = [
     path: "/onboarding",
     route: OnboardingRoute,
     access: ROUTE_ACCESS.PUBLIC,
-  },
-  {
-    path: "/profile",
-    route: ProfileRoute,
-    access: ROUTE_ACCESS.PROTECTED,
   },
   {
     path: "/settings",

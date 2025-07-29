@@ -72,9 +72,7 @@ export const UserProfileImage: React.FC<UserProfileImageProps> = ({
   const avatarUrl = profilePictureUrl || user?.avatar || undefined
 
   if (!editable) {
-    return (
-      <Avatar size={size} src={avatarUrl} fallback={user?.name?.charAt(0)} />
-    )
+    return <Avatar size={size} src={avatarUrl} name={user?.name} />
   }
 
   return (
@@ -82,6 +80,7 @@ export const UserProfileImage: React.FC<UserProfileImageProps> = ({
       size={size}
       src={avatarUrl}
       name={user?.name}
+      className="h-64 w-64 rounded-app"
       onImageChange={handleImageUpload}
       onImageDelete={handleImageDelete}
       isDeletingImage={isDeletingProfilePicture}

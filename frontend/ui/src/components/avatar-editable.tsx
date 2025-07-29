@@ -2,6 +2,7 @@ import { useRef, useState } from "react"
 import { Trash as TrashIcon, Pencil as PencilIcon } from "lucide-react"
 
 import { Avatar, Box, Button, Flex } from "@radixui"
+import { cn } from "@utils"
 
 type AvatarEditableProps = {
   size?: "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
@@ -11,6 +12,7 @@ type AvatarEditableProps = {
   onImageChange?: (file: File) => Promise<void>
   onImageDelete?: () => Promise<void>
   isDeletingImage?: boolean
+  className?: string
 }
 
 export const AvatarEditable: React.FC<AvatarEditableProps> = ({
@@ -21,6 +23,7 @@ export const AvatarEditable: React.FC<AvatarEditableProps> = ({
   onImageChange,
   onImageDelete,
   isDeletingImage = false,
+  className,
 }) => {
   const [isHovered, setIsHovered] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -33,21 +36,21 @@ export const AvatarEditable: React.FC<AvatarEditableProps> = ({
   }
 
   return (
-    <Box position="relative" className="rounded-full">
-      <Avatar size={size} src={src} name={name} />
+    <Box position="relative" className="rounded-app">
+      <Avatar size={size} src={src} name={name} className={cn("",className)} />
       <Flex
         position="absolute"
         inset="0"
         align="center"
         justify="center"
-        className="rounded-full"
+        className="rounded-app"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         <Flex
           align="center"
           justify="center"
-          className={`h-full w-full cursor-pointer rounded-full bg-black/50 transition-opacity ${
+          className={`h-full w-full cursor-pointer rounded-app bg-black/50 transition-opacity ${
             isHovered ? "opacity-100" : "opacity-0"
           }`}
           onClick={() => fileInputRef.current?.click()}
@@ -68,7 +71,7 @@ export const AvatarEditable: React.FC<AvatarEditableProps> = ({
           variant="ghost"
           color="red"
           disabled={isDeletingImage}
-          className="absolute top-0 right-0 rounded-full bg-red-3 p-1"
+          className="absolute top-0 right-0 rounded-app bg-red-3 p-1"
         >
           <TrashIcon width="16" height="16" />
         </Button>

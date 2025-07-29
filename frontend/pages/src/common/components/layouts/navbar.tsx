@@ -111,14 +111,6 @@ const ProfileDropdown: React.FC = () => {
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         <DropdownMenu.Item asChild>
-          <Link asChild href="/profile">
-            <Flex align="center" gap="2">
-              <PersonIcon />
-              <Text>{t("profile")}</Text>
-            </Flex>
-          </Link>
-        </DropdownMenu.Item>
-        <DropdownMenu.Item asChild>
           <Link asChild href="/settings">
             <Flex align="center" gap="2">
               <GearIcon />

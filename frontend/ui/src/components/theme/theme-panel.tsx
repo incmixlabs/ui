@@ -20,12 +20,10 @@ import {
   type RadixColor,
   type RadixRadius,
   type RadixScaling,
-  breakFontColor,
 } from "@incmix/utils/types";
 import { ThemeContext } from "@radix-ui/themes";
 import {
   useThemeStore,
-  useAppearanceStore,
   SIDEBAR_COLOR_OPTIONS as BASE_SIDEBAR_COLOR_OPTIONS,
   extractColorName,
 } from "@incmix/store/use-settings-store";
@@ -95,7 +93,6 @@ const SelectRow = (props: {
 
 export function ThemePlayground() {
   const { t } = useTranslation(["settings", "common"]);
-  const { appearance, toggleAppearance } = useAppearanceStore();
   const {
     accentColor,
     onAccentColorChange,
@@ -124,13 +121,6 @@ export function ThemePlayground() {
           {t("themeSettings")}
         </Heading>
         <Grid p="2" columns={"1"} gap={"2"}>
-          <Flex align="center" justify="between">
-            <Text>{t("darkMode")}</Text>
-            <Switch
-              checked={appearance === "dark"}
-              onCheckedChange={toggleAppearance}
-            />
-          </Flex>
           <SelectRow
             label="Accent Color"
             value={accentColor}

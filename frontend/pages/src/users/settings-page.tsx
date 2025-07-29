@@ -1,3 +1,6 @@
+import { useCurrentUser, useProfileUpdate } from "@auth"
+import { LoadingPage } from "@common"
+import { useAppearanceStore } from "@incmix/store/use-settings-store"
 import {
   Box,
   CardContainer,
@@ -5,6 +8,7 @@ import {
   Flex,
   Grid,
   Heading,
+  Label,
   PageHeader,
   ReactiveButton,
   Select,
@@ -12,17 +16,13 @@ import {
   ThemePlayground,
 } from "@incmix/ui"
 import AutoForm from "@incmix/ui/auto-form"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useTranslation } from "react-i18next"
-import { toast } from "sonner"
-
-import { useCurrentUser, useProfileUpdate } from "@auth"
-import { LoadingPage } from "@common"
-import { useAppearanceStore } from "@incmix/store/use-settings-store"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import type { UserProfile } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Aperture, Globe, Info, Lock, Palette } from "lucide-react"
+import { useTranslation } from "react-i18next"
+import { toast } from "sonner"
 import {
   ShadcnTabs,
   TabsContent,
@@ -35,7 +35,11 @@ import {
   passwordChangeFormSchema,
 } from "./settings-form-schema"
 
-const useGeneralInfoForm = (userId: string, initialName: string) => {
+const useGeneralInfoForm = (
+  userId: string,
+  initialName: string,
+  _user?: UserProfile
+) => {
   const queryClient = useQueryClient()
   const { handleUpdateUser, isUpdatingUser, updateUserError } =
     useProfileUpdate(userId)
@@ -184,6 +188,7 @@ const GeneralInfoForm: React.FC<ReturnType<typeof useGeneralInfoForm>> = ({
   schemaWithTranslations,
   initialValues,
   handleSubmit,
+  user,
   isUpdatingUser,
   updateUserError,
 }) => {
@@ -199,6 +204,16 @@ const GeneralInfoForm: React.FC<ReturnType<typeof useGeneralInfoForm>> = ({
       >
         <Info size={20} /> {t("generalInfo")}
       </Heading>
+      <Box className="pb-4">
+        <Label className="block pb-3 text-base">Email</Label>
+        <Text
+          as="p"
+          className="w-full cursor-not-allowed rounded-md bg-gray-4 p-3 text-base"
+        >
+          {user?.email}
+        </Text>
+      </Box>
+
       <AutoForm
         formSchema={schemaWithTranslations}
         fieldConfig={generalInfoFormSchema.fieldConfig}
@@ -302,7 +317,7 @@ const SettingsPage: React.FC = () => {
 
   return (
     <DashboardLayout>
-      <Box className="px-12">
+      <Box className="container mx-auto px-4 sm:px-0">
         <PageHeader title={t("Account Settings")} isPreviousIcon />
         <ShadcnTabs defaultValue={"general"}>
           <TabsList className="w-full">
@@ -320,7 +335,7 @@ const SettingsPage: React.FC = () => {
           <TabsContent value="general" className="h-full space-y-4 pt-2">
             <Flex gap="4" className="w-full">
               <ProfileSection user={user} />
-              <GeneralInfoForm {...generalInfoForm} />
+              <GeneralInfoForm {...generalInfoForm} user={user} />
             </Flex>
             <PasswordChangeForm {...passwordChangeForm} />
             <LanguageSelector />
