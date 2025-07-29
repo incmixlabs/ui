@@ -436,7 +436,7 @@ export default function AutoFormObject<
     .filter(Boolean) // Remove null values
 
   return (
-    <Accordion type="multiple" className="space-y-5 border-none">
+    <Accordion type="multiple" className="space-y-2 border-none">
       {renderedFields}
     </Accordion>
   )

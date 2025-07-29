@@ -44,9 +44,8 @@ export function NavUser({
                 className="h-8 w-8 rounded-app"
                 name={user.name}
               />
-
               <Box className="grid flex-1 text-left text-sm leading-tight">
-                <Text size="2" as="span">
+                <Text size="2" as="span" className="capitalize">
                   {user.name}
                 </Text>
                 <Text size="2" as="span" className="truncate">
@@ -57,7 +56,7 @@ export function NavUser({
             </SidebarMenuButton>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-app"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-app px-0 py-1"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
@@ -70,39 +69,32 @@ export function NavUser({
                   name={user.name}
                 />
                 <Box className="grid flex-1 text-left leading-tight">
-                  <Text size="2" as="span">
+                  <Text size="2" as="span" className="text-gray-12 capitalize">
                     {user.name}
                   </Text>
-                  <Text size="2" as="span" className="truncate">
+                  <Text size="2" as="span" className="truncate text-gray-11">
                     {user.email}
                   </Text>
                 </Box>
               </Flex>
             </DropdownMenu.Label>
             <DropdownMenu.Separator />
-            {/* <DropdownMenu.Group>
-              <DropdownMenu.Item>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenu.Item>
-            </DropdownMenu.Group>
-            <DropdownMenu.Separator /> */}
             <DropdownMenu.Group>
-              <DropdownMenu.Item asChild>
+              <DropdownMenu.Item asChild className="px-1.5">
                 <Link to="/profile">
-                  <UserIcon />
+                  <UserIcon className="size-4" />
                   {t("profile")}
                 </Link>
               </DropdownMenu.Item>
-              <DropdownMenu.Item asChild>
+              <DropdownMenu.Item asChild className="px-1.5">
                 <Link to="/settings">
-                  <Settings2 />
+                  <Settings2 className="size-4" />
                   {t("settings")}
                 </Link>
               </DropdownMenu.Item>
-              <DropdownMenu.Item asChild>
+              <DropdownMenu.Item asChild className="px-1.5">
                 <Link to="/notifications">
-                  <Bell />
+                  <Bell className="size-4" />
                   {t("notifications")}
                 </Link>
               </DropdownMenu.Item>
@@ -111,8 +103,10 @@ export function NavUser({
             <DropdownMenu.Item
               onClick={handleLogout}
               disabled={isLogoutLoading}
+              className="px-1.5"
+              color="red"
             >
-              <LogOut />
+              <LogOut className="size-4" />
               {t("logout")}
             </DropdownMenu.Item>
           </DropdownMenu.Content>

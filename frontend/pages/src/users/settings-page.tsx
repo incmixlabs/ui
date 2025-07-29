@@ -1,17 +1,15 @@
 import {
   Box,
   CardContainer,
+  Container,
   Flex,
   Grid,
   Heading,
   PageHeader,
   ReactiveButton,
   Select,
-  SidebarTrigger,
-  Switch,
   Text,
   ThemePlayground,
-  useIsMobile,
 } from "@incmix/ui"
 import AutoForm from "@incmix/ui/auto-form"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -20,13 +18,17 @@ import { toast } from "sonner"
 
 import { useCurrentUser, useProfileUpdate } from "@auth"
 import { LoadingPage } from "@common"
-import {
-  useAppearanceStore,
-  useThemeStore,
-} from "@incmix/store/use-settings-store"
+import { useAppearanceStore } from "@incmix/store/use-settings-store"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import type { UserProfile } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
+import { Aperture, Globe, Info, Lock, Palette } from "lucide-react"
+import {
+  ShadcnTabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../../ui/src/components/shadcn"
 import { CurrentUserProfileImage } from "../common/components/user-profile-image"
 import {
   generalInfoFormSchema,
@@ -158,18 +160,22 @@ const usePasswordChangeForm = () => {
   }
 }
 
-const ProfileSection: React.FC<{ user: UserProfile }> = ({ user }) => {
+const ProfileSection: React.FC<{ user?: UserProfile }> = ({ user }) => {
+  console.log(user)
+
   return (
-    <CardContainer>
-      <Flex align="center" mb="4">
-        <CurrentUserProfileImage size="8" editable />
-        <Box ml="4">
-          <Heading size="4" color="gray">
-            {user?.name}
-          </Heading>
-          <Text color="gray">{user.email}</Text>
-        </Box>
-      </Flex>
+    <CardContainer className="w-fit shrink-0">
+      <Heading
+        size="4"
+        mb="4"
+        color="gray"
+        weight="regular"
+        className="flex items-center gap-2"
+      >
+        <Aperture size={20} />
+        Profile Photo
+      </Heading>
+      <CurrentUserProfileImage size="9" editable />
     </CardContainer>
   )
 }
@@ -183,9 +189,15 @@ const GeneralInfoForm: React.FC<ReturnType<typeof useGeneralInfoForm>> = ({
 }) => {
   const { t } = useTranslation(["settings", "common"])
   return (
-    <CardContainer>
-      <Heading size="4" mb="4" color="gray">
-        {t("generalInfo")}
+    <CardContainer className="w-full">
+      <Heading
+        size="4"
+        mb="4"
+        color="gray"
+        weight="regular"
+        className="flex items-center gap-2"
+      >
+        <Info size={20} /> {t("generalInfo")}
       </Heading>
       <AutoForm
         formSchema={schemaWithTranslations}
@@ -218,14 +230,20 @@ const PasswordChangeForm: React.FC<
   const { t } = useTranslation(["settings", "common"])
   return (
     <CardContainer>
-      <Heading size="4" mb="4" color="gray">
-        {t("changePassword")}
+      <Heading
+        size="5"
+        mb="4"
+        color="gray"
+        weight={"regular"}
+        className="flex items-center gap-2"
+      >
+        <Lock size={20} /> {t("changePassword")}
       </Heading>
       <AutoForm
         formSchema={schemaWithTranslations}
         fieldConfig={passwordChangeFormSchema.fieldConfig}
         onSubmit={handleSubmit}
-        className="space-y-4"
+        className="space-y-1"
       >
         {passwordChangeError && (
           <Text color="red">{passwordChangeError.message}</Text>
@@ -248,8 +266,14 @@ const LanguageSelector: React.FC = () => {
 
   return (
     <CardContainer>
-      <Heading size="4" mb="4" color="gray">
-        {t("languageSettings")}
+      <Heading
+        size="5"
+        mb="4"
+        color="gray"
+        weight="regular"
+        className="flex items-center gap-2"
+      >
+        <Globe size={20} /> {t("languageSettings")}
       </Heading>
       <Flex direction="column" gap="2">
         <Text as="label" size="2" color="gray">
@@ -267,24 +291,6 @@ const LanguageSelector: React.FC = () => {
   )
 }
 
-const _ThemeSettings: React.FC = () => {
-  const { t } = useTranslation(["settings", "common"])
-  const appearance = useAppearanceStore((state) => state.appearance)
-  const toggleTheme = useAppearanceStore((state) => state.toggleAppearance)
-
-  return (
-    <CardContainer>
-      <Heading size="4" mb="4" color="gray">
-        {t("themeSettings")}
-      </Heading>
-      <Flex align="center" justify="between">
-        <Text>{t("darkMode")}</Text>
-        <Switch checked={appearance === "dark"} onCheckedChange={toggleTheme} />
-      </Flex>
-    </CardContainer>
-  )
-}
-
 const SettingsPage: React.FC = () => {
   const { t } = useTranslation(["settings", "common"])
   const { user, isLoading, isError } = useCurrentUser()
@@ -296,25 +302,34 @@ const SettingsPage: React.FC = () => {
 
   return (
     <DashboardLayout>
-      <Flex direction="column" className="min-h-full">
-        <PageHeader title={t("settings")} />
-        <Grid
-          columns={{ initial: "1", md: "2" }}
-          gap="6"
-          className="w-full flex-1"
-        >
-          <Flex direction="column" gap="6">
-            <ProfileSection user={user} />
-            <LanguageSelector />
-            <ThemePlayground />
-          </Flex>
-
-          <Flex direction="column" gap="6">
-            <GeneralInfoForm {...generalInfoForm} />
+      <Box className="px-12">
+        <PageHeader title={t("Account Settings")} isPreviousIcon />
+        <ShadcnTabs defaultValue={"general"}>
+          <TabsList className="w-full">
+            <Box className="w-full px-0.5">
+              <TabsTrigger value="general" className="h-9">
+                <Info size={20} />
+                {t("General")}
+              </TabsTrigger>
+              <TabsTrigger value="theme-settings" className="h-9">
+                <Palette size={20} />
+                {t("Theme Settings")}
+              </TabsTrigger>
+            </Box>
+          </TabsList>
+          <TabsContent value="general" className="h-full space-y-4 pt-2">
+            <Flex gap="4" className="w-full">
+              <ProfileSection user={user} />
+              <GeneralInfoForm {...generalInfoForm} />
+            </Flex>
             <PasswordChangeForm {...passwordChangeForm} />
-          </Flex>
-        </Grid>
-      </Flex>
+            <LanguageSelector />
+          </TabsContent>
+          <TabsContent value="theme-settings" className="h-full">
+            <ThemePlayground />
+          </TabsContent>
+        </ShadcnTabs>
+      </Box>
     </DashboardLayout>
   )
 }

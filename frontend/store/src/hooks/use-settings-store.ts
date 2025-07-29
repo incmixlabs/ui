@@ -411,7 +411,6 @@ export const useThemeStore = create<ThemeStoreConfig>()(
             pastelShade,
           }),
         }
-
         return dash
       },
       getRadiusValue: (radiusLevel?: RadixRadius | string) => {

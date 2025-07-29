@@ -145,7 +145,6 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
             dependencies={dependencies}
             fieldConfig={fieldConfig}
           />
-
           {children}
         </form>
       </Form>

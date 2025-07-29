@@ -1,4 +1,3 @@
-// biome-ignore lint/style/useImportType: <explanation>
 import React from "react"
 import { Suspense, useEffect, useMemo } from "react"
 
@@ -64,6 +63,51 @@ function App() {
     return buildRouteTree(authUser, isLoading)
   }, [authUser, isLoading])
 
+  useEffect(() => {
+    const root = document.documentElement
+
+    // Sidebar colors
+    root.style.setProperty("--sidebar-background", sidebarColors.bg)
+    root.style.setProperty("--sidebar-foreground", sidebarColors.fg)
+
+    // Dashboard colors
+    root.style.setProperty("--dashboard-color-1", dashboardColors.color1)
+    root.style.setProperty("--dashboard-text-1", dashboardColors.text1)
+    root.style.setProperty("--dashboard-color-2", dashboardColors.color2)
+    root.style.setProperty("--dashboard-text-2", dashboardColors.text2)
+    root.style.setProperty("--dashboard-color-3", dashboardColors.color3)
+    root.style.setProperty("--dashboard-text-3", dashboardColors.text3)
+    root.style.setProperty("--dashboard-color-4", dashboardColors.color4)
+    root.style.setProperty("--dashboard-text-4", dashboardColors.text4)
+
+    // Indicator colors
+    root.style.setProperty("--indicator-danger", indicatorColors.danger)
+    root.style.setProperty(
+      "--indicator-danger-text",
+      indicatorColors.dangerText
+    )
+    root.style.setProperty("--indicator-warning", indicatorColors.warning)
+    root.style.setProperty(
+      "--indicator-warning-text",
+      indicatorColors.warningText
+    )
+    root.style.setProperty("--indicator-success", indicatorColors.success)
+    root.style.setProperty(
+      "--indicator-success-text",
+      indicatorColors.successText
+    )
+    root.style.setProperty("--indicator-info", indicatorColors.info)
+    root.style.setProperty("--indicator-info-text", indicatorColors.infoText)
+    root.style.setProperty("--indicator-default", indicatorColors.default)
+    root.style.setProperty(
+      "--indicator-default-text",
+      indicatorColors.defaultText
+    )
+
+    // App radius
+    root.style.setProperty("--app-radius", getRadiusValue(radius))
+  }, [sidebarColors, dashboardColors, indicatorColors, radius])
+
   return (
     <Theme
       appearance={appearance.appearance}
@@ -71,34 +115,6 @@ function App() {
       grayColor={grayColor}
       radius={radius}
       scaling={scaling}
-      style={
-        {
-          "--sidebar-background": sidebarColors.bg,
-          "--sidebar-foreground": sidebarColors.fg,
-
-          "--dashboard-color-1": dashboardColors.color1,
-          "--dashboard-text-1": dashboardColors.text1,
-          "--dashboard-color-2": dashboardColors.color2,
-          "--dashboard-text-2": dashboardColors.text2,
-          "--dashboard-color-3": dashboardColors.color3,
-          "--dashboard-text-3": dashboardColors.text3,
-          "--dashboard-color-4": dashboardColors.color4,
-          "--dashboard-text-4": dashboardColors.text4,
-
-          "--indicator-danger": indicatorColors.danger,
-          "--indicator-danger-text": indicatorColors.dangerText,
-          "--indicator-warning": indicatorColors.warning,
-          "--indicator-warning-text": indicatorColors.warningText,
-          "--indicator-success": indicatorColors.success,
-          "--indicator-success-text": indicatorColors.successText,
-          "--indicator-info": indicatorColors.info,
-          "--indicator-info-text": indicatorColors.infoText,
-          "--indicator-default": indicatorColors.default,
-          "--indicator-default-text": indicatorColors.defaultText,
-
-          "--app-radius": getRadiusValue(radius),
-        } as React.CSSProperties
-      }
     >
       <RxdbProvider db={db}>
         <Suspense fallback={<LoadingPage />}>
