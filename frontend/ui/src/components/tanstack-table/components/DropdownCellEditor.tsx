@@ -164,6 +164,7 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
   const [customValue, setCustomValue] = useState(value)
   const [customColor, setCustomColor] = useState("#93c5fd")
   const [isCreating, setIsCreating] = useState(false)
+  const [isPositioned, setIsPositioned] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   
@@ -202,12 +203,15 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
           if (dropdownRect.right > viewportWidth) {
             dropdown.style.left = `${viewportWidth - dropdownRect.width - 10}px`;
           }
+          
+          // Mark as positioned and make visible
+          setIsPositioned(true);
         }
       }
     };
     
-    // Run positioning logic after a brief delay to ensure the DOM is ready
-    setTimeout(findEditingCell, 10);
+    // Run positioning logic immediately
+    findEditingCell();
     
     // Focus the input field if in custom mode
     if (!strictDropdown && inputRef.current) {
@@ -357,7 +361,7 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
   return (
     <div 
       ref={dropdownRef}
-      className="fixed z-[9999] bg-white dark:bg-gray-800 rounded-lg shadow-xl ring-1 ring-black dark:ring-gray-700 ring-opacity-5 focus:outline-none"
+      className="fixed z-[9999] bg-white dark:bg-gray-800 rounded-lg shadow-xl ring-1 ring-black dark:ring-gray-700 ring-opacity-5 focus:outline-none transition-opacity duration-150"
       style={{ 
         minWidth: '260px',
         maxWidth: '320px',
@@ -365,9 +369,11 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
         overflowY: 'auto',
         // Fixed positioning relative to viewport
         position: 'fixed',
-        // Will be positioned by useEffect
+        // Hide until positioned, then reveal with opacity transition
+        opacity: isPositioned ? 1 : 0,
         top: '0px', 
         left: '0px',
+        visibility: isPositioned ? 'visible' : 'hidden'
       }}
     >
       {/* Loading state */}
