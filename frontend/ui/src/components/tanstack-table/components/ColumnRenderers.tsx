@@ -126,7 +126,8 @@ export function createDataCellRenderer<TData>(
       return formatOptions.formatter(value, row.original);
     } 
     
-    return getCellRenderer(column.type as ColumnType, value);
+    // Pass the meta object for dropdown and other types that need it
+    return getCellRenderer(column.type as ColumnType, value, column.meta);
   };
 }
 

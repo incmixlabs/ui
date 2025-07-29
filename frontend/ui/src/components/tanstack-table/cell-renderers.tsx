@@ -173,35 +173,128 @@ export interface DropdownOption {
   value: string;
   label: string;
   color?: string;
+  icon?: ReactNode;
 }
 
-// Dropdown Cell Renderer
+// Enhanced Dropdown Cell Renderer with multiple display styles
 export const DropdownCell: React.FC<{ 
   value: string;
   options?: DropdownOption[];
-}> = ({ value, options = [] }) => {
-  // Find the selected option
-  const selectedOption = options.find(option => option.value === value) || {
-    value,
-    label: value,
+  displayStyle?: 'badge' | 'button' | 'minimal';
+  size?: 'sm' | 'md' | 'lg';
+  showIcon?: boolean;
+  isLoading?: boolean;
+}> = ({ 
+  value, 
+  options = [], 
+  displayStyle = 'badge',
+  size = 'md',
+  showIcon = false,
+  isLoading = false
+}) => {
+  // Handle null/undefined values
+  const safeValue = value || '';
+  
+  // Debug logging to understand what's happening
+  console.log('DropdownCell Debug:', { value, safeValue, options, displayStyle });
+  
+  // Find the selected option with more robust matching
+  const selectedOption = options.find(option => 
+    option.value === safeValue || 
+    option.value === value ||
+    option.label === safeValue ||
+    option.label === value
+  );
+
+  // If no option found, create a fallback that shows the actual value
+  const finalOption = selectedOption || {
+    value: safeValue,
+    label: safeValue || 'No Value',
     color: '#e5e7eb' // Default gray color
   };
+
+  console.log('DropdownCell Selected Option:', finalOption);
+
+  // If no value and no options, show a placeholder
+  if (!safeValue && options.length === 0) {
+    return (
+      <span className={`${size === 'sm' ? 'px-2 py-0.5 text-xs' : size === 'lg' ? 'px-3 py-1.5 text-sm' : 'px-2 py-1 text-xs'} text-gray-400 italic`}>
+        No options
+      </span>
+    );
+  }
   
   // Determine text color based on background color (if provided)
-  const textColor = selectedOption.color 
-    ? getContrastingTextColor(selectedOption.color)
+  const textColor = finalOption.color 
+    ? getContrastingTextColor(finalOption.color)
     : '#000000';
-  
+
+  // Size classes
+  const sizeClasses = {
+    sm: 'px-2 py-0.5 text-xs',
+    md: 'px-2 py-1 text-xs',
+    lg: 'px-3 py-1.5 text-sm'
+  };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className={`inline-flex items-center gap-1 ${sizeClasses[size]} rounded-md bg-gray-100 text-gray-500`}>
+        <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin" />
+        <span>Loading...</span>
+      </div>
+    );
+  }
+
+  // Badge style (original)
+  if (displayStyle === 'badge') {
+    const displayText = finalOption.label || value || 'No Value';
+    return (
+      <span
+        className={`inline-flex items-center gap-1 rounded-full ${sizeClasses[size]} font-medium ring-1 ring-inset capitalize`}
+        style={{
+          backgroundColor: finalOption.color || '#e5e7eb',
+          color: textColor,
+          borderColor: finalOption.color ? adjustColor(finalOption.color, -20) : '#d1d5db'
+        }}
+      >
+        {showIcon && finalOption.icon}
+        <span>{displayText}</span>
+      </span>
+    );
+  }
+
+  // Button style (like your custom implementation)
+  if (displayStyle === 'button') {
+    const displayText = finalOption.label || value || 'No Value';
+    return (
+      <div
+        className={`inline-flex items-center gap-2 ${sizeClasses[size]} rounded-md font-medium border transition-all duration-200 cursor-pointer hover:opacity-80`}
+        style={{
+          backgroundColor: finalOption.color ? `${finalOption.color}20` : '#f3f4f6',
+          color: finalOption.color || '#374151',
+          borderColor: finalOption.color ? `${finalOption.color}40` : '#d1d5db'
+        }}
+      >
+        {showIcon && (
+          <div 
+            className="w-2 h-2 rounded-full" 
+            style={{ backgroundColor: finalOption.color || '#9ca3af' }}
+          />
+        )}
+        <span>{displayText}</span>
+        <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    );
+  }
+
+  // Minimal style
+  const displayText = finalOption.label || value || 'No Value';
   return (
-    <span
-      className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset capitalize"
-      style={{
-        backgroundColor: selectedOption.color || '#e5e7eb',
-        color: textColor,
-        borderColor: selectedOption.color ? adjustColor(selectedOption.color, -20) : '#d1d5db'
-      }}
-    >
-      {selectedOption.label || value}
+    <span className={`${sizeClasses[size]} text-gray-700 dark:text-gray-300`}>
+      {displayText}
     </span>
   );
 };
@@ -405,7 +498,24 @@ export const defaultCellRenderers: Record<string, CellRendererFn> = {
   "Tag": (value: any) => <TagCell value={value} />,
   "Status": (value: any, statusMap?: Record<string, { color: string }>, defaultColor?: string) => <StatusCell value={value} statusMap={statusMap} defaultColor={defaultColor} />,
   "Boolean": (value: any) => <BooleanCell value={value} />,
-  "Dropdown": (value: any, options?: DropdownOption[]) => <DropdownCell value={value} options={options} />,
+  "Dropdown": (value: any, meta?: any) => {
+    const options = meta?.dropdownOptions || [];
+    const displayStyle = meta?.displayStyle || 'badge';
+    const size = meta?.size || 'md';
+    const showIcon = meta?.enableIcons || false;
+    const isLoading = meta?.isLoading || false;
+    
+    return (
+      <DropdownCell 
+        value={String(value || '')} 
+        options={options}
+        displayStyle={displayStyle}
+        size={size}
+        showIcon={showIcon}
+        isLoading={isLoading}
+      />
+    );
+  },
   "People": (value: any, options?: any) => <PeopleCell value={value} maxDisplay={options?.maxDisplay} />,
   "TimelineProgress": (value: any, options?: any) => {
     // Extract format options if they exist

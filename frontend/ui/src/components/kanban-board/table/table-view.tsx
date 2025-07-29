@@ -12,7 +12,7 @@ import {
   DropdownMenu,
   Tooltip,
 } from "@base"
-import { TanstackDataTable } from "../../tanstack-table/components/DataTable"
+import { TanstackDataTable, createEnhancedDropdownColumn, generateUniqueDropdownColor } from "../../tanstack-table"
 import {
   Search,
   Layers as LayersIcon,
@@ -26,15 +26,12 @@ import {
 } from "lucide-react"
 
 import type { TableTask, ListColumn } from "../types"
-import type { LabelSchema, TaskDataSchema } from "@incmix/utils/schema"
-import type { CellContext } from "@tanstack/react-table"
+import type { TaskDataSchema } from "@incmix/utils/schema"
 // import { useAIFeaturesStore } from "@incmix/store" // Commented out as not used
 import { KeyboardShortcutsHelp } from "../../tanstack-table/components/KeyboardShortcutsHelp"
 import { useTableView } from "../hooks/use-table-view"
-import { TASK_TABLE_COLUMNS } from "./table-columns-config"
 import { TableRowActions } from "./table-row-actions"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
-import { StatusDropdownCell, PriorityDropdownCell } from "./custom-dropdown-columns"
 import { User } from "../../tanstack-table/cell-renderers"
 import { StatusColumnConfigDialog } from "./status-column-config-dialog"
 
@@ -124,41 +121,23 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     setIsStatusConfigOpen(true)
   }, [])
 
-  // Generate a unique color for new status values
-  const generateUniqueStatusColor = useCallback(() => {
-    const existingColors = labels.map(label => label.color).filter(Boolean)
-    const colorPalette = [
-      '#93c5fd', // Light blue
-      '#fcd34d', // Light yellow  
-      '#86efac', // Light green
-      '#f9a8d4', // Light pink
-      '#c4b5fd', // Light purple
-      '#a5b4fc', // Lavender
-      '#fdba74', // Light orange
-      '#67e8f9', // Light teal
-      '#d8b4fe', // Light violet
-      '#f87171', // Light red
-      '#fde68a', // Light gold
-      '#6ee7b7', // Mint
-    ]
 
-    // Find an unused color from the palette
-    const unusedColor = colorPalette.find(color => !existingColors.includes(color))
-    return unusedColor || '#93c5fd' // Default to light blue if all colors are used
-  }, [labels])
 
-  // Enhanced columns with row actions
-  const enhancedColumns = useMemo((): any[] => {
+  // Enhanced columns with row actions using the new enhanced dropdown system
+  const enhancedColumns = useMemo(() => {
     // Convert task statuses to dropdown options for status column
-    // Note: labels are actually ListColumn[] from the list view, not LabelSchema[]
-    const statusOptions = labels.map(status => ({
+    const statusOptions = labels.length > 0 ? labels.map(status => ({
       value: status.id,
       label: status.name,
       color: status.color
-    }))
+    })) : [
+      // Fallback options if labels are not loaded yet
+      { value: "todo", label: "To Do", color: "#93c5fd" },
+      { value: "in_progress", label: "In Progress", color: "#fcd34d" },
+      { value: "done", label: "Done", color: "#86efac" },
+    ]
 
-    // Convert priority labels to dropdown options
-    // For now, we'll use hardcoded priority options since priority management isn't implemented yet
+    // Priority options (hardcoded since priority management isn't implemented yet)
     const priorityOptions = [
       { value: "low", label: "Low", color: "#6b7280" },
       { value: "medium", label: "Medium", color: "#3b82f6" },
@@ -166,196 +145,186 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       { value: "urgent", label: "Urgent", color: "#ef4444" },
     ]
 
-    // Convert our column config to DataTable format with explicit mapping
-    const columns: any[] = TASK_TABLE_COLUMNS.map(column => {
-      // Create a base column with required properties
-      const baseColumn: any = {
-        headingName: column.id === "status" ? (
+    const columns = [
+      // Task Name Column
+      {
+        headingName: "Task",
+        type: "String" as const,
+        accessorKey: "name" as const,
+        id: "name",
+        enableSorting: true,
+        enableInlineEdit: true,
+      },
+
+      // Enhanced Status Column - replaces your custom StatusDropdownCell
+      createEnhancedDropdownColumn<TableTask>({
+        headingName: (
           <div
             onDoubleClick={handleStatusColumnDoubleClick}
             style={{ cursor: 'pointer' }}
             title={`Double-click to configure status options${allowCustomStatusValues ? ' • Custom values allowed' : ' • Only predefined values'}`}
             className="w-full flex items-center gap-1"
           >
-            {column.headingName}
+            Status
             {allowCustomStatusValues && (
               <span className="text-xs text-blue-600 dark:text-blue-400">*</span>
             )}
           </div>
-        ) : column.headingName,
-        type: column.type,
-        accessorKey: column.accessorKey as string,
-        id: column.id,
-        renderer: column.renderer
-      }
-
-      // Apply optional properties based on the column type
-      switch (column.id) {
-        case "name":
-          baseColumn.enableSorting = true;
-          baseColumn.enableInlineEdit = true;
-          baseColumn.type = "String";
-          break;
-        case "status":
-          baseColumn.enableSorting = true;
-          baseColumn.enableInlineEdit = false; // Handled by custom dropdown
-          baseColumn.type = "Dropdown";
-          baseColumn.meta = {
-            dropdownOptions: statusOptions,
-            strictDropdown: !allowCustomStatusValues // Invert the logic: strict when custom values are NOT allowed
-          };
-          break;
-        case "priority":
-          baseColumn.enableSorting = true;
-          baseColumn.enableInlineEdit = false; // Handled by custom dropdown
-          baseColumn.type = "Dropdown";
-          baseColumn.meta = {
-            dropdownOptions: priorityOptions,
-            strictDropdown: true
-          };
-          break;
-        case "startDate":
-        case "endDate":
-          baseColumn.enableSorting = true;
-          baseColumn.enableInlineEdit = true;
-          baseColumn.type = "Date";
-          baseColumn.format = {
-            dateFormat: "YYYY-MM-DD"
-          };
-          // Custom accessor function to convert timestamp to ISO date string for EditableDateCell
-          baseColumn.accessorFn = (row: TableTask) => {
-            const dateValue = column.id === "startDate" ? row.startDate : row.endDate;
-            if (!dateValue) return '';
-
-            // Convert timestamp to YYYY-MM-DD format for date input
-            const date = new Date(dateValue);
-            if (isNaN(date.getTime())) return '';
-
-            // Return in YYYY-MM-DD format (what HTML date input expects)
-            return date.toISOString().split('T')[0];
-          };
-          break;
-        case "assignedTo":
-          baseColumn.enableSorting = false;
-          baseColumn.enableInlineEdit = true;
-          baseColumn.type = "People";
-          baseColumn.accessorKey = "assignedTo"; // Use the User[] array directly
-          baseColumn.meta = {
-            availableUsers: SAMPLE_USERS,
-            maxDisplay: 3,
-            maxSelections: 10
-          };
-          // Ensure we access the assignedTo array directly
-          baseColumn.accessorFn = (row: TableTask) => row.assignedTo || [];
-          break;
-        case "createdAt":
-          baseColumn.enableSorting = true;
-          baseColumn.enableInlineEdit = false;
-          baseColumn.type = "Date";
-          break;
-      }
-
-      // For columns that need dropdown options (like status), we'll handle this with cell properties
-      if (column.id === "status") {
-        // For status column, we use our custom StatusDropdownCell component
-        baseColumn.cell = (info: CellContext<TableTask, unknown>) => {
-          const task = info.row.original as TableTask;
-          return (
-            <StatusDropdownCell
-              value={task.statusId || ''}
-              row={task}
-              taskStatuses={labels.map(label => ({
-                id: label.id,
-                name: label.name,
-                color: label.color
-              }))}
-              onStatusChange={(taskId, newStatusId) => moveTaskToStatus(taskId, newStatusId)}
-              onCreateStatus={async (name: string, color: string) => {
-                const newStatusId = await createLabel("status", name, color);
-                // Refresh to show the new status in all dropdowns
-                refetch();
-                return newStatusId;
-              }}
-              allowCustomValues={allowCustomStatusValues}
-            />
+        ),
+        accessorKey: "statusId",
+        id: "status",
+        options: statusOptions,
+        displayStyle: 'button', // Matches your custom button style
+        enableColorPicker: true, // Your color picker feature
+        showCreateButton: true, // Your create functionality
+        createButtonText: "Create & Select",
+        strictDropdown: !allowCustomStatusValues,
+        onCreateOption: async (name: string, color?: string) => {
+          const uniqueColor = color || generateUniqueDropdownColor(
+            statusOptions.map(opt => opt.color).filter(Boolean) as string[]
           );
-        };
+          const newStatusId = await createLabel("status", name, uniqueColor);
+          refetch(); // Refresh to show the new status in all dropdowns
+          return newStatusId;
+        },
+        enableSorting: true,
+        enableInlineEdit: true,
+      }),
+
+      // Enhanced Priority Column - replaces your custom PriorityDropdownCell
+      createEnhancedDropdownColumn<TableTask>({
+        headingName: "Priority",
+        accessorKey: "priorityId",
+        id: "priority",
+        options: priorityOptions,
+        displayStyle: 'badge', // Badge style for priority
+        strictDropdown: true, // Only predefined priorities
+        enableSorting: true,
+        enableInlineEdit: true,
+      }),
+
+      // Start Date Column
+      {
+        headingName: "Start Date",
+        type: "Date" as const,
+        accessorKey: "startDate" as const,
+        id: "startDate",
+        enableSorting: true,
+        enableInlineEdit: true,
+        format: {
+          dateFormat: "YYYY-MM-DD"
+        },
+        // Custom accessor function to convert timestamp to ISO date string
+        accessorFn: (row: TableTask) => {
+          if (!row.startDate) return '';
+          const date = new Date(row.startDate);
+          if (isNaN(date.getTime())) return '';
+          return date.toISOString().split('T')[0];
+        },
+      },
+
+      // End Date Column
+      {
+        headingName: "Due Date",
+        type: "Date" as const,
+        accessorKey: "endDate" as const,
+        id: "endDate",
+        enableSorting: true,
+        enableInlineEdit: true,
+        format: {
+          dateFormat: "YYYY-MM-DD"
+        },
+        // Custom accessor function to convert timestamp to ISO date string
+        accessorFn: (row: TableTask) => {
+          if (!row.endDate) return '';
+          const date = new Date(row.endDate);
+          if (isNaN(date.getTime())) return '';
+          return date.toISOString().split('T')[0];
+        },
+      },
+
+      // Assigned To Column
+      {
+        headingName: "Assigned To",
+        type: "People" as const,
+        accessorKey: "assignedTo" as const,
+        id: "assignedTo",
+        enableSorting: false,
+        enableInlineEdit: true,
+        meta: {
+          availableUsers: SAMPLE_USERS,
+          maxDisplay: 3,
+          maxSelections: 10
+        },
+        // Ensure we access the assignedTo array directly
+        accessorFn: (row: TableTask) => row.assignedTo || [],
+      },
+
+      // Created At Column
+      {
+        headingName: "Created",
+        type: "Date" as const,
+        accessorKey: "createdAt" as const,
+        id: "createdAt",
+        enableSorting: true,
+        enableInlineEdit: false,
+      },
+
+      // Actions Column
+      {
+        headingName: "Actions",
+        type: "String" as const,
+        accessorKey: "id" as const,
+        id: "actions",
+        enableSorting: false,
+        enableInlineEdit: false,
+        renderer: () => (
+          <TableRowActions
+            task={{} as TableTask} // This will be properly populated by the table
+            taskStatuses={labels.map(label => ({
+              id: label.id,
+              name: label.name,
+              color: label.color,
+              type: "status" // All labels from list view are status labels
+            }))}
+            onUpdateTask={async (taskId, updates) => {
+              // Convert TableTask updates to TaskDataSchema updates
+              const schemaUpdates: Partial<TaskDataSchema> = {};
+
+              // Copy only properties that exist on TaskDataSchema
+              if (updates.name !== undefined) schemaUpdates.name = updates.name;
+              if (updates.description !== undefined) schemaUpdates.description = updates.description;
+              if (updates.statusId !== undefined) schemaUpdates.statusId = updates.statusId;
+              if (updates.priorityId !== undefined) schemaUpdates.priorityId = updates.priorityId;
+              if (updates.completed !== undefined) schemaUpdates.completed = updates.completed;
+              if (updates.endDate !== undefined) schemaUpdates.endDate = updates.endDate;
+              if (updates.startDate !== undefined) schemaUpdates.startDate = updates.startDate;
+
+              // Handle subTasks with special mapping to ensure order property
+              if (updates.subTasks !== undefined) {
+                schemaUpdates.subTasks = updates.subTasks.map((subTask, index) => ({
+                  id: subTask.id || '',
+                  name: subTask.name,
+                  completed: subTask.completed,
+                  order: index // Use index as order if not provided
+                }));
+              }
+
+              if (updates.assignedTo !== undefined) schemaUpdates.assignedTo = updates.assignedTo;
+              if (updates.labelsTags !== undefined) schemaUpdates.labelsTags = updates.labelsTags;
+              if (updates.attachments !== undefined) schemaUpdates.attachments = updates.attachments;
+
+              return updateTask(taskId, schemaUpdates);
+            }}
+            onDeleteTask={deleteTask}
+            onMoveTaskToStatus={moveTaskToStatus}
+          />
+        )
       }
+    ]
 
-      // For priority column, use our custom PriorityDropdownCell component
-      if (column.id === "priority") {
-        baseColumn.cell = (info: CellContext<TableTask, unknown>) => {
-          const task = info.row.original as TableTask;
-          return (
-            <PriorityDropdownCell
-              value={task.priorityId || ''}
-              row={task}
-              onPriorityChange={(taskId, newPriorityId) => {
-                return updateTask(taskId, { priorityId: newPriorityId });
-              }}
-            />
-          );
-        };
-      }
-
-      return baseColumn
-    })
-
-    // Add the actions column
-    const actionsColumn: any = {
-      headingName: "Actions",
-      type: "String",
-      accessorKey: "id", // Use a valid accessor key
-      id: "actions",
-      enableSorting: false,
-      enableInlineEdit: false,
-      renderer: () => (
-        <TableRowActions
-          task={{} as TableTask} // This will be properly populated by the table
-          taskStatuses={labels.map(label => ({
-            id: label.id,
-            name: label.name,
-            color: label.color,
-            type: "status" // All labels from list view are status labels
-          }))}
-          onUpdateTask={async (taskId, updates) => {
-            // Convert TableTask updates to TaskDataSchema updates
-            const schemaUpdates: Partial<TaskDataSchema> = {};
-
-            // Copy only properties that exist on TaskDataSchema
-            // Handle known properties specially
-            if (updates.name !== undefined) schemaUpdates.name = updates.name;
-            if (updates.description !== undefined) schemaUpdates.description = updates.description;
-            if (updates.statusId !== undefined) schemaUpdates.statusId = updates.statusId;
-            if (updates.priorityId !== undefined) schemaUpdates.priorityId = updates.priorityId;
-            if (updates.completed !== undefined) schemaUpdates.completed = updates.completed;
-            if (updates.endDate !== undefined) schemaUpdates.endDate = updates.endDate;
-            if (updates.startDate !== undefined) schemaUpdates.startDate = updates.startDate;
-
-            // Handle subTasks with special mapping to ensure order property
-            if (updates.subTasks !== undefined) {
-              schemaUpdates.subTasks = updates.subTasks.map((subTask, index) => ({
-                id: subTask.id || '',
-                name: subTask.name,
-                completed: subTask.completed,
-                order: index // Use index as order if not provided
-              }));
-            }
-
-            if (updates.assignedTo !== undefined) schemaUpdates.assignedTo = updates.assignedTo;
-            if (updates.labelsTags !== undefined) schemaUpdates.labelsTags = updates.labelsTags;
-            if (updates.attachments !== undefined) schemaUpdates.attachments = updates.attachments;
-
-            return updateTask(taskId, schemaUpdates);
-          }}
-          onDeleteTask={deleteTask}
-          onMoveTaskToStatus={moveTaskToStatus}
-        />
-      )
-    }
-
-    return [...columns, actionsColumn]
-  }, [labels, updateTask, deleteTask, moveTaskToStatus, allowCustomStatusValues, handleStatusColumnDoubleClick])
+    return columns
+  }, [labels, allowCustomStatusValues, handleStatusColumnDoubleClick, createLabel, refetch, updateTask, deleteTask, moveTaskToStatus])
 
   // Filter tasks based on search query
   const filteredTasks = useMemo(() => {
@@ -376,17 +345,15 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     refetch()
   }, [refetch])
 
-  // Handle cell edit - enhanced to support all data types
+  // Simplified cell edit handler - the enhanced dropdown handles creation internally
   const handleCellEdit = useCallback(async (rowData: TableTask, columnId: string, newValue: any) => {
     if (!rowData.id) {
       console.error("Task ID is missing")
       return
     }
 
-
-
     try {
-      // Validation for title field - prevent empty titles
+      // Simple field mapping - the enhanced dropdown handles status creation internally
       if (columnId === 'name') {
         const trimmedValue = typeof newValue === 'string' ? newValue.trim() : String(newValue).trim();
         if (!trimmedValue) {
@@ -394,112 +361,44 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           return; // Don't save empty titles
         }
         await updateTask(rowData.id, { name: trimmedValue });
-        return;
-      }
-
-      // Handle date fields - convert date strings back to timestamps
-      if (columnId === 'startDate' || columnId === 'endDate') {
+      } else if (columnId === 'status' || columnId === 'statusId') {
+        // Enhanced dropdown handles creation, we just need to move the task
+        await moveTaskToStatus(rowData.id, newValue);
+      } else if (columnId === 'priority' || columnId === 'priorityId') {
+        await updateTask(rowData.id, { priorityId: newValue });
+      } else if (columnId === 'startDate' || columnId === 'endDate') {
+        // Handle date conversion
         if (typeof newValue === 'string' && newValue.trim()) {
-          // Handle both YYYY-MM-DD format (from date input) and ISO format
           let dateValue: Date;
-
           if (newValue.includes('T')) {
-            // ISO format: 2024-01-15T00:00:00.000Z
             dateValue = new Date(newValue);
           } else {
-            // YYYY-MM-DD format: 2024-01-15
-            // Create date at midnight in local timezone to avoid timezone issues
             dateValue = new Date(newValue + 'T00:00:00');
           }
-
           if (!isNaN(dateValue.getTime())) {
-            const timestamp = dateValue.getTime();
-            await updateTask(rowData.id, { [columnId]: timestamp });
-          } else {
-            console.warn('Invalid date value:', newValue);
-            return;
+            await updateTask(rowData.id, { [columnId]: dateValue.getTime() });
           }
-        } else if (newValue === '' || newValue === null || newValue === undefined) {
-          // Handle clearing the date
+        } else {
           await updateTask(rowData.id, { [columnId]: undefined });
         }
-        return;
-      }
-
-      // Handle assigned users - newValue should be User[] from PeopleCellEditor
-      if (columnId === 'assignedTo') {
+      } else if (columnId === 'assignedTo') {
         if (Array.isArray(newValue)) {
-          // newValue is User[] from EditablePeopleCell
-          // Convert User[] to the format expected by updateTask
           const assignedUsers = newValue.map(user => ({
             id: user.id,
             name: user.name,
-            avatar: user.image, // Map image to avatar for compatibility
+            avatar: user.image,
             email: user.email
           }));
           await updateTask(rowData.id, { assignedTo: assignedUsers });
-        } else {
-          console.warn('Invalid assignedTo value - expected array:', newValue);
         }
-        return;
+      } else {
+        // Generic field update
+        await updateTask(rowData.id, { [columnId]: newValue });
       }
-
-      // Special handling for status changes
-      if (columnId === "status") {
-        // Check if this is an existing status
-        const existingStatus = labels.find(label => label.id === newValue);
-
-        if (existingStatus) {
-          // Use existing status
-          await moveTaskToStatus(rowData.id, newValue);
-          return;
-        } else if (allowCustomStatusValues && typeof newValue === 'string' && newValue.trim()) {
-          // Create new status if custom values are allowed
-          try {
-            const uniqueColor = generateUniqueStatusColor()
-            const newStatusId = await createLabel("status", newValue.trim(), uniqueColor);
-            await moveTaskToStatus(rowData.id, newStatusId);
-            // Refresh to show the new status in dropdowns
-            refetch();
-
-            // Show a brief success message (optional - could be implemented with a toast system)
-            console.log(`Created new status: "${newValue.trim()}" with color ${uniqueColor}`);
-            return;
-          } catch (error) {
-            console.error("Failed to create new status:", error);
-            return;
-          }
-        } else {
-          console.error(`Invalid status: ${newValue}. Custom values are not allowed.`);
-          return;
-        }
-      }
-
-      // Special handling for priority changes (though this should be handled by custom dropdown)
-      if (columnId === "priority") {
-        const validPriority = (labels as unknown as LabelSchema[]).some(label =>
-          label.type === "priority" && label.id === newValue
-        );
-        if (!validPriority) {
-          console.error(`Invalid priority ID: ${newValue}`);
-          return;
-        }
-        await updateTask(rowData.id, { priorityId: newValue });
-        return;
-      }
-
-      // Default handling for other fields
-      const fieldMap: Record<string, string> = {
-        description: "description",
-      };
-
-      const field = fieldMap[columnId] || columnId;
-      await updateTask(rowData.id, { [field]: newValue });
-
     } catch (error) {
       console.error(`Failed to update ${columnId}:`, error);
     }
-  }, [updateTask, moveTaskToStatus, labels, allowCustomStatusValues, createLabel, refetch, generateUniqueStatusColor])
+  }, [updateTask, moveTaskToStatus])
 
 
 
