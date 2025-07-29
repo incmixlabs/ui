@@ -168,55 +168,94 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   
-  // Get position of the cell that was clicked to position dropdown properly
+  // Get position of the cell that was clicked/activated to position dropdown properly
   useEffect(() => {
-    // Function to find the cell element that was clicked
+    // Function to find the editing cell with better detection for keyboard navigation
     const findEditingCell = () => {
-      // Look for cell with data-editing="true" or similar attribute
-      // In this case, we'll position near the active cell that has focus
-      const activeElement = document.activeElement;
+      if (!dropdownRef.current) return;
       
-      if (activeElement && dropdownRef.current) {
-        // Find closest table cell
-        const cell = activeElement.closest('td') || activeElement;
-        
-        // Get position
-        if (cell) {
-          const cellRect = cell.getBoundingClientRect();
-          const dropdown = dropdownRef.current;
-          
-          // Position dropdown near the cell
-          dropdown.style.top = `${cellRect.bottom + window.scrollY + 5}px`;
-          dropdown.style.left = `${cellRect.left + window.scrollX}px`;
-          
-          // Make sure dropdown is within viewport bounds
-          const dropdownRect = dropdown.getBoundingClientRect();
-          const viewportHeight = window.innerHeight;
-          const viewportWidth = window.innerWidth;
-          
-          // Adjust if extends beyond bottom
-          if (dropdownRect.bottom > viewportHeight) {
-            dropdown.style.top = `${cellRect.top + window.scrollY - dropdownRect.height - 5}px`;
-          }
-          
-          // Adjust if extends beyond right edge
-          if (dropdownRect.right > viewportWidth) {
-            dropdown.style.left = `${viewportWidth - dropdownRect.width - 10}px`;
-          }
-          
-          // Mark as positioned and make visible
-          setIsPositioned(true);
+      // Find the active/editing cell using multiple strategies
+      // 1. Try the active element itself
+      // 2. Look for cells with aria-selected="true" which indicates keyboard selection
+      // 3. Look for cells with custom attributes for editing state
+      // 4. Fall back to active element's closest td
+      
+      const activeElement = document.activeElement;
+      let targetCell: Element | null = null;
+      
+      // Strategy 1: First check for cells with aria-selected="true" (keyboard navigation)
+      const selectedCells = document.querySelectorAll('td[aria-selected="true"]');
+      if (selectedCells.length === 1) {
+        targetCell = selectedCells[0];
+      }
+      
+      // Strategy 2: If no selected cell found, check for cells with editing state
+      if (!targetCell) {
+        const editingCells = document.querySelectorAll('td[data-state="editing"]');
+        if (editingCells.length === 1) {
+          targetCell = editingCells[0];
         }
+      }
+      
+      // Strategy 3: Fall back to active element's closest td
+      if (!targetCell && activeElement) {
+        targetCell = activeElement.closest('td');
+      }
+      
+      // Strategy 4: Use the active element itself if nothing else worked
+      if (!targetCell && activeElement) {
+        targetCell = activeElement;
+      }
+      
+      // Position the dropdown if we found a target cell
+      if (targetCell) {
+        const cellRect = targetCell.getBoundingClientRect();
+        const dropdown = dropdownRef.current;
+        
+        // Position dropdown near the cell
+        dropdown.style.top = `${cellRect.bottom + window.scrollY + 5}px`;
+        dropdown.style.left = `${cellRect.left + window.scrollX}px`;
+        
+        // Make sure dropdown is within viewport bounds
+        const dropdownRect = dropdown.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const viewportWidth = window.innerWidth;
+        
+        // Adjust if extends beyond bottom
+        if (dropdownRect.bottom > viewportHeight) {
+          dropdown.style.top = `${cellRect.top + window.scrollY - dropdownRect.height - 5}px`;
+        }
+        
+        // Adjust if extends beyond right edge
+        if (dropdownRect.right > viewportWidth) {
+          dropdown.style.left = `${viewportWidth - dropdownRect.width - 10}px`;
+        }
+        
+        // Mark as positioned and make visible
+        setIsPositioned(true);
       }
     };
     
-    // Run positioning logic immediately
-    findEditingCell();
+    // Try positioning multiple times with delays to handle different timing scenarios
+    // This ensures we catch the correct positioning even with keyboard navigation
+    findEditingCell(); // Immediate attempt
+    
+    // Additional attempts with increasing delays to ensure we catch the position
+    const timers = [
+      setTimeout(findEditingCell, 10),
+      setTimeout(findEditingCell, 50),
+      setTimeout(findEditingCell, 100)
+    ];
     
     // Focus the input field if in custom mode
     if (!strictDropdown && inputRef.current) {
       setTimeout(() => inputRef.current?.focus(), 50);
     }
+    
+    return () => {
+      // Clean up timers
+      timers.forEach(timer => clearTimeout(timer));
+    };
   }, [])
   
   // Verify options are valid

@@ -181,12 +181,15 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           return (
             <Table.Cell
               key={cell.id}
-              className={`px-2 py-1.5 ${columnDef?.className || ""} overflow-hidden`}
+              className={`px-2 py-1.5 ${columnDef?.className || ""} overflow-hidden ${isEditableCell && isSelected?.(row.id, cell.column.id) ? 'keyboard-selected-cell' : ''}`}
               style={{
                 width: columnDef?.width,
                 minWidth: columnDef?.minWidth,
                 maxWidth: columnDef?.maxWidth,
-                position: 'relative' // For absolute positioning of editable content
+                position: 'relative', // For absolute positioning of editable content
+                ...(isEditableCell && isSelected?.(row.id, cell.column.id) && {
+                  backgroundColor: 'rgba(93, 135, 255, 0.03)'
+                })
               }}
               role={enableInlineCellEdit ? "gridcell" : undefined}
               aria-colindex={columnDef ? flatColumns.indexOf(columnDef) + 1 : undefined} // ARIA indices are 1-based

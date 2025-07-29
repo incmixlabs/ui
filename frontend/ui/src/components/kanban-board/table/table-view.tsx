@@ -651,7 +651,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           // Inline editing functionality - ENABLED for full editing capabilities
           enableInlineCellEdit={true}
           // Define which columns support inline editing
-          inlineEditableColumns={["name", "startDate", "endDate", "assignedTo"]} // Status and priority handled by custom components
+          inlineEditableColumns={["name", "status", "priority", "startDate", "endDate", "assignedTo"]} // Include all editable columns for keyboard navigation
           onCellEdit={handleCellEdit}
 
           // Track selection changes
