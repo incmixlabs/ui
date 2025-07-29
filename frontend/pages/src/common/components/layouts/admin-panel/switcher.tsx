@@ -80,7 +80,7 @@ export function Switcher({
             side={isMobile ? "bottom" : "right"}
             sideOffset={4}
           >
-            <DropdownMenu.Label className="pb-1 font-medium text-xl capitalize">
+            <DropdownMenu.Label className="mb-1 font-medium text-xl capitalize">
               {t(title)}
             </DropdownMenu.Label>
             {items.map((item) => (

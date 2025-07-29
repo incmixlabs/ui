@@ -2,6 +2,7 @@ import { useProjectStore, useProjectsCheck } from "@incmix/store"
 import type { Project } from "@incmix/utils/types"
 import * as React from "react"
 import { Switcher, type SwitcherItem } from "./switcher"
+import { BadgeAlert } from "lucide-react"
 
 /**
  * Convert from database project format to Project type expected by project store
@@ -78,15 +79,15 @@ export function ProjectSwitcher({ className }: { className?: string }) {
   // Show a message if projects are loading
   if (isLoading) {
     return (
-      <div className="px-2 py-1 text-gray-500 text-xs">Loading projects...</div>
+      <div className="px-2 py-1 text-[var(--sidebar-foreground)] text-xs">Loading projects...</div>
     )
   }
 
   // If there are no projects after filtering by organization ID, show a helpful message
   if (!hasProjects || projects.length === 0) {
     return (
-      <div className="px-2 py-1 text-gray-500 text-xs">
-        No projects in current org
+      <div className="flex items-center gap-2 px-2 py-2 text-[var(--sidebar-foreground)] text-xs">
+        <BadgeAlert size={16} /> No projects found
       </div>
     )
   }
