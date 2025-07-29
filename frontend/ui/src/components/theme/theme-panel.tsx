@@ -166,15 +166,17 @@ export function ThemePlayground() {
             <Select.Root
               value={extractColorName(sidebarBg)}
               onValueChange={(selectedBg) => {
-                // Directly set sidebarBg string (e.g. "var(--blue-10)")
+
                 const getColor = SIDEBAR_COLOR_OPTIONS.find(
                   (opt) => opt.bg.color === selectedBg,
                 );
-
+                if (!getColor) {
+                  return; 
+                }
                 const bgColor = getColor?.bg.color as string;
 
                 setTheme({
-                  sidebarBg: `var(--${bgColor}-${getColor?.bg.break})`,
+                  sidebarBg: `var(--${bgColor}-${getColor.bg.break})`,
                 });
               }}
             >

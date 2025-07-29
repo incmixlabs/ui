@@ -164,9 +164,7 @@ const usePasswordChangeForm = () => {
   }
 }
 
-const ProfileSection: React.FC<{ user?: UserProfile }> = ({ user }) => {
-  console.log(user)
-
+const ProfileSection = () => {
   return (
     <CardContainer className="w-fit shrink-0">
       <Heading
@@ -334,7 +332,7 @@ const SettingsPage: React.FC = () => {
           </TabsList>
           <TabsContent value="general" className="h-full space-y-4 pt-2">
             <Flex gap="4" className="w-full">
-              <ProfileSection user={user} />
+              <ProfileSection />
               <GeneralInfoForm {...generalInfoForm} user={user} />
             </Flex>
             <PasswordChangeForm {...passwordChangeForm} />
