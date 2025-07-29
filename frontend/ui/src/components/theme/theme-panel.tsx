@@ -166,7 +166,6 @@ export function ThemePlayground() {
             <Select.Root
               value={extractColorName(sidebarBg)}
               onValueChange={(selectedBg) => {
-
                 const getColor = SIDEBAR_COLOR_OPTIONS.find(
                   (opt) => opt.bg.color === selectedBg,
                 );
@@ -174,7 +173,6 @@ export function ThemePlayground() {
                   return; 
                 }
                 const bgColor = getColor?.bg.color as string;
-
                 setTheme({
                   sidebarBg: `var(--${bgColor}-${getColor.bg.break})`,
                 });
