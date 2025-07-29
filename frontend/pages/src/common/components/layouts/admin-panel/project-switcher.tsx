@@ -1,8 +1,8 @@
 import { useProjectStore, useProjectsCheck } from "@incmix/store"
 import type { Project } from "@incmix/utils/types"
+import { BadgeAlert } from "lucide-react"
 import * as React from "react"
 import { Switcher, type SwitcherItem } from "./switcher"
-import { BadgeAlert } from "lucide-react"
 
 /**
  * Convert from database project format to Project type expected by project store
@@ -79,7 +79,9 @@ export function ProjectSwitcher({ className }: { className?: string }) {
   // Show a message if projects are loading
   if (isLoading) {
     return (
-      <div className="px-2 py-1 text-[var(--sidebar-foreground)] text-xs">Loading projects...</div>
+      <div className="px-2 py-1 text-[var(--sidebar-foreground)] text-xs">
+        Loading projects...
+      </div>
     )
   }
 
