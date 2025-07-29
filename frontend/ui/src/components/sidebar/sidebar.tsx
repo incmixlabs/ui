@@ -30,26 +30,14 @@ import {
   Skeleton,
   Text,
 } from "@base";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@radix-ui/react-tooltip";
-import {
-  useThemeStore,
-  useAppearanceStore,
-  useSidebarStore,
-  SIDEBAR_COLOR_OPTIONS,
-} from "@incmix/store/use-settings-store";
+import { TooltipContent } from "@radix-ui/react-tooltip";
 import { set } from "date-fns";
 import { HoverMenu } from "./hovermenu";
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = "16rem";
-const SIDEBAR_WIDTH_MOBILE = "18rem";
-const SIDEBAR_WIDTH_ICON = "4rem";
+const SIDEBAR_WIDTH_ICON = "5rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
 const COLLAPSE_ROUTES = ["/dashboard", "/file-manager"];
@@ -71,7 +59,7 @@ type SidebarContext = {
   toggleSidebar: () => void;
   toggleSecondarySidebar: () => void;
 
-  shouldAlwaysCollapse: boolean
+  shouldAlwaysCollapse: boolean;
 };
 
 const SidebarContext = createContext<SidebarContext | null>(null);
@@ -123,11 +111,11 @@ const SidebarProvider = forwardRef<
     const secondaryOpen = secondaryOpenProp ?? _secondaryOpen;
 
     const shouldAlwaysCollapse = useMemo(() => {
-      return COLLAPSE_ROUTES.some(route => pathname.startsWith(route));
+      return COLLAPSE_ROUTES.some((route) => pathname.startsWith(route));
     }, [pathname]);
 
     const [_open, _setOpen] = useState(
-      shouldAlwaysCollapse ? false : defaultOpen
+      shouldAlwaysCollapse ? false : defaultOpen,
     );
     const open = openProp ?? _open;
 
@@ -182,18 +170,22 @@ const SidebarProvider = forwardRef<
       return () => window.removeEventListener("keydown", handleKeyDown);
     }, [toggleSidebar]);
 
-
     useEffect(() => {
       if (shouldAlwaysCollapse) {
         setOpen(false);
         setOpenMobile(false);
-      } 
+      }
     }, [shouldAlwaysCollapse, setOpen]);
-    
-    
-    const state = isMobile 
-      ? (shouldAlwaysCollapse ? "collapsed" : (openMobile ? "expanded" : "collapsed"))
-      : (shouldAlwaysCollapse || !open) ? "collapsed" : "expanded";
+
+    const state = isMobile
+      ? shouldAlwaysCollapse
+        ? "collapsed"
+        : openMobile
+          ? "expanded"
+          : "collapsed"
+      : shouldAlwaysCollapse || !open
+        ? "collapsed"
+        : "expanded";
 
     const contextValue = useMemo<SidebarContext>(
       () => ({
@@ -271,7 +263,8 @@ const Sidebar = React.forwardRef<
     },
     ref,
   ) => {
-    const { isMobile, state, openMobile,shouldAlwaysCollapse, setOpenMobile } = useSidebar();
+    const { isMobile, state, openMobile, shouldAlwaysCollapse, setOpenMobile } =
+      useSidebar();
     const SideBarTrigger = (
       <SidebarTrigger
         icon={<ChevronsLeft className="stroke-[var(--sidebar-background)]" />}
@@ -319,7 +312,7 @@ const Sidebar = React.forwardRef<
             <Box className="flex h-full w-full flex-col">{children}</Box>
           </Box>
         </Box>
-      )
+      );
     }
     return (
       <>
@@ -351,7 +344,7 @@ const Sidebar = React.forwardRef<
           data-sidebar="sidebar"
           data-mobile="false"
         >
-         {!shouldAlwaysCollapse && SideBarTrigger}
+          {!shouldAlwaysCollapse && SideBarTrigger}
           {/* This is what handles the sidebar gap on desktop */}
           <Box
             className={cn(
@@ -417,7 +410,7 @@ const SidebarTrigger = React.forwardRef<
       isMobile,
       openMobile,
       setOpenMobile,
-      shouldAlwaysCollapse
+      shouldAlwaysCollapse,
     } = useSidebar();
 
     return (
@@ -428,7 +421,7 @@ const SidebarTrigger = React.forwardRef<
         className={cn("h-7 w-7", className)}
         onClick={(event) => {
           onClick?.(event);
-     
+
           if (isMobile) {
             if (mobileSidebarTrigger) {
               setOpenMobile(!openMobile);
@@ -704,7 +697,7 @@ const SidebarMenuItem = React.forwardRef<
 SidebarMenuItem.displayName = "SidebarMenuItem";
 
 const sidebarMenuButtonVariants = cva(
-  "peer/menu-button group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-[width,height,padding] hover:bg-[var(--sidebar-active)] hover:text-[var(--sidebar-foreground)] focus-visible:ring-2 active:bg-[var(--sidebar-active)] active:text-[var(--sidebar-foreground)] disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-[var(--sidebar-active)] data-[active=true]:font-medium data-[active=true]:text-[var(--sidebar-foreground)] data-[state=open]:hover:bg-[var(--sidebar-active)] data-[state=open]:hover:text-[var(--sidebar-foreground)] [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0",
+  "peer/menu-button group-data-[collapsible=icon]:!size-8 group-data-[collapsible=icon]:!p-2 flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-none ring-sidebar-ring transition-[width,height,padding] hover:bg-[var(--sidebar-active)] hover:text-[var(--sidebar-foreground)] focus-visible:ring-2 active:bg-[var(--sidebar-active)] active:text-[var(--sidebar-foreground)] disabled:pointer-events-none disabled:opacity-50 group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-[var(--sidebar-active)] data-[active=true]:font-medium data-[active=true]:text-[var(--sidebar-foreground)] data-[state=open]:hover:bg-[var(--sidebar-active)] data-[state=open]:hover:text-[var(--sidebar-foreground)] [&>span:last-child]:truncate [&>svg]:size-4 group-data-[collapsible=icon]:[&>svg]:size-5 group-data-[collapsible=icon]:!translate-x-2.5 [&>svg]:shrink-0 data-[status=active]:bg-[var(--sidebar-active)] data-[status=active]:text-[var(--sidebar-foreground)]",
   {
     variants: {
       variant: {
@@ -753,23 +746,28 @@ const SidebarMenuButton = React.forwardRef<
     ref,
   ) => {
     const Comp = asChild ? Slot : "button";
-    const { isMobile, state, open, setOpen } = useSidebar();
+    const { state, open } = useSidebar();
     
     const button = (
-      <Comp
-        ref={ref}
-        data-sidebar="menu-button"
-        data-size={size}
-        data-active={isActive}
-        className={cn(
-          sidebarMenuButtonVariants({ variant, size }),
-          "hover:bg-[var(--sidebar-active)]",
-          `${isSelected && open && "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[var(--sidebar-active)] font-[600] before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[4px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-[var(--sidebar-foreground)] before:content-['']"}`,
-          `${(isSelected || isSubMenuSelected) && !open && " bg-[var(--sidebar-active)] text-[var(--sidebar-foreground)]"}`,
-          className,
-        )}
-        {...props}
-      />
+      <Box className="group-data-[collapsible=icon]:my-1">
+        <Comp
+          ref={ref}
+          data-sidebar="menu-button"
+          data-size={size}
+          data-active={isActive}
+          className={cn(
+            sidebarMenuButtonVariants({ variant, size }),
+            "hover:bg-[var(--sidebar-active)]",
+            `${isSelected && open && "relative rounded-tl-[0px] rounded-bl-[0px] border-l-0 bg-[var(--sidebar-active)] font-semibold before:absolute before:top-0 before:bottom-0 before:left-0 before:w-[4px] before:rounded-tr-[4px] before:rounded-br-[4px] before:bg-[var(--sidebar-foreground)] before:content-['']"}`,
+            `${(isSelected || isSubMenuSelected) && !open && " bg-[var(--sidebar-active)] text-[var(--sidebar-foreground)]"}`,
+            className,
+          )}
+          {...props}
+        />
+        <span className="hidden group-data-[collapsible=icon]:block text-[9px] font-medium leading-tight text-center">
+          {tooltip && <>{tooltip}</>}
+        </span>
+      </Box>
     );
     if (state === "collapsed" && (hoverContent || tooltip)) {
       return (
@@ -782,7 +780,7 @@ const SidebarMenuButton = React.forwardRef<
                   size="2"
                   className="font-medium whitespace-nowrap"
                 >
-                  {tooltip}
+                  {tooltip && <>{tooltip}</>}
                 </Text>
               </Box>
             )
