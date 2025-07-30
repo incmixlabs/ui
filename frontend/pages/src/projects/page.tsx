@@ -3,8 +3,7 @@ import { DashboardLayout } from "@layouts/admin-panel/layout"
 
 const ProjectsPage = () => {
   return (
-    <DashboardLayout
-    >
+    <DashboardLayout>
       <ProjectPageComponents />
     </DashboardLayout>
   )

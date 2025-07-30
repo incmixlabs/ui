@@ -46,7 +46,10 @@ export function NavUser({ userId }: { userId: string }) {
                   {user.email}
                 </Text>
               </Box>
-              <Icon name="ChevronsUpDown" className="ml-auto shrink-0 scale-icon" />
+              <Icon
+                name="ChevronsUpDown"
+                className="ml-auto shrink-0 scale-icon"
+              />
             </SidebarMenuButton>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content
@@ -76,7 +79,7 @@ export function NavUser({ userId }: { userId: string }) {
             <DropdownMenu.Group>
               <DropdownMenu.Item asChild className="px-1.5">
                 <Link to="/settings">
-                  <Icon name="Settings2"/>
+                  <Icon name="Settings2" />
                   {t("settings")}
                 </Link>
               </DropdownMenu.Item>

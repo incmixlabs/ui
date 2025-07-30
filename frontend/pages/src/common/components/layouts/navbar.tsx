@@ -10,10 +10,10 @@ import {
   DropdownMenu,
   Flex,
   IconButton,
-  iconSize,
   Link,
   Text,
   TextField,
+  iconSize,
 } from "@incmix/ui"
 
 import {
@@ -67,7 +67,7 @@ const SearchBar: React.FC = () => {
 }
 
 const ThemeToggle: React.FC = () => {
-  const { theme} = useThemeStore()
+  const { theme } = useThemeStore()
   const { t } = useTranslation("navbar")
   const style = `${iconSize} text-gray-12`
   return (
