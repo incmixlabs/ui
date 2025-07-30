@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
 import {
   Box,
   Flex,
@@ -20,12 +20,10 @@ import {
   type RadixColor,
   type RadixRadius,
   type RadixScaling,
-  breakFontColor,
 } from "@incmix/utils/types";
 import { ThemeContext } from "@radix-ui/themes";
 import {
   useThemeStore,
-  useAppearanceStore,
   SIDEBAR_COLOR_OPTIONS as BASE_SIDEBAR_COLOR_OPTIONS,
   extractColorName,
 } from "@incmix/store/use-settings-store";
@@ -95,7 +93,6 @@ const SelectRow = (props: {
 
 export function ThemePlayground() {
   const { t } = useTranslation(["settings", "common"]);
-  const { appearance, toggleAppearance } = useAppearanceStore();
   const {
     accentColor,
     onAccentColorChange,
@@ -117,6 +114,20 @@ export function ThemePlayground() {
     ...BASE_SIDEBAR_COLOR_OPTIONS,
   ];
   
+  const handleSidebarColorChange = useCallback((selectedBg: string) => {
+    const getColor = SIDEBAR_COLOR_OPTIONS.find(
+      (opt) => opt.bg.color === selectedBg
+    );
+    if (!getColor) return;
+  
+    const bgColor = getColor.bg.color;
+  
+    setTheme({
+      sidebarBg: `var(--${bgColor}-${getColor.bg.break})`,
+    });
+  }, [setTheme]);
+  
+
   return (
     <>
       <CardContainer>
@@ -124,13 +135,6 @@ export function ThemePlayground() {
           {t("themeSettings")}
         </Heading>
         <Grid p="2" columns={"1"} gap={"2"}>
-          <Flex align="center" justify="between">
-            <Text>{t("darkMode")}</Text>
-            <Switch
-              checked={appearance === "dark"}
-              onCheckedChange={toggleAppearance}
-            />
-          </Flex>
           <SelectRow
             label="Accent Color"
             value={accentColor}
@@ -175,18 +179,7 @@ export function ThemePlayground() {
             <Text>{t("Sidebar")}</Text>
             <Select.Root
               value={extractColorName(sidebarBg)}
-              onValueChange={(selectedBg) => {
-                // Directly set sidebarBg string (e.g. "var(--blue-10)")
-                const getColor = SIDEBAR_COLOR_OPTIONS.find(
-                  (opt) => opt.bg.color === selectedBg,
-                );
-
-                const bgColor = getColor?.bg.color as string;
-
-                setTheme({
-                  sidebarBg: `var(--${bgColor}-${getColor?.bg.break})`,
-                });
-              }}
+              onValueChange={handleSidebarColorChange}
             >
               <Select.Trigger />
               <Select.Content>

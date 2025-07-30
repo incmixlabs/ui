@@ -782,7 +782,7 @@ const SidebarMenuButton = React.forwardRef<
                   size="2"
                   className="font-medium whitespace-nowrap"
                 >
-                  {tooltip}
+                  {tooltip && <>{tooltip}</>}
                 </Text>
               </Box>
             )
