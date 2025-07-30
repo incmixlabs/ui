@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
 import {
   Box,
   Flex,
@@ -114,6 +114,20 @@ export function ThemePlayground() {
     ...BASE_SIDEBAR_COLOR_OPTIONS,
   ];
   
+  const handleSidebarColorChange = useCallback((selectedBg: string) => {
+    const getColor = SIDEBAR_COLOR_OPTIONS.find(
+      (opt) => opt.bg.color === selectedBg
+    );
+    if (!getColor) return;
+  
+    const bgColor = getColor.bg.color;
+  
+    setTheme({
+      sidebarBg: `var(--${bgColor}-${getColor.bg.break})`,
+    });
+  }, [setTheme]); // you can also add SIDEBAR_COLOR_OPTIONS if it's dynamic
+  
+
   return (
     <>
       <CardContainer>
@@ -165,20 +179,7 @@ export function ThemePlayground() {
             <Text>{t("Sidebar")}</Text>
             <Select.Root
               value={extractColorName(sidebarBg)}
-              onValueChange={(selectedBg) => {
-
-                const getColor = SIDEBAR_COLOR_OPTIONS.find(
-                  (opt) => opt.bg.color === selectedBg,
-                );
-                if (!getColor) {
-                  return; 
-                }
-                const bgColor = getColor?.bg.color as string;
-
-                setTheme({
-                  sidebarBg: `var(--${bgColor}-${getColor.bg.break})`,
-                });
-              }}
+              onValueChange={handleSidebarColorChange}
             >
               <Select.Trigger />
               <Select.Content>
