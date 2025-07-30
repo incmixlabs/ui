@@ -19,19 +19,13 @@ import { cn } from "@utils/cn";
 import {
   Box,
   Button,
-  HoverCard,
   IconButton,
   Input,
   Separator,
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetTitle,
   Skeleton,
   Text,
 } from "@base";
 import { TooltipContent } from "@radix-ui/react-tooltip";
-import { set } from "date-fns";
 import { HoverMenu } from "./hovermenu";
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state";
@@ -764,7 +758,7 @@ const SidebarMenuButton = React.forwardRef<
           )}
           {...props}
         />
-        <span className="hidden group-data-[collapsible=icon]:block text-[9px] font-medium leading-tight text-center">
+        <span className="hidden group-data-[collapsible=icon]:block text-[9px] w-14 md:w-full font-medium leading-tight text-center">
           {tooltip && <>{tooltip}</>}
         </span>
       </Box>
@@ -787,7 +781,7 @@ const SidebarMenuButton = React.forwardRef<
           }
           side="right"
           align="center"
-          sideOffset={8}
+          sideOffset={11}
           openDelay={50}
           closeDelay={150}
         >
@@ -900,7 +894,7 @@ const SidebarMenuSub = React.forwardRef<
     ref={ref}
     data-sidebar="menu-sub"
     className={cn(
-      "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-[var(--sidebar-foreground)] border-l px-2.5 py-0.5",
+      "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-[var(--sidebar-foreground)] border-l py-0.5",
       "group-data-[collapsible=icon]:hidden",
       className,
     )}

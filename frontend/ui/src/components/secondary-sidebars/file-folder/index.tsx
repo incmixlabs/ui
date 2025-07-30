@@ -48,13 +48,13 @@ export function FileFolder(): JSX.Element {
             return (
               <Box
                 key={item.title}
-                className=" cursor-pointer px-8 py-2 hover:bg-sidebar-secondary-active/10"
+                className=" cursor-pointer px-8 py-2 hover:bg-gray-4"
               >
                 <Flex justify={"between"} align={"center"} className="gap-2 ">
                   <Text className=" font-medium text-[16px] text-gray-12">
                     {item.title}
                   </Text>
-                  <Text className=" family-[Poppins] font-medium text-[16px] text-sidebar-secondary-muted ">
+                  <Text className="font-medium text-[16px] text-gray-12 ">
                     {item.storageAvailable}%
                   </Text>
                 </Flex>
@@ -69,11 +69,11 @@ export function FileFolder(): JSX.Element {
           return (
             <Box
               key={item.title}
-              className="flex cursor-pointer items-center gap-2 px-8 py-2 text-gray-12 hover:bg-sidebar-secondary-active/10"
+              className="flex cursor-pointer items-center gap-2 px-8 py-2 text-gray-12 hover:bg-gray-4"
             >
               {item.icon && (
                 <item.icon
-                  className={`${iconSize} shrink-0 text-sidebar-secondary-muted`}
+                  className={`${iconSize} shrink-0 text-gray-12`}
                   aria-hidden="true"
                 />
               )}

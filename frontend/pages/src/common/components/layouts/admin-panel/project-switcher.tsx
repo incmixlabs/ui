@@ -88,7 +88,7 @@ export function ProjectSwitcher({ className }: { className?: string }) {
   // If there are no projects after filtering by organization ID, show a helpful message
   if (!hasProjects || projects.length === 0) {
     return (
-      <div className="flex items-center gap-2 px-2 py-2 text-[var(--sidebar-foreground)] text-xs">
+      <div className="flex items-center gap-2 px-0 py-2 text-[var(--sidebar-foreground)] text-xs group-data-[collapsible=icon]:px-1 group-data-[collapsible=icon]:text-gray-12">
         <BadgeAlert size={16} /> No projects found
       </div>
     )
