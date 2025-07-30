@@ -76,6 +76,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
   const [isColumnsMenuOpen, setIsColumnsMenuOpen] = useState(false)
   const [isStatusConfigOpen, setIsStatusConfigOpen] = useState(false)
   const [allowCustomStatusValues, setAllowCustomStatusValues] = useState(false)
+  const [hideStatusBackgroundColor, setHideStatusBackgroundColor] = useState(false)
 
   // State for grouping - default to status grouping
   const [groupByField, setGroupByField] = useState<'statusLabel' | 'priorityLabel'>('statusLabel')
@@ -162,19 +163,22 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           <div
             onDoubleClick={handleStatusColumnDoubleClick}
             style={{ cursor: 'pointer' }}
-            title={`Double-click to configure status options${allowCustomStatusValues ? ' • Custom values allowed' : ' • Only predefined values'}`}
+            title={`Double-click to configure status options${allowCustomStatusValues ? ' • Custom values allowed' : ' • Only predefined values'}${hideStatusBackgroundColor ? ' • Background colors hidden' : ''}`}
             className="w-full flex items-center gap-1"
           >
             Status
             {allowCustomStatusValues && (
               <span className="text-xs text-blue-600 dark:text-blue-400">*</span>
             )}
+            {hideStatusBackgroundColor && (
+              <span className="text-xs text-gray-600 dark:text-gray-400">(plain)</span>
+            )}
           </div>
         ),
         accessorKey: "statusId",
         id: "status",
         options: statusOptions,
-        displayStyle: 'button', // Matches your custom button style
+        displayStyle: hideStatusBackgroundColor ? 'plain' : 'button', // Use plain style when hideBackgroundColor is true
         enableColorPicker: true, // Your color picker feature
         showCreateButton: true, // Your create functionality
         createButtonText: "Create & Select",
@@ -705,6 +709,8 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
         onRefresh={refetch}
         allowCustomValues={allowCustomStatusValues}
         onAllowCustomValuesChange={setAllowCustomStatusValues}
+        hideBackgroundColor={hideStatusBackgroundColor}
+        onHideBackgroundColorChange={setHideStatusBackgroundColor}
       />
 
       {/* Task Detail Drawer */}

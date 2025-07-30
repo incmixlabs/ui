@@ -79,46 +79,19 @@ export function createEnhancedDropdownColumn<TData extends object>(
                 return 'No Value';
             }
             
-            // Return based on the display style and column type
+            // Use our DropdownCell component to handle all display styles
             const displayStyle = config.displayStyle || 'badge';
             const columnId = config.id || String(config.accessorKey);
-            const isPriority = columnId === 'priority';
             
-            // Always use button style for both status and priority
+            // Use the DropdownCell component to render the cell with the correct display style
             return (
-                <div
-                    className={`inline-flex items-center gap-2 px-2 py-1 text-xs rounded-md font-medium border transition-all duration-200`}
-                    style={{
-                        backgroundColor: option.color ? `${option.color}20` : '#f3f4f6',
-                        color: option.color || '#374151',
-                        borderColor: option.color ? `${option.color}40` : '#d1d5db'
-                    }}
-                >
-                    {isPriority ? (
-                        // Flag icon for priority
-                        <svg 
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="12"
-                            height="12"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke={option.color || '#9ca3af'}
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"></path>
-                            <line x1="4" y1="22" x2="4" y2="15"></line>
-                        </svg>
-                    ) : (
-                        // Dot for status
-                        <div 
-                            className="w-2 h-2 rounded-full" 
-                            style={{ backgroundColor: option.color || '#9ca3af' }}
-                        />
-                    )}
-                    <span>{option.label}</span>
-                </div>
+                <DropdownCell
+                    value={value}
+                    options={dropdownOptions}
+                    displayStyle={displayStyle}
+                    size="sm"
+                    showIcon={true}
+                />
             );
             
             // No more styles to handle

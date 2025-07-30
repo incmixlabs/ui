@@ -20,7 +20,7 @@ interface DropdownCellEditorProps {
   isLoading?: boolean
   loadingText?: string
   errorMessage?: string
-  displayStyle?: 'badge' | 'button' | 'minimal'
+  displayStyle?: 'badge' | 'button' | 'minimal' | 'plain'
   size?: 'sm' | 'md' | 'lg'
   rowData?: any // For context in callbacks
 }

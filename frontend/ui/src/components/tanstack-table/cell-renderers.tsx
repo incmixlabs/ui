@@ -1,5 +1,5 @@
 // File: components/DataTable/cellRenderers.tsx
-import React from "react";
+import React, { ReactNode } from "react";
 
 // Cell Renderer Components
 export const TagCell: React.FC<{ value: string[] }> = ({ value }) => {
@@ -180,7 +180,7 @@ export interface DropdownOption {
 export const DropdownCell: React.FC<{ 
   value: string;
   options?: DropdownOption[];
-  displayStyle?: 'badge' | 'button' | 'minimal';
+  displayStyle?: 'badge' | 'button' | 'minimal' | 'plain';
   size?: 'sm' | 'md' | 'lg';
   showIcon?: boolean;
   isLoading?: boolean;
@@ -290,7 +290,20 @@ export const DropdownCell: React.FC<{
     );
   }
 
-  // Minimal style
+  // Plain style - just text with a dropdown chevron, no colors
+  if (displayStyle === 'plain') {
+    const displayText = finalOption.label || value || 'No Value';
+    return (
+      <div className={`inline-flex items-center gap-2 ${sizeClasses[size]} text-gray-700 dark:text-gray-300 cursor-pointer`}>
+        <span>{displayText}</span>
+        <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    );
+  }
+
+  // Minimal style - just text, no chevron, no colors (fallback)
   const displayText = finalOption.label || value || 'No Value';
   return (
     <span className={`${sizeClasses[size]} text-gray-700 dark:text-gray-300`}>

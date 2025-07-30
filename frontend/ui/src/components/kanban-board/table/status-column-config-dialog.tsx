@@ -32,6 +32,8 @@ interface StatusColumnConfigDialogProps {
   onRefresh?: () => void // Optional refresh callback
   allowCustomValues?: boolean // Whether to allow custom values in dropdown
   onAllowCustomValuesChange?: (allow: boolean) => void // Callback when custom values setting changes
+  hideBackgroundColor?: boolean
+  onHideBackgroundColorChange?: (hide: boolean) => void
 }
 
 export const StatusColumnConfigDialog: React.FC<StatusColumnConfigDialogProps> = ({
@@ -45,6 +47,8 @@ export const StatusColumnConfigDialog: React.FC<StatusColumnConfigDialogProps> =
   onRefresh,
   allowCustomValues = false,
   onAllowCustomValuesChange,
+  hideBackgroundColor = false,
+  onHideBackgroundColorChange,
 }) => {
   // Transform status labels to options with usage count
   const [statusOptions, setStatusOptions] = useState<StatusOption[]>([])
@@ -285,23 +289,37 @@ export const StatusColumnConfigDialog: React.FC<StatusColumnConfigDialogProps> =
             </div>
           </div>
 
-          {/* Dropdown Options Header with Allow Custom Values Toggle */}
+          {/* Dropdown Options Header with Toggle Controls */}
           <div className="space-y-4">
-            <Flex justify="between" align="center">
+            <Flex justify="between" align="center" className="flex-wrap gap-2">
               <Text size="2" weight="medium">
                 Dropdown Options
               </Text>
-              <Flex align="center" gap="2">
-                <Text size="2">
-                  Allow custom values
-                </Text>
-                <Switch
-                  checked={allowCustomValues}
-                  onCheckedChange={(checked) => {
-                    onAllowCustomValuesChange?.(checked)
-                  }}
-                  disabled={isLoading}
-                />
+              <Flex align="center" gap="6">
+                <Flex align="center" gap="2">
+                  <Text size="2">
+                    Allow custom values
+                  </Text>
+                  <Switch
+                    checked={allowCustomValues}
+                    onCheckedChange={(checked) => {
+                      onAllowCustomValuesChange?.(checked)
+                    }}
+                    disabled={isLoading}
+                  />
+                </Flex>
+                <Flex align="center" gap="2">
+                  <Text size="2">
+                    Hide background color
+                  </Text>
+                  <Switch
+                    checked={hideBackgroundColor}
+                    onCheckedChange={(checked) => {
+                      onHideBackgroundColorChange?.(checked)
+                    }}
+                    disabled={isLoading}
+                  />
+                </Flex>
               </Flex>
             </Flex>
 
