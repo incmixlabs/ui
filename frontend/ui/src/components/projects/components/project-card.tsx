@@ -17,7 +17,7 @@ import {
   Trash2,
   UserPlus,
 } from "lucide-react"
-import { iconSize } from "../../icons/icon"
+import { iconSize } from "../../common/icon"
 import type { Project } from "../types"
 
 interface ProjectCardProps {

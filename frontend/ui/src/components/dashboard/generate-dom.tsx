@@ -1,5 +1,5 @@
 import RGL, { WidthProvider } from "@incmix/react-grid-layout";
-import { Box, cn, IconButton, Tooltip } from "@incmix/ui";
+import { Box, cn, Icon, IconButton, Tooltip } from "@incmix/ui";
 import {
   WidgetDropZone,
   ComponentSlot,
@@ -49,7 +49,7 @@ export function generateDOM(
                 variant="surface"
                 onClick={() => handleRemoveComponent(item.i)}
               >
-                <Trash size={16} />
+                <Icon name="Trash"/>
               </IconButton>
             </Tooltip>
           )}
@@ -85,7 +85,7 @@ export function generateDOM(
                   key={nestedItem.i}
                   className={cn(
                     "",
-                    isEditing && "rounded-lg dark:bg-gray-8 bg-gray-5 shadow",
+                    isEditing && "rounded-app dark:bg-gray-8 bg-gray-5 shadow",
                   )}
                 >
                   <WidgetDropZone

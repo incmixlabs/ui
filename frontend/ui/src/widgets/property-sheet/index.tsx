@@ -1,23 +1,19 @@
 
 import { useState } from "react"
-
 import { Input,
-
   Box,
   Button,
-  Card,
   Checkbox,
   Flex,
   Heading,
   Popover,
   Select,
   Text,
-  iconSize, 
   CardContainer} from "@base"
-
 
 import ColorPicker from "@components/color-picker"
 import { KanbanImages } from "@components/kanban-board/images"
+import { iconSize } from "@components/common"
 
 export const themeData = [
   {

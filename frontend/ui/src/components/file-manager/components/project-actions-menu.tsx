@@ -9,8 +9,7 @@ import {
   Trash2,
 } from "lucide-react"
 
-import { Button,  iconSize } from "@base"
-import { DropdownMenu } from "@radixui/dropdown-menu"
+import { Button, iconSize,DropdownMenu} from "@incmix/ui"
 import { cn } from "@utils"
 
 interface ProjectActionsMenuProps {

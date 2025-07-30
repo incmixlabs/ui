@@ -3,7 +3,6 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  iconSize,
 } from "@base"
 import { cn } from "@utils/cn"
 import { useEffect, useState } from "react"
@@ -12,6 +11,7 @@ import type {
   MCQLayoutType,
   MCQOption,
 } from "../types"
+import { iconSize } from "@components/common"
 
 const getLayoutClass = (layout: MCQLayoutType, gridCols = 2): string => {
   const baseClasses = "gap-3"

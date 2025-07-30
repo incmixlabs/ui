@@ -9,23 +9,12 @@ import {
   IconButton,
   Flex,
   Grid,
-  Heading,
   Pushpin,
   Input,
   Label,
   TextArea
 } from "@base"
-import {
-  iconSize } from "@icons"
-import {
-  CalendarClock,
-  Edit2,
-  Ellipsis,
-  Plus,
-  SlidersHorizontal,
-  Trash,
-  X,
-} from "lucide-react"
+import {Icon} from "@components/common"
 import { type INote, notesData } from "./data"
 import {PageHeader} from "@incmix/ui"
 
@@ -61,12 +50,12 @@ export function NoteComponent() {
       />
           <Flex gap={"2"}>
             <Button variant="soft" color="gray">
-              <SlidersHorizontal className="h-5 w-5" />
+              <Icon name="SlidersHorizontal" />
             </Button>
             <Dialog.Root>
               <Dialog.Trigger>
                 <Button variant="solid">
-                  <Plus className={iconSize} /> Add Note
+                  <Icon name="Plus" /> Add Note
                 </Button>
               </Dialog.Trigger>
               <Dialog.Content>
@@ -118,7 +107,7 @@ export function NoteComponent() {
                   className="relative px-4 py-4"
                 >
                   <Flex align={"center"} className="text-sm">
-                    <CalendarClock className="mr-1.5 h-4 w-4" />
+                    <Icon name="CalendarClock" className="mr-1.5 h-4 w-4" />
                     {note.date}
                   </Flex>
                   <IconButton
@@ -182,21 +171,21 @@ export function NoteComponent() {
                     className="h-6"
                     onClick={() => setIsEditing(true)}
                   >
-                    <Edit2 className="h-4 w-4" />
+                    <Icon name="SquarePen" />
                   </Button>
                   <Button
                     variant="ghost"
                     color="red"
                     className="h-6"
                   >
-                    <Trash className="h-4 w-4" />
+                    <Icon name="Trash" />
                   </Button>
                   <Button
                     variant="ghost"
                     color="blue"
                     className="h-6"
                   >
-                    <Ellipsis className="h-4 w-4" />
+                    <Icon name="Ellipsis"/>
                   </Button>
                 </>
               )}

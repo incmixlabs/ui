@@ -1,7 +1,6 @@
 import {
   Button,
   CloneIcon,
-
   toast,
   Tooltip,
 } from "@incmix/ui/base";

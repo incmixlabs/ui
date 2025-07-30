@@ -15,11 +15,7 @@ import { cn } from "@utils/cn"
 import { useEffect, useMemo, useState } from "react";
 import { DraggableComponent } from "./draggable-component";
 import {
-  ChevronDown,
-  ChevronUp,
   Filter,
-  Minus,
-  Plus,
   Search,
   X,
 } from "lucide-react";
@@ -28,6 +24,7 @@ import { useLocation, useParams } from "@tanstack/react-router";
 import {  useTemplateStore } from "@incmix/store";
 import { getWidgets } from "./widgets-data";
 import { useSelectionStore } from "../hooks/use-widgets-selection";
+import { Icon } from "@incmix/ui";
 
 interface DashboardSidebarProps {
   isEditing?: boolean;
@@ -167,7 +164,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
       <ScrollArea className="h-full p-2">
         <Flex align={"center"} gap="2" className="mb-4">
           <Box className="relative">
-            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Icon name="Search" className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search..."
               value={searchQuery}
@@ -178,7 +175,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
               <IconButton variant="solid">
-                <Filter size={16} />
+                <Icon name="ListFilter" className="w-5 h-5" />
                 <span className="sr-only">Filter</span>
               </IconButton>
             </DropdownMenu.Trigger>
@@ -247,7 +244,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
             }}
             className="-translate-y-1.5 translate-x-2"
           >
-            <X size={16} />
+            <Icon name="X" />
             <span className="sr-only">Remove Filter</span>
           </IconButton>
         </Flex>
@@ -267,7 +264,7 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
               onClick={() => setIsWidgetExpanded(!isWidgetExpanded)}
               className="hover:bg-transparent"
             >
-              {isWidgetExpanded ? <ChevronUp /> : <ChevronDown />}
+              {isWidgetExpanded ? <Icon name="ChevronUp" /> : <Icon name="ChevronDown" />}
               <Box as="span" className="sr-only">
                 {isWidgetExpanded ? "Collapse Widgets" : "Expand Widgets"}
               </Box>

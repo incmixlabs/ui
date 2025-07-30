@@ -1,5 +1,3 @@
-"use client"
-
 import React, { useRef, useState, useEffect, useCallback } from "react"
 import {
   type Instruction,
@@ -20,7 +18,7 @@ import {
   FolderOpen,
 } from "lucide-react"
 
-import { Box, Flex, Text, iconSize, Table } from "@base"
+import { Box, Flex, Text, Table } from "@base"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import { cn } from "@utils/cn"
 import { TreeContextMenu } from "./context-menu"
@@ -29,6 +27,7 @@ import { TreeItemDialog } from "./tree-item-dialog"
 import { TreeViewProvider } from "./tree-view-context"
 import type { TreeViewDescriptions } from "./types"
 import type { FormFieldConfig, TreeDataItem } from "./types"
+import { iconSize } from "../common"
 
 const treeVariants = cva(
   "group before:-z-10 before:absolute before:left-0 before:h-[2rem] before:w-full before:rounded-lg before:bg-accent/70 before:opacity-0 hover:before:opacity-100"

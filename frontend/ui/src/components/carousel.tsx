@@ -17,7 +17,7 @@ import {
 import { Button } from "@shadcn/button"
 
 import Autoplay from "embla-carousel-autoplay"
-import { iconSize } from "./icons/icon"
+import { iconSize } from "./common/icon"
 export { Autoplay }
 
 type CarouselApi = UseEmblaCarouselType[1]

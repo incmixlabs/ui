@@ -14,7 +14,6 @@ import {
   IconButton,
   ScrollArea,
   Text,
-  iconSize,
   toast,
 } from "@base";
 import { PageHeader } from "@components/page-header";
@@ -27,6 +26,7 @@ export {
 import { projects as initialProjects } from "./data";
 import type { Project } from "./types";
 import { useProjectMutation } from "./hooks/use-project-mutation";
+import { iconSize } from "../common";
 
 // Dynamically import heavy components
 const AddProjectAutoForm = lazy(() =>

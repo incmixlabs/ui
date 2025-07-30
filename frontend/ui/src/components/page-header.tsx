@@ -3,6 +3,7 @@ import {
   cn,
   Flex,
   Heading,
+  Icon,
   IconButton,
   Text,
   useIsMobile,
@@ -41,7 +42,7 @@ export function PageHeader({
     >
       <Flex align="center" gap="2">
         <IconButton onClick={() => router.history.back()}>
-          <ArrowLeftIcon />
+          <Icon name="ArrowLeft" className="h-5 w-5" />
         </IconButton>
         {isMobile && <SidebarTrigger mobileSidebarTrigger />}
         <Box>

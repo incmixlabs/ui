@@ -13,7 +13,7 @@ import { useQueryState } from "nuqs"
 
 import { MotionSheet } from "@components/custom-sheet"
 import { useMediaQuery } from "@hooks/use-media-query"
-import { Box, Button, Flex, IconButton, iconSize, Input } from "@base"
+import { Box, Button, Flex, IconButton, iconSize, Input } from "@incmix/ui"
 import { cn } from "@utils"
 import { type FileItem, projectFolders } from "../data"
 import ProjectCard from "./project-card"
