@@ -328,7 +328,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     ]
 
     return columns
-  }, [labels, allowCustomStatusValues, handleStatusColumnDoubleClick, createLabel, refetch, updateTask, deleteTask, moveTaskToStatus])
+  }, [labels, allowCustomStatusValues, handleStatusColumnDoubleClick, createLabel, refetch, updateTask, deleteTask, moveTaskToStatus,hideStatusBackgroundColor])
 
   // Filter tasks based on search query
   const filteredTasks = useMemo(() => {
@@ -639,6 +639,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       {/* Main Content */}
       <Box className=" px-4">
         <TanstackDataTable
+          key={`table-${hideStatusBackgroundColor ? 'plain' : 'colored'}`}
           columns={enhancedColumns}
           data={filteredTasks}
           enableRowSelection={true}
