@@ -63,7 +63,11 @@ export function Switcher({
               )}
             >
               <Box className="grid flex-1 text-left text-sm leading-tight">
-                <Text size="2" as="span" className="truncate font-semibold">
+                <Text
+                  size="2"
+                  as="span"
+                  className="truncate font-medium capitalize"
+                >
                   {selectedItem.name}
                 </Text>
               </Box>
@@ -76,14 +80,14 @@ export function Switcher({
             side={isMobile ? "bottom" : "right"}
             sideOffset={4}
           >
-            <DropdownMenu.Label className="font-bold text-lg capitalize">
+            <DropdownMenu.Label className="mb-1 font-medium text-xl capitalize">
               {t(title)}
             </DropdownMenu.Label>
             {items.map((item) => (
               <DropdownMenu.Item
                 key={item.id}
                 onClick={() => setSwitchedItem(item.id)}
-                className="ml-6 gap-2 p-2"
+                className="ml-2 gap-2 p-2 capitalize"
               >
                 <Text size="2" as="span">
                   {item.name}

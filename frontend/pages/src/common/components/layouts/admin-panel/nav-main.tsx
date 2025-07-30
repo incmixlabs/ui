@@ -245,11 +245,6 @@ export function NavMain({ items }: { items: NavItem[] }) {
                   <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
                     <SidebarMenuSub className="px-0 py-1">
                       {item.items.map((subItem) => {
-                        // Debug to check if the condition for showing ProjectSwitcher is met
-                        console.log("SubItem title check:", {
-                          title: subItem.title,
-                          isTasksMatch: subItem.title.toLowerCase() === "tasks",
-                        })
                         const switcher =
                           subItem.title.toLowerCase() === "tasks" ? (
                             <ProjectSwitcher
