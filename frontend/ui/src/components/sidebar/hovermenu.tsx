@@ -126,7 +126,7 @@ export function HoverMenu({
         return {
           left: "100%",
           marginLeft: `${sideOffset}px`,
-          top: align === "start" ? "0" : align === "end" ? "auto" : "-10%",
+          top: align === "start" ? "0" : align === "end" ? "auto" : "5%",
           bottom: align === "end" ? "0" : "auto",
           transform: align === "center" ? "translateY(-20%)" : "none",
         };

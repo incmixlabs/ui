@@ -38,7 +38,6 @@ function generateHoverContent(item: NavItem) {
       {item.items && item.items.length > 0 && (
         <Box className="mt-2 border-gray-6 border-t pt-2">
           {item.items.map((subItem) => {
-            // Check if we need to show ProjectSwitcher for this subItem
             const showProjectSwitcher = subItem.title.toLowerCase() === "tasks"
 
             return (
@@ -50,9 +49,8 @@ function generateHoverContent(item: NavItem) {
                 )}
                 <Link
                   to={subItem.url}
-                  className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-gray-3"
+                  className="flex items-start gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-gray-3"
                 >
-                  <Box className="w-4" />
                   <Text
                     size="2"
                     className={subItem.isSelected ? "font-medium" : ""}

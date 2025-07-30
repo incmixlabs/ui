@@ -16,7 +16,7 @@ export function SecondarySidebar({
       className={cn(
         "relative h-screen md:w-[240px] w-fit transition-all duration-200 ease-linear xl:w-[270px]",
         isMobile
-          ? `fixed left-12 z-30 min-w-[270px] bg-gray-2 ${open && "hidden"} ${!openMobile && "hidden"}`
+          ? `fixed left-[4.5rem] z-30 min-w-[270px] bg-gray-2 ${open && "hidden"} ${!openMobile && "hidden"}`
           : `${secondaryOpen ? "flex w-[250px] xl:min-w-[270px]" : "hidden w-0"}`
       )}
     >
@@ -27,7 +27,7 @@ export function SecondarySidebar({
             ? "left-[calc(var(--sidebar-width))] z-30"
             : "left-[calc(var(--sidebar-width-icon))]",
           isMobile
-            ? `min-w-[270px] left-12 ${open && "hidden"} ${!openMobile && "hidden"}`
+            ? `min-w-[270px] left-[4.5rem] ${open && "hidden"} ${!openMobile && "hidden"}`
             : `${secondaryOpen ? "flex w-[250px] xl:min-w-[270px]" : "hidden w-0"}`
         )}
       >

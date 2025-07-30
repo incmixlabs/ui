@@ -160,9 +160,9 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                         >
                           <AccordionPrimitive.Trigger
                             className={cn(
-                              `mt-1 flex h-10 w-full flex-1 select-none items-center justify-between gap-1 rounded-md ${padding} font-medium text-sm transition-all hover:bg-sidebar-secondary-active/10 hover:text-sidebar-secondary-active hover:no-underline [&[data-state=open]>svg]:rotate-90`,
+                              `mt-1 flex h-10 w-full flex-1 select-none items-center justify-between gap-1 rounded-md ${padding} font-medium text-sm transition-all hover:bg-gray-4 hover:text-gray-12 text-gray-11  hover:no-underline [&[data-state=open]>svg]:rotate-90`,
                               open &&
-                                "bg-sidebar-secondary-active/10 text-sidebar-secondary-active"
+                                "bg-gray-4 text-gray-12"
                             )}
                             onClick={() => handleSelectChange(item)}
                           >
@@ -176,7 +176,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
 
                               <Text
                                 className={cn(
-                                  "truncate text-sidebar-secondary-text text-sm",
+                                  "truncate text-gray-12 text-sm",
                                   open && "text-sidebar-background"
                                 )}
                               >
@@ -185,8 +185,8 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
                             </Flex>
                             <ChevronRight
                               className={cn(
-                                " h-5 w-5 text-gray-8 transition-transform duration-200 hover:text-sidebar-background",
-                                open && "text-sidebar-background"
+                                " h-5 w-5 text-gray-8 transition-transform duration-200 hover:text-gray-12",
+                                open && "text-gray-12"
                               )}
                             />
                           </AccordionPrimitive.Trigger>
@@ -246,10 +246,10 @@ const Leaf = React.forwardRef<
       align={"center"}
       gap={"2"}
       className={cn(
-        `mt-1 mb-1 cursor-pointer select-none rounded-md ${padding} hover:bg-sidebar-secondary-active/10`,
+        `mt-1 mb-1 cursor-pointer select-none rounded-md ${padding} hover:bg-gray-4`,
         className,
         isSelected &&
-          "bg-sidebar-secondary-active/10 text-sidebar-secondary-active"
+          "bg-gray-4 text-gray-12"
       )}
       {...props}
     >
@@ -257,8 +257,8 @@ const Leaf = React.forwardRef<
 
       <Text
         className={cn(
-          "flex-grow truncate text-sidebar-secondary-text text-sm",
-          isSelected && "text-sidebar-secondary-active"
+          "flex-grow truncate text-gray-11 text-sm",
+          isSelected && "text-gray-12"
         )}
       >
         {item.name}
