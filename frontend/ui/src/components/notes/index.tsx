@@ -41,7 +41,7 @@ export function NoteComponent() {
   }
 
   return (
-    <>
+    <Box className="container mx-auto">
       <Box className="p-4">
         <Flex align={"center"} justify={"between"}>
           <PageHeader
@@ -140,7 +140,6 @@ export function NoteComponent() {
           ))}
         </Grid>
       </Box>
-
       <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
         <Dialog.Content className="relative pt-10">
           <Dialog.Header>
@@ -209,6 +208,6 @@ export function NoteComponent() {
           </Dialog.Description>
         </Dialog.Content>
       </Dialog.Root>
-    </>
+    </Box>
   )
 }

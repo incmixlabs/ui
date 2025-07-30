@@ -1,6 +1,5 @@
 import { Area, AreaChart, ResponsiveContainer } from "recharts"
-import { Box, Button,CardContainer, Flex, Heading, Text } from "@incmix/ui"
-import { MoreHorizontal } from "lucide-react"
+import { Box, Button,CardContainer, Flex, Heading, Text,Icon } from "@incmix/ui"
 
 const data = [
   { value: 20 },
@@ -24,7 +23,7 @@ export function MonthlyBudget() {
         <Flex align={"center"} justify={"between"}>
           <Heading weight={"medium"}>Monthly Budget</Heading>
           <Button variant="ghost" size="2">
-            <MoreHorizontal className="w-4 h-4" />
+            <Icon name="Ellipsis" className="w-4 h-4" />
           </Button>
         </Flex>
       </Box>

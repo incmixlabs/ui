@@ -1,6 +1,5 @@
 import { KanbanImages } from "@components/kanban-board/images"
-import { Avatar, Box, Flex, IconButton, Text } from "@incmix/ui"
-import { Settings } from "lucide-react"
+import { Avatar, Box, Flex, Icon, IconButton, Text } from "@incmix/ui"
 export function ProfileSettings() {
   return (
     <>
@@ -19,7 +18,7 @@ export function ProfileSettings() {
           </Box>
         </Flex>
         <IconButton variant="ghost" className="cursor-pointer">
-          <Settings />
+          <Icon name="Settings" />
         </IconButton>
       </Flex>
     </>

@@ -1,5 +1,4 @@
-import { Button, Flex, IconButton, Label, Switch, Tabs, iconSize } from "@incmix/ui"
-import { X } from "lucide-react"
+import { Button, Flex, Icon, IconButton, Label, Switch, Tabs } from "@incmix/ui"
 import { useState } from "react"
 import { projectFolders } from "../data"
 import { ProjectActionsMenu } from "./project-actions-menu"
@@ -47,7 +46,7 @@ export function ProjectDetails({ projectId, onClose }: ProjectDetailsProps) {
             className="h-6 w-6 cursor-pointer"
             onClick={onClose}
           >
-            <X className={`${iconSize}`} />
+            <Icon name="X"/>
           </IconButton>
         </Flex>
       </Flex>

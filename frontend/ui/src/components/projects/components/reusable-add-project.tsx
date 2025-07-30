@@ -1,6 +1,5 @@
 import { Box, Button, Dialog, Text, toast } from "@base"
 import { saveFormProject, useOrganizationStore } from "@incmix/store"
-import { Loader2, Sparkles } from "lucide-react"
 import { nanoid } from "nanoid"
 import { useCallback, useState } from "react"
 import { useStreamingDisplay, useStreamingResponse } from "../../../hooks"
@@ -11,6 +10,7 @@ import { projectFormSchema } from "./project-form-schema"
 import AutoForm from "@components/auto-form"
 import type { Option } from "@components/multiple-selector/multiple-selector"
 import { useProjectMutation } from "../hooks/use-project-mutation"
+import { Icon } from "@incmix/ui"
 
 /**
  * Props for the ReusableAddProject component
@@ -210,12 +210,12 @@ export function ReusableAddProject({
                 >
                   {streamingState.isStreaming ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <Icon name="Loader"/>
                       Generating...
                     </>
                   ) : (
                     <>
-                      <Sparkles size={16} className="mr-2" />
+                      <Icon name="Sparkles" className="mr-2" />
                       Generate Project Description
                     </>
                   )}
@@ -232,7 +232,7 @@ export function ReusableAddProject({
 
               {streamingState.isStreaming && streamingState.connectionStatus === "connected" && (
                 <div className="flex items-center p-2 bg-blue-50 dark:bg-blue-900/20 rounded text-blue-600 dark:text-blue-300">
-                  <Sparkles size={16} className="mr-2 animate-pulse" />
+                  <Icon name="Sparkles" className="mr-2 animate-pulse" />
                   <span>AI is generating a project description...</span>
                 </div>
               )}
@@ -244,7 +244,7 @@ export function ReusableAddProject({
               )}
               {lastProcessedName && !streamingState.isStreaming && !streamingState.error && formData.description && (
                 <div className="flex items-center p-2 bg-green-50 dark:bg-green-900/20 rounded text-green-600 dark:text-green-300">
-                  <Sparkles size={16} className="mr-2" />
+                  <Icon name="Sparkles" className="mr-2" />
                   <span>AI-generated description based on your project name</span>
                 </div>
               )}
@@ -262,7 +262,7 @@ export function ReusableAddProject({
             {formData.acceptanceCriteria && formData.acceptanceCriteria.length > 0 && (
               <div className="border rounded-md p-4 bg-white dark:bg-gray-800 mt-4 mb-5">
                 <h4 className="text-sm font-medium mb-3 flex items-center">
-                  <Sparkles size={16} className="mr-2 text-blue-500" />
+                  <Icon name="Sparkles" className="mr-2 text-blue-500" />
                   AI Generated Acceptance Criteria
                 </h4>
                 <div className="space-y-2">
@@ -294,7 +294,7 @@ export function ReusableAddProject({
             {formData.checklist && formData.checklist.length > 0 && (
               <div className="border rounded-md p-4 bg-white dark:bg-gray-800 mt-4 mb-5">
                 <h4 className="text-sm font-medium mb-3 flex items-center">
-                  <Sparkles size={16} className="mr-2 text-blue-500" />
+                  <Icon name="Sparkles" className="mr-2 text-blue-500" />
                   AI Generated Checklist
                 </h4>
                 <div className="space-y-2">

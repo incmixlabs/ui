@@ -3,11 +3,11 @@ import {
   CardContainer,
   Flex,
   Heading,
+  Icon,
   IconButton,
   Text,
   WeeklyActivityChart,
 } from "@incmix/ui"
-import { Clipboard, Ellipsis } from "lucide-react"
 
 export function StatisticWidgets() {
   const onMoreOptionsClick = ()=>{
@@ -22,7 +22,7 @@ export function StatisticWidgets() {
         <Flex align={"center"} gap={"2"} justify={"between"}>
           <Heading weight={"medium"}>Statistics</Heading>
           <IconButton onClick={onMoreOptionsClick}>
-            <Ellipsis size={16} />
+            <Icon name="Ellipsis" size={16} />
           </IconButton>
         </Flex>
         <WeeklyActivityChart
@@ -44,7 +44,7 @@ export function StatisticWidgets() {
         >
           <Flex align={"center"} gap={"2"}>
             <IconButton onClick={onClipboardClick}>
-              <Clipboard size={16} />
+              <Icon name="Clipboard" />
             </IconButton>
             <Box>
               <Text as="p">Completed Project</Text>

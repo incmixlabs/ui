@@ -1,6 +1,5 @@
 import { useState, Suspense, lazy } from "react";
 
-import { LayoutGrid, List, Plus, SlidersHorizontal } from "lucide-react";
 import { motion } from "motion/react";
 import { nanoid } from "nanoid";
 import { useQueryState } from "nuqs";
@@ -16,6 +15,7 @@ import {
   Text,
   toast,
 } from "@base";
+
 import { PageHeader } from "@components/page-header";
 import { cn } from "@utils";
 import { MotionSheet } from "../custom-sheet";
@@ -26,9 +26,8 @@ export {
 import { projects as initialProjects } from "./data";
 import type { Project } from "./types";
 import { useProjectMutation } from "./hooks/use-project-mutation";
-import { iconSize } from "../common";
+import { Icon } from "../common";
 
-// Dynamically import heavy components
 const AddProjectAutoForm = lazy(() =>
   import("./components/add-project-auto-form").then((module) => ({
     default: module.AddProjectAutoForm,
@@ -209,7 +208,7 @@ export function ProjectPageComponents() {
 
   return (
     <Box className="min-h-screen bg-gray-1">
-      <Box className="mx-auto max-w-7xl px-4 py-8">
+      <Box className="mx-auto container px-4 py-8">
         <PageHeader title={"Projects"} className="w-full" />
         <Box className={"relative mb-6"}>
           {viewMode === "grid" && (
@@ -282,14 +281,14 @@ export function ProjectPageComponents() {
               size="1"
               onClick={() => setViewMode("grid")}
             >
-              <LayoutGrid size={16} />
+              <Icon name="LayoutGrid" />
             </IconButton>
             <IconButton
               variant={viewMode === "grid" ? "soft" : "solid"}
               size="1"
               onClick={handleOpenListView}
             >
-              <List size={16} />
+              <Icon name="List" />
             </IconButton>
             <Flex align={"center"} gap={"2"} className=" pl-2">
               <IconButton
@@ -298,7 +297,7 @@ export function ProjectPageComponents() {
                 onClick={() => setIsFilterOpen(true)}
                 size="1"
               >
-                <SlidersHorizontal size={16} />
+                <Icon name="SlidersHorizontal" />
               </IconButton>
             </Flex>
           </Box>
@@ -350,7 +349,7 @@ export function ProjectPageComponents() {
                   onClick={() => setIsAddModalOpen(true)}
                   className="bg-blue-600 hover:bg-blue-700"
                 >
-                  <Plus className={`mr-2 ${iconSize}`} /> Add New Project
+                  <Icon name="Plus" className={`mr-2`} /> Add New Project
                 </Button>
               </Box>
             )}

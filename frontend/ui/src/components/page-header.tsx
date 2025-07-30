@@ -10,7 +10,6 @@ import {
 } from "@incmix/ui";
 import { SidebarTrigger } from "@incmix/ui/sidebar";
 import { useRouter } from "@tanstack/react-router";
-import { ArrowLeftIcon } from "lucide-react";
 interface PageHeaderProps {
   title?: string | React.ReactNode;
   email?: string | React.ReactNode;

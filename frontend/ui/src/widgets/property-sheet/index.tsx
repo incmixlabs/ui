@@ -10,7 +10,6 @@ import { Input,
   Select,
   Text,
   CardContainer} from "@base"
-
 import ColorPicker from "@components/color-picker"
 import { KanbanImages } from "@components/kanban-board/images"
 import { iconSize } from "@components/common"

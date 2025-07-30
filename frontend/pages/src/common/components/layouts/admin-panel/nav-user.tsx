@@ -1,10 +1,6 @@
-"use client"
-
-import { Bell, ChevronsUpDown, LogOut, Settings2, UserIcon } from "lucide-react"
-
 import { useLogout, useProfilePictureUrl, useUser } from "@auth"
 import { useAppearanceStore } from "@incmix/store"
-import { Avatar, Box, DropdownMenu, Flex, Switch, Text } from "@incmix/ui"
+import { Avatar, Box, DropdownMenu, Flex, Icon, Switch, Text } from "@incmix/ui"
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -50,7 +46,7 @@ export function NavUser({ userId }: { userId: string }) {
                   {user.email}
                 </Text>
               </Box>
-              <ChevronsUpDown className="ml-auto size-4 shrink-0 scale-icon" />
+              <Icon name="ChevronsUpDown" className="ml-auto shrink-0 scale-icon" />
             </SidebarMenuButton>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content
@@ -80,13 +76,13 @@ export function NavUser({ userId }: { userId: string }) {
             <DropdownMenu.Group>
               <DropdownMenu.Item asChild className="px-1.5">
                 <Link to="/settings">
-                  <Settings2 className="size-4" />
+                  <Icon name="Settings2"/>
                   {t("settings")}
                 </Link>
               </DropdownMenu.Item>
               <DropdownMenu.Item asChild className="px-1.5">
                 <Link to="/notifications">
-                  <Bell className="size-4" />
+                  <Icon name="Bell" />
                   {t("notifications")}
                 </Link>
               </DropdownMenu.Item>
@@ -107,7 +103,7 @@ export function NavUser({ userId }: { userId: string }) {
               className="px-1.5"
               color="red"
             >
-              <LogOut className="size-4" />
+              <Icon name="LogOut" />
               {t("logout")}
             </DropdownMenu.Item>
           </DropdownMenu.Content>

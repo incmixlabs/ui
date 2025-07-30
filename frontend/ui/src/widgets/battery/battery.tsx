@@ -1,10 +1,9 @@
-import { Box, Flex, Text } from "@incmix/ui"
-import { BatteryCharging as LightningBoltIcon } from "lucide-react"
+import { Box, Flex, Icon, Text } from "@incmix/ui"
 import { cn } from "@utils/cn"
 
 function LowBatteryWarning() {
   return (
-    <LightningBoltIcon
+    <Icon name="BatteryCharging"
       className="h-6 w-6 text-red-9"
       aria-label="Low Battery Warning"
     />
@@ -13,7 +12,7 @@ function LowBatteryWarning() {
 
 function ChargingIndicator() {
   return (
-    <LightningBoltIcon
+    <Icon name="BatteryCharging"
       className="h-6 w-6 text-gray-12"
       aria-label="Charging Indicator"
     />

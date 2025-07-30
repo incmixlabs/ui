@@ -6,7 +6,6 @@ import {
   SparkChart,
   Text,
 } from "@incmix/ui"
-import { Task } from "@incmix/utils/types";
 interface TaskChartProps {
     /** Title for the chart */
   title?: string;

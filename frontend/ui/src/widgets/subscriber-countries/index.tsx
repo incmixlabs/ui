@@ -8,8 +8,8 @@ import {
   Heading,
   ScrollArea,
   Text,
+  Icon
 } from "@incmix/ui";
-import { MoreHorizontal, TrendingUp, TrendingDown } from "lucide-react";
 import { flagsImg } from "./assets";
 
 interface Country {
@@ -78,7 +78,7 @@ export function SubscribersByCountries({
         <Flex align="center" justify="between">
           <Heading weight={"medium"}>Subscriber by Countries</Heading>
           <Button variant="ghost" size="2">
-            <MoreHorizontal className="w-4 h-4" />
+            <Icon name="Ellipsis"/>
           </Button>
         </Flex>
       </Box>
@@ -118,9 +118,9 @@ export function SubscribersByCountries({
 
               <Flex align="center" justify="end" gap="1">
                 {country.isPositive ? (
-                  <TrendingUp className="w-3 h-3 text-green-500" />
+                  <Icon name='TrendingUp' className="w-3 h-3 text-green-500" />
                 ) : (
-                  <TrendingDown className="w-3 h-3 text-red-500" />
+                  <Icon name="TrendingDown" className="w-3 h-3 text-red-500" />
                 )}
                 <Text
                   size="2"

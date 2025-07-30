@@ -6,12 +6,11 @@ import {
   Flex,
   Grid,
   Heading,
+  Icon,
   IconButton,
   ScrollArea,
   Text,
-  Tooltip,
 } from "@incmix/ui";
-import { EllipsisVertical } from "lucide-react";
 import { motion } from "motion/react";
 import React, { useState } from "react";
 
@@ -147,7 +146,7 @@ export function ActiveTask() {
                     variant="ghost"
                     className="ml-2 flex-shrink-0 cursor-pointer"
                   >
-                    <EllipsisVertical className="h-5 w-5" />
+                    <Icon name="EllipsisVertical" className="h-5 w-5" />
                   </IconButton>
                 </Flex>
               ))}

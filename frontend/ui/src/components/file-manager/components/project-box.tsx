@@ -1,19 +1,9 @@
 import { type SetStateAction, useState } from "react"
-import {
-  ChevronLeft,
-  Columns2,
-  FilterIcon,
-  LayoutGrid,
-  List,
-  Plus,
-  Search,
-  Upload,
-} from "lucide-react"
 import { useQueryState } from "nuqs"
 
 import { MotionSheet } from "@components/custom-sheet"
 import { useMediaQuery } from "@hooks/use-media-query"
-import { Box, Button, Flex, IconButton, iconSize, Input } from "@incmix/ui"
+import { Box, Button, Flex, Icon, IconButton, Input } from "@incmix/ui"
 import { cn } from "@utils"
 import { type FileItem, projectFolders } from "../data"
 import ProjectCard from "./project-card"
@@ -100,14 +90,6 @@ const ProjectBox = ({ title }: FileGridProps) => {
           gap={"1"}
         >
           <PageHeader />
-          <IconButton
-            className={`mr-2 rounded-full ${iconSize}`}
-            onClick={() => {
-              /* Add navigation logic here */
-            }}
-          >
-            <ChevronLeft />
-          </IconButton>
           <span>File Manager</span> /{" "}
           <span className="text-blue-10">{title}</span>
         </Flex>
@@ -115,7 +97,7 @@ const ProjectBox = ({ title }: FileGridProps) => {
           <Flex align={"center"} justify={"between"} className="mb-4 gap-4 ">
             {isMobile && (
               <Box className="relative flex h-11 w-full items-center rounded-md bg-gray-3">
-                <Search className="ml-3 h-5 w-5 text-gray-10" />
+                <Icon name="Search" className="ml-3 h-5 w-5 text-gray-10" />
                 <Input
                   placeholder="Search..."
                   value={searchQuery}
@@ -125,10 +107,10 @@ const ProjectBox = ({ title }: FileGridProps) => {
               </Box>
             )}
             <Button className="h-10">
-              <Plus className={iconSize} /> Add Folder
+              <Icon name="Plus" /> Add Folder
             </Button>
             <Button className="h-10">
-              <Upload className={iconSize}/> Upload
+              <Icon name="Upload" /> Upload
             </Button>
           </Flex>
           <Flex align={"center"} justify={"between"} className="mb-4">
@@ -141,7 +123,7 @@ const ProjectBox = ({ title }: FileGridProps) => {
                 className="w-full"
               >
                 <Box className="relative flex h-9 w-10 cursor-pointer items-center rounded-app border border-gray-5 md:w-64 md:cursor-default md:border-none">
-                  <Search className="ml-2 h-5 w-5 text-gray-10" />
+                  <Icon name="Search" className="ml-2 h-5 w-5 text-gray-10" />
                   <Input
                     placeholder="Search files..."
                     value={projectSearchQuery}
@@ -153,29 +135,29 @@ const ProjectBox = ({ title }: FileGridProps) => {
               <Flex
                 align={"center"}
                 gap={"1"}
-                className="h-9 rounded-app border border-gray-5 p-1"
+                className="h-9 rounded-app border border-gray-5 p-0.5"
               >
                  <IconButton
                     onClick={() => setViewMode("grid")}
                   >
-                    <FilterIcon className={iconSize}/>
+                    <Icon name="ListFilter"/>
                   </IconButton>
                 <IconButton
 
                   onClick={() => setViewMode("list")}
                 >
-                  <List className={iconSize} />
+                  <Icon name="List"/>
                 </IconButton>
                 <IconButton
                   onClick={() => setViewMode("grid")}
                 >
-                  <LayoutGrid className={iconSize} />
+                  <Icon name="LayoutGrid"/>
                 </IconButton>
                 {isMobile && (
                   <IconButton
                     onClick={() => setViewMode("side")}
                   >
-                    <Columns2 className={cn("h-5 w-5")} />
+                    <Icon name="Columns2"/>
                   </IconButton>
                 )}
               </Flex>
@@ -250,7 +232,7 @@ const ProjectBox = ({ title }: FileGridProps) => {
                 }
                 disabled={currentPage === 1}
               >
-                <ChevronLeft className={`${iconSize}`} />
+                <Icon name="ChevronLeft"/>
                 Previous
               </Button>
               {isMobile && (
@@ -287,7 +269,7 @@ const ProjectBox = ({ title }: FileGridProps) => {
                 disabled={currentPage === totalPages}
               >
                 Next
-                <ChevronLeft className={`${iconSize} rotate-180`} />
+                <Icon name="ChevronLeft" className={`rotate-180`} />
               </Button>
             </Flex>
           )}

@@ -10,14 +10,8 @@ import {
   Progress,
   Text,
 } from "@base"
-import {
-  Clock,
-  Ellipsis,
-  Pencil,
-  Trash2,
-  UserPlus,
-} from "lucide-react"
-import { iconSize } from "../../common/icon"
+
+import {Icon } from "../../common/icon"
 import type { Project } from "../types"
 
 interface ProjectCardProps {
@@ -69,7 +63,7 @@ export function ProjectCard({
           <DropdownMenu.Root>
             <DropdownMenu.Trigger className=" cursor-pointer">
               <IconButton className="bg-transparent text-gray-10">
-                <Ellipsis />
+                <Icon name="Ellipsis"/>
               </IconButton>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content align="end" className="w-[180px] p-0">
@@ -79,21 +73,21 @@ export function ProjectCard({
                 }
                 className="flex items-center gap-2"
               >
-                <Pencil size={16} />
+                <Icon name="Pencil"/>
                 Edit
               </DropdownMenu.Item>
               <DropdownMenu.Item
                 onClick={() => onAddMember(project)}
                 className="flex items-center gap-2"
               >
-                <UserPlus size={16} />
+                <Icon name="UserPlus"/>
                 Add Member
               </DropdownMenu.Item>
               <DropdownMenu.Item
                 onClick={() => onAddDueDate(project)}
                 className="flex items-center gap-2"
               >
-                <Clock size={16} />
+                <Icon name="Clock"/>
                 Add Due Date
               </DropdownMenu.Item>
               <DropdownMenu.Separator />
@@ -101,7 +95,7 @@ export function ProjectCard({
                 color="red"
                 onClick={() => onDelete(project.id)}
               >
-                <Trash2 size={16} />
+                <Icon name="Trash2"/>
                 Delete Project
               </DropdownMenu.Item>
             </DropdownMenu.Content>
@@ -133,7 +127,7 @@ export function ProjectCard({
           gap={"1"}
           className="rounded-app bg-gray-3 p-2 font-medium text-gray-11"
         >
-          <Clock className={`${iconSize}`} />
+          <Icon name="Clock"/>
           <Text as="span" className="text-sm ">
             {project.timeLeft} {project.timeType} left
           </Text>

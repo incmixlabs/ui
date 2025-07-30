@@ -1,6 +1,5 @@
 import React from "react";
-import { Avatar, Box, CardContainer, Flex, IconButton, Text } from "@incmix/ui";
-import { Settings } from "lucide-react";
+import { Avatar,Icon ,Box, CardContainer, Flex, IconButton, Text } from "@incmix/ui";
 
 
 export function UserProfile(
@@ -28,7 +27,7 @@ export function UserProfile(
           </Box>
         </Flex>
         <IconButton variant="ghost" className="cursor-pointer">
-          <Settings />
+          <Icon name="Settings" />
         </IconButton>
       </Flex>
     </CardContainer>
