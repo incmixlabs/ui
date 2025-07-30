@@ -126,7 +126,12 @@ export function HoverMenu({
         return {
           left: "100%",
           marginLeft: `${sideOffset}px`,
-          top: align === "start" ? "0" : align === "end" ? "auto" : "5%",
+          top:
+            align === "start"
+              ? `${alignOffset}px`
+              : align === "end"
+                ? "auto"
+                : `calc(5% + ${alignOffset}px)`,
           bottom: align === "end" ? "0" : "auto",
           transform: align === "center" ? "translateY(-20%)" : "none",
         };
@@ -134,7 +139,12 @@ export function HoverMenu({
         return {
           right: "100%",
           marginRight: `${sideOffset}px`,
-          top: align === "start" ? "0" : align === "end" ? "auto" : "10%",
+          top:
+            align === "start"
+              ? `${alignOffset}px`
+              : align === "end"
+                ? "auto"
+                : `calc(10% + ${alignOffset}px)`,
           bottom: align === "end" ? "0" : "auto",
           transform: align === "center" ? "translateY(-10%)" : "none",
         };
@@ -142,7 +152,12 @@ export function HoverMenu({
         return {
           bottom: "100%",
           marginBottom: `${sideOffset}px`,
-          left: align === "start" ? "0" : align === "end" ? "auto" : "50%",
+          left:
+            align === "start"
+              ? `${alignOffset}px`
+              : align === "end"
+                ? "auto"
+                : `calc(50% + ${alignOffset}px)`,
           right: align === "end" ? "0" : "auto",
           transform: align === "center" ? "translateX(-50%)" : "none",
         };
@@ -150,7 +165,12 @@ export function HoverMenu({
         return {
           top: "100%",
           marginTop: `${sideOffset}px`,
-          left: align === "start" ? "0" : align === "end" ? "auto" : "50%",
+          left:
+            align === "start"
+              ? `${alignOffset}px`
+              : align === "end"
+                ? "auto"
+                : `calc(50% + ${alignOffset}px)`,
           right: align === "end" ? "0" : "auto",
           transform: align === "center" ? "translateX(-50%)" : "none",
         };

@@ -54,7 +54,7 @@ export function FileFolder(): JSX.Element {
                   <Text className=" font-medium text-[16px] text-gray-12">
                     {item.title}
                   </Text>
-                  <Text className=" family-[Poppins] font-medium text-[16px] text-gray-12 ">
+                  <Text className="font-medium text-[16px] text-gray-12 ">
                     {item.storageAvailable}%
                   </Text>
                 </Flex>
