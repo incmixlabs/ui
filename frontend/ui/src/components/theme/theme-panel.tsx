@@ -125,7 +125,7 @@ export function ThemePlayground() {
     setTheme({
       sidebarBg: `var(--${bgColor}-${getColor.bg.break})`,
     });
-  }, [setTheme]); // you can also add SIDEBAR_COLOR_OPTIONS if it's dynamic
+  }, [setTheme]);
   
 
   return (
