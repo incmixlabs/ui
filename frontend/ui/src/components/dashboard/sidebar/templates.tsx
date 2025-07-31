@@ -5,24 +5,16 @@ import {
   Button,
   Badge,
   Flex,
-  Heading,
   Box,
   Grid,
   Text,
   toast,
 } from "@base";
-import {
-  Trash2,
-  CheckCheck,
-  Minus,
-  Plus,
-  ChevronUp,
-  ChevronDown,
-} from "lucide-react";
 import { cn } from "@utils/cn";
 import { useQueryState } from "nuqs";
 import { DashboardTemplate } from "@incmix/store";
 import { useLayoutStore } from "../hooks/use-layout-store";
+import { Heading, Icon } from "@incmix/ui";
 interface TemplatesSidebarProps {
   filteredTemplates:DashboardTemplate[]
   templates: DashboardTemplate[];
@@ -106,7 +98,7 @@ export function TemplatesSidebar({
           onClick={() => setIsTemplateExpanded(!isTemplateExpanded)}
           className="hover:bg-transparent"
         >
-          {isTemplateExpanded ? <ChevronUp /> : <ChevronDown />}
+          {isTemplateExpanded ? <Icon name="ChevronUp" /> : <Icon name="ChevronDown" />}
           <span className="sr-only">
             {isTemplateExpanded ? "Collapse templates" : "Expand templates"}
           </span>
@@ -169,7 +161,7 @@ export function TemplatesSidebar({
                         className="h-8 w-8 "
                         onClick={(e) => handleActiveTemplate(template.id, e)}
                       >
-                        <CheckCheck className="h-5 w-5" />
+                        <Icon name="CheckCheck" />
                         <span className="sr-only">active</span>
                       </Button>
                     ) : (
@@ -185,7 +177,7 @@ export function TemplatesSidebar({
                       className="h-8 w-8 p-0 text-destructive"
                       onClick={(e) => handleDeleteTemplate(template.id, e)}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Icon name="Trash2" />
                       <span className="sr-only">Delete template</span>
                     </Button>
                   </Flex>

@@ -9,13 +9,12 @@ import {
   Box,
   Button,
   Flex,
-  Heading,
   IconButton,
   ScrollArea,
   Text,
   toast,
 } from "@base";
-
+import {Heading,Icon} from "@incmix/ui"
 import { PageHeader } from "@components/page-header";
 import { cn } from "@utils";
 import { MotionSheet } from "../custom-sheet";
@@ -26,7 +25,6 @@ export {
 import { projects as initialProjects } from "./data";
 import type { Project } from "./types";
 import { useProjectMutation } from "./hooks/use-project-mutation";
-import { Icon } from "../common";
 
 const AddProjectAutoForm = lazy(() =>
   import("./components/add-project-auto-form").then((module) => ({

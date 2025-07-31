@@ -1,4 +1,4 @@
-import { Button, Flex, Icon, IconButton, Label, Switch, Tabs } from "@incmix/ui"
+import { Button, Flex, Heading, Icon, IconButton, Label, Switch, Tabs } from "@incmix/ui"
 import { useState } from "react"
 import { projectFolders } from "../data"
 import { ProjectActionsMenu } from "./project-actions-menu"
@@ -34,7 +34,7 @@ export function ProjectDetails({ projectId, onClose }: ProjectDetailsProps) {
         justify={"between"}
       >
         <Flex align={"center"} gap={"2"}>
-          <h2 className="truncate font-semibold text-lg">{fileData?.name}</h2>
+          <Heading variant="subsection">{fileData?.name}</Heading>
         </Flex>
         <Flex align={"center"} gap={"2"}>
           <ProjectActionsMenu
@@ -128,8 +128,8 @@ export function ProjectDetails({ projectId, onClose }: ProjectDetailsProps) {
               </>
             </div>
 
-            <div className="space-y-2">
-              <h3 className="font-medium text-sm">SETTINGS</h3>
+            <div className="space-y-2 border-t border-gray-4 pt-4">
+              <Heading variant="subsection">SETTINGS</Heading>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="file-sharing" className="text-sm">

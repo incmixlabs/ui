@@ -8,7 +8,6 @@ import {
   DropdownMenu,
   Flex,
   Grid,
-  Heading,
   IconButton,
   ScrollArea,
   Tabs,
@@ -46,6 +45,7 @@ import X from "../../icons/x"
 import { ComboBox } from "../../combo-box"
 import { assignData, attachments, commentsData, labelsData } from "../data"
 import { KanbanImages } from "../images"
+import {Heading} from "@incmix/ui"
 
 /**
  * Renders a task card drawer for editing detailed task information within a Kanban board.

@@ -1,21 +1,8 @@
-// components/board/board-column.tsx - Fixed layout and spacing
-"use client";
-
 import {
   draggable,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import {
-  Ellipsis,
-  Plus,
-  Trash2,
-  Edit3,
-  GripVertical,
-  Check,
-  X,
-  Loader2,
-  Sparkles,
-} from "lucide-react";
+
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ColorPicker, { ColorSelectType } from "@components/color-picker";
 import invariant from "tiny-invariant";
@@ -37,7 +24,6 @@ import {
 import {
   Box,
   Flex,
-  Heading,
   IconButton,
   Button,
   TextField,
@@ -45,6 +31,7 @@ import {
   DropdownMenu,
   TextArea,
 } from "@radixui";
+import {Icon, Heading} from "@incmix/ui"
 import { isSafari } from "@utils/browser";
 import { isShallowEqual } from "@incmix/utils/objects";
 import { blockBoardPanningAttr } from "../data-attributes";
@@ -281,12 +268,12 @@ const QuickTaskForm = memo(function QuickTaskForm({
           >
             {streamingState.isStreaming ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <Icon name="Loader" className="w-4 h-4 mr-2 animate-spin" />
                 Generating...
               </>
             ) : (
               <>
-                <Sparkles className="w-4 h-4 mr-2" />
+                <Icon name="Sparkles" className="w-4 h-4 mr-2" />
                 Generate Description
               </>
             )}
@@ -310,7 +297,7 @@ const QuickTaskForm = memo(function QuickTaskForm({
           <Box className="text-xs">
             {streamingState.isStreaming && (
               <Flex align="center" gap="1" className="text-blue-500">
-                <Loader2 size={12} className="animate-spin" />
+                <Icon name="Loader" className="animate-spin" />
                 <Text>Generating description...</Text>
               </Flex>
             )}
@@ -324,7 +311,7 @@ const QuickTaskForm = memo(function QuickTaskForm({
               description &&
               streamingState.connectionStatus === "completed" && (
                 <Flex align="center" gap="1" className="text-green-600">
-                  <Check size={12} />
+                  <Icon name="Check" />
                   <Text>AI description generated</Text>
                 </Flex>
               )}
@@ -733,7 +720,7 @@ export const BoardColumn = memo(function BoardColumn({
                       onClick={handleUpdateColumn}
                       disabled={isUpdating}
                     >
-                      <Check size={14} />
+                      <Icon name="Check" />
                       {isUpdating ? "Saving..." : "Save"}
                     </Button>
                     <Button
@@ -744,7 +731,7 @@ export const BoardColumn = memo(function BoardColumn({
                       onClick={handleCancelEdit}
                       disabled={isUpdating}
                     >
-                      <X size={14} />
+                      <Icon name="X" />
                       Cancel
                     </Button>
                   </Flex>
@@ -790,17 +777,17 @@ export const BoardColumn = memo(function BoardColumn({
                       variant="ghost"
                       className="rounded hover:bg-gray-200 dark:hover:bg-gray-700 flex-shrink-0"
                     >
-                      <Ellipsis size={16} />
+                      <Icon name="EllipsisVertical" />
                     </IconButton>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content>
                     <DropdownMenu.Item onClick={() => setIsEditingColumn(true)}>
-                      <Edit3 size={14} />
+                      <Icon name="SquarePen" />
                       Edit Column
                     </DropdownMenu.Item>
                     <DropdownMenu.Separator />
                     <DropdownMenu.Item onClick={handleDeleteColumn} color="red">
-                      <Trash2 size={14} />
+                      <Icon name="Trash2" />
                       Delete Column
                     </DropdownMenu.Item>
                   </DropdownMenu.Content>
@@ -862,7 +849,7 @@ export const BoardColumn = memo(function BoardColumn({
                 className="grid place-items-center gap-2 w-10 h-10 mx-auto"
                 onClick={() => setIsCreatingTask(true)}
               >
-                <Plus size={20} />
+                <Icon name="Plus" />
                 <Text className="sr-only">Add a task</Text>
               </Button>
             )}

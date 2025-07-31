@@ -43,8 +43,8 @@ function generateHoverContent(item: NavItem) {
             return (
               <Box key={subItem.title} className="w-full">
                 {showProjectSwitcher && (
-                  <Box className="mb-2 w-full px-2">
-                    <ProjectSwitcher className="!w-full !h-fit !p-2" />
+                  <Box className="mb-2 w-full">
+                    <ProjectSwitcher className="!w-full !h-fit !p-2 !-translate-x-0.5" />
                   </Box>
                 )}
                 <Link

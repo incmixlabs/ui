@@ -5,14 +5,13 @@ import { Input,
   Button,
   Checkbox,
   Flex,
-  Heading,
   Popover,
   Select,
   Text,
   CardContainer} from "@base"
 import ColorPicker from "@components/color-picker"
 import { KanbanImages } from "@components/kanban-board/images"
-import { iconSize } from "@components/common"
+import { iconSize,Heading } from "@incmix/ui"
 
 export const themeData = [
   {

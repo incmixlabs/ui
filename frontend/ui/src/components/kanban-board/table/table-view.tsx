@@ -3,7 +3,6 @@ import { useState, useCallback, useMemo } from "react"
 import {
   Box,
   Flex,
-  Heading,
   Button,
   IconButton,
   TextField,
@@ -25,7 +24,7 @@ import {
   Check,
   Flag,
 } from "lucide-react"
-
+import {Heading} from "@incmix/ui"
 import type { TableTask, ListColumn } from "../types"
 import type { TaskDataSchema } from "@incmix/utils/schema"
 // import { useAIFeaturesStore } from "@incmix/store" // Commented out as not used

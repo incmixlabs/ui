@@ -7,11 +7,11 @@ import {
   Box,
   Checkbox,
   Flex,
-  Heading,
   IconButton,
   Progress,
   Text,
 } from "@base"
+import {Heading} from "@incmix/ui"
 
 type TChecklistItem = {
   id: number

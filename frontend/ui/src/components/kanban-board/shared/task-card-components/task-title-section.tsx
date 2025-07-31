@@ -61,7 +61,7 @@ export function TaskTitleSection({
       ) : (
         <Flex gap={"4"} align={"center"} className="group">
           <Heading size={"4"}
-            className=" cursor-pointer hover:bg-gray-3 dark:hover:bg-gray-2 p-2 rounded-md -m-2 flex-1 transition-colors"
+            className="cursor-pointer hover:bg-gray-3 dark:hover:bg-gray-2 p-2 rounded-md -m-2 flex-1 transition-colors"
             onClick={onStartEdit}
           >
             {currentTask.name}

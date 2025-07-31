@@ -73,7 +73,7 @@ export function ActiveTask() {
     <CardContainer className="min-h-64 h-full flex flex-col overflow-hidden">
       {/* Header Section */}
       <Flex justify="between" align="center" className="pb-4 flex-shrink-0">
-        <Heading weight={"medium"}>Active Tasks</Heading>
+        <Heading >Active Tasks</Heading>
         <Flex
           align="center"
           gap="2"

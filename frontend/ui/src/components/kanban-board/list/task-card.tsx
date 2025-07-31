@@ -1,4 +1,3 @@
-// components/list/task-card.tsx - Updated styling to match Figma design with drag and drop
 import React, { useCallback, useState, memo, useEffect, useRef, useMemo, useContext, createContext } from "react"
 import { createPortal } from "react-dom"
 import {
@@ -17,20 +16,6 @@ import invariant from "tiny-invariant"
 
 // Import members data hook
 import { useMembers } from "../hooks/use-members"
-import {
-  CalendarDays,
-  Link,
-  ExternalLink,
-  Figma,
-  GripVertical,
-  MessageSquare,
-  Paperclip,
-  ListChecks,
-  CheckSquare,
-  ClipboardCheck,
-  ChevronRight,
-  ChevronDown
-} from "lucide-react"
 import {
   type TaskDataSchema,
 } from "@incmix/utils/schema"
@@ -54,6 +39,7 @@ import {
   Text,
   Badge,
   Avatar,
+  Icon,
 } from "@incmix/ui"
 import { TaskActionsMenu } from "./task-actions-menu"
 import { ListColumn } from "../hooks/use-list-view"
@@ -665,9 +651,9 @@ export const ListTaskCard = memo(function ListTaskCard({
                   aria-label={isExpanded ? "Collapse subtasks" : "Expand subtasks"}
                 >
                   {isExpanded ? (
-                    <ChevronDown size={14} className="text-gray-9" />
+                    <Icon name="ChevronDown" className="text-gray-9" />
                   ) : (
-                    <ChevronRight size={14} className="text-gray-9" />
+                    <Icon name="ChevronRight" className="text-gray-9" />
                   )}
                 </Box>
               )}
@@ -700,7 +686,7 @@ export const ListTaskCard = memo(function ListTaskCard({
               {/* Subtasks counter */}
               {card.subTasks && card.subTasks.length > 0 && (
                 <Flex align="center" gap="1">
-                  <ListChecks size={14} className="text-gray-9" strokeWidth={2} />
+                  <Icon name="ListChecks" className="text-gray-9" />
                   <Text className="text-gray-10" size="1">
                     {card.subTasks.filter(task => task.completed === true).length}/{card.subTasks.length}
                   </Text>
@@ -710,7 +696,7 @@ export const ListTaskCard = memo(function ListTaskCard({
               {/* Comments counter */}
               {card.comments && card.comments.length > 0 && (
                 <Flex align="center" gap="1">
-                  <MessageSquare size={14} className="text-gray-9" strokeWidth={2} />
+                  <Icon name="MessageSquare" className="text-gray-9" />
                   <Text className="text-gray-10" size="1">
                     {card.comments.length}
                   </Text>
@@ -720,7 +706,7 @@ export const ListTaskCard = memo(function ListTaskCard({
               {/* Attachments counter */}
               {card.attachments && card.attachments.length > 0 && (
                 <Flex align="center" gap="1">
-                  <Paperclip size={14} className="text-gray-9" strokeWidth={2} />
+                  <Icon name="Paperclip" className="text-gray-9" />
                   <Text className="text-gray-10" size="1">
                     {card.attachments.length}
                   </Text>
@@ -730,7 +716,7 @@ export const ListTaskCard = memo(function ListTaskCard({
               {/* Acceptance criteria counter */}
               {card.acceptanceCriteria && card.acceptanceCriteria.length > 0 && (
                 <Flex align="center" gap="1">
-                  <ClipboardCheck size={14} className="text-gray-9" strokeWidth={2} />
+                  <Icon name="ClipboardCheck" className="text-gray-9" />
                   <Text className="text-gray-10" size="1">
                     {card.acceptanceCriteria.filter(item => item.checked === true).length}/{card.acceptanceCriteria.length}
                   </Text>
@@ -740,7 +726,7 @@ export const ListTaskCard = memo(function ListTaskCard({
               {/* Checklist counter */}
               {card.checklist && card.checklist.length > 0 && (
                 <Flex align="center" gap="1">
-                  <CheckSquare size={14} className="text-gray-9" strokeWidth={2} />
+                  <Icon name="SquareCheckBig" className="text-gray-9" />
                   <Text className="text-gray-10" size="1">
                     {card.checklist.filter(item => item.checked === true).length}/{card.checklist.length}
                   </Text>

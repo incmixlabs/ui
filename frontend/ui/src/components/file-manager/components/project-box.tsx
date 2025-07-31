@@ -3,7 +3,7 @@ import { useQueryState } from "nuqs"
 
 import { MotionSheet } from "@components/custom-sheet"
 import { useMediaQuery } from "@hooks/use-media-query"
-import { Box, Button, Flex, Icon, IconButton, Input } from "@incmix/ui"
+import { Box, Button, Flex, Heading, Icon, IconButton, Input } from "@incmix/ui"
 import { cn } from "@utils"
 import { type FileItem, projectFolders } from "../data"
 import ProjectCard from "./project-card"
@@ -114,7 +114,7 @@ const ProjectBox = ({ title }: FileGridProps) => {
             </Button>
           </Flex>
           <Flex align={"center"} justify={"between"} className="mb-4">
-            <h2 className="font-semibold text-xl sm:text-2xl">{title}</h2>
+            <Heading variant="pageTitle">{title}</Heading>
             <Flex align={"center"} gap={"2"}>
               <Flex
                 align={"center"}
