@@ -9,6 +9,7 @@ export { default as TaskTimelineDemo } from "./demo/tasks-timeline-demo";
 export { default as TaskStatusDemo } from "./demo/task-status-demo";
 export { default as UpdatedGroupedDemo } from "./demo/updated-group-demo";
 
+
 // Export the main DataTable component with renamed version
 export { TanstackDataTable, DataTable } from "./components/DataTable";
 
@@ -53,6 +54,15 @@ export { TableFilters, FacetedFilter } from './components/TableFilters';
 export { TablePagination } from './components/TablePagination';
 export { LoadingRow, EmptyRow, ExpandedRow } from './components/TableUtilityRows';
 export { TableSidebar } from './sidebar-filter';
+
+// Re-export enhanced dropdown utilities
+export {
+  createEnhancedDropdownColumn,
+  generateUniqueDropdownColor,
+  createStatusDropdownOptions,
+  createPriorityDropdownOptions
+} from './utils/dropdown-utils';
+export type { EnhancedDropdownConfig } from './utils/dropdown-utils';
 
 // // For backward compatibility, also export from tanstack-table.tsx
 // export * from "./tanstack-table";

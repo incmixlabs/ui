@@ -13,6 +13,7 @@ import { EditableCell } from "./EditableCell";
 import { EditableDateCell } from "./EditableDateCell";
 import { EditableBooleanCell } from "./EditableBooleanCell";
 import { EditableTagCell } from "./EditableTagCell";
+import { EditablePeopleCell } from "./EditablePeopleCell";
 
 /**
  * Expanded row component for rendering expanded content
@@ -158,6 +159,7 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           const isEditableDateCell = isEditableCell && columnDef?.type === "Date";
           const isEditableBooleanCell = isEditableCell && columnDef?.type === "Boolean";
           const isEditableTagCell = isEditableCell && columnDef?.type === "Tag";
+          const isEditablePeopleCell = isEditableCell && columnDef?.type === "People";
           const isEditableStringCell = isEditableCell && columnDef?.type === "String";
           const isEditableDropdownCell = isEditableCell && columnDef?.type === "Dropdown";
 
@@ -179,12 +181,15 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           return (
             <Table.Cell
               key={cell.id}
-              className={`px-2 py-1.5 ${columnDef?.className || ""} overflow-hidden`}
+              className={`px-2 py-1.5 ${columnDef?.className || ""} overflow-hidden ${isEditableCell && isSelected?.(row.id, cell.column.id) ? 'keyboard-selected-cell' : ''}`}
               style={{
                 width: columnDef?.width,
                 minWidth: columnDef?.minWidth,
                 maxWidth: columnDef?.maxWidth,
-                position: 'relative' // For absolute positioning of editable content
+                position: 'relative', // For absolute positioning of editable content
+                ...(isEditableCell && isSelected?.(row.id, cell.column.id) && {
+                  backgroundColor: 'rgba(93, 135, 255, 0.03)'
+                })
               }}
               role={enableInlineCellEdit ? "gridcell" : undefined}
               aria-colindex={columnDef ? flatColumns.indexOf(columnDef) + 1 : undefined} // ARIA indices are 1-based
@@ -232,6 +237,22 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
                   onCancelEdit={cancelEditing}
                   className=""
                 />
+              ) : isEditablePeopleCell ? (
+                <EditablePeopleCell
+                  value={cellValue as any[]}
+                  rowData={row.original}
+                  columnId={cell.column.id}
+                  onSave={saveEdit}
+                  isEditing={isEditing?.(row.id, cell.column.id) || false}
+                  isSelected={isSelected?.(row.id, cell.column.id) || false}
+                  onSelect={() => selectCell?.(row.id, cell.column.id)}
+                  onStartEdit={() => startEditing?.(row.id, cell.column.id)}
+                  onCancelEdit={cancelEditing}
+                  className=""
+                  availableUsers={columnDef?.meta?.availableUsers || []}
+                  maxDisplay={columnDef?.meta?.maxDisplay || 3}
+                  maxSelections={columnDef?.meta?.maxSelections || 10}
+                />
               ) : isEditableDropdownCell ? (
                 // Custom handling for dropdown cells
                 <div
@@ -259,6 +280,7 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
                             onSave: (newValue: string) => saveEdit(row.original, cell.column.id, newValue),
                             onCancel: cancelEditing,
                             columnDef: columnDef,
+                            rowData: row.original,
                           })
                         ) : (
                           // Fallback if no custom editor is provided

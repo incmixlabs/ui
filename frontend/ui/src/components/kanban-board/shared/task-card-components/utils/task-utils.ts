@@ -1,6 +1,7 @@
 // task-card-components/utils/task-utils.ts
 import { AlertCircle, Flag, Clock } from "lucide-react"
 import type { PriorityConfig, Member } from "./types"
+import { MOCK_MEMBERS } from "../../../constants/mock-members"
 
 export const getPriorityConfig = (priorityId?: string): PriorityConfig => {
   switch (priorityId) {
@@ -75,51 +76,5 @@ export const calculateSubtaskProgress = (subtasks: { completed: boolean }[] = []
   }
 }
 
-// Hard-coded members data - could be moved to a config file or API call
-export const members: Member[] = [
-  {
-    id: "1",
-    value: "shane-black",
-    name: "Shane Black",
-    label: "Shane Black",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
-    position: "UI/UX Designer",
-    color: "blue",
-  },
-  {
-    id: "2",
-    value: "john-doe",
-    name: "John Doe", 
-    label: "John Doe",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
-    position: "Project Manager",
-    color: "amber",
-  },
-  {
-    id: "3",
-    value: "jane-smith",
-    name: "Jane Smith",
-    label: "Jane Smith", 
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b589?w=32&h=32&fit=crop&crop=face",
-    position: "Business Analyst",
-    color: "indigo",
-  },
-  {
-    id: "4",
-    value: "emily-johnson",
-    name: "Emily Johnson",
-    label: "Emily Johnson",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face",
-    color: "cyan",
-    position: "Web Developer",
-  },
-  {
-    id: "5",
-    value: "micheal-brown",
-    label: "Michael Brown",
-    name: "Michael Brown",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=32&h=32&fit=crop&crop=face",
-    position: "Product Designer", 
-    color: "orange",
-  },
-]
+// Re-export members from centralized location for backward compatibility
+export const members: Member[] = MOCK_MEMBERS

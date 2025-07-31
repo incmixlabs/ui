@@ -29,56 +29,7 @@ import {
 import { TaskDataSchema } from "@incmix/utils/schema"
 import { KanbanTask } from "../types" // Import KanbanTask type
 import { OverlappingAvatarGroup, type AssignedUser, type SelectableUser } from "../shared/overlapping-avatar-group"
-
-
-// Hard-coded members data (same as in mention input)
-const members = [
-  {
-    id: "1",
-    value: "shane-black",
-    name: "Shane Black",
-    label: "Shane Black",
-    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
-    position: "UI/UX Designer",
-    color: "blue",
-  },
-  {
-    id: "2",
-    value: "john-doe",
-    name: "John Doe", 
-    label: "John Doe",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
-    position: "Project Manager",
-    color: "amber",
-  },
-  {
-    id: "3",
-    value: "jane-smith",
-    name: "Jane Smith",
-    label: "Jane Smith", 
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b589?w=32&h=32&fit=crop&crop=face",
-    position: "Business Analyst",
-    color: "indigo",
-  },
-  {
-    id: "4",
-    value: "emily-johnson",
-    name: "Emily Johnson",
-    label: "Emily Johnson",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face",
-    color: "cyan",
-    position: "Web Developer",
-  },
-  {
-    id: "5",
-    value: "micheal-brown",
-    label: "Michael Brown",
-    name: "Michael Brown",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=32&h=32&fit=crop&crop=face",
-    position: "Product Designer", 
-    color: "orange",
-  },
-]
+import { MOCK_MEMBERS } from "../constants/mock-members"
 
 interface TaskActionsMenuProps {
   task?: KanbanTask | TaskDataSchema
@@ -196,7 +147,7 @@ export function TaskActionsMenu({
     setIsDatePickerOpen(null)
   }, [handleUpdateField])
 
-  const handleMemberToggle = useCallback((member: typeof members[0]) => {
+  const handleMemberToggle = useCallback((member: typeof MOCK_MEMBERS[0]) => {
     const isAssigned = currentAssignedTo.find(u => u.id === member.id)
     let newAssignedTo
     
@@ -374,7 +325,7 @@ export function TaskActionsMenu({
                 maxDisplayed={5}
                 size="sm"
                 interactive={true}
-                allUsers={members.map(member => ({
+                allUsers={MOCK_MEMBERS.map(member => ({
                   id: member.id,
                   name: member.name,
                   avatar: member.avatar,

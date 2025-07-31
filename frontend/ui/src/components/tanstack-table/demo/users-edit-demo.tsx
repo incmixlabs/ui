@@ -42,7 +42,49 @@ interface User {
   balance: number
   rating: number
   profileImage: string
+  dueDate?: string // New field for date picker demo
+  assignedTo?: User[] // New field for people picker demo
 }
+
+// Sample users for assignment (simplified for demo)
+const SAMPLE_ASSIGNABLE_USERS: User[] = [
+  {
+    id: "assign1",
+    name: "John Doe",
+    email: "john@example.com",
+    joinDate: "2023-01-01",
+    isActive: true,
+    tags: ["admin"],
+    plan: "success",
+    balance: 1000,
+    rating: 5,
+    profileImage: "https://i.pravatar.cc/150?u=john"
+  },
+  {
+    id: "assign2", 
+    name: "Jane Smith",
+    email: "jane@example.com",
+    joinDate: "2023-01-01",
+    isActive: true,
+    tags: ["developer"],
+    plan: "success", 
+    balance: 1000,
+    rating: 4,
+    profileImage: "https://i.pravatar.cc/150?u=jane"
+  },
+  {
+    id: "assign3",
+    name: "Mike Johnson", 
+    email: "mike@example.com",
+    joinDate: "2023-01-01",
+    isActive: true,
+    tags: ["customer"],
+    plan: "success",
+    balance: 1000,
+    rating: 3,
+    profileImage: "https://i.pravatar.cc/150?u=mike"
+  }
+]
 
 // Sample data
 const SAMPLE_USERS: User[] = [
@@ -56,7 +98,9 @@ const SAMPLE_USERS: User[] = [
     plan: "success",
     balance: 2480,
     rating: 5,
-    profileImage: "https://i.pravatar.cc/150?u=alice"
+    profileImage: "https://i.pravatar.cc/150?u=alice",
+    dueDate: "2025-02-15T00:00:00.000Z",
+    assignedTo: []
   },
   {
     id: "user2",
@@ -68,7 +112,9 @@ const SAMPLE_USERS: User[] = [
     plan: "pending",
     balance: 1250,
     rating: 3,
-    profileImage: "https://i.pravatar.cc/150?u=bob"
+    profileImage: "https://i.pravatar.cc/150?u=bob",
+    dueDate: "2025-03-01T00:00:00.000Z",
+    assignedTo: []
   },
   {
     id: "user3",
@@ -80,7 +126,9 @@ const SAMPLE_USERS: User[] = [
     plan: "success",
     balance: 3200,
     rating: 4,
-    profileImage: "https://i.pravatar.cc/150?u=carol"
+    profileImage: "https://i.pravatar.cc/150?u=carol",
+    dueDate: "2025-01-30T00:00:00.000Z",
+    assignedTo: []
   },
   {
     id: "user4",
@@ -92,7 +140,9 @@ const SAMPLE_USERS: User[] = [
     plan: "pending",
     balance: 1890,
     rating: 4,
-    profileImage: "https://i.pravatar.cc/150?u=david"
+    profileImage: "https://i.pravatar.cc/150?u=david",
+    dueDate: "2025-04-10T00:00:00.000Z",
+    assignedTo: []
   },
   {
     id: "user5",
@@ -104,7 +154,9 @@ const SAMPLE_USERS: User[] = [
     plan: "failed",
     balance: 750,
     rating: 2,
-    profileImage: "https://i.pravatar.cc/150?u=eva"
+    profileImage: "https://i.pravatar.cc/150?u=eva",
+    dueDate: "2025-02-28T00:00:00.000Z",
+    assignedTo: []
   },
   {
     id: "user15",
@@ -116,7 +168,9 @@ const SAMPLE_USERS: User[] = [
     plan: "failed",
     balance: 1050,
     rating: 1,
-    profileImage: "https://i.pravatar.cc/150?u=olivia"
+    profileImage: "https://i.pravatar.cc/150?u=olivia",
+    dueDate: "2025-05-15T00:00:00.000Z",
+    assignedTo: []
   },
 ]
 
@@ -154,6 +208,11 @@ const userEditSchema = {
         type: "string",
         enum: ["1", "2", "3", "4", "5"],
         title: "User Rating",
+      },
+      dueDate: {
+        type: "string",
+        format: "date",
+        title: "Due Date",
       },
     },
     required: ["name", "email", "plan", "rating"],
@@ -204,6 +263,13 @@ const userEditSchema = {
           { label: "★★★★", value: "4" },
           { label: "★★★★★", value: "5" },
         ],
+      },
+    },
+    dueDate: {
+      description: "Due date for user tasks",
+      fieldType: "date",
+      inputProps: {
+        placeholder: "Select due date",
       },
     },
   },
@@ -288,6 +354,36 @@ const USER_TABLE_COLUMNS = [
     accessorKey: "rating" as const,
     id: "rating",
     enableSorting: true
+  },
+  {
+    headingName: "Due Date",
+    type: "Date" as const,
+    accessorKey: "dueDate" as const,
+    id: "dueDate",
+    enableSorting: true,
+    enableInlineEdit: true,
+    cellAttributes: {
+      className: "cursor-pointer transition-colors duration-150 hover:bg-gray-50",
+      title: "Double-click to edit due date"
+    }
+  },
+  {
+    headingName: "Assigned To",
+    type: "People" as const,
+    accessorKey: "assignedTo" as const,
+    id: "assignedTo",
+    enableSorting: false,
+    enableInlineEdit: true,
+    size: 150,
+    meta: {
+      availableUsers: SAMPLE_ASSIGNABLE_USERS,
+      maxDisplay: 3,
+      maxSelections: 10
+    },
+    cellAttributes: {
+      className: "cursor-pointer transition-colors duration-150 hover:bg-gray-50",
+      title: "Double-click to edit assignments"
+    }
   }
 ]
 
@@ -343,7 +439,18 @@ const EditableUsersTableDemo = () => {
   const [totalItems, setTotalItems] = useState(0)
 
   // Store all users data (not just the current page)
-  const [allUsers, setAllUsers] = useState<User[]>([...SAMPLE_USERS])
+  const [allUsers, setAllUsers] = useState<User[]>([])
+
+  // Initialize users with assigned users after component mounts
+  useEffect(() => {
+    const initialUsers = SAMPLE_USERS.map((user, index) => ({
+      ...user,
+      assignedTo: index % 3 === 0 ? [SAMPLE_ASSIGNABLE_USERS[0]] : 
+                  index % 3 === 1 ? [SAMPLE_ASSIGNABLE_USERS[1], SAMPLE_ASSIGNABLE_USERS[2]] :
+                  [SAMPLE_ASSIGNABLE_USERS[0], SAMPLE_ASSIGNABLE_USERS[2]]
+    }))
+    setAllUsers(initialUsers)
+  }, [])
 
   // Data and loading state for current page
   const [users, setUsers] = useState<User[]>([])
@@ -496,6 +603,35 @@ const EditableUsersTableDemo = () => {
     alert(`User ${newData.name} updated successfully!`)
   }, [])
 
+  /**
+   * Handle inline cell edit - for date picker and people picker
+   */
+  const handleCellEdit = useCallback((rowData: User, columnId: string, newValue: any) => {
+    console.log("Inline cell edit:", { rowData: rowData.id, columnId, newValue })
+
+    // Create updated user
+    const updatedUser = {
+      ...rowData,
+      [columnId]: newValue
+    }
+
+    // Update the user in the full dataset
+    setAllUsers(prevUsers =>
+      prevUsers.map(user =>
+        user.id === updatedUser.id ? updatedUser : user
+      )
+    )
+
+    // Also update the current page if the edited user is in the current view
+    setUsers(prevPageUsers =>
+      prevPageUsers.map(user =>
+        user.id === updatedUser.id ? updatedUser : user
+      )
+    )
+
+    console.log(`Updated ${columnId} for user ${rowData.name}`)
+  }, [])
+
   return (
     <div className="container mx-auto py-10">
       <h1 className="text-2xl font-bold mb-4">Editable Users Table</h1>
@@ -542,6 +678,11 @@ const EditableUsersTableDemo = () => {
         editFieldConfig={userEditSchema.fieldConfig}
         onRowEdit={handleRowEdit}
         editDialogTitle="Edit User Profile"
+
+        // Inline editing functionality
+        enableInlineCellEdit={true}
+        inlineEditableColumns={["dueDate", "assignedTo"]}
+        onCellEdit={handleCellEdit}
 
         // Events
         onSelectionChange={handleSelectionChange}

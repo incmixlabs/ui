@@ -1,12 +1,12 @@
 "use client"
 
 import React, { useState, useEffect, useCallback, useMemo } from "react"
-import { 
-  registerCellRenderer, 
-  cellRendererRegistry, 
-  DropdownOption, 
-  getContrastingTextColor, 
-  adjustColor 
+import {
+  registerCellRenderer,
+  cellRendererRegistry,
+  DropdownOption,
+  getContrastingTextColor,
+  adjustColor
 } from "../cell-renderers"
 import { DataTable } from "../components/DataTable"
 import { EyeIcon, EditIcon } from "lucide-react"
@@ -72,11 +72,11 @@ const generateUniqueColor = (existingColors: string[]): string => {
     '#fde68a', // Light gold
     '#6ee7b7', // Mint
   ];
-  
+
   // Try to find a color from the palette that's not in use
   const unusedColor = colorPalette.find(color => !existingColors.includes(color));
   if (unusedColor) return unusedColor;
-  
+
   // If all palette colors are used, generate a random color
   // Keep trying until we get a unique one
   let randomColor;
@@ -87,7 +87,7 @@ const generateUniqueColor = (existingColors: string[]): string => {
     const b = Math.floor(Math.random() * 155) + 100;
     randomColor = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
   } while (existingColors.includes(randomColor));
-  
+
   return randomColor;
 }
 
@@ -189,17 +189,17 @@ const processedCustomValues = new Map<string, string>();
 // and can do thorough duplicate checking
 const addCustomDropdownOption = (value: string): string => {
   if (!value) return value;
-  
+
   // First check our processed values map to prevent duplicates
   const valueLower = value.toLowerCase();
   if (processedCustomValues.has(valueLower)) {
     console.log(`Already processed: ${value} → ${processedCustomValues.get(valueLower)}`);
     return processedCustomValues.get(valueLower) || value;
   }
-  
+
   // Normalize the value for internal use
   const normalizedValue = value.toLowerCase().replace(/\s+/g, '_');
-  
+
   // Check if this value (or something very similar) already exists
   // using a very thorough set of checks
   for (const option of STATUS_OPTIONS) {
@@ -210,7 +210,7 @@ const addCustomDropdownOption = (value: string): string => {
       processedCustomValues.set(valueLower, option.value);
       return option.value;
     }
-    
+
     // Check case-insensitive label match
     if (option.label.toLowerCase() === value.toLowerCase()) {
       console.log(`Label already exists: ${option.label}`);
@@ -219,27 +219,27 @@ const addCustomDropdownOption = (value: string): string => {
       return option.value;
     }
   }
-  
+
   // If we get here, it's a truly new value
   console.log(`Adding new custom option: ${value} (${normalizedValue})`);
-  
+
   // Generate a random color that's not already in use
   const existingColors = STATUS_OPTIONS.map(opt => opt.color || '#e5e7eb').filter(Boolean);
   const color = generateUniqueColor(existingColors as string[]);
-  
+
   // Create the new option
   const newOption: DropdownOption = {
     value: normalizedValue,
     label: value,
     color
   };
-  
+
   // Add to STATUS_OPTIONS - this is our single source of truth
   STATUS_OPTIONS.push(newOption);
-  
+
   // Remember this mapping for future calls
   processedCustomValues.set(valueLower, normalizedValue);
-  
+
   console.log(`Added new option to dropdown: ${value} (${normalizedValue})`);
   return normalizedValue;
 };
@@ -255,12 +255,12 @@ const STATUS_COLOR_MAP = {
 if (!cellRendererRegistry["ColoredStatus"]) {
   registerCellRenderer("ColoredStatus", (value, options) => {
     // Find the selected option
-    const option = options?.find((opt: DropdownOption) => opt.value === value) || { 
-      value, 
-      label: value, 
-      color: "#e5e7eb" 
+    const option = options?.find((opt: DropdownOption) => opt.value === value) || {
+      value,
+      label: value,
+      color: "#e5e7eb"
     };
-    
+
     // Return a styled span that looks like our dropdown option
     return (
       <span
@@ -278,26 +278,26 @@ if (!cellRendererRegistry["ColoredStatus"]) {
 }
 
 // Custom cell editor for dropdown status
-const CustomDropdownCellEditor: React.FC<{ 
+const CustomDropdownCellEditor: React.FC<{
   value: string;
   options: DropdownOption[];
   onSave: (newValue: string) => void;
   onCancel: () => void;
 }> = ({ value, options, onSave, onCancel }) => {
-  console.log('Dropdown editor for value:', value); 
+  console.log('Dropdown editor for value:', value);
   console.log('Available options:', options);
-  
+
   // Make sure we're passing the correct current value
   // If the value doesn't exist in options, try to find a matching label
   const optionExists = options.some(opt => opt.value === value);
-  
+
   // If we can't find the value in the options, try to match by label
   if (!optionExists && value) {
-    const matchingOption = options.find(opt => 
+    const matchingOption = options.find(opt =>
       opt.label.toLowerCase() === value.toLowerCase() ||
       opt.label.toLowerCase().includes(value.toLowerCase())
     );
-    
+
     if (matchingOption) {
       console.log('Found matching option by label:', matchingOption);
       // Update the value to match the current option value
@@ -305,7 +305,7 @@ const CustomDropdownCellEditor: React.FC<{
       return null; // Don't render the dropdown yet, wait for the update
     }
   }
-  
+
   return (
     <DropdownCellEditor
       value={value}
@@ -372,21 +372,21 @@ const TASK_TABLE_COLUMNS: ExtendedColumnConfig[] = [
     // Custom cell renderer for dropdown values with colors
     cell: (props: { getValue: () => any; row: { original: any }; column: { columnDef: any } }) => {
       const value = props.getValue() as string;
-      
+
       // Always use STATUS_OPTIONS directly to ensure we get the latest version
       // This is essential for color/label updates to be reflected
       const options = STATUS_OPTIONS;
-      
+
       // Find the selected option by value
       const option = options.find((opt: DropdownOption) => opt.value === value);
-      
+
       // If no matching option is found, use a fallback
-      const displayOption = option || { 
-        value, 
-        label: value, 
-        color: "#e5e7eb" 
+      const displayOption = option || {
+        value,
+        label: value,
+        color: "#e5e7eb"
       };
-      
+
       return (
         <span
           className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset capitalize"
@@ -409,16 +409,16 @@ const TASK_TABLE_COLUMNS: ExtendedColumnConfig[] = [
     inlineCellEditor: (props: { value: any, onSave: (newValue: any) => void, onCancel: () => void, columnDef?: any }) => {
       // Get options from column definition and handle both required and optional params
       const { value, onSave, onCancel, columnDef } = props;
-      
+
       // Always use STATUS_OPTIONS directly to ensure we get the latest options
       const options = STATUS_OPTIONS;
-      
+
       // Check if strict dropdown mode is enabled (default to true if not specified)
       const strictDropdown = columnDef?.meta?.strictDropdown !== false;
-      
+
       // Debug log to see if strictDropdown setting is recognized
       console.log('Column strictDropdown setting:', columnDef?.meta?.strictDropdown, 'Using strictDropdown:', strictDropdown);
-      
+
       // Wrap the onSave callback to support custom value creation
       const handleSaveWithCustomValue = (newValue: string) => {
         // If we're in strict mode or it's not a string, just pass through
@@ -426,7 +426,7 @@ const TASK_TABLE_COLUMNS: ExtendedColumnConfig[] = [
           onSave(newValue);
           return;
         }
-        
+
         // For custom values in non-strict mode, we need to do special handling
         // Use our centralized function to ensure we never add duplicates
         if (!options.some(opt => opt.value === newValue)) {
@@ -435,18 +435,18 @@ const TASK_TABLE_COLUMNS: ExtendedColumnConfig[] = [
           // We'll let the cell edit handler take care of this using our centralized function
           // The actual adding of the option will happen in handleCellEdit
         }
-        
+
         // Pass through the original value - handleCellEdit will handle normalization
         onSave(newValue);
       };
-      
+
       return (
-        <DropdownCellEditor 
-          value={value as string} 
+        <DropdownCellEditor
+          value={value as string}
           options={options}
           strictDropdown={strictDropdown}
-          onSave={handleSaveWithCustomValue} 
-          onCancel={onCancel} 
+          onSave={handleSaveWithCustomValue}
+          onCancel={onCancel}
         />
       );
     }
@@ -524,8 +524,8 @@ const TaskStatusDemo = () => {
   const [loading, setLoading] = useState(true)
 
   // Track last edited cell for visual feedback
-  const [lastEditedCell, setLastEditedCell] = useState<{id: string, column: string} | null>(null);
-  
+  const [lastEditedCell, setLastEditedCell] = useState<{ id: string, column: string } | null>(null);
+
   // State for column configuration dialog
   const [isColumnConfigOpen, setIsColumnConfigOpen] = useState(false);
   const [selectedColumn, setSelectedColumn] = useState<ExtendedColumnConfig | null>(null);
@@ -586,22 +586,22 @@ const TaskStatusDemo = () => {
     console.log(`Editing cell ${columnId} for task ${rowData.id}:`, newValue)
 
     // Track which cell was just edited (for visual feedback)
-    setLastEditedCell({id: rowData.id, column: columnId});
-    
+    setLastEditedCell({ id: rowData.id, column: columnId });
+
     // Special handling for status field custom values
     if (columnId === 'status') {
       const columnDef = columns.find(col => col.id === 'status');
       const strictMode = columnDef?.meta?.strictDropdown !== false;
-      
+
       // If we're not in strict mode, check if this is a custom value
       if (!strictMode && newValue && typeof newValue === 'string') {
         // Use our centralized function to handle the custom value
         // This ensures we never add duplicates
         const processedValue = addCustomDropdownOption(newValue);
-        
+
         // Force a refresh of columns to ensure the change is recognized
         setTimeout(() => setColumns([...columns]), 0);
-        
+
         // Update newValue to use the processed value
         newValue = processedValue;
       }
@@ -632,7 +632,7 @@ const TaskStatusDemo = () => {
       setLastEditedCell(null);
     }, 1000);
   }, [])
-  
+
   /**
    * Handle column header double-click to open configuration dialog
    */
@@ -641,26 +641,26 @@ const TaskStatusDemo = () => {
     setSelectedColumn(column);
     setIsColumnConfigOpen(true);
   }, []);
-  
+
   /**
    * Handle saving column configuration changes
    */
   const handleSaveColumnConfig = useCallback((columnId: string, updates: Partial<ExtendedColumnConfig>) => {
     console.log(`Saving column config for ${columnId}:`, updates);
-    
+
     // Create a simple copy of columns to work with
     const updatedColumns = [...columns];
-    
+
     // Find the column to update
     const columnIndex = updatedColumns.findIndex(col => col.id === columnId);
-    
+
     if (columnIndex !== -1) {
       // Get the original column
       const originalColumn = columns[columnIndex];
-      
+
       // Create a new column object to ensure React sees the change
       let updatedColumn: ExtendedColumnConfig = { ...originalColumn };
-      
+
       // Update heading name if provided
       if (updates.headingName) {
         updatedColumn = {
@@ -669,18 +669,18 @@ const TaskStatusDemo = () => {
           headingName: updates.headingName
         };
       }
-      
+
       // Update column type if provided
       if (updates.type && updates.type !== originalColumn.type) {
         updatedColumn.type = updates.type;
       }
-      
+
       // Handle dropdown options updates
       if (updates.meta?.dropdownOptions && originalColumn.type === 'Dropdown') {
         // Store the new options
         const newOptions = [...updates.meta.dropdownOptions];
         console.log('New dropdown options:', newOptions);
-        
+
         // Update the column with new options and maintain strictDropdown setting
         updatedColumn = {
           ...updatedColumn,
@@ -690,54 +690,54 @@ const TaskStatusDemo = () => {
             strictDropdown: updates.meta.strictDropdown
           }
         };
-        
+
         // Log the strictDropdown status for debugging
         console.log(`Setting strictDropdown to: ${updates.meta.strictDropdown}`);
-        
+
         // Update STATUS_OPTIONS global variable to reflect changes
         // This ensures the dropdown works with the latest options
         if (columnId === 'status') {
           // Create a new reference for the STATUS_OPTIONS
           const updatedStatusOptions = [...newOptions];
-          
+
           // This replaces the reference to STATUS_OPTIONS used by the cell renderer
           Object.assign(STATUS_OPTIONS, updatedStatusOptions);
-          
+
           // Clear existing array and push new items to maintain the same reference
           STATUS_OPTIONS.length = 0;
           newOptions.forEach(opt => STATUS_OPTIONS.push(opt));
-          
+
           // Update STATUS_COLUMN_META to reflect strictDropdown setting
           if (updates.meta?.strictDropdown !== undefined) {
             STATUS_COLUMN_META.strictDropdown = updates.meta.strictDropdown;
             console.log('Updated STATUS_COLUMN_META.strictDropdown to:', STATUS_COLUMN_META.strictDropdown);
           }
         }
-        
+
         // Update the tasks to use new labels/colors for the same values
         const updatedAllTasks = allTasks.map(task => {
           // Create a new task object to ensure React picks up the change
           return { ...task };
         });
-        
+
         // Update both datasets to force re-rendering
         setAllTasks(updatedAllTasks);
         setTasks(updatedAllTasks.slice(0, tasks.length));
       }
-      
+
       // Replace the column in the array
       updatedColumns[columnIndex] = updatedColumn;
-      
+
       // Set the updated columns array
       setColumns(updatedColumns);
-      
+
       // Force a complete refresh of the table
       setTimeout(() => {
         // This forces React to re-render with completely new objects
         setColumns([...updatedColumns.map(col => ({ ...col }))]);
       }, 50);
     }
-    
+
     console.log(`Updated column ${columnId}:`, updates);
   }, [columns, allTasks, tasks]);
 
@@ -748,14 +748,14 @@ const TaskStatusDemo = () => {
     return columns.map(column => {
       // Create the double-clickable wrapper for the heading name
       const doubleClickableHeading = (
-        <div 
-          className="cursor-pointer w-full h-full flex items-center" 
+        <div
+          className="cursor-pointer w-full h-full flex items-center"
           onDoubleClick={() => handleHeaderDoubleClick(column)}
         >
           {column.headingName}
         </div>
       );
-      
+
       // Convert the ExtendedColumnConfig to a proper DataTableColumn type
       // that the DataTable component expects
       const convertedColumn: any = {
@@ -765,7 +765,7 @@ const TaskStatusDemo = () => {
         // Ensure accessorKey is a proper string (not optional)
         accessorKey: column.accessorKey || column.id
       };
-      
+
       return convertedColumn;
     });
   }, [columns, handleHeaderDoubleClick]);

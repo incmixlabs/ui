@@ -109,29 +109,76 @@ export const DateCell: React.FC<{ value: string | undefined; isOverdue?: boolean
 
 export const AssignedToCell: React.FC<{ value: TableTask['assignedTo'] }> = ({ value }) => {
   if (!value || value.length === 0) {
-    return <Text size="2" className="text-gray-400">Unassigned</Text>
+    return <Text size="2" className="text-gray-400 dark:text-gray-500">Unassigned</Text>
   }
+
+  // Get color for user based on user ID - consistent coloring
+  const getColorForUser = (userId: string) => {
+    const colors = [
+      "bg-blue-9", "bg-amber-9", "bg-green-9", 
+      "bg-purple-9", "bg-pink-9", "bg-orange-9"
+    ];
+    
+    const hash = userId.split("").reduce((acc, char) => {
+      return ((acc << 5) - acc) + char.charCodeAt(0);
+    }, 0);
+    
+    return colors[Math.abs(hash) % colors.length];
+  };
+
+  // Generate initials from name
+  const getInitials = (name: string): string => {
+    if (!name) return "";
+    const nameParts = name.split(" ");
+    if (nameParts.length >= 2) {
+      return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  };
 
   return (
     <Flex align="center" gap="1">
-      <div className="flex -space-x-1">
+      <div className="flex -space-x-2">
         {value.slice(0, 3).map((user, index) => (
-          <Avatar
+          <div
             key={user.id}
-            src={user.avatar}
-            name={user.name}
-            className="w-6 h-6 border border-white"
-            style={{ zIndex: 3 - index }}
-          />
+            className="w-7 h-7 rounded-full border-2 border-white dark:border-background overflow-hidden"
+            style={{ zIndex: 30 - index }}
+          >
+            {user.avatar ? (
+              <img 
+                src={user.avatar} 
+                alt={user.name} 
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className={`w-full h-full rounded-full ${getColorForUser(user.id)} flex items-center justify-center`}>
+                <span className="text-[10px] font-medium text-white">
+                  {getInitials(user.name)}
+                </span>
+              </div>
+            )}
+          </div>
         ))}
         {value.length > 3 && (
-          <div className="w-6 h-6 rounded-full bg-gray-200 border border-white flex items-center justify-center text-xs font-medium">
-            +{value.length - 3}
+          <div className="w-7 h-7 rounded-full border-2 border-white dark:border-background overflow-hidden bg-gray-9 flex items-center justify-center"
+               style={{ zIndex: 30 - 3 }}
+          >
+            <span className="text-[10px] font-medium text-white">+{value.length - 3}</span>
           </div>
         )}
+        
+        {/* Add the "+" button just like in the second screenshot */}
+        <div 
+          className="w-7 h-7 rounded-full border-2 border-white dark:border-background bg-gray-3 dark:bg-gray-5 flex items-center justify-center ml-1 hover:bg-gray-4 dark:hover:bg-gray-6"
+          style={{ zIndex: 30 - value.slice(0, 3).length - (value.length > 3 ? 1 : 0) }}
+        >
+          <span className="text-[10px] font-medium text-gray-11">+</span>
+        </div>
       </div>
+      
       {value.length <= 2 && (
-        <Text size="1" className="text-gray-600 ml-2">
+        <Text size="1" className="text-gray-600 dark:text-gray-400 ml-2">
           {value.map(u => u.name).join(", ")}
         </Text>
       )}

@@ -1,5 +1,5 @@
 // File: components/DataTable/cellRenderers.tsx
-import React from "react";
+import React, { ReactNode } from "react";
 
 // Cell Renderer Components
 export const TagCell: React.FC<{ value: string[] }> = ({ value }) => {
@@ -173,37 +173,249 @@ export interface DropdownOption {
   value: string;
   label: string;
   color?: string;
+  icon?: ReactNode;
 }
 
-// Dropdown Cell Renderer
+// Enhanced Dropdown Cell Renderer with multiple display styles
 export const DropdownCell: React.FC<{ 
   value: string;
   options?: DropdownOption[];
-}> = ({ value, options = [] }) => {
-  // Find the selected option
-  const selectedOption = options.find(option => option.value === value) || {
-    value,
-    label: value,
+  displayStyle?: 'badge' | 'button' | 'minimal' | 'plain';
+  size?: 'sm' | 'md' | 'lg';
+  showIcon?: boolean;
+  isLoading?: boolean;
+}> = ({ 
+  value, 
+  options = [], 
+  displayStyle = 'badge',
+  size = 'md',
+  showIcon = false,
+  isLoading = false
+}) => {
+  // Handle null/undefined values
+  const safeValue = value || '';
+  
+  // Debug logging to understand what's happening
+  console.log('DropdownCell Debug:', { value, safeValue, options, displayStyle });
+  
+  // Find the selected option with more robust matching
+  const selectedOption = options.find(option => 
+    option.value === safeValue || 
+    option.value === value ||
+    option.label === safeValue ||
+    option.label === value
+  );
+
+  // If no option found, create a fallback that shows the actual value
+  const finalOption = selectedOption || {
+    value: safeValue,
+    label: safeValue || 'No Value',
     color: '#e5e7eb' // Default gray color
   };
+
+  console.log('DropdownCell Selected Option:', finalOption);
+
+  // If no value and no options, show a placeholder
+  if (!safeValue && options.length === 0) {
+    return (
+      <span className={`${size === 'sm' ? 'px-2 py-0.5 text-xs' : size === 'lg' ? 'px-3 py-1.5 text-sm' : 'px-2 py-1 text-xs'} text-gray-400 italic`}>
+        No options
+      </span>
+    );
+  }
   
   // Determine text color based on background color (if provided)
-  const textColor = selectedOption.color 
-    ? getContrastingTextColor(selectedOption.color)
+  const textColor = finalOption.color 
+    ? getContrastingTextColor(finalOption.color)
     : '#000000';
-  
+
+  // Size classes
+  const sizeClasses = {
+    sm: 'px-2 py-0.5 text-xs',
+    md: 'px-2 py-1 text-xs',
+    lg: 'px-3 py-1.5 text-sm'
+  };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className={`inline-flex items-center gap-1 ${sizeClasses[size]} rounded-md bg-gray-100 text-gray-500`}>
+        <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin" />
+        <span>Loading...</span>
+      </div>
+    );
+  }
+
+  // Badge style (original)
+  if (displayStyle === 'badge') {
+    const displayText = finalOption.label || value || 'No Value';
+    return (
+      <span
+        className={`inline-flex items-center gap-1 rounded-full ${sizeClasses[size]} font-medium ring-1 ring-inset capitalize`}
+        style={{
+          backgroundColor: finalOption.color || '#e5e7eb',
+          color: textColor,
+          borderColor: finalOption.color ? adjustColor(finalOption.color, -20) : '#d1d5db'
+        }}
+      >
+        {showIcon && finalOption.icon}
+        <span>{displayText}</span>
+      </span>
+    );
+  }
+
+  // Button style (like your custom implementation)
+  if (displayStyle === 'button') {
+    const displayText = finalOption.label || value || 'No Value';
+    return (
+      <div
+        className={`inline-flex items-center gap-2 ${sizeClasses[size]} rounded-md font-medium border transition-all duration-200 cursor-pointer hover:opacity-80`}
+        style={{
+          backgroundColor: finalOption.color ? `${finalOption.color}20` : '#f3f4f6',
+          color: finalOption.color || '#374151',
+          borderColor: finalOption.color ? `${finalOption.color}40` : '#d1d5db'
+        }}
+      >
+        {showIcon && (
+          <div 
+            className="w-2 h-2 rounded-full" 
+            style={{ backgroundColor: finalOption.color || '#9ca3af' }}
+          />
+        )}
+        <span>{displayText}</span>
+        <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    );
+  }
+
+  // Plain style - just text with a dropdown chevron, no colors
+  if (displayStyle === 'plain') {
+    const displayText = finalOption.label || value || 'No Value';
+    return (
+      <div className={`inline-flex items-center gap-2 ${sizeClasses[size]} text-gray-700 dark:text-gray-300 cursor-pointer`}>
+        <span>{displayText}</span>
+        <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    );
+  }
+
+  // Minimal style - just text, no chevron, no colors (fallback)
+  const displayText = finalOption.label || value || 'No Value';
   return (
-    <span
-      className="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset capitalize"
-      style={{
-        backgroundColor: selectedOption.color || '#e5e7eb',
-        color: textColor,
-        borderColor: selectedOption.color ? adjustColor(selectedOption.color, -20) : '#d1d5db'
-      }}
-    >
-      {selectedOption.label || value}
+    <span className={`${sizeClasses[size]} text-gray-700 dark:text-gray-300`}>
+      {displayText}
     </span>
   );
+};
+
+// Interface for User objects
+export interface User {
+  id: string;
+  name: string;
+  image?: string;
+  email: string;
+}
+
+// Get color for user based on user ID - consistent coloring
+const getColorForUser = (userId: string) => {
+  const colors = [
+    "bg-blue-9", "bg-amber-9", "bg-green-9", 
+    "bg-purple-9", "bg-pink-9", "bg-orange-9"
+  ];
+  
+  // Simple hash function to get consistent color for same user ID
+  const hash = userId.split("").reduce((acc, char) => {
+    return ((acc << 5) - acc) + char.charCodeAt(0);
+  }, 0);
+  
+  return colors[Math.abs(hash) % colors.length];
+};
+
+// Generate initials from name
+const getInitials = (name: string): string => {
+  if (!name) return "";
+  const nameParts = name.split(" ");
+  if (nameParts.length >= 2) {
+    return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
+  }
+  return name.substring(0, 2).toUpperCase();
+};
+
+// Avatar component for showing a user
+export const Avatar: React.FC<{ user: User; size?: number }> = ({ user, size = 24 }) => {
+  const isPlaceholder = user.image?.includes('placeholder');
+  
+  return (
+    <div
+      className="rounded-full flex items-center justify-center text-xs font-medium text-white flex-shrink-0 overflow-hidden"
+      style={{ width: size, height: size }}
+      title={user.name}
+    >
+      {user.image && !isPlaceholder ? (
+        <img
+          src={user.image}
+          alt={user.name}
+          className="w-full h-full rounded-full object-cover"
+        />
+      ) : (
+        <div className={`w-full h-full rounded-full ${getColorForUser(user.id)} flex items-center justify-center`}>
+          <span className="text-[10px] font-medium text-white">
+            {getInitials(user.name)}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Avatar group component for showing multiple users with overlap
+export const AvatarGroup: React.FC<{ users: User[]; maxDisplay?: number }> = ({ users, maxDisplay = 3 }) => {
+  if (!users || users.length === 0) {
+    return (
+      <div className="h-7 w-7 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden border-2 border-white dark:border-background">
+        <span className="text-xs text-gray-400 dark:text-gray-500">—</span>
+      </div>
+    );
+  }
+
+  const displayUsers = users.slice(0, maxDisplay);
+  const remaining = users.length - maxDisplay;
+  const zIndexBase = 30; // Match the zIndex from OverlappingAvatarGroup
+
+  return (
+    <div className="flex -space-x-2">
+      {displayUsers.map((user, index) => (
+        <div
+          key={user.id}
+          className="w-7 h-7 rounded-full border-2 border-white dark:border-background overflow-hidden"
+          style={{ zIndex: zIndexBase - index }}
+        >
+          <Avatar user={user} size={28} />
+        </div>
+      ))}
+      {remaining > 0 && (
+        <div
+          className="w-7 h-7 rounded-full border-2 border-white dark:border-background overflow-hidden bg-gray-9 flex items-center justify-center"
+          style={{ zIndex: zIndexBase - maxDisplay }}
+          title={`+${remaining} more users`}
+        >
+          <span className="text-[10px] font-medium text-white">+{remaining}</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// People Cell Renderer
+export const PeopleCell: React.FC<{ 
+  value: User[];
+  maxDisplay?: number;
+}> = ({ value, maxDisplay = 3 }) => {
+  return <AvatarGroup users={value || []} maxDisplay={maxDisplay} />;
 };
 
 // Define the type for cell renderer functions
@@ -299,7 +511,25 @@ export const defaultCellRenderers: Record<string, CellRendererFn> = {
   "Tag": (value: any) => <TagCell value={value} />,
   "Status": (value: any, statusMap?: Record<string, { color: string }>, defaultColor?: string) => <StatusCell value={value} statusMap={statusMap} defaultColor={defaultColor} />,
   "Boolean": (value: any) => <BooleanCell value={value} />,
-  "Dropdown": (value: any, options?: DropdownOption[]) => <DropdownCell value={value} options={options} />,
+  "Dropdown": (value: any, meta?: any) => {
+    const options = meta?.dropdownOptions || [];
+    const displayStyle = meta?.displayStyle || 'badge';
+    const size = meta?.size || 'md';
+    const showIcon = meta?.enableIcons || false;
+    const isLoading = meta?.isLoading || false;
+    
+    return (
+      <DropdownCell 
+        value={String(value || '')} 
+        options={options}
+        displayStyle={displayStyle}
+        size={size}
+        showIcon={showIcon}
+        isLoading={isLoading}
+      />
+    );
+  },
+  "People": (value: any, options?: any) => <PeopleCell value={value} maxDisplay={options?.maxDisplay} />,
   "TimelineProgress": (value: any, options?: any) => {
     // Extract format options if they exist
     const formatOptions = options?.format || {};
