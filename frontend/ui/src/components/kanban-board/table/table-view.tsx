@@ -80,9 +80,11 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
 
   // State for grouping - default to status grouping
   const [groupByField, setGroupByField] = useState<'statusLabel' | 'priorityLabel'>('statusLabel')
+  
+  // Initial column visibility - we'll hide the status column by default since we're grouping by status
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({
     name: true,
-    status: true,
+    status: false, // Hidden initially since we group by status by default
     priority: true,
     startDate: true,
     endDate: true,
@@ -178,7 +180,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
         accessorKey: "statusId",
         id: "status",
         options: statusOptions,
-        displayStyle: hideStatusBackgroundColor ? 'plain' : 'button', // Use plain style when hideBackgroundColor is true
+        displayStyle: hideStatusBackgroundColor ? 'minimal' : 'button', // Use minimal style when hideBackgroundColor is true
         enableColorPicker: true, // Your color picker feature
         showCreateButton: true, // Your create functionality
         createButtonText: "Create & Select",
@@ -458,9 +460,21 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     return mapping;
   }, [labels, groupByField]);
 
-  // Toggle between grouping by status or priority
+  // Toggle between grouping by status or priority and update column visibility accordingly
   const toggleGrouping = useCallback(() => {
-    setGroupByField(prev => prev === 'statusLabel' ? 'priorityLabel' : 'statusLabel');
+    setGroupByField(prev => {
+      const newGroupByField = prev === 'statusLabel' ? 'priorityLabel' : 'statusLabel';
+      
+      // Update column visibility based on new grouping field
+      setColumnVisibility(currentVisibility => ({
+        ...currentVisibility,
+        // Hide the column we're grouping by and show the other one
+        status: newGroupByField !== 'statusLabel', // Hide status column when grouping by status
+        priority: newGroupByField !== 'priorityLabel' // Hide priority column when grouping by priority
+      }));
+      
+      return newGroupByField;
+    });
   }, []);
 
   // Table facets for filtering
@@ -568,16 +582,43 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
                   </Button>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
-                  {enhancedColumns.map((column) => (
-                    <DropdownMenu.Item key={column.id}>
-                      <Flex align="center" gap="2">
-                        <div className="mr-2 h-4 w-4">
-                          <Check size={16} className="h-4 w-4" />
-                        </div>
-                        <Text>{column.headingName}</Text>
-                      </Flex>
-                    </DropdownMenu.Item>
-                  ))}
+                  {enhancedColumns.map((column) => {
+                    // Disable toggling for the column we're currently grouping by
+                    const isGroupedColumn = 
+                      (groupByField === 'statusLabel' && column.id === 'status') || 
+                      (groupByField === 'priorityLabel' && column.id === 'priority');
+                      
+                    return (
+                      <DropdownMenu.Item 
+                        key={column.id}
+                        onClick={() => {
+                          // Don't allow changing visibility of grouped column
+                          if (isGroupedColumn) return;
+                          
+                          // Make sure column.id is a string to avoid TypeScript errors
+                          const columnId = String(column.id);
+                          setColumnVisibility(prev => ({
+                            ...prev,
+                            [columnId]: !prev[columnId]
+                          }));
+                        }}
+                      >
+                        <Flex align="center" gap="2">
+                          <div className="mr-2 h-4 w-4">
+                            {columnVisibility[String(column.id)] && !isGroupedColumn && (
+                              <Check size={16} className="h-4 w-4" />
+                            )}
+                          </div>
+                          <Text>
+                            {column.headingName}
+                            {isGroupedColumn && (
+                              <span className="ml-2 text-xs text-gray-500">(grouped)</span>
+                            )}
+                          </Text>
+                        </Flex>
+                      </DropdownMenu.Item>
+                    );
+                  })}
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
 
