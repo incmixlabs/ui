@@ -297,16 +297,16 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
         id: "actions",
         enableSorting: false,
         enableInlineEdit: false,
-        renderer: () => (
+        renderer: (value: any, row: TableTask) => (
           <TableRowActions
-            task={{} as TableTask} // This will be properly populated by the table
+            task={row} // Pass the actual row data instead of an empty object
             taskStatuses={labels.map(label => ({
               id: label.id,
               name: label.name,
               color: label.color,
               type: "status" // All labels from list view are status labels
             }))}
-            onUpdateTask={async (taskId, updates) => {
+            onUpdateTask={async (taskId: string, updates: Partial<TableTask>) => {
               // Convert TableTask updates to TaskDataSchema updates
               const schemaUpdates: Partial<TaskDataSchema> = {};
 
@@ -321,7 +321,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
 
               // Handle subTasks with special mapping to ensure order property
               if (updates.subTasks !== undefined) {
-                schemaUpdates.subTasks = updates.subTasks.map((subTask, index) => ({
+                schemaUpdates.subTasks = updates.subTasks.map((subTask: any, index: number) => ({
                   id: subTask.id || '',
                   name: subTask.name,
                   completed: subTask.completed,
