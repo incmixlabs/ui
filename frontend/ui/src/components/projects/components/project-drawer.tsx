@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { cn } from "@utils"
-import { Download, FileArchive, X } from "lucide-react"
+import { X } from "lucide-react"
 import { motion } from "motion/react"
 
 import {
@@ -12,6 +12,7 @@ import {
   IconButton,
   ScrollArea,
   Select,
+  Icon,
   Text,
 } from "@incmix/ui"
 
@@ -90,7 +91,7 @@ export default function ProjectDrawer({
                       onClick={handleDrawerClose}
                       className="absolute top-5 right-3 ml-8 flex h-8 w-8 cursor-pointer items-center justify-center rounded-md"
                     >
-                      <X aria-hidden="true" />
+                      <Icon name="X" aria-hidden="true" />
                       <Text className="sr-only">Close</Text>
                     </IconButton>
                   )}
@@ -161,7 +162,7 @@ export default function ProjectDrawer({
                             </Box>
                           ) : (
                             <Box className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-gray-8">
-                              <FileArchive className="h-5 w-5 text-gray-8" />
+                              <Icon name="FileArchive" className="h-5 w-5 text-gray-8" />
                             </Box>
                           )}
                           <Box className="ml-4 grow">
@@ -178,7 +179,7 @@ export default function ProjectDrawer({
                               variant="soft"
                               className="h-9 cursor-pointer rounded-full bg-transparent p-2 transition-colors hover:bg-gray-4 dark:hover:bg-gray-7"
                             >
-                              <Download className="h-5 w-5 text-gray-12" />
+                              <Icon name="Download" className="h-5 w-5 text-gray-12" />
                             </Button>
                           </Flex>
                         </Flex>

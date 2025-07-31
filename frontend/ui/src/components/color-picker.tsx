@@ -1,6 +1,6 @@
 import { cn } from "@utils"
 import { Check } from "lucide-react"
-import { iconSize } from "./icons/icon"
+import { iconSize } from "./common/icon"
 export interface ColorSelectType {
   hex: string
   name?: string

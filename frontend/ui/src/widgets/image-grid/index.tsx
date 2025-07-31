@@ -7,7 +7,7 @@ import {
 import { toast,  Box, Button,  Flex, Text } from "@base"
 import { useUploadFile } from "@hooks/use-upload-file"
 import { Card } from "@card/card"
-import { Trash as TrashIcon, Upload as UploadIcon } from "lucide-react"
+import {Icon} from "@incmix/ui"
 import { cn } from "@utils"
 import { useCallback, useEffect, useState } from "react"
 
@@ -96,11 +96,11 @@ export function ImageGrid() {
     <Card className="w-full space-y-10">
       <Flex gap="4" align="center" justify="end">
         <Button color="red" onClick={deleteAll}>
-          <TrashIcon />
+          <Icon name="Trash" />
           Delete All
         </Button>
         <Button variant="outline" onClick={openFilePicker}>
-          <UploadIcon />
+          <Icon name="Upload" />
           Upload
         </Button>
       </Flex>

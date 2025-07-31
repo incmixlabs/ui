@@ -30,4 +30,5 @@ export * from "./theme/theme-panel"
 export * from "./theme/theme"
 export * from "./page-header"
 export * from "./auto-form"
+export * from "./common"
 

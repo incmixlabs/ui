@@ -1,7 +1,6 @@
-import { Box, Flex, Heading, IconButton, Text } from "@incmix/ui"
+import { Box, Flex, Heading, Icon, IconButton, Text } from "@incmix/ui"
 import { cn } from "@utils"
 import { AnimatePresence, motion } from "motion/react"
-import { X } from "lucide-react"
 import type React from "react"
 import { useEffect, useState } from "react"
 
@@ -179,7 +178,7 @@ export const MotionSheet: React.FC<SheetProps> = ({
                 </Box>
                 {showCloseButton && (
                   <IconButton onClick={handleClose} color="gray" type="button">
-                    <X />
+                    <Icon name="X" />
                   </IconButton>
                 )}
               </Flex>

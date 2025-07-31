@@ -1,7 +1,7 @@
 import { useState } from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import { Box, Flex, Heading, IconButton, ScrollArea, Text ,CardContainer} from "@base"
+import { Icon } from "@incmix/ui"
 
 type Movie = {
   id: number
@@ -222,7 +222,7 @@ export const GroupList = ({
                 >
                   <Flex align={"center"} justify={"between"}>
                     <span>Year {year.year}</span>
-                    <ChevronRight size={20} />
+                    <Icon name="ChevronRight" />
                   </Flex>
                 </button>
               ))}
@@ -238,7 +238,7 @@ export const GroupList = ({
               onClick={handleBackToYears}
               className=" w-fit gap-1 bg-transparent font-semibold text-gray-12 "
             >
-              <ChevronLeft size={20} />
+              <Icon name="ChevronLeft"/>
               <Text as="span">Year {selectedYear?.year}</Text>
             </IconButton>
           </Flex>

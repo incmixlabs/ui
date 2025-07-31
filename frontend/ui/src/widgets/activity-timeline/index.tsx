@@ -6,8 +6,8 @@ import {
   Text,
   Heading,
   ScrollArea,
+  Icon,
 } from "@incmix/ui";
-import { MoreHorizontal, Play, FileText } from "lucide-react";
 interface Activity {
   id: number;
   title: string;
@@ -29,7 +29,6 @@ const defaultActivities: Activity[] = [
     link: "www.youtube.com/channel/UCuryo5s0CW4aP8ltLjIdZg",
     date: "Tomorrow",
     color: "bg-[var(--dashboard-color-1)]",
-    icon: Play,
   },
   {
     id: 2,
@@ -45,7 +44,6 @@ const defaultActivities: Activity[] = [
     attachment: "presentation.pdf",
     date: "April, 23",
     color: "bg-[var(--dashboard-color-3)]",
-    icon: FileText,
   },
 ];
 const getTimelineConnectorClass = (index: number, totalItems: number) => {
@@ -68,7 +66,7 @@ export function ActivityTimeline({
             Activity Timeline
           </Heading>
           <Button variant="ghost" size="2">
-            <MoreHorizontal className="w-4 h-4" />
+            <Icon name="Ellipsis" />
           </Button>
         </Flex>
       </Box>
@@ -105,7 +103,7 @@ export function ActivityTimeline({
                 {/* Optional Video Link */}
                 {activity.link && (
                   <Flex align="center" gap="1" className="text-xs">
-                    <Play className="w-6 h-6 stroke-white bg-red-9 rounded-full p-1 fill-white" />
+                    <Icon name="Play" className="w-5 h-5 stroke-white bg-red-9 rounded-full p-1 fill-white" />
                     <Text className="text-gray-11 font-medium">
                       {activity.link}
                     </Text>
@@ -115,7 +113,7 @@ export function ActivityTimeline({
                 {/* Optional Attachment */}
                 {activity.attachment && (
                   <Flex align="center" gap="1" className="text-sm">
-                    <FileText className="w-6 h-6 text-red-11 bg-red-2 rounded-sm p-1" />
+                    <Icon name="FileText" className="w-5 h-5 text-red-11 bg-red-2 rounded-sm p-1" />
                     <Text className="text-gray-11 font-medium">
                       {activity.attachment}
                     </Text>

@@ -1,11 +1,11 @@
 import React, { useMemo } from "react"
-
 import {
   Box,
   CardContainer,
   Flex,
   Grid,
   Heading,
+  Icon,
   IconButton,
   Text,
   Tooltip,
@@ -212,7 +212,7 @@ export function PostingTask() {
       <Flex justify={"between"} align={"center"} className="mb-4">
         <Heading weight={"medium"}>Posting Tasks</Heading>
         <IconButton variant="ghost">
-          <Ellipsis />
+          <Icon name="Ellipsis" />
         </IconButton>
       </Flex>
 
@@ -299,7 +299,7 @@ export function PostingTask() {
                       )}
                     >
                       {hasLightning && (
-                        <Zap size={16} className="fill-white stroke-white" />
+                        <Icon name="Zap" className="fill-white stroke-white" />
                       )}
                     </Box>
                   </Tooltip>

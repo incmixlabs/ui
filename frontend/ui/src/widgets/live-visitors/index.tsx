@@ -1,6 +1,5 @@
 import { Bar, BarChart, ResponsiveContainer } from "recharts"
-import { Box, CardContainer, Flex, Heading } from "@incmix/ui"
-import { TrendingUp } from "lucide-react"
+import { Box, CardContainer, Flex, Heading,Icon } from "@incmix/ui"
 
 const data = [
   { value: 45 },
@@ -33,7 +32,7 @@ export function LiveVisitors() {
         <Flex align={"center"} justify={"between"}>
           <Heading weight={"medium"}>Live Visitors</Heading>
           <Flex align={"center"} gap={"1"} className="text-green-9" aria-label="Visitor trend">
-            <TrendingUp className="w-4 h-4 mr-1" />
+            <Icon name="TrendingUp" className="mr-1" />
             +{trend}%
           </Flex>
         </Flex>

@@ -4,11 +4,11 @@ import {
   Flex,
   Grid,
   Heading,
+  Icon,
   IconButton,
   RadialTaskStatusChart,
   Text,
 } from "@incmix/ui";
-import { Ellipsis } from "lucide-react";
 
 let stats = [
   { label: "Ongoing", value: 420, color: "var(--indicator-info)" },
@@ -23,7 +23,7 @@ export function ProjectWidgets() {
         <Flex align={"center"} gap={"2"} justify={"between"}>
           <Heading weight={"medium"}>Projects</Heading>
           <IconButton>
-            <Ellipsis size={16} />
+            <Icon name="Ellipsis" size={16} />
           </IconButton>
         </Flex>
         <RadialTaskStatusChart

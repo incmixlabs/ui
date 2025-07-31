@@ -1,22 +1,20 @@
 import {
   Card,
-  Badge,
   Flex,
   Box,
   Text,
   Heading,
   DropdownMenu,
   IconButton,
-  Link,
   CardContainer,
   ScrollArea,
 } from "@base";
-import { MoreHorizontal, Smartphone, Sparkles, Palette } from "lucide-react";
+import { Icon } from "@incmix/ui";
 
 interface IProjectList {
   name: string;
   tasks: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ReactNode;
   iconColor: string;
   bgColor: string;
 }
@@ -26,21 +24,21 @@ export function ProjectListWidgets() {
     {
       name: "IOS Application",
       tasks: "840/2.5k",
-      icon: Smartphone,
-      iconColor: "text-[var(--dashboard-text-1)]",
-      bgColor: "bg-[var(--dashboard-color-1)]",
+      icon: <Icon name="Smartphone" className="w-5 h-5 text-black" />,
+      iconColor: "text-[var(--dashboard-text-4)]",
+      bgColor: "bg-[var(--dashboard-color-4)]",
     },
     {
       name: "Web Application",
       tasks: "99/1.42k",
-      icon: Sparkles,
+      icon: <Icon name="Sparkles" className="w-5 h-5 text-black" />,
       iconColor: "text-[var(--dashboard-text-2)]",
       bgColor: "bg-[var(--dashboard-color-2)]",
     },
     {
       name: "UI Kit Design",
       tasks: "120/350",
-      icon: Palette,
+      icon: <Icon name="Palette" className="w-5 h-5 text-black" />,
       iconColor: "text-[var(--dashboard-text-3)]",
       bgColor: "bg-[var(--dashboard-color-3)]",
     },
@@ -69,7 +67,7 @@ export function ProjectListWidgets() {
                       variant="ghost"
                       className="rounded-full transition-colors duration-200 hover:bg-blue-7"
                     >
-                      <MoreHorizontal className="w-5 h-5 text-gray-11" />
+                      <Icon name="Ellipsis" className="w-5 h-5 text-gray-11" />
                     </IconButton>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content>
@@ -98,9 +96,7 @@ export function ProjectListWidgets() {
                     className="gap-3 p-3 rounded-lg hover:bg-gray-3 cursor-pointer transition-colors"
                   >
                     <Box className={`p-2 rounded-lg ${project.bgColor}`}>
-                      <project.icon
-                        className={`w-5 h-5 ${project.iconColor}`}
-                      />
+                      {project.icon}
                     </Box>
                     <Box className="flex-1 min-w-0">
                       <Heading

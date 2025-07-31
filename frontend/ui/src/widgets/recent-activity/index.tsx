@@ -4,11 +4,11 @@ import {
   cn,
   Flex,
   Heading,
+  Icon,
   IconButton,
   ScrollArea,
   Text,
 } from "@incmix/ui";
-import { Ellipsis } from "lucide-react";
 interface ActivityItem {
   id: string;
   time: string;
@@ -131,7 +131,7 @@ export function RecentActivity({ className }: { className?: string }) {
         <Flex align="center" justify="between">
           <Heading size="4">Recent Activity</Heading>
           <IconButton variant="ghost">
-            <Ellipsis className="h-5 w-5" />
+            <Icon name="Ellipsis"/>
           </IconButton>
         </Flex>
       </Box>

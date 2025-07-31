@@ -4,7 +4,6 @@ import {
   Flex,
   Input,
   Label,
-  EditIcon,
   Tooltip,
   CloneIcon,
   toast,

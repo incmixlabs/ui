@@ -6,8 +6,6 @@ import {
 } from "@incmix/ui/base";
 import { useDashboardStore } from "@incmix/store";
 import { useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Copy } from "lucide-react";
 
 export function DeleteDashboard({ dashboardId }: { dashboardId: string }) {
   const { deleteDashboard } = useDashboardStore();

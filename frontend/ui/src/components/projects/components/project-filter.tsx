@@ -1,5 +1,4 @@
 import { Box, Button, Flex, Select, Input } from "@base"
-import { Search, X } from "lucide-react"
 import { useState } from "react"
 import { members } from "../data"
 
@@ -9,6 +8,7 @@ import {
 } from "@components/multiple-selector/multiple-selector"
 
 import {MultipleSelector} from "@components/multiple-selector/multiple-selector"
+import { Icon } from "@incmix/ui"
 
 interface ProjectFilterProps {
   onApplyFilters: (filters: {
@@ -53,7 +53,7 @@ export function ProjectFilter({
       <Box>
         <Box className="space-y-4">
           <Box className="relative ">
-            <Search className="absolute top-3 left-2.5" size={20} />
+            <Icon name="Search" className="absolute top-3 left-2.5" size={20} />
             <Input
               placeholder="Search Projects..."
               value={search}

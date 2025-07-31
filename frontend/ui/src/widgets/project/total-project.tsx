@@ -3,10 +3,10 @@ import {
   CardContainer,
   Flex,
   Heading,
+  Icon,
   IconButton,
   Text,
 } from "@incmix/ui"
-import type { BadgeProps } from "@radix-ui/themes"
 import { Ellipsis } from "lucide-react"
 import { useState } from "react"
 interface ProgressItem {
@@ -46,7 +46,7 @@ export function TotalProject() {
           variant="ghost"
           className="m-0 flex cursor-pointer flex-row items-center p-0"
         >
-          <Ellipsis />
+          <Icon name="Ellipsis"/>
         </IconButton>
       </Flex>
       <Box className="space-y-4 pt-10">

@@ -4,16 +4,12 @@ import { Button, Flex, Tooltip } from "@incmix/ui/base";
 import { Input } from "@incmix/ui/base";
 import { Label } from "@incmix/ui/base";
 import { Dialog } from "@incmix/ui/base";
-import { Save, X, Tag } from "lucide-react";
 import { database, useTemplateStore } from "@incmix/store";
-import { Badge } from "@incmix/ui/base";
 import {
+  Icon,
   MultipleSelector,
-  MultipleSelectorControlled,
   toast,
 } from "@incmix/ui";
-import type { Layout } from "react-grid-layout";
-import type { Breakpoint } from "@incmix/ui/dashboard";
 import { useQueryState } from "nuqs";
 import type { CustomLayouts } from "@incmix/store";
 
@@ -139,7 +135,7 @@ export function SaveTemplateDialog({
           <Button variant="solid" color={isTemplate ? "indigo" : "orange"}>
             {isDesktop ? (
               <>
-                <Save size={20} />
+                <Icon name="Save"/>
                 {isTemplate ? "Update Template" : "Save Template"}
               </>
             ) : (
@@ -147,7 +143,7 @@ export function SaveTemplateDialog({
                 <Tooltip
                   content={isTemplate ? "Update Template" : "Save Template"}
                 >
-                  <Save size={20} />
+                  <Icon name="Save"/>
                 </Tooltip>
               </>
             )}
@@ -208,7 +204,7 @@ export function SaveTemplateDialog({
                 isTemplate ? handleUpdateTemplate(isTemplate) : handleSave()
               }
             >
-              <Save className="h-4 w-4" />
+              <Icon name="Save"/>
               {isTemplate ? "Update Template" : "Save Template"}
             </Button>
           </Dialog.Footer>
@@ -216,7 +212,7 @@ export function SaveTemplateDialog({
       </Dialog.Root>
       {isTemplate && (
         <Button variant="solid" color={"red"} onClick={handleCancelUpdate}>
-          <X size={20} /> Cancel
+          <Icon name="X"/> Cancel
         </Button>
       )}
     </Flex>

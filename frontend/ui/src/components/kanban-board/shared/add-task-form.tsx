@@ -1,17 +1,15 @@
 // components/board/add-task-form-autoform.tsx
-"use client"
 
 import { useState, useCallback, useMemo, useEffect, useRef } from "react"
 import { Button, Dialog, Text, Box } from "@base"
-import { Plus, Sparkles, Loader2 } from "lucide-react"
 import { type TaskDataSchema } from "@incmix/utils/schema"
 import AutoForm from "@components/auto-form"
 import { useKanban } from "../hooks/use-kanban-data"
 import { useAIFeaturesStore, useAIUserStory } from "@incmix/store"
 import { nanoid } from "nanoid"
 import { createTaskFormSchema } from "./add-task-schema"
-import { useAIDescriptionGeneration } from "../../../hooks/use-ai-description-generation"
 import { useStreamingDisplay, useStreamingResponse } from "../../../hooks"
+import { Icon } from "@incmix/ui"
 
 interface AddTaskFormProps {
   projectId: string
@@ -291,7 +289,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
   if (kanbanLoading || !taskFormSchema) {
     return (
       <Button size="2" disabled>
-        <Plus size={16} />
+        <Icon name="Plus" />
         Loading...
       </Button>
     )
@@ -313,7 +311,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
     >
       <Dialog.Trigger>
         <Button size="2" className="bg-blue-600 hover:bg-blue-700 text-white">
-          <Plus size={16} />
+          <Icon name="Plus" />
           Add Task {useAI && <span className="ml-1 text-xs">(AI)</span>}
         </Button>
       </Dialog.Trigger>
@@ -353,7 +351,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
                 <Button onClick={() => streamingActions.startStreaming()} disabled={streamingState.isStreaming|| !formData.name?.trim().length}>
                   {streamingState.isStreaming ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <Icon name="Loader" className="w-4 h-4 animate-spin" />
                       Generating...
                     </>
                   ) : (
@@ -371,7 +369,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
 
               {streamingState.isStreaming && streamingState.connectionStatus === "connected" && (
                 <div className="flex items-center p-2 bg-blue-50 dark:bg-blue-900/20 rounded text-blue-600 dark:text-blue-300">
-                  <Sparkles size={16} className="mr-2 animate-pulse" />
+                  <Icon name="Sparkles" className="mr-2 animate-pulse" />
                   <span>AI is generating a task description...</span>
                 </div>
               )}
@@ -384,7 +382,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
               )}
               {lastProcessedTitle && !streamingState.isStreaming && !streamingState.error && formData.description && (
                 <div className="flex items-center p-2 bg-green-50 dark:bg-green-900/20 rounded text-green-600 dark:text-green-300">
-                  <Sparkles size={16} className="mr-2" />
+                  <Icon name="Sparkles" className="mr-2" />
                   <span>AI-generated description based on your title</span>
                 </div>
               )}
@@ -403,7 +401,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
             {formData.checklist && formData.checklist.length > 0 && (
               <div className="border rounded-md p-4 bg-white dark:bg-gray-800 mt-4 mb-5">
                 <h4 className="text-sm font-medium mb-3 flex items-center">
-                  <Sparkles size={16} className="mr-2 text-blue-500" />
+                  <Icon name="Sparkles" className="mr-2 text-blue-500" />
                   AI Generated Checklist
                 </h4>
                 <div className="space-y-2">
@@ -434,7 +432,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
             {formData.acceptanceCriteria && formData.acceptanceCriteria.length > 0 && (
               <div className="border rounded-md p-4 bg-white dark:bg-gray-800 mt-4 mb-5">
                 <h4 className="text-sm font-medium mb-3 flex items-center">
-                  <Sparkles size={16} className="mr-2 text-blue-500" />
+                  <Icon name="Sparkles" className="mr-2 text-blue-500" />
                   AI Generated Acceptance Criteria
                 </h4>
                 <div className="space-y-2">
@@ -471,7 +469,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Icon name="Loader" className="mr-2 animate-spin" />
                     Creating...
                   </>
                 ) : (

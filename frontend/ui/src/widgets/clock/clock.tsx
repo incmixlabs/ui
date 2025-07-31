@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import RClock from "react-clock"
-import { useThemeStore } from "@incmix/store"
 export { Clock as ClockIcon } from "lucide-react"
 import { CardContainer } from "@components/card/card-container"
 import { Flex, Text, Box } from "@incmix/ui"
