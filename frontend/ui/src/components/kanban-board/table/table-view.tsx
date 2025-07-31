@@ -23,6 +23,7 @@ import {
   Download,
   ChevronDown,
   Check,
+  Flag,
 } from "lucide-react"
 
 import type { TableTask, ListColumn } from "../types"
@@ -203,10 +204,22 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
         accessorKey: "priorityId",
         id: "priority",
         options: priorityOptions,
-        displayStyle: 'badge', // Badge style for priority
+        displayStyle: 'button', // Button style like status
         strictDropdown: true, // Only predefined priorities
         enableSorting: true,
         enableInlineEdit: true,
+        // Use renderer to customize the cell appearance with a flag icon
+        renderer: (value, row) => {
+          const option = priorityOptions.find(opt => opt.value === value);
+          if (!option) return null;
+          
+          return (
+            <div className="flex items-center gap-1.5">
+              <Flag size={14} style={{ color: option.color }} />
+              <span>{option.label}</span>
+            </div>
+          );
+        },
       }),
 
       // Start Date Column
