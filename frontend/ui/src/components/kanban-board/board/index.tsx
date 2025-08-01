@@ -321,7 +321,7 @@ export function Board({
         </ScrollArea>
       </Box>
 
-      <TaskCardDrawer />
+      <TaskCardDrawer viewType="board" projectId={projectId} />
     </Box>
   )
 }

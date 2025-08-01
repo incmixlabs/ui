@@ -142,11 +142,14 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
 
       // Ensure card.id exists before using it
       if (!card.id) return;
-
-      if (onTaskOpen) {
+      
+      // Simple direct approach - just open the drawer
+      console.log('Opening task drawer for:', card.id);
+      handleDrawerOpen(card.id);
+      
+      // If onTaskOpen exists, call it after handleDrawerOpen
+      if (onTaskOpen && card.id) {
         onTaskOpen(card.id);
-      } else {
-        handleDrawerOpen(card.id);
       }
     },
     [card.id, handleDrawerOpen, onTaskOpen],
@@ -419,12 +422,16 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
                   "bg-cyan-400",
                   "bg-red-400",
                 ];
-                const randomColor =
-                  colors[Math.floor(Math.random() * colors.length)];
+                // Create a deterministic color based on the assignee's name
+                const nameSum = assignee.name.split('').reduce(
+                  (sum, char) => sum + char.charCodeAt(0), 0
+                );
+                const colorIndex = nameSum % colors.length;
+                const stableColor = colors[colorIndex];
                 return (
                   <Text
                     key={assignee.name}
-                    className={`flex h-1 w-6 items-center gap-1 rounded-full ${randomColor}`}
+                    className={`flex h-1 w-6 items-center gap-1 rounded-full ${stableColor}`}
                   />
                 );
               })}
