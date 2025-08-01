@@ -167,13 +167,7 @@ const usePasswordChangeForm = () => {
 const ProfileSection = () => {
   return (
     <CardContainer className="w-fit shrink-0">
-      <Heading
-        size="4"
-        mb="4"
-        color="gray"
-        weight="regular"
-        className="flex items-center gap-2"
-      >
+      <Heading mb="4" variant="subsection" className="flex items-center gap-2">
         <Aperture size={20} />
         Profile Photo
       </Heading>
@@ -193,13 +187,7 @@ const GeneralInfoForm: React.FC<ReturnType<typeof useGeneralInfoForm>> = ({
   const { t } = useTranslation(["settings", "common"])
   return (
     <CardContainer className="w-full">
-      <Heading
-        size="4"
-        mb="4"
-        color="gray"
-        weight="regular"
-        className="flex items-center gap-2"
-      >
+      <Heading mb="4" variant="subsection" className="flex items-center gap-2">
         <Info size={20} /> {t("generalInfo")}
       </Heading>
       <Box className="pb-4">
@@ -243,13 +231,7 @@ const PasswordChangeForm: React.FC<
   const { t } = useTranslation(["settings", "common"])
   return (
     <CardContainer>
-      <Heading
-        size="5"
-        mb="4"
-        color="gray"
-        weight={"regular"}
-        className="flex items-center gap-2"
-      >
+      <Heading mb="4" variant="subsection" className="flex items-center gap-2">
         <Lock size={20} /> {t("changePassword")}
       </Heading>
       <AutoForm
@@ -279,13 +261,7 @@ const LanguageSelector: React.FC = () => {
 
   return (
     <CardContainer>
-      <Heading
-        size="5"
-        mb="4"
-        color="gray"
-        weight="regular"
-        className="flex items-center gap-2"
-      >
+      <Heading mb="4" variant="subsection" className="flex items-center gap-2">
         <Globe size={20} /> {t("languageSettings")}
       </Heading>
       <Flex direction="column" gap="2">

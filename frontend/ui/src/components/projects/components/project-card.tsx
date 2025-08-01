@@ -5,13 +5,13 @@ import {
   Card,
   DropdownMenu,
   Flex,
-  Heading,
   IconButton,
   Progress,
   Text,
 } from "@base"
 
-import {Icon } from "../../common/icon"
+import {Heading,Icon} from "@incmix/ui"
+
 import type { Project } from "../types"
 
 interface ProjectCardProps {

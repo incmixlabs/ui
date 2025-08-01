@@ -2,7 +2,6 @@ import { useCallback, useContext } from "react";
 import {
   Box,
   Flex,
-  Heading,
   Text,
   Select,
   Grid,
@@ -27,7 +26,7 @@ import {
   SIDEBAR_COLOR_OPTIONS as BASE_SIDEBAR_COLOR_OPTIONS,
   extractColorName,
 } from "@incmix/store/use-settings-store";
-
+import {Heading} from "@incmix/ui"
 import { useTranslation } from "react-i18next";
 
 const SelectRow = (props: {
@@ -131,7 +130,7 @@ export function ThemePlayground() {
   return (
     <>
       <CardContainer>
-        <Heading size="5" mb="2" color="gray" weight="regular">
+        <Heading variant="subsection" mb="2">
           {t("themeSettings")}
         </Heading>
         <Grid p="2" columns={"1"} gap={"2"}>
@@ -204,7 +203,7 @@ export function ThemePlayground() {
         </Grid>
       </CardContainer>
       <CardContainer className="mt-3 p-4">
-        <Heading size="5" mb="2" weight="regular">
+        <Heading variant="subsection" mb="2">
           {t("Dashboard Colors")}
         </Heading>
         <Box className="p-1 space-y-2">

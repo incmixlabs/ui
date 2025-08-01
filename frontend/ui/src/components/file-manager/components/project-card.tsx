@@ -1,5 +1,5 @@
 import { useMediaQuery } from "@hooks/use-media-query"
-import { Box, Flex } from "@incmix/ui"
+import { Box, Flex, Heading } from "@incmix/ui"
 import { cn } from "@utils"
 import type { ElementType } from "react"
 import type { FileItem } from "../data"
@@ -52,14 +52,15 @@ export default function ProjectCard({
         </Box>
 
         <Box className={`${viewMode === "grid" ? "text-center" : "flex-1"}`}>
-          <h3
+          <Heading
+            variant="subsection"
             className={cn(
               "truncate font-medium",
               viewMode === "grid" ? "text-center" : ""
             )}
           >
             {file.name}
-          </h3>
+          </Heading>
           {viewMode === "list" && (
             <Flex
               align={"center"}

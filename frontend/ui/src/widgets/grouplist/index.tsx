@@ -1,7 +1,7 @@
 import { useState } from "react"
 
-import { Box, Flex, Heading, IconButton, ScrollArea, Text ,CardContainer} from "@base"
-import { Icon } from "@incmix/ui"
+import { Box, Flex, IconButton, ScrollArea, Text ,CardContainer} from "@base"
+import { Icon,Heading } from "@incmix/ui"
 
 type Movie = {
   id: number

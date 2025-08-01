@@ -3,13 +3,12 @@ import {
   Flex,
   Box,
   Text,
-  Heading,
   DropdownMenu,
   IconButton,
   CardContainer,
   ScrollArea,
 } from "@base";
-import { Icon } from "@incmix/ui";
+import { Icon,Heading } from "@incmix/ui";
 
 interface IProjectList {
   name: string;

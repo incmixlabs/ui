@@ -37,27 +37,11 @@ import {
 } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 
-import {
-  CalendarDays,
-  MessageSquareText,
-  Paperclip,
-  MoreVertical,
-  Edit3,
-  Trash2,
-  CheckSquare,
-} from "lucide-react";
+import { Edit3, CheckSquare } from "lucide-react";
 
 import { isShallowEqual } from "@incmix/utils/objects";
 import { isSafari } from "@utils/browser";
-import {
-  IconButton,
-  DropdownMenu,
-  Box,
-  Flex,
-  Heading,
-  Text,
-  Badge,
-} from "@base";
+import { IconButton, DropdownMenu, Box, Flex, Text, Badge } from "@base";
 import { toast } from "@incmix/ui";
 import {
   isCardData,
@@ -75,6 +59,7 @@ import { TaskDataSchema } from "@incmix/utils/schema";
 import { RefUrlSummary } from "../shared/ref-url-summary";
 import { getPriorityInfo } from "../priority-config";
 import { useAppearanceStore } from "@incmix/store";
+import { Icon, Heading } from "@incmix/ui";
 
 type TCardState =
   | { type: "idle" }
@@ -276,7 +261,6 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
     typeof card.startDate === "number" ? new Date(card.startDate) : undefined,
   );
 
-
   return (
     <>
       {/* Delete Task Confirmation Modal */}
@@ -359,7 +343,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
               {/* Due Date */}
               {dueDateInfo.text && (
                 <Flex align="center" gap="1">
-                  <CalendarDays size={16} />
+                  <Icon name="CalendarDays" />
                   <Text
                     size="2"
                     className={cn(
@@ -381,12 +365,12 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
                       onClick={(e) => e.stopPropagation()}
                       className=""
                     >
-                      <MoreVertical size={14} />
+                      <Icon name="EllipsisVertical" />
                     </IconButton>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content>
                     <DropdownMenu.Item onClick={handleEdit}>
-                      <Edit3 size={12} />
+                      <Icon name="SquarePen" />
                       Edit Task
                     </DropdownMenu.Item>
                     <DropdownMenu.Item
@@ -396,12 +380,12 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
                         )
                       }
                     >
-                      <CheckSquare size={12} />
+                      <Icon name="SquareCheck" />
                       {card.completed ? "Mark Incomplete" : "Mark Complete"}
                     </DropdownMenu.Item>
                     <DropdownMenu.Separator />
                     <DropdownMenu.Item onClick={handleDelete} color="red">
-                      <Trash2 size={12} />
+                      <Icon name="Trash2" />
                       Delete Task
                     </DropdownMenu.Item>
                   </DropdownMenu.Content>
@@ -479,7 +463,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
             <Box className="space-y-2">
               <Flex align="center" justify="between">
                 <Flex align="center" gap="1">
-                  <CheckSquare size={12} className="text-gray-11" />
+                  <Icon name="SquareCheck" className="text-gray-11" />
                   <Text size="1" className="text-gray-11 font-medium">
                     {completedSubTasks}/{totalSubTasks} subtasks
                   </Text>
@@ -501,58 +485,55 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
           )}
 
           {/* Footer with meta information */}
-        
-            <Flex
-              align={"center"}
-              justify={"between"}
-              className="gap-2 py-1 w-full"
-            >
-              <Flex align={"center"} gap="4">
-                   {/* Reference URLs */}
-              <RefUrlSummary
-                refUrls={card.refUrls}
-                className="text-gray-12"
-              />
-            
-                {card.attachments && (
-                  <IconButton className="flex items-center gap-1 bg-transparent text-gray-700 dark:text-gray-200">
-                    <Paperclip size={20} />
-                    <Text>{card.attachments.length}</Text>
-                  </IconButton>
-                )}
+
+          <Flex
+            align={"center"}
+            justify={"between"}
+            className="gap-2 py-1 w-full"
+          >
+            <Flex align={"center"} gap="4">
+              {/* Reference URLs */}
+              <RefUrlSummary refUrls={card.refUrls} className="text-gray-12" />
+
+              {card.attachments && (
                 <IconButton className="flex items-center gap-1 bg-transparent text-gray-700 dark:text-gray-200">
-                  <MessageSquareText size={20} />
-                  <Text>5</Text>
+                  <Icon name="Paperclip" />
+                  <Text>{card.attachments.length}</Text>
                 </IconButton>
-              </Flex>
-              <Flex align={"center"} className="gap-2">
-                {card.assignedTo && card.assignedTo.length > 0 && (
-                  <Flex align="center" className="-space-x-2">
-                    {card.assignedTo.slice(0, 3).map((member, index) => (
-                      <div
-                        key={member.id}
-                        className="h-8 w-8 rounded-full bg-gray-5 flex items-center justify-center border border-gray-7 text-gray-11"
-                        style={{ zIndex: 3 - index }}
-                        title={member.name}
-                      >
-                        {member.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")
-                          .toUpperCase()
-                          .slice(0, 2)}
-                      </div>
-                    ))}
-                    {card.assignedTo.length > 3 && (
-                      <div className="h-8 w-8 rounded-full bg-gray-3 flex items-center justify-center border border-gray-7 text-xs font-medium text-gray-11">
-                        +{card.assignedTo.length - 3}
-                      </div>
-                    )}
-                  </Flex>
-                )}
-              </Flex>
+              )}
+              <IconButton className="flex items-center gap-1 bg-transparent text-gray-700 dark:text-gray-200">
+                <Icon name="MessageSquareText" />
+                <Text>5</Text>
+              </IconButton>
             </Flex>
-            {/* Assigned users */}
+            <Flex align={"center"} className="gap-2">
+              {card.assignedTo && card.assignedTo.length > 0 && (
+                <Flex align="center" className="-space-x-2">
+                  {card.assignedTo.slice(0, 3).map((member, index) => (
+                    <div
+                      key={member.id}
+                      className="h-8 w-8 rounded-full bg-gray-5 flex items-center justify-center border border-gray-7 text-gray-11"
+                      style={{ zIndex: 3 - index }}
+                      title={member.name}
+                    >
+                      {member.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .toUpperCase()
+                        .slice(0, 2)}
+                    </div>
+                  ))}
+                  {card.assignedTo.length > 3 && (
+                    <div className="h-8 w-8 rounded-full bg-gray-3 flex items-center justify-center border border-gray-7 text-xs font-medium text-gray-11">
+                      +{card.assignedTo.length - 3}
+                    </div>
+                  )}
+                </Flex>
+              )}
+            </Flex>
+          </Flex>
+          {/* Assigned users */}
         </Card>
 
         {/* Drop indicator below */}

@@ -46,7 +46,7 @@ export function PageHeader({
         {isMobile && <SidebarTrigger mobileSidebarTrigger />}
         <Box>
           {title && (
-            <Heading size="6" weight="medium" className="capitalize">
+            <Heading variant="pageTitle" className="capitalize">
               {title}
             </Heading>
           )}

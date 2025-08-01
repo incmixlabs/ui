@@ -1,6 +1,6 @@
-import { Suspense, lazy, useRef, useState } from "react"
+import { Suspense, lazy, useRef, useState } from "react";
 
-import { cn } from "@utils"
+import { cn } from "@utils";
 import {
   Box,
   Button,
@@ -12,42 +12,40 @@ import {
   Pushpin,
   Input,
   Label,
-  TextArea
-} from "@base"
-import {Icon} from "@components/common"
-import { type INote, notesData } from "./data"
-import {PageHeader} from "@incmix/ui"
+  TextArea,
+  Text,
+} from "@base";
+import { Heading, Icon } from "@components/common";
+import { type INote, notesData } from "./data";
+import { PageHeader } from "@incmix/ui";
 
 const TiptapEditor = lazy(() =>
   import("./components/tiptap-editor").then((mod) => ({
     default: mod.TiptapEditor,
-  }))
-)
+  })),
+);
 
 export function NoteComponent() {
-  const [notes, _setNotes] = useState<INote[]>(notesData)
-  const [isOpen, setIsOpen] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
-  const [modalData, setModalData] = useState<INote | null>(null)
-  const titleInputRef = useRef<HTMLInputElement>(null)
-  const descriptionInputRef = useRef<HTMLTextAreaElement>(null)
+  const [notes, _setNotes] = useState<INote[]>(notesData);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [modalData, setModalData] = useState<INote | null>(null);
+  const titleInputRef = useRef<HTMLInputElement>(null);
+  const descriptionInputRef = useRef<HTMLTextAreaElement>(null);
 
   const onClick = (id: string) => {
-    const findData = notes.find((note) => note.id === id)
+    const findData = notes.find((note) => note.id === id);
     if (findData) {
-      setModalData(findData)
-      setIsOpen(!isOpen)
+      setModalData(findData);
+      setIsOpen(!isOpen);
     }
-  }
+  };
 
   return (
     <Box className="container mx-auto">
       <Box className="p-4">
         <Flex align={"center"} justify={"between"}>
-          <PageHeader
-        title={"Notes"}
-        className="w-full"
-      />
+          <PageHeader title={"Notes"} className="w-full" />
           <Flex gap={"2"}>
             <Button variant="soft" color="gray">
               <Icon name="SlidersHorizontal" />
@@ -60,7 +58,9 @@ export function NoteComponent() {
               </Dialog.Trigger>
               <Dialog.Content>
                 <Dialog.Header>
-                  <Dialog.Title className="font-semibold uppercase">Add Note</Dialog.Title>
+                  <Dialog.Title className="font-semibold uppercase">
+                    Add Note
+                  </Dialog.Title>
                 </Dialog.Header>
                 <Dialog.Description className="space-y-3">
                   <Box className="space-y-2">
@@ -132,8 +132,12 @@ export function NoteComponent() {
                   </svg>
                 </Flex>
                 <Box className="px-4 pt-3">
-                  <h3 className="mb-2 font-medium text-lg">{note.title}</h3>
-                  <p className="text-gray-11 text-sm">{note.content}</p>
+                  <Heading mb="2" variant="sectionTitle">
+                    {note.title}
+                  </Heading>
+                  <Text color="gray" as="p" size="2">
+                    {note.content}
+                  </Text>
                 </Box>
               </Card.Content>
             </Card.Root>
@@ -143,12 +147,14 @@ export function NoteComponent() {
       <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
         <Dialog.Content className="relative pt-10">
           <Dialog.Header>
-            <Dialog.Title className="font-semibold uppercase">Edit Note</Dialog.Title>
+            <Dialog.Title className="font-semibold uppercase">
+              Edit Note
+            </Dialog.Title>
             <Flex
               align={"center"}
               className={cn(
                 "absolute right-8 space-x-2",
-                isEditing ? "top-5" : "top-3"
+                isEditing ? "top-5" : "top-3",
               )}
             >
               {isEditing ? (
@@ -172,19 +178,11 @@ export function NoteComponent() {
                   >
                     <Icon name="SquarePen" />
                   </Button>
-                  <Button
-                    variant="ghost"
-                    color="red"
-                    className="h-6"
-                  >
+                  <Button variant="ghost" color="red" className="h-6">
                     <Icon name="Trash" />
                   </Button>
-                  <Button
-                    variant="ghost"
-                    color="blue"
-                    className="h-6"
-                  >
-                    <Icon name="Ellipsis"/>
+                  <Button variant="ghost" color="blue" className="h-6">
+                    <Icon name="Ellipsis" />
                   </Button>
                 </>
               )}
@@ -199,15 +197,17 @@ export function NoteComponent() {
               </div>
             ) : (
               <Box className="">
-                <h3 className="mb-2 font-medium text-gray-12 text-lg">
+                <Heading mb="2" variant="sectionTitle">
                   {modalData?.title}
-                </h3>
-                <p className="text-gray-11 text-sm">{modalData?.content}</p>
+                </Heading>
+                <Text color="gray">
+                  {modalData?.content}
+                </Text>
               </Box>
             )}
           </Dialog.Description>
         </Dialog.Content>
       </Dialog.Root>
     </Box>
-  )
+  );
 }

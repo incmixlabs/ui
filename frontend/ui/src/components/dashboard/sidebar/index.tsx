@@ -4,27 +4,22 @@ import {
   Button,
   DropdownMenu,
   Flex,
-  Heading,
   IconButton,
   Input,
   ScrollArea,
 } from "@base";
 
 import { LayoutPresetsSection } from "./layout-presets-selection";
-import { cn } from "@utils/cn"
+import { cn } from "@utils/cn";
 import { useEffect, useMemo, useState } from "react";
 import { DraggableComponent } from "./draggable-component";
-import {
-  Filter,
-  Search,
-  X,
-} from "lucide-react";
+
 import { TemplatesSidebar } from "./templates";
 import { useLocation, useParams } from "@tanstack/react-router";
-import {  useTemplateStore } from "@incmix/store";
+import { useTemplateStore } from "@incmix/store";
 import { getWidgets } from "./widgets-data";
 import { useSelectionStore } from "../hooks/use-widgets-selection";
-import { Icon } from "@incmix/ui";
+import { Icon, Heading } from "@incmix/ui";
 
 interface DashboardSidebarProps {
   isEditing?: boolean;
@@ -164,7 +159,10 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
       <ScrollArea className="h-full p-2">
         <Flex align={"center"} gap="2" className="mb-4">
           <Box className="relative">
-            <Icon name="Search" className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Icon
+              name="Search"
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
+            />
             <Input
               placeholder="Search..."
               value={searchQuery}
@@ -264,7 +262,11 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
               onClick={() => setIsWidgetExpanded(!isWidgetExpanded)}
               className="hover:bg-transparent"
             >
-              {isWidgetExpanded ? <Icon name="ChevronUp" /> : <Icon name="ChevronDown" />}
+              {isWidgetExpanded ? (
+                <Icon name="ChevronUp" />
+              ) : (
+                <Icon name="ChevronDown" />
+              )}
               <Box as="span" className="sr-only">
                 {isWidgetExpanded ? "Collapse Widgets" : "Expand Widgets"}
               </Box>
@@ -279,7 +281,10 @@ export function DashboardSidebar({ isEditing = true }: DashboardSidebarProps) {
               ) : (
                 <Box className="relative mt-2 grid grid-cols-12 gap-2">
                   {filteredWidgets.map((comp) => (
-                    <div key={comp.slotId} className={cn("relative", comp.className)}>
+                    <div
+                      key={comp.slotId}
+                      className={cn("relative", comp.className)}
+                    >
                       <DraggableComponent
                         id={comp.slotId}
                         title={comp.title}
