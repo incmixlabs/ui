@@ -32,7 +32,7 @@ export function SimpleTaskInput({
   const [checklist, setChecklist] = useState<Array<{ id: string; text: string; checked: boolean }>>([])
   const [acceptanceCriteria, setAcceptanceCriteria] = useState<Array<{ id: string; text: string }>>([])
   const [taskData, setTaskData] = useState({
-    priority: "medium",
+    priority: "", // Will be set to first available priority label or empty
     startDate: "",
     endDate: "",
     assignedTo: [],

@@ -56,9 +56,13 @@ export function TaskCardDrawer({
   const [selectedMemebers, setSelectedMemebers] = useState<string[]>([
     "regina-cooper",
   ]);
-  // Use the appropriate hook based on the view type
+  // Use the appropriate hook based on the view type and get full results
+  const kanbanData = useKanban(projectId);
+  const listViewData = useListView(projectId);
+  
+  // Destructure what we need based on the view type
   const { columns, updateTask, deleteTask, createTask, moveTask } =
-    viewType === "board" ? useKanban(projectId) : useListView(projectId);
+    viewType === "board" ? kanbanData : listViewData;
 
   // Find the current task and its column - Memoize to prevent re-renders
   const foundTask = React.useMemo(() => 
@@ -206,6 +210,7 @@ export function TaskCardDrawer({
                 currentTask={currentTask}
                 currentColumn={currentColumn}
                 columns={columns}
+                priorityLabels={viewType === "board" ? kanbanData?.priorityLabels : listViewData?.priorityLabels}
                 onCompleteTask={taskActions.handleCompleteTask}
                 onStatusChange={taskActions.handleStatusChange}
                 onPriorityChange={taskActions.handlePriorityChange}

@@ -45,7 +45,7 @@ const baseTaskFormSchema = {
     },
     priorityId: {
       type: "string",
-      enum: ["low", "medium", "high", "urgent"],
+      // No hardcoded enum values - will be populated dynamically from labels
       title: "Priority",
     },
     startDate: {

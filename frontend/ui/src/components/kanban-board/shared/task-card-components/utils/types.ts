@@ -67,6 +67,7 @@ export interface TaskActionButtonsProps {
   currentTask: TaskDataSchema;
   currentColumn: KanbanColumn;
   columns: KanbanColumn[];
+  priorityLabels?: any[]; // Priority labels from the database
   onCompleteTask: () => void;
   onStatusChange: (columnId: string) => void;
   onPriorityChange: (priority: string) => void;

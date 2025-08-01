@@ -73,7 +73,7 @@ import { useKanbanDrawer } from "../hooks/use-kanban-drawer";
 import { ModalPresets } from "../shared/confirmation-modal";
 import { TaskDataSchema } from "@incmix/utils/schema";
 import { RefUrlSummary } from "../shared/ref-url-summary";
-import { getPriorityInfo } from "../priority-config";
+import { getPriorityInfo, getPriorityConfig } from "../priority-config";
 import { useAppearanceStore } from "@incmix/store";
 
 type TCardState =
@@ -112,6 +112,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
   card,
   state,
   innerRef,
+  priorityLabels,
   onUpdateTask,
   onDeleteTask,
   onTaskOpen,
@@ -119,6 +120,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
   card: KanbanTask;
   state: TCardState;
   innerRef?: MutableRefObject<HTMLDivElement | null>;
+  priorityLabels?: any[]; // Array of priority labels
   onUpdateTask?: (
     taskId: string,
     updates: Partial<TaskDataSchema>,
@@ -227,7 +229,8 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
     }
   }, [card.id, handleDrawerOpen, onTaskOpen]);
 
-  // Using the shared priority configuration from priority-config.ts
+  // Using the shared priority configuration from priority-config.ts - will be updated with dynamic labels
+  // Note: The TaskCard should receive priorityLabels from its parent to avoid hardcoded values
 
   const formatDate = useCallback((date?: Date) => {
     if (!date) return { text: "", className: "" };
@@ -273,7 +276,8 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
   const progressPercentage =
     totalSubTasks > 0 ? (completedSubTasks / totalSubTasks) * 100 : 0;
 
-  const priorityInfo = getPriorityInfo(card.priorityId);
+  // Use new getPriorityConfig function which works with priorityLabels
+  const priorityInfo = getPriorityConfig(card.priorityId, priorityLabels);
   const PriorityIcon = priorityInfo.icon;
   const dueDateInfo = formatDate(
     typeof card.startDate === "number" ? new Date(card.startDate) : undefined,
@@ -574,6 +578,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
 export function TaskCard({
   card,
   statusId,
+  priorityLabels,
   onUpdateTask,
   onDeleteTask,
   onTaskOpen,
@@ -581,6 +586,7 @@ export function TaskCard({
 }: {
   card: KanbanTask;
   statusId: string;
+  priorityLabels?: any[]; // Array of priority labels
   onUpdateTask?: (
     taskId: string,
     updates: Partial<TaskDataSchema>,
@@ -719,6 +725,7 @@ export function TaskCard({
         card={card}
         state={state}
         innerRef={innerRef}
+        priorityLabels={priorityLabels}
         onUpdateTask={onUpdateTask}
         onDeleteTask={onDeleteTask}
         onTaskOpen={onTaskOpen}
@@ -728,6 +735,7 @@ export function TaskCard({
             <TaskCardDisplay
               state={state}
               card={card}
+              priorityLabels={priorityLabels}
               onUpdateTask={onUpdateTask}
               onDeleteTask={onDeleteTask}
               onTaskOpen={onTaskOpen}

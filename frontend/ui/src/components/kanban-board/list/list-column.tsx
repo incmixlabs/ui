@@ -114,6 +114,7 @@ const idle = { type: "idle" } satisfies TColumnState
 interface ListColumnProps {
   column: ListColumn
   columns: ListColumn[] // All available columns for the menu
+  priorityLabels: any[] // Add priorityLabels prop to match other components
   onCreateTask: (columnId: string, taskData: Partial<TaskDataSchema>) => Promise<void>
   onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
@@ -128,6 +129,7 @@ interface ListColumnProps {
 export const CardList = memo(function CardList({
   column,
   columns,
+  priorityLabels,
   onUpdateTask,
   onDeleteTask,
   selectedTaskIds,
@@ -135,6 +137,7 @@ export const CardList = memo(function CardList({
 }: {
   column: ListColumn
   columns: ListColumn[]
+  priorityLabels: any[]
   onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
   selectedTaskIds?: {[key: string]: boolean}
@@ -213,6 +216,7 @@ export const CardList = memo(function CardList({
           card={task}
           statusId={column.id}
           columns={columns}
+          priorityLabels={priorityLabels}
           onUpdateTask={onUpdateTask}
           onDeleteTask={onDeleteTask}
           onTaskSelect={onTaskSelect ? (taskId, selected) => onTaskSelect(taskId, selected, task.name || '') : undefined}
@@ -226,6 +230,7 @@ export const CardList = memo(function CardList({
 export function ListColumn({
   column,
   columns,
+  priorityLabels, // Add priorityLabels prop
   onCreateTask,
   onUpdateTask,
   onDeleteTask,
@@ -725,6 +730,7 @@ export function ListColumn({
                 <CardList
                   column={column}
                   columns={columns}
+                  priorityLabels={priorityLabels}
                   onUpdateTask={onUpdateTask}
                   onDeleteTask={onDeleteTask}
                   selectedTaskIds={selectedTaskIds}

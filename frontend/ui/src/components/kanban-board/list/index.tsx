@@ -64,6 +64,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   // Use the list view hook
   const {
     columns,
+    priorityLabels, // Extract priority labels from the hook
     isLoading,
     error,
     createTask,
@@ -627,6 +628,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                   key={column.id}
                   column={column}
                   columns={columns}
+                  priorityLabels={priorityLabels}
                   onCreateTask={createTask}
                   onUpdateTask={updateTask}
                   onDeleteTask={deleteTask}

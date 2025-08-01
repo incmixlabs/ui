@@ -186,13 +186,20 @@ export function createStatusDropdownOptions(): DropdownOption[] {
 }
 
 /**
- * Creates standard priority dropdown options
+ * Creates priority dropdown options from labels
+ * @param priorityLabels - Array of priority labels from the database
  */
-export function createPriorityDropdownOptions(): DropdownOption[] {
-    return [
-        { value: "low", label: "Low", color: "#6b7280" },
-        { value: "medium", label: "Medium", color: "#3b82f6" },
-        { value: "high", label: "High", color: "#f59e0b" },
-        { value: "urgent", label: "Urgent", color: "#ef4444" },
-    ];
+export function createPriorityDropdownOptions(priorityLabels?: any[]): DropdownOption[] {
+    // If no priority labels are provided, return an empty array
+    // The consuming component should get the labels from the appropriate hook
+    if (!priorityLabels || priorityLabels.length === 0) {
+        return [];
+    }
+    
+    // Map priority labels to dropdown options
+    return priorityLabels.map(label => ({
+        value: label.id,
+        label: label.name,
+        color: label.color || "#6b7280" // Fallback color if none is provided
+    }));
 }

@@ -95,6 +95,7 @@ const idle = { type: "idle" } satisfies TColumnState;
 
 interface BoardColumnProps {
   column: KanbanColumn;
+  priorityLabels?: any[]; // Array of priority labels from useKanban hook
   onCreateTask: (
     columnId: string,
     taskData: Partial<TaskDataSchema>,
@@ -121,6 +122,7 @@ const QuickTaskForm = memo(function QuickTaskForm({
   columnId,
   onCreateTask,
   onCancel,
+  priorityLabels,
 }: {
   columnId: string;
   onCreateTask: (
@@ -128,6 +130,7 @@ const QuickTaskForm = memo(function QuickTaskForm({
     taskData: Partial<TaskDataSchema>,
   ) => Promise<void>;
   onCancel: () => void;
+  priorityLabels?: any[]; // Array of priority labels
 }) {
   // Get AI features state
   const { useAI } = useAIFeaturesStore();
@@ -220,10 +223,14 @@ const QuickTaskForm = memo(function QuickTaskForm({
 
       setIsSubmitting(true);
       try {
+        // Get first priority label id or empty string if none available
+        const defaultPriority = priorityLabels && priorityLabels.length > 0 ? 
+          priorityLabels[0].id : "";
+            
         await onCreateTask(columnId, {
           name: taskName.trim(),
           description: description.trim(),
-          priorityId: "medium", // Updated: priority → priorityId
+          priorityId: defaultPriority, // Use first available priority from labels
           completed: false,
           labelsTags: [],
           attachments: [],
@@ -364,27 +371,27 @@ const QuickTaskForm = memo(function QuickTaskForm({
   );
 });
 
-const CardList = memo(function CardList({
+const TaskList = memo(function TaskList({
   column,
+  priorityLabels,
   onUpdateTask,
   onDeleteTask,
   onTaskOpen,
 }: {
   column: KanbanColumn;
-  onUpdateTask: (
-    taskId: string,
-    updates: Partial<TaskDataSchema>,
-  ) => Promise<void>;
+  priorityLabels?: any[]; // Array of priority labels
+  onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>;
   onDeleteTask: (taskId: string) => Promise<void>;
   onTaskOpen?: (taskId: string) => void;
 }) {
   return (
     <>
-      {column.tasks.map((card) => (
+      {column.tasks.map((task) => (
         <TaskCard
-          key={card.id}
-          card={card}
+          key={task.id}
+          card={task}
           statusId={column.id}
+          priorityLabels={priorityLabels}
           onUpdateTask={onUpdateTask}
           onDeleteTask={onDeleteTask}
           onTaskOpen={onTaskOpen}
@@ -396,6 +403,7 @@ const CardList = memo(function CardList({
 
 export const BoardColumn = memo(function BoardColumn({
   column,
+  priorityLabels,
   onCreateTask,
   onUpdateTask,
   onDeleteTask,
@@ -833,8 +841,9 @@ export const BoardColumn = memo(function BoardColumn({
           {/* Tasks Container - No internal scrolling, grows naturally */}
           <div className="px-2" ref={scrollableRef}>
             <div className="space-y-1 py-2">
-              <CardList
+              <TaskList
                 column={column}
+                priorityLabels={priorityLabels}
                 onUpdateTask={onUpdateTask}
                 onDeleteTask={onDeleteTask}
                 onTaskOpen={onTaskOpen}
@@ -852,6 +861,7 @@ export const BoardColumn = memo(function BoardColumn({
             {isCreatingTask ? (
               <QuickTaskForm
                 columnId={column.id}
+                priorityLabels={priorityLabels}
                 onCreateTask={onCreateTask}
                 onCancel={() => setIsCreatingTask(false)}
               />
