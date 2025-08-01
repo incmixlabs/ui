@@ -46,26 +46,26 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
   const { generateUserStory, isGenerating, error: aiError } = useAIUserStory()
 
   // Get kanban data and operations
-  const { columns, createTask, isLoading: kanbanLoading } = useKanban(projectId)
+  const { columns, priorityLabels, createTask, isLoading: kanbanLoading } = useKanban(projectId)
 
   // Create the schema with dynamic columns
   const taskFormSchema = useMemo(() => {
     if (columns.length === 0) return null
-    return createTaskFormSchema(columns)
-  }, [columns])
+    return createTaskFormSchema(columns, priorityLabels)
+  }, [columns, priorityLabels])
 
   // Set up default form values when schema is ready
   const defaultFormValues = useMemo(() => {
     if (!taskFormSchema || columns.length === 0) return {}
 
-    // Get default column (prefer "To Do" or first column)
-    const defaultStatusId = columns.find(col =>
-      col.name.toLowerCase().includes("todo") ||
-      col.name.toLowerCase().includes("to do")
-    )?.id || columns[0]?.id || ""
-
+    // Get first available column for default status
+    const defaultStatusId = columns[0]?.id || ""
+    
+    // Get first available priority for default
+    const defaultPriorityId = priorityLabels[0]?.id || ""
+    
     const defaults = {
-      priorityId: "medium",
+      priorityId: defaultPriorityId,
       statusId: defaultStatusId,
       assignedTo: [],
       labelsTags: [],
@@ -81,7 +81,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
 
     console.log('Generated default form values:', defaults) // Debug log
     return defaults
-  }, [taskFormSchema, columns])
+  }, [taskFormSchema, columns, priorityLabels])
 
   // Initialize form data with defaults when component mounts or dialog opens
   useEffect(() => {
@@ -119,7 +119,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
     return {
       name: data.name?.trim() || "",
       description: data.description?.trim() || "",
-      priorityId: data.priorityId || "medium",
+      priorityId: data.priorityId || (priorityLabels[0]?.id || ""),
       startDate: data.startDate || null,
       endDate: data.endDate || null,
       completed: false,
@@ -165,7 +165,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
       attachments: [],
       comments: [],
     }
-  }, [getColorForLabel])
+  }, [getColorForLabel, priorityLabels])
 
   // Track if we've had a generation error for the current title
   const [hadGenerationError, setHadGenerationError] = useState(false);

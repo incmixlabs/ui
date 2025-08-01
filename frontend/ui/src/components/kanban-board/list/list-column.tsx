@@ -769,6 +769,7 @@ export function ListColumn({
                       createdBy: col.createdBy,
                       updatedBy: col.updatedBy,
                     }))}
+                    priorityLabels={priorityLabels}
                     placeholder="Enter task title..."
                   />
                 ) : (
