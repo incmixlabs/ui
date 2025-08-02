@@ -73,7 +73,7 @@ import { useKanbanDrawer } from "../hooks/use-kanban-drawer";
 import { ModalPresets } from "../shared/confirmation-modal";
 import { TaskDataSchema } from "@incmix/utils/schema";
 import { RefUrlSummary } from "../shared/ref-url-summary";
-import { getPriorityInfo, getPriorityConfig } from "../priority-config";
+import { getPriorityInfo, getPriorityConfig, PriorityLabel } from "../priority-config";
 import { useAppearanceStore } from "@incmix/store";
 
 type TCardState =
@@ -120,7 +120,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
   card: KanbanTask;
   state: TCardState;
   innerRef?: MutableRefObject<HTMLDivElement | null>;
-  priorityLabels?: any[]; // Array of priority labels
+  priorityLabels?: PriorityLabel[]; // Array of priority labels
   onUpdateTask?: (
     taskId: string,
     updates: Partial<TaskDataSchema>,
@@ -586,7 +586,7 @@ export function TaskCard({
 }: {
   card: KanbanTask;
   statusId: string;
-  priorityLabels?: any[]; // Array of priority labels
+  priorityLabels?: PriorityLabel[]; // Array of priority labels
   onUpdateTask?: (
     taskId: string,
     updates: Partial<TaskDataSchema>,

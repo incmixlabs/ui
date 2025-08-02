@@ -10,27 +10,40 @@ export interface PriorityInfo {
 }
 
 /**
+ * Interface for priority labels used throughout the application
+ */
+export interface PriorityLabel {
+  id: string
+  name: string
+  color?: string
+  type?: 'priority'
+  order?: number
+}
+
+/**
  * Get priority info from priority labels array
  * @param priorityId - The ID of the priority to get info for
  * @param priorityLabels - Array of priority labels from the hooks
  * @returns Priority info with color, icon and label
  */
-export function getPriorityConfig(priorityId?: string, priorityLabels?: any[]): PriorityInfo {
-  // If we have priorityLabels and a priorityId, try to find the matching label
+export function getPriorityConfig(priorityId?: string, priorityLabels?: PriorityLabel[]): PriorityInfo {
+  // First try to find the priority in the provided labels
   if (priorityLabels?.length && priorityId) {
     const matchedLabel = priorityLabels.find(label => label.id === priorityId);
     if (matchedLabel) {
       // Determine appropriate icon based on priority name/color
       let icon = Clock; // Default icon
       
-      // Try to intelligently assign icons based on label name or color
+      // Map icons based on priority name patterns
       const name = matchedLabel.name.toLowerCase();
-      if (name.includes("urgent") || name.includes("critical") || 
-          matchedLabel.color?.includes("red") || matchedLabel.color?.includes("#f")) {
+      if (name.includes('urgent') || name.includes('critical')) {
         icon = AlertCircle;
-      } else if (name.includes("high") || matchedLabel.color?.includes("orange") || 
-                matchedLabel.color?.includes("yellow")) {
+      } else if (name.includes('high')) {
         icon = Flag;
+      } else if (name.includes('medium') || name.includes('normal')) {
+        icon = Clock;
+      } else {
+        icon = Clock;
       }
       
       return {
@@ -41,7 +54,31 @@ export function getPriorityConfig(priorityId?: string, priorityLabels?: any[]): 
     }
   }
   
-  // Fallback to legacy behavior for backward compatibility
+  // If we get here, the priority ID wasn't found in the labels array
+  // Look for a default/medium priority in the labels
+  if (priorityLabels?.length) {
+    const defaultPriority = priorityLabels.find(label => {
+      const lowerName = label.name.toLowerCase();
+      return lowerName.includes('medium') || lowerName.includes('normal');
+    });
+    
+    if (defaultPriority) {
+      return {
+        color: defaultPriority.color || "gray",
+        icon: Clock,
+        label: defaultPriority.name
+      };
+    }
+    
+    // If there are any priority labels, use the first one as fallback
+    return {
+      color: priorityLabels[0].color || "gray",
+      icon: Clock,
+      label: priorityLabels[0].name
+    };
+  }
+  
+  // Final fallback to legacy behavior for backward compatibility
   return getPriorityInfo(priorityId);
 }
 

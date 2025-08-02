@@ -6,6 +6,8 @@ import { LucideIcon } from 'lucide-react';
 export interface LabelOption {
   id: string;
   name: string;
+  /** 'status' for workflow states, 'priority' for task priorities */
+  type: 'status' | 'priority';
   color?: string;
   description?: string;
   order?: number;

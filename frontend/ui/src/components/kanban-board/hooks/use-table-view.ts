@@ -7,12 +7,13 @@ import type { TaskDataSchema, TableTask } from "@incmix/utils/schema"
 import type { ListColumn } from "./use-list-view"
 import { useListView } from "./use-list-view"
 import { useKanban } from "./use-kanban-data"
+import { PriorityLabel } from "../priority-config"
 
 // Define locally to ensure compatibility with our implementation
 export interface UseTableViewReturn {
   tasks: TableTask[]
   statusLabels: ListColumn[]  // Status labels (columns)
-  priorityLabels: any[]       // Priority labels
+  priorityLabels: PriorityLabel[]  // Priority labels
   isLoading: boolean
   error: string | null
 

@@ -70,24 +70,16 @@ export function getPriorityConfig(priorityId: string | undefined, priorityLabels
 
 // Utility function to filter status labels from all labels
 export function getStatusLabels(labels: LabelOption[]): LabelOption[] {
-  return labels.filter(label => {
-    // Check if label has a type property (coming from database) 
-    if ('type' in label && typeof label.type === 'string') {
-      return label.type === 'status';
-    }
-    return false;
-  }).sort((a, b) => (a.order || 0) - (b.order || 0));
+  return labels
+    .filter(label => label.type === 'status')
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 }
 
 // Utility function to filter priority labels from all labels
 export function getPriorityLabels(labels: LabelOption[]): LabelOption[] {
-  return labels.filter(label => {
-    // Check if label has a type property (coming from database)
-    if ('type' in label && typeof label.type === 'string') {
-      return label.type === 'priority';
-    }
-    return false;
-  }).sort((a, b) => (a.order || 0) - (b.order || 0));
+  return labels
+    .filter(label => label.type === 'priority')
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 }
 
 // Utility to find a label by its ID
