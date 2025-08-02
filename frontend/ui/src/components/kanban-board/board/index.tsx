@@ -49,6 +49,7 @@ export function Board({
   const { useAI } = useAIFeaturesStore();
   const {
     columns,
+    priorityLabels,
     isLoading,
     error,
     createTask,
@@ -340,6 +341,7 @@ export function Board({
               <div key={column.id} className="w-80 flex-shrink-0 h-full">
                 <BoardColumn
                   column={column}
+                  priorityLabels={priorityLabels}
                   onCreateTask={createTask}
                   onUpdateTask={updateTask}
                   onDeleteTask={deleteTask}
@@ -373,7 +375,7 @@ export function Board({
         </ScrollArea>
       </Box>
 
-      <TaskCardDrawer />
+      <TaskCardDrawer viewType="board" projectId={projectId} />
     </Box>
   );
 }

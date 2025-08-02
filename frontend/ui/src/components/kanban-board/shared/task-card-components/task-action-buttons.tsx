@@ -1,32 +1,36 @@
 // task-card-components/task-action-buttons.tsx
 import {
-    Check,
-    MoreVertical,
-    Copy,
-    Star,
-    Archive,
-    Trash2,
-    Clock,
-    AlertCircle,
-    Flag,
-  } from "lucide-react"
-  import { Select, DropdownMenu, Button, Box } from "@incmix/ui"
-  import { cn } from "@utils"
-  import { getPriorityConfig, isTaskOverdue } from "./utils/task-utils"
-  import type { TaskActionButtonsProps } from "./utils/types"
+  Check,
+  MoreVertical,
+  Copy,
+  Star,
+  Archive,
+  Trash2,
+  Clock,
+  AlertCircle,
+  Flag,
+} from "lucide-react"
+import { DropdownMenu, Button, Box } from "@incmix/ui"
+import { cn } from "@utils"
+import { isTaskOverdue } from "./utils/task-utils"
+import type { TaskActionButtonsProps } from "./utils/types"
 import { KanbanColumn } from "@incmix/utils/schema"
+import { LabelDropdownSelector } from "../../../../components/dropdown-selector/label-dropdown-selector"
+import { getPriorityConfig } from "../../../../components/dropdown-selector/label-utils"
   
   export function TaskActionButtons({
     currentTask,
     currentColumn,
     columns,
+    priorityLabels = [], // Use priorityLabels from props with default empty array
     onCompleteTask,
     onStatusChange,
     onPriorityChange,
     onDeleteTask,
     onDuplicateTask,
   }: TaskActionButtonsProps) {
-    const priorityConfig = getPriorityConfig(currentTask.priorityId)
+  
+    const priorityConfig = getPriorityConfig(currentTask.priorityId, priorityLabels)
     const PriorityIcon = priorityConfig.icon
     const isOverdue = isTaskOverdue(currentTask)
   
@@ -40,7 +44,7 @@ import { KanbanColumn } from "@incmix/utils/schema"
           {/* Mark Complete Button */}
           <Button
             onClick={onCompleteTask}
-            color={currentTask.completed && "green"}
+            color={currentTask.completed ? "green" : undefined}
             className={cn(
               "inline-flex items-center gap-2 h-9 rounded-md text-sm font-medium transition-all duration-200",
             )}
@@ -50,66 +54,38 @@ import { KanbanColumn } from "@incmix/utils/schema"
           </Button>
     
           {/* Status/Column Dropdown */}
-          <Select.Root
+          <LabelDropdownSelector
+            options={columns.map((col: KanbanColumn) => ({
+              id: col.id,
+              name: col.name,
+              color: col.color
+            }))}
             value={currentTask.statusId}
             onValueChange={onStatusChange}
-          >
-            <Select.Trigger className="flex h-9 px-4 py-2 w-40 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: currentColumn?.color }} />
-                <span className="text-sm font-medium">{currentColumn?.name}</span>
-              </div>
-            </Select.Trigger>
-            <Select.Content>
-              {columns.map((col: KanbanColumn) => (
-                <Select.Item key={col.id} value={col.id}>
-                  <div className="flex items-center gap-2 ">
-                    <div className="w-2 h-3 rounded-full" style={{ backgroundColor: col.color }} />
-                    <span>{col.name}</span>
-                  </div>
-                </Select.Item>
-              ))}
-            </Select.Content>
-          </Select.Root>
-    
+            showColorDot={true}
+            triggerClassName="w-40"
+          />
+          
           {/* Priority Dropdown */}
-          <Select.Root
+          <LabelDropdownSelector
+            options={priorityLabels}
             value={currentTask.priorityId || "medium"}
             onValueChange={onPriorityChange}
-          >
-            <Select.Trigger className="flex h-9 px-4 py-2 min-w-[140px] rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-              <div className="flex items-center gap-2">
-                <PriorityIcon className="h-4 w-4 flex-shrink-0" />
-                <span className="text-sm font-medium">{priorityConfig.label}</span>
-              </div>
-            </Select.Trigger>
-            <Select.Content>
-              <Select.Item value="low">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-gray-500" />
-                  <span>Low Priority</span>
-                </div>
-              </Select.Item>
-              <Select.Item value="medium">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4 text-blue-500" />
-                  <span>Medium Priority</span>
-                </div>
-              </Select.Item>
-              <Select.Item value="high">
-                <div className="flex items-center gap-2">
-                  <Flag className="h-4 w-4 text-orange-500" />
-                  <span>High Priority</span>
-                </div>
-              </Select.Item>
-              <Select.Item value="urgent">
-                <div className="flex items-center gap-2">
-                  <AlertCircle className="h-4 w-4 text-red-500" />
-                  <span>Urgent</span>
-                </div>
-              </Select.Item>
-            </Select.Content>
-          </Select.Root>
+            icon={Flag}
+            renderIcon={(option: { id: string; color?: string }) => {
+              // Get the proper icon for this priority based on available labels
+              const config = getPriorityConfig(option.id, priorityLabels)
+              const PriorityIcon = config.icon
+              
+              return (
+                <PriorityIcon 
+                  className="h-4 w-4 flex-shrink-0" 
+                  style={{ color: option.color }}
+                />
+              )
+            }}
+            showColorDot={false}
+          />
 
           {/* {isOverdue && (
           <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-md bg-red-50 text-red-700 border border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-800">

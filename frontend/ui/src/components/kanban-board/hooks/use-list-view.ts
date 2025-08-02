@@ -26,7 +26,8 @@ export interface ListColumn extends KanbanColumn {
 export type { KanbanTask }
 
 export interface UseListViewReturn {
-  columns: ListColumn[]
+  columns: ListColumn[] // Status labels transformed to columns
+  priorityLabels: any[] // Priority labels from the labels table
   isLoading: boolean
   error: string | null
 
@@ -62,6 +63,19 @@ export interface UseListViewReturn {
   createStatusLabel: (name: string, color?: string, description?: string) => Promise<string>
   updateStatusLabel: (id: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
   deleteStatusLabel: (id: string) => Promise<void>
+  reorderStatusLabels: (labelIds: string[]) => Promise<void>
+  
+  // Priority label methods
+  createPriorityLabel: (name: string, color?: string, description?: string) => Promise<string>
+  updatePriorityLabel: (id: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
+  deletePriorityLabel: (id: string) => Promise<void>
+  reorderPriorityLabels: (labelIds: string[]) => Promise<void>
+  
+  // General label operations
+  createLabel: (type: "status" | "priority", name: string, color?: string, description?: string) => Promise<string>
+  updateLabel: (id: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
+  deleteLabel: (id: string) => Promise<void>
+  reorderLabels: (labelIds: string[]) => Promise<void>
 
   // Bulk operations
   bulkUpdateTasks: (
@@ -110,6 +124,7 @@ export function useListView(providedProjectId?: string): UseListViewReturn {
   return {
     // Base properties
     columns: listColumns,
+    priorityLabels: kanbanData.priorityLabels,
     isLoading: kanbanData.isLoading,
     error: kanbanData.error,
     projectStats: kanbanData.projectStats,
@@ -136,6 +151,19 @@ export function useListView(providedProjectId?: string): UseListViewReturn {
     createStatusLabel: kanbanData.createStatusLabel,
     updateStatusLabel: kanbanData.updateStatusLabel,
     deleteStatusLabel: kanbanData.deleteStatusLabel,
+    reorderStatusLabels: kanbanData.reorderStatusLabels,
+    
+    // Priority label methods
+    createPriorityLabel: kanbanData.createPriorityLabel,
+    updatePriorityLabel: kanbanData.updatePriorityLabel,
+    deletePriorityLabel: kanbanData.deletePriorityLabel,
+    reorderPriorityLabels: kanbanData.reorderPriorityLabels,
+    
+    // General label operations
+    createLabel: kanbanData.createLabel,
+    updateLabel: kanbanData.updateLabel,
+    deleteLabel: kanbanData.deleteLabel,
+    reorderLabels: kanbanData.reorderLabels,
     
     // Bulk operations
     bulkUpdateTasks: kanbanData.bulkUpdateTasks,

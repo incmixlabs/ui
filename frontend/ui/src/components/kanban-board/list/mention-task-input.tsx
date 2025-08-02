@@ -14,6 +14,7 @@ interface SimpleTaskInputProps {
   columns?: TaskDataSchema[]
   placeholder?: string
   disabled?: boolean
+  priorityLabels?: { id: string; name: string; color: string; type: string }[] // Add priorityLabels prop
 }
 
 export function SimpleTaskInput({
@@ -21,7 +22,8 @@ export function SimpleTaskInput({
   onCancel,
   columns = [],
   placeholder = "Enter task title...",
-  disabled = false
+  disabled = false,
+  priorityLabels = []
 }: SimpleTaskInputProps) {
   // Get AI features state
   const { useAI } = useAIFeaturesStore()
@@ -32,7 +34,7 @@ export function SimpleTaskInput({
   const [checklist, setChecklist] = useState<Array<{ id: string; text: string; checked: boolean }>>([])
   const [acceptanceCriteria, setAcceptanceCriteria] = useState<Array<{ id: string; text: string }>>([])
   const [taskData, setTaskData] = useState({
-    priority: "medium",
+    priorityId: "", // Will be populated in handleSubmit using priorityLabels
     startDate: "",
     endDate: "",
     assignedTo: [],
@@ -101,12 +103,17 @@ export function SimpleTaskInput({
 
     setIsSubmitting(true)
     try {
-      // Include the description, checklist, and acceptanceCriteria in the task data
+      // Use the same approach as board view - set default priority to first available
+      const defaultPriority = priorityLabels && priorityLabels.length > 0 ? 
+        priorityLabels[0].id : "";
+        
+      // Include the description, checklist, acceptanceCriteria, and default priority
       const fullTaskData = {
         ...taskData,
         description: description.trim(),
         checklist: checklist,
-        acceptanceCriteria: acceptanceCriteria
+        acceptanceCriteria: acceptanceCriteria,
+        priorityId: defaultPriority, // Use first priority label by default
       }
 
       await onCreateTask(taskName.trim(), fullTaskData)
@@ -117,7 +124,7 @@ export function SimpleTaskInput({
       setChecklist([])
       setAcceptanceCriteria([])
       setTaskData({
-        priority: "medium",
+        priorityId: "", // Reset to empty, will be set on next submit
         startDate: "",
         endDate: "",
         assignedTo: [],
@@ -128,7 +135,7 @@ export function SimpleTaskInput({
     } finally {
       setIsSubmitting(false)
     }
-  }, [taskName, description, taskData, onCreateTask, isSubmitting])
+  }, [taskName, description, taskData, onCreateTask, isSubmitting, priorityLabels])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
@@ -159,6 +166,7 @@ export function SimpleTaskInput({
           mode="new-task"
           newTaskData={taskData}
           columns={columns}
+          priorityLabels={priorityLabels}
           onNewTaskDataChange={handleTaskDataChange}
           disabled={disabled || isSubmitting}
           size="2"
@@ -244,37 +252,6 @@ export function SimpleTaskInput({
           Cancel
         </Button>
       </Flex>
-
-      {/* Preview of selected options */}
-      {(taskData.priority !== "medium" ||
-        taskData.assignedTo.length > 0 ||
-        taskData.startDate ||
-        taskData.endDate) && (
-        <Box className="pt-2 border-t border-gray-200">
-          <Flex gap="2" wrap="wrap" className="text-xs">
-            {taskData.priority !== "medium" && (
-              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded">
-                Priority: {taskData.priority}
-              </span>
-            )}
-            {taskData.assignedTo.length > 0 && (
-              <span className="px-2 py-1 bg-green-100 text-green-700 rounded">
-                Assigned: {taskData.assignedTo.length} member{taskData.assignedTo.length > 1 ? 's' : ''}
-              </span>
-            )}
-            {taskData.startDate && (
-              <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded">
-                Start: {new Date(taskData.startDate).toLocaleDateString()}
-              </span>
-            )}
-            {taskData.endDate && (
-              <span className="px-2 py-1 bg-orange-100 text-orange-700 rounded">
-                Due: {new Date(taskData.endDate).toLocaleDateString()}
-              </span>
-            )}
-          </Flex>
-        </Box>
-      )}
     </Box>
   )
 }

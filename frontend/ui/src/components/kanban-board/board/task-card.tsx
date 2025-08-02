@@ -57,7 +57,7 @@ import { useKanbanDrawer } from "../hooks/use-kanban-drawer";
 import { ModalPresets } from "../shared/confirmation-modal";
 import { TaskDataSchema } from "@incmix/utils/schema";
 import { RefUrlSummary } from "../shared/ref-url-summary";
-import { getPriorityInfo } from "../priority-config";
+import { getPriorityInfo, getPriorityConfig, PriorityLabel } from "../priority-config";
 import { useAppearanceStore } from "@incmix/store";
 import { Icon, Heading } from "@incmix/ui";
 
@@ -97,6 +97,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
   card,
   state,
   innerRef,
+  priorityLabels,
   onUpdateTask,
   onDeleteTask,
   onTaskOpen,
@@ -104,6 +105,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
   card: KanbanTask;
   state: TCardState;
   innerRef?: MutableRefObject<HTMLDivElement | null>;
+  priorityLabels?: PriorityLabel[]; // Array of priority labels
   onUpdateTask?: (
     taskId: string,
     updates: Partial<TaskDataSchema>,
@@ -127,11 +129,14 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
 
       // Ensure card.id exists before using it
       if (!card.id) return;
-
-      if (onTaskOpen) {
+      
+      // Simple direct approach - just open the drawer
+      console.log('Opening task drawer for:', card.id);
+      handleDrawerOpen(card.id);
+      
+      // If onTaskOpen exists, call it after handleDrawerOpen
+      if (onTaskOpen && card.id) {
         onTaskOpen(card.id);
-      } else {
-        handleDrawerOpen(card.id);
       }
     },
     [card.id, handleDrawerOpen, onTaskOpen],
@@ -209,7 +214,8 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
     }
   }, [card.id, handleDrawerOpen, onTaskOpen]);
 
-  // Using the shared priority configuration from priority-config.ts
+  // Using the shared priority configuration from priority-config.ts - will be updated with dynamic labels
+  // Note: The TaskCard should receive priorityLabels from its parent to avoid hardcoded values
 
   const formatDate = useCallback((date?: Date) => {
     if (!date) return { text: "", className: "" };
@@ -255,7 +261,8 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
   const progressPercentage =
     totalSubTasks > 0 ? (completedSubTasks / totalSubTasks) * 100 : 0;
 
-  const priorityInfo = getPriorityInfo(card.priorityId);
+  // Use new getPriorityConfig function which works with priorityLabels
+  const priorityInfo = getPriorityConfig(card.priorityId, priorityLabels);
   const PriorityIcon = priorityInfo.icon;
   const dueDateInfo = formatDate(
     typeof card.startDate === "number" ? new Date(card.startDate) : undefined,
@@ -403,12 +410,16 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
                   "bg-cyan-400",
                   "bg-red-400",
                 ];
-                const randomColor =
-                  colors[Math.floor(Math.random() * colors.length)];
+                // Create a deterministic color based on the assignee's name
+                const nameSum = assignee.name.split('').reduce(
+                  (sum, char) => sum + char.charCodeAt(0), 0
+                );
+                const colorIndex = nameSum % colors.length;
+                const stableColor = colors[colorIndex];
                 return (
                   <Text
                     key={assignee.name}
-                    className={`flex h-1 w-6 items-center gap-1 rounded-full ${randomColor}`}
+                    className={`flex h-1 w-6 items-center gap-1 rounded-full ${stableColor}`}
                   />
                 );
               })}
@@ -548,6 +559,7 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
 export function TaskCard({
   card,
   statusId,
+  priorityLabels,
   onUpdateTask,
   onDeleteTask,
   onTaskOpen,
@@ -555,6 +567,7 @@ export function TaskCard({
 }: {
   card: KanbanTask;
   statusId: string;
+  priorityLabels?: PriorityLabel[]; // Array of priority labels
   onUpdateTask?: (
     taskId: string,
     updates: Partial<TaskDataSchema>,
@@ -693,6 +706,7 @@ export function TaskCard({
         card={card}
         state={state}
         innerRef={innerRef}
+        priorityLabels={priorityLabels}
         onUpdateTask={onUpdateTask}
         onDeleteTask={onDeleteTask}
         onTaskOpen={onTaskOpen}
@@ -702,6 +716,7 @@ export function TaskCard({
             <TaskCardDisplay
               state={state}
               card={card}
+              priorityLabels={priorityLabels}
               onUpdateTask={onUpdateTask}
               onDeleteTask={onDeleteTask}
               onTaskOpen={onTaskOpen}

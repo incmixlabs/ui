@@ -45,7 +45,7 @@ const baseTaskFormSchema = {
     },
     priorityId: {
       type: "string",
-      enum: ["low", "medium", "high", "urgent"],
+      // No hardcoded enum values - will be populated dynamically from labels
       title: "Priority",
     },
     startDate: {
@@ -104,7 +104,7 @@ const baseTaskFormSchema = {
 }
 
 // Function to create schema with dynamic columns
-export const createTaskFormSchema = (columns: KanbanColumn[]): TaskFormSchema => {
+export const createTaskFormSchema = (columns: KanbanColumn[], priorityLabels: any[] = []): TaskFormSchema => {
   // Transform columns into options for the select field with color indicators
   const columnOptions = columns.map(column => ({
     label: column.name,
@@ -112,11 +112,18 @@ export const createTaskFormSchema = (columns: KanbanColumn[]): TaskFormSchema =>
     color: column.color, // Include color for rendering
   }))
 
-  // Get default column (prefer "To Do" or first column)
-  const defaultStatusId = columns.find(col => 
-    col.name.toLowerCase().includes("todo") || 
-    col.name.toLowerCase().includes("to do")
-  )?.id || columns[0]?.id || ""
+  // Transform priority labels into options for the select field
+  const priorityOptions = priorityLabels.map(priority => ({
+    label: priority.name,
+    value: priority.id,
+    color: priority.color, // Include color for rendering
+  }));
+
+  // Get first available column for default status
+  const defaultStatusId = columns[0]?.id || ""
+  
+  // Get first available priority option for default
+  const defaultPriorityId = priorityOptions[0]?.value || ""
 
   // Create a modified schema with defaults
   const schemaWithDefaults = {
@@ -129,7 +136,7 @@ export const createTaskFormSchema = (columns: KanbanColumn[]): TaskFormSchema =>
       },
       priorityId: {
         ...baseTaskFormSchema.properties.priorityId,
-        default: "medium"
+        default: defaultPriorityId
       }
     }
   }
@@ -162,28 +169,7 @@ export const createTaskFormSchema = (columns: KanbanColumn[]): TaskFormSchema =>
       priorityId: {
         description: "Set task priority level",
         fieldType: "select",
-        options: [
-          { 
-            label: "Urgent", 
-            value: "urgent",
-            color: "#ef4444" // Red
-          },
-          { 
-            label: "High", 
-            value: "high",
-            color: "#f97316" // Orange
-          },
-          { 
-            label: "Medium", 
-            value: "medium",
-            color: "#3b82f6" // Blue
-          },
-          { 
-            label: "Low", 
-            value: "low",
-            color: "#6b7280" // Gray
-          },
-        ],
+        options: priorityOptions,
         inputProps: {
           placeholder: "Select priority...",
         },

@@ -7,11 +7,13 @@ import type { TaskDataSchema, TableTask } from "@incmix/utils/schema"
 import type { ListColumn } from "./use-list-view"
 import { useListView } from "./use-list-view"
 import { useKanban } from "./use-kanban-data"
+import { PriorityLabel } from "../priority-config"
 
 // Define locally to ensure compatibility with our implementation
 export interface UseTableViewReturn {
   tasks: TableTask[]
-  labels: ListColumn[]
+  statusLabels: ListColumn[]  // Status labels (columns)
+  priorityLabels: PriorityLabel[]  // Priority labels
   isLoading: boolean
   error: string | null
 
@@ -25,6 +27,16 @@ export interface UseTableViewReturn {
   createLabel: (type: "status" | "priority", name: string, color?: string, description?: string) => Promise<string>
   updateLabel: (id: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
   deleteLabel: (id: string) => Promise<void>
+  
+  // Status label operations
+  createStatusLabel: (name: string, color?: string, description?: string) => Promise<string>
+  updateStatusLabel: (id: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
+  deleteStatusLabel: (id: string) => Promise<void>
+  
+  // Priority label operations
+  createPriorityLabel: (name: string, color?: string, description?: string) => Promise<string>
+  updatePriorityLabel: (id: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
+  deletePriorityLabel: (id: string) => Promise<void>
 
   // Bulk operations
   bulkUpdateTasks: (taskIds: string[], updates: Partial<TaskDataSchema>) => Promise<void>
@@ -60,24 +72,16 @@ export function useTableView(
 
   // Transform tasks for table display with computed properties
   const tableTasks = useMemo<TableTask[]>(() => {
-    // Instead of trying to access projectData directly, we can infer priority information
-    // by examining the tasks that have priorityId values
-    // Collect unique priorityIds from tasks
-    const uniquePriorityIds = new Set<string>()
-    listViewData.columns.forEach(column => {
-      column.tasks.forEach(task => {
-        if (task.priorityId) uniquePriorityIds.add(task.priorityId)
-      })
-    })
+    // Create a mapping of priorityId to their display properties from the database priority labels
+    const priorityMap: Record<string, {name: string, color: string}> = {}
     
-    // Create a mapping of priorityId to their display properties
-    // We'll use a hardcoded set of common priorities as fallback
-    const priorityMap: Record<string, {name: string, color: string}> = {
-      'low': { name: 'Low', color: '#6b7280' },
-      'medium': { name: 'Medium', color: '#3b82f6' },
-      'high': { name: 'High', color: '#f59e0b' },
-      'urgent': { name: 'Urgent', color: '#ef4444' },
-    }
+    // Map each priority label to the priorityMap for easy lookup by ID
+    listViewData.priorityLabels.forEach(label => {
+      priorityMap[label.id] = {
+        name: label.name,
+        color: label.color
+      }
+    })
     
     // Flatten all tasks from all columns
     const allTasks = listViewData.columns.flatMap((column) =>
@@ -158,7 +162,8 @@ export function useTableView(
 
   return {
     tasks: tableTasks,
-    labels: listViewData.columns, // Updated from taskStatuses to labels
+    statusLabels: listViewData.columns,
+    priorityLabels: listViewData.priorityLabels,
     isLoading: listViewData.isLoading,
     error: listViewData.error,
 
@@ -168,18 +173,26 @@ export function useTableView(
     deleteTask: listViewData.deleteTask,
     moveTaskToStatus,
 
-    // Label operations with updated naming
+    // General label operations
     createLabel: async (type: "status" | "priority", name: string, color?: string, description?: string) => {
       if (type === "status") {
         return await listViewData.createStatusLabel(name, color, description)
       } else {
-        // For now, priority creation is not implemented in the backend
-        // This would need to be implemented when priority management is added
-        throw new Error("Priority label creation is not yet implemented")
+        return await listViewData.createPriorityLabel(name, color, description)
       }
     },
-    updateLabel: listViewData.updateStatusLabel,
-    deleteLabel: listViewData.deleteStatusLabel,
+    updateLabel: listViewData.updateLabel,
+    deleteLabel: listViewData.deleteLabel,
+    
+    // Status label operations
+    createStatusLabel: listViewData.createStatusLabel,
+    updateStatusLabel: listViewData.updateStatusLabel,
+    deleteStatusLabel: listViewData.deleteStatusLabel,
+    
+    // Priority label operations
+    createPriorityLabel: listViewData.createPriorityLabel,
+    updatePriorityLabel: listViewData.updatePriorityLabel,
+    deletePriorityLabel: listViewData.deletePriorityLabel,
     
     // Bulk operations
     bulkUpdateTasks: listViewData.bulkUpdateTasks,

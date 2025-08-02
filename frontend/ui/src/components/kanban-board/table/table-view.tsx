@@ -96,7 +96,8 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
   // Use the table view hook
   const {
     tasks,
-    labels,
+    statusLabels, // Updated from 'labels' to 'statusLabels'
+    priorityLabels, // New property for priority labels
     isLoading,
     error,
     // createTask, // Commented out as not used
@@ -129,7 +130,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
   // Enhanced columns with row actions using the new enhanced dropdown system
   const enhancedColumns = useMemo(() => {
     // Convert task statuses to dropdown options for status column
-    const statusOptions = labels.length > 0 ? labels.map(status => ({
+    const statusOptions = statusLabels.length > 0 ? statusLabels.map(status => ({
       value: status.id,
       label: status.name,
       color: status.color
@@ -140,8 +141,13 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       { value: "done", label: "Done", color: "#86efac" },
     ]
 
-    // Priority options (hardcoded since priority management isn't implemented yet)
-    const priorityOptions = [
+    // Priority options from priorityLabels
+    const priorityOptions = priorityLabels.length > 0 ? priorityLabels.map(priority => ({
+      value: priority.id,
+      label: priority.name,
+      color: priority.color
+    })) : [
+      // Fallback options if priority labels are not loaded yet
       { value: "low", label: "Low", color: "#6b7280" },
       { value: "medium", label: "Medium", color: "#3b82f6" },
       { value: "high", label: "High", color: "#f59e0b" },
@@ -299,12 +305,22 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
         renderer: (value: any, row: TableTask) => (
           <TableRowActions
             task={row} // Pass the actual row data instead of an empty object
-            taskStatuses={labels.map(label => ({
-              id: label.id,
-              name: label.name,
-              color: label.color,
-              type: "status" // All labels from list view are status labels
-            }))}
+            taskStatuses={[
+              // Include status labels
+              ...statusLabels.map(label => ({
+                id: label.id,
+                name: label.name,
+                color: label.color,
+                type: "status"
+              })),
+              // Include priority labels
+              ...priorityLabels.map(label => ({
+                id: label.id,
+                name: label.name,
+                color: label.color,
+                type: "priority"
+              }))
+            ]}
             onUpdateTask={async (taskId: string, updates: Partial<TableTask>) => {
               // Convert TableTask updates to TaskDataSchema updates
               const schemaUpdates: Partial<TaskDataSchema> = {};
@@ -342,7 +358,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     ]
 
     return columns
-  }, [labels, allowCustomStatusValues, handleStatusColumnDoubleClick, createLabel, refetch, updateTask, deleteTask, moveTaskToStatus,hideStatusBackgroundColor])
+  }, [statusLabels, priorityLabels, allowCustomStatusValues, handleStatusColumnDoubleClick, createLabel, refetch, updateTask, deleteTask, moveTaskToStatus, hideStatusBackgroundColor])
 
   // Filter tasks based on search query
   const filteredTasks = useMemo(() => {
@@ -352,11 +368,11 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     return tasks.filter(task =>
       task.name?.toLowerCase().includes(query) ||
       task.description?.toLowerCase().includes(query) ||
-      // Find status label name from labels using task.statusId
-      labels.find(s => s.id === task.statusId)?.name?.toLowerCase().includes(query) ||
+      // Find status label name from statusLabels using task.statusId
+      statusLabels.find(s => s.id === task.statusId)?.name?.toLowerCase().includes(query) ||
       task.assignedToNames?.toLowerCase().includes(query) || false
     )
-  }, [tasks, searchQuery, labels])
+  }, [tasks, searchQuery, statusLabels])
 
   // Handle refresh
   const handleRefresh = useCallback(() => {
@@ -449,13 +465,8 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
 
     // Add the colors for each label of the selected type
     const targetLabels = groupByField === 'statusLabel'
-      ? labels // All labels from list view are status labels
-      : [ // Hardcoded priority labels for now
-        { id: "low", name: "Low", color: "#6b7280" },
-        { id: "medium", name: "Medium", color: "#3b82f6" },
-        { id: "high", name: "High", color: "#f59e0b" },
-        { id: "urgent", name: "Urgent", color: "#ef4444" },
-      ];
+      ? statusLabels // Status labels for status grouping
+      : priorityLabels; // Priority labels for priority grouping
 
     targetLabels.forEach(label => {
       // For dark mode support, we use the original color for text and a semi-transparent version for background
@@ -470,7 +481,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     });
 
     return mapping;
-  }, [labels, groupByField]);
+  }, [statusLabels, priorityLabels, groupByField]);
 
   // Toggle between grouping by status or priority and update column visibility accordingly
   const toggleGrouping = useCallback(() => {
@@ -494,7 +505,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     {
       column: "statusId",
       title: "Status",
-      options: labels.map(status => ({
+      options: statusLabels.map(status => ({
         label: status.name,
         value: status.id,
         color: status.color
@@ -503,12 +514,11 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     {
       column: "priorityId",
       title: "Priority",
-      options: [
-        { label: "Low", value: "low", color: "#6b7280" },
-        { label: "Medium", value: "medium", color: "#3b82f6" },
-        { label: "High", value: "high", color: "#f59e0b" },
-        { label: "Urgent", value: "urgent", color: "#ef4444" },
-      ]
+      options: priorityLabels.map(priority => ({
+        label: priority.name,
+        value: priority.id,
+        color: priority.color
+      }))
     },
     {
       column: "completed",
@@ -518,7 +528,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
         { label: "Pending", value: false }
       ]
     }
-  ], [labels])
+  ], [statusLabels, priorityLabels])
 
   if (isLoading) {
     return (
@@ -749,7 +759,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       <StatusColumnConfigDialog
         isOpen={isStatusConfigOpen}
         onClose={() => setIsStatusConfigOpen(false)}
-        statusLabels={labels as unknown as ListColumn[]}
+        statusLabels={statusLabels as unknown as ListColumn[]}
         tasks={filteredTasks}
         onCreateStatus={async (name: string, color?: string, description?: string) => {
           return await createLabel("status", name, color, description)
