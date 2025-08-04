@@ -1,6 +1,4 @@
 export * from "./services/projects"
 export * from "./hooks/projects/use-projects-check"
 export * from "./hooks/projects/use-project-task-data"
-export * from "./hooks/projects/use-task-store"
-export * from "./hooks/projects/use-task-status-store"
 export * from "./sql/projects"
