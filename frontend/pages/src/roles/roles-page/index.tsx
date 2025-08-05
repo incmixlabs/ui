@@ -1,3 +1,5 @@
+import { useAuth } from "@auth"
+import { useOrganizationStore } from "@incmix/store"
 import { Callout, Spinner } from "@incmix/ui"
 import { Flex } from "@incmix/ui"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
@@ -8,8 +10,6 @@ import { createContext, useEffect, useState } from "react"
 import { type Change, getRolesPermissions } from "./actions"
 import PermissonsTable from "./permissions-table"
 import type { PermissionsResponse, Role } from "./types"
-import { useOrganizationStore } from "@incmix/store"
-import { useAuth } from "@auth"
 
 export const permissionsContext = createContext<{
   changes: Change[]
@@ -35,7 +35,8 @@ const RolesPage = () => {
       selectedOrganisation?.id,
       authUser?.isSuperAdmin,
     ],
-    queryFn: () => getRolesPermissions(selectedOrganisation?.id,authUser?.isSuperAdmin),
+    queryFn: () =>
+      getRolesPermissions(selectedOrganisation?.id, authUser?.isSuperAdmin),
     enabled: !!selectedOrganisation?.id,
   })
 

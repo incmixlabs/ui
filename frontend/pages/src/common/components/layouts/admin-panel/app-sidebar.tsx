@@ -22,6 +22,7 @@ import {
   SidebarRail,
   useSidebar,
 } from "@incmix/ui/sidebar"
+import { useOrganizationMemberAbility } from "@orgs/utils"
 import { useLocation } from "@tanstack/react-router"
 import { ErrorBoundary } from "react-error-boundary"
 import { useTranslation } from "react-i18next"
@@ -29,7 +30,6 @@ import { buildSidebarItems } from "../../../../route-config"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
 import { OrgSwitcher } from "./org-switcher"
-import { useOrganizationMemberAbility } from "@orgs/utils"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation(["common", "sidebar"])
@@ -54,7 +54,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { ability } = useOrganizationMemberAbility(selectedOrganisation?.handle)
 
   const navItems = React.useMemo(() => {
-    return buildSidebarItems(user?.isSuperAdmin??false, ability, dashboards, t)
+    return buildSidebarItems(
+      user?.isSuperAdmin ?? false,
+      ability,
+      dashboards,
+      t
+    )
   }, [t, dashboards, user?.isSuperAdmin])
 
   return (
