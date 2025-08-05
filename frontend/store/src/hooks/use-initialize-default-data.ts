@@ -156,7 +156,9 @@ async function initializeTasks(
         !input.name ||
         !input.statusId ||
         !input.priorityId ||
-        !input.taskOrder
+        input.taskOrder === undefined ||
+        input.parentTaskId === undefined ||
+        input.isSubtask === undefined
       ) {
         throw new Error(
           `Missing required fields for task: ${JSON.stringify(input)}`
@@ -183,6 +185,8 @@ async function initializeTasks(
         statusId: input.statusId,
         priorityId: input.priorityId,
         taskOrder: input.taskOrder,
+        parentTaskId: input.parentTaskId,
+        isSubtask: input.isSubtask,
 
         // Fields with defaults
         startDate: input.startDate ?? timestamp,
@@ -215,6 +219,8 @@ async function initializeTasks(
         statusId: todoStatus.id,
         priorityId: mediumPriority.id, // Use the medium priority we found
         taskOrder: 0,
+        parentTaskId: null, // Top-level task
+        isSubtask: false, // Not a subtask
         startDate: timestamp,
         endDate: timestamp + 604800000, // One week later
         description: "Set up the initial project repository and documentation",
@@ -249,6 +255,8 @@ async function initializeTasks(
         statusId: todoStatus.id,
         priorityId: mediumPriority.id,
         taskOrder: 1,
+        parentTaskId: null, // Top-level task
+        isSubtask: false, // Not a subtask
         startDate: timestamp,
         endDate: timestamp + 1209600000, // Two weeks later
         description:
@@ -271,6 +279,8 @@ async function initializeTasks(
         statusId: todoStatus.id,
         priorityId: mediumPriority.id,
         taskOrder: 2,
+        parentTaskId: null, // Top-level task
+        isSubtask: false, // Not a subtask
         startDate: timestamp,
         endDate: timestamp + 172800000, // Two days later
         description:
