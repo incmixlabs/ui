@@ -1,15 +1,19 @@
 import { ORG_API_URL } from "@incmix/ui/constants"
-import {
-  type Action,
-  type Subject,
-  UserRoles,
-  type subjects,
-} from "@incmix/utils/types"
+import type { Action, Subject, subjects } from "@incmix/utils/types"
 import type { PermissionsResponse, PermissionsWithRole, Role } from "./types"
-export async function getRolesPermissions() {
-  const res = await fetch(`${ORG_API_URL}/permissions`, {
-    credentials: "include",
-  })
+export async function getRolesPermissions(
+  orgId?: string,
+  isSuperAdmin?: boolean
+) {
+  const searchParams = new URLSearchParams()
+  if (orgId && !isSuperAdmin) searchParams.set("orgId", orgId)
+
+  const res = await fetch(
+    `${ORG_API_URL}/permissions?${searchParams.toString()}`,
+    {
+      credentials: "include",
+    }
+  )
 
   if (!res.ok) {
     throw new Error("Failed to fetch roles and permissions")
@@ -127,7 +131,7 @@ export async function updateRolesPermissions(changes: Change[]) {
 }
 
 export async function createRole(role: string) {
-  const res = await fetch(`${ORG_API_URL}/permissions/roles`, {
+  const res = await fetch(`${ORG_API_URL}/roles`, {
     method: "POST",
     body: JSON.stringify({ name: role }),
     headers: { "content-type": "application/json" },

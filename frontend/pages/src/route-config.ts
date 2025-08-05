@@ -1,11 +1,12 @@
 import type { Dashboard } from "@incmix/store"
-import { type AuthUserSession, UserRoles } from "@incmix/utils/types"
 import {
-  type Redirect,
-  type Route,
-  createRoute,
-  createRouter,
-} from "@tanstack/react-router"
+  type Action,
+  type AppAbility,
+  type AuthUserSession,
+  type Subject,
+  UserRoles,
+} from "@incmix/utils/types"
+import { createRouter } from "@tanstack/react-router"
 import {
   BoxIcon,
   FolderClosed,
@@ -105,7 +106,12 @@ type RouteConfig = {
   /**
    * Access control for the route. Can be a single access type or an array of access types.
    */
-  access: RouteAccess | RouteAccess[]
+  role: RouteAccess | RouteAccess[]
+
+  permission?: {
+    subject: Subject
+    action: Action
+  }
 }
 
 // Unified config for both sidebar and route tree
@@ -123,11 +129,11 @@ const ROUTES_CONFIG: RouteConfig[] = [
           path: "/dashboard/home",
           route: DashboardHomeRoute,
           sidebar: { title: "Home" },
-          access: ROUTE_ACCESS.MEMBER,
+          role: ROUTE_ACCESS.MEMBER,
         },
       ],
     },
-    access: ROUTE_ACCESS.MEMBER,
+    role: ROUTE_ACCESS.MEMBER,
   },
   {
     path: "/projects",
@@ -141,35 +147,35 @@ const ROUTES_CONFIG: RouteConfig[] = [
           path: "/projects",
           route: ProjectsRoute,
           sidebar: { title: "All Projects" },
-          access: ROUTE_ACCESS.MEMBER,
+          role: ROUTE_ACCESS.MEMBER,
         },
         {
           path: "/tasks",
           route: TasksRoute,
           sidebar: { title: "Tasks" },
-          access: ROUTE_ACCESS.MEMBER,
+          role: ROUTE_ACCESS.MEMBER,
         },
         {
           path: "/users/list",
           route: ListUsersRoute,
           sidebar: { title: "Users" },
-          access: ROUTE_ACCESS.SUPER_ADMIN,
+          role: ROUTE_ACCESS.SUPER_ADMIN,
         },
       ],
     },
-    access: ROUTE_ACCESS.MEMBER,
+    role: ROUTE_ACCESS.MEMBER,
   },
   {
     path: "/file-manager",
     route: FileManagerRoute,
     sidebar: { title: "File Manager", icon: FolderClosed, position: 3 },
-    access: ROUTE_ACCESS.MEMBER,
+    role: ROUTE_ACCESS.MEMBER,
   },
   {
     path: "/notes",
     route: NotesRoute,
     sidebar: { title: "Notes", icon: Notebook, position: 4 },
-    access: ROUTE_ACCESS.MEMBER,
+    role: ROUTE_ACCESS.MEMBER,
   },
   {
     path: "/organizations",
@@ -183,84 +189,93 @@ const ROUTES_CONFIG: RouteConfig[] = [
           path: "/organization/$orgHandle",
           route: OrganisationDetailsRoute,
 
-          access: ROUTE_ACCESS.MEMBER,
+          role: ROUTE_ACCESS.MEMBER,
         },
         {
           path: "/organization/$orgHandle/env-vars",
           route: OrganisationEnvVarsRoute,
 
-          access: ROUTE_ACCESS.MEMBER,
+          role: ROUTE_ACCESS.MEMBER,
         },
         {
           path: "/organization/$orgHandle/users",
           route: OrganisationUsersRoute,
 
-          access: ROUTE_ACCESS.MEMBER,
+          role: ROUTE_ACCESS.MEMBER,
         },
       ],
     },
-    access: ROUTE_ACCESS.MEMBER,
+    role: ROUTE_ACCESS.MEMBER,
   },
   {
     path: "/roles",
     route: RolesRoute,
     sidebar: { title: "Roles and Permissions", icon: LockIcon, position: 6 },
-    access: ROUTE_ACCESS.SUPER_ADMIN,
+    role: ROUTE_ACCESS.MEMBER,
+    permission: {
+      subject: "Role",
+      action: "update",
+    },
   },
   {
     path: "/help",
     route: null,
     sidebar: { title: "Help", icon: HelpCircle, position: 6 },
-    access: ROUTE_ACCESS.PUBLIC,
+    role: ROUTE_ACCESS.PUBLIC,
   },
   // Add more as needed...
   // Auth, onboarding, etc. (not in sidebar)
-  { path: "/login", route: LoginRoute, access: ROUTE_ACCESS.PUBLIC },
-  { path: "/signup", route: SignupRoute, access: ROUTE_ACCESS.PUBLIC },
+  { path: "/login", route: LoginRoute, role: ROUTE_ACCESS.PUBLIC },
+  { path: "/signup", route: SignupRoute, role: ROUTE_ACCESS.PUBLIC },
   {
     path: "/reset-password",
     route: ResetPasswordRoute,
-    access: ROUTE_ACCESS.PUBLIC,
+    role: ROUTE_ACCESS.PUBLIC,
   },
   {
     path: "/email-verification",
     route: EmailVerificationRoute,
-    access: ROUTE_ACCESS.PUBLIC,
+    role: ROUTE_ACCESS.PUBLIC,
   },
   {
     path: "/onboarding",
     route: OnboardingRoute,
-    access: ROUTE_ACCESS.PUBLIC,
+    role: ROUTE_ACCESS.PUBLIC,
   },
   {
     path: "/settings",
     route: SettingsRoute,
-    access: ROUTE_ACCESS.PROTECTED,
+    role: ROUTE_ACCESS.PROTECTED,
   },
   {
     path: "/notifications",
     route: NotificationsRoute,
-    access: ROUTE_ACCESS.PROTECTED,
+    role: ROUTE_ACCESS.PROTECTED,
   },
   {
     path: "/translations",
     route: TranslationsRoute,
-    access: ROUTE_ACCESS.SUPER_ADMIN,
+    role: ROUTE_ACCESS.SUPER_ADMIN,
   },
-  { path: "/welcome", route: WelcomeRoute, access: ROUTE_ACCESS.PUBLIC },
+  { path: "/welcome", route: WelcomeRoute, role: ROUTE_ACCESS.PUBLIC },
   // Fallbacks
   // {
   //   path: NotFoundRoute.path,
   //   route: NotFoundRoute,
   //   access: ROUTE_ACCESS.PUBLIC,
   // },
-  { path: "/", route: IndexRoute, access: ROUTE_ACCESS.PUBLIC },
+  { path: "/", route: IndexRoute, role: ROUTE_ACCESS.PUBLIC },
 ]
 
 // Helper to check access
 function hasAccess(
   routeAccess: RouteAccess | RouteAccess[],
-  userType: string | undefined
+  userType: string | undefined,
+  permission?: {
+    subject: Subject
+    action: Action
+  },
+  ability?: AppAbility
 ): boolean {
   if (!userType) return routeAccess === ROUTE_ACCESS.PUBLIC
   if (Array.isArray(routeAccess)) {
@@ -279,6 +294,10 @@ function hasAccess(
     )
   if (routeAccess === ROUTE_ACCESS.SUPER_ADMIN)
     return userType === UserRoles.ROLE_SUPER_ADMIN
+
+  if (ability && permission) {
+    return ability.can(permission.action, permission.subject)
+  }
   return false
 }
 
@@ -297,13 +316,15 @@ export function buildRouteTree(
       defaultNotFoundComponent: LoadingPage,
     })
   }
-  const userType = authUser?.userType
+  const userType = authUser?.isSuperAdmin
+    ? UserRoles.ROLE_SUPER_ADMIN
+    : UserRoles.ROLE_MEMBER
 
   // Recursively collect all route objects from config and children
   function collectRoutes(configs: RouteConfig[], acc: Map<any, any>) {
     for (const r of configs) {
       if (
-        hasAccess(r.access, userType) &&
+        hasAccess(r.role, userType) &&
         r.route !== null &&
         !acc.has(r.route)
       ) {
@@ -324,14 +345,21 @@ export function buildRouteTree(
 
 // Build sidebar items
 export function buildSidebarItems(
-  userType: string | undefined,
+  isSuperAdmin: boolean,
+  ability?: AppAbility,
   dashboards: Dashboard[] = [],
   t: (k: string) => string = (k) => k
 ): NavItem[] {
+  const userType = isSuperAdmin
+    ? UserRoles.ROLE_SUPER_ADMIN
+    : UserRoles.ROLE_MEMBER
+
   // Recursively build sidebar from config
   function buildItems(configs: RouteConfig[]): NavItem[] {
     return configs
-      .filter((r) => r.sidebar && hasAccess(r.access, userType))
+      .filter(
+        (r) => r.sidebar && hasAccess(r.role, userType, r.permission, ability)
+      )
       .map((r) => {
         const sidebar = r.sidebar
         const item: NavItem = {

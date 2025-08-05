@@ -449,7 +449,7 @@ const getOrganizationPermissions = async (
 }
 
 export const useOrganizationMemberAbility = (
-  orgHandle: string
+  orgHandle?: string
 ): {
   ability: AppAbility | undefined
   isLoading: boolean
@@ -457,7 +457,8 @@ export const useOrganizationMemberAbility = (
 } => {
   const { data, isLoading, isError } = useQuery<Permission[]>({
     queryKey: ["organizationPermissions", orgHandle],
-    queryFn: () => getOrganizationPermissions(orgHandle),
+    queryFn: () => getOrganizationPermissions(orgHandle ?? ""),
+    enabled: !!orgHandle,
   })
 
   if (!data) return { ability: undefined, isLoading, isError }

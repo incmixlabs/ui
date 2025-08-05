@@ -73,7 +73,7 @@ export const getColumns = (
               Role
             </Text>
             <DropdownMenu.Root>
-              <DropdownMenu.Trigger>
+              <DropdownMenu.Trigger disabled={role.isSystemRole}>
                 <EllipsisVertical className="size-4" />
               </DropdownMenu.Trigger>
               <DropdownMenu.Content>
@@ -204,6 +204,7 @@ const CheckboxCell = ({
   }
   return (
     <Checkbox
+      disabled={role.isSystemRole}
       checked={isChecked}
       onCheckedChange={(v) => handleChange(Boolean(v))}
     />
