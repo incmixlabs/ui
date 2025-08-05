@@ -3,6 +3,7 @@ import type { Action, subjects } from "@incmix/utils/types"
 export type Role = {
   id: number
   name: string
+  isSystemRole?: boolean
 }
 
 export type PermissionsResponse = {

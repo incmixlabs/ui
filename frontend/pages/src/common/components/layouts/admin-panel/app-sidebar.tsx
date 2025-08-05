@@ -29,6 +29,7 @@ import { buildSidebarItems } from "../../../../route-config"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
 import { OrgSwitcher } from "./org-switcher"
+import { useOrganizationMemberAbility } from "@orgs/utils"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { t } = useTranslation(["common", "sidebar"])
@@ -48,9 +49,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }
   }, [initialize, initialized])
 
+  const { selectedOrganisation } = useOrganizationStore()
+
+  const { ability } = useOrganizationMemberAbility(selectedOrganisation?.handle)
+
   const navItems = React.useMemo(() => {
-    return buildSidebarItems(user?.userType, dashboards, t)
-  }, [t, dashboards, user?.userType])
+    return buildSidebarItems(user?.isSuperAdmin??false, ability, dashboards, t)
+  }, [t, dashboards, user?.isSuperAdmin])
 
   return (
     <>

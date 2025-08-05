@@ -8,6 +8,8 @@ import { createContext, useEffect, useState } from "react"
 import { type Change, getRolesPermissions } from "./actions"
 import PermissonsTable from "./permissions-table"
 import type { PermissionsResponse, Role } from "./types"
+import { useOrganizationStore } from "@incmix/store"
+import { useAuth } from "@auth"
 
 export const permissionsContext = createContext<{
   changes: Change[]
@@ -25,10 +27,16 @@ export const permissionsContext = createContext<{
 
 const RolesPage = () => {
   const [changes, setChanges] = useState<Change[]>([])
-
+  const { selectedOrganisation } = useOrganizationStore()
+  const { authUser } = useAuth()
   const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["roles-permissions"],
-    queryFn: getRolesPermissions,
+    queryKey: [
+      "roles-permissions",
+      selectedOrganisation?.id,
+      authUser?.isSuperAdmin,
+    ],
+    queryFn: () => getRolesPermissions(selectedOrganisation?.id,authUser?.isSuperAdmin),
+    enabled: !!selectedOrganisation?.id,
   })
 
   const [rawPermissions, setRawPermissions] = useState<PermissionsResponse[]>(
