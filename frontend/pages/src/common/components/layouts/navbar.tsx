@@ -14,7 +14,7 @@ import {
   Text,
   TextField,
   iconSize,
-} from  "@incmix/ui/base"
+} from "@incmix/ui/base"
 
 import {
   Bell as BellIcon,

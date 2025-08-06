@@ -2,70 +2,128 @@ packages:
   - apps/*
   - frontend/*
   - shared/*
-
-
 catalog:
+  "@casl/react": 5.0.0
+  "@eslint/js": 9.32.0
+  "@hookform/resolvers": 5.2.1
+  "@incmix/utils": 0.36.3
+  "@julr/vite-plugin-validate-env": 2.2.0
+  "@radix-ui/colors": 3.0.0
+  "@radix-ui/react-accessible-icon": 1.1.7
+  "@radix-ui/react-accordion": 1.2.11
+  "@radix-ui/react-alert-dialog": 1.1.14
+  "@radix-ui/react-aspect-ratio": 1.1.7
+  "@radix-ui/react-avatar": 1.1.10
+  "@radix-ui/react-checkbox": 1.3.2
+  "@radix-ui/react-collection": 1.1.7
+  "@radix-ui/react-compose-refs": 1.1.2
+  "@radix-ui/react-context": 1.1.2
+  "@radix-ui/react-context-menu": 2.2.15
+  "@radix-ui/react-dialog": 1.1.14
+  "@radix-ui/react-direction": 1.1.1
+  "@radix-ui/react-dropdown-menu": 2.1.15
+  "@radix-ui/react-hover-card": 1.1.14
+  "@radix-ui/react-label": 2.1.7
+  "@radix-ui/react-menubar": 1.1.15
+  "@radix-ui/react-navigation-menu": 1.2.13
+  "@radix-ui/react-popover": 1.1.14
+  "@radix-ui/react-portal": 1.1.9
+  "@radix-ui/react-primitive": 2.1.3
+  "@radix-ui/react-progress": 1.1.7
+  "@radix-ui/react-radio-group": 1.3.7
+  "@radix-ui/react-roving-focus": 1.1.10
+  "@radix-ui/react-scroll-area": 1.2.9
+  "@radix-ui/react-select": 2.2.5
+  "@radix-ui/react-slider": 1.3.5
+  "@radix-ui/react-slot": 1.2.3
+  "@radix-ui/react-switch": 1.2.5
+  "@radix-ui/react-tabs": 1.1.12
+  "@radix-ui/react-toggle": 1.1.9
+  "@radix-ui/react-toggle-group": 1.1.10
+  "@radix-ui/react-tooltip": 1.2.7
+  "@radix-ui/react-use-controllable-state": 1.2.2
+  "@radix-ui/react-visually-hidden": 1.2.3
+  "@radix-ui/themes": 3.2.1
+  "@storybook/addon-docs": 9.1.0
+  "@storybook/addon-onboarding": 9.1.0
+  "@storybook/react-vite": 9.1.0
+  "@tailwindcss/typography": 0.5.16
+  "@tailwindcss/vite": 4.1.11
+  "@tanstack/react-form": 1.18.0
+  "@tanstack/react-query": 5.81.5
+  "@tanstack/react-router": 1.130.12
+  "@tanstack/react-table": 8.21.3
+  "@tanstack/router-cli": 1.130.15
+  "@tanstack/router-devtools": 1.130.13
+  "@tanstack/zod-form-adapter": 0.42.1
+  "@tiptap/react": 3.0.9
+  "@tiptap/starter-kit": 3.0.9
+  "@types/node": 24.1.0
+  "@types/react": 19.1.9
+  "@types/react-dom": 19.1.7
+  "@types/wicg-file-system-access": 2023.10.6
+  "@typescript-eslint/utils": 8.39.0
+  "@vitejs/plugin-react": 4.7.0
+  "@vitejs/plugin-react-swc": 3.11.0
   autoprefixer: 10.4.21
-  eslint: 9.21.0
-  eslint-plugin-react-hooks: 5.1.0
-  eslint-plugin-react-refresh: 0.4.19
+  class-variance-authority: 0.7.1
+  classnames: 2.3.2
+  clsx: 2.1.1
+  cmdk: 1.1.1
   date-fns: 4.1.0
-  globals: 16.0.0
+  esbuild: 0.25.8
+  eslint: 9.32.0
+  eslint-plugin-jsx-a11y: 6.10.2
+  eslint-plugin-react: 7.37.5
+  eslint-plugin-react-hooks: 5.2.0
+  eslint-plugin-react-refresh: 0.4.20
+  eslint-plugin-storybook: 9.1.1
+  globals: 16.3.0
   i18next: 24.2.3
   i18next-chained-backend: 4.6.2
   i18next-http-backend: 3.0.2
   i18next-resources-to-backend: 1.2.1
   immer: 10.1.1
+  input-otp: 1.4.2
   jsdom: 26.0.0
-  json-schema-to-zod: 2.6.0
-  lucide-react: 0.503.0
+  json-schema-to-zod: 2.6.1
+  lucide-react: 0.536.0
   motion: 12.6.3
   nanoid: 5.1.5
   nuqs: 2.4.1
-  postcss: 8.5.3
+  postcss: 8.5.6
+  postcss-cli: 11.0.1
+  postcss-combine-duplicated-selectors: 10.0.3
+  postcss-custom-media: 11.0.6
+  postcss-discard-empty: 7.0.1
+  postcss-import: 16.1.1
+  postcss-nesting: 13.0.2
   prop-types: 15.8.1
-  react: 19.1.0
-  react-dom: 19.1.0
-  react-error-boundary: 5.0.0
+  react: 19.1.1
+  react-day-picker: 9.8.1
+  react-dom: 19.1.1
+  react-error-boundary: 6.0.0
+  react-hook-form: 7.62.0
   react-i18next: 15.4.1
+  react-remove-scroll-bar: 2.3.8
   remark-gfm: 4.0.1
   rollup-plugin-visualizer: 5.14.0
   rxdb: 16.16.0
   rxdb-hooks: 5.0.2
   rxdb-premium: 16.16.0
-  semver: 7.7.1
+  semver: 7.7.2
+  storybook: 9.1.1
+  stylelint: 16.23.0
   swapy: 1.0.5
-  tailwindcss: 3.4.14
+  tailwind-merge: 3.3.1
+  tailwindcss: 3.4.17
   tailwindcss-animate: 1.0.7
-  tailwind-merge: 3.1.0
-  typescript: 5.8.2
-  typescript-eslint: 8.24.1
-  vite: 7.0.0
-  vitest: 3.2.4
-  vite-tsconfig-paths: 5.1.4
-  vite-plugin-top-level-await: 1.5.0
+  typescript: 5.9.2
+  typescript-eslint: 8.39.0
+  vite: 7.0.6
   vite-plugin-bundlesize: 0.2.0
-  zod: 3.25.67
+  vite-plugin-top-level-await: 1.6.0
+  vite-tsconfig-paths: 5.1.4
+  vitest: 3.2.4
+  zod: 4.0.15
   zustand: 5.0.6
-  "@casl/react": 5.0.0
-  "@eslint/js": 9.21.0
-  "@incmix/utils": 0.36.2
-  "@julr/vite-plugin-validate-env": 1.3.0
-  "@radix-ui/themes": 3.2.1
-  "@tailwindcss/typography": 0.5.16
-  "@tailwindcss/vite": 4.1.11
-  "@tanstack/zod-form-adapter": 0.42.1
-  "@tanstack/react-form": 1.12.4
-  "@tanstack/react-query": 5.81.5
-  "@tanstack/react-router": 1.122.0
-  "@tanstack/react-table": 8.21.3
-  "@tanstack/router-cli": 1.122.0
-  "@tanstack/router-devtools": 1.122.0
-  "@tiptap/react": 2.23.0
-  "@tiptap/starter-kit": 2.23.0
-  "@types/react": 19.1.8
-  "@types/react-dom": 19.1.6
-  "@vitejs/plugin-react": 4.6.0
-  "@vitejs/plugin-react-swc": 3.10.2
-  "@types/wicg-file-system-access": 2023.10.6
-

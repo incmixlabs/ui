@@ -1,0 +1,171 @@
+/* https://www.youtube.com/watch?v=6zMa4qK63hQ */
+/*
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+*/
+
+@layer tw_base, radix_ui, tw_components_utils;
+@import "@incmix/radix-ui/styles.css" layer(radix_ui);
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+@layer tw_base {
+  @tailwind base;
+}
+@layer tw_components_utils {
+  @tailwind components;
+  @tailwind utilities;
+}
+@layer tw_base {
+  .aspect-video {
+    aspect-ratio: 16 / 9;
+    background-color: aliceblue;
+  }
+  .main-nav .rt-ScrollAreaViewport {
+    overflow: visible !important;
+  }
+  [data-scaling="90%"] .scale-icon {
+    transform: scale(0.9);
+  }
+  [data-scaling="95%"] .scale-icon {
+    transform: scale(0.95);
+  }
+  [data-scaling="100%"] .scale-icon {
+    transform: scale(1);
+  }
+  [data-scaling="105%"] .scale-icon {
+    transform: scale(1.05);
+  }
+  [data-scaling="110%"] .scale-icon {
+    transform: scale(1.1);
+  }
+  :root {
+    --font-inter: "Inter", ui-sans-serif, system-ui;
+
+    --color-black: #000000;
+    --color-white: #ffffff;
+
+    --background: #fcfcfc;
+    --foreground: #111111;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+
+    --radius: 0.5rem;
+    --navbar-height: theme("width.14");
+    --sidebar-width: theme("width.64");
+
+    --sidebar-active: #d9d9d926;
+
+    --sidebar-border: 220 7% 92%;
+    --sidebar-trigger-border: 0 0% 85%;
+    --sidebar-trigger-background: 0 0% 100%;
+  }
+
+  .dark {
+    --color-black: #000000;
+    --color-white: #ffffff;
+
+    --background: #111111;
+    --foreground: #fcfcfc;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+
+    --radius: 0.5rem;
+    --navbar-height: theme("width.14");
+    --sidebar-width: theme("width.64");
+
+    --sidebar-active: #d9d9d926;
+
+    --sidebar-border: 222 9% 22%;
+    --sidebar-trigger-border: 0 0% 85%;
+    --sidebar-trigger-background: 0 0% 100%;
+  }
+  * {
+    font-family: var(--font-inter);
+  }
+}
+
+.radix-themes {
+  --default-font-family: var(--font-inter);
+  --heading-font-family: var(--font-inter);
+  --code-font-family: "JetBrains Mono", "Fira Code", monospace;
+  --strong-font-family: var(--font-inter);
+  --em-font-family: var(--font-inter);
+  --quote-font-family: var(--font-inter);
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.blink {
+  animation: blink 1s linear infinite;
+}
+
+@layer tw_base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  .react-grid-item > .react-resizable-handle::after {
+    border-right: 2px solid var(--foreground) !important;
+    border-bottom: 2px solid var(--foreground) !important;
+  }
+  .react-grid-item > .react-resizable-handle {
+    cursor: e-resize;
+  }
+}
