@@ -780,164 +780,183 @@ export function useProjectData(
 
   // Find the potential parent for a task if it were to be indented
   // This needs to be defined before canTaskBeIndented since it's used by it
-  const findPotentialParentTask = useCallback(
-    async (taskId: string) => {
-      try {
-        // Directly query the database to get the current task - this ensures we always have the latest data
-        const taskDoc = await database.tasks.findOne({ selector: { id: taskId } }).exec();
-        if (!taskDoc) {
-          console.log(`findPotentialParentTask: Task ${taskId} not found in database`);
-          return null;
-        }
-        
-        const task = taskDoc.toJSON();
-        console.log(`findPotentialParentTask for task ${taskId}:`, {
-          id: task.id,
-          isSubtask: task.isSubtask,
-          statusId: task.statusId
-        });
-
-        // Query database for all tasks in the same column, sorted by order
-        const tasksInColumnDocs = await database.tasks.find({
-          selector: { statusId: task.statusId },
-          sort: [{ taskOrder: 'asc' }]
-        }).exec();
-        
-        const allTasksInColumn = tasksInColumnDocs.map(doc => doc.toJSON());
-        
-        // Get the position of the current task
-        const currentPosition = allTasksInColumn.findIndex((t) => t.id === taskId);
-        if (currentPosition <= 0) {
-          console.log(`findPotentialParentTask: No tasks before ${taskId} in the column`);
-          return null;
-        }
-        
-        // For regular tasks: find the closest previous non-subtask task
-        if (!task.isSubtask) {
-          // Look for non-subtask tasks before this one
-          for (let i = currentPosition - 1; i >= 0; i--) {
-            if (!allTasksInColumn[i].isSubtask) {
-              console.log(`findPotentialParentTask: Found parent ${allTasksInColumn[i].id} for ${taskId}`);
-              return allTasksInColumn[i].id;
-            }
-          }
-        } else {
-          // For subtasks: find the parent task at the appropriate level
-          // This is more complex and would need to account for hierarchy levels
-          // For now, just find the previous task that isn't a child of this task
-          const previousTask = allTasksInColumn[currentPosition - 1];
-          if (!task.isSubtask || previousTask.parentTaskId !== task.parentTaskId) {
-            console.log(`findPotentialParentTask: Found parent ${previousTask.id} for subtask ${taskId}`);
-            return previousTask.id;
-          }
-        }
-        
-        console.log(`findPotentialParentTask: No suitable parent found for ${taskId}`);
-        return null;
-      } catch (error) {
-        console.error(`Error in findPotentialParentTask for ${taskId}:`, error);
-        return null;
+  const findPotentialParentTask = useCallback(async (taskId: string) => {
+    try {
+      // Directly query the database to get the current task - this ensures we always have the latest data
+      const taskDoc = await database.tasks
+        .findOne({ selector: { id: taskId } })
+        .exec()
+      if (!taskDoc) {
+        console.log(
+          `findPotentialParentTask: Task ${taskId} not found in database`
+        )
+        return null
       }
-    },
-    []
-  )
+
+      const task = taskDoc.toJSON()
+      console.log(`findPotentialParentTask for task ${taskId}:`, {
+        id: task.id,
+        isSubtask: task.isSubtask,
+        statusId: task.statusId,
+      })
+
+      // Query database for all tasks in the same column, sorted by order
+      const tasksInColumnDocs = await database.tasks
+        .find({
+          selector: { statusId: task.statusId },
+          sort: [{ taskOrder: "asc" }],
+        })
+        .exec()
+
+      const allTasksInColumn = tasksInColumnDocs.map((doc) => doc.toJSON())
+
+      // Get the position of the current task
+      const currentPosition = allTasksInColumn.findIndex((t) => t.id === taskId)
+      if (currentPosition <= 0) {
+        console.log(
+          `findPotentialParentTask: No tasks before ${taskId} in the column`
+        )
+        return null
+      }
+
+      // For regular tasks: find the closest previous non-subtask task
+      if (!task.isSubtask) {
+        // Look for non-subtask tasks before this one
+        for (let i = currentPosition - 1; i >= 0; i--) {
+          if (!allTasksInColumn[i].isSubtask) {
+            console.log(
+              `findPotentialParentTask: Found parent ${allTasksInColumn[i].id} for ${taskId}`
+            )
+            return allTasksInColumn[i].id
+          }
+        }
+      } else {
+        // For subtasks: find the parent task at the appropriate level
+        // This is more complex and would need to account for hierarchy levels
+        // For now, just find the previous task that isn't a child of this task
+        const previousTask = allTasksInColumn[currentPosition - 1]
+        if (
+          !task.isSubtask ||
+          previousTask.parentTaskId !== task.parentTaskId
+        ) {
+          console.log(
+            `findPotentialParentTask: Found parent ${previousTask.id} for subtask ${taskId}`
+          )
+          return previousTask.id
+        }
+      }
+
+      console.log(
+        `findPotentialParentTask: No suitable parent found for ${taskId}`
+      )
+      return null
+    } catch (error) {
+      console.error(`Error in findPotentialParentTask for ${taskId}:`, error)
+      return null
+    }
+  }, [])
 
   // Check if a task can be indented (converted to subtask)
   const canTaskBeIndented = useCallback(
     async (taskId: string) => {
       try {
         // Directly query the database to get the current task
-        const taskDoc = await database.tasks.findOne({ selector: { id: taskId } }).exec();
+        const taskDoc = await database.tasks
+          .findOne({ selector: { id: taskId } })
+          .exec()
         if (!taskDoc) {
-          console.log(`canTaskBeIndented: Task ${taskId} not found in database`);
-          return false;
+          console.log(`canTaskBeIndented: Task ${taskId} not found in database`)
+          return false
         }
-        
-        const task = taskDoc.toJSON();
+
+        const task = taskDoc.toJSON()
         console.log(`canTaskBeIndented for task ${taskId}:`, {
           id: task.id,
           isSubtask: task.isSubtask,
           parentTaskId: task.parentTaskId,
-          statusId: task.statusId
-        });
-        
+          statusId: task.statusId,
+        })
+
         // If it's already a subtask, check the nesting level
         if (task.isSubtask) {
           // Check nesting level by tracing up the hierarchy
-          let currentTaskId = task.id;
-          let nestingLevel = 1; // Current task is already at level 1
+          let currentTaskId = task.id
+          let nestingLevel = 1 // Current task is already at level 1
 
           // Traverse up to find the nesting level
           while (true) {
-            const currentDoc = await database.tasks.findOne({ 
-              selector: { id: currentTaskId } 
-            }).exec();
-            
-            if (!currentDoc) break;
-            
-            const currentTask = currentDoc.toJSON();
-            if (!currentTask.parentTaskId) break;
-            
-            currentTaskId = currentTask.parentTaskId;
-            nestingLevel++;
+            const currentDoc = await database.tasks
+              .findOne({
+                selector: { id: currentTaskId },
+              })
+              .exec()
+
+            if (!currentDoc) break
+
+            const currentTask = currentDoc.toJSON()
+            if (!currentTask.parentTaskId) break
+
+            currentTaskId = currentTask.parentTaskId
+            nestingLevel++
 
             // Max nesting level check (3 levels max)
             if (nestingLevel >= 3) {
-              console.log(`canTaskBeIndented: Max nesting level reached for ${taskId}`);
-              return false;
+              console.log(
+                `canTaskBeIndented: Max nesting level reached for ${taskId}`
+              )
+              return false
             }
           }
         }
 
         // Check if there's a valid potential parent task
-        const potentialParentId = await findPotentialParentTask(taskId);
-        const canIndent = potentialParentId !== null;
-        
+        const potentialParentId = await findPotentialParentTask(taskId)
+        const canIndent = potentialParentId !== null
+
         console.log(`canTaskBeIndented result for ${taskId}:`, {
           potentialParentId,
-          canIndent
-        });
-        
-        return canIndent;
+          canIndent,
+        })
+
+        return canIndent
       } catch (error) {
-        console.error(`Error in canTaskBeIndented for ${taskId}:`, error);
-        return false;
+        console.error(`Error in canTaskBeIndented for ${taskId}:`, error)
+        return false
       }
     },
     [findPotentialParentTask]
   )
 
   // Check if a task can be unindented (converted from subtask to regular task)
-  const canTaskBeUnindented = useCallback(
-    async (taskId: string) => {
-      try {
-        // Directly query the database to get the current task
-        const taskDoc = await database.tasks.findOne({ selector: { id: taskId } }).exec();
-        if (!taskDoc) {
-          console.log(`canTaskBeUnindented: Task ${taskId} not found in database`);
-          return false;
-        }
-        
-        const task = taskDoc.toJSON();
-        
-        // Can only unindent if it's currently a subtask
-        const canUnindent = task.isSubtask === true;
-        
-        console.log(`canTaskBeUnindented for task ${taskId}:`, {
-          id: task.id,
-          isSubtask: task.isSubtask,
-          parentTaskId: task.parentTaskId,
-          canUnindent
-        });
-        
-        return canUnindent;
-      } catch (error) {
-        console.error(`Error in canTaskBeUnindented for ${taskId}:`, error);
-        return false;
+  const canTaskBeUnindented = useCallback(async (taskId: string) => {
+    try {
+      // Directly query the database to get the current task
+      const taskDoc = await database.tasks
+        .findOne({ selector: { id: taskId } })
+        .exec()
+      if (!taskDoc) {
+        console.log(`canTaskBeUnindented: Task ${taskId} not found in database`)
+        return false
       }
-    },
-    []
-  )
+
+      const task = taskDoc.toJSON()
+
+      // Can only unindent if it's currently a subtask
+      const canUnindent = task.isSubtask === true
+
+      console.log(`canTaskBeUnindented for task ${taskId}:`, {
+        id: task.id,
+        isSubtask: task.isSubtask,
+        parentTaskId: task.parentTaskId,
+        canUnindent,
+      })
+
+      return canUnindent
+    } catch (error) {
+      console.error(`Error in canTaskBeUnindented for ${taskId}:`, error)
+      return false
+    }
+  }, [])
 
   // Removed duplicate declaration of findPotentialParentTask since it's now defined above
 
