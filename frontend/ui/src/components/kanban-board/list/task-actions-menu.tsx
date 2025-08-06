@@ -30,6 +30,7 @@ import { TaskDataSchema } from "@incmix/utils/schema"
 import { KanbanTask } from "../types" // Import KanbanTask type
 import { OverlappingAvatarGroup, type AssignedUser, type SelectableUser } from "../shared/overlapping-avatar-group"
 import { MOCK_MEMBERS } from "../constants/mock-members"
+import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
 
 interface TaskActionsMenuProps {
   task?: KanbanTask | TaskDataSchema
@@ -68,7 +69,7 @@ interface TaskActionsMenuProps {
   mode?: "existing-task" | "new-task"
 }
 
-export function TaskActionsMenu({
+export const TaskActionsMenu = ({
   task,
   columns,
   priorityLabels = [],
@@ -87,7 +88,9 @@ export function TaskActionsMenu({
   size = "1",
   variant = "ghost",
   mode = "existing-task"
-}: TaskActionsMenuProps) {
+}: TaskActionsMenuProps) => {
+  // Get drawer open handler from hook
+  const { handleDrawerOpen } = useKanbanDrawer()
   const [isDatePickerOpen, setIsDatePickerOpen] = useState<"start" | "end" | null>(null)
 
   // Get current values - either from existing task or new task data
@@ -198,7 +201,7 @@ export function TaskActionsMenu({
           <DropdownMenu.SubTrigger>
             <Flex align="center" gap="2">
               <PriorityIcon size={14} />
-              <Text>Set Priority</Text>
+              <Text>Priority</Text>
               <Badge 
                 color={priorityInfo.color} 
                 variant="soft" 
@@ -240,7 +243,7 @@ export function TaskActionsMenu({
           <DropdownMenu.SubTrigger>
             <Flex align="center" gap="2">
               <CalendarIcon size={14} />
-              <Text>Set Dates</Text>
+              <Text>Dates</Text>
             </Flex>
           </DropdownMenu.SubTrigger>
           <DropdownMenu.SubContent>
@@ -309,7 +312,7 @@ export function TaskActionsMenu({
           <DropdownMenu.SubTrigger>
             <Flex align="center" gap="2">
               <User size={14} />
-              <Text>Assign To</Text>
+              <Text>Assignee</Text>
               {currentAssignedTo.length > 0 && (
                 <Badge variant="soft" size="1" className="ml-auto">
                   {currentAssignedTo.length}
@@ -348,7 +351,7 @@ export function TaskActionsMenu({
           <DropdownMenu.SubTrigger>
             <Flex align="center" gap="2">
               <ArrowRight size={14} />
-              <Text>Move to</Text>
+              <Text>Status</Text>
               {columns.map(col => {
                 const isCurrentColumn = col.id === currentStatusId
                 if (isCurrentColumn) {
@@ -402,9 +405,10 @@ export function TaskActionsMenu({
               <DropdownMenu.Item 
                 onClick={() => task?.id && onIndentTask(task.id)} 
                 disabled={!canIndent}
+                className="flex items-center gap-2"
               >
                 <IndentIcon size={14} />
-                <Text>Convert to Subtask</Text>
+                <Text>Make Subtask</Text>
               </DropdownMenu.Item>
             )}
 
@@ -413,21 +417,28 @@ export function TaskActionsMenu({
               <DropdownMenu.Item 
                 onClick={() => task?.id && onUnindentTask(task.id)} 
                 disabled={!canUnindent}
+                className="flex items-center gap-2"
               >
                 <OutdentIcon size={14} />
-                <Text>Convert to Task</Text>
+                <Text>Make Task</Text>
               </DropdownMenu.Item>
             )}
 
             {/* Edit Task */}
-            <DropdownMenu.Item>
+            <DropdownMenu.Item 
+              className="flex items-center gap-2"
+              onClick={() => task?.id && handleDrawerOpen(task.id)}
+            >
               <Edit3 size={14} />
-              <Text>Edit Task</Text>
+              <Text>Edit</Text>
             </DropdownMenu.Item>
 
             {/* Duplicate Task */}
             {onDuplicateTask && (
-              <DropdownMenu.Item onClick={onDuplicateTask}>
+              <DropdownMenu.Item 
+                onClick={onDuplicateTask}
+                className="flex items-center gap-2"
+              >
                 <Copy size={14} />
                 <Text>Duplicate</Text>
               </DropdownMenu.Item>
@@ -439,10 +450,10 @@ export function TaskActionsMenu({
             {onDeleteTask && (
               <DropdownMenu.Item 
                 onClick={onDeleteTask}
-                className="text-destructive focus:text-destructive"
+                className="text-destructive focus:text-destructive flex items-center gap-2"
               >
                 <Trash2 size={14} />
-                <Text>Delete Task</Text>
+                <Text>Delete</Text>
               </DropdownMenu.Item>
             )}
           </>
