@@ -4,7 +4,7 @@ import {
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import {     ModalPresets } from "../shared/confirmation-modal"
-import { Ellipsis, Plus, ChevronDown, ChevronRight, Trash2, Edit3, Check, X } from "lucide-react"
+import { Ellipsis, Plus, ChevronDown, ChevronRight, Trash2, Edit3, Check, X, Download } from "lucide-react"
 import { memo, useEffect, useRef, useState, useCallback, useMemo } from "react"
 import invariant from "tiny-invariant"
 
@@ -35,6 +35,7 @@ import { ListTaskCard, ExpandedTasksProvider } from "./task-card"
 import { SimpleTaskInput } from "./mention-task-input"
 import { InlineAddTaskCard } from "./inline-add-task-card"
 import { isShallowEqual } from "@incmix/utils/objects"
+import { exportColumnToCSV } from "../utils/csv-export"
 
 /**
  * Helper function to create a semi-transparent version of a color
@@ -533,6 +534,19 @@ export function ListColumn({
     }
   }, [column.id, onDeleteColumn])
 
+  // CSV export handler
+  const handleExportCSV = useCallback(() => {
+    try {
+      exportColumnToCSV(column, priorityLabels, {
+        includeSubtasks: true,
+        includeMetadata: true,
+        includeTimestamps: true
+      })
+    } catch (error) {
+      console.error("Failed to export CSV:", error)
+    }
+  }, [column, priorityLabels])
+
   return (
     <Flex
       direction="column"
@@ -701,6 +715,13 @@ export function ListColumn({
                     <DropdownMenu.Item onClick={() => setIsEditingColumn(true)}>
                       <Edit3 size={14} />
                       Edit Column
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item 
+                      onClick={handleExportCSV}
+                      disabled={column.tasks.length === 0}
+                    >
+                      <Download size={14} />
+                      Export as CSV
                     </DropdownMenu.Item>
                     <DropdownMenu.Separator />
                     <DropdownMenu.Item

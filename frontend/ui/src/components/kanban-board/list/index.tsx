@@ -12,7 +12,7 @@ import { ConfirmationDialog } from "./confirmation-dialog"
 import { type KanbanTask } from "../types"
 import { Box, Flex, Heading, IconButton, Button, Text, TextField, TextArea, Badge, Tooltip, toast, DropdownMenu, Dialog } from "@incmix/ui"
 
-import { Plus, Search, RefreshCw, Settings, MoreVertical, X, ClipboardList, XCircle, Sparkles, Loader2 } from "lucide-react"
+import { Plus, Search, RefreshCw, Settings, MoreVertical, X, ClipboardList, XCircle, Sparkles, Loader2, Download } from "lucide-react"
 import { CreateColumnForm } from "../shared/create-column-form"
 
 
@@ -31,6 +31,7 @@ import { useListView } from "../hooks/use-list-view"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
 import { blockBoardPanningAttr } from "../data-attributes"
 import { TaskCopyBufferProvider } from "../hooks/use-task-copy-buffer"
+import { exportAllTasksToCSV } from "../utils/csv-export"
 
 interface ListBoardProps {
   projectId?: string
@@ -87,6 +88,19 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     error: generationError,
     clearError: clearGenerationError
   } = useBulkAIGeneration(updateTask)
+
+  // CSV export handler for all tasks
+  const handleExportAllCSV = useCallback(() => {
+    try {
+      exportAllTasksToCSV(columns, priorityLabels, {
+        includeSubtasks: true,
+        includeMetadata: true,
+        includeTimestamps: true
+      })
+    } catch (error) {
+      console.error("Failed to export CSV:", error)
+    }
+  }, [columns, priorityLabels])
 
   // State to track optimistic duplicates
   const [optimisticDuplicateIds, setOptimisticDuplicateIds] = useState<Set<string>>(new Set());
@@ -682,6 +696,17 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
               >
                 <Plus size={14} />
                 Add Column
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                size="2" 
+                className="flex items-center gap-1 shadow-sm hover:shadow-md transition-all duration-150" 
+                onClick={handleExportAllCSV}
+                disabled={columns.length === 0 || columns.every(col => col.tasks.length === 0)}
+              >
+                <Download size={14} />
+                Export All CSV
               </Button>
               
               <Tooltip content="Refresh">
