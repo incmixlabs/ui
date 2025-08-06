@@ -623,23 +623,31 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
           <Box className="w-full space-y-2">
             {/* Column creation is now handled by the CreateColumnForm in the dropdown menu */}
 
-              {filteredColumns.map((column) => (
-                <ListColumn
-                  key={column.id}
-                  column={column}
-                  columns={columns}
-                  priorityLabels={priorityLabels}
-                  onCreateTask={createTask}
-                  onUpdateTask={updateTask}
-                  onDeleteTask={deleteTask}
-                  onUpdateColumn={(id, updates) => updateStatusLabel(id, updates)}
-                  onDeleteColumn={deleteStatusLabel}
-                  isDragging={isDragging}
-                  selectedTaskIds={selectedTasks}
-                  onTaskSelect={handleTaskSelect}
-                  onSelectAll={handleColumnSelectAll}
-                />
-              ))}
+              {filteredColumns.map((column) => {
+                // Transform selectedTasks to match the expected type: {[key: string]: boolean}
+                const selectedTasksAsBooleans = Object.keys(selectedTasks).reduce(
+                  (acc, id) => ({ ...acc, [id]: true }), 
+                  {} as {[key: string]: boolean}
+                );
+                
+                return (
+                  <ListColumn
+                    key={column.id}
+                    column={column}
+                    columns={columns}
+                    priorityLabels={priorityLabels}
+                    onCreateTask={createTask}
+                    onUpdateTask={updateTask}
+                    onDeleteTask={deleteTask}
+                    onUpdateColumn={(id, updates) => updateStatusLabel(id, updates)}
+                    onDeleteColumn={deleteStatusLabel}
+                    isDragging={isDragging}
+                    selectedTaskIds={selectedTasksAsBooleans}
+                    onTaskSelect={handleTaskSelect}
+                    onSelectAll={handleColumnSelectAll}
+                  />
+                );
+              })}
 
             {filteredColumns.length === 0 && searchQuery && (
               <Box className="text-center py-12">

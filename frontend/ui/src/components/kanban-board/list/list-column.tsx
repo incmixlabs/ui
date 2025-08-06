@@ -33,6 +33,7 @@ import { TaskDataSchema } from "@incmix/utils/schema"
 import ColorPicker, { ColorSelectType } from "@components/color-picker"
 import { ListTaskCard, ExpandedTasksProvider } from "./task-card"
 import { SimpleTaskInput } from "./mention-task-input"
+import { InlineAddTaskCard } from "./inline-add-task-card"
 import { isShallowEqual } from "@incmix/utils/objects"
 
 /**
@@ -248,6 +249,7 @@ export function ListColumn({
   const [state, setState] = useState<TColumnState>(idle)
   const [isExpanded, setIsExpanded] = useState(true)
   const [isCreatingTask, setIsCreatingTask] = useState(false)
+  const defaultPriority = "medium" // Default priority for new tasks
 
   // Calculate column statistics with proper typing
   const completedTasks = column.tasks.filter((task: KanbanTask) => task.completed).length
@@ -738,51 +740,22 @@ export function ListColumn({
                 />
               </Box>
                 
-              {/* Simple Add Task Section */}
+              {/* Inline Add Task Card Section */}
               <Box className="pt-1 pb-2">
                 {isCreatingTask ? (
-                  <SimpleTaskInput
-                    onCreateTask={handleCreateTaskWithData}
+                  <InlineAddTaskCard
+                    onCreateTask={(title) => handleCreateTaskWithData(title, {})}
                     onCancel={() => setIsCreatingTask(false)}
-                    columns={columns.map(col => ({
-                      id: col.id,
-                      name: col.name,
-                      projectId: col.projectId,
-                      // Map required TaskDataSchema fields
-                      statusId: col.id, // Using column id as statusId since this is a status column
-                      priorityId: '', // Default empty string for required field
-                      taskOrder: col.order || 0, // Map order to taskOrder
-                      completed: false, // Default value
-                      // Include color from the column
-                      color: col.color,
-                      description: col.description,
-                      // Default empty arrays for required array fields
-                      refUrls: [],
-                      labelsTags: [],
-                      attachments: [],
-                      assignedTo: [],
-                      subTasks: [],
-                      comments: [],
-                      // Timestamps and audit fields
-                      createdAt: col.createdAt,
-                      updatedAt: col.updatedAt,
-                      createdBy: col.createdBy,
-                      updatedBy: col.updatedBy,
-                    }))}
                     priorityLabels={priorityLabels}
-                    placeholder="Enter task title..."
+                    defaultPriority={defaultPriority}
                   />
                 ) : (
-                  <Box className="flex flex-shrink-0 flex-col px-2 py-1.5 w-full">
-                    <Box 
-                      className="group relative px-6 h-10 rounded-xl transition-all duration-150 bg-white border border-dashed border-gray-6 dark:bg-gray-1 dark:border dark:border-dashed dark:border-gray-6 hover:bg-gray-3 dark:hover:bg-gray-2 w-full"
-                      onClick={() => setIsCreatingTask(true)}
-                    >
-                      <Flex justify="start" align="center" className="h-full w-full gap-2 cursor-pointer">
-                        <Plus size={14} className="text-blue-9" />
-                        <Text className="text-blue-9">Add task</Text>
-                      </Flex>
-                    </Box>
+                  <Box
+                    className="mt-2 px-4 py-2 rounded-md cursor-pointer hover:bg-gray-2 transition-colors flex items-center space-x-1"
+                    onClick={() => setIsCreatingTask(true)}
+                  >
+                    <Plus size={14} className="text-gray-9" />
+                    <Text className="text-gray-10 font-medium">Add task</Text>
                   </Box>
                 )}
               </Box>
