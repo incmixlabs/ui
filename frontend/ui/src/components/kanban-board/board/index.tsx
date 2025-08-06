@@ -29,6 +29,7 @@ import { useKanban } from "../hooks/use-kanban-data";
 import { BoardColumn } from "./board-column";
 import { TaskCardDrawer } from "../shared/task-card-drawer";
 import { CreateColumnForm } from "../shared/create-column-form";
+import { DndKanbanBoard } from "../dnd-example/KanbanBoard";
 
 interface BoardProps {
   projectId?: string;
@@ -325,14 +326,13 @@ export function Board({
         </Flex>
       </Box>
 
-      <Box className="flex-1 overflow-hidden">
+     <Box className="flex-1 overflow-hidden">
         <ScrollArea
           scrollbars="horizontal"
           type="hover"
           className="w-full h-full"
           ref={scrollableRef}
         >
-          {/* This inner div can now be as wide as it needs, and the ScrollArea will handle it. */}
           <div
             className="p-4 flex gap-6 h-full"
             style={{ width: "max-content" }}
@@ -373,8 +373,8 @@ export function Board({
             </div>
           </div>
         </ScrollArea>
-      </Box>
-
+      </Box> 
+<DndKanbanBoard/>
       <TaskCardDrawer viewType="board" projectId={projectId} />
     </Box>
   );
