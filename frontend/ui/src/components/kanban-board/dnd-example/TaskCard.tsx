@@ -3,16 +3,11 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Button,Badge, Card, Icon } from "@incmix/ui";
 import { cva } from "class-variance-authority";
-import { ColumnId } from "./KanbanBoard";
+import { KanbanColumn, KanbanTask } from "../types";
 
-export interface Task {
-  id: UniqueIdentifier;
-  columnId: ColumnId;
-  content: string;
-}
 
 interface TaskCardProps {
-  task: Task;
+  task: KanbanTask;
   isOverlay?: boolean;
 }
 
@@ -20,10 +15,12 @@ export type TaskType = "Task";
 
 export interface TaskDragData {
   type: TaskType;
-  task: Task;
+  task: KanbanTask;
 }
 
 export function TaskCard({ task, isOverlay }: TaskCardProps) {
+
+  // console.log("task", task);
   const {
     setNodeRef,
     attributes,
@@ -32,7 +29,7 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
     transition,
     isDragging,
   } = useSortable({
-    id: task.id,
+    id: task?.id as UniqueIdentifier,
     data: {
       type: "Task",
       task,
@@ -51,7 +48,7 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
     variants: {
       dragging: {
         over: "ring-2 opacity-30",
-        overlay: "ring-2 ring-primary",
+        overlay: "ring-2 bg-gray-12 text-gray-1",
       },
     },
   });
@@ -79,7 +76,7 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
         </Badge>
       </Card.Header>
       <Card.Content className="px-3 pt-3 pb-6 text-left whitespace-pre-wrap">
-        {task.content}
+        {task.name}
       </Card.Content>
     </Card.Root>
   );

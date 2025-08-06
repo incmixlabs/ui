@@ -95,6 +95,8 @@ export interface KanbanTask extends Partial<Omit<TaskDataSchema, 'attachments' |
     image?: string  // Optional to match the data source
   }
 
+  statusId?:string
+  columnId?:string
   // Any additional UI-specific properties can be added here
 }
 

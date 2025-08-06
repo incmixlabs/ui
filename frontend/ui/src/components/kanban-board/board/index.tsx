@@ -42,6 +42,13 @@ export function Board({
 }: BoardProps) {
   const scrollableRef = useRef<HTMLDivElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  // const [columns, setColumns] = useState<Column[]>(columnsData);
+  // const pickedUpTaskColumn = useRef<ColumnId | null>(null);
+  // const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
+
+  // const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  // const [activeColumn, setActiveColumn] = useState<Column | null>(null);
+  // const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   // ... (all your existing hooks and logic remain the same)
   const [optimisticColumns, setOptimisticColumns] = useState<KanbanColumn[]>(
@@ -272,6 +279,8 @@ export function Board({
     );
   }
 
+  console.log("displayColumns", displayColumns);
+
   return (
     // FIX: The Board is now a flex column that fills the height of its container.
     <Box className="w-full h-full flex flex-col">
@@ -326,7 +335,7 @@ export function Board({
         </Flex>
       </Box>
 
-     <Box className="flex-1 overflow-hidden">
+      <Box className="flex-1 overflow-hidden">
         <ScrollArea
           scrollbars="horizontal"
           type="hover"
@@ -337,7 +346,7 @@ export function Board({
             className="p-4 flex gap-6 h-full"
             style={{ width: "max-content" }}
           >
-            {displayColumns.map((column) => (
+            {/* {displayColumns.map((column) => (
               <div key={column.id} className="w-80 flex-shrink-0 h-full">
                 <BoardColumn
                   column={column}
@@ -351,7 +360,18 @@ export function Board({
                   onTaskOpen={onTaskOpen}
                 />
               </div>
-            ))}
+            ))} */}
+            <DndKanbanBoard
+              columnsData={displayColumns}
+              priorityLabels={priorityLabels}
+              onCreateTask={createTask}
+              onUpdateTask={updateTask}
+              onDeleteTask={deleteTask}
+              onUpdateColumn={updateStatusLabel}
+              onDeleteColumn={deleteStatusLabel}
+              isDragging={isDragging}
+              onTaskOpen={onTaskOpen}
+            />
             <div className="w-80 flex-shrink-0 h-full">
               <Box className="h-full rounded-lg border bg-gray-3 border-gray-6">
                 <Flex
@@ -373,8 +393,8 @@ export function Board({
             </div>
           </div>
         </ScrollArea>
-      </Box> 
-<DndKanbanBoard/>
+      </Box>
+
       <TaskCardDrawer viewType="board" projectId={projectId} />
     </Box>
   );
