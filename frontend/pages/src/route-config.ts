@@ -18,9 +18,11 @@ import {
   Notebook,
 } from "lucide-react"
 import EmailVerificationRoute from "./auth/routes/email-verification"
+import GoogleAuthCallbackRoute from "./auth/routes/google-auth-callback"
 import LoginRoute from "./auth/routes/login"
 import ResetPasswordRoute from "./auth/routes/reset-password"
 import SignupRoute from "./auth/routes/signup"
+import TauriGoogleAuthCallbackRoute from "./auth/routes/tauri-google-auth-callback"
 import WelcomeRoute from "./auth/routes/welcome"
 import LoadingPage from "./common/loading-page"
 import NotFoundPage from "./common/not-found-page"
@@ -258,6 +260,16 @@ const ROUTES_CONFIG: RouteConfig[] = [
     role: ROUTE_ACCESS.SUPER_ADMIN,
   },
   { path: "/welcome", route: WelcomeRoute, role: ROUTE_ACCESS.PUBLIC },
+  {
+    path: "/auth/google/callback",
+    route: GoogleAuthCallbackRoute,
+    role: ROUTE_ACCESS.PUBLIC,
+  },
+  {
+    path: "/auth/google/tauri-callback",
+    route: TauriGoogleAuthCallbackRoute,
+    role: ROUTE_ACCESS.PUBLIC,
+  },
   // Fallbacks
   // {
   //   path: NotFoundRoute.path,
