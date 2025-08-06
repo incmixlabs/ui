@@ -13,6 +13,8 @@ import { useProjectStore } from "../../services/projects"
 // Extend the UseProjectDataReturn type to include subtask operations
 declare module "@incmix/utils/schema" {
   interface UseProjectDataReturn {
+    // Task operations
+    duplicateTask: (taskId: string) => Promise<void>
     // Subtask operations
     convertTaskToSubtask: (
       taskId: string,
@@ -960,12 +962,237 @@ export function useProjectData(
 
   // Removed duplicate declaration of findPotentialParentTask since it's now defined above
 
+  // Duplicate task function - creates an exact copy with new ID, placed directly below original
+  const duplicateTask = useCallback(
+    async (taskId: string) => {
+      console.log('🚀 duplicateTask called with taskId:', taskId)
+      try {
+        const now = getCurrentTimestamp()
+        const user = getCurrentUser(currentUser)
+        console.log('📅 Timestamp and user obtained:', { now, user })
+
+        // Validate inputs
+        if (!taskId) {
+          throw new Error("Task ID is required")
+        }
+        
+        if (!projectId) {
+          throw new Error("Project ID is required")
+        }
+
+        // Find the original task
+        const originalTask = data.tasks.find(t => t.id === taskId)
+        if (!originalTask) {
+          console.error('❌ Task not found with ID:', taskId)
+          console.error('Available tasks:', data.tasks.map(t => ({ id: t.id, name: t.name })))
+          throw new Error(`Task not found with ID: ${taskId}`)
+        }
+        console.log('✅ Original task found:', originalTask.name)
+
+        // Validate original task has required fields
+        if (!originalTask.statusId) {
+          throw new Error("Original task missing statusId")
+        }
+        
+        if (!originalTask.priorityId) {
+          console.warn('⚠️ Original task missing priorityId, using default')
+          // Find a default priority
+          const defaultPriority = data.labels.find(l => l.type === "priority") 
+          if (!defaultPriority) {
+            throw new Error("No priority labels available and original task missing priorityId")
+          }
+          originalTask.priorityId = defaultPriority.id
+        }
+
+        // Get all tasks in the same status to calculate new order
+        const tasksInStatus = data.tasks
+          .filter(t => t.statusId === originalTask.statusId)
+          .sort((a, b) => (a.taskOrder ?? 0) - (b.taskOrder ?? 0))
+        
+        // Find the index of the original task
+        const originalIndex = tasksInStatus.findIndex(t => t.id === taskId)
+        if (originalIndex === -1) {
+          throw new Error("Original task not found in status")
+        }
+
+        // Calculate the order for the new task (directly below original)
+        let newTaskOrder: number
+        if (originalIndex === tasksInStatus.length - 1) {
+          // Original is the last task, add to end
+          newTaskOrder = (originalTask.taskOrder || 1000) + 1000
+        } else {
+          // Insert between original and next task
+          const nextTask = tasksInStatus[originalIndex + 1]
+          const gap = (nextTask.taskOrder || 1000) - (originalTask.taskOrder || 1000)
+          if (gap > 1) {
+            // There's space, insert in the middle
+            newTaskOrder = Math.floor(((originalTask.taskOrder || 1000) + (nextTask.taskOrder || 1000)) / 2)
+          } else {
+            // No space, need to reorder tasks
+            newTaskOrder = (originalTask.taskOrder || 1000) + 500
+            
+            // Update all tasks after the original to make space
+            for (let i = originalIndex + 1; i < tasksInStatus.length; i++) {
+              const taskToUpdate = await database.tasks
+                .findOne({ selector: { id: tasksInStatus[i].id } })
+                .exec()
+              if (taskToUpdate) {
+                await taskToUpdate.update({
+                  $set: {
+                    taskOrder: (tasksInStatus[i].taskOrder || 1000) + 1000,
+                    updatedAt: now,
+                    updatedBy: user,
+                  },
+                })
+              }
+            }
+          }
+        }
+
+        // Create the duplicate task with new ID but all other properties preserved
+        console.log('🔧 Creating duplicate task data...')
+        const duplicateTaskData: TaskDataSchema = {
+          id: generateBrowserUniqueId("task"),
+          projectId, // Ensure projectId is set
+          name: `${originalTask.name || 'Untitled Task'} (Duplicate)`,
+          statusId: originalTask.statusId,
+          taskOrder: newTaskOrder,
+          startDate: originalTask.startDate || Number(new Date()),
+          endDate: originalTask.endDate || 0,
+          description: originalTask.description || "",
+          completed: false, // Reset completion status
+          priorityId: originalTask.priorityId,
+          refUrls: originalTask.refUrls || [],
+          labelsTags: originalTask.labelsTags || [],
+          attachments: originalTask.attachments || [],
+          assignedTo: originalTask.assignedTo || [],
+          // Preserve subtask relationships but reset completion status
+          isSubtask: originalTask.isSubtask || false,
+          parentTaskId: originalTask.parentTaskId || "",
+          // Process arrays to ensure new IDs for nested items but preserve structure
+          subTasks: (originalTask.subTasks || []).map((st, index) => ({
+            id: generateBrowserUniqueId("st"),
+            name: st.name || "",
+            completed: false, // Reset completion status
+            order: index,
+          })),
+          checklist: (originalTask.checklist || []).map((cl, index) => ({
+            id: generateBrowserUniqueId("cl"),
+            text: cl.text || "",
+            checked: false, // Reset completion status for new task
+            order: index,
+          })),
+          acceptanceCriteria: (originalTask.acceptanceCriteria || []).map((ac, index) => ({
+            id: generateBrowserUniqueId("ac"),
+            text: ac.text || "",
+            checked: false, // Reset completion status for new task
+            order: index,
+          })),
+          comments: [], // Start with empty comments for the duplicate
+          createdAt: now,
+          updatedAt: now,
+          createdBy: user,
+          updatedBy: user,
+        }
+        
+        console.log('💾 About to insert duplicate task:', {
+          id: duplicateTaskData.id,
+          name: duplicateTaskData.name,
+          taskOrder: duplicateTaskData.taskOrder,
+          statusId: duplicateTaskData.statusId,
+          priorityId: duplicateTaskData.priorityId
+        })
+
+        // Insert the duplicate task with comprehensive error handling
+        try {
+          await database.tasks.insert(duplicateTaskData as TaskDocType)
+          console.log('✅ Duplicate task inserted successfully!')
+        } catch (insertError) {
+          console.error('❌ Failed to insert duplicate task:', insertError)
+          console.error('Task data that failed to insert:', duplicateTaskData)
+          throw new Error(`Database insert failed: ${insertError}`)
+        }
+
+        // If the original task is a main task with subtasks, we need to duplicate those too
+        // and update their parentTaskId to point to the new task
+        if (!originalTask.isSubtask) {
+          const subtasks = data.tasks.filter(t => 
+            t.isSubtask && t.parentTaskId === originalTask.id
+          ).sort((a, b) => (a.taskOrder ?? 0) - (b.taskOrder ?? 0))
+
+          console.log(`🔗 Found ${subtasks.length} subtasks to duplicate`)
+          
+          for (const subtask of subtasks) {
+            const duplicatedSubtask: TaskDataSchema = {
+              id: generateBrowserUniqueId("task"),
+              projectId,
+              name: subtask.name || "Untitled Subtask",
+              statusId: subtask.statusId,
+              taskOrder: (subtask.taskOrder || 1000) + 10000, // Offset to avoid conflicts
+              startDate: subtask.startDate || Number(new Date()),
+              endDate: subtask.endDate || 0,
+              description: subtask.description || "",
+              completed: false, // Reset completion status
+              priorityId: subtask.priorityId,
+              refUrls: subtask.refUrls || [],
+              labelsTags: subtask.labelsTags || [],
+              attachments: subtask.attachments || [],
+              assignedTo: subtask.assignedTo || [],
+              isSubtask: true,
+              parentTaskId: duplicateTaskData.id, // Point to the new parent
+              // Process arrays for subtasks too
+              subTasks: (subtask.subTasks || []).map((st, index) => ({
+                id: generateBrowserUniqueId("st"),
+                name: st.name || "",
+                completed: false,
+                order: index,
+              })),
+              checklist: (subtask.checklist || []).map((cl, index) => ({
+                id: generateBrowserUniqueId("cl"),
+                text: cl.text || "",
+                checked: false,
+                order: index,
+              })),
+              acceptanceCriteria: (subtask.acceptanceCriteria || []).map((ac, index) => ({
+                id: generateBrowserUniqueId("ac"),
+                text: ac.text || "",
+                checked: false,
+                order: index,
+              })),
+              comments: [],
+              createdAt: now,
+              updatedAt: now,
+              createdBy: user,
+              updatedBy: user,
+            }
+            await database.tasks.insert(duplicatedSubtask as TaskDocType)
+            console.log(`✅ Duplicated subtask: ${subtask.name}`)
+          }
+        }
+
+        console.log(`🎉 Task duplication completed for: ${originalTask.name}`)
+        
+      } catch (error) {
+        console.error("❌ Failed to duplicate task:", error)
+        console.error("Error details:", {
+          taskId,
+          projectId,
+          dataTasksLength: data.tasks.length,
+          error: error instanceof Error ? error.message : error
+        })
+        throw error
+      }
+    },
+    [data.tasks, data.labels, projectId, currentUser]
+  )
+
   return {
     ...data,
     createTask,
     updateTask,
     deleteTask,
     moveTask,
+    duplicateTask,
     createLabel, // Updated from createTaskStatus
     updateLabel, // Updated from updateTaskStatus
     deleteLabel, // Updated from deleteTaskStatus

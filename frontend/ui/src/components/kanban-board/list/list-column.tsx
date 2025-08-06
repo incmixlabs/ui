@@ -119,6 +119,7 @@ interface ListColumnProps {
   onCreateTask: (columnId: string, taskData: Partial<TaskDataSchema>) => Promise<void>
   onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
+  onDuplicateTask?: (taskId: string) => Promise<void>
   onUpdateColumn: (columnId: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
   onDeleteColumn: (columnId: string) => Promise<void>
   isDragging?: boolean
@@ -133,6 +134,8 @@ export const CardList = memo(function CardList({
   priorityLabels,
   onUpdateTask,
   onDeleteTask,
+  onCreateTask,
+  onDuplicateTask,
   selectedTaskIds,
   onTaskSelect
 }: {
@@ -141,6 +144,8 @@ export const CardList = memo(function CardList({
   priorityLabels: any[]
   onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
+  onCreateTask: (statusId: string, taskData: Partial<TaskDataSchema>) => Promise<void>
+  onDuplicateTask?: (taskId: string) => Promise<void>
   selectedTaskIds?: {[key: string]: boolean}
   onTaskSelect?: (taskId: string, selected: boolean, taskName: string) => void
 }) {
@@ -220,6 +225,8 @@ export const CardList = memo(function CardList({
           priorityLabels={priorityLabels}
           onUpdateTask={onUpdateTask}
           onDeleteTask={onDeleteTask}
+          onCreateTask={onCreateTask}
+          onDuplicateTask={onDuplicateTask}
           onTaskSelect={onTaskSelect ? (taskId, selected) => onTaskSelect(taskId, selected, task.name || '') : undefined}
           isSelected={task.id ? !!selectedTaskIds?.[task.id] : false}
         />
@@ -235,6 +242,7 @@ export function ListColumn({
   onCreateTask,
   onUpdateTask,
   onDeleteTask,
+  onDuplicateTask,
   onUpdateColumn,
   onDeleteColumn,
   isDragging = false,
@@ -735,6 +743,8 @@ export function ListColumn({
                   priorityLabels={priorityLabels}
                   onUpdateTask={onUpdateTask}
                   onDeleteTask={onDeleteTask}
+                  onCreateTask={onCreateTask}
+                  onDuplicateTask={onDuplicateTask}
                   selectedTaskIds={selectedTaskIds}
                   onTaskSelect={onTaskSelect}
                 />

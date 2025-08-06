@@ -155,6 +155,8 @@ interface ListTaskCardProps {
   priorityLabels?: { id: string; name: string; color: string; type: string }[]
   onUpdateTask: (id: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask: (id: string) => Promise<void>
+  onCreateTask: (statusId: string, taskData: Partial<TaskDataSchema>) => Promise<void>
+  onDuplicateTask?: (id: string) => Promise<void>
   onTaskSelect?: (id: string, selected: boolean) => void
   isSelected?: boolean
   projectId?: string
@@ -206,9 +208,11 @@ export const ListTaskCard = memo(function ListTaskCard({
   priorityLabels,
   onUpdateTask,
   onDeleteTask,
+  onCreateTask,
+  onDuplicateTask,
   onTaskSelect,
   isSelected = false,
-  projectId = "default-project",
+  projectId
 }: ListTaskCardProps) {
 
   const { handleDrawerOpen } = useKanbanDrawer()
@@ -432,8 +436,18 @@ export const ListTaskCard = memo(function ListTaskCard({
   }, [card.id, onDeleteTask])
 
   const handleDuplicateTask = useCallback(async () => {
-    // Implementation for task duplication could be added here
-  }, [])
+    if (!card.id) {
+      console.error("Task ID is missing for duplication")
+      return
+    }
+    
+    try {
+      await onDuplicateTask?.(card.id)
+      console.log(`Task "${card.name || 'Untitled Task'}" duplicated successfully`)
+    } catch (error) {
+      console.error("Failed to duplicate task:", error)
+    }
+  }, [card.id, card.name, onDuplicateTask])
 
   const handleOpenDrawer = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
@@ -952,8 +966,17 @@ export const ListTaskCard = memo(function ListTaskCard({
                     createdBy: { id: '', name: '' },
                     updatedBy: { id: '', name: '' }
                   })) as unknown as TaskDataSchema[]}
+                  priorityLabels={priorityLabels}
                   onUpdateTask={onUpdateTask}
                   onDeleteTask={async () => { setShowDeleteConfirmation(true); return Promise.resolve(); }}
+                  // Add copy/paste support
+                  onCreateTask={async (taskData) => {
+                    // Create task in the same status as the current card
+                    await onCreateTask(statusId, taskData)
+                  }}
+                  currentStatusId={statusId}
+                  // Add duplicate task support
+                  onDuplicateTask={handleDuplicateTask}
                   // Add subtask operation handlers
                   onIndentTask={handleIndentTask}
                   onUnindentTask={handleUnindentTask}

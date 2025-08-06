@@ -11,9 +11,9 @@ declare module "@incmix/utils/schema" {
     // Subtask operations
     convertTaskToSubtask: (taskId: string, parentTaskId: string) => Promise<void>
     convertSubtaskToTask: (taskId: string) => Promise<void>
-    canTaskBeIndented: (taskId: string) => boolean
-    canTaskBeUnindented: (taskId: string) => boolean
-    findPotentialParentTask: (taskId: string) => string | null
+    canTaskBeIndented: (taskId: string) => Promise<boolean>
+    canTaskBeUnindented: (taskId: string) => Promise<boolean>
+    findPotentialParentTask: (taskId: string) => Promise<string | null>
   }
 }
 
@@ -41,6 +41,7 @@ export interface UseListViewReturn {
     updates: Partial<TaskDataSchema>
   ) => Promise<void>
   deleteTask: (id: string) => Promise<void>
+  duplicateTask: (id: string) => Promise<void>
   moveTask: (
     id: string,
     targetStatusId: string,
@@ -50,9 +51,9 @@ export interface UseListViewReturn {
   // Subtask operations
   convertTaskToSubtask: (taskId: string, parentTaskId: string) => Promise<void>
   convertSubtaskToTask: (taskId: string) => Promise<void>
-  canTaskBeIndented: (taskId: string) => boolean
-  canTaskBeUnindented: (taskId: string) => boolean
-  findPotentialParentTask: (taskId: string) => string | null
+  canTaskBeIndented: (taskId: string) => Promise<boolean>
+  canTaskBeUnindented: (taskId: string) => Promise<boolean>
+  findPotentialParentTask: (taskId: string) => Promise<string | null>
 
   // Status label methods with legacy column naming for backwards compatibility
   createColumn: (name: string, color?: string, description?: string) => Promise<string>
@@ -133,6 +134,7 @@ export function useListView(providedProjectId?: string): UseListViewReturn {
     createTask: kanbanData.createTask,
     updateTask: kanbanData.updateTask,
     deleteTask: kanbanData.deleteTask,
+    duplicateTask: kanbanData.duplicateTask,
     moveTask: kanbanData.moveTask,
     
     // Subtask operations

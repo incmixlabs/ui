@@ -7,7 +7,6 @@ import {
   Flex,
   Text,
   Badge,
-  Avatar,
   Calendar,
   Popover,
   Button,
@@ -20,6 +19,7 @@ import {
   ArrowRight,
   Trash2,
   Copy,
+  Clipboard,
   Edit3,
   AlertCircle,
   Clock,
@@ -31,6 +31,7 @@ import { KanbanTask } from "../types" // Import KanbanTask type
 import { OverlappingAvatarGroup, type AssignedUser, type SelectableUser } from "../shared/overlapping-avatar-group"
 import { MOCK_MEMBERS } from "../constants/mock-members"
 import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
+import { useTaskCopyBuffer } from "../hooks/use-task-copy-buffer"
 
 interface TaskActionsMenuProps {
   task?: KanbanTask | TaskDataSchema
@@ -51,6 +52,8 @@ interface TaskActionsMenuProps {
   onUnindentTask?: (taskId: string) => Promise<void>
   canIndent?: boolean
   canUnindent?: boolean
+  // Copy/Paste operations
+  currentStatusId?: string // Current column ID for paste operations
   newTaskData?: { 
     priorityId?: string;
     startDate?: string;
@@ -82,6 +85,8 @@ export const TaskActionsMenu = ({
   onUnindentTask,
   canIndent = false,
   canUnindent = false,
+  // Copy/Paste props
+  currentStatusId,
   newTaskData,
   setNewTaskData,
   disabled = false,
@@ -91,6 +96,7 @@ export const TaskActionsMenu = ({
 }: TaskActionsMenuProps) => {
   // Get drawer open handler from hook
   const { handleDrawerOpen } = useKanbanDrawer()
+  const { copyTask, hasCopiedTask, copiedTask } = useTaskCopyBuffer()
   const [isDatePickerOpen, setIsDatePickerOpen] = useState<"start" | "end" | null>(null)
 
   // Get current values - either from existing task or new task data
@@ -98,7 +104,7 @@ export const TaskActionsMenu = ({
   const currentStartDate = task?.startDate || newTaskData?.startDate
   const currentEndDate = task?.endDate || newTaskData?.endDate
   const currentAssignedTo = task?.assignedTo || newTaskData?.assignedTo || []
-  const currentStatusId = task?.statusId || newTaskData?.statusId
+  const taskStatusId = task?.statusId || newTaskData?.statusId || currentStatusId
 
   // Priority helpers - updated for new schema with priorityId and labels
   const getPriorityInfo = (priorityId: string | undefined) => {
@@ -171,6 +177,38 @@ export const TaskActionsMenu = ({
     handleUpdateField("statusId", statusId)
   }, [handleUpdateField])
 
+  // Copy/Paste handlers
+  const handleCopyTask = useCallback(() => {
+    if (task && task.id) {
+      copyTask(task as TaskDataSchema)
+      // Show success feedback
+      console.log(`Task "${task.name || 'Untitled Task'}" copied to clipboard`)
+    }
+  }, [task, copyTask])
+
+  const handlePasteTask = useCallback(async () => {
+    if (!copiedTask || !onCreateTask || !currentStatusId) return
+
+    try {
+      // Create a new task based on the copied task data
+      const taskToPaste: Partial<TaskDataSchema> = {
+        ...copiedTask.task,
+        // Always create as a main task (not a subtask)
+        isSubtask: false,
+        parentTaskId: "",
+        // Update status to current column
+        statusId: currentStatusId,
+        // Add suffix to name to indicate it's a copy
+        name: `${copiedTask.task.name || 'Untitled Task'} (Copy)`,
+      }
+
+      await onCreateTask(taskToPaste)
+      console.log(`Task "${copiedTask.originalName}" pasted successfully`)
+    } catch (error) {
+      console.error('Failed to paste task:', error)
+    }
+  }, [copiedTask, onCreateTask, currentStatusId])
+
   const formatDate = (dateInput: string | number) => {
     return new Date(dateInput).toLocaleDateString("en-US", { 
       month: "short", 
@@ -237,6 +275,54 @@ export const TaskActionsMenu = ({
             })}
           </DropdownMenu.SubContent>
         </DropdownMenu.Sub>
+
+        {/* Move to Column Section - Updated for statusId */}
+        <DropdownMenu.Sub>
+          <DropdownMenu.SubTrigger>
+            <Flex align="center" gap="2">
+              <ArrowRight size={14} />
+              <Text>Status</Text>
+              {columns.map(col => {
+                const isCurrentColumn = col.id === currentStatusId
+                if (isCurrentColumn) {
+                  return (
+                    <Badge 
+                      key={col.id}
+                      style={{ backgroundColor: `${(col as any).color ? `${(col as any).color}20` : '#e0e0e020'}`, color: (col as any).color || '#808080' }}
+                      variant="soft"
+                      size="1"
+                      className="ml-auto"
+                    >
+                      {col.name}
+                    </Badge>
+                  )
+                }
+                return null
+              })}
+            </Flex>
+          </DropdownMenu.SubTrigger>
+          <DropdownMenu.SubContent>
+            {columns.map((column) => {
+              const isCurrentColumn = column.id === currentStatusId
+              return (
+                <DropdownMenu.Item
+                  key={column.id}
+                  onClick={() => handleMoveToColumn(column.id)}
+                  className={isCurrentColumn ? "bg-accent" : ""}
+                  disabled={isCurrentColumn}
+                >
+                  <Flex align="center" gap="2">
+                    <Box
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: (column as any).color || '#808080' }}
+                    />
+                    <Text>{column.name}</Text>
+                  </Flex>
+                </DropdownMenu.Item>
+              )
+            })}
+            </DropdownMenu.SubContent>
+          </DropdownMenu.Sub>
 
         {/* Dates Section */}
         <DropdownMenu.Sub>
@@ -346,54 +432,6 @@ export const TaskActionsMenu = ({
           </DropdownMenu.SubContent>
         </DropdownMenu.Sub>
 
-        {/* Move to Column Section - Updated for statusId */}
-        <DropdownMenu.Sub>
-          <DropdownMenu.SubTrigger>
-            <Flex align="center" gap="2">
-              <ArrowRight size={14} />
-              <Text>Status</Text>
-              {columns.map(col => {
-                const isCurrentColumn = col.id === currentStatusId
-                if (isCurrentColumn) {
-                  return (
-                    <Badge 
-                      key={col.id}
-                      style={{ backgroundColor: `${(col as any).color ? `${(col as any).color}20` : '#e0e0e020'}`, color: (col as any).color || '#808080' }}
-                      variant="soft"
-                      size="1"
-                      className="ml-auto"
-                    >
-                      {col.name}
-                    </Badge>
-                  )
-                }
-                return null
-              })}
-            </Flex>
-          </DropdownMenu.SubTrigger>
-          <DropdownMenu.SubContent>
-            {columns.map((column) => {
-              const isCurrentColumn = column.id === currentStatusId
-              return (
-                <DropdownMenu.Item
-                  key={column.id}
-                  onClick={() => handleMoveToColumn(column.id)}
-                  className={isCurrentColumn ? "bg-accent" : ""}
-                  disabled={isCurrentColumn}
-                >
-                  <Flex align="center" gap="2">
-                    <Box
-                      className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: (column as any).color || '#808080' }}
-                    />
-                    <Text>{column.name}</Text>
-                  </Flex>
-                </DropdownMenu.Item>
-              )
-            })}
-            </DropdownMenu.SubContent>
-          </DropdownMenu.Sub>
-
         {/* Separator for task actions */}
         {mode !== "new-task" && (
           <>
@@ -441,6 +479,39 @@ export const TaskActionsMenu = ({
               >
                 <Copy size={14} />
                 <Text>Duplicate</Text>
+              </DropdownMenu.Item>
+            )}
+
+            {/* Copy Task */}
+            {mode === "existing-task" && task && (
+              <DropdownMenu.Item 
+                onClick={handleCopyTask}
+                className="flex items-center gap-2"
+              >
+                <Copy size={14} />
+                <Text>Copy Task</Text>
+              </DropdownMenu.Item>
+            )}
+
+            {/* Paste Task */}
+            {mode === "existing-task" && onCreateTask && currentStatusId && (
+              <DropdownMenu.Item 
+                onClick={handlePasteTask}
+                disabled={!hasCopiedTask}
+                className="flex items-center gap-2"
+              >
+                <Clipboard size={14} />
+                {hasCopiedTask && copiedTask ? (
+                  <Text 
+                    title={`Paste "${copiedTask.originalName}"`}
+                  >
+                    Paste "{copiedTask.originalName.length > 20 ? 
+                      copiedTask.originalName.substring(0, 20) + '...' : 
+                      copiedTask.originalName}"
+                  </Text>
+                ) : (
+                  <Text>Paste Task</Text>
+                )}
               </DropdownMenu.Item>
             )}
 
