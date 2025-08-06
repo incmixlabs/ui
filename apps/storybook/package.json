@@ -5,14 +5,16 @@
   "scripts": {
     "dev": "storybook dev -p 6006 --no-open",
     "preview": "vite preview",
-    "build:storybook": "storybook build"
+    "build": "storybook build"
   },
   "dependencies": {
     "@incmix/store": "workspace: *",
     "@incmix/ui": "workspace: *",
     "@incmix/utils": "catalog:",
-    "lucide-react": "catalog:",
+    "@storybook/blocks": "^8.6.14",
     "@tanstack/react-query": "catalog:",
+    "find-up": "^6.3.0",
+    "lucide-react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:"
   },

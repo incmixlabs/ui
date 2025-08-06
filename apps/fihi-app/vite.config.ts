@@ -23,6 +23,43 @@ export default defineConfig(async () => ({
     chunkSizeWarningLimit: 4800,
     rollupOptions: {
       treeshake: true,
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            if (id.includes("lucide-react")) {
+              return "icons"
+            }
+            if (id.includes("recharts")) {
+              return "charts"
+            }
+            if (id.includes("zod")) {
+              return "validation"
+            }
+            if (id.includes("react") || id.includes("react-dom")) {
+              return "react-vendor"
+            }
+            if (id.includes("@tanstack/react-router")) {
+              return "router"
+            }
+            if (id.includes("@tanstack/react-query")) {
+              return "query"
+            }
+            if (id.includes("@sentry/react")) {
+              return "sentry"
+            }
+            if (id.includes("rxdb") || id.includes("rxjs")) {
+              return "rxdb"
+            }
+            if (id.includes("@radix-ui")) {
+              return "radix"
+            }
+            if (id.includes("motion") || id.includes("framer-motion")) {
+              return "animations"
+            }
+            return "vendor"
+          }
+        },
+      },
     },
   },
 
@@ -41,7 +78,7 @@ export default defineConfig(async () => ({
     bundlesize({ limits: [{ name: "**/*", limit: "4 mB" }] }),
     react(),
     tsconfigPaths(),
-    chunkSplitPlugin(),
+    // chunkSplitPlugin(),
     visualizer({ open: true }) as PluginOption,
     ValidateEnv({
       VITE_BFF_API_URL: Schema.string(),
