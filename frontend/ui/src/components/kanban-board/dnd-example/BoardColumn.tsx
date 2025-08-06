@@ -2,32 +2,58 @@ import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { useDndContext, type UniqueIdentifier } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { useMemo } from "react";
-import { Task, TaskCard } from "./TaskCard";
+import { TaskCard } from "./TaskCard";
 import { cva } from "class-variance-authority";
-import { Card,Button,ScrollArea, Icon} from "@incmix/ui";
-
-export interface Column {
-  id: UniqueIdentifier;
-  title: string;
-}
+import { Card, Button, ScrollArea, Icon } from "@incmix/ui";
+import type { KanbanColumn } from "../types";
+import { TaskDataSchema } from "@incmix/utils/schema";
 
 export type ColumnType = "Column";
 
 export interface ColumnDragData {
   type: ColumnType;
-  column: Column;
+  column: KanbanColumn;
 }
 
 interface BoardColumnProps {
-  column: Column;
-  tasks: Task[];
+  column: KanbanColumn;
+  priorityLabels?: Array<{ id: string; label: string; color?: string }>;
   isOverlay?: boolean;
+  onCreateTask: (
+    columnId: string,
+    taskData: Partial<TaskDataSchema>,
+  ) => Promise<void>;
+  onUpdateTask: (
+    taskId: string,
+    updates: Partial<TaskDataSchema>,
+  ) => Promise<void>;
+  onDeleteTask: (taskId: string) => Promise<void>;
+  onUpdateColumn: (
+    columnId: string,
+    updates: { name?: string; color?: string; description?: string },
+  ) => Promise<void>;
+  onDeleteColumn: (columnId: string) => Promise<void>;
+  onTaskOpen?: (taskId: string) => void;
 }
 
-export function DndBoardColumn({ column, tasks, isOverlay }: BoardColumnProps) {
+export function DndBoardColumn({
+  column,
+  priorityLabels,
+  onCreateTask,
+  onUpdateTask,
+  onDeleteTask,
+  onUpdateColumn,
+  onDeleteColumn,
+  onTaskOpen,
+  isOverlay,
+}: BoardColumnProps) {
+  const sortedTasks = useMemo(() => {
+    return [...column.tasks].sort((a, b) => (a.taskOrder || 0) - (b.taskOrder || 0));
+  }, [column.tasks]);
+
   const tasksIds = useMemo(() => {
-    return tasks.map((task) => task.id);
-  }, [tasks]);
+    return sortedTasks.map((task) => task.id);
+  }, [sortedTasks]);
 
   const {
     setNodeRef,
@@ -43,7 +69,7 @@ export function DndBoardColumn({ column, tasks, isOverlay }: BoardColumnProps) {
       column,
     } satisfies ColumnDragData,
     attributes: {
-      roleDescription: `Column: ${column.title}`,
+      roleDescription: `Column: ${column.name}`,
     },
   });
 
@@ -62,7 +88,7 @@ export function DndBoardColumn({ column, tasks, isOverlay }: BoardColumnProps) {
           overlay: "ring-2 ring-primary",
         },
       },
-    }
+    },
   );
 
   return (
@@ -78,18 +104,23 @@ export function DndBoardColumn({ column, tasks, isOverlay }: BoardColumnProps) {
           variant={"ghost"}
           {...attributes}
           {...listeners}
-          className=" p-1 text-primary/50 -ml-2 h-auto cursor-grab relative"
+          className="p-1 text-primary/50 -ml-2 h-auto cursor-grab relative"
         >
-          <span className="sr-only">{`Move column: ${column.title}`}</span>
+          <span className="sr-only">{`Move column: ${column.name}`}</span>
           <Icon name="GripVertical" />
         </Button>
-        <span className="ml-auto"> {column.title}</span>
+        <span className="ml-auto">{column.name}</span>
       </Card.Header>
+
       <ScrollArea>
         <Card.Content className="flex flex-grow flex-col gap-2 p-2">
           <SortableContext items={tasksIds}>
-            {tasks.map((task) => (
-              <TaskCard key={task.id} task={task} />
+            {sortedTasks.map((task) => (
+              <TaskCard 
+                key={task.id} 
+                task={task} 
+                onTaskOpen={onTaskOpen}
+              />
             ))}
           </SortableContext>
         </Card.Content>

@@ -5,7 +5,7 @@ import { TaskDragData } from "./TaskCard";
 type DraggableData = ColumnDragData | TaskDragData;
 
 export function hasDraggableData<T extends Active | Over>(
-  entry: T | null | undefined
+  entry: T | null | undefined,
 ): entry is T & {
   data: DataRef<DraggableData>;
 } {

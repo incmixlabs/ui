@@ -358,7 +358,7 @@ const QuickTaskForm = memo(function QuickTaskForm({
   );
 });
 
-const TaskList = memo(function TaskList({
+export const TaskList = memo(function TaskList({
   column,
   priorityLabels,
   onUpdateTask,
@@ -748,11 +748,6 @@ export const BoardColumn = memo(function BoardColumn({
             ) : (
               <Flex justify="between" align="center">
                 <Flex align="center" gap="2" className="flex-1 min-w-0">
-                  {/* <GripVertical size={16} className="text-gray-400 flex-shrink-0" /> */}
-                  {/* <div
-                    className="w-3 h-3 rounded-full flex-shrink-0"
-                    style={{ backgroundColor: column.color }}
-                  /> */}
                   <Heading
                     size="5"
                     as="h3"
