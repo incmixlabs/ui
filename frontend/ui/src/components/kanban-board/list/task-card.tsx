@@ -560,33 +560,55 @@ export const ListTaskCard = memo(function ListTaskCard({
           
           const sourceCard = sourceData.card as KanbanTask;
           
-          // If the current card (drop target) is a subtask
+          // Don't allow dropping onto itself
+          if (sourceCard.id === card.id) return false;
+          
+          // CASE 1: If the current card (drop target) is a subtask
           if (card.isSubtask) {
-            // Only allow dropping if source is also a subtask with the same parent
-            return Boolean(sourceCard.isSubtask && sourceCard.parentTaskId === card.parentTaskId);
+            // Allow dropping other subtasks with the same parent to maintain hierarchy
+            if (sourceCard.isSubtask && sourceCard.parentTaskId === card.parentTaskId) {
+              return true;
+            }
+            
+            // For other cases with subtasks, be more restrictive to maintain hierarchy
+            return false;
           }
           
-          // If we're dropping near a parent task that has expanded subtasks
-          // We need to check if we're in the subtask zone to prevent dropping regular tasks as subtasks
-          if (hasChildTasks && isExpanded) {
-            // For parent tasks, allow drops only for other parent tasks or subtasks already belonging to this parent
-            return Boolean(!sourceCard.isSubtask || sourceCard.parentTaskId === card.id);
+          // CASE 2: If this is a parent task with subtasks
+          // We need to be more permissive here to allow tasks to be dropped above parent tasks
+          if (hasChildTasks) {
+            // If dragging a subtask
+            if (sourceCard.isSubtask) {
+              // Only allow if it's already a subtask of this parent
+              return sourceCard.parentTaskId === card.id;
+            } else {
+              // If dragging a regular task, allow it
+              // This enables dropping tasks above parent tasks
+              return true;
+            }
           }
           
-          // In all other cases, allow the drop
+          // In all other cases (normal tasks without subtasks), allow drops
           return true;
         },
         getData: ({ element, input }) => {
           // Get the basic data for this card as a drop target
           const data = getCardDropTargetData({ card, statusId });
           
-          // For parent tasks with subtasks, we need to ensure they can be dropped above other tasks
-          // Enhance the drop target detection for better accuracy with specific settings for upward movement
-          return attachClosestEdge(data, {
+          // For tasks with subtasks we need a different approach to edge detection
+          // Use TypeScript casting to enhance the data with extra properties
+          const enhancedData = { 
+            ...data,
+            // Use a special marker in the card data itself rather than modifying the detection
+            // This allows us to use the marker later in the onDrag/onDrop handlers
+            __hasChildTasks: hasChildTasks 
+          } as any; // Type assertion to avoid TypeScript errors
+          
+          // Configure a larger drop target for the top edge to make it easier to drop above tasks with subtasks
+          // The 'allowedEdges' is left as default to get natural detection behavior
+          return attachClosestEdge(enhancedData, {
             element,
             input,
-            // Explicitly allow both top and bottom edges with biased hit detection
-            // This improves the ability to drop tasks above existing tasks
             allowedEdges: ["top", "bottom"],
           });
         },
@@ -594,27 +616,44 @@ export const ListTaskCard = memo(function ListTaskCard({
           if (!isCardData(source.data)) return;
           if (source.data.card.id === card.id) return;
           
-          // Get edge information from the source data
-          const dataWithEdge = source.data as TCardDataWithEdge;
-          const sourceCard = source.data.card as KanbanTask;
+          // Get edge information from the source data with stronger typing
+          const sourceData = source.data;
+          const sourceCard = sourceData.card as KanbanTask;
           
-          // Always ensure a valid edge is used, defaulting to bottom if not specified
-          // For tasks with subtasks, we want to ensure they can be dropped in all positions
-          // This improves the drag-and-drop experience for hierarchical tasks
-          const closestEdge = dataWithEdge.closestEdge || "bottom";
-          
-          // Special handling for parent tasks with subtasks to ensure proper edge detection
-          // We need to know if the dragged task has subtasks to adjust the detection area
-          const hasSubtasks = !sourceCard.isSubtask && 
+          // Determine if the source card is a parent task with subtasks
+          const sourceHasSubtasks = !sourceCard.isSubtask && 
                             columns.some(col => 
                               col.tasks.some((t: KanbanTask) => 
                                 t.parentTaskId === sourceCard.id
                               )
                             );
-                            
+          
+          // Extract edge information with proper TypeScript typing
+          // Define allowed edge types to match the Edge type from the drag-and-drop library
+          type Edge = "top" | "right" | "bottom" | "left";
+          
+          // Initialize with a valid Edge type
+          let closestEdge: Edge = "bottom";
+          
+          // If the source data has edge information, extract it with proper typing
+          if ('closestEdge' in sourceData) {
+            const extractedEdge = (sourceData as any).closestEdge;
+            // Only assign if it's a valid Edge value
+            if (extractedEdge === "top" || extractedEdge === "right" || 
+                extractedEdge === "bottom" || extractedEdge === "left") {
+              closestEdge = extractedEdge;
+            }
+          }
+          
+          // If this is a parent task with subtasks, favor "top" edge to make dropping above easier
+          // This is the key improvement - for parent tasks with subtasks, make it easier to drop above
+          if (hasChildTasks && !sourceCard.isSubtask) {
+            closestEdge = "top"; // Now properly typed
+          }
+          
           setState({
             type: "is-over",
-            dragging: source.data.rect,
+            dragging: sourceData.rect,
             closestEdge,
           });
         },
@@ -623,20 +662,45 @@ export const ListTaskCard = memo(function ListTaskCard({
           // Check id instead of taskId for the new schema
           if (source.data.card.id === card.id) return;
           
-          // Extract the closest edge and ensure it's valid
-          const closestEdge = extractClosestEdge(self.data);
-          if (!closestEdge) return;
+          // Define Edge type for better TypeScript compliance
+          type Edge = "top" | "right" | "bottom" | "left";
+          
+          // Extract the closest edge and ensure it's valid with proper typing
+          let closestEdge: Edge | null = null;
+          try {
+            // Extract edge info from self data if available
+            const extractedEdge = extractClosestEdge(self.data);
+            if (extractedEdge === "top" || extractedEdge === "right" || 
+                extractedEdge === "bottom" || extractedEdge === "left") {
+              closestEdge = extractedEdge;
+            }
+          } catch (err) {
+            // Default to bottom if extraction fails
+            closestEdge = "bottom";
+          }
+          
+          // If no valid edge was detected, use a default
+          if (!closestEdge) {
+            closestEdge = "bottom";
+          }
           
           // Get the source card with proper typing
           const sourceCard = source.data.card as KanbanTask;
           
-          // Detect if the dragged task has subtasks to provide better drag detection
-          const hasSubtasks = !sourceCard.isSubtask && 
+          // Detect if the dragged task has subtasks
+          const sourceHasSubtasks = !sourceCard.isSubtask && 
                             columns.some(col => 
                               col.tasks.some((t: KanbanTask) => 
                                 t.parentTaskId === sourceCard.id
                               )
                             );
+          
+          // Enhanced edge detection for parent tasks with subtasks
+          // Make it easier to drop tasks above parent tasks with subtasks
+          if (hasChildTasks && !sourceCard.isSubtask) {
+            // Bias toward top edge for better positioning above parent tasks
+            closestEdge = "top";
+          }
           
           // Build the proposed state with additional information
           const proposed: TCardState = {
