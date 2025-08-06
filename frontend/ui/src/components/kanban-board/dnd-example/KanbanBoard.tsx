@@ -60,8 +60,7 @@ export function DndKanbanBoard({
   
   const isDraggingRef = useRef(false);
 
-  // @ts-ignore
-  const dragEndTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const dragEndTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
 
@@ -266,13 +265,13 @@ export function DndKanbanBoard({
             )
           );
 
-          // Persist the reordering
           try {
             for (let i = 0; i < reorderedTasks.length; i++) {
               await onUpdateTask(reorderedTasks[i].id, { taskOrder: i });
             }
           } catch (error) {
-            console.error("Failed to update task order:", error);
+            // Revert the optimistic update
+            setColumns(columnsData);
           }
         }
       } else {

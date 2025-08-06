@@ -29,7 +29,7 @@ export function TaskCard({ task, isOverlay }: TaskCardProps) {
     transition,
     isDragging,
   } = useSortable({
-    id: task?.id as UniqueIdentifier,
+    id: task?.id || `task-${Math.random()}` as UniqueIdentifier,
     data: {
       type: "Task",
       task,
