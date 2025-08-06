@@ -17,7 +17,7 @@ export interface ColumnDragData {
 
 interface BoardColumnProps {
   column: KanbanColumn;
-  priorityLabels?: any[];
+  priorityLabels?: Array<{ id: string; label: string; color?: string }>;
   isOverlay?: boolean;
   onCreateTask: (
     columnId: string,
