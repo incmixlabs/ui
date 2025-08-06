@@ -327,21 +327,85 @@ export const ListTaskCard = memo(function ListTaskCard({
   
   // Kanban data is now accessed above
   
+  // States for storing async validation results
+  const [canIndent, setCanIndent] = useState<boolean>(false);
+  const [canUnindent, setCanUnindent] = useState<boolean>(false);
+  const [potentialParentId, setPotentialParentId] = useState<string | null>(null);
+  
+  // Use effects to update the validation states when dependencies change
+  useEffect(() => {
+    let isMounted = true;
+    
+    const checkCanIndent = async () => {
+      if (!card.id) return;
+      
+      try {
+        const result = await kanbanData.canTaskBeIndented(card.id);
+        if (isMounted) {
+          console.log(`Task ${card.id} canIndent:`, result, 'isSubtask:', card.isSubtask, 'parentTaskId:', card.parentTaskId);
+          setCanIndent(result);
+        }
+      } catch (error) {
+        console.error(`Error checking if task ${card.id} can be indented:`, error);
+        if (isMounted) setCanIndent(false);
+      }
+    };
+    
+    checkCanIndent();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [card.id, card.isSubtask, card.parentTaskId, kanbanData]);
+  
+  useEffect(() => {
+    let isMounted = true;
+    
+    const checkCanUnindent = async () => {
+      if (!card.id) return;
+      
+      try {
+        const result = await kanbanData.canTaskBeUnindented(card.id);
+        if (isMounted) {
+          console.log(`Task ${card.id} canUnindent:`, result, 'isSubtask:', card.isSubtask, 'parentTaskId:', card.parentTaskId);
+          setCanUnindent(result);
+        }
+      } catch (error) {
+        console.error(`Error checking if task ${card.id} can be unindented:`, error);
+        if (isMounted) setCanUnindent(false);
+      }
+    };
+    
+    checkCanUnindent();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [card.id, card.isSubtask, card.parentTaskId, kanbanData]);
+  
   // Prepare handlers for indent/unindent operations
   const handleIndentTask = useCallback(async (taskId: string) => {
-    const parentTaskId = kanbanData.findPotentialParentTask(taskId);
-    if (parentTaskId) {
-      await kanbanData.convertTaskToSubtask(taskId, parentTaskId);
+    try {
+      // Find the potential parent ID if not already fetched
+      const parentId = potentialParentId || await kanbanData.findPotentialParentTask(taskId);
+      
+      if (parentId) {
+        await kanbanData.convertTaskToSubtask(taskId, parentId);
+      } else {
+        console.error(`No potential parent found for task ${taskId}`);
+      }
+    } catch (error) {
+      console.error(`Error indenting task ${taskId}:`, error);
     }
-  }, [kanbanData]);
+  }, [kanbanData, potentialParentId]);
   
   const handleUnindentTask = useCallback(async (taskId: string) => {
-    await kanbanData.convertSubtaskToTask(taskId);
+    try {
+      await kanbanData.convertSubtaskToTask(taskId);
+    } catch (error) {
+      console.error(`Error unindenting task ${taskId}:`, error);
+    }
   }, [kanbanData]);
-  
-  // Check if the task can be indented or unindented
-  const canIndent = useMemo(() => card.id ? kanbanData.canTaskBeIndented(card.id) : false, [card.id, kanbanData]);
-  const canUnindent = useMemo(() => card.id ? kanbanData.canTaskBeUnindented(card.id) : false, [card.id, kanbanData]);
 
   // Opens the delete confirmation modal
   const handleDeleteTask = useCallback(async () => {
