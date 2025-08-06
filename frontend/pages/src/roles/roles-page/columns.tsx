@@ -101,7 +101,10 @@ export const getColumns = (
             </DropdownMenu.Root>
           </Flex>
           <Text size="2" className="capitalize">
-            {role.name}
+            {role.name
+              .split("_")
+              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(" ")}
           </Text>
         </Flex>
       )

@@ -50,7 +50,7 @@ const RolesPage = () => {
 
   if (isLoading) {
     return (
-      <DashboardLayout breadcrumbItems={[{ label: "Roles", url: "/roles" }]}>
+      <DashboardLayout>
         <Flex
           className="h-[calc((100vh-var(--navbar-height))-3rem)]"
           align="center"
@@ -64,7 +64,7 @@ const RolesPage = () => {
 
   if (isError) {
     return (
-      <DashboardLayout breadcrumbItems={[{ label: "Roles", url: "/roles" }]}>
+      <DashboardLayout>
         <Callout.Root variant="surface" color="red">
           <Callout.Icon>
             <AlertCircleIcon className="size-4" />
@@ -76,7 +76,7 @@ const RolesPage = () => {
   }
 
   return (
-    <DashboardLayout breadcrumbItems={[{ label: "Roles", url: "/roles" }]}>
+    <DashboardLayout>
       <permissionsContext.Provider
         value={{
           changes,

@@ -11,6 +11,9 @@ import AutoForm from "@components/auto-form"
 import type { Option } from "@components/multiple-selector/multiple-selector"
 import { useProjectMutation } from "../hooks/use-project-mutation"
 import { Icon } from "@incmix/ui"
+import { ORG_API_URL } from "../../../utils/constants"
+import { useQuery } from "@tanstack/react-query"
+import { GetMembersResponse } from "@incmix/utils/types"
 
 /**
  * Props for the ReusableAddProject component
@@ -115,6 +118,26 @@ export function ReusableAddProject({
 
   const { selectedOrganisation } = useOrganizationStore()
 
+  const { data } = useQuery({
+    queryKey: ["organizationMembers", selectedOrganisation?.handle],
+    queryFn: async () => {
+      const res = await fetch(`${ORG_API_URL}/${selectedOrganisation?.handle}/members`, {
+        credentials: "include",
+      })
+      const data = await res.json() as GetMembersResponse
+      return data.map((member) => ({
+        id: member.userId,
+        label: member.fullName,
+        value: member.userId,
+        name: member.fullName,
+        avatar: member.avatar,
+        position: "member",
+      })) as Option[]
+    },
+    initialData: [],
+    enabled: !!selectedOrganisation?.handle,
+    retry: false,
+  })
   const { mutateAsync: saveProjectToBackend } = useProjectMutation();
 
   const handleSubmit = async (data: Record<string, any>) => {
@@ -126,6 +149,7 @@ export function ReusableAddProject({
 
       // Process the form data
       const uniqueId = nanoid()
+      console.log(data.members)
 
       // Create a Project object with required fields
       const newProject = {
@@ -144,7 +168,11 @@ export function ReusableAddProject({
         // Transform members to match expected format
         members: data.members?.map((option: Option) => ({
           label: option.label || option.value || "", // Fallback to value if label is missing
-          value: option.value || ""
+          value: option.value || "",
+          id: option.id,
+          name: option.name,
+          avatar: option.avatar,
+          position: option.position,
         })) || [],
         fileData: data.files?.[0] || null,
         orgId: selectedOrganisation.id
@@ -256,7 +284,18 @@ export function ReusableAddProject({
             onSubmit={handleSubmit}
             onValuesChange={handleValuesChange}
             values={formData}
-            fieldConfig={projectFormSchema.fieldConfig}
+            // @ts-expect-error - TODO: fix this
+            fieldConfig={{...projectFormSchema.fieldConfig,
+              members: {
+              description: "Members",
+              fieldType: "multipleSelector",
+              inputProps: {
+                defaultOptions: data,
+                placeholder: "Select members",
+                defaultColor: "gray",
+                className: "border-1 dark:bg-gray-1",
+              },
+            },}}
           >
             {/* AI Generated Acceptance Criteria Display */}
             {formData.acceptanceCriteria && formData.acceptanceCriteria.length > 0 && (

@@ -3,11 +3,7 @@ import { useTranslation } from "react-i18next"
 
 import { I18n } from "@incmix/pages/i18n"
 import { useRateLimitStore } from "@incmix/store"
-import {
-  AUTH_API_URL,
-  RATELIMIT_API_URL,
-  USERS_API_URL,
-} from "@incmix/ui/constants"
+import { AUTH_API_URL, USERS_API_URL } from "@incmix/ui/constants"
 import { isTauri } from "@incmix/ui/tauri"
 import type {
   AuthUserSession,
@@ -463,29 +459,29 @@ const handleGoogleCallback = async (
   }
 }
 
-export const useRateLimits = () => {
-  const { data: rateLimits } = useQuery<{
-    [key: string]: { time: number; limit: number }
-  }>({
-    queryKey: ["rateLimits"],
-    queryFn: async () => {
-      const response = await fetch(`${RATELIMIT_API_URL}`, {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          "accept-language": I18n.language ?? "en",
-        },
-      })
-      if (!response.ok) throw new Error("Failed to fetch rate limits")
-      return response.json()
-    },
-  })
+// export const useRateLimits = () => {
+//   const { data: rateLimits } = useQuery<{
+//     [key: string]: { time: number; limit: number }
+//   }>({
+//     queryKey: ["rateLimits"],
+//     queryFn: async () => {
+//       const response = await fetch(`${RATELIMIT_API_URL}`, {
+//         method: "GET",
+//         credentials: "include",
+//         headers: {
+//           "accept-language": I18n.language ?? "en",
+//         },
+//       })
+//       if (!response.ok) throw new Error("Failed to fetch rate limits")
+//       return response.json()
+//     },
+//   })
 
-  const { setRateLimits } = useRateLimitStore()
+//   const { setRateLimits } = useRateLimitStore()
 
-  useEffect(() => {
-    if (rateLimits) setRateLimits(rateLimits)
-  }, [rateLimits, setRateLimits])
+//   useEffect(() => {
+//     if (rateLimits) setRateLimits(rateLimits)
+//   }, [rateLimits, setRateLimits])
 
-  return rateLimits
-}
+//   return rateLimits
+// }
