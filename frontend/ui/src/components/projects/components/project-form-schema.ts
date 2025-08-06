@@ -57,6 +57,7 @@ export const projectFormSchema: ProjectFormSchema = {
             label: { type: "string" },
             value: { type: "string" },
           },
+
         },
         title: "Members",
       },

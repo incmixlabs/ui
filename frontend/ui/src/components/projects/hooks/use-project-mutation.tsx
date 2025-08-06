@@ -33,10 +33,10 @@ export function useProjectMutation() {
         formData.append("logoUrl", project.logo);
       }
       // members as comma-separated string
+      console.log(project.members)
       if (Array.isArray(project.members)) {
         formData.append("members", JSON.stringify(project.members.map((member) => ({
-          id: member.id,
-          role: member.position,
+          id: member.value,
         }))));
       }
       // ... rest of the FormData construction logic
