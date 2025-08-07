@@ -52,7 +52,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "sideEffects": ["*.css"],
+  "sideEffects": [
+    "*.css"
+  ],
   "license": "MIT",
   "files": [
     "src/**",
@@ -72,9 +74,25 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@hookform/resolvers": "catalog:",
     "@incmix/radix-ui": "workspace: *",
     "@incmix/shadcn": "workspace: *",
-    "classnames": "^2.3.2"
+    "@radix-ui/react-accordion": "catalog:",
+    "@radix-ui/react-dialog": "catalog:",
+    "@radix-ui/react-label": "catalog:",
+    "@radix-ui/react-menubar": "catalog:",
+    "@radix-ui/react-navigation-menu": "catalog:",
+    "@radix-ui/react-slot": "catalog:",
+    "@radix-ui/react-tabs": "catalog:",
+    "@radix-ui/react-toggle": "catalog:",
+    "@radix-ui/react-toggle-group": "catalog:",
+    "classnames": "^2.3.2",
+    "cmdk": "catalog:",
+    "date-fns": "catalog:",
+    "input-otp": "catalog:",
+    "react-day-picker": "^9.8.1",
+    "react-hook-form": "catalog:",
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "@types/react": "catalog:",
@@ -91,8 +109,8 @@
     }
   },
   "devDependencies": {
-    "@incmix/config": "workspace: *",
     "@eslint/js": "catalog:",
+    "@incmix/config": "workspace: *",
     "@storybook/addon-docs": "catalog:",
     "@storybook/addon-onboarding": "catalog:",
     "@storybook/react-vite": "catalog:",
