@@ -1,0 +1,190 @@
+{
+  "name": "@incmix/radix-ui",
+  "version": "3.2.3",
+  "type": "commonjs",
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/cjs/index.d.ts",
+  "module": "./dist/esm/index.js",
+  "style": "./styles.css",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    },
+    "./components/*": {
+      "require": {
+        "types": "./dist/cjs/components/*.d.ts",
+        "default": "./dist/cjs/components/*.js"
+      },
+      "import": {
+        "types": "./dist/esm/components/*.d.ts",
+        "default": "./dist/esm/components/*.js"
+      }
+    },
+    "./helpers": {
+      "require": {
+        "types": "./dist/cjs/helpers/index.d.ts",
+        "default": "./dist/cjs/helpers/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/helpers/index.d.ts",
+        "default": "./dist/esm/helpers/index.js"
+      }
+    },
+    "./props": {
+      "require": {
+        "types": "./dist/cjs/props/index.d.ts",
+        "default": "./dist/cjs/props/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/props/index.d.ts",
+        "default": "./dist/esm/props/index.js"
+      }
+    },
+    "./*": "./*"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": ["*.css"],
+  "license": "MIT",
+  "files": [
+    "src/**",
+    "dist/**",
+    "tokens/**",
+    "layout/**",
+    "*.css",
+    "postcss-breakpoints.cjs",
+    "postcss-whitespace.cjs"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && pnpm build:js && pnpm build:css",
+    "build:js": "pnpm build:js:cjs && pnpm build:js:esm && pnpm build:js:cjs:types && pnpm build:js:esm:types",
+    "build:js:cjs": "node scripts/esbuild-cjs.js",
+    "build:js:cjs:types": "tsc --outdir dist/cjs",
+    "build:js:esm": "node scripts/esbuild-esm.js",
+    "build:js:esm:types": "tsc --outdir dist/esm",
+    "build:css": "pnpm build:css:index && pnpm build:css:tokens && pnpm build:css:components && pnpm build:css:utilities && pnpm build:css:layout",
+    "build:css:index": "postcss src/styles/index.css -o styles.css",
+    "build:css:components": "postcss src/components/index.css -o components.css",
+    "build:css:utilities": "postcss src/styles/utilities/index.css -o utilities.css",
+    "build:css:tokens": "pnpm build:css:tokens:index && pnpm build:css:tokens:base && pnpm build:css:tokens:colors",
+    "build:css:tokens:index": "postcss src/styles/tokens/index.css -o tokens.css",
+    "build:css:tokens:base": "postcss src/styles/tokens/base.css -o tokens/base.css",
+    "build:css:tokens:colors": "postcss src/styles/tokens/colors/*.css --dir tokens/colors",
+    "build:css:layout": "pnpm build:css:layout:index && pnpm build:css:layout:tokens && pnpm build:css:layout:components && pnpm build:css:layout:utilities",
+    "build:css:layout:index": "postcss src/styles/layout.css -o layout.css",
+    "build:css:layout:tokens": "postcss src/styles/tokens/layout.css -o layout/tokens.css",
+    "build:css:layout:components": "postcss src/components/layout.css -o layout/components.css",
+    "build:css:layout:utilities": "postcss src/styles/utilities/layout.css -o layout/utilities.css",
+    "dev": "pnpm dev:js & pnpm dev:css",
+    "dev:js": "pnpm dev:js:cjs & pnpm dev:js:esm & pnpm dev:js:cjs:types & pnpm dev:js:esm:types",
+    "dev:js:cjs": "node scripts/esbuild-cjs.js watch=true",
+    "dev:js:cjs:types": "tsc --watch --incremental --outdir dist/cjs",
+    "dev:js:esm": "node scripts/esbuild-esm.js watch=true",
+    "dev:js:esm:types": "tsc --watch --incremental --outdir dist/esm >/dev/null",
+    "dev:css": "postcss src/styles/index.css -o styles.css --watch",
+    "lint": "pnpm lint:js && pnpm lint:css && pnpm lint:ts",
+    "lint:fix": "pnpm lint:js:fix && pnpm lint:css:fix",
+    "lint:js": "eslint \"src/**/*.ts*\" --ignore-pattern \"src/stories/**\"",
+    "lint:js:fix": "eslint \"src/**/*.ts*\" --fix --ignore-pattern \"src/stories/**\"",
+    "lint:ts": "tsc --noEmit",
+    "lint:css": "stylelint \"src/**/*.css\" --ignore-pattern \"src/stories/**\"",
+    "lint:css:fix": "stylelint \"src/**/*.css\" --fix --ignore-pattern \"src/stories/**\"",
+    "clean": "rm -rf .turbo node_modules dist tokens layout *.css",
+    "prepublishOnly": "pnpm lint",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@radix-ui/colors": "catalog:",
+    "@radix-ui/react-accessible-icon": "catalog:",
+    "@radix-ui/react-alert-dialog": "catalog:",
+    "@radix-ui/react-aspect-ratio": "catalog:",
+    "@radix-ui/react-avatar": "catalog:",
+    "@radix-ui/react-checkbox": "catalog:",
+    "@radix-ui/react-collection": "catalog:",
+    "@radix-ui/react-compose-refs": "catalog:",
+    "@radix-ui/react-context": "catalog:",
+    "@radix-ui/react-context-menu": "catalog:",
+    "@radix-ui/react-dialog": "catalog:",
+    "@radix-ui/react-direction": "catalog:",
+    "@radix-ui/react-dropdown-menu": "catalog:",
+    "@radix-ui/react-hover-card": "catalog:",
+    "@radix-ui/react-navigation-menu": "catalog:",
+    "@radix-ui/react-popover": "catalog:",
+    "@radix-ui/react-portal": "catalog:",
+    "@radix-ui/react-primitive": "catalog:",
+    "@radix-ui/react-progress": "catalog:",
+    "@radix-ui/react-radio-group": "catalog:",
+    "@radix-ui/react-roving-focus": "catalog:",
+    "@radix-ui/react-scroll-area": "catalog:",
+    "@radix-ui/react-select": "catalog:",
+    "@radix-ui/react-slider": "catalog:",
+    "@radix-ui/react-slot": "catalog:",
+    "@radix-ui/react-switch": "catalog:",
+    "@radix-ui/react-tabs": "catalog:",
+    "@radix-ui/react-toggle-group": "catalog:",
+    "@radix-ui/react-tooltip": "catalog:",
+    "@radix-ui/react-use-controllable-state": "catalog:",
+    "@radix-ui/react-visually-hidden": "catalog:",
+    "classnames": "catalog:",
+    "react-remove-scroll-bar": "catalog:"
+  },
+  "peerDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "@types/react": {
+      "optional": true
+    },
+    "@types/react-dom": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "catalog:",
+    "@storybook/addon-docs": "catalog:",
+    "@storybook/addon-onboarding": "catalog:",
+    "@storybook/react-vite": "catalog:",
+    "@types/node": "catalog:",
+    "autoprefixer": "catalog:",
+    "esbuild": "catalog:",
+    "eslint": "catalog:",
+    "eslint-plugin-jsx-a11y": "catalog:",
+    "eslint-plugin-react": "catalog:",
+    "eslint-plugin-react-hooks": "catalog:",
+    "eslint-plugin-storybook": "catalog:",
+    "globals": "catalog:",
+    "postcss": "catalog:",
+    "postcss-cli": "catalog:",
+    "postcss-combine-duplicated-selectors": "catalog:",
+    "postcss-custom-media": "catalog:",
+    "postcss-discard-empty": "catalog:",
+    "postcss-import": "catalog:",
+    "postcss-nesting": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "storybook": "catalog:",
+    "stylelint": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
+  },
+  "homepage": "https://radix-ui.com/themes",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/incmix/ui-base.git"
+  },
+  "bugs": {
+    "url": "https://github.com/incmix/ui-base/issues"
+  }
+}

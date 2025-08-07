@@ -10,11 +10,11 @@
     "ignore": [
       "node_modules",
       "apps/storybook",
-      "apps/storybook2",
       "frontend/ui/src",
-      "frontend/ui2/src/demos",
-      "frontend/ui2/src/lib",
-      "frontend/pages2",
+      "frontend/radix-ui",
+      "frontend/ui-base/src/*stories*",
+      "frontend/ui-base/src/stories",
+      "frontend/shadcn/src/*stories*",
       "dist",
       ".next",
       ".astro",
@@ -22,8 +22,7 @@
       "storybook-static",
       ".vscode",
       "*/routeTree.gen.ts",
-      "vite-env.d.ts",
-      "frontend/ui/src/icons"
+      "vite-env.d.ts"
     ]
   },
   "formatter": {

@@ -17,12 +17,12 @@
     "typecheck": "turbo typecheck"
   },
   "pnpm": {
-    "neverBuiltDependencies": ["rxdb-premium"]
+    "neverBuiltDependencies": ["rxdb-premium", "secp256k1"]
   },
   "engines": {
     "node": ">=22.13.0"
   },
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@10.14.0",
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@commitlint/cli": "19.6.1",

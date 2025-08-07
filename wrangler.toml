@@ -1,0 +1,15 @@
+name = "incmix-ui"
+compatibility_date = "2025-01-07"
+
+[build]
+command = "pnpm build:fe"
+cwd = "."
+
+[env.production]
+name = "incmix-ui"
+
+[env.preview]
+name = "incmix-ui-preview"
+
+[site]
+bucket = "apps/fihi-app/dist"

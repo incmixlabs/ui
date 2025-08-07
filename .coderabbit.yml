@@ -1,0 +1,8 @@
+ignore:
+  - "**/*.stories.*"
+  - "**/*.test.*"
+  - "**/*.spec.*"
+  - "**/__tests__/**"
+  - "**/tests/**"
+  - "**/__stories__/**"
+  - "**/stories/**"
