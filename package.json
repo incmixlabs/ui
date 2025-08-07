@@ -17,7 +17,7 @@
     "typecheck": "turbo typecheck"
   },
   "pnpm": {
-    "neverBuiltDependencies": ["rxdb-premium"]
+    "neverBuiltDependencies": ["rxdb-premium", "secp256k1"]
   },
   "engines": {
     "node": ">=22.13.0"
