@@ -192,7 +192,7 @@ const QuickTaskForm = memo(function QuickTaskForm({
         setIsSubmitting(false);
       }
     },
-    [taskName, description, onCreateTask, columnId, onCancel],
+    [taskName, description, onCreateTask, columnId, onCancel, priorityLabels, checklist, acceptanceCriteria],
   );
 
   const handleKeyDown = useCallback(

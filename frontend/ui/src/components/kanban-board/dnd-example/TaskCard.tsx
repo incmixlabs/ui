@@ -22,6 +22,7 @@ import {
 } from "../priority-config";
 import { useAppearanceStore } from "@incmix/store";
 import { useCallback, useState } from "react";
+import { nanoid } from "nanoid";
 
 interface TaskCardProps {
   task: KanbanTask;
@@ -67,7 +68,7 @@ export function TaskCard({
     transition,
     isDragging,
   } = useSortable({
-    id: task?.id || (`task-${Math.random()}` as UniqueIdentifier),
+    id: task?.id || (`task-${nanoid()}` as UniqueIdentifier),
     data: {
       type: "Task",
       task,
@@ -467,7 +468,7 @@ export function TaskCard({
                 )}
                 <IconButton className="flex items-center gap-1 bg-transparent text-gray-700 dark:text-gray-200">
                   <Icon name="MessageSquareText" />
-                  <Text>5</Text>
+                  <Text>{task.comments?.length || 0}</Text>
                 </IconButton>
               </Flex>
               <Flex align={"center"} className="gap-2">
