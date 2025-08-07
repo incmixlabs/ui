@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "storybook dev -p 6006 --no-open",
     "preview": "vite preview",
-    "build": "storybook build"
+    "build": "storybook build",
+    "build:storybook": "storybook build"
   },
   "dependencies": {
     "@incmix/store": "workspace: *",
