@@ -926,13 +926,13 @@ export function useProjectData(
       if (!taskId) {
         throw new Error("Task ID is required")
       }
-        
+
       if (!projectId) {
         throw new Error("Project ID is required")
       }
 
       // Find the original task
-      const originalTask = data.tasks.find(t => t.id === taskId)
+      const originalTask = data.tasks.find((t) => t.id === taskId)
       if (!originalTask) {
         throw new Error(`Task not found with ID: ${taskId}`)
       }
@@ -941,23 +941,25 @@ export function useProjectData(
       if (!originalTask.statusId) {
         throw new Error("Original task missing statusId")
       }
-        
+
       if (!originalTask.priorityId) {
         // Find a default priority
-        const defaultPriority = data.labels.find(l => l.type === "priority") 
+        const defaultPriority = data.labels.find((l) => l.type === "priority")
         if (!defaultPriority) {
-          throw new Error("No priority labels available and original task missing priorityId")
+          throw new Error(
+            "No priority labels available and original task missing priorityId"
+          )
         }
         originalTask.priorityId = defaultPriority.id
       }
 
       // Get all tasks in the same status to calculate new order
       const tasksInStatus = data.tasks
-        .filter(t => t.statusId === originalTask.statusId)
+        .filter((t) => t.statusId === originalTask.statusId)
         .sort((a, b) => (a.taskOrder ?? 0) - (b.taskOrder ?? 0))
-        
+
       // Find the index of the original task
-      const originalIndex = tasksInStatus.findIndex(t => t.id === taskId)
+      const originalIndex = tasksInStatus.findIndex((t) => t.id === taskId)
       if (originalIndex === -1) {
         throw new Error("Original task not found in status")
       }
@@ -970,14 +972,18 @@ export function useProjectData(
       } else {
         // Insert between original and next task
         const nextTask = tasksInStatus[originalIndex + 1]
-        const gap = (nextTask.taskOrder || 1000) - (originalTask.taskOrder || 1000)
+        const gap =
+          (nextTask.taskOrder || 1000) - (originalTask.taskOrder || 1000)
         if (gap > 1) {
           // There's space, insert in the middle
-          newTaskOrder = Math.floor(((originalTask.taskOrder || 1000) + (nextTask.taskOrder || 1000)) / 2)
+          newTaskOrder = Math.floor(
+            ((originalTask.taskOrder || 1000) + (nextTask.taskOrder || 1000)) /
+              2
+          )
         } else {
           // No space, need to reorder tasks
           newTaskOrder = (originalTask.taskOrder || 1000) + 500
-            
+
           // Update all tasks after the original to make space
           for (let i = originalIndex + 1; i < tasksInStatus.length; i++) {
             const taskToUpdate = await database.tasks
@@ -1000,7 +1006,7 @@ export function useProjectData(
       const duplicateTaskData: TaskDataSchema = {
         id: generateBrowserUniqueId("task"),
         projectId, // Ensure projectId is set
-        name: `${originalTask.name || 'Untitled Task'} (Duplicate)`,
+        name: `${originalTask.name || "Untitled Task"} (Duplicate)`,
         statusId: originalTask.statusId,
         taskOrder: newTaskOrder,
         startDate: originalTask.startDate || Number(new Date()),
@@ -1028,12 +1034,14 @@ export function useProjectData(
           checked: false, // Reset completion status for new task
           order: index,
         })),
-        acceptanceCriteria: (originalTask.acceptanceCriteria || []).map((ac, index) => ({
-          id: generateBrowserUniqueId("ac"),
-          text: ac.text || "",
-          checked: false, // Reset completion status for new task
-          order: index,
-        })),
+        acceptanceCriteria: (originalTask.acceptanceCriteria || []).map(
+          (ac, index) => ({
+            id: generateBrowserUniqueId("ac"),
+            text: ac.text || "",
+            checked: false, // Reset completion status for new task
+            order: index,
+          })
+        ),
         comments: [], // Start with empty comments for the duplicate
         createdAt: now,
         updatedAt: now,
@@ -1047,10 +1055,10 @@ export function useProjectData(
       // If the original task is a main task with subtasks, we need to duplicate those too
       // and update their parentTaskId to point to the new task
       if (!originalTask.isSubtask) {
-        const subtasks = data.tasks.filter(t => 
-          t.isSubtask && t.parentTaskId === originalTask.id
-        ).sort((a, b) => (a.taskOrder ?? 0) - (b.taskOrder ?? 0))
-          
+        const subtasks = data.tasks
+          .filter((t) => t.isSubtask && t.parentTaskId === originalTask.id)
+          .sort((a, b) => (a.taskOrder ?? 0) - (b.taskOrder ?? 0))
+
         for (const subtask of subtasks) {
           const duplicatedSubtask: TaskDataSchema = {
             id: generateBrowserUniqueId("task"),
@@ -1082,12 +1090,14 @@ export function useProjectData(
               checked: false,
               order: index,
             })),
-            acceptanceCriteria: (subtask.acceptanceCriteria || []).map((ac, index) => ({
-              id: generateBrowserUniqueId("ac"),
-              text: ac.text || "",
-              checked: false,
-              order: index,
-            })),
+            acceptanceCriteria: (subtask.acceptanceCriteria || []).map(
+              (ac, index) => ({
+                id: generateBrowserUniqueId("ac"),
+                text: ac.text || "",
+                checked: false,
+                order: index,
+              })
+            ),
             comments: [],
             createdAt: now,
             updatedAt: now,
