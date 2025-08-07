@@ -2,7 +2,17 @@ import {
   draggable,
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-
+import {
+  Ellipsis,
+  Plus,
+  Trash2,
+  Edit3,
+  GripVertical,
+  Check,
+  X,
+  Loader2,
+  Sparkles,
+} from "lucide-react";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ColorPicker, { ColorSelectType } from "@components/color-picker";
 import invariant from "tiny-invariant";
@@ -31,13 +41,13 @@ import {
   DropdownMenu,
   TextArea,
 } from "@radixui";
-import {Icon, Heading} from "@incmix/ui"
 import { isSafari } from "@utils/browser";
 import { isShallowEqual } from "@incmix/utils/objects";
 import { blockBoardPanningAttr } from "../data-attributes";
 import { TaskCard, TaskCardShadow } from "./task-card";
 import { useAIFeaturesStore } from "@incmix/store";
 import { TaskDataSchema } from "@incmix/utils/schema";
+import {Heading} from "@incmix/ui"
 
 // Define types for drag and drop operations
 type DragData = {
@@ -82,7 +92,6 @@ const idle = { type: "idle" } satisfies TColumnState;
 
 interface BoardColumnProps {
   column: KanbanColumn;
-  priorityLabels?: any[]; // Array of priority labels from useKanban hook
   onCreateTask: (
     columnId: string,
     taskData: Partial<TaskDataSchema>,
@@ -109,7 +118,6 @@ const QuickTaskForm = memo(function QuickTaskForm({
   columnId,
   onCreateTask,
   onCancel,
-  priorityLabels,
 }: {
   columnId: string;
   onCreateTask: (
@@ -117,7 +125,6 @@ const QuickTaskForm = memo(function QuickTaskForm({
     taskData: Partial<TaskDataSchema>,
   ) => Promise<void>;
   onCancel: () => void;
-  priorityLabels?: any[]; // Array of priority labels
 }) {
   // Get AI features state
   const { useAI } = useAIFeaturesStore();
@@ -210,14 +217,10 @@ const QuickTaskForm = memo(function QuickTaskForm({
 
       setIsSubmitting(true);
       try {
-        // Get first priority label id or empty string if none available
-        const defaultPriority = priorityLabels && priorityLabels.length > 0 ? 
-          priorityLabels[0].id : "";
-            
         await onCreateTask(columnId, {
           name: taskName.trim(),
           description: description.trim(),
-          priorityId: defaultPriority, // Use first available priority from labels
+          priorityId: "medium", // Updated: priority → priorityId
           completed: false,
           labelsTags: [],
           attachments: [],
@@ -275,12 +278,12 @@ const QuickTaskForm = memo(function QuickTaskForm({
           >
             {streamingState.isStreaming ? (
               <>
-                <Icon name="Loader" className="w-4 h-4 mr-2 animate-spin" />
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Generating...
               </>
             ) : (
               <>
-                <Icon name="Sparkles" className="w-4 h-4 mr-2" />
+                <Sparkles className="w-4 h-4 mr-2" />
                 Generate Description
               </>
             )}
@@ -304,7 +307,7 @@ const QuickTaskForm = memo(function QuickTaskForm({
           <Box className="text-xs">
             {streamingState.isStreaming && (
               <Flex align="center" gap="1" className="text-blue-500">
-                <Icon name="Loader" className="animate-spin" />
+                <Loader2 size={12} className="animate-spin" />
                 <Text>Generating description...</Text>
               </Flex>
             )}
@@ -318,7 +321,7 @@ const QuickTaskForm = memo(function QuickTaskForm({
               description &&
               streamingState.connectionStatus === "completed" && (
                 <Flex align="center" gap="1" className="text-green-600">
-                  <Icon name="Check" />
+                  <Check size={12} />
                   <Text>AI description generated</Text>
                 </Flex>
               )}
@@ -358,27 +361,27 @@ const QuickTaskForm = memo(function QuickTaskForm({
   );
 });
 
-export const TaskList = memo(function TaskList({
+const CardList = memo(function CardList({
   column,
-  priorityLabels,
   onUpdateTask,
   onDeleteTask,
   onTaskOpen,
 }: {
   column: KanbanColumn;
-  priorityLabels?: any[]; // Array of priority labels
-  onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>;
+  onUpdateTask: (
+    taskId: string,
+    updates: Partial<TaskDataSchema>,
+  ) => Promise<void>;
   onDeleteTask: (taskId: string) => Promise<void>;
   onTaskOpen?: (taskId: string) => void;
 }) {
   return (
     <>
-      {column.tasks.map((task) => (
+      {column.tasks.map((card) => (
         <TaskCard
-          key={task.id}
-          card={task}
+          key={card.id}
+          card={card}
           statusId={column.id}
-          priorityLabels={priorityLabels}
           onUpdateTask={onUpdateTask}
           onDeleteTask={onDeleteTask}
           onTaskOpen={onTaskOpen}
@@ -390,7 +393,6 @@ export const TaskList = memo(function TaskList({
 
 export const BoardColumn = memo(function BoardColumn({
   column,
-  priorityLabels,
   onCreateTask,
   onUpdateTask,
   onDeleteTask,
@@ -728,7 +730,7 @@ export const BoardColumn = memo(function BoardColumn({
                       onClick={handleUpdateColumn}
                       disabled={isUpdating}
                     >
-                      <Icon name="Check" />
+                      <Check size={14} />
                       {isUpdating ? "Saving..." : "Save"}
                     </Button>
                     <Button
@@ -739,7 +741,7 @@ export const BoardColumn = memo(function BoardColumn({
                       onClick={handleCancelEdit}
                       disabled={isUpdating}
                     >
-                      <Icon name="X" />
+                      <X size={14} />
                       Cancel
                     </Button>
                   </Flex>
@@ -748,6 +750,11 @@ export const BoardColumn = memo(function BoardColumn({
             ) : (
               <Flex justify="between" align="center">
                 <Flex align="center" gap="2" className="flex-1 min-w-0">
+                  {/* <GripVertical size={16} className="text-gray-400 flex-shrink-0" /> */}
+                  {/* <div
+                    className="w-3 h-3 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: column.color }}
+                  /> */}
                   <Heading
                     size="5"
                     as="h3"
@@ -780,17 +787,17 @@ export const BoardColumn = memo(function BoardColumn({
                       variant="ghost"
                       className="rounded hover:bg-gray-200 dark:hover:bg-gray-700 flex-shrink-0"
                     >
-                      <Icon name="EllipsisVertical" />
+                      <Ellipsis size={16} />
                     </IconButton>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Content>
                     <DropdownMenu.Item onClick={() => setIsEditingColumn(true)}>
-                      <Icon name="SquarePen" />
+                      <Edit3 size={14} />
                       Edit Column
                     </DropdownMenu.Item>
                     <DropdownMenu.Separator />
                     <DropdownMenu.Item onClick={handleDeleteColumn} color="red">
-                      <Icon name="Trash2" />
+                      <Trash2 size={14} />
                       Delete Column
                     </DropdownMenu.Item>
                   </DropdownMenu.Content>
@@ -823,9 +830,8 @@ export const BoardColumn = memo(function BoardColumn({
           {/* Tasks Container - No internal scrolling, grows naturally */}
           <div className="px-2" ref={scrollableRef}>
             <div className="space-y-1 py-2">
-              <TaskList
+              <CardList
                 column={column}
-                priorityLabels={priorityLabels}
                 onUpdateTask={onUpdateTask}
                 onDeleteTask={onDeleteTask}
                 onTaskOpen={onTaskOpen}
@@ -843,7 +849,6 @@ export const BoardColumn = memo(function BoardColumn({
             {isCreatingTask ? (
               <QuickTaskForm
                 columnId={column.id}
-                priorityLabels={priorityLabels}
                 onCreateTask={onCreateTask}
                 onCancel={() => setIsCreatingTask(false)}
               />
@@ -854,7 +859,7 @@ export const BoardColumn = memo(function BoardColumn({
                 className="grid place-items-center gap-2 w-10 h-10 mx-auto"
                 onClick={() => setIsCreatingTask(true)}
               >
-                <Icon name="Plus" />
+                <Plus size={20} />
                 <Text className="sr-only">Add a task</Text>
               </Button>
             )}
