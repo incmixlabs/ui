@@ -40,7 +40,7 @@ import {
   Text,
   DropdownMenu,
   TextArea,
-} from "@radixui";
+} from "@base";
 import { isSafari } from "@utils/browser";
 import { isShallowEqual } from "@incmix/utils/objects";
 import { blockBoardPanningAttr } from "../data-attributes";
