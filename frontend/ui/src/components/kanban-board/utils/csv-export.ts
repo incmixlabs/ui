@@ -165,7 +165,7 @@ export function exportAllTasksToCSV(columns: ListColumn[], priorityLabels: Label
 
 // Helper functions
 function escapeCSVField(field: string): string {
-  if (field.includes(',') || field.includes('"') || field.includes('\n')) {
+  if (field.includes(',') || field.includes('"') || field.includes('\n') || field.includes('\r')) {
     return `"${field.replace(/"/g, '""')}"`
   }
   return field

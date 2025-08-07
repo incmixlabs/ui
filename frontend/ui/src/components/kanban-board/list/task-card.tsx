@@ -44,6 +44,7 @@ import {
 import { TaskActionsMenu } from "./task-actions-menu"
 import { ListColumn } from "../hooks/use-list-view"
 import { useKanban } from "../hooks/use-kanban-data"
+import { getPriorityStyles, getPriorityName } from "../utils/priority-utils"
 
 // Constants for DOM manipulation checks
 const canUseDOM =
@@ -88,60 +89,7 @@ const checkboxStyles = {
 // Group hover styles for elements that should only appear on hover
 const hoverVisibleClasses = "opacity-0 group-hover:opacity-100 transition-opacity duration-150"
 
-// Helper functions for priority labels styling
-const getPriorityStyles = (priorityId: string, priorityLabels?: { id: string; name: string; color: string; type: string }[]): string => {
-  // If priorityLabels exists, try to get color from it
-  if (priorityLabels && priorityLabels.length > 0) {
-    const priority = priorityLabels.find(p => p.id === priorityId);
-    if (priority && priority.color) {
-      // Convert the color to a Radix UI token class based on color value
-      switch (priority.color.toLowerCase()) {
-        case "red":
-          return "bg-red-3 text-red-11 dark:bg-red-3 dark:text-red-11";
-        case "orange":
-          return "bg-orange-3 text-orange-11 dark:bg-orange-3 dark:text-orange-11";
-        case "yellow":
-          return "bg-yellow-3 text-yellow-11 dark:bg-yellow-3 dark:text-yellow-11";
-        case "green":
-          return "bg-green-3 text-green-11 dark:bg-green-3 dark:text-green-11";
-        case "blue":
-          return "bg-blue-3 text-blue-11 dark:bg-blue-3 dark:text-blue-11";
-        case "purple":
-          return "bg-purple-3 text-purple-11 dark:bg-purple-3 dark:text-purple-11";
-        default:
-          return "bg-gray-3 text-gray-11 dark:bg-gray-3 dark:text-gray-11";
-      }
-    }
-  }
-  
-  // Fallback to using priorityId directly
-  switch (priorityId.toLowerCase()) {
-    case "urgent":
-    case "high":
-      return "bg-red-3 text-red-11 dark:bg-red-3 dark:text-red-11";
-    case "medium":
-      return "bg-orange-3 text-orange-11 dark:bg-orange-3 dark:text-orange-11";
-    case "low":
-      return "bg-blue-3 text-blue-11 dark:bg-blue-3 dark:text-blue-11";
-    default:
-      return "bg-gray-3 text-gray-11 dark:bg-gray-3 dark:text-gray-11";
-  }
-};
 
-// Helper function to get priority name from ID
-const getPriorityName = (priorityId: string, priorityLabels?: { id: string; name: string; color: string; type: string }[]): string => {
-  // First try to get from priorityLabels if available
-  if (priorityLabels && priorityLabels.length > 0) {
-    const priority = priorityLabels.find(p => p.id === priorityId);
-    if (priority?.name) return priority.name;
-  }
-  
-  // Fallback to formatting the priorityId directly
-  if (!priorityId) return "";
-  
-  // Capitalize first letter and format the rest
-  return priorityId.charAt(0).toUpperCase() + priorityId.slice(1).toLowerCase();
-};
 
 // Helper function to format dates
 const formatDate = (date: Date): string => {
@@ -346,7 +294,7 @@ export const ListTaskCard = memo(function ListTaskCard({
       try {
         const result = await kanbanData.canTaskBeIndented(card.id);
         if (isMounted) {
-          console.log(`Task ${card.id} canIndent:`, result, 'isSubtask:', card.isSubtask, 'parentTaskId:', card.parentTaskId);
+         
           setCanIndent(result);
         }
       } catch (error) {
@@ -371,7 +319,7 @@ export const ListTaskCard = memo(function ListTaskCard({
       try {
         const result = await kanbanData.canTaskBeUnindented(card.id);
         if (isMounted) {
-          console.log(`Task ${card.id} canUnindent:`, result, 'isSubtask:', card.isSubtask, 'parentTaskId:', card.parentTaskId);
+          
           setCanUnindent(result);
         }
       } catch (error) {
@@ -443,7 +391,7 @@ export const ListTaskCard = memo(function ListTaskCard({
     
     try {
       await onDuplicateTask?.(card.id)
-      console.log(`Task "${card.name || 'Untitled Task'}" duplicated successfully`)
+     
     } catch (error) {
       console.error("Failed to duplicate task:", error)
     }

@@ -193,40 +193,28 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   }, [columns, duplicateTask]);
 
   // Effect to clear optimistic state when real duplicate tasks appear
+  // Optimized to reduce dependencies and improve performance
   useEffect(() => {
-    if (optimisticDuplicateIds.size === 0) return;
+    if (optimisticDuplicateIds.size === 0 || optimisticColumns.length === 0) return;
 
-    // Check if any new tasks appeared that match our expected duplicates
-    const currentTaskNames = new Set<string>();
-    columns.forEach(col => {
-      col.tasks.forEach(task => {
-        if (task.name && task.name.includes('(Duplicate)')) {
-          currentTaskNames.add(task.name);
-        }
-      });
-    });
+    // Use more efficient approach to check for matching real tasks
+    const hasMatchingRealTask = optimisticColumns.some(col =>
+      col.tasks.some(task => 
+        task.id?.startsWith('temp-') && 
+        task.name?.includes('(Duplicate)') &&
+        columns.some(realCol =>
+          realCol.tasks.some(realTask => 
+            realTask.name === task.name && !realTask.id?.startsWith('temp-')
+          )
+        )
+      )
+    );
 
-    // If we found real duplicate tasks that weren't there before, clear optimistic state
-    let foundRealDuplicate = false;
-    if (optimisticColumns.length > 0) {
-      optimisticColumns.forEach(col => {
-        col.tasks.forEach(task => {
-          if (task.id && task.name && task.id.startsWith('temp-') && task.name.includes('(Duplicate)')) {
-            // Check if a real task with the same name now exists
-            if (currentTaskNames.has(task.name)) {
-              foundRealDuplicate = true;
-            }
-          }
-        });
-      });
-    }
-
-    if (foundRealDuplicate) {
-      console.log('Real duplicate task found, clearing optimistic state');
+    if (hasMatchingRealTask) {
       setOptimisticColumns([]);
       setOptimisticDuplicateIds(new Set());
     }
-  }, [columns, optimisticColumns, optimisticDuplicateIds]);
+  }, [columns.length, optimisticDuplicateIds.size]); // Reduced dependencies to prevent excessive re-renders
 
   // Use optimistic columns if available, otherwise use regular columns
   const activeColumns = optimisticColumns.length > 0 ? optimisticColumns : columns;
