@@ -10,9 +10,30 @@ export type PriorityLabel = {
   type: string
 }
 
+// Color mappings for priority styling using Radix UI tokens
+const PRIORITY_COLOR_MAP = {
+  red: "bg-red-3 text-red-11",
+  orange: "bg-orange-3 text-orange-11",
+  yellow: "bg-yellow-3 text-yellow-11",
+  green: "bg-green-3 text-green-11",
+  blue: "bg-blue-3 text-blue-11",
+  purple: "bg-purple-3 text-purple-11",
+} as const;
+
+// Priority ID mappings for fallback styling
+const PRIORITY_ID_MAP = {
+  urgent: "bg-red-3 text-red-11",
+  high: "bg-red-3 text-red-11",
+  medium: "bg-orange-3 text-orange-11",
+  low: "bg-blue-3 text-blue-11",
+} as const;
+
+// Default styling when no match is found
+const DEFAULT_PRIORITY_STYLE = "bg-gray-3 text-gray-11";
+
 /**
  * Get CSS class names for priority styling based on priority ID and labels.
- * Returns appropriate Radix UI color token classes for both light and dark themes.
+ * Returns appropriate Radix UI color token classes that work for both light and dark themes.
  * 
  * @param priorityId - The priority identifier
  * @param priorityLabels - Optional array of priority label objects with color information
@@ -23,38 +44,12 @@ export const getPriorityStyles = (priorityId: string, priorityLabels?: PriorityL
   if (priorityLabels && priorityLabels.length > 0) {
     const priority = priorityLabels.find(p => p.id === priorityId)
     if (priority && priority.color) {
-      // Convert the color to a Radix UI token class based on color value
-      switch (priority.color.toLowerCase()) {
-        case "red":
-          return "bg-red-3 text-red-11 dark:bg-red-3 dark:text-red-11"
-        case "orange":
-          return "bg-orange-3 text-orange-11 dark:bg-orange-3 dark:text-orange-11"
-        case "yellow":
-          return "bg-yellow-3 text-yellow-11 dark:bg-yellow-3 dark:text-yellow-11"
-        case "green":
-          return "bg-green-3 text-green-11 dark:bg-green-3 dark:text-green-11"
-        case "blue":
-          return "bg-blue-3 text-blue-11 dark:bg-blue-3 dark:text-blue-11"
-        case "purple":
-          return "bg-purple-3 text-purple-11 dark:bg-purple-3 dark:text-purple-11"
-        default:
-          return "bg-gray-3 text-gray-11 dark:bg-gray-3 dark:text-gray-11"
-      }
+      return PRIORITY_COLOR_MAP[priority.color.toLowerCase() as keyof typeof PRIORITY_COLOR_MAP] || DEFAULT_PRIORITY_STYLE
     }
   }
   
   // Fallback to using priorityId directly
-  switch (priorityId.toLowerCase()) {
-    case "urgent":
-    case "high":
-      return "bg-red-3 text-red-11 dark:bg-red-3 dark:text-red-11"
-    case "medium":
-      return "bg-orange-3 text-orange-11 dark:bg-orange-3 dark:text-orange-11"
-    case "low":
-      return "bg-blue-3 text-blue-11 dark:bg-blue-3 dark:text-blue-11"
-    default:
-      return "bg-gray-3 text-gray-11 dark:bg-gray-3 dark:text-gray-11"
-  }
+  return PRIORITY_ID_MAP[priorityId.toLowerCase() as keyof typeof PRIORITY_ID_MAP] || DEFAULT_PRIORITY_STYLE
 }
 
 /**
