@@ -8,8 +8,8 @@
     "paths": {
       "@incmix/radix-ui": ["../radix-ui/src"],
       "@incmix/radix-ui/*": ["../radix-ui/src/*"],
-      "@incmix/shadcn": ["../shadcn/src"],
-      "@incmix/shadcn/*": ["../shadcn/src/*"]
+      "@incmix/shadcn": ["/src/shadcn"],
+      "@incmix/shadcn/*": ["src/shadcn/*"]
     }
   },
   "exclude": ["**/*.stories.tsx", ".storybook/**/*", "src/stories/**/*"]
