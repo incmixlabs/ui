@@ -262,14 +262,7 @@ const OrganizationDetailsPage: React.FC = () => {
 
   return (
     <AbilityContext.Provider value={ability}>
-      <DashboardLayout
-        breadcrumbItems={[
-          {
-            label: organization.name,
-            url: `/organization/${orgHandle}`,
-          },
-        ]}
-      >
+      <DashboardLayout>
         <Container size="3">
           <CardContainer>
             <Flex direction="column" gap="4">

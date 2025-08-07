@@ -124,19 +124,16 @@ export function ReusableAddProject({
       const res = await fetch(`${ORG_API_URL}/${selectedOrganisation?.handle}/members`, {
         credentials: "include",
       })
+      if (!res.ok) return []
       const data = await res.json() as GetMembersResponse
       return data.map((member) => ({
-        id: member.userId,
         label: member.fullName,
         value: member.userId,
-        name: member.fullName,
-        avatar: member.avatar,
-        position: "member",
       })) as Option[]
     },
     initialData: [],
     enabled: !!selectedOrganisation?.handle,
-    retry: false,
+    retry: 1,
   })
   const { mutateAsync: saveProjectToBackend } = useProjectMutation();
 
@@ -149,7 +146,7 @@ export function ReusableAddProject({
 
       // Process the form data
       const uniqueId = nanoid()
-      console.log(data.members)
+
 
       // Create a Project object with required fields
       const newProject = {
@@ -169,10 +166,6 @@ export function ReusableAddProject({
         members: data.members?.map((option: Option) => ({
           label: option.label || option.value || "", // Fallback to value if label is missing
           value: option.value || "",
-          id: option.id,
-          name: option.name,
-          avatar: option.avatar,
-          position: option.position,
         })) || [],
         fileData: data.files?.[0] || null,
         orgId: selectedOrganisation.id

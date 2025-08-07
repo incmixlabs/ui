@@ -8,7 +8,12 @@ export async function getRolesPermissions(
   const searchParams = new URLSearchParams()
   if (orgId && !isSuperAdmin) searchParams.set("orgId", orgId)
 
-  const res = await fetch(`${PERMISSIONS_API_URL}?${searchParams.toString()}`, {
+  const queryString = searchParams.toString()
+  const url = queryString
+    ? `${PERMISSIONS_API_URL}?${queryString}`
+    : PERMISSIONS_API_URL
+
+  const res = await fetch(url, {
     credentials: "include",
   })
 
