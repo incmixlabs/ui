@@ -1,4 +1,4 @@
-import { ORG_API_URL } from "@incmix/ui/constants"
+import { PERMISSIONS_API_URL } from "@incmix/ui/constants"
 import type { Action, Subject, subjects } from "@incmix/utils/types"
 import type { PermissionsResponse, PermissionsWithRole, Role } from "./types"
 export async function getRolesPermissions(
@@ -8,12 +8,14 @@ export async function getRolesPermissions(
   const searchParams = new URLSearchParams()
   if (orgId && !isSuperAdmin) searchParams.set("orgId", orgId)
 
-  const res = await fetch(
-    `${ORG_API_URL}/permissions?${searchParams.toString()}`,
-    {
-      credentials: "include",
-    }
-  )
+  const queryString = searchParams.toString()
+  const url = queryString
+    ? `${PERMISSIONS_API_URL}?${queryString}`
+    : PERMISSIONS_API_URL
+
+  const res = await fetch(url, {
+    credentials: "include",
+  })
 
   if (!res.ok) {
     throw new Error("Failed to fetch roles and permissions")
@@ -115,7 +117,7 @@ export type Change = {
 }
 
 export async function updateRolesPermissions(changes: Change[]) {
-  const res = await fetch(`${ORG_API_URL}/permissions`, {
+  const res = await fetch(`${PERMISSIONS_API_URL}`, {
     method: "PUT",
     body: JSON.stringify({ updates: changes }),
     headers: { "content-type": "application/json" },
@@ -131,7 +133,7 @@ export async function updateRolesPermissions(changes: Change[]) {
 }
 
 export async function createRole(role: string) {
-  const res = await fetch(`${ORG_API_URL}/roles`, {
+  const res = await fetch(`${PERMISSIONS_API_URL}/roles`, {
     method: "POST",
     body: JSON.stringify({ name: role }),
     headers: { "content-type": "application/json" },
@@ -149,7 +151,7 @@ export async function createRole(role: string) {
 }
 
 export async function deleteRole(roleId: number) {
-  const res = await fetch(`${ORG_API_URL}/permissions/roles/${roleId}`, {
+  const res = await fetch(`${PERMISSIONS_API_URL}/roles/${roleId}`, {
     method: "DELETE",
     credentials: "include",
   })
@@ -165,7 +167,7 @@ export async function deleteRole(roleId: number) {
 }
 
 export async function updateRole(role: { id: number; name: string }) {
-  const res = await fetch(`${ORG_API_URL}/permissions/roles`, {
+  const res = await fetch(`${PERMISSIONS_API_URL}/roles`, {
     method: "PUT",
     body: JSON.stringify(role),
     headers: { "content-type": "application/json" },
