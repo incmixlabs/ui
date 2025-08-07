@@ -1260,6 +1260,9 @@ importers:
       '@incmix/radix-ui':
         specifier: 'workspace: *'
         version: link:../radix-ui
+      '@incmix/shadcn':
+        specifier: 'workspace: *'
+        version: link:../shadcn
       '@types/react':
         specifier: 'catalog:'
         version: 19.1.9
