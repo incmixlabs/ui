@@ -7,7 +7,7 @@ import {
 } from "@base"
 import { Plus, Trash } from "lucide-react"
 import { useFieldArray, type useForm } from "react-hook-form"
-import type * as z from "zod"
+import { z } from "zod"
 import { beautifyObjectName } from "../utils"
 import AutoFormObject from "./object"
 
@@ -28,7 +28,7 @@ export default function AutoFormArray({
     control: form.control,
     name,
   })
-  const title = item._def.description ?? beautifyObjectName(name)
+  const title = (item as any)._def?.description ?? beautifyObjectName(name)
 
   return (
     <AccordionItem value={name} className="border-none">
@@ -39,7 +39,7 @@ export default function AutoFormArray({
           return (
             <div className="mt-4 flex flex-col" key={`${key}`}>
               <AutoFormObject
-                schema={item._def.type as z.ZodObject<any, any>}
+                schema={(item as any)._def?.type as z.ZodObject<any, any>}
                 form={form}
                 fieldConfig={fieldConfig}
                 path={[...path, index.toString()]}

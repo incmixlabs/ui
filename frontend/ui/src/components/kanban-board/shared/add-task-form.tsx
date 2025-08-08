@@ -79,7 +79,7 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
 
 
 
-    console.log('Generated default form values:', defaults) // Debug log
+
     return defaults
   }, [taskFormSchema, columns, priorityLabels])
 

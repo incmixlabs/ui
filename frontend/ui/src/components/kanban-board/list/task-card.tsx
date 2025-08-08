@@ -201,7 +201,7 @@ export const ListTaskCard = memo(function ListTaskCard({
   }, [card.isSubtask])
   
   // Determine if we should remove the border (for parent-subtask relationships)
-  const shouldRemoveBorder = useCallback(() => {
+  const shouldRemoveBorder = useMemo(() => {
     // If this task is a parent (has children), remove its bottom border
     if (hasChildTasks) return true;
     
@@ -284,6 +284,16 @@ export const ListTaskCard = memo(function ListTaskCard({
   const [canUnindent, setCanUnindent] = useState<boolean>(false);
   const [potentialParentId, setPotentialParentId] = useState<string | null>(null);
   
+  // Extract stable function references to prevent infinite re-renders
+  const canTaskBeIndentedRef = useRef(kanbanData.canTaskBeIndented)
+  const canTaskBeUnindentedRef = useRef(kanbanData.canTaskBeUnindented)
+  
+  // Update refs when kanbanData changes
+  useEffect(() => {
+    canTaskBeIndentedRef.current = kanbanData.canTaskBeIndented
+    canTaskBeUnindentedRef.current = kanbanData.canTaskBeUnindented
+  }, [kanbanData.canTaskBeIndented, kanbanData.canTaskBeUnindented])
+
   // Use effects to update the validation states when dependencies change
   useEffect(() => {
     let isMounted = true;
@@ -292,9 +302,8 @@ export const ListTaskCard = memo(function ListTaskCard({
       if (!card.id) return;
       
       try {
-        const result = await kanbanData.canTaskBeIndented(card.id);
+        const result = await canTaskBeIndentedRef.current(card.id);
         if (isMounted) {
-         
           setCanIndent(result);
         }
       } catch (error) {
@@ -308,7 +317,7 @@ export const ListTaskCard = memo(function ListTaskCard({
     return () => {
       isMounted = false;
     };
-  }, [card.id, card.isSubtask, card.parentTaskId, kanbanData]);
+  }, [card.id, card.isSubtask, card.parentTaskId]); // Removed kanbanData dependency
   
   useEffect(() => {
     let isMounted = true;
@@ -317,9 +326,8 @@ export const ListTaskCard = memo(function ListTaskCard({
       if (!card.id) return;
       
       try {
-        const result = await kanbanData.canTaskBeUnindented(card.id);
+        const result = await canTaskBeUnindentedRef.current(card.id);
         if (isMounted) {
-          
           setCanUnindent(result);
         }
       } catch (error) {
@@ -333,7 +341,7 @@ export const ListTaskCard = memo(function ListTaskCard({
     return () => {
       isMounted = false;
     };
-  }, [card.id, card.isSubtask, card.parentTaskId, kanbanData]);
+  }, [card.id, card.isSubtask, card.parentTaskId]); // Removed kanbanData dependency
   
   // Prepare handlers for indent/unindent operations
   const handleIndentTask = useCallback(async (taskId: string) => {
@@ -712,7 +720,7 @@ export const ListTaskCard = memo(function ListTaskCard({
         ) : null}
         <Box
           ref={innerRef}
-          className={`group relative ${cardStyles.base} ${cardStyles.light} ${cardStyles.dark} ${cardStyles.hover} ${isSelected ? cardStyles.selected : ""} ${state.type === "is-dragging" ? cardStyles.dragging : ""} ${isSubtask ? cardStyles.subtask : ""} ${shouldRemoveBorder() ? cardStyles.noBorder : ""}`}
+          className={`group relative ${cardStyles.base} ${cardStyles.light} ${cardStyles.dark} ${cardStyles.hover} ${isSelected ? cardStyles.selected : ""} ${state.type === "is-dragging" ? cardStyles.dragging : ""} ${isSubtask ? cardStyles.subtask : ""} ${shouldRemoveBorder ? cardStyles.noBorder : ""}`}
           style={{ 
             // Apply larger indentation for subtasks
             marginLeft: isSubtask ? '32px' : '0',

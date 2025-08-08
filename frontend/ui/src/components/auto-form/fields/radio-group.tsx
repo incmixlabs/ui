@@ -1,4 +1,4 @@
-import type * as z from "zod"
+import { z } from "zod"
 
 import {
   FormControl,
@@ -20,8 +20,8 @@ export default function AutoFormRadioGroup({
   fieldProps,
   fieldConfigItem,
 }: AutoFormInputComponentProps) {
-  const baseValues = (getBaseSchema(zodItem) as unknown as z.ZodEnum<any>)._def
-    .values
+  const baseSchema = getBaseSchema(zodItem)
+  const baseValues = (baseSchema as any)?._def?.values
 
   let values: string[] = []
   if (!Array.isArray(baseValues)) {

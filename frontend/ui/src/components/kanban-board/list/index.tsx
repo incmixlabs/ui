@@ -193,7 +193,13 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   }, [columns, duplicateTask]);
 
   // Effect to clear optimistic state when real duplicate tasks appear
-  // Optimized to reduce dependencies and improve performance
+  // Fixed to prevent infinite render loops
+  const clearOptimisticStateRef = useRef<(() => void) | undefined>(undefined)
+  clearOptimisticStateRef.current = () => {
+    setOptimisticColumns([]);
+    setOptimisticDuplicateIds(new Set());
+  }
+
   useEffect(() => {
     if (optimisticDuplicateIds.size === 0 || optimisticColumns.length === 0) return;
 
@@ -211,22 +217,31 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     );
 
     if (hasMatchingRealTask) {
-      setOptimisticColumns([]);
-      setOptimisticDuplicateIds(new Set());
+      // Use setTimeout to prevent immediate state update during render
+      setTimeout(() => {
+        clearOptimisticStateRef.current?.()
+      }, 0)
     }
-  }, [columns.length, optimisticDuplicateIds.size]); // Reduced dependencies to prevent excessive re-renders
+  }, [columns, optimisticColumns, optimisticDuplicateIds])
 
-  // Use optimistic columns if available, otherwise use regular columns
-  const activeColumns = optimisticColumns.length > 0 ? optimisticColumns : columns;
+  // Use memoized active columns to prevent unnecessary re-renders
+  const activeColumns = useMemo(() => {
+    return optimisticColumns.length > 0 ? optimisticColumns : columns
+  }, [optimisticColumns, columns]);
 
-  // Filter columns based on search query
-  const filteredColumns = activeColumns.filter(column =>
-    column.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    column.tasks.some(task =>
-      task.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      task.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  // Memoize filtered columns to prevent unnecessary re-filtering
+  const filteredColumns = useMemo(() => {
+    if (!searchQuery.trim()) return activeColumns
+    
+    const lowerSearchQuery = searchQuery.toLowerCase()
+    return activeColumns.filter(column =>
+      column.name.toLowerCase().includes(lowerSearchQuery) ||
+      column.tasks.some(task =>
+        task.name?.toLowerCase().includes(lowerSearchQuery) ||
+        task.description?.toLowerCase().includes(lowerSearchQuery)
+      )
     )
-  )
+  }, [activeColumns, searchQuery])
 
 
   // Handle task selection
@@ -521,13 +536,27 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   }, [columns, isLoading, moveTask, optimisticColumns])
 
   // Use optimistic columns for drag and drop operations
+  // Fixed to prevent cascading state updates
+  const prevColumnsRef = useRef(columns)
+  const prevIsDraggingRef = useRef(isDragging)
+  
   useEffect(() => {
-    if (!isDragging) {
-      setOptimisticColumns(columns)
+    // Only update if columns actually changed and we're not dragging
+    if (!isDragging && (prevColumnsRef.current !== columns || prevIsDraggingRef.current !== isDragging)) {
+      // Use shallow comparison to avoid unnecessary updates
+      if (optimisticColumns.length === 0 || JSON.stringify(optimisticColumns) !== JSON.stringify(columns)) {
+        setOptimisticColumns([]); // Reset to empty to use regular columns
+      }
     }
-  }, [columns, isDragging])
+    
+    prevColumnsRef.current = columns
+    prevIsDraggingRef.current = isDragging
+  }, [columns, isDragging, optimisticColumns])
 
-  const displayColumns = isDragging ? optimisticColumns : columns
+  // Use memoized display columns to prevent unnecessary re-renders
+  const displayColumns = useMemo(() => {
+    return isDragging && optimisticColumns.length > 0 ? optimisticColumns : columns
+  }, [isDragging, optimisticColumns, columns])
 
   // Handle board panning
   useEffect(() => {

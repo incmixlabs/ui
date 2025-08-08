@@ -7,7 +7,7 @@ import {
 } from "@base"
 
 import { type useForm, useFormContext } from "react-hook-form"
-import type * as z from "zod"
+import { z } from "zod"
 import { DEFAULT_ZOD_HANDLERS, INPUT_COMPONENTS } from "../config"
 import type { FieldConfig, FieldConfigItem, FieldGroupConfig } from "../types"
 import {
@@ -251,9 +251,9 @@ export default function AutoFormObject<
   path = [],
   dependencies = {},
 }: {
-  schema: SchemaType | z.ZodEffects<SchemaType>
+  schema: SchemaType | z.ZodTransform<SchemaType, any>
   form: ReturnType<typeof useForm>
-  fieldConfig?: FieldConfig<z.infer<SchemaType>>
+  fieldConfig?: FieldConfig<Record<string, unknown>>
   path?: string[]
   dependencies?: Record<
     string,
@@ -325,8 +325,7 @@ export default function AutoFormObject<
 
           let item = shape[fieldName] as z.ZodAny
           item = handleIfZodNumber(item) as z.ZodAny
-          const itemName =
-            item._def.description ?? beautifyObjectName(fieldName)
+          const itemName = (item as any)._def?.description ?? beautifyObjectName(fieldName)
           const key = [...path, fieldName].join(".")
           let isDisabled = false
 
@@ -387,7 +386,7 @@ export default function AutoFormObject<
         // Render this field normally
         let item = shape[name] as z.ZodAny
         item = handleIfZodNumber(item) as z.ZodAny
-        const itemName = item._def.description ?? beautifyObjectName(name)
+        const itemName = (item as any)._def?.description ?? beautifyObjectName(name)
         const key = [...path, name].join(".")
         let isDisabled = false
 

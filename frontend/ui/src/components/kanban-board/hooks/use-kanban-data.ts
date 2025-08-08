@@ -270,7 +270,8 @@ export function useKanban(providedProjectId?: string): UseKanbanReturn {
     [operations.deleteTask]
   )
 
-  return {
+  // Memoize the final return object to prevent infinite re-renders
+  return useMemo(() => ({
     columns,
     priorityLabels,
     isLoading: projectData.isLoading,
@@ -313,5 +314,15 @@ export function useKanban(providedProjectId?: string): UseKanbanReturn {
     updateLabel: operations.updateLabel, 
     deleteLabel: operations.deleteLabel,
     reorderLabels: operations.reorderLabels
-  }
+  }), [
+    columns, 
+    priorityLabels, 
+    projectData.isLoading, 
+    projectData.error, 
+    projectStats,
+    operations,
+    bulkUpdateTasks,
+    bulkMoveTasks,
+    bulkDeleteTasks
+  ])
 }
