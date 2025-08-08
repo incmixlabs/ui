@@ -4,7 +4,7 @@ import {
   dropTargetForElements,
 } from "@atlaskit/pragmatic-drag-and-drop/element/adapter"
 import {     ModalPresets } from "../shared/confirmation-modal"
-import { Ellipsis, Plus, ChevronDown, ChevronRight, Trash2, Edit3, Check, X } from "lucide-react"
+import { Ellipsis, Plus, ChevronDown, ChevronRight, Trash2, Edit3, Check, X, Download } from "lucide-react"
 import { memo, useEffect, useRef, useState, useCallback, useMemo } from "react"
 import invariant from "tiny-invariant"
 
@@ -33,7 +33,9 @@ import { TaskDataSchema } from "@incmix/utils/schema"
 import ColorPicker, { ColorSelectType } from "@components/color-picker"
 import { ListTaskCard, ExpandedTasksProvider } from "./task-card"
 import { SimpleTaskInput } from "./mention-task-input"
+import { InlineAddTaskCard } from "./inline-add-task-card"
 import { isShallowEqual } from "@incmix/utils/objects"
+import { exportColumnToCSV } from "../utils/csv-export"
 
 /**
  * Helper function to create a semi-transparent version of a color
@@ -118,6 +120,7 @@ interface ListColumnProps {
   onCreateTask: (columnId: string, taskData: Partial<TaskDataSchema>) => Promise<void>
   onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
+  onDuplicateTask?: (taskId: string) => Promise<void>
   onUpdateColumn: (columnId: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
   onDeleteColumn: (columnId: string) => Promise<void>
   isDragging?: boolean
@@ -132,6 +135,8 @@ export const CardList = memo(function CardList({
   priorityLabels,
   onUpdateTask,
   onDeleteTask,
+  onCreateTask,
+  onDuplicateTask,
   selectedTaskIds,
   onTaskSelect
 }: {
@@ -140,6 +145,8 @@ export const CardList = memo(function CardList({
   priorityLabels: any[]
   onUpdateTask: (taskId: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask: (taskId: string) => Promise<void>
+  onCreateTask: (statusId: string, taskData: Partial<TaskDataSchema>) => Promise<void>
+  onDuplicateTask?: (taskId: string) => Promise<void>
   selectedTaskIds?: {[key: string]: boolean}
   onTaskSelect?: (taskId: string, selected: boolean, taskName: string) => void
 }) {
@@ -219,6 +226,8 @@ export const CardList = memo(function CardList({
           priorityLabels={priorityLabels}
           onUpdateTask={onUpdateTask}
           onDeleteTask={onDeleteTask}
+          onCreateTask={onCreateTask}
+          onDuplicateTask={onDuplicateTask}
           onTaskSelect={onTaskSelect ? (taskId, selected) => onTaskSelect(taskId, selected, task.name || '') : undefined}
           isSelected={task.id ? !!selectedTaskIds?.[task.id] : false}
         />
@@ -234,6 +243,7 @@ export function ListColumn({
   onCreateTask,
   onUpdateTask,
   onDeleteTask,
+  onDuplicateTask,
   onUpdateColumn,
   onDeleteColumn,
   isDragging = false,
@@ -248,6 +258,7 @@ export function ListColumn({
   const [state, setState] = useState<TColumnState>(idle)
   const [isExpanded, setIsExpanded] = useState(true)
   const [isCreatingTask, setIsCreatingTask] = useState(false)
+  const defaultPriority = "medium" // Default priority for new tasks
 
   // Calculate column statistics with proper typing
   const completedTasks = column.tasks.filter((task: KanbanTask) => task.completed).length
@@ -523,6 +534,19 @@ export function ListColumn({
     }
   }, [column.id, onDeleteColumn])
 
+  // CSV export handler
+  const handleExportCSV = useCallback(() => {
+    try {
+      exportColumnToCSV(column, priorityLabels, {
+        includeSubtasks: true,
+        includeMetadata: true,
+        includeTimestamps: true
+      })
+    } catch (error) {
+      console.error("Failed to export CSV:", error)
+    }
+  }, [column, priorityLabels])
+
   return (
     <Flex
       direction="column"
@@ -692,6 +716,13 @@ export function ListColumn({
                       <Edit3 size={14} />
                       Edit Column
                     </DropdownMenu.Item>
+                    <DropdownMenu.Item 
+                      onClick={handleExportCSV}
+                      disabled={column.tasks.length === 0}
+                    >
+                      <Download size={14} />
+                      Export as CSV
+                    </DropdownMenu.Item>
                     <DropdownMenu.Separator />
                     <DropdownMenu.Item
                       onClick={handleDeleteColumn}
@@ -733,56 +764,29 @@ export function ListColumn({
                   priorityLabels={priorityLabels}
                   onUpdateTask={onUpdateTask}
                   onDeleteTask={onDeleteTask}
+                  onCreateTask={onCreateTask}
+                  onDuplicateTask={onDuplicateTask}
                   selectedTaskIds={selectedTaskIds}
                   onTaskSelect={onTaskSelect}
                 />
               </Box>
                 
-              {/* Simple Add Task Section */}
+              {/* Inline Add Task Card Section */}
               <Box className="pt-1 pb-2">
                 {isCreatingTask ? (
-                  <SimpleTaskInput
-                    onCreateTask={handleCreateTaskWithData}
+                  <InlineAddTaskCard
+                    onCreateTask={(title) => handleCreateTaskWithData(title, {})}
                     onCancel={() => setIsCreatingTask(false)}
-                    columns={columns.map(col => ({
-                      id: col.id,
-                      name: col.name,
-                      projectId: col.projectId,
-                      // Map required TaskDataSchema fields
-                      statusId: col.id, // Using column id as statusId since this is a status column
-                      priorityId: '', // Default empty string for required field
-                      taskOrder: col.order || 0, // Map order to taskOrder
-                      completed: false, // Default value
-                      // Include color from the column
-                      color: col.color,
-                      description: col.description,
-                      // Default empty arrays for required array fields
-                      refUrls: [],
-                      labelsTags: [],
-                      attachments: [],
-                      assignedTo: [],
-                      subTasks: [],
-                      comments: [],
-                      // Timestamps and audit fields
-                      createdAt: col.createdAt,
-                      updatedAt: col.updatedAt,
-                      createdBy: col.createdBy,
-                      updatedBy: col.updatedBy,
-                    }))}
                     priorityLabels={priorityLabels}
-                    placeholder="Enter task title..."
+                    defaultPriority={defaultPriority}
                   />
                 ) : (
-                  <Box className="flex flex-shrink-0 flex-col px-2 py-1.5 w-full">
-                    <Box 
-                      className="group relative px-6 h-10 rounded-xl transition-all duration-150 bg-white border border-dashed border-gray-6 dark:bg-gray-1 dark:border dark:border-dashed dark:border-gray-6 hover:bg-gray-3 dark:hover:bg-gray-2 w-full"
-                      onClick={() => setIsCreatingTask(true)}
-                    >
-                      <Flex justify="start" align="center" className="h-full w-full gap-2 cursor-pointer">
-                        <Plus size={14} className="text-blue-9" />
-                        <Text className="text-blue-9">Add task</Text>
-                      </Flex>
-                    </Box>
+                  <Box
+                    className="mt-2 px-4 py-2 rounded-md cursor-pointer hover:bg-gray-2 transition-colors flex items-center space-x-1"
+                    onClick={() => setIsCreatingTask(true)}
+                  >
+                    <Plus size={14} className="text-gray-9" />
+                    <Text className="text-gray-10 font-medium">Add task</Text>
                   </Box>
                 )}
               </Box>

@@ -13,15 +13,17 @@ import { useProjectStore } from "../../services/projects"
 // Extend the UseProjectDataReturn type to include subtask operations
 declare module "@incmix/utils/schema" {
   interface UseProjectDataReturn {
+    // Task operations
+    duplicateTask: (taskId: string) => Promise<void>
     // Subtask operations
     convertTaskToSubtask: (
       taskId: string,
       parentTaskId: string
     ) => Promise<void>
     convertSubtaskToTask: (taskId: string) => Promise<void>
-    canTaskBeIndented: (taskId: string) => boolean
-    canTaskBeUnindented: (taskId: string) => boolean
-    findPotentialParentTask: (taskId: string) => string | null
+    canTaskBeIndented: (taskId: string) => Promise<boolean>
+    canTaskBeUnindented: (taskId: string) => Promise<boolean>
+    findPotentialParentTask: (taskId: string) => Promise<string | null>
   }
 }
 
@@ -676,9 +678,6 @@ export function useProjectData(
   const refetch = useCallback(() => {
     // With reactive subscriptions, manual refetch is rarely needed
     // The subscriptions automatically keep data fresh
-    console.log(
-      "Refetch called - RxDB subscriptions handle updates automatically"
-    )
   }, [])
 
   const clearError = useCallback(() => {
@@ -778,75 +777,338 @@ export function useProjectData(
     }
   }, [])
 
-  // Check if a task can be indented (converted to subtask)
-  const canTaskBeIndented = useCallback(
-    (taskId: string) => {
-      // Get the current task
-      const task = data.tasks.find((t) => t.id === taskId)
-      if (!task) return false
+  // Find the potential parent for a task if it were to be indented
+  // This needs to be defined before canTaskBeIndented since it's used by it
+  const findPotentialParentTask = useCallback(async (taskId: string) => {
+    try {
+      // Directly query the database to get the current task - this ensures we always have the latest data
+      const taskDoc = await database.tasks
+        .findOne({ selector: { id: taskId } })
+        .exec()
+      if (!taskDoc) {
+        return null
+      }
 
-      // If already a subtask or already at max nesting level (3), can't indent further
-      if (task.isSubtask) {
-        // Check nesting level by tracing up the hierarchy
-        let currentTask = task
-        let nestingLevel = 1 // Current task is already at level 1
+      const task = taskDoc.toJSON()
 
-        // Traverse up to find the nesting level
-        while (currentTask.parentTaskId) {
-          const parentTask = data.tasks.find(
-            (t) => t.id === currentTask.parentTaskId
-          )
-          if (!parentTask) break
-          nestingLevel++
-          currentTask = parentTask
+      // Query database for all tasks in the same column, sorted by order
+      const tasksInColumnDocs = await database.tasks
+        .find({
+          selector: { statusId: task.statusId },
+          sort: [{ taskOrder: "asc" }],
+        })
+        .exec()
 
-          // Max nesting level check
-          if (nestingLevel >= 3) return false
+      const allTasksInColumn = tasksInColumnDocs.map((doc) => doc.toJSON())
+
+      // Get the position of the current task
+      const currentPosition = allTasksInColumn.findIndex((t) => t.id === taskId)
+      if (currentPosition <= 0) {
+        return null
+      }
+
+      // For regular tasks: find the closest previous non-subtask task
+      if (!task.isSubtask) {
+        // Look for non-subtask tasks before this one
+        for (let i = currentPosition - 1; i >= 0; i--) {
+          if (!allTasksInColumn[i].isSubtask) {
+            return allTasksInColumn[i].id
+          }
+        }
+      } else {
+        // For subtasks: find the parent task at the appropriate level
+        // This is more complex and would need to account for hierarchy levels
+        // For now, just find the previous task that isn't a child of this task
+        const previousTask = allTasksInColumn[currentPosition - 1]
+        if (
+          !task.isSubtask ||
+          previousTask.parentTaskId !== task.parentTaskId
+        ) {
+          return previousTask.id
         }
       }
 
-      // Find if there's a task above this one in the same status
-      const tasksInSameStatus = data.tasks
-        .filter((t) => t.statusId === task.statusId && !t.isSubtask) // Only consider top-level tasks
-        .sort((a, b) => a.taskOrder - b.taskOrder)
+      return null
+    } catch (error) {
+      console.error(`Error in findPotentialParentTask for ${taskId}:`, error)
+      return null
+    }
+  }, [])
 
-      const taskIndex = tasksInSameStatus.findIndex((t) => t.id === taskId)
+  // Check if a task can be indented (converted to subtask)
+  const canTaskBeIndented = useCallback(
+    async (taskId: string) => {
+      try {
+        // Directly query the database to get the current task
+        const taskDoc = await database.tasks
+          .findOne({ selector: { id: taskId } })
+          .exec()
+        if (!taskDoc) {
+          return false
+        }
 
-      // Can only indent if there's a task before this one
-      return taskIndex > 0
+        const task = taskDoc.toJSON()
+
+        // If it's already a subtask, check the nesting level
+        if (task.isSubtask) {
+          // Check nesting level by tracing up the hierarchy
+          let currentTaskId = task.id
+          let nestingLevel = 1 // Current task is already at level 1
+
+          // Traverse up to find the nesting level
+          while (true) {
+            const currentDoc = await database.tasks
+              .findOne({
+                selector: { id: currentTaskId },
+              })
+              .exec()
+
+            if (!currentDoc) break
+
+            const currentTask = currentDoc.toJSON()
+            if (!currentTask.parentTaskId) break
+
+            currentTaskId = currentTask.parentTaskId
+            nestingLevel++
+
+            // Max nesting level check (3 levels max)
+            if (nestingLevel >= 3) {
+              return false
+            }
+          }
+        }
+
+        // Check if there's a valid potential parent task
+        const potentialParentId = await findPotentialParentTask(taskId)
+        const canIndent = potentialParentId !== null
+
+        return canIndent
+      } catch (error) {
+        console.error(`Error in canTaskBeIndented for ${taskId}:`, error)
+        return false
+      }
     },
-    [data.tasks]
+    [findPotentialParentTask]
   )
 
   // Check if a task can be unindented (converted from subtask to regular task)
-  const canTaskBeUnindented = useCallback(
-    (taskId: string) => {
-      // Get the current task
-      const task = data.tasks.find((t) => t.id === taskId)
+  const canTaskBeUnindented = useCallback(async (taskId: string) => {
+    try {
+      // Directly query the database to get the current task
+      const taskDoc = await database.tasks
+        .findOne({ selector: { id: taskId } })
+        .exec()
+      if (!taskDoc) {
+        return false
+      }
+
+      const task = taskDoc.toJSON()
+
       // Can only unindent if it's currently a subtask
-      return task?.isSubtask === true
+      const canUnindent = task.isSubtask === true
+
+      return canUnindent
+    } catch (error) {
+      console.error(`Error in canTaskBeUnindented for ${taskId}:`, error)
+      return false
+    }
+  }, [])
+
+  // Removed duplicate declaration of findPotentialParentTask since it's now defined above
+
+  // Duplicate task function - creates an exact copy with new ID, placed directly below original
+  const duplicateTask = useCallback(
+    async (taskId: string) => {
+      const now = getCurrentTimestamp()
+      const user = getCurrentUser(currentUser)
+
+      // Validate inputs
+      if (!taskId) {
+        throw new Error("Task ID is required")
+      }
+
+      if (!projectId) {
+        throw new Error("Project ID is required")
+      }
+
+      // Find the original task
+      const originalTask = data.tasks.find((t) => t.id === taskId)
+      if (!originalTask) {
+        throw new Error(`Task not found with ID: ${taskId}`)
+      }
+
+      // Validate original task has required fields
+      if (!originalTask.statusId) {
+        throw new Error("Original task missing statusId")
+      }
+
+      if (!originalTask.priorityId) {
+        // Find a default priority
+        const defaultPriority = data.labels.find((l) => l.type === "priority")
+        if (!defaultPriority) {
+          throw new Error(
+            "No priority labels available and original task missing priorityId"
+          )
+        }
+        originalTask.priorityId = defaultPriority.id
+      }
+
+      // Get all tasks in the same status to calculate new order
+      const tasksInStatus = data.tasks
+        .filter((t) => t.statusId === originalTask.statusId)
+        .sort((a, b) => (a.taskOrder ?? 0) - (b.taskOrder ?? 0))
+
+      // Find the index of the original task
+      const originalIndex = tasksInStatus.findIndex((t) => t.id === taskId)
+      if (originalIndex === -1) {
+        throw new Error("Original task not found in status")
+      }
+
+      // Calculate the order for the new task (directly below original)
+      let newTaskOrder: number
+      if (originalIndex === tasksInStatus.length - 1) {
+        // Original is the last task, add to end
+        newTaskOrder = (originalTask.taskOrder || 1000) + 1000
+      } else {
+        // Insert between original and next task
+        const nextTask = tasksInStatus[originalIndex + 1]
+        const gap =
+          (nextTask.taskOrder || 1000) - (originalTask.taskOrder || 1000)
+        if (gap > 1) {
+          // There's space, insert in the middle
+          newTaskOrder = Math.floor(
+            ((originalTask.taskOrder || 1000) + (nextTask.taskOrder || 1000)) /
+              2
+          )
+        } else {
+          // No space, need to reorder tasks
+          newTaskOrder = (originalTask.taskOrder || 1000) + 500
+
+          // Update all tasks after the original to make space
+          for (let i = originalIndex + 1; i < tasksInStatus.length; i++) {
+            const taskToUpdate = await database.tasks
+              .findOne({ selector: { id: tasksInStatus[i].id } })
+              .exec()
+            if (taskToUpdate) {
+              await taskToUpdate.update({
+                $set: {
+                  taskOrder: (tasksInStatus[i].taskOrder || 1000) + 1000,
+                  updatedAt: now,
+                  updatedBy: user,
+                },
+              })
+            }
+          }
+        }
+      }
+
+      // Create the duplicate task with new ID but all other properties preserved
+      const duplicateTaskData: TaskDataSchema = {
+        id: generateBrowserUniqueId("task"),
+        projectId, // Ensure projectId is set
+        name: `${originalTask.name || "Untitled Task"} (Duplicate)`,
+        statusId: originalTask.statusId,
+        taskOrder: newTaskOrder,
+        startDate: originalTask.startDate || Number(new Date()),
+        endDate: originalTask.endDate || 0,
+        description: originalTask.description || "",
+        completed: false, // Reset completion status
+        priorityId: originalTask.priorityId,
+        refUrls: originalTask.refUrls || [],
+        labelsTags: originalTask.labelsTags || [],
+        attachments: originalTask.attachments || [],
+        assignedTo: originalTask.assignedTo || [],
+        // Preserve subtask relationships but reset completion status
+        isSubtask: originalTask.isSubtask || false,
+        parentTaskId: originalTask.parentTaskId || "",
+        // Process arrays to ensure new IDs for nested items but preserve structure
+        subTasks: (originalTask.subTasks || []).map((st, index) => ({
+          id: generateBrowserUniqueId("st"),
+          name: st.name || "",
+          completed: false, // Reset completion status
+          order: index,
+        })),
+        checklist: (originalTask.checklist || []).map((cl, index) => ({
+          id: generateBrowserUniqueId("cl"),
+          text: cl.text || "",
+          checked: false, // Reset completion status for new task
+          order: index,
+        })),
+        acceptanceCriteria: (originalTask.acceptanceCriteria || []).map(
+          (ac, index) => ({
+            id: generateBrowserUniqueId("ac"),
+            text: ac.text || "",
+            checked: false, // Reset completion status for new task
+            order: index,
+          })
+        ),
+        comments: [], // Start with empty comments for the duplicate
+        createdAt: now,
+        updatedAt: now,
+        createdBy: user,
+        updatedBy: user,
+      }
+
+      // Insert the duplicate task
+      await database.tasks.insert(duplicateTaskData as TaskDocType)
+
+      // If the original task is a main task with subtasks, we need to duplicate those too
+      // and update their parentTaskId to point to the new task
+      if (!originalTask.isSubtask) {
+        const subtasks = data.tasks
+          .filter((t) => t.isSubtask && t.parentTaskId === originalTask.id)
+          .sort((a, b) => (a.taskOrder ?? 0) - (b.taskOrder ?? 0))
+
+        for (const subtask of subtasks) {
+          const duplicatedSubtask: TaskDataSchema = {
+            id: generateBrowserUniqueId("task"),
+            projectId,
+            name: subtask.name || "Untitled Subtask",
+            statusId: subtask.statusId,
+            taskOrder: (subtask.taskOrder || 1000) + 10000, // Offset to avoid conflicts
+            startDate: subtask.startDate || Number(new Date()),
+            endDate: subtask.endDate || 0,
+            description: subtask.description || "",
+            completed: false, // Reset completion status
+            priorityId: subtask.priorityId,
+            refUrls: subtask.refUrls || [],
+            labelsTags: subtask.labelsTags || [],
+            attachments: subtask.attachments || [],
+            assignedTo: subtask.assignedTo || [],
+            isSubtask: true,
+            parentTaskId: duplicateTaskData.id, // Point to the new parent
+            // Process arrays for subtasks too
+            subTasks: (subtask.subTasks || []).map((st, index) => ({
+              id: generateBrowserUniqueId("st"),
+              name: st.name || "",
+              completed: false,
+              order: index,
+            })),
+            checklist: (subtask.checklist || []).map((cl, index) => ({
+              id: generateBrowserUniqueId("cl"),
+              text: cl.text || "",
+              checked: false,
+              order: index,
+            })),
+            acceptanceCriteria: (subtask.acceptanceCriteria || []).map(
+              (ac, index) => ({
+                id: generateBrowserUniqueId("ac"),
+                text: ac.text || "",
+                checked: false,
+                order: index,
+              })
+            ),
+            comments: [],
+            createdAt: now,
+            updatedAt: now,
+            createdBy: user,
+            updatedBy: user,
+          }
+          await database.tasks.insert(duplicatedSubtask as TaskDocType)
+        }
+      }
     },
-    [data.tasks]
-  )
-
-  // Find the potential parent for a task if it were to be indented
-  const findPotentialParentTask = useCallback(
-    (taskId: string) => {
-      const task = data.tasks.find((t) => t.id === taskId)
-      if (!task) return null
-
-      // Find tasks in the same status column
-      const tasksInSameStatus = data.tasks
-        .filter((t) => t.statusId === task.statusId && !t.isSubtask) // Only consider top-level tasks
-        .sort((a, b) => a.taskOrder - b.taskOrder)
-
-      const taskIndex = tasksInSameStatus.findIndex((t) => t.id === taskId)
-      if (taskIndex <= 0) return null
-
-      // Return the task above this one
-      return tasksInSameStatus[taskIndex - 1].id
-    },
-    [data.tasks]
+    [data.tasks, data.labels, projectId, currentUser]
   )
 
   return {
@@ -855,6 +1117,7 @@ export function useProjectData(
     updateTask,
     deleteTask,
     moveTask,
+    duplicateTask,
     createLabel, // Updated from createTaskStatus
     updateLabel, // Updated from updateTaskStatus
     deleteLabel, // Updated from deleteTaskStatus

@@ -12,7 +12,7 @@ import { ConfirmationDialog } from "./confirmation-dialog"
 import { type KanbanTask } from "../types"
 import { Box, Flex, Heading, IconButton, Button, Text, TextField, TextArea, Badge, Tooltip, toast, DropdownMenu, Dialog } from "@incmix/ui"
 
-import { Plus, Search, RefreshCw, Settings, MoreVertical, X, ClipboardList, XCircle, Sparkles, Loader2 } from "lucide-react"
+import { Plus, Search, RefreshCw, Settings, MoreVertical, X, ClipboardList, XCircle, Sparkles, Loader2, Download } from "lucide-react"
 import { CreateColumnForm } from "../shared/create-column-form"
 
 
@@ -30,6 +30,8 @@ import {
 import { useListView } from "../hooks/use-list-view"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
 import { blockBoardPanningAttr } from "../data-attributes"
+import { TaskCopyBufferProvider } from "../hooks/use-task-copy-buffer"
+import { exportAllTasksToCSV } from "../utils/csv-export"
 
 interface ListBoardProps {
   projectId?: string
@@ -70,6 +72,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     createTask,
     updateTask,
     deleteTask,
+    duplicateTask,
     moveTask,
     createStatusLabel, // Using compatibility methods instead
     updateStatusLabel, // Using compatibility methods instead
@@ -86,8 +89,138 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     clearError: clearGenerationError
   } = useBulkAIGeneration(updateTask)
 
+  // CSV export handler for all tasks
+  const handleExportAllCSV = useCallback(() => {
+    try {
+      exportAllTasksToCSV(columns, priorityLabels, {
+        includeSubtasks: true,
+        includeMetadata: true,
+        includeTimestamps: true
+      })
+    } catch (error) {
+      console.error("Failed to export CSV:", error)
+    }
+  }, [columns, priorityLabels])
+
+  // State to track optimistic duplicates
+  const [optimisticDuplicateIds, setOptimisticDuplicateIds] = useState<Set<string>>(new Set());
+
+  // Optimistic duplicate task handler
+  const handleOptimisticDuplicate = useCallback(async (taskId: string) => {
+    try {
+      // Find the original task from the current columns
+      let originalTask: KanbanTask | undefined;
+      let originalColumn: typeof columns[0] | undefined;
+      
+      for (const column of columns) {
+        const task = column.tasks.find(t => t.id === taskId);
+        if (task) {
+          originalTask = task;
+          originalColumn = column;
+          break;
+        }
+      }
+      
+      if (!originalTask || !originalColumn) {
+        console.error('Task not found for optimistic duplicate:', taskId);
+        await duplicateTask(taskId); // Fallback to normal duplicate
+        return;
+      }
+
+      // Generate a temporary ID for the optimistic duplicate
+      const tempId = `temp-${Date.now()}-${Math.random()}`;
+      
+      // Create optimistic duplicate task
+      const optimisticDuplicate: KanbanTask = {
+        ...originalTask,
+        id: tempId,
+        name: `${originalTask.name || 'Untitled Task'} (Duplicate)`,
+        taskOrder: (originalTask.taskOrder || 1000) + 500,
+        completed: false,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        // Reset nested arrays with new IDs
+        subTasks: (originalTask.subTasks || []).map((st, index) => ({
+          ...st,
+          id: `temp-st-${Date.now()}-${index}`,
+          completed: false,
+        })),
+        checklist: (originalTask.checklist || []).map((cl, index) => ({
+          ...cl,
+          id: `temp-cl-${Date.now()}-${index}`,
+          checked: false,
+        })),
+        acceptanceCriteria: (originalTask.acceptanceCriteria || []).map((ac, index) => ({
+          ...ac,
+          id: `temp-ac-${Date.now()}-${index}`,
+          checked: false,
+        })),
+        comments: [],
+      };
+
+      // Find the index to insert the duplicate right after the original
+      const originalIndex = originalColumn.tasks.findIndex(t => t.id === taskId);
+      const newTasks = [...originalColumn.tasks];
+      newTasks.splice(originalIndex + 1, 0, optimisticDuplicate);
+
+      // Update optimistic columns immediately
+      const newColumns = columns.map(col => 
+        col.id === originalColumn!.id 
+          ? { ...col, tasks: newTasks, totalTasksCount: col.totalTasksCount + 1 }
+          : col
+      );
+      setOptimisticColumns(newColumns);
+      
+      // Track this optimistic duplicate
+      setOptimisticDuplicateIds(prev => new Set([...prev, tempId]));
+
+      // Perform the actual duplicate operation in the background
+      try {
+        await duplicateTask(taskId);
+        // Don't clear optimistic state immediately - let the effect handle it
+      } catch (error) {
+        // Revert optimistic update on error
+        console.error('Failed to duplicate task, reverting optimistic update:', error);
+        setOptimisticColumns([]);
+        setOptimisticDuplicateIds(new Set());
+        throw error;
+      }
+    } catch (error) {
+      console.error('Optimistic duplicate failed:', error);
+      // Fallback to normal duplicate
+      await duplicateTask(taskId);
+    }
+  }, [columns, duplicateTask]);
+
+  // Effect to clear optimistic state when real duplicate tasks appear
+  // Optimized to reduce dependencies and improve performance
+  useEffect(() => {
+    if (optimisticDuplicateIds.size === 0 || optimisticColumns.length === 0) return;
+
+    // Use more efficient approach to check for matching real tasks
+    const hasMatchingRealTask = optimisticColumns.some(col =>
+      col.tasks.some(task => 
+        task.id?.startsWith('temp-') && 
+        task.name?.includes('(Duplicate)') &&
+        columns.some(realCol =>
+          realCol.tasks.some(realTask => 
+            realTask.name === task.name && !realTask.id?.startsWith('temp-')
+          )
+        )
+      )
+    );
+
+    if (hasMatchingRealTask) {
+      setOptimisticColumns([]);
+      setOptimisticDuplicateIds(new Set());
+    }
+  }, [columns.length, optimisticDuplicateIds.size]); // Reduced dependencies to prevent excessive re-renders
+
+  // Use optimistic columns if available, otherwise use regular columns
+  const activeColumns = optimisticColumns.length > 0 ? optimisticColumns : columns;
+
   // Filter columns based on search query
-  const filteredColumns = columns.filter(column =>
+  const filteredColumns = activeColumns.filter(column =>
     column.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     column.tasks.some(task =>
       task.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -485,8 +618,9 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   }
 
   return (
-    // FIX: Making ListBoard structure consistent with Board component to fix double scrollbars
-    <Box className="w-full h-full flex flex-col overflow-hidden">
+    <TaskCopyBufferProvider>
+      {/* FIX: Making ListBoard structure consistent with Board component to fix double scrollbars */}
+      <Box className="w-full h-full flex flex-col overflow-hidden">
       {/* HEADER: Fixed header area */}
       <Box className="flex-shrink-0 border-b border-gray-4 dark:border-gray-5 bg-gray-1 dark:bg-gray-2">
         <Flex direction="column" gap="4" className="p-4">
@@ -550,6 +684,17 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
               >
                 <Plus size={14} />
                 Add Column
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                size="2" 
+                className="flex items-center gap-1 shadow-sm hover:shadow-md transition-all duration-150" 
+                onClick={handleExportAllCSV}
+                disabled={columns.length === 0 || columns.every(col => col.tasks.length === 0)}
+              >
+                <Download size={14} />
+                Export All CSV
               </Button>
               
               <Tooltip content="Refresh">
@@ -623,23 +768,32 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
           <Box className="w-full space-y-2">
             {/* Column creation is now handled by the CreateColumnForm in the dropdown menu */}
 
-              {filteredColumns.map((column) => (
-                <ListColumn
-                  key={column.id}
-                  column={column}
-                  columns={columns}
-                  priorityLabels={priorityLabels}
-                  onCreateTask={createTask}
-                  onUpdateTask={updateTask}
-                  onDeleteTask={deleteTask}
-                  onUpdateColumn={(id, updates) => updateStatusLabel(id, updates)}
-                  onDeleteColumn={deleteStatusLabel}
-                  isDragging={isDragging}
-                  selectedTaskIds={selectedTasks}
-                  onTaskSelect={handleTaskSelect}
-                  onSelectAll={handleColumnSelectAll}
-                />
-              ))}
+              {filteredColumns.map((column) => {
+                // Transform selectedTasks to match the expected type: {[key: string]: boolean}
+                const selectedTasksAsBooleans = Object.keys(selectedTasks).reduce(
+                  (acc, id) => ({ ...acc, [id]: true }), 
+                  {} as {[key: string]: boolean}
+                );
+                
+                return (
+                  <ListColumn
+                    key={column.id}
+                    column={column}
+                    columns={activeColumns}
+                    priorityLabels={priorityLabels}
+                    onCreateTask={createTask}
+                    onUpdateTask={updateTask}
+                    onDeleteTask={deleteTask}
+                    onDuplicateTask={handleOptimisticDuplicate}
+                    onUpdateColumn={(id, updates) => updateStatusLabel(id, updates)}
+                    onDeleteColumn={deleteStatusLabel}
+                    isDragging={isDragging}
+                    selectedTaskIds={selectedTasksAsBooleans}
+                    onTaskSelect={handleTaskSelect}
+                    onSelectAll={handleColumnSelectAll}
+                  />
+                );
+              })}
 
             {filteredColumns.length === 0 && searchQuery && (
               <Box className="text-center py-12">
@@ -688,6 +842,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         open={isAddColumnDialogOpen}
         onOpenChange={setIsAddColumnDialogOpen}
       />
-    </Box>
+      </Box>
+    </TaskCopyBufferProvider>
   );
 }

@@ -29,6 +29,7 @@ export interface UseKanbanReturn {
   createTask: (statusId: string, taskData: Partial<TaskDataSchema>) => Promise<void>
   updateTask: (id: string, updates: Partial<TaskDataSchema>) => Promise<void>
   deleteTask: (id: string) => Promise<void>
+  duplicateTask: (id: string) => Promise<void>
   moveTask: (id: string, targetStatusId: string, targetIndex?: number) => Promise<void>
   bulkUpdateTasks: (taskIds: string[], updates: Partial<TaskDataSchema>) => Promise<void>
   bulkMoveTasks: (taskIds: string[], targetStatusId: string) => Promise<void>
@@ -37,9 +38,9 @@ export interface UseKanbanReturn {
   // Subtask operations
   convertTaskToSubtask: (taskId: string, parentTaskId: string) => Promise<void>
   convertSubtaskToTask: (taskId: string) => Promise<void>
-  canTaskBeIndented: (taskId: string) => boolean
-  canTaskBeUnindented: (taskId: string) => boolean
-  findPotentialParentTask: (taskId: string) => string | null
+  canTaskBeIndented: (taskId: string) => Promise<boolean>
+  canTaskBeUnindented: (taskId: string) => Promise<boolean>
+  findPotentialParentTask: (taskId: string) => Promise<string | null>
   
   // Status label operations
   createStatusLabel: (name: string, color?: string, description?: string) => Promise<string>
@@ -184,6 +185,7 @@ export function useKanban(providedProjectId?: string): UseKanbanReturn {
       createTask: projectData.createTask,
       updateTask: projectData.updateTask,
       deleteTask: projectData.deleteTask,
+      duplicateTask: projectData.duplicateTask,
       moveTask: projectData.moveTask,
 
       // Subtask operations (new)
@@ -279,6 +281,7 @@ export function useKanban(providedProjectId?: string): UseKanbanReturn {
     createTask: operations.createTask,
     updateTask: operations.updateTask,
     deleteTask: operations.deleteTask,
+    duplicateTask: operations.duplicateTask,
     moveTask: operations.moveTask,
     refetch: operations.refetch,
     clearError: operations.clearError,

@@ -44,6 +44,7 @@ import {
 import { TaskActionsMenu } from "./task-actions-menu"
 import { ListColumn } from "../hooks/use-list-view"
 import { useKanban } from "../hooks/use-kanban-data"
+import { getPriorityStyles, getPriorityName } from "../utils/priority-utils"
 
 // Constants for DOM manipulation checks
 const canUseDOM =
@@ -88,60 +89,7 @@ const checkboxStyles = {
 // Group hover styles for elements that should only appear on hover
 const hoverVisibleClasses = "opacity-0 group-hover:opacity-100 transition-opacity duration-150"
 
-// Helper functions for priority labels styling
-const getPriorityStyles = (priorityId: string, priorityLabels?: { id: string; name: string; color: string; type: string }[]): string => {
-  // If priorityLabels exists, try to get color from it
-  if (priorityLabels && priorityLabels.length > 0) {
-    const priority = priorityLabels.find(p => p.id === priorityId);
-    if (priority && priority.color) {
-      // Convert the color to a Radix UI token class based on color value
-      switch (priority.color.toLowerCase()) {
-        case "red":
-          return "bg-red-3 text-red-11 dark:bg-red-3 dark:text-red-11";
-        case "orange":
-          return "bg-orange-3 text-orange-11 dark:bg-orange-3 dark:text-orange-11";
-        case "yellow":
-          return "bg-yellow-3 text-yellow-11 dark:bg-yellow-3 dark:text-yellow-11";
-        case "green":
-          return "bg-green-3 text-green-11 dark:bg-green-3 dark:text-green-11";
-        case "blue":
-          return "bg-blue-3 text-blue-11 dark:bg-blue-3 dark:text-blue-11";
-        case "purple":
-          return "bg-purple-3 text-purple-11 dark:bg-purple-3 dark:text-purple-11";
-        default:
-          return "bg-gray-3 text-gray-11 dark:bg-gray-3 dark:text-gray-11";
-      }
-    }
-  }
-  
-  // Fallback to using priorityId directly
-  switch (priorityId.toLowerCase()) {
-    case "urgent":
-    case "high":
-      return "bg-red-3 text-red-11 dark:bg-red-3 dark:text-red-11";
-    case "medium":
-      return "bg-orange-3 text-orange-11 dark:bg-orange-3 dark:text-orange-11";
-    case "low":
-      return "bg-blue-3 text-blue-11 dark:bg-blue-3 dark:text-blue-11";
-    default:
-      return "bg-gray-3 text-gray-11 dark:bg-gray-3 dark:text-gray-11";
-  }
-};
 
-// Helper function to get priority name from ID
-const getPriorityName = (priorityId: string, priorityLabels?: { id: string; name: string; color: string; type: string }[]): string => {
-  // First try to get from priorityLabels if available
-  if (priorityLabels && priorityLabels.length > 0) {
-    const priority = priorityLabels.find(p => p.id === priorityId);
-    if (priority?.name) return priority.name;
-  }
-  
-  // Fallback to formatting the priorityId directly
-  if (!priorityId) return "";
-  
-  // Capitalize first letter and format the rest
-  return priorityId.charAt(0).toUpperCase() + priorityId.slice(1).toLowerCase();
-};
 
 // Helper function to format dates
 const formatDate = (date: Date): string => {
@@ -155,6 +103,8 @@ interface ListTaskCardProps {
   priorityLabels?: { id: string; name: string; color: string; type: string }[]
   onUpdateTask: (id: string, updates: Partial<TaskDataSchema>) => Promise<void>
   onDeleteTask: (id: string) => Promise<void>
+  onCreateTask: (statusId: string, taskData: Partial<TaskDataSchema>) => Promise<void>
+  onDuplicateTask?: (id: string) => Promise<void>
   onTaskSelect?: (id: string, selected: boolean) => void
   isSelected?: boolean
   projectId?: string
@@ -206,9 +156,11 @@ export const ListTaskCard = memo(function ListTaskCard({
   priorityLabels,
   onUpdateTask,
   onDeleteTask,
+  onCreateTask,
+  onDuplicateTask,
   onTaskSelect,
   isSelected = false,
-  projectId = "default-project",
+  projectId
 }: ListTaskCardProps) {
 
   const { handleDrawerOpen } = useKanbanDrawer()
@@ -327,21 +279,85 @@ export const ListTaskCard = memo(function ListTaskCard({
   
   // Kanban data is now accessed above
   
+  // States for storing async validation results
+  const [canIndent, setCanIndent] = useState<boolean>(false);
+  const [canUnindent, setCanUnindent] = useState<boolean>(false);
+  const [potentialParentId, setPotentialParentId] = useState<string | null>(null);
+  
+  // Use effects to update the validation states when dependencies change
+  useEffect(() => {
+    let isMounted = true;
+    
+    const checkCanIndent = async () => {
+      if (!card.id) return;
+      
+      try {
+        const result = await kanbanData.canTaskBeIndented(card.id);
+        if (isMounted) {
+         
+          setCanIndent(result);
+        }
+      } catch (error) {
+        console.error(`Error checking if task ${card.id} can be indented:`, error);
+        if (isMounted) setCanIndent(false);
+      }
+    };
+    
+    checkCanIndent();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [card.id, card.isSubtask, card.parentTaskId, kanbanData]);
+  
+  useEffect(() => {
+    let isMounted = true;
+    
+    const checkCanUnindent = async () => {
+      if (!card.id) return;
+      
+      try {
+        const result = await kanbanData.canTaskBeUnindented(card.id);
+        if (isMounted) {
+          
+          setCanUnindent(result);
+        }
+      } catch (error) {
+        console.error(`Error checking if task ${card.id} can be unindented:`, error);
+        if (isMounted) setCanUnindent(false);
+      }
+    };
+    
+    checkCanUnindent();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, [card.id, card.isSubtask, card.parentTaskId, kanbanData]);
+  
   // Prepare handlers for indent/unindent operations
   const handleIndentTask = useCallback(async (taskId: string) => {
-    const parentTaskId = kanbanData.findPotentialParentTask(taskId);
-    if (parentTaskId) {
-      await kanbanData.convertTaskToSubtask(taskId, parentTaskId);
+    try {
+      // Find the potential parent ID if not already fetched
+      const parentId = potentialParentId || await kanbanData.findPotentialParentTask(taskId);
+      
+      if (parentId) {
+        await kanbanData.convertTaskToSubtask(taskId, parentId);
+      } else {
+        console.error(`No potential parent found for task ${taskId}`);
+      }
+    } catch (error) {
+      console.error(`Error indenting task ${taskId}:`, error);
     }
-  }, [kanbanData]);
+  }, [kanbanData, potentialParentId]);
   
   const handleUnindentTask = useCallback(async (taskId: string) => {
-    await kanbanData.convertSubtaskToTask(taskId);
+    try {
+      await kanbanData.convertSubtaskToTask(taskId);
+    } catch (error) {
+      console.error(`Error unindenting task ${taskId}:`, error);
+    }
   }, [kanbanData]);
-  
-  // Check if the task can be indented or unindented
-  const canIndent = useMemo(() => card.id ? kanbanData.canTaskBeIndented(card.id) : false, [card.id, kanbanData]);
-  const canUnindent = useMemo(() => card.id ? kanbanData.canTaskBeUnindented(card.id) : false, [card.id, kanbanData]);
 
   // Opens the delete confirmation modal
   const handleDeleteTask = useCallback(async () => {
@@ -368,8 +384,18 @@ export const ListTaskCard = memo(function ListTaskCard({
   }, [card.id, onDeleteTask])
 
   const handleDuplicateTask = useCallback(async () => {
-    // Implementation for task duplication could be added here
-  }, [])
+    if (!card.id) {
+      console.error("Task ID is missing for duplication")
+      return
+    }
+    
+    try {
+      await onDuplicateTask?.(card.id)
+     
+    } catch (error) {
+      console.error("Failed to duplicate task:", error)
+    }
+  }, [card.id, card.name, onDuplicateTask])
 
   const handleOpenDrawer = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
@@ -496,33 +522,55 @@ export const ListTaskCard = memo(function ListTaskCard({
           
           const sourceCard = sourceData.card as KanbanTask;
           
-          // If the current card (drop target) is a subtask
+          // Don't allow dropping onto itself
+          if (sourceCard.id === card.id) return false;
+          
+          // CASE 1: If the current card (drop target) is a subtask
           if (card.isSubtask) {
-            // Only allow dropping if source is also a subtask with the same parent
-            return Boolean(sourceCard.isSubtask && sourceCard.parentTaskId === card.parentTaskId);
+            // Allow dropping other subtasks with the same parent to maintain hierarchy
+            if (sourceCard.isSubtask && sourceCard.parentTaskId === card.parentTaskId) {
+              return true;
+            }
+            
+            // For other cases with subtasks, be more restrictive to maintain hierarchy
+            return false;
           }
           
-          // If we're dropping near a parent task that has expanded subtasks
-          // We need to check if we're in the subtask zone to prevent dropping regular tasks as subtasks
-          if (hasChildTasks && isExpanded) {
-            // For parent tasks, allow drops only for other parent tasks or subtasks already belonging to this parent
-            return Boolean(!sourceCard.isSubtask || sourceCard.parentTaskId === card.id);
+          // CASE 2: If this is a parent task with subtasks
+          // We need to be more permissive here to allow tasks to be dropped above parent tasks
+          if (hasChildTasks) {
+            // If dragging a subtask
+            if (sourceCard.isSubtask) {
+              // Only allow if it's already a subtask of this parent
+              return sourceCard.parentTaskId === card.id;
+            } else {
+              // If dragging a regular task, allow it
+              // This enables dropping tasks above parent tasks
+              return true;
+            }
           }
           
-          // In all other cases, allow the drop
+          // In all other cases (normal tasks without subtasks), allow drops
           return true;
         },
         getData: ({ element, input }) => {
           // Get the basic data for this card as a drop target
           const data = getCardDropTargetData({ card, statusId });
           
-          // For parent tasks with subtasks, we need to ensure they can be dropped above other tasks
-          // Enhance the drop target detection for better accuracy with specific settings for upward movement
-          return attachClosestEdge(data, {
+          // For tasks with subtasks we need a different approach to edge detection
+          // Use TypeScript casting to enhance the data with extra properties
+          const enhancedData = { 
+            ...data,
+            // Use a special marker in the card data itself rather than modifying the detection
+            // This allows us to use the marker later in the onDrag/onDrop handlers
+            __hasChildTasks: hasChildTasks 
+          } as any; // Type assertion to avoid TypeScript errors
+          
+          // Configure a larger drop target for the top edge to make it easier to drop above tasks with subtasks
+          // The 'allowedEdges' is left as default to get natural detection behavior
+          return attachClosestEdge(enhancedData, {
             element,
             input,
-            // Explicitly allow both top and bottom edges with biased hit detection
-            // This improves the ability to drop tasks above existing tasks
             allowedEdges: ["top", "bottom"],
           });
         },
@@ -530,27 +578,44 @@ export const ListTaskCard = memo(function ListTaskCard({
           if (!isCardData(source.data)) return;
           if (source.data.card.id === card.id) return;
           
-          // Get edge information from the source data
-          const dataWithEdge = source.data as TCardDataWithEdge;
-          const sourceCard = source.data.card as KanbanTask;
+          // Get edge information from the source data with stronger typing
+          const sourceData = source.data;
+          const sourceCard = sourceData.card as KanbanTask;
           
-          // Always ensure a valid edge is used, defaulting to bottom if not specified
-          // For tasks with subtasks, we want to ensure they can be dropped in all positions
-          // This improves the drag-and-drop experience for hierarchical tasks
-          const closestEdge = dataWithEdge.closestEdge || "bottom";
-          
-          // Special handling for parent tasks with subtasks to ensure proper edge detection
-          // We need to know if the dragged task has subtasks to adjust the detection area
-          const hasSubtasks = !sourceCard.isSubtask && 
+          // Determine if the source card is a parent task with subtasks
+          const sourceHasSubtasks = !sourceCard.isSubtask && 
                             columns.some(col => 
                               col.tasks.some((t: KanbanTask) => 
                                 t.parentTaskId === sourceCard.id
                               )
                             );
-                            
+          
+          // Extract edge information with proper TypeScript typing
+          // Define allowed edge types to match the Edge type from the drag-and-drop library
+          type Edge = "top" | "right" | "bottom" | "left";
+          
+          // Initialize with a valid Edge type
+          let closestEdge: Edge = "bottom";
+          
+          // If the source data has edge information, extract it with proper typing
+          if ('closestEdge' in sourceData) {
+            const extractedEdge = (sourceData as any).closestEdge;
+            // Only assign if it's a valid Edge value
+            if (extractedEdge === "top" || extractedEdge === "right" || 
+                extractedEdge === "bottom" || extractedEdge === "left") {
+              closestEdge = extractedEdge;
+            }
+          }
+          
+          // If this is a parent task with subtasks, favor "top" edge to make dropping above easier
+          // This is the key improvement - for parent tasks with subtasks, make it easier to drop above
+          if (hasChildTasks && !sourceCard.isSubtask) {
+            closestEdge = "top"; // Now properly typed
+          }
+          
           setState({
             type: "is-over",
-            dragging: source.data.rect,
+            dragging: sourceData.rect,
             closestEdge,
           });
         },
@@ -559,20 +624,45 @@ export const ListTaskCard = memo(function ListTaskCard({
           // Check id instead of taskId for the new schema
           if (source.data.card.id === card.id) return;
           
-          // Extract the closest edge and ensure it's valid
-          const closestEdge = extractClosestEdge(self.data);
-          if (!closestEdge) return;
+          // Define Edge type for better TypeScript compliance
+          type Edge = "top" | "right" | "bottom" | "left";
+          
+          // Extract the closest edge and ensure it's valid with proper typing
+          let closestEdge: Edge | null = null;
+          try {
+            // Extract edge info from self data if available
+            const extractedEdge = extractClosestEdge(self.data);
+            if (extractedEdge === "top" || extractedEdge === "right" || 
+                extractedEdge === "bottom" || extractedEdge === "left") {
+              closestEdge = extractedEdge;
+            }
+          } catch (err) {
+            // Default to bottom if extraction fails
+            closestEdge = "bottom";
+          }
+          
+          // If no valid edge was detected, use a default
+          if (!closestEdge) {
+            closestEdge = "bottom";
+          }
           
           // Get the source card with proper typing
           const sourceCard = source.data.card as KanbanTask;
           
-          // Detect if the dragged task has subtasks to provide better drag detection
-          const hasSubtasks = !sourceCard.isSubtask && 
+          // Detect if the dragged task has subtasks
+          const sourceHasSubtasks = !sourceCard.isSubtask && 
                             columns.some(col => 
                               col.tasks.some((t: KanbanTask) => 
                                 t.parentTaskId === sourceCard.id
                               )
                             );
+          
+          // Enhanced edge detection for parent tasks with subtasks
+          // Make it easier to drop tasks above parent tasks with subtasks
+          if (hasChildTasks && !sourceCard.isSubtask) {
+            // Bias toward top edge for better positioning above parent tasks
+            closestEdge = "top";
+          }
           
           // Build the proposed state with additional information
           const proposed: TCardState = {
@@ -824,8 +914,17 @@ export const ListTaskCard = memo(function ListTaskCard({
                     createdBy: { id: '', name: '' },
                     updatedBy: { id: '', name: '' }
                   })) as unknown as TaskDataSchema[]}
+                  priorityLabels={priorityLabels}
                   onUpdateTask={onUpdateTask}
                   onDeleteTask={async () => { setShowDeleteConfirmation(true); return Promise.resolve(); }}
+                  // Add copy/paste support
+                  onCreateTask={async (taskData) => {
+                    // Create task in the same status as the current card
+                    await onCreateTask(statusId, taskData)
+                  }}
+                  currentStatusId={statusId}
+                  // Add duplicate task support
+                  onDuplicateTask={handleDuplicateTask}
                   // Add subtask operation handlers
                   onIndentTask={handleIndentTask}
                   onUnindentTask={handleUnindentTask}

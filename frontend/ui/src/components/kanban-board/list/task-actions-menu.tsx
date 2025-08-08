@@ -7,7 +7,6 @@ import {
   Flex,
   Text,
   Badge,
-  Avatar,
   Calendar,
   Popover,
   Button,
@@ -20,6 +19,7 @@ import {
   ArrowRight,
   Trash2,
   Copy,
+  Clipboard,
   Edit3,
   AlertCircle,
   Clock,
@@ -30,6 +30,8 @@ import { TaskDataSchema } from "@incmix/utils/schema"
 import { KanbanTask } from "../types" // Import KanbanTask type
 import { OverlappingAvatarGroup, type AssignedUser, type SelectableUser } from "../shared/overlapping-avatar-group"
 import { MOCK_MEMBERS } from "../constants/mock-members"
+import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
+import { useTaskCopyBuffer } from "../hooks/use-task-copy-buffer"
 
 interface TaskActionsMenuProps {
   task?: KanbanTask | TaskDataSchema
@@ -50,6 +52,8 @@ interface TaskActionsMenuProps {
   onUnindentTask?: (taskId: string) => Promise<void>
   canIndent?: boolean
   canUnindent?: boolean
+  // Copy/Paste operations
+  currentStatusId?: string // Current column ID for paste operations
   newTaskData?: { 
     priorityId?: string;
     startDate?: string;
@@ -68,7 +72,7 @@ interface TaskActionsMenuProps {
   mode?: "existing-task" | "new-task"
 }
 
-export function TaskActionsMenu({
+export const TaskActionsMenu = ({
   task,
   columns,
   priorityLabels = [],
@@ -81,13 +85,18 @@ export function TaskActionsMenu({
   onUnindentTask,
   canIndent = false,
   canUnindent = false,
+  // Copy/Paste props
+  currentStatusId,
   newTaskData,
   setNewTaskData,
   disabled = false,
   size = "1",
   variant = "ghost",
   mode = "existing-task"
-}: TaskActionsMenuProps) {
+}: TaskActionsMenuProps) => {
+  // Get drawer open handler from hook
+  const { handleDrawerOpen } = useKanbanDrawer()
+  const { copyTask, hasCopiedTask, copiedTask } = useTaskCopyBuffer()
   const [isDatePickerOpen, setIsDatePickerOpen] = useState<"start" | "end" | null>(null)
 
   // Get current values - either from existing task or new task data
@@ -95,7 +104,7 @@ export function TaskActionsMenu({
   const currentStartDate = task?.startDate || newTaskData?.startDate
   const currentEndDate = task?.endDate || newTaskData?.endDate
   const currentAssignedTo = task?.assignedTo || newTaskData?.assignedTo || []
-  const currentStatusId = task?.statusId || newTaskData?.statusId
+  const taskStatusId = task?.statusId || newTaskData?.statusId || currentStatusId
 
   // Priority helpers - updated for new schema with priorityId and labels
   const getPriorityInfo = (priorityId: string | undefined) => {
@@ -168,6 +177,38 @@ export function TaskActionsMenu({
     handleUpdateField("statusId", statusId)
   }, [handleUpdateField])
 
+  // Copy/Paste handlers
+  const handleCopyTask = useCallback(() => {
+    if (task && task.id) {
+      copyTask(task as TaskDataSchema)
+      // Show success feedback
+      console.log(`Task "${task.name || 'Untitled Task'}" copied to clipboard`)
+    }
+  }, [task, copyTask])
+
+  const handlePasteTask = useCallback(async () => {
+    if (!copiedTask || !onCreateTask || !currentStatusId) return
+
+    try {
+      // Create a new task based on the copied task data
+      const taskToPaste: Partial<TaskDataSchema> = {
+        ...copiedTask.task,
+        // Always create as a main task (not a subtask)
+        isSubtask: false,
+        parentTaskId: "",
+        // Update status to current column
+        statusId: currentStatusId,
+        // Add suffix to name to indicate it's a copy
+        name: `${copiedTask.task.name || 'Untitled Task'} (Copy)`,
+      }
+
+      await onCreateTask(taskToPaste)
+      console.log(`Task "${copiedTask.originalName}" pasted successfully`)
+    } catch (error) {
+      console.error('Failed to paste task:', error)
+    }
+  }, [copiedTask, onCreateTask, currentStatusId])
+
   const formatDate = (dateInput: string | number) => {
     return new Date(dateInput).toLocaleDateString("en-US", { 
       month: "short", 
@@ -198,7 +239,7 @@ export function TaskActionsMenu({
           <DropdownMenu.SubTrigger>
             <Flex align="center" gap="2">
               <PriorityIcon size={14} />
-              <Text>Set Priority</Text>
+              <Text>Priority</Text>
               <Badge 
                 color={priorityInfo.color} 
                 variant="soft" 
@@ -235,12 +276,60 @@ export function TaskActionsMenu({
           </DropdownMenu.SubContent>
         </DropdownMenu.Sub>
 
+        {/* Move to Column Section - Updated for statusId */}
+        <DropdownMenu.Sub>
+          <DropdownMenu.SubTrigger>
+            <Flex align="center" gap="2">
+              <ArrowRight size={14} />
+              <Text>Status</Text>
+              {columns.map(col => {
+                const isCurrentColumn = col.id === currentStatusId
+                if (isCurrentColumn) {
+                  return (
+                    <Badge 
+                      key={col.id}
+                      style={{ backgroundColor: `${(col as any).color ? `${(col as any).color}20` : '#e0e0e020'}`, color: (col as any).color || '#808080' }}
+                      variant="soft"
+                      size="1"
+                      className="ml-auto"
+                    >
+                      {col.name}
+                    </Badge>
+                  )
+                }
+                return null
+              })}
+            </Flex>
+          </DropdownMenu.SubTrigger>
+          <DropdownMenu.SubContent>
+            {columns.map((column) => {
+              const isCurrentColumn = column.id === currentStatusId
+              return (
+                <DropdownMenu.Item
+                  key={column.id}
+                  onClick={() => handleMoveToColumn(column.id)}
+                  className={isCurrentColumn ? "bg-accent" : ""}
+                  disabled={isCurrentColumn}
+                >
+                  <Flex align="center" gap="2">
+                    <Box
+                      className="w-2 h-2 rounded-full"
+                      style={{ backgroundColor: (column as any).color || '#808080' }}
+                    />
+                    <Text>{column.name}</Text>
+                  </Flex>
+                </DropdownMenu.Item>
+              )
+            })}
+            </DropdownMenu.SubContent>
+          </DropdownMenu.Sub>
+
         {/* Dates Section */}
         <DropdownMenu.Sub>
           <DropdownMenu.SubTrigger>
             <Flex align="center" gap="2">
               <CalendarIcon size={14} />
-              <Text>Set Dates</Text>
+              <Text>Dates</Text>
             </Flex>
           </DropdownMenu.SubTrigger>
           <DropdownMenu.SubContent>
@@ -309,7 +398,7 @@ export function TaskActionsMenu({
           <DropdownMenu.SubTrigger>
             <Flex align="center" gap="2">
               <User size={14} />
-              <Text>Assign To</Text>
+              <Text>Assignee</Text>
               {currentAssignedTo.length > 0 && (
                 <Badge variant="soft" size="1" className="ml-auto">
                   {currentAssignedTo.length}
@@ -343,54 +432,6 @@ export function TaskActionsMenu({
           </DropdownMenu.SubContent>
         </DropdownMenu.Sub>
 
-        {/* Move to Column Section - Updated for statusId */}
-        <DropdownMenu.Sub>
-          <DropdownMenu.SubTrigger>
-            <Flex align="center" gap="2">
-              <ArrowRight size={14} />
-              <Text>Move to</Text>
-              {columns.map(col => {
-                const isCurrentColumn = col.id === currentStatusId
-                if (isCurrentColumn) {
-                  return (
-                    <Badge 
-                      key={col.id}
-                      style={{ backgroundColor: `${(col as any).color ? `${(col as any).color}20` : '#e0e0e020'}`, color: (col as any).color || '#808080' }}
-                      variant="soft"
-                      size="1"
-                      className="ml-auto"
-                    >
-                      {col.name}
-                    </Badge>
-                  )
-                }
-                return null
-              })}
-            </Flex>
-          </DropdownMenu.SubTrigger>
-          <DropdownMenu.SubContent>
-            {columns.map((column) => {
-              const isCurrentColumn = column.id === currentStatusId
-              return (
-                <DropdownMenu.Item
-                  key={column.id}
-                  onClick={() => handleMoveToColumn(column.id)}
-                  className={isCurrentColumn ? "bg-accent" : ""}
-                  disabled={isCurrentColumn}
-                >
-                  <Flex align="center" gap="2">
-                    <Box
-                      className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: (column as any).color || '#808080' }}
-                    />
-                    <Text>{column.name}</Text>
-                  </Flex>
-                </DropdownMenu.Item>
-              )
-            })}
-            </DropdownMenu.SubContent>
-          </DropdownMenu.Sub>
-
         {/* Separator for task actions */}
         {mode !== "new-task" && (
           <>
@@ -402,9 +443,10 @@ export function TaskActionsMenu({
               <DropdownMenu.Item 
                 onClick={() => task?.id && onIndentTask(task.id)} 
                 disabled={!canIndent}
+                className="flex items-center gap-2"
               >
                 <IndentIcon size={14} />
-                <Text>Convert to Subtask</Text>
+                <Text>Make Subtask</Text>
               </DropdownMenu.Item>
             )}
 
@@ -413,23 +455,63 @@ export function TaskActionsMenu({
               <DropdownMenu.Item 
                 onClick={() => task?.id && onUnindentTask(task.id)} 
                 disabled={!canUnindent}
+                className="flex items-center gap-2"
               >
                 <OutdentIcon size={14} />
-                <Text>Convert to Task</Text>
+                <Text>Make Task</Text>
               </DropdownMenu.Item>
             )}
 
             {/* Edit Task */}
-            <DropdownMenu.Item>
+            <DropdownMenu.Item 
+              className="flex items-center gap-2"
+              onClick={() => task?.id && handleDrawerOpen(task.id)}
+            >
               <Edit3 size={14} />
-              <Text>Edit Task</Text>
+              <Text>Edit</Text>
             </DropdownMenu.Item>
 
             {/* Duplicate Task */}
             {onDuplicateTask && (
-              <DropdownMenu.Item onClick={onDuplicateTask}>
+              <DropdownMenu.Item 
+                onClick={onDuplicateTask}
+                className="flex items-center gap-2"
+              >
                 <Copy size={14} />
                 <Text>Duplicate</Text>
+              </DropdownMenu.Item>
+            )}
+
+            {/* Copy Task */}
+            {mode === "existing-task" && task && (
+              <DropdownMenu.Item 
+                onClick={handleCopyTask}
+                className="flex items-center gap-2"
+              >
+                <Copy size={14} />
+                <Text>Copy Task</Text>
+              </DropdownMenu.Item>
+            )}
+
+            {/* Paste Task */}
+            {mode === "existing-task" && onCreateTask && currentStatusId && (
+              <DropdownMenu.Item 
+                onClick={handlePasteTask}
+                disabled={!hasCopiedTask}
+                className="flex items-center gap-2"
+              >
+                <Clipboard size={14} />
+                {hasCopiedTask && copiedTask ? (
+                  <Text 
+                    title={`Paste "${copiedTask.originalName}"`}
+                  >
+                    Paste "{copiedTask.originalName.length > 20 ? 
+                      copiedTask.originalName.substring(0, 20) + '...' : 
+                      copiedTask.originalName}"
+                  </Text>
+                ) : (
+                  <Text>Paste Task</Text>
+                )}
               </DropdownMenu.Item>
             )}
 
@@ -439,10 +521,10 @@ export function TaskActionsMenu({
             {onDeleteTask && (
               <DropdownMenu.Item 
                 onClick={onDeleteTask}
-                className="text-destructive focus:text-destructive"
+                className="text-destructive focus:text-destructive flex items-center gap-2"
               >
                 <Trash2 size={14} />
-                <Text>Delete Task</Text>
+                <Text>Delete</Text>
               </DropdownMenu.Item>
             )}
           </>
