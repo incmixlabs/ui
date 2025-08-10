@@ -14,6 +14,7 @@ import { Box, Flex, Heading, IconButton, Button, Text, TextField, TextArea, Badg
 
 import { Plus, Search, RefreshCw, Settings, MoreVertical, X, ClipboardList, XCircle, Sparkles, Loader2, Download } from "lucide-react"
 import { CreateColumnForm } from "../shared/create-column-form"
+import { TaskViewHeader } from "../shared/task-view-header"
 
 
 import {
@@ -234,13 +235,13 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     if (!searchQuery.trim()) return activeColumns
     
     const lowerSearchQuery = searchQuery.toLowerCase()
-    return activeColumns.filter(column =>
-      column.name.toLowerCase().includes(lowerSearchQuery) ||
-      column.tasks.some(task =>
+    return activeColumns.map(column => ({
+      ...column,
+      tasks: column.tasks.filter(task =>
         task.name?.toLowerCase().includes(lowerSearchQuery) ||
         task.description?.toLowerCase().includes(lowerSearchQuery)
       )
-    )
+    }))
   }, [activeColumns, searchQuery])
 
 
@@ -650,145 +651,72 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     <TaskCopyBufferProvider>
       {/* FIX: Making ListBoard structure consistent with Board component to fix double scrollbars */}
       <Box className="w-full h-full flex flex-col overflow-hidden">
-      {/* HEADER: Fixed header area */}
-      <Box className="flex-shrink-0 border-b border-gray-4 dark:border-gray-5 bg-gray-1 dark:bg-gray-2">
-        <Flex direction="column" gap="4" className="p-4">
-
-          <Flex justify="between" align="center">
-            <Heading size="5" className="font-semibold text-gray-12 dark:text-gray-11">Project Tasks</Heading>
-
-            <Flex align="center" gap="2">
-              {/* Selected Tasks Actions - moved here from separate row */}
-              {selectedTasksCount > 0 && (
-                <>
-                  <Flex align="center" gap="2" className="mr-2">
-                    <Badge variant="solid" color="blue" size="1" className="px-2 py-0.5">
-                      {selectedTasksCount}
-                    </Badge>
-                    <Text size="2" className="font-medium text-blue-11">
-                      {selectedTasksCount === 1 ? 'task' : 'tasks'} selected
-                    </Text>
-                  </Flex>
-                  
-                  {useAI && (
-                    <Tooltip content={!isGenerating ? "Generate AI content for selected tasks" : "Generating content..."}>
-                      <Button
-                        variant="soft"
-                        color="purple"
-                        size="2"
-                        className="shadow-sm hover:shadow-md transition-all duration-150"
-                        onClick={promptGenerateAIContent}
-                        disabled={isGenerating}
-                      >
-                        {isGenerating ? (
-                          <Loader2 size={16} className="animate-spin mr-1" />
-                        ) : (
-                          <Sparkles size={16} className="mr-1" />
-                        )}
-                        {isGenerating ?
-                          `Generating...` :
-                          "Generate AI"}
-                      </Button>
-                    </Tooltip>
-                  )}
-                  
-                  <Button
-                    variant="outline"
-                    color="gray"
-                    size="2"
-                    className="shadow-sm hover:shadow-md hover:bg-gray-3 transition-all duration-150"
-                    onClick={() => setSelectedTasks({})}
-                  >
-                    <XCircle size={16} className="mr-1" />
-                    Clear
-                  </Button>
-                </>
-              )}
-              
-              <Button 
-                variant="soft" 
-                size="2" 
-                className="flex items-center gap-1 shadow-sm hover:shadow-md transition-all duration-150" 
-                onClick={() => setIsAddColumnDialogOpen(true)}
-              >
-                <Plus size={14} />
-                Add Column
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="2" 
-                className="flex items-center gap-1 shadow-sm hover:shadow-md transition-all duration-150" 
-                onClick={handleExportAllCSV}
-                disabled={columns.length === 0 || columns.every(col => col.tasks.length === 0)}
-              >
-                <Download size={14} />
-                Export All CSV
-              </Button>
-              
-              <Tooltip content="Refresh">
-                <IconButton 
-                  variant="soft" 
-                  size="1"
-                  className="hover:shadow-sm transition-all duration-150"
-                  onClick={() => window.location.reload()}
+      {/* HEADER: Using reusable task view header */}
+      <TaskViewHeader
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search tasks..."
+        stats={{
+          totalStatusLabels: projectStats.totalStatusLabels,
+          totalTasks: projectStats.totalTasks,
+          completedTasks: projectStats.completedTasks,
+          overdueTasks: projectStats.overdueTasks,
+          urgentTasks: projectStats.urgentTasks,
+        }}
+        onRefresh={() => window.location.reload()}
+        selectedTasksCount={selectedTasksCount}
+        selectedTasksActions={
+          <>
+            {useAI && (
+              <Tooltip content={!isGenerating ? "Generate AI content for selected tasks" : "Generating content..."}>
+                <Button
+                  variant="soft"
+                  color="purple"
+                  size="2"
+                  className="shadow-sm hover:shadow-md transition-all duration-150"
+                  onClick={promptGenerateAIContent}
+                  disabled={isGenerating}
                 >
-                  <RefreshCw size={14} />
-                </IconButton>
+                  {isGenerating ? (
+                    <Loader2 size={16} className="animate-spin mr-1" />
+                  ) : (
+                    <Sparkles size={16} className="mr-1" />
+                  )}
+                  {isGenerating ?
+                    `Generating...` :
+                    "Generate AI"}
+                </Button>
               </Tooltip>
-
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger>
-                  <IconButton 
-                    variant="soft" 
-                    size="1"
-                    className="hover:shadow-sm transition-all duration-150"
-                  >
-                    <MoreVertical size={14} />
-                  </IconButton>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content>
-                  <DropdownMenu.Group>
-                    {/* Settings items go here */}
-                    <DropdownMenu.Item>
-                      <Flex align="center" gap="2">
-                        <Settings size={14} className="text-gray-11" />
-                        <Text size="2">Settings</Text>
-                      </Flex>
-                    </DropdownMenu.Item>
-                  </DropdownMenu.Group>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-            </Flex>
-          </Flex>
-
-          {/* Search and Stats */}
-          <Flex justify="between" align="center" gap="4">
-            <Box className="flex-1 relative max-w-md">
-              <Search size={16} className="absolute top-2.5 left-3 text-gray-9" />
-              <TextField.Root
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search tasks..."
-                className="pl-9 h-9"
-                size="2"
-              />
-            </Box>
-
-            <Flex gap="6" className="text-gray-10">
-              <Text size="1">{projectStats.totalStatusLabels} columns</Text>
-              <Text size="1">{projectStats.totalTasks} tasks</Text>
-              <Text size="1">{projectStats.completedTasks} completed</Text>
-              {projectStats.overdueTasks > 0 && (
-                <Text size="1" className="text-red-9">{projectStats.overdueTasks} overdue</Text>
-              )}
-              {projectStats.urgentTasks > 0 && (
-                <Text size="1" className="text-orange-9">{projectStats.urgentTasks} urgent</Text>
-              )}
-            </Flex>
-          </Flex>
-        </Flex>
-      </Box>
+            )}
+          </>
+        }
+        onClearSelection={() => setSelectedTasks({})}
+        rightActions={
+          <>
+            <Button 
+              variant="soft" 
+              size="2" 
+              className="flex items-center gap-1 shadow-sm hover:shadow-md transition-all duration-150" 
+              onClick={() => setIsAddColumnDialogOpen(true)}
+            >
+              <Plus size={14} />
+              Add Column
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              size="2" 
+              className="flex items-center gap-1 shadow-sm hover:shadow-md transition-all duration-150" 
+              onClick={handleExportAllCSV}
+              disabled={columns.length === 0 || columns.every(col => col.tasks.length === 0)}
+            >
+              <Download size={14} />
+              Export All CSV
+            </Button>
+          </>
+        }
+        isLoading={isLoading}
+      />
 
       {/* CONTENT AREA: Flexible content area with proper overflow handling */}
       <Box className="flex-1 h-full">
