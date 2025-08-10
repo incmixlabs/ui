@@ -9,12 +9,17 @@ import {
   Flex,
   Text,
 } from "@incmix/ui/base"
-import { TanstackDataTable as DataTable, TaskStatusDemo } from "@incmix/ui/tanstack-table"
+import {
+  TanstackDataTable as DataTable,
+  TaskStatusDemo,
+} from "@incmix/ui/tanstack-table"
 import type { Organization } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
+import ColorPicker from "../../../ui/src/components/tanstack-table/components/ColorPicker"
+import DropdownCellEditor from "../../../ui/src/components/tanstack-table/components/DropdownCellEditor"
 import {
   useCreateOrganization,
   useOrganizations,
@@ -25,8 +30,6 @@ import {
   getOrganizationColumns,
   getOrganizationRowActions,
 } from "./utils/organization-table-utils"
-import ColorPicker from "../../../ui/src/components/tanstack-table/components/ColorPicker"
-import DropdownCellEditor from "../../../ui/src/components/tanstack-table/components/DropdownCellEditor"
 
 const OrganizationHeader: React.FC<{ onCreateClick: () => void }> = ({
   onCreateClick,
@@ -64,7 +67,7 @@ const CreateOrganizationDialog: React.FC<{
 
   const handleSubmit = (data: any) => {
     handleCreateOrganization(data.organizationName, data.organizationHandle, [])
-    setFormData({}) 
+    setFormData({})
     onCreateOrganization()
   }
 
@@ -85,7 +88,9 @@ const CreateOrganizationDialog: React.FC<{
   return (
     <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
       <Dialog.Content>
-        <Dialog.Title className="font-semibold">{t("organizations:createNewOrganization")}</Dialog.Title>
+        <Dialog.Title className="font-semibold">
+          {t("organizations:createNewOrganization")}
+        </Dialog.Title>
         <Dialog.Description className="sr-only">
           {t("organizations:createNewOrganization")}
         </Dialog.Description>
