@@ -4,27 +4,19 @@ import {
   Box,
   Flex,
   Button,
-  IconButton,
-  TextField,
   Text,
-  Badge,
   DropdownMenu,
   Tooltip,
 } from "@base"
 import { TanstackDataTable, createEnhancedDropdownColumn, generateUniqueDropdownColor } from "../../tanstack-table"
 import {
-  Search,
   Layers as LayersIcon,
   LayoutGrid as LayoutGridIcon,
   RefreshCw,
-  Settings,
-  MoreVertical,
-  Download,
   ChevronDown,
   Check,
   Flag,
 } from "lucide-react"
-import {Heading} from "@incmix/ui"
 import type { TableTask, ListColumn } from "../types"
 import type { TaskDataSchema } from "@incmix/utils/schema"
 import { TaskViewHeader } from "../shared/task-view-header"
@@ -33,6 +25,7 @@ import { KeyboardShortcutsHelp } from "../../tanstack-table/components/KeyboardS
 import { useTableView } from "../hooks/use-table-view"
 import { TableRowActions } from "./table-row-actions"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
+import { exportAllTasksToCSV } from "../utils/csv-export"
 import { User } from "../../tanstack-table/cell-renderers"
 import { StatusColumnConfigDialog } from "./status-column-config-dialog"
 
@@ -380,6 +373,50 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     refetch()
   }, [refetch])
 
+  // CSV export handler for all tasks
+  const handleExportAllCSV = useCallback(() => {
+    try {
+      // Convert table tasks to column format for CSV export
+      const columnsForExport = statusLabels.map(status => {
+        const statusTasks = tasks.filter(task => task.statusId === status.id)
+        
+        return {
+          id: status.id,
+          name: status.name,
+          projectId: projectId,
+          color: status.color || '#6B7280',
+          order: 0,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          createdBy: { id: 'system', name: 'System' },
+          updatedBy: { id: 'system', name: 'System' },
+          taskCount: statusTasks.length,
+          completedTasksCount: statusTasks.filter(task => task.completed).length,
+          totalTasksCount: statusTasks.length,
+          progressPercentage: statusTasks.length > 0 ? 
+            (statusTasks.filter(task => task.completed).length / statusTasks.length) * 100 : 0,
+          tasks: statusTasks as any[] // Type cast to avoid compatibility issues
+        }
+      })
+      
+      // Convert priorityLabels to LabelSchema format
+      const priorityLabelsForExport = priorityLabels.map(priority => ({
+        id: priority.id,
+        name: priority.name,
+        type: 'priority' as const,
+        color: priority.color
+      }))
+      
+      exportAllTasksToCSV(columnsForExport as any, priorityLabelsForExport, {
+        includeSubtasks: true,
+        includeMetadata: true,
+        includeTimestamps: true
+      })
+    } catch (error) {
+      console.error("Failed to export CSV:", error)
+    }
+  }, [tasks, statusLabels, priorityLabels, projectId])
+
   // Simplified cell edit handler - the enhanced dropdown handles creation internally
   const handleCellEdit = useCallback(async (rowData: TableTask, columnId: string, newValue: any) => {
     if (!rowData.id) {
@@ -568,6 +605,8 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           urgentTasks: projectStats.urgentTasks,
         }}
         onRefresh={handleRefresh}
+        showExportCSV={true}
+        onExportCSV={handleExportAllCSV}
         leftActions={
           <Button
             variant="outline"

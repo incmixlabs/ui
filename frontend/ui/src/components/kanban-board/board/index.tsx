@@ -31,6 +31,7 @@ import { TaskCardDrawer } from "../shared/task-card-drawer";
 import { CreateColumnForm } from "../shared/create-column-form";
 import { DndKanbanBoard } from "../dnd-example/KanbanBoard";
 import { TaskViewHeader } from "../shared/task-view-header";
+import { exportAllTasksToCSV } from "../utils/csv-export";
 
 interface BoardProps {
   projectId?: string;
@@ -270,6 +271,19 @@ export function Board({
     refetch();
   }, [refetch]);
 
+  // CSV export handler for all tasks
+  const handleExportAllCSV = useCallback(() => {
+    try {
+      exportAllTasksToCSV(filteredColumns, priorityLabels, {
+        includeSubtasks: true,
+        includeMetadata: true,
+        includeTimestamps: true
+      })
+    } catch (error) {
+      console.error("Failed to export CSV:", error)
+    }
+  }, [filteredColumns, priorityLabels]);
+
   if (isLoading) {
     return (
       <Box className="flex items-center justify-center h-full">
@@ -313,6 +327,8 @@ export function Board({
           urgentTasks: projectStats.urgentTasks,
         }}
         onRefresh={handleRefresh}
+        showExportCSV={true}
+        onExportCSV={handleExportAllCSV}
         isLoading={isLoading}
       />
 

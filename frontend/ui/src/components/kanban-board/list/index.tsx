@@ -691,6 +691,8 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
           </>
         }
         onClearSelection={() => setSelectedTasks({})}
+        showExportCSV={true}
+        onExportCSV={handleExportAllCSV}
         rightActions={
           <>
             <Button 
@@ -701,17 +703,6 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
             >
               <Plus size={14} />
               Add Column
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              size="2" 
-              className="flex items-center gap-1 shadow-sm hover:shadow-md transition-all duration-150" 
-              onClick={handleExportAllCSV}
-              disabled={columns.length === 0 || columns.every(col => col.tasks.length === 0)}
-            >
-              <Download size={14} />
-              Export All CSV
             </Button>
           </>
         }

@@ -18,6 +18,7 @@ import {
   RefreshCw,
   Settings,
   MoreVertical,
+  Download,
 } from "lucide-react"
 import { useProjectStore } from "@incmix/store"
 
@@ -39,6 +40,8 @@ export interface TaskViewHeaderProps {
 
   // Actions
   onRefresh: () => void
+  onExportCSV?: () => void
+  showExportCSV?: boolean
   
   // View-specific content
   leftActions?: ReactNode // For view-specific buttons/actions on the left
@@ -65,6 +68,8 @@ export function TaskViewHeader({
   searchPlaceholder = "Search tasks...",
   stats,
   onRefresh,
+  onExportCSV,
+  showExportCSV = false,
   leftActions,
   rightActions,
   selectedTasksCount = 0,
@@ -77,7 +82,7 @@ export function TaskViewHeader({
   const { selectedProject } = useProjectStore()
 
   // Determine the heading text
-  const headingText = customHeading || selectedProject?.title || selectedProject?.name || "Project Tasks"
+  const headingText = customHeading || selectedProject?.title || "Project Tasks"
 
   // Handle refresh
   const handleRefresh = useCallback(() => {
@@ -129,6 +134,21 @@ export function TaskViewHeader({
             {rightActions}
             
             {/* Common actions */}
+            {showExportCSV && onExportCSV && (
+              <Tooltip content="Export to CSV">
+                <Button 
+                  variant="outline" 
+                  size="2" 
+                  className="flex items-center gap-1 shadow-sm hover:shadow-md transition-all duration-150" 
+                  onClick={onExportCSV}
+                  disabled={isLoading || stats.totalTasks === 0}
+                >
+                  <Download size={14} />
+                  Export CSV
+                </Button>
+              </Tooltip>
+            )}
+            
             <Tooltip content="Refresh">
               <IconButton 
                 variant="soft" 
