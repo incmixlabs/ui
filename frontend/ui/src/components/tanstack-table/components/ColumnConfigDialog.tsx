@@ -66,9 +66,9 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
       } else if (column.type === "Dropdown") {
         // Default options if none are set - use standard todo/doing/done values
         setDropdownOptions([
-          { value: "todo", label: "To Do", color: "#93c5fd" },  // Light blue
-          { value: "doing", label: "Doing", color: "#fcd34d" }, // Light yellow
-          { value: "done", label: "Done", color: "#86efac" }    // Light green
+          { value: "todo", label: "To Do", color: "var(--blue-5)" },  
+          { value: "doing", label: "Doing", color: "var(--yellow-5)" }, 
+          { value: "done", label: "Done", color: "var(--green-5)" }    
         ])
       }
       
@@ -170,30 +170,30 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
 
           {/* Dropdown options editor (only visible for Dropdown type) */}
           {columnType === "Dropdown" && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <div className="text-sm font-medium">Dropdown Options</div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-xs text-gray-500">
+            <Box className="space-y-4">
+              <Flex justify="between" align="center">
+                <Text as="label" size="2" weight="medium">
+                  Dropdown Options
+                </Text>
+                <Flex justify="between" align="center">
+                  <Text as="label" size="2" weight="medium">
                     {strictDropdown ? 'Only predefined values' : 'Allow custom values'}
-                  </span>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input 
+                  </Text>
+                  <input 
                       type="checkbox" 
                       checked={strictDropdown}
                       onChange={() => setStrictDropdown(!strictDropdown)}
                       className="sr-only peer" 
                     />
-                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
-                  </label>
-                </div>
-              </div>
+                  <Box className="w-9 h-5 bg-gray-12 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></Box>
+                </Flex>
+              </Flex>
               <DropdownOptionsEditor 
                 options={dropdownOptions} 
                 onChange={setDropdownOptions} 
                 valuesInUse={getValuesInUse()}
               />
-            </div>
+            </Box>
           )}
         </Flex>
         

@@ -107,7 +107,7 @@ export const DateCell: React.FC<{ value: string | Date, format?: string }> = ({ 
     if (format) {
       // This is a simplified format implementation
       return (
-        <span className="font-mono text-sm text-gray-600 dark:text-gray-300">
+        <span className="font-mono text-sm text-gray-12">
           {format
             .replace('YYYY', date.getFullYear().toString())
             .replace('MM', (date.getMonth() + 1).toString().padStart(2, '0'))
@@ -119,7 +119,7 @@ export const DateCell: React.FC<{ value: string | Date, format?: string }> = ({ 
     }
 
     return (
-      <span className="font-mono text-sm text-gray-600 dark:text-gray-300">
+      <span className="font-mono text-sm text-gray-12">
         {date.toLocaleString(undefined, options)}
       </span>
     );
@@ -151,7 +151,7 @@ export function getContrastingTextColor(backgroundColor: string): string {
   
   // Calculate contrast using YIQ method
   const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-  return yiq >= 128 ? '#000000' : '#ffffff';
+  return yiq >= 128 ? 'var(--gray-1)' : 'var(--gray-12)';
 }
 
 // Helper function to adjust color brightness (for hover effects)
@@ -210,12 +210,11 @@ export const DropdownCell: React.FC<{
   const finalOption = selectedOption || {
     value: safeValue,
     label: safeValue || 'No Value',
-    color: '#e5e7eb' // Default gray color
+    color: 'var(--gray-1)'
   };
 
   console.log('DropdownCell Selected Option:', finalOption);
 
-  // If no value and no options, show a placeholder
   if (!safeValue && options.length === 0) {
     return (
       <span className={`${size === 'sm' ? 'px-2 py-0.5 text-xs' : size === 'lg' ? 'px-3 py-1.5 text-sm' : 'px-2 py-1 text-xs'} text-gray-400 italic`}>
@@ -227,7 +226,7 @@ export const DropdownCell: React.FC<{
   // Determine text color based on background color (if provided)
   const textColor = finalOption.color 
     ? getContrastingTextColor(finalOption.color)
-    : '#000000';
+    : 'var(--gray-12)';
 
   // Size classes
   const sizeClasses = {
@@ -239,8 +238,8 @@ export const DropdownCell: React.FC<{
   // Loading state
   if (isLoading) {
     return (
-      <div className={`inline-flex items-center gap-1 ${sizeClasses[size]} rounded-md bg-gray-100 text-gray-500`}>
-        <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin" />
+      <div className={`inline-flex items-center gap-1 ${sizeClasses[size]} rounded-md bg-gray-12 text-gray-1`}>
+        <div className="w-3 h-3 border border-gray-4 border-t-transparent rounded-full animate-spin" />
         <span>Loading...</span>
       </div>
     );
@@ -253,9 +252,9 @@ export const DropdownCell: React.FC<{
       <span
         className={`inline-flex items-center gap-1 rounded-full ${sizeClasses[size]} font-medium ring-1 ring-inset capitalize`}
         style={{
-          backgroundColor: finalOption.color || '#e5e7eb',
+          backgroundColor: finalOption.color || 'var(--blue-1)',
           color: textColor,
-          borderColor: finalOption.color ? adjustColor(finalOption.color, -20) : '#d1d5db'
+          borderColor: finalOption.color ? adjustColor(finalOption.color, -20) : 'var(--blue-1)'
         }}
       >
         {showIcon && finalOption.icon}
@@ -271,15 +270,15 @@ export const DropdownCell: React.FC<{
       <div
         className={`inline-flex items-center gap-2 ${sizeClasses[size]} rounded-md font-medium border transition-all duration-200 cursor-pointer hover:opacity-80`}
         style={{
-          backgroundColor: finalOption.color ? `${finalOption.color}20` : '#f3f4f6',
-          color: finalOption.color || '#374151',
-          borderColor: finalOption.color ? `${finalOption.color}40` : '#d1d5db'
+          backgroundColor: finalOption.color ? `${finalOption.color}20` : 'var(--blue-1)',
+          color: finalOption.color || 'var(--blue-1)',
+          borderColor: finalOption.color ? `${finalOption.color}40` : 'var(--blue-1)'
         }}
       >
         {showIcon && (
           <div 
             className="w-2 h-2 rounded-full" 
-            style={{ backgroundColor: finalOption.color || '#9ca3af' }}
+            style={{ backgroundColor: finalOption.color || 'var(--blue-1)' }}
           />
         )}
         <span>{displayText}</span>
@@ -294,7 +293,7 @@ export const DropdownCell: React.FC<{
   if (displayStyle === 'plain') {
     const displayText = finalOption.label || value || 'No Value';
     return (
-      <div className={`inline-flex items-center gap-2 ${sizeClasses[size]} text-gray-700 dark:text-gray-300 cursor-pointer`}>
+      <div className={`inline-flex items-center gap-2 ${sizeClasses[size]} text-gray-1 cursor-pointer`}>
         <span>{displayText}</span>
         <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -306,7 +305,7 @@ export const DropdownCell: React.FC<{
   // Minimal style - just text, no chevron, no colors (fallback)
   const displayText = finalOption.label || value || 'No Value';
   return (
-    <span className={`${sizeClasses[size]} text-gray-700 dark:text-gray-300`}>
+    <span className={`${sizeClasses[size]} text-gray-1`}>
       {displayText}
     </span>
   );
@@ -351,7 +350,7 @@ export const Avatar: React.FC<{ user: User; size?: number }> = ({ user, size = 2
   
   return (
     <div
-      className="rounded-full flex items-center justify-center text-xs font-medium text-white flex-shrink-0 overflow-hidden"
+      className="rounded-full flex items-center justify-center text-xs font-medium fex-shrink-0 overflow-hidden"
       style={{ width: size, height: size }}
       title={user.name}
     >
@@ -363,7 +362,7 @@ export const Avatar: React.FC<{ user: User; size?: number }> = ({ user, size = 2
         />
       ) : (
         <div className={`w-full h-full rounded-full ${getColorForUser(user.id)} flex items-center justify-center`}>
-          <span className="text-[10px] font-medium text-white">
+          <span className="text-[10px] font-medium text-gray-1">
             {getInitials(user.name)}
           </span>
         </div>
@@ -376,8 +375,8 @@ export const Avatar: React.FC<{ user: User; size?: number }> = ({ user, size = 2
 export const AvatarGroup: React.FC<{ users: User[]; maxDisplay?: number }> = ({ users, maxDisplay = 3 }) => {
   if (!users || users.length === 0) {
     return (
-      <div className="h-7 w-7 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden border-2 border-white dark:border-background">
-        <span className="text-xs text-gray-400 dark:text-gray-500">—</span>
+      <div className="h-7 w-7 rounded-full bg-gray-1 flex items-center justify-center overflow-hidden border-2 border-white">
+        <span className="text-xs text-gray-1">—</span>
       </div>
     );
   }
@@ -399,11 +398,11 @@ export const AvatarGroup: React.FC<{ users: User[]; maxDisplay?: number }> = ({ 
       ))}
       {remaining > 0 && (
         <div
-          className="w-7 h-7 rounded-full border-2 border-white dark:border-background overflow-hidden bg-gray-9 flex items-center justify-center"
+          className="w-7 h-7 rounded-full border-2 border-white overflow-hidden bg-gray-1 flex items-center justify-center"
           style={{ zIndex: zIndexBase - maxDisplay }}
           title={`+${remaining} more users`}
         >
-          <span className="text-[10px] font-medium text-white">+{remaining}</span>
+          <span className="text-[10px] font-medium text-gray-1">+{remaining}</span>
         </div>
       )}
     </div>
@@ -472,7 +471,7 @@ export const TimelineProgressCell: React.FC<TimelineProgressProps> = ({
   return (
     <div className="w-full space-y-1">
       {/* Progress bar */}
-      <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded overflow-hidden">
+      <div className="w-full h-2 bg-gray-1 rounded overflow-hidden">
         <div 
           className={`h-full ${colorClasses[color as keyof typeof colorClasses] || colorClasses.primary}`} 
           style={{ width: `${progress}%` }}
@@ -480,7 +479,7 @@ export const TimelineProgressCell: React.FC<TimelineProgressProps> = ({
       </div>
       
       {/* Labels */}
-      <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
+      <div className="flex justify-between text-xs text-gray-12">
         {showDates && (
           <>
             <span>{formatDate(start)}</span>
@@ -494,7 +493,7 @@ export const TimelineProgressCell: React.FC<TimelineProgressProps> = ({
       
       {/* Only show percentage complete text if explicitly enabled */}
       {showPercentage && (
-        <div className="text-center text-xs font-medium text-gray-700 dark:text-gray-300">
+        <div className="text-center text-xs font-medium text-gray-12">
           {Math.round(progress)}% Complete
         </div>
       )}

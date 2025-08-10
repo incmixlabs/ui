@@ -6,6 +6,7 @@ import { Table } from "@shadcn";
 import { TableHeader } from "./TableHeader";
 import { TableBody } from "./TableBody";
 import { DataTableColumn, RowGroupingOptions } from "../types";
+import { Box } from "@incmix/ui";
 
 interface TableContentProps<TData extends object> {
   table: TanStackTable<TData>;
@@ -61,8 +62,8 @@ function TableContentComponent<TData extends object>({
   saveEdit,
 }: TableContentProps<TData>) {
   return (
-    <div 
-      className="rounded-md border border-gray-200 dark:border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+    <Box 
+      className="rounded-md border border-gray-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       tabIndex={enableInlineCellEdit ? 0 : undefined}
       role={enableInlineCellEdit ? "grid" : undefined}
       aria-label={enableInlineCellEdit ? "Data table with keyboard navigation" : undefined}
@@ -102,7 +103,7 @@ function TableContentComponent<TData extends object>({
           saveEdit={saveEdit}
         />
       </Table.Root>
-    </div>
+    </Box>
   );
 }
 

@@ -1,7 +1,6 @@
-"use client"
-
 import React, { useState, useEffect, useRef } from "react"
 import { DropdownOption, getContrastingTextColor, adjustColor } from "../cell-renderers"
+import { Box, Flex, Text } from "@incmix/ui"
 
 interface DropdownCellEditorProps {
   value: string
@@ -22,10 +21,9 @@ interface DropdownCellEditorProps {
   errorMessage?: string
   displayStyle?: 'badge' | 'button' | 'minimal' | 'plain'
   size?: 'sm' | 'md' | 'lg'
-  rowData?: any // For context in callbacks
+  rowData?: any 
 }
 
-// Color picker component for inline option creation
 interface ColorPickerProps {
   color: string;
   onChange: (color: string) => void;
@@ -39,10 +37,15 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, size = 'md' 
   const popupRef = useRef<HTMLDivElement>(null);
 
   // Color palette for option creation
+  // const colorPalette = [
+  //   '#93c5fd', '#fcd34d', '#86efac', '#f9a8d4', '#c4b5fd', '#a5b4fc',
+  //   '#fdba74', '#67e8f9', '#d8b4fe', '#f87171', '#fde68a', '#6ee7b7'
+  // ];
+
   const colorPalette = [
-    '#93c5fd', '#fcd34d', '#86efac', '#f9a8d4', '#c4b5fd', '#a5b4fc',
-    '#fdba74', '#67e8f9', '#d8b4fe', '#f87171', '#fde68a', '#6ee7b7'
-  ];
+    'var(--blue-5)', 'var(--green-5)', 'var(--red-5)', 'var(--yellow-5)', 'var(--plum-5)', 'var(--teal-5)',
+    'var(--pink-5)', 'var(--indigo-5)', 'var(--amber-5)', 'var(--orange-5)', 'var(--purple-5)', 'var(--teal-5)'
+  ]
 
   const handleColorSelect = (selectedColor: string) => {
     onChange(selectedColor);
@@ -79,7 +82,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, size = 'md' 
   const sizeClass = size === 'sm' ? 'w-6 h-6' : 'w-8 h-8';
 
   return (
-    <div className="relative inline-block">
+    <Box className="relative inline-block">
       <div
         ref={buttonRef}
         onClick={(e) => {
@@ -131,14 +134,10 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, size = 'md' 
           </div>
         </div>
       )}
-    </div>
+    </Box>
   );
 };
 
-/**
- * Enhanced Dropdown Cell Editor - displays a dropdown menu for selecting options
- * Now includes color picker, loading states, and custom option creation
- */
 export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
   value,
   options,
@@ -284,12 +283,12 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
   const generateUniqueColor = () => {
     const existingColors = options.map(option => option.color).filter(Boolean)
     const colorPalette = [
-      '#93c5fd', '#fcd34d', '#86efac', '#f9a8d4', '#c4b5fd', '#a5b4fc',
-      '#fdba74', '#67e8f9', '#d8b4fe', '#f87171', '#fde68a', '#6ee7b7'
+      'var(--blue-5)', 'var(--green-5)', 'var(--red-5)', 'var(--yellow-5)', 'var(--plum-5)', 'var(--teal-5)',
+      'var(--pink-5)', 'var(--indigo-5)', 'var(--amber-5)', 'var(--orange-5)', 'var(--purple-5)', 'var(--teal-5)'
     ]
 
     const unusedColor = colorPalette.find(color => !existingColors.includes(color))
-    return unusedColor || '#93c5fd'
+    return unusedColor || 'var(--blue-5)'
   }
 
   // Set unique color when component mounts
@@ -399,7 +398,7 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
   if (!isOpen) return null
 
   return (
-    <div 
+    <Box 
       ref={dropdownRef}
       className="fixed z-[9999] bg-white dark:bg-gray-800 rounded-lg shadow-xl ring-1 ring-black dark:ring-gray-700 ring-opacity-5 focus:outline-none transition-opacity duration-150"
       style={{ 
@@ -418,39 +417,39 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
     >
       {/* Loading state */}
       {isLoading && (
-        <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-            <div className="w-4 h-4 border border-gray-400 border-t-transparent rounded-full animate-spin" />
+        <Box className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+          <Flex className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+            <Box className="w-4 h-4 border border-gray-400 border-t-transparent rounded-full animate-spin" />
             {loadingText}
-          </div>
-        </div>
+          </Flex>
+        </Box>
       )}
 
       {/* Error message */}
       {errorMessage && (
-        <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-          <div className="text-sm text-red-600 dark:text-red-400">
+        <Box className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+          <Text className="text-sm text-red-600 dark:text-red-400">
             {errorMessage}
-          </div>
-        </div>
+          </Text>
+        </Box>
       )}
 
       {/* Header */}
-      <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
-        <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+      <Box className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
+        <Text className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
           Select Option
-        </div>
-      </div>
+        </Text>
+      </Box>
 
       {/* Custom value input when strictDropdown is false */}
       {!strictDropdown && (
-        <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-          <div className="space-y-3">
-            <div className="text-xs font-medium text-gray-700 dark:text-gray-300">
+        <Box className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+          <Flex className="space-y-3">
+            <Text className="text-xs font-medium text-gray-700 dark:text-gray-300">
               {showCreateButton ? "Create New Option" : "Add Custom Value"}
-            </div>
+            </Text>
             
-            <div className="flex items-center gap-2">
+            <Flex gap="2" >
               {/* Color picker */}
               {enableColorPicker && (
                 <ColorPicker
@@ -471,7 +470,7 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
                 placeholder="Enter option name..."
                 disabled={isCreating}
               />
-            </div>
+            </Flex>
 
             {/* Create button */}
             <button 
@@ -488,28 +487,28 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
                 createButtonText
               )}
             </button>
-          </div>
+          </Flex>
           
           {validOptions.length > 0 && (
-            <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
-              <div className="text-xs text-gray-500 dark:text-gray-400">Or select from existing options:</div>
-            </div>
+            <Box className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+              <Text className="text-xs text-gray-500 dark:text-gray-400">Or select from existing options:</Text>
+            </Box>
           )}
-        </div>
+        </Box>
       )}
       
       {/* Dropdown options list */}
-      <div className="max-h-48 overflow-y-auto">
+      <Box className="max-h-48 overflow-y-auto">
         {validOptions.length === 0 ? (
-          <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
+          <Box className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
             No options available
-          </div>
+          </Box>
         ) : (
           validOptions.map((option) => {
             const isSelected = option.value === value;
             
             return (
-              <div
+              <Box
                 key={option.value}
                 onClick={() => handleSelect(option.value)}
                 className={`
@@ -520,9 +519,9 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
                   }
                 `}
               >
-                <div className="flex items-center gap-3">
+                <Flex align={"center"} gap="2">
                   {/* Color indicator */}
-                  <div 
+                  <Box 
                     className="w-3 h-3 rounded-full flex-shrink-0 ring-1 ring-gray-200 dark:ring-gray-600" 
                     style={{ 
                       backgroundColor: option.color || '#e5e7eb'
@@ -531,31 +530,31 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
                   
                   {/* Icon if enabled */}
                   {enableIcons && option.icon && (
-                    <div className="flex-shrink-0 text-gray-500">
+                    <Box className="flex-shrink-0 text-gray-500">
                       {option.icon}
-                    </div>
+                    </Box>
                   )}
                   
                   {/* Label */}
-                  <span className="flex-grow font-medium text-gray-900 dark:text-gray-100">
+                  <Text className="flex-grow font-medium text-gray-900 dark:text-gray-100">
                     {option.label || option.value}
-                  </span>
+                  </Text>
                   
                   {/* Selected indicator */}
                   {isSelected && (
-                    <div className="flex-shrink-0 text-blue-500">
+                    <Box className="flex-shrink-0 text-blue-500">
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
-                    </div>
+                    </Box>
                   )}
-                </div>
-              </div>
+                </Flex>
+              </Box>
             );
           })
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   )
 }
 

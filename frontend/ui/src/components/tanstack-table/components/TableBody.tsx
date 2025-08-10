@@ -426,7 +426,7 @@ function TableBodyComponent<TData extends object>({
   // Early return for loading and empty states
   if (isPaginationLoading) {
     return (
-      <Table.Body className="divide-y divide-gray-100 dark:divide-gray-800">
+      <Table.Body className="divide-y divide-gray-12">
         <LoadingRow colSpan={flatColumns.length} />
       </Table.Body>
     );
@@ -434,15 +434,15 @@ function TableBodyComponent<TData extends object>({
 
   if (rows.length === 0) {
     return (
-      <Table.Body className="divide-y divide-gray-100 dark:divide-gray-800">
+      <Table.Body className="divide-y divide-gray-12">
         <EmptyRow colSpan={flatColumns.length} />
       </Table.Body>
     );
   }
-
+  
   return (
     <Table.Body
-      className="divide-y divide-gray-100 dark:divide-gray-800"
+      className="divide-y divide-gray-12"
       role={enableInlineCellEdit ? "rowgroup" : undefined}
     >
       {enableRowGrouping && rowGrouping ? (
@@ -474,7 +474,7 @@ function TableBodyComponent<TData extends object>({
                 {!group.isCollapsed && (
                   <>
                     {/* Column headers for this group */}
-                    <Table.Row className="border-t border-b border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900">
+                    <Table.Row className="border-t border-b border-gray-12">
                       {table.getHeaderGroups()[0].headers.map(header => {
                         // Skip the status column if it's hidden
                         if (header.id === 'status' && !header.column.getIsVisible()) {
@@ -495,7 +495,7 @@ function TableBodyComponent<TData extends object>({
                         return (
                           <Table.Cell
                             key={header.id}
-                            className="px-2 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900"
+                            className="px-2 py-2 text-xs font-medium text-gray-1 bg-gray-12"
                           >
                             {header.isPlaceholder
                               ? null

@@ -12,7 +12,7 @@ import { DataTable } from "../components/DataTable"
 import { EyeIcon, EditIcon } from "lucide-react"
 import { RowAction } from "../types"
 import { ColumnConfigDialog, ColumnConfig } from "../components/ColumnConfigDialog"
-
+import {Box, Heading} from "@incmix/ui"
 // Extended column type to include custom properties
 interface ExtendedColumnConfig extends ColumnConfig {
   _originalHeading?: string;
@@ -771,8 +771,8 @@ const TaskStatusDemo = () => {
   }, [columns, handleHeaderDoubleClick]);
 
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-4">Task Management Dashboard</h1>
+    <Box className="container mx-auto py-10">
+      <Heading className="mb-4" variant="sectionTitle">Task Management Dashboard</Heading>
 
       {/* Column configuration dialog */}
       <ColumnConfigDialog
@@ -780,7 +780,7 @@ const TaskStatusDemo = () => {
         onClose={() => setIsColumnConfigOpen(false)}
         column={selectedColumn}
         onSave={handleSaveColumnConfig}
-        tableData={tasks} // Pass table data to track values in use
+        tableData={tasks} 
       />
 
       <DataTable
@@ -801,7 +801,7 @@ const TaskStatusDemo = () => {
         inlineEditableColumns={["name", "email", "joinDate", "status", "tags"]}
         onCellEdit={handleCellEdit}
       />
-    </div>
+    </Box>
   )
 }
 
