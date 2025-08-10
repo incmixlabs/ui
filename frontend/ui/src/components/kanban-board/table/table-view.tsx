@@ -310,14 +310,14 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
               ...statusLabels.map(label => ({
                 id: label.id,
                 name: label.name,
-                color: label.color,
+                color: label.color || '#6b7280', // Fallback to gray if color is undefined
                 type: "status"
               })),
               // Include priority labels
               ...priorityLabels.map(label => ({
                 id: label.id,
                 name: label.name,
-                color: label.color,
+                color: label.color || '#6b7280', // Fallback to gray if color is undefined
                 type: "priority"
               }))
             ]}
@@ -470,7 +470,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
 
     targetLabels.forEach(label => {
       // For dark mode support, we use the original color for text and a semi-transparent version for background
-      const originalColor = label.color;
+      const originalColor = label.color || '#6b7280'; // Fallback to gray if color is undefined
       const bgColor = hexToRgba(originalColor, 0.3); // Using 0.3 alpha for better visibility (70% transparent)
 
       // Map by name for the UI display, which is what the grouping shows
