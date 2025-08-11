@@ -60,7 +60,9 @@ export const projectFormSchema: ProjectFormSchema = {
       },
       budget: {
         type: "string",
+        pattern: "^-?\\d{1,3}(,\\d{3})*(\\.\\d{1,2})?$",
         title: "Budget",
+        example: "25,000.00",
       },
     },
     required: ["name", "company", "description"],

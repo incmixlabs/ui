@@ -253,7 +253,7 @@ export default function AutoFormObject<
 }: {
   schema: SchemaType | z.ZodTransform<SchemaType, any>
   form: ReturnType<typeof useForm>
-  fieldConfig?: FieldConfig<Record<string, unknown>>
+  fieldConfig?: FieldConfig<z.infer<SchemaType>>
   path?: string[]
   dependencies?: Record<
     string,

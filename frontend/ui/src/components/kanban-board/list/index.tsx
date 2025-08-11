@@ -34,6 +34,16 @@ import { blockBoardPanningAttr } from "../data-attributes"
 import { TaskCopyBufferProvider } from "../hooks/use-task-copy-buffer"
 import { exportAllTasksToCSV } from "../utils/csv-export"
 
+// Helper function for efficient shallow column comparison
+function shallowColumnsEqual(a: any[], b: any[]) {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i].id !== b[i].id || a[i].tasks.length !== b[i].tasks.length) return false;
+  }
+  return true;
+}
+
 interface ListBoardProps {
   projectId?: string
 }
@@ -78,7 +88,8 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     createStatusLabel, // Using compatibility methods instead
     updateStatusLabel, // Using compatibility methods instead
     deleteStatusLabel, // Using compatibility methods instead
-    projectStats
+    projectStats,
+    refetch // Add refetch method for proper refresh
   } = useListView(projectId)
 
   // Get bulk AI generation hook
@@ -544,8 +555,8 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   useEffect(() => {
     // Only update if columns actually changed and we're not dragging
     if (!isDragging && (prevColumnsRef.current !== columns || prevIsDraggingRef.current !== isDragging)) {
-      // Use shallow comparison to avoid unnecessary updates
-      if (optimisticColumns.length === 0 || JSON.stringify(optimisticColumns) !== JSON.stringify(columns)) {
+      // Use efficient shallow comparison to avoid unnecessary updates
+      if (optimisticColumns.length === 0 || !shallowColumnsEqual(optimisticColumns, columns)) {
         setOptimisticColumns([]); // Reset to empty to use regular columns
       }
     }
@@ -554,10 +565,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     prevIsDraggingRef.current = isDragging
   }, [columns, isDragging, optimisticColumns])
 
-  // Use memoized display columns to prevent unnecessary re-renders
-  const displayColumns = useMemo(() => {
-    return isDragging && optimisticColumns.length > 0 ? optimisticColumns : columns
-  }, [isDragging, optimisticColumns, columns])
+  // Removed unused displayColumns variable as it duplicates activeColumns functionality
 
   // Handle board panning
   useEffect(() => {
@@ -638,7 +646,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
       <Box className="flex items-center justify-center h-64">
         <Flex direction="column" align="center" gap="4">
           <div className="text-red-9">Error: {error}</div>
-          <Button onClick={() => window.location.reload()} variant="outline">
+          <Button onClick={refetch} variant="outline">
             <RefreshCw size={16} />
             Retry
           </Button>
@@ -663,7 +671,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
           overdueTasks: projectStats.overdueTasks,
           urgentTasks: projectStats.urgentTasks,
         }}
-        onRefresh={() => window.location.reload()}
+        onRefresh={refetch}
         selectedTasksCount={selectedTasksCount}
         selectedTasksActions={
           <>

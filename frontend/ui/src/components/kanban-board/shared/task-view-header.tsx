@@ -142,6 +142,7 @@ export function TaskViewHeader({
                   className="flex items-center gap-1 shadow-sm hover:shadow-md transition-all duration-150" 
                   onClick={onExportCSV}
                   disabled={isLoading || stats.totalTasks === 0}
+                  aria-label="Export tasks to CSV"
                 >
                   <Download size={14} />
                   Export CSV
@@ -156,13 +157,14 @@ export function TaskViewHeader({
                 className="hover:shadow-sm transition-all duration-150"
                 onClick={handleRefresh}
                 disabled={isLoading}
+                aria-label="Refresh"
               >
                 <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
               </IconButton>
             </Tooltip>
 
             <DropdownMenu.Root>
-              <DropdownMenu.Trigger>
+              <DropdownMenu.Trigger aria-label="More options">
                 <IconButton 
                   variant="soft" 
                   size="1"
@@ -193,14 +195,15 @@ export function TaskViewHeader({
 
         {/* Search and Stats row */}
         <Flex justify="between" align="center" gap="4">
-          <Box className="flex-1 relative max-w-md">
-            <Search size={16} className="absolute top-2.5 left-3 text-gray-9" />
+          <Box className="flex-1 relative max-w-md" role="search">
+            <Search size={16} className="absolute top-2.5 left-3 text-gray-9" aria-hidden="true" />
             <TextField.Root
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               placeholder={searchPlaceholder}
               className="pl-9 h-9"
               size="2"
+              aria-label="Search tasks"
             />
           </Box>
 

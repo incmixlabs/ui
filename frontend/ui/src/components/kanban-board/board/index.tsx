@@ -15,6 +15,7 @@ import {
   DropdownMenu,
   ScrollArea,
   Tooltip,
+  toast,
 } from "@base";
 import { Loader2, Settings, MoreVertical, RefreshCw } from "lucide-react";
 import {
@@ -272,15 +273,45 @@ export function Board({
   }, [refetch]);
 
   // CSV export handler for all tasks
-  const handleExportAllCSV = useCallback(() => {
+  const handleExportAllCSV = useCallback(async () => {
     try {
+      // Check if there are any tasks to export
+      const totalFiltered = filteredColumns.reduce((n, c) => n + c.tasks.length, 0);
+      if (totalFiltered === 0) {
+        toast.info("No tasks to export for current filter", {
+          description: "Try adjusting your search or filters to include more tasks",
+          duration: 3000
+        });
+        return;
+      }
+
+      // Show loading feedback
+      toast.info("Exporting tasks to CSV...", {
+        description: `Preparing ${totalFiltered} task${totalFiltered !== 1 ? 's' : ''} for export`,
+        duration: 2000
+      });
+
+      // Perform the export
       exportAllTasksToCSV(filteredColumns, priorityLabels, {
         includeSubtasks: true,
         includeMetadata: true,
         includeTimestamps: true
-      })
+      });
+
+      // Show success feedback
+      toast.success("CSV export completed", {
+        description: `Successfully exported ${totalFiltered} task${totalFiltered !== 1 ? 's' : ''} to CSV file`,
+        duration: 4000
+      });
     } catch (error) {
-      console.error("Failed to export CSV:", error)
+      console.error("Failed to export CSV:", error);
+      
+      // Show error feedback to user
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      toast.error("Failed to export CSV", {
+        description: errorMessage,
+        duration: 5000
+      });
     }
   }, [filteredColumns, priorityLabels]);
 

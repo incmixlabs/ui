@@ -376,9 +376,9 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
   // CSV export handler for all tasks
   const handleExportAllCSV = useCallback(() => {
     try {
-      // Convert table tasks to column format for CSV export
+      // Convert filtered table tasks to column format for CSV export
       const columnsForExport = statusLabels.map(status => {
-        const statusTasks = tasks.filter(task => task.statusId === status.id)
+        const statusTasks = filteredTasks.filter(task => task.statusId === status.id)
         
         return {
           id: status.id,
@@ -395,7 +395,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           totalTasksCount: statusTasks.length,
           progressPercentage: statusTasks.length > 0 ? 
             (statusTasks.filter(task => task.completed).length / statusTasks.length) * 100 : 0,
-          tasks: statusTasks as any[] // Type cast to avoid compatibility issues
+          tasks: statusTasks
         }
       })
       
@@ -415,7 +415,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     } catch (error) {
       console.error("Failed to export CSV:", error)
     }
-  }, [tasks, statusLabels, priorityLabels, projectId])
+  }, [filteredTasks, statusLabels, priorityLabels, projectId])
 
   // Simplified cell edit handler - the enhanced dropdown handles creation internally
   const handleCellEdit = useCallback(async (rowData: TableTask, columnId: string, newValue: any) => {
@@ -546,7 +546,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       options: statusLabels.map(status => ({
         label: status.name,
         value: status.id,
-        color: status.color
+        color: status.color || '#6b7280'
       }))
     },
     {
@@ -555,7 +555,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       options: priorityLabels.map(priority => ({
         label: priority.name,
         value: priority.id,
-        color: priority.color
+        color: priority.color || '#6b7280'
       }))
     },
     {
@@ -600,7 +600,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
         stats={{
           totalTasks: projectStats.totalTasks,
           completedTasks: projectStats.completedTasks,
-          totalLabels: projectStats.totalLabels,
+          totalStatusLabels: projectStats.totalLabels,
           overdueTasks: projectStats.overdueTasks,
           urgentTasks: projectStats.urgentTasks,
         }}
@@ -616,13 +616,13 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
           >
             {groupByField === 'statusLabel' ? (
               <>
-                <LayersIcon size={14} />
-                <span>Group by Status</span>
+                <LayoutGridIcon size={14} />
+                <span>Switch to Priority</span>
               </>
             ) : (
               <>
-                <LayoutGridIcon size={14} />
-                <span>Group by Priority</span>
+                <LayersIcon size={14} />
+                <span>Switch to Status</span>
               </>
             )}
           </Button>
