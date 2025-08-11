@@ -75,7 +75,6 @@
   },
   "dependencies": {
     "@hookform/resolvers": "catalog:",
-    "@incmix/radix-ui": "workspace: *",
     "@incmix/shadcn": "workspace: *",
     "@radix-ui/react-accordion": "catalog:",
     "@radix-ui/react-dialog": "catalog:",

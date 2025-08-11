@@ -6,10 +6,10 @@
     "rootDir": "src",
     "baseUrl": "./src",
     "paths": {
-      "@incmix/radix-ui": ["../radix-ui/src"],
-      "@incmix/radix-ui/*": ["../radix-ui/src/*"],
-      "@incmix/shadcn": ["/src/shadcn"],
-      "@incmix/shadcn/*": ["src/shadcn/*"]
+      "@radix-ui": ["./radix-ui"],
+      "@radix-ui/*": ["./radix-ui/*"],
+      "@shadcn": ["./shadcn"],
+      "@shadcn/*": ["./shadcn/*"]
     }
   },
   "exclude": ["**/*.stories.tsx", ".storybook/**/*", "src/stories/**/*"]

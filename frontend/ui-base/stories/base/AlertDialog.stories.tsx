@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { AlertDialog } from "./alert-dialog"
+import { AlertDialog } from "./index"
 import { Button } from "./button"
 import { Flex } from "./flex"
 import { Text } from "./text"
