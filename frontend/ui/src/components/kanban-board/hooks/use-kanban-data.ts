@@ -1,7 +1,7 @@
 // File: use-kanban-data.ts
 // Updated to use the selected project from project store
 
-import { useMemo } from "react"
+import { useMemo, useCallback } from "react"
 import type { TaskDataSchema, KanbanColumn, KanbanTask } from "@incmix/utils/schema"
 
 import { useProjectData } from "@incmix/store"
@@ -178,60 +178,105 @@ export function useKanban(providedProjectId?: string): UseKanbanReturn {
     }
   }, [projectData.tasks, projectData.labels])
 
-  // Memoize operation functions to prevent unnecessary re-renders
+  // Destructure functions for cleaner dependencies and linter friendliness
+  const { createLabel, updateLabel } = projectData
+  
+  // Memoize stable wrapper functions to prevent unnecessary re-renders
+  const createStatusLabel = useCallback(
+    (name: string, color?: string, description?: string) => 
+      createLabel("status", name, color, description),
+    [createLabel]
+  )
+  
+  const updateStatusLabel = useCallback(
+    (id: string, updates: { name?: string; color?: string; description?: string }) => 
+      updateLabel(id, updates),
+    [updateLabel]
+  )
+  
+  const createPriorityLabel = useCallback(
+    (name: string, color?: string, description?: string) => 
+      createLabel("priority", name, color, description),
+    [createLabel]
+  )
+  
+  const updatePriorityLabel = useCallback(
+    (id: string, updates: { name?: string; color?: string; description?: string }) => 
+      updateLabel(id, updates),
+    [updateLabel]
+  )
+
+  // Memoize operation functions with stable dependencies to prevent unnecessary re-renders
   const operations = useMemo(
     () => ({
-      // Task operations
+      // Task operations - direct references for stability
       createTask: projectData.createTask,
       updateTask: projectData.updateTask,
       deleteTask: projectData.deleteTask,
       duplicateTask: projectData.duplicateTask,
       moveTask: projectData.moveTask,
 
-      // Subtask operations (new)
+      // Subtask operations - direct references
       convertTaskToSubtask: projectData.convertTaskToSubtask,
       convertSubtaskToTask: projectData.convertSubtaskToTask,
       canTaskBeIndented: projectData.canTaskBeIndented,
       canTaskBeUnindented: projectData.canTaskBeUnindented,
       findPotentialParentTask: projectData.findPotentialParentTask,
 
-      // Status label operations (renamed from Column operations for consistency)
-      createStatusLabel: (name: string, color?: string, description?: string) => 
-        projectData.createLabel("status", name, color, description),
-      updateStatusLabel: (id: string, updates: { name?: string; color?: string; description?: string }) => 
-        projectData.updateLabel(id, updates),
+      // Status label operations - use stable wrapper functions
+      createStatusLabel,
+      updateStatusLabel,
       deleteStatusLabel: projectData.deleteLabel,
       reorderStatusLabels: projectData.reorderLabels,
         
-      // Priority label operations
-      createPriorityLabel: (name: string, color?: string, description?: string) => 
-        projectData.createLabel("priority", name, color, description),
-      updatePriorityLabel: (id: string, updates: { name?: string; color?: string; description?: string }) => 
-        projectData.updateLabel(id, updates),
+      // Priority label operations - use stable wrapper functions
+      createPriorityLabel,
+      updatePriorityLabel,
       deletePriorityLabel: projectData.deleteLabel,
       reorderPriorityLabels: projectData.reorderLabels,
 
-      // Label operations (map directly from projectData)
+      // Label operations - direct references
       createLabel: projectData.createLabel,
       updateLabel: projectData.updateLabel,
       deleteLabel: projectData.deleteLabel,
       reorderLabels: projectData.reorderLabels,
 
-      // Utility
+      // Utility - direct references
       refetch: projectData.refetch,
       clearError: projectData.clearError,
     }),
-    [projectData]
+    [
+      projectData.createTask,
+      projectData.updateTask,
+      projectData.deleteTask,
+      projectData.duplicateTask,
+      projectData.moveTask,
+      projectData.convertTaskToSubtask,
+      projectData.convertSubtaskToTask,
+      projectData.canTaskBeIndented,
+      projectData.canTaskBeUnindented,
+      projectData.findPotentialParentTask,
+      createStatusLabel,
+      updateStatusLabel,
+      createPriorityLabel,
+      updatePriorityLabel,
+      projectData.deleteLabel,
+      projectData.reorderLabels,
+      projectData.refetch,
+      projectData.clearError,
+    ]
   )
 
-  // Bulk operations for better UX
-  const bulkUpdateTasks = useMemo(
-    () => async (taskIds: string[], updates: Partial<TaskDataSchema>) => {
+  // Bulk operations for better UX - using useCallback for better readability
+  const bulkUpdateTasks = useCallback(
+    async (taskIds: string[], updates: Partial<TaskDataSchema>) => {
       try {
-        // Update tasks in parallel for better performance
-        await Promise.all(
-          taskIds.map((id) => operations.updateTask(id, updates))
-        )
+        // Use chunking to prevent overwhelming the backend with large selections
+        const batchSize = 20
+        for (let i = 0; i < taskIds.length; i += batchSize) {
+          const batch = taskIds.slice(i, i + batchSize)
+          await Promise.all(batch.map((id) => operations.updateTask(id, updates)))
+        }
       } catch (error) {
         console.error("Failed to bulk update tasks:", error)
         throw error
@@ -240,28 +285,35 @@ export function useKanban(providedProjectId?: string): UseKanbanReturn {
     [operations.updateTask]
   )
 
-  const bulkMoveTasks = useMemo(
-    () => async (taskIds: string[], targetStatusId: string) => {
+  const bulkMoveTasks = useCallback(
+    async (taskIds: string[], targetStatusId: string) => {
       try {
-        // Move tasks in sequence to maintain order
+        // Find the target column to get current task count for proper indexing
+        const targetColumn = columns.find(col => col.id === targetStatusId)
+        const baseIndex = targetColumn?.tasks.length || 0
+        
+        // Move tasks in sequence to maintain relative order
+        // Use baseIndex + i to append tasks at the end of the target column
         for (let i = 0; i < taskIds.length; i++) {
-          await operations.moveTask(taskIds[i], targetStatusId, i)
+          await operations.moveTask(taskIds[i], targetStatusId, baseIndex + i)
         }
       } catch (error) {
         console.error("Failed to bulk move tasks:", error)
         throw error
       }
     },
-    [operations.moveTask]
+    [operations.moveTask, columns]
   )
 
-  const bulkDeleteTasks = useMemo(
-    () => async (taskIds: string[]) => {
+  const bulkDeleteTasks = useCallback(
+    async (taskIds: string[]) => {
       try {
-        // Delete tasks in parallel
-        await Promise.all(
-          taskIds.map((id) => operations.deleteTask(id))
-        )
+        // Use chunking to prevent overwhelming the backend with large selections
+        const batchSize = 20
+        for (let i = 0; i < taskIds.length; i += batchSize) {
+          const batch = taskIds.slice(i, i + batchSize)
+          await Promise.all(batch.map((id) => operations.deleteTask(id)))
+        }
       } catch (error) {
         console.error("Failed to bulk delete tasks:", error)
         throw error
@@ -270,7 +322,8 @@ export function useKanban(providedProjectId?: string): UseKanbanReturn {
     [operations.deleteTask]
   )
 
-  return {
+  // Memoize the final return object to prevent infinite re-renders
+  return useMemo(() => ({
     columns,
     priorityLabels,
     isLoading: projectData.isLoading,
@@ -313,5 +366,15 @@ export function useKanban(providedProjectId?: string): UseKanbanReturn {
     updateLabel: operations.updateLabel, 
     deleteLabel: operations.deleteLabel,
     reorderLabels: operations.reorderLabels
-  }
+  }), [
+    columns, 
+    priorityLabels, 
+    projectData.isLoading, 
+    projectData.error, 
+    projectStats,
+    operations,
+    bulkUpdateTasks,
+    bulkMoveTasks,
+    bulkDeleteTasks
+  ])
 }

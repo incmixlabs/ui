@@ -4,7 +4,7 @@ import { z } from "zod"
 // TODO: This should support recursive ZodEffects but TypeScript doesn't allow circular type definitions.
 export type ZodObjectOrWrapped =
   | z.ZodObject<any, any>
-  | z.ZodEffects<z.ZodObject<any, any>>
+  | z.ZodTransform<z.ZodObject<any, any>, any>
 
 /**
  * Beautify a camelCase string.
@@ -22,14 +22,14 @@ export function beautifyObjectName(string: string) {
  * This will unpack optionals, refinements, etc.
  */
 export function getBaseSchema<
-  ChildType extends z.ZodAny | z.AnyZodObject = z.ZodAny,
->(schema: ChildType | z.ZodEffects<ChildType>): ChildType | null {
+  ChildType extends z.ZodTypeAny = z.ZodTypeAny,
+>(schema: ChildType | z.ZodTransform<ChildType, any>): ChildType | null {
   if (!schema) return null
   if ("innerType" in schema._def) {
-    return getBaseSchema(schema._def.innerType as ChildType)
+    return getBaseSchema(schema._def.innerType as any) as ChildType
   }
   if ("schema" in schema._def) {
-    return getBaseSchema(schema._def.schema as ChildType)
+    return getBaseSchema(schema._def.schema as any) as ChildType
   }
 
   return schema as ChildType
@@ -39,31 +39,33 @@ export function getBaseSchema<
  * Get the type name of the lowest level Zod type.
  * This will unpack optionals, refinements, etc.
  */
-export function getBaseType(schema: z.ZodAny): string {
+export function getBaseType(schema: z.ZodTypeAny): string {
   const baseSchema = getBaseSchema(schema)
-  return baseSchema ? baseSchema._def.typeName : ""
+  if (!baseSchema || !baseSchema._def) return ""
+  // Handle different Zod versions
+  return (baseSchema._def as any).typeName || (baseSchema as any)._def.typeName || ""
 }
 
 /**
- * Search for a "ZodDefult" in the Zod stack and return its value.
+ * Search for a "ZodDefault" in the Zod stack and return its value.
  */
-export function getDefaultValueInZodStack(schema: z.ZodAny): any {
-  const typedSchema = schema as unknown as z.ZodDefault<
-    z.ZodNumber | z.ZodString
-  >
+export function getDefaultValueInZodStack(schema: z.ZodTypeAny): any {
+  const typedSchema = schema as any
 
   if (typedSchema._def.typeName === "ZodDefault") {
-    return typedSchema._def.defaultValue()
+    return typeof typedSchema._def.defaultValue === "function"
+      ? typedSchema._def.defaultValue()
+      : typedSchema._def.defaultValue
   }
 
   if ("innerType" in typedSchema._def) {
     return getDefaultValueInZodStack(
-      typedSchema._def.innerType as unknown as z.ZodAny
+      typedSchema._def.innerType as z.ZodTypeAny
     )
   }
   if ("schema" in typedSchema._def) {
     return getDefaultValueInZodStack(
-      (typedSchema._def as any).schema as z.ZodAny
+      typedSchema._def.schema as z.ZodTypeAny
     )
   }
 
@@ -75,15 +77,14 @@ export function getDefaultValueInZodStack(schema: z.ZodAny): any {
  */
 export function getDefaultValues<Schema extends z.ZodObject<any, any>>(
   schema: Schema
-) {
+): DefaultValues<Record<string, unknown>> | null {
   if (!schema) return null
   const { shape } = schema
-  type DefaultValuesType = DefaultValues<Partial<z.infer<Schema>>>
-  const defaultValues = {} as DefaultValuesType
+  const defaultValues: Record<string, any> = {}
   if (!shape) return defaultValues
 
   for (const key of Object.keys(shape)) {
-    const item = shape[key] as z.ZodAny
+    const item = shape[key] as z.ZodTypeAny
 
     if (getBaseType(item) === "ZodObject") {
       const defaultItems = getDefaultValues(
@@ -92,27 +93,29 @@ export function getDefaultValues<Schema extends z.ZodObject<any, any>>(
 
       if (defaultItems !== null) {
         for (const defaultItemKey of Object.keys(defaultItems)) {
-          const pathKey = `${key}.${defaultItemKey}` as keyof DefaultValuesType
+          const pathKey = `${key}.${defaultItemKey}`
           defaultValues[pathKey] = defaultItems[defaultItemKey]
         }
       }
     } else {
       const defaultValue = getDefaultValueInZodStack(item)
       if (defaultValue !== undefined) {
-        defaultValues[key as keyof DefaultValuesType] = defaultValue
+        defaultValues[key] = defaultValue
       }
     }
   }
 
-  return defaultValues
+  return defaultValues as DefaultValues<Record<string, unknown>>
 }
 
 export function getObjectFormSchema(
   schema: ZodObjectOrWrapped
 ): z.ZodObject<any, any> {
-  if (schema?._def.typeName === "ZodEffects") {
-    const typedSchema = schema as z.ZodEffects<z.ZodObject<any, any>>
-    return getObjectFormSchema(typedSchema._def.schema)
+  const schemaType = (schema as any)?._def?.typeName
+  if (schemaType === "ZodEffects" || schemaType === "ZodTransform") {
+    // Access the underlying schema from transform/effects
+    const innerSchema = (schema as any)?._def?.schema || (schema as any)?._def?.innerType
+    return getObjectFormSchema(innerSchema)
   }
   return schema as z.ZodObject<any, any>
 }
@@ -160,17 +163,22 @@ export function zodToHtmlInputProps(
  * @returns True if the schema represents an array of selectable option objects, false otherwise.
  */
 export function isMultipleSelectorType(zodItem: z.ZodTypeAny): boolean {
-  if (!(zodItem instanceof z.ZodArray)) return false
-
-  const innerType = zodItem._def.type
-
-  // Check if it's an array of objects that look like options
   try {
-    if (innerType instanceof z.ZodObject) {
-      const shape = innerType.shape
-      return (
-        shape.label instanceof z.ZodString && shape.value instanceof z.ZodString
-      )
+    const typeName = (zodItem as any)?._def?.typeName
+    if (typeName !== "ZodArray") return false
+
+    const innerType = (zodItem as any)?._def?.type
+    if (!innerType) return false
+
+    // Check if it's an array of objects that look like options
+    const innerTypeName = (innerType as any)?._def?.typeName
+    if (innerTypeName === "ZodObject") {
+      const shape = (innerType as any)?._def?.shape || (innerType as any)?.shape
+      if (!shape) return false
+      
+      const labelType = (shape.label as any)?._def?.typeName
+      const valueType = (shape.value as any)?._def?.typeName
+      return labelType === "ZodString" && valueType === "ZodString"
     }
   } catch (_e) {
     // If any error in type checking, it's not a MultipleSelector type

@@ -83,7 +83,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
   onValuesChange?: (values: Partial<z.infer<SchemaType>>) => void
   onParsedValuesChange?: (values: Partial<z.infer<SchemaType>>) => void
   onSubmit?: (values: z.infer<SchemaType>) => void
-  fieldConfig?: FieldConfig<z.infer<SchemaType>>
+  fieldConfig?: FieldConfig<Record<string, unknown>>
   children?: React.ReactNode
   className?: string
   dependencies?: Record<
@@ -104,20 +104,20 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
     : formSchema
 
   const objectFormSchema = getObjectFormSchema(zodFormSchema)
-  const defaultValues: DefaultValues<z.infer<typeof objectFormSchema>> | null =
+  const defaultValues: DefaultValues<Record<string, unknown>> | null =
     getDefaultValues(objectFormSchema)
 
-  const form = useForm<z.infer<typeof objectFormSchema>>({
-    resolver: zodResolver(zodFormSchema),
+  const form = useForm<Record<string, unknown>>({
+    resolver: zodResolver(zodFormSchema) as any,
     defaultValues: defaultValues ?? undefined,
-    values: valuesProp,
+    values: valuesProp as Record<string, unknown>,
     mode: "onSubmit", // changed from default "onChange" to "onSubmit"
   })
 
-  function onSubmit(values: z.infer<typeof zodFormSchema>) {
+  function onSubmit(values: Record<string, unknown>) {
     const parsedValues = zodFormSchema.safeParse(values)
     if (parsedValues.success) {
-      onSubmitProp?.(parsedValues.data)
+      onSubmitProp?.(parsedValues.data as z.infer<SchemaType>)
     }
   }
 
@@ -131,10 +131,10 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
           }}
           onChange={() => {
             const values = form.getValues()
-            onValuesChangeProp?.(values)
+            onValuesChangeProp?.(values as Partial<z.infer<SchemaType>>)
             const parsedValues = zodFormSchema.safeParse(values)
             if (parsedValues.success) {
-              onParsedValuesChange?.(parsedValues.data)
+              onParsedValuesChange?.(parsedValues.data as Partial<z.infer<SchemaType>>)
             }
           }}
           className={cn("space-y-5", className)}

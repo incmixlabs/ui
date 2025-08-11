@@ -5,15 +5,13 @@ import type { FieldConfig } from "@components/auto-form/types"
 import type { ZodObjectOrWrapped } from "@components/auto-form/utils"
 import type { z } from "zod"
 
-export interface ProjectFormSchema<
-  SchemaType extends ZodObjectOrWrapped = any,
-> {
+export interface ProjectFormSchema {
   formSchema: {
     type: string
     properties: Record<string, any>
     required: string[]
   }
-  fieldConfig: FieldConfig<z.infer<SchemaType>>
+  fieldConfig: FieldConfig<Record<string, unknown>>
 }
 
 export const projectFormSchema: ProjectFormSchema = {
@@ -21,7 +19,6 @@ export const projectFormSchema: ProjectFormSchema = {
     type: "object",
     properties: {
       files: {
-        type: "object",
         title: "Project Image",
       },
       name: {
@@ -62,8 +59,10 @@ export const projectFormSchema: ProjectFormSchema = {
         title: "Members",
       },
       budget: {
-        type: "number",
+        type: "string",
+        pattern: "^-?\\d{1,3}(,\\d{3})*(\\.\\d{1,2})?$",
         title: "Budget",
+        example: "25,000.00",
       },
     },
     required: ["name", "company", "description"],

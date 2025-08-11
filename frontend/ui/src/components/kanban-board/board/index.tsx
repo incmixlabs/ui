@@ -1,6 +1,6 @@
 // components/board/index.tsx - Fixed horizontal scrolling
 
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import { autoScrollForElements } from "@atlaskit/pragmatic-drag-and-drop-auto-scroll/element";
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { reorderWithEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/reorder-with-edge";
@@ -15,6 +15,7 @@ import {
   DropdownMenu,
   ScrollArea,
   Tooltip,
+  toast,
 } from "@base";
 import { Loader2, Settings, MoreVertical, RefreshCw } from "lucide-react";
 import {
@@ -30,6 +31,8 @@ import { BoardColumn } from "./board-column";
 import { TaskCardDrawer } from "../shared/task-card-drawer";
 import { CreateColumnForm } from "../shared/create-column-form";
 import { DndKanbanBoard } from "../dnd-example/KanbanBoard";
+import { TaskViewHeader } from "../shared/task-view-header";
+import { exportAllTasksToCSV } from "../utils/csv-export";
 
 interface BoardProps {
   projectId?: string;
@@ -42,6 +45,7 @@ export function Board({
 }: BoardProps) {
   const scrollableRef = useRef<HTMLDivElement | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   // const [columns, setColumns] = useState<Column[]>(columnsData);
   // const pickedUpTaskColumn = useRef<ColumnId | null>(null);
   // const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
@@ -78,6 +82,20 @@ export function Board({
   }, [columns, isDragging]);
 
   const displayColumns = isDragging ? optimisticColumns : columns;
+
+  // Filter columns based on search query
+  const filteredColumns = useMemo(() => {
+    if (!searchQuery.trim()) return displayColumns;
+    
+    const lowerSearchQuery = searchQuery.toLowerCase();
+    return displayColumns.map(column => ({
+      ...column,
+      tasks: column.tasks.filter(task =>
+        task.name?.toLowerCase().includes(lowerSearchQuery) ||
+        task.description?.toLowerCase().includes(lowerSearchQuery)
+      )
+    }));
+  }, [displayColumns, searchQuery]);
 
   useEffect(() => {
     const element = scrollableRef.current;
@@ -254,6 +272,49 @@ export function Board({
     refetch();
   }, [refetch]);
 
+  // CSV export handler for all tasks
+  const handleExportAllCSV = useCallback(async () => {
+    try {
+      // Check if there are any tasks to export
+      const totalFiltered = filteredColumns.reduce((n, c) => n + c.tasks.length, 0);
+      if (totalFiltered === 0) {
+        toast.info("No tasks to export for current filter", {
+          description: "Try adjusting your search or filters to include more tasks",
+          duration: 3000
+        });
+        return;
+      }
+
+      // Show loading feedback
+      toast.info("Exporting tasks to CSV...", {
+        description: `Preparing ${totalFiltered} task${totalFiltered !== 1 ? 's' : ''} for export`,
+        duration: 2000
+      });
+
+      // Perform the export
+      exportAllTasksToCSV(filteredColumns, priorityLabels, {
+        includeSubtasks: true,
+        includeMetadata: true,
+        includeTimestamps: true
+      });
+
+      // Show success feedback
+      toast.success("CSV export completed", {
+        description: `Successfully exported ${totalFiltered} task${totalFiltered !== 1 ? 's' : ''} to CSV file`,
+        duration: 4000
+      });
+    } catch (error) {
+      console.error("Failed to export CSV:", error);
+      
+      // Show error feedback to user
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      toast.error("Failed to export CSV", {
+        description: errorMessage,
+        duration: 5000
+      });
+    }
+  }, [filteredColumns, priorityLabels]);
+
   if (isLoading) {
     return (
       <Box className="flex items-center justify-center h-full">
@@ -284,56 +345,23 @@ export function Board({
   return (
     // FIX: The Board is now a flex column that fills the height of its container.
     <Box className="w-full h-full flex flex-col">
-      {/* HEADER: This part is fixed and will not shrink. */}
-      <Box className="flex-shrink-0 border-b border-gray-3">
-        <Flex direction="column" gap="4" className="p-4 px-6">
-          <Flex justify="between" align="center">
-            <Flex gap="6" className="text-sm text-gray-11">
-              <Text>
-                {projectStats.totalStatusLabels} column
-                {projectStats.totalStatusLabels !== 1 ? "s" : ""}
-              </Text>
-              <Text>
-                {projectStats.totalTasks} task
-                {projectStats.totalTasks !== 1 ? "s" : ""}
-              </Text>
-              <Text>{projectStats.completedTasks} completed</Text>
-              {projectStats.overdueTasks > 0 && (
-                <Text className="text-red-600">
-                  {projectStats.overdueTasks} overdue
-                </Text>
-              )}
-              {projectStats.urgentTasks > 0 && (
-                <Text className="text-orange-600">
-                  {projectStats.urgentTasks} urgent
-                </Text>
-              )}
-            </Flex>
-            <Flex align="center" gap="2">
-              <Tooltip content="Refresh">
-                <IconButton variant="ghost" onClick={handleRefresh}>
-                  <RefreshCw size={16} />
-                </IconButton>
-              </Tooltip>
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger>
-                  <IconButton variant="ghost">
-                    <MoreVertical size={16} />
-                  </IconButton>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content>
-                  <DropdownMenu.Item onClick={handleRefresh}>
-                    <RefreshCw size={14} /> Refresh Board
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item>
-                    <Settings size={14} /> Board Settings
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-            </Flex>
-          </Flex>
-        </Flex>
-      </Box>
+      {/* HEADER: Using reusable task view header */}
+      <TaskViewHeader
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search tasks..."
+        stats={{
+          totalStatusLabels: projectStats.totalStatusLabels,
+          totalTasks: projectStats.totalTasks,
+          completedTasks: projectStats.completedTasks,
+          overdueTasks: projectStats.overdueTasks,
+          urgentTasks: projectStats.urgentTasks,
+        }}
+        onRefresh={handleRefresh}
+        showExportCSV={true}
+        onExportCSV={handleExportAllCSV}
+        isLoading={isLoading}
+      />
 
       <Box className="flex-1 overflow-hidden">
         <ScrollArea
@@ -362,7 +390,7 @@ export function Board({
               </div>
             ))} */}
             <DndKanbanBoard
-              columnsData={displayColumns}
+              columnsData={filteredColumns}
               priorityLabels={priorityLabels}
               onCreateTask={createTask}
               onUpdateTask={updateTask}

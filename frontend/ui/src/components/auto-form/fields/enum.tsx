@@ -5,7 +5,7 @@ import {
   FormMessage,
   Select
 } from "@base"
-import type * as z from "zod"
+import { z } from "zod"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"
 import type { AutoFormInputComponentProps } from "../types"
@@ -48,7 +48,8 @@ export default function AutoFormEnum({
   else {
     let baseValues
     try {
-      baseValues = (getBaseSchema(zodItem) as unknown as z.ZodEnum<any>)?._def?.values
+      const baseSchema = getBaseSchema(zodItem)
+      baseValues = (baseSchema as any)?._def?.values
 
       if (baseValues) {
         if (!Array.isArray(baseValues)) {

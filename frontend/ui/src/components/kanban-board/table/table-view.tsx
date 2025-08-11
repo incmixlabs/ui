@@ -4,34 +4,28 @@ import {
   Box,
   Flex,
   Button,
-  IconButton,
-  TextField,
   Text,
-  Badge,
   DropdownMenu,
   Tooltip,
 } from "@base"
 import { TanstackDataTable, createEnhancedDropdownColumn, generateUniqueDropdownColor } from "../../tanstack-table"
 import {
-  Search,
   Layers as LayersIcon,
   LayoutGrid as LayoutGridIcon,
   RefreshCw,
-  Settings,
-  MoreVertical,
-  Download,
   ChevronDown,
   Check,
   Flag,
 } from "lucide-react"
-import {Heading} from "@incmix/ui"
 import type { TableTask, ListColumn } from "../types"
 import type { TaskDataSchema } from "@incmix/utils/schema"
+import { TaskViewHeader } from "../shared/task-view-header"
 // import { useAIFeaturesStore } from "@incmix/store" // Commented out as not used
 import { KeyboardShortcutsHelp } from "../../tanstack-table/components/KeyboardShortcutsHelp"
 import { useTableView } from "../hooks/use-table-view"
 import { TableRowActions } from "./table-row-actions"
 import { TaskCardDrawer } from "../shared/task-card-drawer"
+import { exportAllTasksToCSV } from "../utils/csv-export"
 import { User } from "../../tanstack-table/cell-renderers"
 import { StatusColumnConfigDialog } from "./status-column-config-dialog"
 
@@ -310,14 +304,14 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
               ...statusLabels.map(label => ({
                 id: label.id,
                 name: label.name,
-                color: label.color,
+                color: label.color || '#6b7280', // Fallback to gray if color is undefined
                 type: "status"
               })),
               // Include priority labels
               ...priorityLabels.map(label => ({
                 id: label.id,
                 name: label.name,
-                color: label.color,
+                color: label.color || '#6b7280', // Fallback to gray if color is undefined
                 type: "priority"
               }))
             ]}
@@ -378,6 +372,50 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
   const handleRefresh = useCallback(() => {
     refetch()
   }, [refetch])
+
+  // CSV export handler for all tasks
+  const handleExportAllCSV = useCallback(() => {
+    try {
+      // Convert filtered table tasks to column format for CSV export
+      const columnsForExport = statusLabels.map(status => {
+        const statusTasks = filteredTasks.filter(task => task.statusId === status.id)
+        
+        return {
+          id: status.id,
+          name: status.name,
+          projectId: projectId,
+          color: status.color || '#6B7280',
+          order: 0,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          createdBy: { id: 'system', name: 'System' },
+          updatedBy: { id: 'system', name: 'System' },
+          taskCount: statusTasks.length,
+          completedTasksCount: statusTasks.filter(task => task.completed).length,
+          totalTasksCount: statusTasks.length,
+          progressPercentage: statusTasks.length > 0 ? 
+            (statusTasks.filter(task => task.completed).length / statusTasks.length) * 100 : 0,
+          tasks: statusTasks
+        }
+      })
+      
+      // Convert priorityLabels to LabelSchema format
+      const priorityLabelsForExport = priorityLabels.map(priority => ({
+        id: priority.id,
+        name: priority.name,
+        type: 'priority' as const,
+        color: priority.color
+      }))
+      
+      exportAllTasksToCSV(columnsForExport as any, priorityLabelsForExport, {
+        includeSubtasks: true,
+        includeMetadata: true,
+        includeTimestamps: true
+      })
+    } catch (error) {
+      console.error("Failed to export CSV:", error)
+    }
+  }, [filteredTasks, statusLabels, priorityLabels, projectId])
 
   // Simplified cell edit handler - the enhanced dropdown handles creation internally
   const handleCellEdit = useCallback(async (rowData: TableTask, columnId: string, newValue: any) => {
@@ -470,7 +508,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
 
     targetLabels.forEach(label => {
       // For dark mode support, we use the original color for text and a semi-transparent version for background
-      const originalColor = label.color;
+      const originalColor = label.color || '#6b7280'; // Fallback to gray if color is undefined
       const bgColor = hexToRgba(originalColor, 0.3); // Using 0.3 alpha for better visibility (70% transparent)
 
       // Map by name for the UI display, which is what the grouping shows
@@ -508,7 +546,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       options: statusLabels.map(status => ({
         label: status.name,
         value: status.id,
-        color: status.color
+        color: status.color || '#6b7280'
       }))
     },
     {
@@ -517,7 +555,7 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
       options: priorityLabels.map(priority => ({
         label: priority.name,
         value: priority.id,
-        color: priority.color
+        color: priority.color || '#6b7280'
       }))
     },
     {
@@ -554,150 +592,104 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
 
   return (
     <>
-      {/* Header */}
-      <Box className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-        <Flex direction="column" gap="4" className="p-4">
-          <Flex justify="between" align="center">
-            <Heading size="6">Task Table</Heading>
-
-            <Flex align="center" gap="2">
-              {/* Grouping toggle button */}
-              <Button
-                variant="outline"
-                onClick={toggleGrouping}
-                className="flex items-center gap-1"
-                size="2"
-              >
-                {groupByField === 'statusLabel' ? (
-                  <>
-                    <LayersIcon size={14} />
-                    <span>Group by Status</span>
-                  </>
-                ) : (
-                  <>
-                    <LayoutGridIcon size={14} />
-                    <span>Group by Priority</span>
-                  </>
-                )}
-              </Button>
-              <Tooltip content="Refresh">
-                <IconButton variant="ghost" onClick={handleRefresh}>
-                  <RefreshCw size={16} />
-                </IconButton>
+      {/* Header: Using reusable task view header */}
+      <TaskViewHeader
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search tasks..."
+        stats={{
+          totalTasks: projectStats.totalTasks,
+          completedTasks: projectStats.completedTasks,
+          totalStatusLabels: projectStats.totalLabels,
+          overdueTasks: projectStats.overdueTasks,
+          urgentTasks: projectStats.urgentTasks,
+        }}
+        onRefresh={handleRefresh}
+        showExportCSV={true}
+        onExportCSV={handleExportAllCSV}
+        leftActions={
+          <Button
+            variant="outline"
+            onClick={toggleGrouping}
+            className="flex items-center gap-1"
+            size="2"
+          >
+            {groupByField === 'statusLabel' ? (
+              <>
+                <LayoutGridIcon size={14} />
+                <span>Switch to Priority</span>
+              </>
+            ) : (
+              <>
+                <LayersIcon size={14} />
+                <span>Switch to Status</span>
+              </>
+            )}
+          </Button>
+        }
+        rightActions={
+          <>
+            {/* Keyboard shortcuts help */}
+            <div>
+              <Tooltip content="Keyboard Shortcuts">
+                <div>
+                  <KeyboardShortcutsHelp />
+                </div>
               </Tooltip>
+            </div>
 
-              {/* Keyboard shortcuts help */}
-              <div>
-                <Tooltip content="Keyboard Shortcuts">
-                  <div>
-                    <KeyboardShortcutsHelp />
-                  </div>
-                </Tooltip>
-              </div>
-
-              {/* Column visibility dropdown */}
-              <DropdownMenu.Root open={isColumnsMenuOpen} onOpenChange={setIsColumnsMenuOpen}>
-                <DropdownMenu.Trigger>
-                  <Button variant="ghost" className="flex items-center gap-1">
-                    Columns
-                    <ChevronDown size={14} />
-                  </Button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content>
-                  {enhancedColumns.map((column) => {
-                    // Disable toggling for the column we're currently grouping by
-                    const isGroupedColumn = 
-                      (groupByField === 'statusLabel' && column.id === 'status') || 
-                      (groupByField === 'priorityLabel' && column.id === 'priority');
-                      
-                    return (
-                      <DropdownMenu.Item 
-                        key={column.id}
-                        onClick={() => {
-                          // Don't allow changing visibility of grouped column
-                          if (isGroupedColumn) return;
-                          
-                          // Make sure column.id is a string to avoid TypeScript errors
-                          const columnId = String(column.id);
-                          setColumnVisibility(prev => ({
-                            ...prev,
-                            [columnId]: !prev[columnId]
-                          }));
-                        }}
-                      >
-                        <Flex align="center" gap="2">
-                          <div className="mr-2 h-4 w-4">
-                            {columnVisibility[String(column.id)] && !isGroupedColumn && (
-                              <Check size={16} className="h-4 w-4" />
-                            )}
-                          </div>
-                          <Text>
-                            {column.headingName}
-                            {isGroupedColumn && (
-                              <span className="ml-2 text-xs text-gray-500">(grouped)</span>
-                            )}
-                          </Text>
-                        </Flex>
-                      </DropdownMenu.Item>
-                    );
-                  })}
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-
-              <DropdownMenu.Root open={isMoreMenuOpen} onOpenChange={setIsMoreMenuOpen}>
-                <DropdownMenu.Trigger>
-                  <IconButton variant="ghost">
-                    <MoreVertical size={16} />
-                  </IconButton>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content>
-                  <DropdownMenu.Item>
-                    <Flex align="center" gap="2">
-                      <Download size={16} />
-                      <Text>Download</Text>
-                    </Flex>
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item>
-                    <Flex align="center" gap="2">
-                      <Settings size={16} />
-                      <Text>Settings</Text>
-                    </Flex>
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-            </Flex>
-          </Flex>
-
-          {/* Search and Stats */}
-          <Flex justify="between" align="center" gap="4">
-            <Box className="flex-1 relative max-w-md">
-              <Search size={20} className="absolute top-3 left-3 text-gray-400" />
-              <TextField.Root
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search tasks..."
-                className="pl-10 h-12"
-              />
-            </Box>
-
-            <Flex gap="6" className="text-sm text-gray-600 dark:text-gray-400">
-              <span>{projectStats.totalTasks} tasks</span>
-              <span>{projectStats.completedTasks} completed</span>
-              <span>{projectStats.totalLabels} labels</span>
-              {projectStats.overdueTasks > 0 && (
-                <Badge color="red" variant="soft">
-                  {projectStats.overdueTasks} overdue
-                </Badge>
-              )}
-              {projectStats.urgentTasks > 0 && (
-                <Badge color="orange" variant="soft">
-                  {projectStats.urgentTasks} urgent
-                </Badge>
-              )}
-            </Flex>
-          </Flex>
-        </Flex>
-      </Box>
+            {/* Column visibility dropdown */}
+            <DropdownMenu.Root open={isColumnsMenuOpen} onOpenChange={setIsColumnsMenuOpen}>
+              <DropdownMenu.Trigger>
+                <Button variant="ghost" className="flex items-center gap-1">
+                  Columns
+                  <ChevronDown size={14} />
+                </Button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content>
+                {enhancedColumns.map((column) => {
+                  // Disable toggling for the column we're currently grouping by
+                  const isGroupedColumn = 
+                    (groupByField === 'statusLabel' && column.id === 'status') || 
+                    (groupByField === 'priorityLabel' && column.id === 'priority');
+                    
+                  return (
+                    <DropdownMenu.Item 
+                      key={column.id}
+                      onClick={() => {
+                        // Don't allow changing visibility of grouped column
+                        if (isGroupedColumn) return;
+                        
+                        // Make sure column.id is a string to avoid TypeScript errors
+                        const columnId = String(column.id);
+                        setColumnVisibility(prev => ({
+                          ...prev,
+                          [columnId]: !prev[columnId]
+                        }));
+                      }}
+                    >
+                      <Flex align="center" gap="2">
+                        <div className="mr-2 h-4 w-4">
+                          {columnVisibility[String(column.id)] && !isGroupedColumn && (
+                            <Check size={16} className="h-4 w-4" />
+                          )}
+                        </div>
+                        <Text>
+                          {column.headingName}
+                          {isGroupedColumn && (
+                            <span className="ml-2 text-xs text-gray-500">(grouped)</span>
+                          )}
+                        </Text>
+                      </Flex>
+                    </DropdownMenu.Item>
+                  );
+                })}
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          </>
+        }
+        isLoading={isLoading}
+      />
 
       {/* Main Content */}
       <Box className=" px-4">

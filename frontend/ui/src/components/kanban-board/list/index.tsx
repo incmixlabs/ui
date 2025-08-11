@@ -14,6 +14,7 @@ import { Box, Flex, Heading, IconButton, Button, Text, TextField, TextArea, Badg
 
 import { Plus, Search, RefreshCw, Settings, MoreVertical, X, ClipboardList, XCircle, Sparkles, Loader2, Download } from "lucide-react"
 import { CreateColumnForm } from "../shared/create-column-form"
+import { TaskViewHeader } from "../shared/task-view-header"
 
 
 import {
@@ -32,6 +33,16 @@ import { TaskCardDrawer } from "../shared/task-card-drawer"
 import { blockBoardPanningAttr } from "../data-attributes"
 import { TaskCopyBufferProvider } from "../hooks/use-task-copy-buffer"
 import { exportAllTasksToCSV } from "../utils/csv-export"
+
+// Helper function for efficient shallow column comparison
+function shallowColumnsEqual(a: any[], b: any[]) {
+  if (a === b) return true;
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i].id !== b[i].id || a[i].tasks.length !== b[i].tasks.length) return false;
+  }
+  return true;
+}
 
 interface ListBoardProps {
   projectId?: string
@@ -77,7 +88,8 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     createStatusLabel, // Using compatibility methods instead
     updateStatusLabel, // Using compatibility methods instead
     deleteStatusLabel, // Using compatibility methods instead
-    projectStats
+    projectStats,
+    refetch // Add refetch method for proper refresh
   } = useListView(projectId)
 
   // Get bulk AI generation hook
@@ -193,7 +205,13 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   }, [columns, duplicateTask]);
 
   // Effect to clear optimistic state when real duplicate tasks appear
-  // Optimized to reduce dependencies and improve performance
+  // Fixed to prevent infinite render loops
+  const clearOptimisticStateRef = useRef<(() => void) | undefined>(undefined)
+  clearOptimisticStateRef.current = () => {
+    setOptimisticColumns([]);
+    setOptimisticDuplicateIds(new Set());
+  }
+
   useEffect(() => {
     if (optimisticDuplicateIds.size === 0 || optimisticColumns.length === 0) return;
 
@@ -211,22 +229,31 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     );
 
     if (hasMatchingRealTask) {
-      setOptimisticColumns([]);
-      setOptimisticDuplicateIds(new Set());
+      // Use setTimeout to prevent immediate state update during render
+      setTimeout(() => {
+        clearOptimisticStateRef.current?.()
+      }, 0)
     }
-  }, [columns.length, optimisticDuplicateIds.size]); // Reduced dependencies to prevent excessive re-renders
+  }, [columns, optimisticColumns, optimisticDuplicateIds])
 
-  // Use optimistic columns if available, otherwise use regular columns
-  const activeColumns = optimisticColumns.length > 0 ? optimisticColumns : columns;
+  // Use memoized active columns to prevent unnecessary re-renders
+  const activeColumns = useMemo(() => {
+    return optimisticColumns.length > 0 ? optimisticColumns : columns
+  }, [optimisticColumns, columns]);
 
-  // Filter columns based on search query
-  const filteredColumns = activeColumns.filter(column =>
-    column.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    column.tasks.some(task =>
-      task.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      task.description?.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  )
+  // Memoize filtered columns to prevent unnecessary re-filtering
+  const filteredColumns = useMemo(() => {
+    if (!searchQuery.trim()) return activeColumns
+    
+    const lowerSearchQuery = searchQuery.toLowerCase()
+    return activeColumns.map(column => ({
+      ...column,
+      tasks: column.tasks.filter(task =>
+        task.name?.toLowerCase().includes(lowerSearchQuery) ||
+        task.description?.toLowerCase().includes(lowerSearchQuery)
+      )
+    }))
+  }, [activeColumns, searchQuery])
 
 
   // Handle task selection
@@ -521,13 +548,24 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
   }, [columns, isLoading, moveTask, optimisticColumns])
 
   // Use optimistic columns for drag and drop operations
+  // Fixed to prevent cascading state updates
+  const prevColumnsRef = useRef(columns)
+  const prevIsDraggingRef = useRef(isDragging)
+  
   useEffect(() => {
-    if (!isDragging) {
-      setOptimisticColumns(columns)
+    // Only update if columns actually changed and we're not dragging
+    if (!isDragging && (prevColumnsRef.current !== columns || prevIsDraggingRef.current !== isDragging)) {
+      // Use efficient shallow comparison to avoid unnecessary updates
+      if (optimisticColumns.length === 0 || !shallowColumnsEqual(optimisticColumns, columns)) {
+        setOptimisticColumns([]); // Reset to empty to use regular columns
+      }
     }
-  }, [columns, isDragging])
+    
+    prevColumnsRef.current = columns
+    prevIsDraggingRef.current = isDragging
+  }, [columns, isDragging, optimisticColumns])
 
-  const displayColumns = isDragging ? optimisticColumns : columns
+  // Removed unused displayColumns variable as it duplicates activeColumns functionality
 
   // Handle board panning
   useEffect(() => {
@@ -608,7 +646,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
       <Box className="flex items-center justify-center h-64">
         <Flex direction="column" align="center" gap="4">
           <div className="text-red-9">Error: {error}</div>
-          <Button onClick={() => window.location.reload()} variant="outline">
+          <Button onClick={refetch} variant="outline">
             <RefreshCw size={16} />
             Retry
           </Button>
@@ -621,145 +659,63 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     <TaskCopyBufferProvider>
       {/* FIX: Making ListBoard structure consistent with Board component to fix double scrollbars */}
       <Box className="w-full h-full flex flex-col overflow-hidden">
-      {/* HEADER: Fixed header area */}
-      <Box className="flex-shrink-0 border-b border-gray-4 dark:border-gray-5 bg-gray-1 dark:bg-gray-2">
-        <Flex direction="column" gap="4" className="p-4">
-
-          <Flex justify="between" align="center">
-            <Heading size="5" className="font-semibold text-gray-12 dark:text-gray-11">Project Tasks</Heading>
-
-            <Flex align="center" gap="2">
-              {/* Selected Tasks Actions - moved here from separate row */}
-              {selectedTasksCount > 0 && (
-                <>
-                  <Flex align="center" gap="2" className="mr-2">
-                    <Badge variant="solid" color="blue" size="1" className="px-2 py-0.5">
-                      {selectedTasksCount}
-                    </Badge>
-                    <Text size="2" className="font-medium text-blue-11">
-                      {selectedTasksCount === 1 ? 'task' : 'tasks'} selected
-                    </Text>
-                  </Flex>
-                  
-                  {useAI && (
-                    <Tooltip content={!isGenerating ? "Generate AI content for selected tasks" : "Generating content..."}>
-                      <Button
-                        variant="soft"
-                        color="purple"
-                        size="2"
-                        className="shadow-sm hover:shadow-md transition-all duration-150"
-                        onClick={promptGenerateAIContent}
-                        disabled={isGenerating}
-                      >
-                        {isGenerating ? (
-                          <Loader2 size={16} className="animate-spin mr-1" />
-                        ) : (
-                          <Sparkles size={16} className="mr-1" />
-                        )}
-                        {isGenerating ?
-                          `Generating...` :
-                          "Generate AI"}
-                      </Button>
-                    </Tooltip>
-                  )}
-                  
-                  <Button
-                    variant="outline"
-                    color="gray"
-                    size="2"
-                    className="shadow-sm hover:shadow-md hover:bg-gray-3 transition-all duration-150"
-                    onClick={() => setSelectedTasks({})}
-                  >
-                    <XCircle size={16} className="mr-1" />
-                    Clear
-                  </Button>
-                </>
-              )}
-              
-              <Button 
-                variant="soft" 
-                size="2" 
-                className="flex items-center gap-1 shadow-sm hover:shadow-md transition-all duration-150" 
-                onClick={() => setIsAddColumnDialogOpen(true)}
-              >
-                <Plus size={14} />
-                Add Column
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="2" 
-                className="flex items-center gap-1 shadow-sm hover:shadow-md transition-all duration-150" 
-                onClick={handleExportAllCSV}
-                disabled={columns.length === 0 || columns.every(col => col.tasks.length === 0)}
-              >
-                <Download size={14} />
-                Export All CSV
-              </Button>
-              
-              <Tooltip content="Refresh">
-                <IconButton 
-                  variant="soft" 
-                  size="1"
-                  className="hover:shadow-sm transition-all duration-150"
-                  onClick={() => window.location.reload()}
+      {/* HEADER: Using reusable task view header */}
+      <TaskViewHeader
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search tasks..."
+        stats={{
+          totalStatusLabels: projectStats.totalStatusLabels,
+          totalTasks: projectStats.totalTasks,
+          completedTasks: projectStats.completedTasks,
+          overdueTasks: projectStats.overdueTasks,
+          urgentTasks: projectStats.urgentTasks,
+        }}
+        onRefresh={refetch}
+        selectedTasksCount={selectedTasksCount}
+        selectedTasksActions={
+          <>
+            {useAI && (
+              <Tooltip content={!isGenerating ? "Generate AI content for selected tasks" : "Generating content..."}>
+                <Button
+                  variant="soft"
+                  color="purple"
+                  size="2"
+                  className="shadow-sm hover:shadow-md transition-all duration-150"
+                  onClick={promptGenerateAIContent}
+                  disabled={isGenerating}
                 >
-                  <RefreshCw size={14} />
-                </IconButton>
+                  {isGenerating ? (
+                    <Loader2 size={16} className="animate-spin mr-1" />
+                  ) : (
+                    <Sparkles size={16} className="mr-1" />
+                  )}
+                  {isGenerating ?
+                    `Generating...` :
+                    "Generate AI"}
+                </Button>
               </Tooltip>
-
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger>
-                  <IconButton 
-                    variant="soft" 
-                    size="1"
-                    className="hover:shadow-sm transition-all duration-150"
-                  >
-                    <MoreVertical size={14} />
-                  </IconButton>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content>
-                  <DropdownMenu.Group>
-                    {/* Settings items go here */}
-                    <DropdownMenu.Item>
-                      <Flex align="center" gap="2">
-                        <Settings size={14} className="text-gray-11" />
-                        <Text size="2">Settings</Text>
-                      </Flex>
-                    </DropdownMenu.Item>
-                  </DropdownMenu.Group>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-            </Flex>
-          </Flex>
-
-          {/* Search and Stats */}
-          <Flex justify="between" align="center" gap="4">
-            <Box className="flex-1 relative max-w-md">
-              <Search size={16} className="absolute top-2.5 left-3 text-gray-9" />
-              <TextField.Root
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search tasks..."
-                className="pl-9 h-9"
-                size="2"
-              />
-            </Box>
-
-            <Flex gap="6" className="text-gray-10">
-              <Text size="1">{projectStats.totalStatusLabels} columns</Text>
-              <Text size="1">{projectStats.totalTasks} tasks</Text>
-              <Text size="1">{projectStats.completedTasks} completed</Text>
-              {projectStats.overdueTasks > 0 && (
-                <Text size="1" className="text-red-9">{projectStats.overdueTasks} overdue</Text>
-              )}
-              {projectStats.urgentTasks > 0 && (
-                <Text size="1" className="text-orange-9">{projectStats.urgentTasks} urgent</Text>
-              )}
-            </Flex>
-          </Flex>
-        </Flex>
-      </Box>
+            )}
+          </>
+        }
+        onClearSelection={() => setSelectedTasks({})}
+        showExportCSV={true}
+        onExportCSV={handleExportAllCSV}
+        rightActions={
+          <>
+            <Button 
+              variant="soft" 
+              size="2" 
+              className="flex items-center gap-1 shadow-sm hover:shadow-md transition-all duration-150" 
+              onClick={() => setIsAddColumnDialogOpen(true)}
+            >
+              <Plus size={14} />
+              Add Column
+            </Button>
+          </>
+        }
+        isLoading={isLoading}
+      />
 
       {/* CONTENT AREA: Flexible content area with proper overflow handling */}
       <Box className="flex-1 h-full">

@@ -147,6 +147,35 @@ export function ReusableAddProject({
       // Process the form data
       const uniqueId = nanoid()
 
+      // Transform and validate form data
+      const transformedData = {
+        // Handle budget: convert string to number
+        budget: data.budget ? parseFloat(String(data.budget).replace(/[^0-9.-]/g, '')) || 0 : 0,
+        
+        // Handle files: extract File object from form data
+        fileData: (() => {
+          if (data.files) {
+            // If files is an array (from our schema), get first item
+            if (Array.isArray(data.files)) {
+              return data.files[0] || null
+            }
+            // If files is a FileList or single File
+            if (data.files instanceof FileList) {
+              return data.files[0] || null
+            }
+            if (data.files instanceof File) {
+              return data.files
+            }
+          }
+          return null
+        })(),
+        
+        // Handle members array
+        members: data.members?.map((option: Option) => ({
+          label: option.label || option.value || "",
+          value: option.value || ""
+        })) || [],
+      }
 
       // Create a Project object with required fields
       const newProject = {
@@ -159,15 +188,11 @@ export function ReusableAddProject({
         timeLeft: data.timeLeft || "2 weeks",
         timeType: data.timeType || "week",
         status: data.status || "started",
-        createdAt: new Date(), // Convert to proper Date object
-        updatedAt: new Date(), // Convert to proper Date object
-        budget: data.budget || 0,
-        // Transform members to match expected format
-        members: data.members?.map((option: Option) => ({
-          label: option.label || option.value || "", // Fallback to value if label is missing
-          value: option.value || "",
-        })) || [],
-        fileData: data.files?.[0] || null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        budget: transformedData.budget,
+        members: transformedData.members,
+        fileData: transformedData.fileData,
         orgId: selectedOrganisation.id
       } satisfies Project & { orgId: string }
 
