@@ -27,7 +27,7 @@
         "default": "./dist/esm/base/*.js"
       }
     },
-     "./blocks/*": {
+    "./blocks/*": {
       "require": {
         "types": "./dist/cjs/blocks/*.d.ts",
         "default": "./dist/cjs/blocks/*.js"
@@ -47,7 +47,7 @@
         "default": "./dist/esm/elements/*.js"
       }
     },
-     "./pages/*": {
+    "./pages/*": {
       "require": {
         "types": "./dist/cjs/pages/*.d.ts",
         "default": "./dist/cjs/pages/*.js"
@@ -62,9 +62,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "sideEffects": [
-    "*.css"
-  ],
+  "sideEffects": ["*.css"],
   "license": "MIT",
   "files": [
     "src/**",

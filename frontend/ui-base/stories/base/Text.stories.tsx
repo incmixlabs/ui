@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Text } from "./text"
-import { Theme } from "./theme"
+import { Text, Theme } from "../../src/base"
 
 const meta: Meta<typeof Text> = {
   title: "Components/Text",

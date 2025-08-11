@@ -1,11 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Box } from "./box"
-import { Button } from "./button"
-import { Flex } from "./flex"
-import { Spinner } from "./spinner"
-import { Text } from "./text"
-import { Theme } from "./theme"
+import { Box, Button, Flex, Spinner, Text, Theme } from "../../src/base" // Adjust the import path as necessary
 
 const meta: Meta<typeof Spinner> = {
   title: "Components/Spinner",

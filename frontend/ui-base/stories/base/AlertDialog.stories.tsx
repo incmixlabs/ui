@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
 import { AlertDialog, Button, Flex, Text, Theme } from "../../src/base"
 
-
 const meta: Meta<typeof AlertDialog> = {
   title: "Components/AlertDialog",
   component: AlertDialog.Root,

@@ -1,7 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Avatar, Button, Card, Flex, Heading, Text, Theme } from "../../src/base"
-
+import {
+  Avatar,
+  Button,
+  Card,
+  Flex,
+  Heading,
+  Text,
+  Theme,
+} from "../../src/base"
 
 const meta: Meta<typeof Card> = {
   title: "Components/Card",

@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Kbd, Flex, Text, Theme } from "../../src/base" // Adjust the import path as necessary
-
+import { Flex, Kbd, Text, Theme } from "../../src/base" // Adjust the import path as necessary
 
 const meta: Meta<typeof Kbd> = {
   title: "Components/Kbd",
