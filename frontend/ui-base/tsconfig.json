@@ -1,15 +1,18 @@
 {
   "extends": "@incmix/config/react.json",
-  "include": ["src/"],
+  "include": ["src/", "stories/"],
   "compilerOptions": {
     "types": ["@types/wicg-file-system-access", "vite/client"],
-    "rootDir": "src",
-    "baseUrl": "./src",
+
     "paths": {
-      "@incmix/radix-ui": ["../radix-ui/src"],
-      "@incmix/radix-ui/*": ["../radix-ui/src/*"],
-      "@incmix/shadcn": ["../shadcn/src"],
-      "@incmix/shadcn/*": ["../shadcn/src/*"]
+      "@/src": ["./src"],
+      "@/src/*": ["./src/*"],
+      "@/base": ["./src/base"],
+      "@/base/*": ["./src/base/*"],
+      "@/radix-ui": ["./radix-ui"],
+      "@/radix-ui/*": ["./radix-ui/*"],
+      "@/shadcn": ["./shadcn"],
+      "@/shadcn/*": ["./shadcn/*"]
     }
   },
   "exclude": ["**/*.stories.tsx", ".storybook/**/*", "src/stories/**/*"]

@@ -5,7 +5,7 @@
   "main": "./dist/cjs/index.js",
   "types": "./dist/cjs/index.d.ts",
   "module": "./dist/esm/index.js",
-  "style": "./styles.css",
+  "style": "./src/styles/styles.css",
   "exports": {
     ".": {
       "require": {
@@ -17,34 +17,44 @@
         "default": "./dist/esm/index.js"
       }
     },
-    "./components/*": {
+    "./base/*": {
       "require": {
-        "types": "./dist/cjs/components/*.d.ts",
-        "default": "./dist/cjs/components/*.js"
+        "types": "./dist/cjs/base/*.d.ts",
+        "default": "./dist/cjs/base/*.js"
       },
       "import": {
-        "types": "./dist/esm/components/*.d.ts",
-        "default": "./dist/esm/components/*.js"
+        "types": "./dist/esm/base/*.d.ts",
+        "default": "./dist/esm/base/*.js"
       }
     },
-    "./helpers": {
+    "./blocks/*": {
       "require": {
-        "types": "./dist/cjs/helpers/index.d.ts",
-        "default": "./dist/cjs/helpers/index.js"
+        "types": "./dist/cjs/blocks/*.d.ts",
+        "default": "./dist/cjs/blocks/*.js"
       },
       "import": {
-        "types": "./dist/esm/helpers/index.d.ts",
-        "default": "./dist/esm/helpers/index.js"
+        "types": "./dist/esm/blocks/*.d.ts",
+        "default": "./dist/esm/blocks/*.js"
       }
     },
-    "./props": {
+    "./elements/*": {
       "require": {
-        "types": "./dist/cjs/props/index.d.ts",
-        "default": "./dist/cjs/props/index.js"
+        "types": "./dist/cjs/elements/*.d.ts",
+        "default": "./dist/cjs/elements/*.js"
       },
       "import": {
-        "types": "./dist/esm/props/index.d.ts",
-        "default": "./dist/esm/props/index.js"
+        "types": "./dist/esm/elements/*.d.ts",
+        "default": "./dist/esm/elements/*.js"
+      }
+    },
+    "./pages/*": {
+      "require": {
+        "types": "./dist/cjs/pages/*.d.ts",
+        "default": "./dist/cjs/pages/*.js"
+      },
+      "import": {
+        "types": "./dist/esm/pages/*.d.ts",
+        "default": "./dist/esm/pages/*.js"
       }
     },
     "./*": "./*"
@@ -65,16 +75,30 @@
   ],
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.json --outDir dist",
-    "typecheck": "tsc",
+    "typecheck": "tsc --traceResolution",
     "dev": "pnpm run build && pnpm watch & pnpm storybook",
     "watch": "tsc -p tsconfig.json --outDir dist --watch",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@incmix/radix-ui": "workspace: *",
-    "@incmix/shadcn": "workspace: *",
-    "classnames": "^2.3.2"
+    "@hookform/resolvers": "catalog:",
+    "@radix-ui/react-accordion": "catalog:",
+    "@radix-ui/react-dialog": "catalog:",
+    "@radix-ui/react-label": "catalog:",
+    "@radix-ui/react-menubar": "catalog:",
+    "@radix-ui/react-navigation-menu": "catalog:",
+    "@radix-ui/react-slot": "catalog:",
+    "@radix-ui/react-tabs": "catalog:",
+    "@radix-ui/react-toggle": "catalog:",
+    "@radix-ui/react-toggle-group": "catalog:",
+    "classnames": "^2.3.2",
+    "cmdk": "catalog:",
+    "date-fns": "catalog:",
+    "input-otp": "catalog:",
+    "react-day-picker": "^9.8.1",
+    "react-hook-form": "catalog:",
+    "zod": "catalog:"
   },
   "peerDependencies": {
     "@types/react": "catalog:",
@@ -91,8 +115,8 @@
     }
   },
   "devDependencies": {
-    "@incmix/config": "workspace: *",
     "@eslint/js": "catalog:",
+    "@incmix/config": "workspace: *",
     "@storybook/addon-docs": "catalog:",
     "@storybook/addon-onboarding": "catalog:",
     "@storybook/react-vite": "catalog:",
