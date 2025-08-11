@@ -178,29 +178,32 @@ export function useKanban(providedProjectId?: string): UseKanbanReturn {
     }
   }, [projectData.tasks, projectData.labels])
 
+  // Destructure functions for cleaner dependencies and linter friendliness
+  const { createLabel, updateLabel } = projectData
+  
   // Memoize stable wrapper functions to prevent unnecessary re-renders
   const createStatusLabel = useCallback(
     (name: string, color?: string, description?: string) => 
-      projectData.createLabel("status", name, color, description),
-    [projectData.createLabel]
+      createLabel("status", name, color, description),
+    [createLabel]
   )
   
   const updateStatusLabel = useCallback(
     (id: string, updates: { name?: string; color?: string; description?: string }) => 
-      projectData.updateLabel(id, updates),
-    [projectData.updateLabel]
+      updateLabel(id, updates),
+    [updateLabel]
   )
   
   const createPriorityLabel = useCallback(
     (name: string, color?: string, description?: string) => 
-      projectData.createLabel("priority", name, color, description),
-    [projectData.createLabel]
+      createLabel("priority", name, color, description),
+    [createLabel]
   )
   
   const updatePriorityLabel = useCallback(
     (id: string, updates: { name?: string; color?: string; description?: string }) => 
-      projectData.updateLabel(id, updates),
-    [projectData.updateLabel]
+      updateLabel(id, updates),
+    [updateLabel]
   )
 
   // Memoize operation functions with stable dependencies to prevent unnecessary re-renders
@@ -259,8 +262,6 @@ export function useKanban(providedProjectId?: string): UseKanbanReturn {
       updatePriorityLabel,
       projectData.deleteLabel,
       projectData.reorderLabels,
-      projectData.createLabel,
-      projectData.updateLabel,
       projectData.refetch,
       projectData.clearError,
     ]
@@ -270,10 +271,12 @@ export function useKanban(providedProjectId?: string): UseKanbanReturn {
   const bulkUpdateTasks = useCallback(
     async (taskIds: string[], updates: Partial<TaskDataSchema>) => {
       try {
-        // Update tasks in parallel for better performance
-        await Promise.all(
-          taskIds.map((id) => operations.updateTask(id, updates))
-        )
+        // Use chunking to prevent overwhelming the backend with large selections
+        const batchSize = 20
+        for (let i = 0; i < taskIds.length; i += batchSize) {
+          const batch = taskIds.slice(i, i + batchSize)
+          await Promise.all(batch.map((id) => operations.updateTask(id, updates)))
+        }
       } catch (error) {
         console.error("Failed to bulk update tasks:", error)
         throw error
@@ -285,25 +288,32 @@ export function useKanban(providedProjectId?: string): UseKanbanReturn {
   const bulkMoveTasks = useCallback(
     async (taskIds: string[], targetStatusId: string) => {
       try {
-        // Move tasks in sequence to maintain order
+        // Find the target column to get current task count for proper indexing
+        const targetColumn = columns.find(col => col.id === targetStatusId)
+        const baseIndex = targetColumn?.tasks.length || 0
+        
+        // Move tasks in sequence to maintain relative order
+        // Use baseIndex + i to append tasks at the end of the target column
         for (let i = 0; i < taskIds.length; i++) {
-          await operations.moveTask(taskIds[i], targetStatusId, i)
+          await operations.moveTask(taskIds[i], targetStatusId, baseIndex + i)
         }
       } catch (error) {
         console.error("Failed to bulk move tasks:", error)
         throw error
       }
     },
-    [operations.moveTask]
+    [operations.moveTask, columns]
   )
 
   const bulkDeleteTasks = useCallback(
     async (taskIds: string[]) => {
       try {
-        // Delete tasks in parallel
-        await Promise.all(
-          taskIds.map((id) => operations.deleteTask(id))
-        )
+        // Use chunking to prevent overwhelming the backend with large selections
+        const batchSize = 20
+        for (let i = 0; i < taskIds.length; i += batchSize) {
+          const batch = taskIds.slice(i, i + batchSize)
+          await Promise.all(batch.map((id) => operations.deleteTask(id)))
+        }
       } catch (error) {
         console.error("Failed to bulk delete tasks:", error)
         throw error
