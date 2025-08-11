@@ -6,7 +6,7 @@
 */
 
 @layer tw_base, radix_ui, tw_components_utils;
-@import "@incmix/radix-ui/styles.css" layer(radix_ui);
+@import "../radix-ui/styles.css" layer(radix_ui);
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 @layer tw_base {
