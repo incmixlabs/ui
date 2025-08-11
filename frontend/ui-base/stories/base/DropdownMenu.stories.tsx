@@ -1,11 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Button } from "./button"
-import { DropdownMenu } from "./dropdown-menu"
-import { Flex } from "./flex"
-import { IconButton } from "./icon-button"
-import { Text } from "./text"
-import { Theme } from "./theme"
+import { Button, DropdownMenu, Flex, Text, Theme } from "../../src/base"
+
 
 const meta: Meta<typeof DropdownMenu.Root> = {
   title: "Components/DropdownMenu",

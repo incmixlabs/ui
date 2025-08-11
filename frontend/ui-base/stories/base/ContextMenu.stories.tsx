@@ -1,10 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Box } from "./box"
-import { ContextMenu } from "./context-menu"
-import { Flex } from "./flex"
-import { Text } from "./text"
-import { Theme } from "./theme"
+import { Box, ContextMenu, Flex, Text, Theme } from "../../src/base" // Adjust the import path as necessary
+
 
 const meta: Meta<typeof ContextMenu.Root> = {
   title: "Components/ContextMenu",

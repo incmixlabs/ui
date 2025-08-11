@@ -1,10 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Box } from "./box"
-import { Button } from "./button"
-import { Flex } from "./flex"
-import { Text } from "./text"
-import { Theme } from "./theme"
+import { Box, Button, Flex, Text, Theme } from "../../src/base" // Adjust the import path as necessary
 
 const meta: Meta<typeof Flex> = {
   title: "Components/Flex",

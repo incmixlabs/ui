@@ -1,10 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Button } from "./button"
-import { Flex } from "./flex"
-import { Progress } from "./progress"
-import { Text } from "./text"
-import { Theme } from "./theme"
+
+import { Button, Flex, Progress, Text, Theme } from "../../src/base" // Adjust the import path as necessary
 
 const meta: Meta<typeof Progress> = {
   title: "Components/Progress",

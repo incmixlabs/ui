@@ -1,9 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Flex } from "./flex"
-import { Slider } from "./slider"
-import { Text } from "./text"
-import { Theme } from "./theme"
+import { Flex, Slider, Text, Theme } from "../../src/base"
 
 const meta: Meta<typeof Slider> = {
   title: "Components/Slider",

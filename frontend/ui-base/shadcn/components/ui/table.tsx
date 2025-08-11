@@ -1,6 +1,6 @@
 "use client"
 
-import { cn } from "shadcn/lib/utils"
+import { cn } from "@shadcn/lib/utils"
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (

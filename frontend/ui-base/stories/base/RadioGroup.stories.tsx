@@ -1,9 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Flex } from "./flex"
-import { RadioGroup } from "./radio-group"
-import { Text } from "./text"
-import { Theme } from "./theme"
+import { Flex, RadioGroup, Text, Theme } from "../../src/base" // Adjust the import path as necessary
 
 const meta: Meta<typeof RadioGroup.Root> = {
   title: "Components/RadioGroup",

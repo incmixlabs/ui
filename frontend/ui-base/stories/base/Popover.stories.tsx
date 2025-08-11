@@ -1,12 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Button } from "./button"
-import { Flex } from "./flex"
-import { IconButton } from "./icon-button"
-import { Popover } from "./popover"
-import { Separator } from "./separator"
-import { Text } from "./text"
-import { Theme } from "./theme"
+import { Button, Flex, IconButton, Popover, Separator, Text, Theme } from "../../src/base" // Adjust the import path as necessary
+
 
 const meta: Meta<typeof Popover.Root> = {
   title: "Components/Popover",

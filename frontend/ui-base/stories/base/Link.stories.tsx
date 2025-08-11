@@ -1,9 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Flex } from "./flex"
-import { Link } from "./link"
-import { Text } from "./text"
-import { Theme } from "./theme"
+import { Flex, Link, Text, Theme } from "../../src/base" // Adjust the import path as necessary
 
 const meta: Meta<typeof Link> = {
   title: "Components/Link",

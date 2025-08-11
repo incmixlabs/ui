@@ -1,10 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Box } from "./box"
-import { Flex } from "./flex"
-import { Separator } from "./separator"
-import { Text } from "./text"
-import { Theme } from "./theme"
+import { Box, Flex, Separator, Text, Theme } from "./box"
 
 const meta: Meta<typeof Separator> = {
   title: "Components/Separator",

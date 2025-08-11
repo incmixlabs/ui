@@ -1,9 +1,6 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Code } from './code';
-import { Theme } from './theme';
-import { Flex } from './flex';
-import { Text } from './text';
+import { Code, Theme, Flex, Text } from '../../src/base'; // Adjust the import path as necessary
 
 const meta: Meta<typeof Code> = {
   title: 'Components/Code',
@@ -34,8 +31,8 @@ const meta: Meta<typeof Code> = {
     color: {
       control: 'select',
       options: [
-        'gray', 'gold', 'bronze', 'brown', 'yellow', 'amber', 'orange', 'tomato', 
-        'red', 'ruby', 'crimson', 'pink', 'plum', 'purple', 'violet', 'iris', 
+        'gray', 'gold', 'bronze', 'brown', 'yellow', 'amber', 'orange', 'tomato',
+        'red', 'ruby', 'crimson', 'pink', 'plum', 'purple', 'violet', 'iris',
         'indigo', 'blue', 'cyan', 'teal', 'jade', 'green', 'grass', 'lime', 'mint', 'sky'
       ],
       description: 'Code color',
@@ -240,7 +237,7 @@ export const InlineCode: Story = {
   render: () => (
     <Text size="3" style={{ maxWidth: '500px', lineHeight: '1.6' }}>
       To install the package, run <Code>npm install @my-org/ui</Code> in your terminal.
-      Then you can import components like <Code>import {"{ Button }"} from '@my-org/ui'</Code> 
+      Then you can import components like <Code>import {"{ Button }"} from '@my-org/ui'</Code>
       and use them in your React application.
     </Text>
   ),
@@ -253,7 +250,7 @@ export const CodeSnippetsExample: Story = {
       <Text size="4" weight="bold" style={{ marginBottom: '20px', display: 'block' }}>
         Installation Guide
       </Text>
-      
+
       <Flex direction="column" gap="4">
         <div>
           <Text size="2" weight="medium" style={{ marginBottom: '8px', display: 'block' }}>
@@ -263,7 +260,7 @@ export const CodeSnippetsExample: Story = {
             npm install @radix-ui/react-components
           </Code>
         </div>
-        
+
         <div>
           <Text size="2" weight="medium" style={{ marginBottom: '8px', display: 'block' }}>
             Using yarn:
@@ -272,7 +269,7 @@ export const CodeSnippetsExample: Story = {
             yarn add @radix-ui/react-components
           </Code>
         </div>
-        
+
         <div>
           <Text size="2" weight="medium" style={{ marginBottom: '8px', display: 'block' }}>
             Using pnpm:
@@ -293,7 +290,7 @@ export const APIDocumentationExample: Story = {
       <Text size="4" weight="bold" style={{ marginBottom: '16px', display: 'block' }}>
         Button Component API
       </Text>
-      
+
       <Flex direction="column" gap="3">
         <div>
           <Text size="2" weight="medium">Import:</Text>
@@ -301,14 +298,14 @@ export const APIDocumentationExample: Story = {
             <Code>import {"{ Button }"} from './components'</Code>
           </div>
         </div>
-        
+
         <div>
           <Text size="2" weight="medium">Basic Usage:</Text>
           <div style={{ marginTop: '4px' }}>
             <Code>&lt;Button variant="solid"&gt;Click me&lt;/Button&gt;</Code>
           </div>
         </div>
-        
+
         <div>
           <Text size="2" weight="medium">Props:</Text>
           <div style={{ marginTop: '8px' }}>
@@ -340,7 +337,7 @@ export const TerminalCommandsExample: Story = {
       <Text size="3" weight="bold" style={{ marginBottom: '16px', display: 'block' }}>
         Common Git Commands
       </Text>
-      
+
       <Flex direction="column" gap="3">
         <div>
           <Text size="2" style={{ marginBottom: '4px', display: 'block' }}>
@@ -350,7 +347,7 @@ export const TerminalCommandsExample: Story = {
             git clone https://github.com/user/repo.git
           </Code>
         </div>
-        
+
         <div>
           <Text size="2" style={{ marginBottom: '4px', display: 'block' }}>
             Add all changes:
@@ -359,7 +356,7 @@ export const TerminalCommandsExample: Story = {
             git add .
           </Code>
         </div>
-        
+
         <div>
           <Text size="2" style={{ marginBottom: '4px', display: 'block' }}>
             Commit with message:
@@ -368,7 +365,7 @@ export const TerminalCommandsExample: Story = {
             git commit -m "Add new feature"
           </Code>
         </div>
-        
+
         <div>
           <Text size="2" style={{ marginBottom: '4px', display: 'block' }}>
             Push to origin:
@@ -389,28 +386,28 @@ export const StatusIndicatorsExample: Story = {
       <Text size="3" weight="bold" style={{ marginBottom: '16px', display: 'block' }}>
         Build Status
       </Text>
-      
+
       <Flex direction="column" gap="3">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Text size="2">Tests:</Text>
           <Code color="green" variant="soft" size="1">PASSED</Code>
         </div>
-        
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Text size="2">Build:</Text>
           <Code color="green" variant="soft" size="1">SUCCESS</Code>
         </div>
-        
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Text size="2">Deploy:</Text>
           <Code color="yellow" variant="soft" size="1">PENDING</Code>
         </div>
-        
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Text size="2">Coverage:</Text>
           <Code color="blue" variant="soft" size="1">87%</Code>
         </div>
-        
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Text size="2">Bundle size:</Text>
           <Code color="orange" variant="soft" size="1">2.4MB</Code>
@@ -427,7 +424,7 @@ export const FilePathsExample: Story = {
       <Text size="3" weight="bold" style={{ marginBottom: '16px', display: 'block' }}>
         Project Structure
       </Text>
-      
+
       <Flex direction="column" gap="1">
         <Code variant="ghost" size="1">src/</Code>
         <Code variant="ghost" size="1" style={{ marginLeft: '16px' }}>components/</Code>
