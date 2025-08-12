@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback, KeyboardEvent } from "react"
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react"
 import {
   Box,
   Flex,
@@ -12,6 +12,19 @@ import { getPriorityStyles, getPriorityName } from "../utils/priority-utils"
 import { detectUrlType, generateDefaultTitle } from "@utils/url-helpers"
 import { nanoid } from "nanoid"
 import { X, ExternalLink } from "lucide-react"
+
+// Constants for better maintainability
+const CONSTANTS = {
+  MAX_URLS: 3,
+  MIN_INPUT_WIDTH: 120,
+  MAX_INPUT_WIDTH: 300,
+  INPUT_PADDING: 16,
+  MAX_URL_TITLE_LENGTH: 60,
+  INITIAL_WIDTH: 120
+} as const
+
+// Memoized URL regex to avoid recreation on every render
+const URL_REGEX = /(https?:\/\/[^\s]+|(?:www\.|[a-zA-Z0-9-]+\.)(?:[a-zA-Z]{2,}|co\.uk|com\.au)\/[^\s]*|(?:figma\.com|youtube\.com|github\.com|docs\.google\.com)[^\s]*)/gi
 
 // Match the exact card styles from task-card component for perfect visual consistency
 const cardStyles = {
@@ -37,6 +50,16 @@ interface InlineAddTaskCardProps {
   priorityLabels?: { id: string; name: string; color: string; type: string }[]
 }
 
+type TaskCreationError = {
+  type: 'VALIDATION' | 'NETWORK' | 'UNKNOWN'
+  message: string
+}
+
+interface UrlProcessingResult {
+  cleanTitle: string
+  newUrls: TaskRefUrl[]
+}
+
 /**
  * InlineAddTaskCard - A component that visually matches existing task cards
  * but is optimized for task creation with just the title field editable.
@@ -51,36 +74,34 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
   const [titleInput, setTitleInput] = useState("")
   const [extractedUrls, setExtractedUrls] = useState<TaskRefUrl[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [inputWidth, setInputWidth] = useState(120) // Initial width
+  const [inputWidth, setInputWidth] = useState<number>(CONSTANTS.INITIAL_WIDTH)
+  const [error, setError] = useState<TaskCreationError | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const measureRef = useRef<HTMLSpanElement>(null)
 
 
 
-  // Process input to extract URLs from pasted text (max 3 total)
-  const processInput = useCallback((text: string) => {
-    const urlRegex = /(https?:\/\/[^\s]+|(?:www\.|[a-zA-Z0-9-]+\.)(?:[a-zA-Z]{2,}|co\.uk|com\.au)\/[^\s]*|(?:figma\.com|youtube\.com|github\.com|docs\.google\.com)[^\s]*)/gi
-    
+  // Utility function to process URLs from text - fixed stale closure issue
+  const processUrlsFromText = useCallback((text: string, currentUrls: TaskRefUrl[]): UrlProcessingResult => {
     const newUrls: TaskRefUrl[] = []
     let cleanTitle = text
-    const maxLinks = 3
     
-    // Extract all URLs
-    const matches = Array.from(text.matchAll(urlRegex))
+    // Extract all URLs using memoized regex
+    const matches = Array.from(text.matchAll(new RegExp(URL_REGEX.source, URL_REGEX.flags)))
     
-    matches.forEach((match, index) => {
+    matches.forEach((match) => {
       const url = match[0]
       
       // Always remove URL from title text (regardless of badge limit)
       cleanTitle = cleanTitle.replace(url, ' ')
       
       // Only create badge if under the limit
-      const currentUrlCount = extractedUrls.length + newUrls.length
-      if (currentUrlCount < maxLinks) {
+      const currentUrlCount = currentUrls.length + newUrls.length
+      if (currentUrlCount < CONSTANTS.MAX_URLS) {
         const normalizedUrl = url.startsWith('http') ? url : `https://${url}`
         const urlType = detectUrlType(normalizedUrl)
-        const title = generateDefaultTitle(normalizedUrl, urlType, [...extractedUrls, ...newUrls])
+        const title = generateDefaultTitle(normalizedUrl, urlType, [...currentUrls, ...newUrls])
         
         newUrls.push({
           id: nanoid(),
@@ -94,50 +115,61 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
     // Clean up title
     cleanTitle = cleanTitle.replace(/\s+/g, ' ').trim()
     
+    return { cleanTitle, newUrls }
+  }, [])
+
+  // Process input to extract URLs from pasted text
+  const processInput = useCallback((text: string) => {
+    const result = processUrlsFromText(text, extractedUrls)
+    
     // Update states
-    setTitleInput(cleanTitle)
-    if (newUrls.length > 0) {
-      setExtractedUrls(prev => [...prev, ...newUrls])
+    setTitleInput(result.cleanTitle)
+    if (result.newUrls.length > 0) {
+      setExtractedUrls(prev => [...prev, ...result.newUrls])
     }
-  }, [extractedUrls])
+  }, [extractedUrls, processUrlsFromText])
 
 
 
-  // Calculate input width based on content
-  const calculateInputWidth = useCallback((text: string) => {
-    if (!measureRef.current) return 120
+  // Calculate input width based on content - memoized for performance
+  const calculateInputWidth = useCallback((text: string): number => {
+    if (!measureRef.current) return CONSTANTS.MIN_INPUT_WIDTH
     
     // Set the text to measure
     measureRef.current.textContent = text || 'Enter task title and paste URLs...'
     const textWidth = measureRef.current.offsetWidth
     
-    // Add some padding and set reasonable min/max bounds
-    const minWidth = 120 // Minimum width for placeholder
-    const maxWidth = 300 // Maximum width before it stops growing
-    const paddedWidth = textWidth + 16 // Add padding
+    // Add padding and set reasonable bounds using constants
+    const paddedWidth = textWidth + CONSTANTS.INPUT_PADDING
     
-    return Math.min(Math.max(paddedWidth, minWidth), maxWidth)
+    return Math.min(Math.max(paddedWidth, CONSTANTS.MIN_INPUT_WIDTH), CONSTANTS.MAX_INPUT_WIDTH)
+  }, [])
+
+  // Memoized URL detection to avoid recreating regex
+  const containsUrls = useCallback((text: string): boolean => {
+    return new RegExp(URL_REGEX.source, URL_REGEX.flags).test(text)
   }, [])
 
   // Handle input changes - for normal typing, just update the input
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     
+    // Clear any previous errors
+    if (error) setError(null)
+    
     // Update width based on content
     const newWidth = calculateInputWidth(value)
     setInputWidth(newWidth)
     
     // Check if the input contains URLs (only process if URLs are detected)
-    const urlRegex = /(https?:\/\/[^\s]+|(?:www\.|[a-zA-Z0-9-]+\.)(?:[a-zA-Z]{2,}|co\.uk|com\.au)\/[^\s]*|(?:figma\.com|youtube\.com|github\.com|docs\.google\.com)[^\s]*)/gi
-    
-    if (urlRegex.test(value)) {
+    if (containsUrls(value)) {
       // Contains URLs, process them
       processInput(value)
     } else {
       // Normal typing, just update the input
       setTitleInput(value)
     }
-  }, [processInput, calculateInputWidth])
+  }, [processInput, calculateInputWidth, containsUrls, error])
 
   // Handle paste events specifically
   const handlePaste = useCallback((e: React.ClipboardEvent<HTMLInputElement>) => {
@@ -163,21 +195,38 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
 
 
 
-  // Save the task if the title is not empty
+  // Save the task if the title is not empty - with improved error handling
   const handleSave = useCallback(async () => {
     const trimmedTitle = titleInput.trim()
     if (!trimmedTitle || isSubmitting) return
 
+    // Basic validation
+    if (trimmedTitle.length > 500) {
+      setError({
+        type: 'VALIDATION',
+        message: 'Task title is too long (max 500 characters)'
+      })
+      return
+    }
+
     try {
       setIsSubmitting(true)
+      setError(null)
       await onCreateTask(trimmedTitle, extractedUrls.length > 0 ? extractedUrls : undefined)
+      
+      // Reset form state
       setTitleInput("")
       setExtractedUrls([])
+      setInputWidth(CONSTANTS.INITIAL_WIDTH)
       if (inputRef.current) {
         inputRef.current.value = ""
       }
-    } catch (error) {
-      console.error("Failed to create task:", error)
+    } catch (err) {
+      console.error("Failed to create task:", err)
+      setError({
+        type: 'NETWORK',
+        message: 'Failed to create task. Please try again.'
+      })
     } finally {
       setIsSubmitting(false)
     }
@@ -205,6 +254,14 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
     const initialWidth = calculateInputWidth('')
     setInputWidth(initialWidth)
   }, [calculateInputWidth])
+
+  // Clear error after a delay
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(null), 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [error])
 
   // Update width when titleInput changes (for programmatic updates)
   useEffect(() => {
@@ -234,33 +291,52 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
 
 
 
-  // Render URL type icon
-  const renderUrlTypeIcon = (type: "figma" | "task" | "external") => {
-    switch (type) {
-      case "figma":
-        return (
-          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M8 24c2.21 0 4-1.79 4-4v-4H8c-2.21 0-4 1.79-4 4s1.79 4 4 4Z" />
-            <path d="M8 16h4v-4H8v4Z" />
-            <path d="M8 8h4V4H8c-2.21 0-4 1.79-4 4 0 2.21 1.79 4 4 4Z" />
-            <path d="M16 8c2.21 0 4-1.79 4-4s-1.79-4-4-4h-4v8h4Z" />
-            <path d="M16 16c2.21 0 4-1.79 4-4s-1.79-4-4-4h-4v8h4Z" />
-          </svg>
-        )
-      case "task":
-        return (
-          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        )
-      case "external":
-      default:
-        return <ExternalLink className="h-3.5 w-3.5" />
+  // Memoized URL type icon renderer for performance
+  const renderUrlTypeIcon = useMemo(() => {
+    return (type: "figma" | "task" | "external") => {
+      const iconProps = {
+        className: "h-3.5 w-3.5",
+        'aria-hidden': true // Accessibility improvement
+      }
+      
+      switch (type) {
+        case "figma":
+          return (
+            <svg {...iconProps} viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 24c2.21 0 4-1.79 4-4v-4H8c-2.21 0-4 1.79-4 4s1.79 4 4 4Z" />
+              <path d="M8 16h4v-4H8v4Z" />
+              <path d="M8 8h4V4H8c-2.21 0-4 1.79-4 4 0 2.21 1.79 4 4 4Z" />
+              <path d="M16 8c2.21 0 4-1.79 4-4s-1.79-4-4-4h-4v8h4Z" />
+              <path d="M16 16c2.21 0 4-1.79 4-4s-1.79-4-4-4h-4v8h4Z" />
+            </svg>
+          )
+        case "task":
+          return (
+            <svg {...iconProps} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          )
+        case "external":
+        default:
+          return <ExternalLink {...iconProps} />
+      }
     }
-  }
+  }, [])
 
   return (
-    <Box className="flex flex-shrink-0 flex-col pl-5" ref={containerRef}>
+    <Box 
+      className="flex flex-shrink-0 flex-col pl-5" 
+      ref={containerRef}
+      role="form"
+      aria-label="Add new task"
+    >
+      {/* Error message display */}
+      {error && (
+        <Box className="mb-2 p-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded text-red-700 dark:text-red-400 text-sm">
+          {error.message}
+        </Box>
+      )}
+      
       <Box
         className={`relative ${cardStyles.base} ${cardStyles.light} ${cardStyles.dark}`}
       >
@@ -284,7 +360,7 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
                   aria-hidden="true"
                 />
                 
-                {/* Title input - auto-growing width */}
+                {/* Title input - auto-growing width with accessibility improvements */}
                 <input
                   ref={inputRef}
                   className="bg-transparent border-0 outline-none text-gray-12 dark:text-gray-12 font-medium text-base leading-6 placeholder-gray-9 focus:outline-none focus:ring-0 p-0 m-0 transition-all duration-150 ease-in-out"
@@ -294,31 +370,46 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
                   onPaste={handlePaste}
                   onKeyDown={handleKeyDown}
                   disabled={isSubmitting}
+                  aria-label="Task title"
+                  aria-describedby={extractedUrls.length > 0 ? "url-badges" : undefined}
+                  aria-invalid={error?.type === 'VALIDATION'}
                   style={{
                     minHeight: '24px',
                     lineHeight: '1.5',
                     width: `${inputWidth}px`,
-                    maxWidth: '300px',
-                    minWidth: '120px',
+                    maxWidth: `${CONSTANTS.MAX_INPUT_WIDTH}px`,
+                    minWidth: `${CONSTANTS.MIN_INPUT_WIDTH}px`,
                   }}
                 />
                 
-                {/* URL badges inline to the right - with small gap */}
+                {/* URL badges inline to the right - with small gap and accessibility */}
                 {extractedUrls.length > 0 && (
-                  <div className="flex items-center gap-1 ml-2">
+                  <div 
+                    className="flex items-center gap-1 ml-2"
+                    id="url-badges"
+                    role="list"
+                    aria-label="Reference URLs"
+                  >
                     {extractedUrls.map((url) => (
                       <span
                         key={url.id}
                         className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-3 dark:bg-blue-4 text-blue-11 dark:text-blue-11 border border-blue-6 dark:border-blue-6 rounded text-xs font-medium flex-shrink-0"
+                        role="listitem"
                       >
                         {renderUrlTypeIcon(url.type)}
-                        <span className="max-w-[60px] truncate">{url.title}</span>
+                        <span 
+                          className={`max-w-[${CONSTANTS.MAX_URL_TITLE_LENGTH}px] truncate`}
+                          title={url.title} // Tooltip for full title
+                        >
+                          {url.title}
+                        </span>
                         <button
                           type="button"
                           className="ml-1 hover:bg-blue-5 dark:hover:bg-blue-6 rounded p-0.5 transition-colors"
                           onClick={() => handleRemoveRefUrl(url.id)}
+                          aria-label={`Remove ${url.title} URL`}
                         >
-                          <X className="h-2.5 w-2.5" />
+                          <X className="h-2.5 w-2.5" aria-hidden="true" />
                         </button>
                       </span>
                     ))}
@@ -350,10 +441,10 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
                 <span></span>
               </Flex>
               
-              {/* Actions menu - helper text */}
+              {/* Actions menu - helper text with status */}
               <Flex align="center" justify="center" className="flex-shrink-0 ml-4 mr-2">
                 <Text className="text-gray-8" size="1">
-                  Enter to save
+                  {isSubmitting ? 'Saving...' : 'Enter to save'}
                 </Text>
               </Flex>
             </Flex>
