@@ -15,9 +15,8 @@ export function getSubtree(
   if (!asChild)
     return typeof content === "function" ? content(children) : content
 
-  const firstChild = React.Children.only(children) as React.ReactElement
+  const firstChild = React.Children.only(children) as React.ReactElement<any>
   return React.cloneElement(firstChild, {
-    // @ts-expect-error
     children:
       typeof content === "function"
         ? content(firstChild.props.children)
