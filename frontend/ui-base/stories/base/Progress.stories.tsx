@@ -4,7 +4,7 @@ import * as React from "react"
 import { Button, Flex, Progress, Text, Theme } from "../../src/base" // Adjust the import path as necessary
 
 const meta: Meta<typeof Progress> = {
-  title: "Components/Progress",
+  title:"Base/Progress",
   component: Progress,
   parameters: {
     layout: "centered",

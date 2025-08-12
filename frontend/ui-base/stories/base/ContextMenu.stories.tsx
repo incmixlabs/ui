@@ -3,7 +3,7 @@ import * as React from "react"
 import { Box, ContextMenu, Flex, Text, Theme } from "../../src/base" // Adjust the import path as necessary
 
 const meta: Meta<typeof ContextMenu.Root> = {
-  title: "Components/ContextMenu",
+  title:"Base/ContextMenu",
   component: ContextMenu.Root,
   parameters: {
     layout: "centered",

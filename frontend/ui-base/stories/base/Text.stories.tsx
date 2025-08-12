@@ -3,7 +3,7 @@ import * as React from "react"
 import { Text, Theme } from "../../src/base"
 
 const meta: Meta<typeof Text> = {
-  title: "Components/Text",
+  title:"Base/Text",
   component: Text,
   parameters: {
     layout: "centered",

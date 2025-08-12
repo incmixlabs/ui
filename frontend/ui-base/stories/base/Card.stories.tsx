@@ -4,15 +4,16 @@ import {
   Avatar,
   Button,
   Card,
+  CardContainer,
   Flex,
   Heading,
   Text,
   Theme,
 } from "../../src/base"
 
-const meta: Meta<typeof Card> = {
-  title: "Components/Card",
-  component: Card,
+const meta: Meta<typeof Card.Root> = {
+  title: "Base/Card",
+  component: Card.Root,
   parameters: {
     layout: "centered",
   },
@@ -38,122 +39,113 @@ const meta: Meta<typeof Card> = {
       control: "boolean",
       description: "Merge props with the child element",
     },
-    children: {
-      control: "text",
-      description: "Card content",
-    },
   },
   args: {
     size: "1",
     variant: "surface",
-    children: "Card content goes here",
   },
 }
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-// Default story
+// Default story using shadcn Card components
 export const Default: Story = {
-  args: {
-    children: "This is a default card with some content inside.",
-    style: { width: "300px" },
-  },
-}
-
-// Size stories
-export const Size1: Story = {
-  args: {
-    size: "1",
-    children: "Size 1 card - minimal padding",
-    style: { width: "250px" },
-  },
-}
-
-export const Size2: Story = {
-  args: {
-    size: "2",
-    children: "Size 2 card - small padding",
-    style: { width: "250px" },
-  },
-}
-
-export const Size3: Story = {
-  args: {
-    size: "3",
-    children: "Size 3 card - medium padding",
-    style: { width: "250px" },
-  },
-}
-
-export const Size4: Story = {
-  args: {
-    size: "4",
-    children: "Size 4 card - large padding",
-    style: { width: "250px" },
-  },
-}
-
-export const Size5: Story = {
-  args: {
-    size: "5",
-    children: "Size 5 card - extra large padding",
-    style: { width: "250px" },
-  },
-}
-
-// Variant stories
-export const VariantSurface: Story = {
-  args: {
-    variant: "surface",
-    children: "Surface variant card",
-    style: { width: "250px" },
-  },
-}
-
-export const VariantClassic: Story = {
-  args: {
-    variant: "classic",
-    children: "Classic variant card",
-    style: { width: "250px" },
-  },
-}
-
-export const VariantGhost: Story = {
-  args: {
-    variant: "ghost",
-    children: "Ghost variant card (minimal styling)",
-    style: { width: "250px" },
-  },
-}
-
-// All sizes showcase
-export const AllSizes: Story = {
-  render: () => (
-    <Flex gap="3" wrap="wrap">
-      {["1", "2", "3", "4", "5"].map((size) => (
-        <Card key={size} size={size as any} style={{ width: "120px" }}>
-          <Text size="2" align="center">
-            Size {size}
-          </Text>
-        </Card>
-      ))}
-    </Flex>
+  render: (args) => (
+    <Card.Root {...args} style={{ width: "300px" }}>
+      <Card.Header>
+        <Card.Title>Card Title</Card.Title>
+        <Card.Description>Card description goes here.</Card.Description>
+      </Card.Header>
+      <Card.Content>
+        <Text size="2">
+          This is the main content of the card using the new Card API structure.
+        </Text>
+      </Card.Content>
+    </Card.Root>
   ),
 }
 
-// All variants showcase
-export const AllVariants: Story = {
+// CardContainer component story
+export const WithCardContainer: Story = {
   render: () => (
-    <Flex gap="4" wrap="wrap">
-      {["surface", "classic", "ghost"].map((variant) => (
-        <Card key={variant} variant={variant as any} style={{ width: "150px" }}>
-          <Text size="2" weight="medium" align="center">
-            {variant.charAt(0).toUpperCase() + variant.slice(1)} variant
+    <CardContainer style={{ width: "300px" }}>
+      <Heading size="4" style={{ marginBottom: "8px" }}>
+        CardContainer
+      </Heading>
+      <Text size="2" color="gray">
+        This uses the CardContainer component which wraps content with Radix Card styling.
+      </Text>
+    </CardContainer>
+  ),
+}
+
+// Basic shadcn Card structure
+export const BasicStructure: Story = {
+  render: () => (
+    <Card.Root style={{ width: "350px" }}>
+      <Card.Header>
+        <Card.Title>Getting Started</Card.Title>
+        <Card.Description>
+          Learn how to use the new Card components with proper structure.
+        </Card.Description>
+      </Card.Header>
+      <Card.Content>
+        <Text size="2">
+          The Card now uses a composite pattern with separate components for header, 
+          title, description, content, and footer.
+        </Text>
+      </Card.Content>
+      <Card.Footer>
+        <Flex gap="2" justify="end" style={{ width: "100%" }}>
+          <Button variant="outline" size="1">
+            Cancel
+          </Button>
+          <Button size="1">Continue</Button>
+        </Flex>
+      </Card.Footer>
+    </Card.Root>
+  ),
+}
+
+// Card with all sections
+export const FullStructure: Story = {
+  render: () => (
+    <Card.Root style={{ width: "400px" }}>
+      <Card.Header>
+        <Card.Title>Complete Card Example</Card.Title>
+        <Card.Description>
+          This card demonstrates all available sections and proper usage.
+        </Card.Description>
+      </Card.Header>
+      <Card.Content>
+        <Flex direction="column" gap="3">
+          <Text size="2">
+            This is the main content area where you can place any content.
           </Text>
-        </Card>
-      ))}
-    </Flex>
+          <div style={{
+            padding: "12px",
+            backgroundColor: "var(--gray-3)",
+            borderRadius: "6px"
+          }}>
+            <Text size="1" color="gray">
+              Example content block with background
+            </Text>
+          </div>
+        </Flex>
+      </Card.Content>
+      <Card.Footer>
+        <Flex gap="2" justify="between" align="center" style={{ width: "100%" }}>
+          <Text size="1" color="gray">
+            Footer information
+          </Text>
+          <Flex gap="2">
+            <Button variant="outline" size="1">Secondary</Button>
+            <Button size="1">Primary</Button>
+          </Flex>
+        </Flex>
+      </Card.Footer>
+    </Card.Root>
   ),
 }
 
@@ -410,6 +402,48 @@ export const DashboardLayout: Story = {
           </Flex>
         </Card>
       </Flex>
+    </Flex>
+  ),
+}
+
+// Comparison between CardContainer and Card.Root
+export const ComponentComparison: Story = {
+  render: () => (
+    <Flex gap="4" align="start" wrap="wrap">
+      <div style={{ flex: 1, minWidth: "300px" }}>
+        <Text size="3" weight="bold" style={{ marginBottom: "12px", display: "block" }}>
+          CardContainer
+        </Text>
+        <CardContainer>
+          <Flex direction="column" gap="2">
+            <Text size="2" weight="medium">Simple wrapper</Text>
+            <Text size="2" color="gray">
+              Uses Radix Card with predefined styling. Good for simple content without structured sections.
+            </Text>
+            <Button size="1" variant="outline">Action</Button>
+          </Flex>
+        </CardContainer>
+      </div>
+      
+      <div style={{ flex: 1, minWidth: "300px" }}>
+        <Text size="3" weight="bold" style={{ marginBottom: "12px", display: "block" }}>
+          Card.Root Structure
+        </Text>
+        <Card.Root>
+          <Card.Header>
+            <Card.Title>Structured card</Card.Title>
+            <Card.Description>Uses shadcn Card components</Card.Description>
+          </Card.Header>
+          <Card.Content>
+            <Text size="2" color="gray">
+              Provides semantic structure with header, content, and footer sections.
+            </Text>
+          </Card.Content>
+          <Card.Footer>
+            <Button size="1" variant="outline">Action</Button>
+          </Card.Footer>
+        </Card.Root>
+      </div>
     </Flex>
   ),
 }

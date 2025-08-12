@@ -5,7 +5,6 @@ export { Badge, type Badge as BadgeProps } from "@/radix-ui"
 export { Blockquote, type BlockquoteProps } from "@/radix-ui"
 export { Box, type BoxProps } from "@/radix-ui"
 export { Callout, type Callout as CalloutProps } from "@/radix-ui"
-export { Card, type Card as CardProps } from "@/radix-ui"
 export { Checkbox, type Checkbox as CheckboxProps } from "@/radix-ui"
 export {
   CheckboxCards,

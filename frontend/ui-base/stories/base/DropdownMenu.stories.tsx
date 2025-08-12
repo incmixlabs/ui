@@ -10,7 +10,7 @@ import {
 } from "../../src/base"
 
 const meta: Meta<typeof DropdownMenu.Root> = {
-  title: "Components/DropdownMenu",
+  title:"Base/DropdownMenu",
   component: DropdownMenu.Root,
   parameters: {
     layout: "centered",

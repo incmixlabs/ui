@@ -3,7 +3,7 @@ import * as React from "react"
 import { Box, Flex, Separator, Text, Theme } from "../../src/base"
 
 const meta: Meta<typeof Separator> = {
-  title: "Components/Separator",
+  title:"Base/Separator",
   component: Separator,
   parameters: {
     layout: "centered",

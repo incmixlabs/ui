@@ -3,7 +3,7 @@ import * as React from "react"
 import { Button, Theme } from "../../src/base"
 
 const meta: Meta<typeof Button> = {
-  title: "Components/Button",
+  title:"Base/Button",
   component: Button,
   parameters: {
     layout: "centered",

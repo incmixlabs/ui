@@ -4,7 +4,7 @@ import * as React from "react"
 import { Box, Flex, SegmentedControl, Text, Theme } from "../../src/base" // Adjust the import path as necessary,
 
 const meta: Meta<typeof SegmentedControl.Root> = {
-  title: "Components/SegmentedControl",
+  title:"Base/SegmentedControl",
   component: SegmentedControl.Root,
   parameters: {
     layout: "centered",

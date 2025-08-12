@@ -3,7 +3,7 @@ import * as React from "react"
 import { Flex, Kbd, Text, Theme } from "../../src/base" // Adjust the import path as necessary
 
 const meta: Meta<typeof Kbd> = {
-  title: "Components/Kbd",
+  title:"Base/Kbd",
   component: Kbd,
   parameters: {
     layout: "centered",

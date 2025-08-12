@@ -3,7 +3,7 @@ import * as React from "react"
 import { Box, Button, Flex, Text, Theme } from "../../src/base" // Adjust the import path as necessary
 
 const meta: Meta<typeof Flex> = {
-  title: "Components/Flex",
+  title:"Base/Flex",
   component: Flex,
   parameters: {
     layout: "centered",

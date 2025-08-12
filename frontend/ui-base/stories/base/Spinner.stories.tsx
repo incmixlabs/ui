@@ -3,7 +3,7 @@ import * as React from "react"
 import { Box, Button, Flex, Spinner, Text, Theme } from "../../src/base" // Adjust the import path as necessary
 
 const meta: Meta<typeof Spinner> = {
-  title: "Components/Spinner",
+  title:"Base/Spinner",
   component: Spinner,
   parameters: {
     layout: "centered",

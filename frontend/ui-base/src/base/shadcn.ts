@@ -1,4 +1,3 @@
-export * from "@/shadcn-ui/accordion"
 export * from "@/shadcn-ui/calendar"
 export * from "@/shadcn-ui/command"
 export * from "@/shadcn-ui/form"

@@ -1,7 +1,10 @@
+import {
+  Avatar as RadixAvatar,
+  type AvatarProps as RadixProps,
+} from "@/radix-ui/avatar"
 import { getInitials } from "@incmix/utils/strings"
-import { Avatar as RadixAvatar, type AvatarProps as RadixProps } from "@/radix-ui/components/avatar"
 import { User as PersonIcon } from "lucide-react"
-import  {  extendIconWidth, type ExtendSize,  } from "../types"
+import { type ExtendSize, extendIconWidth } from "../types"
 
 export type AvatarProps = {
   email?: string

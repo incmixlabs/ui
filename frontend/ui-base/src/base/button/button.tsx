@@ -1,10 +1,9 @@
 import {
   Button as RadixButton,
   type ButtonProps as RadixButtonProps,
-} from "@/radix-ui/components/button"
-import React from "react"
+} from "@/radix-ui/button"
 // eslint-disable-next-line react-refresh/only-export-components
-export { buttonPropDefs } from "@/radix-ui/components/button.props.js"
+export { buttonPropDefs } from "@/radix-ui//button.props"
 
 export type ButtonProps = RadixButtonProps & {
   icon?: React.ReactNode
@@ -13,7 +12,13 @@ export type ButtonProps = RadixButtonProps & {
   mobileSidebarTrigger?: boolean
   variant?: RadixButtonProps["variant"] | "naked"
 }
-export const Button = ({ children, className, disabled, variant, ...props }: ButtonProps) => {
+export const Button = ({
+  children,
+  className,
+  disabled,
+  variant,
+  ...props
+}: ButtonProps) => {
   const defaultClassName = `${disabled ? "cursor-not-allowed" : "cursor-pointer"} `
   return (
     <RadixButton
