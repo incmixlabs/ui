@@ -159,6 +159,7 @@ export type UserPreferenceStoreConfig = UserPreference & {
   onAppearanceChange: (appearance: "light" | "dark") => void
   toggleAppearance: () => void
   setSystemAppearance: (isSystem: boolean) => void
+  setAppearance: (appearance: "light" | "dark") => void
   setLanguage: (lang: string) => void
   setDirection: (direction: "ltr" | "rtl") => void
   getDirection: () => "ltr" | "rtl"
@@ -194,6 +195,11 @@ export const useAppearanceStore = create<UserPreferenceStoreConfig>()(
         set((s) => ({
           ...s,
           appearance: s.appearance === "light" ? "dark" : "light",
+        })),
+      setAppearance: (appearance: "light" | "dark") =>
+        set((s) => ({
+          ...s,
+          appearance,
         })),
       setSystemAppearance: (isSystem: boolean) =>
         set((s) => ({

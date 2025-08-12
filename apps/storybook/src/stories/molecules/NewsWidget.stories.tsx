@@ -1,4 +1,4 @@
-import { useThemeStore } from "@incmix/store"
+import { useAppearanceStore } from "@incmix/store"
 import { NewsWidget } from "@incmix/ui/widgets"
 // @ts-nocheck
 import type { Meta, StoryObj } from "@storybook/react"
@@ -13,8 +13,8 @@ const meta: Meta<typeof NewsWidget> = {
           title: "Theme",
           icon: "circlehollow",
           onClick: () => {
-            const { toggleTheme } = useThemeStore()
-            toggleTheme()
+            const { toggleAppearance } = useAppearanceStore.getState()
+            toggleAppearance()
           },
         },
       ],

@@ -1,4 +1,4 @@
-import { useThemeStore } from "@incmix/store"
+import { useAppearanceStore} from "@incmix/store"
 import { ImageGrid } from "@incmix/ui/widgets"
 import type { Meta, StoryObj } from "@storybook/react"
 
@@ -12,8 +12,8 @@ const meta: Meta<typeof ImageGrid> = {
           title: "Theme",
           icon: "circlehollow",
           onClick: () => {
-            const { toggleTheme } = useThemeStore()
-            toggleTheme()
+            const { toggleAppearance } = useAppearanceStore.getState()
+            toggleAppearance()
           },
         },
       ],

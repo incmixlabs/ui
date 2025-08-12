@@ -1,7 +1,7 @@
 import type { Preview } from "@storybook/react"
 import React from "react"
 import "./global.css"
-import { useThemeStore } from "@incmix/store"
+import { useAppearanceStore } from "@incmix/store"
 import { Toaster } from "@incmix/ui"
 import { Flex, Theme } from "@incmix/ui"
 import QueryProvider from "./query-client"
@@ -13,11 +13,11 @@ const ThemeWrapper = ({
   children: React.ReactNode
   theme: "light" | "dark"
 }) => {
-  const { setTheme } = useThemeStore()
+  const { setAppearance} = useAppearanceStore()
 
   React.useEffect(() => {
-    setTheme(theme)
-  }, [theme, setTheme])
+    setAppearance(theme)
+  }, [theme, setAppearance])
 
   return (
     <QueryProvider>

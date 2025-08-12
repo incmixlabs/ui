@@ -1,4 +1,4 @@
-import { useThemeStore } from "@incmix/store"
+import { useAppearanceStore } from "@incmix/store"
 import { Carousel, CarouselContent } from "@incmix/ui"
 import { NewsCard, type NewsStory } from "@incmix/ui/widgets"
 import type { Meta, StoryObj } from "@storybook/react"
@@ -22,8 +22,8 @@ const meta: Meta<typeof NewsCard> = {
           title: "Theme",
           icon: "circlehollow",
           onClick: () => {
-            const { toggleTheme } = useThemeStore()
-            toggleTheme()
+            const { toggleAppearance } = useAppearanceStore.getState()
+            toggleAppearance()
           },
         },
       ],
