@@ -12,7 +12,7 @@ const meta: Meta<typeof ImageGrid> = {
           title: "Theme",
           icon: "circlehollow",
           onClick: () => {
-            const { toggleAppearance } = useAppearanceStore()
+            const { toggleAppearance } = useAppearanceStore.getState()
             toggleAppearance()
           },
         },

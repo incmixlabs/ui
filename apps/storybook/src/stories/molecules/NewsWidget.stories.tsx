@@ -13,7 +13,7 @@ const meta: Meta<typeof NewsWidget> = {
           title: "Theme",
           icon: "circlehollow",
           onClick: () => {
-            const { toggleAppearance } = useAppearanceStore()
+            const { toggleAppearance } = useAppearanceStore.getState()
             toggleAppearance()
           },
         },

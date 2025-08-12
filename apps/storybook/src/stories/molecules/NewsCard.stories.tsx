@@ -22,7 +22,7 @@ const meta: Meta<typeof NewsCard> = {
           title: "Theme",
           icon: "circlehollow",
           onClick: () => {
-            const { toggleAppearance } = useAppearanceStore()
+            const { toggleAppearance } = useAppearanceStore.getState()
             toggleAppearance()
           },
         },
