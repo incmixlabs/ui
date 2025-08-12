@@ -12,7 +12,7 @@ const meta: Meta<typeof ClockWidget> = {
           title: "Theme",
           icon: "circlehollow",
           onClick: () => {
-            const { toggleAppearance } = useAppearanceStore ()
+            const { toggleAppearance } = useAppearanceStore.getState()
             toggleAppearance()
           },
         },
