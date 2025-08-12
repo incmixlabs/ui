@@ -24,7 +24,8 @@
       "@/radix-ui": ["./radix-ui/components"],
       "@/radix-ui/*": ["./radix-ui/components/*"],
       "@/shadcn": ["./shadcn"],
-      "@/shadcn/*": ["./shadcn/*"]
+      "@/shadcn/*": ["./shadcn/*"],
+      "@/shadcn-ui/*": ["./shadcn/components/ui/*"]
     }
   }
 }
