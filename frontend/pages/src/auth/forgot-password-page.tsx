@@ -108,11 +108,8 @@ function ForgotPasswordForm() {
 }
 
 function ForgotPasswordPage() {
-
   const navigate = useNavigate()
   const { authUser, isLoading, isError } = useAuth()
-
-
 
   useEffect(() => {
     if (authUser && !isLoading && !isError) {
