@@ -5,13 +5,6 @@ import type { Meta, StoryObj } from "@storybook/react"
 const meta: Meta<typeof GroupList> = {
   title: "Molecules/grouplist",
   component: GroupList,
-  parameters: {
-    toolbar: {
-      items: [
-        {
-          title: "Theme",
-          icon: "circlehollow",
-          onClick: () => {
 parameters: {
   toolbar: {
     items: [
@@ -19,6 +12,7 @@ parameters: {
         title: "Theme",
         icon: "circlehollow",
         onClick: (_event, _item, context) => {
+  
           // update Storybook globals so ThemeWrapper sees the change
           context.updateGlobals({
             theme: context.globals.theme === "light" ? "dark" : "light",
@@ -28,11 +22,6 @@ parameters: {
     ],
   },
 },
-          },
-        },
-      ],
-    },
-  },
   argTypes: {},
 }
 
