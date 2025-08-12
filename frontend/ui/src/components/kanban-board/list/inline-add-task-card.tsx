@@ -48,165 +48,116 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
   defaultPriority = "medium",
   priorityLabels = []
 }) => {
-  const [rawText, setRawText] = useState("")
+  const [titleInput, setTitleInput] = useState("")
   const [extractedUrls, setExtractedUrls] = useState<TaskRefUrl[]>([])
-  const [taskTitle, setTaskTitle] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isComposing, setIsComposing] = useState(false)
-  const editableRef = useRef<HTMLDivElement>(null)
+  const [inputWidth, setInputWidth] = useState(120) // Initial width
+  const inputRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const measureRef = useRef<HTMLSpanElement>(null)
 
-  // Extract plain text from contentEditable div
-  const extractTextFromElement = useCallback((element: HTMLElement): string => {
-    let text = ''
-    element.childNodes.forEach(node => {
-      if (node.nodeType === Node.TEXT_NODE) {
-        text += node.textContent || ''
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const el = node as HTMLElement
-        if (el.classList.contains('url-badge')) {
-          // Replace badge with original URL
-          const url = el.getAttribute('data-url')
-          if (url) text += url
-        } else {
-          text += el.textContent || ''
-        }
-      }
-    })
-    return text
-  }, [])
 
-  // Process input to extract URLs and update display
+
+  // Process input to extract URLs from pasted text (max 3 total)
   const processInput = useCallback((text: string) => {
     const urlRegex = /(https?:\/\/[^\s]+|(?:www\.|[a-zA-Z0-9-]+\.)(?:[a-zA-Z]{2,}|co\.uk|com\.au)\/[^\s]*|(?:figma\.com|youtube\.com|github\.com|docs\.google\.com)[^\s]*)/gi
     
-    const urls: TaskRefUrl[] = []
+    const newUrls: TaskRefUrl[] = []
     let cleanTitle = text
-    let processedText = text
+    const maxLinks = 3
     
-    // Extract all URLs and replace with badges
+    // Extract all URLs
     const matches = Array.from(text.matchAll(urlRegex))
     
-    // Process in reverse order to maintain string positions
-    for (let i = matches.length - 1; i >= 0; i--) {
-      const match = matches[i]
+    matches.forEach((match, index) => {
       const url = match[0]
-      const startIndex = match.index!
       
-      const normalizedUrl = url.startsWith('http') ? url : `https://${url}`
-      const urlType = detectUrlType(normalizedUrl)
-      const title = generateDefaultTitle(normalizedUrl, urlType, urls)
-      
-      const urlData = {
-        id: nanoid(),
-        url: normalizedUrl,
-        title,
-        type: urlType
-      }
-      
-      urls.unshift(urlData)
-      
-      // Replace URL with badge placeholder in processed text
-      processedText = processedText.slice(0, startIndex) + `__BADGE_${urlData.id}__` + processedText.slice(startIndex + url.length)
-      
-      // Remove URL from title
+      // Always remove URL from title text (regardless of badge limit)
       cleanTitle = cleanTitle.replace(url, ' ')
-    }
+      
+      // Only create badge if under the limit
+      const currentUrlCount = extractedUrls.length + newUrls.length
+      if (currentUrlCount < maxLinks) {
+        const normalizedUrl = url.startsWith('http') ? url : `https://${url}`
+        const urlType = detectUrlType(normalizedUrl)
+        const title = generateDefaultTitle(normalizedUrl, urlType, [...extractedUrls, ...newUrls])
+        
+        newUrls.push({
+          id: nanoid(),
+          url: normalizedUrl,
+          title,
+          type: urlType
+        })
+      }
+    })
     
     // Clean up title
     cleanTitle = cleanTitle.replace(/\s+/g, ' ').trim()
     
-    setRawText(text)
-    setTaskTitle(cleanTitle)
-    setExtractedUrls(urls)
-    
-    // Update contentEditable display if not composing
-    if (!isComposing && editableRef.current) {
-      updateContentEditableDisplay(processedText, urls)
+    // Update states
+    setTitleInput(cleanTitle)
+    if (newUrls.length > 0) {
+      setExtractedUrls(prev => [...prev, ...newUrls])
     }
-  }, [isComposing])
+  }, [extractedUrls])
 
-  // Update the contentEditable display with text and badges
-  const updateContentEditableDisplay = useCallback((text: string, urls: TaskRefUrl[]) => {
-    if (!editableRef.current) return
+
+
+  // Calculate input width based on content
+  const calculateInputWidth = useCallback((text: string) => {
+    if (!measureRef.current) return 120
     
-    // Save cursor position
-    const selection = window.getSelection()
-    const range = selection && selection.rangeCount > 0 ? selection.getRangeAt(0) : null
-    let cursorOffset = 0
-    if (range) {
-      cursorOffset = range.startOffset
-    }
+    // Set the text to measure
+    measureRef.current.textContent = text || 'Enter task title and paste URLs...'
+    const textWidth = measureRef.current.offsetWidth
     
-    // Build HTML content
-    let html = text
+    // Add some padding and set reasonable min/max bounds
+    const minWidth = 120 // Minimum width for placeholder
+    const maxWidth = 300 // Maximum width before it stops growing
+    const paddedWidth = textWidth + 16 // Add padding
     
-    urls.forEach(url => {
-      const badgeHtml = `<span class="url-badge inline-flex items-center gap-1 px-2 py-0.5 mx-1 bg-blue-3 dark:bg-blue-4 text-blue-11 dark:text-blue-11 border border-blue-6 dark:border-blue-6 rounded text-xs font-medium" data-url="${url.url}" data-id="${url.id}" contenteditable="false">${renderUrlTypeIconSvg(url.type)}<span class="max-w-[60px] truncate">${url.title}</span><button type="button" class="badge-remove ml-1 hover:bg-blue-5 dark:hover:bg-blue-6 rounded p-0.5" onclick="window.removeBadge('${url.id}')">×</button></span>`
-      html = html.replace(`__BADGE_${url.id}__`, badgeHtml)
-    })
-    
-    editableRef.current.innerHTML = html
-    
-    // Restore cursor position (simplified)
-    try {
-      if (selection && editableRef.current.firstChild) {
-        const newRange = document.createRange()
-        newRange.setStart(editableRef.current.firstChild, Math.min(cursorOffset, editableRef.current.textContent?.length || 0))
-        newRange.collapse(true)
-        selection.removeAllRanges()
-        selection.addRange(newRange)
-      }
-    } catch (e) {
-      // Ignore cursor positioning errors
-    }
+    return Math.min(Math.max(paddedWidth, minWidth), maxWidth)
   }, [])
 
-  // Handle contentEditable input
-  const handleContentEditableInput = useCallback(() => {
-    if (!editableRef.current || isComposing) return
+  // Handle input changes - for normal typing, just update the input
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
     
-    const text = extractTextFromElement(editableRef.current)
-    processInput(text)
-  }, [extractTextFromElement, processInput, isComposing])
-
-  // Handle composition events (for IME input)
-  const handleCompositionStart = useCallback(() => {
-    setIsComposing(true)
-  }, [])
-
-  const handleCompositionEnd = useCallback(() => {
-    setIsComposing(false)
-    if (editableRef.current) {
-      const text = extractTextFromElement(editableRef.current)
-      processInput(text)
+    // Update width based on content
+    const newWidth = calculateInputWidth(value)
+    setInputWidth(newWidth)
+    
+    // Check if the input contains URLs (only process if URLs are detected)
+    const urlRegex = /(https?:\/\/[^\s]+|(?:www\.|[a-zA-Z0-9-]+\.)(?:[a-zA-Z]{2,}|co\.uk|com\.au)\/[^\s]*|(?:figma\.com|youtube\.com|github\.com|docs\.google\.com)[^\s]*)/gi
+    
+    if (urlRegex.test(value)) {
+      // Contains URLs, process them
+      processInput(value)
+    } else {
+      // Normal typing, just update the input
+      setTitleInput(value)
     }
-  }, [extractTextFromElement, processInput])
+  }, [processInput, calculateInputWidth])
+
+  // Handle paste events specifically
+  const handlePaste = useCallback((e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pastedText = e.clipboardData.getData('text')
+    if (pastedText) {
+      // Process the pasted text for URLs
+      processInput(titleInput + pastedText)
+      e.preventDefault() // We'll handle the paste manually
+    }
+  }, [titleInput, processInput])
 
   // Remove a reference URL
   const handleRemoveRefUrl = useCallback((id: string) => {
-    const urlToRemove = extractedUrls.find(url => url.id === id)
-    if (!urlToRemove) return
-    
-    // Remove URL from raw text and reprocess
-    const updatedText = rawText.replace(urlToRemove.url, ' ').replace(/\s+/g, ' ').trim()
-    processInput(updatedText)
+    setExtractedUrls(prev => prev.filter(url => url.id !== id))
     
     // Focus back to input
-    if (editableRef.current) {
-      editableRef.current.focus()
+    if (inputRef.current) {
+      inputRef.current.focus()
     }
-  }, [extractedUrls, rawText, processInput])
-
-  // Global function to remove badges (called from onclick)
-  useEffect(() => {
-    (window as any).removeBadge = (id: string) => {
-      handleRemoveRefUrl(id)
-    }
-    return () => {
-      delete (window as any).removeBadge
-    }
-  }, [handleRemoveRefUrl])
+  }, [])
 
 
 
@@ -214,27 +165,26 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
 
   // Save the task if the title is not empty
   const handleSave = useCallback(async () => {
-    const trimmedTitle = taskTitle.trim()
+    const trimmedTitle = titleInput.trim()
     if (!trimmedTitle || isSubmitting) return
 
     try {
       setIsSubmitting(true)
       await onCreateTask(trimmedTitle, extractedUrls.length > 0 ? extractedUrls : undefined)
-      setRawText("")
-      setTaskTitle("")
+      setTitleInput("")
       setExtractedUrls([])
-      if (editableRef.current) {
-        editableRef.current.innerHTML = ""
+      if (inputRef.current) {
+        inputRef.current.value = ""
       }
     } catch (error) {
       console.error("Failed to create task:", error)
     } finally {
       setIsSubmitting(false)
     }
-  }, [taskTitle, extractedUrls, onCreateTask, isSubmitting])
+  }, [titleInput, extractedUrls, onCreateTask, isSubmitting])
   
   // Handle keyboard events for saving or canceling
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
       handleSave()
@@ -246,19 +196,28 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
 
 
   
-  // Focus the input when the component mounts
+  // Focus the input and set initial width when the component mounts
   useEffect(() => {
-    if (editableRef.current) {
-      editableRef.current.focus()
+    if (inputRef.current) {
+      inputRef.current.focus()
     }
-  }, [])
+    // Set initial width based on placeholder
+    const initialWidth = calculateInputWidth('')
+    setInputWidth(initialWidth)
+  }, [calculateInputWidth])
+
+  // Update width when titleInput changes (for programmatic updates)
+  useEffect(() => {
+    const newWidth = calculateInputWidth(titleInput)
+    setInputWidth(newWidth)
+  }, [titleInput, calculateInputWidth])
 
   // Handle click outside to either save the task or cancel
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         // If there's text, try to save; otherwise cancel
-        const trimmedTitle = taskTitle.trim()
+        const trimmedTitle = titleInput.trim()
         if (trimmedTitle && !isSubmitting) {
           handleSave()
         } else {
@@ -271,22 +230,34 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside)
     }
-  }, [handleSave, taskTitle, isSubmitting, onCancel])
+  }, [handleSave, titleInput, isSubmitting, onCancel])
 
 
 
-  // Render URL type icon as SVG string for innerHTML
-  const renderUrlTypeIconSvg = useCallback((type: "figma" | "task" | "external"): string => {
+  // Render URL type icon
+  const renderUrlTypeIcon = (type: "figma" | "task" | "external") => {
     switch (type) {
       case "figma":
-        return '<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M8 24c2.21 0 4-1.79 4-4v-4H8c-2.21 0-4 1.79-4 4s1.79 4 4 4Z" /><path d="M8 16h4v-4H8v4Z" /><path d="M8 8h4V4H8c-2.21 0-4 1.79-4 4 0 2.21 1.79 4 4 4Z" /><path d="M16 8c2.21 0 4-1.79 4-4s-1.79-4-4-4h-4v8h4Z" /><path d="M16 16c2.21 0 4-1.79 4-4s-1.79-4-4-4h-4v8h4Z" /></svg>'
+        return (
+          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 24c2.21 0 4-1.79 4-4v-4H8c-2.21 0-4 1.79-4 4s1.79 4 4 4Z" />
+            <path d="M8 16h4v-4H8v4Z" />
+            <path d="M8 8h4V4H8c-2.21 0-4 1.79-4 4 0 2.21 1.79 4 4 4Z" />
+            <path d="M16 8c2.21 0 4-1.79 4-4s-1.79-4-4-4h-4v8h4Z" />
+            <path d="M16 16c2.21 0 4-1.79 4-4s-1.79-4-4-4h-4v8h4Z" />
+          </svg>
+        )
       case "task":
-        return '<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>'
+        return (
+          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        )
       case "external":
       default:
-        return '<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 7 10 10M7 7h10M7 7v10"/></svg>'
+        return <ExternalLink className="h-3.5 w-3.5" />
     }
-  }, [])
+  }
 
   return (
     <Box className="flex flex-shrink-0 flex-col pl-5" ref={containerRef}>
@@ -296,36 +267,61 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
         <Flex direction="column" className="w-full py-3 px-4 space-y-3">
           {/* Main input row with layout matching existing cards */}
           <Flex align="center" className="h-full w-full">
-            {/* Left side: Input for title + URLs */}
-            <Flex align="start" gap="3" className="flex-shrink-0 w-[35%]">
+            {/* Left side: Hybrid input + badges */}
+            <Flex align="center" gap="3" className="flex-shrink-0 min-w-[35%] max-w-[70%]">
               {/* Empty space where the checkbox would be */}
-              <Box className="w-5 h-5 flex items-center justify-center mt-0.5">
+              <Box className="w-5 h-5 flex items-center justify-center">
                 <Box className="w-[18px] h-[18px] rounded-sm border border-gray-6"></Box>
               </Box>
               
-              {/* ContentEditable input with inline badges */}
-              <div className="w-full relative">
-                <div
-                  ref={editableRef}
-                  className="w-full bg-transparent border-0 outline-none text-gray-12 dark:text-gray-12 font-medium text-base leading-6 focus:outline-none focus:ring-0 p-0 m-0 min-h-[24px]"
-                  contentEditable
-                  suppressContentEditableWarning
-                  onInput={handleContentEditableInput}
+              {/* Hybrid input container */}
+              <div className="flex items-center flex-1 gap-1 min-h-[24px]">
+                {/* Hidden span for text width measurement */}
+                <span
+                  ref={measureRef}
+                  className="absolute invisible whitespace-nowrap text-gray-12 dark:text-gray-12 font-medium text-base leading-6"
+                  style={{ top: -9999, left: -9999 }}
+                  aria-hidden="true"
+                />
+                
+                {/* Title input - auto-growing width */}
+                <input
+                  ref={inputRef}
+                  className="bg-transparent border-0 outline-none text-gray-12 dark:text-gray-12 font-medium text-base leading-6 placeholder-gray-9 focus:outline-none focus:ring-0 p-0 m-0 transition-all duration-150 ease-in-out"
+                  placeholder={extractedUrls.length === 0 ? "Enter task title and paste URLs..." : ""}
+                  value={titleInput}
+                  onChange={handleInputChange}
+                  onPaste={handlePaste}
                   onKeyDown={handleKeyDown}
-                  onCompositionStart={handleCompositionStart}
-                  onCompositionEnd={handleCompositionEnd}
-                  data-placeholder="Enter task title and paste URLs..."
+                  disabled={isSubmitting}
                   style={{
                     minHeight: '24px',
                     lineHeight: '1.5',
-                    wordWrap: 'break-word',
+                    width: `${inputWidth}px`,
+                    maxWidth: '300px',
+                    minWidth: '120px',
                   }}
                 />
                 
-                {/* Placeholder when empty */}
-                {!rawText && (
-                  <div className="absolute inset-0 text-gray-9 pointer-events-none select-none" style={{ lineHeight: '1.5' }}>
-                    Enter task title and paste URLs...
+                {/* URL badges inline to the right - with small gap */}
+                {extractedUrls.length > 0 && (
+                  <div className="flex items-center gap-1 ml-2">
+                    {extractedUrls.map((url) => (
+                      <span
+                        key={url.id}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-3 dark:bg-blue-4 text-blue-11 dark:text-blue-11 border border-blue-6 dark:border-blue-6 rounded text-xs font-medium flex-shrink-0"
+                      >
+                        {renderUrlTypeIcon(url.type)}
+                        <span className="max-w-[60px] truncate">{url.title}</span>
+                        <button
+                          type="button"
+                          className="ml-1 hover:bg-blue-5 dark:hover:bg-blue-6 rounded p-0.5 transition-colors"
+                          onClick={() => handleRemoveRefUrl(url.id)}
+                        >
+                          <X className="h-2.5 w-2.5" />
+                        </button>
+                      </span>
+                    ))}
                   </div>
                 )}
               </div>
@@ -364,14 +360,14 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
           </Flex>
 
           {/* Preview extracted task title when there are URLs */}
-          {taskTitle && extractedUrls.length > 0 && (
+          {titleInput && extractedUrls.length > 0 && (
             <Flex align="start" gap="3" className="w-full">
               {/* Spacer to align with input */}
               <Box className="w-8"></Box>
               
               <Box className="flex-1">
                 <Text size="1" className="text-gray-8 italic">
-                  Title: "{taskTitle}" + {extractedUrls.length} reference{extractedUrls.length !== 1 ? 's' : ''}
+                  Title: "{titleInput}" + {extractedUrls.length} reference{extractedUrls.length !== 1 ? 's' : ''}
                 </Text>
               </Box>
             </Flex>
