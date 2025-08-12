@@ -3,9 +3,10 @@ import incmixTailwindPreset from "./src/preset"
 const config = {
   darkMode: ["class"],
   content: [
-    "./src/pages/**/*.{ts,tsx}",
-    "./src/components/**/*.{ts,tsx}",
-    "./src/widgets/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+    "./shadcn/**/*.{ts,tsx}",
+    "./stories/**/*.{ts,tsx}",
+    "./stories/**/*.{mdx}",
   ],
   presets: [incmixTailwindPreset],
 } satisfies Config

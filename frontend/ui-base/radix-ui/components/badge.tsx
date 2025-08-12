@@ -42,3 +42,4 @@ Badge.displayName = "Badge"
 
 export { Badge }
 export type { BadgeProps }
+export { badgePropDefs } from "./badge.props"

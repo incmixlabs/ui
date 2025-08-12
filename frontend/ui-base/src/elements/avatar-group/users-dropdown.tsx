@@ -1,5 +1,12 @@
-import { Flex, Popover, ScrollArea, Text, Avatar, type AvatarProps } from "@/base"
-import type { Sizes, } from "./types"
+import {
+  Avatar,
+  type AvatarProps,
+  Flex,
+  Popover,
+  ScrollArea,
+  Text,
+} from "@/base"
+import type { Sizes } from "./types"
 
 type UsersDropdownProps = {
   users: AvatarProps[]
@@ -20,7 +27,11 @@ export const UsersDropdown: React.FC<UsersDropdownProps> = ({
         <Flex direction="column" gap="2">
           {users.map((user) => (
             <Flex key={user.name} align="center" gap="2">
-              <Avatar size={size} src={user.src??undefined} name={user.name} />
+              <Avatar
+                size={size}
+                src={user.src ?? undefined}
+                name={user.name}
+              />
               <Text size={size}>{user.name}</Text>
             </Flex>
           ))}

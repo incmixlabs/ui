@@ -1,16 +1,17 @@
-
-import { useState } from "react"
-import { Input,
+import {
   Box,
   Button,
+  CardContainer,
   Checkbox,
   Flex,
+  Heading,
+  Input,
   Popover,
   Select,
   Text,
-  CardContainer,
   iconSize,
-  Heading} from "@/base"
+} from "@/base"
+import { useState } from "react"
 import ColorPicker from "./color-picker"
 
 const resolveColorVariable = (colorVar: string) => {
@@ -108,7 +109,7 @@ export function PropertySheet() {
                 defaultValue="json"
                 onValueChange={(value) => setPropertyType(value)}
               >
-                <Select.Trigger/>
+                <Select.Trigger />
                 <Select.Content className="border-gray-5">
                   <Select.Item value="json">json</Select.Item>
                   <Select.Item value="xml">xml</Select.Item>
@@ -147,7 +148,7 @@ export function PropertySheet() {
                 defaultValue="left"
                 onValueChange={(value) => setPosition(value)}
               >
-                <Select.Trigger className="border-none shadow-none"/>
+                <Select.Trigger className="border-none shadow-none" />
 
                 <Select.Content className="border-gray-5">
                   <Select.Item value="left">left</Select.Item>
@@ -161,8 +162,12 @@ export function PropertySheet() {
           <Flex align={"center"}>
             <Text className="w-44 border-gray-4 border-r py-2 pl-3">Theme</Text>
             <Box className="relative w-full">
-              <Select.Root value={theme} defaultValue="light" onValueChange={(value) => setTheme(value)}>
-                <Select.Trigger className="border-none shadow-none"/>
+              <Select.Root
+                value={theme}
+                defaultValue="light"
+                onValueChange={(value) => setTheme(value)}
+              >
+                <Select.Trigger className="border-none shadow-none" />
 
                 <Select.Content className="border-gray-5">
                   <Select.Item value="dark">dark</Select.Item>

@@ -1,11 +1,15 @@
 "use client"
 
-import { ArrowLeft as ArrowLeftIcon, ArrowRight as ArrowRightIcon } from "lucide-react"
+import { Box } from "@/base"
+import { Button } from "@/shadcn-ui/button"
 import { cn } from "@/shadcn/lib/utils"
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from "embla-carousel-react"
-import {Box} from "@/base"
+import {
+  ArrowLeft as ArrowLeftIcon,
+  ArrowRight as ArrowRightIcon,
+} from "lucide-react"
 import {
   createContext,
   forwardRef,
@@ -14,10 +18,9 @@ import {
   useEffect,
   useState,
 } from "react"
-import { Button } from "@/shadcn-ui/button"
 
-import Autoplay from "embla-carousel-autoplay"
 import { iconSize } from "@/base"
+import Autoplay from "embla-carousel-autoplay"
 export { Autoplay }
 
 type CarouselApi = UseEmblaCarouselType[1]

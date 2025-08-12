@@ -1,22 +1,22 @@
-import { Text } from '@/radix-ui/text'
+import { Text } from "@/radix-ui/text"
 type RadixTextProps = React.ComponentProps<typeof Text>
 export type ParagraphType = {
   children: React.ReactNode
-  as?: 'p' | 'label' | 'div' | 'span'
-  size?: RadixTextProps['size']
-  weight?: RadixTextProps['weight']
-  align?: RadixTextProps['align']
-  trim?: RadixTextProps['trim']
-  color?: RadixTextProps['color']
+  as?: "p" | "label" | "div" | "span"
+  size?: RadixTextProps["size"]
+  weight?: RadixTextProps["weight"]
+  align?: RadixTextProps["align"]
+  trim?: RadixTextProps["trim"]
+  color?: RadixTextProps["color"]
   className?: string
 }
 export const Paragraph = ({
   children,
-  as = 'p',
-  size = '3',
-  weight = 'regular',
-  align = 'left',
-  trim = 'normal',
+  as = "p",
+  size = "3",
+  weight = "regular",
+  align = "left",
+  trim = "normal",
   color,
   className,
   ...props

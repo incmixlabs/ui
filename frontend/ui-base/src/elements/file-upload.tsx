@@ -13,14 +13,19 @@ import {
 import { cn } from "@/shadcn/lib/utils"
 import { Trash2 as RemoveIcon } from "lucide-react"
 
+import { toast } from "@/base"
 import {
   type DropzoneOptions,
   type DropzoneState,
   type FileRejection,
   useDropzone,
 } from "react-dropzone"
-import { toast } from "@/base"
-import { type Direction, type Orientation, direction as directionOptions, orientation as orientationOptions } from "../types"
+import {
+  type Direction,
+  type Orientation,
+  direction as directionOptions,
+  orientation as orientationOptions,
+} from "../types"
 
 type FileUploaderContextType = {
   dropzoneState: DropzoneState
@@ -226,7 +231,7 @@ export const FileUploader = forwardRef<
           activeIndex,
           setActiveIndex,
           orientation: orientation as Orientation,
-          direction: direction as Direction
+          direction: direction as Direction,
         }}
       >
         <div
@@ -265,7 +270,9 @@ export const FileUploaderContent = forwardRef<
         ref={ref}
         className={cn(
           " gap-1 rounded-xl",
-          orientation === orientationOptions.horizontal ? "grid grid-cols-2" : "flex flex-col",
+          orientation === orientationOptions.horizontal
+            ? "grid grid-cols-2"
+            : "flex flex-col",
           className
         )}
       >
@@ -300,7 +307,9 @@ export const FileUploaderItem = forwardRef<
         type="button"
         className={cn(
           "absolute rounded bg-red-10 p-1 text-background",
-          direction === directionOptions.rtl ? "top-1 left-1" : "right-1.5 bottom-1.5"
+          direction === directionOptions.rtl
+            ? "top-1 left-1"
+            : "right-1.5 bottom-1.5"
         )}
         onClick={() => removeFileFromSet(index)}
       >

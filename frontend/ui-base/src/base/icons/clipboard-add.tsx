@@ -1,6 +1,10 @@
 import type { IconProps } from "@/src/types"
 
-export function ClipBoardAdd({ size = "15",color="var(--indicator-warning)", ...props }: IconProps) {
+export function ClipBoardAdd({
+  size = "15",
+  color = "var(--indicator-warning)",
+  ...props
+}: IconProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

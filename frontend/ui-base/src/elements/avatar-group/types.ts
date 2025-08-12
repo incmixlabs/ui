@@ -1,5 +1,5 @@
-import type { UserProfile } from "@incmix/utils/types"
 import type { AvatarProps } from "@/base"
+import type { UserProfile } from "@incmix/utils/types"
 
 export const sizes = ["1", "2", "3", "4", "5", "6", "7", "8", "9"] as const
 export const layouts = ["spread", "stack"] as const

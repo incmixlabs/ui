@@ -1,6 +1,15 @@
 import { useState } from "react"
 
-import { Box, Flex, IconButton, ScrollArea, Text ,CardContainer, Icon, Heading} from "@/base"
+import {
+  Box,
+  CardContainer,
+  Flex,
+  Heading,
+  Icon,
+  IconButton,
+  ScrollArea,
+  Text,
+} from "@/base"
 
 type Movie = {
   id: number
@@ -237,7 +246,7 @@ export const GroupList = ({
               onClick={handleBackToYears}
               className=" w-fit gap-1 bg-transparent font-semibold text-gray-12 "
             >
-              <Icon name="ChevronLeft"/>
+              <Icon name="ChevronLeft" />
               <Text as="span">Year {selectedYear?.year}</Text>
             </IconButton>
           </Flex>

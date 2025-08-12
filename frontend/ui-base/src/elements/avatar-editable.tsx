@@ -1,7 +1,7 @@
+import { Pencil as PencilIcon, Trash as TrashIcon } from "lucide-react"
 import { useRef, useState } from "react"
-import { Trash as TrashIcon, Pencil as PencilIcon } from "lucide-react"
 
-import { Avatar, Box, Button, Flex, type AvatarProps } from "@/base"
+import { Avatar, type AvatarProps, Box, Button, Flex } from "@/base"
 import { cn } from "@/shadcn/lib/utils"
 
 type AvatarEditableProps = AvatarProps & {
@@ -33,7 +33,7 @@ export const AvatarEditable: React.FC<AvatarEditableProps> = ({
 
   return (
     <Box position="relative" className="rounded-app">
-      <Avatar size={size} src={src} name={name} className={cn("",className)} />
+      <Avatar size={size} src={src} name={name} className={cn("", className)} />
       <Flex
         position="absolute"
         inset="0"

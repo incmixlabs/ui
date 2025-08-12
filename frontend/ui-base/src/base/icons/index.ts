@@ -18,5 +18,5 @@ export {
   UploadCloud,
   Video,
   X,
-  CheckCheck as ThickCheckIcon
+  CheckCheck as ThickCheckIcon,
 } from "lucide-react"

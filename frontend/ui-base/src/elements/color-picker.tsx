@@ -1,6 +1,6 @@
+import { iconSize } from "@/base"
 import { cn } from "@/shadcn/lib/utils"
 import { Check } from "lucide-react"
-import { iconSize } from "@/base"
 
 export interface ColorSelectType {
   hex: string
@@ -110,7 +110,7 @@ const ColorPicker = ({
 
   if (colorType === "base") {
     return (
-      <div className="bg-gray-5 rounded-lg p-2">
+      <div className="rounded-lg bg-gray-5 p-2">
         <div className="grid grid-cols-6 gap-2">
           {baseColors.map((color) => (
             <button
@@ -138,7 +138,7 @@ const ColorPicker = ({
   }
 
   return (
-    <div className="bg-gray-5 rounded-lg p-2">
+    <div className="rounded-lg bg-gray-5 p-2">
       <div className="mb-1 flex justify-between">
         {darkColors.map((color) => (
           <button

@@ -1,10 +1,10 @@
 import type React from "react"
 
+import { cn } from "@/shadcn/lib/utils"
 import type { Transition } from "motion/react"
 import { motion, useAnimation } from "motion/react"
 import type { HTMLAttributes } from "react"
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react"
-import { cn } from "@/shadcn/lib/utils"
 
 export interface PenIconHandle {
   startAnimation: () => void
@@ -41,7 +41,7 @@ const EditIcon = forwardRef<PenIconHandle, PenIconProps>(
         }
         onMouseEnter?.(e)
       },
-      [controls, onMouseEnter],
+      [controls, onMouseEnter]
     )
 
     const handleMouseLeave = useCallback(
@@ -51,7 +51,7 @@ const EditIcon = forwardRef<PenIconHandle, PenIconProps>(
         }
         onMouseLeave?.(e)
       },
-      [controls, onMouseLeave],
+      [controls, onMouseLeave]
     )
 
     return (
@@ -78,6 +78,7 @@ const EditIcon = forwardRef<PenIconHandle, PenIconProps>(
           animate={controls}
           transition={{ duration: 0.2, ease: "easeOut" }}
         >
+          <title>Edit icon</title>
           {/* Square/document path */}
           <motion.path
             d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"
@@ -102,7 +103,7 @@ const EditIcon = forwardRef<PenIconHandle, PenIconProps>(
         </motion.svg>
       </div>
     )
-  },
+  }
 )
 
 EditIcon.displayName = "EditIcon"

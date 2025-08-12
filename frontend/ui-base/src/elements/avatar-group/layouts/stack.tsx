@@ -1,5 +1,5 @@
-import type React from "react"
 import { Avatar, Flex } from "@/base"
+import type React from "react"
 
 import { stackBorderWidths, stackOffsets } from "../constants"
 import type { AvatarGroupProps } from "../types"
