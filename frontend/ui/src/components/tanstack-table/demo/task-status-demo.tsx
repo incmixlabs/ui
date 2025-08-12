@@ -489,15 +489,14 @@ const TASK_TABLE_COLUMNS: ExtendedColumnConfig[] = [
   }
 ]
 
-// Filter definitions
 const TASK_TABLE_FACETS = [
   {
     column: "status",
     title: "Task Status",
     options: [
-      { label: "To Do", value: "todo", color: "#93c5fd" }, // Match our dropdown colors
-      { label: "Doing", value: "doing", color: "#fcd34d" },
-      { label: "Done", value: "done", color: "#86efac" }
+      { label: "To Do", value: "todo", color: "var(--blue-5)" }, 
+      { label: "Doing", value: "doing", color: "var(--yellow-5)" },
+      { label: "Done", value: "done", color: "var(--green-5)" }
     ]
   },
   {
