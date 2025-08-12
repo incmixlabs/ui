@@ -1,0 +1,1 @@
+import{j as e}from"./jsx-runtime-D_zvdyIk.js";import{I as c}from"./icon-button-QpiRLWqf.js";const m=({children:t,className:s,disabled:o,variant:n,...r})=>{const a=`${o?"cursor-not-allowed":"cursor-pointer"} `;return e.jsx(c,{...r,variant:n||"soft",className:`${a}${s}`,disabled:o,children:t})};m.__docgenInfo={description:"",methods:[],displayName:"IconButton"};export{m as I};
