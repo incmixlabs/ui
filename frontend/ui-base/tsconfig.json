@@ -1,19 +1,30 @@
 {
   "extends": "@incmix/config/react.json",
-  "include": ["src/", "stories/"],
+  "include": ["src/**/*", "radix-ui/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    "storybook-static",
+    ".next",
+    ".cache",
+    "stories",
+    "shadcn",
+    "src/preset.ts"
+  ],
   "compilerOptions": {
     "types": ["@types/wicg-file-system-access", "vite/client"],
-
+    "rootDir": ".",
     "paths": {
       "@/src": ["./src"],
       "@/src/*": ["./src/*"],
       "@/base": ["./src/base"],
       "@/base/*": ["./src/base/*"],
-      "@/radix-ui": ["./radix-ui"],
-      "@/radix-ui/*": ["./radix-ui/*"],
+      "@/radix-ui": ["./radix-ui/components"],
+      "@/radix-ui/*": ["./radix-ui/components/*"],
       "@/shadcn": ["./shadcn"],
       "@/shadcn/*": ["./shadcn/*"]
     }
-  },
-  "exclude": ["**/*.stories.tsx", ".storybook/**/*", "src/stories/**/*"]
+  }
 }
