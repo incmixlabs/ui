@@ -9,9 +9,7 @@ import {
   Flex,
   Text,
 } from "@incmix/ui/base"
-import {
-  TanstackDataTable as DataTable,
-} from "@incmix/ui/tanstack-table"
+import { TanstackDataTable as DataTable } from "@incmix/ui/tanstack-table"
 import type { Organization } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useNavigate } from "@tanstack/react-router"
