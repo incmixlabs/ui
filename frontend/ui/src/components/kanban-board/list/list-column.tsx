@@ -775,7 +775,7 @@ export function ListColumn({
               <Box className="pt-1 pb-2">
                 {isCreatingTask ? (
                   <InlineAddTaskCard
-                    onCreateTask={(title) => handleCreateTaskWithData(title, {})}
+                    onCreateTask={(title, refUrls) => handleCreateTaskWithData(title, { refUrls })}
                     onCancel={() => setIsCreatingTask(false)}
                     priorityLabels={priorityLabels}
                     defaultPriority={defaultPriority}
