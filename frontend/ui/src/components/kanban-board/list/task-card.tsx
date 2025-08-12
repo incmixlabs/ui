@@ -161,7 +161,7 @@ export const ListTaskCard = memo(function ListTaskCard({
   projectId
 }: ListTaskCardProps) {
 
-  console.log("Card:", card.refUrls)
+ 
 
   const { handleDrawerOpen } = useKanbanDrawer()
   const innerRef = useRef<HTMLDivElement | null>(null)

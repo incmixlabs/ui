@@ -37,12 +37,12 @@ export const TaskRefUrls: React.FC<TaskRefUrlsProps> = ({
   const getIconForType = (type: string) => {
     switch (type) {
       case "figma":
-        return "Sparkles"; // Using Sparkles as substitute for Figma
+        return "Sparkles"; // TODO: Replace with actual Figma icon when available
       case "task":
-        return "SquareCheck"; // Using SquareCheck instead of CheckSquare
+        return "SquareCheck";
       case "external":
       default:
-        return "Link"; // Using Link instead of ExternalLink
+        return "Link";
     }
   };
 
@@ -55,6 +55,19 @@ export const TaskRefUrls: React.FC<TaskRefUrlsProps> = ({
       case "external":
       default:
         return "gray";
+    }
+  };
+
+  // Static class mapping for Tailwind compatibility
+  const getIconColorClass = (type: string) => {
+    switch (type) {
+      case "figma":
+        return "text-purple-9";
+      case "task":
+        return "text-blue-9";
+      case "external":
+      default:
+        return "text-gray-9";
     }
   };
 
@@ -114,7 +127,7 @@ export const TaskRefUrls: React.FC<TaskRefUrlsProps> = ({
                   <Icon
                     name={getIconForType(refUrl.type)}
                     size={16}
-                    className={`text-${getColorForType(refUrl.type)}-9 flex-shrink-0`}
+                    className={`${getIconColorClass(refUrl.type)} flex-shrink-0`}
                   />
                   <Text
                     size="2"

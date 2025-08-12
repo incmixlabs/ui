@@ -23,8 +23,51 @@ const CONSTANTS = {
   INITIAL_WIDTH: 120
 } as const
 
-// Memoized URL regex to avoid recreation on every render
-const URL_REGEX = /(https?:\/\/[^\s]+|(?:www\.|[a-zA-Z0-9-]+\.)(?:[a-zA-Z]{2,}|co\.uk|com\.au)\/[^\s]*|(?:figma\.com|youtube\.com|github\.com|docs\.google\.com)[^\s]*)/gi
+// Robust URL validation using URL constructor
+const isValidUrl = (string: string): boolean => {
+  try {
+    const url = new URL(string.startsWith('http') ? string : `https://${string}`)
+    return ['http:', 'https:'].includes(url.protocol)
+  } catch {
+    return false
+  }
+}
+
+// Sanitize URL to prevent XSS
+const sanitizeUrl = (url: string): string => {
+  try {
+    const parsed = new URL(url.startsWith('http') ? url : `https://${url}`)
+    // Only allow http and https protocols
+    if (!['http:', 'https:'].includes(parsed.protocol)) {
+      throw new Error('Invalid protocol')
+    }
+    return parsed.toString()
+  } catch {
+    return ''
+  }
+}
+
+// Extract potential URLs from text using a simple word-based approach
+const extractPotentialUrls = (text: string): string[] => {
+  // Split by whitespace and filter for strings that might be URLs
+  const words = text.split(/\s+/)
+  return words.filter(word => {
+    // Basic heuristics for URL-like strings
+    return (
+      word.startsWith('http://') ||
+      word.startsWith('https://') ||
+      word.includes('.com') ||
+      word.includes('.org') ||
+      word.includes('.net') ||
+      word.includes('.io') ||
+      word.includes('.co') ||
+      word.includes('figma.com') ||
+      word.includes('github.com') ||
+      word.includes('youtube.com') ||
+      word.includes('docs.google.com')
+    )
+  })
+}
 
 // Match the exact card styles from task-card component for perfect visual consistency
 const cardStyles = {
@@ -82,33 +125,37 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
 
 
 
-  // Utility function to process URLs from text - fixed stale closure issue
+  // Utility function to process URLs from text - using secure URL validation
   const processUrlsFromText = useCallback((text: string, currentUrls: TaskRefUrl[]): UrlProcessingResult => {
     const newUrls: TaskRefUrl[] = []
     let cleanTitle = text
     
-    // Extract all URLs using memoized regex
-    const matches = Array.from(text.matchAll(new RegExp(URL_REGEX.source, URL_REGEX.flags)))
+    // Extract potential URLs using word-based detection
+    const potentialUrls = extractPotentialUrls(text)
     
-    matches.forEach((match) => {
-      const url = match[0]
-      
-      // Always remove URL from title text (regardless of badge limit)
-      cleanTitle = cleanTitle.replace(url, ' ')
-      
-      // Only create badge if under the limit
-      const currentUrlCount = currentUrls.length + newUrls.length
-      if (currentUrlCount < CONSTANTS.MAX_URLS) {
-        const normalizedUrl = url.startsWith('http') ? url : `https://${url}`
-        const urlType = detectUrlType(normalizedUrl)
-        const title = generateDefaultTitle(normalizedUrl, urlType, [...currentUrls, ...newUrls])
+    potentialUrls.forEach((potentialUrl) => {
+      // Validate the URL using proper URL constructor
+      if (isValidUrl(potentialUrl)) {
+        // Always remove URL from title text (regardless of badge limit)
+        cleanTitle = cleanTitle.replace(potentialUrl, ' ')
         
-        newUrls.push({
-          id: nanoid(),
-          url: normalizedUrl,
-          title,
-          type: urlType
-        })
+        // Only create badge if under the limit
+        const currentUrlCount = currentUrls.length + newUrls.length
+        if (currentUrlCount < CONSTANTS.MAX_URLS) {
+          // Sanitize the URL
+          const sanitizedUrl = sanitizeUrl(potentialUrl)
+          if (sanitizedUrl) {
+            const urlType = detectUrlType(sanitizedUrl)
+            const title = generateDefaultTitle(sanitizedUrl, urlType, [...currentUrls, ...newUrls])
+            
+            newUrls.push({
+              id: nanoid(),
+              url: sanitizedUrl,
+              title,
+              type: urlType
+            })
+          }
+        }
       }
     })
     
@@ -145,9 +192,10 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
     return Math.min(Math.max(paddedWidth, CONSTANTS.MIN_INPUT_WIDTH), CONSTANTS.MAX_INPUT_WIDTH)
   }, [])
 
-  // Memoized URL detection to avoid recreating regex
+  // URL detection using secure validation
   const containsUrls = useCallback((text: string): boolean => {
-    return new RegExp(URL_REGEX.source, URL_REGEX.flags).test(text)
+    const potentialUrls = extractPotentialUrls(text)
+    return potentialUrls.some(url => isValidUrl(url))
   }, [])
 
   // Handle input changes - for normal typing, just update the input
@@ -175,9 +223,13 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
   const handlePaste = useCallback((e: React.ClipboardEvent<HTMLInputElement>) => {
     const pastedText = e.clipboardData.getData('text')
     if (pastedText) {
-      // Process the pasted text for URLs
-      processInput(titleInput + pastedText)
-      e.preventDefault() // We'll handle the paste manually
+      // Get cursor position for proper insertion
+      const input = e.currentTarget
+      const start = input.selectionStart || 0
+      const end = input.selectionEnd || 0
+      const newText = titleInput.slice(0, start) + pastedText + titleInput.slice(end)
+      processInput(newText)
+      e.preventDefault()
     }
   }, [titleInput, processInput])
 
@@ -291,37 +343,35 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
 
 
 
-  // Memoized URL type icon renderer for performance
-  const renderUrlTypeIcon = useMemo(() => {
-    return (type: "figma" | "task" | "external") => {
-      const iconProps = {
-        className: "h-3.5 w-3.5",
-        'aria-hidden': true // Accessibility improvement
-      }
-      
-      switch (type) {
-        case "figma":
-          return (
-            <svg {...iconProps} viewBox="0 0 24 24" fill="currentColor">
-              <path d="M8 24c2.21 0 4-1.79 4-4v-4H8c-2.21 0-4 1.79-4 4s1.79 4 4 4Z" />
-              <path d="M8 16h4v-4H8v4Z" />
-              <path d="M8 8h4V4H8c-2.21 0-4 1.79-4 4 0 2.21 1.79 4 4 4Z" />
-              <path d="M16 8c2.21 0 4-1.79 4-4s-1.79-4-4-4h-4v8h4Z" />
-              <path d="M16 16c2.21 0 4-1.79 4-4s-1.79-4-4-4h-4v8h4Z" />
-            </svg>
-          )
-        case "task":
-          return (
-            <svg {...iconProps} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          )
-        case "external":
-        default:
-          return <ExternalLink {...iconProps} />
-      }
+  // URL type icon renderer
+  const renderUrlTypeIcon = (type: "figma" | "task" | "external") => {
+    const iconProps = {
+      className: "h-3.5 w-3.5",
+      'aria-hidden': true // Accessibility improvement
     }
-  }, [])
+    
+    switch (type) {
+      case "figma":
+        return (
+          <svg {...iconProps} viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 24c2.21 0 4-1.79 4-4v-4H8c-2.21 0-4 1.79-4 4s1.79 4 4 4Z" />
+            <path d="M8 16h4v-4H8v4Z" />
+            <path d="M8 8h4V4H8c-2.21 0-4 1.79-4 4 0 2.21 1.79 4 4 4Z" />
+            <path d="M16 8c2.21 0 4-1.79 4-4s-1.79-4-4-4h-4v8h4Z" />
+            <path d="M16 16c2.21 0 4-1.79 4-4s-1.79-4-4-4h-4v8h4Z" />
+          </svg>
+        )
+      case "task":
+        return (
+          <svg {...iconProps} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        )
+      case "external":
+      default:
+        return <ExternalLink {...iconProps} />
+    }
+  }
 
   return (
     <Box 
@@ -398,7 +448,8 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
                       >
                         {renderUrlTypeIcon(url.type)}
                         <span 
-                          className={`max-w-[${CONSTANTS.MAX_URL_TITLE_LENGTH}px] truncate`}
+                          style={{ maxWidth: `${CONSTANTS.MAX_URL_TITLE_LENGTH}px` }}
+                          className="truncate"
                           title={url.title} // Tooltip for full title
                         >
                           {url.title}
