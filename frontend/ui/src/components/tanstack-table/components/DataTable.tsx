@@ -1,13 +1,9 @@
-"use client"
 
 import  { useCallback, useMemo, memo, useEffect } from "react";
-
-// Import UI components
 import { TableFilters } from "./TableFilters";
 import { TablePagination } from "./TablePagination";
 import { TableSidebar } from "../sidebar-filter";
 import { TableContent } from "./TableContent";
-// Import EditTableForm and wrap it with memo for better performance
 import EditTableFormComponent from "./EditTableForm";
 const EditTableForm = memo(EditTableFormComponent);
 
@@ -18,7 +14,7 @@ import { useTableColumns } from "../hooks/useTableColumns";
 import { useTableInstance } from "../hooks/useTableInstance";
 import { useTableFeatures } from "../hooks/useTableFeatures";
 import { useTableInlineEdit } from "../hooks/useTableInlineEdit";
-import { Box, Flex, Text } from "@incmix/ui"
+import { Box, Flex } from "@incmix/ui"
 
 
 // Import types
