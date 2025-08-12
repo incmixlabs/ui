@@ -82,7 +82,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, insideDialog
         style={{
           width: '28px',
           height: '28px',
-          backgroundColor: color || 'var(--blue-1)',
+          backgroundColor: color || 'var(--gray-3)',
           border: '1px solid var(--gray-6)',
           borderRadius: '4px',
           cursor: 'pointer'
@@ -103,10 +103,10 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, insideDialog
             top: '0px',
             left: '0px',
             padding: '12px',
-            backgroundColor: 'var(--blue-1)',
+            backgroundColor: 'var(--gray-1)',
             borderRadius: '12px',
             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            border: '1px solid var(--blue-1)',
+            border: '1px solid var(--gray-6)',
             zIndex: 9999,
             width: '200px'
           }}

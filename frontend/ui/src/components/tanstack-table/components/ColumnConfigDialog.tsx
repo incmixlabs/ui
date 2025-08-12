@@ -71,10 +71,7 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
         ])
       }
       
-      // Initialize strictDropdown value from meta or default to true
-      // Using explicit check against false to ensure default is true
       const isStrictMode = column.meta?.strictDropdown !== false;
-      console.log('Loading strictDropdown value:', isStrictMode);
       setStrictDropdown(isStrictMode);
     }
   }, [column])

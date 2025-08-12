@@ -293,7 +293,7 @@ export const DropdownCell: React.FC<{
   if (displayStyle === 'plain') {
     const displayText = finalOption.label || value || 'No Value';
     return (
-      <div className={`inline-flex items-center gap-2 ${sizeClasses[size]} text-gray-1 cursor-pointer`}>
+      <div className={`inline-flex items-center gap-2 ${sizeClasses[size]} text-gray-12 cursor-pointer`}>
         <span>{displayText}</span>
         <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
