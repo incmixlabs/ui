@@ -31,7 +31,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, insideDialog
 
   const colorPalette = [
     'var(--sky-9)', 'var(--green-9)', 'var(--red-9)', 'var(--yellow-9)', 'var(--plum-9)', 'var(--teal-9)',
-    'var(--pink-9)', 'var(--indigo-9)', 'var(--amber-9)', 'var(--orange-9)', 'var(--purple-9)', 'var(--teal-9)'
+    'var(--pink-9)', 'var(--indigo-9)', 'var(--amber-9)', 'var(--orange-9)', 'var(--purple-9)', 'var(--mint-9)'
   ];
   
   const handleColorSelect = (selectedColor: string) => {
@@ -132,7 +132,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, insideDialog
                 style={{
                   ...colorOptionStyle,
                   backgroundColor: c,
-                  border: c === color ? '2px solid var(--gray-1)' : '1px solid var(--gray-12)',
+                  border: c === color ? '2px solid var(--gray-12)' : '1px solid var(--gray-6)',
                   ...(hoveredColor === c ? colorOptionHoverStyle : {})
                 }}
               />

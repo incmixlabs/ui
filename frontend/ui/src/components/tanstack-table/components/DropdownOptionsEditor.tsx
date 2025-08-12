@@ -18,7 +18,7 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
   const [newOption, setNewOption] = useState<DropdownOption>({
     label: '',
     value: '',
-    color: 'var(--blue-1)'
+    color: 'var(--blue-5)'
   });
   
   // State for validation errors

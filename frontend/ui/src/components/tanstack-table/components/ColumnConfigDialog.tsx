@@ -1,8 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Dialog, Flex, Box, Text, Button, Select } from "@radix-ui/themes"
-import { X } from "lucide-react"
+import { Dialog, Flex, Box, Text, Button, Select } from "@incmix/ui"
 import { DropdownOption } from "../cell-renderers"
 import DropdownOptionsEditor from "./DropdownOptionsEditor"
 

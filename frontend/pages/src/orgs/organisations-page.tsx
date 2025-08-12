@@ -11,15 +11,12 @@ import {
 } from "@incmix/ui/base"
 import {
   TanstackDataTable as DataTable,
-  TaskStatusDemo,
 } from "@incmix/ui/tanstack-table"
 import type { Organization } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
-import ColorPicker from "../../../ui/src/components/tanstack-table/components/ColorPicker"
-import DropdownCellEditor from "../../../ui/src/components/tanstack-table/components/DropdownCellEditor"
 import {
   useCreateOrganization,
   useOrganizations,

@@ -350,7 +350,7 @@ export const Avatar: React.FC<{ user: User; size?: number }> = ({ user, size = 2
   
   return (
     <div
-      className="rounded-full flex items-center justify-center text-xs font-medium fex-shrink-0 overflow-hidden"
+      className="rounded-full flex items-center justify-center text-xs font-medium shrink-0 overflow-hidden"
       style={{ width: size, height: size }}
       title={user.name}
     >
@@ -376,7 +376,7 @@ export const AvatarGroup: React.FC<{ users: User[]; maxDisplay?: number }> = ({ 
   if (!users || users.length === 0) {
     return (
       <div className="h-7 w-7 rounded-full bg-gray-1 flex items-center justify-center overflow-hidden border-2 border-white">
-        <span className="text-xs text-gray-1">—</span>
+        <span className="text-xs text-gray-12">—</span>
       </div>
     );
   }
@@ -402,7 +402,7 @@ export const AvatarGroup: React.FC<{ users: User[]; maxDisplay?: number }> = ({ 
           style={{ zIndex: zIndexBase - maxDisplay }}
           title={`+${remaining} more users`}
         >
-          <span className="text-[10px] font-medium text-gray-1">+{remaining}</span>
+          <span className="text-[10px] font-medium text-gray-12">+{remaining}</span>
         </div>
       )}
     </div>
