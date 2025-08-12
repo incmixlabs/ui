@@ -3,7 +3,7 @@ import * as React from "react"
 import { Badge, Theme } from "../../src/base"
 
 const meta: Meta<typeof Badge> = {
-  title: "Components/Badge",
+  title:"Base/Badge",
   component: Badge,
   parameters: {
     layout: "centered",

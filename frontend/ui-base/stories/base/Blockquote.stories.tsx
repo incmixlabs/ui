@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
 import { Blockquote, Flex, Link, Text, Theme } from "../../src/base"
 const meta: Meta<typeof Blockquote> = {
-  title: "Components/Blockquote",
+  title:"Base/Blockquote",
   component: Blockquote,
   parameters: {
     layout: "centered",

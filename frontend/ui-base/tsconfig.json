@@ -1,6 +1,6 @@
 {
   "extends": "@incmix/config/react.json",
-  "include": ["src/**/*", "radix-ui/**/*"],
+  "include": ["src/**/*", "radix-ui/**/*", "shadcn/**/*"],
   "exclude": [
     "node_modules",
     "dist",
@@ -10,7 +10,6 @@
     ".next",
     ".cache",
     "stories",
-    "shadcn",
     "src/preset.ts"
   ],
   "compilerOptions": {
@@ -24,7 +23,10 @@
       "@/radix-ui": ["./radix-ui/components"],
       "@/radix-ui/*": ["./radix-ui/components/*"],
       "@/shadcn": ["./shadcn"],
-      "@/shadcn/*": ["./shadcn/*"]
+      "@/shadcn/*": ["./shadcn/*"],
+      "@/shadcn-ui/*": ["./shadcn/components/ui/*"],
+      "@shadcn/*": ["./shadcn/*"],
+      "shadcn/*": ["./shadcn/*"]
     }
   }
 }

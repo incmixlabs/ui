@@ -3,7 +3,7 @@ import * as React from "react"
 import { Heading, Theme } from "../../src/base" // Adjust the import path as necessary
 
 const meta: Meta<typeof Heading> = {
-  title: "Components/Heading",
+  title:"Base/Heading",
   component: Heading,
   parameters: {
     layout: "centered",

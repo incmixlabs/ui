@@ -11,7 +11,7 @@ import {
 } from "../../src/base" // Adjust the import path as necessary
 
 const meta: Meta<typeof Popover.Root> = {
-  title: "Components/Popover",
+  title:"Base/Popover",
   component: Popover.Root,
   parameters: {
     layout: "centered",

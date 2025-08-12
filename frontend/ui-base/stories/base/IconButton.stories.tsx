@@ -3,7 +3,7 @@ import * as React from "react"
 import { Flex, IconButton, Text, Theme } from "../../src/base" // Adjust the import path as necessary
 
 const meta: Meta<typeof IconButton> = {
-  title: "Components/IconButton",
+  title:"Base/IconButton",
   component: IconButton,
   parameters: {
     layout: "centered",

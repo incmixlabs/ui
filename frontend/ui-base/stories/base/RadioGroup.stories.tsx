@@ -3,7 +3,7 @@ import * as React from "react"
 import { Flex, RadioGroup, Text, Theme } from "../../src/base" // Adjust the import path as necessary
 
 const meta: Meta<typeof RadioGroup.Root> = {
-  title: "Components/RadioGroup",
+  title:"Base/RadioGroup",
   component: RadioGroup.Root,
   parameters: {
     layout: "centered",

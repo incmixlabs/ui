@@ -3,7 +3,7 @@ import * as React from "react"
 import { Flex, Link, Text, Theme } from "../../src/base" // Adjust the import path as necessary
 
 const meta: Meta<typeof Link> = {
-  title: "Components/Link",
+  title:"Base/Link",
   component: Link,
   parameters: {
     layout: "centered",

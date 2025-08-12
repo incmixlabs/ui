@@ -3,7 +3,7 @@ import * as React from "react"
 import { Flex, Slider, Text, Theme } from "../../src/base"
 
 const meta: Meta<typeof Slider> = {
-  title: "Components/Slider",
+  title:"Base/Slider",
   component: Slider,
   parameters: {
     layout: "centered",

@@ -28,7 +28,8 @@ const config: StorybookConfig = {
         ...config.resolve.alias,
         "@/src": resolve(__dirname, "../src"),
         "@/base": resolve(__dirname, "../src/base"),
-        "@/radix-ui": resolve(__dirname, "../radix-ui"),
+        "@/radix-ui": resolve(__dirname, "../radix-ui/components"),
+        "@/shadcn-ui": resolve(__dirname, "../shadcn/components/ui"),
         "@/shadcn": resolve(__dirname, "../shadcn"),
       }
     }

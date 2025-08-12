@@ -3,7 +3,7 @@ import * as React from "react"
 import { Checkbox, Flex, Text, Theme } from "../../src/base"
 
 const meta: Meta<typeof Checkbox> = {
-  title: "Components/Checkbox",
+  title:"Base/Checkbox",
   component: Checkbox,
   parameters: {
     layout: "centered",

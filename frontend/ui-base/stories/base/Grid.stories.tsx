@@ -3,7 +3,7 @@ import * as React from "react"
 import { Avatar, Box, Button, Flex, Grid, Text, Theme } from "../../src/base" // Adjust the import path as necessary
 
 const meta: Meta<typeof Grid> = {
-  title: "Components/Grid",
+  title:"Base/Grid",
   component: Grid,
   parameters: {
     layout: "centered",

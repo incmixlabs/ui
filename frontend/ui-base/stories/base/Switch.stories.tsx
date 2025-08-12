@@ -3,7 +3,7 @@ import * as React from "react"
 import { Flex, Switch, Text, Theme } from "../../src/base"
 
 const meta: Meta<typeof Switch> = {
-  title: "Components/Switch",
+  title:"Base/Switch",
   component: Switch,
   parameters: {
     layout: "centered",
