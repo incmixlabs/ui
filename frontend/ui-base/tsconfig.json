@@ -1,7 +1,18 @@
 {
   "extends": "@incmix/config/react.json",
   "include": ["src/**/*", "radix-ui/**/*"],
-  "exclude": ["node_modules", "dist", "build", "coverage", "storybook-static", ".next", ".cache", "stories", "shadcn", "src/preset.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    "storybook-static",
+    ".next",
+    ".cache",
+    "stories",
+    "shadcn",
+    "src/preset.ts"
+  ],
   "compilerOptions": {
     "types": ["@types/wicg-file-system-access", "vite/client"],
     "rootDir": ".",
