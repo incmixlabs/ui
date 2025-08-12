@@ -1,7 +1,6 @@
 import { LoadingPage } from "@common"
 import { I18n } from "@incmix/pages/i18n"
-import { ReactiveButton, toast } from "@incmix/ui"
-import { Box, Flex, Heading, Text } from "@incmix/ui"
+import { Box, Heading, ReactiveButton, Text, toast } from "@incmix/ui"
 import AutoForm from "@incmix/ui/auto-form"
 import { AUTH_API_URL } from "@incmix/ui/constants"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -109,21 +108,8 @@ function ForgotPasswordForm() {
 }
 
 function ForgotPasswordPage() {
-  const queryClient = useQueryClient()
   const navigate = useNavigate()
   const { authUser, isLoading, isError } = useAuth()
-
-  useEffect(() => {
-    const setupListener = setupGoogleAuthCallbackListener(queryClient)
-
-    if (!setupListener) return
-
-    const cleanup = setupListener()
-
-    return () => {
-      if (cleanup) cleanup()
-    }
-  }, [queryClient])
 
   useEffect(() => {
     if (authUser && !isLoading && !isError) {

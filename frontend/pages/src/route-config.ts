@@ -18,6 +18,7 @@ import {
   Notebook,
 } from "lucide-react"
 import EmailVerificationRoute from "./auth/routes/email-verification"
+import ForgotPasswordRoute from "./auth/routes/forgot-password"
 import GoogleAuthCallbackRoute from "./auth/routes/google-auth-callback"
 import LoginRoute from "./auth/routes/login"
 import ResetPasswordRoute from "./auth/routes/reset-password"
@@ -31,6 +32,7 @@ import LoadingRoute from "./common/routes/loading"
 import NotFoundRoute from "./common/routes/not-found"
 import RootRoute from "./common/routes/root"
 import DashboardHomeRoute from "./dashboard/routes/dashboard-home"
+import DynamicDashboardRoute from "./dashboard/routes/dynamic-dashboard"
 import FileManagerRoute from "./file-manager/routes/index"
 import NotesRoute from "./notes/routes/index"
 import OnboardingRoute from "./onboarding/routes/onboarding"
@@ -270,12 +272,16 @@ const ROUTES_CONFIG: RouteConfig[] = [
     route: TauriGoogleAuthCallbackRoute,
     role: ROUTE_ACCESS.PUBLIC,
   },
-  // Fallbacks
-  // {
-  //   path: NotFoundRoute.path,
-  //   route: NotFoundRoute,
-  //   access: ROUTE_ACCESS.PUBLIC,
-  // },
+  {
+    path: "/forgot-password",
+    route: ForgotPasswordRoute,
+    role: ROUTE_ACCESS.PUBLIC,
+  },
+  {
+    path: "/dashboard/$projectId",
+    route: DynamicDashboardRoute,
+    role: ROUTE_ACCESS.MEMBER,
+  },
   { path: "/", route: IndexRoute, role: ROUTE_ACCESS.PUBLIC },
 ]
 

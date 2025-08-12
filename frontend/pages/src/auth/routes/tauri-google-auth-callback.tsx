@@ -1,10 +1,10 @@
 "use client"
-import { RootRoute } from "@common"
 import { createRoute, lazyRouteComponent } from "@tanstack/react-router"
+import RootRoute from "../../common/routes/root"
 
 export default createRoute({
   getParentRoute: () => RootRoute,
-  path: "auth/google/tauri-callback",
+  path: "/auth/google/tauri-callback",
   component: lazyRouteComponent(
     () => import("../tauri-google-auth-callback-page")
   ),
