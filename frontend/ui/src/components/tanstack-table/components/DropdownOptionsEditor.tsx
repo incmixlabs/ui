@@ -131,7 +131,7 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
               <Flex key={index} align="center" gap="2" className="relative w-full">
                 <div className="min-w-[40px] flex items-center justify-center">
                   <ColorPicker 
-                    color={option.color || 'var(--blue-1)'} 
+                    color={option.color || 'var(--blue-5)'} 
                     onChange={(color) => handleUpdateOption(index, 'color', color)} 
                   />
                 </div>
@@ -170,7 +170,7 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
         <Flex align="center" gap="2" className="relative w-full">
           <div className="min-w-[40px] flex items-center justify-center">
             <ColorPicker 
-              color={newOption.color || 'var(--blue-1)'} 
+              color={newOption.color || 'var(--blue-5)'} 
               onChange={(color) => setNewOption({...newOption, color})}
             />
           </div>

@@ -83,7 +83,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, insideDialog
           width: '28px',
           height: '28px',
           backgroundColor: color || 'var(--blue-1)',
-          border: '1px solid var(--blue-1)',
+          border: '1px solid var(--gray-6)',
           borderRadius: '4px',
           cursor: 'pointer'
         }}
