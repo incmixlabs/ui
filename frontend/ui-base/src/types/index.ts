@@ -45,6 +45,11 @@ export const extendIconWidth = {
   "8": "40px",
   "9": "44px",
 }
+export type Orientation = "horizontal" | "vertical"
+export const orientation = {
+  horizontal: "horizontal",
+  vertical: "vertical",
+}
 export type Radius = "none" | "small" | "medium" | "large" | "full"
 export const radius = {
   none: "none",

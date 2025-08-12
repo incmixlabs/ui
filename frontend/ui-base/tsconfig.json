@@ -20,6 +20,7 @@
       "@/src/*": ["./src/*"],
       "@/base": ["./src/base"],
       "@/base/*": ["./src/base/*"],
+      "@/elements/*": ["./src/elements/*"],
       "@/radix-ui": ["./radix-ui/components"],
       "@/radix-ui/*": ["./radix-ui/components/*"],
       "@/shadcn": ["./shadcn"],

@@ -26,7 +26,6 @@ export {
 export { Em, type EmProps } from "@/radix-ui"
 export { Flex, type FlexProps } from "@/radix-ui"
 export { Grid, type GridProps } from "@/radix-ui"
-export { Heading, type HeadingProps } from "@/radix-ui"
 export { HoverCard, type HoverCard as HoverCardProps } from "@/radix-ui"
 export { Inset, type InsetProps } from "@/radix-ui"
 export {
