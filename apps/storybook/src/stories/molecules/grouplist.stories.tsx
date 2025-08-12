@@ -12,8 +12,22 @@ const meta: Meta<typeof GroupList> = {
           title: "Theme",
           icon: "circlehollow",
           onClick: () => {
-            const { toggleAppearance } = useAppearanceStore()
-            toggleAppearance()
+parameters: {
+  toolbar: {
+    items: [
+      {
+        title: "Theme",
+        icon: "circlehollow",
+        onClick: (_event, _item, context) => {
+          // update Storybook globals so ThemeWrapper sees the change
+          context.updateGlobals({
+            theme: context.globals.theme === "light" ? "dark" : "light",
+          })
+        },
+      },
+    ],
+  },
+},
           },
         },
       ],
