@@ -24,6 +24,17 @@ const config: StorybookConfig = {
   },
   "typescript": {
     "reactDocgen": false
+  },
+  "viteFinal": async (config) => {
+    config.resolve = {
+      ...config.resolve,
+      alias: {
+        ...config.resolve?.alias,
+        '@tanstack/react-router': require.resolve('./router-mock.js')
+      }
+    }
+    
+    return config
   }
 };
 export default config;
