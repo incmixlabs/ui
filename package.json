@@ -17,7 +17,10 @@
     "typecheck": "turbo typecheck"
   },
   "pnpm": {
-    "neverBuiltDependencies": ["rxdb-premium", "secp256k1"]
+    "neverBuiltDependencies": [
+      "rxdb-premium",
+      "secp256k1"
+    ]
   },
   "engines": {
     "node": ">=22.13.0"
@@ -31,5 +34,8 @@
     "lefthook": "1.10.4",
     "turbo": "2.3.4"
   },
-  "trustedDependencies": ["@biomejs/biome", "core-js-pure"]
+  "trustedDependencies": [
+    "@biomejs/biome",
+    "core-js-pure"
+  ]
 }

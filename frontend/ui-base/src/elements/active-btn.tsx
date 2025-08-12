@@ -1,5 +1,5 @@
-import { Box, Button, Tooltip } from "@incmix/ui/base";
-import { cn } from "@utils";
+import { Box, Button, Tooltip } from "@/base";
+import { cn } from "@/shadcn/lib/utils";
 import type React from "react";
 
 import { useEffect, useRef, useState } from "react";
@@ -82,7 +82,7 @@ export function ActiveBtn({
               data-item-id={item.id}
               onClick={() => handleItemClick(item.id)}
               className={cn(
-                "flex items-center xl:gap-2 gap-1 px-2 py-2 relative z-[2] text-sm font-medium",
+                "relative z-[2] flex items-center gap-1 px-2 py-2 font-medium text-sm xl:gap-2",
                 activeId === item.id ? "text-gray-1" : "text-gray-12",
               )}
               onKeyDown={(e) => {

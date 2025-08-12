@@ -9,8 +9,6 @@ export const SpreadLayout: React.FC<AvatarGroupProps> = ({
   size = "3",
   direction = "left",
 }) => {
-  // @ts-ignore
-  // TBD - UseProfile and AvatarProps mapping
   const { visibleCount, remainingCount } = getVisibleCount(users, maxVisible)
   const visibleUsers = users.slice(0, visibleCount)
 

@@ -4,7 +4,7 @@ import type { Transition } from "motion/react"
 import { motion, useAnimation } from "motion/react"
 import type { HTMLAttributes } from "react"
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react"
-import { cn } from "@utils"
+import { cn } from "@/shadcn/lib/utils"
 
 export interface PenIconHandle {
   startAnimation: () => void

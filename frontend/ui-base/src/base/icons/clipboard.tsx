@@ -1,4 +1,4 @@
-import type { IconProps } from "@/types"
+import type { IconProps } from "@/src/types"
 
 export function ClipBoard({ size = "16", color = "currentColor", ...props }: IconProps) {
   return (

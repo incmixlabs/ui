@@ -2,7 +2,7 @@ import type { Variants } from 'motion/react';
 import { motion, useAnimation } from 'motion/react';
 import type { HTMLAttributes } from 'react';
 import { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
-import { cn } from '@utils';
+import { cn } from '@/shadcn/lib/utils';
 
 export interface DeleteIconHandle {
   startAnimation: () => void;
@@ -18,7 +18,11 @@ const lidVariants: Variants = {
   animate: { y: -1.1 },
 };
 
-const springTransition = {
+const springTransition: {
+  type: 'spring';
+  stiffness: number;
+  damping: number;
+} = {
   type: 'spring',
   stiffness: 500,
   damping: 30,
@@ -76,6 +80,7 @@ const DeleteIcon = forwardRef<DeleteIconHandle, DeleteIconProps>(
           strokeLinecap="round"
           strokeLinejoin="round"
         >
+          <title>Delete icon</title>
           <motion.g
             variants={lidVariants}
             animate={controls}

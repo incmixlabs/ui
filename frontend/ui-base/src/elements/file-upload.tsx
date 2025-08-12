@@ -20,7 +20,7 @@ import {
   useDropzone,
 } from "react-dropzone"
 import { toast } from "@/base"
-import { type Direction, type Orientation, direction as directionOptions, orientation as orientationOptions } from "../types/index"
+import { type Direction, type Orientation, direction as directionOptions, orientation as orientationOptions } from "../types"
 
 type FileUploaderContextType = {
   dropzoneState: DropzoneState
@@ -225,8 +225,8 @@ export const FileUploader = forwardRef<
           removeFileFromSet,
           activeIndex,
           setActiveIndex,
-          orientation,
-          direction
+          orientation: orientation as Orientation,
+          direction: direction as Direction
         }}
       >
         <div

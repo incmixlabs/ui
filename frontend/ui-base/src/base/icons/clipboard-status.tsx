@@ -1,4 +1,4 @@
-import type { IconProps } from "@/types"
+import type { IconProps } from "@/src/types"
 
 export function ClipBoardStatus({
   color = "currentColor",

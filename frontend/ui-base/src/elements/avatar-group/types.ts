@@ -11,8 +11,6 @@ export type Layout = (typeof layouts)[number]
 export type Direction = (typeof directions)[number]
 export type StackOrder = (typeof stackOrders)[number]
 
-export type User = UserProfile
-
 export type AvatarGroupProps = {
   users: AvatarProps[]
   maxVisible?: number

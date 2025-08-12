@@ -1,6 +1,6 @@
 {
   "extends": "@incmix/config/react.json",
-  "include": ["src/**/*", "radix-ui/**/*", "shadcn/**/*"],
+  "include": ["src/**/*"],
   "exclude": [
     "node_modules",
     "dist",
@@ -10,11 +10,16 @@
     ".next",
     ".cache",
     "stories",
-    "src/preset.ts"
+    "src/preset.ts",
+    "shadcn",
+    "radix-ui"
   ],
   "compilerOptions": {
     "types": ["@types/wicg-file-system-access", "vite/client"],
     "rootDir": ".",
+    "baseUrl": ".",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "paths": {
       "@/src": ["./src"],
       "@/src/*": ["./src/*"],
@@ -27,7 +32,11 @@
       "@/shadcn/*": ["./shadcn/*"],
       "@/shadcn-ui/*": ["./shadcn/components/ui/*"],
       "@shadcn/*": ["./shadcn/*"],
-      "shadcn/*": ["./shadcn/*"]
+      "shadcn/*": ["./shadcn/*"],
+      "@sql": ["../store/src/sql"],
+      "@sql/*": ["../store/src/sql/*"],
+      "@incmix/store": ["../store/src"],
+      "@incmix/store/*": ["../store/src/*"]
     }
   }
 }

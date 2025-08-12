@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import { useAppearanceStore } from "@incmix/store"
-=======
-import { useAppearaceStore } from "@incmix/store"
->>>>>>> 4c4194ff (feat: wip)
 import { NewsWidget } from "@incmix/ui/widgets"
 // @ts-nocheck
 import type { Meta, StoryObj } from "@storybook/react"
