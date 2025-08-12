@@ -7,7 +7,6 @@ import {
   Container,
   Dialog,
   Flex,
-  Heading,
   Text,
 } from "@incmix/ui/base"
 import { TanstackDataTable as DataTable } from "@incmix/ui/tanstack-table"
@@ -57,19 +56,16 @@ const CreateOrganizationDialog: React.FC<{
     useCreateOrganization()
   const [formData, setFormData] = useState<Record<string, any>>({})
 
-  // Handle form values change
   const handleValuesChange = (values: any) => {
     setFormData(values)
   }
 
-  // Handle form submission
   const handleSubmit = (data: any) => {
     handleCreateOrganization(data.organizationName, data.organizationHandle, [])
-    setFormData({}) // Reset form
+    setFormData({})
     onCreateOrganization()
   }
 
-  // Add custom validation for the organization handle field
   const fieldConfigWithValidation = {
     ...organizationFormSchema.fieldConfig,
     organizationHandle: {
@@ -87,7 +83,9 @@ const CreateOrganizationDialog: React.FC<{
   return (
     <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
       <Dialog.Content>
-        <Dialog.Title>{t("organizations:createNewOrganization")}</Dialog.Title>
+        <Dialog.Title className="font-semibold">
+          {t("organizations:createNewOrganization")}
+        </Dialog.Title>
         <Dialog.Description className="sr-only">
           {t("organizations:createNewOrganization")}
         </Dialog.Description>
@@ -189,7 +187,6 @@ const OrganizationsPage: React.FC = () => {
           </Flex>
         </CardContainer>
       </Container>
-
       <CreateOrganizationDialog
         isOpen={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}

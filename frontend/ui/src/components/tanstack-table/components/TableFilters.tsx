@@ -4,6 +4,8 @@ import { Check, ChevronDown, ChevronLeft, Download, SlidersHorizontal, X } from 
 import { Button, DropdownMenuWrapper, Input } from "@base";
 import { DataTableFacet } from "../types";
 import { KeyboardShortcutsHelp } from "./KeyboardShortcutsHelp";
+import { Box, Flex, Text } from "@incmix/ui"
+
 
 interface FacetedFilterProps<TData> {
   table: TanStackTable<TData>;
@@ -156,7 +158,7 @@ export const TableFiltersComponent = <TData extends object>({
   }, [table]);
 
   return (
-    <div className="flex items-center py-1 gap-2 flex-wrap">
+    <Flex align={"center"} gap={"2"} className="py-2 flex-wrap">
       {/* Sidebar toggle button */}
       {enableSidebarFilters && onToggleSidebar && (
         <Button
@@ -178,22 +180,22 @@ export const TableFiltersComponent = <TData extends object>({
       )}
 
       {filterColumn && (
-        <div className="flex-1 max-w-sm">
+        <Box className="flex-1 max-w-sm">
           <Input
             placeholder={filterPlaceholder}
             value={inputValue}
             onChange={handleInputChange}
-            className="h-9 border-gray-200 dark:border-gray-800"
+            className="h-9 border-gray-4 bg-gray-2"
           />
-        </div>
+        </Box>
       )}
 
       {facets && facets.length > 0 && (
-        <div className="flex items-center space-x-2">
+        <Flex align={"center"} className="space-x-2">
           {facets.map((facet, index) => (
             <FacetedFilterComponent key={index} table={table} facet={facet} />
           ))}
-        </div>
+        </Flex>
       )}
 
       {isFiltered && (
@@ -203,18 +205,18 @@ export const TableFiltersComponent = <TData extends object>({
           className="h-9 px-2"
         >
           Reset
-          <X className="ml-2 h-4 w-4" />
+          <X className="h-4 w-4" />
         </Button>
       )}
 
-      <div className="ml-auto flex gap-2">
+      <Flex align={"center"} gap={"2"} className="ml-auto">
         {exportOptions?.enabled && exportItems.length > 0 && (
           <DropdownMenuWrapper
             button={{
               label: "Export",
               variant: "outline",
               icon: <Download className="ml-2 h-4 w-4" />,
-              className: "h-9 border-gray-200 dark:border-gray-800"
+              className: "h-9 border-gray-10"
             }}
             items={exportItems}
             content={{
@@ -225,7 +227,7 @@ export const TableFiltersComponent = <TData extends object>({
         
         {/* Show keyboard shortcuts help when inline editing is enabled */}
         {enableInlineCellEdit && (
-          <KeyboardShortcutsHelp className="mr-2" />
+          <KeyboardShortcutsHelp />
         )}
         
         {visibilityItems?.length > 0 && (
@@ -234,7 +236,7 @@ export const TableFiltersComponent = <TData extends object>({
               label: "Columns",
               variant: "outline",
               icon: <ChevronDown className="ml-2 h-4 w-4" />,
-              className: "h-9 border-gray-200 dark:border-gray-800"
+              className: "h-9 border-gray-10"
             }}
             items={visibilityItems}
             content={{
@@ -242,8 +244,8 @@ export const TableFiltersComponent = <TData extends object>({
             }}
           />
         )}
-      </div>
-    </div>
+      </Flex>
+    </Flex>
   );
 };
 

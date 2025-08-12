@@ -12,7 +12,7 @@ import { DataTable } from "../components/DataTable"
 import { EyeIcon, EditIcon } from "lucide-react"
 import { RowAction } from "../types"
 import { ColumnConfigDialog, ColumnConfig } from "../components/ColumnConfigDialog"
-
+import {Box, Heading} from "@incmix/ui"
 // Extended column type to include custom properties
 interface ExtendedColumnConfig extends ColumnConfig {
   _originalHeading?: string;
@@ -489,15 +489,14 @@ const TASK_TABLE_COLUMNS: ExtendedColumnConfig[] = [
   }
 ]
 
-// Filter definitions
 const TASK_TABLE_FACETS = [
   {
     column: "status",
     title: "Task Status",
     options: [
-      { label: "To Do", value: "todo", color: "#93c5fd" }, // Match our dropdown colors
-      { label: "Doing", value: "doing", color: "#fcd34d" },
-      { label: "Done", value: "done", color: "#86efac" }
+      { label: "To Do", value: "todo", color: "var(--blue-5)" }, 
+      { label: "Doing", value: "doing", color: "var(--yellow-5)" },
+      { label: "Done", value: "done", color: "var(--green-5)" }
     ]
   },
   {
@@ -771,8 +770,8 @@ const TaskStatusDemo = () => {
   }, [columns, handleHeaderDoubleClick]);
 
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-4">Task Management Dashboard</h1>
+    <Box className="container mx-auto py-10">
+      <Heading className="mb-4" variant="sectionTitle">Task Management Dashboard</Heading>
 
       {/* Column configuration dialog */}
       <ColumnConfigDialog
@@ -780,7 +779,7 @@ const TaskStatusDemo = () => {
         onClose={() => setIsColumnConfigOpen(false)}
         column={selectedColumn}
         onSave={handleSaveColumnConfig}
-        tableData={tasks} // Pass table data to track values in use
+        tableData={tasks} 
       />
 
       <DataTable
@@ -801,7 +800,7 @@ const TaskStatusDemo = () => {
         inlineEditableColumns={["name", "email", "joinDate", "status", "tags"]}
         onCellEdit={handleCellEdit}
       />
-    </div>
+    </Box>
   )
 }
 

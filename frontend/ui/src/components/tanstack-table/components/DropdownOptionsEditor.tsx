@@ -14,11 +14,11 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
   onChange,
   valuesInUse = []
 }) => {
-  // State for new option being added
+  
   const [newOption, setNewOption] = useState<DropdownOption>({
     label: '',
     value: '',
-    color: '#93c5fd' // Default color (light blue)
+    color: 'var(--blue-5)'
   });
   
   // State for validation errors
@@ -47,7 +47,7 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
     setNewOption({
       label: '',
       value: '',
-      color: '#93c5fd'
+      color: 'var(--blue-5)'
     });
     
     // Clear any errors
@@ -129,15 +129,13 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
             
             return (
               <Flex key={index} align="center" gap="2" className="relative w-full">
-                {/* Create a container for the color picker to ensure proper positioning */}
                 <div className="min-w-[40px] flex items-center justify-center">
                   <ColorPicker 
-                    color={option.color || '#93c5fd'} 
+                    color={option.color || 'var(--blue-5)'} 
                     onChange={(color) => handleUpdateOption(index, 'color', color)} 
                   />
                 </div>
                 
-                {/* Option label input */}
                 <input
                   value={option.label}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
@@ -170,10 +168,9 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
         </Text>
         
         <Flex align="center" gap="2" className="relative w-full">
-          {/* Color picker for new option with container */}
           <div className="min-w-[40px] flex items-center justify-center">
             <ColorPicker 
-              color={newOption.color || '#93c5fd'} 
+              color={newOption.color || 'var(--blue-5)'} 
               onChange={(color) => setNewOption({...newOption, color})}
             />
           </div>

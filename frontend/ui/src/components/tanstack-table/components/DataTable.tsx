@@ -18,6 +18,8 @@ import { useTableColumns } from "../hooks/useTableColumns";
 import { useTableInstance } from "../hooks/useTableInstance";
 import { useTableFeatures } from "../hooks/useTableFeatures";
 import { useTableInlineEdit } from "../hooks/useTableInlineEdit";
+import { Box, Flex, Text } from "@incmix/ui"
+
 
 // Import types
 import { DataTableProps } from "../types";
@@ -270,12 +272,12 @@ function DataTableComponent<TData extends object>({
 
   // Memoize the entire component structure for better rendering performance
   const tableComponent = useMemo(() => (
-    <div className={className || "w-full"}>
+    <Box className={className || "w-full"}>
       {/* Main layout with proper alignment */}
-      <div className="flex">
+      <Flex >
         {/* Sidebar (always in DOM, but width is 0 when closed) */}
         {enableSidebarFilters && (
-          <div className={`transition-all duration-300 ease-in-out ${
+          <Box className={`transition-all duration-300 ease-in-out ${
             sidebarOpen ? "w-64 opacity-100 mr-6" : "w-0 opacity-0 mr-0 overflow-hidden"
           }`}>
             {sidebarOpen && (
@@ -286,11 +288,11 @@ function DataTableComponent<TData extends object>({
                 onToggle={toggleSidebar}
               />
             )}
-          </div>
+          </Box>
         )}
 
         {/* Main content area */}
-        <div className="flex-1">
+        <Box className="flex-1">
           {/* Header section for filters */}
           <TableFilters
             table={table}
@@ -344,8 +346,8 @@ function DataTableComponent<TData extends object>({
               serverPagination={serverPagination}
             />
           )}
-        </div>
-      </div>
+        </Box>
+      </Flex>
 
 
       {/* Edit Dialog */}
@@ -363,7 +365,7 @@ function DataTableComponent<TData extends object>({
           title={editDialogTitle || "Edit Item"}
         />
       )}
-    </div>
+    </Box>
   ), [
     // UI structure and styling
     className,

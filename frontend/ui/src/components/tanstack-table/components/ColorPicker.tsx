@@ -29,21 +29,15 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, insideDialog
   const buttonRef = useRef<HTMLDivElement>(null);
   const popupRef = useRef<HTMLDivElement>(null);
 
-  // Define a simpler color palette for the compact design
   const colorPalette = [
-    // Row 1
-    '#0096FF', '#1CAC78', '#FF5252', '#FFD700', '#9370DB', '#20B2AA',
-    // Row 2
-    '#E75480', '#4169E1', '#BFFF00', '#FF7F50', '#8A2BE2', '#00CED1'
+    'var(--sky-9)', 'var(--green-9)', 'var(--red-9)', 'var(--yellow-9)', 'var(--plum-9)', 'var(--teal-9)',
+    'var(--pink-9)', 'var(--indigo-9)', 'var(--amber-9)', 'var(--orange-9)', 'var(--purple-9)', 'var(--mint-9)'
   ];
   
-  // Handle color selection
   const handleColorSelect = (selectedColor: string) => {
     onChange(selectedColor);
     setShowPicker(false);
   };
-
-  // Update popup position when shown
   useEffect(() => {
     if (showPicker && buttonRef.current && popupRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
@@ -88,8 +82,8 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, insideDialog
         style={{
           width: '28px',
           height: '28px',
-          backgroundColor: color || '#e5e7eb',
-          border: '1px solid #ccc',
+          backgroundColor: color || 'var(--gray-3)',
+          border: '1px solid var(--gray-6)',
           borderRadius: '4px',
           cursor: 'pointer'
         }}
@@ -100,7 +94,6 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, insideDialog
         <div 
           ref={popupRef}
           onClick={(e) => {
-            // Stop propagation to prevent dialog from closing when clicking inside popup
             if (insideDialog) {
               e.stopPropagation();
             }
@@ -110,10 +103,10 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, insideDialog
             top: '0px',
             left: '0px',
             padding: '12px',
-            backgroundColor: 'white',
+            backgroundColor: 'var(--gray-1)',
             borderRadius: '12px',
             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            border: '1px solid #eaeaea',
+            border: '1px solid var(--gray-6)',
             zIndex: 9999,
             width: '200px'
           }}
@@ -129,7 +122,6 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, insideDialog
               <div 
                 key={`color-row1-${i}`}
                 onClick={(e) => {
-                  // Stop propagation to prevent dialog from closing
                   if (insideDialog) {
                     e.stopPropagation();
                   }
@@ -140,7 +132,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, insideDialog
                 style={{
                   ...colorOptionStyle,
                   backgroundColor: c,
-                  border: c === color ? '2px solid #000' : '1px solid #ddd',
+                  border: c === color ? '2px solid var(--gray-12)' : '1px solid var(--gray-6)',
                   ...(hoveredColor === c ? colorOptionHoverStyle : {})
                 }}
               />
@@ -168,7 +160,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({ color, onChange, insideDialog
                 style={{
                   ...colorOptionStyle,
                   backgroundColor: c,
-                  border: c === color ? '2px solid #000' : '1px solid #ddd',
+                  border: c === color ? '2px solid var(--gray-1)' : '1px solid var(--gray-12)',
                   ...(hoveredColor === c ? colorOptionHoverStyle : {})
                 }}
               />
