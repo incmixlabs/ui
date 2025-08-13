@@ -1,7 +1,7 @@
 import { Button, Flex, toast } from "@incmix/ui/base"
+import { DataTable } from "@incmix/ui/tanstack-table"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useCallback, useContext, useMemo, useState } from "react"
-import { DataTable } from "@incmix/ui/tanstack-table"
 import { permissionsContext } from "."
 import { createPermissionSubrows, updateRolesPermissions } from "./actions"
 import { DeleteDialog } from "./delete-dialog"
@@ -19,26 +19,26 @@ const PermissionsTable = () => {
       rawPermissions,
       roles
     )
-    
+
     const flattenedPermissions: any[] = []
-    
+
     const flattenPermission = (permission: any) => {
       const { subRows, subject, action, ...rest } = permission
       const mergedPermission = {
         ...rest,
         resource: `${action} ${subject.toLowerCase()}`,
         subject,
-        action
+        action,
       }
       flattenedPermissions.push(mergedPermission)
-      
+
       if (subRows && subRows.length > 0) {
         subRows.forEach((subRow: any) => {
           flattenPermission(subRow)
         })
       }
     }
-    
+
     transformedPermissions.forEach(flattenPermission)
     return flattenedPermissions
   }, [rawPermissions, roles])
@@ -46,39 +46,39 @@ const PermissionsTable = () => {
   const columns = useMemo(() => {
     const dataTableColumns = [
       {
-        headingName: 'Resource',
-        accessorKey: 'resource',
-        type: 'text',
+        headingName: "Resource",
+        accessorKey: "resource",
+        type: "text",
       },
       // Add columns for each role
-      ...roles.map(role => ({
+      ...roles.map((role) => ({
         headingName: role.name,
         accessorKey: role.name.toLowerCase(),
-        type: 'boolean',
+        type: "boolean",
         cell: ({ row }: any) => {
-          const permission = row.original;
-          const hasPermission = permission[role.name.toLowerCase()];
+          const permission = row.original
+          const hasPermission = permission[role.name.toLowerCase()]
           return (
             <input
               type="checkbox"
-              className="w-4 mx-auto"
+              className="mx-auto w-4"
               checked={hasPermission}
               onChange={(e) => {
-                console.log('Permission changed:', {
+                console.log("Permission changed:", {
                   resource: permission.resource,
                   subject: permission.subject,
                   action: permission.action,
                   role: role.name,
-                  granted: e.target.checked
-                });
+                  granted: e.target.checked,
+                })
               }}
-              />
-          );
-        }
-      }))
-    ];
+            />
+          )
+        },
+      })),
+    ]
 
-    return dataTableColumns;
+    return dataTableColumns
   }, [roles])
 
   const tableData = useMemo(() => {
@@ -104,12 +104,14 @@ const PermissionsTable = () => {
   }, [mutation, changes])
 
   // Handle row selection changes if needed
-  const handleSelectionChange = useCallback((selectedRows: Record<string, boolean>) => {
-    console.log('Selected rows:', selectedRows)
-  }, [])
+  const handleSelectionChange = useCallback(
+    (selectedRows: Record<string, boolean>) => {
+      console.log("Selected rows:", selectedRows)
+    },
+    []
+  )
 
-console.log("tableData",tableData);
-
+  console.log("tableData", tableData)
 
   return (
     <Flex className="px-2 pt-4 pb-4 2xl:p-2" direction="column" gap="3">
