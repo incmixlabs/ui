@@ -47,6 +47,10 @@
         "default": "./dist/esm/elements/*.js"
       }
     },
+    "./styles.css": {
+      "require": "./src/styles/index.css",
+      "import": "./src/styles/index.css"
+    },
     "./pages/*": {
       "require": {
         "types": "./dist/cjs/pages/*.d.ts",
