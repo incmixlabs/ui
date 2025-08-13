@@ -33,10 +33,6 @@
       "@/shadcn-ui/*": ["./shadcn/components/ui/*"],
       "@shadcn/*": ["./shadcn/*"],
       "shadcn/*": ["./shadcn/*"],
-      "@sql": ["../store/src/sql"],
-      "@sql/*": ["../store/src/sql/*"],
-      "@incmix/store": ["../store/src"],
-      "@incmix/store/*": ["../store/src/*"]
     }
   }
 }
