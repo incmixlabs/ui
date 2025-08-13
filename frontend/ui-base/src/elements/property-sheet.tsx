@@ -60,7 +60,12 @@ export function PropertySheet() {
                 min="0"
                 className="rounded-none border-none"
                 value={width}
-                onChange={(e) => setWidth(Number(e.target.value))}
+                onChange={(e) =>
+                  setWidth((prev) => {
+                    const n = Number(e.target.value)
+                    return Number.isFinite(n) && n >= 0 ? n : prev
+                  })
+                }
               />
             </Box>
           </Flex>
@@ -75,7 +80,12 @@ export function PropertySheet() {
                 min="0"
                 className="rounded-none border-none"
                 value={height}
-                onChange={(e) => setHeight(Number(e.target.value))}
+                onChange={(e) =>
+                  setHeight((prev) => {
+                    const n = Number(e.target.value)
+                    return Number.isFinite(n) && n >= 0 ? n : prev
+                  })
+                }
               />
             </Box>
           </Flex>
@@ -106,7 +116,6 @@ export function PropertySheet() {
             <Box className="w-full">
               <Select.Root
                 value={propertyType}
-                defaultValue="json"
                 onValueChange={(value) => setPropertyType(value)}
               >
                 <Select.Trigger />
@@ -145,7 +154,6 @@ export function PropertySheet() {
             <Box className="w-full">
               <Select.Root
                 value={position}
-                defaultValue="left"
                 onValueChange={(value) => setPosition(value)}
               >
                 <Select.Trigger className="border-none shadow-none" />
@@ -164,7 +172,6 @@ export function PropertySheet() {
             <Box className="relative w-full">
               <Select.Root
                 value={theme}
-                defaultValue="light"
                 onValueChange={(value) => setTheme(value)}
               >
                 <Select.Trigger className="border-none shadow-none" />

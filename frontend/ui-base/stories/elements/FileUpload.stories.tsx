@@ -31,7 +31,7 @@ const meta: Meta<typeof FileUploader> = {
       description: "Layout orientation",
     },
     direction: {
-      control: "select", 
+      control: "select",
       options: ["ltr", "rtl"],
       description: "Text direction",
     },
@@ -81,7 +81,7 @@ export const Default: Story = {
           <FileUploaderContent className="mt-4">
             {files.map((file, index) => (
               <FileUploaderItem key={index} index={index} className="bg-gray-50 rounded-md">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-2">
                   <div className="text-lg">📄</div>
                   <div className="flex-1 min-w-0">
                     <Text size="2" weight="medium" className="truncate">
@@ -138,7 +138,7 @@ export const SingleFile: Story = {
         {file && file.length > 0 && (
           <FileUploaderContent className="mt-4">
             <FileUploaderItem index={0} className="bg-blue-50 border border-blue-200 rounded-md">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center gap-2">
                 <div className="text-lg">📄</div>
                 <div className="flex-1">
                   <Text size="2" weight="medium">
@@ -303,7 +303,7 @@ export const RTLDirection: Story = {
           <FileUploaderContent className="mt-4">
             {files.map((file, index) => (
               <FileUploaderItem key={index} index={index} className="bg-orange-50 border border-orange-200 rounded-md">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-2">
                   <div className="text-lg">📁</div>
                   <div>
                     <Text size="2" weight="medium">
@@ -362,7 +362,7 @@ export const CustomDropMessage: Story = {
           <FileUploaderContent className="mt-4">
             {files.map((file, index) => (
               <FileUploaderItem key={index} index={index} className="bg-red-50 border border-red-200 rounded-md">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-2">
                   <div className="text-lg">🎬</div>
                   <div>
                     <Text size="2" weight="medium">
@@ -426,7 +426,7 @@ export const NoReSelect: Story = {
             <FileUploaderContent className="mt-4">
               {files.map((file, index) => (
                 <FileUploaderItem key={index} index={index} className="bg-gray-50 rounded-md">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center gap-2">
                     <div className="text-lg">📄</div>
                     <div>
                       <Text size="2" weight="medium">
@@ -531,8 +531,8 @@ export const ComplexExample: Story = {
                   <div className="flex items-center justify-between w-full">
                     <div className="flex items-center space-x-3">
                       <div className="text-xl">
-                        {file.type.includes('pdf') ? '📕' : 
-                         file.type.includes('image') ? '🖼️' : 
+                        {file.type.includes('pdf') ? '📕' :
+                         file.type.includes('image') ? '🖼️' :
                          file.type.includes('word') ? '📘' : '📄'}
                       </div>
                       <div>
@@ -544,8 +544,8 @@ export const ComplexExample: Story = {
                         </Text>
                       </div>
                     </div>
-                    
-                    <div className="flex items-center space-x-2">
+
+                    <div className="flex items-center gap-2">
                       {uploadStatus[file.name] === 'uploading' && (
                         <div className="text-yellow-600">⏳</div>
                       )}
@@ -565,7 +565,7 @@ export const ComplexExample: Story = {
             <Text size="2" color="gray">
               {files.length} file{files.length !== 1 ? 's' : ''} ready to upload
             </Text>
-            <div className="space-x-2">
+            <div className="gap-2">
               <Button onClick={() => setFiles(null)} variant="outline">
                 Clear All
               </Button>
