@@ -4,7 +4,6 @@ import { useCallback, useContext, useMemo, useState } from "react"
 import { DataTable } from "@incmix/ui/tanstack-table"
 import { permissionsContext } from "."
 import { createPermissionSubrows, updateRolesPermissions } from "./actions"
-import { getColumns } from "./columns"
 import { DeleteDialog } from "./delete-dialog"
 import RoleEditorModal from "./role-editor-modal"
 import type { ColumnAction, PermissionsWithRole } from "./types"
@@ -15,26 +14,40 @@ const PermissionsTable = () => {
   const { changes, setChanges, rawPermissions, roles } =
     useContext(permissionsContext)
 
-  // Transform permissions data with memoization
   const permissions = useMemo(() => {
     const transformedPermissions = createPermissionSubrows(
       rawPermissions,
       roles
     )
-    return transformedPermissions
+    
+    const flattenedPermissions: any[] = []
+    
+    const flattenPermission = (permission: any) => {
+      const { subRows, subject, action, ...rest } = permission
+      const mergedPermission = {
+        ...rest,
+        resource: `${action} ${subject.toLowerCase()}`,
+        subject,
+        action
+      }
+      flattenedPermissions.push(mergedPermission)
+      
+      if (subRows && subRows.length > 0) {
+        subRows.forEach((subRow: any) => {
+          flattenPermission(subRow)
+        })
+      }
+    }
+    
+    transformedPermissions.forEach(flattenPermission)
+    return flattenedPermissions
   }, [rawPermissions, roles])
 
-  // Create DataTable-specific columns
   const columns = useMemo(() => {
     const dataTableColumns = [
       {
         headingName: 'Resource',
-        accessorKey: 'subject',
-        type: 'text',
-      },
-      {
-        headingName: 'Action',
-        accessorKey: 'action',
+        accessorKey: 'resource',
         type: 'text',
       },
       // Add columns for each role
@@ -48,17 +61,18 @@ const PermissionsTable = () => {
           return (
             <input
               type="checkbox"
+              className="w-4 mx-auto"
               checked={hasPermission}
               onChange={(e) => {
-                // Handle permission change
                 console.log('Permission changed:', {
+                  resource: permission.resource,
                   subject: permission.subject,
                   action: permission.action,
                   role: role.name,
                   granted: e.target.checked
                 });
               }}
-            />
+              />
           );
         }
       }))
@@ -67,10 +81,8 @@ const PermissionsTable = () => {
     return dataTableColumns;
   }, [roles])
 
-  // Transform the permissions data to work with DataTable's expectations
   const tableData = useMemo(() => {
-    // Extract just the original data from each permission row
-    return permissions.map(permission => permission.original || permission)
+    return permissions
   }, [permissions])
 
   const queryClient = useQueryClient()
@@ -93,9 +105,11 @@ const PermissionsTable = () => {
 
   // Handle row selection changes if needed
   const handleSelectionChange = useCallback((selectedRows: Record<string, boolean>) => {
-    // Handle selection changes if your permissions table needs it
     console.log('Selected rows:', selectedRows)
   }, [])
+
+console.log("tableData",tableData);
+
 
   return (
     <Flex className="px-2 pt-4 pb-4 2xl:p-2" direction="column" gap="3">
@@ -121,7 +135,7 @@ const PermissionsTable = () => {
         </Flex>
       </Flex>
 
-      {/* DataTable component */}
+      {/* DataTable component - removed expandable rows configuration */}
       <DataTable
         columns={columns}
         data={tableData}
@@ -130,18 +144,11 @@ const PermissionsTable = () => {
         enablePagination={false}
         enableRowSelection={false}
         enableColumnVisibility={false}
-        filterColumn="subject" // Use subject field for filtering permissions
+        filterColumn="resource" // Update filter to use merged resource field
         filterPlaceholder="Search Permissions"
-        // Expandable rows configuration for hierarchical permissions
-        expandableRows={{
-          enabled: true,
-          singleExpand: false, // Allow multiple rows to be expanded
-          getSubRows: (row: PermissionsWithRole) => row.subRows || [],
-        }}
-        onRowSelectionChange={handleSelectionChange}
+        onSelectionChange={handleSelectionChange}
         className="w-full"
         showRowCount={false}
-        // Disable features not needed for permissions
         enableColumnResizing={false}
         enableColumnReordering={false}
       />
