@@ -1,10 +1,17 @@
-// components/auto-form/fields/ref-url-fields.tsx
-import { useState, useCallback } from "react"
-import { Button, Input, FormControl, FormItem, FormMessage, Dialog } from "@/base"
-import { Plus, Trash2, Edit2 } from "lucide-react"
+import {
+  Button,
+  Dialog,
+  FormControl,
+  FormItem,
+  FormMessage,
+  Input,
+} from "@/base"
 import { cn } from "@/utils/cn"
-import { nanoid } from "nanoid"
 import { detectUrlType, generateDefaultTitle } from "@/utils/url-helpers"
+import { Edit2, Plus, Trash2 } from "lucide-react"
+import { nanoid } from "nanoid"
+// components/auto-form/fields/ref-url-fields.tsx
+import { useCallback, useState } from "react"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 
@@ -45,8 +52,10 @@ export default function RefUrlField({
     const newRefUrl: RefUrl = {
       id: nanoid(),
       url: currentUrl.trim(),
-      title: currentTitle.trim() ? currentTitle.trim() : generateDefaultTitle(currentUrl, urlType, refUrls),
-      type: urlType
+      title: currentTitle.trim()
+        ? currentTitle.trim()
+        : generateDefaultTitle(currentUrl, urlType, refUrls),
+      type: urlType,
     }
 
     field.onChange([...refUrls, newRefUrl])
@@ -65,13 +74,15 @@ export default function RefUrlField({
     const urlType = detectUrlType(currentUrl)
 
     field.onChange(
-      refUrls.map(refUrl =>
+      refUrls.map((refUrl) =>
         refUrl.id === editingId
           ? {
               ...refUrl,
               url: currentUrl.trim(),
-              title: currentTitle.trim() ? currentTitle.trim() : generateDefaultTitle(currentUrl, urlType, refUrls),
-              type: urlType
+              title: currentTitle.trim()
+                ? currentTitle.trim()
+                : generateDefaultTitle(currentUrl, urlType, refUrls),
+              type: urlType,
             }
           : refUrl
       )
@@ -86,7 +97,7 @@ export default function RefUrlField({
 
   // Handle removing a URL
   const handleRemoveUrl = (id: string) => {
-    field.onChange(refUrls.filter(refUrl => refUrl.id !== id))
+    field.onChange(refUrls.filter((refUrl) => refUrl.id !== id))
   }
 
   // Start editing a URL
@@ -117,19 +128,31 @@ export default function RefUrlField({
           <path d="M16 16c2.21 0 4-1.79 4-4s-1.79-4-4-4h-4v8h4Z" />
         </svg>
       )
-    } else if (type === "task") {
+    }
+    if (type === "task") {
       return (
-        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          className="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       )
-    } else {
-      return (
-        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-        </svg>
-      )
     }
+    return (
+      <svg
+        className="h-4 w-4"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+      </svg>
+    )
   }
 
   return (
@@ -141,7 +164,7 @@ export default function RefUrlField({
           type="button"
           onClick={() => setIsDialogOpen(true)}
           size="1"
-          className="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white"
+          className="bg-blue-600 px-2 py-1 text-white hover:bg-blue-700"
         >
           <Plus size={14} />
           <span className="ml-1">Add URL</span>
@@ -151,30 +174,33 @@ export default function RefUrlField({
       {/* URL List */}
       {refUrls.length > 0 ? (
         <div className="space-y-3">
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            {refUrls.length} reference URL{refUrls.length !== 1 ? 's' : ''} added
+          <div className="text-gray-600 text-sm dark:text-gray-400">
+            {refUrls.length} reference URL{refUrls.length !== 1 ? "s" : ""}{" "}
+            added
           </div>
 
-          <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1 pt-1">
+          <div className="max-h-60 space-y-2.5 overflow-y-auto pt-1 pr-1">
             {refUrls.map((refUrl) => (
               <div
                 key={refUrl.id}
                 className={cn(
-                  "flex items-center gap-3 p-3 rounded-lg border",
+                  "flex items-center gap-3 rounded-lg border p-3",
                   "bg-white dark:bg-gray-800/90",
                   "border-gray-200 dark:border-gray-700",
-                  "shadow-sm hover:shadow-md transition-colors duration-150"
+                  "shadow-sm transition-colors duration-150 hover:shadow-md"
                 )}
               >
                 {/* URL icon by type */}
-                <div className="flex-shrink-0">
-                  {getUrlIcon(refUrl.type)}
-                </div>
+                <div className="flex-shrink-0">{getUrlIcon(refUrl.type)}</div>
 
                 {/* URL information */}
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm truncate">{refUrl.title}</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 truncate">{refUrl.url}</div>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-medium text-sm">
+                    {refUrl.title}
+                  </div>
+                  <div className="truncate text-gray-500 text-xs dark:text-gray-400">
+                    {refUrl.url}
+                  </div>
                 </div>
 
                 {/* Action buttons */}
@@ -184,7 +210,7 @@ export default function RefUrlField({
                     onClick={() => handleStartEdit(refUrl)}
                     size="1"
                     variant="ghost"
-                    className="p-1 h-auto"
+                    className="h-auto p-1"
                   >
                     <Edit2 size={14} />
                   </Button>
@@ -193,7 +219,7 @@ export default function RefUrlField({
                     onClick={() => handleRemoveUrl(refUrl.id)}
                     size="1"
                     variant="ghost"
-                    className="p-1 h-auto text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    className="h-auto p-1 text-red-500 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20"
                   >
                     <Trash2 size={14} />
                   </Button>
@@ -203,7 +229,7 @@ export default function RefUrlField({
           </div>
         </div>
       ) : (
-        <div className="text-sm text-gray-500 dark:text-gray-400">
+        <div className="text-gray-500 text-sm dark:text-gray-400">
           No reference URLs added yet. Click "Add URL" to add one.
         </div>
       )}
@@ -218,8 +244,7 @@ export default function RefUrlField({
             <Dialog.Description>
               {editingId
                 ? "Update the URL and optional title for this reference"
-                : "Add a URL and optional title to reference external content"
-              }
+                : "Add a URL and optional title to reference external content"}
             </Dialog.Description>
           </Dialog.Header>
 
@@ -227,7 +252,7 @@ export default function RefUrlField({
             <div className="space-y-2">
               <FormControl>
                 <div>
-                  <label className="text-sm font-medium" htmlFor="url-input">
+                  <label className="font-medium text-sm" htmlFor="url-input">
                     URL <span className="text-red-500">*</span>
                   </label>
                   <Input
@@ -245,7 +270,7 @@ export default function RefUrlField({
             <div className="space-y-2">
               <FormControl>
                 <div>
-                  <label className="text-sm font-medium" htmlFor="title-input">
+                  <label className="font-medium text-sm" htmlFor="title-input">
                     Title <span className="text-gray-500">(optional)</span>
                   </label>
                   <Input
@@ -255,8 +280,9 @@ export default function RefUrlField({
                     placeholder="Enter a descriptive title"
                     className="mt-1.5"
                   />
-                  <p className="text-xs text-gray-500 mt-1.5">
-                    If left blank, a title will be automatically generated based on the URL
+                  <p className="mt-1.5 text-gray-500 text-xs">
+                    If left blank, a title will be automatically generated based
+                    on the URL
                   </p>
                 </div>
               </FormControl>
@@ -264,18 +290,14 @@ export default function RefUrlField({
           </div>
 
           <Dialog.Footer>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleCancel}
-            >
+            <Button type="button" variant="outline" onClick={handleCancel}>
               Cancel
             </Button>
             <Button
               type="button"
               onClick={editingId ? handleUpdateUrl : handleAddUrl}
               disabled={!currentUrl.trim()}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-blue-600 text-white hover:bg-blue-700"
             >
               {editingId ? "Update" : "Add"}
             </Button>
@@ -285,7 +307,7 @@ export default function RefUrlField({
 
       {/* Help text */}
       {fieldConfigItem?.description && (
-        <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        <div className="mt-1 text-gray-500 text-sm dark:text-gray-400">
           {fieldConfigItem.description}
         </div>
       )}

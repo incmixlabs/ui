@@ -1,5 +1,5 @@
 import type { AvatarProps } from "@/base"
-import type { ExtendSize, Direction, SortOrder } from "@/src/types"
+import type { Direction, ExtendSize, SortOrder } from "@/src/types"
 export const layouts = ["spread", "stack"] as const
 export type Layout = (typeof layouts)[number]
 

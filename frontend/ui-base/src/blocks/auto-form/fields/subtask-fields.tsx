@@ -1,8 +1,8 @@
+import { Button, FormControl, FormItem, FormMessage, Input } from "@/base"
+import { cn } from "@/utils/cn"
+import { Check, Edit2, Plus, Trash2, X } from "lucide-react"
 // components/auto-form/fields/subtask-field.tsx
 import { useState } from "react"
-import { Button, Input, FormControl, FormItem, FormMessage } from "@/base"
-import { Plus, Trash2, Edit2, Check, X } from "lucide-react"
-import { cn } from "@/utils/cn"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 
@@ -30,7 +30,8 @@ export default function SubTaskField({
   const subtasks: SubTask[] = field.value || []
 
   // Generate unique ID
-  const generateId = () => `subtask-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+  const generateId = () =>
+    `subtask-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 
   // Add new subtask
   const handleAddSubtask = () => {
@@ -48,7 +49,7 @@ export default function SubTaskField({
 
   // Remove subtask
   const handleRemoveSubtask = (id: string) => {
-    field.onChange(subtasks.filter(subtask => subtask.id !== id))
+    field.onChange(subtasks.filter((subtask) => subtask.id !== id))
   }
 
   // Start editing subtask
@@ -62,7 +63,7 @@ export default function SubTaskField({
     if (!editingText.trim()) return
 
     field.onChange(
-      subtasks.map(subtask =>
+      subtasks.map((subtask) =>
         subtask.id === editingId
           ? { ...subtask, name: editingText.trim() }
           : subtask
@@ -81,7 +82,7 @@ export default function SubTaskField({
   // Toggle subtask completion (for preview purposes)
   const handleToggleComplete = (id: string) => {
     field.onChange(
-      subtasks.map(subtask =>
+      subtasks.map((subtask) =>
         subtask.id === id
           ? { ...subtask, completed: !subtask.completed }
           : subtask
@@ -118,7 +119,7 @@ export default function SubTaskField({
           onClick={handleAddSubtask}
           disabled={!newSubtaskName.trim()}
           size="2"
-          className="px-3 bg-blue-600 hover:bg-blue-700 text-white "
+          className="bg-blue-600 px-3 text-white hover:bg-blue-700 "
         >
           <Plus size={16} />
         </Button>
@@ -127,19 +128,19 @@ export default function SubTaskField({
       {/* Subtasks list */}
       {subtasks.length > 0 && (
         <div className="space-y-3">
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            {subtasks.length} subtask{subtasks.length !== 1 ? 's' : ''} added
+          <div className="text-gray-600 text-sm dark:text-gray-400">
+            {subtasks.length} subtask{subtasks.length !== 1 ? "s" : ""} added
           </div>
 
-          <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1 pt-1">
+          <div className="max-h-60 space-y-2.5 overflow-y-auto pt-1 pr-1">
             {subtasks.map((subtask) => (
               <div
                 key={subtask.id}
                 className={cn(
-                  "flex items-center gap-3 p-3 rounded-lg border",
+                  "flex items-center gap-3 rounded-lg border p-3",
                   "bg-white dark:bg-gray-800/90",
                   "border-gray-200 dark:border-gray-700",
-                  "shadow-sm hover:shadow-md transition-colors duration-150",
+                  "shadow-sm transition-colors duration-150 hover:shadow-md",
                   subtask.completed && "bg-gray-50 dark:bg-gray-800/60"
                 )}
               >
@@ -148,11 +149,11 @@ export default function SubTaskField({
                   type="checkbox"
                   checked={subtask.completed}
                   onChange={() => handleToggleComplete(subtask.id)}
-                  className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
 
                 {/* Subtask content */}
-                <div className="flex-1 min-w-0">
+                <div className="min-w-0 flex-1">
                   {editingId === subtask.id ? (
                     // Edit mode
                     <div className="flex gap-2">
@@ -186,8 +187,9 @@ export default function SubTaskField({
                     // Display mode
                     <span
                       className={cn(
-                        "block text-sm font-medium",
-                        subtask.completed && "line-through text-gray-400 dark:text-gray-500"
+                        "block font-medium text-sm",
+                        subtask.completed &&
+                          "text-gray-400 line-through dark:text-gray-500"
                       )}
                     >
                       {subtask.name}
@@ -203,7 +205,7 @@ export default function SubTaskField({
                       onClick={() => handleStartEdit(subtask)}
                       size="1"
                       variant="ghost"
-                      className="p-1 h-auto"
+                      className="h-auto p-1"
                     >
                       <Edit2 size={14} />
                     </Button>
@@ -212,7 +214,7 @@ export default function SubTaskField({
                       onClick={() => handleRemoveSubtask(subtask.id)}
                       size="1"
                       variant="ghost"
-                      className="p-1 h-auto text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                      className="h-auto p-1 text-red-500 hover:bg-red-50 hover:text-red-700 dark:hover:bg-red-900/20"
                     >
                       <Trash2 size={14} />
                     </Button>
@@ -226,7 +228,7 @@ export default function SubTaskField({
 
       {/* Help text */}
       {fieldConfigItem?.description && (
-        <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        <div className="mt-1 text-gray-500 text-sm dark:text-gray-400">
           {fieldConfigItem.description}
         </div>
       )}

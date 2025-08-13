@@ -1,7 +1,7 @@
-import { type DefaultValues, useForm } from "react-hook-form"
-import  { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import jsonSchemaToZod from "json-schema-to-zod"
+import { type DefaultValues, useForm } from "react-hook-form"
+import { z } from "zod"
 
 import { Box, Button, Form } from "@/base"
 import { cn } from "@/utils/cn"
@@ -134,7 +134,9 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
             onValuesChangeProp?.(values as Partial<z.infer<SchemaType>>)
             const parsedValues = zodFormSchema.safeParse(values)
             if (parsedValues.success) {
-              onParsedValuesChange?.(parsedValues.data as Partial<z.infer<SchemaType>>)
+              onParsedValuesChange?.(
+                parsedValues.data as Partial<z.infer<SchemaType>>
+              )
             }
           }}
           className={cn("space-y-5", className)}

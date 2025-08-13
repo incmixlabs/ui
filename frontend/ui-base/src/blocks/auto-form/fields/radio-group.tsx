@@ -5,7 +5,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  RadioGroup
+  RadioGroup,
 } from "@/base"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"

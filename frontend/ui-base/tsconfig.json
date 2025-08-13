@@ -15,7 +15,7 @@
     "radix-ui"
   ],
   "compilerOptions": {
-    "types": ["@types/wicg-file-system-access", "vite/client"],
+    "types": ["@types/wicg-file-system-access", "vite/client", "node"],
     "rootDir": ".",
     "baseUrl": ".",
     "module": "ESNext",

@@ -1,7 +1,4 @@
-import {
-  IconButton,
-  Tooltip,
-} from "@/base"
+import { IconButton, Tooltip } from "@/base"
 import { HelpCircle } from "lucide-react"
 
 /**
@@ -19,16 +16,13 @@ function AutoFormTooltip({ fieldConfigItem }: { fieldConfigItem: any }) {
   return (
     <>
       {fieldConfigItem?.description && (
-        <Tooltip content={
-          <p className="text-sm">
-                {fieldConfigItem.description}
-            </p>
-        } >
+        <Tooltip
+          content={<p className="text-sm">{fieldConfigItem.description}</p>}
+        >
           <IconButton variant="ghost">
-            <HelpCircle/>
+            <HelpCircle />
           </IconButton>
         </Tooltip>
-
       )}
     </>
   )

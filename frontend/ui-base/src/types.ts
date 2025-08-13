@@ -9,7 +9,7 @@ export const direction = {
   rtl: "rtl",
 } as const
 export type Direction = keyof typeof direction
-export const sortOrder  = {
+export const sortOrder = {
   asc: "asc",
   desc: "desc",
 } as const

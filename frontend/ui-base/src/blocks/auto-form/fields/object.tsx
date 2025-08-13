@@ -1,7 +1,4 @@
-import {
-  Accordion,
-  FormField
-} from "@/base"
+import { Accordion, FormField } from "@/base"
 
 import { type useForm, useFormContext } from "react-hook-form"
 import type { z } from "zod"
@@ -114,10 +111,10 @@ function renderField({
             fieldConfigItem.fieldType === "multiCheckbox"
               ? INPUT_COMPONENTS.multiCheckbox
               : fieldConfigItem.fieldType === "multipleSelector"
-              ? INPUT_COMPONENTS.multipleSelector
-              : fieldConfigItem.fieldType === "subtask"
-              ? INPUT_COMPONENTS.subtask // ✅ ADD THIS LINE
-              : INPUT_COMPONENTS.multipleSelector
+                ? INPUT_COMPONENTS.multipleSelector
+                : fieldConfigItem.fieldType === "subtask"
+                  ? INPUT_COMPONENTS.subtask // ✅ ADD THIS LINE
+                  : INPUT_COMPONENTS.multipleSelector
 
           const ParentElement = fieldConfigItem.renderParent ?? DefaultParent
 
@@ -322,7 +319,8 @@ export default function AutoFormObject<
 
           let item = shape[fieldName] as z.ZodAny
           item = handleIfZodNumber(item) as z.ZodAny
-          const itemName = (item as any)._def?.description ?? beautifyObjectName(fieldName)
+          const itemName =
+            (item as any)._def?.description ?? beautifyObjectName(fieldName)
           const key = [...path, fieldName].join(".")
           let isDisabled = false
 
@@ -383,7 +381,8 @@ export default function AutoFormObject<
         // Render this field normally
         let item = shape[name] as z.ZodAny
         item = handleIfZodNumber(item) as z.ZodAny
-        const itemName = (item as any)._def?.description ?? beautifyObjectName(name)
+        const itemName =
+          (item as any)._def?.description ?? beautifyObjectName(name)
         const key = [...path, name].join(".")
         let isDisabled = false
 

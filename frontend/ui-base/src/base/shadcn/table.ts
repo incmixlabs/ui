@@ -1,6 +1,15 @@
-import { Table as Root,  TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption, TableHeader } from "@/shadcn-ui/table"
+import {
+  Table as Root,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/shadcn-ui/table"
 
-export const Table ={
+export const Table = {
   Root,
   Header: TableHeader,
   Body: TableBody,

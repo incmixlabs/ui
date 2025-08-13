@@ -1,14 +1,8 @@
-// components/auto-form/fields/ref-url-field.tsx
-import { useState, useEffect } from "react"
-import {
-  Button,
-  Input,
-  FormControl,
-  FormItem,
-  Dialog,
-} from "@/base"
-import { Plus, ExternalLink, Pencil, Trash2, Figma } from "lucide-react"
+import { Button, Dialog, FormControl, FormItem, Input } from "@/base"
 import { cn } from "@/utils/cn"
+import { ExternalLink, Figma, Pencil, Plus, Trash2 } from "lucide-react"
+// components/auto-form/fields/ref-url-field.tsx
+import { useEffect, useState } from "react"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 
@@ -31,7 +25,6 @@ export default function RefUrlField({
   label,
   isRequired,
   field,
-  fieldConfigItem,
 }: AutoFormInputComponentProps) {
   // Local state for URLs - parse from the JSON string or initialize as empty
   const [urls, setUrls] = useState<RefUrl[]>([])
@@ -64,13 +57,15 @@ export default function RefUrlField({
   }
 
   // Generate unique ID
-  const generateId = () => `url-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
+  const generateId = () =>
+    `url-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`
 
   // Detect URL type based on URL string
   const detectUrlType = (url: string): RefUrlType => {
     if (url.includes("figma.com")) {
       return "figma"
-    } else if (
+    }
+    if (
       url.includes("localhost") &&
       (url.includes("taskId=") || url.includes("/tasks"))
     ) {
@@ -81,7 +76,7 @@ export default function RefUrlField({
 
   // Generate default title based on URL type and count
   const generateDefaultTitle = (url: string, type: RefUrlType): string => {
-    const typeCount = urls.filter(u => u.type === type).length + 1
+    const typeCount = urls.filter((u) => u.type === type).length + 1
 
     switch (type) {
       case "figma":
@@ -108,10 +103,8 @@ export default function RefUrlField({
 
     if (editingId) {
       // Edit existing URL
-      const updatedUrls = urls.map(url =>
-        url.id === editingId
-          ? { ...url, url: currentUrl, title, type }
-          : url
+      const updatedUrls = urls.map((url) =>
+        url.id === editingId ? { ...url, url: currentUrl, title, type } : url
       )
       updateFieldValue(updatedUrls)
     } else {
@@ -134,7 +127,7 @@ export default function RefUrlField({
 
   // Remove URL
   const handleRemoveUrl = (id: string) => {
-    updateFieldValue(urls.filter(url => url.id !== id))
+    updateFieldValue(urls.filter((url) => url.id !== id))
   }
 
   // Start editing URL
@@ -172,7 +165,7 @@ export default function RefUrlField({
           setCurrentTitle("")
         }}
         variant="outline"
-        className="w-full py-6 border-dashed justify-center"
+        className="w-full justify-center border-dashed py-6"
       >
         <Plus className="mr-2 h-4 w-4" />
         Add Reference URL
@@ -181,34 +174,34 @@ export default function RefUrlField({
       {/* URLs list */}
       {urls.length > 0 && (
         <div className="space-y-3">
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            {urls.length} URL{urls.length !== 1 ? 's' : ''} added
+          <div className="text-gray-600 text-sm dark:text-gray-400">
+            {urls.length} URL{urls.length !== 1 ? "s" : ""} added
           </div>
 
-          <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1 pt-1">
+          <div className="max-h-60 space-y-2.5 overflow-y-auto pt-1 pr-1">
             {urls.map((url) => (
               <div
                 key={url.id}
                 className={cn(
-                  "flex items-center justify-between gap-3 p-3 rounded-lg border",
+                  "flex items-center justify-between gap-3 rounded-lg border p-3",
                   "bg-white dark:bg-gray-800/90",
                   "dark:border-gray-700"
                 )}
               >
-                <div className="flex items-center gap-3 flex-grow min-w-0">
-                  <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+                <div className="flex min-w-0 flex-grow items-center gap-3">
+                  <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
                     {getUrlIcon(url.type)}
                   </span>
-                  <div className="flex-grow min-w-0">
-                    <p className="font-medium text-gray-900 dark:text-gray-200 truncate">
+                  <div className="min-w-0 flex-grow">
+                    <p className="truncate font-medium text-gray-900 dark:text-gray-200">
                       {url.title}
                     </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                    <p className="truncate text-gray-500 text-sm dark:text-gray-400">
                       {url.url}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 flex-shrink-0">
+                <div className="flex flex-shrink-0 items-center gap-2">
                   <Button
                     type="button"
                     variant="ghost"
@@ -260,8 +253,9 @@ export default function RefUrlField({
             <FormItem>
               <div className="flex flex-col space-y-1">
                 <AutoFormLabel label="Title" isRequired={false} />
-                <p className="text-sm text-muted-foreground">
-                  Optional. If not provided, a title will be generated based on the URL.
+                <p className="text-muted-foreground text-sm">
+                  Optional. If not provided, a title will be generated based on
+                  the URL.
                 </p>
               </div>
               <FormControl>

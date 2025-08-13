@@ -21,9 +21,9 @@ export function beautifyObjectName(string: string) {
  * Get the lowest level Zod type.
  * This will unpack optionals, refinements, etc.
  */
-export function getBaseSchema<
-  ChildType extends z.ZodTypeAny = z.ZodTypeAny,
->(schema: ChildType | z.ZodTransform<ChildType, any>): ChildType | null {
+export function getBaseSchema<ChildType extends z.ZodTypeAny = z.ZodTypeAny>(
+  schema: ChildType | z.ZodTransform<ChildType, any>
+): ChildType | null {
   if (!schema) return null
   if ("innerType" in schema._def) {
     return getBaseSchema(schema._def.innerType as any) as ChildType
@@ -43,7 +43,9 @@ export function getBaseType(schema: z.ZodTypeAny): string {
   const baseSchema = getBaseSchema(schema)
   if (!baseSchema || !baseSchema._def) return ""
   // Handle different Zod versions
-  return (baseSchema._def as any).typeName || (baseSchema as any)._def.typeName || ""
+  return (
+    (baseSchema._def as any).typeName || (baseSchema as any)._def.typeName || ""
+  )
 }
 
 /**
@@ -59,14 +61,10 @@ export function getDefaultValueInZodStack(schema: z.ZodTypeAny): any {
   }
 
   if ("innerType" in typedSchema._def) {
-    return getDefaultValueInZodStack(
-      typedSchema._def.innerType as z.ZodTypeAny
-    )
+    return getDefaultValueInZodStack(typedSchema._def.innerType as z.ZodTypeAny)
   }
   if ("schema" in typedSchema._def) {
-    return getDefaultValueInZodStack(
-      typedSchema._def.schema as z.ZodTypeAny
-    )
+    return getDefaultValueInZodStack(typedSchema._def.schema as z.ZodTypeAny)
   }
 
   return undefined
@@ -114,7 +112,8 @@ export function getObjectFormSchema(
   const schemaType = (schema as any)?._def?.typeName
   if (schemaType === "ZodEffects" || schemaType === "ZodTransform") {
     // Access the underlying schema from transform/effects
-    const innerSchema = (schema as any)?._def?.schema || (schema as any)?._def?.innerType
+    const innerSchema =
+      (schema as any)?._def?.schema || (schema as any)?._def?.innerType
     return getObjectFormSchema(innerSchema)
   }
   return schema as z.ZodObject<any, any>

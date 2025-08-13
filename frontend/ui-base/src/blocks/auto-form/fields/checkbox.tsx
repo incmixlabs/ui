@@ -19,10 +19,7 @@ export default function AutoFormCheckbox({
         </FormLabel>
         <FormControl>
           <Checkbox
-            className={cn(
-              "h-5 w-5 data-[state=checked]:text-white",
-              className
-            )}
+            className={cn("h-5 w-5 data-[state=checked]:text-white", className)}
             checked={field.value}
             onCheckedChange={field.onChange}
             {...fieldProps}

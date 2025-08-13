@@ -2,13 +2,13 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import "../../src/styles/index.css"
 import React, { useState } from "react"
 import { Theme, Box, Text, Flex } from "../../src/base"
-import { LabelDropdownSelector, type LabelOption } from "../../src/elements/dropdown-selector"
-import { 
-  AlertCircle, 
-  Clock, 
-  Flag, 
-  CheckCircle2, 
-  Circle, 
+import { LabelDropdownSelector, type LabelOption } from "../../src/elements/dropdown-select"
+import {
+  AlertCircle,
+  Clock,
+  Flag,
+  CheckCircle2,
+  Circle,
   Timer,
   Zap,
   ArrowUp,
@@ -147,7 +147,7 @@ export const Default: Story = {
           onValueChange={setValue}
           placeholder="Select status..."
         />
-        
+
         {value && (
           <Box
             style={{
@@ -178,7 +178,7 @@ export const PrioritySelector: Story = {
         <Text size="3" weight="medium">
           Task Priority
         </Text>
-        
+
         <LabelDropdownSelector
           options={priorityOptions}
           value={value}
@@ -186,7 +186,7 @@ export const PrioritySelector: Story = {
           placeholder="Select priority..."
           icon={Flag}
         />
-        
+
         <Box
           style={{
             padding: "12px",
@@ -221,9 +221,9 @@ export const WithCustomIcons: Story = {
         completed: CheckCircle2,
         cancelled: AlertCircle,
       }
-      
+
       const IconComponent = iconMap[option.id] || Circle
-      
+
       return <IconComponent className="h-4 w-4" style={{ color: option.color }} />
     }
 
@@ -232,7 +232,7 @@ export const WithCustomIcons: Story = {
         <Text size="3" weight="medium">
           Status with Custom Icons
         </Text>
-        
+
         <LabelDropdownSelector
           options={statusOptions}
           value={value}
@@ -240,7 +240,7 @@ export const WithCustomIcons: Story = {
           placeholder="Select status..."
           renderIcon={customRenderIcon}
         />
-        
+
         {value && (
           <Box
             style={{
@@ -274,7 +274,7 @@ export const WithoutColorDots: Story = {
         <Text size="3" weight="medium">
           Clean Status Selector (No Color Dots)
         </Text>
-        
+
         <LabelDropdownSelector
           options={statusOptions}
           value={value}
@@ -283,7 +283,7 @@ export const WithoutColorDots: Story = {
           showColorDot={false}
           icon={Circle}
         />
-        
+
         <Text size="2" color="gray">
           Color dots are hidden in this example
         </Text>
@@ -305,7 +305,7 @@ export const CustomValueLabel: Story = {
         <Text size="3" weight="medium">
           Custom Value Label
         </Text>
-        
+
         <LabelDropdownSelector
           options={priorityOptions}
           value={value}
@@ -314,7 +314,7 @@ export const CustomValueLabel: Story = {
           valueLabel={customLabel}
           icon={Flag}
         />
-        
+
         <Text size="2" color="gray">
           The trigger shows custom formatted text
         </Text>
@@ -333,7 +333,7 @@ export const CustomStyling: Story = {
         <Text size="3" weight="medium">
           Custom Styled Dropdown
         </Text>
-        
+
         <LabelDropdownSelector
           options={statusOptions}
           value={value}
@@ -342,7 +342,7 @@ export const CustomStyling: Story = {
           className="border-2 border-blue-200 hover:border-blue-300"
           triggerClassName="bg-blue-50 hover:bg-blue-100 text-blue-900"
         />
-        
+
         <Text size="2" color="gray">
           Custom border and background colors
         </Text>
@@ -361,7 +361,7 @@ export const DisabledState: Story = {
         <Text size="3" weight="medium">
           Disabled Dropdown
         </Text>
-        
+
         <LabelDropdownSelector
           options={statusOptions}
           value={value}
@@ -369,7 +369,7 @@ export const DisabledState: Story = {
           placeholder="Select status..."
           disabled={true}
         />
-        
+
         <Text size="2" color="gray">
           This dropdown is disabled and cannot be changed
         </Text>
@@ -392,7 +392,7 @@ export const CustomOptionLabels: Story = {
         <Text size="3" weight="medium">
           Custom Option Labels
         </Text>
-        
+
         <LabelDropdownSelector
           options={[...statusOptions, ...priorityOptions]}
           value={value}
@@ -400,11 +400,11 @@ export const CustomOptionLabels: Story = {
           placeholder="Select any option..."
           getOptionLabel={customGetOptionLabel}
         />
-        
+
         <Text size="2" color="gray">
           Options show both name and type
         </Text>
-        
+
         {value && (
           <Box
             style={{
@@ -436,7 +436,7 @@ export const MultipleSideBySide: Story = {
         <Text size="4" weight="bold">
           Task Management
         </Text>
-        
+
         <Flex direction="row" gap="4" align="center">
           <Flex direction="column" gap="2" align="center">
             <Text size="2" weight="medium">Status</Text>
@@ -448,7 +448,7 @@ export const MultipleSideBySide: Story = {
               icon={Circle}
             />
           </Flex>
-          
+
           <Flex direction="column" gap="2" align="center">
             <Text size="2" weight="medium">Priority</Text>
             <LabelDropdownSelector
@@ -460,7 +460,7 @@ export const MultipleSideBySide: Story = {
             />
           </Flex>
         </Flex>
-        
+
         <Box
           style={{
             padding: "16px",
@@ -501,7 +501,7 @@ export const InteractivePlayground: Story = {
         <Text size="4" weight="bold">
           Interactive Dropdown Selector
         </Text>
-        
+
         {/* Controls */}
         <Box
           style={{
@@ -514,7 +514,7 @@ export const InteractivePlayground: Story = {
           <Text size="3" weight="medium" style={{ marginBottom: "12px", display: "block" }}>
             Configuration
           </Text>
-          
+
           <Flex direction="column" gap="3">
             <Flex direction="row" gap="2" align="center">
               <Text size="2" style={{ minWidth: "80px" }}>Type:</Text>
@@ -536,7 +536,7 @@ export const InteractivePlayground: Story = {
                 <option value="priority">Priority Options</option>
               </select>
             </Flex>
-            
+
             <Flex direction="row" gap="2" align="center">
               <Text size="2" style={{ minWidth: "80px" }}>Placeholder:</Text>
               <input
@@ -552,7 +552,7 @@ export const InteractivePlayground: Story = {
                 }}
               />
             </Flex>
-            
+
             <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <input
                 type="checkbox"
@@ -561,7 +561,7 @@ export const InteractivePlayground: Story = {
               />
               <Text size="2">Show Color Dots</Text>
             </label>
-            
+
             <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <input
                 type="checkbox"
@@ -583,7 +583,7 @@ export const InteractivePlayground: Story = {
           disabled={disabled}
           icon={optionType === "status" ? Circle : Flag}
         />
-        
+
         {/* Results */}
         <Box
           style={{

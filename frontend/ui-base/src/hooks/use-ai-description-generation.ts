@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useDebounce } from './use-debounce';
+import { useEffect } from "react"
+import { useDebounce } from "./use-debounce"
 
 /**
  * Custom hook to handle AI description generation with debouncing
@@ -22,14 +22,14 @@ export function useAIDescriptionGeneration(
   onResetError: () => void
 ): void {
   // Debounce the title input to avoid unnecessary API calls
-  const debouncedTitle = useDebounce(title, 2000);
+  const debouncedTitle = useDebounce(title, 2000)
 
   // Reset error state when title changes
   useEffect(() => {
     if (title && title !== lastProcessedTitle) {
-      onResetError();
+      onResetError()
     }
-  }, [title, lastProcessedTitle, onResetError]);
+  }, [title, lastProcessedTitle, onResetError])
 
   // Generate description when debounced title changes
   useEffect(() => {
@@ -42,7 +42,14 @@ export function useAIDescriptionGeneration(
       debouncedTitle.length > 3 &&
       !hasDescription
     ) {
-      onGenerate(debouncedTitle);
+      onGenerate(debouncedTitle)
     }
-  }, [debouncedTitle, useAI, hasDescription, hadGenerationError, lastProcessedTitle, onGenerate]);
+  }, [
+    debouncedTitle,
+    useAI,
+    hasDescription,
+    hadGenerationError,
+    lastProcessedTitle,
+    onGenerate,
+  ])
 }

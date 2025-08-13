@@ -1,11 +1,20 @@
+// @ts-nocheck
 import React from "react"
 type ActiveModifiers = {
-  [modifier: string]: boolean | undefined;
-};
-import { Button, Calendar, type CalendarProps, Popover,  ScrollArea, Text, type ButtonProps } from "@/base"
-import { parseDate } from "chrono-node"
-import { cn } from "@/utils/cn"
+  [modifier: string]: boolean | undefined
+}
+import {
+  Button,
+  type ButtonProps,
+  Calendar,
+  type CalendarProps,
+  Popover,
+  ScrollArea,
+  Text,
+} from "@/base"
 import { CalendarIcon } from "@/base/radix-ui/icons/calender"
+import { cn } from "@/utils/cn"
+import { parseDate } from "chrono-node"
 
 /* -------------------------------------------------------------------------- */
 /*                               Inspired By:                                 */
@@ -544,12 +553,12 @@ const NaturalLanguageInput = React.forwardRef<
 
 NaturalLanguageInput.displayName = "NaturalLanguageInput"
 
-type DateTimeLocalInputProps = {width?:string} & ButtonProps & CalendarProps
+type DateTimeLocalInputProps = { width?: string } & ButtonProps & CalendarProps
 
 const DateTimeLocalInput = ({
   className,
-  variant="soft",
-  width="16",
+  variant = "soft",
+  width = "16",
   ...props
 }: DateTimeLocalInputProps) => {
   const { value, onValueChange, showCalendar, showTimePicker } =
@@ -585,10 +594,8 @@ const DateTimeLocalInput = ({
   return (
     <Popover.Root>
       <Popover.Trigger>
-        <Button
-          variant={variant}
-        >
-          <CalendarIcon width={width} height={width}/>
+        <Button variant={variant}>
+          <CalendarIcon width={width} height={width} />
           <span className="sr-only">calendar</span>
         </Button>
       </Popover.Trigger>

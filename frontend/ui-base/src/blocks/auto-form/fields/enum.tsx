@@ -1,10 +1,5 @@
 // components/auto-form/fields/enum.tsx - Enhanced with color support
-import {
-  FormControl,
-  FormItem,
-  FormMessage,
-  Select
-} from "@/base"
+import { FormControl, FormItem, FormMessage, Select } from "@/base"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 import { getBaseSchema } from "../utils"
@@ -44,7 +39,7 @@ export default function AutoFormEnum({
   }
   // Finally try to get values from Zod schema
   else {
-    let baseValues
+    let baseValues: any
     try {
       const baseSchema = getBaseSchema(zodItem)
       baseValues = (baseSchema as any)?._def?.values
@@ -64,7 +59,7 @@ export default function AutoFormEnum({
       }
     } catch (e) {
       // Handle case where zodItem doesn't have the expected structure
-      console.warn('Error getting enum values from schema:', e)
+      console.warn("Error getting enum values from schema:", e)
     }
   }
 
@@ -73,11 +68,14 @@ export default function AutoFormEnum({
   }
 
   // Component to render option with color indicator
-  const OptionDisplay = ({ option, isSelected = false }: { option: OptionWithColor, isSelected?: boolean }) => (
+  const OptionDisplay = ({
+    option,
+    isSelected = false,
+  }: { option: OptionWithColor; isSelected?: boolean }) => (
     <div className="flex items-center gap-2">
       {option.color && (
         <div
-          className="w-3 h-3 rounded-full border border-gray-300"
+          className="h-3 w-3 rounded-full border border-gray-300"
           style={{ backgroundColor: option.color }}
         />
       )}
@@ -92,17 +90,19 @@ export default function AutoFormEnum({
     <div className="flex flex-row items-center gap-2">
       <FormItem className="flex flex-row items-center justify-start gap-2 ">
         <AutoFormLabel label={label} isRequired={isRequired} />
-        <FormControl >
+        <FormControl>
           <Select.Root
             onValueChange={field.onChange}
-            value={field.value || ''} // Ensure controlled value
+            value={field.value || ""} // Ensure controlled value
             {...fieldProps}
           >
             <Select.Trigger className={`${fieldProps.className} min-w-[140px]`}>
               {selectedOption ? (
                 <OptionDisplay option={selectedOption} isSelected />
               ) : (
-                <span className="text-gray-500">{fieldProps.placeholder || `Select ${label.toLowerCase()}...`}</span>
+                <span className="text-gray-500">
+                  {fieldProps.placeholder || `Select ${label.toLowerCase()}...`}
+                </span>
               )}
             </Select.Trigger>
 

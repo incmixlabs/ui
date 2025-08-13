@@ -1,9 +1,4 @@
-import {
-  FormControl,
-  FormItem,
-  FormMessage,
-  TextArea
-} from "@/base"
+import { FormControl, FormItem, FormMessage, TextArea } from "@/base"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 

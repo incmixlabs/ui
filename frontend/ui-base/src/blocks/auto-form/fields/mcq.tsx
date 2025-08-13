@@ -1,21 +1,21 @@
-import { FormControl, FormItem, FormLabel, FormMessage } from "@/base";
-import { cn } from "@/utils/cn";
+import { FormControl, FormItem, FormLabel, FormMessage } from "@/base"
+import { cn } from "@/utils/cn"
 import type {
   AutoFormInputComponentProps,
   MCQLayoutType,
   MCQOption,
   MCQSizeType,
-} from "../types";
+} from "../types"
 
 const sizeStyles: Record<MCQSizeType, string> = {
   sm: "min-h-[36px] text-sm px-3",
   md: "min-h-[42px] text-base px-4",
   lg: "min-h-[50px] text-lg px-5",
-};
+}
 
 const getLayoutClass = (layout: MCQLayoutType, gridCols = 2): string => {
   // Add w-full to base classes
-  const baseClasses = "gap-2 w-full";
+  const baseClasses = "gap-2 w-full"
   switch (layout) {
     case "grid":
       return cn(
@@ -27,33 +27,30 @@ const getLayoutClass = (layout: MCQLayoutType, gridCols = 2): string => {
             ? "grid grid-cols-1 sm:grid-cols-3"
             : gridCols === 4
               ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
-              : "grid grid-cols-1 sm:grid-cols-2",
-      );
+              : "grid grid-cols-1 sm:grid-cols-2"
+      )
     case "row":
-      return cn(baseClasses, "flex flex-row flex-wrap justify-between");
+      return cn(baseClasses, "flex flex-row flex-wrap justify-between")
     case "column":
-      return cn(baseClasses, "flex flex-col");
+      return cn(baseClasses, "flex flex-col")
     default:
-      return cn(
-        baseClasses,
-        "grid grid-cols-1 sm:grid-cols-2",
-      );
+      return cn(baseClasses, "grid grid-cols-1 sm:grid-cols-2")
   }
-};
+}
 
 const getOptionWidthClass = (layout: MCQLayoutType): string => {
   switch (layout) {
     case "grid":
-      return "w-full";
+      return "w-full"
     case "row":
       // For row layout, ensure items take up appropriate space
-      return "flex-grow-0 w-[48%]"; // Use percentage width instead of min-width
+      return "flex-grow-0 w-[48%]" // Use percentage width instead of min-width
     case "column":
-      return "w-full";
+      return "w-full"
     default:
-      return "w-full";
+      return "w-full"
   }
-};
+}
 
 export default function AutoFormMCQ({
   label,
@@ -61,18 +58,17 @@ export default function AutoFormMCQ({
   field,
   fieldConfigItem,
 }: AutoFormInputComponentProps) {
-  const options = (fieldConfigItem.inputProps?.options || []) as MCQOption[];
-  const layout = (fieldConfigItem.inputProps?.layout ||
-    "grid") as MCQLayoutType;
-  const gridCols = fieldConfigItem.inputProps?.gridCols || 2;
+  const options = (fieldConfigItem.inputProps?.options || []) as MCQOption[]
+  const layout = (fieldConfigItem.inputProps?.layout || "grid") as MCQLayoutType
+  const gridCols = fieldConfigItem.inputProps?.gridCols || 2
   const optionSize = (fieldConfigItem.inputProps?.optionSize ||
-    "md") as MCQSizeType;
+    "md") as MCQSizeType
 
   return (
     <div className="flex w-full flex-col space-y-4">
       <FormItem className="w-full">
         <div className="mb-4">
-          <FormLabel className="font-medium text-gray-800 dark:text-white text-xl">
+          <FormLabel className="font-medium text-gray-800 text-xl dark:text-white">
             {label}
             {isRequired && <span className="text-destructive"> *</span>}
           </FormLabel>
@@ -112,10 +108,10 @@ export default function AutoFormMCQ({
                         "hover:border-blue-100 hover:bg-blue-50 dark:hover:border-blue-900 dark:hover:bg-blue-900/30",
                         "peer-checked:border-blue-500 peer-checked:bg-blue-500 peer-checked:text-white",
                         "focus-within:ring-2 focus-within:ring-blue-500",
-                        "font-medium text-gray-600 dark:text-gray-300 dark:border-gray-700",
+                        "font-medium text-gray-600 dark:border-gray-700 dark:text-gray-300",
                         "dark:bg-gray-800/50",
                         sizeStyles[optionSize],
-                        layout === "row" ? "w-full" : "min-w-[120px]",
+                        layout === "row" ? "w-full" : "min-w-[120px]"
                       )}
                     >
                       {option.label}
@@ -129,5 +125,5 @@ export default function AutoFormMCQ({
         <FormMessage className="dark:text-red-400" />
       </FormItem>
     </div>
-  );
+  )
 }

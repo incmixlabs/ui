@@ -2,11 +2,7 @@ import { useEffect, useState } from "react"
 import React from "react"
 import { useFormContext } from "react-hook-form"
 
-import {  FormControl,
-  FormItem,
-  FormMessage,
-  Input
-} from "@/base"
+import { FormControl, FormItem, FormMessage, Input } from "@/base"
 import { Eye, EyeOff } from "lucide-react"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"
@@ -90,12 +86,9 @@ export default function AutoFormInput({
           <Input
             {...restFieldProps}
             type={inputType}
-            className={`h-10 w-full rounded-md border border-gray-300 bg-white text-gray-900
-              dark:border-0 dark:bg-zinc-950 dark:text-white
-              ${icon ? "pl-10" : "px-4"}
+            className={`h-10 w-full rounded-md border border-gray-300 bg-white text-gray-900 dark:border-0 dark:bg-zinc-950 dark:text-white ${icon ? "pl-10" : "px-4"}
               ${type === "password" ? "pr-10" : ""}
-              ${hasError ? "border border-red-500" : ""}
-              focus-visible:ring-0 focus-visible:ring-offset-0`}
+              ${hasError ? "border border-red-500" : ""}focus-visible:ring-0 focus-visible:ring-offset-0`}
             placeholder={
               restFieldProps.placeholder || `Enter ${label.toLowerCase()}`
             }

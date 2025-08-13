@@ -1,7 +1,7 @@
 import type { colorPropDef } from "@/radix-ui"
-import { mergeDeep } from "@incmix/utils/objects"
 /* eslint-disable react-refresh/only-export-components */
 import { DropdownMenu as RadixDropdownMenu } from "@/radix-ui"
+import { mergeDeep } from "@incmix/utils/objects"
 type ColorProp = (typeof colorPropDef)["color"]["values"][number]
 export {
   dropdownMenuContentPropDefs,
@@ -91,7 +91,11 @@ const DropdownMenuItem = ({
           </RadixDropdownMenu.SubContent>
         </RadixDropdownMenu.Sub>
       ) : (
-        <RadixDropdownMenu.Item role="menuitemcheckbox"  aria-checked={checked} {...props}>
+        <RadixDropdownMenu.Item
+          role="menuitemcheckbox"
+          aria-checked={checked}
+          {...props}
+        >
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center">
               {icon && <span className="mr-2">{icon}</span>}

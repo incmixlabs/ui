@@ -1,10 +1,5 @@
+import { FormControl, FormItem, FormLabel, FormMessage } from "@/base"
 import { MultiSelect } from "@/elements/multi-select"
-import {
-  FormControl,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/base"
 import type { AutoFormInputComponentProps } from "../types"
 
 // Define the allowed color types to match the component's requirements

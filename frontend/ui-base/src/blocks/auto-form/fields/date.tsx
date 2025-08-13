@@ -1,9 +1,5 @@
+import { FormControl, FormItem, FormMessage } from "@/base"
 import { SmartDatetimeInput } from "@/elements/dates/datetime-picker"
-import {
-  FormControl,
-  FormItem,
-  FormMessage,
-} from "@/base"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 

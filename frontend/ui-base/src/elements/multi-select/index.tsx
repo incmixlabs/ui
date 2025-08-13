@@ -47,4 +47,4 @@ export const MultiSelectControlled: React.FC<MultiSelectControlledProps> = ({
   )
 }
 
-export { MultiSelect}
+export { MultiSelect }

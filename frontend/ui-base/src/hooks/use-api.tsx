@@ -1,28 +1,28 @@
-import { useState, useEffect } from 'react';
-import { useRunOnce } from './use-run-once';
-import axios from 'axios';
+import axios from "axios"
+import { useEffect, useState } from "react"
+import { useRunOnce } from "./use-run-once"
 
-export const useApi = (url:string, options = {}) => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<any>(null);
+export const useApi = (url: string, options = {}) => {
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<any>(null)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios(url, options);
-        setData(response.data);
+        const response = await axios(url, options)
+        setData(response.data)
       } catch (err) {
-        setError(err);
+        setError(err)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchData();
-  }, [url, JSON.stringify(options)]);
+    fetchData()
+  }, [url, JSON.stringify(options)])
 
-  return { data, loading, error };
-};
+  return { data, loading, error }
+}
 
-export default useApi;
+export default useApi
