@@ -31,10 +31,11 @@
       "@/radix-ui": ["./radix-ui/components"],
       "@/radix-ui/*": ["./radix-ui/components/*"],
       "@/utils/*": ["./src/utils/*"],
-      "@/shadcn/*": ["./shadcn/*"],
       "@/shadcn-ui/*": ["./shadcn/components/ui/*"],
-      "@shadcn/*": ["./shadcn/*"],
-      "shadcn/*": ["./shadcn/*"]
+      "@/shadcn/*": ["./shadcn/*"],
+      "@/auto-form": ["./src/blocks/auto-form"],
+      "@/auto-form/*": ["./src/blocks/auto-form/*"],
+      "@/tanstack-table": ["./src/blocks/tanstack-table"]
     }
   }
 }
