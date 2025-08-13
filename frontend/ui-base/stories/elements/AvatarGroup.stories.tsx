@@ -243,10 +243,10 @@ export const LayoutComparison: Story = {
 export const AllSizes: Story = {
   render: () => (
     <Flex direction="column" gap="4" align="center">
-      {["1", "2", "3", "4", "5"].map((size) => (
+      {(["1", "2", "3", "4", "5"] as const).map((size) => (
         <Flex key={size} direction="column" align="center" gap="2">
           <AvatarGroup
-            size={size as any}
+            size={size}
             users={sampleUsers.slice(0, 4)}
             maxVisible={3}
           />
