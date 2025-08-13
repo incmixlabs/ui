@@ -1,6 +1,6 @@
-import type { Sizes } from "./types"
+import type { ExtendSize } from "@/src/types"
 
-export const gaps: Record<Sizes, string> = {
+export const gaps: Record<ExtendSize, string> = {
   "1": "1",
   "2": "1",
   "3": "2",
@@ -12,7 +12,7 @@ export const gaps: Record<Sizes, string> = {
   "9": "5",
 }
 
-export const stackOffsets: Record<Sizes, string> = {
+export const stackOffsets: Record<ExtendSize, string> = {
   "1": "-4px",
   "2": "-6px",
   "3": "-8px",
@@ -24,7 +24,7 @@ export const stackOffsets: Record<Sizes, string> = {
   "9": "-20px",
 }
 
-export const stackBorderWidths: Record<Sizes, string> = {
+export const stackBorderWidths: Record<ExtendSize, string> = {
   "1": "1px",
   "2": "2px",
   "3": "2px",

@@ -212,7 +212,7 @@ export const ListComboBox = ({
                   >
                     <Flex align={"center"} gap={"2"}>
                       {option.avatar && (
-                        <Avatar src={option.avatar} className="h-8 w-8" />
+                        <Avatar name={option.label??''} src={option.avatar} className="h-8 w-8" />
                       )}
                       <Badge
                         color={

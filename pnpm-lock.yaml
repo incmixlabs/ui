@@ -934,6 +934,9 @@ importers:
       '@radix-ui/react-toggle-group':
         specifier: 'catalog:'
         version: 1.1.10(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      '@tanstack/react-table':
+        specifier: 'catalog:'
+        version: 8.21.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@types/react':
         specifier: 'catalog:'
         version: 19.1.9

@@ -103,7 +103,6 @@ function TableCaption({
   )
 }
 
-
 export const Table ={
   Root,
   Header: TableHeader,

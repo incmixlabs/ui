@@ -1,6 +1,5 @@
-import React from 'react';
-import { Select } from '@incmix/ui';
-import { LucideIcon } from 'lucide-react';
+import { Select } from '@/base';
+import  type{ LucideIcon } from 'lucide-react';
 
 // Define interfaces for the component
 export interface LabelOption {
@@ -18,18 +17,18 @@ export interface LabelDropdownSelectorProps {
   options: LabelOption[];
   value: string;
   onValueChange: (value: string) => void;
-  
+
   // Visual customization
   icon?: LucideIcon;
   renderIcon?: (option: LabelOption) => React.ReactNode;
   showColorDot?: boolean;
-  
+
   // UI props
   className?: string;
   triggerClassName?: string;
   placeholder?: string;
   disabled?: boolean;
-  
+
   // Label text customization
   getOptionLabel?: (option: LabelOption) => string;
   valueLabel?: string; // Optional custom label for the selected value
@@ -51,7 +50,7 @@ export function LabelDropdownSelector({
 }: LabelDropdownSelectorProps) {
   // Find the currently selected option
   const selectedOption = options.find(option => option.id === value);
-  
+
   // Default icon rendering if no custom renderIcon is provided
   const defaultRenderIcon = (option: LabelOption) => {
     if (Icon) {
@@ -59,10 +58,10 @@ export function LabelDropdownSelector({
     }
     return null;
   };
-  
+
   // Use custom or default icon renderer
   const finalRenderIcon = renderIcon || defaultRenderIcon;
-  
+
   // Function to get the display label for an option
   const getLabel = (option: LabelOption) => {
     if (getOptionLabel) {
@@ -77,7 +76,7 @@ export function LabelDropdownSelector({
       onValueChange={onValueChange}
       disabled={disabled}
     >
-      <Select.Trigger 
+      <Select.Trigger
         className={`flex h-9 px-4 py-2 min-w-[140px] rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${triggerClassName} ${className}`}
       >
         {selectedOption ? (
@@ -94,7 +93,7 @@ export function LabelDropdownSelector({
           <span className="text-sm text-gray-500">{placeholder}</span>
         )}
       </Select.Trigger>
-      
+
       <Select.Content>
         {options.map((option) => (
           <Select.Item key={option.id} value={option.id}>

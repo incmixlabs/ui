@@ -97,6 +97,7 @@
     "@radix-ui/react-tabs": "catalog:",
     "@radix-ui/react-toggle": "catalog:",
     "@radix-ui/react-toggle-group": "catalog:",
+    "@tanstack/react-table": "catalog:",
     "classnames": "^2.3.2",
     "cmdk": "catalog:",
     "date-fns": "catalog:",

@@ -170,7 +170,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                           />
                         )}
                         {option.avatar && (
-                          <Avatar src={option.avatar} className="h-8 w-8" />
+                          <Avatar name={option.label} src={option.avatar} className="h-8 w-8" />
                         )}
                         <Badge
                           color={option.color as ExtendedColorType}

@@ -18,7 +18,7 @@ export { Code, type CodeProps } from "@/radix-ui"
 export { Container, type ContainerProps } from "@/radix-ui"
 export { ContextMenu, type ContextMenu as ContextMenuProps } from "@/radix-ui"
 export { DataList, type DataList as DataListProps } from "@/radix-ui"
-export { Dialog, type Dialog as DialogProps } from "@/radix-ui"
+export { Dialog, type Dialog as DialogProps, dialogPropDefs } from "./dialog"
 export {
   DropdownMenu,
   type DropdownMenu as DropdownMenuProps,
@@ -72,3 +72,9 @@ export {
 } from "@/radix-ui"
 export { Tooltip, type TooltipProps } from "@/radix-ui"
 export { VisuallyHidden, type VisuallyHiddenProps } from "@/radix-ui"
+export * from "./icons"
+export * from "./button"
+export * from "./avatar"
+export * from "./heading"
+export * from "./paragraph"
+export * from "./dropdown-menu"
