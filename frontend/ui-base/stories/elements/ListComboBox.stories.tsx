@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import "../../src/styles/index.css"
 import React, { useState } from "react"
-import { Theme, Box, Text, Flex } from "../../src/base"
+import { Theme, Box, Text, Flex, Checkbox } from "../../src/base"
 import { ListComboBox } from "../../src/elements/list-combo-box"
 import type { ExtendedColorType } from "../../src/elements/combo-box"
 
@@ -134,7 +134,7 @@ export const Default: Story = {
           onValueChange={setSelectedLabels}
           placeholder="Manage labels"
         />
-        
+
         {selectedLabels.filter(label => label.checked).length > 0 && (
           <Box
             style={{
@@ -162,7 +162,7 @@ export const Default: Story = {
 export const WithTitle: Story = {
   render: () => {
     const [selectedLabels, setSelectedLabels] = useState([
-      ...sampleLabels.map(label => 
+      ...sampleLabels.map(label =>
         label.value === "high-priority" ? { ...label, checked: true } : label
       )
     ])
@@ -175,7 +175,7 @@ export const WithTitle: Story = {
           title="Project Labels"
           placeholder="Select project labels"
         />
-        
+
         <Box
           style={{
             padding: "12px",
@@ -210,7 +210,7 @@ export const WithAvatars: Story = {
           title="Team Members"
           placeholder="Select team members"
         />
-        
+
         {selectedMembers.filter(member => member.checked).length > 0 && (
           <Box
             style={{
@@ -246,7 +246,7 @@ export const WithAddNewLabel: Story = {
         <Text size="3" weight="medium">
           You can add new labels
         </Text>
-        
+
         <ListComboBox
           defaultValue={selectedLabels}
           onValueChange={setSelectedLabels}
@@ -258,7 +258,7 @@ export const WithAddNewLabel: Story = {
           labelColor={labelColor}
           setLabelColor={setLabelColor}
         />
-        
+
         <Box
           style={{
             padding: "12px",
@@ -293,14 +293,14 @@ export const WithDisabledOptions: Story = {
         <Text size="3" weight="medium">
           Some members are disabled
         </Text>
-        
+
         <ListComboBox
           defaultValue={selectedItems}
           onValueChange={setSelectedItems}
           title="Team Assignment"
           placeholder="Assign team members"
         />
-        
+
         <Box
           style={{
             padding: "12px",
@@ -335,7 +335,7 @@ export const CustomButtonStyling: Story = {
         <Text size="3" weight="medium">
           Custom styled trigger button
         </Text>
-        
+
         <ListComboBox
           defaultValue={selectedLabels}
           onValueChange={setSelectedLabels}
@@ -343,7 +343,7 @@ export const CustomButtonStyling: Story = {
           placeholder="Open with styled button"
           btnClassName="bg-blue-500 hover:bg-blue-600 text-white border-blue-500"
         />
-        
+
         <Text size="2" color="gray" style={{ textAlign: "center" }}>
           The trigger button has custom blue styling
         </Text>
@@ -387,7 +387,7 @@ export const PriorityManagement: Story = {
         checked: false,
       },
     ]
-    
+
     const [priorities, setPriorities] = useState(priorityLabels)
 
     return (
@@ -395,14 +395,14 @@ export const PriorityManagement: Story = {
         <Text size="4" weight="bold">
           Task Priority Management
         </Text>
-        
+
         <ListComboBox
           defaultValue={priorities}
           onValueChange={setPriorities}
           title="Set Priority Level"
           placeholder="Select task priority"
         />
-        
+
         <Box
           style={{
             padding: "16px",
@@ -415,7 +415,7 @@ export const PriorityManagement: Story = {
           <Text size="3" weight="medium" style={{ marginBottom: "12px", display: "block" }}>
             Priority Status
           </Text>
-          
+
           {priorities.map((priority) => (
             <Flex
               key={priority.value}
@@ -463,7 +463,7 @@ export const LabelManagementWithStats: Story = {
         <Text size="4" weight="bold">
           Project Label Management
         </Text>
-        
+
         {/* Statistics */}
         <Flex gap="4" wrap="wrap" justify="center">
           <Box
@@ -482,7 +482,7 @@ export const LabelManagementWithStats: Story = {
               Total Labels
             </Text>
           </Box>
-          
+
           <Box
             style={{
               padding: "12px 16px",
@@ -499,7 +499,7 @@ export const LabelManagementWithStats: Story = {
               Active
             </Text>
           </Box>
-          
+
           <Box
             style={{
               padding: "12px 16px",
@@ -517,11 +517,21 @@ export const LabelManagementWithStats: Story = {
             </Text>
           </Box>
         </Flex>
-        
+
         {/* Label Manager */}
         <ListComboBox
+          options={labels}
           defaultValue={labels}
-          onValueChange={setLabels}
+          onValueChange={value =>
+            setLabels(
+              value.map(l => ({
+                ...l,
+                label: l.label ?? "",
+                color: l.color ?? "blue",
+                checked: l.checked ?? false,
+              }))
+            )
+          }
           title="Project Labels"
           placeholder="Manage project labels"
           addNewLabel={true}
@@ -530,7 +540,7 @@ export const LabelManagementWithStats: Story = {
           labelColor={labelColor}
           setLabelColor={setLabelColor}
         />
-        
+
         {/* Active Labels Display */}
         {activeLabels.length > 0 && (
           <Box
@@ -544,7 +554,7 @@ export const LabelManagementWithStats: Story = {
             <Text size="3" weight="medium" style={{ marginBottom: "12px", display: "block" }}>
               Currently Active Labels:
             </Text>
-            
+
             <Flex wrap="wrap" gap="2">
               {activeLabels.map((label) => (
                 <Box
@@ -584,7 +594,7 @@ export const InteractivePlayground: Story = {
         <Text size="4" weight="bold">
           Interactive ListComboBox
         </Text>
-        
+
         {/* Controls */}
         <Box
           style={{
@@ -597,34 +607,28 @@ export const InteractivePlayground: Story = {
           <Text size="3" weight="medium" style={{ marginBottom: "12px", display: "block" }}>
             Configuration
           </Text>
-          
+
           <Flex direction="column" gap="3">
-            <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <input
-                type="checkbox"
+            <Flex align="center" gap="2">
+            <Checkbox
                 checked={showTitle}
-                onChange={(e) => setShowTitle(e.target.checked)}
+                onCheckedChange={setShowTitle}
               />
               <Text size="2">Show Title</Text>
-            </label>
-            
-            <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <input
-                type="checkbox"
+            </Flex>
+              <Flex align="center" gap="2">
+            <Checkbox
                 checked={enableAddNew}
-                onChange={(e) => setEnableAddNew(e.target.checked)}
+                onCheckedChange={setEnableAddNew}
               />
               <Text size="2">Enable Add New Labels</Text>
-            </label>
-            
-            <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <input
-                type="checkbox"
-                checked={useCustomButton}
-                onChange={(e) => setUseCustomButton(e.target.checked)}
-              />
+            </Flex>
+            <Checkbox
+              checked={useCustomButton}
+              onCheckedChange={setUseCustomButton}
+            >
               <Text size="2">Use Custom Button Style</Text>
-            </label>
+            </Checkbox>
           </Flex>
         </Box>
 
@@ -641,7 +645,7 @@ export const InteractivePlayground: Story = {
           setLabelColor={setLabelColor}
           btnClassName={useCustomButton ? "bg-purple-500 hover:bg-purple-600 text-white" : undefined}
         />
-        
+
         {/* Results */}
         <Box
           style={{
@@ -657,7 +661,7 @@ export const InteractivePlayground: Story = {
           <Text size="2" color="gray" style={{ marginTop: "4px", display: "block" }}>
             Total: {labels.length} | Active: {labels.filter(l => l.checked).length} | Inactive: {labels.filter(l => !l.checked).length}
           </Text>
-          
+
           {labels.filter(l => l.checked).length > 0 && (
             <>
               <Text size="2" weight="medium" style={{ marginTop: "8px", display: "block" }}>

@@ -32,7 +32,7 @@
       "@/shadcn/*": ["./shadcn/*"],
       "@/shadcn-ui/*": ["./shadcn/components/ui/*"],
       "@shadcn/*": ["./shadcn/*"],
-      "shadcn/*": ["./shadcn/*"],
+      "shadcn/*": ["./shadcn/*"]
     }
   }
 }

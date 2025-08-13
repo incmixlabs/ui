@@ -1,6 +1,6 @@
 // https://lucide.dev/guide/packages/lucide-react
 import dynamicIconImports from "lucide-react/dynamicIconImports"
-import { lazy, Suspense } from "react"
+import { Suspense, lazy } from "react"
 
 export type LucideIconName = keyof typeof dynamicIconImports
 export type LucideIconType = {
@@ -17,6 +17,6 @@ export const LucideIcon = ({ name, color, size }: LucideIconType) => {
     </Suspense>
   )
 }
-}
+
 export type LucideIconCompType = typeof LucideIcon
 export default LucideIcon

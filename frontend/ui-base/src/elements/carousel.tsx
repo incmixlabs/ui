@@ -104,7 +104,7 @@ const Carousel = forwardRef<
         const isHorizontal = orientation === "horizontal"
         const prevKey = isHorizontal ? "ArrowLeft" : "ArrowUp"
         const nextKey = isHorizontal ? "ArrowRight" : "ArrowDown"
-        
+
         if (event.key === prevKey) {
           event.preventDefault()
           scrollPrev()

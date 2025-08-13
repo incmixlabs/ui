@@ -119,14 +119,16 @@ export function PropertySheet() {
             </Box>
           </Flex>
           <Flex align={"center"}>
-            <Text id="jsonp-label" className="w-44 border-gray-4 border-r p-2 px-3">
+            <Text
+              id="jsonp-label"
+              className="w-44 border-gray-4 border-r p-2 px-3"
+            >
               Use JSONP
             </Text>
             <Box className="w-full p-2 px-3">
               <Flex align="center" gap="1">
                 <Checkbox id="jsonp-checkbox" aria-labelledby="jsonp-label" />
               </Flex>
-            </Box>
             </Box>
           </Flex>
         </Box>
@@ -177,7 +179,7 @@ export function PropertySheet() {
         </Box>
       </Box>
       <Box className="rounded-b bg-gray-2 ">
-        <Flex align={"center"} className="border-gray-4 border-b">
+        <Flex align="center" className="border-gray-4 border-b">
           <Text className="w-44 border-gray-4 border-r p-2 px-3">
             Main Color
           </Text>
