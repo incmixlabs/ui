@@ -12,19 +12,26 @@ import { HelpCircle } from "lucide-react"
  *
  * @returns A JSX element with a tooltip if a description exists; otherwise, an empty fragment.
  */
-function AutoFormTooltip({ fieldConfigItem }: { fieldConfigItem: any }) {
+import { IconButton, Tooltip } from "@/base"
+import { HelpCircle } from "lucide-react"
+import type { FieldConfigItem } from "../types"
+
+/**
+ * Renders a tooltip icon with descriptive text for a form field if a description is provided.
+ */
+function AutoFormTooltip({
+  fieldConfigItem,
+}: {
+  fieldConfigItem: Pick<FieldConfigItem, "description">
+}) {
+  const description = fieldConfigItem?.description
+  if (!description) return null
   return (
-    <>
-      {fieldConfigItem?.description && (
-        <Tooltip
-          content={<p className="text-sm">{fieldConfigItem.description}</p>}
-        >
-          <IconButton variant="ghost">
-            <HelpCircle />
-          </IconButton>
-        </Tooltip>
-      )}
-    </>
+    <Tooltip content={<p className="text-sm">{description}</p>}>
+      <IconButton variant="ghost" aria-label="Show help" title="Show help">
+        <HelpCircle className="h-4 w-4" />
+      </IconButton>
+    </Tooltip>
   )
 }
 
