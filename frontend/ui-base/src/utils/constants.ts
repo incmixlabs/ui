@@ -15,7 +15,7 @@ export const LOCATION_API_URL = `${BFF_API_URL}${API.LOCATION}`
 export const GENAI_API_URL = `${BFF_API_URL}${API.GENAI}`
 export const PERMISSIONS_API_URL = `${BFF_API_URL}${API.PERMISSIONS}`
 
-function getBffApiUrl(): string  {
+function getBffApiUrl(): string {
   const url = import.meta.env["VITE_BFF_API_URL"] || ""
   if (!url) {
     console.error("VITE_BFF_API_URL is not configured")

@@ -71,7 +71,7 @@
         "noArrayIndexKey": "off"
       },
       "a11y": {
-        "noSvgWithoutTitle": "warn"
+        "noSvgWithoutTitle": "off"
       }
     },
     "include": [

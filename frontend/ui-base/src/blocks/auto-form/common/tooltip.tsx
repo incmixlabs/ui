@@ -1,6 +1,6 @@
 import { IconButton, Tooltip } from "@/base"
 import { HelpCircle } from "lucide-react"
-
+import type { FieldConfigItem } from "../types"
 /**
  * Renders a tooltip icon with descriptive text for a form field if a description is provided.
  *
@@ -12,9 +12,6 @@ import { HelpCircle } from "lucide-react"
  *
  * @returns A JSX element with a tooltip if a description exists; otherwise, an empty fragment.
  */
-import { IconButton, Tooltip } from "@/base"
-import { HelpCircle } from "lucide-react"
-import type { FieldConfigItem } from "../types"
 
 /**
  * Renders a tooltip icon with descriptive text for a form field if a description is provided.
