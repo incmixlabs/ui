@@ -37,9 +37,13 @@ const preview: Preview = {
       toolbar: {
         title: "Theme",
         icon: "mirror",
-        items: ["Light", "Dark"],
+        items: [
+          { value: "light", title: "Light" },
+          { value: "dark", title: "Dark" },
+      ],
         dynamicTitle: true,
       },
+      defaultValue: "light"
     },
   },
 
@@ -70,7 +74,7 @@ const preview: Preview = {
     },
   ],
 
-  tags: ["autodocs", "autodocs"],
+  tags: ["autodocs"],
 }
 
 export default preview

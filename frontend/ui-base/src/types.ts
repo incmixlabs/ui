@@ -1,14 +1,14 @@
 import type { SVGProps } from "react"
-export type Side = "left" | "right"
 export const side = {
   left: "left",
   right: "right",
-}
-export type Direction = "ltr" | "rtl"
+} as const
+export type Side = keyof typeof side
 export const direction = {
   ltr: "ltr",
   rtl: "rtl",
-}
+} as const
+export type Direction = keyof typeof direction
 
 export type IconProps = SVGProps<SVGSVGElement> & {
   size?: string | number
@@ -27,7 +27,7 @@ export const size = {
   lg: "3",
   xl: "4",
   default: "2",
-}
+} as const
 export type ExtendSize = Size | "5" | "6" | "7" | "8" | "9"
 export const extendedSize = {
   ...size,
@@ -45,43 +45,42 @@ export const extendIconWidth = {
   "8": "40px",
   "9": "44px",
 }
-export type Orientation = "horizontal" | "vertical"
 export const orientation = {
   horizontal: "horizontal",
   vertical: "vertical",
-}
-export type Radius = "none" | "small" | "medium" | "large" | "full"
+} as const
+export type Orientation = keyof typeof orientation
 export const radius = {
   none: "none",
   small: "small",
   medium: "medium",
   large: "large",
   full: "full",
-}
-export type Variant = "classic" | "surface" | "soft"
+} as const
+export type Radius = keyof typeof radius
 export const variant = {
   classic: "classic",
   surface: "surface",
   soft: "soft",
-}
-export type ButtonVariant = Variant | "outline" | "solid" | "ghost"
+} as const
+export type Variant = keyof typeof variant
 export const buttonVariant = {
   ...variant,
   outline: "outline",
   solid: "solid",
   ghost: "ghost",
 }
-
+export type ButtonVariant = keyof typeof buttonVariant
 export type DeepPartial<T> = T extends object
   ? {
       [P in keyof T]?: DeepPartial<T[P]>
     }
   : T
-export type BooleanComp = "off" | "on"
 export const booleanComp = {
   off: "off",
   on: "on",
-}
+} as const
+export type BooleanComp = keyof typeof booleanComp
 export type RemoveIndexSignature<T> = {
   [K in keyof T as string extends K ? never : K]: T[K]
 }

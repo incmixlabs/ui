@@ -594,6 +594,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                   selected.filter((s) => s.fixed).length === selected.length) &&
                   "hidden"
               )}
+              aria-label="Clear all selected items"
             >
               <X size={20} />
             </button>

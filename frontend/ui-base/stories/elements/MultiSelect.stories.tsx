@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite"
 import "../../src/styles/index.css"
 import React, { useState } from "react"
 import { Theme, Box, Text, Flex } from "../../src/base"
-import { MultiSelect, type Option } from "../../src/elements/multi-selector/multi-select"
+import { MultiSelect, type Option } from "../../src/elements/multi-select/multi-select"
 import { Loader2 } from "lucide-react"
 
 const meta: Meta<typeof MultiSelect> = {
@@ -165,7 +165,7 @@ export const Default: Story = {
           onChange={setSelected}
           placeholder="Select skills..."
         />
-        
+
         {selected.length > 0 && (
           <Box
             style={{
@@ -205,7 +205,7 @@ export const WithDefaultSelection: Story = {
           onChange={setSelected}
           placeholder="Modify your selection..."
         />
-        
+
         <Box
           style={{
             padding: "12px",
@@ -239,7 +239,7 @@ export const WithAvatars: Story = {
           onChange={setSelected}
           placeholder="Select team members..."
         />
-        
+
         {selected.length > 0 && (
           <Box
             style={{
@@ -276,7 +276,7 @@ export const WithGrouping: Story = {
           groupBy="department"
           placeholder="Select roles by department..."
         />
-        
+
         {selected.length > 0 && (
           <Box
             style={{
@@ -310,14 +310,14 @@ export const CreatableOptions: Story = {
         <Text size="3" weight="medium">
           Type to create new options
         </Text>
-        
+
         <MultiSelect
           options={sampleOptions}
           onChange={setSelected}
           creatable={true}
           placeholder="Select or create new skills..."
         />
-        
+
         {selected.length > 0 && (
           <Box
             style={{
@@ -352,7 +352,7 @@ export const WithMaxSelection: Story = {
         <Text size="3" weight="medium">
           Maximum {maxSelected} selections allowed
         </Text>
-        
+
         <MultiSelect
           options={sampleOptions}
           onChange={setSelected}
@@ -360,7 +360,7 @@ export const WithMaxSelection: Story = {
           onMaxSelected={(max) => alert(`Maximum ${max} selections reached!`)}
           placeholder="Select up to 3 skills..."
         />
-        
+
         <Box
           style={{
             padding: "12px",
@@ -392,11 +392,11 @@ export const WithAsyncSearch: Story = {
       setIsLoading(true)
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000))
-      
+
       const filteredOptions = sampleOptions.filter(option =>
         option.label.toLowerCase().includes(searchTerm.toLowerCase())
       )
-      
+
       setIsLoading(false)
       return filteredOptions
     }
@@ -406,7 +406,7 @@ export const WithAsyncSearch: Story = {
         <Text size="3" weight="medium">
           Search with 1 second delay
         </Text>
-        
+
         <MultiSelect
           onChange={setSelected}
           onSearch={handleAsyncSearch}
@@ -425,7 +425,7 @@ export const WithAsyncSearch: Story = {
             </Text>
           }
         />
-        
+
         {selected.length > 0 && (
           <Box
             style={{
@@ -463,7 +463,7 @@ export const ColorThemes: Story = {
         <Text size="4" weight="bold">
           Color Theme Variations
         </Text>
-        
+
         <Flex direction="column" gap="4" style={{ width: "100%" }}>
           <Flex direction="column" gap="2">
             <Text size="2" weight="medium">Gray Theme:</Text>
@@ -475,7 +475,7 @@ export const ColorThemes: Story = {
               placeholder="Gray theme..."
             />
           </Flex>
-          
+
           <Flex direction="column" gap="2">
             <Text size="2" weight="medium">Indigo Theme:</Text>
             <MultiSelect
@@ -486,7 +486,7 @@ export const ColorThemes: Story = {
               placeholder="Indigo theme..."
             />
           </Flex>
-          
+
           <Flex direction="column" gap="2">
             <Text size="2" weight="medium">Cyan Theme:</Text>
             <MultiSelect
@@ -497,7 +497,7 @@ export const ColorThemes: Story = {
               placeholder="Cyan theme..."
             />
           </Flex>
-          
+
           <Flex direction="column" gap="2">
             <Text size="2" weight="medium">Orange Theme:</Text>
             <MultiSelect
@@ -508,7 +508,7 @@ export const ColorThemes: Story = {
               placeholder="Orange theme..."
             />
           </Flex>
-          
+
           <Flex direction="column" gap="2">
             <Text size="2" weight="medium">Crimson Theme:</Text>
             <MultiSelect
@@ -535,7 +535,7 @@ export const DisabledState: Story = {
         <Text size="3" weight="medium">
           Disabled MultiSelect
         </Text>
-        
+
         <MultiSelect
           options={sampleOptions}
           value={selected}
@@ -543,7 +543,7 @@ export const DisabledState: Story = {
           disabled={true}
           placeholder="This is disabled..."
         />
-        
+
         <Text size="2" color="gray" style={{ textAlign: "center" }}>
           The component is disabled but shows the selected values
         </Text>
@@ -568,7 +568,7 @@ export const InteractivePlayground: Story = {
         <Text size="4" weight="bold">
           Interactive MultiSelect
         </Text>
-        
+
         {/* Controls */}
         <Box
           style={{
@@ -581,7 +581,7 @@ export const InteractivePlayground: Story = {
           <Text size="3" weight="medium" style={{ marginBottom: "12px", display: "block" }}>
             Configuration
           </Text>
-          
+
           <Flex direction="column" gap="3">
             <Flex gap="4" wrap="wrap">
               <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -592,7 +592,7 @@ export const InteractivePlayground: Story = {
                 />
                 <Text size="2">Disabled</Text>
               </label>
-              
+
               <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <input
                   type="checkbox"
@@ -601,7 +601,7 @@ export const InteractivePlayground: Story = {
                 />
                 <Text size="2">Creatable</Text>
               </label>
-              
+
               <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <input
                   type="checkbox"
@@ -610,7 +610,7 @@ export const InteractivePlayground: Story = {
                 />
                 <Text size="2">Hide Placeholder</Text>
               </label>
-              
+
               <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 <input
                   type="checkbox"
@@ -620,7 +620,7 @@ export const InteractivePlayground: Story = {
                 <Text size="2">Hide Clear All</Text>
               </label>
             </Flex>
-            
+
             <Flex gap="4" align="center">
               <Text size="2">Max Selected:</Text>
               <input
@@ -631,7 +631,7 @@ export const InteractivePlayground: Story = {
                 placeholder="No limit"
               />
             </Flex>
-            
+
             <Flex gap="2" align="center">
               <Text size="2">Color Theme:</Text>
               <select
@@ -663,7 +663,7 @@ export const InteractivePlayground: Story = {
           onMaxSelected={(max) => alert(`Maximum ${max} selections reached!`)}
           placeholder="Configure and test the component..."
         />
-        
+
         {/* Results */}
         <Box
           style={{

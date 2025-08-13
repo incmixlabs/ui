@@ -1,5 +1,5 @@
 export const EyeIcon = (
-  props: React.SVGProps<SVGSVGElement> & { size?: number }
+  props: React.SVGProps<SVGSVGElement> & { size?: number; title?: string }
 ) => (
   <svg
     width={props.size ?? 24}
@@ -9,7 +9,7 @@ export const EyeIcon = (
     className="stroke-white"
     {...props}
   >
-    <title>Eye Icon</title>
+    <title>{props.title ?? "Eye Icon"}</title>
     <path
       fillRule="evenodd"
       clipRule="evenodd"

@@ -97,6 +97,7 @@
     "cmdk": "catalog:",
     "date-fns": "catalog:",
     "input-otp": "catalog:",
+    "lucide-react": "catalog:",
     "react-day-picker": "^9.8.1",
     "react-hook-form": "catalog:",
     "zod": "catalog:"
@@ -142,13 +143,5 @@
     "stylelint": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:"
-  },
-  "homepage": "https://radix-ui.com/themes",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/incmix/ui-base.git"
-  },
-  "bugs": {
-    "url": "https://github.com/incmix/ui-base/issues"
   }
 }

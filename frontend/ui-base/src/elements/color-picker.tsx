@@ -71,6 +71,7 @@ const ColorPicker = ({
   const darkColors = [
     "var(--gray-1)",
     "var(--gray-2)",
+    "var(--gray-3)",
     "var(--gray-4)",
     "var(--gray-5)",
     "var(--gray-6)",
@@ -156,11 +157,8 @@ const ColorPicker = ({
       </div>
 
       <div className="flex justify-between">
-        {colorGroups.map((group) => (
-          <div
-            key={`group-${colorGroups.indexOf(group)}`}
-            className="flex flex-col gap-1"
-          >
+        {colorGroups.map((group, groupIndex) => (
+          <div key={`group-${groupIndex}`} className="flex flex-col gap-1">
             {group.map((color) => {
               const varNameMatch = color.match(/^var\((--.+)\)$/)
               const varName = varNameMatch ? varNameMatch[1] : color

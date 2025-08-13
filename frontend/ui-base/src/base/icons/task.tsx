@@ -1,5 +1,5 @@
 export const TaskIcon = (
-  props: React.SVGProps<SVGSVGElement> & { size?: number }
+  props: React.SVGProps<SVGSVGElement> & { size?: number; title?: string }
 ) => (
   <svg
     width={props.size ?? 24}
@@ -8,7 +8,7 @@ export const TaskIcon = (
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
-    <title>Task Icon</title>
+    <title>{props.title ?? "Task Icon"}</title>
     <path
       fillRule="evenodd"
       clipRule="evenodd"

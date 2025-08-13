@@ -5,8 +5,7 @@ const config = {
   content: [
     "./src/**/*.{ts,tsx}",
     "./shadcn/**/*.{ts,tsx}",
-    "./stories/**/*.{ts,tsx}",
-    "./stories/**/*.{mdx}",
+    "./stories/**/*.{ts,tsx,mdx}",
   ],
   presets: [incmixTailwindPreset],
 } satisfies Config

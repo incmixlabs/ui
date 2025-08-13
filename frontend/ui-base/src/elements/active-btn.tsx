@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useEffect, useRef, useState } from "react"
 
-export type btnItem = {
+export type BtnItem = {
   id: string
   label: React.ReactNode
   icon?: React.ReactNode
@@ -12,7 +12,7 @@ export type btnItem = {
 
 type ActiveBtnProps = {
   isDesktop: boolean
-  items: btnItem[]
+  items: BtnItem[]
   defaultActiveId?: string
   onChange?: (id: string) => void
   className?: string
@@ -34,30 +34,39 @@ export function ActiveBtn({
   useEffect(() => {
     if (defaultActiveId) setActiveId(defaultActiveId)
   }, [defaultActiveId])
+
   const [indicatorStyle, setIndicatorStyle] = useState({
     left: 0,
     width: 0,
   })
 
   useEffect(() => {
-    const updateIndicator = () => {
-      const containerElement = containerRef.current
-      if (!containerElement) return
+    let timeoutId: ReturnType<typeof setTimeout>
 
-      const activeElement = containerElement.querySelector(
-        `[data-item-id="${activeId}"]`
-      ) as HTMLElement
-      if (activeElement) {
-        setIndicatorStyle({
-          left: activeElement.offsetLeft,
-          width: activeElement.offsetWidth,
-        })
-      }
+    const updateIndicator = () => {
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(() => {
+        const containerElement = containerRef.current
+        if (!containerElement) return
+
+        const activeElement = containerElement.querySelector(
+          `[data-item-id="${activeId}"]`
+        ) as HTMLElement
+        if (activeElement) {
+          setIndicatorStyle({
+            left: activeElement.offsetLeft,
+            width: activeElement.offsetWidth,
+          })
+        }
+      }, 100)
     }
 
     updateIndicator()
     window.addEventListener("resize", updateIndicator)
-    return () => window.removeEventListener("resize", updateIndicator)
+    return () => {
+      window.removeEventListener("resize", updateIndicator)
+      clearTimeout(timeoutId)
+    }
   }, [activeId])
 
   const handleItemClick = (id: string) => {
@@ -111,7 +120,14 @@ export function ActiveBtn({
                   {item.label}
                 </>
               ) : (
-                <Tooltip content={item.label}>{item.icon}</Tooltip>
+                <Tooltip
+                  content={item.label}
+                  aria-label={
+                    typeof item.label === "string" ? item.label : undefined
+                  }
+                >
+                  {item.icon}
+                </Tooltip>
               )}
             </Button>
           </li>
@@ -124,7 +140,7 @@ export function ActiveBtn({
           indicatorClassName
         )}
         style={{
-          left: `${indicatorStyle.left}px`,
+          transform: `translateX(${indicatorStyle.left}px)`,
           width: `${indicatorStyle.width}px`,
         }}
       />
