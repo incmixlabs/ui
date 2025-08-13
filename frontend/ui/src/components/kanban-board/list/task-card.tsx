@@ -27,24 +27,22 @@ import {
   getCardDropTargetData
 } from "../types"
 import { isShallowEqual } from "@incmix/utils/objects"
-import { isSafari } from "@utils/browser"
 import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
 import { ModalPresets } from "../shared/confirmation-modal"
-import { OverlappingAvatarGroup, type AssignedUser, type SelectableUser } from "../shared/overlapping-avatar-group"
-import { cn } from "@utils"
+import { OverlappingAvatarGroup, type AssignedUser } from "../shared/overlapping-avatar-group"
 import {
   Box,
   Checkbox,
   Flex,
   Text,
   Badge,
-  Avatar,
   Icon,
 } from "@incmix/ui"
 import { TaskActionsMenu } from "./task-actions-menu"
 import { ListColumn } from "../hooks/use-list-view"
 import { useKanban } from "../hooks/use-kanban-data"
 import { getPriorityStyles, getPriorityName } from "../utils/priority-utils"
+import { TaskRefUrls, type RefUrl } from "../shared/task-ref-urls"
 
 // Constants for DOM manipulation checks
 const canUseDOM =
@@ -162,6 +160,8 @@ export const ListTaskCard = memo(function ListTaskCard({
   isSelected = false,
   projectId
 }: ListTaskCardProps) {
+
+ 
 
   const { handleDrawerOpen } = useKanbanDrawer()
   const innerRef = useRef<HTMLDivElement | null>(null)
@@ -404,6 +404,25 @@ export const ListTaskCard = memo(function ListTaskCard({
       console.error("Failed to duplicate task:", error)
     }
   }, [card.id, card.name, onDuplicateTask])
+
+  const handleRemoveRefUrl = useCallback(async (urlId: string) => {
+    if (!card.id) {
+      console.error("Task ID is missing")
+      return
+    }
+    
+    try {
+      // Filter out the URL to be removed
+      const updatedRefUrls = (card.refUrls || []).filter(url => url.id !== urlId)
+      
+      // Update the task with the new refUrls array
+      await onUpdateTask(card.id, {
+        refUrls: updatedRefUrls
+      })
+    } catch (error) {
+      console.error("Failed to remove reference URL:", error)
+    }
+  }, [card.id, card.refUrls, onUpdateTask])
 
   const handleOpenDrawer = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
@@ -855,6 +874,15 @@ export const ListTaskCard = memo(function ListTaskCard({
                     No priority
                   </Text>
                 )}
+              </Flex>
+              
+              {/* Reference URLs - fixed width */}
+              <Flex align="center" justify="center" className="flex-shrink-0 min-w-[4rem] w-16">
+                <TaskRefUrls
+                  refUrls={(card.refUrls || []) as RefUrl[]}
+                  onRemoveUrl={handleRemoveRefUrl}
+                  size="sm"
+                />
               </Flex>
               
               {/* Due date with "Due:" label - fixed width */}

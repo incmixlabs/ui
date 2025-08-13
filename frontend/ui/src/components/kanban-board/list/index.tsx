@@ -85,7 +85,6 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     deleteTask,
     duplicateTask,
     moveTask,
-    createStatusLabel, // Using compatibility methods instead
     updateStatusLabel, // Using compatibility methods instead
     deleteStatusLabel, // Using compatibility methods instead
     projectStats,
