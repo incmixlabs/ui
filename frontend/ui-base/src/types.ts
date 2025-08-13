@@ -9,7 +9,11 @@ export const direction = {
   rtl: "rtl",
 } as const
 export type Direction = keyof typeof direction
-
+export const sortOrder = {
+  asc: "asc",
+  desc: "desc",
+} as const
+export type SortOrder = keyof typeof sortOrder
 export type IconProps = SVGProps<SVGSVGElement> & {
   size?: string | number
   color?: string

@@ -6,11 +6,11 @@ import {
   ScrollArea,
   Text,
 } from "@/base"
-import type { Sizes } from "./types"
+import type { ExtendSize } from "@/src/types"
 
 type UsersDropdownProps = {
   users: AvatarProps[]
-  size: Sizes
+  size: ExtendSize
 }
 
 export const UsersDropdown: React.FC<UsersDropdownProps> = ({

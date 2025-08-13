@@ -46,3 +46,5 @@ export const MultiSelectControlled: React.FC<MultiSelectControlledProps> = ({
     </div>
   )
 }
+
+export { MultiSelect }

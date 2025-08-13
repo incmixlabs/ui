@@ -4,7 +4,7 @@ import {
 } from "@/radix-ui/avatar"
 import { getInitials } from "@incmix/utils/strings"
 import { User as PersonIcon } from "lucide-react"
-import { type ExtendSize, extendIconWidth } from "../types"
+import { type ExtendSize, extendIconWidth } from "../../types"
 
 export type AvatarProps = {
   email?: string
@@ -21,7 +21,7 @@ export type AvatarProps = {
 export const Avatar = ({
   id,
   size = "3",
-  name,
+  name = "Unkown User",
   radius = "full",
   variant = "solid",
   className,

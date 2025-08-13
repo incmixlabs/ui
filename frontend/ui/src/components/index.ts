@@ -31,5 +31,5 @@ export * from "./theme/theme"
 export * from "./page-header"
 export * from "./auto-form"
 export * from "./common"
-export * from "./dropdown-selector"
+export * from "./dropdown-select"
 

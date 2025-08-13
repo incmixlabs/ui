@@ -1,5 +1,5 @@
 import { AlertCircle, Clock, Flag } from 'lucide-react';
-import type { LabelOption } from './label-dropdown-selector';
+import type { LabelOption } from './label-dropdown-select';
 import type { LucideIcon } from 'lucide-react';
 
 export interface LabelConfig {
@@ -12,11 +12,11 @@ export interface LabelConfig {
 export function getPriorityConfig(priorityId: string | undefined, priorityLabels: LabelOption[] = []): LabelConfig {
   // First try to find the priority in the provided labels
   const priorityLabel = priorityLabels.find(label => label.id === priorityId);
-  
+
   if (priorityLabel) {
     // If found in labels, return with default icon mapping
     let icon: LucideIcon = Clock; // Default icon
-    
+
     // Map icons based on priority name patterns
     const lowerName = priorityLabel.name.toLowerCase();
     if (lowerName.includes('urgent')) {
@@ -28,21 +28,21 @@ export function getPriorityConfig(priorityId: string | undefined, priorityLabels
     } else {
       icon = Clock;
     }
-    
+
     return {
       label: priorityLabel.name,
       icon,
       color: priorityLabel.color,
     };
   }
-  
+
   // If we get here, the priority ID wasn't found in the labels array
   // Look for a default/medium priority in the labels
   const defaultPriority = priorityLabels.find(label => {
     const lowerName = label.name.toLowerCase();
     return lowerName.includes('medium') || lowerName.includes('normal');
   });
-  
+
   if (defaultPriority) {
     return {
       label: defaultPriority.name,
@@ -50,7 +50,7 @@ export function getPriorityConfig(priorityId: string | undefined, priorityLabels
       color: defaultPriority.color,
     };
   }
-  
+
   // If there are any priority labels, use the first one as fallback
   if (priorityLabels.length > 0) {
     return {
@@ -59,12 +59,12 @@ export function getPriorityConfig(priorityId: string | undefined, priorityLabels
       color: priorityLabels[0].color,
     };
   }
-  
+
   // Absolute last resort - return a minimal default
-  return { 
-    label: 'Priority', 
-    icon: Clock, 
-    color: '#3b82f6' 
+  return {
+    label: 'Priority',
+    icon: Clock,
+    color: '#3b82f6'
   };
 }
 

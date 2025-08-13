@@ -1,6 +1,6 @@
 {
   "extends": "@incmix/config/react.json",
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "radix-ui/**/*", "shadcn/**/*"],
   "exclude": [
     "node_modules",
     "dist",
@@ -15,7 +15,7 @@
     "radix-ui"
   ],
   "compilerOptions": {
-    "types": ["@types/wicg-file-system-access", "vite/client"],
+    "types": ["@types/wicg-file-system-access", "vite/client", "node"],
     "rootDir": ".",
     "baseUrl": ".",
     "module": "ESNext",
@@ -26,8 +26,11 @@
       "@/base": ["./src/base"],
       "@/base/*": ["./src/base/*"],
       "@/elements/*": ["./src/elements/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/layouts/*": ["./src/layouts/*"],
       "@/radix-ui": ["./radix-ui/components"],
       "@/radix-ui/*": ["./radix-ui/components/*"],
+      "@/utils/*": ["./src/utils/*"],
       "@/shadcn/*": ["./shadcn/*"],
       "@/shadcn-ui/*": ["./shadcn/components/ui/*"],
       "@shadcn/*": ["./shadcn/*"],
