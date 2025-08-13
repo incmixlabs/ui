@@ -1,5 +1,6 @@
 import { API } from "@incmix/utils/env"
-export const BFF_API_URL: string = import.meta.env["VITE_BFF_API_URL"] || ""
+
+export const BFF_API_URL: string = getBffApiUrl()
 export const VITE_SENTRY_DSN: string = import.meta.env.VITE_SENTRY_DSN || ""
 export const INTL_API_URL = `${BFF_API_URL}${API.INTL}`
 export const AUTH_API_URL = `${BFF_API_URL}${API.AUTH}`
@@ -13,3 +14,12 @@ export const LOCATION_API_URL = `${BFF_API_URL}${API.LOCATION}`
 
 export const GENAI_API_URL = `${BFF_API_URL}${API.GENAI}`
 export const PERMISSIONS_API_URL = `${BFF_API_URL}${API.PERMISSIONS}`
+
+function getBffApiUrl(): string  {
+  const url = import.meta.env["VITE_BFF_API_URL"] || ""
+  if (!url) {
+    console.error("VITE_BFF_API_URL is not configured")
+    throw new Error("BFF API URL is not configured")
+  }
+  return url
+}

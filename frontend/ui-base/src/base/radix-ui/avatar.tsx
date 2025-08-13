@@ -11,7 +11,7 @@ export type AvatarProps = {
   id?: string
   size?: ExtendSize
   src?: string
-  name: string
+  name?: string
   radius?: RadixProps["radius"]
   variant?: RadixProps["variant"]
   className?: string
@@ -21,7 +21,7 @@ export type AvatarProps = {
 export const Avatar = ({
   id,
   size = "3",
-  name,
+  name = "Unkown User",
   radius = "full",
   variant = "solid",
   className,
