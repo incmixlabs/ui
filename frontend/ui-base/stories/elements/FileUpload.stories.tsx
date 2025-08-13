@@ -463,16 +463,25 @@ export const ComplexExample: Story = {
       if (!files?.length) return
 
       const newStatus: Record<string, string> = {}
-      
-      for (const file of files) {
-        newStatus[file.name] = 'uploading'
-        setUploadStatus({ ...newStatus })
-        
-        // Simulate upload
-        await new Promise(resolve => setTimeout(resolve, 2000))
-        newStatus[file.name] = 'completed'
+
+      try {
+        for (const file of files) {
+          newStatus[file.name] = 'uploading'
+          setUploadStatus({ ...newStatus })
+
+          // Simulate upload
+          await new Promise(resolve => setTimeout(resolve, 2000))
+          newStatus[file.name] = 'completed'
+        }
+      } catch (error) {
+        // Mark failed uploads
+        for (const file of files) {
+          if (newStatus[file.name] === 'uploading') {
+            newStatus[file.name] = 'failed'
+          }
+        }
       }
-      
+
       setUploadStatus(newStatus)
     }
 
