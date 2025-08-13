@@ -1,7 +1,7 @@
 export { AccessibleIcon, type AccessibleIconProps } from "@/radix-ui"
 export { AlertDialog, type AlertDialog as AlertDialogProps } from "@/radix-ui"
 export { AspectRatio, type AspectRatioProps } from "@/radix-ui"
-export { Badge, type Badge as BadgeProps } from "@/radix-ui"
+export { Badge, type Badge as BadgeProps, badgePropDefs } from "@/radix-ui"
 export { Blockquote, type BlockquoteProps } from "@/radix-ui"
 export { Box, type BoxProps } from "@/radix-ui"
 export { Callout, type Callout as CalloutProps } from "@/radix-ui"
@@ -26,7 +26,6 @@ export {
 export { Em, type EmProps } from "@/radix-ui"
 export { Flex, type FlexProps } from "@/radix-ui"
 export { Grid, type GridProps } from "@/radix-ui"
-export { Heading, type HeadingProps } from "@/radix-ui"
 export { HoverCard, type HoverCard as HoverCardProps } from "@/radix-ui"
 export { Inset, type InsetProps } from "@/radix-ui"
 export {

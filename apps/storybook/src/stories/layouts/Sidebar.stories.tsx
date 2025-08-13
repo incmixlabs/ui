@@ -53,18 +53,20 @@ export const Extended = () => {
 
 export const Minified = () => {
   return (
-    <Sidebar>
-      <DefaultContent />
-    </Sidebar>
+    <SidebarProvider>
+      <Sidebar>
+        <DefaultContent />
+      </Sidebar>
+    </SidebarProvider>
   )
 }
 
 export const WithName = () => {
   return (
     <SidebarProvider>
-    <Sidebar>
-      <DefaultContent />
-    </Sidebar>
+      <Sidebar>
+        <DefaultContent />
+      </Sidebar>
     </SidebarProvider>
   )
 }

@@ -1,8 +1,8 @@
 import type { Layout } from "@incmix/react-grid-layout"
 import { generateUniqueId } from "../../utils/browser-helpers"
 
-import { database } from "sql/main"
 import { create } from "zustand"
+import { database } from "../../sql/main"
 
 export type Breakpoint = "lg" | "md" | "sm" | "xs" | "xxs"
 

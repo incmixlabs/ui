@@ -83,6 +83,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "catalog:",
+    "@incmix/store": "workspace: *",
     "@radix-ui/react-accordion": "catalog:",
     "@radix-ui/react-dialog": "catalog:",
     "@radix-ui/react-label": "catalog:",
@@ -96,6 +97,7 @@
     "cmdk": "catalog:",
     "date-fns": "catalog:",
     "input-otp": "catalog:",
+    "lucide-react": "catalog:",
     "react-day-picker": "^9.8.1",
     "react-hook-form": "catalog:",
     "zod": "catalog:"
@@ -117,16 +119,16 @@
   "devDependencies": {
     "@eslint/js": "catalog:",
     "@incmix/config": "workspace: *",
-    "@storybook/addon-docs": "catalog:",
-    "@storybook/addon-onboarding": "catalog:",
-    "@storybook/react-vite": "catalog:",
+    "@storybook/addon-docs": "9.1.2",
+    "@storybook/addon-onboarding": "9.1.2",
+    "@storybook/react-vite": "9.1.2",
     "autoprefixer": "catalog:",
     "esbuild": "catalog:",
     "eslint": "catalog:",
     "eslint-plugin-jsx-a11y": "catalog:",
     "eslint-plugin-react": "catalog:",
     "eslint-plugin-react-hooks": "catalog:",
-    "eslint-plugin-storybook": "catalog:",
+    "eslint-plugin-storybook": "9.1.2",
     "globals": "catalog:",
     "postcss": "catalog:",
     "postcss-cli": "catalog:",
@@ -137,17 +139,9 @@
     "postcss-nesting": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "storybook": "catalog:",
+    "storybook": "9.1.2",
     "stylelint": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:"
-  },
-  "homepage": "https://radix-ui.com/themes",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/incmix/ui-base.git"
-  },
-  "bugs": {
-    "url": "https://github.com/incmix/ui-base/issues"
   }
 }
