@@ -66,9 +66,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "sideEffects": [
-    "*.css"
-  ],
+  "sideEffects": ["*.css"],
   "license": "MIT",
   "files": [
     "src/**",

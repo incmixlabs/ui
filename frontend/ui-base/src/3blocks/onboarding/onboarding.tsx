@@ -1,8 +1,8 @@
 import { useMediaQuery } from "@/hooks/use-media-query"
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
+import { StepperProvider } from "../stepper"
 import { formSchema } from "./form-schema"
 import { StepForm } from "./step-form"
-import { StepperProvider } from "../stepper"
 
 export type OnboardingProps = {
   onComplete: (data: any, userData: any) => Promise<void>
@@ -12,7 +12,7 @@ export type OnboardingProps = {
 export const Onboarding = ({ onComplete, onError }: OnboardingProps) => {
   const [stepData, setStepData] = useState<Record<number, any>>({})
   const [userData, setUserData] = useState<any>(null)
-  const isDesktop = useMediaQuery("(min-width: 768px)")
+  const _isDesktop = useMediaQuery("(min-width: 768px)")
 
   useEffect(() => {
     // Retrieve user data from localStorage
@@ -27,7 +27,9 @@ export const Onboarding = ({ onComplete, onError }: OnboardingProps) => {
 
   const handleFinalSubmit = async (finalData: Record<number, any>) => {
     if (!userData) {
-      const error = new Error("User data not found for onboarding. Please sign up again.")
+      const error = new Error(
+        "User data not found for onboarding. Please sign up again."
+      )
       console.error(error.message)
       onError?.(error)
       return
@@ -42,10 +44,8 @@ export const Onboarding = ({ onComplete, onError }: OnboardingProps) => {
     const completeData = {
       ...onboardingData,
       userId: userData.userId,
-      email: userData.email
+      email: userData.email,
     }
-
-
 
     try {
       // Call the onComplete callback with the combined data
@@ -57,9 +57,11 @@ export const Onboarding = ({ onComplete, onError }: OnboardingProps) => {
   }
 
   if (!userData) {
-    return <div className="flex h-screen items-center justify-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-    </div>
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="h-12 w-12 animate-spin rounded-full border-blue-500 border-t-2 border-b-2" />
+      </div>
+    )
   }
 
   return (
@@ -68,8 +70,9 @@ export const Onboarding = ({ onComplete, onError }: OnboardingProps) => {
         value={{
           steps: formSchema.steps.map((step) => ({
             label: step.label,
-            icon: typeof step.stepIcon === 'string' ? undefined : step.stepIcon,
-            description: typeof step.stepIcon === 'string' ? step.stepIcon : undefined,
+            icon: typeof step.stepIcon === "string" ? undefined : step.stepIcon,
+            description:
+              typeof step.stepIcon === "string" ? step.stepIcon : undefined,
           })),
           initialStep: 0,
         }}

@@ -25,17 +25,18 @@ export function StepperFooter() {
               Back
             </Button>
           ) : (
-            <div/> // Empty div to maintain space
+            <div /> // Empty div to maintain space
           )}
 
           <Button
             type="submit"
-            className={`${activeStep > 0 ? 'w-2/3' : 'w-full'} h-[42px] rounded-md py-2 `}
+            className={`${activeStep > 0 ? "w-2/3" : "w-full"} h-[42px] rounded-md py-2 `}
           >
             {activeStep === 0 ? "Continue" : isLastStep ? "Finish" : "Continue"}
           </Button>
         </>
-      )}``
+      )}
+      ``
     </div>
   )
 }

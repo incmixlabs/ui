@@ -3,7 +3,8 @@ export const isWeb = !isTauri // running on the browser on either desktop or mob
 
 export const isMobile = navigator.maxTouchPoints > 0 // running in mobile either in the browser or as a tauri app
 export const isDesktop = !isMobile // running in desktop either in the browser or as a tauri app
-export const isTablet = isMobile && /iPad|Android|Playbook|Silk/i.test(navigator.userAgent) // running on a tablet either in the browser or as a tauri app
+export const isTablet =
+  isMobile && /iPad|Android|Playbook|Silk/i.test(navigator.userAgent) // running on a tablet either in the browser or as a tauri app
 export const isTauriMobile = isTauri && isMobile // running on mobile as a tauri app - but not on the browser
 export const isTauriDesktop = isTauri && isDesktop // running on desktop as a tauri app - but not on the browser
 

@@ -1,4 +1,4 @@
-import { AuthWrapper } from "../auth-wrapper"
+import { AuthWrapper } from "@/layouts/auth-wrapper"
 import AutoForm from "../auto-form"
 import { useStepper } from "../stepper"
 import { StepperFooter } from "./stepper-footer"
@@ -69,7 +69,7 @@ export const StepForm = ({
       image={`step${getStepImageNumber(activeStep)}`}
       step={activeStep + 1}
       showFooterLinks={false}
-      totalSteps={steps.length }
+      totalSteps={steps.length}
     >
       {/* Pass JSON schema directly to AutoForm */}
       <AutoForm
