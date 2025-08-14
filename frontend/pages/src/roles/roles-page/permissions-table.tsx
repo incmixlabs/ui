@@ -92,19 +92,8 @@ const PermissionsTable = () => {
     mutation.mutate(changes)
   }, [mutation, changes])
 
-  // Handle row selection changes if needed
-  const handleSelectionChange = useCallback(
-    (selectedRows: Record<string, boolean>) => {
-      console.log("Selected rows:", selectedRows)
-    },
-    []
-  )
-
-  console.log("tableData", tableData)
-
   return (
     <Flex className="px-2 pt-4 pb-4 2xl:p-2" direction="column" gap="3">
-      {/* Header with actions */}
       <Flex className="px-6" justify="between" gap="2" align="center">
         <Flex justify="end" gap="2" align="center">
           <RoleEditorModal
@@ -126,7 +115,6 @@ const PermissionsTable = () => {
         </Flex>
       </Flex>
 
-      {/* DataTable component - removed expandable rows configuration */}
       <DataTable
         columns={columns}
         data={tableData}
