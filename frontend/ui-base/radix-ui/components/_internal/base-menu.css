@@ -1,14 +1,8 @@
 .rt-BaseMenuContent {
   --scrollarea-scrollbar-vertical-margin-top: var(--base-menu-content-padding);
-  --scrollarea-scrollbar-vertical-margin-bottom: var(
-    --base-menu-content-padding
-  );
-  --scrollarea-scrollbar-horizontal-margin-left: var(
-    --base-menu-content-padding
-  );
-  --scrollarea-scrollbar-horizontal-margin-right: var(
-    --base-menu-content-padding
-  );
+  --scrollarea-scrollbar-vertical-margin-bottom: var(--base-menu-content-padding);
+  --scrollarea-scrollbar-horizontal-margin-left: var(--base-menu-content-padding);
+  --scrollarea-scrollbar-horizontal-margin-right: var(--base-menu-content-padding);
 
   display: flex;
   flex-direction: column;
@@ -25,12 +19,7 @@
   padding: var(--base-menu-content-padding);
   box-sizing: border-box;
 
-  :where(
-      .rt-BaseMenuContent:has(
-          .rt-ScrollAreaScrollbar[data-orientation="vertical"]
-        )
-    )
-    & {
+  :where(.rt-BaseMenuContent:has(.rt-ScrollAreaScrollbar[data-orientation='vertical'])) & {
     padding-right: var(--space-3);
   }
 }
@@ -204,7 +193,7 @@
   color: var(--gray-a11);
 }
 .rt-BaseMenuItem:where([data-disabled], [data-highlighted]),
-.rt-BaseMenuSubTrigger:where([data-state="open"]) {
+.rt-BaseMenuSubTrigger:where([data-state='open']) {
   & :where(.rt-BaseMenuShortcut) {
     color: inherit;
   }
@@ -216,7 +205,7 @@
 /* solid */
 
 .rt-BaseMenuContent:where(.rt-variant-solid) {
-  & :where(.rt-BaseMenuSubTrigger[data-state="open"]) {
+  & :where(.rt-BaseMenuSubTrigger[data-state='open']) {
     background-color: var(--gray-a3);
   }
   & :where(.rt-BaseMenuItem[data-highlighted]) {
@@ -247,7 +236,7 @@
 /* soft */
 
 .rt-BaseMenuContent:where(.rt-variant-soft) {
-  & :where(.rt-BaseMenuSubTrigger[data-state="open"]) {
+  & :where(.rt-BaseMenuSubTrigger[data-state='open']) {
     background-color: var(--accent-a3);
   }
   & :where(.rt-BaseMenuItem[data-highlighted]) {

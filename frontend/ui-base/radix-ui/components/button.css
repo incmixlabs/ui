@@ -1,4 +1,4 @@
-@import "./_internal/base-button.css";
+@import './_internal/base-button.css';
 
 .rt-Button {
   &:where(:not(.rt-variant-ghost)) {
@@ -27,22 +27,10 @@
     --margin-left: 0px;
 
     /* Define the overrides to incorporate the negative margins */
-    --margin-top-override: calc(
-      var(--margin-top) -
-      var(--button-ghost-padding-y)
-    );
-    --margin-right-override: calc(
-      var(--margin-right) -
-      var(--button-ghost-padding-x)
-    );
-    --margin-bottom-override: calc(
-      var(--margin-bottom) -
-      var(--button-ghost-padding-y)
-    );
-    --margin-left-override: calc(
-      var(--margin-left) -
-      var(--button-ghost-padding-x)
-    );
+    --margin-top-override: calc(var(--margin-top) - var(--button-ghost-padding-y));
+    --margin-right-override: calc(var(--margin-right) - var(--button-ghost-padding-x));
+    --margin-bottom-override: calc(var(--margin-bottom) - var(--button-ghost-padding-y));
+    --margin-left-override: calc(var(--margin-left) - var(--button-ghost-padding-x));
 
     /* Reset the overrides on direct children */
     :where(&) > * {
@@ -52,8 +40,8 @@
       --margin-left-override: initial;
     }
 
-    margin: var(--margin-top-override) var(--margin-right-override)
-      var(--margin-bottom-override) var(--margin-left-override);
+    margin: var(--margin-top-override) var(--margin-right-override) var(--margin-bottom-override)
+      var(--margin-left-override);
   }
 }
 

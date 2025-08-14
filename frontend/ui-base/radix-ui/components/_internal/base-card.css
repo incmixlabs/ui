@@ -26,22 +26,10 @@
    * To have both (1) and (2), we clip the content at the outer edge of `.rt-BaseCard` border, and use
    * a ::before pseudo-element for the background color, which is smaller by the border width on each side.
    */
-  --inset-padding-top: calc(
-    var(--base-card-padding-top) -
-    var(--base-card-border-width)
-  );
-  --inset-padding-right: calc(
-    var(--base-card-padding-right) -
-    var(--base-card-border-width)
-  );
-  --inset-padding-bottom: calc(
-    var(--base-card-padding-bottom) -
-    var(--base-card-border-width)
-  );
-  --inset-padding-left: calc(
-    var(--base-card-padding-left) -
-    var(--base-card-border-width)
-  );
+  --inset-padding-top: calc(var(--base-card-padding-top) - var(--base-card-border-width));
+  --inset-padding-right: calc(var(--base-card-padding-right) - var(--base-card-border-width));
+  --inset-padding-bottom: calc(var(--base-card-padding-bottom) - var(--base-card-border-width));
+  --inset-padding-left: calc(var(--base-card-padding-left) - var(--base-card-border-width));
 
   /*
    * ::before is used for the background color.
@@ -49,14 +37,11 @@
    */
   &::before,
   &::after {
-    content: "";
+    content: '';
     position: absolute;
     pointer-events: none;
     transition: inherit;
-    border-radius: calc(
-      var(--base-card-border-radius) -
-      var(--base-card-border-width)
-    );
+    border-radius: calc(var(--base-card-border-radius) - var(--base-card-border-width));
     inset: var(--base-card-border-width);
   }
 
@@ -85,12 +70,9 @@
   --base-card-surface-active-box-shadow: 0 0 0 1px var(--gray-a6);
 
   @supports (color: color-mix(in oklab, white, black)) {
-    --base-card-surface-box-shadow: 0 0 0 1px
-      color-mix(in oklab, var(--gray-a5), var(--gray-5) 25%);
-    --base-card-surface-hover-box-shadow: 0 0 0 1px
-      color-mix(in oklab, var(--gray-a7), var(--gray-7) 25%);
-    --base-card-surface-active-box-shadow: 0 0 0 1px
-      color-mix(in oklab, var(--gray-a6), var(--gray-6) 25%);
+    --base-card-surface-box-shadow: 0 0 0 1px color-mix(in oklab, var(--gray-a5), var(--gray-5) 25%);
+    --base-card-surface-hover-box-shadow: 0 0 0 1px color-mix(in oklab, var(--gray-a7), var(--gray-7) 25%);
+    --base-card-surface-active-box-shadow: 0 0 0 1px color-mix(in oklab, var(--gray-a6), var(--gray-6) 25%);
   }
 }
 
@@ -158,21 +140,9 @@
   --base-card-classic-hover-border-color: var(--gray-a3);
   --base-card-classic-active-border-color: var(--gray-a4);
   @supports (color: color-mix(in oklab, white, black)) {
-    --base-card-classic-border-color: color-mix(
-      in oklab,
-      var(--gray-a3),
-      var(--gray-3) 25%
-    );
-    --base-card-classic-hover-border-color: color-mix(
-      in oklab,
-      var(--gray-a4),
-      var(--gray-4) 25%
-    );
-    --base-card-classic-active-border-color: color-mix(
-      in oklab,
-      var(--gray-a3),
-      var(--gray-3) 25%
-    );
+    --base-card-classic-border-color: color-mix(in oklab, var(--gray-a3), var(--gray-3) 25%);
+    --base-card-classic-hover-border-color: color-mix(in oklab, var(--gray-a4), var(--gray-4) 25%);
+    --base-card-classic-active-border-color: color-mix(in oklab, var(--gray-a3), var(--gray-3) 25%);
   }
 }
 
@@ -228,20 +198,8 @@
   --base-card-classic-hover-border-color: var(--gray-a6);
   --base-card-classic-active-border-color: var(--gray-a6);
   @supports (color: color-mix(in oklab, white, black)) {
-    --base-card-classic-border-color: color-mix(
-      in oklab,
-      var(--gray-a6),
-      var(--gray-6) 25%
-    );
-    --base-card-classic-hover-border-color: color-mix(
-      in oklab,
-      var(--gray-a6),
-      var(--gray-6) 25%
-    );
-    --base-card-classic-active-border-color: color-mix(
-      in oklab,
-      var(--gray-a6),
-      var(--gray-6) 25%
-    );
+    --base-card-classic-border-color: color-mix(in oklab, var(--gray-a6), var(--gray-6) 25%);
+    --base-card-classic-hover-border-color: color-mix(in oklab, var(--gray-a6), var(--gray-6) 25%);
+    --base-card-classic-active-border-color: color-mix(in oklab, var(--gray-a6), var(--gray-6) 25%);
   }
 }

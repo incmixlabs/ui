@@ -567,7 +567,7 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
             {/* Create button */}
             <Button
               size="2"
-              color="blue"
+              variant="ghost"
               onClick={handleCustomValueSubmit}
               disabled={!customValue.trim() || isCreating}
             >

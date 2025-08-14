@@ -10,16 +10,16 @@ export type ButtonProps = RadixButtonProps & {
   srLabel?: string
   isSecondary?: boolean
   mobileSidebarTrigger?: boolean
-  variant?: RadixButtonProps["variant"] | "naked"
+  variant?: RadixButtonProps["variant"]
 }
 export const Button = ({
   children,
-  className,
+  className = "",
   disabled,
   variant,
   ...props
 }: ButtonProps) => {
-  const defaultClassName = `${disabled ? "cursor-not-allowed" : "cursor-pointer"} `
+  const defaultClassName = disabled ? "cursor-not-allowed " : "cursor-pointer"
   return (
     <RadixButton
       {...props}
@@ -31,3 +31,4 @@ export const Button = ({
     </RadixButton>
   )
 }
+Button.displayName = "Button"

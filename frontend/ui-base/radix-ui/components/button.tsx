@@ -1,21 +1,16 @@
-import classNames from "classnames"
-import * as React from "react"
+import * as React from 'react';
+import classNames from 'classnames';
 
-import { BaseButton } from "./_internal/base-button.js"
+import { BaseButton } from './_internal/base-button.js';
 
-type ButtonElement = React.ElementRef<typeof BaseButton>
-interface ButtonProps
-  extends React.ComponentPropsWithoutRef<typeof BaseButton> {}
+type ButtonElement = React.ElementRef<typeof BaseButton>;
+interface ButtonProps extends React.ComponentPropsWithoutRef<typeof BaseButton> {}
 const Button = React.forwardRef<ButtonElement, ButtonProps>(
   ({ className, ...props }, forwardedRef) => (
-    <BaseButton
-      {...props}
-      ref={forwardedRef}
-      className={classNames("rt-Button", className)}
-    />
+    <BaseButton {...props} ref={forwardedRef} className={classNames('rt-Button', className)} />
   )
-)
-Button.displayName = "Button"
+);
+Button.displayName = 'Button';
 
-export { Button }
-export type { ButtonProps }
+export { Button };
+export type { ButtonProps };

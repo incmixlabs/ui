@@ -1,5 +1,5 @@
-import { Button, Checkbox } from "@/base"
 import { DropdownMenuWrapper } from "@/src/base/radix-ui/dropdown-menu"
+import { Button, Checkbox } from "@radix-ui/themes"
 import type { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, Check, MoreHorizontal } from "lucide-react"
 import { getCellRenderer } from "../cell-renderers"
@@ -16,7 +16,7 @@ export function createSortableHeader<TData>(
       <Button
         variant="ghost"
         onClick={() => col.toggleSorting(col.getIsSorted() === "asc")}
-        className="p-0 text-left font-medium text-sm hover:bg-transparent hover:text-primary"
+        className="p-0 text-left font-medium text-gray-800 text-sm hover:bg-transparent hover:text-primary"
       >
         {column.headingName}
         <ArrowUpDown className="ml-2 h-4 w-4" />

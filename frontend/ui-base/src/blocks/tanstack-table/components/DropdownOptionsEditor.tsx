@@ -209,7 +209,7 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
           />
 
           {/* Add button */}
-          <Button onClick={handleAddOption}>add</Button>
+          <Button onClick={handleAddOption}>Add</Button>
         </Flex>
 
         {/* Error message */}

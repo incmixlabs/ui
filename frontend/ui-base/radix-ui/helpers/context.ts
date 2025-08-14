@@ -1,2 +1,1 @@
-export * as Context from "@radix-ui/react-context"
-;("")
+export * as Context from '@radix-ui/react-context';``
