@@ -190,7 +190,7 @@ export interface RowGroupingOptions<TData> {
   groupByColumn: string | ((row: TData) => string)
   initiallyCollapsed?: boolean
   toggleOnClick?: boolean
-  renderGroupHeader?: (groupValue: string, count: number) => React.ReactNode
+  renderGroupHeader?: (groupValue: string, count: number) => ReactNode
   // Optional mapping for standardized category identifiers
   categoryMapping?:
     | {
