@@ -170,6 +170,7 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
                     "Tag",
                     "Status",
                     "Rating",
+                    "Dropdown",
                   ].includes(value)
                 ) {
                   setColumnType(value as ColumnConfig["type"])
