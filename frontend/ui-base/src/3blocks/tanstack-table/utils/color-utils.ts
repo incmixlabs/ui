@@ -29,12 +29,25 @@ export type PaletteColor = (typeof COLOR_PALETTE)[number]
 export function generateUniqueDropdownColor(
   existingColors: readonly string[]
 ): string {
-  const used = new Set(existingColors.filter(Boolean))
-  const firstUnused = COLOR_PALETTE.find((color) => !used.has(color))
-  if (firstUnused) return firstUnused
+  // Normalize both existing colors and palette for accurate comparison
+  const used = new Set(
+    existingColors
+      .filter(Boolean)
+      .map(normalizeToHex)
+      .filter(Boolean)
+  )
+  
+  // Find first unused palette color by comparing normalized values
+  const normalizedPalette = COLOR_PALETTE.map(normalizeToHex)
+  const unusedIndex = normalizedPalette.findIndex(color => !used.has(color))
+  
+  if (unusedIndex !== -1) {
+    return COLOR_PALETTE[unusedIndex] // Return original palette token
+  }
+  
   // If all are used, rotate to spread duplicates more evenly
-  const idx = used.size % COLOR_PALETTE.length
-  return COLOR_PALETTE[idx]
+  const rotationIndex = used.size % COLOR_PALETTE.length
+  return COLOR_PALETTE[rotationIndex]
 }
 
 /**
@@ -52,11 +65,17 @@ export function isValidPaletteColor(color: string): color is PaletteColor {
 }
 
 /**
- * Normalizes color values to hex format for color pickers
- * Resolves CSS variables to their computed values
+ * Resolves color values to a concrete computed color string for color pickers.
+ * - If the input is a CSS var(...) token, it tries to resolve it via getComputedStyle.
+ * - Returns the original input on failure or in non-browser environments.
+ * Note: The returned string is not guaranteed to be hex; it may be rgb()/hsl()/hex.
  */
 export function normalizeToHex(input: string): string {
   if (!input) return input
+  // In SSR/non-browser environments, bail out early
+  if (typeof window === "undefined" || typeof document === "undefined") {
+    return input
+  }
   if (input.startsWith("var(")) {
     try {
       const varName = input.slice(4, -1).trim() // "--blue-5"

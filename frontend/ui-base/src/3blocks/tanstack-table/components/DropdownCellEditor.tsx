@@ -179,10 +179,10 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
     const existingColors = options
       .map((option) => option.color)
       .filter((color): color is string => Boolean(color))
-      .map(normalizeToHex) // Normalize existing colors to hex for proper comparison
+      // Pass raw colors; the utility handles comparison against palette tokens
 
     const uniqueColor = generateUniqueDropdownColor(existingColors)
-    return normalizeToHex(uniqueColor) // Normalize generated color to hex
+    return normalizeToHex(uniqueColor) // Resolve CSS var to a concrete color string
   }
 
   // Set unique color when component mounts
