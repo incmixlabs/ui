@@ -76,7 +76,6 @@ export function createColumnDefinitions<TData>(
                 row.original
               )
           : ({ row }) => {
-          : ({ row }) => {
               const value = row.getValue(column.accessorKey as string)
               const formatOptions = column.format
 

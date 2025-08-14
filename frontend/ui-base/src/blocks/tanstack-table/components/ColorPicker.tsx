@@ -41,7 +41,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
     "var(--red-9)",
     "var(--yellow-9)",
     "var(--purple-9)",
-    "var(--pink-9)"
+    "var(--pink-9)",
   ]
 
   // Close picker when clicking outside
@@ -60,9 +60,13 @@ const ColorPicker: FC<ColorPickerProps> = ({
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside, { capture: true })
+    document.addEventListener("mousedown", handleClickOutside, {
+      capture: true,
+    })
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside, { capture: true })
+      document.removeEventListener("mousedown", handleClickOutside, {
+        capture: true,
+      })
     }
   }, [showPicker])
 
@@ -153,8 +157,12 @@ const ColorPicker: FC<ColorPickerProps> = ({
                 style={{
                   ...colorOptionStyle,
                   backgroundColor: optionColor,
-                  border: isSelected ? "3px solid var(--gray-12)" : "1px solid var(--gray-6)",
-                  ...(hoveredColor === optionColor ? colorOptionHoverStyle : {}),
+                  border: isSelected
+                    ? "3px solid var(--gray-12)"
+                    : "1px solid var(--gray-6)",
+                  ...(hoveredColor === optionColor
+                    ? colorOptionHoverStyle
+                    : {}),
                 }}
                 srLabel={`Select color ${index + 1}`}
               />

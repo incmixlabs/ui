@@ -146,10 +146,10 @@ export interface RowAction {
 
 // Export options
 export interface ExportOptions<TData extends object = any> {
-   enabled?: boolean
-   formats?: ("csv" | "excel" | "pdf")[]
-   filename?: string
-   customExporter?: (data: TData[], columns: DataTableColumn<TData>[]) => void
+  enabled?: boolean
+  formats?: ("csv" | "excel" | "pdf")[]
+  filename?: string
+  customExporter?: (data: TData[], columns: DataTableColumn<TData>[]) => void
 }
 
 // Virtualization options
