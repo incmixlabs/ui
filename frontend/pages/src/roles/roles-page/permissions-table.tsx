@@ -64,13 +64,21 @@ const PermissionsTable = () => {
               className="mx-auto w-4"
               checked={hasPermission}
               onChange={(e) => {
-                console.log("Permission changed:", {
+                const change = {
                   resource: permission.resource,
                   subject: permission.subject,
                   action: permission.action,
                   role: role.name,
-                  granted: e.target.checked,
-                })
+                  granted: e.target.checked
+                };
+                setChanges(prevChanges => {
+                  const filtered = prevChanges.filter(
+                    c => !(c.subject === change.subject && 
+                          c.action === change.action && 
+                          c.role === change.role)
+                  );
+                  return [...filtered, change];
+                });
               }}
             />
           )
