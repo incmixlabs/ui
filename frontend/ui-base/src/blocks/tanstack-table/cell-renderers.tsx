@@ -96,7 +96,7 @@ export const NumberCell: React.FC<{ value: number; options?: any }> = ({
   options,
 }) => (
   <span className="block text-left">
-    {typeof options === "object"
+    {options && typeof options === "object"
       ? new Intl.NumberFormat(undefined, options).format(value)
       : value.toLocaleString()}
   </span>
