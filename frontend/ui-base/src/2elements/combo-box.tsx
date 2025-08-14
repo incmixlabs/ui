@@ -1,5 +1,5 @@
 import { cn } from "@/shadcn/lib/utils"
-import { Flex, Popover, Text, type badgePropDefs, iconSize } from "@/src/1base"
+import { Flex, Popover, Text, badgePropDefs, iconSize } from "@/src/1base"
 import * as React from "react"
 
 import {
