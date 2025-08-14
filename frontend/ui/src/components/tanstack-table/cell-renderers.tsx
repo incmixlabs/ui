@@ -151,7 +151,7 @@ export function getContrastingTextColor(backgroundColor: string): string {
   
   // Calculate contrast using YIQ method
   const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
-  return yiq >= 128 ? 'var(--gray-1)' : 'var(--gray-12)';
+  return yiq >= 128 ? 'var(--gray-1)' : 'var(--gray-6)';
 }
 
 // Helper function to adjust color brightness (for hover effects)
@@ -226,7 +226,7 @@ export const DropdownCell: React.FC<{
   // Determine text color based on background color (if provided)
   const textColor = finalOption.color 
     ? getContrastingTextColor(finalOption.color)
-    : 'var(--gray-12)';
+    : 'var(--gray-6)';
 
   // Size classes
   const sizeClasses = {

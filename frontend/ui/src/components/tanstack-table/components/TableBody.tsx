@@ -270,6 +270,7 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
         {visibleCells.map(cell => {
           // Skip rendering cells for hidden columns
           if (!cell.column.getIsVisible()) return null;
+          console.log("allcell",cell);
           
           // Get column definition for styling and type information
           const columnDef = flatColumns.find(col =>
@@ -297,7 +298,7 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
             return (
               <Table.Cell
                 key={cell.id}
-                className={`pl-3 pr-0 py-1.5 ${columnDef?.className || ""} overflow-hidden`}
+                className={`pl-3 pr-0 py-1.5  ${columnDef?.className || ""} overflow-hidden`}
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </Table.Cell>
@@ -307,7 +308,7 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           return (
             <Table.Cell
               key={cell.id}
-              className={`px-2 border-l border-gray-6 py-1.5 ${columnDef?.className || ""} overflow-hidden ${isEditableCell && isSelected?.(row.id, cell.column.id) ? 'keyboard-selected-cell' : ''}`}
+              className={`px-2 pl-10 border-l border-gray-6 py-1.5 ${columnDef?.className || ""} overflow-hidden ${isEditableCell && isSelected?.(row.id, cell.column.id) ? 'keyboard-selected-cell' : ''} `}
               style={{
                 width: columnDef?.width,
                 minWidth: columnDef?.minWidth,
@@ -461,10 +462,8 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
   );
 }
 
-// Create a memoized version of the row component
 const MemoizedRow = memo(TableRowComponent) as <T extends object>(props: RowProps<T>) => React.ReactElement;
 
-// Set display name for debugging
 (MemoizedRow as any).displayName = "MemoizedTableRow";
 
 /**
