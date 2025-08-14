@@ -31,8 +31,6 @@ const BaseButton = React.forwardRef<BaseButtonElement, BaseButtonProps>((props, 
     disabled = props.loading,
     ...baseButtonProps
   } = extractProps(props, baseButtonPropDefs, marginPropDefs);
-  debugger;
-  console.log('BaseButton props:', props, 'extracted:', baseButtonProps);
   const Comp = asChild ? SlotRoot : 'button';
   return (
     <Comp
