@@ -1,6 +1,6 @@
 import React from "react"
 
-import { Header } from "../blocks/Header"
+import { Header } from "../3blocks/Header"
 import "./page.css"
 
 type User = {

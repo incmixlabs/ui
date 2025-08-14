@@ -20,6 +20,8 @@ node_modules
 
 # Testing
 coverage
+#Demo
+demo
 
 # Turbo
 .turbo
