@@ -104,9 +104,11 @@ export function useTableInstance<TData>({
       setRowSelection(updatedSelection)
       // Call the selection change handler if provided
       if (onSelectionChange) {
-        const selectedRowIds = Object.keys(updatedSelection).filter(
-          (id) => (updatedSelection as Record<string, boolean>)[id]
+        const selectedRowIds = Object.entries(
+          updatedSelection as RowSelectionState
         )
+          .filter(([_, isSelected]) => isSelected === true)
+          .map(([id]) => id)
 
         const selectedRowData = selectedRowIds
           .map((id) => table.getRow(id))
