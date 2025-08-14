@@ -52,8 +52,13 @@ export const exportCSV = <TData extends object>(
   )
 
   // Combine headers and rows
-  const csvEscape = (v: string) =>
-    `"${v.replace(/"/g, '""').replace(/\n/g, "\\n")}"`
+  const csvEscape = (v: string) => {
+    // Only quote if the value contains comma, quote, or newline
+    if (v.includes(',') || v.includes('"') || v.includes('\n')) {
+      return `"${v.replace(/"/g, '""')}"`;
+    }
+    return v;
+  }
   const csvContent = [
     headers.map(csvEscape).join(","),
     ...rows.map((r) => r.map((v) => csvEscape(String(v))).join(",")),
