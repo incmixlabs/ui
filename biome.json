@@ -17,6 +17,7 @@
       "frontend/ui-base/shadcn",
       "frontend/ui-base/.storybook",
       "dist",
+      "demo",
       ".next",
       ".astro",
       "!.storybook",

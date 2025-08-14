@@ -1,15 +1,15 @@
-import type { PropDef } from "./prop-def.js"
+import type { PropDef } from './prop-def.js';
 
-const radii = ["none", "small", "medium", "large", "full"] as const
+const radii = ['none', 'small', 'medium', 'large', 'full'] as const;
 
 const radiusPropDef = {
   radius: {
-    type: "enum",
+    type: 'enum',
     values: radii,
     default: undefined,
   },
 } satisfies {
-  radius: PropDef<(typeof radii)[number]>
-}
+  radius: PropDef<(typeof radii)[number]>;
+};
 
-export { radiusPropDef, radii }
+export { radiusPropDef, radii };

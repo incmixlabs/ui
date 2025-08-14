@@ -20,7 +20,14 @@ const size = {
   values: ["1", "2"] as const,
 }
 const variants = dropdownButtonPropDefs.variant
-variants.values = ["solid", "soft"]
+variants.values = [
+  "classic",
+  "solid",
+  "soft",
+  "ghost",
+  "surface",
+  "outline",
+] as const
 const colors = dropdownButtonPropDefs.color
 const highContrast = dropdownButtonPropDefs.highContrast
 

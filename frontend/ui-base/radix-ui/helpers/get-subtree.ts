@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from 'react';
 
 /**
  * This is a helper function that is used when a component supports `asChild`
@@ -11,15 +11,12 @@ export function getSubtree(
   options: { asChild: boolean | undefined; children: React.ReactNode },
   content: React.ReactNode | ((children: React.ReactNode) => React.ReactNode)
 ) {
-  const { asChild, children } = options
-  if (!asChild)
-    return typeof content === "function" ? content(children) : content
+  const { asChild, children } = options;
+  if (!asChild) return typeof content === 'function' ? content(children) : content;
 
-  const firstChild = React.Children.only(children) as React.ReactElement<any>
+  const firstChild = React.Children.only(children) as React.ReactElement;
   return React.cloneElement(firstChild, {
-    children:
-      typeof content === "function"
-        ? content(firstChild.props.children)
-        : content,
-  })
+    // @ts-expect-error
+    children: typeof content === 'function' ? content(firstChild.props.children) : content,
+  });
 }

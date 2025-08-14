@@ -4,7 +4,7 @@
 
   &::before {
     position: fixed;
-    content: "";
+    content: '';
     inset: 0;
     background-color: var(--color-overlay);
   }
@@ -116,23 +116,23 @@
 
   .rt-BaseDialogOverlay {
     /* Keep the overlay mounted until the children have animated */
-    &:where([data-state="closed"]) {
+    &:where([data-state='closed']) {
       animation: rt-dialog-overlay-no-op 160ms cubic-bezier(0.16, 1, 0.3, 1);
     }
-    &:where([data-state="open"])::before {
+    &:where([data-state='open'])::before {
       animation: rt-fade-in 200ms cubic-bezier(0.16, 1, 0.3, 1);
     }
-    &:where([data-state="closed"])::before {
+    &:where([data-state='closed'])::before {
       opacity: 0;
       animation: rt-fade-out 160ms cubic-bezier(0.16, 1, 0.3, 1);
     }
   }
 
   .rt-BaseDialogContent {
-    &:where([data-state="open"]) {
+    &:where([data-state='open']) {
       animation: rt-dialog-content-show 200ms cubic-bezier(0.16, 1, 0.3, 1);
     }
-    &:where([data-state="closed"]) {
+    &:where([data-state='closed']) {
       opacity: 0;
       animation: rt-dialog-content-hide 100ms cubic-bezier(0.16, 1, 0.3, 1);
     }

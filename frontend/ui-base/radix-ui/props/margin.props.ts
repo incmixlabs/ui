@@ -1,27 +1,7 @@
-import type { GetPropDefTypes, PropDef } from "./prop-def.js"
+import type { PropDef, GetPropDefTypes } from './prop-def.js';
 
 // prettier-ignore
-const marginValues = [
-  "0",
-  "1",
-  "2",
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
-  "-1",
-  "-2",
-  "-3",
-  "-4",
-  "-5",
-  "-6",
-  "-7",
-  "-8",
-  "-9",
-] as const
+const marginValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-1', '-2', '-3', '-4', '-5', '-6', '-7', '-8', '-9'] as const;
 
 const marginPropDefs = {
   /**
@@ -37,11 +17,11 @@ const marginPropDefs = {
    * https://developer.mozilla.org/en-US/docs/Web/CSS/margin
    */
   m: {
-    type: "enum | string",
+    type: 'enum | string',
     values: marginValues,
     responsive: true,
-    className: "rt-r-m",
-    customProperties: ["--m"],
+    className: 'rt-r-m',
+    customProperties: ['--m'],
   },
   /**
    * Sets the CSS **margin-left** and **margin-right** properties.
@@ -57,11 +37,11 @@ const marginPropDefs = {
    * https://developer.mozilla.org/en-US/docs/Web/CSS/margin-right
    */
   mx: {
-    type: "enum | string",
+    type: 'enum | string',
     values: marginValues,
     responsive: true,
-    className: "rt-r-mx",
-    customProperties: ["--ml", "--mr"],
+    className: 'rt-r-mx',
+    customProperties: ['--ml', '--mr'],
   },
   /**
    * Sets the CSS **margin-top** and **margin-bottom** properties.
@@ -77,11 +57,11 @@ const marginPropDefs = {
    * https://developer.mozilla.org/en-US/docs/Web/CSS/margin-bottom
    */
   my: {
-    type: "enum | string",
+    type: 'enum | string',
     values: marginValues,
     responsive: true,
-    className: "rt-r-my",
-    customProperties: ["--mt", "--mb"],
+    className: 'rt-r-my',
+    customProperties: ['--mt', '--mb'],
   },
   /**
    * Sets the CSS **margin-top** property.
@@ -96,11 +76,11 @@ const marginPropDefs = {
    * https://developer.mozilla.org/en-US/docs/Web/CSS/margin-top
    */
   mt: {
-    type: "enum | string",
+    type: 'enum | string',
     values: marginValues,
     responsive: true,
-    className: "rt-r-mt",
-    customProperties: ["--mt"],
+    className: 'rt-r-mt',
+    customProperties: ['--mt'],
   },
   /**
    * Sets the CSS **margin-right** property.
@@ -115,11 +95,11 @@ const marginPropDefs = {
    * https://developer.mozilla.org/en-US/docs/Web/CSS/margin-right
    */
   mr: {
-    type: "enum | string",
+    type: 'enum | string',
     values: marginValues,
     responsive: true,
-    className: "rt-r-mr",
-    customProperties: ["--mr"],
+    className: 'rt-r-mr',
+    customProperties: ['--mr'],
   },
   /**
    * Sets the CSS **margin-bottom** property.
@@ -134,11 +114,11 @@ const marginPropDefs = {
    * https://developer.mozilla.org/en-US/docs/Web/CSS/margin-bottom
    */
   mb: {
-    type: "enum | string",
+    type: 'enum | string',
     values: marginValues,
     responsive: true,
-    className: "rt-r-mb",
-    customProperties: ["--mb"],
+    className: 'rt-r-mb',
+    customProperties: ['--mb'],
   },
   /**
    * Sets the CSS **margin-left** property.
@@ -153,23 +133,23 @@ const marginPropDefs = {
    * https://developer.mozilla.org/en-US/docs/Web/CSS/margin-left
    */
   ml: {
-    type: "enum | string",
+    type: 'enum | string',
     values: marginValues,
     responsive: true,
-    className: "rt-r-ml",
-    customProperties: ["--ml"],
+    className: 'rt-r-ml',
+    customProperties: ['--ml'],
   },
 } satisfies {
-  m: PropDef<(typeof marginValues)[number]>
-  mx: PropDef<(typeof marginValues)[number]>
-  my: PropDef<(typeof marginValues)[number]>
-  mt: PropDef<(typeof marginValues)[number]>
-  mr: PropDef<(typeof marginValues)[number]>
-  mb: PropDef<(typeof marginValues)[number]>
-  ml: PropDef<(typeof marginValues)[number]>
-}
+  m: PropDef<(typeof marginValues)[number]>;
+  mx: PropDef<(typeof marginValues)[number]>;
+  my: PropDef<(typeof marginValues)[number]>;
+  mt: PropDef<(typeof marginValues)[number]>;
+  mr: PropDef<(typeof marginValues)[number]>;
+  mb: PropDef<(typeof marginValues)[number]>;
+  ml: PropDef<(typeof marginValues)[number]>;
+};
 
-type MarginProps = GetPropDefTypes<typeof marginPropDefs>
+type MarginProps = GetPropDefTypes<typeof marginPropDefs>;
 
-export { marginPropDefs }
-export type { MarginProps }
+export { marginPropDefs };
+export type { MarginProps };

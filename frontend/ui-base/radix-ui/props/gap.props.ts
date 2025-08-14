@@ -1,6 +1,6 @@
-import type { PropDef } from "./prop-def.js"
+import type { PropDef } from './prop-def.js';
 
-const gapValues = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"] as const
+const gapValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'] as const;
 
 const gapPropDefs = {
   /**
@@ -16,9 +16,9 @@ const gapPropDefs = {
    * https://developer.mozilla.org/en-US/docs/Web/CSS/gap
    */
   gap: {
-    type: "enum | string",
-    className: "rt-r-gap",
-    customProperties: ["--gap"],
+    type: 'enum | string',
+    className: 'rt-r-gap',
+    customProperties: ['--gap'],
     values: gapValues,
     responsive: true,
   },
@@ -35,9 +35,9 @@ const gapPropDefs = {
    * https://developer.mozilla.org/en-US/docs/Web/CSS/row-gap
    */
   gapX: {
-    type: "enum | string",
-    className: "rt-r-cg",
-    customProperties: ["--column-gap"],
+    type: 'enum | string',
+    className: 'rt-r-cg',
+    customProperties: ['--column-gap'],
     values: gapValues,
     responsive: true,
   },
@@ -54,16 +54,16 @@ const gapPropDefs = {
    * https://developer.mozilla.org/en-US/docs/Web/CSS/column-gap
    */
   gapY: {
-    type: "enum | string",
-    className: "rt-r-rg",
-    customProperties: ["--row-gap"],
+    type: 'enum | string',
+    className: 'rt-r-rg',
+    customProperties: ['--row-gap'],
     values: gapValues,
     responsive: true,
   },
 } satisfies {
-  gap: PropDef<(typeof gapValues)[number]>
-  gapX: PropDef<(typeof gapValues)[number]>
-  gapY: PropDef<(typeof gapValues)[number]>
-}
+  gap: PropDef<(typeof gapValues)[number]>;
+  gapX: PropDef<(typeof gapValues)[number]>;
+  gapY: PropDef<(typeof gapValues)[number]>;
+};
 
-export { gapPropDefs }
+export { gapPropDefs };
