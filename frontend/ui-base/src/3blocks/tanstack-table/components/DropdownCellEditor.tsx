@@ -1,10 +1,10 @@
 import { Box, Button, Flex, Text } from "@/src/1base"
 import { useEffect, useRef, useState } from "react"
-import {
-  type DropdownOption,
-  adjustColor,
-  getContrastingTextColor,
+import type {
+  DropdownOption,
 } from "../cell-renderers"
+import ColorPicker from "./ColorPicker"
+import { generateUniqueDropdownColor } from "@/src/3blocks/tanstack-table/utils/color-utils"
 
 interface DropdownCellEditorProps {
   value: string
@@ -29,185 +29,6 @@ interface DropdownCellEditorProps {
   displayStyle?: "badge" | "button" | "minimal" | "plain"
   size?: "sm" | "md" | "lg"
   rowData?: any
-}
-
-interface ColorPickerProps {
-  color: string
-  onChange: (color: string) => void
-  size?: "sm" | "md"
-}
-
-const ColorPicker: React.FC<ColorPickerProps> = ({
-  color,
-  onChange,
-  size = "md",
-}) => {
-  const [showPicker, setShowPicker] = useState(false)
-  const [hoveredColor, setHoveredColor] = useState<string | null>(null)
-  const buttonRef = useRef<HTMLDivElement>(null)
-  const popupRef = useRef<HTMLDialogElement>(null)
-
-  // Color palette for option creation
-  // const colorPalette = [
-  //   '#93c5fd', '#fcd34d', '#86efac', '#f9a8d4', '#c4b5fd', '#a5b4fc',
-  //   '#fdba74', '#67e8f9', '#d8b4fe', '#f87171', '#fde68a', '#6ee7b7'
-  // ];
-
-  const colorPalette = [
-    "var(--blue-5)",
-    "var(--green-5)",
-    "var(--red-5)",
-    "var(--yellow-5)",
-    "var(--plum-5)",
-    "var(--teal-5)",
-    "var(--pink-5)",
-    "var(--indigo-5)",
-    "var(--amber-5)",
-    "var(--orange-5)",
-    "var(--purple-5)",
-    "var(--teal-5)",
-  ]
-
-  const handleColorSelect = (selectedColor: string) => {
-    onChange(selectedColor)
-    setShowPicker(false)
-  }
-
-  // Position popup relative to button
-  useEffect(() => {
-    if (showPicker && buttonRef.current && popupRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect()
-      popupRef.current.style.top = `${rect.bottom + window.scrollY + 5}px`
-      popupRef.current.style.left = `${rect.left + window.scrollX - 5}px`
-    }
-  }, [showPicker])
-
-  // Close on outside click
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (buttonRef.current && popupRef.current) {
-        if (
-          !buttonRef.current.contains(e.target as Node) &&
-          !popupRef.current.contains(e.target as Node)
-        ) {
-          setShowPicker(false)
-        }
-      }
-    }
-
-    if (showPicker) {
-      document.addEventListener("mousedown", handleClickOutside, {
-        capture: true,
-      })
-    }
-
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside, {
-        capture: true,
-      })
-  }, [showPicker])
-
-  const sizeClass = size === "sm" ? "w-6 h-6" : "w-8 h-8"
-
-  return (
-    <Box className="relative inline-block">
-      <div
-        ref={buttonRef}
-        onClick={(e) => {
-          e.stopPropagation()
-          setShowPicker(!showPicker)
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault()
-            e.stopPropagation()
-            setShowPicker(!showPicker)
-          }
-        }}
-        className={`${sizeClass} cursor-pointer rounded border border-gray-300 bg-gray-200`}
-        style={{ backgroundColor: color }}
-        tabIndex={0}
-        role="button"
-        aria-label="Color picker"
-        aria-expanded={showPicker}
-      />
-
-      {showPicker && (
-        <dialog
-          ref={popupRef}
-          open
-          onClick={(e) => e.stopPropagation()}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.stopPropagation()
-            }
-          }}
-          className="fixed top-0 left-0 z-[9999] w-[200px] rounded-xl border border-gray-200 bg-white p-3 shadow-lg"
-          aria-label="Color picker panel"
-        >
-          <div className="mb-2.5 flex justify-between gap-2.5">
-            {colorPalette.slice(0, 6).map((c, i) => (
-              <div
-                key={`color-row1-${i}`}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleColorSelect(c)
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    handleColorSelect(c)
-                  }
-                }}
-                onMouseEnter={() => setHoveredColor(c)}
-                onMouseLeave={() => setHoveredColor(null)}
-                className={`h-6 w-6 cursor-pointer rounded-full transition-transform duration-200 ease-in-out ${
-                  c === color
-                    ? "border-2 border-black"
-                    : "border border-gray-300"
-                } ${hoveredColor === c ? "scale-115" : "scale-100"}`}
-                style={{ backgroundColor: c }}
-                tabIndex={0}
-                role="button"
-                aria-label={`Select color ${c}`}
-              />
-            ))}
-          </div>
-
-          <div className="flex justify-between gap-2.5">
-            {colorPalette.slice(6).map((c, i) => (
-              <div
-                key={`color-row2-${i}`}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  handleColorSelect(c)
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    handleColorSelect(c)
-                  }
-                }}
-                onMouseEnter={() => setHoveredColor(c)}
-                onMouseLeave={() => setHoveredColor(null)}
-                className={`h-6 w-6 cursor-pointer rounded-full transition-transform duration-200 ease-in-out ${
-                  c === color
-                    ? "border-2 border-black"
-                    : "border border-gray-300"
-                } ${hoveredColor === c ? "scale-115" : "scale-100"}`}
-                style={{ backgroundColor: c }}
-                tabIndex={0}
-                role="button"
-                aria-label={`Select color ${c}`}
-              />
-            ))}
-          </div>
-        </dialog>
-      )}
-    </Box>
-  )
 }
 
 export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
@@ -352,28 +173,12 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
     setCustomValue(e.target.value)
   }
 
-  // Generate unique color for new options
+  // Generate unique color for new options using shared utility
   const generateUniqueColor = () => {
-    const existingColors = options.map((option) => option.color).filter(Boolean)
-    const colorPalette = [
-      "var(--blue-5)",
-      "var(--green-5)",
-      "var(--red-5)",
-      "var(--yellow-5)",
-      "var(--plum-5)",
-      "var(--teal-5)",
-      "var(--pink-5)",
-      "var(--indigo-5)",
-      "var(--amber-5)",
-      "var(--orange-5)",
-      "var(--purple-5)",
-      "var(--teal-5)",
-    ]
-
-    const unusedColor = colorPalette.find(
-      (color) => !existingColors.includes(color)
-    )
-    return unusedColor || "var(--blue-5)"
+    const existingColors = options
+      .map((option) => option.color)
+      .filter((color): color is string => Boolean(color))
+    return generateUniqueDropdownColor(existingColors)
   }
 
   // Set unique color when component mounts
