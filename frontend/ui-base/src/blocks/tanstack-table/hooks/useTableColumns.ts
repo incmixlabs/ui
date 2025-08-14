@@ -20,7 +20,7 @@ import {
 /**
  * Hook to handle column definitions and transformations
  */
-export function useTableColumns<TData>({
+export function useTableColumns<TData extends object>({
   columns,
   enableRowSelection,
   enableSorting,

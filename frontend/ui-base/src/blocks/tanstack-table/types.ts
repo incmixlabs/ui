@@ -109,14 +109,14 @@ export interface FilterOption {
 }
 
 // Faceted filter interface
-export interface DataTableFacet<TData> {
+export interface DataTableFacet<TData extends object> {
   column: keyof TData | string
   title: string
   options: FilterOption[]
 }
 
 // Advanced filter interface
-export interface AdvancedFilter<TData> {
+export interface AdvancedFilter<TData extends object> {
   column: keyof TData | string
   operator:
     | "equals"
@@ -154,7 +154,7 @@ export interface VirtualizationOptions {
 }
 
 // Expandable row options
-export interface ExpandableRowOptions<TData> {
+export interface ExpandableRowOptions<TData extends object> {
   render: (row: TData) => ReactNode
   expandOnClick?: boolean
   singleExpand?: boolean
@@ -170,7 +170,7 @@ export type SidebarFilterType =
   | "text"
 
 // Sidebar filter configuration
-export interface SidebarFilterConfig<TData> {
+export interface SidebarFilterConfig<TData extends object> {
   type: SidebarFilterType
   column: keyof TData | string
   title: string
@@ -180,7 +180,7 @@ export interface SidebarFilterConfig<TData> {
 }
 
 // Row grouping options
-export interface RowGroupingOptions<TData> {
+export interface RowGroupingOptions<TData extends object> {
   groupByColumn: string | ((row: TData) => string)
   initiallyCollapsed?: boolean
   toggleOnClick?: boolean

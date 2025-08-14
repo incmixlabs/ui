@@ -1,5 +1,5 @@
 import { Button } from "@/base"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useId, useRef, useState } from "react"
 import type { CSSProperties, FC } from "react"
 interface ColorPickerProps {
   color: string
@@ -33,7 +33,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
   const [hoveredColor, setHoveredColor] = useState<string | null>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const popupRef = useRef<HTMLDivElement>(null)
-
+  const popupId = useId()
   // Color palette
   const colors = [
     "var(--sky-9)",
@@ -47,8 +47,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
   // Close picker when clicking outside
   useEffect(() => {
     if (!showPicker) return
-
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: PointerEvent) => {
       const target = event.target as Node
       if (
         buttonRef.current &&
@@ -60,13 +59,9 @@ const ColorPicker: FC<ColorPickerProps> = ({
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside, {
-      capture: true,
-    })
+    document.addEventListener("pointerdown", handleClickOutside, true)
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside, {
-        capture: true,
-      })
+      document.removeEventListener("pointerdown", handleClickOutside, true)
     }
   }, [showPicker])
 
@@ -74,13 +69,12 @@ const ColorPicker: FC<ColorPickerProps> = ({
     onChange(selectedColor)
     setShowPicker(false)
   }
-
   return (
     <div style={{ position: "relative", display: "inline-block" }}>
       <button
         type="button"
         ref={buttonRef}
-        aria-haspopup="true"
+        aria-haspopup="dialog"
         aria-expanded={showPicker}
         aria-label="Open color picker"
         onClick={(e) => {
@@ -90,7 +84,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
           }
           setShowPicker(!showPicker)
         }}
-        onMouseDown={(e) => {
+        onPointerDownCapture={(e) => {
           if (insideDialog) e.stopPropagation()
         }}
         onKeyDown={(e) => {
@@ -114,6 +108,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
 
       {showPicker && (
         <div
+          id={popupId}
           ref={popupRef}
           style={{
             position: "absolute",
@@ -130,7 +125,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
             flexWrap: "wrap",
             gap: "8px",
           }}
-          onMouseDown={(e) => {
+          onPointerDownCapture={(e) => {
             if (insideDialog) e.stopPropagation()
           }}
         >

@@ -13,7 +13,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import type { DataTableFacet } from "../types"
 import { KeyboardShortcutsHelp } from "./KeyboardShortcutsHelp"
 
-interface FacetedFilterProps<TData> {
+interface FacetedFilterProps<TData extends object> {
   table: TanStackTable<TData>
   facet: DataTableFacet<TData>
 }
@@ -95,7 +95,7 @@ const FacetedFilterComponent = <TData extends object>({
   )
 }
 
-export interface TableFiltersProps<TData> {
+export interface TableFiltersProps<TData extends object> {
   table: TanStackTable<TData>
   filterColumn?: keyof TData | string
   filterPlaceholder: string

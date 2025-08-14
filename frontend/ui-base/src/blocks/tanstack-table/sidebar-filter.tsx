@@ -211,13 +211,13 @@ const DateRangeFilter: React.FC<{
 }
 
 // Individual Filter Group Component
-interface FilterGroupProps<TData> {
+interface FilterGroupProps<TData extends object> {
   filter: SidebarFilterConfig<TData>
   onFilterChange: (column: string, value: any) => void
   currentValue: any
 }
 
-export function FilterGroup<TData>({
+export function FilterGroup<TData extends object>({
   filter,
   onFilterChange,
   currentValue,
@@ -326,14 +326,14 @@ export function FilterGroup<TData>({
 }
 
 // Main Sidebar Component
-interface TableSidebarProps<TData> {
+interface TableSidebarProps<TData extends object> {
   filters: SidebarFilterConfig<TData>[]
   table: Table<TData>
   isOpen: boolean
   onToggle: () => void
 }
 
-export function TableSidebar<TData>({
+export function TableSidebar<TData extends object>({
   filters,
   table,
   isOpen,

@@ -144,7 +144,6 @@ export function createEnhancedDropdownColumn<TData extends object>(
         onDeleteOption={config.onDeleteOption}
         isLoading={config.isLoading ?? false}
         loadingText={config.loadingText ?? "Loading..."}
-        errorMessage={config.errorMessage}
         displayStyle={config.displayStyle ?? "badge"}
         errorMessage={config.errorMessage}
         rowData={props.rowData}
