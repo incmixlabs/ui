@@ -1,19 +1,16 @@
 import { AuthWrapper } from "@/layouts/auth-wrapper"
 import AutoForm from "../auto-form"
+import type { ZodObjectOrWrapped } from "../auto-form/utils"
 import { useStepper } from "../stepper"
 import { StepperFooter } from "./stepper-footer"
 import type { StepSchema } from "./types"
-import type { ZodObjectOrWrapped } from "../auto-form/utils"
 
 interface StepFormProps<T extends ZodObjectOrWrapped = any> {
   steps: StepSchema<T>[]
   stepData: Record<number, Partial<T>>
-  setStepData: React.Dispatch<
-    React.SetStateAction<Record<number, Partial<T>>>
-  >
+  setStepData: React.Dispatch<React.SetStateAction<Record<number, Partial<T>>>>
   onFinalSubmit: (data: Record<number, Partial<T>>) => void
 }
-
 
 export const StepForm = ({
   steps,
