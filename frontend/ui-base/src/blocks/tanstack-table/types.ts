@@ -38,15 +38,9 @@ export interface DataTableColumn<TData> {
 
   // Formatting options
   format?: {
-    dateFormat?: string
-    numberFormat?: {
-      style?: string
-      currency?: string
-      minimumFractionDigits?: number
-      maximumFractionDigits?: number
-      [key: string]: any
-    }
-    formatter?: (value: any, row: TData) => string
+    dateFormat?: string | Intl.DateTimeFormatOptions
+    numberFormat?: Intl.NumberFormatOptions
+    formatter?: (value: unknown, row: TData) => string
   }
 
   // Custom renderer - fixed type to be more flexible with value types
