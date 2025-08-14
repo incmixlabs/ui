@@ -146,7 +146,7 @@ export function createEnhancedDropdownColumn<TData extends object>(
         loadingText={config.loadingText ?? "Loading..."}
         errorMessage={config.errorMessage}
         displayStyle={config.displayStyle ?? "badge"}
-        size={config.size ?? "md"}
+        errorMessage={config.errorMessage}
         rowData={props.rowData}
       />
     ),
