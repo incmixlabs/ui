@@ -42,6 +42,7 @@ const PermissionsTable = () => {
             <input
               type="checkbox"
               className="mx-auto w-4"
+              aria-label={`Toggle ${permission.resource} for ${role.name}`}
               checked={hasPermission}
               onChange={(e) => {
                 const change = {
