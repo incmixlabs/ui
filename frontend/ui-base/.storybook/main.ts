@@ -27,9 +27,9 @@ const config: StorybookConfig = {
       config.resolve.alias = {
         ...config.resolve.alias,
         "@/src": resolve(__dirname, "../src"),
-        "@/base": resolve(__dirname, "../src/base1"),
-        "@/blocks": resolve(__dirname, "../src/blocks1"),
-        "@/elements": resolve(__dirname, "../src/elements1"),
+        "@/base": resolve(__dirname, "../src/1base"),
+        "@/blocks": resolve(__dirname, "../src/3blocks"),
+        "@/elements": resolve(__dirname, "../src/2elements"),
         "@/radix-ui": resolve(__dirname, "../radix-ui/components"),
         "@/shadcn-ui": resolve(__dirname, "../shadcn/components/ui"),
         "@/shadcn": resolve(__dirname, "../shadcn")
