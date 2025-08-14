@@ -8,6 +8,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import type {
+  ColumnDef,
   ColumnFiltersState,
   OnChangeFn,
   PaginationState,
@@ -32,7 +33,7 @@ interface TableStateProps {
 
 interface TableInstanceProps<TData> {
   data: TData[]
-  columnDefs: any[]
+  columnDefs: ColumnDef<TData, any>[]
   enableSorting: boolean
   enableFiltering: boolean
   enablePagination: boolean
