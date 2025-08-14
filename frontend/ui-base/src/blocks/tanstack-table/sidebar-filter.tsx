@@ -1,4 +1,5 @@
 import { Button, Checkbox, Input } from "@/base"
+import type { Table } from "@tanstack/react-table"
 import { Calendar, Check, ChevronDown, ChevronRight, X } from "lucide-react"
 // File: components/DataTable/SidebarFilters.tsx
 import { useState } from "react"
@@ -327,7 +328,7 @@ export function FilterGroup<TData>({
 // Main Sidebar Component
 interface TableSidebarProps<TData> {
   filters: SidebarFilterConfig<TData>[]
-  table: any
+  table: Table<TData>
   isOpen: boolean
   onToggle: () => void
 }
