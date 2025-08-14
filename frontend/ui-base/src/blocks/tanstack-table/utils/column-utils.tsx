@@ -71,12 +71,11 @@ export function createColumnDefinitions<TData>(
         ? column.cell
         : column.renderer
           ? ({ row }) =>
-              column.renderer
-                ? column.renderer(
-                    row.getValue(column.accessorKey as string),
-                    row.original
-                  )
-                : null
+              column.renderer(
+                row.getValue(column.accessorKey as string),
+                row.original
+              )
+          : ({ row }) => {
           : ({ row }) => {
               const value = row.getValue(column.accessorKey as string)
               const formatOptions = column.format
