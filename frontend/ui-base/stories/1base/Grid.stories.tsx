@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Avatar, Box, Button, Flex, Grid, Text, Theme } from "../../src/base" // Adjust the import path as necessary
+import { Avatar, Box, Button, Flex, Grid, Text, Theme } from "../../src/1base" // Adjust the import path as necessary
 
 const meta: Meta<typeof Grid> = {
   title:"1 Base/Grid",

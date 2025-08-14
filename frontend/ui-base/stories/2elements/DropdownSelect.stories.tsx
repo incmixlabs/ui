@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import "../../src/styles/index.css"
 import React, { useState } from "react"
-import { Theme, Box, Text, Flex } from "../../src/base"
-import { LabelDropdownSelector, type LabelOption } from "../../src/elements/dropdown-select"
+import { Theme, Box, Text, Flex } from "../../src/1base"
+import { LabelDropdownSelector, type LabelOption } from "../../src/2elements/dropdown-select"
 import {
   AlertCircle,
   Clock,

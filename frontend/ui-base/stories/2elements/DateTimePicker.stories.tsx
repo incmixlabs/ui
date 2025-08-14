@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Theme, Box, Text, Flex, Card, Button } from "../../src/base"
-import { SmartDatetimeInput } from "../../src/elements/dates/datetime-picker"
+import { Theme, Box, Text, Flex, Card, Button } from "../../src/1base"
+import { SmartDatetimeInput } from "../../src/2elements/dates/datetime-picker"
 
 const meta: Meta<typeof SmartDatetimeInput> = {
   title: "2 Elements/Dates/DateTimePicker",

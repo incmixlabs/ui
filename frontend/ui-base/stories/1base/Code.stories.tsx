@@ -1,6 +1,6 @@
 import * as React from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Code, Theme, Flex, Text } from '../../src/base'; // Adjust the import path as necessary
+import { Code, Theme, Flex, Text } from '../../src/1base'; // Adjust the import path as necessary
 
 const meta: Meta<typeof Code> = {
   title: '1 Base/Code',

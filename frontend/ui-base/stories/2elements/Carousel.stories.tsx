@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import "../../src/styles/index.css"
 import React, { useState } from "react"
-import { Theme, Box, Text, Flex } from "../../src/base"
+import { Theme, Box, Text, Flex } from "../../src/1base"
 import {
   Carousel,
   CarouselContent,
@@ -10,7 +10,7 @@ import {
   CarouselPrevious,
   Autoplay,
   type CarouselApi,
-} from "../../src/elements/carousel"
+} from "../../src/2elements/carousel"
 
 const meta: Meta<typeof Carousel> = {
   title: "2 Elements/Carousel",

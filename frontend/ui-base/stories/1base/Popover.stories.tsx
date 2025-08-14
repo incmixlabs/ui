@@ -8,7 +8,7 @@ import {
   Separator,
   Text,
   Theme,
-} from "../../src/base" // Adjust the import path as necessary
+} from "../../src/1base" // Adjust the import path as necessary
 
 const meta: Meta<typeof Popover.Root> = {
   title:"1 Base/Popover",

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { AlertDialog, Button, Flex, Text, Theme } from "../../src/base"
+import { AlertDialog, Button, Flex, Text, Theme } from "../../src/1base"
 
 const meta: Meta<typeof AlertDialog> = {
   title:"1 Base/AlertDialog",

@@ -1,6 +1,6 @@
 import React from "react"
 
-import { Button } from "@/base"
+import { Button } from "../../src/1base"
 import "./header.css"
 
 type User = {

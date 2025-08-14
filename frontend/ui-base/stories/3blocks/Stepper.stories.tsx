@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Theme } from "../../src/base"
-import { Stepper, Step } from "../../src/blocks/stepper"
-import { DemoStepper_Footer } from "../../src/blocks/stepper/demo-stepper-footer"
+import { Theme } from "../../src/1base"
+import { Stepper, Step } from "../../src/3blocks/stepper"
+import { DemoStepper_Footer } from "../../src/3blocks/stepper/demo-stepper-footer"
 
 const meta: Meta<typeof Stepper> = {
   title: "3 Blocks/Stepper",

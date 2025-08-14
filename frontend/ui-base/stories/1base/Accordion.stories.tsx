@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { Accordion, Theme } from "../../src/base"
+import { Accordion, Theme } from "../../src/1base"
 
 const meta: Meta<typeof Accordion> = {
   title: "1 Base/Accordion",

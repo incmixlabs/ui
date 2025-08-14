@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import "../../src/styles/index.css"
 import React, { useState } from "react"
-import { Theme, Box, Text, Flex } from "../../src/base"
-import { MultiSelect, type Option } from "../../src/elements/multi-select/multi-select"
+import { Theme, Box, Text, Flex } from "../../src/1base"
+import { MultiSelect, type Option } from "../../src/2elements/multi-select/multi-select"
 import { Loader2 } from "lucide-react"
 
 const meta: Meta<typeof MultiSelect> = {

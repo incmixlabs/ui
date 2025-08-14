@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Heading, Theme } from "../../src/base" // Adjust the import path as necessary
+import { Heading, Theme } from "../../src/1base" // Adjust the import path as necessary
 
 const meta: Meta<typeof Heading> = {
   title:"1 Base/Heading",

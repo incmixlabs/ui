@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Box, Text, Theme } from "../../src/base"
+import { Box, Text, Theme } from "../../src/1base"
 
 const meta: Meta<typeof Box> = {
   title:"1 Base/Box",

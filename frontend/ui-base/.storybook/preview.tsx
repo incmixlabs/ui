@@ -2,7 +2,7 @@ import type { Preview } from "@storybook/react"
 import React from "react"
 import "./global.css"
 import { useAppearanceStore } from "@incmix/store"
-import { Toaster, Flex, Theme } from "@/base"
+import { Toaster, Flex, Theme } from "../src/1base"
 import QueryProvider from "./query-client"
 
 const ThemeWrapper = ({

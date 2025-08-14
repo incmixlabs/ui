@@ -7,7 +7,7 @@ import {
   IconButton,
   Text,
   Theme,
-} from "../../src/base"
+} from "../../src/1base"
 
 const meta: Meta<typeof DropdownMenu.Root> = {
   title:"1 Base/DropdownMenu",

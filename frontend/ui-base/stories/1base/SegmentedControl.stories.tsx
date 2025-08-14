@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
 
-import { Box, Flex, SegmentedControl, Text, Theme } from "../../src/base" // Adjust the import path as necessary,
+import { Box, Flex, SegmentedControl, Text, Theme } from "../../src/1base" // Adjust the import path as necessary,
 
 const meta: Meta<typeof SegmentedControl.Root> = {
   title:"1 Base/SegmentedControl",

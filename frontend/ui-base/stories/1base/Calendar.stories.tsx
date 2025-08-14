@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Calendar, Button, Card, Flex, Text, Theme } from "../../src/base"
+import { Calendar, Button, Card, Flex, Text, Theme } from "../../src/1base"
 
 const meta: Meta<typeof Calendar> = {
   title: "1 Base/Calendar",

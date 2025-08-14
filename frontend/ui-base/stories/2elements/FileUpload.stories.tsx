@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import "../../src/styles/index.css"
 import React, { useState } from "react"
-import { Theme, Box, Text, Flex, Button } from "../../src/base"
+import { Theme, Box, Text, Flex, Button } from "../../src/1base"
 import {
   FileUploader,
   FileUploaderContent,
   FileUploaderItem,
   FileInput,
-} from "../../src/elements/file-upload"
+} from "../../src/2elements/file-upload"
 
 const meta: Meta<typeof FileUploader> = {
   title: "2 Elements/FileUpload",

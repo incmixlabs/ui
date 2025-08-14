@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Flex, Switch, Text, Theme } from "../../src/base"
+import { Flex, Switch, Text, Theme } from "../../src/1base"
 
 const meta: Meta<typeof Switch> = {
   title:"1 Base/Switch",

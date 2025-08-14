@@ -9,7 +9,7 @@ import {
   Heading,
   Text,
   Theme,
-} from "../../src/base"
+} from "../../src/1base"
 
 const meta: Meta<typeof Card.Root> = {
   title: "1 Base/Card",

@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import "../../src/styles/index.css"
 import React, { useState } from "react"
-import { Theme, Box, Text, Flex, Checkbox } from "../../src/base"
-import { ListComboBox } from "../../src/elements/list-combo-box"
-import type { ExtendedColorType } from "../../src/elements/combo-box"
+import { Theme, Box, Text, Flex, Checkbox } from "../../src/1base"
+import { ListComboBox } from "../../src/2elements/list-combo-box"
+import type { ExtendedColorType } from "../../src/2elements/combo-box"
 
 const meta: Meta<typeof ListComboBox> = {
   title: "2 Elements/ListComboBox",

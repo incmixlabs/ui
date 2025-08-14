@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import "../../src/styles/index.css"
 import React, { useState } from "react"
-import { Theme, Box, Text, Flex } from "../../src/base"
-import { ComboBox } from "../../src/elements/combo-box"
+import { Theme, Box, Text, Flex } from "../../src/1base"
+import { ComboBox } from "../../src/2elements/combo-box"
 import { User, Star, Tag, Users, Settings } from "lucide-react"
 
 const meta: Meta<typeof ComboBox> = {

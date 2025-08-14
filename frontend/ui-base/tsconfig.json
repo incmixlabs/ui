@@ -23,20 +23,20 @@
     "paths": {
       "@/src": ["./src"],
       "@/src/*": ["./src/*"],
-      "@/base": ["./src/base"],
-      "@/base/*": ["./src/base/*"],
-      "@/elements/*": ["./src/elements/*"],
+      "@/base": ["src/1base"],
+      "@/base/*": ["src/1base/*"],
+      "@/elements/*": ["src/2elements/*"],
       "@/hooks/*": ["./src/hooks/*"],
-      "@/layouts/*": ["./src/layouts/*"],
+      "@/layouts/*": ["./src/4layouts/*"],
       "@/radix-ui": ["./radix-ui/components"],
       "@/radix-ui/*": ["./radix-ui/components/*"],
       "@/utils/*": ["./src/utils/*"],
       "@/shadcn-ui/*": ["./shadcn/components/ui/*"],
       "@/shadcn/*": ["./shadcn/*"],
-      "@/auto-form": ["./src/blocks/auto-form"],
-      "@/auto-form/*": ["./src/blocks/auto-form/*"],
-      "@/tanstack-table": ["./src/blocks/tanstack-table"],
-      "@/tanstack-table/*": ["./src/blocks/tanstack-table/*"]
+      "@/auto-form": ["src/3blocks/auto-form"],
+      "@/auto-form/*": ["src/3blocks/auto-form/*"],
+      "@/tanstack-table": ["src/3blocks/tanstack-table"],
+      "@/tanstack-table/*": ["src/3blocks/tanstack-table/*"]
     }
   }
 }

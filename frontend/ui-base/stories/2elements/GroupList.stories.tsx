@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import "../../src/styles/index.css"
-import { Theme } from "../../src/base"
-import { GroupList } from "../../src/elements/group-list"
+import { Theme } from "../../src/1base"
+import { GroupList } from "../../src/2elements/group-list"
 
 // Sample data for stories
 const movieData = [

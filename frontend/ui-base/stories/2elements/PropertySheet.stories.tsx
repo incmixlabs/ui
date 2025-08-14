@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import "../../src/styles/index.css"
-import { Theme, Flex, Box, Text } from "../../src/base"
-import { PropertySheet } from "../../src/elements/property-sheet"
+import { Theme, Flex, Box, Text } from "../../src/1base"
+import { PropertySheet } from "../../src/2elements/property-sheet"
 
 const meta: Meta<typeof PropertySheet> = {
   title: "2 Elements/PropertySheet",

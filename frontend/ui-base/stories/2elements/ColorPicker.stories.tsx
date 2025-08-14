@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import "../../src/styles/index.css"
 import React, { useState } from "react"
-import { Theme, Box, Text, Flex, Button, Popover } from "../../src/base"
-import ColorPicker, { type ColorSelectType } from "../../src/elements/color-picker"
+import { Theme, Box, Text, Flex, Button, Popover } from "../../src/1base"
+import ColorPicker, { type ColorSelectType } from "../../src/2elements/color-picker"
 
 const meta: Meta<typeof ColorPicker> = {
   title: "2 Elements/ColorPicker",

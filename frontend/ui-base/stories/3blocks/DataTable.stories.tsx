@@ -1,5 +1,5 @@
 
-import { SidebarFilterDemo, UsersTableDemo,TasksTableDemo, EditableUsersTableDemo, InlineEditDemo, GroupedDemo, TaskTimelineDemo, TaskStatusDemo, UpdatedGroupedDemo } from "../../src/blocks/tanstack-table";
+import { SidebarFilterDemo, UsersTableDemo,TasksTableDemo, EditableUsersTableDemo, InlineEditDemo, GroupedDemo, TaskTimelineDemo, TaskStatusDemo, UpdatedGroupedDemo } from "../../src/3blocks/tanstack-table";
 
 import type { Meta, StoryObj } from "@storybook/react";
 

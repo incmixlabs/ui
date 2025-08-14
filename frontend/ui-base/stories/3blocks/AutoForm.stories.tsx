@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
 import { z } from "zod"
-import AutoForm, { AutoFormSubmit } from "../../src/blocks/auto-form"
-import { Theme } from "../../src/base"
+import AutoForm, { AutoFormSubmit } from "../../src/3blocks/auto-form"
+import { Theme } from "../../src/1base"
 
 const meta: Meta<typeof AutoForm> = {
   title: "3 Blocks/AutoForm",

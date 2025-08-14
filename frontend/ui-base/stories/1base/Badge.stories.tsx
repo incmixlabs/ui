@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import { Badge, Theme } from "../../src/base"
+import { Badge, Theme } from "../../src/1base"
 
 const meta: Meta<typeof Badge> = {
   title:"1 Base/Badge",
