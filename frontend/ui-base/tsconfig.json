@@ -35,7 +35,8 @@
       "@/shadcn/*": ["./shadcn/*"],
       "@/auto-form": ["./src/blocks/auto-form"],
       "@/auto-form/*": ["./src/blocks/auto-form/*"],
-      "@/tanstack-table": ["./src/blocks/tanstack-table"]
+      "@/tanstack-table": ["./src/blocks/tanstack-table"],
+      "@/tanstack-table/*": ["./src/blocks/tanstack-table/*"]
     }
   }
 }
