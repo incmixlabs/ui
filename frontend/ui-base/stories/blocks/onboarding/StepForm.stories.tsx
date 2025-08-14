@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react-vite"
+import type { Meta, StoryObj } from "@storybook/react"
 import * as React from "react"
 import { Theme } from "../../../src/1base"
 import { StepForm } from "../../../src/3blocks/onboarding/step-form"
