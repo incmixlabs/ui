@@ -70,13 +70,13 @@ const StepFormWrapper = ({
     >
       <StepForm
         steps={formSchema.steps}
+        {...props}
         stepData={stepData}
         setStepData={setStepData}
         onFinalSubmit={(data) => {
           console.log("Final submit:", data)
           props.onFinalSubmit?.(data)
         }}
-        {...props}
       />
     </StepperProvider>
   )
