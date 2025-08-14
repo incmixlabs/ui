@@ -29,9 +29,8 @@ const PermissionsTable = () => {
       {
         headingName: "Resource",
         accessorKey: "resource",
-        type: "text",
+        type: "String",
       },
-      // Add columns for each role
       ...roles.map((role) => ({
         headingName: role.name,
         accessorKey: role.name.toLowerCase(),

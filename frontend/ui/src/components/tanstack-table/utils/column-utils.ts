@@ -1,35 +1,38 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumn, ColumnGroup, RowAction, ColumnType } from "../types";
 import { getCellRenderer } from "../cell-renderers";
-export const flattenPermissions = (permissions: any[]): any[] => {
+
+export const flattenPermissions = (permissions: any[] | null | undefined): any[] => {
   const flattenedPermissions: any[] = [];
-  
+
   const flattenPermission = (permission: any) => {
-    const { subRows, subject, action, ...rest } = permission;
+    const { subRows, subject, action, ...rest } = permission ?? {};
+    const normalizedSubject = typeof subject === "string" ? subject.toLowerCase() : String(subject ?? "").toLowerCase();
+    const normalizedAction = typeof action === "string" ? action : String(action ?? "");
+
     const mergedPermission = {
       ...rest,
-      resource: `${action} ${subject.toLowerCase()}`,
+      resource: `${normalizedAction} ${normalizedSubject}`.trim(),
       subject,
-      action
+      action,
     };
     flattenedPermissions.push(mergedPermission);
-    
-    if (subRows && subRows.length > 0) {
+
+    if (Array.isArray(subRows) && subRows.length > 0) {
       subRows.forEach((subRow: any) => {
         flattenPermission(subRow);
       });
     }
   };
-  
-  permissions.forEach(flattenPermission);
+
+  (permissions ?? []).forEach(flattenPermission);
   return flattenedPermissions;
 };
-// Type guard for column group
+
 export function isColumnGroup<TData>(obj: any): obj is ColumnGroup<TData> {
   return obj && typeof obj === 'object' && 'title' in obj && 'columns' in obj;
 }
 
-// Flatten column groups into a flat array of columns
 export function flattenColumns<TData>(
   columns: (DataTableColumn<TData> | ColumnGroup<TData>)[]
 ): DataTableColumn<TData>[] {

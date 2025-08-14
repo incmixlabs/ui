@@ -163,7 +163,13 @@ function AccordionManageRow<TData extends object>({
           col.id === cell.column.id
         );
 
-        const isFirstDataColumn = cellIndex === 0; 
+        // Identify the first non-select visible column so the toggle sits on the first data column
+        const firstNonSelectColumnId =
+          visibleCells.find(
+            (c) => c.column.id !== "select" && c.column.getIsVisible()
+          )?.column.id;
+        const isFirstDataColumn =
+          cell.column.id !== "select" && cell.column.id === firstNonSelectColumnId;
         
         if (cell.column.id === 'select') {
           return (
