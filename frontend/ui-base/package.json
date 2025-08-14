@@ -66,7 +66,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "sideEffects": ["*.css"],
+  "sideEffects": [
+    "*.css"
+  ],
   "license": "MIT",
   "files": [
     "src/**",
@@ -98,6 +100,7 @@
     "@radix-ui/react-toggle": "catalog:",
     "@radix-ui/react-toggle-group": "catalog:",
     "@tanstack/react-table": "catalog:",
+    "@tanstack/zod-form-adapter": "catalog:",
     "classnames": "catalog:",
     "cmdk": "catalog:",
     "date-fns": "catalog:",
