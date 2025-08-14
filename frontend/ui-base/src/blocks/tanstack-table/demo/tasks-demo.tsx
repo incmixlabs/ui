@@ -189,7 +189,7 @@ const USER_TABLE_COLUMNS = [
     // Example of custom currency formatting
     format: {
       numberFormat: {
-        style: "currency",
+        style: "currency" as const,
         currency: "USD",
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,

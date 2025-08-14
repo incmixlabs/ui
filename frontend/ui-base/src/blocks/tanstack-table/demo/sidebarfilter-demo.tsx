@@ -192,7 +192,7 @@ const USER_TABLE_COLUMNS = [
     enableSorting: true,
     format: {
       numberFormat: {
-        style: "currency",
+        style: "currency" as const,
         currency: "USD",
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,

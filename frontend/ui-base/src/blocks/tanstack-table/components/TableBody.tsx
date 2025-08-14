@@ -239,7 +239,11 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
                   onStartEdit={() => startEditing?.(row.id, cell.column.id)}
                   onCancelEdit={cancelEditing}
                   className=""
-                  dateFormat={columnDef?.format?.dateFormat}
+                  dateFormat={
+                    typeof columnDef?.format?.dateFormat === "string"
+                      ? columnDef.format.dateFormat
+                      : undefined
+                  }
                 />
               ) : isEditableBooleanCell ? (
                 <EditableBooleanCell
