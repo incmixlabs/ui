@@ -31,20 +31,17 @@ export function generateUniqueDropdownColor(
 ): string {
   // Normalize both existing colors and palette for accurate comparison
   const used = new Set(
-    existingColors
-      .filter(Boolean)
-      .map(normalizeToHex)
-      .filter(Boolean)
+    existingColors.filter(Boolean).map(normalizeToHex).filter(Boolean)
   )
-  
+
   // Find first unused palette color by comparing normalized values
   const normalizedPalette = COLOR_PALETTE.map(normalizeToHex)
-  const unusedIndex = normalizedPalette.findIndex(color => !used.has(color))
-  
+  const unusedIndex = normalizedPalette.findIndex((color) => !used.has(color))
+
   if (unusedIndex !== -1) {
     return COLOR_PALETTE[unusedIndex] // Return original palette token
   }
-  
+
   // If all are used, rotate to spread duplicates more evenly
   const rotationIndex = used.size % COLOR_PALETTE.length
   return COLOR_PALETTE[rotationIndex]
