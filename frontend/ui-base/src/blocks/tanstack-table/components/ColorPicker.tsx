@@ -140,7 +140,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
               <Button
                 key={index}
                 variant="ghost"
-                size="sm"
+                size="1"
                 onClick={(e) => {
                   if (insideDialog) {
                     e.stopPropagation()
