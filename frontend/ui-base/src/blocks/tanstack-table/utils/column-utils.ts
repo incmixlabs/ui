@@ -31,19 +31,19 @@ export function applyColumnSizeConstraints<TData>(
 ): void {
   if (typeof constraints.width === "number") {
     def.size = constraints.width
-  } else if (constraints.width && /^\d+$/.test(constraints.width)) {
+  } else if (typeof constraints.width === "string" && /^\d+$/.test(constraints.width)) {
     def.size = Number(constraints.width) // pixels
   } // otherwise leave undefined – let CSS handle %, rem, etc.
 
   if (typeof constraints.minWidth === "number") {
     def.minSize = constraints.minWidth
-  } else if (constraints.minWidth && /^\d+$/.test(constraints.minWidth)) {
+  } else if (typeof constraints.minWidth === "string" && /^\d+$/.test(constraints.minWidth)) {
     def.minSize = Number(constraints.minWidth) // pixels
   } // otherwise leave undefined – let CSS handle %, rem, etc.
 
   if (typeof constraints.maxWidth === "number") {
     def.maxSize = constraints.maxWidth
-  } else if (constraints.maxWidth && /^\d+$/.test(constraints.maxWidth)) {
+  } else if (typeof constraints.maxWidth === "string" && /^\d+$/.test(constraints.maxWidth)) {
     def.maxSize = Number(constraints.maxWidth) // pixels
   } // otherwise leave undefined – let CSS handle %, rem, etc.
 }
