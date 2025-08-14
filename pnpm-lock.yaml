@@ -946,6 +946,9 @@ importers:
       '@tanstack/react-table':
         specifier: 'catalog:'
         version: 8.21.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      '@tanstack/zod-form-adapter':
+        specifier: 'catalog:'
+        version: 0.42.1(zod@4.0.15)
       '@types/react':
         specifier: 'catalog:'
         version: 19.1.9
