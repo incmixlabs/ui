@@ -3,11 +3,11 @@ import { DataTable } from "@incmix/ui/tanstack-table"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useCallback, useContext, useMemo, useState } from "react"
 import { permissionsContext } from "."
+import { flattenPermissions } from "../../../../ui/src/components/tanstack-table/utils/column-utils"
 import { createPermissionSubrows, updateRolesPermissions } from "./actions"
 import { DeleteDialog } from "./delete-dialog"
 import RoleEditorModal from "./role-editor-modal"
 import type { ColumnAction, PermissionsWithRole } from "./types"
-import { flattenPermissions } from "../../../../ui/src/components/tanstack-table/utils/column-utils"
 
 const PermissionsTable = () => {
   const [columnAction, setColumnAction] = useState<ColumnAction | null>(null)
@@ -21,7 +21,7 @@ const PermissionsTable = () => {
       roles
     )
 
-    return flattenPermissions(transformedPermissions);
+    return flattenPermissions(transformedPermissions)
   }, [rawPermissions, roles])
 
   const columns = useMemo(() => {
@@ -50,16 +50,19 @@ const PermissionsTable = () => {
                   subject: permission.subject,
                   action: permission.action,
                   role: role.name,
-                  granted: e.target.checked
-                };
-                setChanges(prevChanges => {
+                  granted: e.target.checked,
+                }
+                setChanges((prevChanges) => {
                   const filtered = prevChanges.filter(
-                    c => !(c.subject === change.subject && 
-                          c.action === change.action && 
-                          c.role === change.role)
-                  );
-                  return [...filtered, change];
-                });
+                    (c) =>
+                      !(
+                        c.subject === change.subject &&
+                        c.action === change.action &&
+                        c.role === change.role
+                      )
+                  )
+                  return [...filtered, change]
+                })
               }}
             />
           )
