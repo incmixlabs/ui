@@ -1,3 +1,4 @@
+import { Button } from "@/radix-ui"
 import { cn } from "@/shadcn/lib/utils"
 import { Popover } from "@/src/1base"
 import BaseColorPicker, {
@@ -5,6 +6,7 @@ import BaseColorPicker, {
 } from "@/src/2elements/color-picker"
 import { useState } from "react"
 import type { FC } from "react"
+import { normalizeToHex } from "../utils/color-utils"
 
 interface ColorPickerProps {
   color: string
@@ -13,6 +15,7 @@ interface ColorPickerProps {
   insideDialog?: boolean
   size?: "sm" | "md" | "lg"
 }
+
 
 /**
  * Table color picker component that wraps the base ColorPicker with popover functionality
@@ -39,7 +42,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger>
-        <button
+        <Button
           type="button"
           aria-label="Select color"
           className={cn(
@@ -70,7 +73,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
         <BaseColorPicker
           onColorSelect={handleColorSelect}
           colorType="base"
-          activeColor={color}
+          activeColor={normalizeToHex(color)}
         />
       </Popover.Content>
     </Popover.Root>
