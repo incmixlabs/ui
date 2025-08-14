@@ -1,7 +1,29 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumn, ColumnGroup, RowAction, ColumnType } from "../types";
 import { getCellRenderer } from "../cell-renderers";
-
+export const flattenPermissions = (permissions: any[]): any[] => {
+  const flattenedPermissions: any[] = [];
+  
+  const flattenPermission = (permission: any) => {
+    const { subRows, subject, action, ...rest } = permission;
+    const mergedPermission = {
+      ...rest,
+      resource: `${action} ${subject.toLowerCase()}`,
+      subject,
+      action
+    };
+    flattenedPermissions.push(mergedPermission);
+    
+    if (subRows && subRows.length > 0) {
+      subRows.forEach((subRow: any) => {
+        flattenPermission(subRow);
+      });
+    }
+  };
+  
+  permissions.forEach(flattenPermission);
+  return flattenedPermissions;
+};
 // Type guard for column group
 export function isColumnGroup<TData>(obj: any): obj is ColumnGroup<TData> {
   return obj && typeof obj === 'object' && 'title' in obj && 'columns' in obj;

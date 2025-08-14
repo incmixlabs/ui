@@ -28,6 +28,7 @@ function DataTableComponent<TData extends object>({
   enableRowSelection = true,
   enableColumnVisibility = true,
   initialColumnVisibility,
+  isRoles=false,
   columnVisibility,
   onColumnVisibilityChange,
   enableColumnResizing = false,
@@ -299,6 +300,7 @@ function DataTableComponent<TData extends object>({
           {/* Table component */}
           <TableContent
             table={table}
+            isRoles={isRoles}
             flatColumns={flatColumns}
             isPaginationLoading={isPaginationLoading}
             expandableRows={expandableRows}

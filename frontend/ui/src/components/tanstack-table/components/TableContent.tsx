@@ -10,6 +10,7 @@ import { Box } from "@incmix/ui";
 
 interface TableContentProps<TData extends object> {
   table: TanStackTable<TData>;
+  isRoles?:boolean
   flatColumns: DataTableColumn<TData>[];
   isPaginationLoading?: boolean;
   expandableRows?: {
@@ -41,6 +42,7 @@ interface TableContentProps<TData extends object> {
  */
 function TableContentComponent<TData extends object>({
   table,
+  isRoles,
   flatColumns,
   isPaginationLoading,
   expandableRows,
@@ -85,6 +87,7 @@ function TableContentComponent<TData extends object>({
         )}
         <TableBody
           table={table}
+          isRoles={isRoles}
           flatColumns={flatColumns}
           isPaginationLoading={isPaginationLoading}
           expandableRows={expandableRows}

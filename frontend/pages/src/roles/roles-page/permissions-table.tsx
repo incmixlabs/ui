@@ -7,6 +7,7 @@ import { createPermissionSubrows, updateRolesPermissions } from "./actions"
 import { DeleteDialog } from "./delete-dialog"
 import RoleEditorModal from "./role-editor-modal"
 import type { ColumnAction, PermissionsWithRole } from "./types"
+import { flattenPermissions } from "../../../../ui/src/components/tanstack-table/utils/column-utils"
 
 const PermissionsTable = () => {
   const [columnAction, setColumnAction] = useState<ColumnAction | null>(null)
@@ -20,27 +21,7 @@ const PermissionsTable = () => {
       roles
     )
 
-    const flattenedPermissions: any[] = []
-
-    const flattenPermission = (permission: any) => {
-      const { subRows, subject, action, ...rest } = permission
-      const mergedPermission = {
-        ...rest,
-        resource: `${action} ${subject.toLowerCase()}`,
-        subject,
-        action,
-      }
-      flattenedPermissions.push(mergedPermission)
-
-      if (subRows && subRows.length > 0) {
-        subRows.forEach((subRow: any) => {
-          flattenPermission(subRow)
-        })
-      }
-    }
-
-    transformedPermissions.forEach(flattenPermission)
-    return flattenedPermissions
+    return flattenPermissions(transformedPermissions);
   }, [rawPermissions, roles])
 
   const columns = useMemo(() => {
@@ -151,12 +132,12 @@ const PermissionsTable = () => {
         data={tableData}
         enableFiltering={true}
         enableSorting={false}
+        isRoles={true}
         enablePagination={false}
         enableRowSelection={false}
         enableColumnVisibility={false}
         filterColumn="resource" // Update filter to use merged resource field
         filterPlaceholder="Search Permissions"
-        onSelectionChange={handleSelectionChange}
         className="w-full"
         showRowCount={false}
         enableColumnResizing={false}
