@@ -420,15 +420,16 @@ export const TimelineProgressCell: React.FC<TimelineProgressProps> = ({
     currentDate instanceof Date ? currentDate : new Date(currentDate)
 
   // Calculate total duration and elapsed time
-  const totalDuration = end.getTime() - start.getTime()
+  const totalDuration = Math.max(0, end.getTime() - start.getTime())
   const elapsedTime = current.getTime() - start.getTime()
-
-  // Calculate progress percentage (capped between 0-100)
-  const progress = Math.max(
-    0,
-    Math.min(100, (elapsedTime / totalDuration) * 100)
-  )
-
+  // Calculate progress percentage (capped between 0-100) and avoid NaN/Infinity
+  let progress = 0
+  if (totalDuration > 0) {
+    progress = Math.max(0, Math.min(100, (elapsedTime / totalDuration) * 100))
+  } else {
+    // If start and end are the same moment, treat as 0% before start, 100% at/after end
+    progress = current.getTime() >= end.getTime() ? 100 : 0
+  }
   // Status colors
   const colorClasses = {
     primary: "bg-primary-500",
