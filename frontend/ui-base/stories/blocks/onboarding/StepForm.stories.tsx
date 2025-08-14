@@ -25,10 +25,6 @@ const meta: Meta<typeof StepForm> = {
       action: "onFinalSubmit",
       description: "Callback function called when final step is submitted",
     },
-    setStepData: {
-      action: "setStepData",
-      description: "Function to update step data",
-    },
   },
 }
 
