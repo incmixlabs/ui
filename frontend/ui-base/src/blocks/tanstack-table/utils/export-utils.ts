@@ -37,21 +37,14 @@ export const exportCSV = <TData extends object>(
   // Get data rows
   const rows = data.map((item) =>
     columns.map((col) => {
-      const key = col.accessorKey
-const rows = data.map((item) =>
-  columns.map((col) => {
-    let value: any
-    if (col.accessorFn) {
-      value = col.accessorFn(item)
-    } else {
-      const key = col.accessorKey as string
-      // Handle potential nested properties (e.g., "user.name")
-      value = key.split('.').reduce((obj, prop) => obj?.[prop], item as any)
-    }
-
-    // existing code that uses `value`...
-  })
-)
+      let value: any
+      if (col.accessorFn) {
+        value = col.accessorFn(item)
+      } else {
+        const key = col.accessorKey as string
+        // Handle potential nested properties (e.g., "user.name")
+        value = key.split(".").reduce((obj, prop) => obj?.[prop], item as any)
+      }
 
       // Handle different data types
       if (Array.isArray(value)) {
