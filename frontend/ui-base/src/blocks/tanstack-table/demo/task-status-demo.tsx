@@ -633,8 +633,8 @@ const TaskStatusDemo = () => {
           // This ensures we never add duplicates
           const processedValue = addCustomDropdownOption(newValue)
 
-          // Force a refresh of columns to ensure the change is recognized
-          setTimeout(() => setColumns([...columns]), 0)
+          // Update columns immediately to ensure the change is recognized
+          setColumns(prevColumns => [...prevColumns])
 
           // Update newValue to use the processed value
           newValue = processedValue
@@ -666,9 +666,8 @@ const TaskStatusDemo = () => {
         setLastEditedCell(null)
       }, 1000)
     },
-    []
+    [columns]
   )
-
   /**
    * Handle column header double-click to open configuration dialog
    */
