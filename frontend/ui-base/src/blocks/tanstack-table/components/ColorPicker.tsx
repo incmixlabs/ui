@@ -1,6 +1,6 @@
 import { Button } from "@/base"
 import { useEffect, useRef, useState } from "react"
-
+import type { CSSProperties, FC } from "react"
 interface ColorPickerProps {
   color: string
   onChange: (color: string) => void
@@ -9,7 +9,7 @@ interface ColorPickerProps {
 }
 
 // Add these styles to your global CSS or add them inline as we do here
-const colorOptionStyle: React.CSSProperties = {
+const colorOptionStyle: CSSProperties = {
   width: "24px",
   height: "24px",
   borderRadius: "50%",
@@ -17,91 +17,77 @@ const colorOptionStyle: React.CSSProperties = {
   transition: "transform 0.2s ease",
 }
 
-const colorOptionHoverStyle: React.CSSProperties = {
+const colorOptionHoverStyle: CSSProperties = {
   transform: "scale(1.15)",
 }
 
 /**
  * Simplified color picker component with circular options
  */
-const ColorPicker: React.FC<ColorPickerProps> = ({
+const ColorPicker: FC<ColorPickerProps> = ({
   color,
   onChange,
   insideDialog = false,
 }) => {
   const [showPicker, setShowPicker] = useState(false)
   const [hoveredColor, setHoveredColor] = useState<string | null>(null)
-  const buttonRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
   const popupRef = useRef<HTMLDivElement>(null)
 
-  const colorPalette = [
+  // Color palette
+  const colors = [
     "var(--sky-9)",
     "var(--green-9)",
     "var(--red-9)",
     "var(--yellow-9)",
-    "var(--plum-9)",
-    "var(--teal-9)",
-    "var(--pink-9)",
-    "var(--indigo-9)",
-    "var(--amber-9)",
-    "var(--orange-9)",
     "var(--purple-9)",
-    "var(--mint-9)",
+    "var(--pink-9)"
   ]
+
+  // Close picker when clicking outside
+  useEffect(() => {
+    if (!showPicker) return
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node
+      if (
+        buttonRef.current &&
+        popupRef.current &&
+        !buttonRef.current.contains(target) &&
+        !popupRef.current.contains(target)
+      ) {
+        setShowPicker(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside, { capture: true })
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside, { capture: true })
+    }
+  }, [showPicker])
 
   const handleColorSelect = (selectedColor: string) => {
     onChange(selectedColor)
     setShowPicker(false)
   }
-  useEffect(() => {
-    if (showPicker && buttonRef.current && popupRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect()
-      popupRef.current.style.top = `${rect.bottom + window.scrollY + 5}px`
-      popupRef.current.style.left = `${rect.left + window.scrollX - 5}px`
-    }
-  }, [showPicker])
-
-  // Close on outside click - with modifications for dialogs
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      // Only process if our refs are valid
-      if (buttonRef.current && popupRef.current) {
-        // Check if click is outside both the button and popup
-        if (
-          !buttonRef.current.contains(e.target as Node) &&
-          !popupRef.current.contains(e.target as Node)
-        ) {
-          setShowPicker(false)
-        }
-      }
-    }
-
-    if (showPicker) {
-      // Use capturing phase to ensure our handler runs before dialog's handlers
-      document.addEventListener("mousedown", handleClickOutside, {
-        capture: true,
-      })
-    }
-
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside, {
-        capture: true,
-      })
-  }, [showPicker])
 
   return (
     <div style={{ position: "relative", display: "inline-block" }}>
-      {/* Color button - square button to select color */}
-      <div
+      <button
+        type="button"
         ref={buttonRef}
-        tabIndex={0}
-        role="button"
+        aria-haspopup="true"
+        aria-expanded={showPicker}
+        aria-label="Open color picker"
         onClick={(e) => {
           // Stop propagation to prevent dialog from closing
           if (insideDialog) {
             e.stopPropagation()
           }
           setShowPicker(!showPicker)
+        }}
+        onMouseDown={(e) => {
+          if (insideDialog) e.stopPropagation()
         }}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -122,78 +108,58 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
         }}
       />
 
-      {/* Compact color picker popup */}
       {showPicker && (
         <div
           ref={popupRef}
-          onClick={(e) => {
-            if (insideDialog) {
-              e.stopPropagation()
-            }
-          }}
-          onKeyDown={(e) => {
-            // Optionally handle keyboard events for accessibility
-            if (insideDialog) {
-              e.stopPropagation()
-            }
-          }}
-          tabIndex={-1}
           style={{
-            position: "fixed",
-            top: "0px",
-            left: "0px",
-            padding: "12px",
-            backgroundColor: "var(--gray-1)",
-            borderRadius: "12px",
-            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+            position: "absolute",
+            top: "100%",
+            left: "0",
+            zIndex: 1000,
+            backgroundColor: "white",
             border: "1px solid var(--gray-6)",
-            zIndex: 9999,
+            borderRadius: "8px",
+            padding: "8px",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
             width: "200px",
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "8px",
+          }}
+          onMouseDown={(e) => {
+            if (insideDialog) e.stopPropagation()
           }}
         >
-          {/* First row of colors */}
-          <div
-            style={{
-              display: "flex",
-              gap: "10px",
-              justifyContent: "space-between",
-              marginBottom: "10px",
-            }}
-          >
-            {colorPalette.slice(0, 6).map((c, i) => (
+          {colors.map((optionColor, index) => {
+            const isSelected = color === optionColor
+            return (
               <Button
-                key={`color-row1-${i}`}
+                key={index}
                 variant="ghost"
-                srLabel={`Select color ${c}`}
+                size="sm"
                 onClick={(e) => {
                   if (insideDialog) {
                     e.stopPropagation()
                   }
-                  handleColorSelect(c)
+                  handleColorSelect(optionColor)
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault()
-                    if (insideDialog) {
-                      e.stopPropagation()
-                    }
-                    handleColorSelect(c)
+                  if ((e.key === "Enter" || e.key === " ") && insideDialog) {
+                    e.stopPropagation()
                   }
                 }}
-                onMouseEnter={() => setHoveredColor(c)}
+                onMouseEnter={() => setHoveredColor(optionColor)}
                 onMouseLeave={() => setHoveredColor(null)}
                 style={{
                   ...colorOptionStyle,
-                  backgroundColor: c,
-                  border:
-                    c === color
-                      ? "2px solid var(--gray-12)"
-                      : "1px solid var(--gray-6)",
-                  ...(hoveredColor === c ? colorOptionHoverStyle : {}),
+                  backgroundColor: optionColor,
+                  border: isSelected ? "3px solid var(--gray-12)" : "1px solid var(--gray-6)",
+                  ...(hoveredColor === optionColor ? colorOptionHoverStyle : {}),
                 }}
+                srLabel={`Select color ${index + 1}`}
               />
-            ))}
-          </div>
+            )
+          })}
         </div>
       )}
     </div>
