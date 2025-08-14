@@ -26,7 +26,9 @@ export type PaletteColor = (typeof COLOR_PALETTE)[number]
  * Generate a unique color for new dropdown options by finding the first unused color
  * from the palette
  */
-export function generateUniqueDropdownColor(existingColors: readonly string[]): string {
+export function generateUniqueDropdownColor(
+  existingColors: readonly string[]
+): string {
   const used = new Set(existingColors.filter(Boolean))
   const firstUnused = COLOR_PALETTE.find((color) => !used.has(color))
   if (firstUnused) return firstUnused
@@ -45,9 +47,7 @@ export function getAvailableColors(): readonly string[] {
 /**
  * Check if a color exists in the palette
  */
-export function isValidPaletteColor(
-  color: string
-): color is PaletteColor {
+export function isValidPaletteColor(color: string): color is PaletteColor {
   return (COLOR_PALETTE as readonly string[]).includes(color)
 }
 
@@ -60,7 +60,9 @@ export function normalizeToHex(input: string): string {
   if (input.startsWith("var(")) {
     try {
       const varName = input.slice(4, -1).trim() // "--blue-5"
-      const computed = getComputedStyle(document.documentElement).getPropertyValue(varName).trim()
+      const computed = getComputedStyle(document.documentElement)
+        .getPropertyValue(varName)
+        .trim()
       return computed || input
     } catch {
       return input

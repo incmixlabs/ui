@@ -16,7 +16,6 @@ interface ColorPickerProps {
   size?: "sm" | "md" | "lg"
 }
 
-
 /**
  * Table color picker component that wraps the base ColorPicker with popover functionality
  */

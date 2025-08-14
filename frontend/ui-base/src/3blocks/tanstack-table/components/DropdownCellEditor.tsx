@@ -1,5 +1,8 @@
 import { Box, Button, Flex, Text } from "@/src/1base"
-import { generateUniqueDropdownColor, normalizeToHex } from "@/src/3blocks/tanstack-table/utils/color-utils"
+import {
+  generateUniqueDropdownColor,
+  normalizeToHex,
+} from "@/src/3blocks/tanstack-table/utils/color-utils"
 import { useEffect, useRef, useState } from "react"
 import type { DropdownOption } from "../cell-renderers"
 import ColorPicker from "./ColorPicker"
@@ -177,7 +180,7 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
       .map((option) => option.color)
       .filter((color): color is string => Boolean(color))
       .map(normalizeToHex) // Normalize existing colors to hex for proper comparison
-    
+
     const uniqueColor = generateUniqueDropdownColor(existingColors)
     return normalizeToHex(uniqueColor) // Normalize generated color to hex
   }
@@ -424,7 +427,9 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
                   <Box
                     className="h-3 w-3 flex-shrink-0 rounded-full ring-1 ring-gray-200 dark:ring-gray-600"
                     style={{
-                      backgroundColor: normalizeToHex(option.color || "#e5e7eb"),
+                      backgroundColor: normalizeToHex(
+                        option.color || "#e5e7eb"
+                      ),
                     }}
                   />
 
