@@ -201,13 +201,16 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
                       ? "Only predefined values"
                       : "Allow custom values"}
                   </Text>
-                  <input
-                    type="checkbox"
-                    checked={strictDropdown}
-                    onChange={() => setStrictDropdown(!strictDropdown)}
-                    className="peer sr-only"
-                  />
-                  <Box className="peer h-5 w-9 rounded-full bg-gray-12 after:absolute after:top-[2px] after:left-[2px] after:h-4 after:w-4 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300" />
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={strictDropdown}
+                      onChange={() => setStrictDropdown(!strictDropdown)}
+                      className="sr-only peer"
+                      aria-label="Toggle strict dropdown mode"
+                    />
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600" />
+                  </label>
                 </Flex>
               </Flex>
               <DropdownOptionsEditor
