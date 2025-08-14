@@ -1,6 +1,8 @@
-import { Popover } from "@/src/1base"
-import BaseColorPicker, { type ColorSelectType } from "@/src/2elements/color-picker"
 import { cn } from "@/shadcn/lib/utils"
+import { Popover } from "@/src/1base"
+import BaseColorPicker, {
+  type ColorSelectType,
+} from "@/src/2elements/color-picker"
 import { useState } from "react"
 import type { FC } from "react"
 
@@ -30,8 +32,8 @@ const ColorPicker: FC<ColorPickerProps> = ({
 
   const sizeClasses = {
     sm: "h-6 w-6",
-    md: "h-7 w-7", 
-    lg: "h-8 w-8"
+    md: "h-7 w-7",
+    lg: "h-8 w-8",
   }
 
   return (
@@ -44,8 +46,8 @@ const ColorPicker: FC<ColorPickerProps> = ({
             "cursor-pointer rounded border border-gray-6 transition-colors hover:border-gray-7 focus:outline-none focus:ring-2 focus:ring-blue-8 focus:ring-offset-1",
             sizeClasses[size]
           )}
-          style={{ 
-            backgroundColor: color || "var(--gray-3)" 
+          style={{
+            backgroundColor: color || "var(--gray-3)",
           }}
           onClick={(e) => {
             if (insideDialog) {
@@ -57,8 +59,8 @@ const ColorPicker: FC<ColorPickerProps> = ({
           }}
         />
       </Popover.Trigger>
-      
-      <Popover.Content 
+
+      <Popover.Content
         className="z-50 w-auto rounded-lg border border-gray-6 bg-white p-0 shadow-lg"
         sideOffset={4}
         onPointerDownCapture={(e) => {

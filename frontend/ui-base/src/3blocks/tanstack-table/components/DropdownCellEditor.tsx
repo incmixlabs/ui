@@ -1,10 +1,8 @@
 import { Box, Button, Flex, Text } from "@/src/1base"
-import { useEffect, useRef, useState } from "react"
-import type {
-  DropdownOption,
-} from "../cell-renderers"
-import ColorPicker from "./ColorPicker"
 import { generateUniqueDropdownColor } from "@/src/3blocks/tanstack-table/utils/color-utils"
+import { useEffect, useRef, useState } from "react"
+import type { DropdownOption } from "../cell-renderers"
+import ColorPicker from "./ColorPicker"
 
 interface DropdownCellEditorProps {
   value: string
