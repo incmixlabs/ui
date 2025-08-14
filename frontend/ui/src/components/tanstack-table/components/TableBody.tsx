@@ -297,7 +297,7 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
             return (
               <Table.Cell
                 key={cell.id}
-                className={`pl-3 pr-0 py-1.5 ${columnDef?.className || ""} overflow-hidden ${isSubRow ? "pl-8" : ""}`}
+                className={`pl-3 pr-0 py-1.5 ${columnDef?.className || ""} overflow-hidden`}
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </Table.Cell>
@@ -307,7 +307,7 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           return (
             <Table.Cell
               key={cell.id}
-              className={`px-2 border-l border-gray-6 py-1.5 ${columnDef?.className || ""} overflow-hidden ${isEditableCell && isSelected?.(row.id, cell.column.id) ? 'keyboard-selected-cell' : ''} ${isSubRow ? "pl-8" : ""}`}
+              className={`px-2 border-l border-gray-6 py-1.5 ${columnDef?.className || ""} overflow-hidden ${isEditableCell && isSelected?.(row.id, cell.column.id) ? 'keyboard-selected-cell' : ''}`}
               style={{
                 width: columnDef?.width,
                 minWidth: columnDef?.minWidth,
