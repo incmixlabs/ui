@@ -66,8 +66,8 @@ const StepFormWrapper = ({
       }}
     >
       <StepForm
-        steps={formSchema.steps}
         {...props}
+        steps={formSchema.steps}
         stepData={stepData}
         setStepData={setStepData}
         onFinalSubmit={(data) => {
