@@ -4,6 +4,7 @@ import { Theme } from "../../../src/1base"
 import { StepForm } from "../../../src/3blocks/onboarding/step-form"
 import { StepperProvider } from "../../../src/3blocks/stepper"
 import { formSchema } from "../../../src/3blocks/onboarding/form-schema"
+import { useStepper } from "../../../src/3blocks/stepper"
 
 const meta: Meta<typeof StepForm> = {
   title: "3 Blocks/Onboarding/StepForm",
@@ -42,17 +43,17 @@ const mockStepData = {
 }
 
 // Wrapper component to provide stepper context
-const StepFormWrapper = ({ 
-  initialStep = 0, 
-  children, 
-  ...props 
-}: { 
+const StepFormWrapper = ({
+  initialStep = 0,
+  children,
+  ...props
+}: {
   initialStep?: number
   children: React.ReactNode
-  [key: string]: any 
+  [key: string]: any
 }) => {
   const [stepData, setStepData] = React.useState<Record<number, any>>({})
-  
+
   return (
     <StepperProvider
       value={{
@@ -166,7 +167,7 @@ export const WithPrefilledData: Story = {
   },
   render: (args) => {
     const [stepData, setStepData] = React.useState<Record<number, any>>(mockStepData)
-    
+
     return (
       <StepperProvider
         value={{
@@ -197,50 +198,54 @@ export const CompleteFlow: Story = {
   args: {
     onFinalSubmit: (data: Record<number, any>) => {
       console.log("Complete flow final submission:", data)
-      
+
       // Show a summary of all collected data
       const summary = Object.entries(data).map(([stepIndex, stepData]) => {
         const stepName = formSchema.steps[parseInt(stepIndex)]?.label || `Step ${parseInt(stepIndex) + 1}`
         return `${stepName}: ${JSON.stringify(stepData, null, 2)}`
       }).join('\n\n')
-      
+
       alert(`🎉 Complete Onboarding Data:\n\n${summary}`)
     },
   },
   render: (args) => {
-    const [currentStep, setCurrentStep] = React.useState(0)
     const [stepData, setStepData] = React.useState<Record<number, any>>({})
-    
-    React.useEffect(() => {
-      console.log(`Current step: ${currentStep}`)
-      console.log("Current step data:", stepData)
-    }, [currentStep, stepData])
-    
+
+    const StepHeader: React.FC = () => {
+      const { activeStep } = useStepper()
+      return (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            background: "var(--blue-3)",
+            padding: "8px 16px",
+            fontSize: "14px",
+            zIndex: 1000,
+          }}
+        >
+          <strong>Demo Mode:</strong> Step {activeStep + 1} of {formSchema.steps.length} -{" "}
+          {formSchema.steps[activeStep]?.label}
+        </div>
+      )
+    }
+
     return (
       <div>
-        <div style={{ 
-          position: "fixed", 
-          top: 0, 
-          left: 0, 
-          right: 0, 
-          background: "var(--blue-3)", 
-          padding: "8px 16px", 
-          fontSize: "14px",
-          zIndex: 1000
-        }}>
-          <strong>Demo Mode:</strong> Step {currentStep + 1} of {formSchema.steps.length} - {formSchema.steps[currentStep]?.label}
-        </div>
-        <div style={{ paddingTop: "40px" }}>
-          <StepperProvider
-            value={{
-              steps: formSchema.steps.map((step) => ({
-                label: step.label,
-                icon: typeof step.stepIcon === 'string' ? undefined : step.stepIcon,
-                description: typeof step.stepIcon === 'string' ? step.stepIcon : undefined,
-              })),
-              initialStep: 0,
-            }}
-          >
+        <StepperProvider
+          value={{
+            steps: formSchema.steps.map((step) => ({
+              label: step.label,
+              icon: typeof step.stepIcon === "string" ? undefined : step.stepIcon,
+              description: typeof step.stepIcon === "string" ? step.stepIcon : undefined,
+            })),
+            initialStep: 0,
+          }}
+        >
+          <StepHeader />
+          <div style={{ paddingTop: "40px" }}>
             <StepForm
               steps={formSchema.steps}
               stepData={stepData}
@@ -253,8 +258,8 @@ export const CompleteFlow: Story = {
                 args.onFinalSubmit?.(data)
               }}
             />
-          </StepperProvider>
-        </div>
+          </div>
+        </StepperProvider>
       </div>
     )
   },

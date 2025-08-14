@@ -36,7 +36,6 @@ export const Image = forwardRef<HTMLImageElement, ImageProps>(
       <img
         ref={ref}
         src={src}
-        src={src}
         alt={alt}
         loading={loading}
         onError={onError}

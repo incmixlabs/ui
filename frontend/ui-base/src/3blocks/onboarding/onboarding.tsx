@@ -12,18 +12,7 @@ export type OnboardingProps = {
 export const Onboarding = ({ onComplete, onError }: OnboardingProps) => {
   const [stepData, setStepData] = useState<Record<number, any>>({})
   const [userData, setUserData] = useState<any>(null)
-  const _isDesktop = useMediaQuery("(min-width: 768px)")
-
-  useEffect(() => {
-    // Retrieve user data from localStorage
-    try {
-      const raw = localStorage.getItem("signupUserData")
-      if (raw) setUserData(JSON.parse(raw))
-    } catch (e) {
-      console.error("Corrupted signupUserData in localStorage", e)
-      onError?.(e instanceof Error ? e : new Error(String(e)))
-    }
-  }, [])
+  const [loading, setLoading] = useState(true)
 
   const handleFinalSubmit = async (finalData: Record<number, any>) => {
     if (!userData) {
@@ -55,10 +44,6 @@ export const Onboarding = ({ onComplete, onError }: OnboardingProps) => {
       onError?.(error instanceof Error ? error : new Error(String(error)))
     }
   }
-
-  const [userData, setUserData] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const _isDesktop = useMediaQuery("(min-width: 768px)")
 
   useEffect(() => {
     // Retrieve user data from localStorage
@@ -92,8 +77,10 @@ export const Onboarding = ({ onComplete, onError }: OnboardingProps) => {
   if (!userData) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <div className="max-w-md text-center text-sm text-muted">
-          <p>User data not found. Please sign up again to continue onboarding.</p>
+        <div className="max-w-md text-center text-muted text-sm">
+          <p>
+            User data not found. Please sign up again to continue onboarding.
+          </p>
         </div>
       </div>
     )
