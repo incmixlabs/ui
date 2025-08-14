@@ -145,11 +145,11 @@ export interface RowAction {
 }
 
 // Export options
-export interface ExportOptions {
-  enabled?: boolean
-  formats?: ("csv" | "excel" | "pdf")[]
-  filename?: string
-  customExporter?: <T>(data: T[], columns: DataTableColumn<T>[]) => void
+export interface ExportOptions<TData extends object = any> {
+   enabled?: boolean
+   formats?: ("csv" | "excel" | "pdf")[]
+   filename?: string
+   customExporter?: (data: TData[], columns: DataTableColumn<TData>[]) => void
 }
 
 // Virtualization options
@@ -253,7 +253,7 @@ export interface DataTableProps<TData extends object> {
   isPaginationLoading?: boolean
 
   // Export functionality
-  export?: ExportOptions
+  export?: ExportOptions<TData>
 
   // Virtualization options
   virtualization?: VirtualizationOptions
