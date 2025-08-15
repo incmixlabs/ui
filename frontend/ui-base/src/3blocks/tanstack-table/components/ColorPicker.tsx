@@ -4,9 +4,10 @@ import { Popover } from "@/src/1base"
 import BaseColorPicker, {
   type ColorSelectType,
 } from "@/src/2elements/color-picker"
+import { normalizeToHex } from "@incmix/store/color"
 import { useState } from "react"
 import type { FC } from "react"
-import { normalizeToHex } from "../utils/color-utils"
+
 
 interface ColorPickerProps {
   color: string

@@ -1,6 +1,7 @@
 // File: components/DataTable/cellRenderers.tsx
 
 import { AvatarGroup } from "@/src/2elements/avatar-group"
+import { adjustColorBrightness, getContrastingTextColor } from "@incmix/store/color"
 import type { ReactNode } from "react"
 // Cell Renderer Components
 export const TagCell: React.FC<{ value: string[] }> = ({ value }) => {
@@ -159,42 +160,9 @@ export const StringCell: React.FC<{ value: any }> = ({ value }) => (
   </div>
 )
 
-// Helper function to get contrasting text color (black or white) based on background color
-export function getContrastingTextColor(backgroundColor: string): string {
-  // Convert hex to RGB
-  const hex = backgroundColor.replace("#", "")
-  let r = 0
-  let g = 0
-  let b = 0
 
-  if (hex.length === 3) {
-    r = Number.parseInt(hex[0] + hex[0], 16)
-    g = Number.parseInt(hex[1] + hex[1], 16)
-    b = Number.parseInt(hex[2] + hex[2], 16)
-  } else if (hex.length === 6) {
-    r = Number.parseInt(hex.substring(0, 2), 16)
-    g = Number.parseInt(hex.substring(2, 4), 16)
-    b = Number.parseInt(hex.substring(4, 6), 16)
-  }
 
-  // Calculate contrast using YIQ method
-  const yiq = (r * 299 + g * 587 + b * 114) / 1000
-  return yiq >= 128 ? "var(--gray-1)" : "var(--gray-12)"
-}
 
-// Helper function to adjust color brightness (for hover effects)
-export function adjustColor(color: string, amount: number): string {
-  const hex = color.replace("#", "")
-  let r = Number.parseInt(hex.substring(0, 2), 16)
-  let g = Number.parseInt(hex.substring(2, 4), 16)
-  let b = Number.parseInt(hex.substring(4, 6), 16)
-
-  r = Math.max(0, Math.min(255, r + amount))
-  g = Math.max(0, Math.min(255, g + amount))
-  b = Math.max(0, Math.min(255, b + amount))
-
-  return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`
-}
 
 // Interface for dropdown options
 export interface DropdownOption {
@@ -283,7 +251,7 @@ export const DropdownCell: React.FC<{
           backgroundColor: finalOption.color || "var(--blue-1)",
           color: textColor,
           borderColor: finalOption.color
-            ? adjustColor(finalOption.color, -20)
+            ? adjustColorBrightness(finalOption.color, -20)
             : "var(--blue-1)",
         }}
       >

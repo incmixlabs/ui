@@ -1,11 +1,9 @@
 import { Box, Button, Flex, Text } from "@/src/1base"
-import {
-  generateUniqueDropdownColor,
-  normalizeToHex,
-} from "@/src/3blocks/tanstack-table/utils/color-utils"
+
 import { useEffect, useRef, useState } from "react"
 import type { DropdownOption } from "../cell-renderers"
 import ColorPicker from "./ColorPicker"
+import { generateUniqueDropdownColor, normalizeToHex } from "@incmix/store/color"
 
 interface DropdownCellEditorProps {
   value: string
@@ -51,7 +49,7 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
   const [isOpen, setIsOpen] = useState(true)
   // Initialize with empty string instead of the value (which might be an ID)
   const [customValue, setCustomValue] = useState("")
-  const [customColor, setCustomColor] = useState("#93c5fd")
+  const [customColor, setCustomColor] = useState("var(--blue-5)")
   const [isCreating, setIsCreating] = useState(false)
   const [isPositioned, setIsPositioned] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -160,7 +158,7 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
   ) || {
     value,
     label: value,
-    color: "#e5e7eb", // Default gray color
+    color: "var(--gray-5)", // Default gray color
   }
 
   // Handle option selection

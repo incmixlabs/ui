@@ -183,6 +183,6 @@ export function createPriorityDropdownOptions(
   return priorityLabels.map((label) => ({
     value: label.id,
     label: label.name,
-    color: label.color || "#6b7280", // Fallback color if none is provided
+    color: label.color || "var(--gray-6)", // Fallback color if none is provided
   }))
 }
