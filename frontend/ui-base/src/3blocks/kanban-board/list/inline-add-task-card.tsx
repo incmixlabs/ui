@@ -123,6 +123,7 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
     (text: string, currentUrls: TaskRefUrl[]): UrlProcessingResult => {
       const newUrls: TaskRefUrl[] = []
       let cleanTitle = text
+      let droppedUrlCount = 0
 
       // Extract potential URLs using word-based detection
       const potentialUrls = extractPotentialUrls(text)
@@ -130,12 +131,12 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
       potentialUrls.forEach((potentialUrl) => {
         // Validate the URL using proper URL constructor
         if (isValidUrl(potentialUrl)) {
-          // Always remove URL from title text (regardless of badge limit)
-          cleanTitle = cleanTitle.replace(potentialUrl, " ")
-
           // Only create badge if under the limit
           const currentUrlCount = currentUrls.length + newUrls.length
           if (currentUrlCount < CONSTANTS.MAX_URLS) {
+            // Remove URL from title text when adding as badge
+            cleanTitle = cleanTitle.replace(potentialUrl, " ")
+
             // Sanitize the URL
             const sanitizedUrl = sanitizeUrl(potentialUrl)
             if (sanitizedUrl) {
@@ -152,12 +153,17 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
                 type: urlType,
               })
             }
+          } else {
+            droppedUrlCount++
           }
         }
       })
 
       // Clean up title
       cleanTitle = cleanTitle.replace(/\s+/g, " ").trim()
+      
+      // Optionally, you could return droppedUrlCount to show a warning
+      // return { cleanTitle, newUrls, droppedUrlCount }
 
       return { cleanTitle, newUrls }
     },
