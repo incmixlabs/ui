@@ -103,13 +103,16 @@ export function getContrastingTextColor(backgroundColor: string): string {
 
   // Normalize 3-digit hex to 6-digit for hasGoodContrastOnLight
   let normalizedHex = backgroundColor
-  if (backgroundColor.length === 4) { // #RGB format
+  if (backgroundColor.length === 4) {
+    // #RGB format
     const hex = backgroundColor.slice(1)
     normalizedHex = `#${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`
   }
 
   // Use existing function for contrast check
-  return hasGoodContrastOnLight(normalizedHex) ? "var(--gray-12)" : "var(--gray-1)"
+  return hasGoodContrastOnLight(normalizedHex)
+    ? "var(--gray-12)"
+    : "var(--gray-1)"
 }
 
 /**
@@ -138,9 +141,9 @@ export function adjustColorBrightness(color: string, amount: number): string {
  * Note: The returned string is not guaranteed to be hex; it may be rgb()/hsl()/hex.
  */
 export function normalizeToHex(input: string): string {
-  if (!input || typeof input !== 'string') {
-    console.warn('normalizeToHex: Invalid input provided')
-    return '#000000' // Fallback to black
+  if (!input || typeof input !== "string") {
+    console.warn("normalizeToHex: Invalid input provided")
+    return "#000000" // Fallback to black
   }
 
   // In SSR/non-browser environments, bail out early
@@ -163,18 +166,22 @@ export function normalizeToHex(input: string): string {
   }
 
   // Handle hex colors - validate format
-  if (input.startsWith('#')) {
+  if (input.startsWith("#")) {
     if (/^#[0-9A-Fa-f]{3}$|^#[0-9A-Fa-f]{6}$/.test(input)) {
       return input // Valid hex color
     }
     console.warn(`normalizeToHex: Invalid hex color format: ${input}`)
-    return '#000000' // Fallback to black
+    return "#000000" // Fallback to black
   }
 
   // Handle other color formats (rgb, hsl, etc.) - return as-is
   // These should be handled by the consuming component
-  if (input.startsWith('rgb(') || input.startsWith('rgba(') || 
-      input.startsWith('hsl(') || input.startsWith('hsla(')) {
+  if (
+    input.startsWith("rgb(") ||
+    input.startsWith("rgba(") ||
+    input.startsWith("hsl(") ||
+    input.startsWith("hsla(")
+  ) {
     return input
   }
 
