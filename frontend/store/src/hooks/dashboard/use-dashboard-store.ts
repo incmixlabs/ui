@@ -399,10 +399,21 @@ export const useDashboardStore = create<DashboardState>()((set, get) => ({
         const newTemplateId = generateUniqueId("template")
 
         const clonedTemplate = {
-          ...templateData,
-          dashboardLink: newDashboardId,
           id: newTemplateId,
+          templateName: templateData.templateName,
+          dashboardLink: newDashboardId,
           updatedAt: templateTime,
+          tags: Array.from(templateData.tags), // Convert DeepReadonlyArray to string[]
+          mainLayouts: {
+            xxs: templateData.mainLayouts.xxs
+              ? templateData.mainLayouts.xxs.map((item: any) => ({ ...item }))
+              : [],
+            xs: templateData.mainLayouts.xs.map((item: any) => ({ ...item })),
+            sm: templateData.mainLayouts.sm.map((item: any) => ({ ...item })),
+            md: templateData.mainLayouts.md.map((item: any) => ({ ...item })),
+            lg: templateData.mainLayouts.lg.map((item: any) => ({ ...item })),
+          },
+          createdAt: templateData.createdAt || templateTime,
         }
 
         await templatesCollection.insert(clonedTemplate)

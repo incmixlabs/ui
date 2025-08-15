@@ -129,6 +129,7 @@
     "@storybook/addon-onboarding": "catalog:",
     "@storybook/react-vite": "catalog:",
     "@types/node": "catalog:",
+    "@types/uuid": "^10.0.0",
     "autoprefixer": "catalog:",
     "esbuild": "catalog:",
     "eslint": "catalog:",
