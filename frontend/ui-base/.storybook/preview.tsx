@@ -6,6 +6,44 @@ import { Toaster, Flex, Theme } from "../src/1base"
 import QueryProvider from "./query-client"
 import { TaskCopyBufferProvider } from "../src/3blocks/kanban-board/hooks/use-task-copy-buffer"
 
+// Mock useProjectData for Storybook
+const mockUseProjectData = (projectId: string) => {
+  const mockData = React.useMemo(() => {
+    // Get mock data from story parameters if available
+    const storyContext = (window as any).__STORYBOOK_STORY_STORE__?.args;
+    if (storyContext?.parameters?.mockData) {
+      return storyContext.parameters.mockData;
+    }
+    
+    // Default empty data if no mock provided
+    return {
+      isLoading: false,
+      error: null,
+      data: {
+        columns: [],
+        priorityLabels: [],
+        tasks: [],
+        labels: []
+      }
+    };
+  }, [projectId]);
+  
+  return {
+    ...mockData,
+    // Mock functions
+    refetch: () => Promise.resolve(),
+    createTask: async () => {},
+    updateTask: async () => {},
+    deleteTask: async () => {},
+    duplicateTask: async () => {},
+    moveTask: async () => {},
+    createLabel: async () => "",
+    updateLabel: async () => {},
+    deleteLabel: async () => {},
+    moveTaskToStatus: async () => {},
+  };
+};
+
 const ThemeWrapper = ({
   children,
   theme,

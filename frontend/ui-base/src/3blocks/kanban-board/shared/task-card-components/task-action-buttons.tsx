@@ -1,26 +1,23 @@
 import { Box, Button, DropdownMenu } from "@/base"
+import { LabelDropdownSelector } from "@/elements/dropdown-select/label-dropdown-select"
+import { getPriorityConfig } from "@/elements/dropdown-select/label-utils"
 import { cn } from "@/utils/cn"
 import type { KanbanColumn } from "@incmix/utils/schema"
 // task-card-components/task-action-buttons.tsx
 import {
-  AlertCircle,
   Archive,
   Check,
-  Clock,
   Copy,
   Flag,
   MoreVertical,
   Star,
   Trash2,
 } from "lucide-react"
-import { LabelDropdownSelector } from "../../../../2elements/dropdown-select/label-dropdown-select"
-import { getPriorityConfig } from "../../../../2elements/dropdown-select/label-utils"
 import { isTaskOverdue } from "./utils/task-utils"
 import type { TaskActionButtonsProps } from "./utils/types"
 
 export function TaskActionButtons({
   currentTask,
-  currentColumn: _currentColumn,
   columns,
   priorityLabels = [], // Use priorityLabels from props with default empty array
   onCompleteTask,
@@ -100,12 +97,9 @@ export function TaskActionButtons({
         {/* 3-dot menu positioned directly next to the priority dropdown */}
         <DropdownMenu.Root>
           <DropdownMenu.Trigger>
-            <button
-              type="button"
-              className="flex h-9 w-9 items-center justify-center rounded-md p-0 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800"
-            >
+            <Button className="flex h-9 w-9 rounded-md p-0 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800">
               <MoreVertical className="h-4 w-4" />
-            </button>
+            </Button>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content align="end">
             <DropdownMenu.Item onClick={onDuplicateTask}>

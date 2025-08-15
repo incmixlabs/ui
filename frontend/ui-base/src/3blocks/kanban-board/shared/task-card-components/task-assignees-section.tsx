@@ -1,7 +1,7 @@
 import { Avatar, Box, Flex, Heading } from "@/base"
+import { ComboBox } from "@/elements/combo-box"
 // task-card-components/task-assignees-section.tsx
 import { User, Users } from "lucide-react"
-import { ComboBox } from "../../../../2elements/combo-box"
 import { members } from "./utils/task-utils"
 import type { TaskAssigneesSectionProps, User as UserType } from "./utils/types"
 

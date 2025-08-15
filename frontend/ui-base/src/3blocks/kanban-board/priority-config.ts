@@ -16,7 +16,7 @@ export interface PriorityLabel {
   id: string
   name: string
   color?: string
-  type?: "priority"
+  type?: string
   order?: number
 }
 

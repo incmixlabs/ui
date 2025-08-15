@@ -104,7 +104,6 @@ export interface UseKanbanReturn {
 export function useKanban(providedProjectId?: string): UseKanbanReturn {
   // Get reactive project data
   const projectData = useProjectData(providedProjectId)
-
   // Filter priority labels for use in components
   const priorityLabels = useMemo(() => {
     if (projectData.isLoading) return []
@@ -329,7 +328,7 @@ export function useKanban(providedProjectId?: string): UseKanbanReturn {
           const results = await Promise.allSettled(
             batch.map((id) => operations.updateTask(id, updates))
           )
-          const failures = results.filter(r => r.status === 'rejected')
+          const failures = results.filter((r) => r.status === "rejected")
           if (failures.length > 0) {
             console.error(`Failed to update ${failures.length} tasks in batch`)
           }

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import React from "react"
 import { useFormContext } from "react-hook-form"
 
-import { FormControl, FormItem, FormMessage, Input } from "@/src/1base"
+import { FormControl, FormItem, FormMessage, Input } from "@/base"
 import { Eye, EyeOff } from "lucide-react"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"

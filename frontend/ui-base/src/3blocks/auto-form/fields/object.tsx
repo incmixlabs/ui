@@ -1,4 +1,4 @@
-import { Accordion, FormField } from "@/src/1base"
+import { Accordion, FormField } from "@/base"
 
 import { type useForm, useFormContext } from "react-hook-form"
 import type { z } from "zod"

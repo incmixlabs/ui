@@ -1,4 +1,4 @@
-import { FormControl, FormItem, FormLabel, FormMessage } from "@/src/1base"
+import { FormControl, FormItem, FormLabel, FormMessage } from "@/base"
 import { MultiSelect } from "@/src/2elements/multi-select"
 import type { AutoFormInputComponentProps } from "../types"
 

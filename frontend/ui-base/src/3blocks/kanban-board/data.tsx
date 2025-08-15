@@ -282,3 +282,57 @@ export const initialData: TCustomBoard = [
     ],
   },
 ]
+/*
+const mockColumns = initialData.map((column, index) => ({
+  ...column,
+  color: column.color || getRandomColor(),
+  tasks: column.tasks.map(task => ({
+    ...task,
+    priority: task.priority || "low",
+  })),
+}))*/
+interface MockTask {
+  id: string
+  name: string
+  startDate?: number
+  description?: string
+  completed: boolean
+  attachment?: { name: string; url: string; size: string }[]
+  assignedTo?: {
+    id: string
+    name: string
+    label: string
+    color: string
+    value: string
+    avatar: string
+    checked: boolean
+  }[]
+  subTasks?: { name: string; progress: number; completed: boolean }[]
+  priority?: string
+}
+
+interface MockColumn {
+  id: string
+  name: string
+  color?: string
+  tasks: MockTask[]
+}
+
+const mockColumns: MockColumn[] = []
+
+export const mockProjectData: {
+  isLoading?: boolean
+  error?: any
+  data: { columns: MockColumn[]; priorityLabels: any[] }
+} = {
+  isLoading: false,
+  error: null,
+  data: {
+    columns: mockColumns,
+    priorityLabels: [
+      { id: "high", name: "High Priority", color: "#ef4444" },
+      { id: "medium", name: "Medium Priority", color: "#f59e0b" },
+      { id: "low", name: "Low Priority", color: "#10b981" },
+    ],
+  },
+}

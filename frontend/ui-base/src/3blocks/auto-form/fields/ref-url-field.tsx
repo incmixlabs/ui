@@ -1,4 +1,4 @@
-import { Button, Dialog, FormControl, FormItem, Input } from "@/src/1base"
+import { Button, Dialog, FormControl, FormItem, Input } from "@/base"
 import { cn } from "@/utils/cn"
 import { ExternalLink, Figma, Pencil, Plus, Trash2 } from "lucide-react"
 // components/auto-form/fields/ref-url-field.tsx

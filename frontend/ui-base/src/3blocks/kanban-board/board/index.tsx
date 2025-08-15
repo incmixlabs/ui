@@ -175,17 +175,17 @@ export function Board({
               )
 
               if (dragging.card.id) {
-                moveTask(dragging.card.id, destColumn.id, newIndex).finally(
-                  () => {
+                moveTask(dragging.card.id, destColumn.id, newIndex)
+                  .finally(() => {
                     setIsDragging(false)
-                  }
-                ).catch((error) => {
-                  console.error("Failed to move task:", error)
-                  toast.error("Failed to move task", {
-                    description: error.message || "Please try again",
-                    duration: 3000,
                   })
-                })
+                  .catch((error) => {
+                    console.error("Failed to move task:", error)
+                    toast.error("Failed to move task", {
+                      description: error.message || "Please try again",
+                      duration: 3000,
+                    })
+                  })
               } else {
                 console.error("Cannot move task: id is undefined")
                 toast.error("Cannot move task", {

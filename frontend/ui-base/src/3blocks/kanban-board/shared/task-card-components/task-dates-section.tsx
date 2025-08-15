@@ -1,16 +1,6 @@
-import {
-  Avatar,
-  Box,
-  Flex,
-  Heading,
-  IconButton,
-  ScrollArea,
-  Text,
-  X,
-} from "@/base"
+import { Box, Flex, Heading } from "@/base"
 // task-card-components/task-dates-section.tsx
-import { Calendar } from "lucide-react"
-import { SmartDatetimeInput } from "../../../../2elements/dates/datetime-picker"
+import { SmartDatetimeInput } from "@/elements/dates/datetime-picker"
 import type { TaskDatesSectionProps } from "./utils/types"
 export function TaskDatesSection({
   currentTask: _currentTask,

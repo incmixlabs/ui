@@ -123,7 +123,7 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
     (text: string, currentUrls: TaskRefUrl[]): UrlProcessingResult => {
       const newUrls: TaskRefUrl[] = []
       let cleanTitle = text
-      let droppedUrlCount = 0
+      let _droppedUrlCount = 0
 
       // Extract potential URLs using word-based detection
       const potentialUrls = extractPotentialUrls(text)
@@ -154,14 +154,14 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
               })
             }
           } else {
-            droppedUrlCount++
+            _droppedUrlCount++
           }
         }
       })
 
       // Clean up title
       cleanTitle = cleanTitle.replace(/\s+/g, " ").trim()
-      
+
       // Optionally, you could return droppedUrlCount to show a warning
       // return { cleanTitle, newUrls, droppedUrlCount }
 

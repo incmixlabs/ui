@@ -1,8 +1,8 @@
 import type { CSSProperties } from "react"
 
+import { cn } from "@/utils/cn"
 import type { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/types"
 import { cva } from "class-variance-authority"
-import { cn } from "../../utils/cn"
 export type DropIndicatorProps = {
   /**
    * The `edge` to draw a drop indicator on.

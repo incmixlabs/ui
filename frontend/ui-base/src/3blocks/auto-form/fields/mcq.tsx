@@ -1,4 +1,4 @@
-import { FormControl, FormItem, FormLabel, FormMessage } from "@/src/1base"
+import { FormControl, FormItem, FormLabel, FormMessage } from "@/base"
 import { cn } from "@/utils/cn"
 import type {
   AutoFormInputComponentProps,
