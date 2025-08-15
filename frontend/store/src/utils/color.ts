@@ -101,24 +101,15 @@ export function getContrastingTextColor(backgroundColor: string): string {
     return "var(--gray-12)" // Default to dark text
   }
 
-  const hex = backgroundColor.replace("#", "")
-  let r = 0
-  let g = 0
-  let b = 0
-
-  if (hex.length === 3) {
-    r = Number.parseInt(hex[0] + hex[0], 16)
-    g = Number.parseInt(hex[1] + hex[1], 16)
-    b = Number.parseInt(hex[2] + hex[2], 16)
-  } else if (hex.length === 6) {
-    r = Number.parseInt(hex.substring(0, 2), 16)
-    g = Number.parseInt(hex.substring(2, 4), 16)
-    b = Number.parseInt(hex.substring(4, 6), 16)
+  // Normalize 3-digit hex to 6-digit for hasGoodContrastOnLight
+  let normalizedHex = backgroundColor
+  if (backgroundColor.length === 4) { // #RGB format
+    const hex = backgroundColor.slice(1)
+    normalizedHex = `#${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`
   }
 
-  // Use same YIQ calculation as hasGoodContrastOnLight but return CSS vars
-  const brightness = (r * 299 + g * 587 + b * 114) / 1000
-  return brightness >= 128 ? "var(--gray-1)" : "var(--gray-12)"
+  // Use existing function for contrast check
+  return hasGoodContrastOnLight(normalizedHex) ? "var(--gray-12)" : "var(--gray-1)"
 }
 
 /**
@@ -142,15 +133,22 @@ export function adjustColorBrightness(color: string, amount: number): string {
 /**
  * Resolves color values to a concrete computed color string for color pickers.
  * - If the input is a CSS var(...) token, it tries to resolve it via getComputedStyle.
+ * - For hex colors, validates format and returns as-is if valid.
  * - Returns the original input on failure or in non-browser environments.
  * Note: The returned string is not guaranteed to be hex; it may be rgb()/hsl()/hex.
  */
 export function normalizeToHex(input: string): string {
-  if (!input) return input
+  if (!input || typeof input !== 'string') {
+    console.warn('normalizeToHex: Invalid input provided')
+    return '#000000' // Fallback to black
+  }
+
   // In SSR/non-browser environments, bail out early
   if (typeof window === "undefined" || typeof document === "undefined") {
     return input
   }
+
+  // Handle CSS custom properties
   if (input.startsWith("var(")) {
     try {
       const varName = input.slice(4, -1).trim() // "--blue-5"
@@ -159,9 +157,29 @@ export function normalizeToHex(input: string): string {
         .trim()
       return computed || input
     } catch {
+      console.warn(`normalizeToHex: Failed to resolve CSS variable: ${input}`)
       return input
     }
   }
+
+  // Handle hex colors - validate format
+  if (input.startsWith('#')) {
+    if (/^#[0-9A-Fa-f]{3}$|^#[0-9A-Fa-f]{6}$/.test(input)) {
+      return input // Valid hex color
+    }
+    console.warn(`normalizeToHex: Invalid hex color format: ${input}`)
+    return '#000000' // Fallback to black
+  }
+
+  // Handle other color formats (rgb, hsl, etc.) - return as-is
+  // These should be handled by the consuming component
+  if (input.startsWith('rgb(') || input.startsWith('rgba(') || 
+      input.startsWith('hsl(') || input.startsWith('hsla(')) {
+    return input
+  }
+
+  // Unknown format - warn and return fallback
+  console.warn(`normalizeToHex: Unrecognized color format: ${input}`)
   return input
 }
 
