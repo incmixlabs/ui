@@ -331,10 +331,17 @@ export const TaskCardDisplay = memo(function TaskCardDisplay({
                   size="1"
                   color="gray"
                   variant="soft"
-                  className={`px-2 py-0.5 ${getPriorityInfo(card.priorityId).color}`}
-                >
-                  {getPriorityInfo(card.priorityId).label}
-                </Badge>
+               {/* Priority indicator */}
+               {card.priorityId && (
+                 <Badge
+                   size="1"
+                   color="gray"
+                   variant="soft"
+                   className={`px-2 py-0.5 ${priorityInfo.color}`}
+                 >
+                   {priorityInfo.label}
+                 </Badge>
+               )}
               )}
 
               {/* Completion status */}
