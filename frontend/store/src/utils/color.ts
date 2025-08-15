@@ -100,22 +100,22 @@ export function getContrastingTextColor(backgroundColor: string): string {
     console.warn(`Invalid hex color: ${backgroundColor}`)
     return "var(--gray-12)" // Default to dark text
   }
-  
+
   const hex = backgroundColor.replace("#", "")
   let r = 0
   let g = 0
   let b = 0
-  
+
   if (hex.length === 3) {
     r = Number.parseInt(hex[0] + hex[0], 16)
-    g = Number.parseInt(hex[1] + hex[1], 16) 
+    g = Number.parseInt(hex[1] + hex[1], 16)
     b = Number.parseInt(hex[2] + hex[2], 16)
   } else if (hex.length === 6) {
     r = Number.parseInt(hex.substring(0, 2), 16)
     g = Number.parseInt(hex.substring(2, 4), 16)
     b = Number.parseInt(hex.substring(4, 6), 16)
   }
-  
+
   // Use same YIQ calculation as hasGoodContrastOnLight but return CSS vars
   const brightness = (r * 299 + g * 587 + b * 114) / 1000
   return brightness >= 128 ? "var(--gray-1)" : "var(--gray-12)"
@@ -131,11 +131,11 @@ export function adjustColorBrightness(color: string, amount: number): string {
   let r = Number.parseInt(hex.substring(0, 2), 16)
   let g = Number.parseInt(hex.substring(2, 4), 16)
   let b = Number.parseInt(hex.substring(4, 6), 16)
-  
+
   r = Math.max(0, Math.min(255, r + amount))
   g = Math.max(0, Math.min(255, g + amount))
   b = Math.max(0, Math.min(255, b + amount))
-  
+
   return `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`
 }
 

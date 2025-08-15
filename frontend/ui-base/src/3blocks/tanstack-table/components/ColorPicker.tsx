@@ -8,7 +8,6 @@ import { normalizeToHex } from "@incmix/store/color"
 import { useState } from "react"
 import type { FC } from "react"
 
-
 interface ColorPickerProps {
   color: string
   onChange: (color: string) => void

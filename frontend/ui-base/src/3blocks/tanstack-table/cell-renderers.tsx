@@ -1,7 +1,10 @@
 // File: components/DataTable/cellRenderers.tsx
 
 import { AvatarGroup } from "@/src/2elements/avatar-group"
-import { adjustColorBrightness, getContrastingTextColor } from "@incmix/store/color"
+import {
+  adjustColorBrightness,
+  getContrastingTextColor,
+} from "@incmix/store/color"
 import type { ReactNode } from "react"
 // Cell Renderer Components
 export const TagCell: React.FC<{ value: string[] }> = ({ value }) => {
@@ -159,10 +162,6 @@ export const StringCell: React.FC<{ value: any }> = ({ value }) => (
     {value !== null && value !== undefined ? String(value) : ""}
   </div>
 )
-
-
-
-
 
 // Interface for dropdown options
 export interface DropdownOption {

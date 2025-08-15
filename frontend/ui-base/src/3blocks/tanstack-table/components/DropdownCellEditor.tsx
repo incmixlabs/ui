@@ -1,9 +1,12 @@
 import { Box, Button, Flex, Text } from "@/src/1base"
 
+import {
+  generateUniqueDropdownColor,
+  normalizeToHex,
+} from "@incmix/store/color"
 import { useEffect, useRef, useState } from "react"
 import type { DropdownOption } from "../cell-renderers"
 import ColorPicker from "./ColorPicker"
-import { generateUniqueDropdownColor, normalizeToHex } from "@incmix/store/color"
 
 interface DropdownCellEditorProps {
   value: string
