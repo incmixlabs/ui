@@ -52,7 +52,7 @@ export function useStreamingDisplay<T extends Record<string, unknown>>({
     if (onDataUpdate) {
       onDataUpdate(streamingData)
     }
-  }, [streamingData, isStreaming, connectionStatus])
+  }, [streamingData, isStreaming, connectionStatus, onDataUpdate])
 
   const resetDisplay = () => {
     setDisplayData({} as T)
