@@ -268,7 +268,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     return (
       <Box
         className={cn(
-          "flex h-full w-fit flex-col text-sidebar-foreground md:w-[--sidebar-width]"
+          "flex h-full w-fit flex-col text-sidebar-foreground md:w-[var(--sidebar-width)]"
         )}
         ref={ref}
         {...props}
@@ -325,7 +325,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         className={cn(
           "group peer relative bg-[var(--sidebar-background)] text-[var(--sidebar-foreground)]",
           isMobile && openMobile
-            ? "fixed inset-y-0 left-0 z-40 w-fit md:w-[--sidebar-width]"
+            ? "fixed inset-y-0 left-0 z-40 w-fit md:w-[var(--sidebar-width)]"
             : "hidden",
           !isMobile && "flex"
         )}
@@ -340,7 +340,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         {/* This is what handles the sidebar gap on desktop */}
         <Box
           className={cn(
-            "relative h-svh w-[--sidebar-width] bg-transparent transition-[width] duration-200 ease-linear",
+            "relative h-svh w-[var(--sidebar-width)] bg-transparent transition-[width] duration-200 ease-linear",
             "group-data-[collapsible=offcanvas]:w-0",
             "group-data-[side=right]:rotate-180",
             variant === "floating" || variant === "inset"
@@ -350,7 +350,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         />
         <Box
           className={cn(
-            "fixed inset-y-0 z-10 flex h-svh w-[--sidebar-width] transition-[left,right,width] duration-200 ease-linear",
+            "fixed inset-y-0 z-10 flex h-svh w-[var(--sidebar-width)] transition-[left,right,width] duration-200 ease-linear",
             isMobile && openMobile ? "z-40 bg-sidebar shadow-lg" : "",
             side === "left"
               ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
@@ -358,7 +358,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             // Adjust the padding for floating and inset variants.
             variant === "floating" || variant === "inset"
               ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4)_+2px)]"
-              : "group-data-[collapsible=icon]:w-[--sidebar-width-icon] ",
+              : "group-data-[collapsible=icon]:w-[var(--sidebar-width-icon)] ",
             className
           )}
           {...props}

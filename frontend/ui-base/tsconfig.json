@@ -12,7 +12,8 @@
     "stories",
     "src/preset.ts",
     "shadcn",
-    "radix-ui"
+    "radix-ui",
+    "utils"
   ],
   "compilerOptions": {
     "types": ["@types/wicg-file-system-access", "vite/client", "node"],
