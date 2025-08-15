@@ -116,7 +116,6 @@ export function HoverMenu({
         transformOrigin = "top center"
         closedTransform = "scale(0.95) translateY(-8px)"
         break
-      case "top":
       default:
         transformOrigin = "bottom center"
         closedTransform = "scale(0.95) translateY(8px)"
@@ -124,9 +123,19 @@ export function HoverMenu({
     }
 
     if (isAnimating) {
-      return { ...baseStyles, transformOrigin, opacity: 1, transform: "scale(1)" }
+      return {
+        ...baseStyles,
+        transformOrigin,
+        opacity: 1,
+        transform: "scale(1)",
+      }
     }
-    return { ...baseStyles, transformOrigin, opacity: 0, transform: closedTransform }
+    return {
+      ...baseStyles,
+      transformOrigin,
+      opacity: 0,
+      transform: closedTransform,
+    }
   }
 
   const getContentPosition = () => {
