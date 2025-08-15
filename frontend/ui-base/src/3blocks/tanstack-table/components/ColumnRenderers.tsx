@@ -1,10 +1,10 @@
 import { DropdownMenuWrapper } from "@/src/1base/radix-ui/dropdown-menu"
-import { Button, Checkbox } from "@radix-ui/themes"
 import type { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, Check, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 import { getCellRenderer } from "../cell-renderers"
 import type { ColumnType, DataTableColumn, RowAction } from "../types"
 import { applyColumnSizeConstraints } from "../utils/column-utils"
+import { Button, Checkbox } from "@/src/1base"
 
 // Create header cell with sort functionality
 export function createSortableHeader<TData>(
