@@ -1,16 +1,6 @@
 "use client"
 
-import {
-  Box,
-  Button,
-  Dialog,
-  Flex,
-  Input,
-  Label,
-  Select,
-  Switch,
-  Text,
-} from "@/src/1base"
+import { Box, Button, Switch, Dialog, Flex, Input, Label, Select, Text } from "@/src/1base"
 import { useEffect, useState } from "react"
 import type { DropdownOption } from "../cell-renderers"
 import DropdownOptionsEditor from "./DropdownOptionsEditor"
