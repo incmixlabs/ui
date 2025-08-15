@@ -179,9 +179,19 @@ export function Board({
                   () => {
                     setIsDragging(false)
                   }
-                )
+                ).catch((error) => {
+                  console.error("Failed to move task:", error)
+                  toast.error("Failed to move task", {
+                    description: error.message || "Please try again",
+                    duration: 3000,
+                  })
+                })
               } else {
                 console.error("Cannot move task: id is undefined")
+                toast.error("Cannot move task", {
+                  description: "Task ID is missing",
+                  duration: 3000,
+                })
                 setIsDragging(false)
               }
               return
