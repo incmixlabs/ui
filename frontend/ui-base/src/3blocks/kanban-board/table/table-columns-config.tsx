@@ -264,7 +264,7 @@ export const TASK_TABLE_COLUMNS = [
   {
     headingName: "Priority",
     type: "Dropdown" as const,
-    accessorKey: "priority" as const,
+    accessorKey: "priorityId" as const,
     id: "priority",
     enableSorting: true,
     enableInlineEdit: true,
