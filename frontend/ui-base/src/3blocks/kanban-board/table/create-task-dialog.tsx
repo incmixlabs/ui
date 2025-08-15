@@ -74,8 +74,16 @@ export function CreateTaskDialog({
         await onCreateTask({
           name: formData.name.trim(),
           description: formData.description.trim(),
-          statusId: formData.columnId, // Map columnId from form to statusId for TableTask
-          priorityId: formData.priority as "low" | "medium" | "high" | "urgent", // Map priority from form to priorityId for TableTask
+          const validPriorities = ["low", "medium", "high", "urgent"] as const;
+          const priorityId = validPriorities.includes(formData.priority as any)
+            ? (formData.priority as typeof validPriorities[number])
+            : "medium";
+
+          await onCreateTask({
+            name: formData.name.trim(),
+            description: formData.description.trim(),
+            statusId: formData.columnId, // Map columnId from form to statusId for TableTask
+            priorityId, // Map priority from form to priorityId for TableTask
           startDate: formData.startDate
             ? new Date(formData.startDate).getTime()
             : undefined,
