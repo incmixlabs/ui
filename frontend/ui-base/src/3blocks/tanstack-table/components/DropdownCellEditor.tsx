@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text } from "@/src/1base"
+import { Box, Button, Flex, Input, Text } from "@/src/1base"
 
 import {
   generateUniqueDropdownColor,
@@ -346,7 +346,7 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
       {/* Custom value input when strictDropdown is false */}
       {!strictDropdown && (
         <Box className="border-gray-100 border-b px-4 py-3 dark:border-gray-700">
-          <Flex className="space-y-3">
+          <Flex className="space-y-3" direction="column">
             <Text className="font-medium text-gray-700 text-xs dark:text-gray-300">
               {showCreateButton ? "Create New Option" : "Add Custom Value"}
             </Text>
@@ -362,13 +362,12 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
               )}
 
               {/* Input field */}
-              <input
+              <Input
                 ref={inputRef}
                 type="text"
                 value={customValue}
                 onChange={handleCustomInputChange}
                 onKeyDown={handleCustomInputKeyDown}
-                className="flex-1 rounded-md border border-gray-300 bg-white px-2 py-1.5 text-gray-900 text-sm focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
                 placeholder="Enter option name..."
                 disabled={isCreating}
               />

@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Button, Dialog, Flex, Select, Text } from "@/src/1base"
+import { Box, Button, Switch, Dialog, Flex, Input, Label, Select, Text } from "@/src/1base"
 import { useEffect, useState } from "react"
 import type { DropdownOption } from "../cell-renderers"
 import DropdownOptionsEditor from "./DropdownOptionsEditor"
@@ -142,9 +142,8 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
             <Text as="label" size="2" weight="medium">
               Column Name
             </Text>
-            <input
+            <Input
               type="text"
-              className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={headingName}
               onChange={handleInputChange}
               placeholder="Enter column name"
@@ -195,22 +194,19 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
                 <Text as="label" size="2" weight="medium">
                   Dropdown Options
                 </Text>
-                <Flex justify="between" align="center">
+                <Flex justify="between" align="center" gap="2">
                   <Text as="label" size="2" weight="medium">
                     {strictDropdown
                       ? "Only predefined values"
                       : "Allow custom values"}
                   </Text>
-                  <label className="relative inline-flex cursor-pointer items-center">
-                    <input
-                      type="checkbox"
+                  <Label className="flex cursor-pointer items-center gap-2">
+                    <Switch
                       checked={strictDropdown}
-                      onChange={() => setStrictDropdown(!strictDropdown)}
-                      className="peer sr-only"
+                      onCheckedChange={setStrictDropdown}
                       aria-label="Toggle strict dropdown mode"
                     />
-                    <div className="peer h-5 w-9 rounded-full bg-gray-200 after:absolute after:top-[2px] after:left-[2px] after:h-4 after:w-4 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:peer-focus:ring-blue-800" />
-                  </label>
+                  </Label>
                 </Flex>
               </Flex>
               <DropdownOptionsEditor

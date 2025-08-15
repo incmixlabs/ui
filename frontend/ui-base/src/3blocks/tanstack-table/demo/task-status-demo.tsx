@@ -4,9 +4,9 @@ import { Box, Heading } from "@/src/1base"
 import { EditIcon, EyeIcon } from "lucide-react"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import {
-  adjustColor,
+  
   cellRendererRegistry,
-  getContrastingTextColor,
+  
   registerCellRenderer,
 } from "../cell-renderers"
 import type { DropdownOption } from "../cell-renderers"
@@ -28,6 +28,7 @@ interface ExtendedColumnConfig extends ColumnConfig {
 }
 
 import DropdownCellEditor from "../components/DropdownCellEditor"
+import { adjustColorBrightness, getContrastingTextColor } from "@incmix/store/color"
 
 // Custom rating cell renderer
 const RatingCell: React.FC<{ value: number }> = ({ value }) => {
@@ -280,7 +281,7 @@ if (!cellRendererRegistry["ColoredStatus"]) {
             ? getContrastingTextColor(option.color)
             : "#000000",
           borderColor: option.color
-            ? adjustColor(option.color, -20)
+            ? adjustColorBrightness(option.color, -20)
             : "#d1d5db",
         }}
       >
@@ -411,7 +412,7 @@ const TASK_TABLE_COLUMNS: ExtendedColumnConfig[] = [
           style={{
             backgroundColor: displayOption.color || "#e5e7eb",
             color: getContrastingTextColor(displayOption.color || "#e5e7eb"),
-            borderColor: adjustColor(displayOption.color || "#e5e7eb", -20),
+            borderColor: adjustColorBrightness(displayOption.color || "#e5e7eb", -20),
           }}
         >
           {displayOption.label}
