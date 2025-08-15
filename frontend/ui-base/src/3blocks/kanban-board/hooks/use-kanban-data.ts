@@ -326,9 +326,13 @@ export function useKanban(providedProjectId?: string): UseKanbanReturn {
         const batchSize = 20
         for (let i = 0; i < taskIds.length; i += batchSize) {
           const batch = taskIds.slice(i, i + batchSize)
-          await Promise.all(
+          const results = await Promise.allSettled(
             batch.map((id) => operations.updateTask(id, updates))
           )
+          const failures = results.filter(r => r.status === 'rejected')
+          if (failures.length > 0) {
+            console.error(`Failed to update ${failures.length} tasks in batch`)
+          }
         }
       } catch (error) {
         console.error("Failed to bulk update tasks:", error)
