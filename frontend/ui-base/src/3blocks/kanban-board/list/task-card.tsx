@@ -1060,8 +1060,8 @@ export const ListTaskCard = memo(function ListTaskCard({
                   }
                   priorityLabels={priorityLabels}
                   onUpdateTask={onUpdateTask}
-                  onDeleteTask={() => {
-                    setShowDeleteConfirmation(true)
+                  onDeleteTask={async () => {
+                    await setShowDeleteConfirmation(true)
                   }}
                   // Add copy/paste support
                   onCreateTask={async (taskData) => {

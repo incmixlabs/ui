@@ -185,7 +185,7 @@ export const TaskActionsMenu = ({
   const _handleMemberToggle = useCallback(
     (member: (typeof MOCK_MEMBERS)[0]) => {
       const isAssigned = currentAssignedTo.find((u) => u.id === member.id)
-      let newAssignedTo: (typeof MOCK_MEMBERS)[0][]
+      let newAssignedTo: any[]
 
       if (isAssigned) {
         newAssignedTo = currentAssignedTo.filter((u) => u.id !== member.id)
@@ -196,6 +196,7 @@ export const TaskActionsMenu = ({
             id: member.id,
             name: member.name,
             image: member.avatar,
+            position: member.position,
           },
         ]
       }

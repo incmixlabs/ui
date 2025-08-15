@@ -66,7 +66,7 @@ export function CreateColumnForm({
   })
   const [isColorPickerOpen, setIsColorPickerOpen] = useState(false)
   const colorPickerRef = useRef<HTMLDivElement | null>(null)
-  const colorPickerButtonRef = useRef<HTMLDivElement | null>(null)
+  const colorPickerButtonRef = useRef<HTMLButtonElement | null>(null)
 
   // Close color picker when clicking outside
   useEffect(() => {
@@ -328,8 +328,8 @@ export function CreateColumnForm({
                     />
                     {isColorPickerOpen && (
                       <dialog
-                        ref={colorPickerRef}
-                        className="absolute z-50 mt-1"
+                        open
+                        className="absolute z-50 m-0 mt-1 border-none bg-transparent p-0"
                         style={{ minWidth: "240px" }}
                         aria-label="Color picker"
                         onClick={(e) => {

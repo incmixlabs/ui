@@ -104,6 +104,7 @@
     "date-fns": "catalog:",
     "input-otp": "catalog:",
     "lucide-react": "catalog:",
+    "nuqs": "catalog:",
     "react-day-picker": "9.8.1",
     "react-hook-form": "catalog:",
     "zod": "catalog:"

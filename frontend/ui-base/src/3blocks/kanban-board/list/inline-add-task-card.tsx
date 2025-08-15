@@ -115,7 +115,7 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
   const [inputWidth, setInputWidth] = useState<number>(CONSTANTS.INITIAL_WIDTH)
   const [error, setError] = useState<TaskCreationError | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLFormElement>(null)
   const measureRef = useRef<HTMLSpanElement>(null)
 
   // Utility function to process URLs from text - using secure URL validation

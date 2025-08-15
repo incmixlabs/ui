@@ -4,6 +4,7 @@ import "./global.css"
 import { useAppearanceStore } from "@incmix/store"
 import { Toaster, Flex, Theme } from "../src/1base"
 import QueryProvider from "./query-client"
+import { TaskCopyBufferProvider } from "../src/3blocks/kanban-board/hooks/use-task-copy-buffer"
 
 const ThemeWrapper = ({
   children,
@@ -20,15 +21,18 @@ const ThemeWrapper = ({
 
   return (
     <QueryProvider>
-      <Theme appearance={theme}>
-        <Flex align="center" justify="center" height="100vh">
-          {children}
-        </Flex>
-        <Toaster position="bottom-center" />
-      </Theme>
+      <TaskCopyBufferProvider>
+        <Theme appearance={theme}>
+          <Flex align="center" justify="center" height="100vh">
+            {children}
+          </Flex>
+          <Toaster position="bottom-center" />
+        </Theme>
+      </TaskCopyBufferProvider>
     </QueryProvider>
   )
 }
+
 
 const preview: Preview = {
   globalTypes: {

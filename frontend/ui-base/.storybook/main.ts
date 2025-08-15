@@ -32,7 +32,9 @@ const config: StorybookConfig = {
         "@/elements": resolve(__dirname, "../src/2elements"),
         "@/radix-ui": resolve(__dirname, "../radix-ui/components"),
         "@/shadcn-ui": resolve(__dirname, "../shadcn/components/ui"),
-        "@/shadcn": resolve(__dirname, "../shadcn")
+        "@/shadcn": resolve(__dirname, "../shadcn"),
+        // Mock nuqs for Storybook
+        "nuqs": resolve(__dirname, "./nuqs-mock.ts")
       }
     }
     return config

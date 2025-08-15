@@ -813,7 +813,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                     onUpdateTask={updateTask}
                     onDeleteTask={deleteTask}
                     onDuplicateTask={handleOptimisticDuplicate}
-                    onUpdateColumn={(id, updates) =>
+                    onUpdateColumn={(id: string, updates: any) =>
                       updateStatusLabel(id, updates)
                     }
                     onDeleteColumn={deleteStatusLabel}

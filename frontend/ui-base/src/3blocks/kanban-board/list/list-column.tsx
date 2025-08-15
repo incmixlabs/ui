@@ -285,6 +285,8 @@ export const CardList = memo(function CardList({
   )
 })
 
+export { ListColumnComponent as ListColumn }
+
 export function ListColumnComponent({
   column,
   columns,
