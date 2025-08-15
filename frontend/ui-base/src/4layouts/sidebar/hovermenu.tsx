@@ -98,24 +98,35 @@ export function HoverMenu({
   const getAnimationStyles = () => {
     const baseStyles = {
       transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
-      transformOrigin: side === "right" ? "left center" : "right center",
+    } as const
+
+    let transformOrigin = "top center"
+    let closedTransform = "scale(0.95)"
+
+    switch (side) {
+      case "right":
+        transformOrigin = "left center"
+        closedTransform = "scale(0.95) translateX(-8px)"
+        break
+      case "left":
+        transformOrigin = "right center"
+        closedTransform = "scale(0.95) translateX(8px)"
+        break
+      case "bottom":
+        transformOrigin = "top center"
+        closedTransform = "scale(0.95) translateY(-8px)"
+        break
+      case "top":
+      default:
+        transformOrigin = "bottom center"
+        closedTransform = "scale(0.95) translateY(8px)"
+        break
     }
 
     if (isAnimating) {
-      return {
-        ...baseStyles,
-        opacity: 1,
-        transform: "scale(1) translateX(0)",
-      }
+      return { ...baseStyles, transformOrigin, opacity: 1, transform: "scale(1)" }
     }
-    return {
-      ...baseStyles,
-      opacity: 0,
-      transform:
-        side === "right"
-          ? "scale(0.95) translateX(-8px)"
-          : "scale(0.95) translateX(8px)",
-    }
+    return { ...baseStyles, transformOrigin, opacity: 0, transform: closedTransform }
   }
 
   const getContentPosition = () => {
