@@ -177,7 +177,12 @@ export const MotionSheet: React.FC<SheetProps> = ({
                   )}
                 </Box>
                 {showCloseButton && (
-                  <IconButton onClick={handleClose} color="gray" type="button">
+                  <IconButton
+                    onClick={handleClose}
+                    color="gray"
+                    type="button"
+                    aria-label={closeButtonText ?? "Close"}
+                  >
                     <Icon name="X" />
                   </IconButton>
                 )}
