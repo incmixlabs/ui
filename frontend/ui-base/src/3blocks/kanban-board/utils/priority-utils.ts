@@ -3,12 +3,7 @@
  * This prevents code duplication between task-card.tsx and inline-add-task-card.tsx.
  */
 
-export type PriorityLabel = {
-  id: string
-  name: string
-  color: string
-  type: string
-}
+import type { PriorityLabel } from "../priority-config"
 
 // Color mappings for priority styling using Radix UI tokens
 const PRIORITY_COLOR_MAP = {
