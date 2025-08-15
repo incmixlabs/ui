@@ -140,9 +140,8 @@ export const MotionSheet: React.FC<SheetProps> = ({
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
             className={cn(
               // Base styles for all sheets
-              isFilter
-                ? isFilterClassName
-                : "fixed h-[98vh] w-96 max-w-full bg-gray-3 p-5 py-4",
+              "fixed h-[98vh] max-w-full bg-gray-3 p-5 py-4",
+              isFilter ? isFilterClassName : "w-96",
               positionClasses[side],
               className
             )}
