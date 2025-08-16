@@ -64,7 +64,7 @@ export function DropIndicator({ edge, gap = "0px" }: DropIndicatorProps) {
   return (
     <div
       className={cn(
-        "pointer-events-none absolute z-10 h-1 bg-blue-5",
+        "pointer-events-none absolute z-10 bg-blue-5",
         orientationVariants({ edge, orientation })
       )}
       style={{ "--local-line-offset": lineOffset } as CSSProperties}
