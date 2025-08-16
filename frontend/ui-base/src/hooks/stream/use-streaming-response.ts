@@ -152,7 +152,8 @@ export function useStreamingResponse<T = Record<string, unknown>>(
                   }
 
                   // Handle Vercel AI SDK format if present
-                  else if (data.type === "object") {
+                  // Handle Vercel AI SDK format if present
+                 else if (data.type === "object" && data.object && typeof data.object === "object") {
                     setState((prev: StreamingState<T>) => ({
                       ...prev,
                       data: {
@@ -161,6 +162,7 @@ export function useStreamingResponse<T = Record<string, unknown>>(
                       } as T,
                     }))
                     options.onData?.(data.object)
+                  }
                   } else if (data.type === "finish") {
                     updateConnectionStatus("completed")
                     updateState({ isStreaming: false })
