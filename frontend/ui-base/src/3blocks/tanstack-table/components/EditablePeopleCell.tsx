@@ -1,13 +1,13 @@
 "use client"
 
-import { Avatar, type AvatarProps, Button } from "@/src/1base"
+import { Avatar, type AvatarProps, Button, Box, Input, Popover } from "@/src/1base"
 import {
   AvatarGroup,
   type AvatarGroupProps,
 } from "@/src/2elements/avatar-group"
 import { cn } from "@/utils/cn"
 import { Check, Search } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useEditableCellKeyboard } from "../hooks/useEditableCellKeyboard"
 
 interface EditablePeopleCellProps {
@@ -46,64 +46,36 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
   maxSelections = 10,
 }) => {
   const cellRef = useRef<HTMLDivElement>(null)
-  const dropdownRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   // State for the people editor
   const [selectedUsers, setSelectedUsers] = useState<AvatarProps[]>(value || [])
   const [searchQuery, setSearchQuery] = useState("")
 
-  // Reset selected users when value changes or editing starts
+  // Reset selected users when editing starts (avoid render loops)
   useEffect(() => {
-    console.log("EditablePeopleCell state change:", {
-      isEditing,
-      isSelected,
-      value,
-    })
-    setSelectedUsers(value || [])
-    setSearchQuery("")
-  }, [value, isEditing, isSelected])
+    if (isEditing) {
+      setSelectedUsers(value || [])
+      setSearchQuery("")
+    }
+  }, [isEditing]) // Remove value dependency to prevent loops
 
-  // Focus search input when editing starts and position dropdown
+  // Focus search input when editing starts
   useEffect(() => {
     if (isEditing && searchInputRef.current) {
       setTimeout(() => searchInputRef.current?.focus(), 50)
     }
-
-    // Position dropdown when editing
-    if (isEditing && dropdownRef.current && cellRef.current) {
-      const cellRect = cellRef.current.getBoundingClientRect()
-      const dropdown = dropdownRef.current
-
-      // Position dropdown below the cell
-      dropdown.style.top = `${cellRect.bottom + window.scrollY + 5}px`
-      dropdown.style.left = `${cellRect.left + window.scrollX}px`
-
-      // Make sure dropdown is within viewport bounds
-      setTimeout(() => {
-        const dropdownRect = dropdown.getBoundingClientRect()
-        const viewportHeight = window.innerHeight
-        const viewportWidth = window.innerWidth
-
-        // Adjust if extends beyond bottom
-        if (dropdownRect.bottom > viewportHeight) {
-          dropdown.style.top = `${cellRect.top + window.scrollY - dropdownRect.height - 5}px`
-        }
-
-        // Adjust if extends beyond right edge
-        if (dropdownRect.right > viewportWidth) {
-          dropdown.style.left = `${viewportWidth - dropdownRect.width - 10}px`
-        }
-      }, 10)
-    }
   }, [isEditing])
 
-  // Filter users based on search query
-  const filteredUsers = availableUsers.filter(
-    (user) =>
-      user?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user?.email?.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  // Filter users based on search query (memoized for performance)
+  const filteredUsers = useMemo(() => {
+    const query = searchQuery.toLowerCase()
+    return availableUsers.filter(
+      (user) =>
+        user?.name?.toLowerCase().includes(query) ||
+        user?.email?.toLowerCase().includes(query)
+    )
+  }, [availableUsers, searchQuery])
 
   // Handle user selection/deselection
   const handleUserToggle = (user: AvatarProps) => {
@@ -121,17 +93,9 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
   }
 
   // Handle saving the selected users
-  const handleSave = () => {
-    console.log("EditablePeopleCell handleSave called:", {
-      rowData: rowData.id,
-      columnId,
-      selectedUsers,
-      originalValue: value,
-    })
-    // Force update the selected users state before saving
-    console.log("Calling onSave with:", selectedUsers)
+  const handleSave = useCallback(() => {
     onSave(rowData, columnId, selectedUsers)
-  }
+  }, [selectedUsers, onSave, rowData, columnId])
 
   // Handle search input change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -172,204 +136,156 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
   // Get accessibility attributes
   const ariaAttributes = getAriaAttributes()
 
-  // Handle document-wide click to deselect or save
-  useEffect(() => {
-    if (!isSelected && !isEditing) return
-
-    const handleOutsideClick = (e: MouseEvent) => {
-      const target = e.target as Node
-
-      // Check if click is outside both the cell and the dropdown
-      const isOutsideCell = cellRef.current && !cellRef.current.contains(target)
-      const isOutsideDropdown =
-        dropdownRef.current && !dropdownRef.current.contains(target)
-
-      if (isOutsideCell && isOutsideDropdown) {
-        if (isEditing) {
-          // Save when clicking outside during editing
-          handleSave()
-        } else {
-          // Cancel selection when clicking outside
-          onCancelEdit()
-        }
-      }
+  // Handle popover close
+  const handlePopoverClose = useCallback(() => {
+    if (isEditing) {
+      handleSave()
+    } else {
+      onCancelEdit()
     }
-
-    document.addEventListener("mousedown", handleOutsideClick)
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick)
-    }
-  }, [isSelected, isEditing, selectedUsers])
-
-  if (isEditing) {
-    return (
-      <>
-        {/* Cell container */}
-        <div
-          ref={cellRef}
-          className="flex h-full w-full items-center p-1"
-          onClick={(e) => e.stopPropagation()}
-          onKeyDown={(e) => {
-            // Optionally handle keyboard events here if needed
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault()
-              e.stopPropagation()
-            }
-          }}
-        >
-          <div className="flex items-center gap-2">
-            <AvatarGroup users={selectedUsers} maxVisible={maxVisible} />
-          </div>
-        </div>
-
-        {/* Dropdown overlay - positioned outside the table */}
-        <div
-          ref={dropdownRef}
-          className="fixed z-[9999] rounded-md bg-white shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none dark:bg-gray-800 dark:ring-gray-700"
-          style={{
-            minWidth: "280px",
-            maxWidth: "350px",
-            maxHeight: "400px",
-            position: "fixed",
-            top: "0px",
-            left: "0px",
-          }}
-          onClick={(e) => e.stopPropagation()}
-          onKeyDown={(e) => e.stopPropagation()}
-        >
-          {/* Search input */}
-          <div className="border-gray-100 border-b p-3 dark:border-gray-700">
-            <div className="relative">
-              <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-gray-400" />
-              <input
-                ref={searchInputRef}
-                type="text"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                onKeyDown={handleSearchKeyDown}
-                className="w-full rounded-md border border-gray-300 bg-white py-2 pr-4 pl-10 text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
-                placeholder="Search users..."
-              />
-            </div>
-
-            {/* Selected count */}
-            {selectedUsers.length > 0 && (
-              <div className="mt-2 text-gray-500 text-xs dark:text-gray-400">
-                {selectedUsers.length} user
-                {selectedUsers.length !== 1 ? "s" : ""} selected
-                {maxSelections && ` (max ${maxSelections})`}
-              </div>
-            )}
-          </div>
-
-          {/* User list */}
-          <div className="max-h-64 overflow-y-auto">
-            {filteredUsers.length === 0 ? (
-              <div className="px-4 py-3 text-gray-500 text-sm dark:text-gray-400">
-                {searchQuery
-                  ? "No users found matching your search"
-                  : "No users available"}
-              </div>
-            ) : (
-              filteredUsers.map((user) => {
-                const isUserSelected = selectedUsers.some(
-                  (u) => u.id === user.id
-                )
-                const isDisabled =
-                  !isUserSelected &&
-                  maxSelections &&
-                  selectedUsers.length >= maxSelections
-
-                return (
-                  <Button
-                    key={user.id}
-                    variant="ghost"
-                    size="2"
-                    onClick={() => !isDisabled && handleUserToggle(user)}
-                    onKeyDown={(e) => {
-                      if (!isDisabled && (e.key === "Enter" || e.key === " ")) {
-                        e.preventDefault()
-                        handleUserToggle(user)
-                      }
-                    }}
-                    disabled={!!isDisabled}
-                    className={`flex items-center gap-3 text-left ${
-                      isUserSelected ? "bg-blue-50 dark:bg-blue-900/30" : ""
-                    }`}
-                  >
-                    {/* Checkbox */}
-                    <div
-                      className={`flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border-2 ${
-                        isUserSelected
-                          ? "border-blue-500 bg-blue-500"
-                          : "border-gray-300 dark:border-gray-600"
-                      }
-                    `}
-                    >
-                      {isUserSelected && (
-                        <Check className="h-3 w-3 text-white" />
-                      )}
-                    </div>
-
-                    {/* User avatar */}
-                    <Avatar size={"3"} {...user} />
-
-                    {/* User info */}
-                    <div className="min-w-0 flex-grow">
-                      <div className="truncate font-medium text-gray-900 dark:text-gray-100">
-                        {user.name}
-                      </div>
-                      <div className="truncate text-gray-500 text-xs dark:text-gray-400">
-                        {user.email}
-                      </div>
-                    </div>
-                  </Button>
-                )
-              })
-            )}
-          </div>
-
-          {/* Action buttons */}
-          <div className="flex justify-end gap-2 border-gray-100 border-t p-3 dark:border-gray-700">
-            <Button variant="ghost" size="1" onClick={onCancelEdit}>
-              Cancel
-            </Button>
-            <Button
-              size="1"
-              onClick={() => {
-                console.log("Save button clicked")
-                handleSave()
-              }}
-            >
-              Save ({selectedUsers.length})
-            </Button>
-          </div>
-        </div>
-      </>
-    )
-  }
+  }, [isEditing, handleSave, onCancelEdit])
 
   return (
-    <div
-      ref={(el) => {
-        // Connect both refs to ensure proper functionality
-        cellRef.current = el
-        if (keyboardCellRef) keyboardCellRef.current = el
-      }}
-      onClick={(e) => {
-        console.log("EditablePeopleCell clicked")
-        handleCellClick(e)
-      }}
-      onKeyDown={handleKeyDown}
-      className={cn(
-        className,
-        "h-full w-full cursor-pointer p-1 transition-colors duration-150",
-        isSelected && "rounded bg-blue-100 dark:bg-blue-900/30"
-      )}
-      {...ariaAttributes}
-      aria-label={`${columnId}: ${value?.length || 0} users assigned`}
-    >
-      <AvatarGroup users={value || []} maxVisible={maxVisible} />
-    </div>
+    <Popover.Root open={isEditing} onOpenChange={(open) => !open && handlePopoverClose()}>
+      <Popover.Trigger>
+        <Box
+          ref={(el) => {
+            cellRef.current = el
+            if (keyboardCellRef) keyboardCellRef.current = el
+          }}
+          onClick={handleCellClick}
+          onKeyDown={handleKeyDown}
+          className={cn(
+            className,
+            "h-full w-full cursor-pointer p-1 transition-colors",
+            isSelected && "rounded bg-blue-2 dark:bg-blue-3"
+          )}
+          {...ariaAttributes}
+          aria-label={`${columnId}: ${value?.length || 0} users assigned`}
+        >
+          <AvatarGroup users={isEditing ? selectedUsers : value || []} maxVisible={maxVisible} layout="stack" stackOrder="asc" size="1"/>
+        </Box>
+      </Popover.Trigger>
+
+      <Popover.Content className="max-h-[480px] w-[360px] rounded-lg border border-gray-6 bg-white p-2 shadow-lg dark:border-gray-7 dark:bg-gray-2" sideOffset={8}>
+        {/* Search input */}
+        <Box className="border-gray-6 border-b p-4 dark:border-gray-7">
+          <Box className="relative">
+            <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-gray-9" />
+            <Input
+              ref={searchInputRef}
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              onKeyDown={handleSearchKeyDown}
+              className="border-gray-6 pl-10 focus:border-blue-8 focus:ring-2 focus:ring-blue-3"
+              placeholder="Search users..."
+              size={2}
+            />
+          </Box>
+
+          {/* Selected count */}
+          {selectedUsers.length > 0 && (
+            <Box className="mt-3 rounded-sm bg-blue-2 px-2 py-1 font-medium text-blue-11 text-xs dark:bg-blue-3 dark:text-blue-11">
+              {selectedUsers.length} user{selectedUsers.length !== 1 ? "s" : ""} selected
+              {maxSelections && ` (max ${maxSelections})`}
+            </Box>
+          )}
+        </Box>
+
+        {/* User list */}
+        <Box className="max-h-60 w-full px-2 py-2">
+          {filteredUsers.length === 0 ? (
+            <Box className="flex flex-col items-center justify-center gap-2 px-2 py-8">
+              <Box className="mb-1 font-medium text-gray-11 text-sm">
+                {searchQuery ? "No users found" : "No users available"}
+              </Box>
+              {searchQuery && (
+                <Box className="text-gray-9 text-xs">
+                  Try adjusting your search
+                </Box>
+              )}
+            </Box>
+          ) : (
+            filteredUsers.map((user) => {
+              const isUserSelected = selectedUsers.some(
+                (u) => u.id === user.id
+              )
+              const isDisabled =
+                !isUserSelected &&
+                maxSelections &&
+                selectedUsers.length >= maxSelections
+
+              return (
+                <Button
+                  key={user.id}
+                  variant="ghost"
+                  size="2"
+                  onClick={() => !isDisabled && handleUserToggle(user)}
+                  onKeyDown={(e) => {
+                    if (!isDisabled && (e.key === "Enter" || e.key === " ")) {
+                      e.preventDefault()
+                      handleUserToggle(user)
+                    }
+                  }}
+                  disabled={!!isDisabled}
+                  className={cn(
+                    "h-full w-full justify-start gap-3 rounded-md px-2 py-2 text-left transition-all duration-150 ",
+                    isUserSelected 
+                      ? "bg-blue-3 hover:bg-blue-4 dark:bg-blue-4 dark:hover:bg-blue-5"
+                      : "hover:bg-gray-3 dark:hover:bg-gray-4",
+                    isDisabled && "cursor-not-allowed opacity-50"
+                  )}
+                >
+                  {/* Checkbox */}
+                  <Box
+                    className={cn(
+                      "flex h-5 w-5 flex-shrink-0 items-center justify-center rounded border-2 transition-colors",
+                      isUserSelected
+                        ? "border-blue-9 bg-blue-9"
+                        : "border-gray-7 bg-white dark:border-gray-6 dark:bg-gray-1"
+                    )}
+                  >
+                    {isUserSelected && (
+                      <Check className="h-3 w-3 text-white" />
+                    )}
+                  </Box>
+
+                  {/* User avatar */}
+                  <Avatar size="2" {...user} className="flex-shrink-0" />
+
+                  {/* User info */}
+                  <Box className="min-w-0 flex-1">
+                    <Box className="truncate font-medium text-gray-12 text-sm">
+                      {user.name}
+                    </Box>
+                    <Box className="truncate text-gray-10 text-xs">
+                      {user.email}
+                    </Box>
+                  </Box>
+                </Button>
+              )
+            })
+          )}
+        </Box>
+
+        {/* Action buttons */}
+        <Box className="flex items-center justify-between border-gray-6 border-t bg-gray-1 px-4 py-3 dark:border-gray-7 dark:bg-gray-3">
+          <Box className="text-gray-10 text-xs">
+            {selectedUsers.length > 0 && (
+              <>{selectedUsers.length} selected</>
+            )}
+          </Box>
+          <Box className="flex gap-2">
+            <Button variant="soft" size="2" color="gray" onClick={onCancelEdit}>
+              Cancel
+            </Button>
+            <Button size="2" onClick={handleSave} disabled={selectedUsers.length === 0}>
+              Save
+            </Button>
+          </Box>
+        </Box>
+      </Popover.Content>
+    </Popover.Root>
   )
 }
