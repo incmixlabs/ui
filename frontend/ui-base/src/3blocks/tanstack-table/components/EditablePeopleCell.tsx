@@ -1,13 +1,6 @@
 "use client"
 
-import {
-  Avatar,
-  type AvatarProps,
-  Box,
-  Button,
-  Input,
-  Popover,
-} from "@/src/1base"
+import { Avatar, type AvatarProps, Button, Box, Input, Popover } from "@/src/1base"
 import {
   AvatarGroup,
   type AvatarGroupProps,
@@ -77,11 +70,11 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
   // Filter users based on search query (memoized for performance)
   const filteredUsers = useMemo(() => {
     const query = searchQuery.toLowerCase()
-    return availableUsers.filter((user) => {
-      const name = user?.name?.toLowerCase() ?? ""
-      const email = user?.email?.toLowerCase() ?? ""
-      return name.includes(query) || email.includes(query)
-    })
+    return availableUsers.filter(
+      (user) =>
+        user?.name?.toLowerCase().includes(query) ||
+        user?.email?.toLowerCase().includes(query)
+    )
   }, [availableUsers, searchQuery])
 
   // Handle user selection/deselection
@@ -143,25 +136,17 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
   // Get accessibility attributes
   const ariaAttributes = getAriaAttributes()
 
-  // Track close reason to decide whether to save or cancel
-  const closeReasonRef = useRef<"escape" | "interactOutside" | null>(null)
-
-  const handlePopoverClose = useCallback(
-    (open: boolean) => {
-      if (!open) {
-        if (closeReasonRef.current === "escape") {
-          onCancelEdit()
-        } else {
-          handleSave()
-        }
-        closeReasonRef.current = null
-      }
-    },
-    [handleSave, onCancelEdit]
-  )
+  // Handle popover close
+  const handlePopoverClose = useCallback(() => {
+    if (isEditing) {
+      handleSave()
+    } else {
+      onCancelEdit()
+    }
+  }, [isEditing, handleSave, onCancelEdit])
 
   return (
-    <Popover.Root open={isEditing} onOpenChange={handlePopoverClose}>
+    <Popover.Root open={isEditing} onOpenChange={(open) => !open && handlePopoverClose()}>
       <Popover.Trigger>
         <Box
           ref={(el) => {
@@ -178,26 +163,11 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
           {...ariaAttributes}
           aria-label={`${columnId}: ${value?.length || 0} users assigned`}
         >
-          <AvatarGroup
-            users={isEditing ? selectedUsers : value || []}
-            maxVisible={maxVisible}
-            layout="stack"
-            stackOrder="asc"
-            size="1"
-          />
+          <AvatarGroup users={isEditing ? selectedUsers : value || []} maxVisible={maxVisible} layout="stack" stackOrder="asc" size="1"/>
         </Box>
       </Popover.Trigger>
 
-      <Popover.Content
-        className="max-h-[480px] w-[360px] rounded-lg border border-gray-6 bg-white p-2 shadow-lg dark:border-gray-7 dark:bg-gray-2"
-        sideOffset={8}
-        onEscapeKeyDown={() => {
-          closeReasonRef.current = "escape"
-        }}
-        onInteractOutside={() => {
-          closeReasonRef.current = "interactOutside"
-        }}
-      >
+      <Popover.Content className="max-h-[480px] w-[360px] rounded-lg border border-gray-6 bg-white p-2 shadow-lg dark:border-gray-7 dark:bg-gray-2" sideOffset={8}>
         {/* Search input */}
         <Box className="border-gray-6 border-b p-4 dark:border-gray-7">
           <Box className="relative">
@@ -217,8 +187,7 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
           {/* Selected count */}
           {selectedUsers.length > 0 && (
             <Box className="mt-3 rounded-sm bg-blue-2 px-2 py-1 font-medium text-blue-11 text-xs dark:bg-blue-3 dark:text-blue-11">
-              {selectedUsers.length} user{selectedUsers.length !== 1 ? "s" : ""}{" "}
-              selected
+              {selectedUsers.length} user{selectedUsers.length !== 1 ? "s" : ""} selected
               {maxSelections && ` (max ${maxSelections})`}
             </Box>
           )}
@@ -239,7 +208,9 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
             </Box>
           ) : (
             filteredUsers.map((user) => {
-              const isUserSelected = selectedUsers.some((u) => u.id === user.id)
+              const isUserSelected = selectedUsers.some(
+                (u) => u.id === user.id
+              )
               const isDisabled =
                 !isUserSelected &&
                 maxSelections &&
@@ -275,7 +246,9 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
                         : "border-gray-7 bg-white dark:border-gray-6 dark:bg-gray-1"
                     )}
                   >
-                    {isUserSelected && <Check className="h-3 w-3 text-white" />}
+                    {isUserSelected && (
+                      <Check className="h-3 w-3 text-white" />
+                    )}
                   </Box>
 
                   {/* User avatar */}
@@ -299,17 +272,15 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
         {/* Action buttons */}
         <Box className="flex items-center justify-between border-gray-6 border-t bg-gray-1 px-4 py-3 dark:border-gray-7 dark:bg-gray-3">
           <Box className="text-gray-10 text-xs">
-            {selectedUsers.length > 0 && <>{selectedUsers.length} selected</>}
+            {selectedUsers.length > 0 && (
+              <>{selectedUsers.length} selected</>
+            )}
           </Box>
           <Box className="flex gap-2">
             <Button variant="soft" size="2" color="gray" onClick={onCancelEdit}>
               Cancel
             </Button>
-            <Button
-              size="2"
-              onClick={handleSave}
-              disabled={selectedUsers.length === 0}
-            >
+            <Button size="2" onClick={handleSave} disabled={selectedUsers.length === 0}>
               Save
             </Button>
           </Box>
