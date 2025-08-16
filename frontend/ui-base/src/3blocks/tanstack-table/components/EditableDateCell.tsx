@@ -46,7 +46,9 @@ export const EditableDateCell: React.FC<EditableDateCellProps> = ({
       : undefined
 
   // State to track the current date value being edited
-  const [editDateValue, setEditDateValue] = useState<Date | undefined>(dateValue)
+  const [editDateValue, setEditDateValue] = useState<Date | undefined>(
+    dateValue
+  )
 
   // When editing starts, set the current edit value ONCE
   useEffect(() => {
