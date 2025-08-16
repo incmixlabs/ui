@@ -68,7 +68,9 @@ const TablePaginationComponent: React.FC<TablePaginationProps> = ({
 
       <Flex align="center" gap="2" ml="auto">
         <Flex align="center" gap="1">
-          <Text size="2" color="gray">Rows per page</Text>
+          <Text size="2" color="gray">
+            Rows per page
+          </Text>
           <Select.Root
             value={paginationInfo.pageSize.toString()}
             onValueChange={(value) => handlePageSizeChange(Number(value))}
@@ -95,7 +97,9 @@ const TablePaginationComponent: React.FC<TablePaginationProps> = ({
                 variant="outline"
                 size="1"
                 onClick={() => handlePageChange(0)}
-                disabled={!paginationInfo.canPreviousPage || isPaginationLoading}
+                disabled={
+                  !paginationInfo.canPreviousPage || isPaginationLoading
+                }
                 aria-label="Go to first page"
               >
                 <ChevronsLeft size={16} />
@@ -106,7 +110,9 @@ const TablePaginationComponent: React.FC<TablePaginationProps> = ({
                 variant="outline"
                 size="1"
                 onClick={() => handlePageChange(paginationInfo.currentPage - 1)}
-                disabled={!paginationInfo.canPreviousPage || isPaginationLoading}
+                disabled={
+                  !paginationInfo.canPreviousPage || isPaginationLoading
+                }
                 aria-label="Go to previous page"
               >
                 <ChevronLeft size={16} />
