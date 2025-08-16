@@ -62,9 +62,7 @@ export function KeyboardShortcutsHelp({
                   gap="2"
                   mb="2"
                 >
-                  <Kbd size="1">
-                    {shortcut.key}
-                  </Kbd>
+                  <Kbd size="1">{shortcut.key}</Kbd>
                   <Text size="2" color="gray">
                     {shortcut.description}
                   </Text>
