@@ -1,19 +1,29 @@
-"use client";
-
-import React, { useMemo, memo, useCallback } from "react";
+import React, { useMemo, memo, useCallback, useState } from "react";
 import { flexRender, Table as TanStackTable, Row, Cell, RowSelectionState } from "@tanstack/react-table";
 import { Table } from "@shadcn";
 import { LoadingRow, EmptyRow } from "./TableUtilityRows";
 import { DataTableColumn, RowGroupingOptions } from "../types";
 import { GroupHeaderRow } from "./GroupHeaderRow";
 import { useTableGrouping } from "../hooks/useTableGrouping";
-
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import {Box, Flex, IconButton} from "@incmix/ui"
 // Import editable cell components
 import { EditableCell } from "./EditableCell";
 import { EditableDateCell } from "./EditableDateCell";
 import { EditableBooleanCell } from "./EditableBooleanCell";
 import { EditableTagCell } from "./EditableTagCell";
 import { EditablePeopleCell } from "./EditablePeopleCell";
+
+// Type definitions
+interface GroupedData<TData> {
+  manageRow: Row<TData> | null;
+  otherRows: Row<TData>[];
+  subject: string;
+}
+
+interface AccordionState {
+  [subject: string]: boolean;
+}
 
 /**
  * Expanded row component for rendering expanded content
@@ -41,6 +51,7 @@ function ExpandedRow<TData>({ row, colSpan, renderContent }: ExpandedRowProps<TD
  */
 interface TableBodyProps<TData extends object> {
   table: TanStackTable<TData>;
+  isRoles?:boolean
   flatColumns: DataTableColumn<TData>[];
   isPaginationLoading?: boolean;
   expandableRows?: {
@@ -86,11 +97,134 @@ interface RowProps<TData extends object> {
   saveEdit?: (rowData: TData, columnId: string, newValue: any) => void;
   // Accessibility props
   rowIndex?: number; // Index of the row for ARIA attributes
+  isRoles?:boolean;
+  isSubRow?: boolean;
 }
 
 /**
- * Memoized row component to prevent unnecessary re-renders
+ * Enhanced Manage Row Component with Accordion Toggle
  */
+interface AccordionManageRowProps<TData extends object> extends Omit<RowProps<TData>, 'row'> {
+  row: Row<TData>;
+  isExpanded: boolean;
+  hasSubRows: boolean;
+  onToggle: () => void;
+  subject: string;
+  groupSelectProps?: {
+    isAllRowsSelected: boolean;
+    isSomeRowsSelected: boolean;
+    toggleAllRowsSelected: (value: boolean) => void;
+  };
+}
+
+function AccordionManageRow<TData extends object>({
+  row,
+  flatColumns,
+  isExpanded,
+  hasSubRows,
+  onToggle,
+  subject,
+  expandableRows,
+  toggleRowExpanded,
+  onRowClick,
+  enableInlineCellEdit = false,
+}: AccordionManageRowProps<TData>) {
+  const visibleCells = useMemo(() => row.getVisibleCells(), [row]);
+
+  const handleRowClick = () => {
+    if (onRowClick) {
+      onRowClick(row.original);
+    } else if (expandableRows && expandableRows.expandOnClick) {
+      toggleRowExpanded(row.id);
+    }
+  };
+
+  const handleAccordionToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggle();
+  };
+
+  return (
+    <Table.Row
+      data-state={row.getIsSelected() && "selected"}
+      className={` border-gray-5 data-[state=selected]:bg-gray-4 font-medium ${
+        onRowClick || (expandableRows?.expandOnClick) ? "cursor-pointer" : ""
+      }`}
+      onClick={handleRowClick}
+      role={enableInlineCellEdit ? "row" : undefined}
+      aria-expanded={isExpanded}
+      aria-label={`${subject} permissions group`}
+    >
+      {visibleCells.map((cell, cellIndex) => {
+        if (!cell.column.getIsVisible()) return null;
+        
+        const columnDef = flatColumns.find(col =>
+          col.accessorKey?.toString() === cell.column.id ||
+          col.id === cell.column.id
+        );
+
+        // Identify the first non-select visible column so the toggle sits on the first data column
+        const firstNonSelectColumnId =
+          visibleCells.find(
+            (c) => c.column.id !== "select" && c.column.getIsVisible()
+          )?.column.id;
+        const isFirstDataColumn =
+          cell.column.id !== "select" && cell.column.id === firstNonSelectColumnId;
+        
+        if (cell.column.id === 'select') {
+          return (
+            <Table.Cell
+              key={cell.id}
+              className={`pl-3 pr-0 py-1.5 ${columnDef?.className || ""} overflow-hidden`}
+            >
+              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </Table.Cell>
+          );
+        }
+        
+        return (
+          <Table.Cell
+            key={cell.id}
+            className={`${isFirstDataColumn ? "border-0":"border-l border-gray-6" } px-2 py-2 ${columnDef?.className || ""} overflow-hidden`}
+            style={{
+              width: columnDef?.width,
+              minWidth: columnDef?.minWidth,
+              maxWidth: columnDef?.maxWidth,
+            }}
+          >
+            <Flex align={"center"} gap={"2"}>
+              {isFirstDataColumn && hasSubRows && (
+                <IconButton
+                  onClick={handleAccordionToggle}
+                  className="p-1 bg-gray-3 hover:bg-gray-5 rounded transition-colors"
+                  aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${subject} permissions`}
+                >
+                  {isExpanded ? (
+                    <ChevronDown className="h-4 w-4 text-gray-12" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4 text-gray-12" />
+                  )}
+                </IconButton>
+              )}
+              
+              <Box className="flex-1">
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </Box>
+              
+              {/* {isFirstDataColumn && (
+                <span className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-md font-medium">
+                  {subject}
+                </span>
+              )} */}
+            </Flex>
+          </Table.Cell>
+        );
+      })}
+    </Table.Row>
+  );
+}
+
+
 function TableRowComponent<TData extends object>(props: RowProps<TData>) {
   const {
     row,
@@ -109,10 +243,10 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
     cancelEditing,
     saveEdit,
     // Accessibility props
-    rowIndex
+    rowIndex,
+    isSubRow = false
   } = props;
 
-  // Determine if this row is expanded
   const isExpanded = expandableRows && expandedRows[row.id];
 
   // Memoize visible cells to avoid unnecessary re-computation
@@ -131,9 +265,9 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
     <React.Fragment>
       <Table.Row
         data-state={row.getIsSelected() && "selected"}
-        className={`border-gray-100 dark:border-gray-800 dark:data-[state=selected]:bg-muted/20 ${
+        className={`border-gray-5 dark:border-gray-5 dark:data-[state=selected]:bg-muted/20 ${
           onRowClick || (expandableRows?.expandOnClick) ? "cursor-pointer" : ""
-        } ${isExpanded ? "bg-muted/10" : ""}`}
+        } ${isExpanded ? "bg-gray-5" : ""} ${isSubRow ? "" : ""}`}
         onClick={handleRowClick}
         role={enableInlineCellEdit ? "row" : undefined}
         aria-rowindex={rowIndex !== undefined ? rowIndex + 1 : undefined} // ARIA indices are 1-based
@@ -142,6 +276,7 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
         {visibleCells.map(cell => {
           // Skip rendering cells for hidden columns
           if (!cell.column.getIsVisible()) return null;
+          console.log("allcell",cell);
           
           // Get column definition for styling and type information
           const columnDef = flatColumns.find(col =>
@@ -163,15 +298,13 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           const isEditableStringCell = isEditableCell && columnDef?.type === "String";
           const isEditableDropdownCell = isEditableCell && columnDef?.type === "Dropdown";
 
-          // Get the cell value
           const cellValue = cell.getValue();
 
-          // Special styling for the checkbox column
           if (cell.column.id === 'select') {
             return (
               <Table.Cell
                 key={cell.id}
-                className={`pl-3 pr-0 py-1.5 ${columnDef?.className || ""} overflow-hidden`}
+                className={`pl-3 pr-0 py-1.5  ${columnDef?.className || ""} overflow-hidden`}
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </Table.Cell>
@@ -181,21 +314,21 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           return (
             <Table.Cell
               key={cell.id}
-              className={`px-2 py-1.5 ${columnDef?.className || ""} overflow-hidden ${isEditableCell && isSelected?.(row.id, cell.column.id) ? 'keyboard-selected-cell' : ''}`}
+              className={`px-2 pl-10 border-l border-gray-6 py-1.5 ${columnDef?.className || ""} overflow-hidden ${isEditableCell && isSelected?.(row.id, cell.column.id) ? 'keyboard-selected-cell' : ''} `}
               style={{
                 width: columnDef?.width,
                 minWidth: columnDef?.minWidth,
                 maxWidth: columnDef?.maxWidth,
-                position: 'relative', // For absolute positioning of editable content
+                position: 'relative',
                 ...(isEditableCell && isSelected?.(row.id, cell.column.id) && {
                   backgroundColor: 'rgba(93, 135, 255, 0.03)'
                 })
               }}
               role={enableInlineCellEdit ? "gridcell" : undefined}
-              aria-colindex={columnDef ? flatColumns.indexOf(columnDef) + 1 : undefined} // ARIA indices are 1-based
+              aria-colindex={columnDef ? flatColumns.indexOf(columnDef) + 1 : undefined}
               aria-selected={isEditableCell && isSelected?.(row.id, cell.column.id) ? "true" : undefined}
               aria-readonly={isEditableCell ? "false" : "true"}
-              tabIndex={isEditableCell && isSelected?.(row.id, cell.column.id) ? 0 : -1} // Make selected cell focusable
+              tabIndex={isEditableCell && isSelected?.(row.id, cell.column.id) ? 0 : -1}
             >
               {isEditableDateCell ? (
                 <EditableDateCell
@@ -254,7 +387,6 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
                   maxSelections={columnDef?.meta?.maxSelections || 10}
                 />
               ) : isEditableDropdownCell ? (
-                // Custom handling for dropdown cells
                 <div
                   className={`relative w-full h-full ${isSelected?.(row.id, cell.column.id) ? 'ring-2 ring-blue-500' : ''}`}
                   onClick={() => selectCell?.(row.id, cell.column.id)}
@@ -265,7 +397,6 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
                   style={{ position: 'static' }} // Make sure position is static to avoid conflicts
                 >
                   <div className="dropdown-container" style={{ position: 'relative' }}>
-                    {/* Always render the original cell value */}
                     {flexRender(
                       cell.column.columnDef.cell,
                       cell.getContext()
@@ -337,10 +468,8 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
   );
 }
 
-// Create a memoized version of the row component
 const MemoizedRow = memo(TableRowComponent) as <T extends object>(props: RowProps<T>) => React.ReactElement;
 
-// Set display name for debugging
 (MemoizedRow as any).displayName = "MemoizedTableRow";
 
 /**
@@ -349,6 +478,7 @@ const MemoizedRow = memo(TableRowComponent) as <T extends object>(props: RowProp
  */
 function TableBodyComponent<TData extends object>({
   table,
+  isRoles,
   flatColumns,
   isPaginationLoading,
   expandableRows,
@@ -368,6 +498,9 @@ function TableBodyComponent<TData extends object>({
   cancelEditing,
   saveEdit,
 }: TableBodyProps<TData>) {
+  // State for accordion expanded/collapsed
+  const [accordionState, setAccordionState] = useState<AccordionState>({});
+
   // Memoize the row model to prevent unnecessary recalculations
   const rows = useMemo(() => table.getRowModel().rows, [table.getRowModel().rows]);
   
@@ -375,7 +508,7 @@ function TableBodyComponent<TData extends object>({
   const visibleColumnCount = useMemo(() => {
     return table.getVisibleFlatColumns().length;
   }, [table.getVisibleFlatColumns().length]);
-  
+
   const columnCount = useMemo(() => table.getAllColumns().length, [table.getAllColumns().length]);
 
   // Group selection helper functions
@@ -423,6 +556,45 @@ function TableBodyComponent<TData extends object>({
     getRowGroupValue
   } = grouping;
 
+  const groupedAccordionData = useMemo(() => {
+    if (!isRoles) return [];
+    
+    const grouped: { [subject: string]: GroupedData<TData> } = {};
+    
+    rows.forEach((row) => {
+      const { subject, action } = row.original as any;
+      
+      if (!grouped[subject]) {
+        grouped[subject] = {
+          manageRow: null,
+          otherRows: [],
+          subject
+        };
+      }
+      
+      if (action === 'manage') {
+        grouped[subject].manageRow = row;
+      } else {
+        grouped[subject].otherRows.push(row);
+      }
+    });
+    
+    return Object.values(grouped);
+  }, [rows, isRoles]);
+
+  // Toggle accordion for a specific subject
+  const toggleAccordion = useCallback((subject: string) => {
+    setAccordionState(prev => ({
+      ...prev,
+      [subject]: !prev[subject]
+    }));
+  }, []);
+
+  // Check if accordion is expanded
+  const isAccordionExpanded = useCallback((subject: string) => {
+    return accordionState[subject] || false;
+  }, [accordionState]);
+
   // Early return for loading and empty states
   if (isPaginationLoading) {
     return (
@@ -439,14 +611,81 @@ function TableBodyComponent<TData extends object>({
       </Table.Body>
     );
   }
-  
+
+  // Render accordion-style grouped rows
+  const renderAccordionGroup = (group: GroupedData<TData>) => {
+    const isExpanded = isAccordionExpanded(group.subject);
+    const allGroupRows = [group.manageRow, ...group.otherRows].filter(Boolean) as Row<TData>[];
+    
+    return (
+      <React.Fragment key={`accordion-${group.subject}`}>
+        {/* Always show the manage row with accordion toggle */}
+        {group.manageRow && (
+          <AccordionManageRow
+            row={group.manageRow}
+            flatColumns={flatColumns}
+            isExpanded={isExpanded}
+            hasSubRows={group.otherRows.length > 0}
+            onToggle={() => toggleAccordion(group.subject)}
+            subject={group.subject}
+            expandableRows={expandableRows}
+            expandedRows={expandedRows}
+            toggleRowExpanded={toggleRowExpanded}
+            onRowClick={onRowClick}
+            enableInlineCellEdit={enableInlineCellEdit}
+            inlineEditableColumns={inlineEditableColumns}
+            isEditing={isEditing}
+            isSelected={isSelected}
+            selectCell={selectCell}
+            startEditing={startEditing}
+            cancelEditing={cancelEditing}
+            saveEdit={saveEdit}
+            // Group selection props
+            groupSelectProps={{
+              isAllRowsSelected: isGroupFullySelected(allGroupRows),
+              isSomeRowsSelected: isGroupPartiallySelected(allGroupRows),
+              toggleAllRowsSelected: (value) => toggleGroupSelection(allGroupRows, value)
+            }}
+          />
+        )}
+        
+        {isExpanded && group.otherRows.map((row, index) => (
+          <MemoizedRow
+            key={row.id}
+            row={row}
+            flatColumns={flatColumns}
+            expandableRows={expandableRows}
+            expandedRows={expandedRows}
+            toggleRowExpanded={toggleRowExpanded}
+            onRowClick={onRowClick}
+            enableInlineCellEdit={enableInlineCellEdit}
+            inlineEditableColumns={inlineEditableColumns}
+            isEditing={isEditing}
+            isSelected={isSelected}
+            selectCell={selectCell}
+            startEditing={startEditing}
+            cancelEditing={cancelEditing}
+            saveEdit={saveEdit}
+            rowIndex={index}
+            isSubRow={true}
+          />
+        ))}
+      </React.Fragment>
+    );
+  };
+
+  console.log("allrows",rows);
+
   return (
     <Table.Body
       className="divide-y divide-gray-12"
       role={enableInlineCellEdit ? "rowgroup" : undefined}
     >
-      {enableRowGrouping && rowGrouping ? (
-        // Render grouped rows with headers
+      {isRoles ? (
+        // Render accordion-style grouped rows only when isRoles is true
+        groupedAccordionData.map(renderAccordionGroup)
+      ) : enableRowGrouping && rowGrouping ? (
+        // Render grouped rows with headers (existing functionality)
         <>
           {groupKeys.map(groupKey => {
             const group = groupedRows[groupKey];
@@ -536,11 +775,12 @@ function TableBodyComponent<TData extends object>({
           })}
         </>
       ) : (
-        // Regular non-grouped rows
+        // Regular non-grouped rows when isRoles is false
         rows.map((row, rowIndex) => (
           <MemoizedRow
             key={row.id}
             row={row}
+            isRoles={isRoles}
             flatColumns={flatColumns}
             expandableRows={expandableRows}
             expandedRows={expandedRows}
@@ -554,7 +794,7 @@ function TableBodyComponent<TData extends object>({
             startEditing={startEditing}
             cancelEditing={cancelEditing}
             saveEdit={saveEdit}
-            rowIndex={rowIndex} // Pass row index for ARIA attributes
+            rowIndex={rowIndex}
           />
         ))
       )}

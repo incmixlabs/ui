@@ -189,7 +189,7 @@ export interface DataTableProps<TData extends object> {
   columns: DataTableColumn<TData>[] | ColumnGroup<TData>[];
   // Data array
   data: TData[];
-
+  isRoles?:boolean
   // Basic features
   enableFiltering?: boolean;
   enableSorting?: boolean;

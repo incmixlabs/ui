@@ -1,13 +1,9 @@
-"use client"
 
 import  { useCallback, useMemo, memo, useEffect } from "react";
-
-// Import UI components
 import { TableFilters } from "./TableFilters";
 import { TablePagination } from "./TablePagination";
 import { TableSidebar } from "../sidebar-filter";
 import { TableContent } from "./TableContent";
-// Import EditTableForm and wrap it with memo for better performance
 import EditTableFormComponent from "./EditTableForm";
 const EditTableForm = memo(EditTableFormComponent);
 
@@ -18,17 +14,11 @@ import { useTableColumns } from "../hooks/useTableColumns";
 import { useTableInstance } from "../hooks/useTableInstance";
 import { useTableFeatures } from "../hooks/useTableFeatures";
 import { useTableInlineEdit } from "../hooks/useTableInlineEdit";
-import { Box, Flex, Text } from "@incmix/ui"
+import { Box, Flex } from "@incmix/ui"
 
 
-// Import types
 import { DataTableProps } from "../types";
 
-/**
- * DataTable component - main entry point for the data table
- * Using extracted hooks and components for better organization
- * Optimized for React 19 with proper memoization and performance best practices
- */
 function DataTableComponent<TData extends object>({
   columns,
   data,
@@ -38,7 +28,7 @@ function DataTableComponent<TData extends object>({
   enableRowSelection = true,
   enableColumnVisibility = true,
   initialColumnVisibility,
-  // New props for external column visibility control
+  isRoles=false,
   columnVisibility,
   onColumnVisibilityChange,
   enableColumnResizing = false,
@@ -174,14 +164,13 @@ function DataTableComponent<TData extends object>({
     enhancedRowActions,
   });
 
-  // Table instance with memoized data
   const {
     table,
     paginationInfo,
     isPaginationVisible,
     handlePageChange,
     handlePageSizeChange,
-    rowModel,  // Added to access row model for cell navigation
+    rowModel,  
   } = useTableInstance({
     data,
     columnDefs,
@@ -256,10 +245,7 @@ function DataTableComponent<TData extends object>({
     return table.getFilteredRowModel().rows.length;
   }, [table.getFilteredRowModel().rows.length]);
 
-  // Memoize additional table state values to prevent unnecessary recalculations
-  // Generate a stable ID for the table instance based on data characteristics
   const tableId = useMemo(() => {
-    // Create a stable ID that only changes when the data or visible columns change
     return table.options.data?.length
       ? `table-${table.options.data.length}-${Object.keys(table.getState().columnVisibility || {}).length}`
       : 'empty-table';
@@ -314,6 +300,7 @@ function DataTableComponent<TData extends object>({
           {/* Table component */}
           <TableContent
             table={table}
+            isRoles={isRoles}
             flatColumns={flatColumns}
             isPaginationLoading={isPaginationLoading}
             expandableRows={expandableRows}

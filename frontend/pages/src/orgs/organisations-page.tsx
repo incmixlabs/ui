@@ -158,7 +158,6 @@ const OrganizationsPage: React.FC = () => {
       // Add a members count field for the DataTable to use
       members: org.members,
     }))
-
     return (
       <DataTable
         columns={getOrganizationColumns(t)}
