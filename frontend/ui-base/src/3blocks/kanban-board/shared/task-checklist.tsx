@@ -1,10 +1,9 @@
-import { Checkbox, TextField } from "@/base"
+import { Checkbox, Progress, Text } from "@/base"
 import { Reorder, useDragControls } from "framer-motion"
 import { Check, GripVertical, Pencil, Plus, Trash, X } from "lucide-react"
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import { ConfirmationModal } from "./confirmation-modal"
-import { ProgressBar } from "./progress-bar"
 
 interface ChecklistItem {
   id: string
@@ -294,8 +293,8 @@ export function TaskChecklist({
   // Calculate progress for the checklist
   const completedItems = checklist.filter((item) => item.checked).length
   const totalItems = checklist.length
-  const _progressPercentage =
-    totalItems > 0 ? (completedItems / totalItems) * 100 : 0
+  const progressPercentage =
+    totalItems > 0 ? Math.trunc(completedItems / totalItems) * 100 : 0
 
   const handleReorderChecklist = (newOrder: ChecklistItem[]) => {
     // Update the order property for each item based on its new position
@@ -316,18 +315,13 @@ export function TaskChecklist({
       <div className="space-y-4">
         {!hideTitle && (
           <div className="flex items-center justify-between">
-            <h3 className="font-medium text-gray-900 text-sm dark:text-gray-100">
+            <Text>
               CHECKLIST ({completedItems}/{totalItems})
-            </h3>
+            </Text>
           </div>
         )}
 
-        {totalItems > 0 && (
-          <ProgressBar
-            completedItems={completedItems}
-            totalItems={totalItems}
-          />
-        )}
+        {totalItems > 0 && <Progress value={progressPercentage} />}
 
         <div className="space-y-2">
           {totalItems > 0 ? (

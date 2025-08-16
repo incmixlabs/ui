@@ -1,4 +1,3 @@
-import { TaskDataSchema } from "@incmix/utils/schema"
 import type { KanbanTask, ListColumn } from "../types"
 
 export interface CSVExportOptions {

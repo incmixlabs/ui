@@ -1,7 +1,6 @@
 import { DropdownMenu, Flex, IconButton, Text } from "@/base"
 import {
   ArrowRight,
-  Calendar,
   CheckCircle,
   Circle,
   Copy,
@@ -10,10 +9,9 @@ import {
   Flag,
   MoreVertical,
   Trash2,
-  User,
 } from "lucide-react"
 // components/table/table-row-actions.tsx
-import React, { useState, useCallback } from "react"
+import { useCallback, useState } from "react"
 
 import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
 import { ModalPresets } from "../shared/confirmation-modal"

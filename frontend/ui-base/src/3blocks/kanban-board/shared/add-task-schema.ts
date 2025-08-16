@@ -1,5 +1,4 @@
 import type { KanbanColumn } from "@incmix/utils/schema"
-import type { z } from "zod"
 // components/board/add-task-schema.ts
 import type { FieldConfig } from "../../auto-form/types"
 import type { ZodObjectOrWrapped } from "../../auto-form/utils"

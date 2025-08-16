@@ -1,11 +1,10 @@
-import { Checkbox } from "@/base"
+import { Checkbox, Progress } from "@/base"
 import { cn } from "@/utils/cn"
 import { Reorder, useDragControls } from "framer-motion"
 import { Check, GripVertical, Pencil, Plus, Trash, X } from "lucide-react"
 import type React from "react"
 import { useEffect, useRef, useState } from "react"
 import { ConfirmationModal } from "../confirmation-modal"
-import { ProgressBar } from "../progress-bar"
 
 export interface AcceptanceCriteriaItem {
   id: string
@@ -268,7 +267,7 @@ export function TaskAcceptanceCriteriaSection({
       )}
 
       {totalItems > 0 && (
-        <ProgressBar completedItems={completedItems} totalItems={totalItems} />
+        <Progress value={Math.trunc((completedItems / totalItems) * 100)} />
       )}
 
       <div className="space-y-2">
