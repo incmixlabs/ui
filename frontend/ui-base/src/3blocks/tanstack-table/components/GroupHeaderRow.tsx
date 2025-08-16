@@ -48,7 +48,7 @@ const getGroupColor = (
   },
   fallbackColor?: string
 ): string => {
-  return categoryMapping?.colors?.[groupKey] || fallbackColor || '#6b7280'
+  return categoryMapping?.colors?.[groupKey] || fallbackColor || "#6b7280"
 }
 
 /**

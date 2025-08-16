@@ -189,11 +189,7 @@ export const TableFiltersComponent = <TData extends object>({
       )}
 
       {filterColumn && (
-<<<<<<< HEAD
         <Box>
-=======
-        <Box style={{ maxWidth: "24rem", flex: 1 }}>
->>>>>>> 0f623087 (fix: refactor remaining components)
           <TextField.Root
             placeholder={filterPlaceholder}
             value={inputValue}
@@ -211,14 +207,7 @@ export const TableFiltersComponent = <TData extends object>({
       )}
 
       {isFiltered && (
-<<<<<<< HEAD
         <Button variant="ghost" onClick={handleResetFilters}>
-=======
-        <Button
-          variant="ghost"
-          onClick={handleResetFilters}
-        >
->>>>>>> 0f623087 (fix: refactor remaining components)
           Reset
           <X size={16} />
         </Button>
