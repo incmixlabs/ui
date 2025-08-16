@@ -1,4 +1,4 @@
-import { Button, FormControl, FormItem, FormMessage, Input } from "@/src/1base"
+import { Button, FormControl, FormItem, FormMessage, Input } from "@/base"
 import { cn } from "@/utils/cn"
 import { Check, Edit2, Plus, Trash2, X } from "lucide-react"
 // components/auto-form/fields/subtask-field.tsx

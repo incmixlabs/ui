@@ -23,3 +23,6 @@ function getBffApiUrl(): string {
   }
   return url
 }
+export function isMock(): boolean {
+  return import.meta.env["REACT_APP_MOCK"] === "true"
+}

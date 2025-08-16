@@ -29,8 +29,8 @@ declare module "@incmix/utils/schema" {
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import type { Subscription } from "rxjs"
-import { database } from "sql"
-import type { LabelDocType, TaskDocType } from "sql/types"
+import { database } from "../../sql"
+import type { LabelDocType, TaskDocType } from "../../sql/types"
 // Import browser-compatible helpers instead of Node.js Buffer-using ones
 import {
   generateBrowserUniqueId,
@@ -157,9 +157,9 @@ export function useProjectData(
             sort: [{ statusId: "asc" }, { taskOrder: "asc" }],
           })
           .$.subscribe({
-            next: (taskDocs) => {
-              const tasks = taskDocs.map((doc) => {
-                const task = doc.toJSON()
+            next: (taskDocs: TaskDocType[]) => {
+              const tasks = taskDocs.map((doc: TaskDocType) => {
+                const task = (doc as any).toJSON ? (doc as any).toJSON() : doc
                 return {
                   ...task,
                   completed: task.completed ?? false,
@@ -799,10 +799,14 @@ export function useProjectData(
         })
         .exec()
 
-      const allTasksInColumn = tasksInColumnDocs.map((doc) => doc.toJSON())
+      const allTasksInColumn = tasksInColumnDocs.map((doc: TaskDocType) =>
+        (doc as any).toJSON ? (doc as any).toJSON() : doc
+      )
 
       // Get the position of the current task
-      const currentPosition = allTasksInColumn.findIndex((t) => t.id === taskId)
+      const currentPosition = allTasksInColumn.findIndex(
+        (t: any) => t.id === taskId
+      )
       if (currentPosition <= 0) {
         return null
       }

@@ -11,6 +11,7 @@ import AutoFormNumber from "./fields/number"
 import AutoFormRadioGroup from "./fields/radio-group"
 import RefUrlField from "./fields/ref-url-field"
 import SubTaskField from "./fields/subtask-fields"
+import AutoFormSwitch from "./fields/switch"
 import AutoFormTextarea from "./fields/textarea"
 
 // Note: We don't include FieldGroup in INPUT_COMPONENTS as it's handled separately
@@ -28,6 +29,7 @@ export const INPUT_COMPONENTS = {
   multipleSelector: MultipleSelectorField,
   subtask: SubTaskField,
   refurl: RefUrlField,
+  switch: AutoFormSwitch,
 } as const
 
 /**

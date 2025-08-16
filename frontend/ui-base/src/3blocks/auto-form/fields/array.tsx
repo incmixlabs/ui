@@ -1,4 +1,4 @@
-import { Accordion, Button, Separator } from "@/src/1base"
+import { Accordion, Button, Separator } from "@/base"
 import { Plus, Trash } from "lucide-react"
 import { useFieldArray, type useForm } from "react-hook-form"
 import type { z } from "zod"

@@ -1,7 +1,7 @@
 import { Plus, Trash2 } from "lucide-react"
 import { type ChangeEvent, useEffect, useRef, useState } from "react"
 
-import { FormControl, FormMessage, Input } from "@/src/1base"
+import { FormControl, FormMessage, Input } from "@/base"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 

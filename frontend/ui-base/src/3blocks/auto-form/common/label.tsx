@@ -1,4 +1,4 @@
-import { FormLabel } from "@/src/1base"
+import { FormLabel } from "@/base"
 import { cn } from "@/utils/cn"
 
 /**

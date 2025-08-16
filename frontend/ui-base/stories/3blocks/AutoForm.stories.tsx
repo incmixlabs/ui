@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react-vite"
+import type { Meta, StoryObj } from "@storybook/react"
 import * as React from "react"
 import { z } from "zod"
 import AutoForm, { AutoFormSubmit } from "../../src/3blocks/auto-form"
@@ -372,15 +372,30 @@ export const Controlled: Story = {
 const showcaseSchema = z.object({
   textInput: z.string().min(1, "Required"),
   numberInput: z.number().min(0),
-  textareaInput: z.string().max(200),
-  checkboxInput: z.boolean(),
+  textareaInput: z.string().max(200).optional(),
+  checkboxInput: z.boolean().default(false),
   switchInput: z.boolean().default(true),
-  dateInput: z.date(),
   selectInput: z.enum(["option1", "option2", "option3"]),
   radioInput: z.enum(["radio1", "radio2", "radio3"]),
-  multiSelectInput: z.array(z.string()),
-  fileInput: z.instanceof(File).optional(),
+  multiSelectInput: z.array(z.string()).optional(),
 })
+
+// Simple test schema to isolate the issue
+const simpleTestSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email"),
+})
+
+export const SimpleTest: Story = {
+  render: () => (
+    <AutoForm
+      formSchema={simpleTestSchema}
+      onSubmit={(data) => console.log("Simple form submitted:", data)}
+    >
+      <AutoFormSubmit>Submit</AutoFormSubmit>
+    </AutoForm>
+  ),
+}
 
 export const FieldShowcase: Story = {
   render: () => (
@@ -406,9 +421,6 @@ export const FieldShowcase: Story = {
           description: "Switch toggle",
           fieldType: "switch",
         },
-        dateInput: {
-          description: "Date picker",
-        },
         selectInput: {
           description: "Dropdown select",
           options: [
@@ -420,17 +432,15 @@ export const FieldShowcase: Story = {
         radioInput: {
           description: "Radio button group",
           fieldType: "radio",
-          inputProps: {
-            options: [
-              { label: "Radio One", value: "radio1" },
-              { label: "Radio Two", value: "radio2" },
-              { label: "Radio Three", value: "radio3" },
-            ],
-          },
+          options: [
+            { label: "Radio 1", value: "radio1" },
+            { label: "Radio 2", value: "radio2" },
+            { label: "Radio 3", value: "radio3" },
+          ]
         },
         multiSelectInput: {
           description: "Multi-select dropdown",
-          fieldType: "multi-select",
+          fieldType: "multipleSelector",
           inputProps: {
             multipleSelectorOptions: [
               { label: "Tag 1", value: "tag1" },
@@ -439,10 +449,6 @@ export const FieldShowcase: Story = {
               { label: "Tag 4", value: "tag4" },
             ],
           },
-        },
-        fileInput: {
-          description: "File upload",
-          fieldType: "file",
         },
       }}
       onSubmit={(data) => console.log("Showcase form submitted:", data)}

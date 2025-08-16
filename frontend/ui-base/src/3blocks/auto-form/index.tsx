@@ -3,7 +3,7 @@ import jsonSchemaToZod from "json-schema-to-zod"
 import { type DefaultValues, useForm } from "react-hook-form"
 import { z } from "zod"
 
-import { Box, Button, Form } from "@/src/1base"
+import { Box, Button, Form } from "@/base"
 import { cn } from "@/utils/cn"
 
 import AutoFormObject from "./fields/object"

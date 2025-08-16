@@ -1,5 +1,5 @@
 // components/auto-form/fields/enum.tsx - Enhanced with color support
-import { FormControl, FormItem, FormMessage, Select } from "@/src/1base"
+import { FormControl, FormItem, FormMessage, Select } from "@/base"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 import { getBaseSchema } from "../utils"

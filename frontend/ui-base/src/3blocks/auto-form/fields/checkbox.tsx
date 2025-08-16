@@ -1,4 +1,4 @@
-import { Checkbox, FormControl, FormItem, FormLabel } from "@/src/1base"
+import { Checkbox, FormControl, FormItem, FormLabel } from "@/base"
 
 import { cn } from "@/utils/cn"
 import type { AutoFormInputComponentProps } from "../types"

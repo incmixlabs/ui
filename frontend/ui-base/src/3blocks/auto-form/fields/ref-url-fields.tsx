@@ -5,7 +5,7 @@ import {
   FormItem,
   FormMessage,
   Input,
-} from "@/src/1base"
+} from "@/base"
 import { cn } from "@/utils/cn"
 import { detectUrlType, generateDefaultTitle } from "@/utils/url-helpers"
 import { Edit2, Plus, Trash2 } from "lucide-react"

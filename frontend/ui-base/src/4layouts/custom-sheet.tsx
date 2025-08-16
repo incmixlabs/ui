@@ -38,6 +38,7 @@ export const MotionSheet: React.FC<SheetProps> = ({
   closeOnEsc = true,
   showCloseButton = true,
   overlayColor = "rgba(0, 0, 0, 0.5)",
+  closeButtonText,
   className,
   zIndex = 60,
 }) => {

@@ -1,5 +1,5 @@
-import { FormControl, FormItem, FormLabel, FormMessage } from "@/src/1base"
-import { iconSize } from "@/src/1base/icon"
+import { FormControl, FormItem, FormLabel, FormMessage } from "@/base"
+import { iconSize } from "@/base/icon"
 import { cn } from "@/utils/cn"
 import { useEffect, useState } from "react"
 import type {

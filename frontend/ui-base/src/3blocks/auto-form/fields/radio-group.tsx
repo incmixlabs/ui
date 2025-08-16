@@ -6,7 +6,7 @@ import {
   FormLabel,
   FormMessage,
   RadioGroup,
-} from "@/src/1base"
+} from "../../../1base"
 import AutoFormLabel from "../common/label"
 import AutoFormTooltip from "../common/tooltip"
 import type { AutoFormInputComponentProps } from "../types"
@@ -24,7 +24,9 @@ export default function AutoFormRadioGroup({
   const baseValues = (baseSchema as any)?._def?.values
 
   let values: string[] = []
-  if (!Array.isArray(baseValues)) {
+  if (!baseValues) {
+    values = []
+  } else if (!Array.isArray(baseValues)) {
     values = Object.entries(baseValues).map((item) => item[0])
   } else {
     values = baseValues

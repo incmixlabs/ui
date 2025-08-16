@@ -1,4 +1,4 @@
-import { IconButton, Tooltip } from "@/src/1base"
+import { IconButton, Tooltip } from "@/base"
 import { HelpCircle } from "lucide-react"
 import type { FieldConfigItem } from "../types"
 /**
