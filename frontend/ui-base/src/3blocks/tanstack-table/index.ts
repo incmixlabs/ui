@@ -61,7 +61,6 @@ export { TableSidebar } from "./sidebar-filter"
 // Re-export enhanced dropdown utilities
 export {
   createEnhancedDropdownColumn,
-  generateUniqueDropdownColor,
   createStatusDropdownOptions,
   createPriorityDropdownOptions,
 } from "./utils/dropdown-utils"
