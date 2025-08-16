@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from "@/src/1base"
+import { Box, Button, Input } from "@/src/1base"
 import { cn } from "@/utils/cn"
 import { X } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
@@ -115,7 +115,7 @@ export const EditableTagCell: React.FC<EditableTagCellProps> = ({
 
   if (isEditing) {
     return (
-      <div
+      <Box
         ref={cellRef} /* Keep outside-click detection working */
         className="flex h-full w-full flex-col p-1"
         onClick={(e) => e.stopPropagation()}
@@ -125,9 +125,9 @@ export const EditableTagCell: React.FC<EditableTagCellProps> = ({
           }
         }}
       >
-        <div className="mb-1 flex flex-wrap gap-1">
+        <Box className="mb-1 flex flex-wrap gap-1">
           {tags.map((tag) => (
-            <div
+            <Box
               key={tag}
               className="flex items-center gap-1 rounded bg-blue-100 px-2 py-0.5 text-blue-800 text-xs dark:bg-blue-900/30 dark:text-blue-400"
             >
@@ -140,10 +140,10 @@ export const EditableTagCell: React.FC<EditableTagCellProps> = ({
               >
                 <X className="h-3 w-3" />
               </Button>
-            </div>
+            </Box>
           ))}
-        </div>
-        <input
+        </Box>
+        <Input
           ref={(el) => {
             // Connect keyboard hook's ref to the input element
             if (keyboardCellRef) keyboardCellRef.current = el
@@ -156,12 +156,12 @@ export const EditableTagCell: React.FC<EditableTagCellProps> = ({
           className="h-8 w-full rounded-md border border-gray-300 bg-white px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800"
           aria-label="Add new tag"
         />
-      </div>
+      </Box>
     )
   }
 
   return (
-    <div
+    <Box
       ref={(el) => {
         // Connect both refs to ensure proper functionality
         cellRef.current = el
@@ -177,7 +177,7 @@ export const EditableTagCell: React.FC<EditableTagCellProps> = ({
       {...ariaAttributes}
       aria-label={`${columnId}: ${tags.length} tags`}
     >
-      <div className="flex flex-wrap gap-1">
+      <Box className="flex flex-wrap gap-1">
         {tags.map((tag) => (
           <span
             key={tag}
@@ -186,7 +186,7 @@ export const EditableTagCell: React.FC<EditableTagCellProps> = ({
             {tag}
           </span>
         ))}
-      </div>
-    </div>
+      </Box>
+    </Box>
   )
 }

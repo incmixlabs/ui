@@ -1,5 +1,6 @@
 "use client"
 
+import { Badge, Box, Select } from "@/src/1base"
 import { cn } from "@/utils/cn"
 import { useEffect, useRef, useState } from "react"
 import { useEditableCellKeyboard } from "../hooks/useEditableCellKeyboard"
@@ -94,7 +95,7 @@ export const EditableBooleanCell: React.FC<EditableBooleanCellProps> = ({
 
   if (isEditing) {
     return (
-      <div
+      <Box
         className="flex h-full w-full items-center p-1"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => {
@@ -103,55 +104,53 @@ export const EditableBooleanCell: React.FC<EditableBooleanCellProps> = ({
           }
         }}
       >
-        <select
-          ref={(el) => {
-            // Connect keyboard hook's ref to the select element
-            if (keyboardCellRef) keyboardCellRef.current = el
-          }}
+        <Select.Root
           value={editValue}
-          onChange={(e) => {
-            const newValue = e.target.value === "true"
-            setEditValue(e.target.value)
+          onValueChange={(value) => {
+            const newValue = value === "true"
+            setEditValue(value)
             onSave(rowData, columnId, newValue)
           }}
-          onKeyDown={handleKeyDown}
-          className="h-8 w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800"
-          aria-label={`Edit ${columnId} value`}
         >
-          <option value="true">Yes</option>
-          <option value="false">No</option>
-        </select>
-      </div>
+          <Select.Trigger
+            className="h-8 w-full"
+            onKeyDown={handleKeyDown}
+            aria-label={`Edit ${columnId} value`}
+          />
+          <Select.Content>
+            <Select.Item value="true">Yes</Select.Item>
+            <Select.Item value="false">No</Select.Item>
+          </Select.Content>
+        </Select.Root>
+      </Box>
     )
   }
 
   return (
-    <div
+    <Box
       ref={(el) => {
         // Connect both refs to ensure proper functionality
         cellRef.current = el
         if (keyboardCellRef) keyboardCellRef.current = el
       }}
-      onClick={handleCellClick} // Simplified - our hook now handles all the logic
+      onClick={handleCellClick}
       onKeyDown={handleKeyDown}
       className={cn(
         className,
-        "h-full w-full cursor-pointer p-1 transition-colors duration-150",
-        isSelected && "rounded bg-blue-100 dark:bg-blue-900/30"
+        "h-full w-full cursor-pointer p-1 transition-colors",
+        isSelected && "rounded bg-blue-2 dark:bg-blue-3"
       )}
       {...ariaAttributes}
       aria-label={`${columnId}: ${formattedValue}`}
     >
-      <span
-        className={cn(
-          "rounded px-2 py-1 font-medium text-xs",
-          value
-            ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-            : "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-        )}
+      <Badge
+        color={value ? "green" : "red"}
+        variant="soft"
+        size="1"
+        className="font-medium text-xs"
       >
         {formattedValue}
-      </span>
-    </div>
+      </Badge>
+    </Box>
   )
 }

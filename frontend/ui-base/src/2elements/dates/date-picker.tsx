@@ -32,7 +32,6 @@ export const DatePicker = forwardRef<
           mode="single"
           selected={date}
           onSelect={setDate}
-          initialFocus
         />
       </Popover.Content>
     </Popover.Root>

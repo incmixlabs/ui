@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text } from "@/src/1base"
+import { Box, Button, Dialog, Flex, Input, Text } from "@/src/1base"
 import { useState } from "react"
 import type { DropdownOption } from "../cell-renderers"
 import ColorPicker from "./ColorPicker"
@@ -20,8 +20,10 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
     color: "var(--blue-5)",
   })
 
-  // State for validation errors
+  // State for validation errors and confirmation dialog
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
+  const [deleteIndex, setDeleteIndex] = useState<number | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   // Add a new option to the list
   const handleAddOption = () => {
@@ -101,125 +103,179 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
     onChange(updatedOptions)
   }
 
-  // Delete an option
-  const handleDeleteOption = (index: number) => {
-    // Check if this option's value is currently in use
+  // Open delete confirmation dialog
+  const handleDeleteClick = (index: number) => {
     const optionValue = options[index].value
     const isValueInUse = valuesInUse.includes(optionValue)
 
     if (isValueInUse) {
-      // Don't allow deletion of options in use
-      alert(
-        "Cannot delete this option because it is currently in use in the table."
-      )
+      setErrors({ delete: "Cannot delete this option because it is currently in use in the table." })
+      setTimeout(() => setErrors({}), 3000)
       return
     }
 
-    const updatedOptions = options.filter((_, i) => i !== index)
-    onChange(updatedOptions)
+    setDeleteIndex(index)
+    setShowDeleteDialog(true)
+  }
+
+  // Confirm and delete option
+  const confirmDelete = () => {
+    if (deleteIndex !== null) {
+      const updatedOptions = options.filter((_, i) => i !== deleteIndex)
+      onChange(updatedOptions)
+    }
+    setShowDeleteDialog(false)
+    setDeleteIndex(null)
+  }
+
+  // Cancel delete
+  const cancelDelete = () => {
+    setShowDeleteDialog(false)
+    setDeleteIndex(null)
   }
 
   return (
-    <Box className="mt-4">
-      {/* Section title */}
-      <Text size="2" weight="bold" className="mb-3">
-        Drop down data:
-      </Text>
-
-      {/* Options list */}
-      <Box className="relative z-0 space-y-3">
-        {options.length === 0 ? (
-          <Text size="2" color="gray">
-            No options defined yet. Add some below.
-          </Text>
-        ) : (
-          options.map((option, index) => {
-            const isValueInUse = valuesInUse.includes(option.value)
-
-            return (
-              <Flex
-                key={index}
-                align="center"
-                gap="2"
-                className="relative w-full"
-              >
-                <div className="flex min-w-[40px] items-center justify-center">
-                  <ColorPicker
-                    color={option.color || "var(--blue-5)"}
-                    onChange={(color) =>
-                      handleUpdateOption(index, "color", color)
-                    }
-                  />
-                </div>
-
-                <input
-                  value={option.label}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    handleUpdateOption(index, "label", e.target.value)
-                  }
-                  placeholder="Option Label"
-                  className="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:outline-none"
-                />
-
-                {/* Delete button */}
-                <Button
-                  color="gray"
-                  variant="soft"
-                  disabled={isValueInUse}
-                  onClick={() => handleDeleteOption(index)}
-                  className="min-w-[50px] px-3"
-                >
-                  Del
-                </Button>
-              </Flex>
-            )
-          })
-        )}
-      </Box>
-
-      {/* Add new option section */}
-      <Box className="mt-5">
+    <>
+      <Box className="mt-4">
+        {/* Section title */}
         <Text size="2" weight="bold" className="mb-3">
-          Add new Value:
+          Drop down data:
         </Text>
 
-        <Flex align="center" gap="2" className="relative w-full">
-          <div className="flex min-w-[40px] items-center justify-center">
-            <ColorPicker
-              color={newOption.color || "var(--blue-5)"}
-              onChange={(color) => setNewOption({ ...newOption, color })}
-            />
-          </div>
-
-          {/* Label input for new option */}
-          <input
-            value={newOption.label}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const newLabel = e.target.value
-              const newValue = newLabel.toLowerCase().replace(/\s+/g, "_")
-              setNewOption({
-                ...newOption,
-                label: newLabel,
-                value: newValue,
-              })
-              if (errors.label) setErrors({})
-            }}
-            className="flex-1 rounded-md border border-gray-300 px-3 py-2 focus:outline-none"
-            placeholder="Option Label"
-          />
-
-          {/* Add button */}
-          <Button onClick={handleAddOption}>Add</Button>
-        </Flex>
-
-        {/* Error message */}
-        {errors.label && (
-          <Text size="1" color="red" className="mt-1">
-            {errors.label}
-          </Text>
+        {/* Global error messages */}
+        {errors.delete && (
+          <Box className="mb-3 rounded-md border border-red-6 bg-red-2 p-3">
+            <Text size="2" color="red" role="alert" aria-live="polite">
+              {errors.delete}
+            </Text>
+          </Box>
         )}
+
+        {/* Options list */}
+        <Box className="space-y-3">
+          {options.length === 0 ? (
+            <Text size="2" color="gray">
+              No options defined yet. Add some below.
+            </Text>
+          ) : (
+            options.map((option, index) => {
+              const isValueInUse = valuesInUse.includes(option.value)
+
+              return (
+                <Flex
+                  key={index}
+                  align="center"
+                  gap="2"
+                  className="w-full"
+                >
+                  <Box className="flex min-w-10 items-center justify-center">
+                    <ColorPicker
+                      color={option.color || "var(--blue-5)"}
+                      onChange={(color) =>
+                        handleUpdateOption(index, "color", color)
+                      }
+                    />
+                  </Box>
+
+                  <Input
+                    value={option.label}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      handleUpdateOption(index, "label", e.target.value)
+                    }
+                    placeholder="Option Label"
+                    className="flex-1"
+                    aria-label={`Edit option ${index + 1} label`}
+                    disabled={isValueInUse}
+                  />
+
+                  {/* Delete button */}
+                  <Button
+                    color="gray"
+                    variant="soft"
+                    disabled={isValueInUse}
+                    onClick={() => handleDeleteClick(index)}
+                    className="min-w-12"
+                    aria-label={`Delete option ${option.label}`}
+                  >
+                    Del
+                  </Button>
+                </Flex>
+              )
+            })
+          )}
+        </Box>
+
+        {/* Add new option section */}
+        <Box className="mt-6">
+          <Text size="2" weight="bold" className="mb-3">
+            Add new Value:
+          </Text>
+
+          <Flex align="center" gap="2" className="w-full">
+            <Box className="flex min-w-10 items-center justify-center">
+              <ColorPicker
+                color={newOption.color || "var(--blue-5)"}
+                onChange={(color) => setNewOption({ ...newOption, color })}
+              />
+            </Box>
+
+            {/* Label input for new option */}
+            <Input
+              value={newOption.label}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const newLabel = e.target.value
+                const newValue = newLabel.toLowerCase().replace(/\s+/g, "_")
+                setNewOption({
+                  ...newOption,
+                  label: newLabel,
+                  value: newValue,
+                })
+                if (errors.label) setErrors({})
+              }}
+              className="flex-1"
+              placeholder="Option Label"
+              aria-label="New option label"
+              aria-invalid={!!errors.label}
+              aria-describedby={errors.label ? "label-error" : undefined}
+            />
+
+            {/* Add button */}
+            <Button onClick={handleAddOption} className="min-w-12">
+              Add
+            </Button>
+          </Flex>
+
+          {/* Error message */}
+          {errors.label && (
+            <Box className="mt-2 rounded-md border border-red-6 bg-red-2 p-2">
+              <Text size="1" color="red" id="label-error" role="alert">
+                {errors.label}
+              </Text>
+            </Box>
+          )}
+        </Box>
       </Box>
-    </Box>
+
+      {/* Delete confirmation dialog */}
+      <Dialog.Root open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <Dialog.Content className="max-w-md">
+          <Dialog.Header>
+            <Dialog.Title>Delete Option</Dialog.Title>
+            <Dialog.Description>
+              Are you sure you want to delete the option "{deleteIndex !== null ? options[deleteIndex]?.label : ''}"? This action cannot be undone.
+            </Dialog.Description>
+          </Dialog.Header>
+          <Dialog.Footer>
+            <Button variant="soft" color="gray" onClick={cancelDelete}>
+              Cancel
+            </Button>
+            <Button color="red" onClick={confirmDelete}>
+              Delete
+            </Button>
+          </Dialog.Footer>
+        </Dialog.Content>
+      </Dialog.Root>
+    </>
   )
 }
 

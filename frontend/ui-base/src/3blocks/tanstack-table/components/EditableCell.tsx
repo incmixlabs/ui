@@ -1,5 +1,7 @@
 "use client"
 
+import { Box, Input } from "@/src/1base"
+import { cn } from "@/utils/cn"
 import { useEffect, useRef, useState } from "react"
 import { useEditableCellKeyboard } from "../hooks/useEditableCellKeyboard"
 
@@ -108,46 +110,44 @@ export const EditableCell: React.FC<EditableCellProps> = ({
 
   if (isEditing) {
     return (
-      <div className="absolute inset-0 z-10 flex items-center justify-start px-1">
-        <input
+      <Box className="absolute inset-0 z-10 flex items-center justify-start px-1">
+        <Input
           ref={(el) => {
             // Connect both refs to the input element
             inputRef.current = el
             cellRef.current = el
           }}
-          type="text"
           value={editValue}
           onChange={(e) => setEditValue(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
-          className="w-full rounded-sm border border-blue-300 bg-white px-2 py-1 text-gray-900 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-blue-600 dark:bg-gray-800 dark:text-gray-100"
+          className="h-6 w-full"
           onClick={(e) => e.stopPropagation()}
-          style={{
-            minWidth: 0,
-            maxWidth: "100%",
-            height: "24px", // Reduced height
-          }}
           aria-label={`Edit ${columnId}`}
+          size={1}
         />
-      </div>
+      </Box>
     )
   }
 
   return (
-    <div
+    <Box
       ref={(el) => {
-        // Connect both refs to the div element
+        // Connect both refs to the box element
         divRef.current = el
         cellRef.current = el
       }}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      className={`${className} h-full w-full cursor-pointer px-1 py-1.5 transition-colors duration-150 ${isSelected ? "bg-blue-500/20 outline-none dark:bg-blue-700/30" : ""}`}
-      style={{ outline: "none" }}
+      className={cn(
+        className,
+        "h-full w-full cursor-pointer px-1 py-1.5 transition-colors",
+        isSelected && "bg-blue-2 outline-none dark:bg-blue-3"
+      )}
       {...ariaAttributes}
       aria-label={`${columnId}: ${value || "Empty"}`}
     >
       {value}
-    </div>
+    </Box>
   )
 }
