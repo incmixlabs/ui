@@ -45,7 +45,7 @@ export function KeyboardShortcutsHelp({
             <HelpCircleIcon />
           </Button>
         </Popover.Trigger>
-        
+
         <Popover.Content side="bottom" align="end" sideOffset={8}>
           <Box width="240px">
             <Flex justify="between" align="center" mb="3">
@@ -53,18 +53,16 @@ export function KeyboardShortcutsHelp({
                 Keyboard Shortcuts
               </Text>
             </Flex>
-            
+
             <Box>
               {shortcuts.map((shortcut, index) => (
-                <Flex 
-                  key={`${shortcut.key}-${index}`} 
-                  align="center" 
-                  gap="2" 
+                <Flex
+                  key={`${shortcut.key}-${index}`}
+                  align="center"
+                  gap="2"
                   mb="2"
                 >
-                  <Kbd size="1">
-                    {shortcut.key}
-                  </Kbd>
+                  <Kbd size="1">{shortcut.key}</Kbd>
                   <Text size="2" color="gray">
                     {shortcut.description}
                   </Text>

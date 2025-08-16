@@ -32,7 +32,7 @@ interface GroupHeaderRowProps {
 
 // Get display label from category mapping or fallback to groupKey
 const getDisplayLabel = (
-  groupKey: string, 
+  groupKey: string,
   categoryMapping?: {
     identifierToLabel?: Record<string, string>
   }
@@ -48,7 +48,7 @@ const getGroupColor = (
   },
   fallbackColor?: string
 ): string => {
-  return categoryMapping?.colors?.[groupKey] || fallbackColor || '#6b7280'
+  return categoryMapping?.colors?.[groupKey] || fallbackColor || "#6b7280"
 }
 
 /**
@@ -94,10 +94,10 @@ function GroupHeaderRowComponent({
         ) : (
           // Default rendering using 1base components
           <Box height="10">
-            <Flex 
-              align="center" 
-              justify="between" 
-              px="3" 
+            <Flex
+              align="center"
+              justify="between"
+              px="3"
               height="10"
               width="100%"
             >

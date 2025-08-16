@@ -149,7 +149,9 @@ export const EditableTagCell: React.FC<EditableTagCellProps> = ({
               if (keyboardCellRef) keyboardCellRef.current = el
             }}
             value={inputValue}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setInputValue(e.target.value)
+            }
             onKeyDown={handleInputKeyDown}
             placeholder="Type and press Enter"
             aria-label="Add new tag"
