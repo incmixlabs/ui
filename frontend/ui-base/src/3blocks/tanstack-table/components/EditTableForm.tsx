@@ -1,9 +1,9 @@
 "use client"
 
+import { Box, Button, Dialog, Flex, Heading } from "@/src/1base"
 import AutoForm from "@/src/3blocks/auto-form"
 import type { JSONSchema } from "@/src/3blocks/auto-form"
 import type { ZodObjectOrWrapped } from "@/src/3blocks/auto-form/utils"
-import { Button, Dialog } from "@radix-ui/themes"
 import { useEffect, useMemo, useState } from "react"
 
 /**
@@ -34,8 +34,6 @@ function EditTableForm<TData>({
   // Reset form data when dialog opens with new row data
   useEffect(() => {
     if (rowData) {
-      console.log("Original rowData for pre-filling:", rowData)
-
       // Create a deep copy to avoid modifying the original data
       const processedData = JSON.parse(JSON.stringify(rowData)) as Record<
         string,
@@ -45,24 +43,20 @@ function EditTableForm<TData>({
       // Ensure rating is a string for the form
       if (typeof processedData.rating === "number") {
         processedData.rating = String(processedData.rating)
-        console.log("Converted rating to string:", processedData.rating)
       }
 
       // Initialize form data immediately
-      console.log("Pre-filling form with processed data:", processedData)
       setFormData(processedData)
     }
   }, [rowData])
 
   // Handle form values change
   const handleValuesChange = (values: any) => {
-    console.log("Form values changed:", values)
     setFormData(values)
   }
 
   // Handle form submission
   const handleSubmit = (data: any) => {
-    console.log("Form submitted with data:", data)
     if (rowData) {
       onEditRow(rowData, data)
     }
@@ -91,9 +85,9 @@ function EditTableForm<TData>({
         values={formData}
         fieldConfig={fieldConfig}
       >
-        <div className="mt-4 flex justify-end">
+        <Flex mt="4" justify="end">
           <Button type="submit">Save Changes</Button>
-        </div>
+        </Flex>
       </AutoForm>
     )
   }, [
@@ -108,8 +102,12 @@ function EditTableForm<TData>({
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Content maxWidth="500px">
-        <Dialog.Title className="font-medium">{title}</Dialog.Title>
-        <div className="py-4">{formElement}</div>
+        <Dialog.Title>
+          <Heading size="4" weight="medium">
+            {title}
+          </Heading>
+        </Dialog.Title>
+        <Box py="4">{formElement}</Box>
       </Dialog.Content>
     </Dialog.Root>
   )

@@ -28,12 +28,7 @@ export const DatePicker = forwardRef<
         </Button>
       </Popover.Trigger>
       <Popover.Content width="auto" ref={ref}>
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={setDate}
-          initialFocus
-        />
+        <Calendar mode="single" selected={date} onSelect={setDate} />
       </Popover.Content>
     </Popover.Root>
   )

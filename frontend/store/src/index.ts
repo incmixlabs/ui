@@ -9,3 +9,4 @@ export * from "./projects"
 // Re-export everything from kanban-view.types (including its KanbanColumn)
 export * from "./hooks/use-settings-store"
 export * from "./hooks/use-initialize-default-data"
+export * from "./utils/color"

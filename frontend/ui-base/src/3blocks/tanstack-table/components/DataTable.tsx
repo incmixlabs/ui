@@ -11,7 +11,7 @@ import { TableFilters } from "./TableFilters"
 import { TablePagination } from "./TablePagination"
 const EditTableForm = memo(EditTableFormComponent)
 
-import { Box, Flex, Text } from "@/src/1base"
+import { Box, Flex } from "@/src/1base"
 import { useTableColumns } from "../hooks/useTableColumns"
 import { useTableEdit } from "../hooks/useTableEdit"
 import { useTableFeatures } from "../hooks/useTableFeatures"
