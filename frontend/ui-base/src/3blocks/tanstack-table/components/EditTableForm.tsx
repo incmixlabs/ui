@@ -103,9 +103,7 @@ function EditTableForm<TData>({
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Content maxWidth="500px">
         <Dialog.Title>
-          <Heading size="4" weight="medium">
-            {title}
-          </Heading>
+          <Heading size="4" weight="medium">{title}</Heading>
         </Dialog.Title>
         <Box py="4">{formElement}</Box>
       </Dialog.Content>
