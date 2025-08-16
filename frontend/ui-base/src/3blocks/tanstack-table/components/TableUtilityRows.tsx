@@ -1,3 +1,4 @@
+import { Flex, Spinner, Text } from "@/src/1base"
 import { Table } from "@/src/1base/shadcn/table"
 
 interface LoadingRowProps {
@@ -5,15 +6,12 @@ interface LoadingRowProps {
 }
 
 export const LoadingRow: React.FC<LoadingRowProps> = ({ colSpan }) => (
-  <Table.Row className="dark:border-gray-800">
-    <Table.Cell
-      colSpan={colSpan}
-      className="h-24 text-center dark:text-gray-400"
-    >
-      <div className="flex items-center justify-center">
-        <div className="h-6 w-6 animate-spin rounded-full border-primary border-b-2" />
-        <span className="ml-2">Loading data...</span>
-      </div>
+  <Table.Row>
+    <Table.Cell colSpan={colSpan} style={{ height: '6rem' }}>
+      <Flex align="center" justify="center">
+        <Spinner size="3" />
+        <Text ml="2" color="gray">Loading data...</Text>
+      </Flex>
     </Table.Cell>
   </Table.Row>
 )
@@ -23,12 +21,9 @@ interface EmptyRowProps {
 }
 
 export const EmptyRow: React.FC<EmptyRowProps> = ({ colSpan }) => (
-  <Table.Row className="dark:border-gray-800">
-    <Table.Cell
-      colSpan={colSpan}
-      className="h-24 px-4 text-left dark:text-gray-400"
-    >
-      No results.
+  <Table.Row>
+    <Table.Cell colSpan={colSpan} style={{ height: '6rem', padding: '1rem' }}>
+      <Text color="gray">No results.</Text>
     </Table.Cell>
   </Table.Row>
 )
@@ -45,8 +40,8 @@ export const ExpandedRow = <TData extends object>({
   colSpan,
   renderContent,
 }: ExpandedRowProps<TData>) => (
-  <Table.Row className="bg-muted/20 dark:border-gray-800">
-    <Table.Cell colSpan={colSpan} className="p-4">
+  <Table.Row>
+    <Table.Cell colSpan={colSpan} style={{ padding: '1rem' }}>
       {renderContent(row)}
     </Table.Cell>
   </Table.Row>

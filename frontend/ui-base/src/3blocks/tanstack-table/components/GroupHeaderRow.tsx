@@ -3,7 +3,7 @@
 import { ChevronRight } from "lucide-react"
 import { memo } from "react"
 
-import { Checkbox } from "@/src/1base"
+import { Badge, Box, Checkbox, Flex, IconButton, Text } from "@/src/1base"
 import { Table } from "@/src/1base/shadcn/table"
 
 interface GroupHeaderRowProps {
@@ -20,107 +20,35 @@ interface GroupHeaderRowProps {
     isSomeRowsSelected: boolean
     toggleAllRowsSelected: (value: boolean) => void
   }
-  // Dynamic color mapping from the parent component
-  categoryMapping?: Record<
-    string,
-    {
-      color: string // Text/accent color
-      backgroundColor: string // Background color
-    }
-  >
+  // Color prop for dynamic styling
+  color?: string
+  // Category mapping from parent to get labels and colors
+  categoryMapping?: {
+    valueToIdentifier?: Record<string, string>
+    identifierToLabel?: Record<string, string>
+    colors?: Record<string, string>
+  }
 }
 
-// Define category styles mapping using standardized identifiers
-// This should match your design system
-const categoryStyleMap: Record<
-  string,
-  {
-    color: string
-    textColor: string
-    darkTextColor: string
-    bgColor: string
-    darkBgColor: string
-    label?: string
+// Get display label from category mapping or fallback to groupKey
+const getDisplayLabel = (
+  groupKey: string, 
+  categoryMapping?: {
+    identifierToLabel?: Record<string, string>
   }
-> = {
-  // Standard identifiers
-  todo: {
-    color: "bg-purple-500",
-    textColor: "text-purple-800",
-    darkTextColor: "text-purple-300",
-    bgColor: "bg-purple-100",
-    darkBgColor: "bg-purple-900/30",
-    label: "Todo",
-  },
-  in_design: {
-    color: "bg-violet-500",
-    textColor: "text-violet-800",
-    darkTextColor: "text-violet-300",
-    bgColor: "bg-violet-100",
-    darkBgColor: "bg-violet-900/30",
-    label: "In Design",
-  },
-  in_review: {
-    color: "bg-orange-500",
-    textColor: "text-orange-800",
-    darkTextColor: "text-orange-300",
-    bgColor: "bg-orange-100",
-    darkBgColor: "bg-orange-900/30",
-    label: "In Review",
-  },
-  working: {
-    color: "bg-blue-500",
-    textColor: "text-blue-800",
-    darkTextColor: "text-blue-300",
-    bgColor: "bg-blue-100",
-    darkBgColor: "bg-blue-900/30",
-    label: "Working",
-  },
-  done: {
-    color: "bg-green-500",
-    textColor: "text-green-800",
-    darkTextColor: "text-green-300",
-    bgColor: "bg-green-100",
-    darkBgColor: "bg-green-900/30",
-    label: "Done",
-  },
+): string => {
+  return categoryMapping?.identifierToLabel?.[groupKey] || groupKey
+}
 
-  // Legacy support for display values (for backward compatibility)
-  Todo: {
-    color: "bg-purple-500",
-    textColor: "text-purple-800",
-    darkTextColor: "text-purple-300",
-    bgColor: "bg-purple-100",
-    darkBgColor: "bg-purple-900/30",
+// Get color from category mapping or use provided color
+const getGroupColor = (
+  groupKey: string,
+  categoryMapping?: {
+    colors?: Record<string, string>
   },
-  "In Design": {
-    color: "bg-violet-500",
-    textColor: "text-violet-800",
-    darkTextColor: "text-violet-300",
-    bgColor: "bg-violet-100",
-    darkBgColor: "bg-violet-900/30",
-  },
-  "In Review": {
-    color: "bg-orange-500",
-    textColor: "text-orange-800",
-    darkTextColor: "text-orange-300",
-    bgColor: "bg-orange-100",
-    darkBgColor: "bg-orange-900/30",
-  },
-  Working: {
-    color: "bg-blue-500",
-    textColor: "text-blue-800",
-    darkTextColor: "text-blue-300",
-    bgColor: "bg-blue-100",
-    darkBgColor: "bg-blue-900/30",
-  },
-  Done: {
-    color: "bg-green-500",
-    textColor: "text-green-800",
-    darkTextColor: "text-green-300",
-    bgColor: "bg-green-100",
-    darkBgColor: "bg-green-900/30",
-  },
+  fallbackColor?: string
+): string => {
+  return categoryMapping?.colors?.[groupKey] || fallbackColor || '#6b7280'
 }
 
 /**
@@ -135,6 +63,7 @@ function GroupHeaderRowComponent({
   colSpan,
   renderGroupHeader,
   groupSelectProps,
+  color,
   categoryMapping,
 }: GroupHeaderRowProps) {
   // Handle click on the group header
@@ -147,118 +76,80 @@ function GroupHeaderRowComponent({
     e.stopPropagation()
   }
 
-  // Check if we have dynamic mapping for this category
-  const dynamicStyles = categoryMapping?.[groupKey]
-
-  // If we have dynamic mapping, use it; otherwise fall back to the static map
-  let styles: {
-    color: string
-    textColor: string
-    darkTextColor: string
-    bgColor: string
-    darkBgColor: string
-    label?: string
-  }
-
-  if (dynamicStyles) {
-    // When using dynamic styles, we'll use inline style attributes instead of Tailwind classes
-    // Just use placeholder classes here, actual styling will be done via style attributes
-    styles = {
-      color: "bg-transparent", // Will use style attribute instead
-      textColor: "text-current", // Will use style attribute instead
-      darkTextColor: "text-current", // Will use style attribute instead
-      bgColor: "bg-transparent", // Will use style attribute instead
-      darkBgColor: "bg-transparent", // Will use style attribute instead
-    }
-  } else {
-    // Fallback to hardcoded styles
-    styles = categoryStyleMap[groupKey] || {
-      color: "bg-gray-400",
-      textColor: "text-gray-600",
-      darkTextColor: "text-gray-400",
-      bgColor: "bg-gray-50",
-      darkBgColor: "bg-gray-800/50",
-    }
-  }
-
-  // Use the display label if available, otherwise use the groupKey
-  const displayLabel = styles.label || groupKey
-
-  // If we have dynamic styles, use the color directly for the bullet
-  const _bulletColor = dynamicStyles ? dynamicStyles.color : styles.color
+  // Get display label and color from category mapping
+  const displayLabel = getDisplayLabel(groupKey, categoryMapping)
+  const groupColor = getGroupColor(groupKey, categoryMapping, color)
 
   return (
     <Table.Row
-      className={
-        "group-header cursor-pointer border-gray-200 border-b-0 hover:opacity-90 dark:border-gray-800"
-      }
+      className="group-header h-10 cursor-pointer border-b-0 hover:opacity-90"
       onClick={handleToggleClick}
       aria-expanded={!isCollapsed}
       data-state={isCollapsed ? "collapsed" : "expanded"}
-      style={{
-        backgroundColor: dynamicStyles
-          ? dynamicStyles.backgroundColor
-          : undefined,
-      }}
     >
-      <Table.Cell colSpan={colSpan} className="relative p-0">
+      <Table.Cell colSpan={colSpan} className="p-0">
         {renderGroupHeader ? (
           // Use custom renderer if provided
           renderGroupHeader(groupKey, rowCount)
         ) : (
-          // Default rendering
-          <div className="flex h-10 w-full items-center justify-between px-3">
-            {/* Left section: checkbox, bullet, name, count */}
-            <div className="flex items-center">
-              {/* Group-specific checkbox for row selection */}
-              {groupSelectProps && (
-                <Checkbox
-                  checked={
-                    groupSelectProps.isAllRowsSelected ||
-                    (groupSelectProps.isSomeRowsSelected && "indeterminate")
-                  }
-                  onCheckedChange={(value) =>
-                    groupSelectProps.toggleAllRowsSelected(!!value)
-                  }
-                  onClick={handleCheckboxClick}
-                  aria-label={`Select all rows in ${displayLabel} group`}
-                  className="mr-2 translate-y-[2px]"
+          // Default rendering using 1base components
+          <Box height="10">
+            <Flex 
+              align="center" 
+              justify="between" 
+              px="3" 
+              height="10"
+              width="100%"
+            >
+              {/* Left section: checkbox, bullet, text, count */}
+              <Flex align="center" gap="2">
+                {/* Group-specific checkbox for row selection */}
+                {groupSelectProps && (
+                  <Checkbox
+                    checked={
+                      groupSelectProps.isAllRowsSelected ||
+                      (groupSelectProps.isSomeRowsSelected && "indeterminate")
+                    }
+                    onCheckedChange={(value) =>
+                      groupSelectProps.toggleAllRowsSelected(!!value)
+                    }
+                    onClick={handleCheckboxClick}
+                    aria-label={`Select all rows in ${displayLabel} group`}
+                  />
+                )}
+
+                {/* Bullet indicator */}
+                <Box
+                  width="6px"
+                  height="6px"
+                  className="rounded-full"
+                  style={{ backgroundColor: groupColor }}
                 />
-              )}
 
-              <span
-                className={"mr-2 h-2 w-2 rounded-full"}
-                style={{
-                  backgroundColor: dynamicStyles
-                    ? dynamicStyles.color
-                    : undefined,
-                }}
-              />
+                {/* Status text */}
+                <Text size="2" weight="medium">
+                  {displayLabel}
+                </Text>
 
-              {/* Category name */}
-              <span
-                className={`font-medium ${!dynamicStyles ? `${styles.textColor}dark:${styles.darkTextColor}` : ""}`}
-                style={{
-                  color: dynamicStyles ? dynamicStyles.color : undefined,
-                }}
+                {/* Count */}
+                <Text size="2" color="gray">
+                  {rowCount}
+                </Text>
+              </Flex>
+
+              {/* Right section: Expand/collapse icon */}
+              <IconButton
+                variant="ghost"
+                size="1"
+                className={`transition-transform duration-200 ease-in-out ${
+                  isCollapsed ? "" : "rotate-90"
+                }`}
+                aria-label={isCollapsed ? "Expand group" : "Collapse group"}
               >
-                {displayLabel}
-              </span>
-
-              {/* Count */}
-              <span className="ml-1 text-muted-foreground">{rowCount}</span>
-            </div>
-
-            {/* Right section: Only chevron icon for expand/collapse */}
-            <div className="flex items-center">
-              {/* Expand/collapse button with chevron icon and smooth rotation */}
-              <div
-                className={`transition-transform duration-200 ease-in-out ${isCollapsed ? "" : "rotate-90"}`}
-              >
-                <ChevronRight className="h-4 w-4 text-gray-500" />
-              </div>
-            </div>
-          </div>
+                <ChevronRight />
+              </IconButton>
+            </Flex>
+          </Box>
         )}
       </Table.Cell>
     </Table.Row>

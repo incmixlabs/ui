@@ -1,5 +1,4 @@
-import { Button, DropdownMenuWrapper, Input } from "@/src/1base"
-import { Box, Flex } from "@/src/1base"
+import { Box, Button, DropdownMenuWrapper, Flex, TextField } from "@/src/1base"
 import type { Table as TanStackTable } from "@tanstack/react-table"
 import {
   Check,
@@ -25,9 +24,6 @@ const FacetedFilterComponent = <TData extends object>({
 }: FacetedFilterProps<TData>) => {
   const column = table.getColumn(String(facet.column))
   if (!column) {
-    console.warn(
-      `Column ${String(facet.column)} not found for filter ${facet.title}`
-    )
     return null
   }
 
@@ -60,7 +56,7 @@ const FacetedFilterComponent = <TData extends object>({
           }
         },
         checked: isSelected,
-        checkedIcon: <Check className="h-4 w-4" />,
+        checkedIcon: <Check size={16} />,
         icon: option.icon,
       }
     }),
@@ -84,8 +80,7 @@ const FacetedFilterComponent = <TData extends object>({
       button={{
         label: buttonLabel,
         variant: "outline",
-        icon: <ChevronDown className="ml-2 h-4 w-4" />,
-        className: "h-9 border-gray-200 dark:border-gray-800",
+        icon: <ChevronDown size={16} />,
       }}
       items={items}
       content={{
@@ -158,7 +153,7 @@ export const TableFiltersComponent = <TData extends object>({
       exportOptions?.formats?.map((format) => ({
         label: `Export as ${format.toUpperCase()}`,
         onClick: () => exportOptions.onExport(format),
-        icon: <Download className="mr-2 h-4 w-4" />,
+        icon: <Download size={16} />,
       })) || []
     )
   }, [exportOptions])
@@ -175,18 +170,18 @@ export const TableFiltersComponent = <TData extends object>({
   }, [table])
 
   return (
-    <Flex align={"center"} gap={"2"} className="flex-wrap py-2">
+    <Flex align="center" gap="2" wrap="wrap" py="2">
       {/* Sidebar toggle button */}
       {enableSidebarFilters && onToggleSidebar && (
         <Button onClick={onToggleSidebar} size="2">
           {sidebarOpen ? (
             <>
-              <ChevronLeft className="mr-1 h-4 w-4" />
+              <ChevronLeft size={16} />
               Hide Filters
             </>
           ) : (
             <>
-              <SlidersHorizontal className="mr-1 h-4 w-4" />
+              <SlidersHorizontal size={16} />
               Show Filters
             </>
           )}
@@ -194,18 +189,17 @@ export const TableFiltersComponent = <TData extends object>({
       )}
 
       {filterColumn && (
-        <Box className="max-w-sm flex-1">
-          <Input
+        <Box style={{ maxWidth: "24rem", flex: 1 }}>
+          <TextField.Root
             placeholder={filterPlaceholder}
             value={inputValue}
             onChange={handleInputChange}
-            className="h-9 border-gray-4 bg-gray-2"
           />
         </Box>
       )}
 
       {facets && facets.length > 0 && (
-        <Flex align={"center"} className="space-x-2">
+        <Flex align="center" gap="2">
           {facets.map((facet, index) => (
             <FacetedFilterComponent key={index} table={table} facet={facet} />
           ))}
@@ -216,21 +210,19 @@ export const TableFiltersComponent = <TData extends object>({
         <Button
           variant="ghost"
           onClick={handleResetFilters}
-          className="h-9 px-2"
         >
           Reset
-          <X className="h-4 w-4" />
+          <X size={16} />
         </Button>
       )}
 
-      <Flex align={"center"} gap={"2"} className="ml-auto">
+      <Flex align="center" gap="2" ml="auto">
         {exportOptions?.enabled && exportItems.length > 0 && (
           <DropdownMenuWrapper
             button={{
               label: "Export",
               variant: "outline",
-              icon: <Download className="ml-2 h-4 w-4" />,
-              className: "h-9 border-gray-10",
+              icon: <Download size={16} />,
             }}
             items={exportItems}
             content={{
@@ -247,8 +239,7 @@ export const TableFiltersComponent = <TData extends object>({
             button={{
               label: "Columns",
               variant: "outline",
-              icon: <ChevronDown className="ml-2 h-4 w-4" />,
-              className: "h-9 border-gray-10",
+              icon: <ChevronDown size={16} />,
             }}
             items={visibilityItems}
             content={{
