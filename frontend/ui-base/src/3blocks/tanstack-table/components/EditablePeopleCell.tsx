@@ -1,6 +1,13 @@
 "use client"
 
-import { Avatar, type AvatarProps, Button, Box, Input, Popover } from "@/src/1base"
+import {
+  Avatar,
+  type AvatarProps,
+  Box,
+  Button,
+  Input,
+  Popover,
+} from "@/src/1base"
 import {
   AvatarGroup,
   type AvatarGroupProps,
@@ -146,7 +153,10 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
   }, [isEditing, handleSave, onCancelEdit])
 
   return (
-    <Popover.Root open={isEditing} onOpenChange={(open) => !open && handlePopoverClose()}>
+    <Popover.Root
+      open={isEditing}
+      onOpenChange={(open) => !open && handlePopoverClose()}
+    >
       <Popover.Trigger>
         <Box
           ref={(el) => {
@@ -163,11 +173,20 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
           {...ariaAttributes}
           aria-label={`${columnId}: ${value?.length || 0} users assigned`}
         >
-          <AvatarGroup users={isEditing ? selectedUsers : value || []} maxVisible={maxVisible} layout="stack" stackOrder="asc" size="1"/>
+          <AvatarGroup
+            users={isEditing ? selectedUsers : value || []}
+            maxVisible={maxVisible}
+            layout="stack"
+            stackOrder="asc"
+            size="1"
+          />
         </Box>
       </Popover.Trigger>
 
-      <Popover.Content className="max-h-[480px] w-[360px] rounded-lg border border-gray-6 bg-white p-2 shadow-lg dark:border-gray-7 dark:bg-gray-2" sideOffset={8}>
+      <Popover.Content
+        className="max-h-[480px] w-[360px] rounded-lg border border-gray-6 bg-white p-2 shadow-lg dark:border-gray-7 dark:bg-gray-2"
+        sideOffset={8}
+      >
         {/* Search input */}
         <Box className="border-gray-6 border-b p-4 dark:border-gray-7">
           <Box className="relative">
@@ -187,7 +206,8 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
           {/* Selected count */}
           {selectedUsers.length > 0 && (
             <Box className="mt-3 rounded-sm bg-blue-2 px-2 py-1 font-medium text-blue-11 text-xs dark:bg-blue-3 dark:text-blue-11">
-              {selectedUsers.length} user{selectedUsers.length !== 1 ? "s" : ""} selected
+              {selectedUsers.length} user{selectedUsers.length !== 1 ? "s" : ""}{" "}
+              selected
               {maxSelections && ` (max ${maxSelections})`}
             </Box>
           )}
@@ -208,9 +228,7 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
             </Box>
           ) : (
             filteredUsers.map((user) => {
-              const isUserSelected = selectedUsers.some(
-                (u) => u.id === user.id
-              )
+              const isUserSelected = selectedUsers.some((u) => u.id === user.id)
               const isDisabled =
                 !isUserSelected &&
                 maxSelections &&
@@ -231,7 +249,7 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
                   disabled={!!isDisabled}
                   className={cn(
                     "h-full w-full justify-start gap-3 rounded-md px-2 py-2 text-left transition-all duration-150 ",
-                    isUserSelected 
+                    isUserSelected
                       ? "bg-blue-3 hover:bg-blue-4 dark:bg-blue-4 dark:hover:bg-blue-5"
                       : "hover:bg-gray-3 dark:hover:bg-gray-4",
                     isDisabled && "cursor-not-allowed opacity-50"
@@ -246,9 +264,7 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
                         : "border-gray-7 bg-white dark:border-gray-6 dark:bg-gray-1"
                     )}
                   >
-                    {isUserSelected && (
-                      <Check className="h-3 w-3 text-white" />
-                    )}
+                    {isUserSelected && <Check className="h-3 w-3 text-white" />}
                   </Box>
 
                   {/* User avatar */}
@@ -272,15 +288,17 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
         {/* Action buttons */}
         <Box className="flex items-center justify-between border-gray-6 border-t bg-gray-1 px-4 py-3 dark:border-gray-7 dark:bg-gray-3">
           <Box className="text-gray-10 text-xs">
-            {selectedUsers.length > 0 && (
-              <>{selectedUsers.length} selected</>
-            )}
+            {selectedUsers.length > 0 && <>{selectedUsers.length} selected</>}
           </Box>
           <Box className="flex gap-2">
             <Button variant="soft" size="2" color="gray" onClick={onCancelEdit}>
               Cancel
             </Button>
-            <Button size="2" onClick={handleSave} disabled={selectedUsers.length === 0}>
+            <Button
+              size="2"
+              onClick={handleSave}
+              disabled={selectedUsers.length === 0}
+            >
               Save
             </Button>
           </Box>

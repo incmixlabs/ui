@@ -109,7 +109,10 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
     const isValueInUse = valuesInUse.includes(optionValue)
 
     if (isValueInUse) {
-      setErrors({ delete: "Cannot delete this option because it is currently in use in the table." })
+      setErrors({
+        delete:
+          "Cannot delete this option because it is currently in use in the table.",
+      })
       setTimeout(() => setErrors({}), 3000)
       return
     }
@@ -162,12 +165,7 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
               const isValueInUse = valuesInUse.includes(option.value)
 
               return (
-                <Flex
-                  key={index}
-                  align="center"
-                  gap="2"
-                  className="w-full"
-                >
+                <Flex key={index} align="center" gap="2" className="w-full">
                   <Box className="flex min-w-10 items-center justify-center">
                     <ColorPicker
                       color={option.color || "var(--blue-5)"}
@@ -262,7 +260,9 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
           <Dialog.Header>
             <Dialog.Title>Delete Option</Dialog.Title>
             <Dialog.Description>
-              Are you sure you want to delete the option "{deleteIndex !== null ? options[deleteIndex]?.label : ''}"? This action cannot be undone.
+              Are you sure you want to delete the option "
+              {deleteIndex !== null ? options[deleteIndex]?.label : ""}"? This
+              action cannot be undone.
             </Dialog.Description>
           </Dialog.Header>
           <Dialog.Footer>

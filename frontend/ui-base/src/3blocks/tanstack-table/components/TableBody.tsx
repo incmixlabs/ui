@@ -140,7 +140,8 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
       <Table.Row
         data-state={row.getIsSelected() && "selected"}
         style={{
-          cursor: onRowClick || (expandableRows?.expandOnClick) ? "pointer" : "default"
+          cursor:
+            onRowClick || expandableRows?.expandOnClick ? "pointer" : "default",
         }}
         onClick={handleRowClick}
         role={enableInlineCellEdit ? "row" : undefined}
@@ -193,8 +194,8 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
               <Table.Cell
                 key={cell.id}
                 style={{
-                  padding: '0.375rem 0 0.375rem 0.75rem',
-                  overflow: 'hidden'
+                  padding: "0.375rem 0 0.375rem 0.75rem",
+                  overflow: "hidden",
                 }}
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -206,8 +207,8 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
             <Table.Cell
               key={cell.id}
               style={{
-                padding: '0.375rem 0.5rem',
-                overflow: 'hidden',
+                padding: "0.375rem 0.5rem",
+                overflow: "hidden",
                 width: columnDef?.width,
                 minWidth: columnDef?.minWidth,
                 maxWidth: columnDef?.maxWidth,
@@ -215,7 +216,7 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
                 ...(isEditableCell &&
                   isSelected?.(row.id, cell.column.id) && {
                     backgroundColor: "rgba(93, 135, 255, 0.03)",
-                  })
+                  }),
               }}
               role={enableInlineCellEdit ? "gridcell" : undefined}
               aria-colindex={
@@ -302,8 +303,8 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
                     textAlign: "left",
                     ...(isSelected?.(row.id, cell.column.id) && {
                       outline: "2px solid rgb(59 130 246)",
-                      outlineOffset: "-2px"
-                    })
+                      outlineOffset: "-2px",
+                    }),
                   }}
                   onClick={() => selectCell?.(row.id, cell.column.id)}
                   onDoubleClick={() => startEditing?.(row.id, cell.column.id)}
@@ -321,11 +322,11 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
                     {/* Render the dropdown editor on top if editing */}
                     {isEditing?.(row.id, cell.column.id) && (
                       <Box
-                        style={{ 
-                          position: "absolute", 
-                          top: 0, 
-                          left: 0, 
-                          zIndex: 999 
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          zIndex: 999,
                         }}
                       >
                         {columnDef?.inlineCellEditor ? (
@@ -491,9 +492,7 @@ function TableBodyComponent<TData extends object>({
   }
 
   return (
-    <Table.Body
-      role={enableInlineCellEdit ? "rowgroup" : undefined}
-    >
+    <Table.Body role={enableInlineCellEdit ? "rowgroup" : undefined}>
       {enableRowGrouping && rowGrouping ? (
         // Render grouped rows with headers
         <>
@@ -540,7 +539,7 @@ function TableBodyComponent<TData extends object>({
                           return (
                             <Table.Cell
                               key={header.id}
-                              style={{ width: '40px', padding: '0.5rem' }}
+                              style={{ width: "40px", padding: "0.5rem" }}
                             />
                           )
                         }
@@ -548,7 +547,7 @@ function TableBodyComponent<TData extends object>({
                         return (
                           <Table.Cell
                             key={header.id}
-                            style={{ padding: '0.5rem' }}
+                            style={{ padding: "0.5rem" }}
                           >
                             {header.isPlaceholder
                               ? null

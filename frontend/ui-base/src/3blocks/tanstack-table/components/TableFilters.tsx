@@ -207,10 +207,7 @@ export const TableFiltersComponent = <TData extends object>({
       )}
 
       {isFiltered && (
-        <Button
-          variant="ghost"
-          onClick={handleResetFilters}
-        >
+        <Button variant="ghost" onClick={handleResetFilters}>
           Reset
           <X size={16} />
         </Button>
