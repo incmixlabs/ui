@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Button, Input } from "@/src/1base"
+import { Badge, Box, Button, Flex, TextField } from "@/src/1base"
 import { cn } from "@/utils/cn"
 import { X } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
@@ -117,7 +117,7 @@ export const EditableTagCell: React.FC<EditableTagCellProps> = ({
     return (
       <Box
         ref={cellRef} /* Keep outside-click detection working */
-        className="flex h-full w-full flex-col p-1"
+        className="h-full w-full p-1 "
         onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -125,37 +125,36 @@ export const EditableTagCell: React.FC<EditableTagCellProps> = ({
           }
         }}
       >
-        <Box className="mb-1 flex flex-wrap gap-1">
-          {tags.map((tag) => (
-            <Box
-              key={tag}
-              className="flex items-center gap-1 rounded bg-blue-100 px-2 py-0.5 text-blue-800 text-xs dark:bg-blue-900/30 dark:text-blue-400"
-            >
-              <span>{tag}</span>
-              <Button
-                variant="ghost"
-                size="1"
-                onClick={() => removeTag(tag)}
-                srLabel={`Remove ${tag} tag`}
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </Box>
-          ))}
-        </Box>
-        <Input
-          ref={(el) => {
-            // Connect keyboard hook's ref to the input element
-            if (keyboardCellRef) keyboardCellRef.current = el
-          }}
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={handleInputKeyDown}
-          placeholder="Type and press Enter"
-          className="h-8 w-full rounded-md border border-gray-300 bg-white px-2 py-1 text-sm dark:border-gray-700 dark:bg-gray-800"
-          aria-label="Add new tag"
-        />
+        <Flex direction="column" gap="1" className="h-full">
+          <Flex wrap="wrap" gap="1">
+            {tags.map((tag) => (
+              <Badge key={tag} variant="soft" size="1">
+                <Flex align="center" gap="1">
+                  <span>{tag}</span>
+                  <Button
+                    variant="ghost"
+                    size="1"
+                    onClick={() => removeTag(tag)}
+                    aria-label={`Remove ${tag} tag`}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </Flex>
+              </Badge>
+            ))}
+          </Flex>
+          <TextField.Root
+            ref={(el: HTMLInputElement | null) => {
+              // Connect keyboard hook's ref to the input element
+              if (keyboardCellRef) keyboardCellRef.current = el
+            }}
+            value={inputValue}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value)}
+            onKeyDown={handleInputKeyDown}
+            placeholder="Type and press Enter"
+            aria-label="Add new tag"
+          />
+        </Flex>
       </Box>
     )
   }
@@ -171,22 +170,19 @@ export const EditableTagCell: React.FC<EditableTagCellProps> = ({
       onKeyDown={cellKeyHandler}
       className={cn(
         className,
-        "h-full w-full cursor-pointer p-1 transition-colors duration-150",
+        "h-full w-full cursor-pointer p-1 transition-colors duration-150 ",
         isSelected && "rounded bg-blue-100 dark:bg-blue-900/30"
       )}
       {...ariaAttributes}
       aria-label={`${columnId}: ${tags.length} tags`}
     >
-      <Box className="flex flex-wrap gap-1">
+      <Flex wrap="wrap" gap="1">
         {tags.map((tag) => (
-          <span
-            key={tag}
-            className="rounded bg-blue-100 px-2 py-0.5 text-blue-800 text-xs dark:bg-blue-900/30 dark:text-blue-400"
-          >
+          <Badge key={tag} variant="soft" size="1">
             {tag}
-          </span>
+          </Badge>
         ))}
-      </Box>
+      </Flex>
     </Box>
   )
 }

@@ -1,4 +1,10 @@
-import { Button } from "@/src/1base"
+import { Box, Button, Flex, Select, Text } from "@/src/1base"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+} from "@/src/1base"
 import {
   ChevronLeft,
   ChevronRight,
@@ -45,73 +51,85 @@ const TablePaginationComponent: React.FC<TablePaginationProps> = ({
   ])
 
   return (
-    <div className="flex items-center justify-between space-x-2 py-4">
+    <Flex align="center" justify="between" gap="2" py="4">
       {showRowCount && (
-        <div className="text-muted-foreground text-sm dark:text-gray-400">
+        <Text size="2" color="gray">
           {selectedRowText}
-        </div>
+        </Text>
       )}
 
-      <div className="ml-auto flex items-center space-x-2">
-        <div className="flex items-center gap-1 text-muted-foreground text-sm dark:text-gray-400">
-          <div>Rows per page</div>
-          <select
-            value={paginationInfo.pageSize}
-            onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-            className="h-8 border-0 bg-transparent text-muted-foreground dark:text-gray-400"
+      <Flex align="center" gap="2" ml="auto">
+        <Flex align="center" gap="1">
+          <Text size="2" color="gray">Rows per page</Text>
+          <Select.Root
+            value={paginationInfo.pageSize.toString()}
+            onValueChange={(value) => handlePageSizeChange(Number(value))}
           >
-            {PAGE_SIZE_OPTIONS.map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                {pageSize}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="flex items-center gap-1 text-muted-foreground text-sm dark:text-gray-400">
+            <Select.Trigger />
+            <Select.Content>
+              {PAGE_SIZE_OPTIONS.map((pageSize) => (
+                <Select.Item key={pageSize} value={pageSize.toString()}>
+                  {pageSize}
+                </Select.Item>
+              ))}
+            </Select.Content>
+          </Select.Root>
+        </Flex>
+        <Text size="2" color="gray">
           {useMemo(() => {
             return `Page ${paginationInfo.currentPage + 1} of ${paginationInfo.totalPages || 1}`
           }, [paginationInfo.currentPage, paginationInfo.totalPages])}
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="1"
-            onClick={() => handlePageChange(0)}
-            disabled={!paginationInfo.canPreviousPage || isPaginationLoading}
-          >
-            <span className="sr-only">Go to first page</span>
-            <ChevronsLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="1"
-            onClick={() => handlePageChange(paginationInfo.currentPage - 1)}
-            disabled={!paginationInfo.canPreviousPage || isPaginationLoading}
-          >
-            <span className="sr-only">Go to previous page</span>
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="1"
-            onClick={() => handlePageChange(paginationInfo.currentPage + 1)}
-            disabled={!paginationInfo.canNextPage || isPaginationLoading}
-          >
-            <span className="sr-only">Go to next page</span>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="1"
-            onClick={() => handlePageChange(paginationInfo.totalPages - 1)}
-            disabled={!paginationInfo.canNextPage || isPaginationLoading}
-          >
-            <span className="sr-only">Go to last page</span>
-            <ChevronsRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-    </div>
+        </Text>
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <Button
+                variant="outline"
+                size="1"
+                onClick={() => handlePageChange(0)}
+                disabled={!paginationInfo.canPreviousPage || isPaginationLoading}
+                aria-label="Go to first page"
+              >
+                <ChevronsLeft size={16} />
+              </Button>
+            </PaginationItem>
+            <PaginationItem>
+              <Button
+                variant="outline" 
+                size="1"
+                onClick={() => handlePageChange(paginationInfo.currentPage - 1)}
+                disabled={!paginationInfo.canPreviousPage || isPaginationLoading}
+                aria-label="Go to previous page"
+              >
+                <ChevronLeft size={16} />
+              </Button>
+            </PaginationItem>
+            <PaginationItem>
+              <Button
+                variant="outline"
+                size="1"
+                onClick={() => handlePageChange(paginationInfo.currentPage + 1)}
+                disabled={!paginationInfo.canNextPage || isPaginationLoading}
+                aria-label="Go to next page"
+              >
+                <ChevronRight size={16} />
+              </Button>
+            </PaginationItem>
+            <PaginationItem>
+              <Button
+                variant="outline"
+                size="1"
+                onClick={() => handlePageChange(paginationInfo.totalPages - 1)}
+                disabled={!paginationInfo.canNextPage || isPaginationLoading}
+                aria-label="Go to last page"
+              >
+                <ChevronsRight size={16} />
+              </Button>
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      </Flex>
+    </Flex>
   )
 }
 
