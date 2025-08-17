@@ -139,7 +139,11 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
     <React.Fragment>
       <Table.Row
         data-state={row.getIsSelected() && "selected"}
-        className={onRowClick || expandableRows?.expandOnClick ? "cursor-pointer" : "cursor-default"}
+        className={
+          onRowClick || expandableRows?.expandOnClick
+            ? "cursor-pointer"
+            : "cursor-default"
+        }
         onClick={handleRowClick}
         role={enableInlineCellEdit ? "row" : undefined}
         aria-rowindex={rowIndex !== undefined ? rowIndex + 1 : undefined}
@@ -525,18 +529,12 @@ function TableBodyComponent<TData extends object>({
                         // This maintains alignment with the data rows below
                         if (header.id === "select") {
                           return (
-                            <Table.Cell
-                              key={header.id}
-                              className="w-10 p-2"
-                            />
+                            <Table.Cell key={header.id} className="w-10 p-2" />
                           )
                         }
 
                         return (
-                          <Table.Cell
-                            key={header.id}
-                            className="p-2"
-                          >
+                          <Table.Cell key={header.id} className="p-2">
                             {header.isPlaceholder
                               ? null
                               : flexRender(

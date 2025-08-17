@@ -85,7 +85,9 @@ const TablePaginationComponent: React.FC<TablePaginationProps> = ({
             </Select.Content>
           </Select.Root>
         </Flex>
-        <Text size="2" color="gray">{pageText}</Text>
+        <Text size="2" color="gray">
+          {pageText}
+        </Text>
         <Pagination>
           <PaginationContent>
             <PaginationItem>
