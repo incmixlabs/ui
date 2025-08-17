@@ -189,7 +189,7 @@ export const TableFiltersComponent = <TData extends object>({
       )}
 
       {filterColumn && (
-        <Box style={{ maxWidth: "24rem", flex: 1 }}>
+        <Box>
           <TextField.Root
             placeholder={filterPlaceholder}
             value={inputValue}

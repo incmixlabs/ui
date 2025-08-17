@@ -139,10 +139,7 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
     <React.Fragment>
       <Table.Row
         data-state={row.getIsSelected() && "selected"}
-        style={{
-          cursor:
-            onRowClick || expandableRows?.expandOnClick ? "pointer" : "default",
-        }}
+        className={onRowClick || expandableRows?.expandOnClick ? "cursor-pointer" : "cursor-default"}
         onClick={handleRowClick}
         role={enableInlineCellEdit ? "row" : undefined}
         aria-rowindex={rowIndex !== undefined ? rowIndex + 1 : undefined}
@@ -193,10 +190,7 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
             return (
               <Table.Cell
                 key={cell.id}
-                style={{
-                  padding: "0.375rem 0 0.375rem 0.75rem",
-                  overflow: "hidden",
-                }}
+                className="overflow-hidden py-1.5 pr-0 pl-3"
               >
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </Table.Cell>
@@ -206,17 +200,15 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           return (
             <Table.Cell
               key={cell.id}
+              className={`relative overflow-hidden px-2 py-1.5 ${
+                isEditableCell && isSelected?.(row.id, cell.column.id)
+                  ? "bg-blue-50/30"
+                  : ""
+              }`}
               style={{
-                padding: "0.375rem 0.5rem",
-                overflow: "hidden",
                 width: columnDef?.width,
                 minWidth: columnDef?.minWidth,
                 maxWidth: columnDef?.maxWidth,
-                position: "relative",
-                ...(isEditableCell &&
-                  isSelected?.(row.id, cell.column.id) && {
-                    backgroundColor: "rgba(93, 135, 255, 0.03)",
-                  }),
               }}
               role={enableInlineCellEdit ? "gridcell" : undefined}
               aria-colindex={
@@ -296,39 +288,35 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
                 // Custom handling for dropdown cells
                 <Button
                   variant="ghost"
-                  style={{
-                    position: "static",
-                    height: "100%",
-                    width: "100%",
-                    textAlign: "left",
-                    ...(isSelected?.(row.id, cell.column.id) && {
-                      outline: "2px solid rgb(59 130 246)",
-                      outlineOffset: "-2px",
-                    }),
+                  className={`static h-full w-full text-left ${
+                    isSelected?.(row.id, cell.column.id)
+                      ? "-outline-offset-2 outline-2 outline-blue-500"
+                      : ""
+                  }`}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    selectCell?.(row.id, cell.column.id)
                   }}
-                  onClick={() => selectCell?.(row.id, cell.column.id)}
-                  onDoubleClick={() => startEditing?.(row.id, cell.column.id)}
+                  onDoubleClick={(e) => {
+                    e.stopPropagation()
+                    startEditing?.(row.id, cell.column.id)
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      e.stopPropagation()
                       selectCell?.(row.id, cell.column.id)
                     }
                   }}
                   aria-label={`Edit ${columnDef?.headingName || ""} value`}
                 >
-                  <Box style={{ position: "relative" }}>
+                  <Box className="relative">
                     {/* Always render the original cell value */}
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
 
                     {/* Render the dropdown editor on top if editing */}
                     {isEditing?.(row.id, cell.column.id) && (
-                      <Box
-                        style={{
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          zIndex: 999,
-                        }}
-                      >
+                      <Box className="absolute top-0 left-0 z-[999]">
                         {columnDef?.inlineCellEditor ? (
                           columnDef.inlineCellEditor({
                             value: cellValue as string,
@@ -539,7 +527,7 @@ function TableBodyComponent<TData extends object>({
                           return (
                             <Table.Cell
                               key={header.id}
-                              style={{ width: "40px", padding: "0.5rem" }}
+                              className="w-10 p-2"
                             />
                           )
                         }
@@ -547,7 +535,7 @@ function TableBodyComponent<TData extends object>({
                         return (
                           <Table.Cell
                             key={header.id}
-                            style={{ padding: "0.5rem" }}
+                            className="p-2"
                           >
                             {header.isPlaceholder
                               ? null
