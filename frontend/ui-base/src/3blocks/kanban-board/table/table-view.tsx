@@ -1,4 +1,5 @@
 import { Box, Button, DropdownMenu, Flex, Text, Tooltip } from "@/base"
+import { generateUniqueDropdownColor } from "@incmix/store/color"
 import type { TaskDataSchema } from "@incmix/utils/schema"
 import {
   Check,
@@ -13,7 +14,6 @@ import { useCallback, useMemo, useState } from "react"
 import {
   TanstackDataTable,
   createEnhancedDropdownColumn,
-  generateUniqueDropdownColor,
 } from "../../tanstack-table"
 import type { User } from "../../tanstack-table/cell-renderers"
 // import { useAIFeaturesStore } from "@incmix/store" // Commented out as not used
