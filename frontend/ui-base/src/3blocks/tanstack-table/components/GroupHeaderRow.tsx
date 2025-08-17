@@ -38,8 +38,7 @@ const getDisplayLabel = (
     identifierToLabel?: Record<string, string>
   }
 ): string => {
-  const identifier =
-    categoryMapping?.valueToIdentifier?.[groupKey] ?? groupKey
+  const identifier = categoryMapping?.valueToIdentifier?.[groupKey] ?? groupKey
   return categoryMapping?.identifierToLabel?.[identifier] ?? identifier
 }
 
@@ -52,8 +51,7 @@ const getGroupColor = (
   },
   fallbackColor?: string
 ): string => {
-  const identifier =
-    categoryMapping?.valueToIdentifier?.[groupKey] ?? groupKey
+  const identifier = categoryMapping?.valueToIdentifier?.[groupKey] ?? groupKey
   return categoryMapping?.colors?.[identifier] ?? fallbackColor ?? "#6b7280"
 }
 
