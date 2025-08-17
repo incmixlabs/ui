@@ -20,9 +20,9 @@ function TableHeaderComponent<TData>({
   flatColumns,
 }: TableHeaderProps<TData>) {
   return (
-    <Table.Header className="rounded-t-lg bg-gray-2">
+    <Table.Header>
       {table.getHeaderGroups().map((headerGroup) => (
-        <Table.Row key={headerGroup.id} className=" border-gray-6 border-b">
+        <Table.Row key={headerGroup.id}>
           {headerGroup.headers.map((header) => {
             // Get column type from our original columns definition
             const columnDef = flatColumns.find(
@@ -34,7 +34,6 @@ function TableHeaderComponent<TData>({
             return (
               <Table.HeaderCell
                 key={header.id}
-                className="h-10 rounded-t-lg px-4 text-left font-medium text-sm"
                 style={{
                   width: columnDef?.width,
                   minWidth: columnDef?.minWidth,

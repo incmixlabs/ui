@@ -217,9 +217,7 @@ export const DropdownCell: React.FC<{
   }
 
   // Determine text color based on background color (if provided)
-  const textColor = finalOption.color
-    ? getContrastingTextColor(finalOption.color)
-    : "var(--gray-12)"
+  const textColor = getContrastingTextColor(finalOption.color)
 
   // Size classes
   const sizeClasses = {
