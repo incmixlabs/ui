@@ -78,7 +78,7 @@
     "postcss-whitespace.cjs"
   ],
   "scripts": {
-    "build": "rm -rf dist && tsc -p tsconfig.json --outDir dist && mv dist/src/* dist/ && rmdir dist/src",
+    "build:ui-base": "rm -rf dist && tsc -p tsconfig.json --outDir dist && mv dist/src/* dist/ && rmdir dist/src",
     "typecheck": "tsc --traceResolution",
     "dev": "pnpm run build && pnpm watch & pnpm storybook",
     "watch": "tsc -p tsconfig.json --outDir dist --watch",

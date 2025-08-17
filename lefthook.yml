@@ -2,6 +2,14 @@
 #   Refer for explanation to following link:
 #   https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md
 
+pre-commit:
+  parallel: false
+  commands:
+    lint-fix:
+      run: pnpm run lint:fix
+    build:
+      run: pnpm run build
+
 commit-msg:
   parallel: true
   commands:
