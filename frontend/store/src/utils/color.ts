@@ -94,7 +94,12 @@ export type PaletteColor = (typeof COLOR_PALETTE)[number]
  * Returns CSS custom property values for consistent theming
  * Similar to hasGoodContrastOnLight but returns CSS vars instead of boolean
  */
-export function getContrastingTextColor(backgroundColor: string): string {
+export function getContrastingTextColor(backgroundColor: string | null | undefined): string {
+  // Handle falsy values
+  if (!backgroundColor) {
+    return "var(--gray-12)" // Default to dark text
+  }
+
   // Validate and clean hex color
   if (!/^#[0-9A-Fa-f]{3,6}$/.test(backgroundColor)) {
     console.warn(`Invalid hex color: ${backgroundColor}`)
