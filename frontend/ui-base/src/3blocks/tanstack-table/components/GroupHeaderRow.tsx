@@ -34,21 +34,27 @@ interface GroupHeaderRowProps {
 const getDisplayLabel = (
   groupKey: string,
   categoryMapping?: {
+    valueToIdentifier?: Record<string, string>
     identifierToLabel?: Record<string, string>
   }
 ): string => {
-  return categoryMapping?.identifierToLabel?.[groupKey] || groupKey
+  const identifier =
+    categoryMapping?.valueToIdentifier?.[groupKey] ?? groupKey
+  return categoryMapping?.identifierToLabel?.[identifier] ?? identifier
 }
 
 // Get color from category mapping or use provided color
 const getGroupColor = (
   groupKey: string,
   categoryMapping?: {
+    valueToIdentifier?: Record<string, string>
     colors?: Record<string, string>
   },
   fallbackColor?: string
 ): string => {
-  return categoryMapping?.colors?.[groupKey] || fallbackColor || "#6b7280"
+  const identifier =
+    categoryMapping?.valueToIdentifier?.[groupKey] ?? groupKey
+  return categoryMapping?.colors?.[identifier] ?? fallbackColor ?? "#6b7280"
 }
 
 /**
