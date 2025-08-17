@@ -39,6 +39,8 @@
       "@/ai-elements": ["src/3b-ai-elements/*"],
       "@/auto-form": ["src/3blocks/auto-form"],
       "@/auto-form/*": ["src/3blocks/auto-form/*"],
+      "@/service": ["src/services"],
+      "@/service/*": ["src/services/*"],
       "@/tanstack-table": ["src/3blocks/tanstack-table"],
       "@/tanstack-table/*": ["src/3blocks/tanstack-table/*"]
     }

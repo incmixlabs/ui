@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Text, TextArea, TextField } from "@/base"
-import { useStreamingDisplay, useStreamingResponse } from "@/hooks/stream"
+import { useStreamingDisplay, useStreamingResponse } from "@/src/services/hooks/stream"
 import { useAIFeaturesStore } from "@incmix/store"
 import type { TaskDataSchema } from "@incmix/utils/schema"
 import { Check, Loader2, Plus, Sparkles, X } from "lucide-react"

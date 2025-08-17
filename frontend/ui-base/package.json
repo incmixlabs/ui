@@ -70,7 +70,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "sideEffects": ["*.css"],
+  "sideEffects": [
+    "*.css"
+  ],
   "license": "MIT",
   "files": [
     "src/**",
@@ -95,7 +97,11 @@
     "@hookform/resolvers": "catalog:",
     "@icons-pack/react-simple-icons": "^13.7.0",
     "@incmix/store": "workspace: *",
+<<<<<<< HEAD
     "@radix-ui/colors": "catalog:",
+=======
+    "@preact/signals-react": "^3.2.1",
+>>>>>>> c199d97d (feat: wip)
     "@radix-ui/react-accordion": "catalog:",
     "@radix-ui/react-avatar": "catalog:",
     "@radix-ui/react-collapsible": "^1.1.12",
@@ -110,26 +116,40 @@
     "@radix-ui/react-tabs": "catalog:",
     "@radix-ui/react-toggle": "catalog:",
     "@radix-ui/react-toggle-group": "catalog:",
+<<<<<<< HEAD
     "@radix-ui/react-tooltip": "catalog:",
     "@radix-ui/react-use-controllable-state": "catalog:",
+=======
+    "@tanstack/react-query": "catalog:",
+>>>>>>> c199d97d (feat: wip)
     "@tanstack/react-table": "catalog:",
     "@tanstack/zod-form-adapter": "catalog:",
     "ai": "5.0.15",
     "classnames": "catalog:",
     "cmdk": "catalog:",
     "date-fns": "catalog:",
+<<<<<<< HEAD
     "embla-carousel-react": "8.6.0",
     "harden-react-markdown": "^1.0.4",
+=======
+    "immer": "catalog:",
+>>>>>>> c199d97d (feat: wip)
     "input-otp": "catalog:",
     "katex": "^0.16.22",
     "lucide-react": "catalog:",
+    "radashi": "^12.6.1",
     "react-day-picker": "9.8.1",
     "react-hook-form": "catalog:",
+<<<<<<< HEAD
     "react-markdown": "10.1.0",
     "react-syntax-highlighter": "15.6.1",
     "remark-gfm": "catalog:",
     "use-stick-to-bottom": "1.1.1",
     "zod": "catalog:"
+=======
+    "zod": "catalog:",
+    "zustand": "catalog:"
+>>>>>>> c199d97d (feat: wip)
   },
   "peerDependencies": {
     "@types/react": "catalog:",
