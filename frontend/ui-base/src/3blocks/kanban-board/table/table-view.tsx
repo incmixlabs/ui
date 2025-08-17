@@ -13,8 +13,9 @@ import { useCallback, useMemo, useState } from "react"
 import {
   TanstackDataTable,
   createEnhancedDropdownColumn,
-  generateUniqueDropdownColor,
 } from "../../tanstack-table"
+import {
+  generateUniqueDropdownColor } from "@incmix/store/color"
 import type { User } from "../../tanstack-table/cell-renderers"
 // import { useAIFeaturesStore } from "@incmix/store" // Commented out as not used
 import { KeyboardShortcutsHelp } from "../../tanstack-table/components/KeyboardShortcutsHelp"
