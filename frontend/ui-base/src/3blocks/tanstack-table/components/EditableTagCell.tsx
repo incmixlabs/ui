@@ -1,10 +1,6 @@
 "use client"
 
-<<<<<<< HEAD
-import { Badge, Box, Button, Input } from "@/src/1base"
-=======
 import { Badge, Box, Button, Flex, TextField } from "@/src/1base"
->>>>>>> 0f623087 (fix: refactor remaining components)
 import { cn } from "@/utils/cn"
 import { X } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
