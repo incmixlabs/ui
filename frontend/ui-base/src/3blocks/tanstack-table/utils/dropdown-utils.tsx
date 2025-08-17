@@ -155,40 +155,14 @@ export function createEnhancedDropdownColumn<TData extends object>(
 }
 
 /**
- * Helper function to generate unique colors for new dropdown options
- */
-export function generateUniqueDropdownColor(existingColors: string[]): string {
-  const colorPalette = [
-    "#93c5fd", // Light blue
-    "#fcd34d", // Light yellow
-    "#86efac", // Light green
-    "#f9a8d4", // Light pink
-    "#c4b5fd", // Light purple
-    "#a5b4fc", // Lavender
-    "#fdba74", // Light orange
-    "#67e8f9", // Light teal
-    "#d8b4fe", // Light violet
-    "#f87171", // Light red
-    "#fde68a", // Light gold
-    "#6ee7b7", // Mint
-  ]
-
-  // Find an unused color from the palette
-  const unusedColor = colorPalette.find(
-    (color) => !existingColors.includes(color)
-  )
-  return unusedColor || "#93c5fd" // Default to light blue if all colors are used
-}
-
-/**
  * Creates standard status dropdown options
  */
 export function createStatusDropdownOptions(): DropdownOption[] {
   return [
-    { value: "todo", label: "To Do", color: "#93c5fd" },
-    { value: "in_progress", label: "In Progress", color: "#fcd34d" },
-    { value: "review", label: "In Review", color: "#f9a8d4" },
-    { value: "done", label: "Done", color: "#86efac" },
+    { value: "todo", label: "To Do", color: "var(--blue-5)" },
+    { value: "in_progress", label: "In Progress", color: "var(--amber-5)" },
+    { value: "review", label: "In Review", color: "var(--purple-5)" },
+    { value: "done", label: "Done", color: "var(--green-5)" },
   ]
 }
 
@@ -209,6 +183,6 @@ export function createPriorityDropdownOptions(
   return priorityLabels.map((label) => ({
     value: label.id,
     label: label.name,
-    color: label.color || "#6b7280", // Fallback color if none is provided
+    color: label.color || "var(--gray-6)", // Fallback color if none is provided
   }))
 }
