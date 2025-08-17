@@ -7,7 +7,7 @@ interface LoadingRowProps {
 
 export const LoadingRow: React.FC<LoadingRowProps> = ({ colSpan }) => (
   <Table.Row>
-    <Table.Cell colSpan={colSpan} style={{ height: "6rem" }}>
+    <Table.Cell colSpan={colSpan} className="h-24">
       <Flex align="center" justify="center">
         <Spinner size="3" />
         <Text ml="2" color="gray">
@@ -24,7 +24,7 @@ interface EmptyRowProps {
 
 export const EmptyRow: React.FC<EmptyRowProps> = ({ colSpan }) => (
   <Table.Row>
-    <Table.Cell colSpan={colSpan} style={{ height: "6rem", padding: "1rem" }}>
+    <Table.Cell colSpan={colSpan} className="h-24 p-4">
       <Text color="gray">No results.</Text>
     </Table.Cell>
   </Table.Row>
@@ -43,7 +43,7 @@ export const ExpandedRow = <TData extends object>({
   renderContent,
 }: ExpandedRowProps<TData>) => (
   <Table.Row>
-    <Table.Cell colSpan={colSpan} style={{ padding: "1rem" }}>
+    <Table.Cell colSpan={colSpan} className="p-4">
       {renderContent(row)}
     </Table.Cell>
   </Table.Row>

@@ -77,11 +77,11 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
   // Filter users based on search query (memoized for performance)
   const filteredUsers = useMemo(() => {
     const query = searchQuery.toLowerCase()
-    return availableUsers.filter(
-      (user) =>
-        user?.name?.toLowerCase().includes(query) ||
-        user?.email?.toLowerCase().includes(query)
-    )
+    return availableUsers.filter((user) => {
+      const name = user?.name?.toLowerCase() ?? ""
+      const email = user?.email?.toLowerCase() ?? ""
+      return name.includes(query) || email.includes(query)
+    })
   }, [availableUsers, searchQuery])
 
   // Handle user selection/deselection
@@ -143,20 +143,25 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
   // Get accessibility attributes
   const ariaAttributes = getAriaAttributes()
 
-  // Handle popover close
-  const handlePopoverClose = useCallback(() => {
-    if (isEditing) {
-      handleSave()
-    } else {
-      onCancelEdit()
-    }
-  }, [isEditing, handleSave, onCancelEdit])
+  // Track close reason to decide whether to save or cancel
+  const closeReasonRef = useRef<"escape" | "interactOutside" | null>(null)
+
+  const handlePopoverClose = useCallback(
+    (open: boolean) => {
+      if (!open) {
+        if (closeReasonRef.current === "escape") {
+          onCancelEdit()
+        } else {
+          handleSave()
+        }
+        closeReasonRef.current = null
+      }
+    },
+    [handleSave, onCancelEdit]
+  )
 
   return (
-    <Popover.Root
-      open={isEditing}
-      onOpenChange={(open) => !open && handlePopoverClose()}
-    >
+    <Popover.Root open={isEditing} onOpenChange={handlePopoverClose}>
       <Popover.Trigger>
         <Box
           ref={(el) => {
@@ -186,6 +191,12 @@ export const EditablePeopleCell: React.FC<EditablePeopleCellProps> = ({
       <Popover.Content
         className="max-h-[480px] w-[360px] rounded-lg border border-gray-6 bg-white p-2 shadow-lg dark:border-gray-7 dark:bg-gray-2"
         sideOffset={8}
+        onEscapeKeyDown={() => {
+          closeReasonRef.current = "escape"
+        }}
+        onInteractOutside={() => {
+          closeReasonRef.current = "interactOutside"
+        }}
       >
         {/* Search input */}
         <Box className="border-gray-6 border-b p-4 dark:border-gray-7">
