@@ -85,11 +85,7 @@ const TablePaginationComponent: React.FC<TablePaginationProps> = ({
             </Select.Content>
           </Select.Root>
         </Flex>
-        <Text size="2" color="gray">
-          {useMemo(() => {
-            return `Page ${paginationInfo.currentPage + 1} of ${paginationInfo.totalPages || 1}`
-          }, [paginationInfo.currentPage, paginationInfo.totalPages])}
-        </Text>
+        <Text size="2" color="gray">{pageText}</Text>
         <Pagination>
           <PaginationContent>
             <PaginationItem>
