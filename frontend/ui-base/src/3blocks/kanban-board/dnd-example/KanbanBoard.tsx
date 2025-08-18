@@ -85,7 +85,10 @@ export function DndKanbanBoard({
   // Only update when columnsData changes AND we're not in a drag operation
   useEffect(() => {
     if (!isDraggingRef.current) {
-      setColumns(columnsData)
+      // Add deep equality check to prevent unnecessary updates
+      if (JSON.stringify(columns) !== JSON.stringify(columnsData)) {
+        setColumns(columnsData)
+      }
     }
   }, [columnsData])
 

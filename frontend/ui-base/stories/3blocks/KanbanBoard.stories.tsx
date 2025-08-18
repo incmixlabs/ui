@@ -2,52 +2,19 @@ import { Board } from "../../src/3blocks/kanban-board/board"
 import { ListBoard } from "../../src/3blocks/kanban-board/list"
 import { TableView } from "../../src/3blocks/kanban-board/table"
 import { DndKanbanBoard } from "../../src/3blocks/kanban-board/dnd-example/KanbanBoard"
-import { initialData } from "../../src/3blocks/kanban-board/data"
+import { storybookData } from "../../src/3blocks/kanban-board/storybook-data"
 import { KanbanColumn } from "../../src/3blocks/kanban-board/types"
 
 import type { Meta, StoryObj } from "@storybook/react"
+import React from "react"
 
-// Mock data for stories
-const mockColumns: KanbanColumn[] = initialData.map((column, index) => ({
-  id: column.id,
-  projectId: "storybook-project",
-  name: column.name,
-  color: ["#3b82f6", "#f59e0b", "#10b981"][index] || "#6b7280",
-  order: index,
-  description: `${column.name} column for project tasks`,
-  isDefault: index === 0,
-  createdAt: Date.now() - 86400000 * (3 - index), // Created 1-3 days ago
-  updatedAt: Date.now() - 3600000 * index, // Updated 0-2 hours ago
-  createdBy: {
-    id: "user-1",
-    name: "John Doe",
-    image: "/api/placeholder/32/32",
-  },
-  updatedBy: {
-    id: "user-1", 
-    name: "John Doe",
-    image: "/api/placeholder/32/32",
-  },
-  tasks: column.tasks.map((task, taskIndex) => ({
-    ...task,
-    statusId: column.id,
-    priorityId: ["high", "medium", "low"][taskIndex % 3],
-    createdAt: Date.now() - 86400000 * taskIndex,
-    updatedAt: Date.now() - 3600000 * taskIndex,
-    createdBy: {
-      id: "user-1",
-      name: "John Doe",
-    },
-    updatedBy: {
-      id: "user-1",
-      name: "John Doe", 
-    },
-  })),
-  completedTasksCount: column.tasks.filter(t => t.completed).length,
-  totalTasksCount: column.tasks.length,
-  progressPercentage: Math.round(
-    (column.tasks.filter(t => t.completed).length / column.tasks.length) * 100
-  ),
+// Use comprehensive storybook data that matches RxDB schema
+const mockColumns: KanbanColumn[] = storybookData.kanbanColumns
+const priorityLabels = storybookData.priorityLabels.map(label => ({
+  id: label.id,
+  label: label.name,
+  name: label.name,
+  color: label.color,
 }))
 
 const meta: Meta<typeof Board> = {
@@ -103,24 +70,20 @@ export const DndExample: Story = {
     <div style={{ height: "100vh", padding: "1rem" }}>
       <DndKanbanBoard
         columnsData={mockColumns}
-        priorityLabels={[
-          { id: "high", name: "High Priority", color: "#ef4444" },
-          { id: "medium", name: "Medium Priority", color: "#f59e0b" },
-          { id: "low", name: "Low Priority", color: "#10b981" },
-        ]}
-        onCreateTask={(columnId, taskData) => {
+        priorityLabels={priorityLabels}
+        onCreateTask={async (columnId, taskData) => {
           console.log("Create task:", { columnId, taskData })
         }}
-        onUpdateTask={(taskId, updates) => {
+        onUpdateTask={async (taskId, updates) => {
           console.log("Update task:", { taskId, updates })
         }}
-        onDeleteTask={(taskId) => {
+        onDeleteTask={async (taskId) => {
           console.log("Delete task:", taskId)
         }}
-        onUpdateColumn={(columnId, updates) => {
+        onUpdateColumn={async (columnId, updates) => {
           console.log("Update column:", { columnId, updates })
         }}
-        onDeleteColumn={(columnId) => {
+        onDeleteColumn={async (columnId) => {
           console.log("Delete column:", columnId)
         }}
         isDragging={false}
