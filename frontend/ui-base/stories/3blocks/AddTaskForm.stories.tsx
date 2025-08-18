@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react-vite"
+import type { Meta, StoryObj } from "@storybook/react"
 import * as React from "react"
 import { AddTaskForm } from "../../src/3blocks/kanban-board/shared/add-task-form"
 import { TaskCopyBufferProvider } from "../../src/3blocks/kanban-board/hooks/use-task-copy-buffer"
