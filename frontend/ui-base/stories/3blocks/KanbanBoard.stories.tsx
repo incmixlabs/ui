@@ -86,7 +86,6 @@ export const DndExample: Story = {
         onDeleteColumn={async (columnId) => {
           console.log("Delete column:", columnId)
         }}
-        isDragging={false}
         onTaskOpen={(taskId) => {
           console.log("Open task:", taskId)
         }}

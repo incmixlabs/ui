@@ -1,8 +1,6 @@
 import {
   Badge,
   Box,
-  Button,
-  Card,
   DropdownMenu,
   Flex,
   Heading,
@@ -15,18 +13,14 @@ import type { UniqueIdentifier } from "@dnd-kit/core"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { cva } from "class-variance-authority"
-import type { KanbanColumn, KanbanTask } from "../types"
-
-import { isSafari } from "@/utils/browser"
-import { isShallowEqual } from "@incmix/utils/objects"
+import type {  KanbanTask } from "../types"
 
 import { cn } from "@/utils/cn"
-import { useAppearanceStore } from "@incmix/store"
 import type { TaskDataSchema } from "@incmix/utils/schema"
 import { nanoid } from "nanoid"
 import { useCallback, useState } from "react"
 import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
-import { getPriorityConfig, getPriorityInfo } from "../priority-config"
+import { getPriorityConfig } from "../priority-config"
 import type { PriorityLabel } from "../priority-config"
 import { ModalPresets } from "../shared/confirmation-modal"
 import { RefUrlSummary } from "../shared/ref-url-summary"
@@ -107,7 +101,6 @@ export function TaskCard({
       if (!task.id) return
 
       // Simple direct approach - just open the drawer
-      console.log("Opening task drawer for:", task.id)
       handleDrawerOpen(task.id)
 
       // If onTaskOpen exists, call it after handleDrawerOpen
@@ -261,7 +254,7 @@ export function TaskCard({
         <Box
           onClick={handleTaskClick}
           onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === "Space") {
+            if (e.key === "Enter" || e.key === " " || e.code === "Space") {
               e.preventDefault()
               handleTaskClick(e as unknown as React.MouseEvent)
             }
@@ -278,14 +271,14 @@ export function TaskCard({
             <Flex justify="between" align="start" className="-mt-1 gap-2">
               <Flex align="center" gap="2" className="min-w-0 flex-1">
                 {/* Priority indicator */}
-                {task.priorityId && (
+                {task.priorityId && priorityInfo && (
                   <Badge
                     size="1"
                     color="gray"
                     variant="soft"
-                    className={`px-2 py-0.5 ${getPriorityInfo(task.priorityId).color}`}
+                    className={`px-2 py-0.5 ${priorityInfo.color}`}
                   >
-                    {getPriorityInfo(task.priorityId).label}
+                    {priorityInfo.label}
                   </Badge>
                 )}
 
@@ -489,6 +482,7 @@ export function TaskCard({
                         className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-7 bg-gray-5 text-gray-11"
                         style={{ zIndex: 3 - index }}
                         title={member.name}
+                        aria-label={`Assignee: ${member.name}`}
                       >
                         {member.name
                           .split(" ")
