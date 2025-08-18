@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Card,
   DropdownMenu,
   Flex,
   Heading,
@@ -549,7 +548,7 @@ export function DndBoardColumn({
                 />
                 <Flex justify={"between"}>
                   <Flex align="center" gap="2" className="items-start">
-                    <div className="relative" ref={colorPickerRef}>
+                    <Box className="relative" ref={colorPickerRef}>
                       <Button
                         variant="solid"
                         className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
@@ -557,7 +556,7 @@ export function DndBoardColumn({
                         onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
                       />
                       {isColorPickerOpen && (
-                        <div
+                        <Box
                           className="absolute z-50 mt-1"
                           style={{ minWidth: "240px" }}
                         >
@@ -569,9 +568,9 @@ export function DndBoardColumn({
                             }}
                             activeColor={editColumnColor}
                           />
-                        </div>
+                        </Box>
                       )}
-                    </div>
+                    </Box>
                     {/* <Text size="1" className="text-gray-500">
                       Column color
                     </Text> */}
@@ -669,7 +668,7 @@ export function DndBoardColumn({
             ))}
           </SortableContext>
           {/* Add Task Section - At bottom of content */}
-          <div className="rounded-b-lg px-3 pb-3">
+          <Box className="rounded-b-lg px-3 pb-3">
             {isCreatingTask ? (
               <QuickTaskForm
                 columnId={column.id}
@@ -688,7 +687,7 @@ export function DndBoardColumn({
                 <Text className="sr-only">Add a task</Text>
               </Button>
             )}
-          </div>
+          </Box>
         </Box>
       </Box>
     </>
@@ -713,9 +712,9 @@ export function BoardContainer({ children }: { children: React.ReactNode }) {
         dragging: dndContext.active ? "active" : "default",
       })}
     >
-      <div className="flex flex-row items-start justify-center gap-4">
+      <Box className="flex flex-row items-start justify-center gap-4">
         {children}
-      </div>
+      </Box>
     </ScrollArea>
   )
 }
