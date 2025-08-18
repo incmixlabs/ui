@@ -139,11 +139,11 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
     <React.Fragment>
       <Table.Row
         data-state={row.getIsSelected() && "selected"}
-        className={
+        className={`border-gray-2 border-b ${
           onRowClick || expandableRows?.expandOnClick
             ? "cursor-pointer"
             : "cursor-default"
-        }
+        }`}
         onClick={handleRowClick}
         role={enableInlineCellEdit ? "row" : undefined}
         aria-rowindex={rowIndex !== undefined ? rowIndex + 1 : undefined}
