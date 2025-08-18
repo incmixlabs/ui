@@ -31,9 +31,17 @@ function TableHeaderComponent<TData>({
                 col.id === header.id
             )
 
+            // Special styling for the checkbox column to match body
+            const isSelectColumn = header.id === "select"
+
             return (
               <Table.HeaderCell
                 key={header.id}
+                className={
+                  isSelectColumn
+                    ? "overflow-hidden py-1.5 pr-0 pl-3"
+                    : "overflow-hidden px-2 py-1.5"
+                }
                 style={{
                   width: columnDef?.width,
                   minWidth: columnDef?.minWidth,
