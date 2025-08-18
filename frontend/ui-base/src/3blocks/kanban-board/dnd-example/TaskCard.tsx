@@ -13,7 +13,7 @@ import type { UniqueIdentifier } from "@dnd-kit/core"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { cva } from "class-variance-authority"
-import type {  KanbanTask } from "../types"
+import type { KanbanTask } from "../types"
 
 import { cn } from "@/utils/cn"
 import type { TaskDataSchema } from "@incmix/utils/schema"
