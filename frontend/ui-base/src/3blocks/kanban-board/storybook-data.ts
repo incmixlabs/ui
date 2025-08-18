@@ -117,7 +117,7 @@ const users = {
     image: "/api/placeholder/32/32",
   },
   jane: {
-    id: "user-jane", 
+    id: "user-jane",
     name: "Jane Smith",
     image: "/api/placeholder/32/32",
   },
@@ -144,7 +144,7 @@ export const mockStatusLabels: LabelData[] = [
     updatedBy: users.john,
   },
   {
-    id: "status-inprogress", 
+    id: "status-inprogress",
     projectId: "storybook-project",
     type: "status",
     name: "In Progress",
@@ -158,7 +158,7 @@ export const mockStatusLabels: LabelData[] = [
   },
   {
     id: "status-review",
-    projectId: "storybook-project", 
+    projectId: "storybook-project",
     type: "status",
     name: "Review",
     color: "#f59e0b",
@@ -172,7 +172,7 @@ export const mockStatusLabels: LabelData[] = [
   {
     id: "status-done",
     projectId: "storybook-project",
-    type: "status", 
+    type: "status",
     name: "Done",
     color: "#10b981",
     order: 3,
@@ -202,7 +202,7 @@ export const mockPriorityLabels: LabelData[] = [
   {
     id: "priority-medium",
     projectId: "storybook-project",
-    type: "priority", 
+    type: "priority",
     name: "Medium",
     color: "#f59e0b",
     order: 1,
@@ -216,7 +216,7 @@ export const mockPriorityLabels: LabelData[] = [
     id: "priority-high",
     projectId: "storybook-project",
     type: "priority",
-    name: "High", 
+    name: "High",
     color: "#ef4444",
     order: 2,
     description: "High priority tasks",
@@ -230,7 +230,7 @@ export const mockPriorityLabels: LabelData[] = [
     projectId: "storybook-project",
     type: "priority",
     name: "Urgent",
-    color: "#dc2626", 
+    color: "#dc2626",
     order: 3,
     description: "Urgent priority tasks",
     createdAt: baseTime - 3 * dayMs,
@@ -247,14 +247,15 @@ export const mockTasks: TaskData[] = [
     id: "task-1",
     projectId: "storybook-project",
     name: "Design System Documentation",
-    statusId: "status-todo", 
+    statusId: "status-todo",
     priorityId: "priority-high",
     parentTaskId: null,
     isSubtask: false,
     taskOrder: 0,
     startDate: baseTime + dayMs,
     endDate: baseTime + 5 * dayMs,
-    description: "Create comprehensive documentation for the design system including components, patterns, and guidelines.",
+    description:
+      "Create comprehensive documentation for the design system including components, patterns, and guidelines.",
     acceptanceCriteria: [
       {
         id: "ac-1",
@@ -263,7 +264,7 @@ export const mockTasks: TaskData[] = [
         order: 0,
       },
       {
-        id: "ac-2", 
+        id: "ac-2",
         text: "Usage guidelines written",
         checked: false,
         order: 1,
@@ -288,7 +289,7 @@ export const mockTasks: TaskData[] = [
       {
         id: "ref-1",
         url: "https://www.figma.com/design/example",
-        title: "Design System Mockups", 
+        title: "Design System Mockups",
         type: "figma",
       },
     ],
@@ -315,7 +316,7 @@ export const mockTasks: TaskData[] = [
       },
       {
         id: "subtask-2",
-        name: "Write component specs", 
+        name: "Write component specs",
         completed: false,
         order: 1,
       },
@@ -323,7 +324,8 @@ export const mockTasks: TaskData[] = [
     comments: [
       {
         id: "comment-1",
-        content: "Started working on the component audit. Found several components that need better documentation.",
+        content:
+          "Started working on the component audit. Found several components that need better documentation.",
         createdAt: baseTime - 2 * hourMs,
         createdBy: users.jane,
       },
@@ -335,7 +337,7 @@ export const mockTasks: TaskData[] = [
   },
   {
     id: "task-2",
-    projectId: "storybook-project", 
+    projectId: "storybook-project",
     name: "API Integration Tests",
     statusId: "status-todo",
     priorityId: "priority-medium",
@@ -349,13 +351,13 @@ export const mockTasks: TaskData[] = [
     refUrls: [],
     labelsTags: [
       {
-        value: "backend", 
+        value: "backend",
         label: "Backend",
         color: "#06b6d4",
       },
       {
         value: "testing",
-        label: "Testing", 
+        label: "Testing",
         color: "#84cc16",
       },
     ],
@@ -381,7 +383,7 @@ export const mockTasks: TaskData[] = [
   {
     id: "task-3",
     projectId: "storybook-project",
-    name: "User Dashboard Redesign", 
+    name: "User Dashboard Redesign",
     statusId: "status-inprogress",
     priorityId: "priority-high",
     parentTaskId: null,
@@ -389,7 +391,8 @@ export const mockTasks: TaskData[] = [
     taskOrder: 0,
     startDate: baseTime - dayMs,
     endDate: baseTime + 3 * dayMs,
-    description: "Redesign the user dashboard with improved UX and modern design patterns.",
+    description:
+      "Redesign the user dashboard with improved UX and modern design patterns.",
     acceptanceCriteria: [
       {
         id: "ac-3",
@@ -398,7 +401,7 @@ export const mockTasks: TaskData[] = [
         order: 0,
       },
       {
-        id: "ac-4", 
+        id: "ac-4",
         text: "Accessibility standards met",
         checked: false,
         order: 1,
@@ -434,7 +437,7 @@ export const mockTasks: TaskData[] = [
       },
       {
         id: "ref-3",
-        url: "https://example.com/inspiration", 
+        url: "https://example.com/inspiration",
         title: "Design Inspiration",
         type: "external",
       },
@@ -463,14 +466,16 @@ export const mockTasks: TaskData[] = [
     ],
     comments: [
       {
-        id: "comment-2", 
-        content: "The responsive layout is looking great! Just need to finish the accessibility improvements.",
+        id: "comment-2",
+        content:
+          "The responsive layout is looking great! Just need to finish the accessibility improvements.",
         createdAt: baseTime - 4 * hourMs,
         createdBy: users.john,
       },
       {
         id: "comment-3",
-        content: "Added focus states and improved keyboard navigation. Testing with screen readers next.",
+        content:
+          "Added focus states and improved keyboard navigation. Testing with screen readers next.",
         createdAt: baseTime - 2 * hourMs,
         createdBy: users.jane,
       },
@@ -493,7 +498,8 @@ export const mockTasks: TaskData[] = [
     taskOrder: 0,
     startDate: baseTime - 5 * dayMs,
     endDate: baseTime - dayMs,
-    description: "Integrate Stripe payment system with proper error handling and security measures.",
+    description:
+      "Integrate Stripe payment system with proper error handling and security measures.",
     acceptanceCriteria: [
       {
         id: "ac-5",
@@ -520,7 +526,7 @@ export const mockTasks: TaskData[] = [
     labelsTags: [
       {
         value: "backend",
-        label: "Backend", 
+        label: "Backend",
         color: "#06b6d4",
       },
       {
@@ -540,7 +546,8 @@ export const mockTasks: TaskData[] = [
     comments: [
       {
         id: "comment-4",
-        content: "Payment integration is complete and tested. Ready for security review.",
+        content:
+          "Payment integration is complete and tested. Ready for security review.",
         createdAt: baseTime - 6 * hourMs,
         createdBy: users.mike,
       },
@@ -563,7 +570,8 @@ export const mockTasks: TaskData[] = [
     taskOrder: 0,
     startDate: baseTime - 10 * dayMs,
     endDate: baseTime - 3 * dayMs,
-    description: "Upgrade authentication system with 2FA and improved security features.",
+    description:
+      "Upgrade authentication system with 2FA and improved security features.",
     acceptanceCriteria: [
       {
         id: "ac-8",
@@ -618,7 +626,8 @@ export const mockTasks: TaskData[] = [
     comments: [
       {
         id: "comment-5",
-        content: "All security features implemented and tested successfully. Great work!",
+        content:
+          "All security features implemented and tested successfully. Great work!",
         createdAt: baseTime - 3 * dayMs,
         createdBy: users.john,
       },
@@ -631,7 +640,10 @@ export const mockTasks: TaskData[] = [
 ]
 
 // Combined labels for convenience
-export const mockLabels: LabelData[] = [...mockStatusLabels, ...mockPriorityLabels]
+export const mockLabels: LabelData[] = [
+  ...mockStatusLabels,
+  ...mockPriorityLabels,
+]
 
 // Transform schema data to KanbanColumn format for stories
 export function transformToKanbanColumns(
@@ -651,7 +663,9 @@ export function transformToKanbanColumns(
           priorityId: task.priorityId,
         }))
 
-      const completedTasksCount = columnTasks.filter((task) => task.completed).length
+      const completedTasksCount = columnTasks.filter(
+        (task) => task.completed
+      ).length
       const totalTasksCount = columnTasks.length
       const progressPercentage =
         totalTasksCount > 0
