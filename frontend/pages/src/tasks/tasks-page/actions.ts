@@ -1,4 +1,4 @@
-import type { ColumnDocType, TaskDocType } from "@incmix/store"
+import type { TaskDocType } from "@incmix/store"
 import type { NestedColumns } from "@incmix/utils/types"
 import type { RxDocument } from "rxdb"
 

@@ -60,8 +60,9 @@ function App() {
   const { authUser, isLoading } = useAuth()
 
   const router = useMemo(() => {
+    // Only rebuild router when auth state actually changes meaningfully
     return buildRouteTree(authUser, isLoading)
-  }, [authUser, isLoading])
+  }, [authUser?.isSuperAdmin, authUser?.id, isLoading])
 
   useEffect(() => {
     const root = document.documentElement
