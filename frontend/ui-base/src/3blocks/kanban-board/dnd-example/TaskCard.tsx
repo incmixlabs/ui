@@ -441,8 +441,8 @@ export function TaskCard({
                     {Math.round(progressPercentage)}%
                   </Text>
                 </Flex>
-                <div className="h-1.5 w-full rounded-full bg-gray-6">
-                  <div
+                <Box className="h-1.5 w-full rounded-full bg-gray-6">
+                  <Box
                     className={cn(
                       "h-1.5 rounded-full transition-all duration-300",
                       progressPercentage === 100
@@ -451,7 +451,7 @@ export function TaskCard({
                     )}
                     style={{ width: `${progressPercentage}%` }}
                   />
-                </div>
+                </Box>
               </Box>
             )}
 
@@ -484,7 +484,7 @@ export function TaskCard({
                 {task.assignedTo && task.assignedTo.length > 0 && (
                   <Flex align="center" className="-space-x-2">
                     {task.assignedTo.slice(0, 3).map((member, index) => (
-                      <div
+                      <Box
                         key={member.id}
                         className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-7 bg-gray-5 text-gray-11"
                         style={{ zIndex: 3 - index }}
@@ -496,12 +496,12 @@ export function TaskCard({
                           .join("")
                           .toUpperCase()
                           .slice(0, 2)}
-                      </div>
+                      </Box>
                     ))}
                     {task.assignedTo.length > 3 && (
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-7 bg-gray-3 font-medium text-gray-11 text-xs">
+                      <Box className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-7 bg-gray-3 font-medium text-gray-11 text-xs">
                         +{task.assignedTo.length - 3}
-                      </div>
+                      </Box>
                     )}
                   </Flex>
                 )}
