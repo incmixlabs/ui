@@ -149,9 +149,9 @@ export function ReusableAddProject({
 
       // Transform and validate form data
       const transformedData = {
-        // Handle budget: convert string to number
-        budget: data.budget ? parseFloat(String(data.budget).replace(/[^0-9.-]/g, '')) || 0 : 0,
-        
+        // Handle budget: ensure it's a number
+        budget: typeof data.budget === 'number' ? data.budget : parseFloat(data.budget) || 0,
+
         // Handle files: extract File object from form data
         fileData: (() => {
           if (data.files) {
@@ -169,7 +169,7 @@ export function ReusableAddProject({
           }
           return null
         })(),
-        
+
         // Handle members array
         members: data.members?.map((option: Option) => ({
           label: option.label || option.value || "",
@@ -185,8 +185,8 @@ export function ReusableAddProject({
         logo: "", // Default empty logo
         description: data.description || "",
         progress: 0,
-        timeLeft: data.timeLeft || "2 weeks",
-        timeType: data.timeType || "week",
+        timeLeft: `${data.timeLeft || 2} ${data.timeType || "week"}`,
+        timeType: data.timeLeft ? data.timeType || "week" : "week",
         status: data.status || "started",
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -199,7 +199,7 @@ export function ReusableAddProject({
       // Save to RxDB
       await saveFormProject(newProject )
 
-      //await saveProjectToBackend(newProject);
+      await saveProjectToBackend(newProject);
 
       toast.success("Project created successfully", {
         description: `"${newProject.name}" has been added to your projects.`,
