@@ -10,6 +10,7 @@
 @import "../../radix-ui/tokens/colors/red.css";
 @import "../../radix-ui/tokens/colors/pink.css";
 @import "../../radix-ui/tokens/colors/purple.css";
+@import "../../radix-ui/tokens/colors/violet.css";
 @import "../../radix-ui/tokens/colors/indigo.css";
 @import "../../radix-ui/tokens/colors/violet.css";
 @import "../../radix-ui/tokens/colors/blue.css";
@@ -17,6 +18,7 @@
 @import "../../radix-ui/tokens/colors/green.css";
 @import "../../radix-ui/tokens/colors/lime.css";
 @import "../../radix-ui/tokens/colors/mint.css";
+@import "../../radix-ui/tokens/colors/sky.css";
 
 @import "../../radix-ui/tokens/colors/slate.css";
 /* Rest of the CSS */

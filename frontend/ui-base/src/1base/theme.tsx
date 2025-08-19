@@ -15,6 +15,7 @@ const accentColors = [
   "green",
   "lime",
   "mint",
+  "sky"
 ] as const
 
 const grayColors = ["auto", "slate"] as const
