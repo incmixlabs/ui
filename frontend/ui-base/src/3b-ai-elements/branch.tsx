@@ -144,6 +144,7 @@ export const BranchPrevious = ({
 
   return (
     <IconButton
+      className={className}
       aria-label="Previous branch"
       disabled={totalBranches <= 1}
       onClick={goToPrevious}
@@ -154,6 +155,7 @@ export const BranchPrevious = ({
       {children ?? <ChevronLeftIcon size={14} />}
     </IconButton>
   )
+}
 }
 
 export type BranchNextProps = ComponentProps<typeof Button>
