@@ -167,6 +167,7 @@ export const BranchNext = ({
 
   return (
     <IconButton
+      className={className}
       aria-label="Next branch"
       disabled={totalBranches <= 1}
       onClick={goToNext}
@@ -176,6 +177,7 @@ export const BranchNext = ({
       {children ?? <ChevronRightIcon size={14} />}
     </IconButton>
   )
+}
 }
 
 export type BranchPageProps = HTMLAttributes<HTMLSpanElement>
