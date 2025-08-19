@@ -24,18 +24,14 @@ export function OrgSwitcher() {
     }
   }, [selectedOrganisation, organizations, setSelectedOrganisation])
 
-  const hasAttemptedRef = React.useRef(false)
   React.useEffect(() => {
-    if (
-      !organizations?.length &&
-      !isLoading &&
-      !isCreatingOrganization &&
-      !hasAttemptedRef.current
-    ) {
-      const username = authUser?.email?.split("@")[0]
-      if (username && username.length > 0) {
-        hasAttemptedRef.current = true
-        handleCreateOrganization(username, username, [])
+    if (!organizations?.length && !isLoading) {
+      const email = authUser?.email
+      if (email && typeof email === "string" && email.length > 0) {
+        const username = email.split("@")[0]
+        if (username && username.length > 0) {
+          handleCreateOrganization(username, username, [])
+        }
       }
     }
   }, [
