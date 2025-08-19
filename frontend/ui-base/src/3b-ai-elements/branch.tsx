@@ -1,6 +1,6 @@
 "use client"
 
-import { type Button, IconButton } from "@/base"
+import { IconButton } from "@/base"
 import { cn } from "@/utils/cn"
 import type { UIMessage } from "ai"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
@@ -37,6 +37,7 @@ export const Branch = ({
   defaultBranch = 0,
   onBranchChange,
   className,
+  children,
   ...props
 }: BranchProps) => {
   const [currentBranch, setCurrentBranch] = useState(defaultBranch)
@@ -73,7 +74,9 @@ export const Branch = ({
       <div
         className={cn("grid w-full gap-2 [&>div]:pb-0", className)}
         {...props}
-      />
+      >
+        {children}
+      </div>
     </BranchContext.Provider>
   )
 }
@@ -133,7 +136,7 @@ export const BranchSelector = ({
   )
 }
 
-export type BranchPreviousProps = ComponentProps<typeof Button>
+export type BranchPreviousProps = ComponentProps<typeof IconButton>
 
 export const BranchPrevious = ({
   className,
@@ -156,9 +159,9 @@ export const BranchPrevious = ({
     </IconButton>
   )
 }
-}
 
-export type BranchNextProps = ComponentProps<typeof Button>
+
+export type BranchNextProps = ComponentProps<typeof IconButton>
 
 export const BranchNext = ({
   className,
@@ -180,7 +183,7 @@ export const BranchNext = ({
     </IconButton>
   )
 }
-}
+
 
 export type BranchPageProps = HTMLAttributes<HTMLSpanElement>
 
