@@ -654,15 +654,6 @@ export const ListTaskCard = memo(function ListTaskCard({
           const sourceData = source.data
           const sourceCard = sourceData.card as KanbanTask
 
-          // Determine if the source card is a parent task with subtasks
-          const _sourceHasSubtasks =
-            !sourceCard.isSubtask &&
-            columns.some((col) =>
-              col.tasks.some(
-                (t: KanbanTask) => t.parentTaskId === sourceCard.id
-              )
-            )
-
           // Extract edge information with proper TypeScript typing
           // Define allowed edge types to match the Edge type from the drag-and-drop library
           type Edge = "top" | "right" | "bottom" | "left"
@@ -729,15 +720,6 @@ export const ListTaskCard = memo(function ListTaskCard({
 
           // Get the source card with proper typing
           const sourceCard = source.data.card as KanbanTask
-
-          // Detect if the dragged task has subtasks
-          const _sourceHasSubtasks =
-            !sourceCard.isSubtask &&
-            columns.some((col) =>
-              col.tasks.some(
-                (t: KanbanTask) => t.parentTaskId === sourceCard.id
-              )
-            )
 
           // Enhanced edge detection for parent tasks with subtasks
           // Make it easier to drop tasks above parent tasks with subtasks
