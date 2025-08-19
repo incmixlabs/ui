@@ -4,6 +4,7 @@
   "compilerOptions": {
     "types": ["vite/client"],
     "baseUrl": "./src",
+    "rootDir": ".",
     "paths": {
       "@/*": ["./*"],
       "@hooks": ["./hooks/"],

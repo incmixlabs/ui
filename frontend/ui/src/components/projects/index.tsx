@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { nanoid } from "nanoid";
 import { useQueryState } from "nuqs";
 
-import { saveFormProject } from "@incmix/store";
+import { saveFormProject, useOrganizationStore } from "@incmix/store";
 import {
   Box,
   Button,
@@ -58,6 +58,7 @@ const ProjectFilter = lazy(() =>
  * @returns The React element representing the project management page.
  */
 export function ProjectPageComponents() {
+  const { selectedOrganisation } = useOrganizationStore();
   const [projectId, setProjectId] = useQueryState("projectId", {
     defaultValue: "",
   });
@@ -88,10 +89,17 @@ export function ProjectPageComponents() {
     // Create the project with ID
     const uniqueId = nanoid();
 
+    if (!selectedOrganisation) {
+      toast.error("No organisation selected", {
+        description: "Please create or select an organisation first.",
+      });
+      return;
+    }
     // Create the project with a unique ID
     const projectWithId = {
       ...newProject,
       id: uniqueId, // Use our simple unique ID instead of array length
+      orgId: selectedOrganisation.id,
     };
 
     try {

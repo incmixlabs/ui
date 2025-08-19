@@ -14,7 +14,6 @@ import {
   Card,
   Flex,
   ListBoard,
-  PageHeader,
   RoadmapView,
   Switch,
   TableView,
@@ -22,7 +21,7 @@ import {
 } from "@incmix/ui"
 import { CardContent } from "@incmix/ui/card"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 
 /**
  * Convert from database project format to Project type expected by project store

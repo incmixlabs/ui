@@ -13,10 +13,11 @@ export function useProjectMutation() {
         throw new Error("No organisation selected");
       }
       const formData = new FormData();
-      formData.append("name", project.name || "");
+      formData.append("id", project.id);
+      formData.append("name", project.name);
       formData.append("orgId", selectedOrganisation.id);
-      formData.append("description", project.description || "");
-      formData.append("status", project.status || "");
+      formData.append("description", project.description);
+      formData.append("status", project.status);
       if (project.startDate) {
         formData.append("startDate", new Date(project.startDate).toISOString());
       }
@@ -24,7 +25,7 @@ export function useProjectMutation() {
         formData.append("endDate", new Date(project.endDate).toISOString());
       }
       formData.append("budget", project.budget != null ? String(project.budget) : "");
-      formData.append("company", project.company || "");
+      formData.append("company", project.company);
       // If project.logo is a File or Blob, append it; otherwise, append empty string
       if (project.fileData instanceof File) {
         formData.append("logo", project.fileData);

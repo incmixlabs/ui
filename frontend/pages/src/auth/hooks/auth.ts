@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { useTranslation } from "react-i18next"
 
 import { I18n } from "@incmix/pages/i18n"
@@ -22,27 +22,90 @@ import { listen } from "@tauri-apps/api/event"
 import { toast } from "sonner"
 
 export const useAuth = () => {
+  const hasFailedRef = useRef(false)
+  const errorCountRef = useRef(0)
+
   const { data, isLoading, isError, fetchStatus } = useQuery({
     queryKey: ["user", I18n.language],
     queryFn: async () => {
-      const res = await fetch(`${AUTH_API_URL}`, {
-        credentials: "include",
-        headers: {
-          "Accept-Language": I18n.language ?? "en",
-        },
-      })
-      if (!res.ok) return null
-      return res.json() as Promise<AuthUserSession>
+      // If we've already failed multiple times, don't retry
+      if (hasFailedRef.current || errorCountRef.current >= 3) {
+        return null
+      }
+
+      try {
+        const res = await fetch(`${AUTH_API_URL}`, {
+          credentials: "include",
+          headers: {
+            "Accept-Language": I18n.language ?? "en",
+          },
+        })
+        if (!res.ok) {
+          errorCountRef.current++
+          if (errorCountRef.current >= 3) {
+            hasFailedRef.current = true
+          }
+          return null
+        }
+        // Reset error count on success
+        errorCountRef.current = 0
+        return res.json() as Promise<AuthUserSession>
+      } catch (error) {
+        // Handle network errors (CORS, connection refused, etc.)
+        console.error("Auth request failed:", error)
+        errorCountRef.current++
+        if (errorCountRef.current >= 3) {
+          hasFailedRef.current = true
+        }
+        return null
+      }
     },
     retry: false,
+    retryOnMount: false,
+    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    enabled: !hasFailedRef.current, // Disable query if we've already failed
   })
 
   const authUser = isError || !data ? null : data
 
+  // Reset failure state when we get successful auth data
+  useEffect(() => {
+    if (data && !isError) {
+      hasFailedRef.current = false
+      errorCountRef.current = 0
+    }
+  }, [data, isError])
+
+  // Prevent infinite loops by not re-fetching on errors
+  useEffect(() => {
+    if (isError) {
+      console.warn("Auth query failed, preventing further retries")
+      errorCountRef.current++
+      if (errorCountRef.current >= 3) {
+        hasFailedRef.current = true
+      }
+    }
+  }, [isError])
+
+  // Function to manually reset the failure state
+  const resetAuth = () => {
+    hasFailedRef.current = false
+    errorCountRef.current = 0
+  }
+
   // TODO: Enable this later
   // useRateLimits()
 
-  return { authUser: authUser, isLoading, isError, fetchStatus }
+  return {
+    authUser: authUser,
+    isLoading,
+    isError,
+    fetchStatus,
+    resetAuth,
+    hasFailed: hasFailedRef.current,
+  }
 }
 
 export const useUser = (userId: string) => {
@@ -130,7 +193,7 @@ export const useLogin = () => {
     },
     onSuccess: (data) => {
       if (data.verified) {
-        queryClient.setQueryData(["user"], data)
+        queryClient.setQueryData(["user", I18n.language], data)
         navigate({ to: "/dashboard" })
       } else {
         navigate({ to: "/welcome", search: { email: data.email } })
@@ -170,8 +233,8 @@ export const useLogout = () => {
       if (!response.ok) throw new Error(t("error.logout"))
     },
     onSuccess: () => {
-      queryClient.setQueryData(["user"], null)
-      queryClient.invalidateQueries({ queryKey: ["user"] })
+      queryClient.setQueryData(["user", I18n.language], null)
+      queryClient.invalidateQueries({ queryKey: ["user", I18n.language] })
     },
     onError: (error) => {
       const message = error instanceof Error ? error.message : t("error.logout")
@@ -210,10 +273,11 @@ export const useProfileUpdate = (userId: string) => {
       return response.json()
     },
     onSuccess: (data: any) => {
-      queryClient.setQueryData(["user"], (oldData: UserProfile) => ({
-        ...oldData,
-        name: data?.name,
-      }))
+      queryClient.setQueryData(
+        ["user", I18n.language],
+        (oldData: UserProfile | null | undefined) =>
+          oldData ? { ...oldData, name: data?.name } : oldData
+      )
     },
     onError: (error) => {
       const message =
@@ -281,7 +345,7 @@ export const useProfilePicture = (userId: string) => {
       return response.json()
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] })
+      queryClient.invalidateQueries({ queryKey: ["user", I18n.language] })
     },
     onError: (error) => {
       const message =
@@ -308,7 +372,7 @@ export const useProfilePicture = (userId: string) => {
       return updateResponse.json()
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user"] })
+      queryClient.invalidateQueries({ queryKey: ["user", I18n.language] })
     },
   })
 
@@ -352,9 +416,11 @@ export const useGoogleAuthCallback = (state: string, code: string) => {
 
   const isLoggedIn = !isLoading && !isError
 
-  if (isLoggedIn) {
-    queryClient.invalidateQueries({ queryKey: ["user"] })
-  }
+  useEffect(() => {
+    if (isLoggedIn) {
+      queryClient.invalidateQueries({ queryKey: ["user", I18n.language] })
+    }
+  }, [isLoggedIn, I18n.language, queryClient])
 
   return { data, isLoading, isError, isLoggedIn, error }
 }

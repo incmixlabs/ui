@@ -1,11 +1,8 @@
 import * as React from "react"
 
-import {
-  useOrganizationStore,
-  useProjectStore,
-  useProjectsCheck,
-} from "@incmix/store"
-import { useOrganizations } from "@orgs/utils"
+import { useAuth } from "@auth"
+import { useOrganizationStore, useProjectStore } from "@incmix/store"
+import { useCreateOrganization, useOrganizations } from "@orgs/utils"
 import { Switcher, type SwitcherItem } from "./switcher"
 
 export function OrgSwitcher() {
@@ -13,6 +10,11 @@ export function OrgSwitcher() {
   const { selectedOrganisation, setSelectedOrganisation } =
     useOrganizationStore()
   const { setSelectedProject, selectedProject } = useProjectStore()
+
+  const { handleCreateOrganization, isCreatingOrganization } =
+    useCreateOrganization()
+
+  const { authUser } = useAuth()
 
   React.useEffect(() => {
     if (!selectedOrganisation) setSelectedOrganisation(organizations?.[0])
@@ -22,7 +24,24 @@ export function OrgSwitcher() {
     }
   }, [selectedOrganisation, organizations, setSelectedOrganisation])
 
-  if (isLoading) return <div>Loading...</div>
+  React.useEffect(() => {
+    if (!organizations?.length && !isLoading) {
+      const email = authUser?.email
+      if (email && typeof email === "string" && email.length > 0) {
+        const username = email.split("@")[0]
+        if (username && username.length > 0) {
+          handleCreateOrganization(username, username, [])
+        }
+      }
+    }
+  }, [
+    organizations?.length,
+    authUser?.email,
+    isLoading,
+    isCreatingOrganization,
+    handleCreateOrganization,
+  ])
+  if (isLoading || isCreatingOrganization) return <div>Loading...</div>
   if (!selectedOrganisation) return null
 
   return (
