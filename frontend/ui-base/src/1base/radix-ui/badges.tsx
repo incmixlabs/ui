@@ -6,9 +6,7 @@ interface BadgeComponentProps {
   themeColor: ThemeColor
 }
 
-export const BadgeComponent: React.FC<BadgeComponentProps> = ({
-  themeColor = "gray",
-}) => {
+export function BadgeComponent({ themeColor = "gray" }: BadgeComponentProps) {
   return (
     <div className="grid w-[30rem] place-content-center gap-5 space-y-4 px-10">
       <Badge
