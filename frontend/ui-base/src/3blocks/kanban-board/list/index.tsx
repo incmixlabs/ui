@@ -42,7 +42,7 @@ function shallowColumnsEqual(a: any[], b: any[]) {
 
 interface ListBoardProps {
   projectId?: string
-  
+
   // Optional override props for Storybook/testing
   mockData?: {
     columns: any[]
@@ -56,21 +56,28 @@ interface ListBoardProps {
     }
   }
   mockOperations?: {
-    onCreateTask?: (statusId: string, taskData: Partial<KanbanTask>) => Promise<void>
+    onCreateTask?: (
+      statusId: string,
+      taskData: Partial<KanbanTask>
+    ) => Promise<void>
     onUpdateTask?: (id: string, updates: Partial<KanbanTask>) => Promise<void>
     onDeleteTask?: (id: string) => Promise<void>
     onDuplicateTask?: (id: string) => Promise<void>
-    onMoveTask?: (id: string, targetStatusId: string, targetIndex?: number) => Promise<void>
+    onMoveTask?: (
+      id: string,
+      targetStatusId: string,
+      targetIndex?: number
+    ) => Promise<void>
     onUpdateStatusLabel?: (id: string, updates: any) => Promise<void>
     onDeleteStatusLabel?: (id: string) => Promise<void>
     onRefetch?: () => void
   }
 }
 
-export function ListBoard({ 
+export function ListBoard({
   projectId = "default-project",
   mockData,
-  mockOperations 
+  mockOperations,
 }: ListBoardProps) {
   // Get AI features state
   const { useAI } = useAIFeaturesStore()
@@ -108,7 +115,9 @@ export function ListBoard({
 
   // Determine data source - mock data takes precedence
   const columns = mockData ? mockColumns : hookData.columns
-  const priorityLabels = mockData ? mockData.priorityLabels : hookData.priorityLabels
+  const priorityLabels = mockData
+    ? mockData.priorityLabels
+    : hookData.priorityLabels
   const isLoading = mockData ? false : hookData.isLoading
   const error = mockData ? mockError : hookData.error
   const projectStats = mockData ? mockData.projectStats : hookData.projectStats
@@ -121,194 +130,267 @@ export function ListBoard({
   }, [mockData])
 
   // Mock operations - in-memory CRUD operations
-  const createTask = mockData ? async (statusId: string, taskData: Partial<KanbanTask>) => {
-    try {
-      if (mockOperations?.onCreateTask) {
-        await mockOperations.onCreateTask(statusId, taskData)
-      }
-      
-      const newTask: KanbanTask = {
-        id: `temp-${Date.now()}-${Math.random()}`,
-        name: taskData.name || "New Task",
-        statusId,
-        priorityId: taskData.priorityId || priorityLabels[0]?.id || "",
-        parentTaskId: taskData.parentTaskId || null,
-        isSubtask: taskData.isSubtask || false,
-        taskOrder: taskData.taskOrder || Date.now(),
-        description: taskData.description || "",
-        acceptanceCriteria: taskData.acceptanceCriteria || [],
-        checklist: taskData.checklist || [],
-        completed: taskData.completed || false,
-        refUrls: taskData.refUrls || [],
-        labelsTags: taskData.labelsTags || [],
-        attachments: taskData.attachments || [],
-        assignedTo: taskData.assignedTo || [],
-        subTasks: taskData.subTasks || [],
-        comments: taskData.comments || [],
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-        createdBy: taskData.createdBy || { id: "mock-user", name: "Mock User" },
-        updatedBy: taskData.updatedBy || { id: "mock-user", name: "Mock User" },
-        ...taskData
-      }
+  const createTask = mockData
+    ? async (statusId: string, taskData: Partial<KanbanTask>) => {
+        try {
+          if (mockOperations?.onCreateTask) {
+            await mockOperations.onCreateTask(statusId, taskData)
+          }
 
-      setMockColumns(prev => prev.map(col => 
-        col.id === statusId 
-          ? { ...col, tasks: [...col.tasks, newTask], totalTasksCount: col.totalTasksCount + 1 }
-          : col
-      ))
-    } catch (error) {
-      console.error("Mock create task error:", error)
-      setMockError(error instanceof Error ? error.message : "Failed to create task")
-    }
-  } : hookData.createTask
+          const newTask: KanbanTask = {
+            id: `temp-${Date.now()}-${Math.random()}`,
+            name: taskData.name || "New Task",
+            statusId,
+            priorityId: taskData.priorityId || priorityLabels[0]?.id || "",
+            parentTaskId: taskData.parentTaskId || null,
+            isSubtask: taskData.isSubtask || false,
+            taskOrder: taskData.taskOrder || Date.now(),
+            description: taskData.description || "",
+            acceptanceCriteria: taskData.acceptanceCriteria || [],
+            checklist: taskData.checklist || [],
+            completed: taskData.completed || false,
+            refUrls: taskData.refUrls || [],
+            labelsTags: taskData.labelsTags || [],
+            attachments: taskData.attachments || [],
+            assignedTo: taskData.assignedTo || [],
+            subTasks: taskData.subTasks || [],
+            comments: taskData.comments || [],
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+            createdBy: taskData.createdBy || {
+              id: "mock-user",
+              name: "Mock User",
+            },
+            updatedBy: taskData.updatedBy || {
+              id: "mock-user",
+              name: "Mock User",
+            },
+            ...taskData,
+          }
 
-  const updateTask = mockData ? async (id: string, updates: Partial<KanbanTask>) => {
-    try {
-      if (mockOperations?.onUpdateTask) {
-        await mockOperations.onUpdateTask(id, updates)
-      }
-
-      setMockColumns(prev => prev.map(col => ({
-        ...col,
-        tasks: col.tasks.map((task: KanbanTask) => 
-          task.id === id 
-            ? { ...task, ...updates, updatedAt: Date.now() }
-            : task
-        )
-      })))
-    } catch (error) {
-      console.error("Mock update task error:", error)
-      setMockError(error instanceof Error ? error.message : "Failed to update task")
-    }
-  } : hookData.updateTask
-
-  const deleteTask = mockData ? async (id: string) => {
-    try {
-      if (mockOperations?.onDeleteTask) {
-        await mockOperations.onDeleteTask(id)
-      }
-
-      setMockColumns(prev => prev.map(col => ({
-        ...col,
-        tasks: col.tasks.filter((task: KanbanTask) => task.id !== id),
-        totalTasksCount: col.totalTasksCount - 1
-      })))
-    } catch (error) {
-      console.error("Mock delete task error:", error)
-      setMockError(error instanceof Error ? error.message : "Failed to delete task")
-    }
-  } : hookData.deleteTask
-
-  const duplicateTask = mockData ? async (id: string) => {
-    try {
-      if (mockOperations?.onDuplicateTask) {
-        await mockOperations.onDuplicateTask(id)
-      }
-
-      // Find the original task
-      let originalTask: KanbanTask | undefined
-      let originalColumn: any | undefined
-
-      for (const column of mockColumns) {
-        const task = column.tasks.find((t: KanbanTask) => t.id === id)
-        if (task) {
-          originalTask = task
-          originalColumn = column
-          break
+          setMockColumns((prev) =>
+            prev.map((col) =>
+              col.id === statusId
+                ? {
+                    ...col,
+                    tasks: [...col.tasks, newTask],
+                    totalTasksCount: col.totalTasksCount + 1,
+                  }
+                : col
+            )
+          )
+        } catch (error) {
+          console.error("Mock create task error:", error)
+          setMockError(
+            error instanceof Error ? error.message : "Failed to create task"
+          )
         }
       }
+    : hookData.createTask
 
-      if (!originalTask || !originalColumn) return
-
-      const duplicatedTask: KanbanTask = {
-        ...originalTask,
-        id: `temp-${Date.now()}-${Math.random()}`,
-        name: `${originalTask.name} (Copy)`,
-        taskOrder: (originalTask.taskOrder || 1000) + 1,
-        completed: false,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      }
-
-      setMockColumns(prev => prev.map(col => 
-        col.id === originalColumn?.id 
-          ? { ...col, tasks: [...col.tasks, duplicatedTask], totalTasksCount: col.totalTasksCount + 1 }
-          : col
-      ))
-    } catch (error) {
-      console.error("Mock duplicate task error:", error)
-      setMockError(error instanceof Error ? error.message : "Failed to duplicate task")
-    }
-  } : hookData.duplicateTask
-
-  const moveTask = mockData ? async (id: string, targetStatusId: string, targetIndex?: number) => {
-    try {
-      if (mockOperations?.onMoveTask) {
-        await mockOperations.onMoveTask(id, targetStatusId, targetIndex)
-      }
-
-      // Find and remove the task from its current column
-      let taskToMove: KanbanTask | undefined
-      setMockColumns(prev => {
-        const newColumns = prev.map(col => ({
-          ...col,
-          tasks: col.tasks.filter((task: KanbanTask) => {
-            if (task.id === id) {
-              taskToMove = { ...task, statusId: targetStatusId, updatedAt: Date.now() }
-              return false
-            }
-            return true
-          }),
-          totalTasksCount: col.tasks.some((t: KanbanTask) => t.id === id) ? col.totalTasksCount - 1 : col.totalTasksCount
-        }))
-
-        // Add the task to the target column
-        return newColumns.map(col => {
-          if (col.id === targetStatusId && taskToMove) {
-            const newTasks = [...col.tasks]
-            const insertIndex = targetIndex !== undefined ? Math.min(targetIndex, newTasks.length) : newTasks.length
-            newTasks.splice(insertIndex, 0, taskToMove)
-            return { ...col, tasks: newTasks, totalTasksCount: col.totalTasksCount + 1 }
+  const updateTask = mockData
+    ? async (id: string, updates: Partial<KanbanTask>) => {
+        try {
+          if (mockOperations?.onUpdateTask) {
+            await mockOperations.onUpdateTask(id, updates)
           }
-          return col
-        })
-      })
-    } catch (error) {
-      console.error("Mock move task error:", error)
-      setMockError(error instanceof Error ? error.message : "Failed to move task")
-    }
-  } : hookData.moveTask
 
-  const updateStatusLabel = mockData ? async (id: string, updates: any) => {
-    try {
-      if (mockOperations?.onUpdateStatusLabel) {
-        await mockOperations.onUpdateStatusLabel(id, updates)
+          setMockColumns((prev) =>
+            prev.map((col) => ({
+              ...col,
+              tasks: col.tasks.map((task: KanbanTask) =>
+                task.id === id
+                  ? { ...task, ...updates, updatedAt: Date.now() }
+                  : task
+              ),
+            }))
+          )
+        } catch (error) {
+          console.error("Mock update task error:", error)
+          setMockError(
+            error instanceof Error ? error.message : "Failed to update task"
+          )
+        }
       }
+    : hookData.updateTask
 
-      setMockColumns(prev => prev.map(col => 
-        col.id === id ? { ...col, ...updates, updatedAt: Date.now() } : col
-      ))
-    } catch (error) {
-      console.error("Mock update status label error:", error)
-      setMockError(error instanceof Error ? error.message : "Failed to update status label")
-    }
-  } : hookData.updateStatusLabel
+  const deleteTask = mockData
+    ? async (id: string) => {
+        try {
+          if (mockOperations?.onDeleteTask) {
+            await mockOperations.onDeleteTask(id)
+          }
 
-  const deleteStatusLabel = mockData ? async (id: string) => {
-    try {
-      if (mockOperations?.onDeleteStatusLabel) {
-        await mockOperations.onDeleteStatusLabel(id)
+          setMockColumns((prev) =>
+            prev.map((col) => ({
+              ...col,
+              tasks: col.tasks.filter((task: KanbanTask) => task.id !== id),
+              totalTasksCount: col.totalTasksCount - 1,
+            }))
+          )
+        } catch (error) {
+          console.error("Mock delete task error:", error)
+          setMockError(
+            error instanceof Error ? error.message : "Failed to delete task"
+          )
+        }
       }
+    : hookData.deleteTask
 
-      setMockColumns(prev => prev.filter(col => col.id !== id))
-    } catch (error) {
-      console.error("Mock delete status label error:", error)
-      setMockError(error instanceof Error ? error.message : "Failed to delete status label")
-    }
-  } : hookData.deleteStatusLabel
+  const duplicateTask = mockData
+    ? async (id: string) => {
+        try {
+          if (mockOperations?.onDuplicateTask) {
+            await mockOperations.onDuplicateTask(id)
+          }
 
-  const refetch = mockData ? (mockOperations?.onRefetch || (() => {})) : hookData.refetch
+          // Find the original task
+          let originalTask: KanbanTask | undefined
+          let originalColumn: any | undefined
+
+          for (const column of mockColumns) {
+            const task = column.tasks.find((t: KanbanTask) => t.id === id)
+            if (task) {
+              originalTask = task
+              originalColumn = column
+              break
+            }
+          }
+
+          if (!originalTask || !originalColumn) return
+
+          const duplicatedTask: KanbanTask = {
+            ...originalTask,
+            id: `temp-${Date.now()}-${Math.random()}`,
+            name: `${originalTask.name} (Copy)`,
+            taskOrder: (originalTask.taskOrder || 1000) + 1,
+            completed: false,
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+          }
+
+          setMockColumns((prev) =>
+            prev.map((col) =>
+              col.id === originalColumn?.id
+                ? {
+                    ...col,
+                    tasks: [...col.tasks, duplicatedTask],
+                    totalTasksCount: col.totalTasksCount + 1,
+                  }
+                : col
+            )
+          )
+        } catch (error) {
+          console.error("Mock duplicate task error:", error)
+          setMockError(
+            error instanceof Error ? error.message : "Failed to duplicate task"
+          )
+        }
+      }
+    : hookData.duplicateTask
+
+  const moveTask = mockData
+    ? async (id: string, targetStatusId: string, targetIndex?: number) => {
+        try {
+          if (mockOperations?.onMoveTask) {
+            await mockOperations.onMoveTask(id, targetStatusId, targetIndex)
+          }
+
+          // Find and remove the task from its current column
+          let taskToMove: KanbanTask | undefined
+          setMockColumns((prev) => {
+            const newColumns = prev.map((col) => ({
+              ...col,
+              tasks: col.tasks.filter((task: KanbanTask) => {
+                if (task.id === id) {
+                  taskToMove = {
+                    ...task,
+                    statusId: targetStatusId,
+                    updatedAt: Date.now(),
+                  }
+                  return false
+                }
+                return true
+              }),
+              totalTasksCount: col.tasks.some((t: KanbanTask) => t.id === id)
+                ? col.totalTasksCount - 1
+                : col.totalTasksCount,
+            }))
+
+            // Add the task to the target column
+            return newColumns.map((col) => {
+              if (col.id === targetStatusId && taskToMove) {
+                const newTasks = [...col.tasks]
+                const insertIndex =
+                  targetIndex !== undefined
+                    ? Math.min(targetIndex, newTasks.length)
+                    : newTasks.length
+                newTasks.splice(insertIndex, 0, taskToMove)
+                return {
+                  ...col,
+                  tasks: newTasks,
+                  totalTasksCount: col.totalTasksCount + 1,
+                }
+              }
+              return col
+            })
+          })
+        } catch (error) {
+          console.error("Mock move task error:", error)
+          setMockError(
+            error instanceof Error ? error.message : "Failed to move task"
+          )
+        }
+      }
+    : hookData.moveTask
+
+  const updateStatusLabel = mockData
+    ? async (id: string, updates: any) => {
+        try {
+          if (mockOperations?.onUpdateStatusLabel) {
+            await mockOperations.onUpdateStatusLabel(id, updates)
+          }
+
+          setMockColumns((prev) =>
+            prev.map((col) =>
+              col.id === id
+                ? { ...col, ...updates, updatedAt: Date.now() }
+                : col
+            )
+          )
+        } catch (error) {
+          console.error("Mock update status label error:", error)
+          setMockError(
+            error instanceof Error
+              ? error.message
+              : "Failed to update status label"
+          )
+        }
+      }
+    : hookData.updateStatusLabel
+
+  const deleteStatusLabel = mockData
+    ? async (id: string) => {
+        try {
+          if (mockOperations?.onDeleteStatusLabel) {
+            await mockOperations.onDeleteStatusLabel(id)
+          }
+
+          setMockColumns((prev) => prev.filter((col) => col.id !== id))
+        } catch (error) {
+          console.error("Mock delete status label error:", error)
+          setMockError(
+            error instanceof Error
+              ? error.message
+              : "Failed to delete status label"
+          )
+        }
+      }
+    : hookData.deleteStatusLabel
+
+  const refetch = mockData
+    ? mockOperations?.onRefetch || (() => {})
+    : hookData.refetch
 
   // Get bulk AI generation hook
   const {
@@ -716,7 +798,9 @@ export function ListBoard({
                     parentTask.id,
                     ...subtaskIds,
                   ].filter((id) => {
-                    const idx = sourceColumn.tasks.findIndex((t: KanbanTask) => t.id === id)
+                    const idx = sourceColumn.tasks.findIndex(
+                      (t: KanbanTask) => t.id === id
+                    )
                     return idx !== -1 && idx < targetTaskIndex
                   }).length
 
