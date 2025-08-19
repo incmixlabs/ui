@@ -226,13 +226,6 @@ export const StreamingSimulation: Story = {
   render: () => {
     const [content, setContent] = React.useState("")
     const [isStreaming, setIsStreaming] = React.useState(false)
-
-    const fullContent = streamingMarkdown
-
-export const StreamingSimulation: Story = {
-  render: () => {
-    const [content, setContent] = React.useState("")
-    const [isStreaming, setIsStreaming] = React.useState(false)
     const intervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null)
 
     const fullContent = streamingMarkdown
@@ -269,10 +262,6 @@ export const StreamingSimulation: Story = {
         }
       }, 20)
     }
-
-    // …the rest of your render (buttons, UI that calls simulateStreaming, etc.)…
-  },
-}
 
     return (
       <div className="space-y-4">
