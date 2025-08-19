@@ -15,6 +15,7 @@ const priorityLabels = storybookData.priorityLabels.map(label => ({
   label: label.name,
   name: label.name,
   color: label.color,
+  type: label.type, // ✅ Include the type property
 }))
 
 const meta: Meta<typeof Board> = {

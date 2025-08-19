@@ -65,10 +65,12 @@ const extractPotentialUrls = (text: string): string[] => {
 }
 
 // Card styles using TailwindCSS classes for consistency
-const CARD_CLASSES = "rounded-md bg-white border-b border-gray-4 transition-all duration-150 hover:bg-gray-2 dark:bg-gray-1 dark:border-gray-6 dark:hover:bg-gray-2" as const
+const CARD_CLASSES =
+  "rounded-md bg-white border-b border-gray-4 transition-all duration-150 hover:bg-gray-2 dark:bg-gray-1 dark:border-gray-6 dark:hover:bg-gray-2" as const
 
 // Error styles for consistent error display
-const ERROR_CLASSES = "mb-2 rounded border border-red-6 bg-red-3 p-2 text-sm text-red-11 dark:border-red-6 dark:bg-red-4 dark:text-red-11" as const
+const ERROR_CLASSES =
+  "mb-2 rounded border border-red-6 bg-red-3 p-2 text-sm text-red-11 dark:border-red-6 dark:bg-red-4 dark:text-red-11" as const
 
 interface TaskRefUrl {
   id: string
@@ -168,7 +170,6 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
 
       // Clean up title
       cleanTitle = cleanTitle.replace(/\s+/g, " ").trim()
-
 
       return { cleanTitle, newUrls }
     },
@@ -409,11 +410,7 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
     >
       {/* Error message display */}
       {error && (
-        <Box 
-          className={ERROR_CLASSES}
-          role="alert"
-          aria-live="polite"
-        >
+        <Box className={ERROR_CLASSES} role="alert" aria-live="polite">
           {error.message}
         </Box>
       )}
@@ -430,7 +427,10 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
             >
               {/* Empty space where the checkbox would be */}
               <Box className="flex h-5 w-5 items-center justify-center">
-                <Box className="h-[18px] w-[18px] rounded-sm border border-gray-6" aria-hidden="true" />
+                <Box
+                  className="h-[18px] w-[18px] rounded-sm border border-gray-6"
+                  aria-hidden="true"
+                />
               </Box>
 
               {/* Hybrid input container */}
@@ -527,10 +527,16 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
               </Flex>
 
               {/* Due date - empty placeholder */}
-              <Box className="w-24 min-w-[6rem] flex-shrink-0" aria-hidden="true" />
+              <Box
+                className="w-24 min-w-[6rem] flex-shrink-0"
+                aria-hidden="true"
+              />
 
               {/* Assignees - empty placeholder */}
-              <Box className="w-24 min-w-[6rem] flex-shrink-0" aria-hidden="true" />
+              <Box
+                className="w-24 min-w-[6rem] flex-shrink-0"
+                aria-hidden="true"
+              />
 
               {/* Actions menu - helper text with status */}
               <Flex

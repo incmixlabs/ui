@@ -56,7 +56,9 @@ export function SimpleTaskInput({
   const [acceptanceCriteria, setAcceptanceCriteria] = useState<
     Array<{ id: string; text: string }>
   >([])
-  const [taskData, setTaskData] = useState<Omit<TaskFormData, 'description' | 'checklist' | 'acceptanceCriteria'>>({
+  const [taskData, setTaskData] = useState<
+    Omit<TaskFormData, "description" | "checklist" | "acceptanceCriteria">
+  >({
     priorityId: "", // Will be populated in handleSubmit using priorityLabels
     startDate: "",
     endDate: "",

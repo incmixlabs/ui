@@ -1077,15 +1077,17 @@ export function ListBoard({
           onClearSelection={() => setSelectedTasks({})}
           showExportCSV={true}
           onExportCSV={handleExportAllCSV}
-          rightActions={<Button
-            variant="soft"
-            size="2"
-            className="flex items-center gap-1 shadow-sm transition-all duration-150 hover:shadow-md"
-            onClick={() => setIsAddColumnDialogOpen(true)}
-          >
-            <Plus size={14} />
-            Add Column
-          </Button>}
+          rightActions={
+            <Button
+              variant="soft"
+              size="2"
+              className="flex items-center gap-1 shadow-sm transition-all duration-150 hover:shadow-md"
+              onClick={() => setIsAddColumnDialogOpen(true)}
+            >
+              <Plus size={14} />
+              Add Column
+            </Button>
+          }
           isLoading={isLoading}
         />
 

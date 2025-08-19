@@ -26,11 +26,11 @@ import invariant from "tiny-invariant"
 import { Badge, Box, Checkbox, Flex, IconButton, Text } from "@/base"
 import { isShallowEqual } from "@incmix/utils/objects"
 import type { TaskDataSchema } from "@incmix/utils/schema"
+import { AvatarGroup } from "../../../2elements/avatar-group"
 import { useKanban } from "../hooks/use-kanban-data"
 import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
 import type { ListColumn } from "../hooks/use-list-view"
 import { ModalPresets } from "../shared/confirmation-modal"
-import { AvatarGroup } from "../../../2elements/avatar-group"
 import { type RefUrl, TaskRefUrls } from "../shared/task-ref-urls"
 import {
   type KanbanTask,
@@ -83,7 +83,8 @@ const checkboxStyles = {
 }
 
 // Constants for consistent styling
-const HOVER_VISIBLE_CLASSES = "opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+const HOVER_VISIBLE_CLASSES =
+  "opacity-0 group-hover:opacity-100 transition-opacity duration-150"
 const SUBTASK_MARGIN_CLASS = "ml-8" // 32px equivalent
 const HIDDEN_CLASS = "hidden"
 
@@ -171,7 +172,6 @@ export const ListTaskCard = memo(function ListTaskCard({
 
   // Access kanban data to get the subtask functions
   const kanbanData = useKanban(projectId)
-
 
   // Check if the current task is a parent task (has subtasks)
   const hasChildTasks = useMemo(() => {
@@ -821,15 +821,20 @@ export const ListTaskCard = memo(function ListTaskCard({
                     isExpanded ? "Collapse subtasks" : "Expand subtasks"
                   }
                 >
-                  <svg 
+                  <svg
                     className={`h-3 w-3 text-gray-9 transition-transform ${
                       isExpanded ? "" : "-rotate-90"
                     }`}
-                    fill="none" 
-                    stroke="currentColor" 
+                    fill="none"
+                    stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </IconButton>
               )}
@@ -862,8 +867,18 @@ export const ListTaskCard = memo(function ListTaskCard({
               {/* Subtasks counter - Using proper icon from Radix */}
               {card.subTasks && card.subTasks.length > 0 && (
                 <Flex align="center" gap="1">
-                  <svg className="h-3 w-3 text-gray-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h6a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                  <svg
+                    className="h-3 w-3 text-gray-9"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h6a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                    />
                   </svg>
                   <Text className="text-gray-10" size="1">
                     {
@@ -878,8 +893,18 @@ export const ListTaskCard = memo(function ListTaskCard({
               {/* Comments counter */}
               {card.comments && card.comments.length > 0 && (
                 <Flex align="center" gap="1">
-                  <svg className="h-3 w-3 text-gray-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  <svg
+                    className="h-3 w-3 text-gray-9"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                    />
                   </svg>
                   <Text className="text-gray-10" size="1">
                     {card.comments.length}
@@ -890,8 +915,18 @@ export const ListTaskCard = memo(function ListTaskCard({
               {/* Attachments counter */}
               {card.attachments && card.attachments.length > 0 && (
                 <Flex align="center" gap="1">
-                  <svg className="h-3 w-3 text-gray-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                  <svg
+                    className="h-3 w-3 text-gray-9"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                    />
                   </svg>
                   <Text className="text-gray-10" size="1">
                     {card.attachments.length}
@@ -903,8 +938,18 @@ export const ListTaskCard = memo(function ListTaskCard({
               {card.acceptanceCriteria &&
                 card.acceptanceCriteria.length > 0 && (
                   <Flex align="center" gap="1">
-                    <svg className="h-3 w-3 text-gray-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h6a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    <svg
+                      className="h-3 w-3 text-gray-9"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h6a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                      />
                     </svg>
                     <Text className="text-gray-10" size="1">
                       {
@@ -920,8 +965,18 @@ export const ListTaskCard = memo(function ListTaskCard({
               {/* Checklist counter */}
               {card.checklist && card.checklist.length > 0 && (
                 <Flex align="center" gap="1">
-                  <svg className="h-3 w-3 text-gray-9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg
+                    className="h-3 w-3 text-gray-9"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
                   </svg>
                   <Text className="text-gray-10" size="1">
                     {
@@ -1009,8 +1064,8 @@ export const ListTaskCard = memo(function ListTaskCard({
                   }))}
                   maxVisible={3}
                   layout="stack"
-            stackOrder="asc"
-            size="1"
+                  stackOrder="asc"
+                  size="1"
                 />
               </Flex>
 
