@@ -28,10 +28,15 @@ export const SourcesTrigger = ({
   children,
   ...props
 }: SourcesTriggerProps) => (
-  <CollapsibleTrigger className="flex items-center gap-2" {...props}>
+  <CollapsibleTrigger
+    className={cn("flex items-center gap-2", className)}
+    {...props}
+  >
     {children ?? (
       <>
-        <p className="font-medium">Used {count} sources</p>
+        <p className="font-medium">
+          Used {count} {count === 1 ? "source" : "sources"}
+        </p>
         <ChevronDownIcon className="h-4 w-4" />
       </>
     )}
