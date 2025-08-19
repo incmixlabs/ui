@@ -33,7 +33,6 @@ import { useTaskCopyBuffer } from "../hooks/use-task-copy-buffer"
 import {
   type AssignedUser,
   OverlappingAvatarGroup,
-  type SelectableUser,
 } from "../shared/overlapping-avatar-group"
 import type { KanbanTask } from "../types" // Import KanbanTask type
 
@@ -266,7 +265,7 @@ export const TaskActionsMenu = ({
           size={size}
           variant={variant}
           disabled={disabled}
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e: React.MouseEvent) => e.stopPropagation()}
         >
           <MoreVertical size={size === "1" ? 14 : 16} />
         </IconButton>
@@ -332,13 +331,13 @@ export const TaskActionsMenu = ({
                   return (
                     <Badge
                       key={col.id}
-                      style={{
-                        backgroundColor: `${(col as any).color ? `${(col as any).color}20` : "#e0e0e020"}`,
-                        color: (col as any).color || "#808080",
-                      }}
                       variant="soft"
                       size="1"
                       className="ml-auto"
+style={{
+                        backgroundColor: (col as any).color ? `${(col as any).color}20` : "var(--gray-a3)",
+                        color: (col as any).color || "var(--gray-11)",
+                      } as React.CSSProperties}
                     >
                       {col.name}
                     </Badge>
@@ -361,9 +360,9 @@ export const TaskActionsMenu = ({
                   <Flex align="center" gap="2">
                     <Box
                       className="h-2 w-2 rounded-full"
-                      style={{
-                        backgroundColor: (column as any).color || "#808080",
-                      }}
+style={{
+                        backgroundColor: (column as any).color || "var(--gray-8)",
+                      } as React.CSSProperties}
                     />
                     <Text>{column.name}</Text>
                   </Flex>
@@ -386,7 +385,7 @@ export const TaskActionsMenu = ({
               {/* Start Date */}
               <Popover.Root
                 open={isDatePickerOpen === "start"}
-                onOpenChange={(open) =>
+                onOpenChange={(open: boolean) =>
                   setIsDatePickerOpen(open ? "start" : null)
                 }
               >
@@ -396,7 +395,7 @@ export const TaskActionsMenu = ({
                       <CalendarIcon size={12} className="text-green-9" />
                       <Text size="2">Start Date</Text>
                       {currentStartDate && (
-                        <Text size="1" className="ml-auto text-gray-9">
+                        <Text size="1" className="ml-auto text-gray-11">
                           {formatDate(currentStartDate)}
                         </Text>
                       )}
@@ -409,7 +408,7 @@ export const TaskActionsMenu = ({
                     selected={
                       currentStartDate ? new Date(currentStartDate) : undefined
                     }
-                    onSelect={(date) => handleDateChange("start", date)}
+                    onSelect={(date: Date | undefined) => handleDateChange("start", date)}
                     initialFocus
                   />
                 </Popover.Content>
@@ -418,17 +417,17 @@ export const TaskActionsMenu = ({
               {/* End Date */}
               <Popover.Root
                 open={isDatePickerOpen === "end"}
-                onOpenChange={(open) =>
+                onOpenChange={(open: boolean) =>
                   setIsDatePickerOpen(open ? "end" : null)
                 }
               >
                 <Popover.Trigger>
                   <Button variant="ghost" className="w-full justify-start">
                     <Flex align="center" gap="2" className="w-full">
-                      <CalendarIcon size={12} className="text-gray-9" />
+                      <CalendarIcon size={12} className="text-gray-11" />
                       <Text size="2">End Date</Text>
                       {currentEndDate && (
-                        <Text size="1" className="ml-auto text-gray-9">
+                        <Text size="1" className="ml-auto text-gray-11">
                           {formatDate(currentEndDate)}
                         </Text>
                       )}
@@ -441,7 +440,7 @@ export const TaskActionsMenu = ({
                     selected={
                       currentEndDate ? new Date(currentEndDate) : undefined
                     }
-                    onSelect={(date) => handleDateChange("end", date)}
+                    onSelect={(date: Date | undefined) => handleDateChange("end", date)}
                     initialFocus
                   />
                 </Popover.Content>

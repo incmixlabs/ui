@@ -103,7 +103,7 @@ export const ListView: Story = {
     }
 
     return (
-      <div style={{ height: "100vh" }}>
+      <div className="w-full h-full p-2">
         <ListBoard 
           projectId="storybook-project"
           mockData={mockData}
