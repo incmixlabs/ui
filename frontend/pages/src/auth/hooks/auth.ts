@@ -275,10 +275,8 @@ export const useProfileUpdate = (userId: string) => {
     onSuccess: (data: any) => {
       queryClient.setQueryData(
         ["user", I18n.language],
-        (oldData: UserProfile) => ({
-          ...oldData,
-          name: data?.name,
-        })
+        (oldData: UserProfile | null | undefined) =>
+          oldData ? { ...oldData, name: data?.name } : oldData
       )
     },
     onError: (error) => {
