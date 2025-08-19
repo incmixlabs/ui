@@ -7,7 +7,7 @@
     "build:fe": "pnpm copy:assets && turbo build:fe",
     "build:storybook": "pnpm copy:assets && turbo build:storybook",
     "build:ui-base": "turbo build:ui-base",
-    "build": "pnpm run build:fe && pnpm run build:storybook && cd frontend/ui-base && pnpm run build:ui-base",
+    "build": "pnpm install && pnpm run build:fe && pnpm run build:storybook && cd frontend/ui-base && pnpm run build:ui-base",
     "clean": "turbo clean",
     "copy:assets": "rm -rf apps/fihi-app/public && rm -rf apps/storybook/public && cp -r public apps/fihi-app/. && cp -r public apps/storybook/.",
     "dev:fe": "pnpm copy:assets && turbo dev --parallel --ui tui --filter=\"./apps/fihi-app\"",
