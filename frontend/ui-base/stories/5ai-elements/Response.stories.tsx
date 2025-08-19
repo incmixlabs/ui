@@ -229,23 +229,50 @@ export const StreamingSimulation: Story = {
 
     const fullContent = streamingMarkdown
 
+export const StreamingSimulation: Story = {
+  render: () => {
+    const [content, setContent] = React.useState("")
+    const [isStreaming, setIsStreaming] = React.useState(false)
+    const intervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null)
+
+    const fullContent = streamingMarkdown
+
+    // Clear any pending interval if this component unmounts
+    React.useEffect(() => {
+      return () => {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current)
+          intervalRef.current = null
+        }
+      }
+    }, [])
+
     const simulateStreaming = () => {
       setIsStreaming(true)
       setContent("")
 
       let currentIndex = 0
-      const interval = setInterval(() => {
+      // If somehow an old interval is still running, clear it before starting a new one
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+      intervalRef.current = setInterval(() => {
         if (currentIndex < fullContent.length) {
           setContent(fullContent.slice(0, currentIndex + 1))
           currentIndex++
         } else {
           setIsStreaming(false)
-          clearInterval(interval)
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current)
+            intervalRef.current = null
+          }
         }
       }, 20)
-
-      return () => clearInterval(interval)
     }
+
+    // …the rest of your render (buttons, UI that calls simulateStreaming, etc.)…
+  },
+}
 
     return (
       <div className="space-y-4">
