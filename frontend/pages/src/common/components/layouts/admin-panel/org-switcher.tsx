@@ -24,15 +24,27 @@ export function OrgSwitcher() {
     }
   }, [selectedOrganisation, organizations, setSelectedOrganisation])
 
+  const hasAttemptedRef = React.useRef(false)
   React.useEffect(() => {
-    if (!organizations?.length && !isLoading) {
-      const username = authUser?.email.split("@")[0]
+    if (
+      !organizations?.length &&
+      !isLoading &&
+      !isCreatingOrganization &&
+      !hasAttemptedRef.current
+    ) {
+      const username = authUser?.email?.split("@")[0]
       if (username && username.length > 0) {
+        hasAttemptedRef.current = true
         handleCreateOrganization(username, username, [])
       }
     }
-  }, [organizations?.length, authUser?.email, isLoading])
-
+  }, [
+    organizations?.length,
+    authUser?.email,
+    isLoading,
+    isCreatingOrganization,
+    handleCreateOrganization,
+  ])
   if (isLoading || isCreatingOrganization) return <div>Loading...</div>
   if (!selectedOrganisation) return null
 
