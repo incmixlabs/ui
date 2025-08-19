@@ -90,9 +90,11 @@ export function ProjectPageComponents() {
     const uniqueId = nanoid();
 
     if (!selectedOrganisation) {
-      throw new Error("No organisation selected");
+      toast.error("No organisation selected", {
+        description: "Please create or select an organisation first.",
+      });
+      return;
     }
-
     // Create the project with a unique ID
     const projectWithId = {
       ...newProject,
