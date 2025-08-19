@@ -1,10 +1,9 @@
 import { cn } from "@/utils/cn"
+import type { ComponentProps } from "react"
 import type { Experimental_GeneratedImage } from "ai"
 
-export type ImageProps = Experimental_GeneratedImage & {
-  className?: string
-  alt?: string
-}
+export type ImageProps = Omit<ComponentProps<"img">, "src"> &
+  Experimental_GeneratedImage
 
 export const Image = ({
   base64,
