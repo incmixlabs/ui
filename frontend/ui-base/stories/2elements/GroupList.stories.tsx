@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import "../../src/styles/index.css"
 import { Theme } from "../../src/1base"
 import { GroupList } from "../../src/2elements/group-list"
 

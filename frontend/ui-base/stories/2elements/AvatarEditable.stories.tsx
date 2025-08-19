@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import "../../src/styles/index.css"
 import { useState } from "react"
 import { Theme, Text, Flex, Box } from "../../src/1base"
 import { AvatarEditable } from "../../src/2elements/avatar-editable"

@@ -1,0 +1,20 @@
+import { Badge, type BadgeProps } from "./badge"
+
+type ThemeColor = BadgeProps["color"] | "black"
+
+interface BadgeComponentProps {
+  themeColor: ThemeColor
+}
+
+export function BadgeComponent({ themeColor = "gray" }: BadgeComponentProps) {
+  return (
+    <div className="grid w-[30rem] place-content-center gap-5 space-y-4 px-10">
+      <Badge
+        color={themeColor}
+        className="block w-fit px-3 py-1 text-center text-xl capitalize"
+      >
+        Primary
+      </Badge>
+    </div>
+  )
+}
