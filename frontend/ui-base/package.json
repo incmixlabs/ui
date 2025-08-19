@@ -95,6 +95,7 @@
     "@hookform/resolvers": "catalog:",
     "@icons-pack/react-simple-icons": "^13.7.0",
     "@incmix/store": "workspace: *",
+    "@radix-ui/colors": "catalog:",
     "@radix-ui/react-accordion": "catalog:",
     "@radix-ui/react-avatar": "catalog:",
     "@radix-ui/react-collapsible": "^1.1.12",

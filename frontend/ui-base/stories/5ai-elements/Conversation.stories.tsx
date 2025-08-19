@@ -39,7 +39,6 @@ export const Basic: Story = {
       <ConversationContent>
         <div className="space-y-4">
           {sampleMessages.slice(0, 2).map((msg) => {
-            debugger;
             return (
             <Message key={msg.id} from={msg.from}>
                 {msg.from === "assistant" && (

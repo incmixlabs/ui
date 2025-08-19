@@ -21,6 +21,9 @@ catalogs:
     '@julr/vite-plugin-validate-env':
       specifier: 2.2.0
       version: 2.2.0
+    '@radix-ui/colors':
+      specifier: 3.0.0
+      version: 3.0.0
     '@radix-ui/react-accordion':
       specifier: 1.2.11
       version: 1.2.11
@@ -943,6 +946,9 @@ importers:
       '@incmix/store':
         specifier: 'workspace: *'
         version: link:../store
+      '@radix-ui/colors':
+        specifier: 'catalog:'
+        version: 3.0.0
       '@radix-ui/react-accordion':
         specifier: 'catalog:'
         version: 1.2.11(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
