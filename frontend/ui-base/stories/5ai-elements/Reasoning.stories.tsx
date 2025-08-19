@@ -145,34 +145,59 @@ export const Interactive: Story = {
     const [duration, setDuration] = React.useState(0)
     const [reasoning, setReasoning] = React.useState("")
 
-    const startReasoning = () => {
-      setIsStreaming(true)
-      setDuration(0)
-      setReasoning("Starting to think about this problem...")
+   export const Interactive: Story = {
+     render: () => {
+       const [isStreaming, setIsStreaming] = React.useState(false)
+       const [duration, setDuration] = React.useState(0)
+       const [reasoning, setReasoning] = React.useState("")
+      const intervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null)
 
-      // Simulate streaming reasoning
-      const steps = [
-        "Analyzing the requirements...",
-        "Considering different approaches...",
-        "Evaluating trade-offs between performance and simplicity...",
-        "Choosing the best solution based on the context...",
-        "Planning the implementation steps..."
-      ]
-
-      let currentStep = 0
-      const interval = setInterval(() => {
-        if (currentStep < steps.length) {
-          setReasoning(prev => prev + "\n\n" + steps[currentStep])
-          currentStep++
-        } else {
-          setIsStreaming(false)
-          setDuration(7)
-          clearInterval(interval)
+      React.useEffect(() => {
+        return () => {
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current)
+            intervalRef.current = null
+          }
         }
-      }, 1000)
+      }, [])
 
-      return () => clearInterval(interval)
-    }
+       const startReasoning = () => {
+         setIsStreaming(true)
+         setDuration(0)
+         setReasoning("Starting to think about this problem...")
+
+         // Simulate streaming reasoning
+         const steps = [
+           "Analyzing the requirements...",
+           "Considering different approaches...",
+           "Evaluating trade-offs between performance and simplicity...",
+           "Choosing the best solution based on the context...",
+           "Planning the implementation steps..."
+         ]
+
+         let currentStep = 0
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current)
+        }
+        intervalRef.current = setInterval(() => {
+           if (currentStep < steps.length) {
+             setReasoning(prev => prev + "\n\n" + steps[currentStep])
+             currentStep++
+           } else {
+             setIsStreaming(false)
+             setDuration(7)
+            if (intervalRef.current) {
+              clearInterval(intervalRef.current)
+              intervalRef.current = null
+            }
+           }
+-        }, 1000)
+-
+        }, 1000)
+       }
+       // …rest of render
+     },
+   }
 
     return (
       <div className="space-y-4">
