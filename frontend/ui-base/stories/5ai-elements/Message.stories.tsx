@@ -1,8 +1,9 @@
+
 import type { Meta, StoryObj } from '@storybook/react';
-import { Message, MessageContent, MessageAvatar } from '../../src/3b-ai-elements/message'
+import { Message, MessageContent, MessageAvatar } from '../../src/3b-ai-elements/message';
 
 const meta: Meta<typeof Message> = {
-  title: '5 AI Elements/Message',
+  title: 'AI Elements/Message',
   component: Message,
   parameters: {
     layout: 'padded',

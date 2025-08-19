@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Conversation, ConversationContent, ConversationScrollButton } from '../../src/3b-ai-elements/conversation';
 import { Message, MessageContent, MessageAvatar } from '../../src/3b-ai-elements/message';
+
 const meta: Meta<typeof Conversation> = {
-  title: '5 AI Elements/Conversation',
+  title: 'AI Elements/Conversation',
   component: Conversation,
   parameters: {
     layout: 'fullscreen',
