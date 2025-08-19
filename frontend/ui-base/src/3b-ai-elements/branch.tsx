@@ -160,7 +160,6 @@ export const BranchPrevious = ({
   )
 }
 
-
 export type BranchNextProps = ComponentProps<typeof IconButton>
 
 export const BranchNext = ({
@@ -183,7 +182,6 @@ export const BranchNext = ({
     </IconButton>
   )
 }
-
 
 export type BranchPageProps = HTMLAttributes<HTMLSpanElement>
 

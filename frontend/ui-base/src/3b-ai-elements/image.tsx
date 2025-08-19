@@ -1,6 +1,6 @@
 import { cn } from "@/utils/cn"
-import type { ComponentProps } from "react"
 import type { Experimental_GeneratedImage } from "ai"
+import type { ComponentProps } from "react"
 
 export type ImageProps = Omit<ComponentProps<"img">, "src"> &
   Experimental_GeneratedImage
