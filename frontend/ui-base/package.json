@@ -48,8 +48,13 @@
       }
     },
     "./styles.css": {
-      "require": "./src/styles/index.css",
-      "import": "./src/styles/index.css"
+      "require": "./src/styles/styles.css",
+      "import": "./src/styles/styles.css"
+    },
+
+    "./index.css": {
+      "require": "./src/styles/styles.css",
+      "import": "./src/styles/styles.css"
     },
     "./pages/*": {
       "require": {
@@ -78,6 +83,7 @@
     "postcss-whitespace.cjs"
   ],
   "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.json --outDir dist && mv dist/src/* dist/ && rmdir dist/src",
     "build:ui-base": "rm -rf dist && tsc -p tsconfig.json --outDir dist && mv dist/src/* dist/ && rmdir dist/src",
     "typecheck": "tsc --traceResolution",
     "dev": "pnpm run build && pnpm watch & pnpm storybook",
@@ -86,26 +92,43 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
+    "@ai-sdk/react": "^2.0.15",
     "@hookform/resolvers": "catalog:",
+    "@icons-pack/react-simple-icons": "^13.7.0",
     "@incmix/store": "workspace: *",
     "@radix-ui/react-accordion": "catalog:",
+    "@radix-ui/react-avatar": "catalog:",
+    "@radix-ui/react-collapsible": "^1.1.12",
     "@radix-ui/react-dialog": "catalog:",
+    "@radix-ui/react-hover-card": "catalog:",
     "@radix-ui/react-label": "catalog:",
     "@radix-ui/react-menubar": "catalog:",
     "@radix-ui/react-navigation-menu": "catalog:",
+    "@radix-ui/react-scroll-area": "catalog:",
+    "@radix-ui/react-select": "catalog:",
     "@radix-ui/react-slot": "catalog:",
     "@radix-ui/react-tabs": "catalog:",
     "@radix-ui/react-toggle": "catalog:",
     "@radix-ui/react-toggle-group": "catalog:",
+    "@radix-ui/react-tooltip": "catalog:",
+    "@radix-ui/react-use-controllable-state": "catalog:",
     "@tanstack/react-table": "catalog:",
     "@tanstack/zod-form-adapter": "catalog:",
+    "ai": "5.0.15",
     "classnames": "catalog:",
     "cmdk": "catalog:",
     "date-fns": "catalog:",
+    "embla-carousel-react": "8.6.0",
+    "harden-react-markdown": "^1.0.4",
     "input-otp": "catalog:",
+    "katex": "^0.16.22",
     "lucide-react": "catalog:",
     "react-day-picker": "9.8.1",
     "react-hook-form": "catalog:",
+    "react-markdown": "10.1.0",
+    "react-syntax-highlighter": "15.6.1",
+    "remark-gfm": "catalog:",
+    "use-stick-to-bottom": "1.1.1",
     "zod": "catalog:"
   },
   "peerDependencies": {
@@ -129,6 +152,7 @@
     "@storybook/addon-onboarding": "catalog:",
     "@storybook/react-vite": "catalog:",
     "@types/node": "catalog:",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "@types/uuid": "^10.0.0",
     "autoprefixer": "catalog:",
     "esbuild": "catalog:",

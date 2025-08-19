@@ -16,7 +16,7 @@ import { Loader2, Plus, RefreshCw, Sparkles } from "lucide-react"
 import { CreateColumnForm } from "../shared/create-column-form"
 import { TaskViewHeader } from "../shared/task-view-header"
 
-import { useAIFeaturesStore, useBulkAIGeneration } from "@incmix/store/ai"
+import { useAIFeaturesStore, useBulkAIGeneration } from "@incmix/store"
 import { blockBoardPanningAttr } from "../data-attributes"
 import { useListView } from "../hooks/use-list-view"
 import { TaskCopyBufferProvider } from "../hooks/use-task-copy-buffer"

@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import "../../src/styles/index.css"
 import { Theme, Box, Text, Button, Flex } from "../../src/1base"
 import {
   SidebarProvider,
@@ -397,9 +396,9 @@ export const WithSeparators: Story = {
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
-          
+
           <SidebarSeparator />
-          
+
           <SidebarGroup>
             <SidebarGroupLabel>Tools</SidebarGroupLabel>
             <SidebarGroupContent>
@@ -414,9 +413,9 @@ export const WithSeparators: Story = {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
-        
+
         <SidebarSeparator />
-        
+
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>

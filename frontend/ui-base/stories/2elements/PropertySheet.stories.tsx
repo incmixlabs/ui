@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import "../../src/styles/index.css"
 import { Theme, Flex, Box, Text } from "../../src/1base"
 import { PropertySheet } from "../../src/2elements/property-sheet"
 

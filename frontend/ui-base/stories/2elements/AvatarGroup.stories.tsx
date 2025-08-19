@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import "../../src/styles/index.css"
+
 import { Theme, Text, Flex } from "../../src/1base"
 import { AvatarGroup } from "../../src/2elements/avatar-group"
 import type { AvatarProps } from "../../src/1base"

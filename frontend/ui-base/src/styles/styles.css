@@ -6,7 +6,7 @@
 */
 
 @layer tw_base, radix_ui, tw_components_utils;
-@import "../../radix-ui/styles.css" layer(radix_ui);
+@import "./radix.css" layer(radix_ui);
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 @layer tw_base {
@@ -138,6 +138,16 @@
   --strong-font-family: var(--font-inter);
   --em-font-family: var(--font-inter);
   --quote-font-family: var(--font-inter);
+}
+.rt-black-text {
+  color: var(--black-a5);
+}
+.rt-white-text {
+  color: var(--white-a3);
+}
+.rt-vertical-text {
+  writing-mode: vertical-lr;
+  transform: rotate(180deg);
 }
 
 @keyframes blink {

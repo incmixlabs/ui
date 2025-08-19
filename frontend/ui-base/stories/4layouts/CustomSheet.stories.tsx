@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import "../../src/styles/index.css"
 import { Theme, Box, Text, Button, Flex } from "../../src/1base"
 import { MotionSheet } from "../../src/4layouts/custom-sheet"
 
@@ -61,11 +60,11 @@ type Story = StoryObj<typeof meta>
 export const Default: Story = {
   render: (args) => {
     const [isOpen, setIsOpen] = React.useState(false)
-    
+
     return (
       <>
         <Button onClick={() => setIsOpen(true)}>Open Sheet</Button>
-        <MotionSheet 
+        <MotionSheet
           {...args}
           open={isOpen}
           onOpenChange={setIsOpen}
@@ -94,11 +93,11 @@ export const Default: Story = {
 export const RightSide: Story = {
   render: () => {
     const [isOpen, setIsOpen] = React.useState(false)
-    
+
     return (
       <>
         <Button onClick={() => setIsOpen(true)}>Open Right Sheet</Button>
-        <MotionSheet 
+        <MotionSheet
           open={isOpen}
           onOpenChange={setIsOpen}
           side="right"
@@ -119,11 +118,11 @@ export const RightSide: Story = {
 export const LeftSide: Story = {
   render: () => {
     const [isOpen, setIsOpen] = React.useState(false)
-    
+
     return (
       <>
         <Button onClick={() => setIsOpen(true)}>Open Left Sheet</Button>
-        <MotionSheet 
+        <MotionSheet
           open={isOpen}
           onOpenChange={setIsOpen}
           side="left"
@@ -144,11 +143,11 @@ export const LeftSide: Story = {
 export const TopSide: Story = {
   render: () => {
     const [isOpen, setIsOpen] = React.useState(false)
-    
+
     return (
       <>
         <Button onClick={() => setIsOpen(true)}>Open Top Sheet</Button>
-        <MotionSheet 
+        <MotionSheet
           open={isOpen}
           onOpenChange={setIsOpen}
           side="top"
@@ -169,11 +168,11 @@ export const TopSide: Story = {
 export const BottomSide: Story = {
   render: () => {
     const [isOpen, setIsOpen] = React.useState(false)
-    
+
     return (
       <>
         <Button onClick={() => setIsOpen(true)}>Open Bottom Sheet</Button>
-        <MotionSheet 
+        <MotionSheet
           open={isOpen}
           onOpenChange={setIsOpen}
           side="bottom"
@@ -194,11 +193,11 @@ export const BottomSide: Story = {
 export const FilterSheet: Story = {
   render: () => {
     const [isOpen, setIsOpen] = React.useState(false)
-    
+
     return (
       <>
         <Button onClick={() => setIsOpen(true)}>Open Filter Sheet</Button>
-        <MotionSheet 
+        <MotionSheet
           open={isOpen}
           onOpenChange={setIsOpen}
           side="right"
@@ -214,7 +213,7 @@ export const FilterSheet: Story = {
               <Button variant="soft" size="2">Images</Button>
               <Button variant="soft" size="2">Videos</Button>
             </Flex>
-            
+
             <Text size="2" weight="medium" className="mt-4">Filter by Date</Text>
             <Flex direction="column" gap="2">
               <Button variant="soft" size="2">Last 7 days</Button>
@@ -232,11 +231,11 @@ export const FilterSheet: Story = {
 export const NoCloseButton: Story = {
   render: () => {
     const [isOpen, setIsOpen] = React.useState(false)
-    
+
     return (
       <>
         <Button onClick={() => setIsOpen(true)}>Open Sheet (No Close Button)</Button>
-        <MotionSheet 
+        <MotionSheet
           open={isOpen}
           onOpenChange={setIsOpen}
           side="right"
@@ -261,11 +260,11 @@ export const NoCloseButton: Story = {
 export const CustomStyling: Story = {
   render: () => {
     const [isOpen, setIsOpen] = React.useState(false)
-    
+
     return (
       <>
         <Button onClick={() => setIsOpen(true)}>Open Custom Styled Sheet</Button>
-        <MotionSheet 
+        <MotionSheet
           open={isOpen}
           onOpenChange={setIsOpen}
           side="right"

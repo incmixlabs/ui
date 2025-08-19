@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
 import { z } from "zod"
 import AutoForm, { AutoFormSubmit } from "../../src/3blocks/auto-form"

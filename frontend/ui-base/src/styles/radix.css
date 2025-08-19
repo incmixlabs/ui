@@ -1,0 +1,24 @@
+/* Base theme tokens */
+@import "../../radix-ui/tokens/base.css";
+
+/* Include just the colors you use, for example `ruby`, `teal`, and `slate`.
+ Remember to import the gray tint that matches your theme setting. */
+@import "../../radix-ui/tokens/colors/gold.css";
+@import "../../radix-ui/tokens/colors/brown.css";
+@import "../../radix-ui/tokens/colors/yellow.css";
+@import "../../radix-ui/tokens/colors/orange.css";
+@import "../../radix-ui/tokens/colors/red.css";
+@import "../../radix-ui/tokens/colors/pink.css";
+@import "../../radix-ui/tokens/colors/purple.css";
+@import "../../radix-ui/tokens/colors/indigo.css";
+@import "../../radix-ui/tokens/colors/violet.css";
+@import "../../radix-ui/tokens/colors/blue.css";
+@import "../../radix-ui/tokens/colors/cyan.css";
+@import "../../radix-ui/tokens/colors/green.css";
+@import "../../radix-ui/tokens/colors/lime.css";
+@import "../../radix-ui/tokens/colors/mint.css";
+
+@import "../../radix-ui/tokens/colors/slate.css";
+/* Rest of the CSS */
+@import "../../radix-ui/components.css";
+@import "../../radix-ui/utilities.css";

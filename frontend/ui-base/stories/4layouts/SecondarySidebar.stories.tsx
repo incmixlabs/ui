@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
-import "../../src/styles/index.css"
 import { Theme, Box, Text, Button, Flex } from "../../src/1base"
 import {
   SidebarProvider,
@@ -17,9 +16,9 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "../../src/4layouts/sidebar"
-import { 
-  SecondarySidebar, 
-  SidebarErrorFallback 
+import {
+  SecondarySidebar,
+  SidebarErrorFallback
 } from "../../src/4layouts/secondary-sidebars"
 import { FileFolder } from "../../src/4layouts/secondary-sidebars/file-folder"
 import { Home, Search, Settings, User, FolderClosed, File } from "lucide-react"
@@ -117,7 +116,7 @@ export const Default: Story = {
             <SidebarTrigger />
           </Flex>
           <Text className="mb-4">
-            This layout includes both a primary sidebar (left) and a secondary sidebar. 
+            This layout includes both a primary sidebar (left) and a secondary sidebar.
             The secondary sidebar provides additional navigation or context-specific options.
           </Text>
           <Text size="2" color="gray">
@@ -178,7 +177,7 @@ export const FileManagerExample: Story = {
             <SidebarTrigger />
           </Flex>
           <Text className="mb-4">
-            This is a file manager interface with a specialized secondary sidebar 
+            This is a file manager interface with a specialized secondary sidebar
             that shows the folder tree structure with expandable folders.
           </Text>
           <Box className="grid grid-cols-4 gap-4 mt-6">
@@ -246,7 +245,7 @@ export const CustomContent: Story = {
       <SecondarySidebar>
         <Box className="p-4">
           <Text size="3" weight="bold" className="mb-4">Project Details</Text>
-          
+
           <Box className="mb-6">
             <Text size="2" weight="medium" className="mb-2">Progress</Text>
             <Box className="w-full bg-gray-3 rounded-full h-2">
@@ -303,10 +302,10 @@ export const CustomContent: Story = {
             <SidebarTrigger />
           </Flex>
           <Text className="mb-4">
-            This example shows a project management interface where the secondary sidebar 
+            This example shows a project management interface where the secondary sidebar
             provides contextual information like project progress, team members, and quick actions.
           </Text>
-          
+
           <Box className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
             <Box className="p-4 border rounded-lg">
               <Text size="3" weight="bold" className="mb-2">Tasks</Text>
@@ -439,8 +438,8 @@ export const CollapsedPrimary: Story = {
             <SidebarTrigger />
           </Flex>
           <Text>
-            When the primary sidebar is collapsed to icons only, the secondary sidebar 
-            adjusts its position accordingly. Notice how the secondary sidebar moves closer 
+            When the primary sidebar is collapsed to icons only, the secondary sidebar
+            adjusts its position accordingly. Notice how the secondary sidebar moves closer
             to the collapsed primary sidebar.
           </Text>
         </Box>
