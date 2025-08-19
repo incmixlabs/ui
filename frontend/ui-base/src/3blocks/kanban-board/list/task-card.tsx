@@ -1060,7 +1060,7 @@ export const ListTaskCard = memo(function ListTaskCard({
                   users={(card.assignedTo || []).map((user) => ({
                     id: user.id,
                     name: user.name,
-                    src: user.avatar,
+                    src: (user as any).image || (user as any).avatar,
                   }))}
                   maxVisible={3}
                   layout="stack"

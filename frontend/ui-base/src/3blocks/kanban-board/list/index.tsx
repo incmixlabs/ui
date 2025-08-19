@@ -222,11 +222,18 @@ export function ListBoard({
           }
 
           setMockColumns((prev) =>
-            prev.map((col) => ({
-              ...col,
-              tasks: col.tasks.filter((task: KanbanTask) => task.id !== id),
-              totalTasksCount: col.totalTasksCount - 1,
-            }))
+            prev.map((col) => {
+              const hadTask = col.tasks.some(
+                (task: KanbanTask) => task.id === id
+              )
+              return {
+                ...col,
+                tasks: col.tasks.filter((task: KanbanTask) => task.id !== id),
+                totalTasksCount: hadTask
+                  ? col.totalTasksCount - 1
+                  : col.totalTasksCount,
+              }
+            })
           )
         } catch (error) {
           console.error("Mock delete task error:", error)

@@ -58,11 +58,12 @@ export const ListView: Story = {
         task.endDate && task.endDate < Date.now() && !task.completed
       ).length
     }, 0)
-    const urgentTasks = mockColumns.reduce((sum, col) => {
-      return sum + col.tasks.filter(task => 
-        task.priorityId === priorityLabels.find(p => p.name === "Urgent")?.id
-      ).length
-    }, 0)
+    const urgentLabelId = priorityLabels.find(p => p.name === "Urgent")?.id
+    const urgentTasks = urgentLabelId
+      ? mockColumns.reduce((sum, col) => {
+          return sum + col.tasks.filter(task => task.priorityId === urgentLabelId).length
+        }, 0)
+      : 0
 
     const mockData = {
       columns: mockColumns,

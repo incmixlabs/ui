@@ -40,6 +40,19 @@ import {
 } from "../shared/overlapping-avatar-group"
 import type { KanbanTask } from "../types" // Import KanbanTask type
 
+// Helper function to safely handle both hex and CSS variables for alpha backgrounds
+function toAlphaBg(color?: string, hexAlpha = "20"): string {
+  if (!color) return "var(--gray-a3)"
+  if (color.startsWith("var(")) {
+    const varName = color.match(/var\(([^)]+)\)/)?.[1]
+    return varName
+      ? `var(${varName.replace(/-\d+$/, "-a3")})`
+      : "var(--gray-a3)"
+  }
+  if (color.startsWith("#")) return `${color}${hexAlpha}`
+  return color
+}
+
 interface TaskActionsMenuProps {
   task?: KanbanTask | TaskDataSchema
   columns: TaskDataSchema[]
@@ -340,9 +353,7 @@ export const TaskActionsMenu = ({
                       className="ml-auto"
                       style={
                         {
-                          backgroundColor: (col as any).color
-                            ? `${(col as any).color}20`
-                            : "var(--gray-a3)",
+                          backgroundColor: toAlphaBg((col as any).color),
                           color: (col as any).color || "var(--gray-11)",
                         } as React.CSSProperties
                       }
@@ -612,21 +623,6 @@ export const TaskActionsMenu = ({
                           align="center"
                           gap="3"
                           className="cursor-pointer rounded-md p-2 hover:bg-gray-3"
-                          onClick={() => {
-                            const newAssignedTo = isAssigned
-                              ? currentAssignedTo.filter(
-                                  (user) => user.id !== member.id
-                                )
-                              : [
-                                  ...currentAssignedTo,
-                                  {
-                                    id: member.id,
-                                    name: member.name,
-                                    image: member.avatar,
-                                  },
-                                ]
-                            handleUpdateField("assignedTo", newAssignedTo)
-                          }}
                         >
                           <Checkbox
                             checked={isAssigned}
