@@ -9,6 +9,7 @@ import {
 import {
   type ExtractDocumentTypeFromTypedRxJsonSchema,
   type RxCollection,
+  type RxDatabase,
   toTypedRxJsonSchema,
 } from "rxdb"
 
@@ -57,3 +58,5 @@ export interface TaskCollections {
   dashboardTemplates: RxCollection<DashboardTemplateDocType>
   dashboards: RxCollection<DashboardDocType>
 }
+
+export type RxIncmixDatabase = RxDatabase<TaskCollections>

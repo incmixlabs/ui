@@ -1,5 +1,4 @@
-import React from "react"
-import { Suspense, useEffect, useMemo } from "react"
+import React, { Suspense, useEffect, useMemo } from "react"
 
 import { useQuery } from "@tanstack/react-query"
 import { RouterProvider } from "@tanstack/react-router"
@@ -15,7 +14,6 @@ import {
   useThemeStore,
 } from "@incmix/store/use-settings-store"
 import { Theme, Toaster } from "@incmix/ui"
-import type { LanguageOption as Language } from "@incmix/utils/types"
 import { Provider as RxdbProvider } from "rxdb-hooks"
 
 import { translations } from "./translations"
@@ -117,7 +115,7 @@ function App() {
       radius={radius}
       scaling={scaling}
     >
-      <RxdbProvider db={db}>
+      <RxdbProvider db={db as any}>
         <Suspense fallback={<LoadingPage />}>
           <Toaster />
           <RouterProvider router={router} />
