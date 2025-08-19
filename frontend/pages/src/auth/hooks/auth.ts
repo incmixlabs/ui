@@ -416,9 +416,11 @@ export const useGoogleAuthCallback = (state: string, code: string) => {
 
   const isLoggedIn = !isLoading && !isError
 
-  if (isLoggedIn) {
-    queryClient.invalidateQueries({ queryKey: ["user", I18n.language] })
-  }
+  useEffect(() => {
+    if (isLoggedIn) {
+      queryClient.invalidateQueries({ queryKey: ["user", I18n.language] })
+    }
+  }, [isLoggedIn, I18n.language, queryClient])
 
   return { data, isLoading, isError, isLoggedIn, error }
 }
