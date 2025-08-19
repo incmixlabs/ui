@@ -1,16 +1,16 @@
 import {
+  Avatar,
   Badge,
   Box,
   Button,
   Calendar,
+  Checkbox,
   DropdownMenu,
   Flex,
   IconButton,
   Popover,
-  Text,
-  Avatar,
-  Checkbox,
   ScrollArea,
+  Text,
 } from "@/base"
 import { AvatarGroup } from "@/src/2elements/avatar-group"
 import type { TaskDataSchema } from "@incmix/utils/schema"
@@ -401,10 +401,14 @@ export const TaskActionsMenu = ({
               <Text size="2" weight="medium" className="mb-3 text-gray-12">
                 Task Dates
               </Text>
-              
+
               {/* Start Date */}
               <Box className="space-y-2">
-                <Text size="1" weight="medium" className="text-gray-11 uppercase tracking-wide">
+                <Text
+                  size="1"
+                  weight="medium"
+                  className="text-gray-11 uppercase tracking-wide"
+                >
                   Start Date
                 </Text>
                 <Popover.Root
@@ -414,13 +418,19 @@ export const TaskActionsMenu = ({
                   }
                 >
                   <Popover.Trigger>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       className="h-9 w-full justify-start px-3"
                       style={{
-                        backgroundColor: currentStartDate ? "var(--green-2)" : "transparent",
-                        borderColor: currentStartDate ? "var(--green-7)" : "var(--gray-7)",
-                        color: currentStartDate ? "var(--green-11)" : "var(--gray-11)"
+                        backgroundColor: currentStartDate
+                          ? "var(--green-2)"
+                          : "transparent",
+                        borderColor: currentStartDate
+                          ? "var(--green-7)"
+                          : "var(--gray-7)",
+                        color: currentStartDate
+                          ? "var(--green-11)"
+                          : "var(--gray-11)",
                       }}
                     >
                       <CalendarIcon size={14} className="mr-2" />
@@ -439,7 +449,9 @@ export const TaskActionsMenu = ({
                     <Calendar
                       mode="single"
                       selected={
-                        currentStartDate ? new Date(currentStartDate) : undefined
+                        currentStartDate
+                          ? new Date(currentStartDate)
+                          : undefined
                       }
                       onSelect={(date: Date | undefined) =>
                         handleDateChange("start", date)
@@ -452,7 +464,11 @@ export const TaskActionsMenu = ({
 
               {/* End Date */}
               <Box className="space-y-2">
-                <Text size="1" weight="medium" className="text-gray-11 uppercase tracking-wide">
+                <Text
+                  size="1"
+                  weight="medium"
+                  className="text-gray-11 uppercase tracking-wide"
+                >
                   End Date
                 </Text>
                 <Popover.Root
@@ -462,13 +478,19 @@ export const TaskActionsMenu = ({
                   }
                 >
                   <Popover.Trigger>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       className="h-9 w-full justify-start px-3"
                       style={{
-                        backgroundColor: currentEndDate ? "var(--red-2)" : "transparent",
-                        borderColor: currentEndDate ? "var(--red-7)" : "var(--gray-7)",
-                        color: currentEndDate ? "var(--red-11)" : "var(--gray-11)"
+                        backgroundColor: currentEndDate
+                          ? "var(--red-2)"
+                          : "transparent",
+                        borderColor: currentEndDate
+                          ? "var(--red-7)"
+                          : "var(--gray-7)",
+                        color: currentEndDate
+                          ? "var(--red-11)"
+                          : "var(--gray-11)",
                       }}
                     >
                       <CalendarIcon size={14} className="mr-2" />
@@ -507,9 +529,9 @@ export const TaskActionsMenu = ({
 
               {/* Clear dates option */}
               {(currentStartDate || currentEndDate) && (
-                <Button 
-                  variant="ghost" 
-                  size="1" 
+                <Button
+                  variant="ghost"
+                  size="1"
                   className="mt-3 w-full text-gray-10 hover:text-gray-12"
                   onClick={() => {
                     if (currentStartDate) handleUpdateField("startDate", null)
@@ -541,11 +563,15 @@ export const TaskActionsMenu = ({
               <Text size="2" weight="medium" className="text-gray-12">
                 Assign Members
               </Text>
-              
+
               {/* Currently Assigned Members Display */}
               {currentAssignedTo.length > 0 && (
                 <Box className="space-y-2">
-                  <Text size="1" weight="medium" className="text-gray-11 uppercase tracking-wide">
+                  <Text
+                    size="1"
+                    weight="medium"
+                    className="text-gray-11 uppercase tracking-wide"
+                  >
                     Assigned ({currentAssignedTo.length})
                   </Text>
                   <AvatarGroup
@@ -563,17 +589,23 @@ export const TaskActionsMenu = ({
 
               {/* Available Members List */}
               <Box className="space-y-2">
-                <Text size="1" weight="medium" className="text-gray-11 uppercase tracking-wide">
+                <Text
+                  size="1"
+                  weight="medium"
+                  className="text-gray-11 uppercase tracking-wide"
+                >
                   Team Members
                 </Text>
-                <ScrollArea 
-                  type="hover" 
-                  scrollbars="vertical" 
+                <ScrollArea
+                  type="hover"
+                  scrollbars="vertical"
                   style={{ maxHeight: "200px" }}
                 >
                   <Box className="space-y-1 pr-2">
                     {MOCK_MEMBERS.map((member) => {
-                      const isAssigned = currentAssignedTo.some((user) => user.id === member.id)
+                      const isAssigned = currentAssignedTo.some(
+                        (user) => user.id === member.id
+                      )
                       return (
                         <Flex
                           key={member.id}
@@ -582,7 +614,9 @@ export const TaskActionsMenu = ({
                           className="cursor-pointer rounded-md p-2 hover:bg-gray-3"
                           onClick={() => {
                             const newAssignedTo = isAssigned
-                              ? currentAssignedTo.filter((user) => user.id !== member.id)
+                              ? currentAssignedTo.filter(
+                                  (user) => user.id !== member.id
+                                )
                               : [
                                   ...currentAssignedTo,
                                   {
@@ -598,7 +632,9 @@ export const TaskActionsMenu = ({
                             checked={isAssigned}
                             onCheckedChange={() => {
                               const newAssignedTo = isAssigned
-                                ? currentAssignedTo.filter((user) => user.id !== member.id)
+                                ? currentAssignedTo.filter(
+                                    (user) => user.id !== member.id
+                                  )
                                 : [
                                     ...currentAssignedTo,
                                     {
