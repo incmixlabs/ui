@@ -45,7 +45,9 @@ export const incmixTailwindPreset: Config = {
   content: ["./src/**/*.{js,jsx,ts,tsx,mdx}"],
   presets: [windyTypography],
   darkMode: ["class"],
-  safelist: [{ pattern: /((bg-[a-z])\w+-[1-12]|text-[a-z])\w+-[1-12]|border)-./ }],
+  safelist: [
+    { pattern: /((bg-[a-z])\w+-[1-12]|text-[a-z])\w+-[1-12]|border)-./ },
+  ],
   theme: {
     extend: {
       ...allColorObjects,
