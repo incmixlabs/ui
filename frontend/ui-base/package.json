@@ -98,6 +98,7 @@
     "@icons-pack/react-simple-icons": "^13.7.0",
     "@incmix/store": "workspace: *",
     "@radix-ui/colors": "catalog:",
+    "@preact/signals-react": "^3.2.1",
     "@radix-ui/react-accordion": "catalog:",
     "@radix-ui/react-avatar": "catalog:",
     "@radix-ui/react-collapsible": "^1.1.12",
