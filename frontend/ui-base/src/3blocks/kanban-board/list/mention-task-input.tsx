@@ -4,17 +4,36 @@ import { useAIFeaturesStore } from "@incmix/store"
 import type { TaskDataSchema } from "@incmix/utils/schema"
 import { Check, Loader2, Plus, Sparkles, X } from "lucide-react"
 import { nanoid } from "nanoid"
-// components/shared/simple-task-input.tsx
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useState } from "react"
 import { TaskActionsMenu } from "./task-actions-menu"
 
+interface TaskFormData {
+  priorityId: string
+  startDate: string
+  endDate: string
+  assignedTo: Array<{
+    id: string
+    name: string
+    image?: string
+  }>
+  columnId: string
+  description?: string
+  checklist?: Array<{ id: string; text: string; checked: boolean }>
+  acceptanceCriteria?: Array<{ id: string; text: string }>
+}
+
 interface SimpleTaskInputProps {
-  onCreateTask: (taskName: string, taskData: any) => Promise<void>
+  onCreateTask: (taskName: string, taskData: TaskFormData) => Promise<void>
   onCancel: () => void
   columns?: TaskDataSchema[]
   placeholder?: string
   disabled?: boolean
-  priorityLabels?: { id: string; name: string; color: string; type: string }[] // Add priorityLabels prop
+  priorityLabels?: Array<{
+    id: string
+    name: string
+    color: string
+    type: string
+  }>
 }
 
 export function SimpleTaskInput({
@@ -37,7 +56,9 @@ export function SimpleTaskInput({
   const [acceptanceCriteria, setAcceptanceCriteria] = useState<
     Array<{ id: string; text: string }>
   >([])
-  const [taskData, setTaskData] = useState({
+  const [taskData, setTaskData] = useState<
+    Omit<TaskFormData, "description" | "checklist" | "acceptanceCriteria">
+  >({
     priorityId: "", // Will be populated in handleSubmit using priorityLabels
     startDate: "",
     endDate: "",
@@ -55,7 +76,7 @@ export function SimpleTaskInput({
     []
   )
 
-  const handleTaskDataChange = useCallback((newData: any) => {
+  const handleTaskDataChange = useCallback((newData: Partial<TaskFormData>) => {
     setTaskData((prev) => ({ ...prev, ...newData }))
   }, [])
 
@@ -142,7 +163,7 @@ export function SimpleTaskInput({
       setChecklist([])
       setAcceptanceCriteria([])
       setTaskData({
-        priorityId: "", // Reset to empty, will be set on next submit
+        priorityId: "",
         startDate: "",
         endDate: "",
         assignedTo: [],
@@ -213,7 +234,7 @@ export function SimpleTaskInput({
             disabled
           }
           size="1"
-          className="mt-2 mb-2"
+          className="my-2"
         >
           {streamingState.isStreaming ? (
             <>
@@ -245,13 +266,13 @@ export function SimpleTaskInput({
       {useAI && (
         <Box className="text-xs">
           {streamingState.isStreaming && (
-            <Flex align="center" gap="1" className="text-blue-500">
+            <Flex align="center" gap="1" className="text-blue-11">
               <Loader2 size={12} className="animate-spin" />
               <Text>Generating description...</Text>
             </Flex>
           )}
           {streamingState.error && (
-            <Text className="text-red-500">
+            <Text className="text-red-11">
               Failed to generate description: {streamingState.error}
             </Text>
           )}
@@ -259,7 +280,7 @@ export function SimpleTaskInput({
             !streamingState.error &&
             description &&
             streamingState.connectionStatus === "completed" && (
-              <Flex align="center" gap="1" className="text-green-600">
+              <Flex align="center" gap="1" className="text-green-11">
                 <Check size={12} />
                 <Text>AI description generated</Text>
               </Flex>
@@ -268,7 +289,7 @@ export function SimpleTaskInput({
       )}
 
       {/* Action Buttons */}
-      <Flex gap="2">
+      <Flex gap="2" className="mt-2">
         <Button
           onClick={handleSubmit}
           disabled={

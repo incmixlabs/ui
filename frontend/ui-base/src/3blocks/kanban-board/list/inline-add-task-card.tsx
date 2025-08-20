@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Flex, Input, Text, TextArea } from "@/base"
+import { Badge, Box, Button, Flex, IconButton, Text, TextField } from "@/base"
 import { detectUrlType, generateDefaultTitle } from "@/utils/url-helpers"
 import { ExternalLink, X } from "lucide-react"
 import { nanoid } from "nanoid"
@@ -64,14 +64,13 @@ const extractPotentialUrls = (text: string): string[] => {
   })
 }
 
-// Match the exact card styles from task-card component for perfect visual consistency
-const cardStyles = {
-  base: "rounded-md transition-all duration-150",
-  light: "bg-white border-b border-gray-4",
-  dark: "dark:bg-gray-1 dark:border-b dark:border-gray-6",
-  hover: "hover:bg-gray-2 dark:hover:bg-gray-2",
-  // Removed focus style to blend seamlessly with other cards
-}
+// Card styles using TailwindCSS classes for consistency
+const CARD_CLASSES =
+  "rounded-md bg-white border-b border-gray-4 transition-all duration-150 hover:bg-gray-2 dark:bg-gray-1 dark:border-gray-6 dark:hover:bg-gray-2" as const
+
+// Error styles for consistent error display
+const ERROR_CLASSES =
+  "mb-2 rounded border border-red-6 bg-red-3 p-2 text-sm text-red-11 dark:border-red-6 dark:bg-red-4 dark:text-red-11" as const
 
 interface TaskRefUrl {
   id: string
@@ -81,11 +80,20 @@ interface TaskRefUrl {
   taskId?: string
 }
 
+type UrlType = TaskRefUrl["type"]
+
+type PriorityLabel = {
+  id: string
+  name: string
+  color: string
+  type: string
+}
+
 interface InlineAddTaskCardProps {
   onCreateTask: (title: string, refUrls?: TaskRefUrl[]) => Promise<void>
   onCancel: () => void
   defaultPriority?: string
-  priorityLabels?: { id: string; name: string; color: string; type: string }[]
+  priorityLabels?: PriorityLabel[]
 }
 
 type TaskCreationError = {
@@ -122,8 +130,10 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
   const processUrlsFromText = useCallback(
     (text: string, currentUrls: TaskRefUrl[]): UrlProcessingResult => {
       const newUrls: TaskRefUrl[] = []
-      let cleanTitle = text
-      let _droppedUrlCount = 0
+      const initialTitle = text
+      let cleanTitle = initialTitle
+      // Track dropped URLs for potential future use
+      // let droppedUrlCount = 0
 
       // Extract potential URLs using word-based detection
       const potentialUrls = extractPotentialUrls(text)
@@ -153,17 +163,13 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
                 type: urlType,
               })
             }
-          } else {
-            _droppedUrlCount++
           }
+          // Note: URLs over limit are automatically ignored
         }
       })
 
       // Clean up title
       cleanTitle = cleanTitle.replace(/\s+/g, " ").trim()
-
-      // Optionally, you could return droppedUrlCount to show a warning
-      // return { cleanTitle, newUrls, droppedUrlCount }
 
       return { cleanTitle, newUrls }
     },
@@ -361,12 +367,12 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
     }
   }, [handleSave, titleInput, isSubmitting, onCancel])
 
-  // URL type icon renderer
-  const renderUrlTypeIcon = (type: "figma" | "task" | "external") => {
+  // URL type icon renderer - memoized for performance
+  const renderUrlTypeIcon = useCallback((type: UrlType) => {
     const iconProps = {
       className: "h-3.5 w-3.5",
-      "aria-hidden": true, // Accessibility improvement
-    }
+      "aria-hidden": true,
+    } as const
 
     switch (type) {
       case "figma":
@@ -394,7 +400,7 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
       default:
         return <ExternalLink {...iconProps} />
     }
-  }
+  }, [])
 
   return (
     <form
@@ -404,14 +410,12 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
     >
       {/* Error message display */}
       {error && (
-        <Box className="mb-2 rounded border border-red-200 bg-red-50 p-2 text-red-700 text-sm dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
+        <Box className={ERROR_CLASSES} role="alert" aria-live="polite">
           {error.message}
         </Box>
       )}
 
-      <Box
-        className={`relative ${cardStyles.base} ${cardStyles.light} ${cardStyles.dark}`}
-      >
+      <Box className={`relative ${CARD_CLASSES}`}>
         <Flex direction="column" className="w-full space-y-3 px-4 py-3">
           {/* Main input row with layout matching existing cards */}
           <Flex align="center" className="h-full w-full">
@@ -423,23 +427,27 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
             >
               {/* Empty space where the checkbox would be */}
               <Box className="flex h-5 w-5 items-center justify-center">
-                <Box className="h-[18px] w-[18px] rounded-sm border border-gray-6" />
+                <Box
+                  className="h-[18px] w-[18px] rounded-sm border border-gray-6"
+                  aria-hidden="true"
+                />
               </Box>
 
               {/* Hybrid input container */}
-              <div className="flex min-h-[24px] flex-1 items-center gap-1">
+              <Flex className="min-h-[24px] flex-1 items-center gap-1">
                 {/* Hidden span for text width measurement */}
-                <span
+                <Text
                   ref={measureRef}
-                  className="invisible absolute whitespace-nowrap font-medium text-base text-gray-12 leading-6 dark:text-gray-12"
-                  style={{ top: -9999, left: -9999 }}
+                  className="-left-[9999px] -top-[9999px] invisible absolute whitespace-nowrap font-medium text-base text-gray-12 leading-6 dark:text-gray-12"
                   aria-hidden="true"
-                />
+                >
+                  {/* Text content set programmatically */}
+                </Text>
 
-                {/* Title input - auto-growing width with accessibility improvements */}
-                <input
+                {/* Title input using TextField.Root for proper Radix UI usage */}
+                <TextField.Root
                   ref={inputRef}
-                  className="m-0 border-0 bg-transparent p-0 font-medium text-base text-gray-12 leading-6 placeholder-gray-9 outline-none transition-all duration-150 ease-in-out focus:outline-none focus:ring-0 dark:text-gray-12"
+                  className="m-0 min-h-[24px] border-0 bg-transparent p-0 font-medium text-base text-gray-12 leading-6 placeholder-gray-9 outline-none transition-all duration-150 ease-in-out focus:outline-none focus:ring-0 dark:text-gray-12"
                   placeholder={
                     extractedUrls.length === 0
                       ? "Enter task title and paste URLs..."
@@ -456,49 +464,49 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
                   }
                   aria-invalid={error?.type === "VALIDATION"}
                   style={{
-                    minHeight: "24px",
-                    lineHeight: "1.5",
                     width: `${inputWidth}px`,
                     maxWidth: `${CONSTANTS.MAX_INPUT_WIDTH}px`,
                     minWidth: `${CONSTANTS.MIN_INPUT_WIDTH}px`,
                   }}
                 />
 
-                {/* URL badges inline to the right - with small gap and accessibility */}
+                {/* URL badges inline to the right - using Radix UI components */}
                 {extractedUrls.length > 0 && (
-                  <ul
+                  <Box
                     className="ml-2 flex items-center gap-1"
                     id="url-badges"
                     aria-label="Reference URLs"
                   >
                     {extractedUrls.map((url) => (
-                      <li
+                      <Badge
                         key={url.id}
-                        className="inline-flex flex-shrink-0 items-center gap-1 rounded border border-blue-6 bg-blue-3 px-2 py-0.5 font-medium text-blue-11 text-xs dark:border-blue-6 dark:bg-blue-4 dark:text-blue-11"
+                        variant="soft"
+                        color="blue"
+                        size="1"
+                        className="inline-flex flex-shrink-0 items-center gap-1"
                       >
                         {renderUrlTypeIcon(url.type)}
-                        <span
-                          style={{
-                            maxWidth: `${CONSTANTS.MAX_URL_TITLE_LENGTH}px`,
-                          }}
-                          className="truncate"
-                          title={url.title} // Tooltip for full title
+                        <Text
+                          className="max-w-[60px] truncate"
+                          size="1"
+                          title={url.title}
                         >
                           {url.title}
-                        </span>
-                        <button
-                          type="button"
-                          className="ml-1 rounded p-0.5 transition-colors hover:bg-blue-5 dark:hover:bg-blue-6"
+                        </Text>
+                        <IconButton
+                          size="1"
+                          variant="ghost"
+                          className="ml-1 h-auto w-auto p-0.5"
                           onClick={() => handleRemoveRefUrl(url.id)}
                           aria-label={`Remove ${url.title} URL`}
                         >
                           <X className="h-2.5 w-2.5" aria-hidden="true" />
-                        </button>
-                      </li>
+                        </IconButton>
+                      </Badge>
                     ))}
-                  </ul>
+                  </Box>
                 )}
-              </div>
+              </Flex>
             </Flex>
 
             {/* Right side content with placeholder elements to match the layout */}
@@ -519,22 +527,16 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
               </Flex>
 
               {/* Due date - empty placeholder */}
-              <Flex
-                align="center"
-                justify="center"
+              <Box
                 className="w-24 min-w-[6rem] flex-shrink-0"
-              >
-                <span />
-              </Flex>
+                aria-hidden="true"
+              />
 
               {/* Assignees - empty placeholder */}
-              <Flex
-                align="center"
-                justify="center"
+              <Box
                 className="w-24 min-w-[6rem] flex-shrink-0"
-              >
-                <span />
-              </Flex>
+                aria-hidden="true"
+              />
 
               {/* Actions menu - helper text with status */}
               <Flex
@@ -542,7 +544,7 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
                 justify="center"
                 className="mr-2 ml-4 flex-shrink-0"
               >
-                <Text className="text-gray-8" size="1">
+                <Text className="text-gray-11" size="1">
                   {isSubmitting ? "Saving..." : "Enter to save"}
                 </Text>
               </Flex>
@@ -553,12 +555,12 @@ export const InlineAddTaskCard: React.FC<InlineAddTaskCardProps> = ({
           {titleInput && extractedUrls.length > 0 && (
             <Flex align="start" gap="3" className="w-full">
               {/* Spacer to align with input */}
-              <Box className="w-8" />
+              <Box className="w-8" aria-hidden="true" />
 
               <Box className="flex-1">
-                <Text size="1" className="text-gray-8 italic">
+                <Text size="1" className="text-gray-11 italic">
                   Title: "{titleInput}" + {extractedUrls.length} reference
-                  {extractedUrls.length !== 1 ? "s" : ""}
+                  {extractedUrls.length === 1 ? "" : "s"}
                 </Text>
               </Box>
             </Flex>

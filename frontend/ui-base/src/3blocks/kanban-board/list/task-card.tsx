@@ -23,19 +23,14 @@ import React, {
 import { createPortal } from "react-dom"
 import invariant from "tiny-invariant"
 
-import { Badge, Box, Checkbox, Flex, Icon, Text } from "@/base"
+import { Badge, Box, Checkbox, Flex, IconButton, Text } from "@/base"
 import { isShallowEqual } from "@incmix/utils/objects"
 import type { TaskDataSchema } from "@incmix/utils/schema"
+import { AvatarGroup } from "../../../2elements/avatar-group"
 import { useKanban } from "../hooks/use-kanban-data"
 import { useKanbanDrawer } from "../hooks/use-kanban-drawer"
 import type { ListColumn } from "../hooks/use-list-view"
-// Import members data hook
-import { useMembers } from "../hooks/use-members"
 import { ModalPresets } from "../shared/confirmation-modal"
-import {
-  type AssignedUser,
-  OverlappingAvatarGroup,
-} from "../shared/overlapping-avatar-group"
 import { type RefUrl, TaskRefUrls } from "../shared/task-ref-urls"
 import {
   type KanbanTask,
@@ -87,14 +82,11 @@ const checkboxStyles = {
   checked: "bg-blue-9 border-blue-9",
 }
 
-// Group hover styles for elements that should only appear on hover
-const _hoverVisibleClasses =
+// Constants for consistent styling
+const HOVER_VISIBLE_CLASSES =
   "opacity-0 group-hover:opacity-100 transition-opacity duration-150"
-
-// Helper function to format dates
-const _formatDate = (date: Date): string => {
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
-}
+const SUBTASK_MARGIN_CLASS = "ml-8" // 32px equivalent
+const HIDDEN_CLASS = "hidden"
 
 interface ListTaskCardProps {
   card: KanbanTask
@@ -180,9 +172,6 @@ export const ListTaskCard = memo(function ListTaskCard({
 
   // Access kanban data to get the subtask functions
   const kanbanData = useKanban(projectId)
-
-  // Get members data from hook
-  const { members, isLoading: _membersLoading } = useMembers(projectId)
 
   // Check if the current task is a parent task (has subtasks)
   const hasChildTasks = useMemo(() => {
@@ -665,15 +654,6 @@ export const ListTaskCard = memo(function ListTaskCard({
           const sourceData = source.data
           const sourceCard = sourceData.card as KanbanTask
 
-          // Determine if the source card is a parent task with subtasks
-          const _sourceHasSubtasks =
-            !sourceCard.isSubtask &&
-            columns.some((col) =>
-              col.tasks.some(
-                (t: KanbanTask) => t.parentTaskId === sourceCard.id
-              )
-            )
-
           // Extract edge information with proper TypeScript typing
           // Define allowed edge types to match the Edge type from the drag-and-drop library
           type Edge = "top" | "right" | "bottom" | "left"
@@ -741,15 +721,6 @@ export const ListTaskCard = memo(function ListTaskCard({
           // Get the source card with proper typing
           const sourceCard = source.data.card as KanbanTask
 
-          // Detect if the dragged task has subtasks
-          const _sourceHasSubtasks =
-            !sourceCard.isSubtask &&
-            columns.some((col) =>
-              col.tasks.some(
-                (t: KanbanTask) => t.parentTaskId === sourceCard.id
-              )
-            )
-
           // Enhanced edge detection for parent tasks with subtasks
           // Make it easier to drop tasks above parent tasks with subtasks
           if (hasChildTasks && !sourceCard.isSubtask) {
@@ -805,13 +776,9 @@ export const ListTaskCard = memo(function ListTaskCard({
         ) : null}
         <Box
           ref={innerRef}
-          className={`group relative ${cardStyles.base} ${cardStyles.light} ${cardStyles.dark} ${cardStyles.hover} ${isSelected ? cardStyles.selected : ""} ${state.type === "is-dragging" ? cardStyles.dragging : ""} ${isSubtask ? cardStyles.subtask : ""} ${shouldRemoveBorder ? cardStyles.noBorder : ""}`}
-          style={{
-            // Apply larger indentation for subtasks
-            marginLeft: isSubtask ? "32px" : "0",
-            // Hide the task if it's not visible (e.g., parent is collapsed)
-            display: isVisible ? "block" : "none",
-          }}
+          className={`group relative ${cardStyles.base} ${cardStyles.light} ${cardStyles.dark} ${cardStyles.hover} ${isSelected ? cardStyles.selected : ""} ${state.type === "is-dragging" ? cardStyles.dragging : ""} ${isSubtask ? cardStyles.subtask : ""} ${shouldRemoveBorder ? cardStyles.noBorder : ""} ${
+            isSubtask ? SUBTASK_MARGIN_CLASS : ""
+          } ${!isVisible ? HIDDEN_CLASS : ""}`}
         >
           {/* All content in a single horizontal row with tabular layout */}
           <Flex align="center" className="h-full w-full px-4 py-3">
@@ -819,12 +786,13 @@ export const ListTaskCard = memo(function ListTaskCard({
             <Flex align="center" gap="3" className="w-[35%] flex-shrink-0">
               {/* Expand/collapse icon for parent tasks */}
               {hasChildTasks && (
-                <Box
-                  className="flex h-5 w-5 cursor-pointer items-center justify-center rounded hover:bg-gray-3"
+                <IconButton
+                  size="1"
+                  variant="ghost"
+                  className="h-5 w-5"
                   onClick={(e) => {
                     e.stopPropagation()
                     if (card.id) {
-                      // Toggle expanded state for this task
                       setExpandedTasks({
                         ...expandedTasks,
                         [card.id]: expandedTasks[card.id] === false,
@@ -835,12 +803,22 @@ export const ListTaskCard = memo(function ListTaskCard({
                     isExpanded ? "Collapse subtasks" : "Expand subtasks"
                   }
                 >
-                  {isExpanded ? (
-                    <Icon name="ChevronDown" className="text-gray-9" />
-                  ) : (
-                    <Icon name="ChevronRight" className="text-gray-9" />
-                  )}
-                </Box>
+                  <svg
+                    className={`h-3 w-3 text-gray-9 transition-transform ${
+                      isExpanded ? "" : "-rotate-90"
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </IconButton>
               )}
 
               {/* Checkbox with updated styling */}
@@ -866,12 +844,24 @@ export const ListTaskCard = memo(function ListTaskCard({
             <Flex
               align="center"
               gap="2"
-              className="w-[25%] flex-shrink-0 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
+              className={`w-[25%] flex-shrink-0 ${HOVER_VISIBLE_CLASSES}`}
             >
-              {/* Subtasks counter */}
+              {/* Subtasks counter - Using proper icon from Radix */}
               {card.subTasks && card.subTasks.length > 0 && (
                 <Flex align="center" gap="1">
-                  <Icon name="ListChecks" className="text-gray-9" />
+                  <svg
+                    className="h-3 w-3 text-gray-9"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h6a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                    />
+                  </svg>
                   <Text className="text-gray-10" size="1">
                     {
                       card.subTasks.filter((task) => task.completed === true)
@@ -885,7 +875,19 @@ export const ListTaskCard = memo(function ListTaskCard({
               {/* Comments counter */}
               {card.comments && card.comments.length > 0 && (
                 <Flex align="center" gap="1">
-                  <Icon name="MessageSquare" className="text-gray-9" />
+                  <svg
+                    className="h-3 w-3 text-gray-9"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                    />
+                  </svg>
                   <Text className="text-gray-10" size="1">
                     {card.comments.length}
                   </Text>
@@ -895,7 +897,19 @@ export const ListTaskCard = memo(function ListTaskCard({
               {/* Attachments counter */}
               {card.attachments && card.attachments.length > 0 && (
                 <Flex align="center" gap="1">
-                  <Icon name="Paperclip" className="text-gray-9" />
+                  <svg
+                    className="h-3 w-3 text-gray-9"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+                    />
+                  </svg>
                   <Text className="text-gray-10" size="1">
                     {card.attachments.length}
                   </Text>
@@ -906,7 +920,19 @@ export const ListTaskCard = memo(function ListTaskCard({
               {card.acceptanceCriteria &&
                 card.acceptanceCriteria.length > 0 && (
                   <Flex align="center" gap="1">
-                    <Icon name="ClipboardCheck" className="text-gray-9" />
+                    <svg
+                      className="h-3 w-3 text-gray-9"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5H7a2 2 0 00-2 2v6a2 2 0 002 2h6a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                      />
+                    </svg>
                     <Text className="text-gray-10" size="1">
                       {
                         card.acceptanceCriteria.filter(
@@ -921,7 +947,19 @@ export const ListTaskCard = memo(function ListTaskCard({
               {/* Checklist counter */}
               {card.checklist && card.checklist.length > 0 && (
                 <Flex align="center" gap="1">
-                  <Icon name="SquareCheckBig" className="text-gray-9" />
+                  <svg
+                    className="h-3 w-3 text-gray-9"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
                   <Text className="text-gray-10" size="1">
                     {
                       card.checklist.filter((item) => item.checked === true)
@@ -1000,32 +1038,16 @@ export const ListTaskCard = memo(function ListTaskCard({
                 justify="center"
                 className="w-24 min-w-[6rem] flex-shrink-0"
               >
-                <OverlappingAvatarGroup
-                  users={(card.assignedTo || []) as AssignedUser[]}
-                  maxDisplayed={3}
-                  size="md"
-                  interactive={true}
-                  allUsers={members.map((member) => ({
-                    id: member.id,
-                    name: member.name,
-                    avatar: member.avatar,
-                    position: member.position,
-                    color: member.color,
-                    value: member.value,
-                    label: member.label,
+                <AvatarGroup
+                  users={(card.assignedTo || []).map((user) => ({
+                    id: user.id,
+                    name: user.name,
+                    src: (user as any).image || (user as any).avatar,
                   }))}
-                  onUsersChange={async (updatedUsers) => {
-                    if (!card.id) return
-
-                    try {
-                      // Update the task with the new assigned users
-                      await onUpdateTask(card.id, {
-                        assignedTo: updatedUsers,
-                      })
-                    } catch (error) {
-                      console.error("Failed to update assigned users:", error)
-                    }
-                  }}
+                  maxVisible={3}
+                  layout="stack"
+                  stackOrder="asc"
+                  size="1"
                 />
               </Flex>
 
@@ -1090,28 +1112,13 @@ export const ListTaskCard = memo(function ListTaskCard({
         ) : null}
       </Box>
 
-      {/* Portal for drag preview */}
+      {/* Portal for drag preview - using TailwindCSS classes */}
       {state.type === "preview"
         ? createPortal(
-            <div
-              className="drag-preview-wrapper"
-              style={{
-                filter: "brightness(0.8) contrast(1.2)", // Make it darker to match dark mode
-                backgroundColor: "#1a1a1a", // Dark background
-                borderRadius: "20px",
-                overflow: "hidden",
-              }}
-            >
+            <Box className="overflow-hidden rounded-2xl bg-gray-900 brightness-75 contrast-125">
               <Box
-                className="group relative cursor-grabbing px-6"
-                style={{
-                  height: "56px",
-                  width: state.dragging.width,
-                  backgroundColor: "#1a1a1a", // Dark background
-                  border: "1px solid #333", // Dark border
-                  borderRadius: "20px",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
-                }}
+                className="group relative h-14 cursor-grabbing rounded-2xl border border-gray-700 bg-gray-900 px-6 shadow-lg"
+                style={{ width: state.dragging.width }}
               >
                 <Flex
                   justify="between"
@@ -1121,21 +1128,19 @@ export const ListTaskCard = memo(function ListTaskCard({
                   <Flex align="center" gap="2" className="flex-shrink-0">
                     <Checkbox
                       checked={card.completed || false}
-                      className={`${checkboxStyles.base} ${card.completed ? checkboxStyles.checked : checkboxStyles.unchecked}`}
-                      style={{ opacity: 0.9 }}
+                      className={`opacity-90 ${checkboxStyles.base} ${card.completed ? checkboxStyles.checked : checkboxStyles.unchecked}`}
                       disabled
                     />
                     <Text
                       size="2"
-                      style={{ color: "#fff", fontWeight: 500, opacity: 0.9 }}
-                      className="truncate"
+                      className="truncate font-medium text-white opacity-90"
                     >
                       {card.name}
                     </Text>
                   </Flex>
                 </Flex>
               </Box>
-            </div>,
+            </Box>,
             state.container
           )
         : null}

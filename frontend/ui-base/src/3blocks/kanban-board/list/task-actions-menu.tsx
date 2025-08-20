@@ -1,14 +1,18 @@
 import {
+  Avatar,
   Badge,
   Box,
   Button,
   Calendar,
+  Checkbox,
   DropdownMenu,
   Flex,
   IconButton,
   Popover,
+  ScrollArea,
   Text,
 } from "@/base"
+import { AvatarGroup } from "@/src/2elements/avatar-group"
 import type { TaskDataSchema } from "@incmix/utils/schema"
 import {
   AlertCircle,
@@ -33,9 +37,21 @@ import { useTaskCopyBuffer } from "../hooks/use-task-copy-buffer"
 import {
   type AssignedUser,
   OverlappingAvatarGroup,
-  type SelectableUser,
 } from "../shared/overlapping-avatar-group"
 import type { KanbanTask } from "../types" // Import KanbanTask type
+
+// Helper function to safely handle both hex and CSS variables for alpha backgrounds
+function toAlphaBg(color?: string, hexAlpha = "20"): string {
+  if (!color) return "var(--gray-a3)"
+  if (color.startsWith("var(")) {
+    const varName = color.match(/var\(([^)]+)\)/)?.[1]
+    return varName
+      ? `var(${varName.replace(/-\d+$/, "-a3")})`
+      : "var(--gray-a3)"
+  }
+  if (color.startsWith("#")) return `${color}${hexAlpha}`
+  return color
+}
 
 interface TaskActionsMenuProps {
   task?: KanbanTask | TaskDataSchema
@@ -266,7 +282,7 @@ export const TaskActionsMenu = ({
           size={size}
           variant={variant}
           disabled={disabled}
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e: React.MouseEvent) => e.stopPropagation()}
         >
           <MoreVertical size={size === "1" ? 14 : 16} />
         </IconButton>
@@ -332,13 +348,15 @@ export const TaskActionsMenu = ({
                   return (
                     <Badge
                       key={col.id}
-                      style={{
-                        backgroundColor: `${(col as any).color ? `${(col as any).color}20` : "#e0e0e020"}`,
-                        color: (col as any).color || "#808080",
-                      }}
                       variant="soft"
                       size="1"
                       className="ml-auto"
+                      style={
+                        {
+                          backgroundColor: toAlphaBg((col as any).color),
+                          color: (col as any).color || "var(--gray-11)",
+                        } as React.CSSProperties
+                      }
                     >
                       {col.name}
                     </Badge>
@@ -361,9 +379,12 @@ export const TaskActionsMenu = ({
                   <Flex align="center" gap="2">
                     <Box
                       className="h-2 w-2 rounded-full"
-                      style={{
-                        backgroundColor: (column as any).color || "#808080",
-                      }}
+                      style={
+                        {
+                          backgroundColor:
+                            (column as any).color || "var(--gray-8)",
+                        } as React.CSSProperties
+                      }
                     />
                     <Text>{column.name}</Text>
                   </Flex>
@@ -379,73 +400,158 @@ export const TaskActionsMenu = ({
             <Flex align="center" gap="2">
               <CalendarIcon size={14} />
               <Text>Dates</Text>
+              {(currentStartDate || currentEndDate) && (
+                <Badge variant="soft" size="1" className="ml-auto">
+                  {currentStartDate && currentEndDate ? "2" : "1"}
+                </Badge>
+              )}
             </Flex>
           </DropdownMenu.SubTrigger>
-          <DropdownMenu.SubContent>
-            <Box className="space-y-2 p-2">
+          <DropdownMenu.SubContent className="w-64">
+            <Box className="space-y-3 p-3">
+              <Text size="2" weight="medium" className="mb-3 text-gray-12">
+                Task Dates
+              </Text>
+
               {/* Start Date */}
-              <Popover.Root
-                open={isDatePickerOpen === "start"}
-                onOpenChange={(open) =>
-                  setIsDatePickerOpen(open ? "start" : null)
-                }
-              >
-                <Popover.Trigger>
-                  <Button variant="ghost" className="w-full justify-start">
-                    <Flex align="center" gap="2" className="w-full">
-                      <CalendarIcon size={12} className="text-green-9" />
-                      <Text size="2">Start Date</Text>
-                      {currentStartDate && (
-                        <Text size="1" className="ml-auto text-gray-9">
+              <Box className="space-y-2">
+                <Text
+                  size="1"
+                  weight="medium"
+                  className="text-gray-11 uppercase tracking-wide"
+                >
+                  Start Date
+                </Text>
+                <Popover.Root
+                  open={isDatePickerOpen === "start"}
+                  onOpenChange={(open: boolean) =>
+                    setIsDatePickerOpen(open ? "start" : null)
+                  }
+                >
+                  <Popover.Trigger>
+                    <Button
+                      variant="outline"
+                      className="h-9 w-full justify-start px-3"
+                      style={{
+                        backgroundColor: currentStartDate
+                          ? "var(--green-2)"
+                          : "transparent",
+                        borderColor: currentStartDate
+                          ? "var(--green-7)"
+                          : "var(--gray-7)",
+                        color: currentStartDate
+                          ? "var(--green-11)"
+                          : "var(--gray-11)",
+                      }}
+                    >
+                      <CalendarIcon size={14} className="mr-2" />
+                      {currentStartDate ? (
+                        <Text size="2" weight="medium">
                           {formatDate(currentStartDate)}
                         </Text>
-                      )}
-                    </Flex>
-                  </Button>
-                </Popover.Trigger>
-                <Popover.Content>
-                  <Calendar
-                    mode="single"
-                    selected={
-                      currentStartDate ? new Date(currentStartDate) : undefined
-                    }
-                    onSelect={(date) => handleDateChange("start", date)}
-                    initialFocus
-                  />
-                </Popover.Content>
-              </Popover.Root>
-
-              {/* End Date */}
-              <Popover.Root
-                open={isDatePickerOpen === "end"}
-                onOpenChange={(open) =>
-                  setIsDatePickerOpen(open ? "end" : null)
-                }
-              >
-                <Popover.Trigger>
-                  <Button variant="ghost" className="w-full justify-start">
-                    <Flex align="center" gap="2" className="w-full">
-                      <CalendarIcon size={12} className="text-gray-9" />
-                      <Text size="2">End Date</Text>
-                      {currentEndDate && (
-                        <Text size="1" className="ml-auto text-gray-9">
-                          {formatDate(currentEndDate)}
+                      ) : (
+                        <Text size="2" className="text-gray-10">
+                          Select start date
                         </Text>
                       )}
-                    </Flex>
-                  </Button>
-                </Popover.Trigger>
-                <Popover.Content>
-                  <Calendar
-                    mode="single"
-                    selected={
-                      currentEndDate ? new Date(currentEndDate) : undefined
-                    }
-                    onSelect={(date) => handleDateChange("end", date)}
-                    initialFocus
-                  />
-                </Popover.Content>
-              </Popover.Root>
+                    </Button>
+                  </Popover.Trigger>
+                  <Popover.Content align="start" className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={
+                        currentStartDate
+                          ? new Date(currentStartDate)
+                          : undefined
+                      }
+                      onSelect={(date: Date | undefined) =>
+                        handleDateChange("start", date)
+                      }
+                      initialFocus
+                    />
+                  </Popover.Content>
+                </Popover.Root>
+              </Box>
+
+              {/* End Date */}
+              <Box className="space-y-2">
+                <Text
+                  size="1"
+                  weight="medium"
+                  className="text-gray-11 uppercase tracking-wide"
+                >
+                  End Date
+                </Text>
+                <Popover.Root
+                  open={isDatePickerOpen === "end"}
+                  onOpenChange={(open: boolean) =>
+                    setIsDatePickerOpen(open ? "end" : null)
+                  }
+                >
+                  <Popover.Trigger>
+                    <Button
+                      variant="outline"
+                      className="h-9 w-full justify-start px-3"
+                      style={{
+                        backgroundColor: currentEndDate
+                          ? "var(--red-2)"
+                          : "transparent",
+                        borderColor: currentEndDate
+                          ? "var(--red-7)"
+                          : "var(--gray-7)",
+                        color: currentEndDate
+                          ? "var(--red-11)"
+                          : "var(--gray-11)",
+                      }}
+                    >
+                      <CalendarIcon size={14} className="mr-2" />
+                      {currentEndDate ? (
+                        <Text size="2" weight="medium">
+                          {formatDate(currentEndDate)}
+                        </Text>
+                      ) : (
+                        <Text size="2" className="text-gray-10">
+                          Select end date
+                        </Text>
+                      )}
+                    </Button>
+                  </Popover.Trigger>
+                  <Popover.Content align="start" className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={
+                        currentEndDate ? new Date(currentEndDate) : undefined
+                      }
+                      onSelect={(date: Date | undefined) =>
+                        handleDateChange("end", date)
+                      }
+                      initialFocus
+                      disabled={(date) => {
+                        // Disable dates before start date if start date is set
+                        if (currentStartDate) {
+                          return date < new Date(currentStartDate)
+                        }
+                        return false
+                      }}
+                    />
+                  </Popover.Content>
+                </Popover.Root>
+              </Box>
+
+              {/* Clear dates option */}
+              {(currentStartDate || currentEndDate) && (
+                <Button
+                  variant="ghost"
+                  size="1"
+                  className="mt-3 w-full text-gray-10 hover:text-gray-12"
+                  onClick={() => {
+                    if (currentStartDate) handleUpdateField("startDate", null)
+                    if (currentEndDate) handleUpdateField("endDate", null)
+                  }}
+                >
+                  <Text size="1">Clear all dates</Text>
+                </Button>
+              )}
             </Box>
           </DropdownMenu.SubContent>
         </DropdownMenu.Sub>
@@ -463,30 +569,112 @@ export const TaskActionsMenu = ({
               )}
             </Flex>
           </DropdownMenu.SubTrigger>
-          <DropdownMenu.SubContent className="w-64">
-            <Box className="p-2">
-              <Text size="2" weight="medium" className="mb-2 px-1">
+          <DropdownMenu.SubContent className="w-72">
+            <Box className="space-y-3 p-3">
+              <Text size="2" weight="medium" className="text-gray-12">
                 Assign Members
               </Text>
-              <OverlappingAvatarGroup
-                users={currentAssignedTo as AssignedUser[]}
-                maxDisplayed={5}
-                size="sm"
-                interactive={true}
-                allUsers={MOCK_MEMBERS.map((member) => ({
-                  id: member.id,
-                  name: member.name,
-                  avatar: member.avatar,
-                  position: member.position,
-                  color: member.color,
-                  value: member.value,
-                  label: member.label,
-                }))}
-                onUsersChange={(newUsers) => {
-                  handleUpdateField("assignedTo", newUsers)
-                }}
-                className="justify-center"
-              />
+
+              {/* Currently Assigned Members Display */}
+              {currentAssignedTo.length > 0 && (
+                <Box className="space-y-2">
+                  <Text
+                    size="1"
+                    weight="medium"
+                    className="text-gray-11 uppercase tracking-wide"
+                  >
+                    Assigned ({currentAssignedTo.length})
+                  </Text>
+                  <AvatarGroup
+                    users={currentAssignedTo.map((user) => ({
+                      id: user.id,
+                      name: user.name,
+                      src: (user as any).image || (user as any).avatar,
+                    }))}
+                    maxVisible={4}
+                    size="3"
+                    layout="spread"
+                  />
+                </Box>
+              )}
+
+              {/* Available Members List */}
+              <Box className="space-y-2">
+                <Text
+                  size="1"
+                  weight="medium"
+                  className="text-gray-11 uppercase tracking-wide"
+                >
+                  Team Members
+                </Text>
+                <ScrollArea
+                  type="hover"
+                  scrollbars="vertical"
+                  style={{ maxHeight: "200px" }}
+                >
+                  <Box className="space-y-1 pr-2">
+                    {MOCK_MEMBERS.map((member) => {
+                      const isAssigned = currentAssignedTo.some(
+                        (user) => user.id === member.id
+                      )
+                      return (
+                        <Flex
+                          key={member.id}
+                          align="center"
+                          gap="3"
+                          className="cursor-pointer rounded-md p-2 hover:bg-gray-3"
+                        >
+                          <Checkbox
+                            checked={isAssigned}
+                            onCheckedChange={() => {
+                              const newAssignedTo = isAssigned
+                                ? currentAssignedTo.filter(
+                                    (user) => user.id !== member.id
+                                  )
+                                : [
+                                    ...currentAssignedTo,
+                                    {
+                                      id: member.id,
+                                      name: member.name,
+                                      image: member.avatar,
+                                    },
+                                  ]
+                              handleUpdateField("assignedTo", newAssignedTo)
+                            }}
+                          />
+                          <Avatar
+                            src={member.avatar}
+                            name={member.name}
+                            size="2"
+                          />
+                          <Box className="flex-1">
+                            <Text size="2" weight="medium">
+                              {member.name}
+                            </Text>
+                            {member.position && (
+                              <Text size="1" className="text-gray-10">
+                                {member.position}
+                              </Text>
+                            )}
+                          </Box>
+                        </Flex>
+                      )
+                    })}
+                  </Box>
+                </ScrollArea>
+              </Box>
+
+              {/* Clear All Button */}
+              {currentAssignedTo.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="1"
+                  className="mt-2 w-full text-gray-10 hover:text-gray-12"
+                  onClick={() => handleUpdateField("assignedTo", [])}
+                >
+                  <Text size="1">Clear all assignments</Text>
+                </Button>
+              )}
             </Box>
           </DropdownMenu.SubContent>
         </DropdownMenu.Sub>

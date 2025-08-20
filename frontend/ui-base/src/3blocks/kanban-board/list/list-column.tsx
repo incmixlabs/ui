@@ -689,7 +689,7 @@ export function ListColumnComponent({
                     rows={2}
                   />
                   <Flex align="center" gap="2" className="items-start">
-                    <div className="relative" ref={colorPickerRef}>
+                    <Box className="relative" ref={colorPickerRef}>
                       <Button
                         variant="solid"
                         className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
@@ -697,7 +697,7 @@ export function ListColumnComponent({
                         onClick={() => setIsColorPickerOpen(!isColorPickerOpen)}
                       />
                       {isColorPickerOpen && (
-                        <div
+                        <Box
                           className="absolute z-50 mt-1"
                           style={{ minWidth: "240px" }}
                         >
@@ -709,9 +709,9 @@ export function ListColumnComponent({
                             }}
                             activeColor={editColumnColor}
                           />
-                        </div>
+                        </Box>
                       )}
-                    </div>
+                    </Box>
                     <Text size="1" className="text-gray-9">
                       Column color
                     </Text>
@@ -738,7 +738,7 @@ export function ListColumnComponent({
                 </Flex>
               </Box>
             ) : (
-              <div className="flex items-center">
+              <Box className="flex items-center">
                 <Button
                   variant="ghost"
                   size="1"
@@ -763,7 +763,7 @@ export function ListColumnComponent({
                   }}
                   ref={headerRef}
                 >
-                  <div className="flex items-center ">
+                  <Box className="flex items-center ">
                     <Checkbox
                       checked={
                         allTasksSelected
@@ -776,11 +776,11 @@ export function ListColumnComponent({
                       className="my-auto ml-3 flex-shrink-0"
                       disabled={totalTasks === 0}
                     />
-                  </div>
+                  </Box>
 
                   <Flex align="center" className="ml-2 min-w-0 flex-1 gap-2">
                     {/* Colored dot before title */}
-                    <div
+                    <Box
                       className="h-2.5 w-2.5 flex-shrink-0 rounded-full"
                       style={{
                         backgroundColor: column.color || "var(--gray-9)",
@@ -851,7 +851,7 @@ export function ListColumnComponent({
                     </DropdownMenu.Content>
                   </DropdownMenu.Root>
                 </Flex>
-              </div>
+              </Box>
             )}
           </Box>
 
