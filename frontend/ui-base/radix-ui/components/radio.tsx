@@ -4,14 +4,14 @@ import classNames from "classnames"
 import * as React from "react"
 import { composeEventHandlers, composeRefs } from "./_internal/internal"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { marginPropDefs } from "../props/margin.props.js"
-import { radioPropDefs } from "./radio.props.js"
+import { extractProps } from "../helpers/extract-props"
+import { marginPropDefs } from "../props/margin.props"
+import { radioPropDefs } from "./radio.props"
 
-import type { ComponentPropsWithout } from "../helpers/component-props.js"
-import type { NotInputRadioAttributes } from "../helpers/input-attributes.js"
-import type { MarginProps } from "../props/margin.props.js"
-import type { GetPropDefTypes } from "../props/prop-def.js"
+import type { ComponentPropsWithout } from "../helpers/component-props"
+import type { NotInputRadioAttributes } from "../helpers/input-attributes"
+import type { MarginProps } from "../props/margin.props"
+import type { GetPropDefTypes } from "../props/prop-def"
 
 type RadioElement = React.ElementRef<"input">
 type RadioOwnProps = GetPropDefTypes<typeof radioPropDefs> & {

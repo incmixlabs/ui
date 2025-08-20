@@ -3,7 +3,7 @@ import React from "react"
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
+} from "../helpers/component-props"
 
 type IconElement = React.ElementRef<"svg">
 interface IconProps

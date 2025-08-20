@@ -4,17 +4,17 @@ import { Fallback, Image, Root } from "@radix-ui/react-avatar"
 import classNames from "classnames"
 import * as React from "react"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { getSubtree } from "../helpers/get-subtree.js"
-import { marginPropDefs } from "../props/margin.props.js"
-import { avatarPropDefs } from "./avatar.props.js"
+import { extractProps } from "../helpers/extract-props"
+import { getSubtree } from "../helpers/get-subtree"
+import { marginPropDefs } from "../props/margin.props"
+import { avatarPropDefs } from "./avatar.props"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { MarginProps } from "../props/margin.props.js"
-import type { GetPropDefTypes } from "../props/prop-def.js"
+} from "../helpers/component-props"
+import type { MarginProps } from "../props/margin.props"
+import type { GetPropDefTypes } from "../props/prop-def"
 const AvatarPrimitive = {
   Root,
   Image,

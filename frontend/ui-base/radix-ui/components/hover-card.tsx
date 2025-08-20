@@ -2,16 +2,16 @@ import { Content, Portal, Root, Trigger } from "@radix-ui/react-hover-card"
 import classNames from "classnames"
 import * as React from "react"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { requireReactElement } from "../helpers/require-react-element.js"
-import { hoverCardContentPropDefs } from "./hover-card.props.js"
-import { Theme } from "./theme.js"
+import { extractProps } from "../helpers/extract-props"
+import { requireReactElement } from "../helpers/require-react-element"
+import { hoverCardContentPropDefs } from "./hover-card.props"
+import { Theme } from "./theme"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { HoverCardContentOwnProps } from "./hover-card.props.js"
+} from "../helpers/component-props"
+import type { HoverCardContentOwnProps } from "./hover-card.props"
 const HoverCardPrimitive = {
   Content,
   Portal,

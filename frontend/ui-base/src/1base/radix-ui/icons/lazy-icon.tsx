@@ -1,6 +1,6 @@
 import type { LucideProps } from "lucide-react"
 import dynamicIconImports from "lucide-react/dynamicIconImports"
-import { Suspense, lazy } from "react"
+import React, { Suspense, lazy } from "react"
 
 const fallbackIconComp = (
   <div style={{ background: "var(--foreground)", width: 24, height: 24 }} />

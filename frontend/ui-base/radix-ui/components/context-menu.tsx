@@ -19,24 +19,24 @@ import {
 } from "@radix-ui/react-context-menu"
 import classNames from "classnames"
 import * as React from "react"
-import { extractProps } from "../helpers/extract-props.js"
-import { requireReactElement } from "../helpers/require-react-element.js"
+import { extractProps } from "../helpers/extract-props"
+import { requireReactElement } from "../helpers/require-react-element"
 import {
   contextMenuCheckboxItemPropDefs,
   contextMenuContentPropDefs,
   contextMenuItemPropDefs,
   contextMenuRadioItemPropDefs,
-} from "./context-menu.props.js"
-import { ThickCheckIcon, ThickChevronRightIcon } from "./icons.js"
-import { ScrollArea } from "./scroll-area.js"
-import { Slottable } from "./slot.js"
-import { Theme, useThemeContext } from "./theme.js"
+} from "./context-menu.props"
+import { ThickCheckIcon, ThickChevronRightIcon } from "./icons"
+import { ScrollArea } from "./scroll-area"
+import { Slottable } from "./slot"
+import { Theme, useThemeContext } from "./theme"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { GetPropDefTypes } from "../props/prop-def.js"
+} from "../helpers/component-props"
+import type { GetPropDefTypes } from "../props/prop-def"
 const ContextMenuPrimitive = {
   ItemIndicator,
   Label,

@@ -1,5 +1,13 @@
-import { Box, Button, Dialog, Flex, Text, TextField } from "@/base"
-import { Select, Switch } from "@radix-ui/themes"
+import {
+  Box,
+  Button,
+  Dialog,
+  Flex,
+  Select,
+  Switch,
+  Text,
+  TextField,
+} from "@/base"
 import { ChevronDown, Plus, Trash2 } from "lucide-react"
 // components/table/status-column-config-dialog.tsx
 import type React from "react"

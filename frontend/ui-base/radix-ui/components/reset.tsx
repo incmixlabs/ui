@@ -2,12 +2,12 @@ import classNames from "classnames"
 import * as React from "react"
 import { SlotRoot } from "./slot"
 
-import { requireReactElement } from "../helpers/require-react-element.js"
+import { requireReactElement } from "../helpers/require-react-element"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
+} from "../helpers/component-props"
 
 interface ResetProps
   extends ComponentPropsWithout<typeof SlotRoot, RemovedProps> {}

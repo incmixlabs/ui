@@ -2,16 +2,16 @@ import classNames from "classnames"
 import * as React from "react"
 import { SlotRoot } from "./slot"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { marginPropDefs } from "../props/margin.props.js"
-import { textPropDefs } from "./text.props.js"
+import { extractProps } from "../helpers/extract-props"
+import { marginPropDefs } from "../props/margin.props"
+import { textPropDefs } from "./text.props"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { MarginProps } from "../props/margin.props.js"
-import type { GetPropDefTypes } from "../props/prop-def.js"
+} from "../helpers/component-props"
+import type { MarginProps } from "../props/margin.props"
+import type { GetPropDefTypes } from "../props/prop-def"
 
 type TextElement = React.ElementRef<"span">
 type TextOwnProps = GetPropDefTypes<typeof textPropDefs>

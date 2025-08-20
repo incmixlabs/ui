@@ -3,19 +3,19 @@
 import { Item, Root, createRadioGroupScope } from "@radix-ui/react-radio-group"
 import classNames from "classnames"
 import * as React from "react"
-import { Context } from "./_internal/internal.js"
+import { Context } from "./_internal/internal"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { marginPropDefs } from "../props/margin.props.js"
-import { radioGroupRootPropDefs } from "./radio-group.props.js"
-import { Text } from "./text.js"
+import { extractProps } from "../helpers/extract-props"
+import { marginPropDefs } from "../props/margin.props"
+import { radioGroupRootPropDefs } from "./radio-group.props"
+import { Text } from "./text"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { MarginProps } from "../props/margin.props.js"
-import type { GetPropDefTypes } from "../props/prop-def.js"
+} from "../helpers/component-props"
+import type { MarginProps } from "../props/margin.props"
+import type { GetPropDefTypes } from "../props/prop-def"
 
 const RADIO_GROUP_NAME = "RadioGroup"
 const RadioGroupPrimitive = { Root, createRadioGroupScope, Item }

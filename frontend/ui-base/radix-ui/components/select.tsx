@@ -26,22 +26,22 @@ import {
 import classNames from "classnames"
 import * as React from "react"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { marginPropDefs } from "../props/margin.props.js"
-import { ChevronDownIcon, ThickCheckIcon } from "./icons.js"
+import { extractProps } from "../helpers/extract-props"
+import { marginPropDefs } from "../props/margin.props"
+import { ChevronDownIcon, ThickCheckIcon } from "./icons"
 import {
   selectContentPropDefs,
   selectRootPropDefs,
   selectTriggerPropDefs,
-} from "./select.props.js"
-import { Theme, useThemeContext } from "./theme.js"
+} from "./select.props"
+import { Theme, useThemeContext } from "./theme"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { MarginProps } from "../props/margin.props.js"
-import type { GetPropDefTypes } from "../props/prop-def.js"
+} from "../helpers/component-props"
+import type { MarginProps } from "../props/margin.props"
+import type { GetPropDefTypes } from "../props/prop-def"
 
 type SelectRootOwnProps = GetPropDefTypes<typeof selectRootPropDefs>
 

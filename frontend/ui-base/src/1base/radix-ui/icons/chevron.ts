@@ -1,1 +1,1 @@
-export { ChevronDownIcon } from "@radix-ui/themes"
+export { ChevronDownIcon } from "lucide-react"

@@ -2,15 +2,15 @@ import classNames from "classnames"
 import * as React from "react"
 import { SlotRoot } from "./slot"
 
-import { Text } from "./text.js"
+import { Text } from "./text"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { MarginProps } from "../props/margin.props.js"
-import type { GetPropDefTypes } from "../props/prop-def.js"
-import type { blockquotePropDefs } from "./blockquote.props.js"
+} from "../helpers/component-props"
+import type { MarginProps } from "../props/margin.props"
+import type { GetPropDefTypes } from "../props/prop-def"
+import type { blockquotePropDefs } from "./blockquote.props"
 
 type BlockquoteElement = React.ElementRef<"blockquote">
 type BlockQuoteOwnProps = GetPropDefTypes<typeof blockquotePropDefs>

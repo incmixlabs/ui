@@ -1,15 +1,15 @@
 import classNames from "classnames"
 import * as React from "react"
-import { SlotRoot } from "./slot.js"
+import { SlotRoot } from "./slot"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { quotePropDefs } from "./quote.props.js"
+import { extractProps } from "../helpers/extract-props"
+import { quotePropDefs } from "./quote.props"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { GetPropDefTypes } from "../props/prop-def.js"
+} from "../helpers/component-props"
+import type { GetPropDefTypes } from "../props/prop-def"
 
 type QuoteElement = React.ElementRef<"q">
 type QuoteOwnProps = GetPropDefTypes<typeof quotePropDefs>

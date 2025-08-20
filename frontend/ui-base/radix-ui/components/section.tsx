@@ -1,19 +1,19 @@
 import classNames from "classnames"
 import * as React from "react"
-import { SlotRoot } from "./slot.js"
+import { SlotRoot } from "./slot"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { layoutPropDefs } from "../props/layout.props.js"
-import { marginPropDefs } from "../props/margin.props.js"
-import { sectionPropDefs } from "./section.props.js"
+import { extractProps } from "../helpers/extract-props"
+import { layoutPropDefs } from "../props/layout.props"
+import { marginPropDefs } from "../props/margin.props"
+import { sectionPropDefs } from "./section.props"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { LayoutProps } from "../props/layout.props.js"
-import type { MarginProps } from "../props/margin.props.js"
-import type { SectionOwnProps } from "./section.props.js"
+} from "../helpers/component-props"
+import type { LayoutProps } from "../props/layout.props"
+import type { MarginProps } from "../props/margin.props"
+import type { SectionOwnProps } from "./section.props"
 
 type SectionElement = React.ElementRef<"div">
 interface SectionProps

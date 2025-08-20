@@ -1,22 +1,22 @@
 import classNames from "classnames"
 import * as React from "react"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { getResponsiveClassNames } from "../helpers/get-responsive-styles.js"
-import { marginPropDefs } from "../props/margin.props.js"
-import { ScrollArea } from "./scroll-area.js"
+import { extractProps } from "../helpers/extract-props"
+import { getResponsiveClassNames } from "../helpers/get-responsive-styles"
+import { marginPropDefs } from "../props/margin.props"
+import { ScrollArea } from "./scroll-area"
 import {
   tableCellPropDefs,
   tableRootPropDefs,
   tableRowPropDefs,
-} from "./table.props.js"
+} from "./table.props"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { MarginProps } from "../props/margin.props.js"
-import type { GetPropDefTypes } from "../props/prop-def.js"
+} from "../helpers/component-props"
+import type { MarginProps } from "../props/margin.props"
+import type { GetPropDefTypes } from "../props/prop-def"
 
 type TableRootElement = React.ElementRef<"div">
 type TableRootOwnProps = GetPropDefTypes<typeof tableRootPropDefs>

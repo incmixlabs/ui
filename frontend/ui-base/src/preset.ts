@@ -20,7 +20,6 @@ const allColorObjects = allColors.reduce(
   },
   {} as Record<string, Record<string, string>>
 )
-
 // Functions to generate RadixUI Theme tags for tailwind.
 // See [https://blog.soards.me/posts/radix-colors-with-tailwind/] for more details.
 function generateColorScale(name: string): Record<string, string> {
@@ -28,7 +27,6 @@ function generateColorScale(name: string): Record<string, string> {
     const id = i + 1
     return [[id, `var(--${name}-${id})`]]
   }).flat()
-
   const objScale = Object.fromEntries(scale)
 
   return objScale
@@ -47,8 +45,10 @@ export const incmixTailwindPreset: Config = {
   content: ["./src/**/*.{js,jsx,ts,tsx,mdx}"],
   presets: [windyTypography],
   darkMode: ["class"],
+  safelist: [{ pattern: /((bg-[a-z])\w+-[1-12]|text-[a-z])\w+-[1-12]|border)-./ }],
   theme: {
     extend: {
+      ...allColorObjects,
       spacing: {
         navbar: "var(--navbar-height)",
         sidebar: "var(--sidebar-width)",

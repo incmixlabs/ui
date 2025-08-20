@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import * as React from "react";
-import { Theme, ThemesColorScale,ThemesAccentSwatches, allColors, grayColors, type AccentColor, type GrayColor } from "../../src/1base";
+import { Theme, Flex, ThemesColorScale,ThemesAccentSwatches, allColors, grayColors, accentColors, type AccentColor, type GrayColor } from "../../src/1base";
+const colors = [...accentColors, ...grayColors, "gray", "accent"] as const
+type ColorType = typeof colors[number];
 
 const meta: Meta<typeof Theme> = {
   title: "1 Base/Theme",
@@ -107,6 +109,42 @@ export const Default: Story = {
   ),
 };
 
+export const BGColor: Story = {
+  render: (args) => (
+    <Theme
+      accentColor={args.accentColor}
+      grayColor={args.grayColor}
+      appearance={args.appearance}
+      panelBackground={args.panelBackground}
+      radius={args.radius}
+      scaling={args.scaling}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+        <div>
+          <h3 style={{ margin: "0 0 16px 0", fontSize: "18px", fontWeight: "600" }}>
+            Accent Colors
+          </h3>
+          <ThemesAccentSwatches />
+        </div>
+        <div>
+          <h3 style={{ margin: "0 0 16px 0", fontSize: "18px", fontWeight: "600" }}>
+            Accent Colors Scale ({args.accentColor})
+          </h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+            <div>
+              <h3 style={{ margin: "0 0 16px 0", fontSize: "18px", fontWeight: "600" }}>
+                Accent Colors ({args.accentColor})
+              </h3>
+              <Flex className={`bg-${args.accentColor}-9 text-gray-12`}>
+                This text uses Radix Mauve and a Radix {args.accentColor} background.
+              </Flex>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Theme>
+  ),
+};
 // Accent color variations
 export const AccentColorShowcase: Story = {
   render: () => (
@@ -195,14 +233,13 @@ export const InteractiveColorPicker: Story = {
               <h3 style={{ margin: "0 0 16px 0", fontSize: "18px", fontWeight: "600" }}>
                 Gray Colors ({selectedGrayColor})
               </h3>
-              <ThemesColorScale color={selectedGrayColor} />
+              <ThemesColorScale color="gray" />
             </div>
           </div>
       </div>
     );
   },
 };
-
 // Popular color combinations
 export const PopularColorCombinations: Story = {
   render: () => {
