@@ -21,9 +21,6 @@ catalogs:
     '@julr/vite-plugin-validate-env':
       specifier: 2.2.0
       version: 2.2.0
-    '@radix-ui/colors':
-      specifier: 3.0.0
-      version: 3.0.0
     '@radix-ui/react-accordion':
       specifier: 1.2.11
       version: 1.2.11
@@ -961,9 +958,12 @@ importers:
       '@preact/signals-react':
         specifier: ^3.2.1
         version: 3.3.0(react@19.1.1)
+<<<<<<< HEAD
       '@radix-ui/colors':
         specifier: 'catalog:'
         version: 3.0.0
+=======
+>>>>>>> a1885e2d (feat: wip)
       '@radix-ui/react-accordion':
         specifier: 'catalog:'
         version: 1.2.11(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -1012,6 +1012,9 @@ importers:
       '@radix-ui/react-use-controllable-state':
         specifier: 'catalog:'
         version: 1.2.2(@types/react@19.1.9)(react@19.1.1)
+      '@tanstack/react-query':
+        specifier: 'catalog:'
+        version: 5.81.5(react@19.1.1)
       '@tanstack/react-table':
         specifier: 'catalog:'
         version: 8.21.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -1056,7 +1059,11 @@ importers:
         version: 0.536.0(react@19.1.1)
       radashi:
         specifier: ^12.6.1
+<<<<<<< HEAD
         version: 12.6.2
+=======
+        version: 12.6.1
+>>>>>>> a1885e2d (feat: wip)
       react-day-picker:
         specifier: 9.8.1
         version: 9.8.1(react@19.1.1)
@@ -8284,8 +8291,13 @@ packages:
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
+<<<<<<< HEAD
   radashi@12.6.2:
     resolution: {integrity: sha512-43uD9P3oZ1nT9lgHr2P34K7aEIQh6ku2FDQsDhjaUpaj2sb3il6Xe8s8MS31uJmcbYl0v2Ul35V7OjMG8yrcDw==}
+=======
+  radashi@12.6.1:
+    resolution: {integrity: sha512-W8yT4x6NcRVhPl5vdBz9vwxSb3YLdKCHH29Y9G8I7ai03SekuBQvKIzP0FRp6iJzGG6XZYlwFtRP7US6WNxHHA==}
+>>>>>>> a1885e2d (feat: wip)
     engines: {node: '>=16.0.0'}
 
   radix-ui@1.4.2:
@@ -18379,7 +18391,11 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
+<<<<<<< HEAD
   radashi@12.6.2: {}
+=======
+  radashi@12.6.1: {}
+>>>>>>> a1885e2d (feat: wip)
 
   radix-ui@1.4.2(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
     dependencies:

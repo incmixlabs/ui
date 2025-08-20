@@ -13,7 +13,8 @@
     "src/preset.ts",
     "shadcn",
     "radix-ui",
-    "utils"
+    "utils",
+    "./store"
   ],
   "compilerOptions": {
     "types": ["@types/wicg-file-system-access", "vite/client", "node"],
