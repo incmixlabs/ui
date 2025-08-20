@@ -2,17 +2,17 @@ import classNames from "classnames"
 import * as React from "react"
 import { SlotRoot } from "./slot"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { inert } from "../helpers/inert.js"
-import { marginPropDefs } from "../props/margin.props.js"
-import { skeletonPropDefs } from "./skeleton.props.js"
+import { extractProps } from "../helpers/extract-props"
+import { inert } from "../helpers/inert"
+import { marginPropDefs } from "../props/margin.props"
+import { skeletonPropDefs } from "./skeleton.props"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { MarginProps } from "../props/margin.props.js"
-import type { GetPropDefTypes } from "../props/prop-def.js"
+} from "../helpers/component-props"
+import type { MarginProps } from "../props/margin.props"
+import type { GetPropDefTypes } from "../props/prop-def"
 
 type SkeletonElement = React.ElementRef<"span">
 type SkeletonOwnProps = GetPropDefTypes<typeof skeletonPropDefs>

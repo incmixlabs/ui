@@ -12,12 +12,12 @@ import {
 import classNames from "classnames"
 import * as React from "react"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { requireReactElement } from "../helpers/require-react-element.js"
-import { alertDialogContentPropDefs } from "./alert-dialog.props.js"
-import { Heading } from "./heading.js"
-import { Text } from "./text.js"
-import { Theme } from "./theme.js"
+import { extractProps } from "../helpers/extract-props"
+import { requireReactElement } from "../helpers/require-react-element"
+import { alertDialogContentPropDefs } from "./alert-dialog.props"
+import { Heading } from "./heading"
+import { Text } from "./text"
+import { Theme } from "./theme"
 const AlertDialogPrimitive = {
   Root,
   Trigger,
@@ -33,8 +33,8 @@ import type {
   ComponentPropsAs,
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { AlertDialogContentOwnProps } from "./alert-dialog.props.js"
+} from "../helpers/component-props"
+import type { AlertDialogContentOwnProps } from "./alert-dialog.props"
 
 interface AlertDialogRootProps
   extends React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Root> {}

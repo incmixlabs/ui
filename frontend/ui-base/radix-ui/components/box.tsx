@@ -1,19 +1,19 @@
 import classNames from "classnames"
 import * as React from "react"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { layoutPropDefs } from "../props/layout.props.js"
-import { marginPropDefs } from "../props/margin.props.js"
-import { boxPropDefs } from "./box.props.js"
-import { Slot } from "./slot.js"
+import { extractProps } from "../helpers/extract-props"
+import { layoutPropDefs } from "../props/layout.props"
+import { marginPropDefs } from "../props/margin.props"
+import { boxPropDefs } from "./box.props"
+import { Slot } from "./slot"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { LayoutProps } from "../props/layout.props.js"
-import type { MarginProps } from "../props/margin.props.js"
-import type { BoxOwnProps } from "./box.props.js"
+} from "../helpers/component-props"
+import type { LayoutProps } from "../props/layout.props"
+import type { MarginProps } from "../props/margin.props"
+import type { BoxOwnProps } from "./box.props"
 
 type BoxElement = React.ElementRef<"div">
 interface CommonBoxProps extends MarginProps, LayoutProps, BoxOwnProps {}

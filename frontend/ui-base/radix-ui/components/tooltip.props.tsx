@@ -1,6 +1,6 @@
-import { widthPropDefs } from "../props/width.props.js"
+import { widthPropDefs } from "../props/width.props"
 
-import type { GetPropDefTypes, PropDef } from "../props/prop-def.js"
+import type { GetPropDefTypes, PropDef } from "../props/prop-def"
 
 const tooltipPropDefs = {
   content: { type: "ReactNode", required: true },

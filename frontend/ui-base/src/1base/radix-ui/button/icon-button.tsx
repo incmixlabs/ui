@@ -3,7 +3,7 @@ import {
   IconButton as RadixIconButton,
 } from "@/radix-ui/icon-button"
 export type { IconButtonProps }
-export { iconButtonPropDefs } from "@/radix-ui/icon-button.props.js"
+export { iconButtonPropDefs } from "@/radix-ui/icon-button.props"
 
 export const IconButton = ({
   children,

@@ -4,15 +4,15 @@ import { Provider } from "@radix-ui/react-direction"
 import { Provider as TooltipProvider } from "@radix-ui/react-tooltip"
 import classNames from "classnames"
 import * as React from "react"
-import { getMatchingGrayColor } from "../helpers/get-matching-gray-color.js"
+import { getMatchingGrayColor } from "../helpers/get-matching-gray-color"
 import { SlotRoot } from "./slot"
-import { themePropDefs } from "./theme.props.js"
+import { themePropDefs } from "./theme.props"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { ThemeOwnProps } from "./theme.props.js"
+} from "../helpers/component-props"
+import type { ThemeOwnProps } from "./theme.props"
 
 const noop = () => {}
 const Direction = {

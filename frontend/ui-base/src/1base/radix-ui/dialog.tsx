@@ -26,4 +26,4 @@ export const Dialog = {
   Footer,
 }
 // Import from the public API instead of internal paths to avoid breaking changes
-export { dialogContentPropDefs as dialogPropDefs } from "@radix-ui/themes/src/components/dialog.props.js"
+export { dialogContentPropDefs as dialogPropDefs } from "@/radix-ui/dialog.props"

@@ -1,19 +1,19 @@
 import classNames from "classnames"
 import * as React from "react"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { layoutPropDefs } from "../props/layout.props.js"
-import { marginPropDefs } from "../props/margin.props.js"
-import { flexPropDefs } from "./flex.props.js"
-import { Slot } from "./slot.js"
+import { extractProps } from "../helpers/extract-props"
+import { layoutPropDefs } from "../props/layout.props"
+import { marginPropDefs } from "../props/margin.props"
+import { flexPropDefs } from "./flex.props"
+import { Slot } from "./slot"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { LayoutProps } from "../props/layout.props.js"
-import type { MarginProps } from "../props/margin.props.js"
-import type { FlexOwnProps } from "./flex.props.js"
+} from "../helpers/component-props"
+import type { LayoutProps } from "../props/layout.props"
+import type { MarginProps } from "../props/margin.props"
+import type { FlexOwnProps } from "./flex.props"
 
 type FlexElement = React.ElementRef<"div">
 interface CommonFlexProps extends MarginProps, LayoutProps, FlexOwnProps {}

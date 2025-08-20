@@ -15,9 +15,10 @@ const accentColors = [
   "green",
   "lime",
   "mint",
+  "sky",
 ] as const
 
-const grayColors = ["auto", "slate"] as const
+const grayColors = ["slate"] as const
 import { Box, Flex, Grid, Text } from "./radix-ui"
 export type GrayColor = (typeof grayColors)[number]
 export type AccentColor = (typeof accentColors)[number]

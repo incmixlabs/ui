@@ -2,23 +2,23 @@
 
 import classNames from "classnames"
 import * as React from "react"
-import { Context } from "./_internal/internal.js"
+import { Context } from "./_internal/internal"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { marginPropDefs } from "../props/margin.props.js"
-import { baseCheckboxPropDefs } from "./_internal/base-checkbox.props.js"
-import { checkboxCardsRootPropDefs } from "./checkbox-cards.props.js"
-import * as CheckboxGroupPrimitive from "./checkbox-group.primitive.js"
-import { createCheckboxGroupScope } from "./checkbox-group.primitive.js"
-import { Grid } from "./grid.js"
-import { ThickCheckIcon } from "./icons.js"
+import { extractProps } from "../helpers/extract-props"
+import { marginPropDefs } from "../props/margin.props"
+import { baseCheckboxPropDefs } from "./_internal/base-checkbox.props"
+import { checkboxCardsRootPropDefs } from "./checkbox-cards.props"
+import * as CheckboxGroupPrimitive from "./checkbox-group.primitive"
+import { createCheckboxGroupScope } from "./checkbox-group.primitive"
+import { Grid } from "./grid"
+import { ThickCheckIcon } from "./icons"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { MarginProps } from "../props/margin.props.js"
-import type { GetPropDefTypes, Responsive } from "../props/prop-def.js"
+} from "../helpers/component-props"
+import type { MarginProps } from "../props/margin.props"
+import type { GetPropDefTypes, Responsive } from "../props/prop-def"
 
 const CHECKBOX_CARD_GROUP_NAME = "CheckboxCards"
 

@@ -2,14 +2,14 @@ import classNames from "classnames"
 import * as React from "react"
 import { SlotRoot } from "./slot"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { strongPropDefs } from "./strong.props.js"
+import { extractProps } from "../helpers/extract-props"
+import { strongPropDefs } from "./strong.props"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { GetPropDefTypes } from "../props/prop-def.js"
+} from "../helpers/component-props"
+import type { GetPropDefTypes } from "../props/prop-def"
 
 type StrongElement = React.ElementRef<"strong">
 type StrongOwnProps = GetPropDefTypes<typeof strongPropDefs>

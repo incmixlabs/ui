@@ -8,23 +8,25 @@ import forms from "@tailwindcss/forms"
 import typography from "@tailwindcss/typography"
 import type { Config } from "tailwindcss"
 import animate from "tailwindcss-animate"
-import defaultTheme from "tailwindcss/defaultTheme"
 import { createPlugin } from "windy-radix-palette"
 import windyTypography from "windy-radix-typography"
-
+import { accentColors, grayColors } from "./1base/theme"
 const colors = createPlugin()
-
+const allColors = [...accentColors, ...grayColors, "gray", "accent"]
+const allColorObjects = allColors.reduce(
+  (acc, color) => {
+    acc[color] = generateColorScale(color)
+    return acc
+  },
+  {} as Record<string, Record<string, string>>
+)
 // Functions to generate RadixUI Theme tags for tailwind.
 // See [https://blog.soards.me/posts/radix-colors-with-tailwind/] for more details.
 function generateColorScale(name: string): Record<string, string> {
   const scale = Array.from({ length: 12 }, (_, i) => {
     const id = i + 1
-    return [
-      [id, `var(--${name}-${id})`],
-      [`a${id}`, `var(--${name}-a${id})`],
-    ]
+    return [[id, `var(--${name}-${id})`]]
   }).flat()
-
   const objScale = Object.fromEntries(scale)
 
   return objScale
@@ -43,8 +45,12 @@ export const incmixTailwindPreset: Config = {
   content: ["./src/**/*.{js,jsx,ts,tsx,mdx}"],
   presets: [windyTypography],
   darkMode: ["class"],
+  safelist: [
+    { pattern: /((bg-[a-z])\w+-[1-12]|text-[a-z])\w+-[1-12]|border)-./ },
+  ],
   theme: {
     extend: {
+      ...allColorObjects,
       spacing: {
         navbar: "var(--navbar-height)",
         sidebar: "var(--sidebar-width)",
@@ -104,29 +110,6 @@ export const incmixTailwindPreset: Config = {
           11: colors.alias("blue.11"),
           12: colors.alias("blue.12"),
         },
-
-        accent: {
-          ...generateColorScale("accent"),
-          DEFAULT: colors.alias("gray.4"),
-          foreground: colors.alias("gray.12"),
-        },
-
-        destructive: {
-          DEFAULT: colors.alias("red.10"),
-          foreground: colors.alias("red.1"),
-          1: colors.alias("red.1"),
-          2: colors.alias("red.2"),
-          3: colors.alias("red.3"),
-          4: colors.alias("red.4"),
-          5: colors.alias("red.5"),
-          6: colors.alias("red.6"),
-          7: colors.alias("red.7"),
-          8: colors.alias("red.8"),
-          9: colors.alias("red.9"),
-          10: colors.alias("red.10"),
-          11: colors.alias("red.11"),
-          12: colors.alias("red.12"),
-        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -150,10 +133,7 @@ export const incmixTailwindPreset: Config = {
         border: colors.alias("gray.4"),
         ring: colors.alias("gray.4"),
 
-        // Radix Palette
-        gray: generateColorScale("gray"),
-        red: generateColorScale("red"),
-        blue: generateColorScale("blue"),
+        ...allColorObjects,
       },
       borderRadius: {
         ...radiusScale,

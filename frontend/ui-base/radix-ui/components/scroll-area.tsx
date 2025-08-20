@@ -8,19 +8,19 @@ import {
 import classNames from "classnames"
 import * as React from "react"
 
-import { extractMarginProps } from "../helpers/extract-margin-props.js"
-import { getMarginStyles } from "../helpers/get-margin-styles.js"
-import { getResponsiveClassNames } from "../helpers/get-responsive-styles.js"
-import { getSubtree } from "../helpers/get-subtree.js"
-import { mergeStyles } from "../helpers/merge-styles.js"
-import { scrollAreaPropDefs } from "./scroll-area.props.js"
+import { extractMarginProps } from "../helpers/extract-margin-props"
+import { getMarginStyles } from "../helpers/get-margin-styles"
+import { getResponsiveClassNames } from "../helpers/get-responsive-styles"
+import { getSubtree } from "../helpers/get-subtree"
+import { mergeStyles } from "../helpers/merge-styles"
+import { scrollAreaPropDefs } from "./scroll-area.props"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { MarginProps } from "../props/margin.props.js"
-import type { GetPropDefTypes } from "../props/prop-def.js"
+} from "../helpers/component-props"
+import type { MarginProps } from "../props/margin.props"
+import type { GetPropDefTypes } from "../props/prop-def"
 const ScrollAreaPrimitive = { Corner, Root, Scrollbar, Thumb, Viewport }
 type ScrollAreaElement = React.ElementRef<typeof ScrollAreaPrimitive.Viewport>
 type ScrollAreaOwnProps = GetPropDefTypes<typeof scrollAreaPropDefs>

@@ -1,22 +1,22 @@
 import classNames from "classnames"
 import * as React from "react"
-import { SlotRoot } from "./slot.js"
+import { SlotRoot } from "./slot"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { getSubtree } from "../helpers/get-subtree.js"
-import { heightPropDefs } from "../props/height.props.js"
-import { layoutPropDefs } from "../props/layout.props.js"
-import { marginPropDefs } from "../props/margin.props.js"
-import { widthPropDefs } from "../props/width.props.js"
-import { containerPropDefs } from "./container.props.js"
+import { extractProps } from "../helpers/extract-props"
+import { getSubtree } from "../helpers/get-subtree"
+import { heightPropDefs } from "../props/height.props"
+import { layoutPropDefs } from "../props/layout.props"
+import { marginPropDefs } from "../props/margin.props"
+import { widthPropDefs } from "../props/width.props"
+import { containerPropDefs } from "./container.props"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { LayoutProps } from "../props/layout.props.js"
-import type { MarginProps } from "../props/margin.props.js"
-import type { ContainerOwnProps } from "./container.props.js"
+} from "../helpers/component-props"
+import type { LayoutProps } from "../props/layout.props"
+import type { MarginProps } from "../props/margin.props"
+import type { ContainerOwnProps } from "./container.props"
 
 type ContainerElement = React.ElementRef<"div">
 interface ContainerProps

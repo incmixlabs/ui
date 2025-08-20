@@ -20,19 +20,19 @@ const DialogPrimitive = {
   Root,
   Title,
 }
-import { extractProps } from "../helpers/extract-props.js"
-import { requireReactElement } from "../helpers/require-react-element.js"
-import { dialogContentPropDefs } from "./dialog.props.js"
-import { Heading } from "./heading.js"
-import { Text } from "./text.js"
-import { Theme } from "./theme.js"
+import { extractProps } from "../helpers/extract-props"
+import { requireReactElement } from "../helpers/require-react-element"
+import { dialogContentPropDefs } from "./dialog.props"
+import { Heading } from "./heading"
+import { Text } from "./text"
+import { Theme } from "./theme"
 
 import type {
   ComponentPropsAs,
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { DialogContentOwnProps } from "./dialog.props.js"
+} from "../helpers/component-props"
+import type { DialogContentOwnProps } from "./dialog.props"
 
 interface DialogRootProps
   extends ComponentPropsWithout<typeof DialogPrimitive.Root, "modal"> {}

@@ -1,5 +1,5 @@
+import type { ButtonProps } from "@/radix-ui"
 import { Spinner } from "@/radix-ui/spinner"
-import type { ButtonProps } from "@radix-ui/themes"
 import { Check } from "lucide-react"
 import { Button } from "./button"
 

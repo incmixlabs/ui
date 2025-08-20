@@ -1,8 +1,8 @@
-import { asChildPropDef } from "../props/as-child.prop.js"
-import { heightPropDefs } from "../props/height.props.js"
-import { widthPropDefs } from "../props/width.props.js"
+import { asChildPropDef } from "../props/as-child.prop"
+import { heightPropDefs } from "../props/height.props"
+import { widthPropDefs } from "../props/width.props"
 
-import type { GetPropDefTypes, PropDef } from "../props/prop-def.js"
+import type { GetPropDefTypes, PropDef } from "../props/prop-def"
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const alignValues = ["start", "center"] as const

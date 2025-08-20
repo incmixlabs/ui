@@ -19,30 +19,30 @@ import {
 } from "@radix-ui/react-dropdown-menu"
 import classNames from "classnames"
 import * as React from "react"
-import { extractProps } from "../helpers/extract-props.js"
-import { requireReactElement } from "../helpers/require-react-element.js"
+import { extractProps } from "../helpers/extract-props"
+import { requireReactElement } from "../helpers/require-react-element"
 import {
   dropdownMenuCheckboxItemPropDefs,
   dropdownMenuContentPropDefs,
   dropdownMenuItemPropDefs,
   dropdownMenuRadioItemPropDefs,
-} from "./dropdown-menu.props.js"
+} from "./dropdown-menu.props"
 import {
   ChevronDownIcon,
   ThickCheckIcon,
   ThickChevronRightIcon,
-} from "./icons.js"
-import { ScrollArea } from "./scroll-area.js"
-import { Slottable } from "./slot.js"
-import { Theme, useThemeContext } from "./theme.js"
+} from "./icons"
+import { ScrollArea } from "./scroll-area"
+import { Slottable } from "./slot"
+import { Theme, useThemeContext } from "./theme"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { GetPropDefTypes } from "../props/prop-def.js"
-import type { IconProps } from "./icons.js"
-import { Radio } from "./radio.js"
+} from "../helpers/component-props"
+import type { GetPropDefTypes } from "../props/prop-def"
+import type { IconProps } from "./icons"
+import { Radio } from "./radio"
 const DropdownMenuPrimitive = {
   CheckboxItem,
   Content,

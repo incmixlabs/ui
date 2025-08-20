@@ -2,16 +2,16 @@ import { Arrow, Content, Portal, Root, Trigger } from "@radix-ui/react-tooltip"
 import classNames from "classnames"
 import * as React from "react"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { Text } from "./text.js"
-import { Theme } from "./theme.js"
-import { tooltipPropDefs } from "./tooltip.props.js"
+import { extractProps } from "../helpers/extract-props"
+import { Text } from "./text"
+import { Theme } from "./theme"
+import { tooltipPropDefs } from "./tooltip.props"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { GetPropDefTypes } from "../props/prop-def.js"
+} from "../helpers/component-props"
+import type { GetPropDefTypes } from "../props/prop-def"
 const TooltipPrimitive = {
   Arrow,
   Content,

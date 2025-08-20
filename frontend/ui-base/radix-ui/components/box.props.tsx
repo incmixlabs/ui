@@ -1,6 +1,6 @@
-import { asChildPropDef } from "../props/as-child.prop.js"
+import { asChildPropDef } from "../props/as-child.prop"
 
-import type { GetPropDefTypes, PropDef } from "../props/prop-def.js"
+import type { GetPropDefTypes, PropDef } from "../props/prop-def"
 
 const as = ["div", "span"] as const
 const displayValues = [

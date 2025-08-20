@@ -2,17 +2,17 @@ import { Content, List, Root, Trigger } from "@radix-ui/react-tabs"
 import classNames from "classnames"
 import * as React from "react"
 
-import { extractProps } from "../helpers/extract-props.js"
-import { marginPropDefs } from "../props/margin.props.js"
-import { tabsListPropDefs } from "./tabs.props.js"
+import { extractProps } from "../helpers/extract-props"
+import { marginPropDefs } from "../props/margin.props"
+import { tabsListPropDefs } from "./tabs.props"
 
 import type {
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { MarginProps } from "../props/margin.props.js"
-import type { GetPropDefTypes } from "../props/prop-def.js"
-import type { tabsContentPropDefs, tabsRootPropDefs } from "./tabs.props.js"
+} from "../helpers/component-props"
+import type { MarginProps } from "../props/margin.props"
+import type { GetPropDefTypes } from "../props/prop-def"
+import type { tabsContentPropDefs, tabsRootPropDefs } from "./tabs.props"
 const TabsPrimitive = { List, Root, Trigger, Content }
 type TabsRootElement = React.ElementRef<typeof TabsPrimitive.Root>
 type TabsRootOwnProps = GetPropDefTypes<typeof tabsRootPropDefs>

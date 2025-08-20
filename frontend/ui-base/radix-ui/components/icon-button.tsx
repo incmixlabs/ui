@@ -1,7 +1,7 @@
 import classNames from "classnames"
 import * as React from "react"
 
-import { BaseButton } from "./_internal/base-button.js"
+import { BaseButton } from "./_internal/base-button"
 
 type IconButtonElement = React.ElementRef<typeof BaseButton>
 interface IconButtonProps

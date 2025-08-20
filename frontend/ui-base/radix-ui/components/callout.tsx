@@ -4,22 +4,22 @@ import classNames from "classnames"
 import * as React from "react"
 import { SlotRoot } from "./slot"
 
-import { extractProps } from "../helpers/extract-props.js"
+import { extractProps } from "../helpers/extract-props"
 import {
   mapCalloutSizeToTextSize,
   mapResponsiveProp,
-} from "../helpers/map-prop-values.js"
-import { marginPropDefs } from "../props/margin.props.js"
-import { calloutRootPropDefs } from "./callout.props.js"
-import { Text } from "./text.js"
+} from "../helpers/map-prop-values"
+import { marginPropDefs } from "../props/margin.props"
+import { calloutRootPropDefs } from "./callout.props"
+import { Text } from "./text"
 
 import type {
   ComponentPropsAs,
   ComponentPropsWithout,
   RemovedProps,
-} from "../helpers/component-props.js"
-import type { MarginProps } from "../props/margin.props.js"
-import type { GetPropDefTypes } from "../props/prop-def.js"
+} from "../helpers/component-props"
+import type { MarginProps } from "../props/margin.props"
+import type { GetPropDefTypes } from "../props/prop-def"
 
 type CalloutRootOwnProps = GetPropDefTypes<typeof calloutRootPropDefs>
 

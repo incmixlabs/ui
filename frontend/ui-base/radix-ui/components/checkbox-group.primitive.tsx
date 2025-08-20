@@ -13,7 +13,7 @@ import {
   RovingFocus,
   useComposedRefs,
   useControllableState,
-} from "./_internal/internal.js"
+} from "./_internal/internal"
 const CheckboxPrimitive = {
   Root: CheckboxRoot,
   createCheckboxScope,
