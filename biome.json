@@ -16,6 +16,7 @@
       "frontend/ui-base/stories",
       "frontend/ui-base/shadcn",
       "frontend/ui-base/.storybook",
+      "frontend/ui-base/src/services",
       "dist",
       "demo",
       ".next",
