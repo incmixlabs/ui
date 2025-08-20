@@ -1,136 +1,176 @@
-import type { Meta, StoryObj } from "@storybook/react-vite"
-import * as React from "react"
-import { Conversation, ConversationContent, ConversationScrollButton } from "../../src/3b-ai-elements/conversation"
-import { Message, MessageContent, MessageAvatar } from "../../src/3b-ai-elements/message"
-import { Theme } from "../../src/1base"
-
+import type { Meta, StoryObj } from '@storybook/react';
+import { Conversation, ConversationContent, ConversationScrollButton } from '../../src/3b-ai-elements/conversation';
+import { Message, MessageContent, MessageAvatar } from '../../src/3b-ai-elements/message';
 const meta: Meta<typeof Conversation> = {
-  title: "5 AI Elements/Conversation",
+  title: '5 AI Elements/Conversation',
   component: Conversation,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
   },
   decorators: [
     (Story) => (
-      <Theme>
-        <div style={{ height: "600px", width: "100%" }}>
-          <Story />
-        </div>
-      </Theme>
+      <div style={{ height: '400px' }}>
+        <Story />
+      </div>
     ),
   ],
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+const messages = [
+  {
+    id: 1,
+    role: 'user' as const,
+    content: "Hello! Can you help me understand React hooks?",
+  },
+  {
+    id: 2,
+    role: 'assistant' as const,
+    content: "Of course! React hooks are functions that let you use state and other React features in functional components. The most common ones are useState and useEffect.",
+  },
+  {
+    id: 3,
+    role: 'user' as const,
+    content: "What's the difference between useState and useEffect?",
+  },
+  {
+    id: 4,
+    role: 'assistant' as const,
+    content: "Great question! useState is for managing component state, while useEffect is for side effects like API calls, subscriptions, or DOM manipulation. useState returns a state value and a setter function, while useEffect runs code after render and can clean up with a return function.",
+  },
+  {
+    id: 5,
+    role: 'user' as const,
+    content: "Can you show me a simple example?",
+  },
+  {
+    id: 6,
+    role: 'assistant' as const,
+    content: `Here's a simple counter example:
+
+\`\`\`jsx
+import React, { useState, useEffect } from 'react';
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    document.title = \`Count: \${count}\`;
+  }, [count]);
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>
+        Click me
+      </button>
+    </div>
+  );
 }
+\`\`\``,
+  },
+];
 
-export default meta
-type Story = StoryObj<typeof meta>
-
-const sampleMessages = [
-  { id: 1, from: "user" as const, content: "Hello! Can you help me with React?" },
-  { id: 2, from: "assistant" as const, content: "Of course! I'd be happy to help you with React. What specific topic would you like to learn about?" },
-  { id: 3, from: "user" as const, content: "I'm trying to understand the useEffect hook and when to use it." },
-  { id: 4, from: "assistant" as const, content: "useEffect is a powerful hook that lets you perform side effects in functional components. Here are the main use cases:\n\n1. **Data fetching** - Making API calls when component mounts\n2. **Subscriptions** - Setting up event listeners\n3. **Cleanup** - Removing event listeners or canceling requests\n4. **DOM manipulation** - Direct DOM updates when needed\n\nThe key is understanding the dependency array - it controls when the effect runs." },
-  { id: 5, from: "user" as const, content: "Can you show me a practical example?" },
-  { id: 6, from: "assistant" as const, content: "Here's a practical example of fetching user data:\n\n```jsx\nfunction UserProfile({ userId }) {\n  const [user, setUser] = useState(null);\n  const [loading, setLoading] = useState(true);\n\n  useEffect(() => {\n    async function fetchUser() {\n      setLoading(true);\n      try {\n        const response = await fetch(`/api/users/${userId}`);\n        const userData = await response.json();\n        setUser(userData);\n      } catch (error) {\n        console.error('Failed to fetch user:', error);\n      } finally {\n        setLoading(false);\n      }\n    }\n\n    fetchUser();\n  }, [userId]); // Re-run when userId changes\n\n  if (loading) return <div>Loading...</div>;\n  return <div>Hello, {user?.name}!</div>;\n}\n```\n\nNotice how `userId` is in the dependency array - this ensures the effect runs again if the user ID changes." },
-]
-
-export const Basic: Story = {
+export const Default: Story = {
   render: () => (
     <Conversation>
       <ConversationContent>
-        <div className="space-y-4">
-          {sampleMessages.slice(0, 2).map((msg) => {
-            return (
-            <Message key={msg.id} from={msg.from}>
-                {msg.from === "assistant" && (
-                  <MessageAvatar
-                    src="https://github.com/vercel.png"
-                    name="Assistant"
-                />
-              )}
-              <MessageContent>{msg.content}</MessageContent>
-              {msg.from === "user" && (
-                <MessageAvatar
-                  src="https://github.com/shadcn.png"
-                  name="User"
-                />
-              )}
-            </Message>
-            )}
-          )}
-        </div>
+        {messages.map((message) => (
+          <Message key={message.id} from={message.role}>
+            <MessageContent>
+              {message.content}
+            </MessageContent>
+            <MessageAvatar
+              src={message.role === 'user' ? "https://github.com/vercel.png" : "https://github.com/openai.png"}
+              name={message.role === 'user' ? "User" : "AI"}
+            />
+          </Message>
+        ))}
       </ConversationContent>
       <ConversationScrollButton />
     </Conversation>
   ),
-}
+};
+
+export const ShortConversation: Story = {
+  render: () => (
+    <Conversation>
+      <ConversationContent>
+        {messages.slice(0, 2).map((message) => (
+          <Message key={message.id} from={message.role}>
+            <MessageContent>
+              {message.content}
+            </MessageContent>
+            <MessageAvatar
+              src={message.role === 'user' ? "https://github.com/vercel.png" : "https://github.com/openai.png"}
+              name={message.role === 'user' ? "User" : "AI"}
+            />
+          </Message>
+        ))}
+      </ConversationContent>
+      <ConversationScrollButton />
+    </Conversation>
+  ),
+};
 
 export const LongConversation: Story = {
-  render: () => (
-    <Conversation>
-      <ConversationContent>
-        <div className="space-y-4">
-          {sampleMessages.map((msg) => (
-            <Message key={msg.id} from={msg.from}>
-              {msg.from === "assistant" && (
-                <MessageAvatar
-                  src="https://github.com/vercel.png"
-                  name="Assistant"
-                />
-              )}
-              <MessageContent>
-                <div className="whitespace-pre-wrap">{msg.content}</div>
-              </MessageContent>
-              {msg.from === "user" && (
-                <MessageAvatar
-                  src="https://github.com/shadcn.png"
-                  name="User"
-                />
-              )}
-            </Message>
-          ))}
-        </div>
-      </ConversationContent>
-      <ConversationScrollButton />
-    </Conversation>
-  ),
-}
-
-export const WithScrollButton: Story = {
   render: () => {
-    // Generate many messages to demonstrate scroll functionality
-    const manyMessages = Array.from({ length: 20 }, (_, i) => ({
-      id: i + 1,
-      from: (i % 2 === 0 ? "user" : "assistant") as const,
-      content: i % 2 === 0
-        ? `User message ${Math.floor(i / 2) + 1}: This is a question about React.`
-        : `Assistant response ${Math.floor(i / 2) + 1}: Here's a helpful answer about React concepts.`
-    }))
+    const longMessages = [
+      ...messages,
+      {
+        id: 7,
+        role: 'user' as const,
+        content: "That's helpful! What about useContext?",
+      },
+      {
+        id: 8,
+        role: 'assistant' as const,
+        content: "useContext is used for accessing values from React Context without nested Consumer components. It's great for sharing data across multiple components without prop drilling.",
+      },
+      {
+        id: 9,
+        role: 'user' as const,
+        content: "Can you explain prop drilling?",
+      },
+      {
+        id: 10,
+        role: 'assistant' as const,
+        content: "Prop drilling is when you pass props down through multiple component layers just to get data to a deeply nested component. It can make your code harder to maintain. Context helps avoid this by providing a way to share values between components without explicitly passing props through every level.",
+      },
+    ];
 
     return (
       <Conversation>
         <ConversationContent>
-          <div className="space-y-4">
-            {manyMessages.map((msg) => (
-              <Message key={msg.id} from={msg.from}>
-                {msg.from === "assistant" && (
-                  <MessageAvatar
-                    src="https://github.com/vercel.png"
-                    name="Assistant"
-                  />
-                )}
-                <MessageContent>{msg.content}</MessageContent>
-                {msg.from === "user" && (
-                  <MessageAvatar
-                    src="https://github.com/shadcn.png"
-                    name="User"
-                  />
-                )}
-              </Message>
-            ))}
-          </div>
+          {longMessages.map((message) => (
+            <Message key={message.id} from={message.role}>
+              <MessageContent>
+                {message.content}
+              </MessageContent>
+              <MessageAvatar
+                src={message.role === 'user' ? "https://github.com/vercel.png" : "https://github.com/openai.png"}
+                name={message.role === 'user' ? "User" : "AI"}
+              />
+            </Message>
+          ))}
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>
-    )
+    );
   },
-}
+};
+
+export const EmptyConversation: Story = {
+  render: () => (
+    <Conversation>
+      <ConversationContent>
+        <div className="flex items-center justify-center h-full text-muted-foreground">
+          <p>No messages yet. Start a conversation!</p>
+        </div>
+      </ConversationContent>
+      <ConversationScrollButton />
+    </Conversation>
+  ),
+};
