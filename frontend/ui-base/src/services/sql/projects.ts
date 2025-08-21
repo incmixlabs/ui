@@ -2,7 +2,7 @@ import type { ProjectFormData } from "@incmix/utils/schema"
 import { ensureFileObject, validateProjectData } from "@incmix/utils/validate"
 import { initializeDefaultData } from "../hooks/use-initialize-default-data"
 // Import organization store to get current organization ID
-import { organizationStore } from "../services/organizations"
+import { organizationStore } from "../api/organizations"
 // sql/project-utils.ts
 import { database } from "./main" // Added import for TaskDataSchema
 import type { FormProjectDocType } from "./types"

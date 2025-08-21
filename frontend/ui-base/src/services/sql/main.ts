@@ -11,7 +11,7 @@ import { type RxDatabase, addRxPlugin, createRxDatabase } from "rxdb"
 import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode"
 // main.ts
 import { replicateRxCollection } from "rxdb/plugins/replication"
-import { organizationStore } from "../services/organizations"
+import { organizationStore } from "../api/organizations"
 
 import { API } from "@incmix/utils/env"
 import { getRxStorageIndexedDB } from "rxdb-premium/plugins/storage-indexeddb"

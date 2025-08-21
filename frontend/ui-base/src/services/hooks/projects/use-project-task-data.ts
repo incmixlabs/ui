@@ -8,7 +8,7 @@ import type {
   TaskDataSchema,
   UseProjectDataReturn,
 } from "@incmix/utils/schema"
-import { useProjectStore } from "../../services/projects"
+import { useProjectStore } from "../../api/projects"
 
 // Extend the UseProjectDataReturn type to include subtask operations
 declare module "@incmix/utils/schema" {
