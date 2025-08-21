@@ -1,4 +1,4 @@
-import { DropdownMenu, Flex, IconButton, Text } from "@/base"
+import { Box, DropdownMenu, Flex, IconButton, Text } from "@/base"
 import {
   ArrowRight,
   CheckCircle,
@@ -190,7 +190,7 @@ export function TableRowActions({
                       className={isCurrentStatus ? "bg-accent" : ""}
                     >
                       <Flex align="center" gap="2">
-                        <div
+                        <Box
                           className="h-3 w-3 rounded-full"
                           style={{ backgroundColor: status.color }}
                         />
@@ -222,7 +222,7 @@ export function TableRowActions({
                       className={isCurrentPriority ? "bg-accent" : ""}
                     >
                       <Flex align="center" gap="2">
-                        <div
+                        <Box
                           className="h-3 w-3 rounded-full"
                           style={{ backgroundColor: priority.color }}
                         />

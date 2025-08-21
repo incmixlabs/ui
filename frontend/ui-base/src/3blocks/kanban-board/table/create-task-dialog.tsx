@@ -192,7 +192,7 @@ export function CreateTaskDialog({
                 <Select.Trigger placeholder="Select status">
                   <Flex align="center" gap="2">
                     {selectedStatus && (
-                      <div
+                      <Box
                         className="h-3 w-3 rounded-full"
                         style={{ backgroundColor: selectedStatus.color }}
                       />
@@ -204,7 +204,7 @@ export function CreateTaskDialog({
                   {taskStatuses.map((status) => (
                     <Select.Item key={status.id} value={status.id}>
                       <Flex align="center" gap="2">
-                        <div
+                        <Box
                           className="h-3 w-3 rounded-full"
                           style={{ backgroundColor: status.color }}
                         />
@@ -300,7 +300,7 @@ export function CreateTaskDialog({
                       {member.name}
                     </Text>
                     {isAssigned && (
-                      <div className="h-2 w-2 rounded-full bg-blue-500" />
+                      <Box className="h-2 w-2 rounded-full bg-blue-500" />
                     )}
                   </Flex>
                 )

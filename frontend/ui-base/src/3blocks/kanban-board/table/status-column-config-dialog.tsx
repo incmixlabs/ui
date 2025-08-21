@@ -283,7 +283,7 @@ export const StatusColumnConfigDialog: React.FC<
       <Dialog.Content maxWidth="500px">
         <Dialog.Title>Configure Column</Dialog.Title>
 
-        <div className="space-y-6 py-4">
+        <Box className="space-y-6 py-4">
           {/* Loading indicator */}
           {isLoading && (
             <Box className="rounded-md border border-blue-200 bg-blue-50 p-3 dark:border-blue-800 dark:bg-blue-950">
@@ -312,28 +312,28 @@ export const StatusColumnConfigDialog: React.FC<
           )}
 
           {/* Column Name - Disabled */}
-          <div className="space-y-2">
+          <Box className="space-y-2">
             <Text as="label" size="2" weight="medium">
               Column Name
             </Text>
             <TextField.Root value="Status" disabled={true} />
-          </div>
+          </Box>
 
           {/* Column Type - Disabled */}
-          <div className="space-y-2">
+          <Box className="space-y-2">
             <Text as="label" size="2" weight="medium">
               Column Type
             </Text>
-            <div className="relative">
-              <div className="flex w-full cursor-not-allowed items-center justify-between rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400">
+            <Box className="relative">
+              <Box className="flex w-full cursor-not-allowed items-center justify-between rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400">
                 <span>Dropdown</span>
                 <ChevronDown size={16} />
-              </div>
-            </div>
-          </div>
+              </Box>
+            </Box>
+          </Box>
 
           {/* Dropdown Options Header with Toggle Controls */}
-          <div className="space-y-4">
+          <Box className="space-y-4">
             <Flex justify="between" align="center" className="flex-wrap gap-2">
               <Text size="2" weight="medium">
                 Dropdown Options
@@ -368,11 +368,11 @@ export const StatusColumnConfigDialog: React.FC<
             </Text>
 
             {/* Existing Status Options */}
-            <div className="space-y-2">
+            <Box className="space-y-2">
               {statusOptions.map((option) => (
-                <div key={option.id} className="flex items-center gap-3">
+                <Box key={option.id} className="flex items-center gap-3">
                   {/* Color picker */}
-                  <div className="relative h-8 w-8 flex-shrink-0">
+                  <Box className="relative h-8 w-8 flex-shrink-0">
                     <Button
                       variant="solid"
                       className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
@@ -385,7 +385,7 @@ export const StatusColumnConfigDialog: React.FC<
                       }}
                     />
                     {activeColorPicker === option.id && (
-                      <div
+                      <Box
                         className="absolute top-9 left-0 z-50"
                         style={{ minWidth: "260px" }}
                       >
@@ -401,9 +401,9 @@ export const StatusColumnConfigDialog: React.FC<
                             }
                           }}
                         />
-                      </div>
+                      </Box>
                     )}
-                  </div>
+                  </Box>
 
                   {/* Status name input */}
                   <TextField.Root
@@ -461,19 +461,19 @@ export const StatusColumnConfigDialog: React.FC<
                   >
                     Del
                   </Button>
-                </div>
+                </Box>
               ))}
-            </div>
+            </Box>
 
             {/* Add New Value Section */}
-            <div className="space-y-3">
+            <Box className="space-y-3">
               <Text size="2" weight="medium">
                 Add new Value:
               </Text>
 
-              <div className="flex items-center gap-3">
+              <Box className="flex items-center gap-3">
                 {/* Color picker for new status */}
-                <div className="relative h-8 w-8 flex-shrink-0">
+                <Box className="relative h-8 w-8 flex-shrink-0">
                   <Button
                     variant="solid"
                     className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
@@ -486,7 +486,7 @@ export const StatusColumnConfigDialog: React.FC<
                     }}
                   />
                   {activeColorPicker === "new" && (
-                    <div
+                    <Box
                       className="absolute top-9 left-0 z-50"
                       style={{ minWidth: "260px" }}
                     >
@@ -499,9 +499,9 @@ export const StatusColumnConfigDialog: React.FC<
                           }
                         }}
                       />
-                    </div>
+                    </Box>
                   )}
-                </div>
+                </Box>
 
                 {/* New status name input */}
                 <TextField.Root
@@ -526,12 +526,12 @@ export const StatusColumnConfigDialog: React.FC<
                 >
                   add
                 </Button>
-              </div>
-            </div>
-          </div>
+              </Box>
+            </Box>
+          </Box>
 
           {/* Action Buttons */}
-          <div className="mt-6 flex justify-end gap-3">
+          <Box className="mt-6 flex justify-end gap-3">
             <Button
               variant="soft"
               onClick={onClose}
@@ -551,8 +551,8 @@ export const StatusColumnConfigDialog: React.FC<
             >
               {isLoading ? "Saving..." : "Save Changes"}
             </Button>
-          </div>
-        </div>
+          </Box>
+        </Box>
       </Dialog.Content>
     </Dialog.Root>
   )

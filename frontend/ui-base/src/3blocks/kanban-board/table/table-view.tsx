@@ -82,17 +82,25 @@ interface TableViewProps {
     onUpdateTask?: (id: string, updates: Partial<TableTask>) => Promise<void>
     onDeleteTask?: (id: string) => Promise<void>
     onMoveTaskToStatus?: (taskId: string, statusId: string) => Promise<void>
-    onCreateLabel?: (type: string, name: string, color?: string, description?: string) => Promise<string>
-    onUpdateLabel?: (id: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
+    onCreateLabel?: (
+      type: string,
+      name: string,
+      color?: string,
+      description?: string
+    ) => Promise<string>
+    onUpdateLabel?: (
+      id: string,
+      updates: { name?: string; color?: string; description?: string }
+    ) => Promise<void>
     onDeleteLabel?: (id: string) => Promise<void>
     onRefetch?: () => void
   }
 }
 
-export function TableView({ 
-  projectId = "default-project", 
+export function TableView({
+  projectId = "default-project",
   mockData,
-  mockOperations 
+  mockOperations,
 }: TableViewProps) {
   // Get AI features state - commented out as not used
   // const { useAI } = useAIFeaturesStore()
@@ -126,8 +134,12 @@ export function TableView({
 
   // State for mock data operations
   const [mockTasks, setMockTasks] = useState<TableTask[]>([])
-  const [mockStatusLabels, setMockStatusLabels] = useState<Array<{id: string; name: string; color: string}>>([])
-  const [mockPriorityLabels, setMockPriorityLabels] = useState<Array<{id: string; name: string; color: string}>>([])
+  const [mockStatusLabels, setMockStatusLabels] = useState<
+    Array<{ id: string; name: string; color: string }>
+  >([])
+  const [mockPriorityLabels, setMockPriorityLabels] = useState<
+    Array<{ id: string; name: string; color: string }>
+  >([])
   const [mockError, setMockError] = useState<string | null>(null)
 
   // Use the table view hook only when not using mock data
@@ -157,31 +169,42 @@ export function TableView({
           if (mockOperations?.onUpdateTask) {
             // Convert TaskDataSchema updates to TableTask updates for mock operations
             const tableTaskUpdates: Partial<TableTask> = {}
-            
+
             if (updates.name !== undefined) tableTaskUpdates.name = updates.name
-            if (updates.description !== undefined) tableTaskUpdates.description = updates.description
-            if (updates.statusId !== undefined) tableTaskUpdates.statusId = updates.statusId
-            if (updates.priorityId !== undefined) tableTaskUpdates.priorityId = updates.priorityId
-            if (updates.completed !== undefined) tableTaskUpdates.completed = updates.completed
-            if (updates.endDate !== undefined) tableTaskUpdates.endDate = updates.endDate
-            if (updates.startDate !== undefined) tableTaskUpdates.startDate = updates.startDate
-            if (updates.assignedTo !== undefined) tableTaskUpdates.assignedTo = updates.assignedTo
-            if (updates.labelsTags !== undefined) tableTaskUpdates.labelsTags = updates.labelsTags
-            if (updates.attachments !== undefined) tableTaskUpdates.attachments = updates.attachments
+            if (updates.description !== undefined)
+              tableTaskUpdates.description = updates.description
+            if (updates.statusId !== undefined)
+              tableTaskUpdates.statusId = updates.statusId
+            if (updates.priorityId !== undefined)
+              tableTaskUpdates.priorityId = updates.priorityId
+            if (updates.completed !== undefined)
+              tableTaskUpdates.completed = updates.completed
+            if (updates.endDate !== undefined)
+              tableTaskUpdates.endDate = updates.endDate
+            if (updates.startDate !== undefined)
+              tableTaskUpdates.startDate = updates.startDate
+            if (updates.assignedTo !== undefined)
+              tableTaskUpdates.assignedTo = updates.assignedTo
+            if (updates.labelsTags !== undefined)
+              tableTaskUpdates.labelsTags = updates.labelsTags
+            if (updates.attachments !== undefined)
+              tableTaskUpdates.attachments = updates.attachments
 
             await mockOperations.onUpdateTask(id, tableTaskUpdates)
           }
 
-          setMockTasks(prev => 
-            prev.map(task => 
-              task.id === id 
+          setMockTasks((prev) =>
+            prev.map((task) =>
+              task.id === id
                 ? { ...task, ...updates, updatedAt: Date.now() }
                 : task
             )
           )
         } catch (error) {
           console.error("Mock update task error:", error)
-          setMockError(error instanceof Error ? error.message : "Failed to update task")
+          setMockError(
+            error instanceof Error ? error.message : "Failed to update task"
+          )
         }
       }
     : hookData.updateTask
@@ -193,10 +216,12 @@ export function TableView({
             await mockOperations.onDeleteTask(id)
           }
 
-          setMockTasks(prev => prev.filter(task => task.id !== id))
+          setMockTasks((prev) => prev.filter((task) => task.id !== id))
         } catch (error) {
           console.error("Mock delete task error:", error)
-          setMockError(error instanceof Error ? error.message : "Failed to delete task")
+          setMockError(
+            error instanceof Error ? error.message : "Failed to delete task"
+          )
         }
       }
     : hookData.deleteTask
@@ -208,68 +233,87 @@ export function TableView({
             await mockOperations.onMoveTaskToStatus(taskId, statusId)
           }
 
-          setMockTasks(prev => 
-            prev.map(task => 
-              task.id === taskId 
+          setMockTasks((prev) =>
+            prev.map((task) =>
+              task.id === taskId
                 ? { ...task, statusId, updatedAt: Date.now() }
                 : task
             )
           )
         } catch (error) {
           console.error("Mock move task error:", error)
-          setMockError(error instanceof Error ? error.message : "Failed to move task")
+          setMockError(
+            error instanceof Error ? error.message : "Failed to move task"
+          )
         }
       }
     : hookData.moveTaskToStatus
 
   const createLabel = mockData
-    ? async (type: string, name: string, color?: string, description?: string) => {
+    ? async (
+        type: string,
+        name: string,
+        color?: string,
+        description?: string
+      ) => {
         try {
           if (mockOperations?.onCreateLabel) {
-            return await mockOperations.onCreateLabel(type, name, color, description)
+            return await mockOperations.onCreateLabel(
+              type,
+              name,
+              color,
+              description
+            )
           }
 
           const newLabel = {
             id: `temp-${Date.now()}-${Math.random()}`,
             name,
-            color: color || "#93c5fd"
+            color: color || "#93c5fd",
           }
 
           if (type === "status") {
-            setMockStatusLabels(prev => [...prev, newLabel])
+            setMockStatusLabels((prev) => [...prev, newLabel])
           } else if (type === "priority") {
-            setMockPriorityLabels(prev => [...prev, newLabel])
+            setMockPriorityLabels((prev) => [...prev, newLabel])
           }
 
           return newLabel.id
         } catch (error) {
           console.error("Mock create label error:", error)
-          setMockError(error instanceof Error ? error.message : "Failed to create label")
+          setMockError(
+            error instanceof Error ? error.message : "Failed to create label"
+          )
           throw error
         }
       }
     : hookData.createLabel
 
   const updateLabel = mockData
-    ? async (id: string, updates: { name?: string; color?: string; description?: string }) => {
+    ? async (
+        id: string,
+        updates: { name?: string; color?: string; description?: string }
+      ) => {
         try {
           if (mockOperations?.onUpdateLabel) {
             await mockOperations.onUpdateLabel(id, updates)
           }
 
-          setMockStatusLabels(prev => 
-            prev.map(label => 
+          setMockStatusLabels((prev) =>
+            prev.map((label) =>
               label.id === id ? { ...label, ...updates } : label
             )
           )
-          setMockPriorityLabels(prev => 
-            prev.map(label => 
+          setMockPriorityLabels((prev) =>
+            prev.map((label) =>
               label.id === id ? { ...label, ...updates } : label
             )
           )
         } catch (error) {
           console.error("Mock update label error:", error)
-          setMockError(error instanceof Error ? error.message : "Failed to update label")
+          setMockError(
+            error instanceof Error ? error.message : "Failed to update label"
+          )
         }
       }
     : hookData.updateLabel
@@ -281,11 +325,15 @@ export function TableView({
             await mockOperations.onDeleteLabel(id)
           }
 
-          setMockStatusLabels(prev => prev.filter(label => label.id !== id))
-          setMockPriorityLabels(prev => prev.filter(label => label.id !== id))
+          setMockStatusLabels((prev) => prev.filter((label) => label.id !== id))
+          setMockPriorityLabels((prev) =>
+            prev.filter((label) => label.id !== id)
+          )
         } catch (error) {
           console.error("Mock delete label error:", error)
-          setMockError(error instanceof Error ? error.message : "Failed to delete label")
+          setMockError(
+            error instanceof Error ? error.message : "Failed to delete label"
+          )
         }
       }
     : hookData.deleteLabel
@@ -294,9 +342,7 @@ export function TableView({
     ? mockOperations?.onRefetch || (() => {})
     : hookData.refetch
 
-  const clearError = mockData
-    ? () => setMockError(null)
-    : hookData.clearError
+  const clearError = mockData ? () => setMockError(null) : hookData.clearError
   // Handle selection changes from the table
   const handleSelectionChange = (selectedRows: TableTask[]) => {
     // For debugging - log selected tasks
@@ -360,7 +406,7 @@ export function TableView({
       // Enhanced Status Column - replaces your custom StatusDropdownCell
       createEnhancedDropdownColumn<TableTask>({
         headingName: (
-          <div
+          <Box
             onDoubleClick={handleStatusColumnDoubleClick}
             style={{ cursor: "pointer" }}
             title={`Double-click to configure status options${allowCustomStatusValues ? " • Custom values allowed" : " • Only predefined values"}${hideStatusBackgroundColor ? " • Background colors hidden" : ""}`}
@@ -377,7 +423,7 @@ export function TableView({
                 (plain)
               </span>
             )}
-          </div>
+          </Box>
         ),
         accessorKey: "statusId",
         id: "status",
@@ -417,10 +463,10 @@ export function TableView({
           if (!option) return null
 
           return (
-            <div className="flex items-center gap-1.5">
+            <Box className="flex items-center gap-1.5">
               <Flag size={14} style={{ color: option.color }} />
               <span>{option.label}</span>
-            </div>
+            </Box>
           )
         },
       }),
@@ -827,7 +873,7 @@ export function TableView({
   if (isLoading) {
     return (
       <Box className="flex h-64 items-center justify-center">
-        <div>Loading tasks...</div>
+        <Box>Loading tasks...</Box>
       </Box>
     )
   }
@@ -836,7 +882,7 @@ export function TableView({
     return (
       <Box className="flex h-64 items-center justify-center">
         <Flex direction="column" align="center" gap="4">
-          <div className="text-red-500">Error: {error}</div>
+          <Box className="text-red-500">Error: {error}</Box>
           <Button
             onClick={() => {
               clearError()
@@ -892,13 +938,13 @@ export function TableView({
         rightActions={
           <>
             {/* Keyboard shortcuts help */}
-            <div>
+            <Box>
               <Tooltip content="Keyboard Shortcuts">
-                <div>
+                <Box>
                   <KeyboardShortcutsHelp />
-                </div>
+                </Box>
               </Tooltip>
-            </div>
+            </Box>
 
             {/* Column visibility dropdown */}
             <DropdownMenu.Root
@@ -936,12 +982,12 @@ export function TableView({
                       }}
                     >
                       <Flex align="center" gap="2">
-                        <div className="mr-2 h-4 w-4">
+                        <Box className="mr-2 h-4 w-4">
                           {columnVisibility[String(column.id)] &&
                             !isGroupedColumn && (
                               <Check size={16} className="h-4 w-4" />
                             )}
-                        </div>
+                        </Box>
                         <Text>
                           {column.headingName}
                           {isGroupedColumn && (

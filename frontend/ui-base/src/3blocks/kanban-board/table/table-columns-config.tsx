@@ -1,4 +1,4 @@
-import { Avatar, Badge, Checkbox, Flex, Text } from "@/base"
+import { Avatar, Badge, Box, Checkbox, Flex, Text } from "@/base"
 import { AlertCircle, CalendarDays, Clock, Flag } from "lucide-react"
 // components/table/table-columns-config.tsx
 import type React from "react"
@@ -48,7 +48,7 @@ export const TaskNameCell: React.FC<{ value: string; row: TableTask }> = ({
   row,
 }) => (
   <Flex align="center" gap="3" className="min-w-0">
-    <div className="min-w-0 flex-1">
+    <Box className="min-w-0 flex-1">
       <Text
         size="2"
         weight="medium"
@@ -62,7 +62,7 @@ export const TaskNameCell: React.FC<{ value: string; row: TableTask }> = ({
           {row.completedSubTasks || 0}/{row.totalSubTasks || 0} subtasks
         </Text>
       )}
-    </div>
+    </Box>
   </Flex>
 )
 
@@ -165,9 +165,9 @@ export const AssignedToCell: React.FC<{ value: TableTask["assignedTo"] }> = ({
 
   return (
     <Flex align="center" gap="1">
-      <div className="-space-x-2 flex">
+      <Box className="-space-x-2 flex">
         {value.slice(0, 3).map((user, index) => (
-          <div
+          <Box
             key={user.id}
             className="h-7 w-7 overflow-hidden rounded-full border-2 border-white dark:border-background"
             style={{ zIndex: 30 - index }}
@@ -179,37 +179,37 @@ export const AssignedToCell: React.FC<{ value: TableTask["assignedTo"] }> = ({
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div
+              <Box
                 className={`h-full w-full rounded-full ${getColorForUser(user.id)} flex items-center justify-center`}
               >
                 <span className="font-medium text-[10px] text-white">
                   {getInitials(user.name)}
                 </span>
-              </div>
+              </Box>
             )}
-          </div>
+          </Box>
         ))}
         {value.length > 3 && (
-          <div
+          <Box
             className="flex h-7 w-7 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-gray-9 dark:border-background"
             style={{ zIndex: 30 - 3 }}
           >
             <span className="font-medium text-[10px] text-white">
               +{value.length - 3}
             </span>
-          </div>
+          </Box>
         )}
 
         {/* Add the "+" button just like in the second screenshot */}
-        <div
+        <Box
           className="ml-1 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-gray-3 hover:bg-gray-4 dark:border-background dark:bg-gray-5 dark:hover:bg-gray-6"
           style={{
             zIndex: 30 - value.slice(0, 3).length - (value.length > 3 ? 1 : 0),
           }}
         >
           <span className="font-medium text-[10px] text-gray-11">+</span>
-        </div>
-      </div>
+        </Box>
+      </Box>
 
       {value.length <= 2 && (
         <Text size="1" className="ml-2 text-gray-600 dark:text-gray-400">
