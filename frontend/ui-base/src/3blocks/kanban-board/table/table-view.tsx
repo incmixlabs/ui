@@ -10,7 +10,7 @@ import {
   RefreshCw,
 } from "lucide-react"
 // components/table/table-view.tsx
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import {
   TanstackDataTable,
   createEnhancedDropdownColumn,
@@ -56,9 +56,44 @@ const SAMPLE_USERS: User[] = [
 
 interface TableViewProps {
   projectId?: string
+
+  // Optional override props for Storybook/testing
+  mockData?: {
+    tasks: TableTask[]
+    statusLabels: Array<{
+      id: string
+      name: string
+      color: string
+    }>
+    priorityLabels: Array<{
+      id: string
+      name: string
+      color: string
+    }>
+    projectStats: {
+      totalTasks: number
+      completedTasks: number
+      totalLabels: number
+      overdueTasks: number
+      urgentTasks: number
+    }
+  }
+  mockOperations?: {
+    onUpdateTask?: (id: string, updates: Partial<TableTask>) => Promise<void>
+    onDeleteTask?: (id: string) => Promise<void>
+    onMoveTaskToStatus?: (taskId: string, statusId: string) => Promise<void>
+    onCreateLabel?: (type: string, name: string, color?: string, description?: string) => Promise<string>
+    onUpdateLabel?: (id: string, updates: { name?: string; color?: string; description?: string }) => Promise<void>
+    onDeleteLabel?: (id: string) => Promise<void>
+    onRefetch?: () => void
+  }
 }
 
-export function TableView({ projectId = "default-project" }: TableViewProps) {
+export function TableView({ 
+  projectId = "default-project", 
+  mockData,
+  mockOperations 
+}: TableViewProps) {
   // Get AI features state - commented out as not used
   // const { useAI } = useAIFeaturesStore()
 
@@ -89,25 +124,179 @@ export function TableView({ projectId = "default-project" }: TableViewProps) {
     actions: true,
   })
 
-  // Use the table view hook
-  const {
-    tasks,
-    statusLabels, // Updated from 'labels' to 'statusLabels'
-    priorityLabels, // New property for priority labels
-    isLoading,
-    error,
-    // createTask, // Commented out as not used
-    updateTask,
-    deleteTask,
-    moveTaskToStatus,
-    refetch,
-    clearError,
-    projectStats,
-    // Status management functions
-    createLabel,
-    updateLabel,
-    deleteLabel,
-  } = useTableView(projectId)
+  // State for mock data operations
+  const [mockTasks, setMockTasks] = useState<TableTask[]>([])
+  const [mockStatusLabels, setMockStatusLabels] = useState<Array<{id: string; name: string; color: string}>>([])
+  const [mockPriorityLabels, setMockPriorityLabels] = useState<Array<{id: string; name: string; color: string}>>([])
+  const [mockError, setMockError] = useState<string | null>(null)
+
+  // Use the table view hook only when not using mock data
+  const hookData = useTableView(mockData ? undefined : projectId)
+
+  // Determine data source - mock data takes precedence
+  const tasks = mockData ? mockTasks : hookData.tasks
+  const statusLabels = mockData ? mockStatusLabels : hookData.statusLabels
+  const priorityLabels = mockData ? mockPriorityLabels : hookData.priorityLabels
+  const isLoading = mockData ? false : hookData.isLoading
+  const error = mockData ? mockError : hookData.error
+  const projectStats = mockData ? mockData.projectStats : hookData.projectStats
+
+  // Initialize mock data when provided
+  useEffect(() => {
+    if (mockData) {
+      setMockTasks(mockData.tasks || [])
+      setMockStatusLabels(mockData.statusLabels || [])
+      setMockPriorityLabels(mockData.priorityLabels || [])
+    }
+  }, [mockData])
+
+  // Mock operations - in-memory CRUD operations
+  const updateTask = mockData
+    ? async (id: string, updates: Partial<TaskDataSchema>) => {
+        try {
+          if (mockOperations?.onUpdateTask) {
+            // Convert TaskDataSchema updates to TableTask updates for mock operations
+            const tableTaskUpdates: Partial<TableTask> = {}
+            
+            if (updates.name !== undefined) tableTaskUpdates.name = updates.name
+            if (updates.description !== undefined) tableTaskUpdates.description = updates.description
+            if (updates.statusId !== undefined) tableTaskUpdates.statusId = updates.statusId
+            if (updates.priorityId !== undefined) tableTaskUpdates.priorityId = updates.priorityId
+            if (updates.completed !== undefined) tableTaskUpdates.completed = updates.completed
+            if (updates.endDate !== undefined) tableTaskUpdates.endDate = updates.endDate
+            if (updates.startDate !== undefined) tableTaskUpdates.startDate = updates.startDate
+            if (updates.assignedTo !== undefined) tableTaskUpdates.assignedTo = updates.assignedTo
+            if (updates.labelsTags !== undefined) tableTaskUpdates.labelsTags = updates.labelsTags
+            if (updates.attachments !== undefined) tableTaskUpdates.attachments = updates.attachments
+
+            await mockOperations.onUpdateTask(id, tableTaskUpdates)
+          }
+
+          setMockTasks(prev => 
+            prev.map(task => 
+              task.id === id 
+                ? { ...task, ...updates, updatedAt: Date.now() }
+                : task
+            )
+          )
+        } catch (error) {
+          console.error("Mock update task error:", error)
+          setMockError(error instanceof Error ? error.message : "Failed to update task")
+        }
+      }
+    : hookData.updateTask
+
+  const deleteTask = mockData
+    ? async (id: string) => {
+        try {
+          if (mockOperations?.onDeleteTask) {
+            await mockOperations.onDeleteTask(id)
+          }
+
+          setMockTasks(prev => prev.filter(task => task.id !== id))
+        } catch (error) {
+          console.error("Mock delete task error:", error)
+          setMockError(error instanceof Error ? error.message : "Failed to delete task")
+        }
+      }
+    : hookData.deleteTask
+
+  const moveTaskToStatus = mockData
+    ? async (taskId: string, statusId: string) => {
+        try {
+          if (mockOperations?.onMoveTaskToStatus) {
+            await mockOperations.onMoveTaskToStatus(taskId, statusId)
+          }
+
+          setMockTasks(prev => 
+            prev.map(task => 
+              task.id === taskId 
+                ? { ...task, statusId, updatedAt: Date.now() }
+                : task
+            )
+          )
+        } catch (error) {
+          console.error("Mock move task error:", error)
+          setMockError(error instanceof Error ? error.message : "Failed to move task")
+        }
+      }
+    : hookData.moveTaskToStatus
+
+  const createLabel = mockData
+    ? async (type: string, name: string, color?: string, description?: string) => {
+        try {
+          if (mockOperations?.onCreateLabel) {
+            return await mockOperations.onCreateLabel(type, name, color, description)
+          }
+
+          const newLabel = {
+            id: `temp-${Date.now()}-${Math.random()}`,
+            name,
+            color: color || "#93c5fd"
+          }
+
+          if (type === "status") {
+            setMockStatusLabels(prev => [...prev, newLabel])
+          } else if (type === "priority") {
+            setMockPriorityLabels(prev => [...prev, newLabel])
+          }
+
+          return newLabel.id
+        } catch (error) {
+          console.error("Mock create label error:", error)
+          setMockError(error instanceof Error ? error.message : "Failed to create label")
+          throw error
+        }
+      }
+    : hookData.createLabel
+
+  const updateLabel = mockData
+    ? async (id: string, updates: { name?: string; color?: string; description?: string }) => {
+        try {
+          if (mockOperations?.onUpdateLabel) {
+            await mockOperations.onUpdateLabel(id, updates)
+          }
+
+          setMockStatusLabels(prev => 
+            prev.map(label => 
+              label.id === id ? { ...label, ...updates } : label
+            )
+          )
+          setMockPriorityLabels(prev => 
+            prev.map(label => 
+              label.id === id ? { ...label, ...updates } : label
+            )
+          )
+        } catch (error) {
+          console.error("Mock update label error:", error)
+          setMockError(error instanceof Error ? error.message : "Failed to update label")
+        }
+      }
+    : hookData.updateLabel
+
+  const deleteLabel = mockData
+    ? async (id: string) => {
+        try {
+          if (mockOperations?.onDeleteLabel) {
+            await mockOperations.onDeleteLabel(id)
+          }
+
+          setMockStatusLabels(prev => prev.filter(label => label.id !== id))
+          setMockPriorityLabels(prev => prev.filter(label => label.id !== id))
+        } catch (error) {
+          console.error("Mock delete label error:", error)
+          setMockError(error instanceof Error ? error.message : "Failed to delete label")
+        }
+      }
+    : hookData.deleteLabel
+
+  const refetch = mockData
+    ? mockOperations?.onRefetch || (() => {})
+    : hookData.refetch
+
+  const clearError = mockData
+    ? () => setMockError(null)
+    : hookData.clearError
   // Handle selection changes from the table
   const handleSelectionChange = (selectedRows: TableTask[]) => {
     // For debugging - log selected tasks

@@ -36,17 +36,17 @@ export default meta
 
 type Story = StoryObj<typeof Board>
 
-export const BoardView: Story = {
-  args: {
-    projectId: "storybook-project",
-  },
-  render: (args) => (
-    <div style={{ height: "100vh" }}>
-      <Board {...args} />
-    </div>
-  ),
-  name: "Board View",
-}
+// export const BoardView: Story = {
+//   args: {
+//     projectId: "storybook-project",
+//   },
+//   render: (args) => (
+//     <div style={{ height: "100vh" }}>
+//       <Board {...args} />
+//     </div>
+//   ),
+//   name: "Board View",
+// }
 
 export const ListView: Story = {
   render: () => {
@@ -118,11 +118,89 @@ export const ListView: Story = {
 }
 
 export const TableViewStory: Story = {
-  render: () => (
-    <div style={{ height: "100vh", padding: "1rem" }}>
-      <TableView projectId="storybook-project" />
-    </div>
-  ),
+  render: () => {
+    // Transform mockColumns data to TableTask format
+    const allTasks = mockColumns.flatMap(column => 
+      column.tasks.map(task => ({
+        ...task,
+        statusId: column.id,
+        statusLabel: column.name,
+        statusColor: column.color,
+        // Add computed properties that TableTask expects
+        assignedToNames: task.assignedTo?.map(user => user.name).join(", ") || "",
+        isOverdue: task.endDate ? task.endDate < Date.now() && !task.completed : false,
+        totalSubTasks: task.subTasks?.length || 0,
+        completedSubTasks: task.subTasks?.filter(st => st.completed).length || 0,
+      }))
+    )
+
+    // Calculate project stats from mock data
+    const totalTasks = allTasks.length
+    const completedTasks = allTasks.filter(task => task.completed).length
+    const overdueTasks = allTasks.filter(task => 
+      task.endDate && task.endDate < Date.now() && !task.completed
+    ).length
+    const urgentLabelId = priorityLabels.find(p => p.name === "Urgent")?.id
+    const urgentTasks = urgentLabelId
+      ? allTasks.filter(task => task.priorityId === urgentLabelId).length
+      : 0
+
+    const mockData = {
+      tasks: allTasks,
+      statusLabels: mockColumns.map(col => ({
+        id: col.id,
+        name: col.name,
+        color: col.color
+      })),
+      priorityLabels: priorityLabels.map(p => ({
+        id: p.id,
+        name: p.name,
+        color: p.color
+      })),
+      projectStats: {
+        totalTasks,
+        completedTasks,
+        totalLabels: mockColumns.length,
+        overdueTasks,
+        urgentTasks
+      }
+    }
+
+    const mockOperations = {
+      onUpdateTask: async (id: string, updates: any) => {
+        console.log("Mock update task:", { id, updates })
+      },
+      onDeleteTask: async (id: string) => {
+        console.log("Mock delete task:", id)
+      },
+      onMoveTaskToStatus: async (taskId: string, statusId: string) => {
+        console.log("Mock move task to status:", { taskId, statusId })
+      },
+      onCreateLabel: async (type: string, name: string, color?: string, description?: string) => {
+        console.log("Mock create label:", { type, name, color, description })
+        return `temp-${Date.now()}`
+      },
+      onUpdateLabel: async (id: string, updates: any) => {
+        console.log("Mock update label:", { id, updates })
+      },
+      onDeleteLabel: async (id: string) => {
+        console.log("Mock delete label:", id)
+      },
+      onRefetch: () => {
+        console.log("Mock refetch")
+      }
+    }
+
+    return (
+      <div style={{ height: "100vh", padding: "1rem" }}>
+        <TableView 
+          projectId="storybook-project"
+          mockData={mockData}
+          mockOperations={mockOperations}
+        />
+      </div>
+    )
+  },
   name: "Table View",
 }
 
