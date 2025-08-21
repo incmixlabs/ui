@@ -139,7 +139,7 @@ function AutoForm<SchemaType extends ZodObjectOrWrapped>({
               )
             }
           }}
-          className={cn("space-y-5", className)}
+          className={cn("space-y-4", className)}
         >
           <AutoFormObject
             schema={objectFormSchema}

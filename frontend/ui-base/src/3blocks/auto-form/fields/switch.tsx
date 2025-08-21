@@ -11,21 +11,23 @@ export default function AutoFormSwitch({
   fieldProps,
 }: AutoFormInputComponentProps) {
   return (
-    <div className="flex flex-row items-center space-x-2">
-      <FormItem className="flex w-full flex-row items-center justify-between">
-        <AutoFormLabel label={label} isRequired={isRequired} />
-        <div className="flex h-10 flex-row items-center space-x-1">
-          <FormControl>
-            <Switch
-              checked={field.value}
-              onCheckedChange={field.onChange}
-              {...fieldProps}
-            />
-          </FormControl>
-        </div>
-        <FormMessage />
-      </FormItem>
-      <AutoFormTooltip fieldConfigItem={fieldConfigItem} />
-    </div>
+    <FormItem className="flex w-full flex-row items-center justify-between space-x-2">
+      <AutoFormLabel 
+        label={label} 
+        isRequired={isRequired} 
+        className="w-auto font-medium text-base"
+      />
+      <div className="flex items-center space-x-2">
+        <FormControl>
+          <Switch
+            checked={field.value}
+            onCheckedChange={field.onChange}
+            {...fieldProps}
+          />
+        </FormControl>
+        <AutoFormTooltip fieldConfigItem={fieldConfigItem} />
+      </div>
+      <FormMessage />
+    </FormItem>
   )
 }

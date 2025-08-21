@@ -36,7 +36,6 @@ export function StepperFooter() {
           </Button>
         </>
       )}
-      ``
     </div>
   )
 }

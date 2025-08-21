@@ -1,4 +1,4 @@
-import { FormControl, FormMessage, Input } from "@/base"
+import { FormControl, FormItem, FormMessage, Input } from "@/base"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 
@@ -27,9 +27,9 @@ export default function AutoFormNumber({
   const isCurrency = fieldProps.currency !== false
 
   return (
-    <div className="flex flex-col space-y-2">
+    <FormItem className="flex w-full flex-col space-y-2">
       {showLabel && (
-        <div className="mb-2">
+        <div className="mb-1">
           <AutoFormLabel
             label={label}
             isRequired={isRequired}
@@ -49,16 +49,15 @@ export default function AutoFormNumber({
           <Input
             type="number"
             {...fieldPropsWithoutShowLabel}
-            className={`h-14 w-full rounded-lg ${isCurrency ? "pl-8" : "px-4"}`}
+            className={`h-10 w-full rounded-md border border-gray-300 bg-white text-gray-900 dark:border-0 dark:bg-zinc-950 dark:text-white ${isCurrency ? "pl-8" : "px-4"} focus-visible:ring-0 focus-visible:ring-offset-0`}
             placeholder={fieldPropsWithoutShowLabel.placeholder || "0.00"}
           />
         </FormControl>
       </div>
 
-      {/* Fixed height error message container to prevent layout shift */}
-      <div className="min-h-[24px] px-1 pt-1">
+      <div>
         <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
       </div>
-    </div>
+    </FormItem>
   )
 }

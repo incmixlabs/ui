@@ -13,7 +13,7 @@ const meta: Meta<typeof AutoForm> = {
   decorators: [
     (Story) => (
       <Theme>
-        <div style={{ minWidth: "400px", maxWidth: "600px" }}>
+        <div style={{ minWidth: "400px", maxWidth: "600px", padding: "24px" }}>
           <Story />
         </div>
       </Theme>
