@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from "react"
-import useUserActivity from "../hooks/use-user-activity" // Assuming useUserActivity is defined elsewhere
+import useUserActivity from "../hooks/user/use-user-activity" // Assuming useUserActivity is defined elsewhere
 
 const UserActivityContext = createContext(null)
 

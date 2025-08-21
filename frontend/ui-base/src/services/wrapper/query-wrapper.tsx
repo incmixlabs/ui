@@ -90,6 +90,29 @@ export const monthlyPeriods = {
   eoy: "eoy",
   qtrly: "qtrly",
 } as const
+export type burstyPeriods = {
+  from: number,
+  to: number,
+  frequency?: number // no of expected transactions etc
+}
+export const periodDefinition = {
+  eoy: "eoy",
+  qtrly: "qtrly",
+  monthly: "monthly",
+  weekly: "weekly",
+  daily: "daily",
+  bow: "bow",
+  eow: "eow",
+  eod: "eod",
+  bod: "bod",
+  mid: "mid"
+}
+export type PeriodDefinition = (typeof periodDefinition)[keyof typeof periodDefinition]
+// set for each org and workspace
+export const periodDefinitions = {
+  // Define period definitions for each org and workspace here
+}
+
 export const updateFreqs = {
   stream: "stream",
   periodic: "periodic",
