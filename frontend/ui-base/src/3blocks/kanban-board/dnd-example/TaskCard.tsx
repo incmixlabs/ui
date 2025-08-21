@@ -470,7 +470,7 @@ export function TaskCard({
                 )}
                 <IconButton className="flex items-center gap-1 bg-transparent text-gray-700 dark:text-gray-200">
                   <Icon name="MessageSquareText" />
-                  <Text>{task.comments?.length || 0}</Text>
+                  <Text>0</Text>
                 </IconButton>
               </Flex>
               <Flex align={"center"} className="gap-2">

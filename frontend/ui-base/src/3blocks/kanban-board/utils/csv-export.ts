@@ -90,7 +90,7 @@ export function exportTasksToCSV(
       task.completed ? "Yes" : "No",
       escapeCSVField(formatTags(task.labelsTags || [])),
       (task.subTasks?.length || 0).toString(),
-      (task.comments?.length || 0).toString(),
+      // (task.comments?.length || 0).toString(),
       (task.attachments?.length || 0).toString(),
     ]
 

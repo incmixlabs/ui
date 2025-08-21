@@ -1,101 +1,87 @@
-import type { ProjectFormData } from "@incmix/utils/schema"
-import { ensureFileObject, validateProjectData } from "@incmix/utils/validate"
+// import { ensureFileObject, validateProjectData } from "@incmix/utils/validate"
 import { initializeDefaultData } from "../hooks/use-initialize-default-data"
 // Import organization store to get current organization ID
-import { organizationStore } from "../services/organizations"
 // sql/project-utils.ts
 import { database } from "./main" // Added import for TaskDataSchema
-import type { FormProjectDocType } from "./types"
+import type { ProjectDocType } from "./types"
 
 /**
  * Saves a project form submission to the RxDB formProjects collection
  * @param projectData The project data from the form
  * @returns The saved RxDB document
  */
-export const saveFormProject = async (projectData: ProjectFormData) => {
+export const saveFormProject = async (projectData: ProjectDocType) => {
   try {
-    const now = Date.now()
-
-    // Get organization ID directly from the Zustand store
-    let orgId = ""
-    try {
-      // Access the store state directly using getState()
-      const selectedOrg = organizationStore.getState().selectedOrganisation
-      if (selectedOrg?.id) {
-        orgId = selectedOrg.id
-      }
-    } catch (error) {
-      console.error("Error getting organization ID from store:", error)
-    }
-
-    // If no organization ID was found, throw error as orgId is required
-    if (!orgId) {
-      console.warn("No selected organization found when creating project")
-      throw new Error("Cannot create project: No organization selected")
-    }
-
-    // Validate and sanitize the project data
-    const validatedData = validateProjectData(projectData)
     // Prepare the document with required tracking fields
     const projectDoc = {
-      ...validatedData,
-      orgId, // Add organization ID to the project document
-      createdAt: now,
-      updatedAt: now,
-    } as FormProjectDocType
+      id: projectData.id,
+      name: projectData.name,
+      logo: typeof projectData.logo === "string" ? projectData.logo : "",
+      description: projectData.description,
+      createdBy: projectData.createdBy,
+      updatedBy: projectData.updatedBy,
+      orgId: projectData.orgId,
+      createdAt: projectData.createdAt,
+      updatedAt: projectData.updatedAt,
+      company: projectData.company,
+      startDate: projectData.startDate,
+      endDate: projectData.endDate,
+      status: projectData.status,
+      budget: projectData.budget,
+    } satisfies ProjectDocType
     // Insert the document first (without the file)
-    const insertedDoc = await database.formProjects.insert(projectDoc)
+    const insertedDoc = await database.projects.insert(projectDoc)
     // Handle file attachment if present
-    if (projectData.fileData) {
-      try {
-        // Convert to proper File object
-        const file = await ensureFileObject(projectData.fileData)
+    // if (projectData.fileData) {
+    //   try {
+    //     // Convert to proper File object
+    //     const file = await ensureFileObject(projectData.fileData)
 
-        if (file) {
-          // Get file information
-          const fileInfo = {
-            name: file.name,
-            type: file.type || "application/octet-stream",
-            size: file.size,
-          }
+    //     if (file) {
+    //       // Get file information
+    //       const fileInfo = {
+    //         name: file.name,
+    //         type: file.type || "application/octet-stream",
+    //         size: file.size,
+    //       }
 
-          const attachmentId = `file_${now}`
+    //       const attachmentId = `file_${now}`
 
-          // Put the file as an attachment
-          await insertedDoc.putAttachment({
-            id: attachmentId,
-            data: file,
-            type: fileInfo.type,
-          })
+    //       // Put the file as an attachment
+    //       await insertedDoc.putAttachment({
+    //         id: attachmentId,
+    //         data: file,
+    //         type: fileInfo.type,
+    //       })
 
-          // Get a fresh reference to the document with the latest revision
-          const refreshedDoc = await database.formProjects
-            .findOne({
-              selector: { id: insertedDoc.id },
-            })
-            .exec()
+    //       // Get a fresh reference to the document with the latest revision
+    //       const refreshedDoc = await database.formProjects
+    //         .findOne({
+    //           selector: { id: insertedDoc.id },
+    //         })
+    //         .exec()
 
-          if (refreshedDoc) {
-            // Update the document with file information using the fresh reference
-            await refreshedDoc.update({
-              $set: {
-                fileInfo: {
-                  name: fileInfo.name,
-                  type: fileInfo.type,
-                  size: fileInfo.size,
-                  attachmentId: attachmentId,
-                },
-              },
-            })
-          }
-        } else {
-          console.warn("Failed to process file data")
-        }
-      } catch (fileError) {
-        console.error("Error adding file attachment:", fileError)
-        // Continue with the document saved, just without the attachment
-      }
-    }
+    //       if (refreshedDoc) {
+    //         // Update the document with file information using the fresh reference
+    //         await refreshedDoc.update({
+    //           $set: {
+    //             fileInfo: {
+    //               name: fileInfo.name,
+    //               type: fileInfo.type,
+    //               size: fileInfo.size,
+    //               attachmentId: attachmentId,
+    //             },
+    //           },
+    //         })
+    //       }
+    //     } else {
+    //       console.warn("Failed to process file data")
+    //     }
+    //   } catch (fileError) {
+    //     console.error("Error adding file attachment:", fileError)
+    //     // Continue with the document saved, just without the attachment
+    //   }
+    // }
     // After successfully saving the project, create default labels and tasks for it
     try {
       console.log(

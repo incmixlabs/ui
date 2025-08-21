@@ -1,7 +1,6 @@
 import {
   dashboardSchemaLiteral,
   dashboardTemplateSchemaLiteral,
-  formProjectSchemaLiteral,
   labelSchemaLiteral,
   projectSchemaLiteral,
   taskSchemaLiteral,
@@ -16,7 +15,6 @@ import {
 // Task schema conversions have been moved to ../utils/task-schema.ts
 
 const projectTyped = toTypedRxJsonSchema(projectSchemaLiteral)
-const formProjectTyped = toTypedRxJsonSchema(formProjectSchemaLiteral)
 const dashboardTemplateTyped = toTypedRxJsonSchema(
   dashboardTemplateSchemaLiteral
 )
@@ -28,10 +26,6 @@ const labelTyped = toTypedRxJsonSchema(labelSchemaLiteral)
 
 export type ProjectDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
   typeof projectTyped
->
-
-export type FormProjectDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
-  typeof formProjectTyped
 >
 
 export type DashboardTemplateDocType = ExtractDocumentTypeFromTypedRxJsonSchema<
@@ -54,7 +48,6 @@ export interface TaskCollections {
   tasks: RxCollection<TaskDocType>
   labels: RxCollection<LabelDocType>
   projects: RxCollection<ProjectDocType>
-  formProjects: RxCollection<FormProjectDocType>
   dashboardTemplates: RxCollection<DashboardTemplateDocType>
   dashboards: RxCollection<DashboardDocType>
 }

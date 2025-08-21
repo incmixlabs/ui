@@ -1,5 +1,5 @@
 import { useProjectStore, useProjectsCheck } from "@incmix/store"
-import type { Project } from "@incmix/utils/types"
+import type { Project } from "@incmix/utils/schema"
 import { BadgeAlert } from "lucide-react"
 import * as React from "react"
 import { Switcher, type SwitcherItem } from "./switcher"

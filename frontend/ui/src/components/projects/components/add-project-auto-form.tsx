@@ -2,13 +2,14 @@ import { useRef, useState } from "react"
 import { Button, Dialog } from "@radix-ui/themes"
 import AutoForm from "@components/auto-form"
 import { ProjectsImages } from "../images"
-import type { Project } from "../types"
+import type { CreateProject, Project } from "../types"
 import { projectFormSchema } from "./project-form-schema"
+import { useOrganizationStore } from "@incmix/store"
 
 interface AddProjectAutoFormProps {
   isOpen: boolean
   onClose: () => void
-  onAddProject: (project: Omit<Project, "id">) => void
+  onAddProject: (project: Omit<CreateProject, "orgId">) => void
 }
 
 /**
@@ -23,7 +24,7 @@ export function AddProjectAutoForm({
   const [formData, setFormData] = useState<Record<string, any>>({})
   // Use a ref to store the File object to prevent serialization
   const fileRef = useRef<File | null>(null)
-
+  const {selectedOrganisation} = useOrganizationStore()
   // Handle form values change
   const handleValuesChange = (values: any) => {
     // Check if values.files is a File object and store it in the ref
@@ -37,18 +38,18 @@ export function AddProjectAutoForm({
 
   // Handle form submission
   const handleSubmit = (data: any) => {
+    if (!selectedOrganisation) {
+      return
+    }
     // Use the File object from the ref instead of from serialized state
     const fileData = fileRef.current
 
     // Transform form data to match the Project type
-    const newProject: Omit<Project, "id"> = {
+    const newProject: Omit<CreateProject, "orgId"> = {
       name: data.name,
       company: data.company,
       logo: ProjectsImages.user, // Default logo
       description: data.description,
-      progress: 0, // Default progress
-      timeLeft: data.timeLeft || "1", // Default timeLeft
-      timeType: data.timeType || "week", // Default timeType
       members: data.members || [],
       status: data.status || "started", // Default status
       startDate: data.startDate

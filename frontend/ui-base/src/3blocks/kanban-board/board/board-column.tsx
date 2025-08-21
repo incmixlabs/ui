@@ -225,8 +225,6 @@ const QuickTaskForm = memo(function QuickTaskForm({
           attachments: [],
           assignedTo: [],
           subTasks: [],
-          comments: [],
-          // commentsCount removed as it's no longer in schema
           checklist: checklist,
           acceptanceCriteria: acceptanceCriteria,
         })

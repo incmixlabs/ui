@@ -872,8 +872,8 @@ export const ListTaskCard = memo(function ListTaskCard({
                 </Flex>
               )}
 
-              {/* Comments counter */}
-              {card.comments && card.comments.length > 0 && (
+              {/* TODO:Fetch from backend */}
+              {
                 <Flex align="center" gap="1">
                   <svg
                     className="h-3 w-3 text-gray-9"
@@ -889,10 +889,10 @@ export const ListTaskCard = memo(function ListTaskCard({
                     />
                   </svg>
                   <Text className="text-gray-10" size="1">
-                    {card.comments.length}
+                    0
                   </Text>
                 </Flex>
-              )}
+              }
 
               {/* Attachments counter */}
               {card.attachments && card.attachments.length > 0 && (

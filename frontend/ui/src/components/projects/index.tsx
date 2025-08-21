@@ -23,7 +23,7 @@ export {
   useAddProject
 } from './components/reusable-add-project';
 import { projects as initialProjects } from "./data";
-import type { Project } from "./types";
+import type { CreateProject, Project } from "./types";
 import { useProjectMutation } from "./hooks/use-project-mutation";
 
 const AddProjectAutoForm = lazy(() =>
@@ -83,12 +83,59 @@ export function ProjectPageComponents() {
     }
   };
 
- const { mutateAsync: saveProjectToBackend } = useProjectMutation();
+ const { mutateAsync: saveProjectToBackend } = useProjectMutation({
+  onSuccess: async (project) => {
+    try {
 
-  const handleAddProject = async (newProject: Omit<Project, "id">) => {
-    // Create the project with ID
-    const uniqueId = nanoid();
 
+    await saveFormProject({
+      id: project.id,
+      name: project.name,
+      description: project.description,
+      createdAt: project.createdAt.getTime(),
+      updatedAt: project.updatedAt.getTime(),
+      createdBy: project.createdBy.id,
+      updatedBy: project.updatedBy.id,
+      company: project.company,
+      status: project.status,
+      startDate: new Date(project.startDate).getTime(),
+      endDate: new Date(project.endDate).getTime(),
+      budget: project.budget,
+      orgId: project.orgId,
+      logo: project.logo,
+    });
+
+
+     setProjects((prev)=>[...prev,project]);
+
+     if (activeTab === "all" || activeTab === project.status) {
+       setFilteredProjects([...filteredProjects, project]);
+     }
+     toast.success("Project created successfully", {
+       description: `"${project.name}" has been added to your projects.`,
+     });
+    } catch (error) {
+      console.error("Failed to save project to RxDB:", error);
+      toast.error("Failed to save project", {
+        description: "Your project couldn't be saved Please try again.",
+      });
+      // Still update the UI state even if DB save fails
+      setProjects((prev)=>[...prev,project]);
+
+      if (activeTab === "all" || activeTab === project.status) {
+        setFilteredProjects([...filteredProjects, project]);
+      }
+    }
+  },
+  onError: (error) => {
+    console.error("Failed to save project to backend:", error);
+    toast.error("Failed to save project", {
+      description: "Your project couldn't be saved Please try again.",
+    });
+  },
+ });
+
+  const handleAddProject = async (newProject: Omit<CreateProject, "orgId">) => {
     if (!selectedOrganisation) {
       toast.error("No organisation selected", {
         description: "Please create or select an organisation first.",
@@ -98,40 +145,9 @@ export function ProjectPageComponents() {
     // Create the project with a unique ID
     const projectWithId = {
       ...newProject,
-      id: uniqueId, // Use our simple unique ID instead of array length
       orgId: selectedOrganisation.id,
     };
-
-    try {
-      // Save to RxDB
-      await saveFormProject(projectWithId);
-
-
-      await saveProjectToBackend(projectWithId);
-
-      // Update local state
-      const updatedProjects = [...projects, projectWithId];
-      setProjects(updatedProjects);
-
-      if (activeTab === "all" || activeTab === newProject.status) {
-        setFilteredProjects([...filteredProjects, projectWithId]);
-      }
-      toast.success("Project created successfully", {
-        description: `"${newProject.name}" has been added to your projects.`,
-      });
-    } catch (error) {
-      console.error("Failed to save project to RxDB:", error);
-      toast.error("Failed to save project", {
-        description: "Your project couldn't be saved Please try again.",
-      });
-      // Still update the UI state even if DB save fails
-      const updatedProjects = [...projects, projectWithId];
-      setProjects(updatedProjects);
-
-      if (activeTab === "all" || activeTab === newProject.status) {
-        setFilteredProjects([...filteredProjects, projectWithId]);
-      }
-    }
+    await saveProjectToBackend(projectWithId);
   };
 
   const handleAddMember = (project: Project) => {
@@ -373,11 +389,6 @@ export function ProjectPageComponents() {
           onAddProject={handleAddProject}
         />
       </Suspense>
-      {/* <AddProjectModal
-      isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onAddProject={handleAddProject}
-      /> */}
 
       <MotionSheet
         title="Filter"

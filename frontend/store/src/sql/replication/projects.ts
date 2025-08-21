@@ -9,34 +9,34 @@ export const startProjectsReplication = (database: RxIncmixDatabase) =>
     collection: database.projects,
     replicationIdentifier: "projects",
     live: true,
-    push: {
-      async handler(changeRows) {
-        console.log("replicating projects")
-        try {
-          const rawResponse = await fetch(`${RXDB_API_URL}/projects/push`, {
-            method: "POST",
-            credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ changeRows }),
-          })
+    // push: {
+    //   async handler(changeRows) {
+    //     console.log("replicating projects")
+    //     try {
+    //       const rawResponse = await fetch(`${RXDB_API_URL}/projects/push`, {
+    //         method: "POST",
+    //         credentials: "include",
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //         },
+    //         body: JSON.stringify({ changeRows }),
+    //       })
 
-          if (!rawResponse.ok) {
-            console.error(
-              `Push replication failed: ${rawResponse.status} ${rawResponse.statusText}`
-            )
-            throw new Error(`Push replication failed: ${rawResponse.status}`)
-          }
+    //       if (!rawResponse.ok) {
+    //         console.error(
+    //           `Push replication failed: ${rawResponse.status} ${rawResponse.statusText}`
+    //         )
+    //         throw new Error(`Push replication failed: ${rawResponse.status}`)
+    //       }
 
-          const conflictsArray = await rawResponse.json()
-          return conflictsArray
-        } catch (error) {
-          console.error("Error during push replication:", error)
-          throw error // Re-throw to let RxDB handle the error
-        }
-      },
-    },
+    //       const conflictsArray = await rawResponse.json()
+    //       return conflictsArray
+    //     } catch (error) {
+    //       console.error("Error during push replication:", error)
+    //       throw error // Re-throw to let RxDB handle the error
+    //     }
+    //   },
+    // },
     pull: {
       async handler(checkpointOrNull, _batchSize) {
         console.log(checkpointOrNull)
