@@ -154,7 +154,6 @@ export function ListBoard({
             attachments: taskData.attachments || [],
             assignedTo: taskData.assignedTo || [],
             subTasks: taskData.subTasks || [],
-            comments: taskData.comments || [],
             createdAt: Date.now(),
             updatedAt: Date.now(),
             createdBy: taskData.createdBy || {
@@ -477,7 +476,6 @@ export function ListBoard({
               checked: false,
             })
           ),
-          comments: [],
         }
 
         // Find the index to insert the duplicate right after the original

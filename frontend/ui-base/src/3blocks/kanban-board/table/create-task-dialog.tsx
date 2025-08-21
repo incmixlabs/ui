@@ -95,8 +95,7 @@ export function CreateTaskDialog({
           completed: false,
           labelsTags: [],
           attachments: [],
-          subTasks: [],
-          comments: [],
+          // subTasks: [],
         })
 
         onClose()

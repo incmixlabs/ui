@@ -20,10 +20,10 @@ export function TaskCommentsSection({
   return (
     <div className="space-y-4">
       <h3 className="font-semibold text-gray-900 text-sm uppercase tracking-wide dark:text-gray-100">
-        Comments ({currentTask.comments?.length || 0})
+        Comments (0)
       </h3>
 
-      <div className="max-h-80 space-y-4 overflow-y-auto">
+      {/* <div className="max-h-80 space-y-4 overflow-y-auto">
         {currentTask.comments && currentTask.comments.length > 0 ? (
           currentTask.comments.map((comment: Comment) => (
             <div
@@ -66,7 +66,7 @@ export function TaskCommentsSection({
             <p className="text-sm">No comments yet</p>
           </div>
         )}
-      </div>
+      </div> */}
 
       <div className="flex gap-2 border-gray-200 border-t pt-2 dark:border-gray-700">
         <input

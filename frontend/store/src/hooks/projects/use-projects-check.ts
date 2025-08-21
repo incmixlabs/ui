@@ -40,7 +40,7 @@ export function useProjectsCheck() {
 
       try {
         // Only check if we have a selected organization and database is available
-        if (!selectedOrganisation?.id || !db.formProjects) {
+        if (!selectedOrganisation?.id || !db.projects) {
           if (cancelled) return
           setProjects([])
           setHasProjects(false)
@@ -51,7 +51,7 @@ export function useProjectsCheck() {
 
         // Filter projects directly at the database level using RxDB's query capabilities
         // This is much more efficient than fetching all projects and filtering in memory
-        const filteredDocs = await db.formProjects
+        const filteredDocs = await db.projects
           .find({
             selector: {
               orgId: selectedOrganisation.id,
@@ -70,7 +70,7 @@ export function useProjectsCheck() {
           typeof window !== "undefined" &&
           window.location.hostname === "localhost"
         if (isDevelopment) {
-          const missingOrgIdDocs = await db.formProjects
+          const missingOrgIdDocs = await db.projects
             .find({
               selector: {
                 orgId: { $exists: false },

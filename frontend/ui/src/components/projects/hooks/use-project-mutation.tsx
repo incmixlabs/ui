@@ -2,18 +2,17 @@ import { useMutation } from "@tanstack/react-query";
 
 import { throwError, useOrganizationStore } from "@incmix/store";
 import { PROJECTS_API_URL } from "@utils/constants";
-import { Project } from "../types";
+import { CreateProject, Project } from "../types";
 
-export function useProjectMutation() {
+export function useProjectMutation({onSuccess,onError}:{onSuccess?: (project: Project) => void,onError?: (error: Error) => void}) {
   const { selectedOrganisation } = useOrganizationStore();
 
   return useMutation({
-    mutationFn: async (project: Project) => {
+    mutationFn: async (project: CreateProject) => {
       if (!selectedOrganisation) {
         throw new Error("No organisation selected");
       }
       const formData = new FormData();
-      formData.append("id", project.id);
       formData.append("name", project.name);
       formData.append("orgId", selectedOrganisation.id);
       formData.append("description", project.description);
@@ -34,13 +33,12 @@ export function useProjectMutation() {
         formData.append("logoUrl", project.logo);
       }
       // members as comma-separated string
-      console.log(project.members)
       if (Array.isArray(project.members)) {
         formData.append("members", JSON.stringify(project.members.map((member) => ({
           id: member.value,
         }))));
       }
-      // ... rest of the FormData construction logic
+
 
       const response = await fetch(PROJECTS_API_URL, {
         method: "POST",
@@ -52,7 +50,9 @@ export function useProjectMutation() {
         throwError(response);
       }
 
-      return response.json();
+      return response.json() as Promise<Project>;
     },
+    onSuccess,
+    onError,
   });
 }

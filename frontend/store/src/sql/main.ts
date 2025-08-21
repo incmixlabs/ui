@@ -1,34 +1,23 @@
 import {
   dashboardSchemaLiteral,
   dashboardTemplateSchemaLiteral,
-  formProjectSchemaLiteral,
   labelSchemaLiteral,
   projectSchemaLiteral,
   taskSchemaLiteral,
 } from "@incmix/utils/schema"
-import { nanoid } from "nanoid"
-import { type RxDatabase, addRxPlugin, createRxDatabase } from "rxdb"
+import { addRxPlugin, createRxDatabase } from "rxdb"
 import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode"
 // main.ts
-import { replicateRxCollection } from "rxdb/plugins/replication"
-import { organizationStore } from "../services/organizations"
 
-import { API } from "@incmix/utils/env"
 import { getRxStorageIndexedDB } from "rxdb-premium/plugins/storage-indexeddb"
 import { RxDBAttachmentsPlugin } from "rxdb/plugins/attachments"
 import { RxDBMigrationSchemaPlugin } from "rxdb/plugins/migration-schema"
 import { RxDBUpdatePlugin } from "rxdb/plugins/update"
 import { wrappedValidateZSchemaStorage } from "rxdb/plugins/validate-z-schema"
-import { initializeDefaultData } from "../hooks/use-initialize-default-data"
 import { startLabelsReplication } from "./replication/labels"
 import { startProjectsReplication } from "./replication/projects"
 import { startTaskReplication } from "./replication/tasks"
-import type {
-  LabelDocType,
-  RxIncmixDatabase,
-  TaskCollections,
-  TaskDocType,
-} from "./types"
+import type { RxIncmixDatabase } from "./types"
 
 addRxPlugin(RxDBUpdatePlugin)
 addRxPlugin(RxDBMigrationSchemaPlugin)
@@ -141,57 +130,6 @@ export class LocalDatabase {
         autoMigrate: true,
       },
       projects: { schema: projectSchemaLiteral, autoMigrate: true },
-      formProjects: {
-        schema: formProjectSchemaLiteral,
-        autoMigrate: true,
-        migrationStrategies: {
-          1: (oldDoc: Record<string, any>) => {
-            // Get the current organization ID from localStorage
-            let orgId = ""
-            try {
-              const orgStore = localStorage.getItem("organization-store")
-              if (orgStore) {
-                const orgData = JSON.parse(orgStore)
-                orgId = orgData?.state?.selectedOrganisation?.id
-                if (orgId) {
-                  console.log("Migration: Found organization ID:", orgId)
-                }
-              }
-            } catch (error) {
-              console.error(
-                "Migration: Error getting organization ID from store:",
-                error
-              )
-            }
-
-            // If we still don't have an orgId, try to get from Zustand store directly
-            // This is critical since orgId is required by the schema
-            if (!orgId) {
-              // Try to get from Zustand store directly
-              const selectedOrg =
-                organizationStore.getState().selectedOrganisation
-              orgId = selectedOrg?.id || ""
-
-              // If still no orgId, use a more descriptive fallback with a unique ID
-              if (!orgId) {
-                orgId = oldDoc.id?.slice(0, 15) || `migration-${nanoid(10)}`
-                console.warn(
-                  `Migration: No orgId found for project ${oldDoc.id}, using generated fallback: ${orgId}`
-                )
-              }
-            }
-
-            // Add organization ID to the document
-            console.log(
-              `Migration: Migrating project ${oldDoc.id} to version 1 with orgId: ${orgId}`
-            )
-            return {
-              ...oldDoc,
-              orgId: orgId,
-            }
-          },
-        },
-      },
       dashboardTemplates: {
         schema: dashboardTemplateSchemaLiteral,
         autoMigrate: true,

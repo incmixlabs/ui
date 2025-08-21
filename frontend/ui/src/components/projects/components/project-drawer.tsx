@@ -23,7 +23,7 @@ import { useProjectDrawer } from "../hooks/use-project-drawer"
 import { members, projects } from "../data"
 import ProjectChecklist from "./project-checklist"
 import ProjectComments from "./project-comments"
-import ProjectDetails from "./project-detials"
+import ProjectDetails from "./project-details"
 import { ComboBox } from "@components/combo-box"
 
 export default function ProjectDrawer({

@@ -1,7 +1,7 @@
-import {
-  type KanbanColumn,
-  type TaskDataSchema,
-  TaskSubTask,
+import type {
+  KanbanColumn,
+  TaskSubTask as Subtask,
+  TaskDataSchema,
 } from "@incmix/utils/schema"
 // task-card-components/hooks/use-task-actions.ts
 import { useCallback } from "react"
@@ -9,7 +9,6 @@ import { useCallback } from "react"
 // Local types for the component
 type Tag = TaskDataSchema["labelsTags"][0]
 // type Comment = TaskDataSchema["comments"][0]
-type Subtask = TaskDataSchema["subTasks"][0]
 
 interface UseTaskActionsProps {
   currentTask: TaskDataSchema | null
@@ -120,31 +119,29 @@ export function useTaskActions({
   )
 
   // Comment management
-  const handleAddComment = useCallback(
-    async (newComment: string) => {
-      if (!currentTask || !newComment.trim()) return
+  // const handleAddComment = useCallback(
+  //   async (newComment: string) => {
+  //     if (!currentTask || !newComment.trim()) return
 
-      const currentUser = {
-        id: "current-user-id",
-        name: "Current User",
-        image: "/placeholder-user.svg",
-      }
+  //     const currentUser = {
+  //       id: "current-user-id",
+  //       name: "Current User",
+  //       image: "/placeholder-user.svg",
+  //     }
 
-      const newCommentObj = {
-        id: crypto.randomUUID(),
-        content: newComment.trim(),
-        createdAt: Date.now(),
-        createdBy: currentUser,
-      }
+  //     const newCommentObj = {
+  //       id: crypto.randomUUID(),
+  //       content: newComment.trim(),
+  //       createdAt: Date.now(),
+  //       createdBy: currentUser,
+  //     }
 
-      const updatedComments = [...(currentTask.comments || []), newCommentObj]
-
-      await handleUpdateTask({
-        comments: updatedComments,
-      })
-    },
-    [currentTask, handleUpdateTask]
-  )
+  //     // await handleUpdateTask({
+  //     //   commentsCount: 1,
+  //     // })
+  //   },
+  //   [currentTask, handleUpdateTask]
+  // )
 
   // Tag management
   const handleAddTag = useCallback(
@@ -263,7 +260,6 @@ export function useTaskActions({
           order: st.order,
         })),
         completed: false,
-        comments: [],
       })
       if (onTaskModified) onTaskModified()
     } catch (error) {
@@ -280,7 +276,7 @@ export function useTaskActions({
     handleStatusChange,
     handleStartDateChange,
     handleEndDateChange,
-    handleAddComment,
+    // handleAddComment,
     handleAddTag,
     handleRemoveTag,
     handleAddSubtask,

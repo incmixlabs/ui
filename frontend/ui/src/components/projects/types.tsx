@@ -9,23 +9,33 @@ export interface Member {
   value?: string
 }
 
+export type CreateProject = Omit<Project, "id" | "createdBy" | "updatedBy" | "timeLeft" | "timeType" | "progress" | "createdAt" | "updatedAt">
 export interface Project {
   id: string
   name: string
   company: string
-  logo: string
+  logo?: string
+  orgId: string
   description: string
   progress: number
   timeLeft: string
   timeType: "week" | "days"
   members: Option[]
   status: "all" | "started" | "on-hold" | "completed"
-  startDate?: number
-  endDate?: number
+  startDate: number
+  endDate: number
   budget?: number
   fileData?: File | null
-  createdAt?: Date
-  updatedAt?: Date
-  createdBy?: number
-  updatedBy?: number
+  createdAt: Date
+  updatedAt : Date
+  createdBy: {
+    id: string
+    name: string
+    image?: string
+  }
+  updatedBy: {
+    id: string
+    name: string
+    image?: string
+  }
 }

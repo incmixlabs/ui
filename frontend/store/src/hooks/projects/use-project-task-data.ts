@@ -254,7 +254,7 @@ export function useProjectData(
           })
         )
 
-        const processedSubTasks = (taskData.subTasks || []).map(
+        const _processedSubTasks = (taskData.subTasks || []).map(
           (item, index) => ({
             id: item.id || generateBrowserUniqueId("st"),
             name: item.name || "",
@@ -280,10 +280,7 @@ export function useProjectData(
           labelsTags: taskData.labelsTags || [],
           attachments: taskData.attachments || [],
           assignedTo: taskData.assignedTo || [],
-          subTasks: processedSubTasks,
-          comments: taskData.comments || [],
-          // Removed commentsCount as it's no longer part of the schema
-          // Use processed arrays that ensure schema compliance
+          // subTasks: processedSubTasks,
           checklist: processedChecklist,
           acceptanceCriteria: processedAcceptanceCriteria,
           createdAt: now,
@@ -1046,7 +1043,6 @@ export function useProjectData(
             order: index,
           })
         ),
-        comments: [], // Start with empty comments for the duplicate
         createdAt: now,
         updatedAt: now,
         createdBy: user,
@@ -1102,7 +1098,7 @@ export function useProjectData(
                 order: index,
               })
             ),
-            comments: [],
+
             createdAt: now,
             updatedAt: now,
             createdBy: user,

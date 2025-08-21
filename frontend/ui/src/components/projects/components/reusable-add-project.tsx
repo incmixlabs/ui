@@ -4,7 +4,7 @@ import { nanoid } from "nanoid"
 import { useCallback, useState } from "react"
 import { useStreamingDisplay, useStreamingResponse } from "../../../hooks"
 
-import type { Project } from "../types"
+import type { CreateProject, Project } from "../types"
 import { projectFormSchema } from "./project-form-schema"
 
 import AutoForm from "@components/auto-form"
@@ -135,7 +135,52 @@ export function ReusableAddProject({
     enabled: !!selectedOrganisation?.handle,
     retry: 1,
   })
-  const { mutateAsync: saveProjectToBackend } = useProjectMutation();
+  const { mutateAsync: saveProjectToBackend } = useProjectMutation({
+    onSuccess: async (project) => {
+      try {
+        await saveFormProject({
+          id: project.id,
+          name: project.name,
+          description: project.description,
+          createdAt: new Date( project.createdAt).getTime(),
+          updatedAt: new Date(project.updatedAt).getTime(),
+          createdBy: project.createdBy.id,
+          updatedBy: project.updatedBy.id,
+          orgId: project.orgId,
+          logo: project.logo,
+          company: project.company,
+          status: project.status,
+          startDate: new Date(project.startDate).getTime(),
+          endDate: new Date(project.endDate).getTime(),
+          budget: project.budget,
+        });
+
+        // Call the callback if provided
+        if (onProjectAdded) {
+          onProjectAdded(project)
+        }
+
+        // Close the dialog
+        onClose()
+
+        toast.success("Project created successfully", {
+          description: `"${project.name}" has been added to your projects.`,
+        });
+      } catch (error) {
+        console.error("Failed to save project to RxDB:", error);
+        toast.error("Failed to save project", {
+          description: "Your project couldn't be saved Please try again.",
+        });
+
+      }
+    },
+    onError: (error) => {
+      console.error("Failed to save project to backend:", error);
+      toast.error("Failed to save project", {
+        description: "Your project couldn't be saved Please try again.",
+      });
+    },
+   });
 
   const handleSubmit = async (data: Record<string, any>) => {
     try {
@@ -143,9 +188,6 @@ export function ReusableAddProject({
         toast.error("Please select an organisation")
         return
       }
-
-      // Process the form data
-      const uniqueId = nanoid()
 
       // Transform and validate form data
       const transformedData = {
@@ -179,25 +221,19 @@ export function ReusableAddProject({
 
       // Create a Project object with required fields
       const newProject = {
-        id: uniqueId,
-        name: data.name || "",
-        company: data.company || "",
+        name: data.name,
+        company: data.company,
         logo: "", // Default empty logo
-        description: data.description || "",
-        progress: 0,
-        timeLeft: `${data.timeLeft || 2} ${data.timeType || "week"}`,
-        timeType: data.timeLeft ? data.timeType || "week" : "week",
-        status: data.status || "started",
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        description: data.description,
+        status: data.status||"started",
+        startDate: new Date(data.startDate).getTime(),
+        endDate: new Date(data.endDate).getTime(),
         budget: transformedData.budget,
         members: transformedData.members,
         fileData: transformedData.fileData,
         orgId: selectedOrganisation.id
-      } satisfies Project & { orgId: string }
+      } satisfies CreateProject
 
-      // Save to RxDB
-      await saveFormProject(newProject )
 
       await saveProjectToBackend(newProject);
 
@@ -205,13 +241,7 @@ export function ReusableAddProject({
         description: `"${newProject.name}" has been added to your projects.`,
       })
 
-      // Call the callback if provided
-      if (onProjectAdded) {
-        onProjectAdded(newProject)
-      }
 
-      // Close the dialog
-      onClose()
     } catch (error) {
       console.error("Failed to save project:", error)
       toast.error("Failed to save project", {

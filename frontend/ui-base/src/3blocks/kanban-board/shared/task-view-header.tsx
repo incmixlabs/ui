@@ -82,7 +82,7 @@ export function TaskViewHeader({
   const { selectedProject } = useProjectStore()
 
   // Determine the heading text
-  const headingText = customHeading || selectedProject?.title || "Project Tasks"
+  const headingText = customHeading || selectedProject?.name || "Project Tasks"
 
   // Handle refresh
   const handleRefresh = useCallback(() => {

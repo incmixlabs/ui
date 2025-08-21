@@ -166,7 +166,6 @@ export function AddTaskForm({ projectId, onSuccess }: AddTaskFormProps) {
 
         // Initialize empty arrays for other fields
         attachments: [],
-        comments: [],
       }
     },
     [getColorForLabel, priorityLabels]
