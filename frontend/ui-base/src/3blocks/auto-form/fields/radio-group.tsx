@@ -35,9 +35,9 @@ export default function AutoFormRadioGroup({
   return (
     <FormItem className="flex w-full flex-col space-y-2">
       <div className="mb-1">
-        <AutoFormLabel 
-          label={label} 
-          isRequired={isRequired} 
+        <AutoFormLabel
+          label={label}
+          isRequired={isRequired}
           className="w-auto font-medium text-base"
         />
       </div>

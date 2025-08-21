@@ -12,9 +12,9 @@ export default function AutoFormSwitch({
 }: AutoFormInputComponentProps) {
   return (
     <FormItem className="flex w-full flex-row items-center justify-between space-x-2">
-      <AutoFormLabel 
-        label={label} 
-        isRequired={isRequired} 
+      <AutoFormLabel
+        label={label}
+        isRequired={isRequired}
         className="w-auto font-medium text-base"
       />
       <div className="flex items-center space-x-2">

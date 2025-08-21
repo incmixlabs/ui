@@ -20,7 +20,7 @@ export default function AutoFormCheckbox({
           {...fieldProps}
         />
       </FormControl>
-      <FormLabel className="w-auto cursor-pointer text-base font-medium">
+      <FormLabel className="w-auto cursor-pointer font-medium text-base">
         {label}
         {isRequired && <span className="text-destructive"> *</span>}
       </FormLabel>
