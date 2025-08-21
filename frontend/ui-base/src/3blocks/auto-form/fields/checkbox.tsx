@@ -26,7 +26,10 @@ export default function AutoFormCheckbox({
           aria-required={isRequired || undefined}
         />
       </FormControl>
-      <FormLabel htmlFor={field.name} className="w-auto cursor-pointer font-medium text-base">
+      <FormLabel
+        htmlFor={field.name}
+        className="w-auto cursor-pointer font-medium text-base"
+      >
         {label}
         {isRequired && <span className="text-destructive"> *</span>}
       </FormLabel>
