@@ -150,13 +150,10 @@ export const TableViewStory: Story = {
       statusLabels: mockColumns.map(col => ({
         id: col.id,
         name: col.name,
-        color: col.color
+        color: col.color,
+        type: "status"
       })),
-      priorityLabels: priorityLabels.map(p => ({
-        id: p.id,
-        name: p.name,
-        color: p.color
-      })),
+      priorityLabels,
       projectStats: {
         totalTasks,
         completedTasks,

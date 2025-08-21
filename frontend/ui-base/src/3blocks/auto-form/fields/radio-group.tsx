@@ -44,7 +44,7 @@ export default function AutoFormRadioGroup({
       <FormControl>
         <RadioGroup.Root
           onValueChange={field.onChange}
-          defaultValue={field.value}
+          value={field.value}
           className="flex flex-col space-y-2"
           {...fieldProps}
         >

@@ -1,5 +1,6 @@
 // components/auto-form/fields/enum.tsx - Enhanced with color support
 import { FormControl, FormItem, FormMessage, Select } from "@/base"
+import { cn } from "@/utils/cn"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 import { getBaseSchema } from "../utils"
@@ -101,7 +102,10 @@ export default function AutoFormEnum({
           value={field.value || ""} // Ensure controlled value
           {...fieldProps}
         >
-          <Select.Trigger className={`${fieldProps.className} min-w-[140px]`}>
+          <Select.Trigger
+            className={cn("min-w-[140px]", fieldProps?.className)}
+            aria-labelledby={`${field.name}-label`}
+          >
             {selectedOption ? (
               <OptionDisplay option={selectedOption} isSelected />
             ) : (
