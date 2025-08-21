@@ -4,7 +4,7 @@ import { MessageSquareText, Send } from "lucide-react"
 import type { Comment, TaskCommentsSectionProps } from "./utils/types"
 
 export function TaskCommentsSection({
-  currentTask,
+  // currentTask,
   newComment,
   onNewCommentChange,
   onAddComment,
