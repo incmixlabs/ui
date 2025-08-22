@@ -88,10 +88,7 @@ export function useBulkAIGeneration(
             }
           } catch (err) {
             failed++
-            console.error(
-              `Failed to update task ${result.taskId}:`,
-              err
-            )
+            console.error(`Failed to update task ${result.taskId}:`, err)
           }
 
           // Update progress
