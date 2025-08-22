@@ -27,7 +27,7 @@ export interface ProcessedUserStory {
 
 interface BulkGenerateRequest {
   type: string
-  taskIds: string[]
+  taskIds: { id: string }[]
 }
 
 export interface BulkGenerateResponse {
@@ -130,14 +130,25 @@ export const aiService = {
    * Generate user stories for multiple tasks using bulk endpoint with queue processing
    */
   bulkGenerateUserStories: async (
-    taskIds: string[]
+    taskIds: string[],
+    opts?: { signal?: AbortSignal }
   ): Promise<BulkGenerateResponse> => {
     // Validate input
-    if (!Array.isArray(taskIds) || taskIds.length === 0) {
+    if (!Array.isArray(taskIds)) {
+      throw new Error("Task IDs array is required and must not be empty")
+    }
+    const uniqueIds = Array.from(
+      new Set(
+        taskIds
+          .map((id) => (typeof id === "string" ? id.trim() : ""))
+          .filter((id) => id.length > 0)
+      )
+    )
+    if (uniqueIds.length === 0) {
       throw new Error("Task IDs array is required and must not be empty")
     }
 
-    if (taskIds.length > 100) {
+    if (uniqueIds.length > 100) {
       throw new Error("Maximum 100 tasks allowed per batch")
     }
 
@@ -148,9 +159,10 @@ export const aiService = {
           "Content-Type": "application/json",
         },
         credentials: "include",
+        signal: opts?.signal,
         body: JSON.stringify({
           type: "user-story",
-          taskIds: taskIds,
+          taskIds: uniqueIds.map((id) => ({ id })),
         } as BulkGenerateRequest),
       })
 

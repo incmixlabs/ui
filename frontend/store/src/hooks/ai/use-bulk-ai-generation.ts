@@ -45,7 +45,7 @@ export function useBulkAIGeneration(
         const taskIds = tasks.map((task) => task.id)
         const bulkResult = await aiService.bulkGenerateUserStories(taskIds)
 
-        if (!bulkResult.success || !bulkResult.results) {
+        if (!Array.isArray(bulkResult.results)) {
           throw new Error(bulkResult.message || "Bulk generation failed")
         }
 
@@ -57,21 +57,21 @@ export function useBulkAIGeneration(
           try {
             if (result.success && result.data) {
               // Transform the AI-generated content to match TaskDataSchema structure
-              const checklist = result.data.checklist.map((item, index) => ({
-                id: item.id,
-                text: item.text,
-                checked: item.checked || false,
-                order: index, // Add required order property
-              }))
-
-              const acceptanceCriteria = result.data.acceptanceCriteria.map(
-                (item, index) => ({
+              const checklist =
+                result.data.checklist?.map((item, index) => ({
                   id: item.id,
                   text: item.text,
-                  checked: false, // Add required checked property
-                  order: index, // Add required order property
-                })
-              )
+                  checked: item.checked ?? false,
+                  order: index,
+                })) ?? []
+
+              const acceptanceCriteria =
+                result.data.acceptanceCriteria?.map((item, index) => ({
+                  id: item.id,
+                  text: item.text,
+                  checked: false,
+                  order: index,
+                })) ?? []
 
               await updateTaskFn(result.taskId, {
                 description: result.data.description,
