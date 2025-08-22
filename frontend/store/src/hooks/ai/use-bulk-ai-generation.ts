@@ -1,8 +1,7 @@
 import type { TaskDataSchema } from "@incmix/utils/schema"
 import { useCallback, useState } from "react"
-import type { ProcessedUserStory } from "../../services/ai-service"
+import { aiService } from "../../services/ai-service"
 import { useAIFeaturesStore } from "./use-ai-features-store"
-import { useAIUserStory } from "./use-ai-user-story"
 
 interface TaskToUpdate {
   id: string // Changed from taskId to id to match schema
@@ -29,7 +28,6 @@ export function useBulkAIGeneration(
   })
   const [error, setError] = useState<string | null>(null)
   const { useAI } = useAIFeaturesStore()
-  const { generateUserStory } = useAIUserStory()
 
   const generateForTasks = useCallback(
     async (tasks: TaskToUpdate[]) => {
@@ -42,30 +40,31 @@ export function useBulkAIGeneration(
       setError(null)
       setStats({ total: tasks.length, completed: 0, failed: 0 })
 
-      let completed = 0
-      let failed = 0
-
       try {
-        // Process tasks sequentially to avoid rate limiting
-        for (const task of tasks) {
+        // Use bulk AI generation endpoint - single API call for all tasks
+        const taskIds = tasks.map((task) => task.id)
+        const bulkResult = await aiService.bulkGenerateUserStories(taskIds)
+
+        if (!bulkResult.success || !bulkResult.results) {
+          throw new Error(bulkResult.message || "Bulk generation failed")
+        }
+
+        let completed = 0
+        let failed = 0
+
+        // Process the bulk results and update tasks
+        for (const result of bulkResult.results) {
           try {
-            // Generate content using the AI service
-            const userStoryResult: ProcessedUserStory | null =
-              await generateUserStory(task.name)
-
-            // Update the task with the AI generated content if successful
-            if (userStoryResult) {
+            if (result.success && result.data) {
               // Transform the AI-generated content to match TaskDataSchema structure
-              const checklist = userStoryResult.checklist.map(
-                (item, index) => ({
-                  id: item.id,
-                  text: item.text,
-                  checked: item.checked || false,
-                  order: index, // Add required order property
-                })
-              )
+              const checklist = result.data.checklist.map((item, index) => ({
+                id: item.id,
+                text: item.text,
+                checked: item.checked || false,
+                order: index, // Add required order property
+              }))
 
-              const acceptanceCriteria = userStoryResult.acceptanceCriteria.map(
+              const acceptanceCriteria = result.data.acceptanceCriteria.map(
                 (item, index) => ({
                   id: item.id,
                   text: item.text,
@@ -74,20 +73,23 @@ export function useBulkAIGeneration(
                 })
               )
 
-              await updateTaskFn(task.id, {
-                // Using id instead of taskId
-                description: userStoryResult.description,
+              await updateTaskFn(result.taskId, {
+                description: result.data.description,
                 checklist,
                 acceptanceCriteria,
               })
               completed++
             } else {
               failed++
+              console.error(
+                `Failed to generate content for task ${result.taskId}:`,
+                result.error
+              )
             }
           } catch (err) {
             failed++
             console.error(
-              `Failed to generate content for task "${task.name}" (${task.id}):`,
+              `Failed to update task ${result.taskId}:`,
               err
             )
           }
@@ -109,7 +111,7 @@ export function useBulkAIGeneration(
         setIsGenerating(false)
       }
     },
-    [useAI, isGenerating, generateUserStory, updateTaskFn]
+    [useAI, isGenerating, updateTaskFn]
   )
 
   return {

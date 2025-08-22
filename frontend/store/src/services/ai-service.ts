@@ -25,6 +25,21 @@ export interface ProcessedUserStory {
   checklist: { id: string; text: string; checked: boolean }[]
 }
 
+interface BulkGenerateRequest {
+  taskIds: { id: string }[]
+}
+
+export interface BulkGenerateResponse {
+  success: boolean
+  message?: string
+  results?: {
+    taskId: string
+    success: boolean
+    data?: ProcessedUserStory
+    error?: string
+  }[]
+}
+
 /**
  * AI Service for generating content using GenAI
  */
@@ -106,6 +121,53 @@ export const aiService = {
       }
     } catch (error) {
       console.error("Failed to generate user story:", error)
+      throw error
+    }
+  },
+
+  /**
+   * Generate user stories for multiple tasks using bulk endpoint with queue processing
+   */
+  bulkGenerateUserStories: async (
+    taskIds: string[]
+  ): Promise<BulkGenerateResponse> => {
+    // Validate input
+    if (!Array.isArray(taskIds) || taskIds.length === 0) {
+      throw new Error("Task IDs array is required and must not be empty")
+    }
+
+    if (taskIds.length > 100) {
+      throw new Error("Maximum 100 tasks allowed per batch")
+    }
+
+    try {
+      const response = await fetch(`${BASE_API_URL}/api/tasks/bulk-ai-gen`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          taskIds: taskIds.map((id) => ({ id })),
+        } as BulkGenerateRequest),
+      })
+
+      if (!response.ok) {
+        await response.json().catch(() => {
+          // Silently handle parsing errors
+        })
+        throw new Error(
+          response.status >= 500
+            ? "Bulk AI service temporarily unavailable. Please try again later."
+            : `Bulk generation request failed: ${response.status}`
+        )
+      }
+
+      const data = (await response.json()) as BulkGenerateResponse
+
+      return data
+    } catch (error) {
+      console.error("Failed to bulk generate user stories:", error)
       throw error
     }
   },
