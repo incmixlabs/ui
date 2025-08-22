@@ -26,7 +26,8 @@ export interface ProcessedUserStory {
 }
 
 interface BulkGenerateRequest {
-  taskIds: { id: string }[]
+  type: string
+  taskIds: string[]
 }
 
 export interface BulkGenerateResponse {
@@ -148,7 +149,8 @@ export const aiService = {
         },
         credentials: "include",
         body: JSON.stringify({
-          taskIds: taskIds.map((id) => ({ id })),
+          type: "user-story",
+          taskIds: taskIds,
         } as BulkGenerateRequest),
       })
 
