@@ -12,7 +12,9 @@ const meta: Meta<typeof Onboarding> = {
   decorators: [
     (Story) => (
       <Theme>
-        <Story />
+        <div style={{ padding: "24px" }}>
+          <Story />
+        </div>
       </Theme>
     ),
   ],

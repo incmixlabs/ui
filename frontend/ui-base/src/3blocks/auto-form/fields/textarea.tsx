@@ -35,7 +35,7 @@ export default function AutoFormTextarea({
       )}
       <FormControl>
         <TextArea
-          className=" w-full resize-none rounded-md border-0 bg-zinc-950 text-white focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="w-full resize-none rounded-md border border-gray-300 bg-white text-gray-900 focus-visible:ring-0 focus-visible:ring-offset-0 dark:border-0 dark:bg-zinc-950 dark:text-white"
           placeholder={
             fieldPropsWithoutShowLabel?.placeholder ||
             `Enter ${label.toLowerCase()}`

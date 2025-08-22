@@ -71,7 +71,7 @@ function renderField({
     return (
       <Accordion.Item value={name} key={key} className="border-none">
         <Accordion.Trigger>{itemName}</Accordion.Trigger>
-        <Accordion.Content className="p-2">
+        <Accordion.Content className="px-0 pt-4 pb-2">
           <AutoFormObject
             schema={item as unknown as z.ZodObject<any, any>}
             form={form}
