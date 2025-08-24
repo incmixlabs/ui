@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import React, { useState } from "react"
 import { Theme, Box, Text, Flex } from "../../src/1base"
-import { MultiSelect, type Option } from "../../src/2elements/multi-select/multi-select"
+import { MultiSelect, ComboBox, type Option } from "../../src/2elements/combo-box"
 import { Loader2 } from "lucide-react"
 
 const meta: Meta<typeof MultiSelect> = {
@@ -546,6 +546,47 @@ export const DisabledState: Story = {
         <Text size="2" color="gray" style={{ textAlign: "center" }}>
           The component is disabled but shows the selected values
         </Text>
+      </Flex>
+    )
+  },
+}
+
+// ComboBox popover variant
+export const ComboBoxPopover: Story = {
+  render: () => {
+    const [selected, setSelected] = useState<Option[]>([])
+
+    return (
+      <Flex direction="column" gap="4" align="center">
+        <Text size="3" weight="medium">
+          ComboBox (Popover Variant)
+        </Text>
+
+        <ComboBox
+          options={sampleOptions}
+          onChange={setSelected}
+          placeholder="Select skills..."
+          title="Skills"
+        />
+
+        {selected.length > 0 && (
+          <Box
+            style={{
+              padding: "12px",
+              borderRadius: "8px",
+              backgroundColor: "var(--gray-2)",
+              textAlign: "center",
+              minWidth: "300px",
+            }}
+          >
+            <Text size="2" weight="medium">
+              Selected Skills ({selected.length}):
+            </Text>
+            <Text size="2" color="gray">
+              {selected.map(s => s.label).join(", ")}
+            </Text>
+          </Box>
+        )}
       </Flex>
     )
   },
