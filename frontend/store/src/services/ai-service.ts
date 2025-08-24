@@ -55,7 +55,7 @@ export interface JobStatus {
   taskId: string
   jobTitle: string
   jobId: string
-  status: 'pending' | 'in_progress' | 'completed' | 'failed'
+  status: "pending" | "in_progress" | "completed" | "failed"
 }
 
 export interface JobStatusResponse {
@@ -65,7 +65,7 @@ export interface JobStatusResponse {
 
 export interface TaskGenerationStatus {
   taskId: string
-  status: 'pending' | 'processing' | 'completed' | 'failed'
+  status: "pending" | "processing" | "completed" | "failed"
   data?: ProcessedUserStory
   error?: string
 }
@@ -241,64 +241,71 @@ export const aiService = {
       }
 
       const data = (await response.json()) as JobStatusResponse
-      
+
       // Filter userStory jobs for the requested taskIds
-      const relevantJobs = data.userStory?.filter(job => taskIds.includes(job.taskId)) || []
-      
-      return taskIds.map(taskId => {
-        const taskJobs = relevantJobs.filter(j => j.taskId === taskId)
-        
+      const relevantJobs =
+        data.userStory?.filter((job) => taskIds.includes(job.taskId)) || []
+
+      return taskIds.map((taskId) => {
+        const taskJobs = relevantJobs.filter((j) => j.taskId === taskId)
+
         if (taskJobs.length === 0) {
           return {
             taskId,
-            status: 'failed' as const,
-            error: 'Job not found'
+            status: "failed" as const,
+            error: "Job not found",
           }
         }
-        
+
         // Check if all jobs for this task are completed
-        const allCompleted = taskJobs.every(job => job.status === 'completed')
-        const hasInProgress = taskJobs.some(job => job.status === 'in_progress')
-        const hasFailed = taskJobs.some(job => job.status === 'failed')
-        
-        let status: 'pending' | 'processing' | 'completed' | 'failed'
+        const allCompleted = taskJobs.every((job) => job.status === "completed")
+        const hasInProgress = taskJobs.some(
+          (job) => job.status === "in_progress"
+        )
+        const hasFailed = taskJobs.some((job) => job.status === "failed")
+
+        let status: "pending" | "processing" | "completed" | "failed"
         if (allCompleted) {
-          status = 'completed'
+          status = "completed"
         } else if (hasFailed) {
-          status = 'failed'
+          status = "failed"
         } else if (hasInProgress) {
-          status = 'processing'
+          status = "processing"
         } else {
-          status = 'pending'
+          status = "pending"
         }
-        
+
         return {
           taskId,
           status,
-          error: hasFailed ? 'Some jobs failed' : undefined
+          error: hasFailed ? "Some jobs failed" : undefined,
         }
       })
     } catch (error) {
       console.error("Failed to check generation status:", error)
-      return taskIds.map(taskId => ({
+      return taskIds.map((taskId) => ({
         taskId,
-        status: 'failed' as const,
-        error: 'Status check failed'
+        status: "failed" as const,
+        error: "Status check failed",
       }))
     }
   },
-
 
   /**
    * Poll for completed AI generation results
    */
   pollForResults: async (
     taskIds: string[],
-    opts?: { 
+    opts?: {
       signal?: AbortSignal
       maxAttempts?: number
       intervalMs?: number
-      onProgress?: (progress: { completed: number; total: number; processing: number; pending: number }) => void
+      onProgress?: (progress: {
+        completed: number
+        total: number
+        processing: number
+        pending: number
+      }) => void
     }
   ): Promise<BulkGenerateResponse> => {
     const maxAttempts = opts?.maxAttempts || 30 // 5 minutes with 5s intervals
@@ -307,74 +314,92 @@ export const aiService = {
 
     while (attempts < maxAttempts) {
       if (opts?.signal?.aborted) {
-        throw new Error('Polling cancelled')
+        throw new Error("Polling cancelled")
       }
 
       const statuses = await aiService.checkGenerationStatus(taskIds, opts)
-      const completedStatuses = statuses.filter(s => s.status === 'completed')
-      const failedStatuses = statuses.filter(s => s.status === 'failed')
+      const completedStatuses = statuses.filter((s) => s.status === "completed")
+      const failedStatuses = statuses.filter((s) => s.status === "failed")
       const completed = [...completedStatuses, ...failedStatuses]
-      
+
       // Report progress to callback if provided
-      const pending = statuses.filter(s => s.status === 'pending').length
-      const processing = statuses.filter(s => s.status === 'processing').length
-      
-      console.log(`AI Generation Progress: ${completed.length}/${taskIds.length} completed (${completedStatuses.length} succeeded, ${failedStatuses.length} failed), ${processing} processing, ${pending} pending`)
-      
+      const pending = statuses.filter((s) => s.status === "pending").length
+      const processing = statuses.filter(
+        (s) => s.status === "processing"
+      ).length
+
+      console.log(
+        `AI Generation Progress: ${completed.length}/${taskIds.length} completed (${completedStatuses.length} succeeded, ${failedStatuses.length} failed), ${processing} processing, ${pending} pending`
+      )
+
       // Call progress callback if provided
       if (opts?.onProgress) {
         opts.onProgress({
           completed: completed.length,
           total: taskIds.length,
           processing,
-          pending
+          pending,
         })
       }
-      
+
       if (completed.length === taskIds.length) {
         // All tasks completed, return results
         const successfulCount = completedStatuses.length
         const failedCount = failedStatuses.length
-        
-        const results = statuses.map(status => ({
+
+        const results = statuses.map((status) => ({
           taskId: status.taskId,
-          success: status.status === 'completed',
+          success: status.status === "completed",
           data: undefined, // No data returned from API - will be synced via RxDB
-          error: status.error
+          error: status.error,
         }))
-        
+
         return {
           success: successfulCount > 0, // Success if at least one task succeeded
-          message: successfulCount > 0 
-            ? `AI content generated successfully! ${successfulCount} task${successfulCount !== 1 ? 's' : ''} completed${failedCount > 0 ? `, ${failedCount} failed` : ''}. Content will appear shortly.`
-            : `AI generation failed for all ${failedCount} task${failedCount !== 1 ? 's' : ''}`,
+          message:
+            successfulCount > 0
+              ? `AI content generated successfully! ${successfulCount} task${successfulCount !== 1 ? "s" : ""} completed${failedCount > 0 ? `, ${failedCount} failed` : ""}. Content will appear shortly.`
+              : `AI generation failed for all ${failedCount} task${failedCount !== 1 ? "s" : ""}`,
           results,
-          stats: { successful: successfulCount, failed: failedCount, total: taskIds.length }
+          stats: {
+            successful: successfulCount,
+            failed: failedCount,
+            total: taskIds.length,
+          },
         }
       }
 
       // Wait before next poll
-      await new Promise(resolve => setTimeout(resolve, intervalMs))
+      await new Promise((resolve) => setTimeout(resolve, intervalMs))
       attempts++
     }
 
     // Timeout - return partial results
     const statuses = await aiService.checkGenerationStatus(taskIds, opts)
-    const completedCount = statuses.filter(s => s.status === 'completed').length
-    const results = statuses.map(status => ({
+    const completedCount = statuses.filter(
+      (s) => s.status === "completed"
+    ).length
+    const results = statuses.map((status) => ({
       taskId: status.taskId,
-      success: status.status === 'completed',
+      success: status.status === "completed",
       data: undefined,
-      error: status.error || (status.status === 'pending' ? 'Generation timeout' : undefined)
+      error:
+        status.error ||
+        (status.status === "pending" ? "Generation timeout" : undefined),
     }))
 
     return {
       success: completedCount > 0,
-      message: completedCount > 0 
-        ? `Partial success: ${completedCount} task${completedCount !== 1 ? 's' : ''} completed, others timed out after ${maxAttempts * intervalMs / 1000}s`
-        : `Generation timed out after ${maxAttempts * intervalMs / 1000}s - no tasks completed`,
+      message:
+        completedCount > 0
+          ? `Partial success: ${completedCount} task${completedCount !== 1 ? "s" : ""} completed, others timed out after ${(maxAttempts * intervalMs) / 1000}s`
+          : `Generation timed out after ${(maxAttempts * intervalMs) / 1000}s - no tasks completed`,
       results,
-      stats: { successful: completedCount, failed: taskIds.length - completedCount, total: taskIds.length }
+      stats: {
+        successful: completedCount,
+        failed: taskIds.length - completedCount,
+        total: taskIds.length,
+      },
     }
   },
 
@@ -383,14 +408,19 @@ export const aiService = {
    */
   bulkGenerateUserStories: async (
     taskIds: string[],
-    opts?: { 
+    opts?: {
       signal?: AbortSignal
-      onProgress?: (progress: { completed: number; total: number; processing: number; pending: number }) => void
+      onProgress?: (progress: {
+        completed: number
+        total: number
+        processing: number
+        pending: number
+      }) => void
     }
   ): Promise<BulkGenerateResponse> => {
     // First, queue the tasks
     await aiService.queueBulkGeneration(taskIds, opts)
-    
+
     // Then poll for results with progress callback
     return aiService.pollForResults(taskIds, opts)
   },

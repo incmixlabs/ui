@@ -10,21 +10,23 @@ import type { ProjectDocType } from "./types"
  */
 const waitForReplicationReady = async (timeoutMs = 5000): Promise<void> => {
   const startTime = Date.now()
-  
+
   while (Date.now() - startTime < timeoutMs) {
     // Check if collections have replication state indicating they're ready
-    const tasksReady = database.tasks && (database.tasks as any).replicationStates?.size > 0
-    const labelsReady = database.labels && (database.labels as any).replicationStates?.size > 0
-    
+    const tasksReady =
+      database.tasks && (database.tasks as any).replicationStates?.size > 0
+    const labelsReady =
+      database.labels && (database.labels as any).replicationStates?.size > 0
+
     if (tasksReady && labelsReady) {
       console.log("Replication is ready for tasks and labels")
       return
     }
-    
+
     // Wait 100ms before checking again
-    await new Promise(resolve => setTimeout(resolve, 100))
+    await new Promise((resolve) => setTimeout(resolve, 100))
   }
-  
+
   console.warn("Replication readiness timeout - proceeding anyway")
 }
 
@@ -54,10 +56,10 @@ export const saveFormProject = async (projectData: ProjectDocType) => {
     } satisfies ProjectDocType
 
     console.log(`Step 1: Creating project: ${projectDoc.id}`)
-    
+
     // Step 1: Insert the project first
     const insertedDoc = await database.projects.insert(projectDoc)
-    
+
     console.log(`Step 2: Project created successfully: ${insertedDoc.id}`)
 
     // Handle file attachment if present
@@ -115,31 +117,36 @@ export const saveFormProject = async (projectData: ProjectDocType) => {
     // Step 2: Wait for replication to be ready before creating default data
     console.log("Step 3: Waiting for replication to be ready...")
     await waitForReplicationReady()
-    
+
     // Step 3: Create default labels and tasks for this project
     try {
-      console.log(`Step 4: Creating default labels for project: ${insertedDoc.id}`)
-      
+      console.log(
+        `Step 4: Creating default labels for project: ${insertedDoc.id}`
+      )
+
       // First create labels only
       await initializeDefaultData(database, {
         projectId: insertedDoc.id,
         forceLabelCreation: true,
         labelsOnly: true, // Create labels first
       })
-      
-      console.log(`Step 5: Labels created, now creating tasks for project: ${insertedDoc.id}`)
-      
+
+      console.log(
+        `Step 5: Labels created, now creating tasks for project: ${insertedDoc.id}`
+      )
+
       // Small delay to ensure labels are fully replicated
-      await new Promise(resolve => setTimeout(resolve, 500))
-      
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
       // Then create tasks
       await initializeDefaultData(database, {
         projectId: insertedDoc.id,
         labelsOnly: false, // Now create tasks
       })
-      
-      console.log(`Step 6: Default data creation completed for project: ${insertedDoc.id}`)
-      
+
+      console.log(
+        `Step 6: Default data creation completed for project: ${insertedDoc.id}`
+      )
     } catch (initError) {
       // Log but don't fail the project creation if default data creation fails
       console.error("Error creating default labels and tasks:", initError)

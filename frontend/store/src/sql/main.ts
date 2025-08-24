@@ -156,7 +156,6 @@ export class LocalDatabase {
 export const db = await LocalDatabase.create()
 export const database = db.database as RxIncmixDatabase
 
-
 if (database.projects) {
   startProjectsReplication(database)
 }

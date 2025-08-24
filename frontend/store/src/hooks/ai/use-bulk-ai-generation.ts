@@ -37,12 +37,22 @@ export function useBulkAIGeneration(
     async (tasks: TaskToUpdate[]) => {
       // Don't proceed if AI is disabled or if already generating
       if (!useAI || isGenerating || tasks.length === 0) {
-        return { success: false, message: "Cannot generate content", stats: null }
+        return {
+          success: false,
+          message: "Cannot generate content",
+          stats: null,
+        }
       }
 
       setIsGenerating(true)
       setError(null)
-      setStats({ total: tasks.length, completed: 0, failed: 0, processing: 0, pending: tasks.length })
+      setStats({
+        total: tasks.length,
+        completed: 0,
+        failed: 0,
+        processing: 0,
+        pending: tasks.length,
+      })
 
       try {
         // Use bulk AI generation endpoint with progress callback
