@@ -64,18 +64,21 @@ export function useBulkAIGeneration(
 
       try {
         // Use bulk AI generation endpoint with progress callback
-        const bulkResult = await aiService.bulkGenerateUserStories(uniqueTaskIds, {
-          onProgress: (progress) => {
-            // Update stats with real-time progress from the API polling
-            setStats({
-              total: progress.total,
-              completed: progress.completed,
-              failed: 0, // We'll get final failed count at the end
-              processing: progress.processing,
-              pending: progress.pending,
-            })
-          },
-        })
+        const bulkResult = await aiService.bulkGenerateUserStories(
+          uniqueTaskIds,
+          {
+            onProgress: (progress) => {
+              // Update stats with real-time progress from the API polling
+              setStats({
+                total: progress.total,
+                completed: progress.completed,
+                failed: 0, // We'll get final failed count at the end
+                processing: progress.processing,
+                pending: progress.pending,
+              })
+            },
+          }
+        )
 
         // No need to process results since API doesn't return data
         // The data will be synced via RxDB pull replication
