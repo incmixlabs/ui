@@ -46,18 +46,25 @@ export function useBulkAIGeneration(
 
       setIsGenerating(true)
       setError(null)
+      // Normalize & de-duplicate IDs to keep UI and service totals aligned
+      const uniqueTaskIds = Array.from(
+        new Set(
+          tasks
+            .map((t) => (typeof t.id === "string" ? t.id.trim() : ""))
+            .filter((id) => id.length > 0)
+        )
+      )
       setStats({
-        total: tasks.length,
+        total: uniqueTaskIds.length,
         completed: 0,
         failed: 0,
         processing: 0,
-        pending: tasks.length,
+        pending: uniqueTaskIds.length,
       })
 
       try {
         // Use bulk AI generation endpoint with progress callback
-        const taskIds = tasks.map((task) => task.id)
-        const bulkResult = await aiService.bulkGenerateUserStories(taskIds, {
+        const bulkResult = await aiService.bulkGenerateUserStories(uniqueTaskIds, {
           onProgress: (progress) => {
             // Update stats with real-time progress from the API polling
             setStats({

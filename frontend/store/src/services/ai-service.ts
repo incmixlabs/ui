@@ -316,8 +316,16 @@ export const aiService = {
       }) => void
     }
   ): Promise<BulkGenerateResponse> => {
-    const maxAttempts = opts?.maxAttempts || 30 // 5 minutes with 5s intervals
-    const intervalMs = opts?.intervalMs || 3000 // 5 seconds (faster polling)
+    // Normalize and de-duplicate IDs once to keep progress math consistent
+    const uniqueIds = Array.from(
+      new Set(
+        taskIds
+          .map((id) => (typeof id === "string" ? id.trim() : ""))
+          .filter((id) => id.length > 0)
+      )
+    )
+    const maxAttempts = opts?.maxAttempts ?? 30 // Defaults: 30 attempts x 3000ms = 90s total
+    const intervalMs = opts?.intervalMs ?? 3000 // 3 seconds (faster polling)
     let attempts = 0
 
     while (attempts < maxAttempts) {
@@ -325,7 +333,7 @@ export const aiService = {
         throw new Error("Polling cancelled")
       }
 
-      const statuses = await aiService.checkGenerationStatus(taskIds, opts)
+      const statuses = await aiService.checkGenerationStatus(uniqueIds, opts)
       const completedStatuses = statuses.filter((s) => s.status === "completed")
       const failedStatuses = statuses.filter((s) => s.status === "failed")
       const completed = [...completedStatuses, ...failedStatuses]
@@ -337,20 +345,20 @@ export const aiService = {
       ).length
 
       console.log(
-        `AI Generation Progress: ${completed.length}/${taskIds.length} completed (${completedStatuses.length} succeeded, ${failedStatuses.length} failed), ${processing} processing, ${pending} pending`
+        `AI Generation Progress: ${completed.length}/${uniqueIds.length} completed (${completedStatuses.length} succeeded, ${failedStatuses.length} failed), ${processing} processing, ${pending} pending`
       )
 
       // Call progress callback if provided
       if (opts?.onProgress) {
         opts.onProgress({
           completed: completed.length,
-          total: taskIds.length,
+          total: uniqueIds.length,
           processing,
           pending,
         })
       }
 
-      if (completed.length === taskIds.length) {
+      if (completed.length === uniqueIds.length) {
         // All tasks completed, return results
         const successfulCount = completedStatuses.length
         const failedCount = failedStatuses.length
@@ -372,18 +380,28 @@ export const aiService = {
           stats: {
             successful: successfulCount,
             failed: failedCount,
-            total: taskIds.length,
+            total: uniqueIds.length,
           },
         }
       }
 
       // Wait before next poll
-      await new Promise((resolve) => setTimeout(resolve, intervalMs))
+      // Abortable sleep
+      await new Promise<void>((resolve, reject) => {
+        const t = setTimeout(resolve, intervalMs)
+        if (opts?.signal) {
+          const onAbort = () => {
+            clearTimeout(t)
+            reject(new Error("Polling cancelled"))
+          }
+          opts.signal.addEventListener("abort", onAbort, { once: true })
+        }
+      })
       attempts++
     }
 
     // Timeout - return partial results
-    const statuses = await aiService.checkGenerationStatus(taskIds, opts)
+    const statuses = await aiService.checkGenerationStatus(uniqueIds, opts)
     const completedCount = statuses.filter(
       (s) => s.status === "completed"
     ).length
@@ -405,8 +423,8 @@ export const aiService = {
       results,
       stats: {
         successful: completedCount,
-        failed: taskIds.length - completedCount,
-        total: taskIds.length,
+        failed: uniqueIds.length - completedCount,
+        total: uniqueIds.length,
       },
     }
   },
@@ -426,10 +444,17 @@ export const aiService = {
       }) => void
     }
   ): Promise<BulkGenerateResponse> => {
+    // Normalize & de-duplicate once to keep queue/poll in sync
+    const uniqueIds = Array.from(
+      new Set(
+        taskIds
+          .map((id) => (typeof id === "string" ? id.trim() : ""))
+          .filter((id) => id.length > 0)
+      )
+    )
     // First, queue the tasks
-    await aiService.queueBulkGeneration(taskIds, opts)
-
+    await aiService.queueBulkGeneration(uniqueIds, opts)
     // Then poll for results with progress callback
-    return aiService.pollForResults(taskIds, opts)
+    return aiService.pollForResults(uniqueIds, opts)
   },
 }
