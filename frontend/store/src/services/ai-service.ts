@@ -225,6 +225,14 @@ export const aiService = {
     if (!Array.isArray(taskIds) || taskIds.length === 0) {
       return []
     }
+    
+    const uniqueIds = Array.from(
+      new Set(
+        taskIds
+          .map((id) => (typeof id === "string" ? id.trim() : ""))
+          .filter((id) => id.length > 0)
+      )
+    )
 
     try {
       const response = await fetch(`${BASE_API_URL}/api/tasks/jobs/status`, {
@@ -244,16 +252,16 @@ export const aiService = {
 
       // Filter userStory jobs for the requested taskIds
       const relevantJobs =
-        data.userStory?.filter((job) => taskIds.includes(job.taskId)) || []
+        data.userStory?.filter((job) => uniqueIds.includes(job.taskId)) || []
 
-      return taskIds.map((taskId) => {
+      return uniqueIds.map((taskId) => {
         const taskJobs = relevantJobs.filter((j) => j.taskId === taskId)
 
         if (taskJobs.length === 0) {
           return {
             taskId,
-            status: "failed" as const,
-            error: "Job not found",
+            status: "pending" as const,
+            error: undefined,
           }
         }
 
@@ -283,10 +291,10 @@ export const aiService = {
       })
     } catch (error) {
       console.error("Failed to check generation status:", error)
-      return taskIds.map((taskId) => ({
+      // Treat transient errors as pending to avoid premature terminal failure
+      return Array.from(new Set(taskIds)).map((taskId) => ({
         taskId,
-        status: "failed" as const,
-        error: "Status check failed",
+        status: "pending" as const,
       }))
     }
   },

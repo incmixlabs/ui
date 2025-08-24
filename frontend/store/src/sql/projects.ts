@@ -12,11 +12,16 @@ const waitForReplicationReady = async (timeoutMs = 5000): Promise<void> => {
   const startTime = Date.now()
 
   while (Date.now() - startTime < timeoutMs) {
-    // Check if collections have replication state indicating they're ready
-    const tasksReady =
-      database.tasks && (database.tasks as any).replicationStates?.size > 0
-    const labelsReady =
-      database.labels && (database.labels as any).replicationStates?.size > 0
+    // Check if collections have replication states registered
+    const hasStates = (col: any) => {
+      const rs = col?.replicationStates
+      if (!rs) return false
+      // Support Set or Array
+      const count = typeof rs.size === "number" ? rs.size : Array.isArray(rs) ? rs.length : 0
+      return count > 0
+    }
+    const tasksReady = hasStates((database as any).tasks)
+    const labelsReady = hasStates((database as any).labels)
 
     if (tasksReady && labelsReady) {
       console.log("Replication is ready for tasks and labels")

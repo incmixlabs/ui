@@ -72,25 +72,26 @@ export function useBulkAIGeneration(
 
         // No need to process results since API doesn't return data
         // The data will be synced via RxDB pull replication
-        const finalStats = bulkResult.stats || {
+        const finalStatsRaw = bulkResult.stats || {
           successful: 0,
           failed: 0,
           total: tasks.length,
         }
 
         // Update final stats
-        setStats({
-          total: finalStats.total,
-          completed: finalStats.successful + finalStats.failed,
-          failed: finalStats.failed,
+        const finalUiStats: BulkGenerationStats = {
+          total: finalStatsRaw.total,
+          completed: finalStatsRaw.successful + finalStatsRaw.failed,
+          failed: finalStatsRaw.failed,
           processing: 0,
           pending: 0,
-        })
+        }
+        setStats(finalUiStats)
 
         return {
           success: bulkResult.success,
           message: bulkResult.message || "Generation completed",
-          stats: finalStats,
+          stats: finalUiStats,
         }
       } catch (err) {
         const errorMessage =
