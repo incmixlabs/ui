@@ -17,7 +17,12 @@ const waitForReplicationReady = async (timeoutMs = 5000): Promise<void> => {
       const rs = col?.replicationStates
       if (!rs) return false
       // Support Set or Array
-      const count = typeof rs.size === "number" ? rs.size : Array.isArray(rs) ? rs.length : 0
+      const count =
+        typeof rs.size === "number"
+          ? rs.size
+          : Array.isArray(rs)
+            ? rs.length
+            : 0
       return count > 0
     }
     const tasksReady = hasStates((database as any).tasks)

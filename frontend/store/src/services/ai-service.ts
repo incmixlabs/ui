@@ -225,7 +225,7 @@ export const aiService = {
     if (!Array.isArray(taskIds) || taskIds.length === 0) {
       return []
     }
-    
+
     const uniqueIds = Array.from(
       new Set(
         taskIds
