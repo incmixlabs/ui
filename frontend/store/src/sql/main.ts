@@ -156,12 +156,14 @@ export class LocalDatabase {
 export const db = await LocalDatabase.create()
 export const database = db.database as RxIncmixDatabase
 
-if (database.tasks) {
-  startTaskReplication(database)
+
+if (database.projects) {
+  startProjectsReplication(database)
 }
+
 if (database.labels) {
   startLabelsReplication(database)
 }
-if (database.projects) {
-  startProjectsReplication(database)
+if (database.tasks) {
+  startTaskReplication(database)
 }
