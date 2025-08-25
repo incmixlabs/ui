@@ -113,15 +113,27 @@ export const Default: Story = {
   args: {},
   render: () => {
     const [selectedValues, setSelectedValues] = useState<string[]>([])
+    const [options, setOptions] = useState(sampleOptions)
 
     return (
       <Flex direction="column" gap="4" align="center">
         <ComboBox
           mode="simple"
-          options={sampleOptions}
+          options={options}
           onValueChange={setSelectedValues}
           placeholder="Add labels to tasks..."
           addNewLabel={true}
+          onAddLabel={({ name, color }) => {
+            const value = name.toLowerCase().replace(/\s+/g, "-")
+            const newOption = {
+              label: name,
+              value,
+              color,
+              icon: Tag, // Add default icon to match type structure
+            }
+            setOptions((prev) => [...prev, newOption])
+            setSelectedValues((prev) => [...prev, value])
+          }}
         />
 
         {selectedValues.length > 0 && (
@@ -226,12 +238,20 @@ export const WithAddNewLabel: Story = {
   args: {},
   render: () => {
     const [selectedValues, setSelectedValues] = useState<string[]>([])
+    const [options, setOptions] = useState(sampleOptions)
     const [isLabelFormOpen, setIsLabelFormOpen] = useState(false)
     const [labelColor, setLabelColor] = useState("blue")
     const formRef = React.useRef<HTMLFormElement>(null)
 
-    const handleAddNewLabel = (label: { name: string; color: any }) => {
+    const handleAddNewLabel = (label: { name: string; color }) => {
       const newValue = label.name.toLowerCase().replace(/\s+/g, "-")
+      const newOption = {
+        label: label.name,
+        value: newValue,
+        color: label.color,
+        icon: Tag,
+      }
+      setOptions(prev => [...prev, newOption])
       setSelectedValues(prev => [...prev, newValue])
       setIsLabelFormOpen(false)
     }
@@ -240,7 +260,7 @@ export const WithAddNewLabel: Story = {
       <Flex direction="column" gap="4" align="center">
         <ComboBox
           mode="simple"
-          options={sampleOptions}
+          options={options}
           onValueChange={setSelectedValues}
           title="Manage Labels"
           placeholder="Select or create labels..."
@@ -385,8 +405,8 @@ export const StatefulWithAddNewLabel: Story = {
         
         <ComboBox
           mode="stateful"
-          options={options as any}
-          onValueChange={setOptions as any}
+          options={options}
+          onValueChange={setOptions}
           title="Stateful Labels"
           placeholder="Manage stateful labels..."
           addNewLabel={true}
@@ -429,7 +449,7 @@ export const InteractivePlayground: Story = {
     const [labelColor, setLabelColor] = useState("blue")
     const formRef = React.useRef<HTMLFormElement>(null)
 
-    const handleAddNewLabel = (label: { name: string; color: any }) => {
+    const handleAddNewLabel = (label: { name: string; color }) => {
       const newValue = label.name.toLowerCase().replace(/\s+/g, "-")
       setSelectedValues(prev => [...prev, newValue])
       setIsLabelFormOpen(false)

@@ -174,10 +174,20 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
             setSelectedValues(newValues)
             ;(onValueChange as (value: string[]) => void)(newValues)
           } else {
-            const newValues = [...(selectedValues as StatefulOption[])]
-            newValues.pop()
-            setSelectedValues(newValues)
-            ;(onValueChange as (value: StatefulOption[]) => void)(newValues)
+            const currentValues = selectedValues as StatefulOption[]
+            // Find the last checked item
+            const lastCheckedIndex = currentValues
+              .map((item) => item.checked)
+              .lastIndexOf(true)
+
+            if (lastCheckedIndex >= 0) {
+              // Create new array with the last checked item unchecked
+              const newValues = currentValues.map((item, index) =>
+                index === lastCheckedIndex ? { ...item, checked: false } : item
+              )
+              setSelectedValues(newValues)
+              ;(onValueChange as (value: StatefulOption[]) => void)(newValues)
+            }
           }
         }
       },
@@ -222,7 +232,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
     // Color selection
     const handleColorSelect = React.useCallback(
       (newColor: ColorSelectType) => {
-        if (setLabelColor) {
+        if (setLabelColor && newColor.name) {
           setLabelColor(newColor.name as ExtendedColorType)
         }
       },
@@ -236,13 +246,13 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
           return (selectedValues as string[]).includes(option.value)
         }
 
-        const statefulOption = option as StatefulOption
-        const found = (selectedValues as StatefulOption[]).find(
-          (item) => item.value === statefulOption.value
+        // In stateful mode, use options array as source of truth
+        const found = (options as StatefulOption[]).find(
+          (item) => item.value === option.value
         )
         return found?.checked ?? false
       },
-      [mode, selectedValues]
+      [mode, selectedValues, options]
     )
 
     // Internal form handling for add new label
