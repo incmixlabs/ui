@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import React, { useState } from "react"
 import { Theme, Box, Text, Flex } from "../../src/1base"
-import { ComboBox } from "../../src/2elements/combo-box"
+import { ComboBox, type StatefulOption } from "../../src/2elements/combo-box"
 import { User, Star, Tag, Users, Settings } from "lucide-react"
 
 const meta: Meta<typeof ComboBox> = {
@@ -228,7 +228,7 @@ export const WithAddNewLabel: Story = {
     const [selectedValues, setSelectedValues] = useState<string[]>([])
     const [isLabelFormOpen, setIsLabelFormOpen] = useState(false)
     const [labelColor, setLabelColor] = useState("blue")
-    const formRef = React.useRef<HTMLFormElement>(null!)
+    const formRef = React.useRef<HTMLFormElement>(null)
 
     const handleAddNewLabel = (label: { name: string; color: any }) => {
       const newValue = label.name.toLowerCase().replace(/\s+/g, "-")
@@ -361,23 +361,14 @@ export const CustomStyling: Story = {
 export const StatefulWithAddNewLabel: Story = {
   args: {},
   render: () => {
-    type StatefulOptionType = {
-      label: string
-      value: string
-      icon?: React.ComponentType<{ className?: string }>
-      color: string
-      checked: boolean
-      disable?: boolean
-    }
-    
-    const [options, setOptions] = useState<StatefulOptionType[]>(
+    const [options, setOptions] = useState<StatefulOption[]>(
       sampleOptions.map(opt => ({ ...opt, checked: false }))
     )
     const [isLabelFormOpen, setIsLabelFormOpen] = useState(false)
     const [labelColor, setLabelColor] = useState("blue")
 
     const handleAddLabel = ({ name, color }: { name: string; color: string }) => {
-      const newOption: StatefulOptionType = {
+      const newOption: StatefulOption = {
         label: name,
         value: name.toLowerCase().replace(/\s+/g, "-"),
         color: color,
@@ -436,7 +427,7 @@ export const InteractivePlayground: Story = {
     const [enableAddNew, setEnableAddNew] = useState(false)
     const [isLabelFormOpen, setIsLabelFormOpen] = useState(false)
     const [labelColor, setLabelColor] = useState("blue")
-    const formRef = React.useRef<HTMLFormElement>(null!)
+    const formRef = React.useRef<HTMLFormElement>(null)
 
     const handleAddNewLabel = (label: { name: string; color: any }) => {
       const newValue = label.name.toLowerCase().replace(/\s+/g, "-")

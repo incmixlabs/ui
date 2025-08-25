@@ -46,7 +46,7 @@ interface BaseOption {
 interface SimpleOption extends BaseOption {}
 
 // Stateful mode option (extends base with checked state)
-interface StatefulOption extends BaseOption {
+export interface StatefulOption extends BaseOption {
   checked?: boolean
 }
 
@@ -114,7 +114,7 @@ interface SimpleComboBoxProps extends BaseComboBoxProps {
   defaultValue?: string[]
 
   // External form handling
-  formRef?: React.RefObject<HTMLFormElement>
+  formRef?: React.RefObject<HTMLFormElement | null>
   handleAddNewLabel?: (e: React.FormEvent) => void
 }
 
@@ -264,7 +264,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
                 (existing: SimpleOption) =>
                   existing.label.toLowerCase() === labelName.toLowerCase()
               )
-            : (selectedValues as StatefulOption[]).some(
+            : (options as StatefulOption[]).some(
                 (existing: StatefulOption) =>
                   existing.label?.toLowerCase() === labelName.toLowerCase()
               )

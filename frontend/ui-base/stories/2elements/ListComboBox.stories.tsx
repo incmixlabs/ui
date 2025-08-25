@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import React, { useState } from "react"
 import { Theme, Box, Text, Flex, Checkbox } from "../../src/1base"
-import { ComboBox } from "../../src/2elements/combo-box"
+import { ComboBox, type StatefulOption } from "../../src/2elements/combo-box"
 import type { ExtendedColorType } from "../../src/2elements/combo-box"
 
 const meta: Meta<typeof ComboBox> = {
@@ -50,7 +50,7 @@ const meta: Meta<typeof ComboBox> = {
 export default meta
 type Story = StoryObj<typeof meta> | { args?: any; render: () => React.JSX.Element }
 
-const sampleLabels = [
+const sampleLabels: StatefulOption[] = [
   {
     label: "High Priority",
     value: "high-priority",
@@ -89,7 +89,7 @@ const sampleLabels = [
   },
 ]
 
-const teamLabels = [
+const teamLabels: StatefulOption[] = [
   {
     label: "John Doe",
     value: "john-doe",
@@ -125,7 +125,7 @@ const teamLabels = [
 export const Default: Story = {
   args: {},
   render: () => {
-    const [selectedLabels, setSelectedLabels] = useState(sampleLabels)
+    const [selectedLabels, setSelectedLabels] = useState<StatefulOption[]>(sampleLabels)
 
     return (
       <Flex direction="column" gap="4" align="center">
@@ -133,7 +133,7 @@ export const Default: Story = {
           mode="stateful"
           options={selectedLabels}
           defaultValue={selectedLabels}
-          onValueChange={setSelectedLabels as any}
+          onValueChange={(value: StatefulOption[]) => setSelectedLabels(value)}
           placeholder="Manage labels"
         />
 
@@ -164,7 +164,7 @@ export const Default: Story = {
 export const WithTitle: Story = {
   args: {},
   render: () => {
-    const [selectedLabels, setSelectedLabels] = useState([
+    const [selectedLabels, setSelectedLabels] = useState<StatefulOption[]>([
       ...sampleLabels.map(label =>
         label.value === "high-priority" ? { ...label, checked: true } : label
       )
@@ -176,7 +176,7 @@ export const WithTitle: Story = {
           mode="stateful"
           options={selectedLabels}
           defaultValue={selectedLabels}
-          onValueChange={setSelectedLabels as any}
+          onValueChange={(value: StatefulOption[]) => setSelectedLabels(value)}
           title="Project Labels"
           placeholder="Select project labels"
         />
@@ -206,7 +206,7 @@ export const WithTitle: Story = {
 export const WithAvatars: Story = {
   args: {},
   render: () => {
-    const [selectedMembers, setSelectedMembers] = useState(teamLabels)
+    const [selectedMembers, setSelectedMembers] = useState<StatefulOption[]>(teamLabels)
 
     return (
       <Flex direction="column" gap="4" align="center">
@@ -214,7 +214,7 @@ export const WithAvatars: Story = {
           mode="stateful"
           options={selectedMembers}
           defaultValue={selectedMembers}
-          onValueChange={setSelectedMembers as any}
+          onValueChange={(value: StatefulOption[]) => setSelectedMembers(value)}
           title="Team Members"
           placeholder="Select team members"
         />
@@ -246,7 +246,7 @@ export const WithAvatars: Story = {
 export const WithAddNewLabel: Story = {
   args: {},
   render: () => {
-    const [selectedLabels, setSelectedLabels] = useState([...sampleLabels])
+    const [selectedLabels, setSelectedLabels] = useState<StatefulOption[]>([...sampleLabels])
     const [isLabelFormOpen, setIsLabelFormOpen] = useState(false)
     const [labelColor, setLabelColor] = useState<ExtendedColorType>("blue")
 
@@ -260,7 +260,7 @@ export const WithAddNewLabel: Story = {
           mode="stateful"
           options={selectedLabels}
           defaultValue={selectedLabels}
-          onValueChange={setSelectedLabels as any}
+          onValueChange={(value: StatefulOption[]) => setSelectedLabels(value)}
           title="Custom Labels"
           placeholder="Manage custom labels"
           addNewLabel={true}
@@ -298,7 +298,7 @@ export const WithAddNewLabel: Story = {
 export const WithDisabledOptions: Story = {
   args: {},
   render: () => {
-    const [selectedItems, setSelectedItems] = useState(teamLabels)
+    const [selectedItems, setSelectedItems] = useState<StatefulOption[]>(teamLabels)
 
     return (
       <Flex direction="column" gap="4" align="center">
@@ -310,7 +310,7 @@ export const WithDisabledOptions: Story = {
           mode="stateful"
           options={selectedItems}
           defaultValue={selectedItems}
-          onValueChange={setSelectedItems as any}
+          onValueChange={(value: StatefulOption[]) => setSelectedItems(value)}
           title="Team Assignment"
           placeholder="Assign team members"
         />
@@ -343,7 +343,7 @@ export const WithDisabledOptions: Story = {
 export const CustomButtonStyling: Story = {
   args: {},
   render: () => {
-    const [selectedLabels, setSelectedLabels] = useState(sampleLabels)
+    const [selectedLabels, setSelectedLabels] = useState<StatefulOption[]>(sampleLabels)
 
     return (
       <Flex direction="column" gap="4" align="center">
@@ -355,7 +355,7 @@ export const CustomButtonStyling: Story = {
           mode="stateful"
           options={selectedLabels}
           defaultValue={selectedLabels}
-          onValueChange={setSelectedLabels as any}
+          onValueChange={(value: StatefulOption[]) => setSelectedLabels(value)}
           title="Styled Labels"
           placeholder="Open with styled button"
           btnClassName="bg-blue-500 hover:bg-blue-600 text-white border-blue-500"
@@ -373,7 +373,7 @@ export const CustomButtonStyling: Story = {
 export const PriorityManagement: Story = {
   args: {},
   render: () => {
-    const priorityLabels = [
+    const priorityLabels: StatefulOption[] = [
       {
         label: "Critical",
         value: "critical",
@@ -406,7 +406,7 @@ export const PriorityManagement: Story = {
       },
     ]
 
-    const [priorities, setPriorities] = useState(priorityLabels)
+    const [priorities, setPriorities] = useState<StatefulOption[]>(priorityLabels)
 
     return (
       <Flex direction="column" gap="4" align="center">
@@ -418,7 +418,7 @@ export const PriorityManagement: Story = {
           mode="stateful"
           options={priorities}
           defaultValue={priorities}
-          onValueChange={setPriorities as any}
+          onValueChange={(value: StatefulOption[]) => setPriorities(value)}
           title="Set Priority Level"
           placeholder="Select task priority"
         />
@@ -472,7 +472,7 @@ export const PriorityManagement: Story = {
 export const LabelManagementWithStats: Story = {
   args: {},
   render: () => {
-    const [labels, setLabels] = useState([...sampleLabels])
+    const [labels, setLabels] = useState<StatefulOption[]>([...sampleLabels])
     const [isLabelFormOpen, setIsLabelFormOpen] = useState(false)
     const [labelColor, setLabelColor] = useState<ExtendedColorType>("blue")
 
@@ -544,7 +544,7 @@ export const LabelManagementWithStats: Story = {
           mode="stateful"
           options={labels}
           defaultValue={labels}
-          onValueChange={setLabels as any}
+          onValueChange={(value: StatefulOption[]) => setLabels(value)}
           title="Project Labels"
           placeholder="Manage project labels"
           addNewLabel={true}
@@ -596,7 +596,7 @@ export const LabelManagementWithStats: Story = {
 export const InteractivePlayground: Story = {
   args: {},
   render: () => {
-    const [labels, setLabels] = useState([...sampleLabels])
+    const [labels, setLabels] = useState<StatefulOption[]>([...sampleLabels])
     const [showTitle, setShowTitle] = useState(true)
     const [enableAddNew, setEnableAddNew] = useState(false)
     const [useCustomButton, setUseCustomButton] = useState(false)
@@ -651,7 +651,7 @@ export const InteractivePlayground: Story = {
           mode="stateful"
           options={labels}
           defaultValue={labels}
-          onValueChange={setLabels as any}
+          onValueChange={(value: StatefulOption[]) => setLabels(value)}
           title={showTitle ? "Interactive Labels" : undefined}
           placeholder="Configure and test the component..."
           addNewLabel={enableAddNew}
