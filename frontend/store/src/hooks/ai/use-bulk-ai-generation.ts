@@ -88,7 +88,7 @@ export function useBulkAIGeneration(
       try {
         // Create abort controller for this operation
         abortControllerRef.current = new AbortController()
-        
+
         // Use bulk AI generation endpoint with progress callback
         const bulkResult = await aiService.bulkGenerateUserStories(
           uniqueTaskIds,
@@ -96,7 +96,10 @@ export function useBulkAIGeneration(
             signal: abortControllerRef.current.signal,
             onProgress: (progress) => {
               // Only update if operation is still active
-              if (abortControllerRef.current && !abortControllerRef.current.signal.aborted) {
+              if (
+                abortControllerRef.current &&
+                !abortControllerRef.current.signal.aborted
+              ) {
                 setStats({
                   total: progress.total,
                   completed: progress.completed,
@@ -134,14 +137,14 @@ export function useBulkAIGeneration(
         }
       } catch (err) {
         // Handle abort gracefully
-        if (err instanceof Error && err.name === 'AbortError') {
+        if (err instanceof Error && err.name === "AbortError") {
           return {
             success: false,
             message: "Generation cancelled",
             stats: null,
           }
         }
-        
+
         const errorMessage =
           err instanceof Error ? err.message : "Unknown error"
         setError(`Failed to generate content: ${errorMessage}`)
