@@ -99,6 +99,7 @@
     "input-otp": "1.4.2",
     "json-schema-to-zod": "2.6.1",
     "lucide-react": "catalog:",
+    "luxon": "^3.7.1",
     "motion": "12.7.4",
     "nanoid": "catalog:",
     "nuqs": "2.4.3",

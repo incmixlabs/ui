@@ -100,6 +100,14 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     clearError: clearGenerationError
   } = useBulkAIGeneration(updateTask)
 
+  // Track generation progress for better UX
+  const [generationProgress, setGenerationProgress] = useState<{
+    total: number
+    completed: number
+    processing: number
+    pending: number
+  } | null>(null)
+
   // CSV export handler for all tasks
   const handleExportAllCSV = useCallback(() => {
     try {
@@ -312,6 +320,14 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
       // Close the confirmation dialog
       setShowConfirmDialog(false)
 
+      // Initialize progress tracking
+      setGenerationProgress({
+        total: selectedTasksArray.length,
+        completed: 0,
+        processing: 0,
+        pending: selectedTasksArray.length,
+      })
+
       // Display the number of tasks to be processed
       const taskCount = selectedTasksArray.length
       toast.info(
@@ -322,15 +338,28 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
       // Call the bulk generation function
       const result = await generateForTasks(selectedTasksArray)
 
+      // Clear progress tracking
+      setGenerationProgress(null)
+
       if (result.success) {
-        toast.success(result.message, {
-          description: `Generated content for ${result.message.split(' ')[2]} tasks`,
-          duration: 5000
-        })
-      } else {
-        toast.error('Failed to generate content', {
+        // Show success toast with proper message
+        toast.success('AI Generation Complete!', {
           description: result.message,
-          duration: 5000
+          duration: 6000
+        })
+
+        // Clear selected tasks after successful generation
+        setSelectedTasks({})
+
+        // Trigger RxDB sync refresh to pull the generated content
+        // Add a small delay to allow server processing
+        setTimeout(() => {
+          refetch()
+        }, 2000)
+      } else {
+        toast.error('AI Generation Failed', {
+          description: result.message,
+          duration: 6000
         })
         console.error('Failed to generate content:', result.message)
       }
@@ -341,8 +370,9 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         duration: 5000
       })
       console.error('Error generating AI content:', error)
+      setGenerationProgress(null)
     }
-  }, [selectedTasks, useAI, generateForTasks, clearGenerationError])
+  }, [selectedTasks, useAI, generateForTasks, clearGenerationError, refetch])
 
   // Count selected tasks
   const selectedTasksCount = useMemo(() => Object.keys(selectedTasks).length, [selectedTasks])
@@ -546,6 +576,20 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
     )
   }, [columns, isLoading, moveTask, optimisticColumns])
 
+  // Sync generation progress from hook stats
+  useEffect(() => {
+    if (isGenerating && generationStats) {
+      setGenerationProgress({
+        total: generationStats.total,
+        completed: generationStats.completed,
+        processing: generationStats.processing || 0,
+        pending: generationStats.pending || 0,
+      })
+    } else if (!isGenerating) {
+      setGenerationProgress(null)
+    }
+  }, [isGenerating, generationStats])
+
   // Use optimistic columns for drag and drop operations
   // Fixed to prevent cascading state updates
   const prevColumnsRef = useRef(columns)
@@ -675,12 +719,16 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         selectedTasksActions={
           <>
             {useAI && (
-              <Tooltip content={!isGenerating ? "Generate AI content for selected tasks" : "Generating content..."}>
+              <Tooltip content={
+                !isGenerating 
+                  ? "Generate AI content for selected tasks" 
+                  : "Generating content..."
+              }>
                 <Button
                   variant="soft"
                   color="purple"
                   size="2"
-                  className="shadow-sm hover:shadow-md transition-all duration-150"
+                  className="shadow-sm hover:shadow-md transition-all duration-150 relative"
                   onClick={promptGenerateAIContent}
                   disabled={isGenerating}
                 >
@@ -689,9 +737,7 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
                   ) : (
                     <Sparkles size={16} className="mr-1" />
                   )}
-                  {isGenerating ?
-                    `Generating...` :
-                    "Generate AI"}
+                  {isGenerating ? "Generating..." : "Generate AI"}
                 </Button>
               </Tooltip>
             )}
@@ -782,12 +828,14 @@ export function ListBoard({ projectId = "default-project" }: ListBoardProps) {
         title="Generate AI Content"
         description={
           `This will generate AI content for ${Object.keys(selectedTasks).length} selected task${Object.keys(selectedTasks).length !== 1 ? 's' : ''}. ` +
-          `Any existing description, checklists, and acceptance criteria will be replaced with AI-generated content. Are you sure?`
+          `Any existing description, checklists, and acceptance criteria will be replaced with AI-generated content. ` +
+          `The generated content will appear automatically once processing is complete. Are you sure?`
         }
-        confirmText="Generate"
+        confirmText="Start Generation"
         cancelText="Cancel"
         isLoading={isGenerating}
       />
+
       
       {/* Controlled CreateColumnForm dialog */}
       <CreateColumnForm

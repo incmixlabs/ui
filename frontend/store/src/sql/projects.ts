@@ -6,13 +6,48 @@ import { database } from "./main" // Added import for TaskDataSchema
 import type { ProjectDocType } from "./types"
 
 /**
+ * Wait for replication to be ready by checking if replication state exists
+ */
+const waitForReplicationReady = async (timeoutMs = 5000): Promise<void> => {
+  const startTime = Date.now()
+
+  while (Date.now() - startTime < timeoutMs) {
+    // Check if collections have replication states registered
+    const hasStates = (col: any) => {
+      const rs = col?.replicationStates
+      if (!rs) return false
+      // Support Set or Array
+      const count =
+        typeof rs.size === "number"
+          ? rs.size
+          : Array.isArray(rs)
+            ? rs.length
+            : 0
+      return count > 0
+    }
+    const tasksReady = hasStates((database as any).tasks)
+    const labelsReady = hasStates((database as any).labels)
+
+    if (tasksReady && labelsReady) {
+      console.log("Replication is ready for tasks and labels")
+      return
+    }
+
+    // Wait 100ms before checking again
+    await new Promise((resolve) => setTimeout(resolve, 100))
+  }
+
+  console.warn("Replication readiness timeout - proceeding anyway")
+}
+
+/**
  * Saves a project form submission to the RxDB formProjects collection
  * @param projectData The project data from the form
  * @returns The saved RxDB document
  */
 export const saveFormProject = async (projectData: ProjectDocType) => {
   try {
-    // Prepare the document with required tracking fields
+    // Prepare the project document
     const projectDoc = {
       id: projectData.id,
       name: projectData.name,
@@ -29,8 +64,14 @@ export const saveFormProject = async (projectData: ProjectDocType) => {
       status: projectData.status,
       budget: projectData.budget,
     } satisfies ProjectDocType
-    // Insert the document first (without the file)
+
+    console.log(`Step 1: Creating project: ${projectDoc.id}`)
+
+    // Step 1: Insert the project first
     const insertedDoc = await database.projects.insert(projectDoc)
+
+    console.log(`Step 2: Project created successfully: ${insertedDoc.id}`)
+
     // Handle file attachment if present
     // if (projectData.fileData) {
     //   try {
@@ -82,18 +123,39 @@ export const saveFormProject = async (projectData: ProjectDocType) => {
     //     // Continue with the document saved, just without the attachment
     //   }
     // }
-    // After successfully saving the project, create default labels and tasks for it
+
+    // Step 2: Wait for replication to be ready before creating default data
+    console.log("Step 3: Waiting for replication to be ready...")
+    await waitForReplicationReady()
+
+    // Step 3: Create default labels and tasks for this project
     try {
       console.log(
-        `Creating default labels and tasks for project: ${insertedDoc.id}`
+        `Step 4: Creating default labels for project: ${insertedDoc.id}`
       )
-      // Create default labels and tasks for this project
+
+      // First create labels only
       await initializeDefaultData(database, {
-        projectId: insertedDoc.id, // Use the newly created project's ID
-        forceLabelCreation: true, // Force creation even if there are existing labels
+        projectId: insertedDoc.id,
+        forceLabelCreation: true,
+        labelsOnly: true, // Create labels first
       })
+
       console.log(
-        `Default labels and tasks created successfully for project: ${insertedDoc.id}`
+        `Step 5: Labels created, now creating tasks for project: ${insertedDoc.id}`
+      )
+
+      // Small delay to ensure labels are fully replicated
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
+      // Then create tasks
+      await initializeDefaultData(database, {
+        projectId: insertedDoc.id,
+        labelsOnly: false, // Now create tasks
+      })
+
+      console.log(
+        `Step 6: Default data creation completed for project: ${insertedDoc.id}`
       )
     } catch (initError) {
       // Log but don't fail the project creation if default data creation fails
