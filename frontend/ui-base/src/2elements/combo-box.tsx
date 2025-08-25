@@ -1,5 +1,12 @@
 import { cn } from "@/shadcn/lib/utils"
-import { Flex, Popover, Text, type badgePropDefs, iconSize } from "@/src/1base"
+import {
+  Box,
+  Flex,
+  Popover,
+  Text,
+  type badgePropDefs,
+  iconSize,
+} from "@/src/1base"
 import * as React from "react"
 
 import {
@@ -22,110 +29,301 @@ import ColorPicker, { type ColorSelectType } from "./color-picker"
 type BadgeColorProp = typeof badgePropDefs.color.default
 export type ExtendedColorType = BadgeColorProp
 
-/**
- * Props for MultiSelect component
- */
-interface MultiSelectProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  /**
-   * An array of option objects to be displayed in the multi-select component.
-   * Each option object has a label, value, and an optional icon.
-   */
-  options: {
-    /** The text to display for the option. */
-    label: string
-    /** The unique value associated with the option. */
-    value: string
-    /** Optional icon component to display alongside the option. */
-    icon?: React.ComponentType<{ className?: string }>
-    avatar?: string
-    color?: ExtendedColorType | string
-    disable?: boolean
-  }[]
+// Base option type
+interface BaseOption {
+  /** The text to display for the option. */
+  label: string
+  /** The unique value associated with the option. */
+  value: string
+  /** Optional icon component to display alongside the option. */
+  icon?: React.ComponentType<{ className?: string }>
+  avatar?: string
+  color?: ExtendedColorType | string
+  disable?: boolean
+}
 
-  /**
-   * Callback function triggered when the selected values change.
-   * Receives an array of the new selected values.
-   */
-  onValueChange: (value: string[]) => void
+// Simple mode option (extends base)
+interface SimpleOption extends BaseOption {}
 
-  /** The default selected values when the component mounts. */
-  defaultValue?: string[]
+// Stateful mode option (extends base with checked state)
+interface StatefulOption extends BaseOption {
+  checked?: boolean
+}
+
+// Remove unused types to fix lint warnings
+
+// Union type approach for better TypeScript support
+interface BaseComboBoxProps
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "defaultValue"> {
   /**
-   * Placeholder text to be displayed when no values are selected.
-   * Optional, defaults to "Select options".
+   * Placeholder text for the search input
    */
   placeholder?: string
+
+  /**
+   * Additional CSS class for the popover
+   */
   popoverClass?: string
+
+  /**
+   * Enable adding new labels functionality
+   */
   addNewLabel?: boolean
+
+  /**
+   * Title displayed at the top of the popover
+   */
   title?: string
-  formRef?: React.RefObject<HTMLFormElement>
+
+  /**
+   * Whether the label form is currently open
+   */
   isLabelFormOpen?: boolean
-  setIsLabelFormOpen?: (isLabelFormOpen: boolean) => void
+
+  /**
+   * Callback to control label form open state
+   */
+  setIsLabelFormOpen?: (isOpen: boolean) => void
+
+  /**
+   * Current label color selection
+   */
   labelColor?: string
-  setLabelColor?: (labelColor: ExtendedColorType) => void
+
+  /**
+   * Callback to update label color
+   */
+  setLabelColor?: (color: ExtendedColorType) => void
+
+  /**
+   * Additional CSS class for the trigger button
+   */
+  btnClassName?: string
+
+  /**
+   * Callback for internal form handling when new label is added
+   */
+  onAddLabel?: (label: { name: string; color: ExtendedColorType }) => void
+}
+
+// Simple mode props
+interface SimpleComboBoxProps extends BaseComboBoxProps {
+  mode?: "simple"
+  options: SimpleOption[]
+  onValueChange: (value: string[]) => void
+  defaultValue?: string[]
+
+  // External form handling
+  formRef?: React.RefObject<HTMLFormElement>
   handleAddNewLabel?: (e: React.FormEvent) => void
 }
 
-export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
-  ({
-    options,
-    onValueChange,
-    defaultValue = [],
-    placeholder = "Select options",
-    title,
-    popoverClass,
-    addNewLabel = false,
-    formRef,
-    labelColor,
-    setLabelColor,
-    isLabelFormOpen,
-    setIsLabelFormOpen,
-    handleAddNewLabel,
-  }) => {
-    const [selectedValues, setSelectedValues] =
-      React.useState<string[]>(defaultValue)
+// Stateful mode props
+interface StatefulComboBoxProps extends BaseComboBoxProps {
+  mode: "stateful"
+  options: StatefulOption[]
+  onValueChange: (value: StatefulOption[]) => void
+  defaultValue?: StatefulOption[]
+}
+
+// Union of both prop types
+type ComboBoxProps = SimpleComboBoxProps | StatefulComboBoxProps
+
+export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
+  (props, _ref) => {
+    const {
+      mode = "simple",
+      options,
+      onValueChange,
+      defaultValue = [],
+      placeholder = "Select options",
+      title,
+      popoverClass,
+      addNewLabel = false,
+      labelColor,
+      setLabelColor,
+      isLabelFormOpen,
+      setIsLabelFormOpen,
+      btnClassName,
+      onAddLabel,
+      ...buttonProps
+    } = props
+
+    // Get form-related props from union type
+    const formRef = "formRef" in props ? props.formRef : undefined
+    const handleAddNewLabel =
+      "handleAddNewLabel" in props ? props.handleAddNewLabel : undefined
+
+    // State management
+    const [selectedValues, setSelectedValues] = React.useState<
+      string[] | StatefulOption[]
+    >(defaultValue)
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false)
+    const [error, setError] = React.useState("")
+    const labelInputRef = React.useRef<HTMLInputElement>(null)
 
-    const handleInputKeyDown = (
-      event: React.KeyboardEvent<HTMLInputElement>
-    ) => {
-      if (event.key === "Enter") {
-        setIsPopoverOpen(true)
-      } else if (event.key === "Backspace" && !event.currentTarget.value) {
-        const newSelectedValues = [...selectedValues]
-        newSelectedValues.pop()
-        setSelectedValues(newSelectedValues)
-        onValueChange(newSelectedValues)
+    // Keyboard handling
+    const handleInputKeyDown = React.useCallback(
+      (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Enter") {
+          setIsPopoverOpen(true)
+        } else if (event.key === "Backspace" && !event.currentTarget.value) {
+          if (mode === "simple") {
+            const newValues = [...(selectedValues as string[])]
+            newValues.pop()
+            setSelectedValues(newValues)
+            ;(onValueChange as (value: string[]) => void)(newValues)
+          } else {
+            const newValues = [...(selectedValues as StatefulOption[])]
+            newValues.pop()
+            setSelectedValues(newValues)
+            ;(onValueChange as (value: StatefulOption[]) => void)(newValues)
+          }
+        }
+      },
+      [mode, selectedValues, onValueChange]
+    )
+
+    // Selection logic
+    const toggleOption = React.useCallback(
+      (optionValue: string) => {
+        if (mode === "simple") {
+          const currentValues = selectedValues as string[]
+          const newValues = currentValues.includes(optionValue)
+            ? currentValues.filter((value) => value !== optionValue)
+            : [...currentValues, optionValue]
+          setSelectedValues(newValues)
+          ;(onValueChange as (value: string[]) => void)(newValues)
+        } else {
+          const currentValues = selectedValues as StatefulOption[]
+          const newValues = currentValues.map((opt) =>
+            opt.value === optionValue ? { ...opt, checked: !opt.checked } : opt
+          )
+          setSelectedValues(newValues)
+          ;(onValueChange as (value: StatefulOption[]) => void)(newValues)
+        }
+      },
+      [mode, selectedValues, onValueChange]
+    )
+
+    // Clear functionality
+    const handleClear = React.useCallback(() => {
+      const emptyValue: string[] | StatefulOption[] = []
+      setSelectedValues(emptyValue)
+      if (mode === "simple") {
+        ;(onValueChange as (value: string[]) => void)(emptyValue as string[])
+      } else {
+        ;(onValueChange as (value: StatefulOption[]) => void)(
+          emptyValue as StatefulOption[]
+        )
       }
-    }
+    }, [mode, onValueChange])
 
-    const toggleOption = (option: string) => {
-      const newSelectedValues = selectedValues.includes(option)
-        ? selectedValues.filter((value) => value !== option)
-        : [...selectedValues, option]
-      setSelectedValues(newSelectedValues)
-      onValueChange(newSelectedValues)
-    }
+    // Color selection
+    const handleColorSelect = React.useCallback(
+      (newColor: ColorSelectType) => {
+        if (setLabelColor) {
+          setLabelColor(newColor.name as ExtendedColorType)
+        }
+      },
+      [setLabelColor]
+    )
 
-    const handleClear = () => {
-      setSelectedValues([])
-      onValueChange([])
-    }
+    // Selection state checker - fixes the bug from ListComboBox
+    const isOptionSelected = React.useCallback(
+      (option: SimpleOption | StatefulOption): boolean => {
+        if (mode === "simple") {
+          return (selectedValues as string[]).includes(option.value)
+        }
 
-    const handleColorSelect = (newColor: ColorSelectType) => {
-      if (setLabelColor) {
-        setLabelColor(newColor.name as ExtendedColorType)
-      }
-    }
+        const statefulOption = option as StatefulOption
+        const found = (selectedValues as StatefulOption[]).find(
+          (item) => item.value === statefulOption.value
+        )
+        return found?.checked ?? false
+      },
+      [mode, selectedValues]
+    )
+
+    // Internal form handling for add new label
+    const handleInternalAddLabel = React.useCallback(
+      (e: React.FormEvent) => {
+        e.preventDefault()
+
+        const labelName = labelInputRef.current?.value.trim()
+
+        if (!labelName) {
+          setError("Please enter a label name")
+          return
+        }
+
+        // Check for duplicates
+        const isDuplicate =
+          mode === "simple"
+            ? (options as SimpleOption[]).some(
+                (existing: SimpleOption) =>
+                  existing.label.toLowerCase() === labelName.toLowerCase()
+              )
+            : (selectedValues as StatefulOption[]).some(
+                (existing: StatefulOption) =>
+                  existing.label?.toLowerCase() === labelName.toLowerCase()
+              )
+
+        if (isDuplicate) {
+          setError("A label with this name already exists")
+          return
+        }
+
+        // Call the callback if provided
+        if (onAddLabel) {
+          onAddLabel({
+            name: labelName,
+            color: (labelColor as ExtendedColorType) || "blue",
+          })
+        }
+
+        // For stateful mode, add to internal state
+        if (mode === "stateful") {
+          const newLabel: StatefulOption = {
+            value: labelName.toLowerCase().replace(/\s+/g, "-"),
+            label: labelName,
+            color: labelColor || "blue",
+            checked: true,
+          }
+          const newValues = [...(selectedValues as StatefulOption[]), newLabel]
+          setSelectedValues(newValues)
+          ;(onValueChange as (value: StatefulOption[]) => void)(newValues)
+        }
+
+        // Reset form
+        if (labelInputRef.current) {
+          labelInputRef.current.value = ""
+        }
+        setError("")
+        setIsLabelFormOpen?.(false)
+      },
+      [
+        mode,
+        options,
+        selectedValues,
+        onAddLabel,
+        labelColor,
+        onValueChange,
+        setIsLabelFormOpen,
+      ]
+    )
 
     return (
       <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
         <Popover.Trigger>
           <IconButton
+            {...buttonProps}
             color="gray"
             aria-label="Open options menu"
-            className="flex h-8 w-8 items-center justify-center rounded-full "
+            className={cn(
+              "flex h-8 w-8 items-center justify-center rounded-full",
+              btnClassName
+            )}
           >
             <Plus aria-hidden="true" />
             <Text className="sr-only">Add new item</Text>
@@ -148,7 +346,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup>
                 {options.map((option) => {
-                  const isSelected = selectedValues.includes(option.value)
+                  const isSelected = isOptionSelected(option)
                   const isDisabled = option.disable
 
                   return (
@@ -207,18 +405,17 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                 {addNewLabel ? (
                   <>
                     {isLabelFormOpen ? (
-                      <form
-                        ref={formRef}
-                        onSubmit={handleAddNewLabel}
-                        className="p-2"
-                      >
+                      <Box className="p-2">
                         <Input
                           name="labelName"
                           type="text"
+                          ref={labelInputRef}
                           placeholder="Enter label name"
-                          className="mb-3 w-full rounded-md border border-gray-5 bg-gray-1 px-3 py-2"
-                          required
+                          className="mb-2 w-full rounded-md border border-gray-5 bg-gray-1 px-3 py-2"
                         />
+                        {error && (
+                          <p className="mb-2 text-red-600 text-sm">{error}</p>
+                        )}
 
                         <Flex justify={"between"}>
                           <Popover.Root>
@@ -244,9 +441,14 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                           </Popover.Root>
                           <Flex gap="2">
                             <Button
-                              type="submit"
+                              type="button"
                               color="blue"
                               variant="solid"
+                              onClick={
+                                formRef && handleAddNewLabel
+                                  ? handleAddNewLabel
+                                  : handleInternalAddLabel
+                              }
                               className="h-8 rounded-md px-3"
                             >
                               Save
@@ -262,7 +464,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, MultiSelectProps>(
                             </Button>
                           </Flex>
                         </Flex>
-                      </form>
+                      </Box>
                     ) : (
                       <Button
                         onClick={() => setIsLabelFormOpen?.(true)}
