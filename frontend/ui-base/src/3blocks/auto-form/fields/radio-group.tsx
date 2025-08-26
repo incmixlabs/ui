@@ -61,7 +61,7 @@ export default function AutoFormRadioGroup({
           ))}
         </RadioGroup.Root>
       </FormControl>
-      <div>
+      <div className="mt-0.5 h-4">
         <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
       </div>
       <AutoFormTooltip fieldConfigItem={fieldConfigItem} />

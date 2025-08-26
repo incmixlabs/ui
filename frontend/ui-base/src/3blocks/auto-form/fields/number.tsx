@@ -1,4 +1,5 @@
 import { FormControl, FormItem, FormMessage, Input } from "@/base"
+import { useFormContext } from "react-hook-form"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 
@@ -12,19 +13,25 @@ import type { AutoFormInputComponentProps } from "../types"
  *
  * @param label The text label for the input field.
  * @param isRequired Indicates whether the input is required.
+ * @param field The field object.
  * @param fieldProps Additional configuration for the input field, such as toggling label display, enabling currency styling,
  *                   and specifying a custom placeholder (defaulting to "0.00").
  */
 export default function AutoFormNumber({
   label,
   isRequired,
+  field,
   fieldProps,
 }: AutoFormInputComponentProps) {
-  const { showLabel: _showLabel, ...fieldPropsWithoutShowLabel } = fieldProps
+  const { showLabel: _showLabel, currency, ...fieldPropsWithoutShowLabel } =
+    fieldProps
   const showLabel = _showLabel === undefined ? true : _showLabel
-
-  // Check if currency styling is enabled (default to true for matching the screenshot)
-  const isCurrency = fieldProps.currency !== false
+  const isCurrency = currency !== false // Default to true unless explicitly false
+  
+  // Access form context to check for errors
+  const formContext = useFormContext()
+  const fieldName = field.name
+  const hasError = Boolean(formContext?.formState?.errors?.[fieldName])
 
   return (
     <FormItem className="flex w-full flex-col space-y-2">
@@ -49,13 +56,17 @@ export default function AutoFormNumber({
           <Input
             type="number"
             {...fieldPropsWithoutShowLabel}
-            className={`h-10 w-full rounded-md border border-gray-300 bg-white text-gray-900 dark:border-0 dark:bg-zinc-950 dark:text-white ${isCurrency ? "pl-8" : "px-4"} focus-visible:ring-0 focus-visible:ring-offset-0`}
+            className={`h-10 w-full rounded-md bg-white text-gray-900 dark:bg-zinc-950 dark:text-white ${isCurrency ? "pl-8" : "px-4"} ${
+              hasError 
+                ? "border-2 border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900" 
+                : "border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:focus:ring-blue-900"
+            } focus-visible:ring-0 focus-visible:ring-offset-0`}
             placeholder={fieldPropsWithoutShowLabel.placeholder || "0.00"}
           />
         </FormControl>
       </div>
 
-      <div>
+      <div className="mt-0.5 h-4">
         <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
       </div>
     </FormItem>
