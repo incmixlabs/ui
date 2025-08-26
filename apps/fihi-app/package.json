@@ -20,6 +20,7 @@
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-router": "catalog:",
     "@tauri-apps/api": "2.7.0",
+    "@ttoss/react-feature-flags": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
     "rxdb-hooks": "catalog:"

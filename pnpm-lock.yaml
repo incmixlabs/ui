@@ -108,6 +108,9 @@ catalogs:
     '@tiptap/starter-kit':
       specifier: 3.0.9
       version: 3.0.9
+    '@ttoss/react-feature-flags':
+      specifier: ^0.2.14
+      version: 0.2.14
     '@types/node':
       specifier: 24.1.0
       version: 24.1.0
@@ -332,6 +335,9 @@ importers:
       '@tauri-apps/api':
         specifier: 2.7.0
         version: 2.7.0
+      '@ttoss/react-feature-flags':
+        specifier: 'catalog:'
+        version: 0.2.14(react@19.1.1)
       react:
         specifier: 'catalog:'
         version: 19.1.1
@@ -511,6 +517,9 @@ importers:
       '@tanstack/zod-form-adapter':
         specifier: 'catalog:'
         version: 0.42.1(zod@4.0.15)
+      '@ttoss/react-feature-flags':
+        specifier: 'catalog:'
+        version: 0.2.14(react@19.1.1)
       i18next:
         specifier: 'catalog:'
         version: 24.2.3(typescript@5.9.2)
@@ -4431,6 +4440,11 @@ packages:
   '@tsconfig/node16@1.0.4':
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
 
+  '@ttoss/react-feature-flags@0.2.14':
+    resolution: {integrity: sha512-03rRAWNTDJmoDZlHhpgzyXxNFfUHBNNE1ye8IH5W2Cq5uc2qZv9XaCB+sNKXIBZk56cZQKdtF0f92FajcEA3jQ==}
+    peerDependencies:
+      react: '>=16.8.0'
+
   '@turbo/gen@2.3.4':
     resolution: {integrity: sha512-HXBa2SW8LFFduVIFgHpz/M7U1670AJncQD3TC+Bt/xS3pyzp2KLebxq8EKNjbNZ8J86vhdqIg+AhXg5MfeMFZQ==}
     hasBin: true
@@ -8323,6 +8337,11 @@ packages:
     engines: {node: '>= 10.13'}
     peerDependencies:
       react: '>= 16.8 || 18.0.0'
+
+  react-error-boundary@5.0.0:
+    resolution: {integrity: sha512-tnjAxG+IkpLephNcePNA7v6F/QpWLH8He65+DmedchDwg162JZqx4NmbXj0mlAYVVEd81OW7aFhmbsScYfiAFQ==}
+    peerDependencies:
+      react: '>=16.13.1'
 
   react-error-boundary@6.0.0:
     resolution: {integrity: sha512-gdlJjD7NWr0IfkPlaREN2d9uUZUlksrfOx7SX62VRerwXbMY6ftGCIZua1VG1aXFNOimhISsTq+Owp725b9SiA==}
@@ -13777,6 +13796,11 @@ snapshots:
 
   '@tsconfig/node16@1.0.4': {}
 
+  '@ttoss/react-feature-flags@0.2.14(react@19.1.1)':
+    dependencies:
+      react: 19.1.1
+      react-error-boundary: 5.0.0(react@19.1.1)
+
   '@turbo/gen@2.3.4(@swc/core@1.13.3)(@swc/wasm@1.13.3)(@types/node@24.1.0)(typescript@5.9.2)':
     dependencies:
       '@turbo/workspaces': 2.3.4
@@ -18464,6 +18488,11 @@ snapshots:
       attr-accept: 2.2.5
       file-selector: 2.1.2
       prop-types: 15.8.1
+      react: 19.1.1
+
+  react-error-boundary@5.0.0(react@19.1.1):
+    dependencies:
+      '@babel/runtime': 7.28.2
       react: 19.1.1
 
   react-error-boundary@6.0.0(react@19.1.1):

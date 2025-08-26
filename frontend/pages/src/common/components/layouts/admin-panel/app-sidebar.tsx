@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 
 import { useAuth } from "@auth"
 import {
@@ -26,7 +26,7 @@ import { useOrganizationMemberAbility } from "@orgs/utils"
 import { useLocation } from "@tanstack/react-router"
 import { ErrorBoundary } from "react-error-boundary"
 import { useTranslation } from "react-i18next"
-import { buildSidebarItems } from "../../../../route-config"
+import { type NavItem, buildSidebarItems } from "../../../../route-config"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
 import { OrgSwitcher } from "./org-switcher"
@@ -53,12 +53,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const { ability } = useOrganizationMemberAbility(selectedOrganisation?.handle)
 
-  const navItems = React.useMemo(() => {
-    return buildSidebarItems(
-      user?.isSuperAdmin ?? false,
-      ability,
-      dashboards,
-      t
+  const [navItems, setNavItems] = useState<NavItem[]>([])
+
+  React.useEffect(() => {
+    buildSidebarItems(user?.isSuperAdmin ?? false, ability, dashboards, t).then(
+      setNavItems
     )
   }, [t, dashboards, user?.isSuperAdmin])
 

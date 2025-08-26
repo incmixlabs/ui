@@ -7,6 +7,7 @@ import {
   UserRoles,
 } from "@incmix/utils/types"
 import { createRouter } from "@tanstack/react-router"
+import { FEATURE_FLAGS, loadFeatureFlags } from "feature-flags"
 import {
   BoxIcon,
   FolderClosed,
@@ -72,6 +73,11 @@ export const ROUTE_ACCESS = {
 
 type RouteAccess = (typeof ROUTE_ACCESS)[keyof typeof ROUTE_ACCESS]
 
+type FeatureFlag = {
+  flags: string[]
+  all: boolean
+}
+
 /**
  * Configuration for a single route in the application.
  */
@@ -108,6 +114,10 @@ type RouteConfig = {
     children?: RouteConfig[]
   }
   /**
+   * Feature flag requirement for the route (optional).
+   */
+  featureFlag?: FeatureFlag
+  /**
    * Access control for the route. Can be a single access type or an array of access types.
    */
   role: RouteAccess | RouteAccess[]
@@ -134,8 +144,16 @@ const ROUTES_CONFIG: RouteConfig[] = [
           route: DashboardHomeRoute,
           sidebar: { title: "Home" },
           role: ROUTE_ACCESS.MEMBER,
+          featureFlag: {
+            flags: [FEATURE_FLAGS.DASHBOARD_ENABLED],
+            all: true,
+          },
         },
       ],
+    },
+    featureFlag: {
+      flags: [FEATURE_FLAGS.DASHBOARD_ENABLED],
+      all: true,
     },
     role: ROUTE_ACCESS.MEMBER,
   },
@@ -281,23 +299,38 @@ const ROUTES_CONFIG: RouteConfig[] = [
     path: "/dashboard/$projectId",
     route: DynamicDashboardRoute,
     role: ROUTE_ACCESS.MEMBER,
+    featureFlag: {
+      flags: [FEATURE_FLAGS.DASHBOARD_ENABLED],
+      all: true,
+    },
   },
   { path: "/", route: IndexRoute, role: ROUTE_ACCESS.PUBLIC },
 ]
 
 // Helper to check access
-function hasAccess(
+async function hasAccess(
   routeAccess: RouteAccess | RouteAccess[],
   userType: string | undefined,
+  featureFlag?: FeatureFlag,
   permission?: {
     subject: Subject
     action: Action
   },
   ability?: AppAbility
-): boolean {
+): Promise<boolean> {
+  if (featureFlag) {
+    const enabledFeatures = await loadFeatureFlags()
+    if (featureFlag.all) {
+      return featureFlag.flags.every((flag) => enabledFeatures.includes(flag))
+    }
+    return featureFlag.flags.some((flag) => enabledFeatures.includes(flag))
+  }
   if (!userType) return routeAccess === ROUTE_ACCESS.PUBLIC
   if (Array.isArray(routeAccess)) {
-    return routeAccess.some((a) => hasAccess(a, userType))
+    return routeAccess.some(
+      async (a) =>
+        await hasAccess(a, userType, featureFlag, permission, ability)
+    )
   }
   if (routeAccess === ROUTE_ACCESS.PUBLIC) return true
   if (routeAccess === ROUTE_ACCESS.PROTECTED)
@@ -316,11 +349,12 @@ function hasAccess(
   if (ability && permission) {
     return ability.can(permission.action, permission.subject)
   }
+
   return false
 }
 
 // Build route tree for router
-export function buildRouteTree(
+export async function buildRouteTree(
   authUser: AuthUserSession | null,
   isLoading: boolean
 ) {
@@ -339,13 +373,16 @@ export function buildRouteTree(
     : UserRoles.ROLE_MEMBER
 
   // Recursively collect all route objects from config and children
-  function collectRoutes(configs: RouteConfig[], acc: Map<any, any>) {
+  async function collectRoutes(configs: RouteConfig[], acc: Map<any, any>) {
     for (const r of configs) {
-      if (
-        hasAccess(r.role, userType) &&
-        r.route !== null &&
-        !acc.has(r.route)
-      ) {
+      const accessible = await hasAccess(
+        r.role,
+        userType,
+        r.featureFlag,
+        r.permission
+      )
+
+      if (accessible && r.route !== null && !acc.has(r.route)) {
         acc.set(r.route, true)
       }
       if (r.sidebar?.children) {
@@ -354,7 +391,7 @@ export function buildRouteTree(
     }
   }
   const routeMap = new Map<any, any>()
-  collectRoutes(ROUTES_CONFIG, routeMap)
+  await collectRoutes(ROUTES_CONFIG, routeMap)
   return createRouter({
     routeTree: RootRoute.addChildren([...routeMap.keys()]),
     defaultNotFoundComponent: NotFoundPage,
@@ -362,23 +399,35 @@ export function buildRouteTree(
 }
 
 // Build sidebar items
-export function buildSidebarItems(
+export async function buildSidebarItems(
   isSuperAdmin: boolean,
   ability?: AppAbility,
   dashboards: Dashboard[] = [],
   t: (k: string) => string = (k) => k
-): NavItem[] {
+): Promise<NavItem[]> {
   const userType = isSuperAdmin
     ? UserRoles.ROLE_SUPER_ADMIN
     : UserRoles.ROLE_MEMBER
 
   // Recursively build sidebar from config
-  function buildItems(configs: RouteConfig[]): NavItem[] {
-    return configs
-      .filter(
-        (r) => r.sidebar && hasAccess(r.role, userType, r.permission, ability)
-      )
-      .map((r) => {
+  async function buildItems(configs: RouteConfig[]): Promise<NavItem[]> {
+    const accessibleRoutes: RouteConfig[] = []
+    for (const r of configs) {
+      if (
+        (await hasAccess(
+          r.role,
+          userType,
+          r.featureFlag,
+          r.permission,
+          ability
+        )) &&
+        r.sidebar
+      ) {
+        accessibleRoutes.push(r)
+      }
+    }
+    const items = await Promise.all(
+      accessibleRoutes.map(async (r) => {
         const sidebar = r.sidebar
         const item: NavItem = {
           title: sidebar ? t(sidebar.title) : "",
@@ -386,7 +435,7 @@ export function buildSidebarItems(
           icon: sidebar?.icon,
         }
         if (sidebar?.children) {
-          item.items = buildItems(sidebar.children)
+          item.items = await buildItems(sidebar.children)
         }
         // Special case: dynamic dashboards
         if (r.path === "/dashboard" && dashboards.length > 0) {
@@ -401,17 +450,16 @@ export function buildSidebarItems(
         }
         return item
       })
-      .sort((a, b) => {
-        // Sort by sidebar.position, undefined last
-        const aPos = configs.find((r) => r.path === a.url)?.sidebar?.position
-        const bPos = configs.find((r) => r.path === b.url)?.sidebar?.position
-        if (aPos == null && bPos == null) return 0
-        if (aPos == null) return 1
-        if (bPos == null) return -1
-        return aPos - bPos
-      })
+    )
+    return items.sort((a, b) => {
+      // Sort by sidebar.position, undefined last
+      const aPos = configs.find((r) => r.path === a.url)?.sidebar?.position
+      const bPos = configs.find((r) => r.path === b.url)?.sidebar?.position
+      if (aPos == null && bPos == null) return 0
+      if (aPos == null) return 1
+      if (bPos == null) return -1
+      return aPos - bPos
+    })
   }
-  const items = buildItems(ROUTES_CONFIG)
-
-  return items
+  return buildItems(ROUTES_CONFIG)
 }
