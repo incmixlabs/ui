@@ -7,7 +7,7 @@ import {
   UserRoles,
 } from "@incmix/utils/types"
 import { createRouter } from "@tanstack/react-router"
-import { FEATURE_FLAGS, loadFeatureFlags } from "feature-flags"
+import { FEATURE_FLAGS, loadFeatureFlags } from "./feature-flags"
 import {
   BoxIcon,
   FolderClosed,
