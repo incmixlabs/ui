@@ -55,10 +55,11 @@ export default function AutoFormMultiCheckbox({
   const layout = (fieldConfigItem.inputProps?.layout || "grid") as MCQLayoutType
   const gridCols = fieldConfigItem.inputProps?.gridCols || 2
 
-  // Access form context to check for errors
-  const formContext = useFormContext()
+  // Access form context to check for errors (supports nested names)
+  const { getFieldState, formState } = useFormContext()
+  const { error } = getFieldState(field.name, formState)
+  const hasError = Boolean(error)
   const fieldName = field.name
-  const hasError = Boolean(formContext?.formState?.errors?.[fieldName])
 
   // Initialize field.value as an array if it's undefined or null
   useEffect(() => {
@@ -133,7 +134,9 @@ export default function AutoFormMultiCheckbox({
                     <div className="flex items-center">
                       <input
                         type="checkbox"
-                        id={`checkbox-${option.value}`}
+                        id={`checkbox-${fieldName}-${option.value}`}
+                        name={fieldName}
+                        aria-invalid={hasError}
                         className={`${iconSize} rounded text-blue-600 focus:ring-blue-500 dark:bg-gray-800 dark:text-blue-500 dark:focus:ring-blue-400 ${
                           hasError
                             ? "border-2 border-red-500"
@@ -147,7 +150,7 @@ export default function AutoFormMultiCheckbox({
                         checked={isValueSelected(option.value)}
                       />
                       <label
-                        htmlFor={`checkbox-${option.value}`}
+                        htmlFor={`checkbox-${fieldName}-${option.value}`}
                         className="ml-2 font-medium text-gray-700 text-sm dark:text-gray-300"
                       >
                         {option.label}
@@ -163,8 +166,11 @@ export default function AutoFormMultiCheckbox({
               Please select at least one option
             </p>
           )}
-          <div className="mt-0.5 h-4">
-            <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
+          <div className="mt-0.5 min-h-[1.25rem]">
+            <FormMessage
+              id={`${fieldName}-error`}
+              className="block max-w-full whitespace-normal break-words text-red-500 text-sm"
+            />
           </div>
         </fieldset>
       </FormItem>

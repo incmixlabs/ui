@@ -65,10 +65,10 @@ export default function AutoFormMCQ({
   const optionSize = (fieldConfigItem.inputProps?.optionSize ||
     "md") as MCQSizeType
 
-  // Access form context to check for errors
-  const formContext = useFormContext()
-  const fieldName = field.name
-  const hasError = Boolean(formContext?.formState?.errors?.[fieldName])
+  // Access form context to check for errors (supports nested names)
+  const { getFieldState, formState } = useFormContext()
+  const { error } = getFieldState(field.name, formState)
+  const hasError = Boolean(error)
 
   return (
     <div className="flex w-full flex-col space-y-4">
@@ -90,6 +90,8 @@ export default function AutoFormMCQ({
             className={getLayoutClass(layout, gridCols)}
             role="radiogroup"
             aria-required={isRequired ? "true" : "false"}
+            aria-invalid={hasError}
+            aria-describedby={hasError ? `${field.name}-error` : undefined}
           >
             {options.map((option) => (
               <FormItem
@@ -101,10 +103,12 @@ export default function AutoFormMCQ({
                     <input
                       type="radio"
                       className="peer sr-only"
+                      name={field.name}
                       value={option.value}
                       onChange={(e) => field.onChange(e.target.value)}
                       checked={field.value === option.value}
                       required={isRequired}
+                      aria-invalid={hasError}
                     />
                     <div
                       className={cn(
@@ -130,8 +134,11 @@ export default function AutoFormMCQ({
             ))}
           </div>
         </FormControl>
-        <div className="mt-0.5 h-4">
-          <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
+        <div className="mt-0.5 min-h-[1.25rem]">
+          <FormMessage
+            id={`${field.name}-error`}
+            className="block max-w-full whitespace-normal break-words text-red-500 text-sm"
+          />
         </div>
       </FormItem>
     </div>

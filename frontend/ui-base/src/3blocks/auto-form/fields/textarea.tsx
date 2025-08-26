@@ -24,10 +24,11 @@ export default function AutoFormTextarea({
   const { showLabel: _showLabel, ...fieldPropsWithoutShowLabel } = fieldProps
   const showLabel = _showLabel === undefined ? true : _showLabel
 
-  // Access form context to check for errors
-  const formContext = useFormContext()
+  // Access form context to check for errors (supports nested names)
+  const { getFieldState, formState } = useFormContext()
+  const { error } = getFieldState(field.name, formState)
+  const hasError = Boolean(error)
   const fieldName = field.name
-  const hasError = Boolean(formContext?.formState?.errors?.[fieldName])
 
   return (
     <FormItem className="flex w-full flex-col space-y-2">
@@ -42,6 +43,10 @@ export default function AutoFormTextarea({
       )}
       <FormControl>
         <TextArea
+          {...field}
+          id={field.name}
+          aria-invalid={hasError}
+          aria-describedby={hasError ? `${fieldName}-error` : undefined}
           className={`w-full resize-none rounded-md bg-white text-gray-900 dark:bg-zinc-950 dark:text-white ${
             hasError
               ? "border-2 border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900"
@@ -54,8 +59,11 @@ export default function AutoFormTextarea({
           {...fieldPropsWithoutShowLabel}
         />
       </FormControl>
-      <div className="mt-0.5 h-4">
-        <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
+      <div className="mt-0.5 min-h-[1.25rem]">
+        <FormMessage
+          id={`${fieldName}-error`}
+          className="block max-w-full whitespace-normal break-words text-red-500 text-sm"
+        />
       </div>
     </FormItem>
   )

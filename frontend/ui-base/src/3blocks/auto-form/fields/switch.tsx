@@ -21,16 +21,20 @@ export default function AutoFormSwitch({
         <div className="flex items-center space-x-2">
           <FormControl>
             <Switch
-              checked={field.value}
-              onCheckedChange={field.onChange}
               {...fieldProps}
+              checked={!!field.value}
+              onCheckedChange={field.onChange}
+              onBlur={field.onBlur}
             />
           </FormControl>
           <AutoFormTooltip fieldConfigItem={fieldConfigItem} />
         </div>
       </FormItem>
-      <div className="mt-0.5 h-4">
-        <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
+      <div className="mt-0.5 min-h-[1.25rem]">
+        <FormMessage
+          id={`${field.name}-error`}
+          className="block max-w-full whitespace-normal break-words text-red-500 text-sm"
+        />
       </div>
     </div>
   )

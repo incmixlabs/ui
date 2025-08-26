@@ -20,10 +20,10 @@ export default function AutoFormEnum({
   zodItem,
   fieldProps,
 }: AutoFormInputComponentProps) {
-  // Access form context to check for errors
-  const formContext = useFormContext()
-  const fieldName = field.name
-  const hasError = Boolean(formContext?.formState?.errors?.[fieldName])
+  // Access form context to check for errors (supports nested names)
+  const { getFieldState, formState } = useFormContext()
+  const { error } = getFieldState(field.name, formState)
+  const hasError = Boolean(error)
 
   // Default to empty array for values
   let values: OptionWithColor[] = []
@@ -117,6 +117,8 @@ export default function AutoFormEnum({
               fieldProps?.className
             )}
             aria-labelledby={`${field.name}-label`}
+            aria-invalid={hasError}
+            aria-describedby={hasError ? `${field.name}-error` : undefined}
           >
             {selectedOption ? (
               <OptionDisplay option={selectedOption} isSelected />
@@ -140,8 +142,11 @@ export default function AutoFormEnum({
           </Select.Content>
         </Select.Root>
       </FormControl>
-      <div className="mt-0.5 h-4">
-        <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
+      <div className="mt-0.5 min-h-[1.25rem]">
+        <FormMessage
+          id={`${field.name}-error`}
+          className="block max-w-full whitespace-normal break-words text-red-500 text-sm"
+        />
       </div>
     </FormItem>
   )

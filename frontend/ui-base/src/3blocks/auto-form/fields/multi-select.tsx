@@ -28,10 +28,14 @@ export default function MultipleSelectorField({
   label,
   isRequired,
 }: AutoFormInputComponentProps) {
-  // Access form context to check for errors
+  // Access form context to check for errors (supports nested names)
   const formContext = useFormContext()
   const fieldName = field.name
-  const hasError = Boolean(formContext?.formState?.errors?.[fieldName])
+  const fieldState = formContext?.getFieldState?.(
+    fieldName,
+    formContext.formState
+  )
+  const hasError = Boolean(fieldState?.error)
 
   // Extract options from fieldConfigItem or use empty array as fallback
   const options =
@@ -74,6 +78,8 @@ export default function MultipleSelectorField({
               : "border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:focus:ring-blue-900"
           }`.trim()}
           defaultColor={safeColor}
+          aria-invalid={hasError}
+          aria-describedby={hasError ? `${fieldName}-error` : undefined}
         />
       </FormControl>
       {/*
@@ -81,8 +87,11 @@ export default function MultipleSelectorField({
         <FormDescription>{fieldConfigItem.description}</FormDescription>
       )} */}
 
-      <div className="mt-0.5 h-4">
-        <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
+      <div className="mt-0.5 min-h-[1.25rem]">
+        <FormMessage
+          id={`${fieldName}-error`}
+          className="block max-w-full whitespace-normal break-words text-destructive text-sm"
+        />
       </div>
     </FormItem>
   )

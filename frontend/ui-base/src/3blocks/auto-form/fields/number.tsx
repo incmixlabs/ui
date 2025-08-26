@@ -21,7 +21,7 @@ export default function AutoFormNumber({
   label,
   isRequired,
   field,
-  fieldProps,
+  fieldProps = {},
 }: AutoFormInputComponentProps) {
   const {
     showLabel: _showLabel,
@@ -31,10 +31,11 @@ export default function AutoFormNumber({
   const showLabel = _showLabel === undefined ? true : _showLabel
   const isCurrency = currency !== false // Default to true unless explicitly false
 
-  // Access form context to check for errors
-  const formContext = useFormContext()
+  // Access form context to check for errors (supports nested names)
+  const { getFieldState, formState } = useFormContext()
+  const { error } = getFieldState(field.name, formState)
+  const hasError = Boolean(error)
   const fieldName = field.name
-  const hasError = Boolean(formContext?.formState?.errors?.[fieldName])
 
   return (
     <FormItem className="flex w-full flex-col space-y-2">
@@ -57,8 +58,19 @@ export default function AutoFormNumber({
 
         <FormControl>
           <Input
-            type="number"
+            {...field}
             {...fieldPropsWithoutShowLabel}
+            type="number"
+            step="any"
+            inputMode="decimal"
+            id={field.name}
+            aria-invalid={hasError}
+            aria-describedby={hasError ? `${fieldName}-error` : undefined}
+            onChange={(e) =>
+              field.onChange(
+                e.target.value === "" ? "" : Number(e.target.value)
+              )
+            }
             className={`h-10 w-full rounded-md bg-white text-gray-900 dark:bg-zinc-950 dark:text-white ${isCurrency ? "pl-8" : "px-4"} ${
               hasError
                 ? "border-2 border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900"
@@ -69,8 +81,11 @@ export default function AutoFormNumber({
         </FormControl>
       </div>
 
-      <div className="mt-0.5 h-4">
-        <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
+      <div className="mt-0.5 min-h-[1.25rem]">
+        <FormMessage
+          id={`${fieldName}-error`}
+          className="block max-w-full whitespace-normal break-words text-red-500 text-sm"
+        />
       </div>
     </FormItem>
   )
