@@ -318,19 +318,30 @@ async function hasAccess(
   },
   ability?: AppAbility
 ): Promise<boolean> {
+  let returnValue = !featureFlag // true if no feature flag, false if feature flag exists
+
   if (featureFlag) {
     const enabledFeatures = await loadFeatureFlags()
     if (featureFlag.all) {
-      return featureFlag.flags.every((flag) => enabledFeatures.includes(flag))
+      returnValue = featureFlag.flags.every((flag) =>
+        enabledFeatures.includes(flag)
+      )
+    } else {
+      returnValue = featureFlag.flags.some((flag) =>
+        enabledFeatures.includes(flag)
+      )
     }
-    return featureFlag.flags.some((flag) => enabledFeatures.includes(flag))
   }
+  if (!returnValue) return false
   if (!userType) return routeAccess === ROUTE_ACCESS.PUBLIC
   if (Array.isArray(routeAccess)) {
-    return routeAccess.some(
-      async (a) =>
-        await hasAccess(a, userType, featureFlag, permission, ability)
+    const results = await Promise.all(
+      routeAccess.map(
+        async (a) =>
+          await hasAccess(a, userType, featureFlag, permission, ability)
+      )
     )
+    return results.some((result) => result === true)
   }
   if (routeAccess === ROUTE_ACCESS.PUBLIC) return true
   if (routeAccess === ROUTE_ACCESS.PROTECTED)
@@ -347,7 +358,18 @@ async function hasAccess(
     return userType === UserRoles.ROLE_SUPER_ADMIN
 
   if (ability && permission) {
-    return ability.can(permission.action, permission.subject)
+    try {
+      const canAccess = ability.can(permission.action, permission.subject)
+      if (typeof canAccess === "boolean") {
+        return canAccess
+      }
+      // Log unexpected permission result
+      console.warn("Unexpected permission result:", canAccess)
+      return false
+    } catch (error) {
+      console.error("Permission check failed:", error)
+      return false
+    }
   }
 
   return false
@@ -443,8 +465,9 @@ export async function buildSidebarItems(
             ...(item.items || []),
             ...dashboards.map((dashboard) => ({
               title:
-                dashboard.dashboardName || `Project ${dashboard.dashboardId}`,
-              url: `/dashboard/${dashboard.dashboardId}`,
+                dashboard.dashboardName ||
+                `Project ${dashboard.dashboardId ?? dashboard.id}`,
+              url: `/dashboard/${dashboard.dashboardId ?? dashboard.id}`,
             })),
           ]
         }
