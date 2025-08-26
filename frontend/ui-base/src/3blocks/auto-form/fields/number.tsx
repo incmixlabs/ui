@@ -23,11 +23,14 @@ export default function AutoFormNumber({
   field,
   fieldProps,
 }: AutoFormInputComponentProps) {
-  const { showLabel: _showLabel, currency, ...fieldPropsWithoutShowLabel } =
-    fieldProps
+  const {
+    showLabel: _showLabel,
+    currency,
+    ...fieldPropsWithoutShowLabel
+  } = fieldProps
   const showLabel = _showLabel === undefined ? true : _showLabel
   const isCurrency = currency !== false // Default to true unless explicitly false
-  
+
   // Access form context to check for errors
   const formContext = useFormContext()
   const fieldName = field.name
@@ -57,8 +60,8 @@ export default function AutoFormNumber({
             type="number"
             {...fieldPropsWithoutShowLabel}
             className={`h-10 w-full rounded-md bg-white text-gray-900 dark:bg-zinc-950 dark:text-white ${isCurrency ? "pl-8" : "px-4"} ${
-              hasError 
-                ? "border-2 border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900" 
+              hasError
+                ? "border-2 border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900"
                 : "border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:focus:ring-blue-900"
             } focus-visible:ring-0 focus-visible:ring-offset-0`}
             placeholder={fieldPropsWithoutShowLabel.placeholder || "0.00"}

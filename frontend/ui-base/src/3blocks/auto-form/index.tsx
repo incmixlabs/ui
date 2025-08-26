@@ -62,13 +62,9 @@ export function AutoFormSubmit({
 }) {
   const form = useFormContext()
   const hasErrors = form ? Object.keys(form.formState.errors).length > 0 : false
-  
+
   return (
-    <Button 
-      type="submit" 
-      className={className}
-      disabled={hasErrors}
-    >
+    <Button type="submit" className={className} disabled={hasErrors}>
       {children ?? "Submit"}
     </Button>
   )

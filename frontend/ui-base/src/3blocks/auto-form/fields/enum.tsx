@@ -1,7 +1,7 @@
 // components/auto-form/fields/enum.tsx - Enhanced with color support
 import { FormControl, FormItem, FormMessage, Select } from "@/base"
-import { useFormContext } from "react-hook-form"
 import { cn } from "@/utils/cn"
+import { useFormContext } from "react-hook-form"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 import { getBaseSchema } from "../utils"
@@ -24,7 +24,7 @@ export default function AutoFormEnum({
   const formContext = useFormContext()
   const fieldName = field.name
   const hasError = Boolean(formContext?.formState?.errors?.[fieldName])
-  
+
   // Default to empty array for values
   let values: OptionWithColor[] = []
 
@@ -111,8 +111,8 @@ export default function AutoFormEnum({
           <Select.Trigger
             className={cn(
               "min-w-[140px]",
-              hasError 
-                ? "border-2 border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900" 
+              hasError
+                ? "border-2 border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900"
                 : "focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-900",
               fieldProps?.className
             )}

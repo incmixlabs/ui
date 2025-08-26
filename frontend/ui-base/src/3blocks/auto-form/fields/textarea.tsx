@@ -23,7 +23,7 @@ export default function AutoFormTextarea({
 }: AutoFormInputComponentProps) {
   const { showLabel: _showLabel, ...fieldPropsWithoutShowLabel } = fieldProps
   const showLabel = _showLabel === undefined ? true : _showLabel
-  
+
   // Access form context to check for errors
   const formContext = useFormContext()
   const fieldName = field.name
@@ -43,8 +43,8 @@ export default function AutoFormTextarea({
       <FormControl>
         <TextArea
           className={`w-full resize-none rounded-md bg-white text-gray-900 dark:bg-zinc-950 dark:text-white ${
-            hasError 
-              ? "border-2 border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900" 
+            hasError
+              ? "border-2 border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900"
               : "border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:focus:ring-blue-900"
           } focus-visible:ring-0 focus-visible:ring-offset-0`}
           placeholder={
