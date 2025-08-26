@@ -7,7 +7,6 @@ import {
   UserRoles,
 } from "@incmix/utils/types"
 import { createRouter } from "@tanstack/react-router"
-import { FEATURE_FLAGS, loadFeatureFlags } from "./feature-flags"
 import {
   BoxIcon,
   FolderClosed,
@@ -34,6 +33,7 @@ import NotFoundRoute from "./common/routes/not-found"
 import RootRoute from "./common/routes/root"
 import DashboardHomeRoute from "./dashboard/routes/dashboard-home"
 import DynamicDashboardRoute from "./dashboard/routes/dynamic-dashboard"
+import { FEATURE_FLAGS, loadFeatureFlags } from "./feature-flags"
 import FileManagerRoute from "./file-manager/routes/index"
 import NotesRoute from "./notes/routes/index"
 import OnboardingRoute from "./onboarding/routes/onboarding"
