@@ -113,7 +113,7 @@ export default function AutoFormEnum({
               "min-w-[140px]",
               hasError
                 ? "border-2 border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900"
-                : "focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-900",
+                : "border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:focus:ring-blue-900",
               fieldProps?.className
             )}
             aria-labelledby={`${field.name}-label`}

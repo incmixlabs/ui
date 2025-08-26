@@ -2,6 +2,7 @@ import { FormControl, FormItem, FormLabel, FormMessage } from "@/base"
 import { iconSize } from "@/base/icon"
 import { cn } from "@/utils/cn"
 import { useEffect, useState } from "react"
+import { useFormContext } from "react-hook-form"
 import type {
   AutoFormInputComponentProps,
   MCQLayoutType,
@@ -53,6 +54,11 @@ export default function AutoFormMultiCheckbox({
   const options = (fieldConfigItem.inputProps?.options || []) as MCQOption[]
   const layout = (fieldConfigItem.inputProps?.layout || "grid") as MCQLayoutType
   const gridCols = fieldConfigItem.inputProps?.gridCols || 2
+
+  // Access form context to check for errors
+  const formContext = useFormContext()
+  const fieldName = field.name
+  const hasError = Boolean(formContext?.formState?.errors?.[fieldName])
 
   // Initialize field.value as an array if it's undefined or null
   useEffect(() => {
@@ -128,7 +134,11 @@ export default function AutoFormMultiCheckbox({
                       <input
                         type="checkbox"
                         id={`checkbox-${option.value}`}
-                        className={`${iconSize} rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-blue-500 dark:focus:ring-blue-400`}
+                        className={`${iconSize} rounded text-blue-600 focus:ring-blue-500 dark:bg-gray-800 dark:text-blue-500 dark:focus:ring-blue-400 ${
+                          hasError
+                            ? "border-2 border-red-500"
+                            : "border-2 border-gray-300 dark:border-gray-600"
+                        }`}
                         value={option.value}
                         onChange={(e) => {
                           handleCheckboxChange(option.value, e.target.checked)
@@ -153,7 +163,9 @@ export default function AutoFormMultiCheckbox({
               Please select at least one option
             </p>
           )}
-          <FormMessage className="dark:text-red-400" />
+          <div className="mt-0.5 h-4">
+            <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
+          </div>
         </fieldset>
       </FormItem>
     </div>

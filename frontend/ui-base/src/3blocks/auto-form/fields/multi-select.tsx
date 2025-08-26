@@ -1,5 +1,6 @@
 import { FormControl, FormItem, FormLabel, FormMessage } from "@/base"
 import { MultiSelect } from "@/src/2elements/multi-select"
+import { useFormContext } from "react-hook-form"
 import type { AutoFormInputComponentProps } from "../types"
 
 // Define the allowed color types to match the component's requirements
@@ -27,6 +28,11 @@ export default function MultipleSelectorField({
   label,
   isRequired,
 }: AutoFormInputComponentProps) {
+  // Access form context to check for errors
+  const formContext = useFormContext()
+  const fieldName = field.name
+  const hasError = Boolean(formContext?.formState?.errors?.[fieldName])
+
   // Extract options from fieldConfigItem or use empty array as fallback
   const options =
     fieldConfigItem.inputProps?.options ||
@@ -62,7 +68,11 @@ export default function MultipleSelectorField({
           placeholder={
             fieldConfigItem.inputProps?.placeholder || "Select options"
           }
-          className={fieldConfigItem.inputProps?.className}
+          className={`${fieldConfigItem.inputProps?.className || ""} ${
+            hasError
+              ? "border-2 border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900"
+              : "border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:focus:ring-blue-900"
+          }`.trim()}
           defaultColor={safeColor}
         />
       </FormControl>
@@ -71,7 +81,9 @@ export default function MultipleSelectorField({
         <FormDescription>{fieldConfigItem.description}</FormDescription>
       )} */}
 
-      <FormMessage />
+      <div className="mt-0.5 h-4">
+        <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
+      </div>
     </FormItem>
   )
 }

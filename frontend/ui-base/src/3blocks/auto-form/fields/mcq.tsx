@@ -1,5 +1,6 @@
 import { FormControl, FormItem, FormLabel, FormMessage } from "@/base"
 import { cn } from "@/utils/cn"
+import { useFormContext } from "react-hook-form"
 import type {
   AutoFormInputComponentProps,
   MCQLayoutType,
@@ -64,6 +65,11 @@ export default function AutoFormMCQ({
   const optionSize = (fieldConfigItem.inputProps?.optionSize ||
     "md") as MCQSizeType
 
+  // Access form context to check for errors
+  const formContext = useFormContext()
+  const fieldName = field.name
+  const hasError = Boolean(formContext?.formState?.errors?.[fieldName])
+
   return (
     <div className="flex w-full flex-col space-y-4">
       <FormItem className="w-full">
@@ -102,16 +108,18 @@ export default function AutoFormMCQ({
                     />
                     <div
                       className={cn(
-                        "flex items-center justify-center rounded-lg border border-gray-300 bg-white text-gray-900",
-                        "dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-300",
+                        "flex items-center justify-center rounded-lg bg-white text-gray-900",
+                        "dark:bg-gray-800/50 dark:text-gray-300",
                         "cursor-pointer transition-all duration-200",
                         "hover:border-blue-100 hover:bg-blue-50 dark:hover:border-blue-900 dark:hover:bg-blue-900/30",
                         "peer-checked:border-blue-500 peer-checked:bg-blue-500 peer-checked:text-white",
                         "focus-within:ring-2 focus-within:ring-blue-500",
-                        "font-medium text-gray-600 dark:border-gray-700 dark:text-gray-300",
-                        "dark:bg-gray-800/50",
+                        "font-medium text-gray-600 dark:text-gray-300",
                         sizeStyles[optionSize],
-                        layout === "row" ? "w-full" : "min-w-[120px]"
+                        layout === "row" ? "w-full" : "min-w-[120px]",
+                        hasError
+                          ? "border-2 border-red-500"
+                          : "border-2 border-gray-300 dark:border-gray-700"
                       )}
                     >
                       {option.label}
@@ -122,7 +130,9 @@ export default function AutoFormMCQ({
             ))}
           </div>
         </FormControl>
-        <FormMessage className="dark:text-red-400" />
+        <div className="mt-0.5 h-4">
+          <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
+        </div>
       </FormItem>
     </div>
   )
