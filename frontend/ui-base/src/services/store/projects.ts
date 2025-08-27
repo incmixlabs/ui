@@ -1,4 +1,4 @@
-import type { Project } from "@incmix/utils/types"
+import type { Project } from "@incmix/utils/schema"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 

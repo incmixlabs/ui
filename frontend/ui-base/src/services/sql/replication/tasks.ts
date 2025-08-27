@@ -4,6 +4,7 @@ import type { RxIncmixDatabase, TaskDocType } from "../types"
 
 const BFF_API_URL: string = import.meta.env["VITE_BFF_API_URL"] || ""
 const RXDB_API_URL = `${BFF_API_URL}${API.RXDB_SYNC}`
+
 export const startTaskReplication = (database: RxIncmixDatabase) =>
   replicateRxCollection<TaskDocType, { updatedAt: number; id: string }>({
     collection: database.tasks,

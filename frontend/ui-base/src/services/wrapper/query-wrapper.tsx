@@ -4,154 +4,10 @@ import {
   useQuery,
 } from "@tanstack/react-query"
 import { type FC, useEffect, useState } from "react"
-
 import { Spinner } from "@/base"
-import { API } from "@incmix/utils/env"
-import { secureFetch } from "@incmix/utils/fetch"
-import { set } from "date-fns"
-import { se } from "date-fns/locale"
-import { getPrevData } from "../utils/get-prev-data"
+import { API, secureFetch, endPointDef, type Persistence, type  HttpMethod } from "@incmix/utils/fetch"
 
-export const BFF_API_URL: string = getBffApiUrl()
-export const VITE_SENTRY_DSN: string = import.meta.env.VITE_SENTRY_DSN || ""
-export const INTL_API_URL = `${BFF_API_URL}${API.INTL}`
-export const AUTH_API_URL = `${BFF_API_URL}${API.AUTH}`
-export const USERS_API_URL = `${BFF_API_URL}${API.USERS}`
-export const ORG_API_URL = `${BFF_API_URL}${API.ORG}`
-export const TASKS_API_URL = `${BFF_API_URL}${API.TASKS}`
-export const PROJECTS_API_URL = `${BFF_API_URL}${API.PROJECTS}`
-export const EMAIL_API_URL = `${BFF_API_URL}${API.EMAIL}`
-export const FILES_API_URL = `${BFF_API_URL}${API.FILES}`
-export const LOCATION_API_URL = `${BFF_API_URL}${API.LOCATION}`
-
-export const GENAI_API_URL = `${BFF_API_URL}${API.GENAI}`
-export const PERMISSIONS_API_URL = `${BFF_API_URL}${API.PERMISSIONS}`
-
-function getBffApiUrl(): string {
-  const url = import.meta.env["VITE_BFF_API_URL"] || ""
-  if (!url) {
-    console.error("VITE_BFF_API_URL is not configured")
-    throw new Error("BFF API URL is not configured")
-  }
-  return url
-}
-export function isMock(): boolean {
-  return import.meta.env["VITE_APP_MOCK"] === "true"
-}
-
-export const persistType = ["local", "rxdb", "session", "cookie"] as const
-export const persistTypes = {
-  local: "local",
-  rxdb: "rxdb",
-  session: "session",
-  cookie: "cookie",
-}
-export type PersistType = (typeof persistType)[number]
-export const dataSize = ["large", "medium", "small"] as const
-export const dataSizes = {
-  large: "large",
-  medium: "medium",
-  small: "small",
-}
-export type DataSize = (typeof dataSize)[number]
-export const updateFreq = ["stream", "asap", "hourly", "daily"] as const
-export type UpdateFreq = (typeof updateFreq)[number]
-export const dailyPeriods = {
-  eod: "eod",
-  bod: "bod",
-  mid: "mid",
-  hourly: "hourly",
-} as const
-export type DailyPeriod = (typeof dailyPeriods)[keyof typeof dailyPeriods]
-export const weeklyPeriods = {
-  monday: "monday",
-  tuesday: "tuesday",
-  wednesday: "wednesday",
-  thursday: "thursday",
-  friday: "friday",
-  saturday: "saturday",
-  sunday: "sunday",
-  bow: "bow",
-  eow: "eow",
-} as const
-export const monthlyPeriods = {
-  january: "january",
-  february: "february",
-  march: "march",
-  april: "april",
-  may: "may",
-  june: "june",
-  july: "july",
-  august: "august",
-  september: "september",
-  october: "october",
-  november: "november",
-  december: "december",
-  eoy: "eoy",
-  qtrly: "qtrly",
-} as const
-export type burstyPeriods = {
-  from: number,
-  to: number,
-  frequency?: number // no of expected transactions etc
-}
-export const periodDefinition = {
-  eoy: "eoy",
-  qtrly: "qtrly",
-  monthly: "monthly",
-  weekly: "weekly",
-  daily: "daily",
-  bow: "bow",
-  eow: "eow",
-  eod: "eod",
-  bod: "bod",
-  mid: "mid"
-}
-export type PeriodDefinition = (typeof periodDefinition)[keyof typeof periodDefinition]
-// set for each org and workspace
-export const periodDefinitions = {
-  // Define period definitions for each org and workspace here
-}
-
-export const updateFreqs = {
-  stream: "stream",
-  periodic: "periodic",
-  hourly: "hourly",
-  daily: "daily",
-}
-export const method = ["GET", "POST", "PUT", "DELETE"] as const
-export const methods = {
-  GET: "GET",
-  POST: "POST",
-  PUT: "PUT",
-  DELETE: "DELETE",
-}
-export type Method = (typeof method)[number]
-const persistence = {
-  "local-first": "local-first",
-  "local-only": "local-only",
-  "remote-first": "remote-first",
-  "remote-only": "remote-only",
-}
-export type Persistence = keyof typeof persistence
-const ops = {
-  create: "create",
-  update: "update",
-  delete: "delete",
-  list: "list",
-  details: "details",
-}
-export type Ops = (typeof ops)[keyof typeof ops]
-export type OpPersistence = {
-  op: Ops
-  persistence: Persistence
-}
-export type endPointDef = {
-  endpoint: string
-  discoverable?: boolean
-  opPersistence?: OpPersistence[]
-}
-export type QueryWrapperProps = {
+export type QueryWrapperProps = endPointDef & {
   queryKey: string
   queryUrl?: string
   queryPath: string
@@ -161,11 +17,8 @@ export type QueryWrapperProps = {
   QueryLoader?: React.ReactNode
   QueryError?: React.ReactNode
   QueryRender: React.FC<{ data: any; lastUpdated: number }>
-  method?: Method
+  method?: HttpMethod
   streaming?: boolean
-  persistTypes?: PersistType[]
-  dataSize?: DataSize
-  updateFreq?: UpdateFreq
   sortFn?: (a: any, b: any) => number
   uniqueKey?: string
   mergeFn?: (data: any[]) => any
@@ -180,7 +33,7 @@ export function QueryWrapper(props: QueryWrapperProps): FC {
     queryKey,
     queryUrl,
     persistTypes,
-    method = methods.GET,
+    method = HttpMethod.GET,
     queryPath,
     transform,
     queryParams,
@@ -190,23 +43,25 @@ export function QueryWrapper(props: QueryWrapperProps): FC {
   const url = queryUrl ?? `${BFF_API_URL}${queryPath}`
   const [isReady, setIsReady] = useState(false)
   const [lastUpdated, setLastUpdated] = useState(0)
-  const [_prevData, _setPrevData] = useState<any>(
-    persistType ? getPrevData(persistTypes) : null
-  )
   const [_recordCount, setRecordCount] = useState(0)
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: [queryKey], // Unique key for this query
     queryFn: async () => {
       // Asynchronous function to fetch data
-      const response = await secureFetch(url, {
+      // Append queryParams to the URL if present
+      const queryString = queryParams
+        ? "?" + new URLSearchParams(queryParams).toString()
+        : ""
+      const response = await secureFetch(url + queryString, {
         method,
-        params: queryParams,
       })
+      // Type assertion to fix 'unknown' type error
+      const res = response as { data: any }
       if (transform) {
-        return transform(response.data)
+        return transform(res.data)
       }
-      return response.data
+      return res.data
     },
   })
 

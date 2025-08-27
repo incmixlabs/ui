@@ -4,6 +4,7 @@ import type { LabelDocType, RxIncmixDatabase } from "../types"
 
 const BFF_API_URL: string = import.meta.env["VITE_BFF_API_URL"] || ""
 const RXDB_API_URL = `${BFF_API_URL}${API.RXDB_SYNC}`
+
 export const startLabelsReplication = (database: RxIncmixDatabase) =>
   replicateRxCollection<LabelDocType, { updatedAt: number; id: string }>({
     collection: database.labels,

@@ -4,6 +4,7 @@ import type { ProjectDocType, RxIncmixDatabase } from "../types"
 
 const BFF_API_URL: string = import.meta.env["VITE_BFF_API_URL"] || ""
 const RXDB_API_URL = `${BFF_API_URL}${API.RXDB_SYNC}`
+
 export const startProjectsReplication = (database: RxIncmixDatabase) =>
   replicateRxCollection<ProjectDocType, { updatedAt: number; id: string }>({
     collection: database.projects,

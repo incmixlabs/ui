@@ -17,6 +17,7 @@
     "./store"
   ],
   "compilerOptions": {
+    "jsx": "react",
     "types": ["@types/wicg-file-system-access", "vite/client", "node"],
     "rootDir": ".",
     "baseUrl": ".",
