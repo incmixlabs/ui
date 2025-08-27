@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import React, { useState } from "react"
 import { Theme, Box, Text, Flex } from "../../src/1base"
-import { TagSelect, type Option } from "../../src/2elements/multi-select/multi-select"
+import { TagSelect, type Option } from "../../src/2elements/multi-select"
 import { Loader2 } from "lucide-react"
 
 const meta: Meta<typeof TagSelect> = {
@@ -462,10 +462,8 @@ export const WithMaxSelection: Story = {
 export const WithAsyncSearch: Story = {
   render: () => {
     const [selected, setSelected] = useState<Option[]>([])
-    const [isLoading, setIsLoading] = useState(false)
 
     const handleAsyncSearch = async (searchTerm: string): Promise<Option[]> => {
-      setIsLoading(true)
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000))
 
@@ -473,7 +471,6 @@ export const WithAsyncSearch: Story = {
         option.label.toLowerCase().includes(searchTerm.toLowerCase())
       )
 
-      setIsLoading(false)
       return filteredOptions
     }
 

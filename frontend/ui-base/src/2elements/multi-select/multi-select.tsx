@@ -12,6 +12,8 @@ import {
   CommandList,
 } from "@/src/1base"
 
+export type Color = "gray" | "indigo" | "cyan" | "orange" | "crimson"
+
 export interface Option {
   value: string
   label: string
@@ -19,7 +21,7 @@ export interface Option {
   name?: string
   disable?: boolean
   avatar?: string
-  color?: string
+  color?: Color
   position?: string
   /** fixed option that can't be removed. */
   fixed?: boolean
@@ -85,7 +87,7 @@ interface TagSelectProps {
   >
   /** hide the clear all button. */
   hideClearAllButton?: boolean
-  defaultColor?: "gray" | "indigo" | "cyan" | "orange" | "crimson"
+  defaultColor?: Color
 }
 
 export interface TagSelectRef {
@@ -222,9 +224,12 @@ export const TagSelect = React.forwardRef<TagSelectRef, TagSelectProps>(
         selectedValue: [...selected],
         input: inputRef.current as HTMLInputElement,
         focus: () => inputRef?.current?.focus(),
-        reset: () => setSelected([]),
+        reset: () => {
+          setSelected([])
+          onChange?.([])
+        },
       }),
-      [selected]
+      [selected, onChange]
     )
 
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
@@ -377,7 +382,7 @@ export const TagSelect = React.forwardRef<TagSelectRef, TagSelectProps>(
           }}
           onSelect={(value: string) => {
             if (selected.length >= maxSelected) {
-              onMaxSelected?.(selected.length)
+              onMaxSelected?.(maxSelected)
               return
             }
             setInputValue("")
@@ -438,8 +443,17 @@ export const TagSelect = React.forwardRef<TagSelectRef, TagSelectProps>(
       return undefined
     }, [creatable, commandProps?.filter])
 
-    const getBadgeColorStyles = (optionColor?: string) => {
-      const colorToUse = optionColor || defaultColor
+    const getBadgeColorStyles = (optionColor?: Color) => {
+      const allowed = new Set<Color>([
+        "gray",
+        "indigo",
+        "cyan",
+        "orange",
+        "crimson",
+      ])
+      const colorToUse = allowed.has(optionColor as Color)
+        ? optionColor
+        : defaultColor
       switch (colorToUse) {
         case "indigo":
           return "bg-indigo-9 text-indigo-1 hover:bg-indigo-10"
@@ -450,7 +464,7 @@ export const TagSelect = React.forwardRef<TagSelectRef, TagSelectProps>(
         case "crimson":
           return "bg-crimson-9 text-crimson-1 hover:bg-crimson-10"
         default:
-          return "bg-gray-4 text-gray-12 hover:bg-gray-6 "
+          return "bg-gray-4 text-gray-12 hover:bg-gray-6"
       }
     }
 
@@ -648,7 +662,7 @@ export const TagSelect = React.forwardRef<TagSelectRef, TagSelectProps>(
                             }}
                             onSelect={() => {
                               if (selected.length >= maxSelected) {
-                                onMaxSelected?.(selected.length)
+                                onMaxSelected?.(maxSelected)
                                 return
                               }
                               setInputValue("")

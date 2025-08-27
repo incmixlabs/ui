@@ -19,7 +19,7 @@ const OPTIONS: Option[] = [
 type ThemeColor = "gray" | "indigo" | "cyan" | "orange" | "crimson"
 
 interface TagSelectControlledProps {
-  themeColor: ThemeColor
+  themeColor?: ThemeColor
 }
 
 export const TagSelectControlled: React.FC<TagSelectControlledProps> = ({
@@ -47,4 +47,4 @@ export const TagSelectControlled: React.FC<TagSelectControlledProps> = ({
   )
 }
 
-export { TagSelect }
+export { TagSelect, type Option, type Color } from "./multi-select"
