@@ -30,7 +30,7 @@ interface GroupOption {
   [key: string]: Option[]
 }
 
-interface MultiSelectProps {
+interface TagSelectProps {
   value?: Option[]
   defaultOptions?: Option[]
   /** manually controlled options */
@@ -88,7 +88,7 @@ interface MultiSelectProps {
   defaultColor?: "gray" | "indigo" | "cyan" | "orange" | "crimson"
 }
 
-export interface MultiSelectRef {
+export interface TagSelectRef {
   selectedValue: Option[]
   input: HTMLInputElement
   focus: () => void
@@ -173,7 +173,7 @@ const CommandEmpty = forwardRef<
 
 CommandEmpty.displayName = "CommandEmpty"
 
-export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
+export const TagSelect = React.forwardRef<TagSelectRef, TagSelectProps>(
   (
     {
       value,
@@ -200,8 +200,8 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       commandProps,
       inputProps,
       hideClearAllButton = false,
-    }: MultiSelectProps,
-    ref: React.Ref<MultiSelectRef>
+    }: TagSelectProps,
+    ref: React.Ref<TagSelectRef>
   ) => {
     const inputRef = React.useRef<HTMLInputElement>(null)
     const [open, setOpen] = React.useState(false)
@@ -438,8 +438,9 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       return undefined
     }, [creatable, commandProps?.filter])
 
-    const getBadgeColorStyles = () => {
-      switch (defaultColor) {
+    const getBadgeColorStyles = (optionColor?: string) => {
+      const colorToUse = optionColor || defaultColor
+      switch (colorToUse) {
         case "indigo":
           return "bg-indigo-9 text-indigo-1 hover:bg-indigo-10"
         case "cyan":
@@ -515,7 +516,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                     "group data-[disabled]:bg-muted-foreground data-[disabled]:text-muted data-[disabled]:hover:bg-muted-foreground",
                     "data-[fixed]:bg-muted-foreground data-[fixed]:text-muted data-[fixed]:hover:bg-muted-foreground",
                     badgeClassName,
-                    getBadgeColorStyles()
+                    getBadgeColorStyles(option.color)
                   )}
                   data-fixed={option.fixed}
                   data-disabled={disabled || undefined}
@@ -683,4 +684,4 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
   }
 )
 
-MultiSelect.displayName = "MultiSelect"
+TagSelect.displayName = "TagSelect"

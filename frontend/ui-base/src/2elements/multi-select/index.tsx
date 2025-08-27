@@ -1,5 +1,5 @@
 import React from "react"
-import { MultiSelect } from "./multi-select"
+import { TagSelect } from "./multi-select"
 import type { Option } from "./multi-select"
 
 const OPTIONS: Option[] = [
@@ -18,11 +18,11 @@ const OPTIONS: Option[] = [
 
 type ThemeColor = "gray" | "indigo" | "cyan" | "orange" | "crimson"
 
-interface MultiSelectControlledProps {
+interface TagSelectControlledProps {
   themeColor: ThemeColor
 }
 
-export const MultiSelectControlled: React.FC<MultiSelectControlledProps> = ({
+export const TagSelectControlled: React.FC<TagSelectControlledProps> = ({
   themeColor = "gray",
 }) => {
   const [value, setValue] = React.useState<Option[]>([])
@@ -30,7 +30,7 @@ export const MultiSelectControlled: React.FC<MultiSelectControlledProps> = ({
   return (
     <div className="flex w-[30rem] flex-col gap-5 px-10 ">
       {/* <p className="text-primary">Your selection: {value.map((val) => val.label).join(', ')}</p> */}
-      <MultiSelect
+      <TagSelect
         value={value}
         onChange={setValue}
         defaultColor={themeColor}
@@ -47,4 +47,4 @@ export const MultiSelectControlled: React.FC<MultiSelectControlledProps> = ({
   )
 }
 
-export { MultiSelect }
+export { TagSelect }
