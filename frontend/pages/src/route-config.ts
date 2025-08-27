@@ -408,7 +408,7 @@ export async function buildRouteTree(
         acc.set(r.route, true)
       }
       if (r.sidebar?.children) {
-        collectRoutes(r.sidebar.children, acc)
+        await collectRoutes(r.sidebar.children, acc)
       }
     }
   }
