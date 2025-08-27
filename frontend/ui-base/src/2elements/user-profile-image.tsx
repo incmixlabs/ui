@@ -1,8 +1,8 @@
-import { toast } from "@incmix/ui"
 import { useQueryClient } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 
-import { Avatar, AvatarEditable } from "@incmix/ui"
+import { Avatar, toast } from "@/base"
+import { AvatarEditable } from "./avatar-editable"
 import {
   useCurrentUser,
   useProfilePicture,

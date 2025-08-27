@@ -5,6 +5,9 @@ import {
   fontColor,
 } from "@incmix/utils/types"
 
+export const shades = [3, 4, 5, 6, 7, 8, 9, 10, 11] as const
+export type Shade = (typeof shades)[number]
+
 export type TextColor = {
   color: RadixAnyColor
   pastel?: boolean

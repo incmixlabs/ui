@@ -1,5 +1,5 @@
-const shades = [3, 4, 5, 6, 7, 8, 9, 10, 11] as const
-export type Shade = (typeof shades)[number]
+import { Box, Flex, Grid, Text } from "../radix-ui"
+import { shades } from "./color"
 const accentColors = [
   "gold",
   "brown",
@@ -19,7 +19,6 @@ const accentColors = [
 ] as const
 
 const grayColors = ["slate"] as const
-import { Box, Flex, Grid, Text } from "./radix-ui"
 export type GrayColor = (typeof grayColors)[number]
 export type AccentColor = (typeof accentColors)[number]
 export const paleColors = ["yellow", "amber", "mint", "sky", "lime"] as const

@@ -4,6 +4,7 @@ import { useFieldArray, type useForm } from "react-hook-form"
 import type { z } from "zod"
 import { beautifyObjectName } from "../utils"
 import AutoFormObject from "./object"
+import React from "react"
 
 export default function AutoFormArray({
   name,
