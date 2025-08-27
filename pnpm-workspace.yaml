@@ -70,6 +70,7 @@ catalog:
   '@typescript-eslint/utils': 8.39.0
   '@vitejs/plugin-react': 4.7.0
   '@vitejs/plugin-react-swc': 3.11.0
+  '@ttoss/react-feature-flags': ^0.2.14
   autoprefixer: 10.4.21
   class-variance-authority: 0.7.1
   classnames: 2.5.1

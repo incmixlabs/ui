@@ -21,7 +21,8 @@
     "./tasks": "./src/tasks/index.ts",
     "./translations": "./src/translations/index.ts",
     "./users": "./src/users/index.ts",
-    "./route-config": "./src/route-config.ts"
+    "./route-config": "./src/route-config.ts",
+    "./feature-flags": "./src/feature-flags.ts"
   },
   "scripts": {
     "build": "pnpm clean && echo 'Skipping build' && exit 0",
@@ -38,6 +39,7 @@
     "@tanstack/react-router": "catalog:",
     "@tanstack/react-table": "catalog:",
     "@tanstack/zod-form-adapter": "catalog:",
+    "@ttoss/react-feature-flags": "catalog:",
     "i18next": "catalog:",
     "i18next-chained-backend": "catalog:",
     "i18next-http-backend": "catalog:",
