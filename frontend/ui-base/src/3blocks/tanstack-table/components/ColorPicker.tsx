@@ -14,6 +14,10 @@ interface ColorPickerProps {
   // Optional prop to determine if component is inside a dialog
   insideDialog?: boolean
   size?: "sm" | "md" | "lg"
+  // Color picker mode - determines which colors to show
+  colorType?: "base" | "all" | "monochromatic" | "monochromatic-shades-only"
+  // Base color for monochromatic mode
+  baseColor?: string
 }
 
 /**
@@ -24,6 +28,8 @@ const ColorPicker: FC<ColorPickerProps> = ({
   onChange,
   insideDialog = false,
   size = "md",
+  colorType = "all",
+  baseColor = "blue",
 }) => {
   const [open, setOpen] = useState(false)
 
@@ -71,8 +77,17 @@ const ColorPicker: FC<ColorPickerProps> = ({
       >
         <BaseColorPicker
           onColorSelect={handleColorSelect}
-          colorType="base"
+          colorType={
+            colorType === "monochromatic-shades-only" 
+              ? "monochromatic-shades-only" 
+              : colorType === "monochromatic" 
+                ? "base" 
+                : colorType === "all"
+                  ? "base" // Show base colors when not in monochromatic mode
+                  : colorType
+          }
           activeColor={normalizeToHex(color)}
+          selectedBaseColor={baseColor}
         />
       </Popover.Content>
     </Popover.Root>

@@ -9,8 +9,9 @@ export interface ColorSelectType {
 
 interface CompactColorPickerProps {
   onColorSelect: (color: { hex: string; name?: string }) => void
-  colorType?: "base" | "all"
+  colorType?: "base" | "all" | "monochromatic" | "monochromatic-shades-only"
   activeColor?: string
+  selectedBaseColor?: string
 }
 
 const baseColors = [
@@ -66,6 +67,7 @@ const ColorPicker = ({
   onColorSelect,
   colorType = "all",
   activeColor,
+  selectedBaseColor = "blue",
 }: CompactColorPickerProps) => {
   // Dark colors - displayed horizontally
   const darkColors = [
@@ -133,6 +135,93 @@ const ColorPicker = ({
               )}
             </button>
           ))}
+        </div>
+      </div>
+    )
+  }
+  
+  if (colorType === "monochromatic" || colorType === "monochromatic-shades-only") {
+    // Generate shades for the selected base color (reverse order for lighter to darker)
+    const monochromaticShades = []
+    for (let i = 9; i >= 1; i--) {
+      monochromaticShades.push(`var(--${selectedBaseColor}-${i})`)
+    }
+    
+    return (
+      <div className="rounded-lg bg-gray-5 p-2">
+        {/* Base color selection - only show in full monochromatic mode */}
+        {colorType === "monochromatic" && (
+          <div className="mb-3">
+            <div className="mb-2 text-xs font-medium text-gray-11">Base colors</div>
+            <div className="grid grid-cols-6 gap-2">
+              {baseColors.map((color) => {
+                const isSelected = color === selectedBaseColor
+                return (
+                  <button
+                    key={color}
+                    type="button"
+                    className={cn(
+                      "h-6 w-6 cursor-pointer rounded-full transition-all hover:scale-110",
+                      "flex items-center justify-center",
+                      isSelected && "ring-2 ring-blue-8 ring-offset-1"
+                    )}
+                    style={{ backgroundColor: `var(--${color}-6)` }}
+                    onClick={() =>
+                      onColorSelect({ hex: `var(--${color}-6)`, name: color })
+                    }
+                    title={color}
+                  >
+                    {isSelected && (
+                      <Check className={`${iconSize} flex-shrink-0 text-white`} />
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )}
+        
+        {/* Shades of selected color */}
+        <div>
+          <div className="mb-2 text-xs font-medium text-gray-11">
+            Shades of {selectedBaseColor}
+          </div>
+          <div className="grid grid-cols-9 gap-1">
+            {monochromaticShades.map((shade, index) => {
+              const shadeNumber = 9 - index
+              const varName = `--${selectedBaseColor}-${shadeNumber}`
+              const isActiveShade = activeColor && (
+                activeColor.includes(varName) || 
+                activeColor === shade
+              )
+              
+              return (
+                <button
+                  key={shade}
+                  type="button"
+                  className={cn(
+                    "h-6 w-6 cursor-pointer rounded-sm transition-transform hover:scale-110",
+                    "flex items-center justify-center",
+                    isActiveShade && "ring-2 ring-blue-8 ring-offset-1"
+                  )}
+                  style={{ backgroundColor: shade }}
+                  onClick={() => {
+                    // Return the CSS variable directly instead of converting to hex
+                    // This maintains consistency with how colors are stored
+                    onColorSelect({
+                      hex: shade, // Use the CSS variable directly
+                      name: `${selectedBaseColor}-${shadeNumber}`,
+                    })
+                  }}
+                  title={`${selectedBaseColor} ${shadeNumber}`}
+                >
+                  {isActiveShade && (
+                    <Check className={`flex-shrink-0 text-xs ${shadeNumber <= 5 ? 'text-gray-12' : 'text-white'}`} />
+                  )}
+                </button>
+              )
+            })}
+          </div>
         </div>
       </div>
     )

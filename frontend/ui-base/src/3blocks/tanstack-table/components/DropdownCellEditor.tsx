@@ -381,10 +381,10 @@ export const DropdownCellEditor: React.FC<DropdownCellEditorProps> = ({
               disabled={!customValue.trim() || isCreating}
             >
               {isCreating ? (
-                <div className="flex items-center justify-center gap-2">
-                  <div className="h-3 w-3 animate-spin rounded-full border border-white border-t-transparent" />
+                <Box className="flex items-center justify-center gap-2">
+                  <Box className="h-3 w-3 animate-spin rounded-full border border-white border-t-transparent" />
                   Creating...
-                </div>
+                </Box>
               ) : (
                 createButtonText
               )}

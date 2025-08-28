@@ -1,5 +1,5 @@
-import { Box, Button, Dialog, Flex, Input, Text } from "@/src/1base"
-import { useState } from "react"
+import { Box, Button, Dialog, Flex, Input, Text, Switch } from "@/src/1base"
+import { useState, useCallback } from "react"
 import type { DropdownOption } from "../cell-renderers"
 import ColorPicker from "./ColorPicker"
 
@@ -24,6 +24,10 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  
+  // Monochromatic mode state
+  const [isMonochromatic, setIsMonochromatic] = useState(false)
+  const [selectedBaseColor, setSelectedBaseColor] = useState("blue")
 
   // Add a new option to the list
   const handleAddOption = () => {
@@ -44,11 +48,12 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
     const updatedOptions = [...options, newOption]
     onChange(updatedOptions)
 
-    // Reset the new option form
+    // Reset the new option form with next available color
+    const nextColor = getNextMonochromaticColor()
     setNewOption({
       label: "",
       value: "",
-      color: "var(--blue-5)",
+      color: nextColor,
     })
 
     // Clear any errors
@@ -137,6 +142,100 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
     setDeleteIndex(null)
   }
 
+  // Generate shades for a given base color
+  const generateColorShades = useCallback((baseColor: string) => {
+    const shades = []
+    for (let i = 1; i <= 9; i++) {
+      shades.push(`var(--${baseColor}-${i})`)
+    }
+    return shades
+  }, [])
+
+  // Handle monochromatic mode toggle
+  const handleMonochromaticToggle = useCallback((enabled: boolean) => {
+    setIsMonochromatic(enabled)
+    
+    if (enabled && options.length > 0) {
+      // Reassign existing options to different shades of the selected base color
+      const shades = generateColorShades(selectedBaseColor)
+      const updatedOptions = options.map((option, index) => ({
+        ...option,
+        color: shades[index % shades.length]
+      }))
+      onChange(updatedOptions)
+    }
+    
+    // Update newOption color to match monochromatic mode
+    const nextColor = enabled 
+      ? (() => {
+          const shades = generateColorShades(selectedBaseColor)
+          const usedShades = options.map(opt => opt.color)
+          // Find first unused shade or cycle through
+          for (const shade of shades) {
+            if (!usedShades.includes(shade)) {
+              return shade
+            }
+          }
+          return shades[options.length % shades.length]
+        })()
+      : "var(--blue-5)"
+    
+    setNewOption(prev => ({ ...prev, color: nextColor }))
+  }, [options, selectedBaseColor, generateColorShades, onChange])
+
+  // Handle base color selection in monochromatic mode
+  const handleBaseColorChange = useCallback((newBaseColor: string) => {
+    setSelectedBaseColor(newBaseColor)
+    
+    if (isMonochromatic && options.length > 0) {
+      // Reassign all existing options to shades of the new base color
+      const shades = generateColorShades(newBaseColor)
+      const updatedOptions = options.map((option, index) => ({
+        ...option,
+        color: shades[index % shades.length]
+      }))
+      onChange(updatedOptions)
+    }
+    
+    // Update newOption color to use new base color shade
+    if (isMonochromatic) {
+      const shades = generateColorShades(newBaseColor)
+      const usedShades = options.map(opt => opt.color)
+      let nextColor = shades[0] // default to first shade
+      
+      // Find first unused shade or cycle through
+      for (const shade of shades) {
+        if (!usedShades.includes(shade)) {
+          nextColor = shade
+          break
+        }
+      }
+      if (!nextColor || usedShades.includes(nextColor)) {
+        nextColor = shades[options.length % shades.length]
+      }
+      
+      setNewOption(prev => ({ ...prev, color: nextColor }))
+    }
+  }, [isMonochromatic, options, generateColorShades, onChange])
+
+  // Get the next available shade for new options in monochromatic mode
+  const getNextMonochromaticColor = useCallback(() => {
+    if (!isMonochromatic) return "var(--blue-5)"
+    
+    const shades = generateColorShades(selectedBaseColor)
+    const usedShades = options.map(opt => opt.color)
+    
+    // Find the first unused shade, or cycle through if all are used
+    for (const shade of shades) {
+      if (!usedShades.includes(shade)) {
+        return shade
+      }
+    }
+    
+    // If all shades are used, return the next one in sequence
+    return shades[options.length % shades.length]
+  }, [isMonochromatic, selectedBaseColor, options, generateColorShades])
+
   return (
     <>
       <Box className="mt-4">
@@ -144,6 +243,45 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
         <Text size="2" weight="bold" className="mb-3">
           Drop down data:
         </Text>
+        
+        {/* Monochromatic mode toggle */}
+        <Box className="mb-4 rounded-lg border border-gray-6 bg-gray-2 p-3">
+          <Flex align="center" justify="between" className="mb-2">
+            <Box>
+              <Text size="2" weight="medium">
+                Monochromatic Mode
+              </Text>
+              <Text size="1" color="gray" className="mt-1">
+                Use different shades of a single color family
+              </Text>
+            </Box>
+            <Switch
+              checked={isMonochromatic}
+              onCheckedChange={handleMonochromaticToggle}
+              aria-label="Enable monochromatic mode"
+            />
+          </Flex>
+          
+          {isMonochromatic && (
+            <Box className="mt-3">
+              <Text size="2" weight="medium" className="mb-2">
+                Base Color:
+              </Text>
+              <ColorPicker
+                color={`var(--${selectedBaseColor}-5)`}
+                onChange={(color) => {
+                  // Extract base color name from CSS variable
+                  const colorMatch = color.match(/--([a-z]+)-/)
+                  if (colorMatch) {
+                    handleBaseColorChange(colorMatch[1])
+                  }
+                }}
+                colorType="base"
+                size="md"
+              />
+            </Box>
+          )}
+        </Box>
 
         {/* Global error messages */}
         {errors.delete && (
@@ -172,6 +310,8 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
                       onChange={(color) =>
                         handleUpdateOption(index, "color", color)
                       }
+                      colorType={isMonochromatic ? "monochromatic-shades-only" : "all"}
+                      baseColor={selectedBaseColor}
                     />
                   </Box>
 
@@ -212,8 +352,10 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
           <Flex align="center" gap="2" className="w-full">
             <Box className="flex min-w-10 items-center justify-center">
               <ColorPicker
-                color={newOption.color || "var(--blue-5)"}
+                color={newOption.color || getNextMonochromaticColor()}
                 onChange={(color) => setNewOption({ ...newOption, color })}
+                colorType={isMonochromatic ? "monochromatic-shades-only" : "all"}
+                baseColor={selectedBaseColor}
               />
             </Box>
 
