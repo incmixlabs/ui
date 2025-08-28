@@ -78,10 +78,10 @@ const ColorPicker: FC<ColorPickerProps> = ({
         <BaseColorPicker
           onColorSelect={handleColorSelect}
           colorType={
-            colorType === "monochromatic-shades-only" 
-              ? "monochromatic-shades-only" 
-              : colorType === "monochromatic" 
-                ? "base" 
+            colorType === "monochromatic-shades-only"
+              ? "monochromatic-shades-only"
+              : colorType === "monochromatic"
+                ? "base"
                 : colorType === "all"
                   ? "base" // Show base colors when not in monochromatic mode
                   : colorType

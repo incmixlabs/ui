@@ -139,20 +139,25 @@ const ColorPicker = ({
       </div>
     )
   }
-  
-  if (colorType === "monochromatic" || colorType === "monochromatic-shades-only") {
+
+  if (
+    colorType === "monochromatic" ||
+    colorType === "monochromatic-shades-only"
+  ) {
     // Generate shades for the selected base color (reverse order for lighter to darker)
     const monochromaticShades = []
     for (let i = 9; i >= 1; i--) {
       monochromaticShades.push(`var(--${selectedBaseColor}-${i})`)
     }
-    
+
     return (
       <div className="rounded-lg bg-gray-5 p-2">
         {/* Base color selection - only show in full monochromatic mode */}
         {colorType === "monochromatic" && (
           <div className="mb-3">
-            <div className="mb-2 text-xs font-medium text-gray-11">Base colors</div>
+            <div className="mb-2 font-medium text-gray-11 text-xs">
+              Base colors
+            </div>
             <div className="grid grid-cols-6 gap-2">
               {baseColors.map((color) => {
                 const isSelected = color === selectedBaseColor
@@ -172,7 +177,9 @@ const ColorPicker = ({
                     title={color}
                   >
                     {isSelected && (
-                      <Check className={`${iconSize} flex-shrink-0 text-white`} />
+                      <Check
+                        className={`${iconSize} flex-shrink-0 text-white`}
+                      />
                     )}
                   </button>
                 )
@@ -180,21 +187,20 @@ const ColorPicker = ({
             </div>
           </div>
         )}
-        
+
         {/* Shades of selected color */}
         <div>
-          <div className="mb-2 text-xs font-medium text-gray-11">
+          <div className="mb-2 font-medium text-gray-11 text-xs">
             Shades of {selectedBaseColor}
           </div>
           <div className="grid grid-cols-9 gap-1">
             {monochromaticShades.map((shade, index) => {
               const shadeNumber = 9 - index
               const varName = `--${selectedBaseColor}-${shadeNumber}`
-              const isActiveShade = activeColor && (
-                activeColor.includes(varName) || 
-                activeColor === shade
-              )
-              
+              const isActiveShade =
+                activeColor &&
+                (activeColor.includes(varName) || activeColor === shade)
+
               return (
                 <button
                   key={shade}
@@ -216,7 +222,9 @@ const ColorPicker = ({
                   title={`${selectedBaseColor} ${shadeNumber}`}
                 >
                   {isActiveShade && (
-                    <Check className={`flex-shrink-0 text-xs ${shadeNumber <= 5 ? 'text-gray-12' : 'text-white'}`} />
+                    <Check
+                      className={`flex-shrink-0 text-xs ${shadeNumber <= 5 ? "text-gray-12" : "text-white"}`}
+                    />
                   )}
                 </button>
               )
