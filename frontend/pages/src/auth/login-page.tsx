@@ -14,6 +14,8 @@ import {
 } from "./hooks/auth"
 
 import AutoForm from "@incmix/ui/auto-form"
+import { useFeatureFlag } from "@ttoss/react-feature-flags"
+import { FEATURE_FLAGS } from "../feature-flags"
 import { AuthLayout } from "./layouts/auth-layout"
 import { loginFormSchema } from "./login-form-schema"
 
@@ -129,7 +131,7 @@ function LoginPage() {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const { authUser, isLoading, isError } = useAuth()
-
+  const dashboardEnabled = useFeatureFlag(FEATURE_FLAGS.DASHBOARD_ENABLED)
   useEffect(() => {
     const setupListener = setupGoogleAuthCallbackListener(queryClient)
 
@@ -144,9 +146,9 @@ function LoginPage() {
 
   useEffect(() => {
     if (authUser && !isLoading && !isError) {
-      navigate({ to: "/dashboard" })
+      navigate({ to: dashboardEnabled ? "/dashboard" : "/projects" })
     }
-  }, [authUser, isLoading, isError, navigate])
+  }, [authUser, isLoading, isError, navigate, dashboardEnabled])
 
   if (isLoading) {
     return <LoadingPage />

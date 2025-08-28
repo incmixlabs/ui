@@ -1,13 +1,10 @@
-import React, { Suspense, useEffect, useMemo } from "react"
+import React, { Suspense, useEffect } from "react"
 
 import { useQuery } from "@tanstack/react-query"
-import { RouterProvider } from "@tanstack/react-router"
 import { setDefaultOptions } from "date-fns"
 
-import { useAuth } from "@incmix/pages"
 import { LoadingPage } from "@incmix/pages/common"
 import { I18n, usei18n } from "@incmix/pages/i18n"
-import { buildRouteTree } from "@incmix/pages/route-config"
 import { database as db } from "@incmix/store"
 import {
   useAppearanceStore,
@@ -16,6 +13,8 @@ import {
 import { Theme, Toaster } from "@incmix/ui"
 import { Provider as RxdbProvider } from "rxdb-hooks"
 
+import { FeatureFlagsProvider } from "./components/FeatureFlagsProvider"
+import RouteProvider from "./route-provider"
 import { translations } from "./translations"
 
 function App() {
@@ -54,13 +53,6 @@ function App() {
       setDefaultOptions({ locale: language })
     }
   }, [language])
-
-  const { authUser, isLoading } = useAuth()
-
-  const router = useMemo(() => {
-    // Only rebuild router when auth state actually changes meaningfully
-    return buildRouteTree(authUser, isLoading)
-  }, [authUser?.isSuperAdmin, authUser?.id, isLoading])
 
   useEffect(() => {
     const root = document.documentElement
@@ -108,20 +100,22 @@ function App() {
   }, [sidebarColors, dashboardColors, indicatorColors, radius])
 
   return (
-    <Theme
-      appearance={appearance.appearance}
-      accentColor={accentColor}
-      grayColor={grayColor}
-      radius={radius}
-      scaling={scaling}
-    >
-      <RxdbProvider db={db as any}>
-        <Suspense fallback={<LoadingPage />}>
-          <Toaster />
-          <RouterProvider router={router} />
-        </Suspense>
-      </RxdbProvider>
-    </Theme>
+    <FeatureFlagsProvider>
+      <Theme
+        appearance={appearance.appearance}
+        accentColor={accentColor}
+        grayColor={grayColor}
+        radius={radius}
+        scaling={scaling}
+      >
+        <RxdbProvider db={db as any}>
+          <Suspense fallback={<LoadingPage />}>
+            <Toaster />
+            <RouteProvider />
+          </Suspense>
+        </RxdbProvider>
+      </Theme>
+    </FeatureFlagsProvider>
   )
 }
 

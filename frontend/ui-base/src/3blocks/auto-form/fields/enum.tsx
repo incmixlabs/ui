@@ -1,6 +1,7 @@
 // components/auto-form/fields/enum.tsx - Enhanced with color support
 import { FormControl, FormItem, FormMessage, Select } from "@/base"
 import { cn } from "@/utils/cn"
+import { useFormContext } from "react-hook-form"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 import { getBaseSchema } from "../utils"
@@ -19,6 +20,11 @@ export default function AutoFormEnum({
   zodItem,
   fieldProps,
 }: AutoFormInputComponentProps) {
+  // Access form context to check for errors (supports nested names)
+  const { getFieldState, formState } = useFormContext()
+  const { error } = getFieldState(field.name, formState)
+  const hasError = Boolean(error)
+
   // Default to empty array for values
   let values: OptionWithColor[] = []
 
@@ -103,8 +109,16 @@ export default function AutoFormEnum({
           {...fieldProps}
         >
           <Select.Trigger
-            className={cn("min-w-[140px]", fieldProps?.className)}
+            className={cn(
+              "min-w-[140px]",
+              hasError
+                ? "border-2 border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900"
+                : "border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:focus:ring-blue-900",
+              fieldProps?.className
+            )}
             aria-labelledby={`${field.name}-label`}
+            aria-invalid={hasError}
+            aria-describedby={hasError ? `${field.name}-error` : undefined}
           >
             {selectedOption ? (
               <OptionDisplay option={selectedOption} isSelected />
@@ -128,8 +142,11 @@ export default function AutoFormEnum({
           </Select.Content>
         </Select.Root>
       </FormControl>
-      <div>
-        <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
+      <div className="mt-0.5 min-h-[1.25rem]">
+        <FormMessage
+          id={`${field.name}-error`}
+          className="block max-w-full whitespace-normal break-words text-red-500 text-sm"
+        />
       </div>
     </FormItem>
   )

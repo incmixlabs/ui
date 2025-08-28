@@ -86,9 +86,13 @@ export default function AutoFormInput({
           <Input
             {...restFieldProps}
             type={inputType}
-            className={`h-10 w-full rounded-md border border-gray-300 bg-white text-gray-900 dark:border-0 dark:bg-zinc-950 dark:text-white ${icon ? "pl-10" : "px-4"}
+            className={`h-10 w-full rounded-md bg-white text-gray-900 dark:bg-zinc-950 dark:text-white ${icon ? "pl-10" : "px-4"}
               ${type === "password" ? "pr-10" : ""}
-              ${hasError ? "border border-red-500" : ""}focus-visible:ring-0 focus-visible:ring-offset-0`}
+              ${
+                hasError
+                  ? "border-2 border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900"
+                  : "border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:focus:ring-blue-900"
+              } focus-visible:ring-0 focus-visible:ring-offset-0`}
             placeholder={
               restFieldProps.placeholder || `Enter ${label.toLowerCase()}`
             }
@@ -116,7 +120,7 @@ export default function AutoFormInput({
       </div>
 
       {/* Fixed height error message container to prevent layout shift */}
-      <div>
+      <div className="mt-0.5 h-4">
         <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
       </div>
     </FormItem>
