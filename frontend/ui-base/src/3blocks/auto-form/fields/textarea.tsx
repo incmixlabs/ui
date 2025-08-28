@@ -1,4 +1,5 @@
 import { FormControl, FormItem, FormMessage, TextArea } from "@/base"
+import { useFormContext } from "react-hook-form"
 import AutoFormLabel from "../common/label"
 import type { AutoFormInputComponentProps } from "../types"
 
@@ -17,10 +18,17 @@ import type { AutoFormInputComponentProps } from "../types"
 export default function AutoFormTextarea({
   label,
   isRequired,
+  field,
   fieldProps,
 }: AutoFormInputComponentProps) {
   const { showLabel: _showLabel, ...fieldPropsWithoutShowLabel } = fieldProps
   const showLabel = _showLabel === undefined ? true : _showLabel
+
+  // Access form context to check for errors (supports nested names)
+  const { getFieldState, formState } = useFormContext()
+  const { error } = getFieldState(field.name, formState)
+  const hasError = Boolean(error)
+  const fieldName = field.name
 
   return (
     <FormItem className="flex w-full flex-col space-y-2">
@@ -35,7 +43,15 @@ export default function AutoFormTextarea({
       )}
       <FormControl>
         <TextArea
-          className="w-full resize-none rounded-md border border-gray-300 bg-white text-gray-900 focus-visible:ring-0 focus-visible:ring-offset-0 dark:border-0 dark:bg-zinc-950 dark:text-white"
+          {...field}
+          id={field.name}
+          aria-invalid={hasError}
+          aria-describedby={hasError ? `${fieldName}-error` : undefined}
+          className={`w-full resize-none rounded-md bg-white text-gray-900 dark:bg-zinc-950 dark:text-white ${
+            hasError
+              ? "border-2 border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200 dark:focus:ring-red-900"
+              : "border-2 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:focus:ring-blue-900"
+          } focus-visible:ring-0 focus-visible:ring-offset-0`}
           placeholder={
             fieldPropsWithoutShowLabel?.placeholder ||
             `Enter ${label.toLowerCase()}`
@@ -43,8 +59,11 @@ export default function AutoFormTextarea({
           {...fieldPropsWithoutShowLabel}
         />
       </FormControl>
-      <div>
-        <FormMessage className="block max-w-full whitespace-normal break-words text-red-500 text-sm" />
+      <div className="mt-0.5 min-h-[1.25rem]">
+        <FormMessage
+          id={`${fieldName}-error`}
+          className="block max-w-full whitespace-normal break-words text-red-500 text-sm"
+        />
       </div>
     </FormItem>
   )

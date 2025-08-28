@@ -62,7 +62,7 @@ type Story = StoryObj<typeof meta>
 const basicSchema = z.object({
   username: z.string().min(1, "Username is required"),
   email: z.string().email("Invalid email address"),
-  age: z.number().min(18, "Must be at least 18 years old"),
+  age: z.coerce.number().gte(18, "Must be 18 and above"),
   bio: z.string().optional(),
 })
 

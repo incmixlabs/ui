@@ -1,6 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import jsonSchemaToZod from "json-schema-to-zod"
-import { type DefaultValues, useForm } from "react-hook-form"
+import {
+  type DefaultValues,
+  type UseFormReturn,
+  useForm,
+  useFormContext,
+} from "react-hook-form"
 import { z } from "zod"
 
 import { Box, Button, Form } from "@/base"
@@ -60,8 +65,25 @@ export function AutoFormSubmit({
   children?: React.ReactNode
   className?: string
 }) {
+  // Guard useFormContext call to prevent crashes when outside FormProvider
+  let formCtx: UseFormReturn<any> | null
+  try {
+    formCtx = useFormContext()
+  } catch {
+    formCtx = null
+  }
+
+  const hasErrors = formCtx
+    ? Object.keys(formCtx.formState.errors).length > 0
+    : false
+  const isSubmitting = formCtx?.formState?.isSubmitting || false
+  const isValidating = formCtx?.formState?.isValidating || false
+
+  // Disable when: has errors, is submitting, is validating, or no form context
+  const isDisabled = hasErrors || isSubmitting || isValidating || !formCtx
+
   return (
-    <Button type="submit" className={className}>
+    <Button type="submit" className={className} disabled={isDisabled}>
       {children ?? "Submit"}
     </Button>
   )
