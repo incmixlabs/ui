@@ -68,6 +68,7 @@ const sampleOptions: Option[] = [
   {
     value: "frontend",
     label: "Frontend Development",
+    color: "indigo",
   },
   {
     value: "backend",

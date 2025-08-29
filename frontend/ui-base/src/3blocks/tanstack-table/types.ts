@@ -1,5 +1,6 @@
+import type { Column, Row } from "@tanstack/react-table"
 // File: components/DataTable/types.ts
-import type { ReactNode } from "react"
+import type { CSSProperties, ReactNode } from "react"
 
 // Define all supported column types
 export type ColumnType =
@@ -45,6 +46,18 @@ export interface DataTableColumn<TData> {
 
   // Custom renderer - fixed type to be more flexible with value types
   renderer?: (value: any, row: TData) => ReactNode
+
+  // Cell attributes for styling table cells
+  cellAttributes?:
+    | { className?: string; style?: CSSProperties }
+    | ((cell: {
+        getValue: () => any
+        row: Row<TData>
+        column: Column<TData>
+      }) => {
+        className?: string
+        style?: CSSProperties
+      })
 
   // Inline editing properties
   enableInlineEdit?: boolean

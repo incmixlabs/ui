@@ -1,5 +1,5 @@
 import { cn } from "@/shadcn/lib/utils"
-import { iconSize } from "@/src/1base"
+import { Box, iconSize } from "@/src/1base"
 import { Check } from "lucide-react"
 
 export interface ColorSelectType {
@@ -9,8 +9,9 @@ export interface ColorSelectType {
 
 interface CompactColorPickerProps {
   onColorSelect: (color: { hex: string; name?: string }) => void
-  colorType?: "base" | "all"
+  colorType?: "base" | "all" | "monochromatic" | "monochromatic-shades-only"
   activeColor?: string
+  selectedBaseColor?: string
 }
 
 const baseColors = [
@@ -35,7 +36,7 @@ const generateColorArray = (color: string, reverse = false) => {
 }
 
 function cssVarToHex(varName: string) {
-  const tempElem = document.createElement("div")
+  const tempElem = document.createElement("Box")
   tempElem.style.color = `var(${varName})`
   document.body.appendChild(tempElem)
 
@@ -66,6 +67,7 @@ const ColorPicker = ({
   onColorSelect,
   colorType = "all",
   activeColor,
+  selectedBaseColor = "blue",
 }: CompactColorPickerProps) => {
   // Dark colors - displayed horizontally
   const darkColors = [
@@ -111,8 +113,8 @@ const ColorPicker = ({
 
   if (colorType === "base") {
     return (
-      <div className="rounded-lg bg-gray-5 p-2">
-        <div className="grid grid-cols-6 gap-2">
+      <Box className="rounded-lg bg-gray-5 p-2">
+        <Box className="grid grid-cols-6 gap-2">
           {baseColors.map((color) => (
             <button
               key={color}
@@ -133,14 +135,109 @@ const ColorPicker = ({
               )}
             </button>
           ))}
-        </div>
-      </div>
+        </Box>
+      </Box>
+    )
+  }
+
+  if (
+    colorType === "monochromatic" ||
+    colorType === "monochromatic-shades-only"
+  ) {
+    // Generate shades for the selected base color (reverse order for lighter to darker)
+    const monochromaticShades = []
+    for (let i = 9; i >= 1; i--) {
+      monochromaticShades.push(`var(--${selectedBaseColor}-${i})`)
+    }
+
+    return (
+      <Box className="rounded-lg bg-gray-5 p-2">
+        {/* Base color selection - only show in full monochromatic mode */}
+        {colorType === "monochromatic" && (
+          <Box className="mb-3">
+            <Box className="mb-2 font-medium text-gray-11 text-xs">
+              Base colors
+            </Box>
+            <Box className="grid grid-cols-6 gap-2">
+              {baseColors.map((color) => {
+                const isSelected = color === selectedBaseColor
+                return (
+                  <button
+                    key={color}
+                    type="button"
+                    className={cn(
+                      "h-6 w-6 cursor-pointer rounded-full transition-all hover:scale-110",
+                      "flex items-center justify-center",
+                      isSelected && "ring-2 ring-blue-8 ring-offset-1"
+                    )}
+                    style={{ backgroundColor: `var(--${color}-6)` }}
+                    onClick={() =>
+                      onColorSelect({ hex: `var(--${color}-6)`, name: color })
+                    }
+                    title={color}
+                  >
+                    {isSelected && (
+                      <Check
+                        className={`${iconSize} flex-shrink-0 text-white`}
+                      />
+                    )}
+                  </button>
+                )
+              })}
+            </Box>
+          </Box>
+        )}
+
+        {/* Shades of selected color */}
+        <Box>
+          <Box className="mb-2 font-medium text-gray-11 text-xs">
+            Shades of {selectedBaseColor}
+          </Box>
+          <Box className="grid grid-cols-9 gap-1">
+            {monochromaticShades.map((shade, index) => {
+              const shadeNumber = 9 - index
+              const varName = `--${selectedBaseColor}-${shadeNumber}`
+              const isActiveShade =
+                activeColor &&
+                (activeColor.includes(varName) || activeColor === shade)
+
+              return (
+                <button
+                  key={shade}
+                  type="button"
+                  className={cn(
+                    "h-6 w-6 cursor-pointer rounded-sm transition-transform hover:scale-110",
+                    "flex items-center justify-center",
+                    isActiveShade && "ring-2 ring-blue-8 ring-offset-1"
+                  )}
+                  style={{ backgroundColor: shade }}
+                  onClick={() => {
+                    // Return the CSS variable directly instead of converting to hex
+                    // This maintains consistency with how colors are stored
+                    onColorSelect({
+                      hex: shade, // Use the CSS variable directly
+                      name: `${selectedBaseColor}-${shadeNumber}`,
+                    })
+                  }}
+                  title={`${selectedBaseColor} ${shadeNumber}`}
+                >
+                  {isActiveShade && (
+                    <Check
+                      className={`flex-shrink-0 text-xs ${shadeNumber <= 5 ? "text-gray-12" : "text-white"}`}
+                    />
+                  )}
+                </button>
+              )
+            })}
+          </Box>
+        </Box>
+      </Box>
     )
   }
 
   return (
-    <div className="rounded-lg bg-gray-5 p-2">
-      <div className="mb-1 flex justify-between">
+    <Box className="rounded-lg bg-gray-5 p-2">
+      <Box className="mb-1 flex justify-between">
         {darkColors.map((color) => (
           <button
             key={`dark-${color}`}
@@ -154,11 +251,11 @@ const ColorPicker = ({
             title={color}
           />
         ))}
-      </div>
+      </Box>
 
-      <div className="flex justify-between">
+      <Box className="flex justify-between">
         {colorGroups.map((group, groupIndex) => (
-          <div key={`group-${groupIndex}`} className="flex flex-col gap-1">
+          <Box key={`group-${groupIndex}`} className="flex flex-col gap-1">
             {group.map((color) => {
               const varNameMatch = color.match(/^var\((--.+)\)$/)
               const varName = varNameMatch ? varNameMatch[1] : color
@@ -182,10 +279,10 @@ const ColorPicker = ({
                 />
               )
             })}
-          </div>
+          </Box>
         ))}
-      </div>
-    </div>
+      </Box>
+    </Box>
   )
 }
 

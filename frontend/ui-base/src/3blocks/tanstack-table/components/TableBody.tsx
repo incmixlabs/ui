@@ -189,6 +189,16 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           // Get the cell value
           const cellValue = cell.getValue()
 
+          // Process cellAttributes from column definition
+          const cellAttributes =
+            typeof columnDef?.cellAttributes === "function"
+              ? columnDef.cellAttributes({
+                  getValue: () => cellValue,
+                  row: row,
+                  column: cell.column,
+                })
+              : columnDef?.cellAttributes || {}
+
           // Special styling for the checkbox column
           if (cell.column.id === "select") {
             return (
@@ -208,8 +218,9 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
                 isEditableCell && isSelected?.(row.id, cell.column.id)
                   ? "bg-blue-50/30"
                   : ""
-              }`}
+              } ${cellAttributes?.className || ""}`}
               style={{
+                ...cellAttributes?.style,
                 width: columnDef?.width,
                 minWidth: columnDef?.minWidth,
                 maxWidth: columnDef?.maxWidth,
