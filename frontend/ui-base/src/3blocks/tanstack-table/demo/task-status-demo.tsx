@@ -475,18 +475,19 @@ const TASK_TABLE_COLUMNS: ExtendedColumnConfig[] = [
     enableInlineEdit: true,
     // Apply initial metadata
     meta: STATUS_COLUMN_META,
-    // Custom cell renderer with full-cell display style
+    // Custom cell renderer that respects column meta cellDisplayStyle
     cell: (props: {
       getValue: () => any
       row: { original: any }
       column: { columnDef: any }
     }) => {
       const value = props.getValue() as string
+      const displayStyle = props.column.columnDef?.meta?.cellDisplayStyle ?? 'full-cell'
       return (
         <StatusCellRenderer
           value={value}
           options={STATUS_OPTIONS}
-          displayStyle="full-cell"
+          displayStyle={displayStyle}
         />
       )
     },

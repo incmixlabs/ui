@@ -280,6 +280,9 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
                   const colorMatch = color.match(/--([a-z]+)-/)
                   if (colorMatch) {
                     handleBaseColorChange(colorMatch[1])
+                  } else {
+                    // Fallback: if no CSS variable matched, preserve current selection
+                    handleBaseColorChange(selectedBaseColor)
                   }
                 }}
                 colorType="base"

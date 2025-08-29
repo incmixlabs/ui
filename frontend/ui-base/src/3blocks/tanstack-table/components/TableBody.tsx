@@ -220,10 +220,10 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
                   : ""
               } ${cellAttributes?.className || ""}`}
               style={{
+                ...cellAttributes?.style,
                 width: columnDef?.width,
                 minWidth: columnDef?.minWidth,
                 maxWidth: columnDef?.maxWidth,
-                ...cellAttributes?.style,
               }}
               role={enableInlineCellEdit ? "gridcell" : undefined}
               aria-colindex={

@@ -1,6 +1,7 @@
 import {
   adjustColorBrightness,
   getContrastingTextColor,
+  normalizeToHex,
 } from "@incmix/store/color"
 import type { DropdownOption } from "../cell-renderers"
 
@@ -31,8 +32,10 @@ export const StatusCellRenderer: React.FC<StatusCellRendererProps> = ({
   }
 
   const backgroundColor = displayOption.color || "#e5e7eb"
-  const textColor = getContrastingTextColor(backgroundColor)
-  const borderColor = adjustColorBrightness(backgroundColor, -20)
+  // Resolve CSS variables to hex before passing to color math functions
+  const normalizedBackgroundColor = normalizeToHex(backgroundColor)
+  const textColor = getContrastingTextColor(normalizedBackgroundColor)
+  const borderColor = adjustColorBrightness(normalizedBackgroundColor, -20)
 
   if (displayStyle === "full-cell") {
     return (

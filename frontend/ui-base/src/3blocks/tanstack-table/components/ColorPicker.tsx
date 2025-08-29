@@ -34,6 +34,7 @@ const ColorPicker: FC<ColorPickerProps> = ({
   const [open, setOpen] = useState(false)
 
   const handleColorSelect = (colorData: ColorSelectType) => {
+    // Preserve CSS variables when available, otherwise use hex
     onChange(colorData.hex)
     setOpen(false)
   }

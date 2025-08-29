@@ -144,6 +144,7 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
     // Add dropdown options for dropdown columns
     if (columnType === "Dropdown") {
       updates.meta = {
+        ...column.meta,
         dropdownOptions,
         strictDropdown,
         cellDisplayStyle,
