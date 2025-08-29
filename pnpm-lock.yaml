@@ -16,8 +16,8 @@ catalogs:
       specifier: 5.2.1
       version: 5.2.1
     '@incmix/utils':
-      specifier: 0.45.1
-      version: 0.45.1
+      specifier: 0.47.1
+      version: 0.47.1
     '@julr/vite-plugin-validate-env':
       specifier: 2.2.0
       version: 2.2.0
@@ -322,7 +322,7 @@ importers:
         version: link:../../frontend/ui
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.45.1(zod@4.0.15)
+        version: 0.47.1(zod@4.0.15)
       '@sentry/react':
         specifier: 8.51.0
         version: 8.51.0(react@19.1.1)
@@ -416,7 +416,7 @@ importers:
         version: link:../../frontend/ui
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.45.1(zod@4.0.15)
+        version: 0.47.1(zod@4.0.15)
       '@storybook/blocks':
         specifier: ^8.6.14
         version: 8.6.14(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(storybook@9.1.2(@testing-library/dom@10.4.0)(prettier@3.6.2)(vite@7.0.6(@types/node@24.1.0)(jiti@2.5.1)(lightningcss@1.30.1)(tsx@4.20.3)(yaml@2.8.1)))
@@ -501,7 +501,7 @@ importers:
         version: link:../ui
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.45.1(zod@4.0.15)
+        version: 0.47.1(zod@4.0.15)
       '@radix-ui/themes':
         specifier: 'catalog:'
         version: 3.2.1(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -604,7 +604,7 @@ importers:
         version: 0.3.7
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.45.1(zod@4.0.15)
+        version: 0.47.1(zod@4.0.15)
       '@koale/useworker':
         specifier: 4.1.0
         version: 4.1.0(react@19.1.1)
@@ -716,7 +716,7 @@ importers:
         version: link:../store
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.45.1(zod@4.0.15)
+        version: 0.47.1(zod@4.0.15)
       '@mantine/hooks':
         specifier: 8.1.2
         version: 8.1.2(react@19.1.1)
@@ -1165,13 +1165,13 @@ importers:
     dependencies:
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.45.1(zod@4.0.15)
+        version: 0.47.1(zod@4.0.15)
 
   shared/config:
     dependencies:
       '@incmix/utils':
         specifier: 'catalog:'
-        version: 0.45.1(zod@4.0.15)
+        version: 0.47.1(zod@4.0.15)
     devDependencies:
       next:
         specifier: 15.1.4
@@ -2570,8 +2570,8 @@ packages:
       react: 19.1.0
       react-dom: 19.1.0
 
-  '@incmix/utils@0.45.1':
-    resolution: {integrity: sha512-o4jKqEJ/uSpEHJDDSpSK9cSMxcFJq3YsHfBoKcJ9ArbZKesVJMb8Mw5BG/6aeqUs80fP+v/5d9YGUh9xk7xt9g==}
+  '@incmix/utils@0.47.1':
+    resolution: {integrity: sha512-6dZmXOfoWIXTn+JWWm50op1Yh6VmDoUyi7L+BLEl0Kv51ZtXNI0J7HKWptOA+tfd1+d7mw2sXWjOv7cSDdEIow==}
     engines: {node: '>=22.13.0'}
     peerDependencies:
       zod: ^4.0.0
@@ -2604,6 +2604,10 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
+
+  '@js-temporal/polyfill@0.5.1':
+    resolution: {integrity: sha512-hloP58zRVCRSpgDxmqCWJNlizAlUgJFqG2ypq79DCvyv9tHjRYMDOcPFjzfl/A1/YxDvRCZz8wvZvmapQnKwFQ==}
+    engines: {node: '>=12'}
 
   '@julr/vite-plugin-validate-env@2.2.0':
     resolution: {integrity: sha512-R00QZcgMNsATxI9beeM1n7VwMcsSyxFnvElJ0S1ZmglmeGzNyOzaVlfxyGgRb0NmIPYGwPSoJOnFI5BYR7Quug==}
@@ -6921,6 +6925,9 @@ packages:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
     hasBin: true
 
+  jsbi@4.3.2:
+    resolution: {integrity: sha512-9fqMSQbhJykSeii05nxKl4m6Eqn2P6rOlYiS+C5Dr/HPIU/7yZxu5qzbs40tgaFORiw2Amd0mirjxatXYMkIew==}
+
   jsbn@1.1.0:
     resolution: {integrity: sha512-4bYVV3aAMtDTTu4+xsDYa6sy9GyJ69/amsu9sYF2zqjiEoZA5xJi3BrfX3uY+/IekIu7MwdObdbDWpoZdBv3/A==}
 
@@ -9467,6 +9474,10 @@ packages:
     resolution: {integrity: sha512-OljLrQ9SQdOUqTaQxqL5dEfZWrXExyyWsozYlAWFawPVNuD83igl7uJD2RTkNMbniIYgt8l81eCJGIdQF7avLQ==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
+  validator@13.15.0:
+    resolution: {integrity: sha512-36B2ryl4+oL5QxZ3AzD0t5SsMNGvTtQHpjgFO5tbNxfXbMFkY822ktCDe1MnlqV3301QQI9SLHDNJokDI+Z9pA==}
+    engines: {node: '>= 0.10'}
+
   validator@13.15.15:
     resolution: {integrity: sha512-BgWVbCI72aIQy937xbawcs+hrVaN/CZ2UwutgaJ36hGqRrLNM+f5LUT/YPRbo8IV/ASeFzXszezV+y2+rq3l8A==}
     engines: {node: '>= 0.10'}
@@ -11852,15 +11863,16 @@ snapshots:
       react-resizable: 3.0.5(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       resize-observer-polyfill: 1.5.1
 
-  '@incmix/utils@0.45.1(zod@4.0.15)':
+  '@incmix/utils@0.47.1(zod@4.0.15)':
     dependencies:
       '@casl/ability': 6.7.3
       '@date-fns/tz': 1.3.1
+      '@js-temporal/polyfill': 0.5.1
       date-fns: 4.1.0
       date-fns-tz: 3.2.0(date-fns@4.1.0)
       superstruct: 2.0.2
       ulidx: 2.4.1
-      validator: 13.15.15
+      validator: 13.15.0
       zod: 4.0.15
 
   '@isaacs/cliui@8.0.2':
@@ -11908,6 +11920,10 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.4
+
+  '@js-temporal/polyfill@0.5.1':
+    dependencies:
+      jsbi: 4.3.2
 
   '@julr/vite-plugin-validate-env@2.2.0(vite@7.0.6(@types/node@24.1.0)(jiti@2.5.1)(lightningcss@1.30.1)(tsx@4.20.3)(yaml@2.8.1))':
     dependencies:
@@ -16840,6 +16856,8 @@ snapshots:
     dependencies:
       argparse: 2.0.1
 
+  jsbi@4.3.2: {}
+
   jsbn@1.1.0: {}
 
   jsdom@26.0.0:
@@ -20007,6 +20025,8 @@ snapshots:
   v8-compile-cache-lib@3.0.1: {}
 
   validate-npm-package-name@5.0.1: {}
+
+  validator@13.15.0: {}
 
   validator@13.15.15: {}
 

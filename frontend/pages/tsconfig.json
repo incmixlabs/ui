@@ -23,6 +23,6 @@
     }
   },
   "extends": "@incmix/config/react.json",
-  "include": [".", "../ui/src/components/page-header.tsx"],
+  "include": ["."],
   "exclude": ["node_modules"]
 }
