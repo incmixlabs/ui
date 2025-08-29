@@ -12,6 +12,8 @@ import {
   CommandList,
 } from "@/src/1base"
 
+export type Color = "gray" | "indigo" | "cyan" | "orange" | "crimson"
+
 export interface Option {
   value: string
   label: string
@@ -19,7 +21,7 @@ export interface Option {
   name?: string
   disable?: boolean
   avatar?: string
-  color?: string
+  color?: Color
   position?: string
   /** fixed option that can't be removed. */
   fixed?: boolean
@@ -30,7 +32,7 @@ interface GroupOption {
   [key: string]: Option[]
 }
 
-interface MultiSelectProps {
+interface TagSelectProps {
   value?: Option[]
   defaultOptions?: Option[]
   /** manually controlled options */
@@ -85,10 +87,10 @@ interface MultiSelectProps {
   >
   /** hide the clear all button. */
   hideClearAllButton?: boolean
-  defaultColor?: "gray" | "indigo" | "cyan" | "orange" | "crimson"
+  defaultColor?: Color
 }
 
-export interface MultiSelectRef {
+export interface TagSelectRef {
   selectedValue: Option[]
   input: HTMLInputElement
   focus: () => void
@@ -173,7 +175,7 @@ const CommandEmpty = forwardRef<
 
 CommandEmpty.displayName = "CommandEmpty"
 
-export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
+export const TagSelect = React.forwardRef<TagSelectRef, TagSelectProps>(
   (
     {
       value,
@@ -200,8 +202,8 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       commandProps,
       inputProps,
       hideClearAllButton = false,
-    }: MultiSelectProps,
-    ref: React.Ref<MultiSelectRef>
+    }: TagSelectProps,
+    ref: React.Ref<TagSelectRef>
   ) => {
     const inputRef = React.useRef<HTMLInputElement>(null)
     const [open, setOpen] = React.useState(false)
@@ -222,9 +224,12 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
         selectedValue: [...selected],
         input: inputRef.current as HTMLInputElement,
         focus: () => inputRef?.current?.focus(),
-        reset: () => setSelected([]),
+        reset: () => {
+          setSelected([])
+          onChange?.([])
+        },
       }),
-      [selected]
+      [selected, onChange]
     )
 
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
@@ -377,7 +382,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
           }}
           onSelect={(value: string) => {
             if (selected.length >= maxSelected) {
-              onMaxSelected?.(selected.length)
+              onMaxSelected?.(maxSelected)
               return
             }
             setInputValue("")
@@ -438,8 +443,18 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       return undefined
     }, [creatable, commandProps?.filter])
 
-    const getBadgeColorStyles = () => {
-      switch (defaultColor) {
+    const getBadgeColorStyles = (optionColor?: Color) => {
+      const allowed = new Set<Color>([
+        "gray",
+        "indigo",
+        "cyan",
+        "orange",
+        "crimson",
+      ])
+      const colorToUse = allowed.has(optionColor as Color)
+        ? optionColor
+        : defaultColor
+      switch (colorToUse) {
         case "indigo":
           return "bg-indigo-9 text-indigo-1 hover:bg-indigo-10"
         case "cyan":
@@ -449,7 +464,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
         case "crimson":
           return "bg-crimson-9 text-crimson-1 hover:bg-crimson-10"
         default:
-          return "bg-gray-4 text-gray-12 hover:bg-gray-6 "
+          return "bg-gray-4 text-gray-12 hover:bg-gray-6"
       }
     }
 
@@ -515,7 +530,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                     "group data-[disabled]:bg-muted-foreground data-[disabled]:text-muted data-[disabled]:hover:bg-muted-foreground",
                     "data-[fixed]:bg-muted-foreground data-[fixed]:text-muted data-[fixed]:hover:bg-muted-foreground",
                     badgeClassName,
-                    getBadgeColorStyles()
+                    getBadgeColorStyles(option.color)
                   )}
                   data-fixed={option.fixed}
                   data-disabled={disabled || undefined}
@@ -647,7 +662,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                             }}
                             onSelect={() => {
                               if (selected.length >= maxSelected) {
-                                onMaxSelected?.(selected.length)
+                                onMaxSelected?.(maxSelected)
                                 return
                               }
                               setInputValue("")
@@ -683,4 +698,4 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
   }
 )
 
-MultiSelect.displayName = "MultiSelect"
+TagSelect.displayName = "TagSelect"

@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react"
 import type { ControllerRenderProps, FieldValues } from "react-hook-form"
 import type * as z from "zod"
+import type { Color } from "../../2elements/multi-select/multi-select"
 import type { INPUT_COMPONENTS } from "./config"
 import type { FieldGroupLayout } from "./fields/field-group"
 
@@ -8,7 +9,7 @@ import type { FieldGroupLayout } from "./fields/field-group"
 export type MCQOption = {
   label: string
   value: string
-  color?: string // Added optional color property
+  color?: Color // Updated to use Color type
 }
 
 export type MCQLayoutType = "grid" | "row" | "column"
@@ -18,7 +19,7 @@ export type MCQSizeType = "sm" | "md" | "lg"
 export type MultipleSelectorOption = {
   label: string
   value: string
-  color?: string // Added optional color property
+  color?: Color // Updated to use Color type
   // Support for rich member data
   id?: string
   name?: string

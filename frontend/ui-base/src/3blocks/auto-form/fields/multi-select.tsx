@@ -1,5 +1,5 @@
 import { FormControl, FormItem, FormLabel, FormMessage } from "@/base"
-import { MultiSelect } from "@/src/2elements/multi-select"
+import { TagSelect } from "@/src/2elements/multi-select"
 import { useFormContext } from "react-hook-form"
 import type { AutoFormInputComponentProps } from "../types"
 
@@ -65,7 +65,7 @@ export default function MultipleSelectorField({
       )}
 
       <FormControl>
-        <MultiSelect
+        <TagSelect
           value={field.value || []}
           onChange={field.onChange}
           defaultOptions={options}

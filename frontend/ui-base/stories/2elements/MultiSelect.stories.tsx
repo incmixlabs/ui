@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import React, { useState } from "react"
 import { Theme, Box, Text, Flex } from "../../src/1base"
-import { MultiSelect, type Option } from "../../src/2elements/multi-select/multi-select"
+import { TagSelect, type Option } from "../../src/2elements/multi-select"
 import { Loader2 } from "lucide-react"
 
-const meta: Meta<typeof MultiSelect> = {
-  title: "2 Elements/MultiSelect",
-  component: MultiSelect,
+const meta: Meta<typeof TagSelect> = {
+  title: "2 Elements/TagSelect",
+  component: TagSelect,
   parameters: {
     layout: "centered",
   },
@@ -96,21 +96,25 @@ const teamOptions: Option[] = [
     value: "john-doe",
     label: "John Doe",
     avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face",
+    color: "indigo",
   },
   {
     value: "jane-smith",
     label: "Jane Smith",
     avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=32&h=32&fit=crop&crop=face",
+    color: "cyan",
   },
   {
     value: "mike-johnson",
     label: "Mike Johnson",
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=32&h=32&fit=crop&crop=face",
+    color: "orange",
   },
   {
     value: "sarah-wilson",
     label: "Sarah Wilson",
     avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=32&h=32&fit=crop&crop=face",
+    color: "crimson",
   },
 ]
 
@@ -152,6 +156,34 @@ const groupedOptions: Option[] = [
   },
 ]
 
+const coloredSkillsOptions: Option[] = [
+  {
+    value: "frontend",
+    label: "Frontend Development",
+    color: "cyan",
+  },
+  {
+    value: "backend", 
+    label: "Backend Development",
+    color: "indigo",
+  },
+  {
+    value: "design",
+    label: "UI/UX Design", 
+    color: "orange",
+  },
+  {
+    value: "marketing",
+    label: "Digital Marketing",
+    color: "crimson",
+  },
+  {
+    value: "devops",
+    label: "DevOps Engineering",
+    color: "gray",
+  },
+]
+
 // Default story
 export const Default: Story = {
   render: () => {
@@ -159,7 +191,7 @@ export const Default: Story = {
 
     return (
       <Flex direction="column" gap="4" align="center">
-        <MultiSelect
+        <TagSelect
           options={sampleOptions}
           onChange={setSelected}
           placeholder="Select skills..."
@@ -198,7 +230,7 @@ export const WithDefaultSelection: Story = {
 
     return (
       <Flex direction="column" gap="4" align="center">
-        <MultiSelect
+        <TagSelect
           options={sampleOptions}
           value={selected}
           onChange={setSelected}
@@ -226,17 +258,62 @@ export const WithDefaultSelection: Story = {
   },
 }
 
-// With avatars
+// With custom colors per tag
+export const WithCustomColors: Story = {
+  render: () => {
+    const [selected, setSelected] = useState<Option[]>([])
+
+    return (
+      <Flex direction="column" gap="4" align="center">
+        <Text size="3" weight="medium">
+          Each skill has a custom color
+        </Text>
+        
+        <TagSelect
+          options={coloredSkillsOptions}
+          onChange={setSelected}
+          placeholder="Select skills with custom colors..."
+        />
+
+        {selected.length > 0 && (
+          <Box
+            style={{
+              padding: "12px",
+              borderRadius: "8px",
+              backgroundColor: "var(--gray-2)",
+              textAlign: "center",
+              minWidth: "300px",
+            }}
+          >
+            <Text size="2" weight="medium">
+              Selected Skills ({selected.length}):
+            </Text>
+            <Text size="2" color="gray">
+              {selected.map(s => s.label).join(", ")}
+            </Text>
+          </Box>
+        )}
+      </Flex>
+    )
+  },
+}
+
+// With avatars and custom defaultColor
 export const WithAvatars: Story = {
   render: () => {
     const [selected, setSelected] = useState<Option[]>([])
 
     return (
       <Flex direction="column" gap="4" align="center">
-        <MultiSelect
+        <Text size="3" weight="medium">
+          Team members with individual colors + gray default
+        </Text>
+        
+        <TagSelect
           options={teamOptions}
           onChange={setSelected}
           placeholder="Select team members..."
+          defaultColor="gray"
         />
 
         {selected.length > 0 && (
@@ -269,7 +346,7 @@ export const WithGrouping: Story = {
 
     return (
       <Flex direction="column" gap="4" align="center">
-        <MultiSelect
+        <TagSelect
           options={groupedOptions}
           onChange={setSelected}
           groupBy="department"
@@ -310,7 +387,7 @@ export const CreatableOptions: Story = {
           Type to create new options
         </Text>
 
-        <MultiSelect
+        <TagSelect
           options={sampleOptions}
           onChange={setSelected}
           creatable={true}
@@ -352,7 +429,7 @@ export const WithMaxSelection: Story = {
           Maximum {maxSelected} selections allowed
         </Text>
 
-        <MultiSelect
+        <TagSelect
           options={sampleOptions}
           onChange={setSelected}
           maxSelected={maxSelected}
@@ -385,10 +462,8 @@ export const WithMaxSelection: Story = {
 export const WithAsyncSearch: Story = {
   render: () => {
     const [selected, setSelected] = useState<Option[]>([])
-    const [isLoading, setIsLoading] = useState(false)
 
     const handleAsyncSearch = async (searchTerm: string): Promise<Option[]> => {
-      setIsLoading(true)
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000))
 
@@ -396,7 +471,6 @@ export const WithAsyncSearch: Story = {
         option.label.toLowerCase().includes(searchTerm.toLowerCase())
       )
 
-      setIsLoading(false)
       return filteredOptions
     }
 
@@ -406,7 +480,7 @@ export const WithAsyncSearch: Story = {
           Search with 1 second delay
         </Text>
 
-        <MultiSelect
+        <TagSelect
           onChange={setSelected}
           onSearch={handleAsyncSearch}
           placeholder="Type to search skills..."
@@ -466,7 +540,7 @@ export const ColorThemes: Story = {
         <Flex direction="column" gap="4" style={{ width: "100%" }}>
           <Flex direction="column" gap="2">
             <Text size="2" weight="medium">Gray Theme:</Text>
-            <MultiSelect
+            <TagSelect
               options={sampleOptions}
               value={graySelected}
               onChange={setGraySelected}
@@ -477,7 +551,7 @@ export const ColorThemes: Story = {
 
           <Flex direction="column" gap="2">
             <Text size="2" weight="medium">Indigo Theme:</Text>
-            <MultiSelect
+            <TagSelect
               options={sampleOptions}
               value={indigoSelected}
               onChange={setIndigoSelected}
@@ -488,7 +562,7 @@ export const ColorThemes: Story = {
 
           <Flex direction="column" gap="2">
             <Text size="2" weight="medium">Cyan Theme:</Text>
-            <MultiSelect
+            <TagSelect
               options={sampleOptions}
               value={cyanSelected}
               onChange={setCyanSelected}
@@ -499,7 +573,7 @@ export const ColorThemes: Story = {
 
           <Flex direction="column" gap="2">
             <Text size="2" weight="medium">Orange Theme:</Text>
-            <MultiSelect
+            <TagSelect
               options={sampleOptions}
               value={orangeSelected}
               onChange={setOrangeSelected}
@@ -510,7 +584,7 @@ export const ColorThemes: Story = {
 
           <Flex direction="column" gap="2">
             <Text size="2" weight="medium">Crimson Theme:</Text>
-            <MultiSelect
+            <TagSelect
               options={sampleOptions}
               value={crimsonSelected}
               onChange={setCrimsonSelected}
@@ -532,10 +606,10 @@ export const DisabledState: Story = {
     return (
       <Flex direction="column" gap="4" align="center">
         <Text size="3" weight="medium">
-          Disabled MultiSelect
+          Disabled TagSelect
         </Text>
 
-        <MultiSelect
+        <TagSelect
           options={sampleOptions}
           value={selected}
           onChange={setSelected}
@@ -565,7 +639,7 @@ export const InteractivePlayground: Story = {
     return (
       <Flex direction="column" gap="6" align="center" style={{ maxWidth: "500px" }}>
         <Text size="4" weight="bold">
-          Interactive MultiSelect
+          Interactive TagSelect
         </Text>
 
         {/* Controls */}
@@ -648,8 +722,8 @@ export const InteractivePlayground: Story = {
           </Flex>
         </Box>
 
-        {/* MultiSelect */}
-        <MultiSelect
+        {/* TagSelect */}
+        <TagSelect
           options={sampleOptions}
           value={selected}
           onChange={setSelected}
