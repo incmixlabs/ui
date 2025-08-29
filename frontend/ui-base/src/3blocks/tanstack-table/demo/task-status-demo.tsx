@@ -28,6 +28,7 @@ interface ExtendedColumnConfig extends ColumnConfig {
 }
 
 import DropdownCellEditor from "../components/DropdownCellEditor"
+import { StatusCellRenderer } from "../components/StatusCellRenderer"
 import { adjustColorBrightness, getContrastingTextColor } from "@incmix/store/color"
 
 // Custom rating cell renderer
@@ -184,6 +185,7 @@ const STATUS_OPTIONS: DropdownOption[] = [
 const STATUS_COLUMN_META = {
   dropdownOptions: STATUS_OPTIONS,
   strictDropdown: true, // Default to strict mode
+  cellDisplayStyle: "badge" as "badge" | "full-cell", // Default cell display style
 }
 
 // Map to track custom values we've already processed - this is our ultimate duplicate prevention
@@ -391,32 +393,15 @@ const TASK_TABLE_COLUMNS: ExtendedColumnConfig[] = [
       column: { columnDef: any }
     }) => {
       const value = props.getValue() as string
-
-      // Always use STATUS_OPTIONS directly to ensure we get the latest version
-      // This is essential for color/label updates to be reflected
-      const options = STATUS_OPTIONS
-
-      // Find the selected option by value
-      const option = options.find((opt: DropdownOption) => opt.value === value)
-
-      // If no matching option is found, use a fallback
-      const displayOption = option || {
-        value,
-        label: value,
-        color: "#e5e7eb",
-      }
-
+      const columnMeta = props.column.columnDef.meta
+      const displayStyle = columnMeta?.cellDisplayStyle || "badge"
+      
       return (
-        <span
-          className="inline-flex items-center rounded-full px-2 py-1 font-medium text-xs capitalize ring-1 ring-inset"
-          style={{
-            backgroundColor: displayOption.color || "#e5e7eb",
-            color: getContrastingTextColor(displayOption.color || "#e5e7eb"),
-            borderColor: adjustColorBrightness(displayOption.color || "#e5e7eb", -20),
-          }}
-        >
-          {displayOption.label}
-        </span>
+        <StatusCellRenderer
+          value={value}
+          options={STATUS_OPTIONS}
+          displayStyle={displayStyle}
+        />
       )
     },
     // Add cursor style and hint for better UX
@@ -467,6 +452,78 @@ const TASK_TABLE_COLUMNS: ExtendedColumnConfig[] = [
         }
 
         // Pass through the original value - handleCellEdit will handle normalization
+        onSave(newValue)
+      }
+
+      return (
+        <DropdownCellEditor
+          value={value as string}
+          options={options}
+          strictDropdown={strictDropdown}
+          onSave={handleSaveWithCustomValue}
+          onCancel={onCancel}
+        />
+      )
+    },
+  },
+  {
+    headingName: "Status (Full Cell)",
+    type: "Dropdown" as const,
+    accessorKey: "status" as const,
+    id: "status-full-cell",
+    enableSorting: true,
+    enableInlineEdit: true,
+    // Apply initial metadata
+    meta: STATUS_COLUMN_META,
+    // Custom cell renderer with full-cell display style
+    cell: (props: {
+      getValue: () => any
+      row: { original: any }
+      column: { columnDef: any }
+    }) => {
+      const value = props.getValue() as string
+      return (
+        <StatusCellRenderer
+          value={value}
+          options={STATUS_OPTIONS}
+          displayStyle="full-cell"
+        />
+      )
+    },
+    // Apply background color to the entire cell
+    cellAttributes: (cell: { getValue: () => any; row: any; column: any }) => {
+      const value = cell.getValue() as string
+      const option = STATUS_OPTIONS.find((opt) => opt.value === value)
+      const backgroundColor = option?.color || "#e5e7eb"
+      
+      return {
+        className: "cursor-pointer transition-colors duration-150",
+        style: {
+          backgroundColor,
+        }
+      }
+    },
+    // Custom inline editor for dropdown that appears on double-click
+    inlineCellEditor: (props: {
+      value: any
+      onSave: (newValue: any) => void
+      onCancel: () => void
+      columnDef?: any
+    }) => {
+      const { value, onSave, onCancel, columnDef } = props
+      const options = STATUS_OPTIONS
+      const strictDropdown = columnDef?.meta?.strictDropdown !== false
+
+      const handleSaveWithCustomValue = (newValue: string) => {
+        if (strictDropdown || typeof newValue !== "string") {
+          onSave(newValue)
+          return
+        }
+
+        if (!options.some((opt) => opt.value === newValue)) {
+          console.log("Passing custom value to be processed")
+        }
+
         onSave(newValue)
       }
 
@@ -848,7 +905,7 @@ const TaskStatusDemo = () => {
         isPaginationLoading={loading}
         // Inline editing functionality with keyboard navigation
         enableInlineCellEdit={true}
-        inlineEditableColumns={["name", "email", "joinDate", "status", "tags"]}
+        inlineEditableColumns={["name", "email", "joinDate", "status", "status-full-cell", "tags"]}
         onCellEdit={handleCellEdit}
       />
     </Box>

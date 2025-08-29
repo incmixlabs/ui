@@ -1,5 +1,5 @@
 import { cn } from "@/shadcn/lib/utils"
-import { iconSize } from "@/src/1base"
+import { Box, iconSize } from "@/src/1base"
 import { Check } from "lucide-react"
 
 export interface ColorSelectType {
@@ -36,7 +36,7 @@ const generateColorArray = (color: string, reverse = false) => {
 }
 
 function cssVarToHex(varName: string) {
-  const tempElem = document.createElement("div")
+  const tempElem = document.createElement("Box")
   tempElem.style.color = `var(${varName})`
   document.body.appendChild(tempElem)
 
@@ -113,8 +113,8 @@ const ColorPicker = ({
 
   if (colorType === "base") {
     return (
-      <div className="rounded-lg bg-gray-5 p-2">
-        <div className="grid grid-cols-6 gap-2">
+      <Box className="rounded-lg bg-gray-5 p-2">
+        <Box className="grid grid-cols-6 gap-2">
           {baseColors.map((color) => (
             <button
               key={color}
@@ -135,8 +135,8 @@ const ColorPicker = ({
               )}
             </button>
           ))}
-        </div>
-      </div>
+        </Box>
+      </Box>
     )
   }
 
@@ -151,14 +151,14 @@ const ColorPicker = ({
     }
 
     return (
-      <div className="rounded-lg bg-gray-5 p-2">
+      <Box className="rounded-lg bg-gray-5 p-2">
         {/* Base color selection - only show in full monochromatic mode */}
         {colorType === "monochromatic" && (
-          <div className="mb-3">
-            <div className="mb-2 font-medium text-gray-11 text-xs">
+          <Box className="mb-3">
+            <Box className="mb-2 font-medium text-gray-11 text-xs">
               Base colors
-            </div>
-            <div className="grid grid-cols-6 gap-2">
+            </Box>
+            <Box className="grid grid-cols-6 gap-2">
               {baseColors.map((color) => {
                 const isSelected = color === selectedBaseColor
                 return (
@@ -184,16 +184,16 @@ const ColorPicker = ({
                   </button>
                 )
               })}
-            </div>
-          </div>
+            </Box>
+          </Box>
         )}
 
         {/* Shades of selected color */}
-        <div>
-          <div className="mb-2 font-medium text-gray-11 text-xs">
+        <Box>
+          <Box className="mb-2 font-medium text-gray-11 text-xs">
             Shades of {selectedBaseColor}
-          </div>
-          <div className="grid grid-cols-9 gap-1">
+          </Box>
+          <Box className="grid grid-cols-9 gap-1">
             {monochromaticShades.map((shade, index) => {
               const shadeNumber = 9 - index
               const varName = `--${selectedBaseColor}-${shadeNumber}`
@@ -229,15 +229,15 @@ const ColorPicker = ({
                 </button>
               )
             })}
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Box>
     )
   }
 
   return (
-    <div className="rounded-lg bg-gray-5 p-2">
-      <div className="mb-1 flex justify-between">
+    <Box className="rounded-lg bg-gray-5 p-2">
+      <Box className="mb-1 flex justify-between">
         {darkColors.map((color) => (
           <button
             key={`dark-${color}`}
@@ -251,11 +251,11 @@ const ColorPicker = ({
             title={color}
           />
         ))}
-      </div>
+      </Box>
 
-      <div className="flex justify-between">
+      <Box className="flex justify-between">
         {colorGroups.map((group, groupIndex) => (
-          <div key={`group-${groupIndex}`} className="flex flex-col gap-1">
+          <Box key={`group-${groupIndex}`} className="flex flex-col gap-1">
             {group.map((color) => {
               const varNameMatch = color.match(/^var\((--.+)\)$/)
               const varName = varNameMatch ? varNameMatch[1] : color
@@ -279,10 +279,10 @@ const ColorPicker = ({
                 />
               )
             })}
-          </div>
+          </Box>
         ))}
-      </div>
-    </div>
+      </Box>
+    </Box>
   )
 }
 

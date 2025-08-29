@@ -43,8 +43,8 @@ export interface ColumnConfig {
     | "Dropdown"
   meta?: {
     dropdownOptions?: DropdownOption[]
-    editable?: boolean
     strictDropdown?: boolean // Controls whether only predefined dropdown values are allowed
+    cellDisplayStyle?: "badge" | "full-cell" // Controls how dropdown/status cells are displayed
     // Other metadata can be added here in the future
   }
   // Additional properties will be added in future
@@ -71,12 +71,27 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
   const [columnType, setColumnType] = useState<ColumnConfig["type"]>("String")
   const [dropdownOptions, setDropdownOptions] = useState<DropdownOption[]>([])
   const [strictDropdown, setStrictDropdown] = useState(true)
+  const [cellDisplayStyle, setCellDisplayStyle] = useState<"badge" | "full-cell">("badge")
 
   // Initialize form when column changes
   useEffect(() => {
     if (column) {
       setHeadingName(column.headingName || "")
       setColumnType(column.type || "String")
+
+      // Initialize strictDropdown setting
+      if (column.meta?.strictDropdown !== undefined) {
+        setStrictDropdown(column.meta.strictDropdown)
+      } else {
+        setStrictDropdown(true) // Default to true if not specified
+      }
+      
+      // Initialize cellDisplayStyle setting
+      if (column.meta?.cellDisplayStyle !== undefined) {
+        setCellDisplayStyle(column.meta.cellDisplayStyle)
+      } else {
+        setCellDisplayStyle("badge") // Default to badge style
+      }
 
       // Initialize dropdown options if available
       if (column.meta?.dropdownOptions) {
@@ -89,9 +104,13 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
           { value: "done", label: "Done", color: "var(--green-5)" },
         ])
       }
-
-      const isStrictMode = column.meta?.strictDropdown !== false
-      setStrictDropdown(isStrictMode)
+    } else {
+      // Reset form for new columns
+      setHeadingName("")
+      setColumnType("String")
+      setDropdownOptions([])
+      setStrictDropdown(true)
+      setCellDisplayStyle("badge")
     }
   }, [column])
 
@@ -123,9 +142,9 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
     // Add dropdown options for dropdown columns
     if (columnType === "Dropdown") {
       updates.meta = {
-        ...column.meta,
         dropdownOptions,
-        strictDropdown, // Include the strictDropdown setting
+        strictDropdown,
+        cellDisplayStyle,
       }
     }
 
@@ -224,6 +243,32 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
                 onChange={setDropdownOptions}
                 valuesInUse={getValuesInUse()}
               />
+              
+              {/* Cell Display Style */}
+              <Flex direction="column" gap="2">
+                <Text as="label" size="2" weight="medium">
+                  Cell Display Style
+                </Text>
+                <Select.Root
+                  value={cellDisplayStyle}
+                  onValueChange={(value) => {
+                    if (value === "badge" || value === "full-cell") {
+                      setCellDisplayStyle(value)
+                    }
+                  }}
+                >
+                  <Select.Trigger placeholder="Select display style" />
+                  <Select.Content>
+                    <Select.Item value="badge">Badge (current)</Select.Item>
+                    <Select.Item value="full-cell">Full Cell Color</Select.Item>
+                  </Select.Content>
+                </Select.Root>
+                <Text size="1" color="gray">
+                  {cellDisplayStyle === "badge" 
+                    ? "Shows colored badge with rounded corners"
+                    : "Fills entire cell with background color"}
+                </Text>
+              </Flex>
             </Box>
           )}
         </Flex>

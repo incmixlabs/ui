@@ -46,6 +46,11 @@ export interface DataTableColumn<TData> {
   // Custom renderer - fixed type to be more flexible with value types
   renderer?: (value: any, row: TData) => ReactNode
 
+  // Cell attributes for styling table cells
+  cellAttributes?: 
+    | { className?: string; style?: React.CSSProperties }
+    | ((cell: { getValue: () => any; row: any; column: any }) => { className?: string; style?: React.CSSProperties })
+
   // Inline editing properties
   enableInlineEdit?: boolean
   inlineCellEditor?: (props: {
