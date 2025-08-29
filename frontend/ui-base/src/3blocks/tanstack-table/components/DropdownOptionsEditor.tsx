@@ -145,7 +145,7 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
   // Generate shades for a given base color
   const generateColorShades = useCallback((baseColor: string) => {
     const shades = []
-    for (let i = 1; i <= 9; i++) {
+    for (let i = 1; i <= 12; i++) {
       shades.push(`var(--${baseColor}-${i})`)
     }
     return shades
@@ -156,10 +156,11 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
     (enabled: boolean) => {
       setIsMonochromatic(enabled)
 
+      let updatedOptions = options
       if (enabled && options.length > 0) {
         // Reassign existing options to different shades of the selected base color
         const shades = generateColorShades(selectedBaseColor)
-        const updatedOptions = options.map((option, index) => ({
+        updatedOptions = options.map((option, index) => ({
           ...option,
           color: shades[index % shades.length],
         }))
@@ -170,14 +171,14 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
       const nextColor = enabled
         ? (() => {
             const shades = generateColorShades(selectedBaseColor)
-            const usedShades = options.map((opt) => opt.color)
+            const usedShades = updatedOptions.map((opt) => opt.color)
             // Find first unused shade or cycle through
             for (const shade of shades) {
               if (!usedShades.includes(shade)) {
                 return shade
               }
             }
-            return shades[options.length % shades.length]
+            return shades[updatedOptions.length % shades.length]
           })()
         : "var(--blue-5)"
 
@@ -191,10 +192,11 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
     (newBaseColor: string) => {
       setSelectedBaseColor(newBaseColor)
 
+      let updatedOptions = options
       if (isMonochromatic && options.length > 0) {
         // Reassign all existing options to shades of the new base color
         const shades = generateColorShades(newBaseColor)
-        const updatedOptions = options.map((option, index) => ({
+        updatedOptions = options.map((option, index) => ({
           ...option,
           color: shades[index % shades.length],
         }))
@@ -204,7 +206,7 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
       // Update newOption color to use new base color shade
       if (isMonochromatic) {
         const shades = generateColorShades(newBaseColor)
-        const usedShades = options.map((opt) => opt.color)
+        const usedShades = updatedOptions.map((opt) => opt.color)
         let nextColor = shades[0] // default to first shade
 
         // Find first unused shade or cycle through
@@ -215,7 +217,7 @@ const DropdownOptionsEditor: React.FC<DropdownOptionsEditorProps> = ({
           }
         }
         if (!nextColor || usedShades.includes(nextColor)) {
-          nextColor = shades[options.length % shades.length]
+          nextColor = shades[updatedOptions.length % shades.length]
         }
 
         setNewOption((prev) => ({ ...prev, color: nextColor }))
