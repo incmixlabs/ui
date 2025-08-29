@@ -190,9 +190,14 @@ function TableRowComponent<TData extends object>(props: RowProps<TData>) {
           const cellValue = cell.getValue()
 
           // Process cellAttributes from column definition
-          const cellAttributes = typeof columnDef?.cellAttributes === 'function' 
-            ? columnDef.cellAttributes({ getValue: () => cellValue, row: row, column: cell.column })
-            : columnDef?.cellAttributes || {}
+          const cellAttributes =
+            typeof columnDef?.cellAttributes === "function"
+              ? columnDef.cellAttributes({
+                  getValue: () => cellValue,
+                  row: row,
+                  column: cell.column,
+                })
+              : columnDef?.cellAttributes || {}
 
           // Special styling for the checkbox column
           if (cell.column.id === "select") {

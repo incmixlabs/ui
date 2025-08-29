@@ -71,7 +71,9 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
   const [columnType, setColumnType] = useState<ColumnConfig["type"]>("String")
   const [dropdownOptions, setDropdownOptions] = useState<DropdownOption[]>([])
   const [strictDropdown, setStrictDropdown] = useState(true)
-  const [cellDisplayStyle, setCellDisplayStyle] = useState<"badge" | "full-cell">("badge")
+  const [cellDisplayStyle, setCellDisplayStyle] = useState<
+    "badge" | "full-cell"
+  >("badge")
 
   // Initialize form when column changes
   useEffect(() => {
@@ -85,7 +87,7 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
       } else {
         setStrictDropdown(true) // Default to true if not specified
       }
-      
+
       // Initialize cellDisplayStyle setting
       if (column.meta?.cellDisplayStyle !== undefined) {
         setCellDisplayStyle(column.meta.cellDisplayStyle)
@@ -243,7 +245,7 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
                 onChange={setDropdownOptions}
                 valuesInUse={getValuesInUse()}
               />
-              
+
               {/* Cell Display Style */}
               <Flex direction="column" gap="2">
                 <Text as="label" size="2" weight="medium">
@@ -264,7 +266,7 @@ export const ColumnConfigDialog: React.FC<ColumnConfigDialogProps> = ({
                   </Select.Content>
                 </Select.Root>
                 <Text size="1" color="gray">
-                  {cellDisplayStyle === "badge" 
+                  {cellDisplayStyle === "badge"
                     ? "Shows colored badge with rounded corners"
                     : "Fills entire cell with background color"}
                 </Text>

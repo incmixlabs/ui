@@ -1,4 +1,7 @@
-import { getContrastingTextColor, adjustColorBrightness } from "@incmix/store/color"
+import {
+  adjustColorBrightness,
+  getContrastingTextColor,
+} from "@incmix/store/color"
 import type { DropdownOption } from "../cell-renderers"
 
 interface StatusCellRendererProps {
@@ -33,7 +36,10 @@ export const StatusCellRenderer: React.FC<StatusCellRendererProps> = ({
 
   if (displayStyle === "full-cell") {
     return (
-      <span className={`font-medium text-sm capitalize ${className}`} style={{ color: textColor }}>
+      <span
+        className={`font-medium text-sm capitalize ${className}`}
+        style={{ color: textColor }}
+      >
         {displayOption.label}
       </span>
     )
