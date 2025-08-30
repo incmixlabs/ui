@@ -1,8 +1,9 @@
-import type { KanbanColumn } from "@incmix/utils/schema"
 // components/board/add-task-schema.ts
-import type { FieldConfig } from "../../auto-form/types"
-import type { ZodObjectOrWrapped } from "../../auto-form/utils"
+import type { z } from "zod"
+
 import { getMembersForSelect } from "../constants/mock-members"
+import type { FieldConfig, ZodObjectOrWrapped, MCQOption, MultipleSelectorOption } from "../../auto-form"
+import type { KanbanColumn } from "../types"
 
 // Predefined labels for tasks
 const PREDEFINED_LABELS = [
@@ -16,13 +17,13 @@ const PREDEFINED_LABELS = [
   { label: "Testing", value: "testing" },
 ]
 
-export interface TaskFormSchema<_SchemaType extends ZodObjectOrWrapped = any> {
+export interface TaskFormSchema {
   formSchema: {
     type: string
     properties: Record<string, any>
     required: string[]
   }
-  fieldConfig: FieldConfig<any>
+  fieldConfig: FieldConfig<Record<string, unknown>>
 }
 
 // Base schema - will be modified to include dynamic columns
@@ -103,27 +104,24 @@ const baseTaskFormSchema = {
 }
 
 // Function to create schema with dynamic columns
-export const createTaskFormSchema = (
-  columns: KanbanColumn[],
-  priorityLabels: any[] = []
-): TaskFormSchema => {
+export const createTaskFormSchema = (columns: KanbanColumn[], priorityLabels: any[] = []): TaskFormSchema => {
   // Transform columns into options for the select field with color indicators
-  const columnOptions = columns.map((column) => ({
+  const columnOptions: MCQOption[] = columns.map(column => ({
     label: column.name,
     value: column.id,
-    color: column.color, // Include color for rendering
+    color: column.color as any, // Include color for rendering
   }))
 
   // Transform priority labels into options for the select field
-  const priorityOptions = priorityLabels.map((priority) => ({
+  const priorityOptions: MCQOption[] = priorityLabels.map(priority => ({
     label: priority.name,
     value: priority.id,
-    color: priority.color, // Include color for rendering
-  }))
+    color: priority.color as any, // Include color for rendering
+  }));
 
   // Get first available column for default status
   const defaultStatusId = columns[0]?.id || ""
-
+  
   // Get first available priority option for default
   const defaultPriorityId = priorityOptions[0]?.value || ""
 
@@ -134,13 +132,13 @@ export const createTaskFormSchema = (
       ...baseTaskFormSchema.properties,
       statusId: {
         ...baseTaskFormSchema.properties.statusId,
-        default: defaultStatusId,
+        default: defaultStatusId
       },
       priorityId: {
         ...baseTaskFormSchema.properties.priorityId,
-        default: defaultPriorityId,
-      },
-    },
+        default: defaultPriorityId
+      }
+    }
   }
 
   return {
@@ -196,7 +194,10 @@ export const createTaskFormSchema = (
         description: "Assign team members to this task",
         fieldType: "multipleSelector",
         inputProps: {
-          defaultOptions: getMembersForSelect(),
+          defaultOptions: getMembersForSelect().map(member => ({
+            ...member,
+            color: member.color as any
+          })) as MultipleSelectorOption[],
           placeholder: "Select members",
           defaultColor: "gray",
           className: "border-1 dark:bg-gray-1",
@@ -206,23 +207,21 @@ export const createTaskFormSchema = (
         description: "Add relevant labels to categorize this task",
         fieldType: "multipleSelector",
         inputProps: {
-          defaultOptions: PREDEFINED_LABELS,
+          defaultOptions: PREDEFINED_LABELS as MultipleSelectorOption[],
           placeholder: "Select labels",
           defaultColor: "gray",
           className: "border-1 dark:bg-gray-1",
         },
       },
       refUrlsJson: {
-        description:
-          "Add reference URLs to link to external resources like Figma designs or related tasks",
+        description: "Add reference URLs to link to external resources like Figma designs or related tasks",
         fieldType: "refurl",
         inputProps: {
           className: "w-full",
         },
       },
       subTasks: {
-        description:
-          "Add subtasks to break down this task into smaller components",
+        description: "Add subtasks to break down this task into smaller components",
         fieldType: "subtask",
         inputProps: {
           className: "w-full",
