@@ -1,8 +1,13 @@
 // components/board/add-task-schema.ts
 import type { z } from "zod"
 
+import type {
+  FieldConfig,
+  MCQOption,
+  MultipleSelectorOption,
+  ZodObjectOrWrapped,
+} from "../../auto-form"
 import { getMembersForSelect } from "../constants/mock-members"
-import type { FieldConfig, ZodObjectOrWrapped, MCQOption, MultipleSelectorOption } from "../../auto-form"
 import type { KanbanColumn } from "../types"
 
 // Predefined labels for tasks
@@ -104,24 +109,27 @@ const baseTaskFormSchema = {
 }
 
 // Function to create schema with dynamic columns
-export const createTaskFormSchema = (columns: KanbanColumn[], priorityLabels: any[] = []): TaskFormSchema => {
+export const createTaskFormSchema = (
+  columns: KanbanColumn[],
+  priorityLabels: any[] = []
+): TaskFormSchema => {
   // Transform columns into options for the select field with color indicators
-  const columnOptions: MCQOption[] = columns.map(column => ({
+  const columnOptions: MCQOption[] = columns.map((column) => ({
     label: column.name,
     value: column.id,
     color: column.color as any, // Include color for rendering
   }))
 
   // Transform priority labels into options for the select field
-  const priorityOptions: MCQOption[] = priorityLabels.map(priority => ({
+  const priorityOptions: MCQOption[] = priorityLabels.map((priority) => ({
     label: priority.name,
     value: priority.id,
     color: priority.color as any, // Include color for rendering
-  }));
+  }))
 
   // Get first available column for default status
   const defaultStatusId = columns[0]?.id || ""
-  
+
   // Get first available priority option for default
   const defaultPriorityId = priorityOptions[0]?.value || ""
 
@@ -132,13 +140,13 @@ export const createTaskFormSchema = (columns: KanbanColumn[], priorityLabels: an
       ...baseTaskFormSchema.properties,
       statusId: {
         ...baseTaskFormSchema.properties.statusId,
-        default: defaultStatusId
+        default: defaultStatusId,
       },
       priorityId: {
         ...baseTaskFormSchema.properties.priorityId,
-        default: defaultPriorityId
-      }
-    }
+        default: defaultPriorityId,
+      },
+    },
   }
 
   return {
@@ -194,9 +202,9 @@ export const createTaskFormSchema = (columns: KanbanColumn[], priorityLabels: an
         description: "Assign team members to this task",
         fieldType: "multipleSelector",
         inputProps: {
-          defaultOptions: getMembersForSelect().map(member => ({
+          defaultOptions: getMembersForSelect().map((member) => ({
             ...member,
-            color: member.color as any
+            color: member.color as any,
           })) as MultipleSelectorOption[],
           placeholder: "Select members",
           defaultColor: "gray",
@@ -214,14 +222,16 @@ export const createTaskFormSchema = (columns: KanbanColumn[], priorityLabels: an
         },
       },
       refUrlsJson: {
-        description: "Add reference URLs to link to external resources like Figma designs or related tasks",
+        description:
+          "Add reference URLs to link to external resources like Figma designs or related tasks",
         fieldType: "refurl",
         inputProps: {
           className: "w-full",
         },
       },
       subTasks: {
-        description: "Add subtasks to break down this task into smaller components",
+        description:
+          "Add subtasks to break down this task into smaller components",
         fieldType: "subtask",
         inputProps: {
           className: "w-full",
