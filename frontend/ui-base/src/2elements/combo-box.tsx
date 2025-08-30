@@ -23,8 +23,7 @@ import {
   IconButton,
   Input,
 } from "@/src/1base"
-import { CheckIcon, Plus } from "lucide-react"
-import ColorPicker, { type ColorSelectType } from "./color-picker"
+import { CheckIcon, Plus, Shuffle } from "lucide-react"
 
 type BadgeColorProp = typeof badgePropDefs.color.default
 export type ExtendedColorType = BadgeColorProp
@@ -229,15 +228,37 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
       }
     }, [mode, onValueChange])
 
-    // Color selection
-    const handleColorSelect = React.useCallback(
-      (newColor: ColorSelectType) => {
-        if (setLabelColor && newColor.name) {
-          setLabelColor(newColor.name as ExtendedColorType)
-        }
-      },
-      [setLabelColor]
-    )
+    // Random color generation with only verified working colors
+    const handleRandomColor = React.useCallback(() => {
+      const availableColors: ExtendedColorType[] = [
+        "blue",
+        "green",
+        "purple",
+        "orange",
+        "red",
+        "pink",
+        "cyan",
+        "indigo",
+        "violet",
+      ]
+      const randomIndex = Math.floor(Math.random() * availableColors.length)
+      const randomColor = availableColors[randomIndex]
+
+      // Debug logging
+      console.log(
+        "Random color selected:",
+        randomColor,
+        "from index:",
+        randomIndex
+      )
+
+      if (setLabelColor && randomColor) {
+        setLabelColor(randomColor)
+      } else {
+        // Fallback to blue if no setter or invalid color
+        setLabelColor?.("blue")
+      }
+    }, [setLabelColor])
 
     // Selection state checker - fixes the bug from ListComboBox
     const isOptionSelected = React.useCallback(
@@ -428,27 +449,25 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
                         )}
 
                         <Flex justify={"between"}>
-                          <Popover.Root>
-                            <Popover.Trigger>
-                              <Button
-                                variant="solid"
-                                className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
-                                color={
+                          <Flex align="center" gap="2">
+                            <Button
+                              type="button"
+                              variant="solid"
+                              className="h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
+                              color={(() => {
+                                const validColor =
                                   (labelColor as ExtendedColorType) || "blue"
-                                }
-                              />
-                            </Popover.Trigger>
-                            <Popover.Content
-                              alignOffset={-75}
-                              width="190px"
-                              className="z-[888] overflow-hidden bg-white p-3"
+                                console.log("Button color prop:", validColor)
+                                return validColor
+                              })()}
+                              onClick={handleRandomColor}
                             >
-                              <ColorPicker
-                                colorType="base"
-                                onColorSelect={handleColorSelect}
-                              />
-                            </Popover.Content>
-                          </Popover.Root>
+                              <Shuffle className={cn(iconSize, "text-white")} />
+                            </Button>
+                            <Text size="1" className="font-mono text-xs">
+                              {labelColor || "undefined"}
+                            </Text>
+                          </Flex>
                           <Flex gap="2">
                             <Button
                               type="button"
