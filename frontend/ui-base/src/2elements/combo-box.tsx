@@ -232,8 +232,18 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
     // Random color initialization when form opens
     const getRandomColor = React.useCallback(() => {
       const baseColors = [
-        "blue", "green", "red", "orange", "purple", "indigo",
-        "pink", "violet", "sky", "lime", "brown", "gray"
+        "blue",
+        "green",
+        "red",
+        "orange",
+        "purple",
+        "indigo",
+        "pink",
+        "violet",
+        "sky",
+        "lime",
+        "brown",
+        "gray",
       ]
       const randomIndex = Math.floor(Math.random() * baseColors.length)
       return baseColors[randomIndex] as ExtendedColorType

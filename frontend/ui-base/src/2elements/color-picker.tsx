@@ -124,7 +124,10 @@ const ColorPicker = ({
                 "flex items-center justify-center",
                 activeColor === color && "ring-2 ring-offset-2"
               )}
-              style={{ backgroundColor: `var(--${color}-9)`, border: '1px solid var(--gray-6)' }}
+              style={{
+                backgroundColor: `var(--${color}-9)`,
+                border: "1px solid var(--gray-6)",
+              }}
               onClick={() =>
                 onColorSelect({ hex: `var(--${color}-9)`, name: color })
               }
@@ -170,7 +173,10 @@ const ColorPicker = ({
                       "flex items-center justify-center",
                       isSelected && "ring-2 ring-blue-8 ring-offset-1"
                     )}
-                    style={{ backgroundColor: `var(--${color}-6)`, border: '1px solid var(--gray-6)' }}
+                    style={{
+                      backgroundColor: `var(--${color}-6)`,
+                      border: "1px solid var(--gray-6)",
+                    }}
                     onClick={() =>
                       onColorSelect({ hex: `var(--${color}-6)`, name: color })
                     }
@@ -210,7 +216,10 @@ const ColorPicker = ({
                     "flex items-center justify-center",
                     isActiveShade && "ring-2 ring-blue-8 ring-offset-1"
                   )}
-                  style={{ backgroundColor: shade, border: '1px solid var(--gray-6)' }}
+                  style={{
+                    backgroundColor: shade,
+                    border: "1px solid var(--gray-6)",
+                  }}
                   onClick={() => {
                     // Return the CSS variable directly instead of converting to hex
                     // This maintains consistency with how colors are stored
