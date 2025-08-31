@@ -23,7 +23,8 @@ import {
   IconButton,
   Input,
 } from "@/src/1base"
-import { CheckIcon, Plus, Shuffle } from "lucide-react"
+import { CheckIcon, Plus } from "lucide-react"
+import ColorPicker, { type ColorSelectType } from "./color-picker"
 
 type BadgeColorProp = typeof badgePropDefs.color.default
 export type ExtendedColorType = BadgeColorProp
@@ -228,36 +229,33 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
       }
     }, [mode, onValueChange])
 
-    // Random color generation with only verified working colors
-    const handleRandomColor = React.useCallback(() => {
-      const availableColors: ExtendedColorType[] = [
-        "blue",
-        "green",
-        "purple",
-        "orange",
-        "red",
-        "pink",
-        "cyan",
-        "indigo",
-        "violet",
+    // Random color initialization when form opens
+    const getRandomColor = React.useCallback(() => {
+      const baseColors = [
+        "blue", "green", "red", "orange", "purple", "indigo",
+        "pink", "violet", "sky", "lime", "brown", "gray"
       ]
+      const randomIndex = Math.floor(Math.random() * baseColors.length)
+      return baseColors[randomIndex] as ExtendedColorType
+    }, [])
 
-      // Use crypto.getRandomValues for stronger randomness when available
-      let randomIndex: number
-      if (typeof crypto !== "undefined" && crypto.getRandomValues) {
-        const array = new Uint32Array(1)
-        crypto.getRandomValues(array)
-        randomIndex = array[0] % availableColors.length
-      } else {
-        randomIndex = Math.floor(Math.random() * availableColors.length)
-      }
+    // Color selection
+    const handleColorSelect = React.useCallback(
+      (newColor: ColorSelectType) => {
+        if (setLabelColor && newColor.name) {
+          setLabelColor(newColor.name as ExtendedColorType)
+        }
+      },
+      [setLabelColor]
+    )
 
-      const randomColor = availableColors[randomIndex]
-
+    // Handle opening label form with random color
+    const handleOpenLabelForm = React.useCallback(() => {
       if (setLabelColor) {
-        setLabelColor(randomColor)
+        setLabelColor(getRandomColor())
       }
-    }, [setLabelColor])
+      setIsLabelFormOpen?.(true)
+    }, [setLabelColor, setIsLabelFormOpen, getRandomColor])
 
     // Selection state checker - fixes the bug from ListComboBox
     const isOptionSelected = React.useCallback(
@@ -448,22 +446,27 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
                         )}
 
                         <Flex justify={"between"}>
-                          <Flex align="center" gap="2">
-                            <Button
-                              type="button"
-                              variant="solid"
-                              className="h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
-                              color={
-                                (labelColor as ExtendedColorType) || "blue"
-                              }
-                              onClick={handleRandomColor}
+                          <Popover.Root>
+                            <Popover.Trigger>
+                              <Button
+                                variant="solid"
+                                className="color-swatch h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
+                                color={
+                                  (labelColor as ExtendedColorType) || "blue"
+                                }
+                              />
+                            </Popover.Trigger>
+                            <Popover.Content
+                              alignOffset={-75}
+                              width="190px"
+                              className="z-[888] overflow-hidden bg-white p-3"
                             >
-                              <Shuffle className={cn(iconSize, "text-white")} />
-                            </Button>
-                            <Text size="1" className="font-mono text-xs">
-                              {labelColor || "undefined"}
-                            </Text>
-                          </Flex>
+                              <ColorPicker
+                                colorType="base"
+                                onColorSelect={handleColorSelect}
+                              />
+                            </Popover.Content>
+                          </Popover.Root>
                           <Flex gap="2">
                             <Button
                               type="button"
@@ -492,7 +495,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
                       </Box>
                     ) : (
                       <Button
-                        onClick={() => setIsLabelFormOpen?.(true)}
+                        onClick={handleOpenLabelForm}
                         className="h-10 w-full rounded-md bg-blue-500 px-4 text-white"
                       >
                         Add new label
