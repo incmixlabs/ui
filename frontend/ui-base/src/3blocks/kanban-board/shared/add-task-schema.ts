@@ -1,13 +1,13 @@
 // components/board/add-task-schema.ts
 import type { z } from "zod"
 
+import type { Color } from "../../../2elements/multi-select/multi-select"
 import type {
   FieldConfig,
   MCQOption,
   MultipleSelectorOption,
   ZodObjectOrWrapped,
 } from "../../auto-form"
-import type { Color } from "../../../2elements/multi-select/multi-select"
 import { getMembersForSelect } from "../constants/mock-members"
 import type { KanbanColumn } from "../types"
 

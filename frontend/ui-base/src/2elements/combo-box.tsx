@@ -241,7 +241,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
         "indigo",
         "violet",
       ]
-      
+
       // Use crypto.getRandomValues for stronger randomness when available
       let randomIndex: number
       if (typeof crypto !== "undefined" && crypto.getRandomValues) {
@@ -251,7 +251,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
       } else {
         randomIndex = Math.floor(Math.random() * availableColors.length)
       }
-      
+
       const randomColor = availableColors[randomIndex]
 
       if (setLabelColor) {
@@ -453,7 +453,9 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
                               type="button"
                               variant="solid"
                               className="h-7 w-8 cursor-pointer rounded-sm border border-gray-12"
-                              color={(labelColor as ExtendedColorType) || "blue"}
+                              color={
+                                (labelColor as ExtendedColorType) || "blue"
+                              }
                               onClick={handleRandomColor}
                             >
                               <Shuffle className={cn(iconSize, "text-white")} />
