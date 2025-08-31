@@ -74,7 +74,7 @@ const ColorPicker = ({
     "var(--gray-1)",
     "var(--gray-2)",
     "var(--gray-3)",
-    "var(--gray-4)",
+    "var(--gray-4)",   
     "var(--gray-5)",
     "var(--gray-6)",
     "var(--gray-7)",

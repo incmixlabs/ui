@@ -7,6 +7,7 @@ import type {
   MultipleSelectorOption,
   ZodObjectOrWrapped,
 } from "../../auto-form"
+import type { Color } from "../../../2elements/multi-select/multi-select"
 import { getMembersForSelect } from "../constants/mock-members"
 import type { KanbanColumn } from "../types"
 
@@ -117,14 +118,14 @@ export const createTaskFormSchema = (
   const columnOptions: MCQOption[] = columns.map((column) => ({
     label: column.name,
     value: column.id,
-    color: column.color as any, // Include color for rendering
+    color: (column.color as Color) || "gray", // Include color for rendering
   }))
 
   // Transform priority labels into options for the select field
   const priorityOptions: MCQOption[] = priorityLabels.map((priority) => ({
     label: priority.name,
     value: priority.id,
-    color: priority.color as any, // Include color for rendering
+    color: (priority.color as Color) || "gray", // Include color for rendering
   }))
 
   // Get first available column for default status
@@ -204,7 +205,7 @@ export const createTaskFormSchema = (
         inputProps: {
           defaultOptions: getMembersForSelect().map((member) => ({
             ...member,
-            color: member.color as any,
+            color: (member.color as Color) || "gray",
           })) as MultipleSelectorOption[],
           placeholder: "Select members",
           defaultColor: "gray",
