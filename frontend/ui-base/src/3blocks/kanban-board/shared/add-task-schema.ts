@@ -1,11 +1,30 @@
 import type { KanbanColumn } from "@incmix/utils/schema"
 // components/board/add-task-schema.ts
-import type { FieldConfig } from "../../auto-form/types"
+import type { FieldConfig, MCQOption, MultipleSelectorOption } from "../../auto-form/types"
 import type { ZodObjectOrWrapped } from "../../auto-form/utils"
+import type { Color } from "../../../2elements/multi-select/multi-select"
 import { getMembersForSelect } from "../constants/mock-members"
 
+// Helper function to check if a string is a valid Color
+const isValidColor = (color: string): color is Color => {
+  return ["gray", "indigo", "cyan", "orange", "crimson"].includes(color)
+}
+
+// Helper function to transform members for MultipleSelector
+const transformMembersForSelector = (): MultipleSelectorOption[] => {
+  return getMembersForSelect().map((member) => ({
+    label: member.label,
+    value: member.value,
+    id: member.id,
+    name: member.name,
+    avatar: member.avatar,
+    position: member.position,
+    color: (isValidColor(member.color) ? member.color : "gray") as Color,
+  }))
+}
+
 // Predefined labels for tasks
-const PREDEFINED_LABELS = [
+const PREDEFINED_LABELS: MultipleSelectorOption[] = [
   { label: "Bug", value: "bug" },
   { label: "Feature", value: "feature" },
   { label: "Enhancement", value: "enhancement" },
@@ -108,17 +127,17 @@ export const createTaskFormSchema = (
   priorityLabels: any[] = []
 ): TaskFormSchema => {
   // Transform columns into options for the select field with color indicators
-  const columnOptions = columns.map((column) => ({
+  const columnOptions: MCQOption[] = columns.map((column) => ({
     label: column.name,
     value: column.id,
-    color: column.color, // Include color for rendering
+    color: isValidColor(column.color) ? (column.color as Color) : undefined,
   }))
 
   // Transform priority labels into options for the select field
-  const priorityOptions = priorityLabels.map((priority) => ({
+  const priorityOptions: MCQOption[] = priorityLabels.map((priority) => ({
     label: priority.name,
     value: priority.id,
-    color: priority.color, // Include color for rendering
+    color: isValidColor(priority.color) ? (priority.color as Color) : undefined,
   }))
 
   // Get first available column for default status
@@ -196,7 +215,7 @@ export const createTaskFormSchema = (
         description: "Assign team members to this task",
         fieldType: "multipleSelector",
         inputProps: {
-          defaultOptions: getMembersForSelect(),
+          defaultOptions: transformMembersForSelector(),
           placeholder: "Select members",
           defaultColor: "gray",
           className: "border-1 dark:bg-gray-1",
