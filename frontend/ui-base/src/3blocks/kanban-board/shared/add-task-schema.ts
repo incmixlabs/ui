@@ -1,8 +1,12 @@
 import type { KanbanColumn } from "@incmix/utils/schema"
-// components/board/add-task-schema.ts
-import type { FieldConfig, MCQOption, MultipleSelectorOption } from "../../auto-form/types"
-import type { ZodObjectOrWrapped } from "../../auto-form/utils"
 import type { Color } from "../../../2elements/multi-select/multi-select"
+// components/board/add-task-schema.ts
+import type {
+  FieldConfig,
+  MCQOption,
+  MultipleSelectorOption,
+} from "../../auto-form/types"
+import type { ZodObjectOrWrapped } from "../../auto-form/utils"
 import { getMembersForSelect } from "../constants/mock-members"
 
 // Helper function to check if a string is a valid Color
