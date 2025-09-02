@@ -1,18 +1,32 @@
-// components/board/add-task-schema.ts
-import type { z } from "zod"
-
+import type { KanbanColumn } from "@incmix/utils/schema"
 import type { Color } from "../../../2elements/multi-select/multi-select"
+// components/board/add-task-schema.ts
 import type {
   FieldConfig,
-  FieldGroupConfig,
   MCQOption,
   MultipleSelectorOption,
-  ZodObjectOrWrapped,
-} from "../../auto-form"
+} from "../../auto-form/types"
+import type { ZodObjectOrWrapped } from "../../auto-form/utils"
 import { getMembersForSelect } from "../constants/mock-members"
-import type { KanbanColumn } from "../types"
 
-type PriorityLabel = { id: string; name: string; color?: Color }
+// Helper function to check if a string is a valid Color
+const isValidColor = (color: string): color is Color => {
+  return ["gray", "indigo", "cyan", "orange", "crimson"].includes(color)
+}
+
+// Helper function to transform members for MultipleSelector
+const transformMembersForSelector = (): MultipleSelectorOption[] => {
+  return getMembersForSelect().map((member) => ({
+    label: member.label,
+    value: member.value,
+    id: member.id,
+    name: member.name,
+    avatar: member.avatar,
+    position: member.position,
+    color: (isValidColor(member.color) ? member.color : "gray") as Color,
+  }))
+}
+
 // Predefined labels for tasks
 const PREDEFINED_LABELS: MultipleSelectorOption[] = [
   { label: "Bug", value: "bug" },
@@ -25,10 +39,10 @@ const PREDEFINED_LABELS: MultipleSelectorOption[] = [
   { label: "Testing", value: "testing" },
 ]
 
-export interface TaskFormSchema {
+export interface TaskFormSchema<_SchemaType extends ZodObjectOrWrapped = any> {
   formSchema: {
     type: string
-    properties: Record<string, unknown>
+    properties: Record<string, any>
     required: string[]
   }
   fieldConfig: FieldConfig<any>
@@ -114,20 +128,20 @@ const baseTaskFormSchema = {
 // Function to create schema with dynamic columns
 export const createTaskFormSchema = (
   columns: KanbanColumn[],
-  priorityLabels: PriorityLabel[] = []
+  priorityLabels: any[] = []
 ): TaskFormSchema => {
   // Transform columns into options for the select field with color indicators
   const columnOptions: MCQOption[] = columns.map((column) => ({
     label: column.name,
     value: column.id,
-    color: (column.color as Color) || "gray", // Include color for rendering
+    color: isValidColor(column.color) ? (column.color as Color) : undefined,
   }))
 
   // Transform priority labels into options for the select field
   const priorityOptions: MCQOption[] = priorityLabels.map((priority) => ({
     label: priority.name,
     value: priority.id,
-    color: (priority.color as Color) || "gray", // Include color for rendering
+    color: isValidColor(priority.color) ? (priority.color as Color) : undefined,
   }))
 
   // Get first available column for default status
@@ -152,130 +166,125 @@ export const createTaskFormSchema = (
     },
   }
 
-  const fieldConfig: FieldConfig<any> = {
-    name: {
-      description: "Enter a descriptive task name",
-      inputProps: {
-        placeholder: "Enter task name...",
-      },
-    },
-    description: {
-      description: "Describe what needs to be done",
-      fieldType: "textarea",
-      inputProps: {
-        placeholder: "Describe the task details...",
-        // Note: rows property will be handled by the textarea component
-      },
-    },
-    statusId: {
-      description: "Select the task status",
-      fieldType: "select",
-      options: columnOptions,
-      inputProps: {
-        placeholder: "Select status...",
-      },
-    },
-    priorityId: {
-      description: "Set task priority level",
-      fieldType: "select",
-      options: priorityOptions,
-      inputProps: {
-        placeholder: "Select priority...",
-      },
-    },
-    startDate: {
-      description: "When should this task start?",
-      fieldType: "date",
-      inputProps: {
-        placeholder: "Select start date",
-        className: "w-full",
-      },
-    },
-    endDate: {
-      description: "When is this task due?",
-      fieldType: "date",
-      inputProps: {
-        placeholder: "Select due date",
-        className: "w-full",
-      },
-    },
-    assignedTo: {
-      description: "Assign team members to this task",
-      fieldType: "multipleSelector",
-      inputProps: {
-        defaultOptions: getMembersForSelect().map((member) => ({
-          ...member,
-          color: (member.color as Color) || "gray",
-        })) as MultipleSelectorOption[],
-        placeholder: "Select members",
-        defaultColor: "gray",
-        className: "border-1 dark:bg-gray-1",
-      },
-    },
-    labelsTags: {
-      description: "Add relevant labels to categorize this task",
-      fieldType: "multipleSelector",
-      inputProps: {
-        defaultOptions: PREDEFINED_LABELS as MultipleSelectorOption[],
-        placeholder: "Select labels",
-        defaultColor: "gray",
-        className: "border-1 dark:bg-gray-1",
-      },
-    },
-    refUrlsJson: {
-      description:
-        "Add reference URLs to link to external resources like Figma designs or related tasks",
-      fieldType: "refurl",
-      inputProps: {
-        className: "w-full",
-      },
-    },
-    subTasks: {
-      description:
-        "Add subtasks to break down this task into smaller components",
-      fieldType: "subtask",
-      inputProps: {
-        className: "w-full",
-      },
-    },
-  }
-
-  // Add fieldGroups separately to the FieldConfig
-  ;(fieldConfig as any).fieldGroups = [
-    {
-      fields: ["name", "description"],
-      layout: "column",
-      gap: 4,
-      className: "mb-4",
-    },
-    {
-      fields: ["statusId", "priorityId"],
-      layout: "row",
-      gap: 4,
-      className: "mb-4",
-    },
-    {
-      fields: ["startDate", "endDate"],
-      layout: "row",
-      gap: 4,
-      className: "mb-4",
-    },
-    {
-      fields: ["assignedTo", "labelsTags"],
-      layout: "row",
-      gap: 4,
-      className: "mb-4",
-    },
-    {
-      fields: ["refUrlsJson"],
-      layout: "column",
-      gap: 4,
-      className: "mb-4",
-    },
-  ]
-
   return {
     formSchema: schemaWithDefaults,
-    fieldConfig,
+    fieldConfig: {
+      name: {
+        description: "Enter a descriptive task name",
+        inputProps: {
+          placeholder: "Enter task name...",
+        },
+      },
+      description: {
+        description: "Describe what needs to be done",
+        fieldType: "textarea",
+        inputProps: {
+          placeholder: "Describe the task details...",
+          // Note: rows property will be handled by the textarea component
+        },
+      },
+      statusId: {
+        description: "Select the task status",
+        fieldType: "select",
+        options: columnOptions,
+        inputProps: {
+          placeholder: "Select status...",
+        },
+      },
+      priorityId: {
+        description: "Set task priority level",
+        fieldType: "select",
+        options: priorityOptions,
+        inputProps: {
+          placeholder: "Select priority...",
+        },
+      },
+      startDate: {
+        description: "When should this task start?",
+        fieldType: "date",
+        inputProps: {
+          placeholder: "Select start date",
+          className: "w-full",
+        },
+      },
+      endDate: {
+        description: "When is this task due?",
+        fieldType: "date",
+        inputProps: {
+          placeholder: "Select due date",
+          className: "w-full",
+        },
+      },
+      assignedTo: {
+        description: "Assign team members to this task",
+        fieldType: "multipleSelector",
+        inputProps: {
+          defaultOptions: transformMembersForSelector(),
+          placeholder: "Select members",
+          defaultColor: "gray",
+          className: "border-1 dark:bg-gray-1",
+        },
+      },
+      labelsTags: {
+        description: "Add relevant labels to categorize this task",
+        fieldType: "multipleSelector",
+        inputProps: {
+          defaultOptions: PREDEFINED_LABELS,
+          placeholder: "Select labels",
+          defaultColor: "gray",
+          className: "border-1 dark:bg-gray-1",
+        },
+      },
+      refUrlsJson: {
+        description:
+          "Add reference URLs to link to external resources like Figma designs or related tasks",
+        fieldType: "refurl",
+        inputProps: {
+          className: "w-full",
+        },
+      },
+      subTasks: {
+        description:
+          "Add subtasks to break down this task into smaller components",
+        fieldType: "subtask",
+        inputProps: {
+          className: "w-full",
+        },
+      },
+
+      // Field groups for better layout
+      fieldGroups: [
+        {
+          fields: ["name", "description"],
+          layout: "column",
+          gap: 4,
+          className: "mb-4",
+        },
+        {
+          fields: ["statusId", "priorityId"],
+          layout: "row",
+          gap: 4,
+          className: "mb-4",
+        },
+        {
+          fields: ["startDate", "endDate"],
+          layout: "row",
+          gap: 4,
+          className: "mb-4",
+        },
+        {
+          fields: ["assignedTo", "labelsTags"],
+          layout: "row",
+          gap: 4,
+          className: "mb-4",
+        },
+        {
+          fields: ["refUrlsJson"],
+          layout: "column",
+          gap: 4,
+          className: "mb-4",
+        },
+      ] as any,
+    },
   }
 }
