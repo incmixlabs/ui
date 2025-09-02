@@ -4,6 +4,7 @@ import type { z } from "zod"
 import type { Color } from "../../../2elements/multi-select/multi-select"
 import type {
   FieldConfig,
+  FieldGroupConfig,
   MCQOption,
   MultipleSelectorOption,
   ZodObjectOrWrapped,
@@ -11,8 +12,9 @@ import type {
 import { getMembersForSelect } from "../constants/mock-members"
 import type { KanbanColumn } from "../types"
 
+type PriorityLabel = { id: string; name: string; color?: Color }
 // Predefined labels for tasks
-const PREDEFINED_LABELS = [
+const PREDEFINED_LABELS: MultipleSelectorOption[] = [
   { label: "Bug", value: "bug" },
   { label: "Feature", value: "feature" },
   { label: "Enhancement", value: "enhancement" },
@@ -26,10 +28,10 @@ const PREDEFINED_LABELS = [
 export interface TaskFormSchema {
   formSchema: {
     type: string
-    properties: Record<string, any>
+    properties: Record<string, unknown>
     required: string[]
   }
-  fieldConfig: FieldConfig<Record<string, unknown>>
+  fieldConfig: FieldConfig<any>
 }
 
 // Base schema - will be modified to include dynamic columns
@@ -112,7 +114,7 @@ const baseTaskFormSchema = {
 // Function to create schema with dynamic columns
 export const createTaskFormSchema = (
   columns: KanbanColumn[],
-  priorityLabels: any[] = []
+  priorityLabels: PriorityLabel[] = []
 ): TaskFormSchema => {
   // Transform columns into options for the select field with color indicators
   const columnOptions: MCQOption[] = columns.map((column) => ({
@@ -150,128 +152,130 @@ export const createTaskFormSchema = (
     },
   }
 
+  const fieldConfig: FieldConfig<any> = {
+    name: {
+      description: "Enter a descriptive task name",
+      inputProps: {
+        placeholder: "Enter task name...",
+      },
+    },
+    description: {
+      description: "Describe what needs to be done",
+      fieldType: "textarea",
+      inputProps: {
+        placeholder: "Describe the task details...",
+        // Note: rows property will be handled by the textarea component
+      },
+    },
+    statusId: {
+      description: "Select the task status",
+      fieldType: "select",
+      options: columnOptions,
+      inputProps: {
+        placeholder: "Select status...",
+      },
+    },
+    priorityId: {
+      description: "Set task priority level",
+      fieldType: "select",
+      options: priorityOptions,
+      inputProps: {
+        placeholder: "Select priority...",
+      },
+    },
+    startDate: {
+      description: "When should this task start?",
+      fieldType: "date",
+      inputProps: {
+        placeholder: "Select start date",
+        className: "w-full",
+      },
+    },
+    endDate: {
+      description: "When is this task due?",
+      fieldType: "date",
+      inputProps: {
+        placeholder: "Select due date",
+        className: "w-full",
+      },
+    },
+    assignedTo: {
+      description: "Assign team members to this task",
+      fieldType: "multipleSelector",
+      inputProps: {
+        defaultOptions: getMembersForSelect().map((member) => ({
+          ...member,
+          color: (member.color as Color) || "gray",
+        })) as MultipleSelectorOption[],
+        placeholder: "Select members",
+        defaultColor: "gray",
+        className: "border-1 dark:bg-gray-1",
+      },
+    },
+    labelsTags: {
+      description: "Add relevant labels to categorize this task",
+      fieldType: "multipleSelector",
+      inputProps: {
+        defaultOptions: PREDEFINED_LABELS as MultipleSelectorOption[],
+        placeholder: "Select labels",
+        defaultColor: "gray",
+        className: "border-1 dark:bg-gray-1",
+      },
+    },
+    refUrlsJson: {
+      description:
+        "Add reference URLs to link to external resources like Figma designs or related tasks",
+      fieldType: "refurl",
+      inputProps: {
+        className: "w-full",
+      },
+    },
+    subTasks: {
+      description:
+        "Add subtasks to break down this task into smaller components",
+      fieldType: "subtask",
+      inputProps: {
+        className: "w-full",
+      },
+    },
+  }
+
+  // Add fieldGroups separately to the FieldConfig
+  ;(fieldConfig as any).fieldGroups = [
+    {
+      fields: ["name", "description"],
+      layout: "column",
+      gap: 4,
+      className: "mb-4",
+    },
+    {
+      fields: ["statusId", "priorityId"],
+      layout: "row",
+      gap: 4,
+      className: "mb-4",
+    },
+    {
+      fields: ["startDate", "endDate"],
+      layout: "row",
+      gap: 4,
+      className: "mb-4",
+    },
+    {
+      fields: ["assignedTo", "labelsTags"],
+      layout: "row",
+      gap: 4,
+      className: "mb-4",
+    },
+    {
+      fields: ["refUrlsJson"],
+      layout: "column",
+      gap: 4,
+      className: "mb-4",
+    },
+  ]
+
   return {
     formSchema: schemaWithDefaults,
-    fieldConfig: {
-      name: {
-        description: "Enter a descriptive task name",
-        inputProps: {
-          placeholder: "Enter task name...",
-        },
-      },
-      description: {
-        description: "Describe what needs to be done",
-        fieldType: "textarea",
-        inputProps: {
-          placeholder: "Describe the task details...",
-          // Note: rows property will be handled by the textarea component
-        },
-      },
-      statusId: {
-        description: "Select the task status",
-        fieldType: "select",
-        options: columnOptions,
-        inputProps: {
-          placeholder: "Select status...",
-        },
-      },
-      priorityId: {
-        description: "Set task priority level",
-        fieldType: "select",
-        options: priorityOptions,
-        inputProps: {
-          placeholder: "Select priority...",
-        },
-      },
-      startDate: {
-        description: "When should this task start?",
-        fieldType: "date",
-        inputProps: {
-          placeholder: "Select start date",
-          className: "w-full",
-        },
-      },
-      endDate: {
-        description: "When is this task due?",
-        fieldType: "date",
-        inputProps: {
-          placeholder: "Select due date",
-          className: "w-full",
-        },
-      },
-      assignedTo: {
-        description: "Assign team members to this task",
-        fieldType: "multipleSelector",
-        inputProps: {
-          defaultOptions: getMembersForSelect().map((member) => ({
-            ...member,
-            color: (member.color as Color) || "gray",
-          })) as MultipleSelectorOption[],
-          placeholder: "Select members",
-          defaultColor: "gray",
-          className: "border-1 dark:bg-gray-1",
-        },
-      },
-      labelsTags: {
-        description: "Add relevant labels to categorize this task",
-        fieldType: "multipleSelector",
-        inputProps: {
-          defaultOptions: PREDEFINED_LABELS as MultipleSelectorOption[],
-          placeholder: "Select labels",
-          defaultColor: "gray",
-          className: "border-1 dark:bg-gray-1",
-        },
-      },
-      refUrlsJson: {
-        description:
-          "Add reference URLs to link to external resources like Figma designs or related tasks",
-        fieldType: "refurl",
-        inputProps: {
-          className: "w-full",
-        },
-      },
-      subTasks: {
-        description:
-          "Add subtasks to break down this task into smaller components",
-        fieldType: "subtask",
-        inputProps: {
-          className: "w-full",
-        },
-      },
-
-      // Field groups for better layout
-      fieldGroups: [
-        {
-          fields: ["name", "description"],
-          layout: "column",
-          gap: 4,
-          className: "mb-4",
-        },
-        {
-          fields: ["statusId", "priorityId"],
-          layout: "row",
-          gap: 4,
-          className: "mb-4",
-        },
-        {
-          fields: ["startDate", "endDate"],
-          layout: "row",
-          gap: 4,
-          className: "mb-4",
-        },
-        {
-          fields: ["assignedTo", "labelsTags"],
-          layout: "row",
-          gap: 4,
-          className: "mb-4",
-        },
-        {
-          fields: ["refUrlsJson"],
-          layout: "column",
-          gap: 4,
-          className: "mb-4",
-        },
-      ] as any,
-    },
+    fieldConfig,
   }
 }
