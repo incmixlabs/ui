@@ -229,6 +229,26 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
       }
     }, [mode, onValueChange])
 
+    // Random color initialization when form opens
+    const getRandomColor = React.useCallback(() => {
+      const baseColors = [
+        "blue",
+        "green",
+        "red",
+        "orange",
+        "purple",
+        "indigo",
+        "pink",
+        "violet",
+        "sky",
+        "lime",
+        "brown",
+        "gray",
+      ]
+      const randomIndex = Math.floor(Math.random() * baseColors.length)
+      return baseColors[randomIndex] as ExtendedColorType
+    }, [])
+
     // Color selection
     const handleColorSelect = React.useCallback(
       (newColor: ColorSelectType) => {
@@ -238,6 +258,14 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
       },
       [setLabelColor]
     )
+
+    // Handle opening label form with random color
+    const handleOpenLabelForm = React.useCallback(() => {
+      if (setLabelColor) {
+        setLabelColor(getRandomColor())
+      }
+      setIsLabelFormOpen?.(true)
+    }, [setLabelColor, setIsLabelFormOpen, getRandomColor])
 
     // Selection state checker - fixes the bug from ListComboBox
     const isOptionSelected = React.useCallback(
@@ -477,7 +505,7 @@ export const ComboBox = React.forwardRef<HTMLButtonElement, ComboBoxProps>(
                       </Box>
                     ) : (
                       <Button
-                        onClick={() => setIsLabelFormOpen?.(true)}
+                        onClick={handleOpenLabelForm}
                         className="h-10 w-full rounded-md bg-blue-500 px-4 text-white"
                       >
                         Add new label
