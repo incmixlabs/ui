@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react"
-import { Text } from "@incmix/ui"
+import { Input, Text } from "@incmix/ui"
 import { cn } from "@utils"
 
 interface InlineEditableNumberProps {
@@ -19,7 +19,7 @@ export function InlineEditableNumber({
   className = "",
   disabled = false,
   prefix = "",
-  format = (val) => val.toString()
+  format = (val) => val.toString(),
 }: InlineEditableNumberProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState(value.toString())
@@ -27,8 +27,14 @@ export function InlineEditableNumber({
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    setEditValue(value.toString())
-  }, [value])
+    console.log(`InlineEditableNumber useEffect: value changed to "${value}", currently editing: ${isEditing}`)
+    if (!isEditing) {
+      setEditValue(value.toString())
+      console.log(`Updated editValue to "${value}"`)
+    } else {
+      console.log(`Not updating editValue because currently editing`)
+    }
+  }, [value, isEditing])
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -38,27 +44,35 @@ export function InlineEditableNumber({
   }, [isEditing])
 
   const handleSave = async () => {
-    const numericValue = parseFloat(editValue.replace(/[^0-9.-]/g, ''))
-    
-    if (isNaN(numericValue) || numericValue === value) {
+    const numericValue = Number.parseFloat(editValue.replace(/[^0-9.-]/g, ""))
+    console.log(`InlineEditableNumber handleSave: editValue="${editValue}", numericValue=${numericValue}, originalValue=${value}`)
+
+    if (Number.isNaN(numericValue) || numericValue === value) {
+      console.log("No change detected, exiting edit mode")
       setIsEditing(false)
       setEditValue(value.toString())
       return
     }
 
     if (numericValue < 0) {
+      console.log("Negative value not allowed")
       setEditValue(value.toString())
       setIsEditing(false)
       return
     }
 
+    console.log("Starting save operation...")
     setIsLoading(true)
     try {
+      console.log("Calling onSave with:", numericValue)
       await onSave(numericValue)
+      console.log("onSave completed successfully")
       setIsEditing(false)
     } catch (error) {
       console.error("Failed to save number:", error)
+      console.log("Reverting to original value due to error")
       setEditValue(value.toString())
+      setIsEditing(false)
     } finally {
       setIsLoading(false)
     }
@@ -80,7 +94,7 @@ export function InlineEditableNumber({
 
   if (isEditing) {
     return (
-      <input
+      <Input
         ref={inputRef}
         type="text"
         inputMode="numeric"
@@ -91,14 +105,62 @@ export function InlineEditableNumber({
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={isLoading}
+        // Sort CSS classes alphabetically to fix lint warning
         className={cn(
-          "bg-transparent border-none outline-none w-20",
-          "focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 rounded px-1 -mx-1",
-          "transition-all duration-200",
-          "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
-          isLoading && "opacity-50 cursor-wait",
+          // Remove all borders, outlines, and other visual elements
+          "[appearance:textfield]",
+          "appearance-none",
+          "bg-transparent",
+          "border-0",
+          "border-none",
+          "border-transparent",
+          "flex-1",
+          "focus-visible:border-0",
+          "focus-visible:border-none",
+          "focus-visible:outline-0",
+          "focus-visible:outline-none",
+          "focus-visible:ring-0",
+          "focus-visible:shadow-none",
+          "focus:border-0",
+          "focus:border-none", 
+          "focus:outline-0",
+          "focus:outline-none",
+          "focus:ring-0",
+          "focus:ring-offset-0",
+          "focus:shadow-none",
+          "hover:border-0",
+          "hover:border-none",
+          "hover:outline-none",
+          "m-0",
+          "outline-0", 
+          "outline-none",
+          "p-0",
+          "ring-0",
+          "ring-offset-0",
+          "shadow-none",
+          "w-20", 
+          "[&::-webkit-inner-spin-button]:appearance-none",
+          "[&::-webkit-outer-spin-button]:appearance-none",
+          "data-[focus]:border-0 data-[focus]:border-transparent data-[focus]:outline-none data-[focus]:ring-0",
+          // Loading state
+          isLoading && "cursor-wait opacity-50",
           className
         )}
+        // Add aggressive inline styles with !important to fully override any browser styling
+        style={{
+          fontSize: "inherit",
+          lineHeight: "inherit",
+          minHeight: "auto",
+          height: "auto",
+          border: "none !important",
+          outline: "none !important",
+          boxShadow: "none !important",
+          WebkitAppearance: "none",
+          MozAppearance: "none",
+          appearance: "none",
+          borderRadius: 0,
+          background: "transparent"
+        }}
       />
     )
   }
@@ -107,7 +169,7 @@ export function InlineEditableNumber({
     <Text
       className={cn(
         "cursor-pointer transition-all duration-200",
-        "hover:bg-gray-2 hover:text-gray-12 rounded px-1 -mx-1",
+        "hover:bg-gray-2 hover:text-gray-12",
         disabled && "cursor-not-allowed opacity-50",
         className
       )}
@@ -115,7 +177,8 @@ export function InlineEditableNumber({
       title={disabled ? "Editing disabled" : "Click to edit"}
       as="p"
     >
-      {prefix}{format(value)}
+      {prefix}
+      {format(value)}
     </Text>
   )
 }

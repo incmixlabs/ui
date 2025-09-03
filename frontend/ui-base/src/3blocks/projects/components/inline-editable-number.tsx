@@ -109,7 +109,7 @@ export function InlineEditableNumber({
           "focus-visible:ring-0",
           "focus-visible:shadow-none",
           "focus:border-0",
-          "focus:border-none", 
+          "focus:border-none",
           "focus:outline-0",
           "focus:outline-none",
           "focus:ring-0",
@@ -119,13 +119,13 @@ export function InlineEditableNumber({
           "hover:border-none",
           "hover:outline-none",
           "m-0",
-          "outline-0", 
+          "outline-0",
           "outline-none",
           "p-0",
           "ring-0",
           "ring-offset-0",
           "shadow-none",
-          "w-20", 
+          "w-20",
           "[&::-webkit-inner-spin-button]:appearance-none",
           "[&::-webkit-outer-spin-button]:appearance-none",
           "data-[focus]:border-0 data-[focus]:border-transparent data-[focus]:outline-none data-[focus]:ring-0",
@@ -146,7 +146,7 @@ export function InlineEditableNumber({
           MozAppearance: "none",
           appearance: "none",
           borderRadius: 0,
-          background: "transparent"
+          background: "transparent",
         }}
       />
     )

@@ -24,7 +24,7 @@ export function AddProjectAutoForm({
   const [formData, setFormData] = useState<Record<string, any>>({})
   // Use a ref to store the File object to prevent serialization
   const fileRef = useRef<File | null>(null)
-  const {selectedOrganisation} = useOrganizationStore()
+  const { selectedOrganisation } = useOrganizationStore()
   // Handle form values change
   const handleValuesChange = (values: any) => {
     // Check if values.files is a File object and store it in the ref

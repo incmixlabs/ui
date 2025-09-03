@@ -11,11 +11,9 @@ import {
 } from "../../utils/browser-helpers"
 
 // TODO: Replace with actual user context when available
-const getCurrentUser = () => ({
-  id: "current-user-id",
-  name: "Current User",
-  image: "/placeholder.svg",
-})
+const getCurrentUserId = (): string => {
+  return "current-user-id"
+}
 
 export interface UpdateProjectData {
   name?: string
@@ -86,7 +84,7 @@ export function useProjectMutations(): UseProjectMutationsReturn {
       const updatedData = {
         ...updates,
         updatedAt: getCurrentTimestamp(),
-        updatedBy: getCurrentUser() as any,
+        updatedBy: getCurrentUserId(),
       }
 
       await projectDoc.update({ $set: updatedData })
@@ -196,8 +194,8 @@ export function useProjectMutations(): UseProjectMutationsReturn {
         name: newName || `${originalData.name} (Copy)`,
         createdAt: now,
         updatedAt: now,
-        createdBy: getCurrentUser() as any,
-        updatedBy: getCurrentUser() as any,
+        createdBy: getCurrentUserId(),
+        updatedBy: getCurrentUserId(),
       }
 
       const newDoc = await db.projects.insert(duplicatedProject)

@@ -21,7 +21,7 @@ export function InlineEditableField({
   as = "text",
   size = "3",
   multiline = false,
-  disabled = false
+  disabled = false,
 }: InlineEditableFieldProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editValue, setEditValue] = useState(value)
@@ -29,8 +29,14 @@ export function InlineEditableField({
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
 
   useEffect(() => {
-    setEditValue(value)
-  }, [value])
+    console.log(`InlineEditableField useEffect: value changed to "${value}", currently editing: ${isEditing}`)
+    if (!isEditing) {
+      setEditValue(value)
+      console.log(`Updated editValue to "${value}"`)
+    } else {
+      console.log(`Not updating editValue because currently editing`)
+    }
+  }, [value, isEditing])
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -45,18 +51,25 @@ export function InlineEditableField({
   }, [isEditing])
 
   const handleSave = async () => {
+    console.log(`InlineEditableField handleSave: editValue="${editValue}", originalValue="${value}"`)
+    
     if (editValue.trim() === value || !editValue.trim()) {
+      console.log("No change detected, exiting edit mode")
       setIsEditing(false)
       setEditValue(value)
       return
     }
 
+    console.log("Starting save operation...")
     setIsLoading(true)
     try {
+      console.log("Calling onSave with:", editValue.trim())
       await onSave(editValue.trim())
+      console.log("onSave completed successfully")
       setIsEditing(false)
     } catch (error) {
       console.error("Failed to save:", error)
+      console.log("Reverting to original value due to error")
       setEditValue(value) // Revert on error
     } finally {
       setIsLoading(false)
@@ -80,17 +93,9 @@ export function InlineEditableField({
     }
   }
 
-  const baseInputStyles = cn(
-    "bg-transparent border-none outline-none resize-none",
-    "focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 rounded px-1 -mx-1",
-    "transition-all duration-200",
-    multiline && "w-full",
-    isLoading && "opacity-50 cursor-wait"
-  )
-
   if (isEditing) {
     const InputComponent = multiline ? "textarea" : "input"
-    
+
     return (
       <InputComponent
         ref={inputRef as any}
@@ -101,15 +106,21 @@ export function InlineEditableField({
         placeholder={placeholder}
         disabled={isLoading}
         className={cn(
-          baseInputStyles,
+          // Ultra-minimal styling for seamless editing
+          "m-0 w-full flex-1 resize-none border-none bg-transparent p-0",
+          "focus:outline-none focus:ring-0",
+          // Typography matching
           as === "heading" ? "font-medium text-gray-12" : "text-gray-11",
           multiline && "min-h-[60px]",
+          isLoading && "cursor-wait opacity-50",
           className
         )}
         style={{
           fontSize: as === "heading" ? undefined : "inherit",
           lineHeight: as === "heading" ? undefined : "inherit",
-          fontWeight: as === "heading" ? "500" : "inherit"
+          fontWeight: as === "heading" ? "500" : "inherit",
+          minHeight: multiline ? "60px" : "auto",
+          height: "auto",
         }}
       />
     )
@@ -119,14 +130,14 @@ export function InlineEditableField({
   const commonProps = {
     className: cn(
       "cursor-pointer transition-all duration-200",
-      "hover:bg-gray-2 hover:text-gray-12 rounded px-1 -mx-1",
+      "hover:bg-gray-2 hover:text-gray-12",
       !value && "text-gray-9 italic",
       disabled && "cursor-not-allowed opacity-50",
-      multiline && "w-full block",
+      multiline && "block w-full",
       className
     ),
     onClick: () => !disabled && setIsEditing(true),
-    title: disabled ? "Editing disabled" : "Click to edit"
+    title: disabled ? "Editing disabled" : "Click to edit",
   }
 
   if (as === "heading") {
