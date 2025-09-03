@@ -80,14 +80,6 @@ export function InlineEditableField({
     }
   }
 
-  const baseInputStyles = cn(
-    "resize-none border-none bg-transparent outline-none",
-    "-mx-1 rounded px-1 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50",
-    "transition-all duration-200",
-    multiline && "w-full",
-    isLoading && "cursor-wait opacity-50"
-  )
-
   if (isEditing) {
     const InputComponent = multiline ? "textarea" : "input"
 
@@ -101,15 +93,21 @@ export function InlineEditableField({
         placeholder={placeholder}
         disabled={isLoading}
         className={cn(
-          baseInputStyles,
+          // Ultra-minimal styling for seamless editing
+          "m-0 w-full flex-1 resize-none border-none bg-transparent p-0",
+          "focus:outline-none focus:ring-0",
+          // Typography matching
           as === "heading" ? "font-medium text-gray-12" : "text-gray-11",
           multiline && "min-h-[60px]",
+          isLoading && "cursor-wait opacity-50",
           className
         )}
         style={{
           fontSize: as === "heading" ? undefined : "inherit",
           lineHeight: as === "heading" ? undefined : "inherit",
           fontWeight: as === "heading" ? "500" : "inherit",
+          minHeight: multiline ? "60px" : "auto",
+          height: "auto",
         }}
       />
     )
@@ -119,7 +117,7 @@ export function InlineEditableField({
   const commonProps = {
     className: cn(
       "cursor-pointer transition-all duration-200",
-      "-mx-1 rounded px-1 hover:bg-gray-2 hover:text-gray-12",
+      "hover:bg-gray-2 hover:text-gray-12",
       !value && "text-gray-9 italic",
       disabled && "cursor-not-allowed opacity-50",
       multiline && "block w-full",

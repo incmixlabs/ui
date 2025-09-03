@@ -92,14 +92,62 @@ export function InlineEditableNumber({
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={isLoading}
+        // Sort CSS classes alphabetically to fix lint warning
         className={cn(
-          "-mx-1 w-auto min-w-[120px] rounded border-none bg-transparent px-1 py-0.5 font-inherit text-inherit shadow-none outline-none transition-all duration-200",
-          "focus:bg-gray-2 focus:ring-1 focus:ring-gray-7",
-          "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+          // Remove all borders, outlines, and other visual elements
+          "[appearance:textfield]",
+          "appearance-none",
+          "bg-transparent",
+          "border-0",
+          "border-none",
+          "border-transparent",
+          "flex-1",
+          "focus-visible:border-0",
+          "focus-visible:border-none",
+          "focus-visible:outline-0",
+          "focus-visible:outline-none",
+          "focus-visible:ring-0",
+          "focus-visible:shadow-none",
+          "focus:border-0",
+          "focus:border-none", 
+          "focus:outline-0",
+          "focus:outline-none",
+          "focus:ring-0",
+          "focus:ring-offset-0",
+          "focus:shadow-none",
+          "hover:border-0",
+          "hover:border-none",
+          "hover:outline-none",
+          "m-0",
+          "outline-0", 
+          "outline-none",
+          "p-0",
+          "ring-0",
+          "ring-offset-0",
+          "shadow-none",
+          "w-20", 
+          "[&::-webkit-inner-spin-button]:appearance-none",
+          "[&::-webkit-outer-spin-button]:appearance-none",
+          "data-[focus]:border-0 data-[focus]:border-transparent data-[focus]:outline-none data-[focus]:ring-0",
+          // Loading state
           isLoading && "cursor-wait opacity-50",
           className
         )}
-        style={{ fontSize: "inherit", lineHeight: "inherit" }}
+        // Add aggressive inline styles with !important to fully override any browser styling
+        style={{
+          fontSize: "inherit",
+          lineHeight: "inherit",
+          minHeight: "auto",
+          height: "auto",
+          border: "none !important",
+          outline: "none !important",
+          boxShadow: "none !important",
+          WebkitAppearance: "none",
+          MozAppearance: "none",
+          appearance: "none",
+          borderRadius: 0,
+          background: "transparent"
+        }}
       />
     )
   }
@@ -107,7 +155,7 @@ export function InlineEditableNumber({
   return (
     <Text
       className={cn(
-        "-mx-1 cursor-pointer rounded px-1 py-0.5 transition-all duration-200",
+        "cursor-pointer transition-all duration-200",
         "hover:bg-gray-2 hover:text-gray-12",
         disabled && "cursor-not-allowed opacity-50",
         className
