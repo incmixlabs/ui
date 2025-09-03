@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import * as React from "react"
 import { Button, Theme } from "../../src/1base"
+import SplitButton from "../../src/1base/radix-ui/button/split-button"
+import { FileText, Copy, Trash2, Download } from "lucide-react"
 
 const meta: Meta<typeof Button> = {
   title:"1 Base/Button",
@@ -344,6 +346,186 @@ export const RealWorldExample: Story = {
       <Button variant="soft" color="green" loading>
         Processing...
       </Button>
+    </div>
+  ),
+}
+
+// Split Button stories
+export const SplitButtonDefault: Story = {
+  render: () => (
+    <SplitButton
+      button={{
+        children: "Create New",
+        onClick: () => console.log("Main button clicked")
+      }}
+      items={[
+        {
+          children: (
+            <>
+              <FileText className="mr-2 h-4 w-4" />
+              Create Draft
+            </>
+          ),
+          onClick: () => console.log("Create Draft")
+        },
+        {
+          children: (
+            <>
+              <Copy className="mr-2 h-4 w-4" />
+              Duplicate
+            </>
+          ),
+          onClick: () => console.log("Duplicate")
+        },
+        {
+          children: (
+            <>
+              <Download className="mr-2 h-4 w-4" />
+              Export
+            </>
+          ),
+          onClick: () => console.log("Export")
+        },
+        {
+          children: (
+            <>
+              <Trash2 className="mr-2 h-4 w-4" />
+              Delete
+            </>
+          ),
+          className: "text-red-600",
+          onClick: () => console.log("Delete")
+        },
+      ]}
+    />
+  ),
+}
+
+export const SplitButtonLeftSide: Story = {
+  render: () => (
+    <div style={{ display: "flex", gap: "16px" }}>
+      <SplitButton
+        splitLeft={true}
+        button={{
+          children: "Actions on Left",
+          onClick: () => console.log("Main button clicked")
+        }}
+        variant="solid"
+        items={[
+          { children: "Option 1", onClick: () => console.log("Option 1") },
+          { children: "Option 2", onClick: () => console.log("Option 2") },
+          { children: "Option 3", onClick: () => console.log("Option 3") },
+        ]}
+      />
+      <SplitButton
+        splitLeft={false}
+        button={{
+          children: "Actions on Right",
+          onClick: () => console.log("Main button clicked")
+        }}
+        variant="outline"
+        items={[
+          { children: "Option 1", onClick: () => console.log("Option 1") },
+          { children: "Option 2", onClick: () => console.log("Option 2") },
+          { children: "Option 3", onClick: () => console.log("Option 3") },
+        ]}
+      />
+    </div>
+  ),
+}
+
+export const SplitButtonSizes: Story = {
+  render: () => (
+    <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+      <SplitButton
+        size="1"
+        button={{
+          children: "Size 1",
+          onClick: () => console.log("Size 1 clicked")
+        }}
+        items={[
+          { children: "Option 1", onClick: () => console.log("Option 1") },
+          { children: "Option 2", onClick: () => console.log("Option 2") },
+          { children: "Option 3", onClick: () => console.log("Option 3") },
+        ]}
+      />
+      <SplitButton
+        size="2"
+        button={{
+          children: "Size 2",
+          onClick: () => console.log("Size 2 clicked")
+        }}
+        items={[
+          { children: "Option 1", onClick: () => console.log("Option 1") },
+          { children: "Option 2", onClick: () => console.log("Option 2") },
+          { children: "Option 3", onClick: () => console.log("Option 3") },
+        ]}
+      />
+      <SplitButton
+        size="3"
+        button={{
+          children: "Size 3",
+          onClick: () => console.log("Size 3 clicked")
+        }}
+        items={[
+          { children: "Option 1", onClick: () => console.log("Option 1") },
+          { children: "Option 2", onClick: () => console.log("Option 2") },
+          { children: "Option 3", onClick: () => console.log("Option 3") },
+        ]}
+      />
+    </div>
+  ),
+}
+
+export const SplitButtonVariants: Story = {
+  render: () => (
+    <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
+      <SplitButton
+        variant="solid"
+        color="blue"
+        button={{
+          children: "Solid"
+        }}
+        items={[
+          { children: "Action 1" },
+          { children: "Action 2" },
+          { children: "Action 3" },
+        ]}
+      />
+      <SplitButton
+        variant="soft"
+        color="green"
+        button={{
+          children: "Soft",
+        }}
+        items={[
+          { children: "Action 1" },
+          { children: "Action 2" },
+          { children: "Action 3" },
+        ]}
+      />
+      <SplitButton
+        variant="outline"
+        button={{
+          children: "Outline"
+        }}
+        items={[
+          { children: "Action 1" },
+          { children: "Action 2" },
+          { children: "Action 3" },
+        ]}
+      />
+      <SplitButton
+        variant="ghost"
+        button={{
+          children: "Ghost"
+        }}
+        items={[
+          { children: "Action 1" },
+          { children: "Action 2" },
+          { children: "Action 3" },
+        ]}
+      />
     </div>
   ),
 }
