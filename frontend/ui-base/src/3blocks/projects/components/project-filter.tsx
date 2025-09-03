@@ -1,9 +1,13 @@
-import { Box, Button, Flex, Icon, Input, Select } from "@/src/1base"
-import { SmartDatetimeInput } from "@/src/2elements/dates/datetime-picker"
-import { TagSelect } from "@/src/2elements/multi-select"
-import type { Option } from "@/src/2elements/multi-select"
+import { Box, Button, Flex, Icon, Input, Select } from "@/base"
 import { useState } from "react"
-import { members } from "../data"
+
+import { SmartDatetimeInput } from "@/src/2elements/dates/datetime-picker"
+import { type Option, TagSelect } from "@/src/2elements/multi-select"
+// TODO: Replace with actual member data from organization/project management
+const mockMembers: Option[] = [
+  { id: "1", value: "user1", name: "Team Member 1", label: "Team Member 1" },
+  { id: "2", value: "user2", name: "Team Member 2", label: "Team Member 2" },
+]
 
 interface ProjectFilterProps {
   onApplyFilters: (filters: {
@@ -68,7 +72,7 @@ export function ProjectFilter({
               value={selectedMembers}
               onChange={setSelectedMembers}
               defaultColor={"gray"}
-              defaultOptions={members}
+              defaultOptions={mockMembers}
               placeholder="Select members"
               className="border-1 bg-gray-1"
               emptyIndicator={

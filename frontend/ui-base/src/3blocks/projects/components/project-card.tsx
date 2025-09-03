@@ -42,13 +42,28 @@ export function ProjectCard({
       <Flex align={"center"} justify={"between"}>
         <Flex align={"center"} gap={"3"}>
           <Box className="relative grid h-14 w-14 place-content-center rounded-app border-2 border-gray-4 p-2">
-            <img
-              src={project.logo}
-              alt={project.name}
-              width={40}
-              height={40}
-              className="object-contain"
-            />
+            {project.logo ? (
+              <img
+                src={project.logo}
+                alt={project.name}
+                width={40}
+                height={40}
+                className="object-contain"
+                onError={(e) => {
+                  // Hide broken image and show placeholder
+                  e.currentTarget.style.display = "none"
+                  const placeholder = e.currentTarget
+                    .nextElementSibling as HTMLElement
+                  if (placeholder) placeholder.style.display = "flex"
+                }}
+              />
+            ) : null}
+            <Box
+              className={`absolute inset-0 flex items-center justify-center font-medium text-gray-11 ${project.logo ? "hidden" : "flex"}`}
+              style={{ display: project.logo ? "none" : "flex" }}
+            >
+              {project.name.charAt(0).toUpperCase()}
+            </Box>
           </Box>
           <Box>
             <Heading as="h3" className="font-medium text-gray-12" size={"3"}>

@@ -1,7 +1,6 @@
 import { Suspense, lazy, useState } from "react"
 
 import { motion } from "motion/react"
-import { nanoid } from "nanoid"
 import { useQueryState } from "nuqs"
 
 import {
@@ -14,17 +13,23 @@ import {
   ScrollArea,
   Text,
   toast,
-} from "@/src/1base"
-import { saveFormProject, useOrganizationStore } from "@incmix/store"
+} from "@/base"
+import {
+  type ProjectDocType,
+  saveFormProject,
+  useOrganizationStore,
+  useProjectMutations,
+  useProjectsQuery,
+} from "@incmix/store"
 
 export {
   ReusableAddProject,
   useAddProject,
 } from "./components/reusable-add-project"
-import { cn } from "@/shadcn/lib/utils"
 import { MotionSheet } from "@/src/4layouts/custom-sheet"
 import { PageHeader } from "@/src/4layouts/page-header"
-import { projects as initialProjects } from "./data"
+import { cn } from "@/src/utils/cn"
+import { members, projects } from "./data"
 import { useProjectMutation } from "./hooks/use-project-mutation"
 import type { CreateProject, Project } from "./types"
 
@@ -59,14 +64,108 @@ const ProjectFilter = lazy(() =>
  *
  * @returns The React element representing the project management page.
  */
+// Helper function to transform RxDB project to UI Project type
+const transformToUIProject = (dbProject: ProjectDocType): Project => {
+  return {
+    id: dbProject.id,
+    name: dbProject.name,
+    company: dbProject.company,
+    logo: dbProject.logo || "",
+    orgId: dbProject.orgId,
+    description: dbProject.description,
+    status: dbProject.status as "all" | "started" | "on-hold" | "completed",
+    startDate: dbProject.startDate || Date.now(),
+    endDate: dbProject.endDate || Date.now(),
+    budget: dbProject.budget,
+    // Default UI-specific fields that aren't in RxDB
+    progress: 50, // Could be calculated from tasks later
+    timeLeft: "1",
+    timeType: "week" as const,
+    members: [], // Could be populated from actual member data later
+    createdAt: new Date(dbProject.createdAt),
+    updatedAt: new Date(dbProject.updatedAt),
+    createdBy: {
+      id: dbProject.createdBy,
+      name: "User", // Could be populated from actual user data
+    },
+    updatedBy: {
+      id: dbProject.updatedBy,
+      name: "User", // Could be populated from actual user data
+    },
+  }
+}
+
 export function ProjectPageComponents() {
   const { selectedOrganisation } = useOrganizationStore()
   const [projectId, setProjectId] = useQueryState("projectId", {
     defaultValue: "",
   })
-  const [projects, setProjects] = useState<Project[]>(initialProjects)
-  const [filteredProjects, setFilteredProjects] =
-    useState<Project[]>(initialProjects)
+
+  // Use real data hooks instead of dummy data
+  const {
+    projects: dbProjects,
+    filteredProjects: dbFilteredProjects,
+    isLoading: projectsLoading,
+    error: projectsError,
+    applyFilters,
+    clearFilters,
+    refetch: refetchProjects,
+  } = useProjectsQuery()
+
+  // Transform database projects to UI format
+  const projects = dbProjects.map(transformToUIProject)
+  const filteredProjects = dbFilteredProjects.map(transformToUIProject)
+
+  // Handle loading state
+  if (projectsLoading) {
+    return (
+      <Box className="min-h-screen bg-gray-1">
+        <Box className="container mx-auto px-4 py-8">
+          <PageHeader title={"Projects"} className="w-full" />
+          <Box className="py-12 text-center">
+            <Box className="animate-pulse space-y-4">
+              <Box className="mx-auto h-8 w-32 rounded bg-gray-6" />
+              <Box className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {[1, 2, 3].map((i) => (
+                  <Box key={i} className="h-64 rounded-lg bg-gray-6" />
+                ))}
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+    )
+  }
+
+  // Handle error state
+  if (projectsError) {
+    return (
+      <Box className="min-h-screen bg-gray-1">
+        <Box className="container mx-auto px-4 py-8">
+          <PageHeader title={"Projects"} className="w-full" />
+          <Box className="py-12 text-center">
+            <Heading as="h1" className="mb-2 font-medium text-lg text-red-600">
+              Error Loading Projects
+            </Heading>
+            <Text as="p" className="mb-6 text-gray-500">
+              {typeof projectsError === "string"
+                ? projectsError
+                : "Failed to load projects. Please try again."}
+            </Text>
+            <Button
+              onClick={() => refetchProjects()}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              <Icon name="RefreshCw" className="mr-2" /> Retry
+            </Button>
+          </Box>
+        </Box>
+      </Box>
+    )
+  }
+
+  const { deleteProject } = useProjectMutations()
+
   const [activeTab, setActiveTab] = useState<
     "all" | "started" | "on-hold" | "completed"
   >("all")
@@ -78,11 +177,8 @@ export function ProjectPageComponents() {
     tab: "all" | "started" | "on-hold" | "completed"
   ) => {
     setActiveTab(tab)
-    if (tab === "all") {
-      setFilteredProjects(projects)
-    } else {
-      setFilteredProjects(projects.filter((project) => project.status === tab))
-    }
+    // Use the query hook's filtering instead of local state
+    applyFilters({ status: tab })
   }
 
   const { mutateAsync: saveProjectToBackend } = useProjectMutation({
@@ -105,11 +201,9 @@ export function ProjectPageComponents() {
           logo: project.logo,
         })
 
-        setProjects((prev) => [...prev, project])
+        // Refetch projects from the database to get the latest data
+        await refetchProjects()
 
-        if (activeTab === "all" || activeTab === project.status) {
-          setFilteredProjects([...filteredProjects, project])
-        }
         toast.success("Project created successfully", {
           description: `"${project.name}" has been added to your projects.`,
         })
@@ -118,12 +212,6 @@ export function ProjectPageComponents() {
         toast.error("Failed to save project", {
           description: "Your project couldn't be saved Please try again.",
         })
-        // Still update the UI state even if DB save fails
-        setProjects((prev) => [...prev, project])
-
-        if (activeTab === "all" || activeTab === project.status) {
-          setFilteredProjects([...filteredProjects, project])
-        }
       }
     },
     onError: (error) => {
@@ -157,10 +245,17 @@ export function ProjectPageComponents() {
     console.log("TODO: Implement due date picker for project", project.id)
   }
 
-  const handleDeleteProject = (projectId: string) => {
-    const updatedProjects = projects.filter((p) => p.id !== projectId)
-    setProjects(updatedProjects)
-    setFilteredProjects(filteredProjects.filter((p) => p.id !== projectId))
+  const handleDeleteProject = async (projectId: string) => {
+    try {
+      await deleteProject.mutateAsync(projectId)
+      await refetchProjects()
+      toast.success("Project deleted successfully")
+    } catch (error) {
+      console.error("Failed to delete project:", error)
+      toast.error("Failed to delete project", {
+        description: "Please try again.",
+      })
+    }
   }
 
   const handleApplyFilters = (filters: {
@@ -169,58 +264,29 @@ export function ProjectPageComponents() {
     dueDate: string
     status: string
   }) => {
-    let filtered = [...projects]
-
-    // Filter by search term
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase()
-      filtered = filtered.filter(
-        (project) =>
-          project.name.toLowerCase().includes(searchLower) ||
-          project.company.toLowerCase().includes(searchLower) ||
-          project.description.toLowerCase().includes(searchLower)
-      )
-    }
-
-    // Filter by members
-    if (filters.members.length > 0) {
-      filtered = filtered.filter((project) =>
-        project.members.some(
-          (member) => member.id && filters.members.includes(member.id)
-        )
-      )
-    }
-
-    // Filter by status if not "all"
-    if (filters.status && filters.status !== "all") {
-      filtered = filtered.filter((project) => project.status === filters.status)
-    }
-
-    // Apply active tab filter
-    if (activeTab !== "all") {
-      filtered = filtered.filter((project) => project.status === activeTab)
-    }
-
-    setFilteredProjects(filtered)
+    // Use the query hook's filtering capabilities
+    applyFilters({
+      search: filters.search || undefined,
+      status: filters.status !== "all" ? filters.status : activeTab,
+      company: undefined, // Could add company filtering later
+    })
     setIsFilterOpen(false)
   }
 
   const handleResetFilters = () => {
-    if (activeTab === "all") {
-      setFilteredProjects(projects)
-    } else {
-      setFilteredProjects(
-        projects.filter((project) => project.status === activeTab)
-      )
+    clearFilters()
+    // Reapply the active tab filter
+    if (activeTab !== "all") {
+      applyFilters({ status: activeTab })
     }
     setIsFilterOpen(false)
   }
 
   const handleOpenListView = () => {
-    setFilteredProjects(projects)
+    clearFilters()
     setActiveTab("all")
     setViewMode("list")
-    if (!projectId) {
+    if (!projectId && filteredProjects.length > 0) {
       setProjectId(filteredProjects[0]?.id)
     }
   }

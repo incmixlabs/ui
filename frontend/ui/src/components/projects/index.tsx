@@ -1,10 +1,15 @@
 import { useState, Suspense, lazy } from "react";
 
 import { motion } from "motion/react";
-import { nanoid } from "nanoid";
 import { useQueryState } from "nuqs";
 
-import { saveFormProject, useOrganizationStore } from "@incmix/store";
+import { 
+  saveFormProject, 
+  useOrganizationStore,
+  useProjectsQuery,
+  useProjectMutations,
+  type ProjectDocType
+} from "@incmix/store";
 import {
   Box,
   Button,
@@ -22,7 +27,7 @@ export {
   ReusableAddProject,
   useAddProject
 } from './components/reusable-add-project';
-import { projects as initialProjects } from "./data";
+import { members, projects } from "./data";
 import type { CreateProject, Project } from "./types";
 import { useProjectMutation } from "./hooks/use-project-mutation";
 
@@ -57,14 +62,60 @@ const ProjectFilter = lazy(() =>
  *
  * @returns The React element representing the project management page.
  */
+// Helper function to transform RxDB project to UI Project type
+const transformToUIProject = (dbProject: ProjectDocType): Project => {
+  return {
+    id: dbProject.id,
+    name: dbProject.name,
+    company: dbProject.company,
+    logo: dbProject.logo || "",
+    orgId: dbProject.orgId,
+    description: dbProject.description,
+    status: dbProject.status as "all" | "started" | "on-hold" | "completed",
+    startDate: dbProject.startDate || Date.now(),
+    endDate: dbProject.endDate || Date.now(),
+    budget: dbProject.budget,
+    // Default UI-specific fields that aren't in RxDB
+    progress: 50, // Could be calculated from tasks later
+    timeLeft: "1",
+    timeType: "week" as const,
+    members: [], // Could be populated from actual member data later
+    createdAt: new Date(dbProject.createdAt),
+    updatedAt: new Date(dbProject.updatedAt),
+    createdBy: {
+      id: dbProject.createdBy,
+      name: "User", // Could be populated from actual user data
+    },
+    updatedBy: {
+      id: dbProject.updatedBy,
+      name: "User", // Could be populated from actual user data
+    },
+  };
+};
+
 export function ProjectPageComponents() {
   const { selectedOrganisation } = useOrganizationStore();
   const [projectId, setProjectId] = useQueryState("projectId", {
     defaultValue: "",
   });
-  const [projects, setProjects] = useState<Project[]>(initialProjects);
-  const [filteredProjects, setFilteredProjects] =
-    useState<Project[]>(initialProjects);
+  
+  // Use real data hooks instead of dummy data
+  const {
+    projects: dbProjects,
+    filteredProjects: dbFilteredProjects,
+    isLoading: projectsLoading,
+    error: projectsError,
+    applyFilters,
+    clearFilters,
+    refetch: refetchProjects,
+  } = useProjectsQuery();
+  console.log(dbProjects)
+  // Transform database projects to UI format
+  const projects = dbProjects.map(transformToUIProject);
+  const filteredProjects = dbFilteredProjects.map(transformToUIProject);
+  
+  const { deleteProject } = useProjectMutations();
+  
   const [activeTab, setActiveTab] = useState<
     "all" | "started" | "on-hold" | "completed"
   >("all");
@@ -76,55 +127,41 @@ export function ProjectPageComponents() {
     tab: "all" | "started" | "on-hold" | "completed",
   ) => {
     setActiveTab(tab);
-    if (tab === "all") {
-      setFilteredProjects(projects);
-    } else {
-      setFilteredProjects(projects.filter((project) => project.status === tab));
-    }
+    // Use the query hook's filtering instead of local state
+    applyFilters({ status: tab });
   };
 
  const { mutateAsync: saveProjectToBackend } = useProjectMutation({
   onSuccess: async (project) => {
     try {
+      await saveFormProject({
+        id: project.id,
+        name: project.name,
+        description: project.description,
+        createdAt: project.createdAt.getTime(),
+        updatedAt: project.updatedAt.getTime(),
+        createdBy: project.createdBy.id,
+        updatedBy: project.updatedBy.id,
+        company: project.company,
+        status: project.status,
+        startDate: new Date(project.startDate).getTime(),
+        endDate: new Date(project.endDate).getTime(),
+        budget: project.budget,
+        orgId: project.orgId,
+        logo: project.logo,
+      });
 
-
-    await saveFormProject({
-      id: project.id,
-      name: project.name,
-      description: project.description,
-      createdAt: project.createdAt.getTime(),
-      updatedAt: project.updatedAt.getTime(),
-      createdBy: project.createdBy.id,
-      updatedBy: project.updatedBy.id,
-      company: project.company,
-      status: project.status,
-      startDate: new Date(project.startDate).getTime(),
-      endDate: new Date(project.endDate).getTime(),
-      budget: project.budget,
-      orgId: project.orgId,
-      logo: project.logo,
-    });
-
-
-     setProjects((prev)=>[...prev,project]);
-
-     if (activeTab === "all" || activeTab === project.status) {
-       setFilteredProjects([...filteredProjects, project]);
-     }
-     toast.success("Project created successfully", {
-       description: `"${project.name}" has been added to your projects.`,
-     });
+      // Refetch projects from the database to get the latest data
+      await refetchProjects();
+      
+      toast.success("Project created successfully", {
+        description: `"${project.name}" has been added to your projects.`,
+      });
     } catch (error) {
       console.error("Failed to save project to RxDB:", error);
       toast.error("Failed to save project", {
         description: "Your project couldn't be saved Please try again.",
       });
-      // Still update the UI state even if DB save fails
-      setProjects((prev)=>[...prev,project]);
-
-      if (activeTab === "all" || activeTab === project.status) {
-        setFilteredProjects([...filteredProjects, project]);
-      }
     }
   },
   onError: (error) => {
@@ -158,10 +195,17 @@ export function ProjectPageComponents() {
     console.log("TODO: Implement due date picker for project", project.id);
   };
 
-  const handleDeleteProject = (projectId: string) => {
-    const updatedProjects = projects.filter((p) => p.id !== projectId);
-    setProjects(updatedProjects);
-    setFilteredProjects(filteredProjects.filter((p) => p.id !== projectId));
+  const handleDeleteProject = async (projectId: string) => {
+    try {
+      await deleteProject.mutateAsync(projectId);
+      await refetchProjects();
+      toast.success("Project deleted successfully");
+    } catch (error) {
+      console.error("Failed to delete project:", error);
+      toast.error("Failed to delete project", {
+        description: "Please try again.",
+      });
+    }
   };
 
   const handleApplyFilters = (filters: {
@@ -170,60 +214,29 @@ export function ProjectPageComponents() {
     dueDate: string;
     status: string;
   }) => {
-    let filtered = [...projects];
-
-    // Filter by search term
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      filtered = filtered.filter(
-        (project) =>
-          project.name.toLowerCase().includes(searchLower) ||
-          project.company.toLowerCase().includes(searchLower) ||
-          project.description.toLowerCase().includes(searchLower),
-      );
-    }
-
-    // Filter by members
-    if (filters.members.length > 0) {
-      filtered = filtered.filter((project) =>
-        project.members.some(
-          (member) => member.id && filters.members.includes(member.id),
-        ),
-      );
-    }
-
-    // Filter by status if not "all"
-    if (filters.status && filters.status !== "all") {
-      filtered = filtered.filter(
-        (project) => project.status === filters.status,
-      );
-    }
-
-    // Apply active tab filter
-    if (activeTab !== "all") {
-      filtered = filtered.filter((project) => project.status === activeTab);
-    }
-
-    setFilteredProjects(filtered);
+    // Use the query hook's filtering capabilities
+    applyFilters({
+      search: filters.search || undefined,
+      status: filters.status !== "all" ? filters.status : activeTab,
+      company: undefined, // Could add company filtering later
+    });
     setIsFilterOpen(false);
   };
 
   const handleResetFilters = () => {
-    if (activeTab === "all") {
-      setFilteredProjects(projects);
-    } else {
-      setFilteredProjects(
-        projects.filter((project) => project.status === activeTab),
-      );
+    clearFilters();
+    // Reapply the active tab filter
+    if (activeTab !== "all") {
+      applyFilters({ status: activeTab });
     }
     setIsFilterOpen(false);
   };
 
   const handleOpenListView = () => {
-    setFilteredProjects(projects);
+    clearFilters();
     setActiveTab("all");
     setViewMode("list");
-    if (!projectId) {
+    if (!projectId && filteredProjects.length > 0) {
       setProjectId(filteredProjects[0]?.id);
     }
   };

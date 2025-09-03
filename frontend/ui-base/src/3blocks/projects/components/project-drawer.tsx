@@ -1,5 +1,6 @@
+import { useEffect, useRef, useState } from "react"
+
 import { motion } from "motion/react"
-import { useState } from "react"
 
 import {
   Avatar,
@@ -12,15 +13,16 @@ import {
   ScrollArea,
   Select,
   Text,
-} from "@/src/1base"
+} from "@/base"
 
+import { useProjectDetails, useProjectMutations } from "@incmix/store"
 import { useProjectDrawer } from "../hooks/use-project-drawer"
 
-import { cn } from "@/shadcn/lib/utils"
 import { ComboBox } from "@/src/2elements/combo-box"
 import { MotionSheet } from "@/src/4layouts/custom-sheet"
+import { cn } from "@/src/utils/cn"
 import { attachments } from "../../kanban-board/data"
-import { members } from "../data"
+import { members } from "../data" // Keep members for now until member management is implemented
 import ProjectChecklist from "./project-checklist"
 import ProjectComments from "./project-comments"
 import ProjectDetails from "./project-details"
@@ -33,12 +35,64 @@ export default function ProjectDrawer({
   listFilterClassName?: string
 }) {
   const { projectId, handleDrawerClose } = useProjectDrawer()
+  const { project, isLoading: projectLoading } = useProjectDetails(projectId)
+  const { updateProject } = useProjectMutations()
 
-  const [status, setStatus] = useState("started")
-
+  const [status, setStatus] = useState<"started" | "on-hold" | "completed">(
+    (project?.status === "all" ? "started" : project?.status) || "started"
+  )
   const [selectedMemebers, setSelectedMembers] = useState<string[]>([
     "regina-cooper",
   ])
+
+  // Update status when project changes
+  useEffect(() => {
+    if (project?.status && project.status !== "all") {
+      setStatus(project.status as "started" | "on-hold" | "completed")
+    }
+  }, [project?.status])
+
+  const handleStatusChange = async (newStatus: string) => {
+    const validStatus = newStatus as "started" | "on-hold" | "completed"
+    setStatus(validStatus)
+    if (project?.id && newStatus !== project.status) {
+      try {
+        await updateProject.mutateAsync({
+          id: project.id,
+          updates: { status: validStatus },
+        })
+      } catch (error) {
+        console.error("Failed to update project status:", error)
+        // Revert status on failure
+        if (project.status !== "all") {
+          setStatus(project.status as "started" | "on-hold" | "completed")
+        }
+      }
+    }
+  }
+
+  // Show loading state while project data is being fetched
+  if (projectLoading) {
+    return (
+      <MotionSheet
+        open={Boolean(projectId)}
+        onOpenChange={handleDrawerClose}
+        showCloseButton={false}
+        isFilterClassName={listFilterClassName}
+        isFilter={listFilter}
+        side="right"
+        className={`${listFilter ? "w-full flex-1" : "w-[53rem]"} p-0 py-0`}
+      >
+        <Box className="flex h-full items-center justify-center">
+          <Box className="animate-pulse space-y-4 p-8">
+            <Box className="mx-auto h-8 w-32 rounded bg-gray-6" />
+            <Box className="h-4 w-full rounded bg-gray-6" />
+            <Box className="h-4 w-3/4 rounded bg-gray-6" />
+          </Box>
+        </Box>
+      </MotionSheet>
+    )
+  }
 
   return (
     <>
@@ -98,9 +152,9 @@ export default function ProjectDrawer({
                   <Box className="space-y-3 px-3 pb-3">
                     <Select.Root
                       aria-label="Project status"
-                      defaultValue="started"
                       value={status}
-                      onValueChange={setStatus}
+                      onValueChange={handleStatusChange}
+                      disabled={updateProject.isLoading}
                     >
                       <Select.Trigger className="h-11 w-full" />
                       <Select.Content className="mx-auto w-[95%]">

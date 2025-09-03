@@ -1,4 +1,5 @@
-import type { Option } from "../../2elements/multi-select/multi-select"
+import type { Option } from "../../2elements/multi-select"
+
 export interface Member {
   id: string
   name: string
