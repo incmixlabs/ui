@@ -25,10 +25,43 @@ const formatDate = (timestamp: number | null | undefined) => {
   }).format(new Date(timestamp))
 }
 
-function ProjectDetails() {
-  const { projectId } = useProjectDrawer()
-  const { project, isLoading, refetch } = useProjectDetails(projectId)
-  const { updateProject } = useProjectMutations()
+export default function ProjectDetails({
+  mockData,
+  mockOperations,
+}: {
+  mockData?: {
+    projectId: string
+    project: any
+    isLoading: boolean
+  }
+  mockOperations?: {
+    updateProject: {
+      mutateAsync: (data: any) => Promise<void>
+      isLoading: boolean
+    }
+    refetch: () => Promise<void>
+  }
+} = {}) {
+  // Use mock data and operations if provided, otherwise use real hooks
+  const drawerData = mockData ? 
+    { projectId: mockData.projectId } : 
+    useProjectDrawer()
+  
+  const projectDetailsData = mockData ?
+    { 
+      project: mockData.project, 
+      isLoading: mockData.isLoading,
+      refetch: mockOperations?.refetch || (() => Promise.resolve())
+    } :
+    useProjectDetails(drawerData.projectId)
+  
+  const mutationsData = mockOperations ?
+    { updateProject: mockOperations.updateProject } :
+    useProjectMutations()
+
+  const { projectId: _ } = drawerData
+  const { project, isLoading, refetch } = projectDetailsData
+  const { updateProject } = mutationsData
 
   const handleUpdateField = async (
     field: "name" | "company" | "description",
@@ -240,5 +273,3 @@ function ProjectDetails() {
     </>
   )
 }
-
-export default ProjectDetails

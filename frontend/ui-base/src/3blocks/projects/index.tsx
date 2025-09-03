@@ -95,7 +95,11 @@ const transformToUIProject = (dbProject: ProjectDocType): Project => {
   }
 }
 
-export function ProjectPageComponents({ mockProjects, mockIsLoading = false, mockError = null }: ProjectPageProps = {}) {
+export function ProjectPageComponents({
+  mockProjects,
+  mockIsLoading = false,
+  mockError = null,
+}: ProjectPageProps = {}) {
   // Always call hooks (Rules of Hooks) but handle failures gracefully
   let orgStore: any = { selectedOrganisation: null }
   let queryState: [string, any] = ["", () => {}]
@@ -106,13 +110,13 @@ export function ProjectPageComponents({ mockProjects, mockIsLoading = false, moc
     error: null,
     applyFilters: () => {},
     clearFilters: () => {},
-    refetch: () => Promise.resolve()
+    refetch: () => Promise.resolve(),
   }
   let mutations: any = {
-    deleteProject: { mutateAsync: () => Promise.resolve() }
+    deleteProject: { mutateAsync: () => Promise.resolve() },
   }
   let projectMutation: any = {
-    mutateAsync: () => Promise.resolve()
+    mutateAsync: () => Promise.resolve(),
   }
 
   try {
@@ -162,18 +166,35 @@ export function ProjectPageComponents({ mockProjects, mockIsLoading = false, moc
   }
 
   // Check if we're using mock data (for Storybook)
-  const usingMockData = mockProjects !== undefined || mockIsLoading || mockError !== null
-  const selectedOrganisation = usingMockData ? { id: "mock-org", name: "Mock Organization" } : orgStore.selectedOrganisation
+  const usingMockData =
+    mockProjects !== undefined || mockIsLoading || mockError !== null
+  const selectedOrganisation = usingMockData
+    ? { id: "mock-org", name: "Mock Organization" }
+    : orgStore.selectedOrganisation
   const [projectId, setProjectId] = queryState
-  const projects = mockProjects || (projectsQuery.projects.length > 0 ? projectsQuery.projects.map(transformToUIProject) : [])
-  const filteredProjects = mockProjects || (projectsQuery.filteredProjects.length > 0 ? projectsQuery.filteredProjects.map(transformToUIProject) : [])
+  const projects =
+    mockProjects ||
+    (projectsQuery.projects.length > 0
+      ? projectsQuery.projects.map(transformToUIProject)
+      : [])
+  const filteredProjects =
+    mockProjects ||
+    (projectsQuery.filteredProjects.length > 0
+      ? projectsQuery.filteredProjects.map(transformToUIProject)
+      : [])
   const projectsLoading = mockProjects ? mockIsLoading : projectsQuery.isLoading
   const projectsError = mockProjects ? mockError : projectsQuery.error
   const applyFilters = mockProjects ? () => {} : projectsQuery.applyFilters
   const clearFilters = mockProjects ? () => {} : projectsQuery.clearFilters
-  const refetchProjects = mockProjects ? () => Promise.resolve() : projectsQuery.refetch
-  const deleteProject = mockProjects ? { mutateAsync: () => Promise.resolve() } : mutations.deleteProject
-  const saveProjectToBackend = mockProjects ? () => Promise.resolve() : projectMutation.mutateAsync
+  const refetchProjects = mockProjects
+    ? () => Promise.resolve()
+    : projectsQuery.refetch
+  const deleteProject = mockProjects
+    ? { mutateAsync: () => Promise.resolve() }
+    : mutations.deleteProject
+  const saveProjectToBackend = mockProjects
+    ? () => Promise.resolve()
+    : projectMutation.mutateAsync
 
   // Handle loading state
   if (projectsLoading) {
@@ -250,7 +271,7 @@ export function ProjectPageComponents({ mockProjects, mockIsLoading = false, moc
       ...newProject,
       orgId: selectedOrganisation.id,
     }
-    
+
     if (mockProjects) {
       // Mock behavior for Storybook
       console.log("Mock: Adding project", projectWithId)
@@ -366,7 +387,10 @@ export function ProjectPageComponents({ mockProjects, mockIsLoading = false, moc
                 )}
                 Started{" "}
                 <Text as="span" className="bg-gray-3 px-2 text-gray-10">
-                  {projects.filter((p: Project) => p.status === "started").length}
+                  {
+                    projects.filter((p: Project) => p.status === "started")
+                      .length
+                  }
                 </Text>
               </Button>
               <Button
@@ -381,7 +405,10 @@ export function ProjectPageComponents({ mockProjects, mockIsLoading = false, moc
                 )}
                 On Hold{" "}
                 <Text as={"span"} className="bg-gray-3 px-2 text-gray-10">
-                  {projects.filter((p: Project) => p.status === "on-hold").length}
+                  {
+                    projects.filter((p: Project) => p.status === "on-hold")
+                      .length
+                  }
                 </Text>
               </Button>
               <Button
@@ -396,7 +423,10 @@ export function ProjectPageComponents({ mockProjects, mockIsLoading = false, moc
                 )}
                 Completed{" "}
                 <Text as={"span"} className="bg-gray-3 px-2 text-gray-10">
-                  {projects.filter((p: Project) => p.status === "completed").length}
+                  {
+                    projects.filter((p: Project) => p.status === "completed")
+                      .length
+                  }
                 </Text>
               </Button>
             </Box>

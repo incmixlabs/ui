@@ -26,17 +26,50 @@ import { members } from "../data" // Keep members for now until member managemen
 import ProjectChecklist from "./project-checklist"
 import ProjectComments from "./project-comments"
 import ProjectDetails from "./project-details"
+import ProjectLabels from "./project-labels"
 
 export default function ProjectDrawer({
   listFilter,
   listFilterClassName = "w-full relative z-50 h-[84vh] shrink-0 rounded-xl",
+  mockData,
+  mockOperations,
 }: {
   listFilter?: boolean
   listFilterClassName?: string
+  mockData?: {
+    projectId: string
+    project: any
+    isLoading: boolean
+    labels?: any[]
+  }
+  mockOperations?: {
+    handleDrawerClose: () => void
+    updateProject: {
+      mutateAsync: (data: any) => Promise<void>
+      isLoading: boolean
+    }
+    updateLabel?: {
+      mutateAsync: (data: any) => Promise<void>
+      isLoading: boolean
+    }
+  }
 }) {
-  const { projectId, handleDrawerClose } = useProjectDrawer()
-  const { project, isLoading: projectLoading } = useProjectDetails(projectId)
-  const { updateProject } = useProjectMutations()
+  // Use mock data and operations if provided, otherwise use real hooks
+  const drawerData = mockData ? 
+    { projectId: mockData.projectId, handleDrawerClose: mockOperations?.handleDrawerClose || (() => {}) } :
+    useProjectDrawer()
+  
+  const projectDetailsData = mockData ?
+    { project: mockData.project, isLoading: mockData.isLoading } :
+    useProjectDetails(drawerData.projectId)
+  
+  const mutationsData = mockOperations ?
+    { updateProject: mockOperations.updateProject } :
+    useProjectMutations()
+
+  const { projectId, handleDrawerClose } = drawerData
+  const { project, isLoading: projectLoading } = projectDetailsData
+  const { updateProject } = mutationsData
 
   const [status, setStatus] = useState<"started" | "on-hold" | "completed">(
     (project?.status === "all" ? "started" : project?.status) || "started"
@@ -125,7 +158,23 @@ export default function ProjectDrawer({
             >
               <Flex align={"center"} className="h-full">
                 <Box className="bg-gray-1 p-4 dark:bg-gray-3">
-                  <ProjectDetails />
+                  <ProjectDetails 
+                    mockData={mockData}
+                    mockOperations={mockOperations ? {
+                      updateProject: mockOperations.updateProject,
+                      refetch: async () => {}
+                    } : undefined}
+                  />
+
+                  <ProjectLabels 
+                    mockData={mockData ? {
+                      projectId: mockData.projectId,
+                      labels: mockData.labels || []
+                    } : undefined}
+                    mockOperations={mockOperations?.updateLabel ? {
+                      updateLabel: mockOperations.updateLabel
+                    } : undefined}
+                  />
 
                   <ProjectChecklist />
 
