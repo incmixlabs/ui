@@ -1,5 +1,5 @@
 import type { LabelSchema } from "@incmix/utils/schema"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import type { RxDatabase } from "rxdb"
 import { useRxDB } from "rxdb-hooks"
 import type { Subscription } from "rxjs"
@@ -38,7 +38,7 @@ export function useProjectLabelsQuery(
   const [error, setError] = useState<string | null>(null)
 
   const db: RxDatabase<TaskCollections> = useRxDB()
-  let labelsSubscription: Subscription | null = null
+  const labelsSubscription = useRef<Subscription | null>(null)
 
   const transformLabelDoc = useCallback(
     (doc: { toJSON(): LabelDocType }): LabelSchema => {
@@ -80,12 +80,13 @@ export function useProjectLabelsQuery(
       }
 
       // Clean up existing subscription
-      if (labelsSubscription) {
-        labelsSubscription.unsubscribe()
+      if (labelsSubscription.current) {
+        labelsSubscription.current.unsubscribe()
+        labelsSubscription.current = null
       }
 
       // Set up reactive subscription for labels
-      labelsSubscription = db.labels
+      labelsSubscription.current = db.labels
         .find({
           selector: { projectId },
           sort: [{ type: "asc" }, { order: "asc" }],
@@ -152,8 +153,9 @@ export function useProjectLabelsQuery(
     fetchLabels()
 
     return () => {
-      if (labelsSubscription) {
-        labelsSubscription.unsubscribe()
+      if (labelsSubscription.current) {
+        labelsSubscription.current.unsubscribe()
+        labelsSubscription.current = null
       }
     }
   }, [fetchLabels])

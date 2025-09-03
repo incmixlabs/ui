@@ -29,7 +29,6 @@ export {
 import { MotionSheet } from "@/src/4layouts/custom-sheet"
 import { PageHeader } from "@/src/4layouts/page-header"
 import { cn } from "@/src/utils/cn"
-import { members, projects } from "./data"
 import { useProjectMutation } from "./hooks/use-project-mutation"
 import type { CreateProject, Project, ProjectPageProps } from "./types"
 
@@ -100,70 +99,76 @@ export function ProjectPageComponents({
   mockIsLoading = false,
   mockError = null,
 }: ProjectPageProps = {}) {
-  // Always call hooks (Rules of Hooks) but handle failures gracefully
-  let orgStore: any = { selectedOrganisation: null }
-  let queryState: [string, any] = ["", () => {}]
-  let projectsQuery: any = {
-    projects: [],
-    filteredProjects: [],
-    isLoading: false,
-    error: null,
-    applyFilters: () => {},
-    clearFilters: () => {},
-    refetch: () => Promise.resolve(),
-  }
-  let mutations: any = {
-    deleteProject: { mutateAsync: () => Promise.resolve() },
-  }
-  let projectMutation: any = {
-    mutateAsync: () => Promise.resolve(),
-  }
+  // Determine if we're in mock mode (e.g., Storybook environment)
+  // TODO: This could be configured via environment variables, config, or props in the future
+  const mockMode =
+    mockProjects !== undefined || mockIsLoading || mockError !== null
 
-  try {
-    orgStore = useOrganizationStore()
-    queryState = useQueryState("projectId", { defaultValue: "" })
-    projectsQuery = useProjectsQuery()
-    mutations = useProjectMutations()
-    projectMutation = useProjectMutation({
-      onSuccess: async (project) => {
-        try {
-          await saveFormProject({
-            id: project.id,
-            name: project.name,
-            description: project.description,
-            createdAt: project.createdAt.getTime(),
-            updatedAt: project.updatedAt.getTime(),
-            createdBy: project.createdBy.id,
-            updatedBy: project.updatedBy.id,
-            company: project.company,
-            status: project.status,
-            startDate: new Date(project.startDate).getTime(),
-            endDate: new Date(project.endDate).getTime(),
-            budget: project.budget,
-            orgId: project.orgId,
-            logo: project.logo,
-          })
-          await projectsQuery.refetch()
-          toast.success("Project created successfully", {
-            description: `"${project.name}" has been added to your projects.`,
-          })
-        } catch (error) {
-          console.error("Failed to save project to RxDB:", error)
-          toast.error("Failed to save project", {
-            description: "Your project couldn't be saved Please try again.",
-          })
-        }
-      },
-      onError: (error) => {
-        console.error("Failed to save project to backend:", error)
-        toast.error("Failed to save project", {
-          description: "Your project couldn't be saved Please try again.",
+  // Always call hooks to satisfy Rules of Hooks
+  const orgStoreResult = useOrganizationStore()
+  const queryStateResult = useQueryState("projectId", { defaultValue: "" })
+  const projectsQueryResult = useProjectsQuery()
+  const mutationsResult = useProjectMutations()
+  const projectMutationResult = useProjectMutation({
+    onSuccess: async (project) => {
+      try {
+        await saveFormProject({
+          id: project.id,
+          name: project.name,
+          description: project.description,
+          createdAt: project.createdAt.getTime(),
+          updatedAt: project.updatedAt.getTime(),
+          createdBy: project.createdBy.id,
+          updatedBy: project.updatedBy.id,
+          company: project.company,
+          status: project.status,
+          startDate: new Date(project.startDate).getTime(),
+          endDate: new Date(project.endDate).getTime(),
+          budget: project.budget,
+          orgId: project.orgId,
+          logo: project.logo,
         })
-      },
-    })
-  } catch (error) {
-    console.warn("Hooks failed, falling back to mock mode:", error)
-  }
+        await projectsQueryResult.refetch()
+        toast.success("Project created successfully", {
+          description: `"${project.name}" has been added to your projects.`,
+        })
+      } catch (error) {
+        console.error("Failed to save project to RxDB:", error)
+        toast.error("Failed to save project", {
+          description: "Your project couldn't be saved. Please try again.",
+        })
+      }
+    },
+    onError: (error) => {
+      console.error("Failed to save project to backend:", error)
+      toast.error("Failed to save project", {
+        description: "Your project couldn't be saved. Please try again.",
+      })
+    },
+  })
+
+  // Branch based on mockMode flag
+  const orgStore = mockMode ? { selectedOrganisation: null } : orgStoreResult
+  const queryState = mockMode
+    ? (["", () => {}] as [string, any])
+    : queryStateResult
+  const projectsQuery = mockMode
+    ? {
+        projects: [],
+        filteredProjects: [],
+        isLoading: false,
+        error: null,
+        applyFilters: () => {},
+        clearFilters: () => {},
+        refetch: () => Promise.resolve(),
+      }
+    : projectsQueryResult
+  const mutations = mockMode
+    ? { deleteProject: { mutateAsync: () => Promise.resolve() } }
+    : mutationsResult
+  const projectMutation = mockMode
+    ? { mutateAsync: () => Promise.resolve() }
+    : projectMutationResult
 
   // Check if we're using mock data (for Storybook)
   const usingMockData =

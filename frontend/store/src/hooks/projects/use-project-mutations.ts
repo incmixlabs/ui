@@ -11,10 +11,11 @@ import {
 } from "../../utils/browser-helpers"
 
 // TODO: Replace with actual user context when available
-const getCurrentUserId = (): string => {
-  // This should be replaced with actual user context
-  return "current-user-id"
-}
+const getCurrentUser = () => ({
+  id: "current-user-id",
+  name: "Current User",
+  image: "/placeholder.svg",
+})
 
 export interface UpdateProjectData {
   name?: string
@@ -85,7 +86,7 @@ export function useProjectMutations(): UseProjectMutationsReturn {
       const updatedData = {
         ...updates,
         updatedAt: getCurrentTimestamp(),
-        updatedBy: getCurrentUserId(),
+        updatedBy: getCurrentUser() as any,
       }
 
       await projectDoc.update({ $set: updatedData })
@@ -163,8 +164,8 @@ export function useProjectMutations(): UseProjectMutationsReturn {
 
   const duplicateProjectMutation = useMutation({
     mutationFn: async ({ id, newName }: { id: string; newName?: string }) => {
-      if (!db.projects || !selectedOrganisation) {
-        throw new Error("Database or organization not available")
+      if (!db.projects) {
+        throw new Error("Database not available")
       }
 
       const originalDoc = await db.projects
@@ -181,14 +182,22 @@ export function useProjectMutations(): UseProjectMutationsReturn {
       const now = getCurrentTimestamp()
       const newId = generateBrowserUniqueId()
 
+      // Use orgId from the original project or fallback to selected organization
+      const orgId = originalData.orgId || selectedOrganisation?.id
+
+      if (!orgId) {
+        throw new Error("Organization ID is required for project duplication")
+      }
+
       const duplicatedProject: ProjectDocType = {
         ...originalData,
         id: newId,
+        orgId,
         name: newName || `${originalData.name} (Copy)`,
         createdAt: now,
         updatedAt: now,
-        createdBy: getCurrentUserId(),
-        updatedBy: getCurrentUserId(),
+        createdBy: getCurrentUser() as any,
+        updatedBy: getCurrentUser() as any,
       }
 
       const newDoc = await db.projects.insert(duplicatedProject)

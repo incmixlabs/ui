@@ -13,6 +13,7 @@ import {
   ScrollArea,
   Select,
   Text,
+  toast,
 } from "@/base"
 
 import { useProjectDetails, useProjectMutations } from "@incmix/store"
@@ -84,7 +85,10 @@ export default function ProjectDrawer({
   // Update status when project changes
   useEffect(() => {
     if (project?.status && project.status !== "all") {
-      setStatus(project.status as "started" | "on-hold" | "completed")
+      const validStatuses = ["started", "on-hold", "completed"] as const
+      if (validStatuses.includes(project.status as any)) {
+        setStatus(project.status as "started" | "on-hold" | "completed")
+      }
     }
   }, [project?.status])
 
@@ -99,6 +103,10 @@ export default function ProjectDrawer({
         })
       } catch (error) {
         console.error("Failed to update project status:", error)
+        // Show user-facing error notification
+        toast.error("Failed to update project status", {
+          description: `Could not update status for "${project?.name || "project"}". Please try again.`,
+        })
         // Revert status on failure
         if (project.status !== "all") {
           setStatus(project.status as "started" | "on-hold" | "completed")

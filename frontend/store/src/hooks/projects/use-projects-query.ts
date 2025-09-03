@@ -91,7 +91,7 @@ export function useProjectsQuery(
         filtered = filtered.filter(
           (project) =>
             project.name.toLowerCase().includes(searchLower) ||
-            project.description.toLowerCase().includes(searchLower) ||
+            (project.description ?? "").toLowerCase().includes(searchLower) ||
             project.company?.toLowerCase().includes(searchLower)
         )
       }

@@ -103,6 +103,19 @@ export default function ProjectDetails({
   ) => {
     if (!project?.id) return
 
+    // Compute the resulting start and end dates
+    const resultingStartDate = field === "startDate" ? value : project.startDate
+    const resultingEndDate = field === "endDate" ? value : project.endDate
+
+    // Validate that end date is not before start date
+    if (
+      resultingStartDate !== null &&
+      resultingEndDate !== null &&
+      resultingEndDate < resultingStartDate
+    ) {
+      throw new Error("End date cannot be before start date")
+    }
+
     try {
       await updateProject.mutateAsync({
         id: project.id,
