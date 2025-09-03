@@ -101,7 +101,12 @@ export default function ProjectDetails({
     field: "startDate" | "endDate",
     value: number | null
   ) => {
-    console.log(`handleUpdateDate called with field: ${field}, value:`, value, "project:", project)
+    console.log(
+      `handleUpdateDate called with field: ${field}, value:`,
+      value,
+      "project:",
+      project
+    )
     if (!project?.id) {
       console.log("No project ID, returning early")
       return

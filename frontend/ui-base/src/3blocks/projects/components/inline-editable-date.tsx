@@ -1,4 +1,4 @@
-import { Box, Button, Text, Popover, Calendar } from "@/base"
+import { Box, Button, Calendar, Popover, Text } from "@/base"
 import { cn } from "@/src/utils/cn"
 import { CalendarIcon, X } from "lucide-react"
 import React, { useState } from "react"
@@ -70,7 +70,10 @@ export function InlineEditableDate({
   if (isEditing && !disabled) {
     return (
       <Box className="relative">
-        <Popover.Root open={isEditing} onOpenChange={(open) => !open && setIsEditing(false)}>
+        <Popover.Root
+          open={isEditing}
+          onOpenChange={(open) => !open && setIsEditing(false)}
+        >
           <Popover.Trigger>
             <Button
               variant="outline"
@@ -85,7 +88,10 @@ export function InlineEditableDate({
               {value ? format(value) : "Select date..."}
             </Button>
           </Popover.Trigger>
-          <Popover.Content className="w-auto border-gray-5 bg-white p-0 shadow-md" align="start">
+          <Popover.Content
+            className="w-auto border-gray-5 bg-white p-0 shadow-md"
+            align="start"
+          >
             <Box className="p-3">
               <Calendar
                 mode="single"
@@ -95,11 +101,11 @@ export function InlineEditableDate({
                     handleDateChange(date)
                   }
                 }}
-                className="border-0 rounded-md"
+                className="rounded-md border-0"
                 initialFocus
               />
               {value && (
-                <Box className="mt-2 border-t border-gray-4 pt-2">
+                <Box className="mt-2 border-gray-4 border-t pt-2">
                   <Button
                     variant="ghost"
                     size="2"
