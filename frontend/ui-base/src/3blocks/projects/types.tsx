@@ -49,3 +49,10 @@ export interface Project {
     image?: string
   }
 }
+
+// Props for Storybook mock data support
+export interface ProjectPageProps {
+  mockProjects?: Project[]
+  mockIsLoading?: boolean
+  mockError?: string | null
+}

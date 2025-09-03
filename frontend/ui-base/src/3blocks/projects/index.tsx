@@ -31,7 +31,7 @@ import { PageHeader } from "@/src/4layouts/page-header"
 import { cn } from "@/src/utils/cn"
 import { members, projects } from "./data"
 import { useProjectMutation } from "./hooks/use-project-mutation"
-import type { CreateProject, Project } from "./types"
+import type { CreateProject, Project, ProjectPageProps } from "./types"
 
 const AddProjectAutoForm = lazy(() =>
   import("./components/add-project-auto-form").then((module) => ({
@@ -95,26 +95,85 @@ const transformToUIProject = (dbProject: ProjectDocType): Project => {
   }
 }
 
-export function ProjectPageComponents() {
-  const { selectedOrganisation } = useOrganizationStore()
-  const [projectId, setProjectId] = useQueryState("projectId", {
-    defaultValue: "",
-  })
+export function ProjectPageComponents({ mockProjects, mockIsLoading = false, mockError = null }: ProjectPageProps = {}) {
+  // Always call hooks (Rules of Hooks) but handle failures gracefully
+  let orgStore: any = { selectedOrganisation: null }
+  let queryState: [string, any] = ["", () => {}]
+  let projectsQuery: any = {
+    projects: [],
+    filteredProjects: [],
+    isLoading: false,
+    error: null,
+    applyFilters: () => {},
+    clearFilters: () => {},
+    refetch: () => Promise.resolve()
+  }
+  let mutations: any = {
+    deleteProject: { mutateAsync: () => Promise.resolve() }
+  }
+  let projectMutation: any = {
+    mutateAsync: () => Promise.resolve()
+  }
 
-  // Use real data hooks instead of dummy data
-  const {
-    projects: dbProjects,
-    filteredProjects: dbFilteredProjects,
-    isLoading: projectsLoading,
-    error: projectsError,
-    applyFilters,
-    clearFilters,
-    refetch: refetchProjects,
-  } = useProjectsQuery()
+  try {
+    orgStore = useOrganizationStore()
+    queryState = useQueryState("projectId", { defaultValue: "" })
+    projectsQuery = useProjectsQuery()
+    mutations = useProjectMutations()
+    projectMutation = useProjectMutation({
+      onSuccess: async (project) => {
+        try {
+          await saveFormProject({
+            id: project.id,
+            name: project.name,
+            description: project.description,
+            createdAt: project.createdAt.getTime(),
+            updatedAt: project.updatedAt.getTime(),
+            createdBy: project.createdBy.id,
+            updatedBy: project.updatedBy.id,
+            company: project.company,
+            status: project.status,
+            startDate: new Date(project.startDate).getTime(),
+            endDate: new Date(project.endDate).getTime(),
+            budget: project.budget,
+            orgId: project.orgId,
+            logo: project.logo,
+          })
+          await projectsQuery.refetch()
+          toast.success("Project created successfully", {
+            description: `"${project.name}" has been added to your projects.`,
+          })
+        } catch (error) {
+          console.error("Failed to save project to RxDB:", error)
+          toast.error("Failed to save project", {
+            description: "Your project couldn't be saved Please try again.",
+          })
+        }
+      },
+      onError: (error) => {
+        console.error("Failed to save project to backend:", error)
+        toast.error("Failed to save project", {
+          description: "Your project couldn't be saved Please try again.",
+        })
+      },
+    })
+  } catch (error) {
+    console.warn("Hooks failed, falling back to mock mode:", error)
+  }
 
-  // Transform database projects to UI format
-  const projects = dbProjects.map(transformToUIProject)
-  const filteredProjects = dbFilteredProjects.map(transformToUIProject)
+  // Check if we're using mock data (for Storybook)
+  const usingMockData = mockProjects !== undefined || mockIsLoading || mockError !== null
+  const selectedOrganisation = usingMockData ? { id: "mock-org", name: "Mock Organization" } : orgStore.selectedOrganisation
+  const [projectId, setProjectId] = queryState
+  const projects = mockProjects || (projectsQuery.projects.length > 0 ? projectsQuery.projects.map(transformToUIProject) : [])
+  const filteredProjects = mockProjects || (projectsQuery.filteredProjects.length > 0 ? projectsQuery.filteredProjects.map(transformToUIProject) : [])
+  const projectsLoading = mockProjects ? mockIsLoading : projectsQuery.isLoading
+  const projectsError = mockProjects ? mockError : projectsQuery.error
+  const applyFilters = mockProjects ? () => {} : projectsQuery.applyFilters
+  const clearFilters = mockProjects ? () => {} : projectsQuery.clearFilters
+  const refetchProjects = mockProjects ? () => Promise.resolve() : projectsQuery.refetch
+  const deleteProject = mockProjects ? { mutateAsync: () => Promise.resolve() } : mutations.deleteProject
+  const saveProjectToBackend = mockProjects ? () => Promise.resolve() : projectMutation.mutateAsync
 
   // Handle loading state
   if (projectsLoading) {
@@ -164,8 +223,6 @@ export function ProjectPageComponents() {
     )
   }
 
-  const { deleteProject } = useProjectMutations()
-
   const [activeTab, setActiveTab] = useState<
     "all" | "started" | "on-hold" | "completed"
   >("all")
@@ -181,47 +238,6 @@ export function ProjectPageComponents() {
     applyFilters({ status: tab })
   }
 
-  const { mutateAsync: saveProjectToBackend } = useProjectMutation({
-    onSuccess: async (project) => {
-      try {
-        await saveFormProject({
-          id: project.id,
-          name: project.name,
-          description: project.description,
-          createdAt: project.createdAt.getTime(),
-          updatedAt: project.updatedAt.getTime(),
-          createdBy: project.createdBy.id,
-          updatedBy: project.updatedBy.id,
-          company: project.company,
-          status: project.status,
-          startDate: new Date(project.startDate).getTime(),
-          endDate: new Date(project.endDate).getTime(),
-          budget: project.budget,
-          orgId: project.orgId,
-          logo: project.logo,
-        })
-
-        // Refetch projects from the database to get the latest data
-        await refetchProjects()
-
-        toast.success("Project created successfully", {
-          description: `"${project.name}" has been added to your projects.`,
-        })
-      } catch (error) {
-        console.error("Failed to save project to RxDB:", error)
-        toast.error("Failed to save project", {
-          description: "Your project couldn't be saved Please try again.",
-        })
-      }
-    },
-    onError: (error) => {
-      console.error("Failed to save project to backend:", error)
-      toast.error("Failed to save project", {
-        description: "Your project couldn't be saved Please try again.",
-      })
-    },
-  })
-
   const handleAddProject = async (newProject: Omit<CreateProject, "orgId">) => {
     if (!selectedOrganisation) {
       toast.error("No organisation selected", {
@@ -234,7 +250,16 @@ export function ProjectPageComponents() {
       ...newProject,
       orgId: selectedOrganisation.id,
     }
-    await saveProjectToBackend(projectWithId)
+    
+    if (mockProjects) {
+      // Mock behavior for Storybook
+      console.log("Mock: Adding project", projectWithId)
+      toast.success("Project created successfully", {
+        description: `"${projectWithId.name}" has been added to your projects.`,
+      })
+    } else {
+      await saveProjectToBackend(projectWithId)
+    }
   }
 
   const handleAddMember = (project: Project) => {
@@ -246,15 +271,21 @@ export function ProjectPageComponents() {
   }
 
   const handleDeleteProject = async (projectId: string) => {
-    try {
-      await deleteProject.mutateAsync(projectId)
-      await refetchProjects()
+    if (mockProjects) {
+      // Mock behavior for Storybook
+      console.log("Mock: Deleting project", projectId)
       toast.success("Project deleted successfully")
-    } catch (error) {
-      console.error("Failed to delete project:", error)
-      toast.error("Failed to delete project", {
-        description: "Please try again.",
-      })
+    } else {
+      try {
+        await deleteProject.mutateAsync(projectId)
+        await refetchProjects()
+        toast.success("Project deleted successfully")
+      } catch (error) {
+        console.error("Failed to delete project:", error)
+        toast.error("Failed to delete project", {
+          description: "Please try again.",
+        })
+      }
     }
   }
 
@@ -264,26 +295,36 @@ export function ProjectPageComponents() {
     dueDate: string
     status: string
   }) => {
-    // Use the query hook's filtering capabilities
-    applyFilters({
-      search: filters.search || undefined,
-      status: filters.status !== "all" ? filters.status : activeTab,
-      company: undefined, // Could add company filtering later
-    })
+    if (mockProjects) {
+      console.log("Mock: Applying filters", filters)
+    } else {
+      // Use the query hook's filtering capabilities
+      applyFilters({
+        search: filters.search || undefined,
+        status: filters.status !== "all" ? filters.status : activeTab,
+        company: undefined, // Could add company filtering later
+      })
+    }
     setIsFilterOpen(false)
   }
 
   const handleResetFilters = () => {
-    clearFilters()
-    // Reapply the active tab filter
-    if (activeTab !== "all") {
-      applyFilters({ status: activeTab })
+    if (mockProjects) {
+      console.log("Mock: Resetting filters")
+    } else {
+      clearFilters()
+      // Reapply the active tab filter
+      if (activeTab !== "all") {
+        applyFilters({ status: activeTab })
+      }
     }
     setIsFilterOpen(false)
   }
 
   const handleOpenListView = () => {
-    clearFilters()
+    if (!mockProjects) {
+      clearFilters()
+    }
     setActiveTab("all")
     setViewMode("list")
     if (!projectId && filteredProjects.length > 0) {
@@ -325,7 +366,7 @@ export function ProjectPageComponents() {
                 )}
                 Started{" "}
                 <Text as="span" className="bg-gray-3 px-2 text-gray-10">
-                  {projects.filter((p) => p.status === "started").length}
+                  {projects.filter((p: Project) => p.status === "started").length}
                 </Text>
               </Button>
               <Button
@@ -340,7 +381,7 @@ export function ProjectPageComponents() {
                 )}
                 On Hold{" "}
                 <Text as={"span"} className="bg-gray-3 px-2 text-gray-10">
-                  {projects.filter((p) => p.status === "on-hold").length}
+                  {projects.filter((p: Project) => p.status === "on-hold").length}
                 </Text>
               </Button>
               <Button
@@ -355,7 +396,7 @@ export function ProjectPageComponents() {
                 )}
                 Completed{" "}
                 <Text as={"span"} className="bg-gray-3 px-2 text-gray-10">
-                  {projects.filter((p) => p.status === "completed").length}
+                  {projects.filter((p: Project) => p.status === "completed").length}
                 </Text>
               </Button>
             </Box>
@@ -398,7 +439,7 @@ export function ProjectPageComponents() {
               <Box
                 className={`${viewMode === "grid" ? "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" : "h-full w-full gap-4 space-y-2 overflow-x-auto"}`}
               >
-                {filteredProjects.map((project) => (
+                {filteredProjects.map((project: Project) => (
                   <Suspense
                     key={project.id}
                     fallback={
@@ -438,34 +479,40 @@ export function ProjectPageComponents() {
                 </Button>
               </Box>
             )}
-            <Suspense fallback={<Box className="p-4">Loading drawer...</Box>}>
-              <ProjectDrawer listFilter={viewMode === "list"} />
-            </Suspense>
+            {!usingMockData && (
+              <Suspense fallback={<Box className="p-4">Loading drawer...</Box>}>
+                <ProjectDrawer listFilter={viewMode === "list"} />
+              </Suspense>
+            )}
           </Box>
         </Box>
       </Box>
 
-      <Suspense fallback={<Box className="p-4">Loading form...</Box>}>
-        <AddProjectAutoForm
-          isOpen={isAddModalOpen}
-          onClose={() => setIsAddModalOpen(false)}
-          onAddProject={handleAddProject}
-        />
-      </Suspense>
-
-      <MotionSheet
-        title="Filter"
-        side="right"
-        open={isFilterOpen}
-        onOpenChange={setIsFilterOpen}
-      >
-        <Suspense fallback={<Box className="p-4">Loading filters...</Box>}>
-          <ProjectFilter
-            onApplyFilters={handleApplyFilters}
-            onResetFilters={handleResetFilters}
+      {!usingMockData && (
+        <Suspense fallback={<Box className="p-4">Loading form...</Box>}>
+          <AddProjectAutoForm
+            isOpen={isAddModalOpen}
+            onClose={() => setIsAddModalOpen(false)}
+            onAddProject={handleAddProject}
           />
         </Suspense>
-      </MotionSheet>
+      )}
+
+      {!usingMockData && (
+        <MotionSheet
+          title="Filter"
+          side="right"
+          open={isFilterOpen}
+          onOpenChange={setIsFilterOpen}
+        >
+          <Suspense fallback={<Box className="p-4">Loading filters...</Box>}>
+            <ProjectFilter
+              onApplyFilters={handleApplyFilters}
+              onResetFilters={handleResetFilters}
+            />
+          </Suspense>
+        </MotionSheet>
+      )}
     </Box>
   )
 }

@@ -59,7 +59,7 @@ const mockHandlers = {
 
 // Main Stories
 export const GridView: Story = {
-  render: () => <ProjectPageComponents />,
+  render: () => <ProjectPageComponents mockProjects={projects} />,
   name: "Grid View (Default)",
   parameters: {
     docs: {
@@ -71,17 +71,7 @@ export const GridView: Story = {
 }
 
 export const EmptyState: Story = {
-  render: () => {
-    // Mock empty projects state
-    const EmptyProjectsComponent = () => {
-      React.useEffect(() => {
-        // Override the initial projects data to be empty for this story
-        console.log("Simulating empty projects state")
-      }, [])
-      return <ProjectPageComponents />
-    }
-    return <EmptyProjectsComponent />
-  },
+  render: () => <ProjectPageComponents mockProjects={[]} />,
   name: "Empty State",
   parameters: {
     docs: {
@@ -218,14 +208,8 @@ export const ProjectFilterStory: Story = {
 // Status-based Stories
 export const StartedProjects: Story = {
   render: () => {
-    const StartedProjectsView = () => {
-      React.useEffect(() => {
-        // Simulate clicking the "Started" tab
-        console.log("Showing started projects")
-      }, [])
-      return <ProjectPageComponents />
-    }
-    return <StartedProjectsView />
+    const startedProjects = projects.filter(p => p.status === "started")
+    return <ProjectPageComponents mockProjects={startedProjects} />
   },
   name: "Started Projects",
   parameters: {
@@ -239,13 +223,8 @@ export const StartedProjects: Story = {
 
 export const CompletedProjects: Story = {
   render: () => {
-    const CompletedProjectsView = () => {
-      React.useEffect(() => {
-        console.log("Showing completed projects")
-      }, [])
-      return <ProjectPageComponents />
-    }
-    return <CompletedProjectsView />
+    const completedProjects = projects.filter(p => p.status === "completed")
+    return <ProjectPageComponents mockProjects={completedProjects} />
   },
   name: "Completed Projects", 
   parameters: {
@@ -259,13 +238,8 @@ export const CompletedProjects: Story = {
 
 export const OnHoldProjects: Story = {
   render: () => {
-    const OnHoldProjectsView = () => {
-      React.useEffect(() => {
-        console.log("Showing on-hold projects")
-      }, [])
-      return <ProjectPageComponents />
-    }
-    return <OnHoldProjectsView />
+    const onHoldProjects = projects.filter(p => p.status === "on-hold")
+    return <ProjectPageComponents mockProjects={onHoldProjects} />
   },
   name: "On Hold Projects",
   parameters: {
@@ -287,13 +261,7 @@ export const ManyProjects: Story = {
       name: `${projects[i % projects.length].name} ${i + 1}`,
     }))
     
-    const ManyProjectsView = () => {
-      React.useEffect(() => {
-        console.log("Rendering many projects:", manyProjects.length)
-      }, [])
-      return <ProjectPageComponents />
-    }
-    return <ManyProjectsView />
+    return <ProjectPageComponents mockProjects={manyProjects} />
   },
   name: "Many Projects (Performance Test)",
   parameters: {
@@ -306,34 +274,7 @@ export const ManyProjects: Story = {
 }
 
 export const LoadingState: Story = {
-  render: () => {
-    const LoadingProjectsView = () => {
-      const [isLoading, setIsLoading] = React.useState(true)
-      
-      React.useEffect(() => {
-        const timer = setTimeout(() => setIsLoading(false), 2000)
-        return () => clearTimeout(timer)
-      }, [])
-      
-      if (isLoading) {
-        return (
-          <div style={{ 
-            height: "100vh", 
-            display: "flex", 
-            alignItems: "center", 
-            justifyContent: "center",
-            fontSize: "18px",
-            color: "#666"
-          }}>
-            Loading projects...
-          </div>
-        )
-      }
-      
-      return <ProjectPageComponents />
-    }
-    return <LoadingProjectsView />
-  },
+  render: () => <ProjectPageComponents mockIsLoading={true} />,
   name: "Loading State",
   parameters: {
     docs: {
