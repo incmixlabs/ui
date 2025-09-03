@@ -1,16 +1,7 @@
+import { Badge, Box, Button, Flex, Heading, Popover, Tabs, Text } from "@/base"
 import { useState } from "react"
-import {
-  Box,
-  Button,
-  Flex,
-  Heading,
-  Text,
-  Tabs,
-  Badge,
-  Popover,
-} from "@/base"
-import { InlineEditableField } from "./inline-editable-field"
 import ColorPicker from "../../../2elements/color-picker"
+import { InlineEditableField } from "./inline-editable-field"
 
 // Label type based on schema
 type Label = {
@@ -48,24 +39,28 @@ interface ProjectLabelsProps {
   }
 }
 
-export default function ProjectLabels({ 
-  mockData, 
-  mockOperations 
+export default function ProjectLabels({
+  mockData,
+  mockOperations,
 }: ProjectLabelsProps = {}) {
   // For now, we'll use mock data - later this would use real hooks
   const labels = mockData?.labels || []
   const updateLabel = mockOperations?.updateLabel
-  
+
   const [activeTab, setActiveTab] = useState<"status" | "priority">("status")
   const [openColorPicker, setOpenColorPicker] = useState<string | null>(null)
-  
+
   // Separate labels by type
-  const statusLabels = labels.filter(label => label.type === "status").sort((a, b) => a.order - b.order)
-  const priorityLabels = labels.filter(label => label.type === "priority").sort((a, b) => a.order - b.order)
-  
+  const statusLabels = labels
+    .filter((label) => label.type === "status")
+    .sort((a, b) => a.order - b.order)
+  const priorityLabels = labels
+    .filter((label) => label.type === "priority")
+    .sort((a, b) => a.order - b.order)
+
   const handleUpdateLabelName = async (labelId: string, newName: string) => {
     if (!updateLabel || !mockData) return
-    
+
     try {
       await updateLabel.mutateAsync({
         id: labelId,
@@ -78,7 +73,7 @@ export default function ProjectLabels({
 
   const handleUpdateLabelColor = async (labelId: string, newColor: string) => {
     if (!updateLabel || !mockData) return
-    
+
     try {
       await updateLabel.mutateAsync({
         id: labelId,
@@ -101,18 +96,20 @@ export default function ProjectLabels({
     return (
       <Box className="space-y-3">
         {labelList.map((label) => (
-          <Flex 
-            key={label.id} 
-            align="center" 
+          <Flex
+            key={label.id}
+            align="center"
             justify="between"
             className="rounded-lg border border-gray-6 bg-gray-2 p-3 transition-colors hover:border-gray-7 dark:bg-gray-4"
           >
             <Flex align="center" gap="3" className="flex-1">
               {/* Color indicator with ColorPicker */}
               <Box className="relative">
-                <Popover.Root 
-                  open={openColorPicker === label.id} 
-                  onOpenChange={(open) => setOpenColorPicker(open ? label.id : null)}
+                <Popover.Root
+                  open={openColorPicker === label.id}
+                  onOpenChange={(open) =>
+                    setOpenColorPicker(open ? label.id : null)
+                  }
                 >
                   <Popover.Trigger>
                     <button
@@ -134,7 +131,7 @@ export default function ProjectLabels({
                   </Popover.Content>
                 </Popover.Root>
               </Box>
-              
+
               {/* Inline editable name */}
               <Box className="flex-1">
                 <InlineEditableField
@@ -146,7 +143,7 @@ export default function ProjectLabels({
                 />
               </Box>
             </Flex>
-            
+
             {/* Order badge */}
             <Badge variant="soft" className="text-xs">
               #{label.order + 1}
@@ -162,8 +159,11 @@ export default function ProjectLabels({
       <Heading size="4" className="font-medium text-gray-12">
         Labels
       </Heading>
-      
-      <Tabs.Root value={activeTab} onValueChange={(value) => setActiveTab(value as "status" | "priority")}>
+
+      <Tabs.Root
+        value={activeTab}
+        onValueChange={(value) => setActiveTab(value as "status" | "priority")}
+      >
         <Tabs.List className="mb-4">
           <Tabs.Trigger value="status" className="flex-1">
             <Flex align="center" gap="2">
@@ -182,19 +182,18 @@ export default function ProjectLabels({
             </Flex>
           </Tabs.Trigger>
         </Tabs.List>
-        
-        <Tabs.Content value="status">
-          {renderLabels(statusLabels)}
-        </Tabs.Content>
-        
+
+        <Tabs.Content value="status">{renderLabels(statusLabels)}</Tabs.Content>
+
         <Tabs.Content value="priority">
           {renderLabels(priorityLabels)}
         </Tabs.Content>
       </Tabs.Root>
-      
+
       {/* Instructions for demo */}
       <Text className="text-gray-10 text-xs">
-        💡 Click on label names to edit them, click color dots to open the color picker
+        💡 Click on label names to edit them, click color dots to open the color
+        picker
       </Text>
     </Box>
   )

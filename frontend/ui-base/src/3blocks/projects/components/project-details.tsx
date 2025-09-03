@@ -43,21 +43,21 @@ export default function ProjectDetails({
   }
 } = {}) {
   // Use mock data and operations if provided, otherwise use real hooks
-  const drawerData = mockData ? 
-    { projectId: mockData.projectId } : 
-    useProjectDrawer()
-  
-  const projectDetailsData = mockData ?
-    { 
-      project: mockData.project, 
-      isLoading: mockData.isLoading,
-      refetch: mockOperations?.refetch || (() => Promise.resolve())
-    } :
-    useProjectDetails(drawerData.projectId)
-  
-  const mutationsData = mockOperations ?
-    { updateProject: mockOperations.updateProject } :
-    useProjectMutations()
+  const drawerData = mockData
+    ? { projectId: mockData.projectId }
+    : useProjectDrawer()
+
+  const projectDetailsData = mockData
+    ? {
+        project: mockData.project,
+        isLoading: mockData.isLoading,
+        refetch: mockOperations?.refetch || (() => Promise.resolve()),
+      }
+    : useProjectDetails(drawerData.projectId)
+
+  const mutationsData = mockOperations
+    ? { updateProject: mockOperations.updateProject }
+    : useProjectMutations()
 
   const { projectId: _ } = drawerData
   const { project, isLoading, refetch } = projectDetailsData

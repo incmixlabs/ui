@@ -55,17 +55,20 @@ export default function ProjectDrawer({
   }
 }) {
   // Use mock data and operations if provided, otherwise use real hooks
-  const drawerData = mockData ? 
-    { projectId: mockData.projectId, handleDrawerClose: mockOperations?.handleDrawerClose || (() => {}) } :
-    useProjectDrawer()
-  
-  const projectDetailsData = mockData ?
-    { project: mockData.project, isLoading: mockData.isLoading } :
-    useProjectDetails(drawerData.projectId)
-  
-  const mutationsData = mockOperations ?
-    { updateProject: mockOperations.updateProject } :
-    useProjectMutations()
+  const drawerData = mockData
+    ? {
+        projectId: mockData.projectId,
+        handleDrawerClose: mockOperations?.handleDrawerClose || (() => {}),
+      }
+    : useProjectDrawer()
+
+  const projectDetailsData = mockData
+    ? { project: mockData.project, isLoading: mockData.isLoading }
+    : useProjectDetails(drawerData.projectId)
+
+  const mutationsData = mockOperations
+    ? { updateProject: mockOperations.updateProject }
+    : useProjectMutations()
 
   const { projectId, handleDrawerClose } = drawerData
   const { project, isLoading: projectLoading } = projectDetailsData
@@ -158,22 +161,34 @@ export default function ProjectDrawer({
             >
               <Flex align={"center"} className="h-full">
                 <Box className="bg-gray-1 p-4 dark:bg-gray-3">
-                  <ProjectDetails 
+                  <ProjectDetails
                     mockData={mockData}
-                    mockOperations={mockOperations ? {
-                      updateProject: mockOperations.updateProject,
-                      refetch: async () => {}
-                    } : undefined}
+                    mockOperations={
+                      mockOperations
+                        ? {
+                            updateProject: mockOperations.updateProject,
+                            refetch: async () => {},
+                          }
+                        : undefined
+                    }
                   />
 
-                  <ProjectLabels 
-                    mockData={mockData ? {
-                      projectId: mockData.projectId,
-                      labels: mockData.labels || []
-                    } : undefined}
-                    mockOperations={mockOperations?.updateLabel ? {
-                      updateLabel: mockOperations.updateLabel
-                    } : undefined}
+                  <ProjectLabels
+                    mockData={
+                      mockData
+                        ? {
+                            projectId: mockData.projectId,
+                            labels: mockData.labels || [],
+                          }
+                        : undefined
+                    }
+                    mockOperations={
+                      mockOperations?.updateLabel
+                        ? {
+                            updateLabel: mockOperations.updateLabel,
+                          }
+                        : undefined
+                    }
                   />
 
                   <ProjectChecklist />
