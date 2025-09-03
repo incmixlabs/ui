@@ -101,7 +101,11 @@ export default function ProjectDetails({
     field: "startDate" | "endDate",
     value: number | null
   ) => {
-    if (!project?.id) return
+    console.log(`handleUpdateDate called with field: ${field}, value:`, value, "project:", project)
+    if (!project?.id) {
+      console.log("No project ID, returning early")
+      return
+    }
 
     // Compute the resulting start and end dates
     const resultingStartDate = field === "startDate" ? value : project.startDate
@@ -113,15 +117,22 @@ export default function ProjectDetails({
       resultingEndDate !== null &&
       resultingEndDate < resultingStartDate
     ) {
+      console.log("Date validation failed: end date before start date")
       throw new Error("End date cannot be before start date")
     }
 
     try {
+      console.log("Calling updateProject.mutateAsync with:", {
+        id: project.id,
+        updates: { [field]: value },
+      })
       await updateProject.mutateAsync({
         id: project.id,
         updates: { [field]: value },
       })
+      console.log("updateProject.mutateAsync completed, calling refetch")
       await refetch()
+      console.log("refetch completed")
     } catch (error) {
       console.error(`Failed to update ${field}:`, error)
       throw error

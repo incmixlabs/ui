@@ -1,4 +1,4 @@
-import { Text } from "@/base"
+import { Input, Text } from "@/base"
 import { cn } from "@/utils/cn"
 import { useEffect, useRef, useState } from "react"
 
@@ -59,6 +59,7 @@ export function InlineEditableNumber({
     } catch (error) {
       console.error("Failed to save number:", error)
       setEditValue(value.toString())
+      setIsEditing(false)
     } finally {
       setIsLoading(false)
     }
@@ -80,7 +81,7 @@ export function InlineEditableNumber({
 
   if (isEditing) {
     return (
-      <input
+      <Input
         ref={inputRef}
         type="text"
         inputMode="numeric"
@@ -92,13 +93,13 @@ export function InlineEditableNumber({
         placeholder={placeholder}
         disabled={isLoading}
         className={cn(
-          "w-20 border-none bg-transparent outline-none",
-          "-mx-1 rounded px-1 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50",
-          "transition-all duration-200",
+          "-mx-1 w-auto min-w-[120px] rounded border-none bg-transparent px-1 py-0.5 font-inherit text-inherit shadow-none outline-none transition-all duration-200",
+          "focus:bg-gray-2 focus:ring-1 focus:ring-gray-7",
           "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
           isLoading && "cursor-wait opacity-50",
           className
         )}
+        style={{ fontSize: "inherit", lineHeight: "inherit" }}
       />
     )
   }
@@ -106,8 +107,8 @@ export function InlineEditableNumber({
   return (
     <Text
       className={cn(
-        "cursor-pointer transition-all duration-200",
-        "-mx-1 rounded px-1 hover:bg-gray-2 hover:text-gray-12",
+        "-mx-1 cursor-pointer rounded px-1 py-0.5 transition-all duration-200",
+        "hover:bg-gray-2 hover:text-gray-12",
         disabled && "cursor-not-allowed opacity-50",
         className
       )}
