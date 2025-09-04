@@ -117,15 +117,7 @@ export interface Colors extends StateColor {
   teal: string
   yellow: string
 }
-export type Color =
-  | "yellow"
-  | "blue"
-  | "cyan"
-  | "gray"
-  | "green"
-  | "indigo"
-  | "lime"
-  | "pink"
-  | "purple"
-  | "red"
-  | "teal"
+// Derive from palette keys (excluding state + light/dark), ignore index signature
+export type Color = DynamicStringEnumKeysOf<
+  Omit<RemoveIndexSignature<Colors>, keyof StateColor | "dark" | "light">
+>
