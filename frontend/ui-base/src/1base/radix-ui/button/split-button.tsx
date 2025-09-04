@@ -22,15 +22,18 @@ const SplitButton = ({
   splitLeft,
   button,
 }: SplitButtonProps) => {
-  button.size = size
-  button.variant = variant
-  button.color = color
+  const buttonProps: ButtonProps = { ...button, size, variant, color }
 
   const DropdownContent = (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger>
-        <IconButton color={color} size={size} variant={variant}>
-          <ChevronDown />
+        <IconButton
+          color={color}
+          size={size}
+          variant={variant}
+          aria-label="More actions"
+        >
+          <ChevronDown aria-hidden="true" />
         </IconButton>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content className="min-w-52">
@@ -38,7 +41,7 @@ const SplitButton = ({
           item.color = color
           return (
             // @ts-ignore
-            <DropdownMenu.Item key={index} {...item} />
+            <DropdownMenu.Item key={item?.["data-key"] ?? index} {...item} />
           )
         })}
       </DropdownMenu.Content>
@@ -48,7 +51,7 @@ const SplitButton = ({
   return (
     <Flex className="inline-flex divide-x divide-border/40 [&>*]:rounded-none [&>button:first-child]:rounded-l-md [&>button:last-child]:rounded-r-md">
       {splitLeft && DropdownContent}
-      <Button {...button} />
+      <Button {...buttonProps} />
       {!splitLeft && DropdownContent}
     </Flex>
   )
