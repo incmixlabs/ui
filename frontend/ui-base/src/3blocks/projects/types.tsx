@@ -1,4 +1,5 @@
-import type { Option } from "../../2elements/multi-select/multi-select"
+import type { Option } from "../../2elements/multi-select"
+
 export interface Member {
   id: string
   name: string
@@ -47,4 +48,11 @@ export interface Project {
     name: string
     image?: string
   }
+}
+
+// Props for Storybook mock data support
+export interface ProjectPageProps {
+  mockProjects?: Project[]
+  mockIsLoading?: boolean
+  mockError?: string | null
 }

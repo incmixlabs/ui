@@ -1,6 +1,5 @@
 import { Box, Button, Flex, Select, Input } from "@base"
 import { useState } from "react"
-import { members } from "../data"
 
 import { SmartDatetimeInput } from "@components/datetime-picker"
 import {
@@ -9,6 +8,12 @@ import {
 
 import {MultipleSelector} from "@components/multiple-selector/multiple-selector"
 import { Icon } from "@incmix/ui"
+
+// TODO: Replace with actual member data from organization/project management
+const mockMembers: Option[] = [
+  { id: "1", value: "user1", name: "Team Member 1", label: "Team Member 1" },
+  { id: "2", value: "user2", name: "Team Member 2", label: "Team Member 2" },
+]
 
 interface ProjectFilterProps {
   onApplyFilters: (filters: {
@@ -73,7 +78,7 @@ export function ProjectFilter({
               value={selectedMembers}
               onChange={setSelectedMembers}
               defaultColor={"gray"}
-              defaultOptions={members}
+              defaultOptions={mockMembers}
               placeholder="Select members"
               className="border-1 bg-gray-1"
               emptyIndicator={

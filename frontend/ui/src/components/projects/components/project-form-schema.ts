@@ -1,7 +1,11 @@
 // frontend/ui/src/components/projects/components/project-form-schema.ts
-import { members } from "../data"
-
 import type { FieldConfig } from "@components/auto-form/types"
+
+// TODO: Replace with actual member data from organization/project management
+const mockMembers = [
+  { id: "1", value: "user1", name: "Team Member 1", label: "Team Member 1" },
+  { id: "2", value: "user2", name: "Team Member 2", label: "Team Member 2" },
+]
 import type { ZodObjectOrWrapped } from "@components/auto-form/utils"
 import type { z } from "zod"
 
@@ -116,7 +120,7 @@ export const projectFormSchema: ProjectFormSchema = {
       description: "Members",
       fieldType: "multipleSelector",
       inputProps: {
-        defaultOptions: members,
+        defaultOptions: mockMembers,
         placeholder: "Select members",
         defaultColor: "gray",
         className: "border-1 dark:bg-gray-1",

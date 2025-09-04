@@ -56,7 +56,7 @@ export const Default: Story = {
     const [date, setDate] = React.useState<Date>()
 
     return (
-      <Flex direction="column" gap="4" align="start">
+      <Flex direction="column" gap="4" align="start" width="full">
         <Text size="3" weight="medium">
           Basic Date Picker
         </Text>

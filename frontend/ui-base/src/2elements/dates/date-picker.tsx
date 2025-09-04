@@ -27,7 +27,7 @@ export const DatePicker = forwardRef<
           {date ? format(date, "PPP") : <span>Pick a date</span>}
         </Button>
       </Popover.Trigger>
-      <Popover.Content width="auto" ref={ref}>
+      <Popover.Content ref={ref}>
         <Calendar mode="single" selected={date} onSelect={setDate} />
       </Popover.Content>
     </Popover.Root>

@@ -10,6 +10,7 @@ import {
   Progress,
   Text,
 } from "@/src/1base"
+import { useState } from "react"
 
 import { useProjectDrawer } from "../hooks/use-project-drawer"
 import type { Project } from "../types"
@@ -30,6 +31,7 @@ export function ProjectCard({
   isListFilter,
 }: ProjectCardProps) {
   const { handleDrawerOpen } = useProjectDrawer()
+  const [logoFailed, setLogoFailed] = useState(false)
   return (
     <Card.Root
       onClick={() => {
@@ -42,13 +44,20 @@ export function ProjectCard({
       <Flex align={"center"} justify={"between"}>
         <Flex align={"center"} gap={"3"}>
           <Box className="relative grid h-14 w-14 place-content-center rounded-app border-2 border-gray-4 p-2">
-            <img
-              src={project.logo}
-              alt={project.name}
-              width={40}
-              height={40}
-              className="object-contain"
-            />
+            {project.logo && !logoFailed ? (
+              <img
+                src={project.logo}
+                alt={project.name}
+                width={40}
+                height={40}
+                className="object-contain"
+                onError={() => setLogoFailed(true)}
+              />
+            ) : (
+              <Box className="absolute inset-0 flex items-center justify-center font-medium text-gray-11">
+                {project.name.charAt(0).toUpperCase()}
+              </Box>
+            )}
           </Box>
           <Box>
             <Heading as="h3" className="font-medium text-gray-12" size={"3"}>

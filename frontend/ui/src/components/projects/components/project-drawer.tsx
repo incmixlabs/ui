@@ -14,32 +14,129 @@ import {
   Select,
   Icon,
   Text,
+  toast,
 } from "@incmix/ui"
 
 import { MotionSheet } from "@components/custom-sheet"
 import { attachments } from "@components/kanban-board/data"
 import { useProjectDrawer } from "../hooks/use-project-drawer"
+import { useProjectDetails, useProjectMutations } from "@incmix/store"
 
-import { members, projects } from "../data"
+import { members } from "../data" // Keep members for now until member management is implemented
 import ProjectChecklist from "./project-checklist"
 import ProjectComments from "./project-comments"
 import ProjectDetails from "./project-details"
 import { ComboBox } from "@components/combo-box"
+import ProjectLabels from "./project-labels"
 
 export default function ProjectDrawer({
   listFilter,
   listFilterClassName = "w-full relative z-50 h-[84vh] shrink-0 rounded-xl",
+  mockData,
+  mockOperations,
 }: {
   listFilter?: boolean
   listFilterClassName?: string
+  mockData?: {
+    projectId: string
+    project: any
+    isLoading: boolean
+    labels?: any[]
+  }
+  mockOperations?: {
+    handleDrawerClose: () => void
+    updateProject: {
+      mutateAsync: (data: any) => Promise<void>
+      isLoading: boolean
+    }
+    updateLabel?: {
+      mutateAsync: (data: any) => Promise<void>
+      isLoading: boolean
+    }
+  }
 }) {
-  const { projectId, handleDrawerClose } = useProjectDrawer()
+  // Use mock data and operations if provided, otherwise use real hooks
+  const drawerData = mockData
+    ? {
+        projectId: mockData.projectId,
+        handleDrawerClose: mockOperations?.handleDrawerClose || (() => {}),
+      }
+    : useProjectDrawer()
 
-  const [status, setStatus] = useState("started")
+  const projectDetailsData = mockData
+    ? { project: mockData.project, isLoading: mockData.isLoading }
+    : useProjectDetails(drawerData.projectId)
 
+  const mutationsData = mockOperations
+    ? { updateProject: mockOperations.updateProject }
+    : useProjectMutations()
+
+  const { projectId, handleDrawerClose } = drawerData
+  const { project, isLoading: projectLoading } = projectDetailsData
+  const { updateProject } = mutationsData
+
+  const [status, setStatus] = useState<"started" | "on-hold" | "completed">(
+    (project?.status === "all" ? "started" : project?.status) || "started"
+  )
   const [selectedMemebers, setSelectedMembers] = useState<string[]>([
     "regina-cooper",
   ])
+
+  // Update status when project changes
+  useEffect(() => {
+    if (project?.status && project.status !== "all") {
+      const validStatuses = ["started", "on-hold", "completed"] as const
+      if (validStatuses.includes(project.status as any)) {
+        setStatus(project.status as "started" | "on-hold" | "completed")
+      }
+    }
+  }, [project?.status])
+
+  const handleStatusChange = async (newStatus: string) => {
+    const validStatus = newStatus as "started" | "on-hold" | "completed"
+    setStatus(validStatus)
+    if (project?.id && newStatus !== project.status) {
+      try {
+        await updateProject.mutateAsync({
+          id: project.id,
+          updates: { status: validStatus },
+        })
+      } catch (error) {
+        console.error("Failed to update project status:", error)
+        // Show user-facing error notification
+        toast.error("Failed to update project status", {
+          description: `Could not update status for "${project?.name || "project"}". Please try again.`,
+        })
+        // Revert status on failure
+        if (project.status !== "all") {
+          setStatus(project.status as "started" | "on-hold" | "completed")
+        }
+      }
+    }
+  }
+
+  // Show loading state while project data is being fetched
+  if (projectLoading) {
+    return (
+      <MotionSheet
+        open={Boolean(projectId)}
+        onOpenChange={handleDrawerClose}
+        showCloseButton={false}
+        isFilterClassName={listFilterClassName}
+        isFilter={listFilter}
+        side="right"
+        className={`${listFilter ? "w-full flex-1" : "w-[53rem]"} p-0 py-0`}
+      >
+        <Box className="flex h-full items-center justify-center">
+          <Box className="animate-pulse space-y-4 p-8">
+            <Box className="mx-auto h-8 w-32 rounded bg-gray-6" />
+            <Box className="h-4 w-full rounded bg-gray-6" />
+            <Box className="h-4 w-3/4 rounded bg-gray-6" />
+          </Box>
+        </Box>
+      </MotionSheet>
+    )
+  }
 
   return (
     <>
@@ -74,6 +171,8 @@ export default function ProjectDrawer({
                 <Box className="bg-gray-1 p-4 dark:bg-gray-3">
                   <ProjectDetails />
 
+                  <ProjectLabels />
+
                   <ProjectChecklist />
 
                   <ProjectComments />
@@ -99,9 +198,9 @@ export default function ProjectDrawer({
                   <Box className="space-y-3 px-3 pb-3">
                     <Select.Root
                       aria-label="Project status"
-                      defaultValue="started"
                       value={status}
-                      onValueChange={setStatus}
+                      onValueChange={handleStatusChange}
+                      disabled={updateProject.isLoading}
                     >
                       <Select.Trigger className="h-11 w-full" />
                       <Select.Content className="mx-auto w-[95%]">
@@ -162,7 +261,10 @@ export default function ProjectDrawer({
                             </Box>
                           ) : (
                             <Box className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-gray-8">
-                              <Icon name="FileArchive" className="h-5 w-5 text-gray-8" />
+                              <Icon
+                                name="FileArchive"
+                                className="h-5 w-5 text-gray-8"
+                              />
                             </Box>
                           )}
                           <Box className="ml-4 grow">
@@ -179,7 +281,10 @@ export default function ProjectDrawer({
                               variant="soft"
                               className="h-9 cursor-pointer rounded-full bg-transparent p-2 transition-colors hover:bg-gray-4 dark:hover:bg-gray-7"
                             >
-                              <Icon name="Download" className="h-5 w-5 text-gray-12" />
+                              <Icon
+                                name="Download"
+                                className="h-5 w-5 text-gray-12"
+                              />
                             </Button>
                           </Flex>
                         </Flex>
