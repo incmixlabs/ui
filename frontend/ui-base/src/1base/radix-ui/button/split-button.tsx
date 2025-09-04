@@ -22,13 +22,18 @@ const SplitButton = ({
   splitLeft,
   button,
 }: SplitButtonProps) => {
-  const buttonProps: ButtonProps = { ...button, size, variant, color }
+  const buttonProps: ButtonProps = {
+    ...button,
+    size,
+    variant,
+    color: color as ButtonProps["color"],
+  }
 
   const DropdownContent = (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger>
         <IconButton
-          color={color}
+          color={color as ButtonProps["color"]}
           size={size}
           variant={variant}
           aria-label="More actions"
@@ -38,7 +43,7 @@ const SplitButton = ({
       </DropdownMenu.Trigger>
       <DropdownMenu.Content className="min-w-52">
         {items.map((item, index) => {
-          item.color = color
+          item.color = color as DropdownMenuItemProps["color"]
           return (
             // @ts-ignore
             <DropdownMenu.Item key={item?.["data-key"] ?? index} {...item} />
