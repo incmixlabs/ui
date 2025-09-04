@@ -487,9 +487,9 @@ export const SplitButtonVariants: Story = {
           children: "Solid"
         }}
         items={[
-          { children: "Action 1" },
-          { children: "Action 2" },
-          { children: "Action 3" },
+          { children: "Action 1", onClick: () => console.log("Action 1") },
+          { children: "Action 2", onClick: () => console.log("Action 2") },
+          { children: "Action 3", onClick: () => console.log("Action 3") },
         ]}
       />
       <SplitButton
@@ -499,9 +499,9 @@ export const SplitButtonVariants: Story = {
           children: "Soft",
         }}
         items={[
-          { children: "Action 1" },
-          { children: "Action 2" },
-          { children: "Action 3" },
+          { children: "Action 1", onClick: () => console.log("Action 1") },
+          { children: "Action 2", onClick: () => console.log("Action 2") },
+          { children: "Action 3", onClick: () => console.log("Action 3") },
         ]}
       />
       <SplitButton
@@ -510,20 +510,20 @@ export const SplitButtonVariants: Story = {
           children: "Outline"
         }}
         items={[
-          { children: "Action 1" },
-          { children: "Action 2" },
-          { children: "Action 3" },
+          { children: "Action 1", onClick: () => console.log("Action 1") },
+          { children: "Action 2", onClick: () => console.log("Action 2") },
+          { children: "Action 3", onClick: () => console.log("Action 3") },
         ]}
       />
       <SplitButton
-        variant="ghost"
+        variant="surface"
         button={{
-          children: "Ghost"
+          children: "Surface"
         }}
         items={[
-          { children: "Action 1" },
-          { children: "Action 2" },
-          { children: "Action 3" },
+          { children: "Action 1", onClick: () => console.log("Action 1") },
+          { children: "Action 2", onClick: () => console.log("Action 2") },
+          { children: "Action 3", onClick: () => console.log("Action 3") },
         ]}
       />
     </div>

@@ -117,3 +117,15 @@ export interface Colors extends StateColor {
   teal: string
   yellow: string
 }
+export type Color =
+  | "yellow"
+  | "blue"
+  | "cyan"
+  | "gray"
+  | "green"
+  | "indigo"
+  | "lime"
+  | "pink"
+  | "purple"
+  | "red"
+  | "teal"
