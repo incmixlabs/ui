@@ -46,6 +46,7 @@ function SignupForm() {
         slug: "",
         userId: userData.id,
         userType: userData.userType,
+        isSuperAdmin: userData.isSuperAdmin,
       } as AuthUser
     },
     onSuccess: (data) => {

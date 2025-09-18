@@ -24,7 +24,9 @@ export function useOrganizations() {
         },
       })
       if (!res.ok) throw new Error(I18n.t("error.fetchOrganizations"))
-      return res.json()
+      const data = await res.json()
+      console.log("data", data)
+      return data
     },
     retry: false,
   })
@@ -81,7 +83,7 @@ export function useValidateHandle() {
     validateHandleError: validateHandle.error,
   }
 }
-export function useCreateOrganization() {
+export function useCreateOrganization(shouldNavigate = true) {
   type BuildingOrgMember = Omit<Member, "orgHandle">
 
   const queryClient = useQueryClient()
@@ -114,7 +116,9 @@ export function useCreateOrganization() {
     },
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ["organizations"] })
-      navigate({ to: `/organization/${data.handle}` })
+      if (shouldNavigate) {
+        navigate({ to: `/organization/${data.handle}` })
+      }
     },
     onError: (error) => {
       const message =
