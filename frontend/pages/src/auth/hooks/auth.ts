@@ -307,8 +307,8 @@ export const useProfilePictureUrl = (userId: string) => {
         const message: { message: string } = (await response.json()) as any
         throw new Error(message.message)
       }
-      const data = (await response.json()) as OptionalPresignedUrl
-      return data.url
+      const data = (await response.json()) as { profileImageUrl: string }
+      return data.profileImageUrl
     },
     enabled: !!userId,
   })
