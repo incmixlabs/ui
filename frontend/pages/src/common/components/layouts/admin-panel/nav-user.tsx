@@ -19,7 +19,7 @@ export function NavUser({ userId }: { userId: string }) {
   const { appearance, toggleAppearance } = useAppearanceStore()
 
   const avatarUrl = profilePictureUrl || user?.avatar || undefined
-
+  console.log({ avatarUrl })
   if (!user) {
     return null
   }

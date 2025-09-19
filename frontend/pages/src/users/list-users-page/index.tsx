@@ -1,29 +1,35 @@
 "use client"
 import { useOrganizationStore } from "@incmix/store"
 
+import { useAuth } from "@auth"
 import { I18n } from "@incmix/pages/i18n"
 import { Flex, Spinner } from "@incmix/ui"
 import { Callout } from "@incmix/ui"
-import { USERS_API_URL } from "@incmix/ui/constants"
+import { PERMISSIONS_API_URL, USERS_API_URL } from "@incmix/ui/constants"
 import { createAbilityFromPermissions } from "@incmix/utils/casl"
 import type { AppAbility, Permission } from "@incmix/utils/types"
 import { DashboardLayout } from "@layouts/admin-panel/layout"
 import { useQuery } from "@tanstack/react-query"
+import { InfoIcon } from "lucide-react"
 import AdminUsersTable from "./admin-users-table"
 import OrgUsersTable from "./org-users-table"
 
 const ListUsersPage = () => {
   const { selectedOrganisation } = useOrganizationStore()
-
-  const { data: permissions, isLoading } = useQuery<Permission[]>({
+  const { authUser } = useAuth()
+  const { data, isLoading } = useQuery<{ permissions: Permission[] }>({
+    enabled: !!authUser?.id,
     queryKey: ["user-permissions", selectedOrganisation?.id],
     queryFn: async () => {
       const searchParams = new URLSearchParams()
-      if (selectedOrganisation?.id)
-        searchParams.append("orgId", selectedOrganisation?.id)
+
+      if (selectedOrganisation?.id) {
+        if (!authUser?.isSuperAdmin)
+          searchParams.append("orgId", selectedOrganisation?.id)
+      }
 
       const res = await fetch(
-        `${USERS_API_URL}/permissions?${searchParams.toString()}`,
+        `${PERMISSIONS_API_URL}/user?${searchParams.toString()}`,
         {
           method: "GET",
           credentials: "include",
@@ -35,9 +41,7 @@ const ListUsersPage = () => {
   })
   if (isLoading)
     return (
-      <DashboardLayout
-        breadcrumbItems={[{ label: "Users", url: "/users/list" }]}
-      >
+      <DashboardLayout>
         <Flex
           className="h-[calc((100vh-var(--navbar-height))-3rem)]"
           align="center"
@@ -48,17 +52,18 @@ const ListUsersPage = () => {
       </DashboardLayout>
     )
 
-  const ability = createAbilityFromPermissions(permissions ?? [])
+  const ability = createAbilityFromPermissions(data?.permissions ?? [])
 
   return (
-    <DashboardLayout breadcrumbItems={[{ label: "Users", url: "/users/list" }]}>
+    <DashboardLayout>
       <UserTable ability={ability} />
     </DashboardLayout>
   )
 }
 
 const UserTable: React.FC<{ ability: AppAbility }> = ({ ability }) => {
-  if (ability.can("read", "User")) {
+  if (ability.can("read", "all")) {
+    console.log("AdminUsersTable")
     return <AdminUsersTable />
   }
 
@@ -69,7 +74,7 @@ const UserTable: React.FC<{ ability: AppAbility }> = ({ ability }) => {
   return (
     <Callout.Root color="red">
       <Callout.Icon>
-        <InfoCircledIcon />
+        <InfoIcon />
       </Callout.Icon>
       <Callout.Text>
         You do not have the necessary permissions to view this page.
