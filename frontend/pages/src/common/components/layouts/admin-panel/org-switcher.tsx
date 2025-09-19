@@ -12,7 +12,7 @@ export function OrgSwitcher() {
   const { setSelectedProject, selectedProject } = useProjectStore()
 
   const { handleCreateOrganization, isCreatingOrganization } =
-    useCreateOrganization()
+    useCreateOrganization(false)
 
   const { authUser } = useAuth()
 

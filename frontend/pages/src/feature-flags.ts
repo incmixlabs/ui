@@ -15,7 +15,7 @@ const featureFlagsConfig: FeatureFlagConfig[] = [
   {
     name: FEATURE_FLAGS.DASHBOARD_ENABLED,
     // Only enable dashboard in local development
-    enabled: import.meta.env.MODE === "development",
+    enabled: false,
     // Additional metadata can be added here
     metadata: {
       description: "Controls access to the dashboard page",

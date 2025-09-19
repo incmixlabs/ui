@@ -34,7 +34,7 @@ export const useAuth = () => {
       }
 
       try {
-        const res = await fetch(`${AUTH_API_URL}`, {
+        const res = await fetch(`${AUTH_API_URL}/me`, {
           credentials: "include",
           headers: {
             "Accept-Language": I18n.language ?? "en",
@@ -300,12 +300,9 @@ export const useProfilePictureUrl = (userId: string) => {
   const { data: presignedUrl } = useQuery({
     queryKey: ["profilePictureUrl", userId],
     queryFn: async () => {
-      const response = await fetch(
-        `${USERS_API_URL}/${userId}/profile-picture`,
-        {
-          credentials: "include",
-        }
-      )
+      const response = await fetch(`${USERS_API_URL}/profile-picture`, {
+        credentials: "include",
+      })
       if (!response.ok) {
         const message: { message: string } = (await response.json()) as any
         throw new Error(message.message)
@@ -327,17 +324,14 @@ export const useProfilePicture = (userId: string) => {
     mutationFn: async (file: File) => {
       const formData = new FormData()
       formData.append("file", file)
-      const response = await fetch(
-        `${USERS_API_URL}/${userId}/profile-picture`,
-        {
-          method: "PUT",
-          body: formData,
-          credentials: "include",
-          headers: {
-            "Accept-Language": I18n.language ?? "en",
-          },
-        }
-      )
+      const response = await fetch(`${USERS_API_URL}/profile-picture`, {
+        method: "PUT",
+        body: formData,
+        credentials: "include",
+        headers: {
+          "Accept-Language": I18n.language ?? "en",
+        },
+      })
       if (!response.ok) {
         const errorData = (await response.json()) as any
         throw new Error(errorData.message || t("error.addProfilePicture"))
